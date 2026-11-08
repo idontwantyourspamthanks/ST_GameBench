@@ -1,0 +1,50 @@
+# --- Never commit copyrighted material -------------------------------------
+# Users supply their own legal copies of the games and of TOS.
+
+# TOS ROM images (Atari copyright). EmuTOS is GPL but kept out for simplicity.
+tos/*
+!tos/README.md
+
+# Game files: PP's HAGA conversions (RUNME.TOS, HAGA, disk images, intro art), originals, archives
+games/*/RUNME.TOS
+games/*/HAGA
+games/*/FILES/
+games/*/*.HST
+games/*/*.BMP
+games/*/*.SWR
+games/*/*.TXT
+games/*/*.PRG
+games/*/*.ST
+games/*/*.st
+games/*/*.zip
+# Third-party game not part of this project
+games/steve-outrun/
+
+# Anything containing game RAM, game data or game imagery
+**/work/snapshots/
+**/work/dumps/
+**/work/disk_overlay/
+**/work/ref/
+**/work/manual*.md
+**/work/**/*.png
+**/work/**/*.bin
+**/work/**/*.sav
+**/work/**/*.st
+**/*.png
+**/*.sav
+# Build outputs contain patched game files
+**/build/
+**/dist/
+
+# --- Local / generated ------------------------------------------------------
+__pycache__/
+*.pyc
+.venv/
+games/*/tos/
+**/*.img
+**/*.gz
+**/*.tos
+**/*.TOS
+**/*.hlog
+# Machine-local helpers (e.g. writing to a personal disk image)
+**/local_*

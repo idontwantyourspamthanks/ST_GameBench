@@ -1,0 +1,94 @@
+== (a) standing 1mb_ingame_foot: A = p4+p7 base, B = base + p7_skip
+flip   10: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (0, 0), 'WAVE': 1, 'NSKIP': 5, 'NREND': 4, 'NINV': 0, 'NUNS': 0, 'NSC': 2, 'NOBJ': 2, 'NWAV': 0}   pos 0000640000006400 npc0 x=0 y=0
+flip   40: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (0, 0), 'WAVE': 1, 'NSKIP': 35, 'NREND': 4, 'NINV': 0, 'NUNS': 0, 'NSC': 2, 'NOBJ': 2, 'NWAV': 0}   pos 0000640000006400 npc0 x=0 y=0
+flip  100: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (0, 0), 'WAVE': 1, 'NSKIP': 95, 'NREND': 4, 'NINV': 0, 'NUNS': 0, 'NSC': 2, 'NOBJ': 2, 'NWAV': 0}   pos 0000640000006400 npc0 x=0 y=0
+1mb_ingame_foot fa1 IDENTICAL
+== (a) standing 1mb_ingame_foot: A = UNPATCHED, B = base + p7_skip
+flip   10: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (0, 0), 'WAVE': 1, 'NSKIP': 5, 'NREND': 4, 'NINV': 0, 'NUNS': 0, 'NSC': 2, 'NOBJ': 2, 'NWAV': 0}   pos 0000640000006400 npc0 x=0 y=0
+flip   40: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (0, 0), 'WAVE': 1, 'NSKIP': 35, 'NREND': 4, 'NINV': 0, 'NUNS': 0, 'NSC': 2, 'NOBJ': 2, 'NWAV': 0}   pos 0000640000006400 npc0 x=0 y=0
+flip  100: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (0, 0), 'WAVE': 1, 'NSKIP': 95, 'NREND': 4, 'NINV': 0, 'NUNS': 0, 'NSC': 2, 'NOBJ': 2, 'NWAV': 0}   pos 0000640000006400 npc0 x=0 y=0
+1mb_ingame_foot fa2 IDENTICAL
+== (a) standing ingame_lobos_foot (2 MB): A = base, B = base + p7_skip
+flip   10: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (0, 0), 'WAVE': 1, 'NSKIP': 5, 'NREND': 4, 'NINV': 0, 'NUNS': 0, 'NSC': 2, 'NOBJ': 2, 'NWAV': 0}   pos 0000640000006400 npc0 x=0 y=0
+flip   40: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (0, 0), 'WAVE': 1, 'NSKIP': 35, 'NREND': 4, 'NINV': 0, 'NUNS': 0, 'NSC': 2, 'NOBJ': 2, 'NWAV': 0}   pos 0000640000006400 npc0 x=0 y=0
+flip  100: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (0, 0), 'WAVE': 1, 'NSKIP': 95, 'NREND': 4, 'NINV': 0, 'NUNS': 0, 'NSC': 2, 'NOBJ': 2, 'NWAV': 0}   pos 0000640000006400 npc0 x=0 y=0
+ingame_lobos_foot fa3 IDENTICAL
+== (b) walking 1mb_ingame_walking: A = base, B = base + p7_skip
+flip   10: visible differing bytes (both buffers) =      0   B counters {'VAL': (0, 0), 'WV': (0, 0), 'WAVE': 0, 'NSKIP': 0, 'NREND': 9, 'NINV': 0, 'NUNS': 0, 'NSC': 9, 'NOBJ': 0, 'NWAV': 0}   pos 000023a000006400 npc0 x=0 y=0
+flip   40: visible differing bytes (both buffers) =      0   B counters {'VAL': (0, 0), 'WV': (0, 0), 'WAVE': 0, 'NSKIP': 0, 'NREND': 39, 'NINV': 0, 'NUNS': 0, 'NSC': 39, 'NOBJ': 0, 'NWAV': 0}   pos 00001d2e00006400 npc0 x=0 y=0
+flip  100: visible differing bytes (both buffers) =      0   B counters {'VAL': (0, 0), 'WV': (0, 0), 'WAVE': 0, 'NSKIP': 0, 'NREND': 98, 'NINV': 0, 'NUNS': 0, 'NSC': 98, 'NOBJ': 0, 'NWAV': 0}   pos 0000608100006400 npc0 x=0 y=0
+1mb_ingame_walking fb1 IDENTICAL
+== (b) banked turn ingame_foot_banked_turn (2 MB): A = base, B = base + p7_skip
+flip   10: visible differing bytes (both buffers) =      0   B counters {'VAL': (0, 0), 'WV': (0, 0), 'WAVE': 0, 'NSKIP': 0, 'NREND': 9, 'NINV': 0, 'NUNS': 0, 'NSC': 9, 'NOBJ': 0, 'NWAV': 0}   pos 00005ac6000063cb npc0 x=0 y=0
+flip   40: visible differing bytes (both buffers) =      0   B counters {'VAL': (0, 0), 'WV': (0, 0), 'WAVE': 0, 'NSKIP': 0, 'NREND': 39, 'NINV': 0, 'NUNS': 0, 'NSC': 39, 'NOBJ': 0, 'NWAV': 0}   pos 00005adf00006330 npc0 x=0 y=0
+flip  100: visible differing bytes (both buffers) =      0   B counters {'VAL': (0, 0), 'WV': (0, 0), 'WAVE': 0, 'NSKIP': 0, 'NREND': 99, 'NINV': 0, 'NUNS': 0, 'NSC': 99, 'NOBJ': 0, 'NWAV': 0}   pos 00005aa400006315 npc0 x=0 y=0
+ingame_foot_banked_turn fb2 IDENTICAL
+== (b) turning ingame_foot_turning (2 MB)
+flip   10: visible differing bytes (both buffers) =      0   B counters {'VAL': (0, 0), 'WV': (0, 0), 'WAVE': 0, 'NSKIP': 0, 'NREND': 9, 'NINV': 0, 'NUNS': 0, 'NSC': 9, 'NOBJ': 0, 'NWAV': 0}   pos 00005b1b00006400 npc0 x=0 y=0
+flip   40: visible differing bytes (both buffers) =      0   B counters {'VAL': (0, 0), 'WV': (0, 0), 'WAVE': 0, 'NSKIP': 0, 'NREND': 39, 'NINV': 0, 'NUNS': 0, 'NSC': 39, 'NOBJ': 0, 'NWAV': 0}   pos 0000586900006400 npc0 x=0 y=0
+flip  100: visible differing bytes (both buffers) =      0   B counters {'VAL': (0, 0), 'WV': (0, 0), 'WAVE': 0, 'NSKIP': 0, 'NREND': 99, 'NINV': 0, 'NUNS': 0, 'NSC': 99, 'NOBJ': 0, 'NWAV': 0}   pos 0000530500006400 npc0 x=0 y=0
+ingame_foot_turning fb3 IDENTICAL
+== stop-and-go: heading poke @18, position poke @43, restore @68 (standing snapshot)
+flip   19: visible differing bytes (both buffers) =      0   B counters {'VAL': (0, 1), 'WV': (0, 0), 'WAVE': 0, 'NSKIP': 13, 'NREND': 5, 'NINV': 0, 'NUNS': 0, 'NSC': 3, 'NOBJ': 2, 'NWAV': 0}   pos 0000640000006400 npc0 x=0 y=0
+flip   20: visible differing bytes (both buffers) =      0   B counters {'VAL': (0, 0), 'WV': (0, 0), 'WAVE': 0, 'NSKIP': 13, 'NREND': 6, 'NINV': 0, 'NUNS': 0, 'NSC': 4, 'NOBJ': 2, 'NWAV': 0}   pos 0000640000006400 npc0 x=0 y=0
+flip   22: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (0, 0), 'WAVE': 0, 'NSKIP': 13, 'NREND': 8, 'NINV': 0, 'NUNS': 0, 'NSC': 4, 'NOBJ': 4, 'NWAV': 0}   pos 0000640000006400 npc0 x=0 y=0
+flip   25: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (0, 0), 'WAVE': 1, 'NSKIP': 16, 'NREND': 8, 'NINV': 0, 'NUNS': 0, 'NSC': 4, 'NOBJ': 4, 'NWAV': 0}   pos 0000640000006400 npc0 x=0 y=0
+flip   44: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 0), 'WV': (0, 0), 'WAVE': 0, 'NSKIP': 34, 'NREND': 9, 'NINV': 0, 'NUNS': 0, 'NSC': 5, 'NOBJ': 4, 'NWAV': 0}   pos 0000670000006400 npc0 x=0 y=0
+flip   45: visible differing bytes (both buffers) =      0   B counters {'VAL': (0, 0), 'WV': (0, 0), 'WAVE': 0, 'NSKIP': 34, 'NREND': 10, 'NINV': 0, 'NUNS': 0, 'NSC': 6, 'NOBJ': 4, 'NWAV': 0}   pos 0000670000006400 npc0 x=0 y=0
+flip   47: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (0, 0), 'WAVE': 0, 'NSKIP': 34, 'NREND': 12, 'NINV': 0, 'NUNS': 0, 'NSC': 6, 'NOBJ': 6, 'NWAV': 0}   pos 0000670000006400 npc0 x=0 y=0
+flip   69: visible differing bytes (both buffers) =      0   B counters {'VAL': (0, 1), 'WV': (0, 0), 'WAVE': 0, 'NSKIP': 55, 'NREND': 13, 'NINV': 0, 'NUNS': 0, 'NSC': 7, 'NOBJ': 6, 'NWAV': 0}   pos 0000640000006400 npc0 x=0 y=0
+flip   70: visible differing bytes (both buffers) =      0   B counters {'VAL': (0, 0), 'WV': (0, 0), 'WAVE': 0, 'NSKIP': 55, 'NREND': 14, 'NINV': 0, 'NUNS': 0, 'NSC': 8, 'NOBJ': 6, 'NWAV': 0}   pos 0000640000006400 npc0 x=0 y=0
+flip   72: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (0, 0), 'WAVE': 0, 'NSKIP': 55, 'NREND': 16, 'NINV': 0, 'NUNS': 0, 'NSC': 8, 'NOBJ': 8, 'NWAV': 0}   pos 0000640000006400 npc0 x=0 y=0
+flip   90: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (0, 0), 'WAVE': 1, 'NSKIP': 73, 'NREND': 16, 'NINV': 0, 'NUNS': 0, 'NSC': 8, 'NOBJ': 8, 'NWAV': 0}   pos 0000640000006400 npc0 x=0 y=0
+1mb_ingame_foot sg1 IDENTICAL
+== (c1) NPC poked 1200 units ahead, moving, player standing
+flip    6: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (1, 1), 'WAVE': 1, 'NSKIP': 0, 'NREND': 5, 'NINV': 0, 'NUNS': 0, 'NSC': 2, 'NOBJ': 2, 'NWAV': 1}   pos 0000640000006400 npc0 x=23346 y=25603
+flip    7: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (1, 1), 'WAVE': 1, 'NSKIP': 0, 'NREND': 6, 'NINV': 0, 'NUNS': 0, 'NSC': 2, 'NOBJ': 2, 'NWAV': 2}   pos 0000640000006400 npc0 x=23316 y=25608
+flip    8: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (1, 1), 'WAVE': 1, 'NSKIP': 0, 'NREND': 7, 'NINV': 0, 'NUNS': 0, 'NSC': 2, 'NOBJ': 2, 'NWAV': 3}   pos 0000640000006400 npc0 x=23276 y=25615
+flip    9: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (1, 1), 'WAVE': 1, 'NSKIP': 0, 'NREND': 8, 'NINV': 0, 'NUNS': 0, 'NSC': 2, 'NOBJ': 2, 'NWAV': 4}   pos 0000640000006400 npc0 x=23226 y=25624
+flip   10: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (1, 1), 'WAVE': 1, 'NSKIP': 0, 'NREND': 9, 'NINV': 0, 'NUNS': 0, 'NSC': 2, 'NOBJ': 2, 'NWAV': 5}   pos 0000640000006400 npc0 x=23167 y=25635
+flip   14: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (1, 1), 'WAVE': 1, 'NSKIP': 0, 'NREND': 13, 'NINV': 0, 'NUNS': 0, 'NSC': 2, 'NOBJ': 2, 'NWAV': 9}   pos 0000640000006400 npc0 x=22882 y=25687
+flip   20: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (0, 0), 'WAVE': 0, 'NSKIP': 0, 'NREND': 19, 'NINV': 0, 'NUNS': 0, 'NSC': 2, 'NOBJ': 2, 'NWAV': 15}   pos 0000640000006400 npc0 x=22450 y=25765
+flip   30: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (0, 0), 'WAVE': 0, 'NSKIP': 0, 'NREND': 29, 'NINV': 0, 'NUNS': 0, 'NSC': 2, 'NOBJ': 12, 'NWAV': 15}   pos 0000640000006400 npc0 x=22157 y=26159
+flip   40: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (1, 1), 'WAVE': 1, 'NSKIP': 0, 'NREND': 39, 'NINV': 0, 'NUNS': 0, 'NSC': 2, 'NOBJ': 19, 'NWAV': 18}   pos 0000640000006400 npc0 x=22866 y=26058
+1mb_ingame_foot npc1 IDENTICAL
+== (c2) NPC poked 17400 units away (outside the 16-cell window), moving
+flip    6: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (0, 0), 'WAVE': 1, 'NSKIP': 1, 'NREND': 4, 'NINV': 0, 'NUNS': 0, 'NSC': 2, 'NOBJ': 2, 'NWAV': 0}   pos 0000640000006400 npc0 x=8192 y=25600
+flip   10: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (0, 0), 'WAVE': 1, 'NSKIP': 5, 'NREND': 4, 'NINV': 0, 'NUNS': 0, 'NSC': 2, 'NOBJ': 2, 'NWAV': 0}   pos 0000640000006400 npc0 x=8192 y=25600
+flip   20: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (0, 0), 'WAVE': 1, 'NSKIP': 15, 'NREND': 4, 'NINV': 0, 'NUNS': 0, 'NSC': 2, 'NOBJ': 2, 'NWAV': 0}   pos 0000640000006400 npc0 x=8192 y=25600
+flip   30: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (0, 0), 'WAVE': 1, 'NSKIP': 25, 'NREND': 4, 'NINV': 0, 'NUNS': 0, 'NSC': 2, 'NOBJ': 2, 'NWAV': 0}   pos 0000640000006400 npc0 x=8192 y=25600
+flip   40: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (0, 0), 'WAVE': 1, 'NSKIP': 35, 'NREND': 4, 'NINV': 0, 'NUNS': 0, 'NSC': 2, 'NOBJ': 2, 'NWAV': 0}   pos 0000640000006400 npc0 x=8192 y=25600
+flip   60: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (0, 0), 'WAVE': 1, 'NSKIP': 55, 'NREND': 4, 'NINV': 0, 'NUNS': 0, 'NSC': 2, 'NOBJ': 2, 'NWAV': 0}   pos 0000640000006400 npc0 x=8192 y=25600
+1mb_ingame_foot npc2 IDENTICAL
+== (c3) sea in view (player moved 8 cells east, heading east)
+flip    6: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (1, 1), 'WAVE': 1, 'NSKIP': 0, 'NREND': 5, 'NINV': 0, 'NUNS': 0, 'NSC': 3, 'NOBJ': 2, 'NWAV': 0}   pos 000075f800006400 npc0 x=0 y=0
+flip    7: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (1, 1), 'WAVE': 1, 'NSKIP': 0, 'NREND': 6, 'NINV': 0, 'NUNS': 0, 'NSC': 3, 'NOBJ': 2, 'NWAV': 1}   pos 000075f800006400 npc0 x=0 y=0
+flip    8: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (1, 1), 'WAVE': 1, 'NSKIP': 0, 'NREND': 7, 'NINV': 0, 'NUNS': 0, 'NSC': 3, 'NOBJ': 2, 'NWAV': 2}   pos 000075f800006400 npc0 x=0 y=0
+flip    9: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (1, 1), 'WAVE': 1, 'NSKIP': 0, 'NREND': 8, 'NINV': 0, 'NUNS': 0, 'NSC': 3, 'NOBJ': 2, 'NWAV': 3}   pos 000075f800006400 npc0 x=0 y=0
+flip   10: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (1, 1), 'WAVE': 1, 'NSKIP': 0, 'NREND': 9, 'NINV': 0, 'NUNS': 0, 'NSC': 3, 'NOBJ': 2, 'NWAV': 4}   pos 000075f800006400 npc0 x=0 y=0
+flip   11: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (1, 1), 'WAVE': 1, 'NSKIP': 0, 'NREND': 10, 'NINV': 0, 'NUNS': 0, 'NSC': 3, 'NOBJ': 2, 'NWAV': 5}   pos 000075f800006400 npc0 x=0 y=0
+flip   20: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (1, 1), 'WAVE': 1, 'NSKIP': 0, 'NREND': 19, 'NINV': 0, 'NUNS': 0, 'NSC': 3, 'NOBJ': 2, 'NWAV': 14}   pos 000075f800006400 npc0 x=0 y=0
+flip   21: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (1, 1), 'WAVE': 1, 'NSKIP': 0, 'NREND': 20, 'NINV': 0, 'NUNS': 0, 'NSC': 3, 'NOBJ': 2, 'NWAV': 15}   pos 000075f800006400 npc0 x=0 y=0
+flip   40: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (1, 1), 'WAVE': 1, 'NSKIP': 0, 'NREND': 39, 'NINV': 0, 'NUNS': 0, 'NSC': 3, 'NOBJ': 2, 'NWAV': 34}   pos 000075f800006400 npc0 x=0 y=0
+1mb_ingame_foot sea1 IDENTICAL
+== render gate $6298 on at flip 10, off at flip 14
+flip    8: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (0, 0), 'WAVE': 1, 'NSKIP': 3, 'NREND': 4, 'NINV': 0, 'NUNS': 0, 'NSC': 2, 'NOBJ': 2, 'NWAV': 0}   pos 0000640000006400 npc0 x=0 y=0
+flip   11: visible differing bytes (both buffers) =      0   B counters {'VAL': (0, 0), 'WV': (0, 0), 'WAVE': 1, 'NSKIP': 5, 'NREND': 4, 'NINV': 1, 'NUNS': 0, 'NSC': 2, 'NOBJ': 2, 'NWAV': 0}   pos 0000640000006400 npc0 x=0 y=0
+flip   13: visible differing bytes (both buffers) =      0   B counters {'VAL': (0, 0), 'WV': (0, 0), 'WAVE': 1, 'NSKIP': 5, 'NREND': 4, 'NINV': 3, 'NUNS': 0, 'NSC': 2, 'NOBJ': 2, 'NWAV': 0}   pos 0000640000006400 npc0 x=0 y=0
+flip   15: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 0), 'WV': (0, 0), 'WAVE': 0, 'NSKIP': 5, 'NREND': 5, 'NINV': 4, 'NUNS': 0, 'NSC': 2, 'NOBJ': 3, 'NWAV': 0}   pos 0000640000006400 npc0 x=0 y=0
+flip   16: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (0, 0), 'WAVE': 0, 'NSKIP': 5, 'NREND': 6, 'NINV': 4, 'NUNS': 0, 'NSC': 2, 'NOBJ': 4, 'NWAV': 0}   pos 0000640000006400 npc0 x=0 y=0
+flip   18: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (0, 0), 'WAVE': 1, 'NSKIP': 7, 'NREND': 6, 'NINV': 4, 'NUNS': 0, 'NSC': 2, 'NOBJ': 4, 'NWAV': 0}   pos 0000640000006400 npc0 x=0 y=0
+flip   24: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (0, 0), 'WAVE': 1, 'NSKIP': 13, 'NREND': 6, 'NINV': 4, 'NUNS': 0, 'NSC': 2, 'NOBJ': 4, 'NWAV': 0}   pos 0000640000006400 npc0 x=0 y=0
+flip   40: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (0, 0), 'WAVE': 1, 'NSKIP': 29, 'NREND': 6, 'NINV': 4, 'NUNS': 0, 'NSC': 2, 'NOBJ': 4, 'NWAV': 0}   pos 0000640000006400 npc0 x=0 y=0
+1mb_ingame_foot gt1 IDENTICAL
+== HUD message timer $7590 = 5 at flip 10 (text drawn into the window after the render)
+flip    8: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (0, 0), 'WAVE': 1, 'NSKIP': 3, 'NREND': 4, 'NINV': 0, 'NUNS': 0, 'NSC': 2, 'NOBJ': 2, 'NWAV': 0}   pos 0000640000006400 npc0 x=0 y=0
+flip   11: visible differing bytes (both buffers) =      0   B counters {'VAL': (0, 0), 'WV': (0, 0), 'WAVE': 1, 'NSKIP': 5, 'NREND': 4, 'NINV': 0, 'NUNS': 1, 'NSC': 2, 'NOBJ': 2, 'NWAV': 0}   pos 0000640000006400 npc0 x=0 y=0
+flip   12: visible differing bytes (both buffers) =      0   B counters {'VAL': (0, 0), 'WV': (0, 0), 'WAVE': 1, 'NSKIP': 5, 'NREND': 4, 'NINV': 0, 'NUNS': 2, 'NSC': 2, 'NOBJ': 2, 'NWAV': 0}   pos 0000640000006400 npc0 x=0 y=0
+flip   14: visible differing bytes (both buffers) =      0   B counters {'VAL': (0, 0), 'WV': (0, 0), 'WAVE': 1, 'NSKIP': 5, 'NREND': 4, 'NINV': 0, 'NUNS': 4, 'NSC': 2, 'NOBJ': 2, 'NWAV': 0}   pos 0000640000006400 npc0 x=0 y=0
+flip   16: visible differing bytes (both buffers) =      0   B counters {'VAL': (0, 1), 'WV': (0, 0), 'WAVE': 0, 'NSKIP': 5, 'NREND': 5, 'NINV': 0, 'NUNS': 5, 'NSC': 2, 'NOBJ': 3, 'NWAV': 0}   pos 0000640000006400 npc0 x=0 y=0
+flip   18: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (0, 0), 'WAVE': 1, 'NSKIP': 6, 'NREND': 6, 'NINV': 0, 'NUNS': 5, 'NSC': 2, 'NOBJ': 4, 'NWAV': 0}   pos 0000640000006400 npc0 x=0 y=0
+flip   24: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (0, 0), 'WAVE': 1, 'NSKIP': 12, 'NREND': 6, 'NINV': 0, 'NUNS': 5, 'NSC': 2, 'NOBJ': 4, 'NWAV': 0}   pos 0000640000006400 npc0 x=0 y=0
+flip   40: visible differing bytes (both buffers) =      0   B counters {'VAL': (1, 1), 'WV': (0, 0), 'WAVE': 1, 'NSKIP': 28, 'NREND': 6, 'NINV': 0, 'NUNS': 5, 'NSC': 2, 'NOBJ': 4, 'NWAV': 0}   pos 0000640000006400 npc0 x=0 y=0
+1mb_ingame_foot msg1 IDENTICAL
+ALLDONE

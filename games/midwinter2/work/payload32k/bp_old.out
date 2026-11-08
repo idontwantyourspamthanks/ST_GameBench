@@ -1,0 +1,7 @@
+M/J/K screen reached; $3bb (text, byte) = 00014DAD: 45                                               E
+bp 1: text $22a (RAM $14c1c) jsr $43d2 (d2==4): hits 0
+bp 2: text $232 (RAM $14c24) jsr $abe (else): hits 1
+bp 3: text $230 (RAM $14c22) bra.b $238 after jsr $43d2: hits 0
+bp 4: text $4476 (RAM $18e68) plane loop entry: hits 0
+bp 5: text $4514 (RAM $18f06) lea $40(a2),a2: hits 0
+bp 6: text $4518 (RAM $18f0a) plane loop dbra d3: hits 0

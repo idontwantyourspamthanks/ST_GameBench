@@ -1,0 +1,1072 @@
+INFO : Hatari v2.6.1, compiled on:  Feb  8 2026, 19:50:12
+INFO : GEMDOS HDD emulation, C: <-> /tmp/mw2run-weawwntz/C.
+WARN : No GEMDOS dir '/tmp/mw2run-weawwntz/C/AUTO'
+> b all
+CPU breakpoints: 0
+> b pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $f8fc4
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-weawwntz/ent.txt' file on hit.
+WARN : No GEMDOS dir '/tmp/mw2run-weawwntz/C/GAMEX'
+> b pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $f9164
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-weawwntz/ext.txt' file on hit.
+> e VBL
+= %11001010100 (bin), #1620 (dec), $654 (hex)
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %11010001011 (bin), #1675 (dec), $68b (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 1 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %11010011101 (bin), #1693 (dec), $69d (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 2 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %11101010001 (bin), #1873 (dec), $751 (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 2 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %11101110111 (bin), #1911 (dec), $777 (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 3 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %11110000101 (bin), #1925 (dec), $785 (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+WARN : PNG screen dump saved to: /tmp/mw2run-weawwntz/shots/grab0001.png
+2. CPU breakpoint condition(s) matched 3 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %11110101011 (bin), #1963 (dec), $7ab (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 4 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %11110111001 (bin), #1977 (dec), $7b9 (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 4 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %11111011111 (bin), #2015 (dec), $7df (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 5 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %100001011111 (bin), #2143 (dec), $85f (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 5 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %100001110001 (bin), #2161 (dec), $871 (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+WARN : PNG screen dump saved to: /tmp/mw2run-weawwntz/shots/grab0002.png
+WARN : PNG screen dump saved to: /tmp/mw2run-weawwntz/shots/grab0003.png
+1. CPU breakpoint condition(s) matched 6 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %101001001011 (bin), #2635 (dec), $a4b (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 6 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %101001110101 (bin), #2677 (dec), $a75 (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 7 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %101001110101 (bin), #2677 (dec), $a75 (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 7 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %101010011111 (bin), #2719 (dec), $a9f (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 8 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %101011000110 (bin), #2758 (dec), $ac6 (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 8 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %101011110000 (bin), #2800 (dec), $af0 (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 9 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %101011110000 (bin), #2800 (dec), $af0 (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 9 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %101100011010 (bin), #2842 (dec), $b1a (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+WARN : PNG screen dump saved to: /tmp/mw2run-weawwntz/shots/grab0004.png
+WARN : PNG screen dump saved to: /tmp/mw2run-weawwntz/shots/grab0005.png
+1. CPU breakpoint condition(s) matched 10 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %110010000001 (bin), #3201 (dec), $c81 (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 10 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %110010100111 (bin), #3239 (dec), $ca7 (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 11 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %110010100111 (bin), #3239 (dec), $ca7 (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 11 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %110011001101 (bin), #3277 (dec), $ccd (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+WARN : PNG screen dump saved to: /tmp/mw2run-weawwntz/shots/grab0006.png
+> e VBL
+= %110110101111 (bin), #3503 (dec), $daf (hex)
+1. CPU breakpoint condition(s) matched 12 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %111010010101 (bin), #3733 (dec), $e95 (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 12 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %111010111011 (bin), #3771 (dec), $ebb (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 13 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %111010111011 (bin), #3771 (dec), $ebb (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 13 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %111011100001 (bin), #3809 (dec), $ee1 (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+WARN : PNG screen dump saved to: /tmp/mw2run-weawwntz/shots/grab0007.png
+1. CPU breakpoint condition(s) matched 14 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %1000101000011 (bin), #4419 (dec), $1143 (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 14 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %1000101101001 (bin), #4457 (dec), $1169 (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 15 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %1000101110010 (bin), #4466 (dec), $1172 (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 15 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %1000110011000 (bin), #4504 (dec), $1198 (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 16 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %1000110011110 (bin), #4510 (dec), $119e (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 16 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %1000111000100 (bin), #4548 (dec), $11c4 (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 17 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %1000111010000 (bin), #4560 (dec), $11d0 (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 17 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %1000111110110 (bin), #4598 (dec), $11f6 (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 18 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %1001000010001 (bin), #4625 (dec), $1211 (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 18 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %1001000110111 (bin), #4663 (dec), $1237 (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 19 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %1001000111110 (bin), #4670 (dec), $123e (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 19 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %1001001100100 (bin), #4708 (dec), $1264 (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 20 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %1001001100110 (bin), #4710 (dec), $1266 (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 20 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %1001010001100 (bin), #4748 (dec), $128c (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 21 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %1001010001100 (bin), #4748 (dec), $128c (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 21 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %1001010110010 (bin), #4786 (dec), $12b2 (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 22 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %1010101010101 (bin), #5461 (dec), $1555 (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 22 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %1010101111011 (bin), #5499 (dec), $157b (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 23 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %1010101111011 (bin), #5499 (dec), $157b (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 23 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %1010110100001 (bin), #5537 (dec), $15a1 (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 24 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %1100010110010 (bin), #6322 (dec), $18b2 (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 24 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %1100011011000 (bin), #6360 (dec), $18d8 (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 25 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %1100011011000 (bin), #6360 (dec), $18d8 (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 25 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %1100011111110 (bin), #6398 (dec), $18fe (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 26 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %1100100000100 (bin), #6404 (dec), $1904 (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 26 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %1100100101010 (bin), #6442 (dec), $192a (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 27 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %1100100101010 (bin), #6442 (dec), $192a (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 27 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %1100101010000 (bin), #6480 (dec), $1950 (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 28 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %1101000100001 (bin), #6689 (dec), $1a21 (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 28 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %1101001000111 (bin), #6727 (dec), $1a47 (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 29 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %1101001000111 (bin), #6727 (dec), $1a47 (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 29 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %1101001101101 (bin), #6765 (dec), $1a6d (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 30 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %1101001111001 (bin), #6777 (dec), $1a79 (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 30 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %1101010011111 (bin), #6815 (dec), $1a9f (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 31 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %1111100010100 (bin), #7956 (dec), $1f14 (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 31 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %1111100111010 (bin), #7994 (dec), $1f3a (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 32 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %1111101000000 (bin), #8000 (dec), $1f40 (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 32 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %1111101100110 (bin), #8038 (dec), $1f66 (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 33 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %1111101100110 (bin), #8038 (dec), $1f66 (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 33 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %1111110001100 (bin), #8076 (dec), $1f8c (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 34 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %1111110011000 (bin), #8088 (dec), $1f98 (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 34 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %1111110111110 (bin), #8126 (dec), $1fbe (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 35 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %10001111011101 (bin), #9181 (dec), $23dd (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 35 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %10010000000011 (bin), #9219 (dec), $2403 (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 36 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %10010000001100 (bin), #9228 (dec), $240c (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 36 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %10010000110010 (bin), #9266 (dec), $2432 (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 37 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %10010000111000 (bin), #9272 (dec), $2438 (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 37 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %10010001011110 (bin), #9310 (dec), $245e (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 38 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %10010001101010 (bin), #9322 (dec), $246a (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 38 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %10010010010000 (bin), #9360 (dec), $2490 (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 39 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %10010010011101 (bin), #9373 (dec), $249d (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 39 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %10010011000011 (bin), #9411 (dec), $24c3 (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 40 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %10010011001000 (bin), #9416 (dec), $24c8 (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 40 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %10010011101110 (bin), #9454 (dec), $24ee (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 41 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %10010011111111 (bin), #9471 (dec), $24ff (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 41 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %10010100100101 (bin), #9509 (dec), $2525 (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 42 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %10010100101001 (bin), #9513 (dec), $2529 (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 42 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %10010101001111 (bin), #9551 (dec), $254f (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 43 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %10010101001111 (bin), #9551 (dec), $254f (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 43 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %10010101110101 (bin), #9589 (dec), $2575 (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+WARN : PNG screen dump saved to: /tmp/mw2run-weawwntz/shots/grab0008.png
+WARN : PNG screen dump saved to: /tmp/mw2run-weawwntz/shots/grab0009.png
+1. CPU breakpoint condition(s) matched 44 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %10110011000110 (bin), #11462 (dec), $2cc6 (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 44 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %10110011101100 (bin), #11500 (dec), $2cec (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 45 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %10110011101100 (bin), #11500 (dec), $2cec (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 45 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %10110100010010 (bin), #11538 (dec), $2d12 (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+WARN : PNG screen dump saved to: /tmp/mw2run-weawwntz/shots/grab0010.png
+1. CPU breakpoint condition(s) matched 46 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %10111101001001 (bin), #12105 (dec), $2f49 (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 46 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %10111101101111 (bin), #12143 (dec), $2f6f (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 47 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %10111101101111 (bin), #12143 (dec), $2f6f (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 47 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %10111110010101 (bin), #12181 (dec), $2f95 (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 48 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %11000001100001 (bin), #12385 (dec), $3061 (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 48 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %11000010000111 (bin), #12423 (dec), $3087 (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 49 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %11000010000111 (bin), #12423 (dec), $3087 (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 49 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %11000010101101 (bin), #12461 (dec), $30ad (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 50 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %11000010111001 (bin), #12473 (dec), $30b9 (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 50 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %11000011011111 (bin), #12511 (dec), $30df (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 51 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %11001110011010 (bin), #13210 (dec), $339a (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 51 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %11001110101100 (bin), #13228 (dec), $33ac (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 52 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %11001110110001 (bin), #13233 (dec), $33b1 (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 52 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %11001111000011 (bin), #13251 (dec), $33c3 (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 53 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %11001111001111 (bin), #13263 (dec), $33cf (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 53 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %11001111100001 (bin), #13281 (dec), $33e1 (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 54 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %11001111101101 (bin), #13293 (dec), $33ed (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 54 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %11001111111111 (bin), #13311 (dec), $33ff (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 55 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %11010000010001 (bin), #13329 (dec), $3411 (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 55 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %11010000100011 (bin), #13347 (dec), $3423 (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 56 times.
+	pc = $f8fc4 :trace :file /tmp/mw2run-weawwntz/ent.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ent.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %11010000100100 (bin), #13348 (dec), $3424 (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 56 times.
+	pc = $f9164 :trace :file /tmp/mw2run-weawwntz/ext.txt
+Reading debugger commands from '/tmp/mw2run-weawwntz/ext.txt'...
+Changed to input file dir '/tmp/mw2run-weawwntz'.
+> e VBL
+= %11010000110110 (bin), #13366 (dec), $3436 (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+> m $6220 2
+00006220: 00 0d                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+WARN : PNG screen dump saved to: /tmp/mw2run-weawwntz/shots/grab0011.png
+> m $6220 2
+00006220: 00 0d                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+> m $b2ff8 4
+000B2FF8: 00 00 00 00                                      ....
+> savebin /tmp/mw2run-weawwntz/b3000.bin 0xb3000 0x1f00
+  Wrote 0x1f00 bytes.
+> m $66e6 2
+000066E6: 00 00                                            ..
+> m $66e8 2
+000066E8: 64 00                                            d.
+> m $66ea 2
+000066EA: 00 00                                            ..
+> m $66ec 2
+000066EC: 64 00                                            d.
+> m $6888 2
+00006888: 04 f8                                            .°
+> m $66e6 2
+000066E6: 00 00                                            ..
+> m $66e8 2
+000066E8: 5c 69                                            \i
+> m $66ea 2
+000066EA: 00 00                                            ..
+> m $66ec 2
+000066EC: 64 00                                            d.
+> m $6888 2
+00006888: 03 81                                            .ü
+WARN : PNG screen dump saved to: /tmp/mw2run-weawwntz/shots/grab0012.png

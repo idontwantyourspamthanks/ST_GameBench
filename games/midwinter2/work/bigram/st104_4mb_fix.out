@@ -1,0 +1,9 @@
+cell st104_4mb_fix st TOS_1_04.img 4096 KB build/game
+VBL at intro loop start 1353
+VBL at M/J/K screen 3443 delta 2090 wall 42
+3D view: $6220=d $700a=2
+MWPO check: 000B2FF8: 4d 57 50 4f                                      MWPO
+payload $B3000..$B33FF equals built image: True | whole $1F00: 20 bytes differ (runtime data areas)
+$B3000 first 16 bytes: 33fc60020002c57448e7fffe40e723fc  image: 33fc60020002c57448e7fffe40e723fc
+differing ranges (first 12): ['0xb3402', '0xb3403', '0xb42e2', '0xb42e3', '0xb42e5', '0xb42e7', '0xb42e9', '0xb42eb', '0xb42ee', '0xb4681', '0xb4683', '0xb4685'] zeroed bytes in payload-nonzero area: 0
+walk start (x,y,dist): ['0x6400', '0x6400', '0x4f8']  after 12 s: ['0x5daa', '0x6400', '0x3d6'] moved

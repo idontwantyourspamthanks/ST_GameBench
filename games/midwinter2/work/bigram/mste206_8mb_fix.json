@@ -1,0 +1,19 @@
+{
+ "cell": "mste206_8mb_fix",
+ "log": [
+  "cell mste206_8mb_fix megaste TOS_2_06.img 8192 KB build/game",
+  "VBL at intro loop start 1574",
+  "VBL at M/J/K screen 3152 delta 1578 wall 26",
+  "3D view: $6220=d $700a=2",
+  "MWPO check: 000B2FF8: 4d 57 50 4f                                      MWPO",
+  "payload $B3000..$B33FF equals built image: True | whole $1F00: 19 bytes differ (runtime data areas)",
+  "$B3000 first 16 bytes: 33fc60020002c57448e7fffe40e723fc  image: 33fc60020002c57448e7fffe40e723fc",
+  "differing ranges (first 12): ['0xb3402', '0xb3403', '0xb42e2', '0xb42e3', '0xb42e7', '0xb42e9', '0xb42eb', '0xb42ee', '0xb4681', '0xb4683', '0xb4685', '0xb4687'] zeroed bytes in payload-nonzero area: 0",
+  "walk start (x,y,dist): ['0x6400', '0x6400', '0x4f8']  after 12 s: ['0x5c77', '0x6400', '0x384'] moved"
+ ],
+ "v_start": 1574,
+ "v_mjk": 3152,
+ "payload_ok": true,
+ "moved": true,
+ "workdir": "/tmp/mw2run-n__n4ht1"
+}

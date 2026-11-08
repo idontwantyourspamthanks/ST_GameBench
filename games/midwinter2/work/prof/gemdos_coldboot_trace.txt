@@ -1,0 +1,133 @@
+INFO : GEMDOS HDD emulation, C: <-> /tmp/mw2run-dgg99tvv/C.
+GEMDOS didn't find filename /tmp/mw2run-dgg99tvv/C/DESKTOP.INF
+Gemdos_Boot(GEMDOS_EMU_ON=1) at PC 0x8FA005A
+GEMDOS 0x4B Pexec(5, 0xe0063b, 0xe0063b, 0xe0063b) at PC 0xE00DCA
+GEMDOS 0x4B Pexec(4, 0xe0385c, 0xa896, 0xe0385c) at PC 0xE00DE8
+GEMDOS 0x20 Super(0x0) at PC 0xE00DFC
+GEMDOS 0x4A Mshrink(0xA896, 0x100) at PC 0xE00E18
+GEMDOS 0x1A Fsetdta(0x9CC) at PC 0xE00E3A
+GEMDOS 0x4E Fsfirst("\AUTO\*.PRG", 0x7) at PC 0xE00E3E
+WARN : No GEMDOS dir '/tmp/mw2run-dgg99tvv/C/AUTO'
+GEMDOS 0x4B Pexec(5, 0xe0063b, 0xe0063b, 0x840) at PC 0xE005EE
+GEMDOS 0x4B Pexec(4, 0xe0063b, 0xa9a4, 0x840) at PC 0xE00612
+GEMDOS 0x4A Mshrink(0xA9A4, 0x100) at PC 0xE13E2C
+GEMDOS 0x20 Super(0x61E6) at PC 0xE13E3A
+GEMDOS 0x48 Malloc(0x400) at PC 0xE1E786
+GEMDOS 0x48 Malloc(0x41C4) at PC 0xE1E786
+GEMDOS 0x19 Dgetdrv() at PC 0xE1E7FE
+GEMDOS 0x0E Dsetdrv(0x2) at PC=0xE1E7FE
+GEMDOS 0x19 Dgetdrv() at PC 0xE1E7FE
+GEMDOS 0x1A Fsetdta(0x7B84) at PC 0xE1E7FE
+GEMDOS 0x19 Dgetdrv() at PC 0xE1E7FE
+GEMDOS 0x0E Dsetdrv(0x2) at PC=0xE1E7FE
+GEMDOS 0x0E Dsetdrv(0x2) at PC=0xE1E7FE
+GEMDOS 0x3B Dsetpath("\") at PC 0xE1E7FE
+GEMDOS: \ -> host: /tmp/mw2run-dgg99tvv/C
+GEMDOS 0x4E Fsfirst("\*.ACC", 0x0) at PC 0xE1E7FE
+GEMDOS: \*.ACC -> host: /tmp/mw2run-dgg99tvv/C/*.ACC
+GEMDOS 0x0E Dsetdrv(0x2) at PC=0xE1E7FE
+GEMDOS 0x3B Dsetpath("\") at PC 0xE1E7FE
+GEMDOS: \ -> host: /tmp/mw2run-dgg99tvv/C
+GEMDOS 0x4E Fsfirst("\*.ACC", 0x0) at PC 0xE1E7FE
+GEMDOS: \*.ACC -> host: /tmp/mw2run-dgg99tvv/C/*.ACC
+GEMDOS 0x48 Malloc(0x1060) at PC 0xE1E786
+GEMDOS 0x19 Dgetdrv() at PC 0xE1E7FE
+GEMDOS 0x0E Dsetdrv(0x2) at PC=0xE1E7FE
+GEMDOS 0x19 Dgetdrv() at PC 0xE1E7FE
+GEMDOS 0x3B Dsetpath("\") at PC 0xE1E7FE
+GEMDOS: \ -> host: /tmp/mw2run-dgg99tvv/C
+GEMDOS 0x3D Fopen("DESKTOP.INF", read-only) at PC=0xE1E7FE
+GEMDOS 0x3F Fread(64, 4192, 0xf068) at PC 0xE1E7FE
+GEMDOS 0x3E Fclose(64) at PC 0xE1E7FE
+GEMDOS 0x0E Dsetdrv(0x2) at PC=0xE1E7FE
+GEMDOS 0x49 Mfree(0xF068) at PC 0xE1E7FE
+GEMDOS 0x19 Dgetdrv() at PC 0xE1E7FE
+GEMDOS 0x0E Dsetdrv(0x2) at PC=0xE1E7FE
+GEMDOS 0x0E Dsetdrv(0x2) at PC=0xE1E7FE
+GEMDOS 0x48 Malloc(0x3400) at PC 0xE1E786
+GEMDOS 0x0E Dsetdrv(0x2) at PC=0xE1E7FE
+GEMDOS 0x3B Dsetpath("C:\") at PC 0xE1E7FE
+GEMDOS: C:\ -> host: /tmp/mw2run-dgg99tvv/C
+GEMDOS 0x49 Mfree(0xF068) at PC 0xE1E7FE
+GEMDOS 0x4B Pexec(0, "C:\RUNME.TOS", [0]"", 0x0) at PC 0xE1E962
+GEMDOS: C:\RUNME.TOS -> host: /tmp/mw2run-dgg99tvv/C/RUNME.TOS
+GEMDOS 0x4B Pexec(5, 0x0, 0xa586, 0x0) at PC 0xFA003A
+GEMDOS: C:\RUNME.TOS -> host: /tmp/mw2run-dgg99tvv/C/RUNME.TOS
+GEMDOS 0x3D Fopen("HAGA", read-only) at PC=0xF182
+GEMDOS: HAGA -> host: /tmp/mw2run-dgg99tvv/C/HAGA
+GEMDOS 0x3F Fread(64, 14000, 0x138cc) at PC 0xF1B0
+GEMDOS 0x3E Fclose(64) at PC 0xF1BC
+GEMDOS 0x20 Super(0x0) at PC 0xF1CA
+GEMDOS 0x19 Dgetdrv() at PC 0x13B74
+GEMDOS 0x3D Fopen("GSAU.TOS", read-only) at PC=0x13C22
+GEMDOS didn't find filename /tmp/mw2run-dgg99tvv/C/GSAU.TOS
+GEMDOS 0x3D Fopen("FILES\D15H5.FIC", read-only) at PC=0x13C44
+GEMDOS didn't find filename /tmp/mw2run-dgg99tvv/C/FILES/D15H5.FIC
+GEMDOS 0x3D Fopen("C:\GAMEX\D15H5.FIC", read-only) at PC=0x13C56
+WARN : No GEMDOS dir '/tmp/mw2run-dgg99tvv/C/GAMEX'
+GEMDOS 0x3E Fclose(65502) at PC 0x13C6C
+GEMDOS 0x0B Cconis() at PC 0xF908
+GEMDOS 0x3D Fopen("FFF273.HST", read-only) at PC=0xFC46
+GEMDOS: FFF273.HST -> host: /tmp/mw2run-dgg99tvv/C/FFF273.HST
+GEMDOS 0x3F Fread(64, 69888, 0x138cc) at PC 0xFC62
+GEMDOS 0x3E Fclose(64) at PC 0xFC6E
+GEMDOS 0x0B Cconis() at PC 0xF908
+GEMDOS 0x3B Dsetpath("FILES") at PC 0xF3C4
+GEMDOS: FILES -> host: /tmp/mw2run-dgg99tvv/C/FILES
+GEMDOS 0x3D Fopen("FFA", read-only) at PC=0xF40A
+GEMDOS: FFA -> host: /tmp/mw2run-dgg99tvv/C/FILES/FFA
+GEMDOS 0x42 Fseek(512, 64, 0) at PC 0xF422
+GEMDOS 0x3F Fread(64, 4096, 0x81000) at PC 0xF438
+GEMDOS 0x3E Fclose(64) at PC 0xF444
+GEMDOS 0x3D Fopen("FFA", read-only) at PC=0x1F9022
+GEMDOS: FFA -> host: /tmp/mw2run-dgg99tvv/C/FILES/FFA
+GEMDOS 0x42 Fseek(9216, 64, 0) at PC 0x1F9046
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x1F910E
+GEMDOS 0x3E Fclose(64) at PC 0x1F9120
+GEMDOS 0x3D Fopen("FFA", read-only) at PC=0x1F9022
+GEMDOS: FFA -> host: /tmp/mw2run-dgg99tvv/C/FILES/FFA
+GEMDOS 0x42 Fseek(211968, 64, 0) at PC 0x1F9046
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x1F910E
+GEMDOS 0x3E Fclose(64) at PC 0x1F9120
+GEMDOS 0x3D Fopen("FFA", read-only) at PC=0x1F9022
+GEMDOS: FFA -> host: /tmp/mw2run-dgg99tvv/C/FILES/FFA
+GEMDOS 0x42 Fseek(414720, 64, 0) at PC 0x1F9046
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x1F910E
+GEMDOS 0x3E Fclose(64) at PC 0x1F9120
+GEMDOS 0x3D Fopen("FFA", read-only) at PC=0x1F9022
+GEMDOS: FFA -> host: /tmp/mw2run-dgg99tvv/C/FILES/FFA
+GEMDOS 0x42 Fseek(537280, 64, 0) at PC 0x1F9046
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x1F910E
+GEMDOS 0x3E Fclose(64) at PC 0x1F9120
+GEMDOS 0x3D Fopen("FFA", read-only) at PC=0x1F9022
+GEMDOS: FFA -> host: /tmp/mw2run-dgg99tvv/C/FILES/FFA
+GEMDOS 0x42 Fseek(9216, 64, 0) at PC 0x1F9046
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x1F910E
+GEMDOS 0x3E Fclose(64) at PC 0x1F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x1F9022
+GEMDOS: FFB -> host: /tmp/mw2run-dgg99tvv/C/FILES/FFB
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x1F910E
+GEMDOS 0x3E Fclose(64) at PC 0x1F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x1F9022
+GEMDOS: FFB -> host: /tmp/mw2run-dgg99tvv/C/FILES/FFB
+GEMDOS 0x42 Fseek(437760, 64, 0) at PC 0x1F9046
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x1F910E
+GEMDOS 0x3E Fclose(64) at PC 0x1F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x1F9022
+GEMDOS: FFB -> host: /tmp/mw2run-dgg99tvv/C/FILES/FFB
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x1F910E
+GEMDOS 0x3E Fclose(64) at PC 0x1F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x1F9022
+GEMDOS: FFB -> host: /tmp/mw2run-dgg99tvv/C/FILES/FFB
+GEMDOS 0x42 Fseek(410112, 64, 0) at PC 0x1F9046
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x1F910E
+GEMDOS 0x3E Fclose(64) at PC 0x1F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x1F9022
+GEMDOS: FFB -> host: /tmp/mw2run-dgg99tvv/C/FILES/FFB
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x1F910E
+GEMDOS 0x3E Fclose(64) at PC 0x1F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x1F9022
+GEMDOS: FFB -> host: /tmp/mw2run-dgg99tvv/C/FILES/FFB
+GEMDOS 0x42 Fseek(537280, 64, 0) at PC 0x1F9046
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x1F910E
+GEMDOS 0x3E Fclose(64) at PC 0x1F9120

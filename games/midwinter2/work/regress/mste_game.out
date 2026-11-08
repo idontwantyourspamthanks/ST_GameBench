@@ -1,0 +1,34 @@
+boot try1 failed: list index out of range
+EXC IndexError('list index out of range')
+Traceback (most recent call last):
+  File "/home/ryan/Code/AtariST/midwinter2/work/regress/run_cell.py", line 17, in <module>
+    p=h.boot_to_game('M')
+      ^^^^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/midwinter2/tools/mw2harness.py", line 335, in boot_to_game
+    if self.screen_matches(ref, (280, 350, 560, 420)):
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/midwinter2/tools/mw2harness.py", line 312, in screen_matches
+    cur = Image.open(self.shot()).convert("RGB").crop(box)
+                     ^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/midwinter2/tools/mw2harness.py", line 259, in shot
+    p = sorted(new)[0]
+        ~~~~~~~~~~~^^^
+IndexError: list index out of range
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ryan/Code/AtariST/midwinter2/work/regress/run_cell.py", line 21, in <module>
+    p=h.boot_to_game('M')
+      ^^^^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/midwinter2/tools/mw2harness.py", line 335, in boot_to_game
+    if self.screen_matches(ref, (280, 350, 560, 420)):
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/midwinter2/tools/mw2harness.py", line 312, in screen_matches
+    cur = Image.open(self.shot()).convert("RGB").crop(box)
+                     ^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/midwinter2/tools/mw2harness.py", line 259, in shot
+    p = sorted(new)[0]
+        ~~~~~~~~~~~^^^
+IndexError: list index out of range
+

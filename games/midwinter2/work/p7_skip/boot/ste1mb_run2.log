@@ -1,0 +1,25 @@
+cell ste1mb ste 162 1024 build/p7skip
+3D view: $6220=d $700a=2
+MWPO: 000B2FF8: 4d 57 50 4f                                      MWPO
+site $1dbbe now: 0001DBBE: 4e f9 00 0b 75 10                                N∙..u. (expect 4e f9 00 0b 75 10)
+counters after boot (standing): {'VAL': (1, 1), 'WV': (0, 0), 'NSKIP': 241, 'NREND': 4, 'NINV': 2, 'NUNS': 0, 'NSC': 2, 'NOBJ': 2, 'NWAV': 0}
+STANDING, skip live / reverted (p7_skip_render site), same session:
+  skip live: 501 flips / 1000 VBL (25.05 fps)  counter deltas {'NSKIP': 569, 'NREND': 0, 'NINV': 0, 'NUNS': 0, 'NSC': 0, 'NOBJ': 0, 'NWAV': 0}  pos (25600, 25600, 768)
+  skip reverted: 95 flips / 1000 VBL (4.75 fps)  counter deltas {'NSKIP': 0, 'NREND': 0, 'NINV': 0, 'NUNS': 0, 'NSC': 0, 'NOBJ': 0, 'NWAV': 0}  pos (25600, 25600, 768)
+  skip live: 501 flips / 1000 VBL (25.05 fps)  counter deltas {'NSKIP': 569, 'NREND': 0, 'NINV': 0, 'NUNS': 0, 'NSC': 0, 'NOBJ': 0, 'NWAV': 0}  pos (25600, 25600, 768)
+  skip reverted: 95 flips / 1000 VBL (4.75 fps)  counter deltas {'NSKIP': 0, 'NREND': 0, 'NINV': 0, 'NUNS': 0, 'NSC': 0, 'NOBJ': 0, 'NWAV': 0}  pos (25600, 25600, 768)
+walk (25600, 25600, 768) -> (24739, 25600, 768) moved
+WALKING (500 VBL windows; the walk is kept short: the cliff 6000 units west turns the player into another type):
+  skip live: 46 flips / 500 VBL (4.60 fps)  counter deltas {'NSKIP': 0, 'NREND': 60, 'NINV': 0, 'NUNS': 0, 'NSC': 60, 'NOBJ': 0, 'NWAV': 0}  pos (22469, 25600, 768)
+  skip reverted: 58 flips / 500 VBL (5.80 fps)  counter deltas {'NSKIP': 0, 'NREND': 0, 'NINV': 0, 'NUNS': 0, 'NSC': 0, 'NOBJ': 0, 'NWAV': 0}  pos (20219, 25600, 768)
+after stopping: pos (19826, 25600, 768) -> (19826, 25600, 768) skip delta 3 render delta 59
+TURN: heading 0x300 -> 0x378 turned
+after the turn: heading 0x378 -> 0x378 skip delta 6 render delta 38
+NPC poked 1200 units ahead of the standing player (moving):
+  npc0 x,y 00003538: 00 00 5e 1b 00 00 63 f8                          .  counters {'VAL': (0, 0), 'WV': (0, 0), 'NSKIP': 1955, 'NREND': 441, 'NINV': 2, 'NUNS': 0, 'NSC': 351, 'NOBJ': 91, 'NWAV': 0}
+  npc0 x,y 00003538: 00 00 5f 8c 00 00 5e 54                          .  counters {'VAL': (0, 0), 'WV': (0, 0), 'NSKIP': 1955, 'NREND': 476, 'NINV': 2, 'NUNS': 0, 'NSC': 375, 'NOBJ': 101, 'NWAV': 0}
+  npc0 x,y 00003538: 00 00 5b ab 00 00 5b 39                          .  counters {'VAL': (1, 1), 'WV': (0, 0), 'NSKIP': 1955, 'NREND': 510, 'NINV': 2, 'NUNS': 0, 'NSC': 400, 'NOBJ': 111, 'NWAV': 0}
+  NPC near, skip live: 131 flips / 1000 VBL (6.55 fps)  counter deltas {'NSKIP': 0, 'NREND': 151, 'NINV': 0, 'NUNS': 21, 'NSC': 110, 'NOBJ': 15, 'NWAV': 6}  pos (19826, 25600, 888)
+  NPC near, skip reverted: 116 flips / 1000 VBL (5.80 fps)  counter deltas {'NSKIP': 0, 'NREND': 0, 'NINV': 1, 'NUNS': 0, 'NSC': 0, 'NOBJ': 0, 'NWAV': 0}  pos (20082, 25600, 0)
+final counters {'VAL': (0, 0), 'WV': (0, 0), 'NSKIP': 1955, 'NREND': 699, 'NINV': 3, 'NUNS': 34, 'NSC': 539, 'NOBJ': 133, 'NWAV': 6}
+RESULT flips/1000VBL standing {'new': [501, 501], 'orig': [95, 95]}

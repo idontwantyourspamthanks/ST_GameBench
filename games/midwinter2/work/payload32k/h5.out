@@ -1,0 +1,50 @@
+cell h5_ste162_1mb_default ste 162 1024 KB build/game set default image 32768 B, 24 sites
+--- debugger log at the boot-stub breakpoint $4D9A6 (end of staging) ---
+INFO : Hatari v2.6.1, compiled on:  Feb  8 2026, 19:50:12
+INFO : GEMDOS HDD emulation, C: <-> /tmp/mw2run-xtmz71u9/C.
+> b all
+CPU breakpoints: 0
+> b pc = $4d9a6 :trace :once :file /tmp/mw2run-xtmz71u9/stage.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $4d9a6
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-xtmz71u9/stage.txt' file on hit.
+WARN : No GEMDOS dir '/tmp/mw2run-xtmz71u9/C/AUTO'
+WARN : Bus Error reading at address $ffff8e21, PC=$1ba9c addr_e3=1ba9c op_e3=1238
+WARN : No GEMDOS dir '/tmp/mw2run-xtmz71u9/C/GAMEX'
+WARN : PNG screen dump saved to: /tmp/mw2run-xtmz71u9/shots/grab0001.png
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $4d9a6 :once :trace :file /tmp/mw2run-xtmz71u9/stage.txt
+Reading debugger commands from '/tmp/mw2run-xtmz71u9/stage.txt'...
+Changed to input file dir '/tmp/mw2run-xtmz71u9'.
+> r
+  D0 0000FFFF   D1 00030D40   D2 0018FFFF   D3 00080000 
+  D4 00070007   D5 00070007   D6 00070007   D7 00080040 
+  A0 0001B6CE   A1 000BB000   A2 000005E8   A3 000B1F44 
+  A4 000F98D2   A5 0000FB48   A6 000F7F26   A7 000B1F40 
+USP  000B1F40 ISP  000B1F40 
+SR=2704 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=7 STP=0
+Prefetch 46fc (MV2SR) 2700 (MOVE) Chip latch 00000000
+0004d9a6 46fc 2700                move.w #$2700,sr
+Next PC: 000
+[stage] marker area 00000000  $B3000-$BAFFF equals the built image at the stub entry: True (0 bytes differ)
+[stage] non-zero bytes in $B1000-$B2FFF: first $b1f44 last $b2851
+[mjk] marker b'MWPO'  payload $B3000-$BAFFF: 3 of 32768 bytes differ from the built image, 2 runs, outside declared data: []
+[mjk]   differing runs: [('0xb3402', '0xb3403'), ('0xb46c1', '0xb46c1')]
+[mjk]   $B3000 head 33fc60020002c574 image head 33fc60020002c574; last 16 B $BAFF0: 00000000000000000000000000000000
+[hall] marker b'MWPO'  payload $B3000-$BAFFF: 3 of 32768 bytes differ from the built image, 2 runs, outside declared data: []
+[hall]   differing runs: [('0xb3402', '0xb3403'), ('0xb46c1', '0xb46c1')]
+[hall]   $B3000 head 33fc60020002c574 image head 33fc60020002c574; last 16 B $BAFF0: 00000000000000000000000000000000
+[map] marker b'MWPO'  payload $B3000-$BAFFF: 3 of 32768 bytes differ from the built image, 2 runs, outside declared data: []
+[map]   differing runs: [('0xb3402', '0xb3403'), ('0xb46c1', '0xb46c1')]
+[map]   $B3000 head 33fc60020002c574 image head 33fc60020002c574; last 16 B $BAFF0: 00000000000000000000000000000000
+3D view: $6220=d $700a=2
+MWPO check: 000B2FF8: 4d 57 50 4f                                      MWPO
+[3d] marker b'MWPO'  payload $B3000-$BAFFF: 21 of 32768 bytes differ from the built image, 15 runs, outside declared data: []
+[3d]   differing runs: [('0xb3402', '0xb3403'), ('0xb42e2', '0xb42e3'), ('0xb42e5', '0xb42e5'), ('0xb42e7', '0xb42e7'), ('0xb42e9', '0xb42e9'), ('0xb42eb', '0xb42eb'), ('0xb42ed', '0xb42ee'), ('0xb4681', '0xb4681'), ('0xb4683', '0xb4683'), ('0xb4685', '0xb4685'), ('0xb4687', '0xb4687'), ('0xb4689', '0xb4689'), ('0xb468d', '0xb468f'), ('0xb4692', '0xb4693')]
+[3d]   $B3000 head 33fc60020002c574 image head 33fc60020002c574; last 16 B $BAFF0: 00000000000000000000000000000000
+walk (x,y,dist): ['0x6400', '0x6400', '0x4f8'] -> ['0x5db9', '0x6400', '0x3d7'] moved
+[walk] marker b'MWPO'  payload $B3000-$BAFFF: 19 of 32768 bytes differ from the built image, 14 runs, outside declared data: []
+[walk]   differing runs: [('0xb3402', '0xb3403'), ('0xb42e2', '0xb42e3'), ('0xb42e7', '0xb42e7'), ('0xb42e9', '0xb42e9'), ('0xb42eb', '0xb42eb'), ('0xb42ee', '0xb42ee'), ('0xb4681', '0xb4681'), ('0xb4683', '0xb4683'), ('0xb4685', '0xb4685'), ('0xb4687', '0xb4687'), ('0xb4689', '0xb4689'), ('0xb468d', '0xb468f'), ('0xb4692', '0xb4693'), ('0xb46c1', '0xb46c1')]
+[walk]   $B3000 head 33fc60020002c574 image head 33fc60020002c574; last 16 B $BAFF0: 00000000000000000000000000000000

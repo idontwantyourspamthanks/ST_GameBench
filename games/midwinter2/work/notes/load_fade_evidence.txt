@@ -1,0 +1,110 @@
+# raw evidence for work/notes/load_fade.md (copied from the Hatari debugger logs of the runs)
+
+## original code, 1 MB STE snapshot: $ff8240-$ff825f at `pc=$F9166` (bp 2 = fade entry) and `pc=$F94A6` (bp 3 = fade-back rts), 8 service calls
+
+bp2 hit  1: 00 00 01 00 02 00 03 00 01 10 02 21 03 32 04 43 | 02 10 03 21 05 32 01 11 02 22 06 40 06 50 07 77
+bp3 hit  1: 00 00 01 00 02 00 03 00 01 10 02 21 03 32 04 43 | 02 10 03 21 05 32 01 11 02 22 06 40 06 50 07 77
+bp2 hit  2: 00 00 01 00 02 00 03 00 01 10 02 21 03 32 04 43 | 02 10 03 21 05 32 01 11 02 22 06 40 06 50 07 77
+bp3 hit  2: 00 00 01 00 02 00 03 00 01 10 02 21 03 32 04 43 | 02 10 03 21 05 32 01 11 02 22 06 40 06 50 07 77
+bp2 hit  3: 00 00 01 00 02 00 03 00 01 10 02 21 03 32 04 43 | 02 10 03 21 05 32 01 11 02 22 06 40 06 50 07 77
+bp3 hit  3: 00 00 01 00 02 00 03 00 01 10 02 21 03 32 04 43 | 02 10 03 21 05 32 01 11 02 22 06 40 06 50 07 77
+bp2 hit  4: 00 00 01 00 02 00 03 00 01 10 02 21 03 32 04 43 | 02 10 03 21 05 32 01 11 02 22 06 40 06 50 07 77
+bp3 hit  4: 00 00 01 00 02 00 03 00 01 10 02 21 03 32 04 43 | 02 10 03 21 05 32 01 11 02 22 06 40 06 50 07 77
+bp2 hit  5: 00 00 01 00 02 00 03 00 01 10 02 21 03 32 04 43 | 02 10 03 21 05 32 01 11 02 22 06 40 06 50 07 77
+bp3 hit  5: 00 00 01 00 02 00 03 00 01 10 02 21 03 32 04 43 | 02 10 03 21 05 32 01 11 02 22 06 40 06 50 07 77
+bp2 hit  6: 00 00 01 00 02 00 03 00 01 10 02 21 03 32 04 43 | 02 10 03 21 05 32 01 11 02 22 06 40 06 50 07 77
+bp3 hit  6: 00 00 01 00 02 00 03 00 01 10 02 21 03 32 04 43 | 02 10 03 21 05 32 01 11 02 22 06 40 06 50 07 77
+bp2 hit  7: 00 00 01 00 02 00 03 00 01 10 02 21 03 32 04 43 | 02 10 03 21 05 32 01 11 02 22 06 40 06 50 07 77
+bp3 hit  7: 00 00 01 00 02 00 03 00 01 10 02 21 03 32 04 43 | 02 10 03 21 05 32 01 11 02 22 06 40 06 50 07 77
+bp2 hit  8: 00 00 01 00 02 00 03 00 01 10 02 21 03 32 04 43 | 02 10 03 21 05 32 01 11 02 22 06 40 06 50 07 77
+bp3 hit  8: 00 00 01 00 02 00 03 00 01 10 02 21 03 32 04 43 | 02 10 03 21 05 32 01 11 02 22 06 40 06 50 07 77
+
+## service requests seen at pc=$F9000 (request copy at $FB360: buf, seek, len, mode, name) and file loads at pc=$278de ([$6918] dest, [$7824] file) + video base
+
+svc  buf=$81000 seek=$0 len=200000 mode=$0 name=FFB  video($ff8200)=00 07 00 00 00 07 00 52
+load dest=$00040040 file=$0002  video($ff8200)=00 07 00 00 00 07 00 52
+load dest=$00042832 file=$0003  video($ff8200)=00 07 00 00 00 07 00 52
+svc  buf=$81000 seek=$31800 len=200000 mode=$0 name=FFB  video($ff8200)=00 07 00 00 00 07 00 52
+load dest=$00049c20 file=$0000  video($ff8200)=00 07 00 00 00 07 00 52
+svc  buf=$81000 seek=$0 len=200000 mode=$0 name=FFB  video($ff8200)=00 07 00 00 00 07 00 52
+load dest=$00049c20 file=$0004  video($ff8200)=00 07 00 00 00 07 00 52
+svc  buf=$81000 seek=$33c00 len=200000 mode=$0 name=FFB  video($ff8200)=00 07 00 00 00 07 00 52
+load dest=$0004b99e file=$0005  video($ff8200)=00 07 00 00 00 07 00 52
+load dest=$0004cb1a file=$0006  video($ff8200)=00 07 00 00 00 07 00 52
+load dest=$0004d3f8 file=$0007  video($ff8200)=00 07 00 00 00 07 00 52
+load dest=$0004d660 file=$0008  video($ff8200)=00 07 00 00 00 07 00 52
+load dest=$0004e078 file=$0009  video($ff8200)=00 07 00 00 00 07 00 52
+load dest=$0004e6b8 file=$0010  video($ff8200)=00 07 00 00 00 07 00 52
+load dest=$0004fc26 file=$0011  video($ff8200)=00 07 00 00 00 07 00 52
+load dest=$000507c0 file=$0012  video($ff8200)=00 07 00 00 00 07 00 52
+load dest=$00052116 file=$0015  video($ff8200)=00 07 00 00 00 07 00 52
+load dest=$00052cba file=$0018  video($ff8200)=00 07 00 00 00 07 00 52
+load dest=$000532e4 file=$0026  video($ff8200)=00 07 00 00 00 07 00 52
+svc  buf=$81000 seek=$6e400 len=200000 mode=$0 name=FFB  video($ff8200)=00 07 00 00 00 07 00 52
+load dest=$00055b7e file=$0027  video($ff8200)=00 07 00 00 00 07 00 52
+load dest=$00055f84 file=$0028  video($ff8200)=00 07 00 00 00 07 00 52
+load dest=$0005638a file=$0025  video($ff8200)=00 07 00 00 00 07 00 52
+svc  buf=$81000 seek=$6c000 len=200000 mode=$0 name=FFB  video($ff8200)=00 07 00 00 00 07 00 52
+svc  buf=$81000 seek=$0 len=200000 mode=$0 name=FFB  video($ff8200)=00 07 00 00 00 07 00 52
+load dest=$00068000 file=$006b  video($ff8200)=00 07 00 00 00 07 00 52
+svc  buf=$81000 seek=$5d600 len=200000 mode=$0 name=FFB  video($ff8200)=00 07 00 00 00 07 00 52
+
+## VBL at every pc=$F9000 / pc=$2794a hit, corridor -> Personnel, 1 MB STE snapshot (first line = query before the click, last = after 25 s)
+
+orig    : 7829 | 8006 8030 8052 8079 8096 8131 8147 8169 8174 8176 8178 8181 8183 8189 8192 8198 8202 8205 8221 8245 8247 8249 8265 8285 8301 8334 8355 | 9239    first-to-last hit = 349 VBL
+patched : 7956 | 8119 8131 8141 8157 8161 8184 8189 8199 8204 8206 8208 8211 8213 8219 8222 8228 8232 8235 8239 8252 8253 8256 8260 8268 8273 8282 8292 | 9365    first-to-last hit = 173 VBL
+
+## T1: palette changes, corridor -> Personnel click, cold boot, `b ($ff8242).w ! ($ff8242).w :trace :file r` (PC of each hit)
+
+Mega ST TOS 1.04 1 MB original: 235 changes; by PC: {'00027244': 6, '0002729c': 2, '000f9190': 5, '000f9206': 37, '000f9208': 44, '000f921e': 44, '000f9234': 43, '000f924c': 46, '000f9494': 8}
+Mega ST TOS 1.04 1 MB build/nofade: 8 changes; by PC: {'00027244': 6, '0002729c': 2}
+STE TOS 1.62 2 MB build/nofade: 4 changes; by PC: {'00027244': 4}
+
+--- orig_mega_pc.out
+mode select reached
+marker 0x0 0x0
+pal before: > m $ff8240 32
+00FF8240: 00 00 01 00 02 00 03 00 01 10 02 21 03 32 04 43  ...........!.2.C
+00FF8250: 02 10 03 21 05 32 01 11 02 22 06 40 06 50 07 77  ...!.2...".@.P.w
+pal after: > m $ff8240 32
+00FF8240: 01 21 03 10 04 21 05 32 06 43 07 54 01 24 04 24  .!...!.2.C.T.$.$
+00FF8250: 05 55 04 44 04 00 07 63 02 31 02 10 00 00 07 77  .U.D...c.1.....w
+RESULT palette-changes 235 service calls 8
+
+--- full_mega3.out
+mode select reached
+marker 0x4d57 0x504f
+pal before: > m $ff8240 32
+00FF8240: 00 00 01 00 02 00 03 00 01 10 02 21 03 32 04 43  ...........!.2.C
+00FF8250: 02 10 03 21 05 32 01 11 02 22 06 40 06 50 07 77  ...!.2...".@.P.w
+pal after: > m $ff8240 32
+00FF8240: 01 21 03 10 04 21 05 32 06 43 07 54 01 24 04 24  .!...!.2.C.T.$.$
+00FF8250: 05 55 04 44 04 00 07 63 02 31 02 10 00 00 07 77  .U.D...c.1.....w
+RESULT T1 palette-changes 8 service calls 8
+boss screen not shown, retry click 0
+boss screen reached after 1 retries
+3D view: 6220=d 700a=2
+MWPO > m $b2ff8 4
+000B2FF8: 4d 57 50 4f                                      MWPO
+pos before ['0x0', '0x6400', '0x0', '0x6400'] after ['0x0', '0x5db2', '0x0', '0x6400'] 6888= 980
+heading series ['0x300', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6']
+DONE OK
+
+--- full_ste3.out
+mode select reached
+marker 0x4d57 0x504f
+pal before: > m $ff8240 32
+00FF8240: 00 00 01 00 02 00 03 00 01 10 02 21 03 32 04 43  ...........!.2.C
+00FF8250: 02 10 03 21 05 32 01 11 02 22 06 40 06 50 07 77  ...!.2...".@.P.w
+pal after: > m $ff8240 32
+00FF8240: 01 21 03 10 04 21 05 32 06 43 07 54 01 24 04 24  .!...!.2.C.T.$.$
+00FF8250: 05 55 04 44 04 00 07 63 02 31 02 10 00 00 07 77  .U.D...c.1.....w
+RESULT T1 palette-changes 4 service calls 8
+boss screen not shown, retry click 0
+boss screen reached after 1 retries
+3D view: 6220=d 700a=2
+MWPO > m $b2ff8 4
+000B2FF8: 4d 57 50 4f                                      MWPO
+pos before ['0x0', '0x6400', '0x0', '0x6400'] after ['0x0', '0x5db7', '0x0', '0x6400'] 6888= 977
+heading series ['0x300', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6']
+DONE OK

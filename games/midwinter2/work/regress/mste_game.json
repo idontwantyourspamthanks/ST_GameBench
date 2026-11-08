@@ -1,0 +1,9 @@
+{
+ "cell": "mste_game",
+ "log": [
+  "boot try1 failed: list index out of range",
+  "EXC IndexError('list index out of range')",
+  "Traceback (most recent call last):\n  File \"/home/ryan/Code/AtariST/midwinter2/work/regress/run_cell.py\", line 17, in <module>\n    p=h.boot_to_game('M')\n      ^^^^^^^^^^^^^^^^^^^\n  File \"/home/ryan/Code/AtariST/midwinter2/tools/mw2harness.py\", line 335, in boot_to_game\n    if self.screen_matches(ref, (280, 350, 560, 420)):\n       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/ryan/Code/AtariST/midwinter2/tools/mw2harness.py\", line 312, in screen_matches\n    cur = Image.open(self.shot()).convert(\"RGB\").crop(box)\n                     ^^^^^^^^^^^\n  File \"/home/ryan/Code/AtariST/midwinter2/tools/mw2harness.py\", line 259, in shot\n    p = sorted(new)[0]\n        ~~~~~~~~~~~^^^\nIndexError: list index out of range\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/ryan/Code/AtariST/midwinter2/work/regress/run_cell.py\", line 21, in <module>\n    p=h.boot_to_game('M')\n      ^^^^^^^^^^^^^^^^^^^\n  File \"/home/ryan/Code/AtariST/midwinter2/tools/mw2harness.py\", line 335, in boot_to_game\n    if self.screen_matches(ref, (280, 350, 560, 420)):\n       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/ryan/Code/AtariST/midwinter2/tools/mw2harness.py\", line 312, in screen_matches\n    cur = Image.open(self.shot()).convert(\"RGB\").crop(box)\n                     ^^^^^^^^^^^\n  File \"/home/ryan/Code/AtariST/midwinter2/tools/mw2harness.py\", line 259, in shot\n    p = sorted(new)[0]\n        ~~~~~~~~~~~^^^\nIndexError: list index out of range\n"
+ ],
+ "workdir": "/tmp/mw2run-ar8y8alz"
+}

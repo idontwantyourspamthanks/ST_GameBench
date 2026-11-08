@@ -1,0 +1,21 @@
+{
+ "cell": "mste206_4mb_pristine",
+ "log": [
+  "cell mste206_4mb_pristine megaste TOS_2_06.img 4096 KB /tmp/bigram/pristine_ov",
+  "timing breakpoints armed, HAGA base 0x3f8000",
+  "VBL at intro loop start 1621",
+  "VBL at M/J/K screen 3197 delta 1576 wall 26",
+  "3D view: $6220=d $700a=2",
+  "MWPO check: 000B2FF8: 43 1b 23 24                                      C.#$",
+  "payload $B3000..$B33FF equals built image: False | whole $1F00: 6394 bytes differ (runtime data areas)",
+  "$B3000 first 16 bytes: 83145b14f0f0e02b2324330f24bb33bb  image: 33fc60020002c57448e7fffe40e723fc",
+  "differing ranges (first 12): ['0xb3000', '0xb3001', '0xb3002', '0xb3003', '0xb3004', '0xb3005', '0xb3006', '0xb3007', '0xb3008', '0xb3009', '0xb300a', '0xb300b'] zeroed bytes in payload-nonzero area: 1175",
+  "walk start (x,y,dist): ['0x6400', '0x6400', '0x4f8']  after 12 s: ['0x5c67', '0x6400', '0x386'] moved",
+  "timing: raw event count 12"
+ ],
+ "v_start": 1621,
+ "v_mjk": 3197,
+ "payload_ok": false,
+ "moved": true,
+ "workdir": "/tmp/mw2run-8p3g5uez"
+}

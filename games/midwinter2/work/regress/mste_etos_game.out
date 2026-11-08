@@ -1,0 +1,20 @@
+boot try1 failed: boot_to_game: did not reach the 3D view ($6220=0x0, $700a=0x0)
+EXC RuntimeError('boot_to_game: did not reach the 3D view ($6220=0x0, $700a=0x0)')
+Traceback (most recent call last):
+  File "/home/ryan/Code/AtariST/midwinter2/work/regress/run_cell.py", line 17, in <module>
+    p=h.boot_to_game('M')
+      ^^^^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/midwinter2/tools/mw2harness.py", line 361, in boot_to_game
+    raise RuntimeError("boot_to_game: did not reach the 3D view "
+RuntimeError: boot_to_game: did not reach the 3D view ($6220=0x0, $700a=0x0)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/ryan/Code/AtariST/midwinter2/work/regress/run_cell.py", line 21, in <module>
+    p=h.boot_to_game('M')
+      ^^^^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/midwinter2/tools/mw2harness.py", line 361, in boot_to_game
+    raise RuntimeError("boot_to_game: did not reach the 3D view "
+RuntimeError: boot_to_game: did not reach the 3D view ($6220=0x0, $700a=0x0)
+

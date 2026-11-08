@@ -1,0 +1,9 @@
+{
+ "cell": "ste4_game",
+ "log": [
+  "boot try1 failed: never reached the M/J/K screen",
+  "EXC RuntimeError('never reached the M/J/K screen')",
+  "Traceback (most recent call last):\n  File \"/home/ryan/Code/AtariST/midwinter2/work/regress/run_cell.py\", line 17, in <module>\n    p=h.boot_to_game('M')\n      ^^^^^^^^^^^^^^^^^^^\n  File \"/home/ryan/Code/AtariST/midwinter2/tools/mw2harness.py\", line 338, in boot_to_game\n    raise RuntimeError(\"never reached the M/J/K screen\")\nRuntimeError: never reached the M/J/K screen\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/home/ryan/Code/AtariST/midwinter2/work/regress/run_cell.py\", line 21, in <module>\n    p=h.boot_to_game('M')\n      ^^^^^^^^^^^^^^^^^^^\n  File \"/home/ryan/Code/AtariST/midwinter2/tools/mw2harness.py\", line 338, in boot_to_game\n    raise RuntimeError(\"never reached the M/J/K screen\")\nRuntimeError: never reached the M/J/K screen\n"
+ ],
+ "workdir": "/tmp/mw2run-diwm5ka_"
+}

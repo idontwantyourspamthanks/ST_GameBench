@@ -1,0 +1,439 @@
+INFO : Hatari v2.6.1, compiled on:  Feb  8 2026, 19:50:12
+INFO : GEMDOS HDD emulation, C: <-> /tmp/mw2run-lnmk2jzp/C.
+GEMDOS didn't find filename /tmp/mw2run-lnmk2jzp/C/NEWDESK.INF
+Gemdos_Boot(GEMDOS_EMU_ON=1) at PC 0xFA005A
+GEMDOS 0x4B Pexec(5, 0xe0095d, 0xe0095d, 0xe0095d) at PC 0xE01240
+GEMDOS 0x4B Pexec(4, 0xe023c4, 0xccb6, 0xe023c4) at PC 0xE0125E
+GEMDOS 0x20 Super(0x0) at PC 0xE01272
+GEMDOS 0x4A Mshrink(0xCCB6, 0x100) at PC 0xE0128E
+GEMDOS 0x1A Fsetdta(0xA18) at PC 0xE012B0
+GEMDOS 0x4E Fsfirst("\AUTO\*.PRG", 0x7) at PC 0xE012B4
+WARN : No GEMDOS dir '/tmp/mw2run-lnmk2jzp/C/AUTO'
+GEMDOS 0x4B Pexec(5, 0xe0095d, 0xe0095d, 0x840) at PC 0xE00910
+GEMDOS 0x4B Pexec(4, 0xe0095d, 0xcdc4, 0x840) at PC 0xE00934
+GEMDOS 0x4A Mshrink(0xCDC4, 0x100) at PC 0xE15CFA
+GEMDOS 0x20 Super(0x0) at PC 0xE15D06
+GEMDOS 0x30 Sversion() at PC 0xE15D7C
+GEMDOS 0x4B Pexec(7, 0x7, 0x695a, 0x0) at PC 0xE15DC4
+GEMDOS 0x4A Mshrink(0xCED2, 0x180) at PC 0xE15DEC
+GEMDOS 0x4B Pexec(6, 0x0, 0xced2, 0x0) at PC 0xE15E00
+GEMDOS 0x20 Super(0x0) at PC 0xE15E0E
+GEMDOS 0x48 Malloc(0x400) at PC 0xE220B6
+GEMDOS 0x48 Malloc(0x7492) at PC 0xE220B6
+GEMDOS 0x19 Dgetdrv() at PC 0xE2212E
+GEMDOS 0x0E Dsetdrv(0x2) at PC=0xE2212E
+GEMDOS 0x19 Dgetdrv() at PC 0xE2212E
+GEMDOS 0x1A Fsetdta(0x9B3A) at PC 0xE2212E
+GEMDOS 0x19 Dgetdrv() at PC 0xE2212E
+GEMDOS 0x0E Dsetdrv(0x2) at PC=0xE2212E
+GEMDOS 0x0E Dsetdrv(0x2) at PC=0xE2212E
+GEMDOS 0x3B Dsetpath("\") at PC 0xE2212E
+GEMDOS: \ -> host: /tmp/mw2run-lnmk2jzp/C
+GEMDOS 0x4E Fsfirst("\*.ACC", 0x0) at PC 0xE2212E
+GEMDOS: \*.ACC -> host: /tmp/mw2run-lnmk2jzp/C/*.ACC
+GEMDOS 0x0E Dsetdrv(0x2) at PC=0xE2212E
+GEMDOS 0x3B Dsetpath("\") at PC 0xE2212E
+GEMDOS: \ -> host: /tmp/mw2run-lnmk2jzp/C
+GEMDOS 0x4E Fsfirst("\*.ACC", 0x0) at PC 0xE2212E
+GEMDOS: \*.ACC -> host: /tmp/mw2run-lnmk2jzp/C/*.ACC
+GEMDOS 0x48 Malloc(0x1060) at PC 0xE220B6
+GEMDOS 0x19 Dgetdrv() at PC 0xE2212E
+GEMDOS 0x0E Dsetdrv(0x2) at PC=0xE2212E
+GEMDOS 0x19 Dgetdrv() at PC 0xE2212E
+GEMDOS 0x3B Dsetpath("\") at PC 0xE2212E
+GEMDOS: \ -> host: /tmp/mw2run-lnmk2jzp/C
+GEMDOS 0x3D Fopen("NEWDESK.INF", read-only) at PC=0xE2212E
+-> FD 64 (read-only -> read-only)
+GEMDOS 0x3F Fread(64, 4192, 0x148e4) at PC 0xE2212E
+GEMDOS 0x3E Fclose(64) at PC 0xE2212E
+GEMDOS 0x0E Dsetdrv(0x2) at PC=0xE2212E
+GEMDOS 0x49 Mfree(0x148E4) at PC 0xE2212E
+GEMDOS 0x19 Dgetdrv() at PC 0xE2212E
+GEMDOS 0x0E Dsetdrv(0x2) at PC=0xE2212E
+GEMDOS 0x0E Dsetdrv(0x2) at PC=0xE2212E
+GEMDOS 0x48 Malloc(0x3E80) at PC 0xE220B6
+GEMDOS 0x0E Dsetdrv(0x2) at PC=0xE2212E
+GEMDOS 0x3B Dsetpath("C:\") at PC 0xE2212E
+GEMDOS: C:\ -> host: /tmp/mw2run-lnmk2jzp/C
+GEMDOS 0x49 Mfree(0x148E4) at PC 0xE2212E
+GEMDOS 0x4B Pexec(0, "C:\RUNME.TOS", [0]"", 0x0) at PC 0xE21C0C
+GEMDOS: C:\RUNME.TOS -> host: /tmp/mw2run-lnmk2jzp/C/RUNME.TOS
+GEMDOS 0x4B Pexec(7, 0x0, 0xc656, 0x0) at PC 0xFA003A
+Basepage has been created - now loading 'C:\RUNME.TOS'
+GEMDOS: C:\RUNME.TOS -> host: /tmp/mw2run-lnmk2jzp/C/RUNME.TOS
+GEMDOS 0x3D Fopen("HAGA", read-only) at PC=0x149FE
+GEMDOS: HAGA -> host: /tmp/mw2run-lnmk2jzp/C/HAGA
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x3F Fread(64, 14000, 0x1b062) at PC 0x14A2C
+GEMDOS 0x3E Fclose(64) at PC 0x14A38
+GEMDOS 0x20 Super(0x0) at PC 0x14A46
+GEMDOS 0x19 Dgetdrv() at PC 0x1B30A
+GEMDOS 0x3D Fopen("GSAU.TOS", read-only) at PC=0x1B3B8
+GEMDOS didn't find filename /tmp/mw2run-lnmk2jzp/C/GSAU.TOS
+-> ERROR -33 (errno = 2)
+GEMDOS 0x3D Fopen("FILES\D15H5.FIC", read-only) at PC=0x1B3DA
+GEMDOS didn't find filename /tmp/mw2run-lnmk2jzp/C/FILES/D15H5.FIC
+-> ERROR -33 (errno = 2)
+GEMDOS 0x3D Fopen("C:\GAMEX\D15H5.FIC", read-only) at PC=0x1B3EC
+WARN : No GEMDOS dir '/tmp/mw2run-lnmk2jzp/C/GAMEX'
+-> ERROR -34 (errno = 2)
+GEMDOS 0x3E Fclose(65502) at PC 0x1B402
+GEMDOS 0x0B Cconis() at PC 0x15184
+GEMDOS 0x9 Cconws(0x3F85E1) at PC 0x3F855C
+GEMDOS 0x9 Cconws(0x3F85EB) at PC 0x3F855C
+GEMDOS 0x9 Cconws(0x3F858C) at PC 0x3F855C
+GEMDOS 0x9 Cconws(0x3F85B6) at PC 0x3F855C
+GEMDOS 0x9 Cconws(0x3F860A) at PC 0x3F855C
+GEMDOS 0x9 Cconws(0x3F85CC) at PC 0x3F855C
+GEMDOS 0x9 Cconws(0x3F8600) at PC 0x3F855C
+GEMDOS 0x9 Cconws(0x3F85DA) at PC 0x3F855C
+GEMDOS 0x9 Cconws(0x153D4) at PC 0x1517A
+GEMDOS 0x06 Crawio(0xFF) at PC 0x14BA2
+8 repeats of: GEMDOS 0x06 Crawio(0xFF) at PC 0x14BA2
+16 repeats of: GEMDOS 0x06 Crawio(0xFF) at PC 0x14BA2
+32 repeats of: GEMDOS 0x06 Crawio(0xFF) at PC 0x14BA2
+64 repeats of: GEMDOS 0x06 Crawio(0xFF) at PC 0x14BA2
+128 repeats of: GEMDOS 0x06 Crawio(0xFF) at PC 0x14BA2
+256 repeats of: GEMDOS 0x06 Crawio(0xFF) at PC 0x14BA2
+512 repeats of: GEMDOS 0x06 Crawio(0xFF) at PC 0x14BA2
+161 repeats of: GEMDOS 0x06 Crawio(0xFF) at PC 0x14BA2
+GEMDOS 0x3D Fopen("FFF273.HST", read-only) at PC=0x154C2
+GEMDOS: FFF273.HST -> host: /tmp/mw2run-lnmk2jzp/C/FFF273.HST
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x3F Fread(64, 69888, 0x1b062) at PC 0x154DE
+GEMDOS 0x3E Fclose(64) at PC 0x154EA
+GEMDOS 0x0B Cconis() at PC 0x15184
+GEMDOS 0x9 Cconws(0x15497) at PC 0x1517A
+GEMDOS 0x3B Dsetpath("FILES") at PC 0x14C40
+GEMDOS: FILES -> host: /tmp/mw2run-lnmk2jzp/C/FILES
+GEMDOS 0x3D Fopen("FFA", read-only) at PC=0x14C86
+GEMDOS: FFA -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFA
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x42 Fseek(512, 64, 0) at PC 0x14C9E
+GEMDOS 0x3F Fread(64, 4096, 0x81000) at PC 0x14CB4
+GEMDOS 0x3E Fclose(64) at PC 0x14CC0
+GEMDOS 0x3D Fopen("FFA", read-only) at PC=0x3F9022
+GEMDOS: FFA -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFA
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x42 Fseek(9216, 64, 0) at PC 0x3F9046
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFA", read-only) at PC=0x3F9022
+GEMDOS: FFA -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFA
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x42 Fseek(211968, 64, 0) at PC 0x3F9046
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFA", read-only) at PC=0x3F9022
+GEMDOS: FFA -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFA
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x42 Fseek(414720, 64, 0) at PC 0x3F9046
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFA", read-only) at PC=0x3F9022
+GEMDOS: FFA -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFA
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x42 Fseek(537280, 64, 0) at PC 0x3F9046
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+WARN : PNG screen dump saved to: /tmp/mw2run-lnmk2jzp/shots/grab0001.png
+GEMDOS 0x3D Fopen("FFA", read-only) at PC=0x3F9022
+GEMDOS: FFA -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFA
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x42 Fseek(9216, 64, 0) at PC 0x3F9046
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+WARN : PNG screen dump saved to: /tmp/mw2run-lnmk2jzp/shots/grab0002.png
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x42 Fseek(437760, 64, 0) at PC 0x3F9046
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+WARN : PNG screen dump saved to: /tmp/mw2run-lnmk2jzp/shots/grab0003.png
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x42 Fseek(410112, 64, 0) at PC 0x3F9046
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+WARN : PNG screen dump saved to: /tmp/mw2run-lnmk2jzp/shots/grab0004.png
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x42 Fseek(537280, 64, 0) at PC 0x3F9046
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+WARN : PNG screen dump saved to: /tmp/mw2run-lnmk2jzp/shots/grab0005.png
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x42 Fseek(479232, 64, 0) at PC 0x3F9046
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+WARN : PNG screen dump saved to: /tmp/mw2run-lnmk2jzp/shots/grab0006.png
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x42 Fseek(202752, 64, 0) at PC 0x3F9046
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x42 Fseek(211968, 64, 0) at PC 0x3F9046
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x42 Fseek(451584, 64, 0) at PC 0x3F9046
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x42 Fseek(442368, 64, 0) at PC 0x3F9046
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x42 Fseek(382464, 64, 0) at PC 0x3F9046
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x42 Fseek(479232, 64, 0) at PC 0x3F9046
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFD", read-only) at PC=0x3F9022
+GEMDOS: FFD -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFD
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFD", read-only) at PC=0x3F9022
+GEMDOS: FFD -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFD
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x42 Fseek(537280, 64, 0) at PC 0x3F9046
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x42 Fseek(537280, 64, 0) at PC 0x3F9046
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x42 Fseek(276480, 64, 0) at PC 0x3F9046
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x42 Fseek(258048, 64, 0) at PC 0x3F9046
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFD", read-only) at PC=0x3F9022
+GEMDOS: FFD -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFD
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x42 Fseek(276480, 64, 0) at PC 0x3F9046
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x42 Fseek(258048, 64, 0) at PC 0x3F9046
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x42 Fseek(202752, 64, 0) at PC 0x3F9046
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x42 Fseek(211968, 64, 0) at PC 0x3F9046
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x42 Fseek(199680, 64, 0) at PC 0x3F9046
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x42 Fseek(433152, 64, 0) at PC 0x3F9046
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x42 Fseek(400896, 64, 0) at PC 0x3F9046
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x42 Fseek(537280, 64, 0) at PC 0x3F9046
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+WARN : PNG screen dump saved to: /tmp/mw2run-lnmk2jzp/shots/grab0007.png
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x42 Fseek(262656, 64, 0) at PC 0x3F9046
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x42 Fseek(276480, 64, 0) at PC 0x3F9046
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x42 Fseek(258048, 64, 0) at PC 0x3F9046
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x42 Fseek(199680, 64, 0) at PC 0x3F9046
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x42 Fseek(225792, 64, 0) at PC 0x3F9046
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x42 Fseek(133632, 64, 0) at PC 0x3F9046
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+GEMDOS 0x3D Fopen("FFB", read-only) at PC=0x3F9022
+GEMDOS: FFB -> host: /tmp/mw2run-lnmk2jzp/C/FILES/FFB
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0x3F910E
+GEMDOS 0x3E Fclose(64) at PC 0x3F9120
+> m $6220 2
+00006220: 00 0d                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+WARN : PNG screen dump saved to: /tmp/mw2run-lnmk2jzp/shots/grab0008.png

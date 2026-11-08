@@ -1,0 +1,11 @@
+config megaste4m megaste TOS_2_06.img 4096 KB
+boot_to_game ok in 103 s; control mode M gstate {'x': 25600, 'z': 25600, 'speed': 0, 'heading': 0, 'action': 0, 'exit': 0}
+MWPO marker $b2ff8: b'MWPO' (want b"MWPO")
+$12fe2: 4ef9000b3800 (want 4ef9000b3800)
+$13618: 303900015110 (want 303900015110)
+$b3800: 2f02203900024faa (want 2f0220390002 4faa)
+mouse rel(-150,0): start heading 0
+VBL heading rate15110 : [(6744, 968, 0), (6900, 968, 0), (7057, 968, 0), (7213, 968, 0), (7369, 968, 0), (7525, 968, 0), (7681, 968, 0), (7837, 968, 0), (7993, 968, 0), (8150, 968, 0)]
+walk: before {'x': 25600, 'z': 25600, 'speed': 0, 'heading': 968, 'action': 0, 'exit': 0} after 8 s {'x': 24765, 'z': 27856, 'speed': 0, 'heading': 968, 'action': 0, 'exit': 0}
+MWPO after walk: b'MWPO'
+screenshot /tmp/coldboot_megaste4m.png

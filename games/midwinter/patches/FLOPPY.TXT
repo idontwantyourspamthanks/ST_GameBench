@@ -1,0 +1,15 @@
+Midwinter (HAGA/PP conversion images) - patched floppy set, {DATE}
+
+Disks (400 KB single-sided, 10 sectors x 80 tracks, raw .st images):
+  MWA.st   boot disk (patched: patch loader + payload in free sectors, original game otherwise)
+  MWB.st   graphics/data disk, unchanged
+  MWC.st   save/data disk, unchanged (use your own save disk if you have one)
+
+Patches in this set: {PATCHES}
+
+Boot from MWA.st in drive A. When the game shows "Insert graphics disk" swap MWB.st into
+drive A and press a key. PP's hard-disk fixes are not part of a floppy boot (original FDC
+driver, no fade); the patch loader sets the marker MWPO at $B2FF8 once its patches are applied.
+
+md5:
+{MD5}

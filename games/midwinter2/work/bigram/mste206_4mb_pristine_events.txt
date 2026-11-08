@@ -1,0 +1,169 @@
+INFO : Hatari v2.6.1, compiled on:  Feb  8 2026, 19:50:12
+INFO : GEMDOS HDD emulation, C: <-> /tmp/mw2run-8p3g5uez/C.
+> b all
+CPU breakpoints: 0
+WARN : No GEMDOS dir '/tmp/mw2run-8p3g5uez/C/AUTO'
+> b pc = $3f8fc4 :trace :file /tmp/mw2run-8p3g5uez/ent.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $3f8fc4
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-8p3g5uez/ent.txt' file on hit.
+WARN : No GEMDOS dir '/tmp/mw2run-8p3g5uez/C/GAMEX'
+> b pc = $3f9164 :trace :file /tmp/mw2run-8p3g5uez/ext.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $3f9164
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-8p3g5uez/ext.txt' file on hit.
+> e VBL
+= %11001010101 (bin), #1621 (dec), $655 (hex)
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $3f8fc4 :trace :file /tmp/mw2run-8p3g5uez/ent.txt
+Reading debugger commands from '/tmp/mw2run-8p3g5uez/ent.txt'...
+Changed to input file dir '/tmp/mw2run-8p3g5uez'.
+> e VBL
+= %11010001100 (bin), #1676 (dec), $68c (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 1 times.
+	pc = $3f9164 :trace :file /tmp/mw2run-8p3g5uez/ext.txt
+Reading debugger commands from '/tmp/mw2run-8p3g5uez/ext.txt'...
+Changed to input file dir '/tmp/mw2run-8p3g5uez'.
+> e VBL
+= %11010011011 (bin), #1691 (dec), $69b (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+WARN : PNG screen dump saved to: /tmp/mw2run-8p3g5uez/shots/grab0001.png
+WARN : PNG screen dump saved to: /tmp/mw2run-8p3g5uez/shots/grab0002.png
+1. CPU breakpoint condition(s) matched 2 times.
+	pc = $3f8fc4 :trace :file /tmp/mw2run-8p3g5uez/ent.txt
+Reading debugger commands from '/tmp/mw2run-8p3g5uez/ent.txt'...
+Changed to input file dir '/tmp/mw2run-8p3g5uez'.
+> e VBL
+= %100111000111 (bin), #2503 (dec), $9c7 (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 2 times.
+	pc = $3f9164 :trace :file /tmp/mw2run-8p3g5uez/ext.txt
+Reading debugger commands from '/tmp/mw2run-8p3g5uez/ext.txt'...
+Changed to input file dir '/tmp/mw2run-8p3g5uez'.
+> e VBL
+= %100111101110 (bin), #2542 (dec), $9ee (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+WARN : PNG screen dump saved to: /tmp/mw2run-8p3g5uez/shots/grab0003.png
+WARN : PNG screen dump saved to: /tmp/mw2run-8p3g5uez/shots/grab0004.png
+WARN : PNG screen dump saved to: /tmp/mw2run-8p3g5uez/shots/grab0005.png
+> e VBL
+= %110001111101 (bin), #3197 (dec), $c7d (hex)
+WARN : PNG screen dump saved to: /tmp/mw2run-8p3g5uez/shots/grab0006.png
+1. CPU breakpoint condition(s) matched 3 times.
+	pc = $3f8fc4 :trace :file /tmp/mw2run-8p3g5uez/ent.txt
+Reading debugger commands from '/tmp/mw2run-8p3g5uez/ent.txt'...
+Changed to input file dir '/tmp/mw2run-8p3g5uez'.
+> e VBL
+= %1011101111111 (bin), #6015 (dec), $177f (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 3 times.
+	pc = $3f9164 :trace :file /tmp/mw2run-8p3g5uez/ext.txt
+Reading debugger commands from '/tmp/mw2run-8p3g5uez/ext.txt'...
+Changed to input file dir '/tmp/mw2run-8p3g5uez'.
+> e VBL
+= %1011110100010 (bin), #6050 (dec), $17a2 (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 4 times.
+	pc = $3f8fc4 :trace :file /tmp/mw2run-8p3g5uez/ent.txt
+Reading debugger commands from '/tmp/mw2run-8p3g5uez/ent.txt'...
+Changed to input file dir '/tmp/mw2run-8p3g5uez'.
+> e VBL
+= %1011110101000 (bin), #6056 (dec), $17a8 (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 4 times.
+	pc = $3f9164 :trace :file /tmp/mw2run-8p3g5uez/ext.txt
+Reading debugger commands from '/tmp/mw2run-8p3g5uez/ext.txt'...
+Changed to input file dir '/tmp/mw2run-8p3g5uez'.
+> e VBL
+= %1011111001011 (bin), #6091 (dec), $17cb (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 5 times.
+	pc = $3f8fc4 :trace :file /tmp/mw2run-8p3g5uez/ent.txt
+Reading debugger commands from '/tmp/mw2run-8p3g5uez/ent.txt'...
+Changed to input file dir '/tmp/mw2run-8p3g5uez'.
+> e VBL
+= %1110111011110 (bin), #7646 (dec), $1dde (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 5 times.
+	pc = $3f9164 :trace :file /tmp/mw2run-8p3g5uez/ext.txt
+Reading debugger commands from '/tmp/mw2run-8p3g5uez/ext.txt'...
+Changed to input file dir '/tmp/mw2run-8p3g5uez'.
+> e VBL
+= %1111000000001 (bin), #7681 (dec), $1e01 (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 6 times.
+	pc = $3f8fc4 :trace :file /tmp/mw2run-8p3g5uez/ent.txt
+Reading debugger commands from '/tmp/mw2run-8p3g5uez/ent.txt'...
+Changed to input file dir '/tmp/mw2run-8p3g5uez'.
+> e VBL
+= %1111000000111 (bin), #7687 (dec), $1e07 (hex)
+> e 1111
+= %10001010111 (bin), #1111 (dec), $457 (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 6 times.
+	pc = $3f9164 :trace :file /tmp/mw2run-8p3g5uez/ext.txt
+Reading debugger commands from '/tmp/mw2run-8p3g5uez/ext.txt'...
+Changed to input file dir '/tmp/mw2run-8p3g5uez'.
+> e VBL
+= %1111000101010 (bin), #7722 (dec), $1e2a (hex)
+> e 2222
+= %100010101110 (bin), #2222 (dec), $8ae (hex)
+Changed back to '/home/ryan/Code/AtariST/midwinter2' dir.
+WARN : PNG screen dump saved to: /tmp/mw2run-8p3g5uez/shots/grab0007.png
+> m $6220 2
+00006220: 00 0d                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+WARN : PNG screen dump saved to: /tmp/mw2run-8p3g5uez/shots/grab0008.png
+> m $6220 2
+00006220: 00 0d                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+> m $b2ff8 4
+000B2FF8: 43 1b 23 24                                      C.#$
+> savebin /tmp/mw2run-8p3g5uez/b3000.bin 0xb3000 0x1f00
+  Wrote 0x1f00 bytes.
+> m $66e6 2
+000066E6: 00 00                                            ..
+> m $66e8 2
+000066E8: 64 00                                            d.
+> m $66ea 2
+000066EA: 00 00                                            ..
+> m $66ec 2
+000066EC: 64 00                                            d.
+> m $6888 2
+00006888: 04 f8                                            .°
+> m $66e6 2
+000066E6: 00 00                                            ..
+> m $66e8 2
+000066E8: 5c 67                                            \g
+> m $66ea 2
+000066EA: 00 00                                            ..
+> m $66ec 2
+000066EC: 64 00                                            d.
+> m $6888 2
+00006888: 03 86                                            .å
+WARN : PNG screen dump saved to: /tmp/mw2run-8p3g5uez/shots/grab0009.png

@@ -1,0 +1,16 @@
+{
+ "cell": "mste_etos_game2",
+ "log": [
+  "boot try1 failed: boot_to_game: did not reach the 3D view ($6220=0x0, $700a=0x0)",
+  "recovered, 6220=d",
+  "3D view shot work/regress/mste_etos_game2_3d.png",
+  "6220=d 700a=2",
+  "MWPO check > m $b2ff8 4\n000B2FF8: 4d 57 50 4f                                      MWPO\n",
+  "speed shot work/regress/mste_etos_game2_walk.png",
+  "world_rate {'vbls': 500, 'flips': 62, 'fps': 6.2, 'vbls_per_frame': 8.064516129032258, 'units_per_sec': 26.040172166427546}",
+  "x66e6=0 6888=635",
+  "heading before 0x300",
+  "heading series ['0x300', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x0']"
+ ],
+ "workdir": "/tmp/mw2run-r_mrs341"
+}

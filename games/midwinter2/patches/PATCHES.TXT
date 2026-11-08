@@ -1,0 +1,27 @@
+Midwinter 2 (HAGA HD version by PP) - patched build, 2026-11-08
+
+Changes vs the original HAGA release:
+- Game speed is fixed to real time: the world no longer speeds up on
+  faster machines (Mega STE 16 MHz, TT, Falcon, accelerators).
+- On foot, movement is smooth at whatever frame rate the machine manages.
+- About 20% faster 3D display on a stock 8 MHz ST/STE (18-23% in tests),
+  pixel-identical: less wasted work on hidden terrain and cockpit overdraw.
+- Direct controls: the mouse turns only while it moves; joystick/keyboard
+  turn at a constant rate while held and stop on release.
+- No grey fading while loading.
+- Standing still on foot, the 3D view is only redrawn when something in it
+  changes (about 25 fps instead of 5 while standing; identical picture).
+- Floppy set: the manual security check is skipped, as in the HD release.
+- fixed: >=4 MB hang. With 4 MB or more RAM on an ST/STE/Mega STE, earlier
+  patched builds stopped at the orange "Flames of Freedom" title. PP's loader
+  caches whole disk images in RAM from 4 MB up, which overwrote the patch code
+  (the unpatched game was fine). The patched build now keeps the loader's
+  200 KB chunked caching on those machines, as on 1-2 MB; loading takes a few
+  seconds longer than the unpatched game does at 4 MB. TT/Falcon are unchanged.
+
+Requirements and usage are as in README.TXT (1 MB RAM minimum).
+Run RUNME.TOS from a hard disk / GEMDOS drive.
+Create a campaign first: War Room -> Start New Campaign (copies the
+missions disk into FILES\FFD), then Control.
+Tested on Hatari: ST (TOS 1.04) and STE (TOS 1.62) at 1 and 4 MB, Mega STE
+(TOS 2.06) at 1, 2, 4, 8 and 14 MB, STE 16 MHz; TT/Falcon/Mega STE with EmuTOS.

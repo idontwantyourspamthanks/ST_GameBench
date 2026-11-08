@@ -1,0 +1,10 @@
+3D view shot work/regress/st1_game_3d.png
+6220=d 700a=2
+MWPO check > m $b2ff8 4
+000B2FF8: 4d 57 50 4f                                      MWPO
+
+speed shot work/regress/st1_game_walk.png
+world_rate {'vbls': 500, 'flips': 45, 'fps': 4.5, 'vbls_per_frame': 11.11111111111111, 'units_per_sec': 28.048780487804876}
+x66e6=0 6888=673
+heading before 0x300
+heading series ['0x300', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6']
