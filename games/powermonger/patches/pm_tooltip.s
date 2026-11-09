@@ -1,5 +1,5 @@
 ; name: pm_tooltip
-; default: no
+; default: yes
 ; stage: 2
 ; site: $130a4
 ; orig: 4eb9000178ae
