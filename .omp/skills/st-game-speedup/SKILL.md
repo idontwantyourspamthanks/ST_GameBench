@@ -16,7 +16,7 @@ Reference project: `games/midwinter2`. Its `PLAN.md` holds phases P0–P7 and it
 - **Deliverables:**
   - patched copies, never the originals modified;
   - a patch tool that verifies original bytes;
-  - zips: HD folder plus a floppy set;
+  - zips: HD folder plus a floppy set. **A floppy version is mandatory** for every enhanced game (most ST owners have no hard disk); if the base release is HD-only, build the floppy set from a floppy release of the same game;
   - `play.sh`-style launcher scripts.
 
 ## Phases

@@ -3,6 +3,7 @@
 Follows the Midwinter method (`.omp/skills/st-game-speedup`). User preferences carry over: target a 1 MB 8 MHz STE; nothing may break up to TT/Falcon or at 4 MB; pixel-identical by default; game speed must not depend on CPU speed.
 
 ## Decisions
+- **Floppy version is mandatory (user rule for all games).** PP's Gamex build is HD-only, so the floppy set is built from a floppy release in `alt/floppy/` (Paper Bag or Replicants crack, user-supplied, git-ignored).
 - **Controls:** keep as they are (the user considers them sensible).
 - **STE sample sound (user decision):** replace the YM effects with the Amiga version's samples through STE DMA, on STE-class machines only. Plain ST keeps the YM.
   - **2-voice software mixer at 6258 Hz, mono.** Chosen after listening to `tools/ste_preview.py` renders. Estimated cost 7–9% of the CPU (`work/notes/sound.md` §3).
