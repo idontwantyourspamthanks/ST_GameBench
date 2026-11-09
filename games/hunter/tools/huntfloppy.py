@@ -95,7 +95,7 @@ class HunterFloppy(Hunter):
             self.key("space", 0.3)
             time.sleep(5)
             if blind:
-                if time.time() - t > 45:
+                if time.time() - t > 100:
                     return
             elif self.at("main"):
                 return

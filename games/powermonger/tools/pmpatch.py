@@ -373,9 +373,9 @@ def assemble(org: int, lines: list[str], equ: str = "") -> bytes:
         return out.read_bytes()
 
 
-def core_segments(imglen: int) -> dict[str, bytes]:
+def core_segments() -> dict[str, bytes]:
     p = Patch(PATCHDIR / "core.s")
-    equ = "\n".join(p.preamble + [f"TEXTLEN equ ${TEXT_LEN:x}", f"IMGLEN equ ${imglen:x}"])
+    equ = "\n".join(p.preamble + [f"TEXTLEN equ ${TEXT_LEN:x}"])
     by_org = {org: lines for org, lines in p.segments}
     if set(by_org) != set(CORE_ORGS.values()):
         raise SystemExit(f"core.s orgs {sorted(by_org)} != {sorted(CORE_ORGS.values())}")
@@ -426,8 +426,10 @@ def fill_byte(a: int) -> int:
 
 
 def build_image(patches: list[Patch], samples: bytes | None = None, corrupt: bool = False):
-    """Returns (image bytes for $B8000.., sites, used spans).  The image is padded to a multiple of 4."""
-    core = core_segments(0x1000)          # sizes only here; the real IMGLEN goes into the front stub later
+    """Returns (flat image bytes for $B8000.. (zeros where nothing is stored), sites, used spans, zero spans).  The zero spans
+    (`; data:` reservations and the init-table / FLAGS / MARKER area) are cleared by `front` at boot; everything else that is
+    zero in the flat image is simply not stored (see pack_records)."""
+    core = core_segments()
     sites = []
     for p in patches:
         if p.site is None:
@@ -494,7 +496,42 @@ def build_image(patches: list[Patch], samples: bytes | None = None, corrupt: boo
         img[org - IMG_BASE:org - IMG_BASE + len(b)] = b
     if samples is not None:
         img[SAMPLE_BASE - IMG_BASE:SAMPLE_BASE - IMG_BASE + len(samples)] = samples
-    return bytes(img), sites, used
+    zeros = [(d, d + ln) for p in patches for d, ln in p.data] + [(UINITTBL, IMG_BASE + 0x800)]
+    return bytes(img), sites, used, zeros
+
+
+def pack_records(img: bytes, zeros) -> bytes:
+    """The payload as `front` reads it: records {dest.l, len.l, bytes}, zero-fill records {dest.l, len.l | $80000000}, a long 0
+    at the end.  Zero spans first (so the non-zero runs overwrite where they overlap), then the non-zero runs of `img`, long
+    aligned, runs closer than 12 zero bytes merged.  Empty space between blobs costs no disk bytes."""
+    out = bytearray()
+    for lo, hi in sorted(zeros):
+        lo, hi = lo & ~3, (hi + 3) & ~3
+        if hi > lo:
+            out += struct.pack(">II", lo, 0x80000000 | (hi - lo))
+    pad = img + bytes(-len(img) % 4)
+    runs, i, n = [], 0, len(pad)
+    while i < n:                                  # maximal non-zero byte spans
+        if pad[i] == 0:
+            i += 1
+            continue
+        j = i
+        while j < n and pad[j] != 0:
+            j += 1
+        runs.append([i, j])
+        i = j
+    for r in runs:                                # long-align, then merge runs closer than 12 bytes
+        r[0] &= ~3
+        r[1] = (r[1] + 3) & ~3
+    merged = []
+    for a, b in runs:
+        if merged and a - merged[-1][1] < 12:
+            merged[-1] = (merged[-1][0], max(b, merged[-1][1]))
+        else:
+            merged.append((a, b))
+    for a, b in merged:
+        out += struct.pack(">II", IMG_BASE + a, b - a) + pad[a:b]
+    return bytes(out) + b"\0\0\0\0"
 
 
 # ---- WAR.PRG rebuild ------------------------------------------------------------------------------------------------
@@ -524,14 +561,14 @@ def patched_text(path: str, push_off: int, hook: int | None) -> bytearray:
     return text
 
 
-def build_war(img: bytes, stage1: bool) -> tuple[bytes, bytes]:
+def build_war(records: bytes, stage1: bool) -> tuple[bytes, bytes]:
     """New AUTO/WAR.PRG and the front stub bytes."""
     text = patched_text(WAR_PATH, PUSH1, HOOK1 if stage1 else None)
     if bytes(text[:8]) != FRONT_ORIG:
         raise SystemExit("WAR.PRG text does not start with the expected Super(0) call")
     text[0:8] = b"\x4e\xf9" + struct.pack(">I", TEXT_LEN) + b"\x4e\x71"
-    front = core_segments(len(img))["front"]
-    data = front + img
+    front = core_segments()["front"]
+    data = front + records
     hdr = bytearray(prg_file(WAR_PATH)[:HDR])
     struct.pack_into(">I", hdr, 6, len(data))
     return bytes(hdr) + bytes(text) + data + struct.pack(">I", 2) + b"\x00", front
@@ -584,7 +621,7 @@ def cmd_verify(patches) -> int:
         patched_text(path, off, None)
     prg_text(WAR_PATH)
     print("stubs: both copy-routine pushes and WAR.PRG's Super(0) call match the expected original bytes")
-    core_segments(0x1000)
+    core_segments()
     stack_routine(HOOK2)
     for p in patches:
         if p.site is None:
@@ -601,7 +638,7 @@ def cmd_verify(patches) -> int:
 
 
 def cmd_list(patches):
-    core = core_segments(0x1000)
+    core = core_segments()
     print(f"core: front {len(core['front'])} B (data segment of WAR.PRG), payload ${IMG_BASE:x}..${IMG_END - 1:x}; "
           f"entry {len(core['entry'])} B, hook1 {len(core['hook1'])} B, hook2 {len(core['hook2'])} B, apply {len(core['apply'])} B, table ${TABLE:x}..${TABLE_END - 1:x}, "
           f"FLAGS ${FLAGS:x}, MARKER ${MARKER:x}")
@@ -667,10 +704,11 @@ def cmd_build(patches, out: Path, floppy: bool, hd: bool, samples, corrupt, all_
     for kind, want, plist in (("floppy", floppy or both, fpatches), ("hd", hd or both, hpatches)):
         if not want:
             continue
-        img, sites, used = build_image(plist, samples, corrupt=corrupt)
-        print(f"{kind}: payload image {len(img)} B (${IMG_BASE:x}..${IMG_BASE + len(img) - 1:x}), {len(sites)} site(s)")
+        flat, sites, used, zeros = build_image(plist, samples, corrupt=corrupt)
+        img = pack_records(flat, zeros)
+        print(f"{kind}: payload ${IMG_BASE:x}..${IMG_BASE + len(flat) - 1:x} stored as {len(img)} B of records, {len(sites)} site(s)")
         (build_floppy if kind == "floppy" else build_hd)(out / kind, img, plist)
-        man = dict(kind=kind, patches=[p.name for p in plist], image_base=IMG_BASE, image_len=len(img),
+        man = dict(kind=kind, patches=[p.name for p in plist], image_base=IMG_BASE, image_len=len(flat), records_len=len(img),
                    used=[[a, b] for a, b in used],
                    sites=[dict(name=s["name"], stage=s["stage"], addr=s["addr"], orig=s["orig"].hex(), new=s["new"].hex())
                           for s in sites])
@@ -683,7 +721,7 @@ def cmd_live(patches, out: Path, samples, ste=True):
     """Payload image + site bytes for applying a patch set to a restored snapshot (stharness capture_frames(live=)):
     <out>.img at IMG_BASE with FLAGS/MARKER set, <out>.json with the sites (the hook and the front stub are omitted)."""
     patches = [p for p in patches if p.stage == 2 and not p.name.startswith("hd_")]
-    img, sites, _ = build_image(patches, samples)
+    img, sites, _, _z = build_image(patches, samples)
     img = bytearray(img)
     struct.pack_into(">I", img, FLAGS - IMG_BASE, 3 if ste else 6)
     img[MARKER - IMG_BASE:MARKER - IMG_BASE + 4] = b"PMPO"

@@ -51,7 +51,7 @@ Paper Bag has 43 KB free; we need the bank (HNSOUND.BIN 124126 B) + payload + th
 
 Needed with 1 KB clusters: bank 122 clusters (124928 B) + payload file 5 (4596 B) + `HUNTER.TOS` same 3 clusters (2512 B) = ~130 KB. **Chosen: 82 x 11, full-quality bank, 9216 B free** [obs: `build --floppy --samples ...`]. 80 x 11 (116736) would need a bank of about 105 KB or less; dropping the half-scale copies of the loop samples (`$A4DF4..` = 38634 B, bank -> 85.5 KB) would give 80 x 11 a 20 KB margin, but costs 6,866 -> 8,801 cycles/VBL for a voice at volume 15 (4.3 % -> 5.5 % of a frame, +1.2 points while the engine plays at full volume; `snd.md` table) [from snd.md, not remeasured]: not done, the full bank fits.
 The payload file is stored as records `{dest.l len.w bytes}` of its non-zero runs (17408 B image -> 4596 B; the stage clears `$8BA00..$8FFFF` first), `pack_payload`/`unpack_payload` round-trip asserted at build time.
-Real hardware: 11-sector, 82-track disks need a drive that seeks to track 81 and a disk written in the 11-sector format (Fastcopy/MSA-style tools, Gotek); the `.st` has no interleave/skew, so write it with a skew or reading is slow (the loader reads one sector per call: [obs] Hatari without `--fastfdc yes` needs minutes for the title phase; with it, ~30 s). Standard-format alternative: `build --floppy --samples F --two-disk` (section 5).
+Real hardware: 11-sector, 82-track disks need a drive that seeks to track 81 and a disk written in the 11-sector format (Fastcopy/MSA-style tools, Gotek); the `.st` has no interleave/skew, so write it with a skew or reading is slow (see section 9: with real FDC timing the load takes about as long as the original's). Standard-format alternative: `build --floppy --samples F --two-disk` (section 5).
 
 ## 4. Loader stage (`core_floppy.s`, appended to HUNTER.TOS) and the splices
 `build_hunter_tos` (all asserted against the original bytes): `$68` T-key `lea/move.w` -> 4 nops; `$b8` `move.w #$4e73,$90.w` -> `bsr.w stage1` + nop; `$22a` `bra.b $22e/nop` -> `bsr.w stage2` (then the original `jmp $800.w`); the three cache constants; stage appended to the text (+306 B, no new relocations; it must lie within the 16388 B HUNTER.TOS copies to `$6a000`).
@@ -89,3 +89,26 @@ Save result [obs, STE 1.62, 82x11 disk]: ESC -> Disk Operation -> Save Game -> s
 - Falcon 4.04, TT 3D view, 2 MB, 512 KB (stage skips everything below 1 MB; not run), plain-ST/STE lean single-disk cold boot after the cache fix, two-disk paths (swap, B drive, skip, joystick FIRE) after the cache fix, `huntab.py`.
 - Real 11-sector hardware (skew, drive tolerance) is untested; the file cache now holds 331 KB instead of ~523 KB, so the title/level loads may reload files that the original cache would have kept (not measured).
 - `build --floppy --zip` writes `dist/Hunter_patched_floppy_<date>.zip`: `HUNTER_disk1.st` + `README.TXT` (`patches/FLOPPY.TXT`, rewritten for the one-disk set).
+
+## 9. Load times with real FDC timing (`--fastfdc no`, Hatari 2.6.1, STE 1.62) [obs]
+Correction: an earlier remark that the title load "takes minutes without --fastfdc" was wrong; the title ignores keys while loading and my first test pressed SPACE only once. `tools/huntfloppy.py` now defaults to `--fastfdc no`. Measured with `meas`-style polling (key at the "Paper Bag" screen -> MAIN OPTIONS visible, emulated seconds from the VBL counter, space pressed every 8 s so each figure is +-8 s):
+
+| disk | stage done (marker HNPO) | key -> MAIN OPTIONS |
+|---|---|---|
+| (a) original Paper Bag, 81x10 | - | **39 s** |
+| lean build (81x10, no bank, our stage) | 15 s | 42 s |
+| (b) ours 82x11, bank read with GEMDOS Fread | 24 s | 51 s |
+| ours 82x11, bank read by raw track reads (`Floprd`, shipped) | 20 s | 51 s |
+
+Cause analysis: the crack's loader does read ONE sector per FDC command (`$d474`: DMA sector count 1, command `$80`, one call per sector, [disasm]); but the original, 81x10, loads in 39 s, i.e. ~22 sectors/s, so Hatari's .st track layout does not make it lose a rotation per sector, and 11 sectors per track costs nothing: the game phase is 27 s on both 81x10 (lean: 42-15) and 82x11 (51-24). The extra time of our disk is our stage (+3 s lean) and the 124 KB bank (+9 s with Fread, ~+5 s with raw track reads; Floprd reads whole tracks per command). So no loader rewrite was done. What a .st cannot express: sector interleave/skew (and gaps); Hatari does not model it for .st, so this test cannot show whether a real drive loses rotations with one-sector-per-command reads. On real hardware/Gotek the disk should be written with a skew (FlashFloppy `image.cfg` interleave/cskew) if loading is slow; an .msa is only a compressed .st (no layout information), .stx/.hfe could carry it but are not produced. Nothing about real timing is proven.
+Shipped bank read: `loadbank` (XBIOS Floprd, track at a time, LSN from the disk built in a second pass, contiguity asserted).
+
+Cold boots with real FDC timing after the cache fix [obs]:
+```
+BOOT OK ste162_slow  STE 1.62 1 MB   HNPO FLAGS 3 fps 4.80 bank 'HSND' (shipping 82x11 disk, in_game after 89 s)
+BOOT OK mste206_slow Mega STE 2.06 4 MB HNPO FLAGS 3 fps 4.80 bank 'HSND' (226 s incl. the TOS 2.06 memory test)
+BOOT OK lean_ste     STE 1.62, lean 81x10 build (no bank): HNPO FLAGS 3 fps 5.00, $90000 = 0 (YM sound)
+BOOT OK two_swap     STE 1.62, --two-disk, swap path: prompt 1 after 22 s, refusal without the disk, prompt 2 after 37 s, 3D view after 103 s, HNPO, bank 'HSND'
+plain ST 1.04 (82x11, blind harness): HNPO FLAGS 6 reached MAIN OPTIONS; the blind menu clicks of the harness missed (twice), so the 3D view was NOT reached in this timing; the fast-FDC run earlier reached it (fps 5.60).
+```
+Not rerun with real timing: two-disk B-drive and skip paths, TT/Falcon.

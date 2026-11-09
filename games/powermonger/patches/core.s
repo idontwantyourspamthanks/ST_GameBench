@@ -39,11 +39,24 @@ HOOK2   equ $b8140
 APPLY   equ $b8190
 
         org     $0
-front:  lea     img(pc),a0              ; the payload image: right behind this stub
-        lea     IMG.l,a1
-        move.w  #IMGLEN/4-1,d0          ; IMGLEN is a multiple of 4, set by pmpatch.py (equ in the preamble)
+front:  lea     img(pc),a0              ; the payload records: right behind this stub
+.rec:   movea.l (a0)+,a1                ; record = {dest.l, len.l [, len bytes]}; dest 0 ends; len bit 31 = zero-fill, no bytes
+        move.l  a1,d1
+        beq.s   .done
+        move.l  (a0)+,d0                ; all lengths are multiples of 4, > 0
+        bmi.s   .zero
+        lsr.l   #2,d0
 .cp:    move.l  (a0)+,(a1)+
-        dbra    d0,.cp
+        subq.l  #1,d0
+        bne.s   .cp
+        bra.s   .rec
+.zero:  andi.l  #$7fffffff,d0
+        lsr.l   #2,d0
+.zl:    clr.l   (a1)+
+        subq.l  #1,d0
+        bne.s   .zl
+        bra.s   .rec
+.done:
         cmpi.l  #'PMPA',IMG.l
         bne.s   .sup
         jsr     IMG+8.l                 ; uinit: user mode, TOS fully alive
@@ -56,7 +69,7 @@ front:  lea     img(pc),a0              ; the payload image: right behind this s
 .out:   lea     front(pc),a0
         suba.l  #TEXTLEN-8,a0           ; TEXTLEN = original text size: this is text offset 8 (the rest of the Super code)
         jmp     (a0)
-img:                                    ; payload image starts here (not assembled; pmpatch.py appends it)
+img:                                    ; payload records start here (not assembled; pmpatch.py appends them)
 
         org     $b8000
         dc.l    'PMPA'
