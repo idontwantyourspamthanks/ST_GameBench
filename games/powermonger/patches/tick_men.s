@@ -1,5 +1,5 @@
 ; name: tick_men
-; default: no
+; default: yes
 ; site: $130c2
 ; orig: 4eb900014b62
 ; note: P2 (needs tick_head). `jsr $14b62`: the people (men) update, 512 records of $32 bytes at $51b66

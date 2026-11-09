@@ -1,5 +1,5 @@
 ; name: tick_wx
-; default: no
+; default: yes
 ; site: $130b0
 ; orig: 4eb90001abaa
 ; note: P2 (needs tick_head). `jsr $1abaa`: season/weather dissolve (steps the LCG $57ff6, advances the

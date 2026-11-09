@@ -1,5 +1,5 @@
 ; name: tick_head
-; default: no
+; default: yes
 ; site: $13020
 ; orig: 45f900014e20
 ; data: $b8a00 64

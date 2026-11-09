@@ -1,5 +1,5 @@
 ; name: tick_pass
-; default: no
+; default: yes
 ; site: $13074
 ; orig: 0479000100057ff0
 ; note: P2 (needs tick_head). The game's own render/skip branch `subi.w #1,$57ff0.l ; bne.b $130b0`

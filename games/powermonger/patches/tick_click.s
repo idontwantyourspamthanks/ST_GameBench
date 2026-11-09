@@ -1,5 +1,5 @@
 ; name: tick_click
-; default: no
+; default: yes
 ; site: $12f8
 ; orig: 0002df70
 ; note: P2 (needs tick_head). `$2df70` is the WORLD clock (the pass counter of the original; $3e06 stores its low

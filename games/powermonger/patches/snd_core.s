@@ -1,24 +1,27 @@
 ; name: snd_core
-; default: no
+; default: yes
 ; site: $1b77e
 ; orig: 4a390002c992
-; data: $e0e00 64
-; data: $e1000 16384
+; data: $d0e00 64
+; data: $d1000 16384
 ; note: STE DMA sound for Powermonger (work/notes/snd.md).  Needs snd_core + snd_start + snd_stop + snd_setup together.
 ; note: The game's only sound is a timer-A sample player: the VBL handler ($1282) calls the sequencer $1b77e, which starts one
 ; note: "chunk" (signed 8-bit PCM ended by a 0 byte, table at $2cba6, 12 B/entry) at a time through $1ae5c; the timer-A IRQ $1af32
 ; note: then writes 3 YM volume registers per byte (264 cycles at 2457600/4/d Hz, d = $2c99a, 2.4-8.7 kHz).  No YM tone/noise, no music.
-; note: This site is the first instruction of the sequencer (`tst.b $2c992.l`, 6 B) -> `jsr $e0000.l`.  The payload (STE only: FLAGS bit0)
+; note: This site is the first instruction of the sequencer (`tst.b $2c992.l`, 6 B) -> `jsr $d0000.l`.  The payload (STE only: FLAGS bit0)
 ; note: runs the DMA producer + the "chunk finished" test ($2c993 = timer IRQ busy flag, cleared when the DMA stops), then does the
 ; note: replaced `tst.b $2c992.l; rts`.  Plain ST (FLAGS bit0 clear): just the `tst.b; rts`.
-; note: Layout: code $e0000 (entry table: tick, start, stop, setup, live), state SV $e0e00, DMA staging buffer STAGE $e1000-$e4fff
+; note: Layout: code $d0000 (entry table: tick, start, stop, setup, live), state SV $d0e00, DMA staging buffer STAGE $d1000-$d4fff
 ; note: (a `; data:` span: zeroed at boot, no disk bytes).
 ; note: A chunk plays from STAGE through a single-shot DMA (6258 or 12517 Hz mono).  MODE (SV+1, 0 = default): 0 = live nearest-neighbour
 ; note: resample of the chunk from its own rate (614400/d) to the DMA rate, in 8-sample steps, one VBL ahead of the DMA read pointer;
-; note: 1 = direct DMA of the chunk bytes at 6258 Hz (zero CPU, pitch/duration follow the DMA rate instead of d).
+; note: 1 = direct DMA of the chunk bytes at 6258 Hz (zero CPU, pitch/duration follow the DMA rate instead of d).  Build option: DEFMODE below
+; note: (snd_setup stores it into MODE at game start).  Polarity: the bytes are used as they are (signed PCM); the LMC1992 inverts the DMA
+; note: signal and the game's YM level table ($1af86) is an inverted ramp, so the two agree (Hatari capture correlation +0.96..+0.99).
 FLAGS   equ     $b87f0
-SV      equ     $e0e00
-STAGE   equ     $e1000
+DEFMODE equ     0                       ; 0 = live resample (default), 1 = direct DMA at 6258 Hz
+SV      equ     $d0e00
+STAGE   equ     $d1000
 ENDFX   equ     $6f304                  ; $5879a + $16b6a: end of the unpacked FX.DAT (last chunk ends here)
 FIRST   equ     512                     ; samples produced before the DMA starts
 LEAD    equ     768                     ; samples kept produced ahead of the DMA read pointer
@@ -26,7 +29,6 @@ K6      equ     6433916                 ; 614400 * 65536 / 6258.29   (step = K /
 K12     equ     3216958                 ; 614400 * 65536 / 12516.58
 o_busy  equ     0
 o_mode  equ     1
-o_neg   equ     2
 o_rate  equ     3
 o_src   equ     4
 o_step  equ     8
@@ -35,13 +37,13 @@ o_frac  equ     12
 o_p     equ     16
 o_m     equ     20
         org     $1b77e
-        jsr     $e0000.l
-        org     $e0000
-        bra.w   snd_tick                ; $e0000
-        bra.w   snd_start               ; $e0004
-        bra.w   snd_stop                ; $e0008
-        bra.w   snd_setup               ; $e000c
-        bra.w   snd_live                ; $e0010  debugger entry for the snapshot gates (ends with jmp $13020)
+        jsr     $d0000.l
+        org     $d0000
+        bra.w   snd_tick                ; $d0000
+        bra.w   snd_start               ; $d0004
+        bra.w   snd_stop                ; $d0008
+        bra.w   snd_setup               ; $d000c
+        bra.w   snd_live                ; $d0010  debugger entry for the snapshot gates (ends with jmp $12fd8)
 ; ---------------------------------------------------------------------------------------------------------------
 snd_tick:                               ; called by jsr from the sequencer: returns the flags of `tst.b $2c992.l`
         btst    #0,(FLAGS+3).l
@@ -210,6 +212,7 @@ snd_stop:                               ; replaces `move.l #$1b7fa,$1af3a.l` at 
 snd_setup:                              ; replaces `addq.l #8,a7 ; move.w #1,$2de66.l` ($11f0) after the FX.DAT tables are built by $1b83c
         movem.l d0-d7/a0-a6,-(a7)
         bsr.s   setup
+        move.b  #DEFMODE,(SV+o_mode).l
         movem.l (a7)+,d0-d7/a0-a6
         move.w  #1,$2de66.l             ; the displaced instructions
         move.l  (a7),8(a7)              ; addq.l #8,a7 under our return address
@@ -217,21 +220,8 @@ snd_setup:                              ; replaces `addq.l #8,a7 ; move.w #1,$2d
         rts
 setup:  btst    #0,(FLAGS+3).l
         beq.s   .out
-        tst.b   (SV+o_neg).l
-        bne.s   .mw
-        st      (SV+o_neg).l
-        movea.l ($2cba6).l,a0           ; chunk 0 = start of the sample area
-        move.l  #ENDFX,d0
-        sub.l   a0,d0
-.nl:    move.b  (a0),d1                 ; the YM table in $1af86 is an inverted ramp (louder = lower byte value): DMA = -sample
-        neg.b   d1
-        bvc.s   .st
-        subq.b  #1,d1                   ; -(-128) = +127
-.st:    move.b  d1,(a0)+
-        subq.l  #1,d0
-        bne.s   .nl
-.mw:    bsr.s   microwire
-.out:   rts
+        bsr.s   microwire               ; the chunk bytes are used as they are: signed PCM; the LMC1992 inverts the DMA signal, as the
+.out:   rts                             ; game's YM volume table does ($1af86: louder = lower byte value), so the polarity matches
 microwire:                              ; master 40 (0 dB), left/right 20 (0 dB), mix DMA with YM, treble/bass 6 (flat); bus error safe
         movea.l sp,a2
         movea.l $8.w,a1
@@ -252,8 +242,8 @@ microwire:                              ; master 40 (0 dB), left/right 20 (0 dB)
         bra.s   .out
 .cmds:  dc.w    $04e8,$0554,$0514,$0401,$0486,$0446
 ; ---------------------------------------------------------------------------------------------------------------
-snd_live:                               ; gates only: run from a snapshot's main loop with `r pc=$e0010` at pc = $13020
+snd_live:                               ; gates only: run from a snapshot's main loop with `r pc=$d0010` at the loop top pc = $12fd8
         movem.l d0-d7/a0-a6,-(a7)
         bsr     setup
         movem.l (a7)+,d0-d7/a0-a6
-        jmp     $13020.l
+        jmp     $12fd8.l
