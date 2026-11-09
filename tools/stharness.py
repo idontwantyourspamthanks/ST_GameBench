@@ -47,6 +47,9 @@ TOS = {
     "1.02": TOS_DIR / "TOS_1_02.img", "1.04": TOS_DIR / "TOS_1_04.img",
     "1.06": TOS_DIR / "TOS_1_06.img", "1.62": TOS_DIR / "TOS_1_62.img",
     "2.06": TOS_DIR / "TOS_2_06.img", "emutos": TOS_DIR / "EmuTOS_1024k.img",
+    "3.05": TOS_DIR / "TOS_3_05_us.img", "3.06": TOS_DIR / "TOS_3_06_uk.img",           # TT
+    "4.00": TOS_DIR / "TOS_4_00.img", "4.01": TOS_DIR / "TOS_4_01.img",                 # Falcon
+    "4.02": TOS_DIR / "TOS_4_02.img", "4.04": TOS_DIR / "TOS_4_04.img",
 }
 # Directory names that are project scaffolding, never game files.
 NOT_GAME = {"work", "tools", "build", "dist", "patches", ".omp", "tos", "__pycache__"}
