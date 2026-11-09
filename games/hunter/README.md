@@ -1,8 +1,19 @@
 # Hunter (PP's "Gamex" hard-disk version, 2010)
 
-Status: **set up; analysis not started.** Activision, 1991: a 3D open-world island game (vehicles, boats, aircraft).
+Status: **done** (HD and floppy releases, see `REPORT.md`). Activision, 1991: a 3D open-world island game (vehicles, boats, aircraft).
+
+Build: `tools/package.sh` (zips into `dist/`); play: `tools/play.sh [--floppy] [--original] [--machine ste]`.
 
 PP's packaging here is the older Gamex loader (`START.TOS` + `HUNTER.PCH` + `GXUT251.PRG`), not the HAGA system used by the Midwinter conversions. 1 MB minimum; ST(E), Mega ST(E), Falcon.
+
+## Floppy base (not included)
+
+The user supplies the Paper Bag floppy image in `alt/floppy/` (git-ignored); the floppy set is built from it. The sample bank is built from the user's Amiga ADF in `alt/amiga/`.
+
+| File | MD5 |
+|---|---|
+| `alt/floppy/Hunter (1991)(Activision)[cr Paper Bag].st` | `f50322aea685f52a8da0dd8e9c84e27a` |
+| `alt/amiga/Hunter (Activision).adf` | `83a56af67bc9ce4aa85b40656609f29f` |
 
 ## Files you need (not included)
 

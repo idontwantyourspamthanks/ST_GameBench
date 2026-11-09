@@ -1,0 +1,25 @@
+HUNTER (Activision 1991) - floppy version, standard-format two-disk set
+===============================================================================
+
+When to use this set
+  Use it only if your floppy drive or disk writer cannot handle the one-disk set (82 tracks x 11 sectors).
+  Both disks here are ordinary formats: disk 1 is the original 81 x 10 layout, disk 2 is a 720 KB disk.
+  Otherwise use the one-disk zip: it loads without a disk swap.
+
+What is in this set
+  HUNTER_disk1.st        the game disk (Paper Bag floppy release + new loader stage + patch code), 829440 bytes
+  HUNTER_disk2_sound.st  the sound disk (STE sample bank), 720 KB standard format
+
+How to start
+  Put HUNTER_disk1 in drive A (write enabled: the game saves to this disk) and switch on.
+  On an STE-class machine a screen asks for the sound disk: put disk 2 in drive A (or leave it in drive B if you
+  have one) and press RETURN or joystick FIRE; SPACE, ESC or joystick UP skips the sound (the original YM sound
+  is then used).  If disk 2 is in drive A the loader asks for disk 1 again before the game goes on.
+  A plain ST never asks: it keeps the YM sound.
+  Then press a key at the "Paper Bag presents" screen.  The title ignores keys while the game loads: wait until
+  the menu appears.  Save games with ESC / Disk Operation / Save Game.
+
+Requirements
+  1 MB RAM or more.  Joystick in port 1 (cursor keys + fire on emulators).
+
+Status: only the disk swap on one drive was cold-booted in Hatari; the second-drive and skip paths were not.

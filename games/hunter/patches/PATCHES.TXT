@@ -1,0 +1,25 @@
+Hunter (Activision 1991) - patched build of PP's Gamex hard-disk version
+
+What changed against the original release:
+- Faster 3D view on a stock 8 MHz ST/STE, pixel-identical to the original:
+  * the polygon filler was rewritten (rows outside the screen are skipped, edges are walked in blocks),
+  * the edge set-up avoids the slow divide when it is not needed,
+  * the joystick poll in the 50 Hz interrupt no longer waits 350 microseconds each time.
+  Together this is about 6.5% (standing) to 13.7% (walking) fewer CPU cycles per frame.
+- STE sound (STE, Mega STE, TT, Falcon): the YM sound effects are replaced by the Amiga
+  version's samples, played through the STE DMA sound chip (mono, 6258 Hz, two voices).
+  The engine pitch follows the speed, as on the Amiga. Costs about 0.2% of the CPU when
+  nothing plays, up to about 10% with two sounds. A plain ST keeps the original YM sound.
+- Every patch checks the original bytes it replaces first. If anything is not as
+  expected, nothing is changed and the game starts as before.
+- Nothing else in the game is changed: controls, game speed and saves work as in PP's release.
+
+How it is delivered:
+- START.TOS is replaced by a patched copy (unpacked); it also reads the extra file FILES\P
+  (patch code plus the sample bank) through the game's own disk loader, then starts the game.
+  If FILES\P is missing the game starts unpatched.
+
+Requirements and usage are as in README.TXT (1 MB RAM minimum).
+Run START.TOS from a hard disk as before (PP's HDDRIVER / AHDI setup).
+Tested on Hatari: STE (TOS 1.62) at 1 MB and 4 MB, Mega STE (TOS 2.06) at 4 MB, ST (TOS 1.04) at 1 MB.
+Not tested on real hardware.
