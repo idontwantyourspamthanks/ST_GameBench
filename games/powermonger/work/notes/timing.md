@@ -17,7 +17,7 @@ Gate tool: `tools/pmtick.py` (`live`, `rate`, `ab`, `input`; has its own tiny li
 | Displayed frame of every tick pass == unpatched frame of that tick | 32 of 32 byte-identical, get_men and battle_320 at 16 MHz |
 | Pointer / click / key responsiveness | same as the original at the same clock (section 6) |
 | Cold boot of a patched floppy (`pmpatch.py build --floppy`), 1 MB and 4 MB | marker `PMPO`, sites patched, 4.0 ticks/s at 8 and 16 MHz (section 7) |
-| Men interpolation, camera real-time scaling | NOT built; options and cost in section 9 |
+| Men interpolation | built later as `p3b_interp` + `p3b_delta` (predict-ahead, `; default: no`): `interp.md`. Camera real-time scaling NOT built |
 
 ## 1. What advances once per loop pass
 

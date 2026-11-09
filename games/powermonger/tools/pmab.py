@@ -286,7 +286,7 @@ def compare(B: dict, P: dict, a) -> tuple[bool, list[str], dict]:
     pm_ = {}
     for i, r in enumerate(P["recs"]):
         pm_.setdefault(keyof(r), []).append((i, r))
-    nback = nshown = 0
+    nback = nshown = nrdiff = 0
     paired = []
     for i, r in enumerate(P["recs"]):
         # the j-th frame of a key in the patched run is matched with the j-th of the same key in the base run
@@ -295,6 +295,10 @@ def compare(B: dict, P: dict, a) -> tuple[bool, list[str], dict]:
         if j >= len(cand):
             continue
         bi, br = cand[j]
+        if getattr(a, "tonly", False) and r["ron"]:       # --tonly: render-only frames are allowed to differ (p3b_interp draws them part-way into the next step)
+            if r["hb"] != br["hb"]:
+                nrdiff += 1
+            continue
         nback += 1
         if r["hb"] != br["hb"]:
             ok = False
@@ -303,7 +307,7 @@ def compare(B: dict, P: dict, a) -> tuple[bool, list[str], dict]:
         # shown buffer: same previous frame, same pointer, same buffer
         pp = P["recs"][i - 1] if i else None
         bp = B["recs"][bi - 1] if bi else None
-        if pp and bp and keyof(pp) == keyof(bp) and (a.neg or (r["x"], r["y"]) == (br["x"], br["y"])):
+        if pp and bp and keyof(pp) == keyof(bp) and (a.neg or (r["x"], r["y"]) == (br["x"], br["y"])) and not (getattr(a, "tonly", False) and pp["ron"]):
             nshown += 1
             if r["hs"] != br["hs"]:
                 ok = False
@@ -315,10 +319,10 @@ def compare(B: dict, P: dict, a) -> tuple[bool, list[str], dict]:
         if keyof(b1) != keyof(p1):
             notes.append(f"  NOTE flip 1 keys differ: base {keyof(b1)} patched {keyof(p1)}: the two runs did not start from the same emulated instant "
                          "(Hatari's cpuclock switch is applied at a wall-clock dependent moment), so the flip-by-number check is skipped; frames are matched by key")
-        elif b1["hb"] != p1["hb"]:
+        elif b1["hb"] != p1["hb"] and not (getattr(a, "tonly", False) and b1["ron"]):
             ok = False
             notes.append("  FLIP 1 DIFFERS: " + diff_desc(b1["sb"], p1["sb"]))
-    return ok, notes, dict(nback=nback, nshown=nshown, paired=paired)
+    return ok, notes, dict(nback=nback, nshown=nshown, paired=paired, nrdiff=nrdiff)
 
 
 def dup2(R: dict) -> tuple[int, int]:
@@ -352,6 +356,7 @@ def main():
     ap.add_argument("--walk", action="store_true", help="poke a different pointer position at every captured flip")
     ap.add_argument("--st", action="store_true", help="patched run with FLAGS=6 (plain-ST code path)")
     ap.add_argument("--poke", action="append", default=[], help="ADDR:HEXBYTES written in the patched run at the apply flip (repeatable), e.g. bd400:0002")
+    ap.add_argument("--tonly", action="store_true", help="only tick-pass (T) frames are hard comparisons; render-only (R) frames that differ are counted (p3b_interp)")
     ap.add_argument("--no-fps", action="store_true")
     ap.add_argument("--neg", action="store_true", help="negative control: the BASE run walks the pointer, the patched run holds it still, and the shown "
                     "buffers are compared regardless of the pointer position: the gate must report DIFFER")
@@ -384,7 +389,7 @@ def main():
                 acc["bw"] += B["work"]; acc["pw"] += P["work"]
                 acc["bf"] += B["flips"]; acc["pf"] += P["flips"]
                 acc["bwin"] += B["window"]; acc["pwin"] += P["window"]
-                acc["nback"] += st["nback"]; acc["nshown"] += st["nshown"]
+                acc["nback"] += st["nback"]; acc["nshown"] += st["nshown"]; acc["nrdiff"] = acc.get("nrdiff", 0) + st["nrdiff"]
                 d2 = dup2(B)
                 acc["d2"] = acc.get("d2", 0) + d2[0]; acc["d2n"] = acc.get("d2n", 0) + d2[1]
                 rr = rr_pairs(B)
@@ -393,7 +398,7 @@ def main():
                 acc["ppw"] += [r["work"] for br, r in st["paired"] if br["work"] is not None and r["work"] is not None]
             ok_all &= ok
             res = "IDENTICAL" if ok else "DIFFER"
-            line = f"{sn} @{mhz} MHz: {res} (back frames matched {acc['nback']}, shown+pointer matched {acc['nshown']}, flips captured {len(P['recs'])}/{len(B['recs'])})"
+            line = f"{sn} @{mhz} MHz: {res} (back frames matched {acc['nback']}, shown+pointer matched {acc['nshown']}{', R frames differing (allowed) ' + str(acc.get('nrdiff', 0)) if a.tonly else ''}, flips captured {len(P['recs'])}/{len(B['recs'])})"
             if not a.no_fps:
                 bw, pw = mean(acc["bw"]), mean(acc["pw"])
                 bf = 50.0 * acc["bf"] / acc["bwin"] if acc["bwin"] else 0.0

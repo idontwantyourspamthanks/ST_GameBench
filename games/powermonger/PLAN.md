@@ -22,3 +22,4 @@ Study: `work/notes/{boot,baseline,frameloop,hotpaths,entities}.md`.
 - **P2 Timing** (`PMTiming`): fixed tick. Prototyped live on snapshots in parallel with P1.
 - **P3 Performance and sound:** items 2–7 above.
 - **P4 Overdraw culling (approval needed), regression, packaging** (HD and floppy zips, launcher, report).
+- **P5 Men interpolation** (2026-11-09, user decision: predict-ahead / extrapolation, world still 4 ticks/s): `p3b_interp` + `p3b_delta`, `; default: no`; `work/notes/interp.md`.

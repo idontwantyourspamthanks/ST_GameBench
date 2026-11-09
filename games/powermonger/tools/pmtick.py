@@ -197,9 +197,10 @@ DUMP_LEN = 0x60000
 # ranges that legitimately differ between runs (interrupt-driven or scratch): screens + stack scratch, VBL/mouse/pointer/sample IRQ state,
 # the sound queue (expiry times from $6f304), the ping-pong of $2df72-$2df8e (click latch, VBL flag, screen pointers)
 MASKS = [(0x1C700, 0x2C100, "screens"), (0x2C100, 0x2CC00, "stack"),
-         (0x1AF30, 0x1AF40, "sample irq pointer"), (0x1C480, 0x1C4E0, "mouse/pointer"), (0x2DF74, 0x2DF84, "click latch, screen pointers"), (0x2DF88, 0x2DF90, "VBL flag"),
+         (0x1AF30, 0x1AF40, "sample irq pointer"), (0x1C480, 0x1C550, "mouse/pointer + its save area"), (0x2DF74, 0x2DF84, "click latch, screen pointers"), (0x2DF88, 0x2DF90, "VBL flag"),
          (0x12952, 0x12CA0, "sound queue"), (0x58050, 0x58070, "sound channels"), (0xE3E2, 0xE3E6, "draw ptr scratch"), (0x12F58, 0x12F5A, "flip flag"),
-         (0x8830, 0x8840, "scratch")]
+         (0x8830, 0x8840, "scratch"), (0x2DEA4, 0x2DEA6, "key table, Alt: transient host input noise, also seen between two tick-only runs"),
+         (0x2DF9E, 0x2DFA0, "right-button latch written by the IKBD handler in the VBL ($12d6-$136c): input event, time dependent")]
 
 
 def log_passes(h, live, mhz, vbls, tag, poke=()):
@@ -243,7 +244,7 @@ def log_passes(h, live, mhz, vbls, tag, poke=()):
     return [(L(b, ITER), L(b, TICKCNT), b) for b in got]
 
 
-SITE_MASKS = [(0x13020, 0x13026), (0x13074, 0x1307C), (0x130B0, 0x130B6), (0x130C2, 0x130C8), (0x12F8, 0x12FC), (0x1354, 0x1358), (0x1373E, 0x13742)]   # the patched sites themselves
+SITE_MASKS = [(0x13020, 0x13026), (0x13074, 0x1307C), (0x130B0, 0x130B6), (0x130C2, 0x130C8), (0x12F8, 0x12FC), (0x1354, 0x1358), (0x1373E, 0x13742), (0x130AA, 0x130B0), (0x130C8, 0x130CE)]   # the patched sites themselves
 
 
 def masked(a):
