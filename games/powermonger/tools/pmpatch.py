@@ -9,7 +9,7 @@ Full reverse-engineering notes and evidence: work/notes/loading.md.
     python3 tools/pmpatch.py live  [--only N ...] [--out build/live/patches] [--samples FILE] [--no-ste]
     python3 tools/pmpatch.py boot  [--disk build/floppy/powermonger.st | --hd build/hd/ [--acsi]] [--machine ste] [--tos 1.62]
                                    [--mem 1024] [--peek ADDR:LEN] [--peek1 ADDR:LEN] [--fill build/<kind>.json --scenario]
-                                   [--call ADDR] [--dump F] [--shots DIR]
+                                   [--call ADDR] [--saveload] [--dump F] [--shots DIR]
 
 Default patch set: empty (every patches/*.s except core.s is `; default: no`); --only selects.  The build with no patch
 is NOT pristine: it still carries the front stub, the payload core and the two hook edits.
@@ -72,14 +72,17 @@ FRONT_ORIG = bytes.fromhex("42a73f3c00204e41")   # clr.l -(a7); move.w #$20,-(a7
 
 # ---- payload layout ($B8000..$EFFFF) ----------------------------------------------------------------------------
 IMG_BASE, IMG_END = 0xB8000, 0xF0000
-SAMPLE_BASE = 0xD0000
+SAMPLE_BASE, SAMPLE_END = 0xD0000, 0xDD000          # sample bank limit = the snd_ range
+HD_SWAP_BASE = 0xDD000                              # reserved: swap buffer S of the HD build (patches/hd_core.s: TOS's low-RAM region R)
+HD_SWAP_END = 0xF6000                               # S may spill past IMG_END up to here ($F0000..$F7F45 is never touched: loading.md section 5)
+HD_WINDOW = (0xBD000, 0xDD000)                      # the HD build's overlay window (hd_core.s OVL): stage 1's SPRITE40.DAT is read here
 HOOK1, HOOK2, APPLY = IMG_BASE + 0x100, IMG_BASE + 0x140, IMG_BASE + 0x190
 CORE_ORGS = {"front": 0x0, "entry": IMG_BASE, "hook1": HOOK1, "hook2": HOOK2, "apply": APPLY}
 PREFIX_RANGES = {                         # blob orgs allowed per patch-name prefix (shared contract, inclusive ends)
     "tick_": (0xB8800, 0xBAFFF), "p3b_": (0xB8800, 0xBAFFF), "test_": (0xCE000, 0xCFFFF),
     "hd_": (0xBB000, 0xBCFFF),
     "p4_": (0xBD000, 0xCDFFF),
-    "snd_": (0xD0000, 0xEFFFF),
+    "snd_": (0xD0000, 0xDCFFF),      # $DD000..$EFFFF: reserved for the real-hardware HD build's TOS swap buffer
 }
 
 
@@ -425,7 +428,7 @@ def fill_byte(a: int) -> int:
     return 1 + ((a * 167 + (a >> 8) * 53) % 251)
 
 
-def build_image(patches: list[Patch], samples: bytes | None = None, corrupt: bool = False):
+def build_image(patches: list[Patch], samples: bytes | None = None, corrupt: bool = False, hd: bool = False):
     """Returns (flat image bytes for $B8000.. (zeros where nothing is stored), sites, used spans, zero spans).  The zero spans
     (`; data:` reservations and the init-table / FLAGS / MARKER area) are cleared by `front` at boot; everything else that is
     zero in the flat image is simply not stored (see pack_records)."""
@@ -475,13 +478,16 @@ def build_image(patches: list[Patch], samples: bytes | None = None, corrupt: boo
                 raise SystemExit(f"{p.name}: data ${a:x}+{ln} outside the range of its prefix")
             used.append((a, a + ln))
     if samples is not None:
-        if SAMPLE_BASE + len(samples) > IMG_END:
-            raise SystemExit(f"samples {len(samples)} B exceed ${SAMPLE_BASE:x}..${IMG_END - 1:x} ({IMG_END - SAMPLE_BASE} B)")
+        if SAMPLE_BASE + len(samples) > SAMPLE_END:
+            raise SystemExit(f"samples {len(samples)} B exceed ${SAMPLE_BASE:x}..${SAMPLE_END - 1:x} ({SAMPLE_END - SAMPLE_BASE} B)")
         used.append((SAMPLE_BASE, SAMPLE_BASE + len(samples)))
     used.sort()
     for (a0, a1), (b0, b1) in zip(used, used[1:]):
         if a1 > b0:
             raise SystemExit(f"image overlap: ${a0:x}-${a1:x} vs ${b0:x}-${b1:x}")
+    for a0, a1 in used:
+        if a1 > HD_SWAP_BASE and a0 < IMG_END:      # every build keeps it free: the HD build's TOS swap buffer lives here
+            raise SystemExit(f"payload ${a0:x}-${a1 - 1:x} overlaps ${HD_SWAP_BASE:x}..${IMG_END - 1:x}, reserved for the HD build's TOS swap buffer")
     end = (max(a1 for _, a1 in used) + 3) & ~3
     img = bytearray(end - IMG_BASE)
     for key in ("entry", "hook1", "hook2", "apply"):
@@ -497,6 +503,8 @@ def build_image(patches: list[Patch], samples: bytes | None = None, corrupt: boo
     if samples is not None:
         img[SAMPLE_BASE - IMG_BASE:SAMPLE_BASE - IMG_BASE + len(samples)] = samples
     zeros = [(d, d + ln) for p in patches for d, ln in p.data] + [(UINITTBL, IMG_BASE + 0x800)]
+    if hd:
+        used.append((HD_SWAP_BASE, IMG_END))         # (S spills up to HD_SWAP_END, which is outside the free-RAM proof anyway)
     return bytes(img), sites, used, zeros
 
 
@@ -655,6 +663,52 @@ def read_samples(path):
     return Path(path).read_bytes() if path else None
 
 
+def late_records(flat: bytes, used, zeros) -> bytes:
+    """DATA-folder file PMLATE.DAT of the HD build (hd_core.s): the payload bytes inside HD_WINDOW, as records {dest.l, len.l
+    [bit 31 = zero fill], bytes} and a terminating {0, 0}.  Stage 1's DATA\\SPRITE40.DAT is read into that window (its destination
+    is inside TOS's low-RAM region, so it cannot be read in place) and hd_load reads these records back straight after the plain
+    copy of the file to its destination, i.e. before the game proper exists and before any init or patch of stage 2 runs.
+    Only the used spans are written (no merging): the free RAM around them must keep whatever it held (free-RAM proof).
+    The records are checked by applying them to an image of the window as the overlay leaves it."""
+    lo, hi = HD_WINDOW
+    zset = sorted(zeros)
+    recs = bytearray()
+    for a, b in sorted(used):
+        a, b = max(a, lo), min(b, hi)
+        if b <= a:
+            continue
+        zero = any(z0 <= a and b <= z1 for z0, z1 in zset)
+        if not zero and any(a < z1 and z0 < b for z0, z1 in zset):
+            raise SystemExit(f"used span ${a:x}-${b - 1:x} is only partly a zero-fill span: cannot restore it")
+        if zero:
+            recs += struct.pack(">II", a, 0x80000000 | (b - a))
+        else:
+            recs += struct.pack(">II", a, b - a) + flat[a - IMG_BASE:b - IMG_BASE]
+    recs += struct.pack(">II", 0, 0)
+    # assertion: the overlay is dead before anything of the payload is used again.  Simulate: window full of file bytes (0xEE),
+    # apply the records, compare with the payload as `front` leaves it (used spans = flat bytes / zero for data spans).
+    sim = bytearray(b"\xee" * (hi - lo))
+    i = 0
+    while True:
+        dest, ln = struct.unpack_from(">II", recs, i)
+        i += 8
+        if dest == 0:
+            break
+        if ln & 0x80000000:
+            ln &= 0x7FFFFFFF
+            sim[dest - lo:dest - lo + ln] = bytes(ln)
+        else:
+            sim[dest - lo:dest - lo + ln] = recs[i:i + ln]
+            i += ln
+    for a, b in used:
+        a, b = max(a, lo), min(b, hi)
+        for x in range(a, b):
+            want = 0 if any(z0 <= x < z1 for z0, z1 in zset) else flat[x - IMG_BASE]
+            if sim[x - lo] != want:
+                raise SystemExit(f"PMLATE.DAT does not restore ${x:x}")
+    return bytes(recs)
+
+
 def build_floppy(out: Path, img: bytes, patches):
     prg, front = build_war(img, any(p.stage == 1 for p in patches))
     fat = Fat12(disk_image())
@@ -666,11 +720,27 @@ def build_floppy(out: Path, img: bytes, patches):
     print(f"floppy: {out / 'powermonger.st'}  WAR.PRG {len(prg)} B ({nclu} clusters), free on disk {before} -> {fat.free_bytes()} B")
 
 
-def build_hd(out: Path, img: bytes, patches):
+def hd_equs() -> dict[str, int]:
+    """The equates of patches/hd_core.s, checked against the shared constants of this file (swap buffer, overlay window)."""
+    e = {}
+    for line in (PATCHDIR / "hd_core.s").read_text().splitlines():
+        m = re.match(r"^(\w+)\s+equ\s+\$([0-9a-fA-F]+)\s*(;.*)?$", line)
+        if m:
+            e[m.group(1)] = int(m.group(2), 16)
+    if not (e["SBASE"] == HD_SWAP_BASE and e["SBASE"] + e["SMAX"] == HD_SWAP_END and e["OVL"] == HD_WINDOW[0]
+            and e["OVL"] + e["OVLMAX"] == HD_WINDOW[1]):
+        raise SystemExit("hd_core.s SBASE/SMAX/OVL/OVLMAX do not match HD_SWAP_BASE/HD_SWAP_END/HD_WINDOW in pmpatch.py")
+    return e
+
+
+def build_hd(out: Path, img: bytes, patches, late: bytes):
     """A GEMDOS folder: AUTO\\WAR.PRG (same carrier), DATA\\*.DAT extracted from the disk image (SPRITE40.DAT patched) and
     the initial save-game disk SAVEDISK.DAT; the hd_* patches replace the game's FAT12/FDC code by GEMDOS calls."""
     prg, front = build_war(img, any(p.stage == 1 for p in patches))
     fat = Fat12(disk_image())
+    hd_equs()
+    if len(build_spr()) > HD_WINDOW[1] - HD_WINDOW[0]:
+        raise SystemExit(f"DATA\\SPRITE40.DAT ({len(build_spr())} B) does not fit the overlay window ${HD_WINDOW[0]:x}..${HD_WINDOW[1] - 1:x}")
     if out.exists():
         shutil.rmtree(out)
     (out / "AUTO").mkdir(parents=True)
@@ -691,7 +761,8 @@ def build_hd(out: Path, img: bytes, patches):
         raise SystemExit("save-disk boot block at $1bb0e not found in the stage 2 image")
     save[:512] = blk
     (out / "SAVEDISK.DAT").write_bytes(bytes(save))
-    print(f"hd: {out}  AUTO/WAR.PRG {len(prg)} B, DATA/ {len(names)} files, SAVEDISK.DAT {len(save)} B")
+    (out / "PMLATE.DAT").write_bytes(late)
+    print(f"hd: {out}  AUTO/WAR.PRG {len(prg)} B, DATA/ {len(names)} files, SAVEDISK.DAT {len(save)} B, PMLATE.DAT {len(late)} B")
 
 
 def cmd_build(patches, out: Path, floppy: bool, hd: bool, samples, corrupt, all_patches):
@@ -704,10 +775,13 @@ def cmd_build(patches, out: Path, floppy: bool, hd: bool, samples, corrupt, all_
     for kind, want, plist in (("floppy", floppy or both, fpatches), ("hd", hd or both, hpatches)):
         if not want:
             continue
-        flat, sites, used, zeros = build_image(plist, samples, corrupt=corrupt)
+        flat, sites, used, zeros = build_image(plist, samples, corrupt=corrupt, hd=(kind == "hd"))
         img = pack_records(flat, zeros)
         print(f"{kind}: payload ${IMG_BASE:x}..${IMG_BASE + len(flat) - 1:x} stored as {len(img)} B of records, {len(sites)} site(s)")
-        (build_floppy if kind == "floppy" else build_hd)(out / kind, img, plist)
+        if kind == "floppy":
+            build_floppy(out / kind, img, plist)
+        else:
+            build_hd(out / kind, img, plist, late_records(flat, used, zeros))
         man = dict(kind=kind, patches=[p.name for p in plist], image_base=IMG_BASE, image_len=len(flat), records_len=len(img),
                    used=[[a, b] for a, b in used],
                    sites=[dict(name=s["name"], stage=s["stage"], addr=s["addr"], orig=s["orig"].hex(), new=s["new"].hex())
@@ -751,6 +825,17 @@ def make_pm(disk: Path | None, hd: Path | None, acsi: bool = False, **kw):
         orig_key(keysym, hold)
 
     h.key = key
+    orig_peekw = h.peekw
+
+    def peekw(addr):                  # the debugger's answer can come late on a loaded host: ask again
+        for _ in range(8):
+            try:
+                return orig_peekw(addr)
+            except IndexError:
+                time.sleep(1.0)
+        return orig_peekw(addr)
+
+    h.peekw = peekw
     return h
 
 
@@ -775,6 +860,10 @@ def _make_pm(pm, disk, hd, acsi=False, **kw):
                 hunter.build_hd(R / "hd.img", game=folder, autorun="C:\\NONE.TOS")
                 extra += ["--gemdos-drive", "skip", "--acsi", f"0={R / 'hd.img'}"]
                 kw2["files"] = []
+            if kw2.get("snapshot"):      # a memstate made by a run of the same kind: its scratch paths are retargeted to this one
+                snap_in = R / "snap_in.sav"
+                pm.retarget_snapshot(kw2["snapshot"], snap_in, R)
+                kw2["snapshot"] = str(snap_in)
             old = os.environ.get("HOME")
             os.environ["HOME"] = str(home)
             try:
@@ -801,7 +890,7 @@ def free_spans(manifest: Path):
     return [(lo, hi) for lo, hi in spans if hi > lo]
 
 
-def fill_report(name: str, d: bytes, spans) -> bool:
+def fill_report(name: str, d: bytes, spans, swap: tuple[int, int] | None = None) -> bool:
     n = bad = 0
     runs = []
     for lo, hi in spans:
@@ -813,12 +902,120 @@ def fill_report(name: str, d: bytes, spans) -> bool:
                     runs[-1][1] = a
                 else:
                     runs.append([a, a])
-    topnz = [a for a in range(IMG_END, 0xF7FC8) if d[a]]
+    pat = {a for lo, hi in spans if hi > IMG_END for a in range(max(lo, IMG_END), hi)}      # (HD: the part of $F0000.. that holds the pattern too)
+    topnz = [a for a in range(IMG_END, 0xF7FC8) if d[a] and a not in pat and not (swap and swap[0] <= a < swap[1])]
     top = f"{len(topnz)}" + (f" at {[hex(a) for a in topnz[:8]]}" if topnz else "")
-    print(f"  fill[{name}]: {n} pattern bytes in ${IMG_BASE + 0x800:x}..${IMG_END - 1:x}, {bad} changed"
+    print(f"  fill[{name}]: {n} pattern bytes in the free spans of ${IMG_BASE + 0x800:x}..${IMG_END - 1:x} (HD: and ${IMG_END:x}..${HD_SWAP_END - 1:x} beyond the swap buffer), {bad} changed"
           + (f" first runs {[(hex(x), hex(y)) for x, y in runs[:6]]}" if bad else "")
-          + f"; ${IMG_END:x}..$f7fc7 non-zero bytes: {top}")
+          + f"; ${IMG_END:x}..$f7fc7 non-zero bytes: {top}" + (f" (swap buffer spill ${swap[0]:x}..${swap[1] - 1:x} excluded)" if swap else ""))
     return bad == 0
+
+
+REF = ROOT / "work" / "ref"
+STATE = (0x3F768, 198 * 512)             # the game state a save slot holds (loading.md section 2.4): $c6 sectors at $3f768
+
+
+def find_btn(h, ref: str, region=(96, 58, 736, 458), quiet: bool = False):
+    """ST-pixel centre of the best match of work/ref/<ref> in the game screen of a screenshot, or None (a dialog of the game
+    opens at a position that depends on the pointer, so buttons are found, not clicked at fixed places)."""
+    import numpy as np
+    from numpy.lib.stride_tricks import sliding_window_view
+    from PIL import Image
+    img = np.asarray(Image.open(h.shot()).convert("L"), dtype=np.int16)
+    tpl = np.asarray(Image.open(REF / ref).convert("L"), dtype=np.int16)
+    th, tw = tpl.shape
+    x0, y0, x1, y1 = region
+    sub = img[y0:y1, x0:x1]
+    best = (1e9, None)
+    for ys in range(0, sub.shape[0] - th + 1, 40):
+        win = sliding_window_view(sub[ys:min(ys + 40 + th - 1, sub.shape[0])], (th, tw))
+        d = np.abs(win - tpl).mean(axis=(2, 3))
+        i = np.unravel_index(np.argmin(d), d.shape)
+        if d[i] < best[0]:
+            best = (float(d[i]), (x0 + i[1] + tw // 2, y0 + ys + i[0] + th // 2))
+    if best[0] > 12.0:
+        if not quiet:
+            print(f"  find_btn: {ref} not found (best match {best[0]:.1f})")
+            shutil.copy(h.shot(), f"/tmp/pm_find_{ref}")
+        return None
+    return (int(best[1][0] - 96) // 2, int(best[1][1] - 58) // 2)
+
+
+def file_dialog(h, button: str, arm=None):
+    """Option symbol -> FILE -> `button` (pm_btn_load.png / pm_btn_save.png): the game's own save / load menu, slot A.  `arm()` runs
+    right before the last click (a conditional breakpoint slows the emulation down, so it is set as late as possible)."""
+    for _try in range(3):
+        h.click_st(72, 138, wait=2.0)                       # the Option symbol (top-left of the command panel)
+        p = find_btn(h, "pm_btn_file.png")
+        if p is None:
+            continue
+        h.click_st(*p, wait=2.0)
+        p = find_btn(h, button)
+        if p is not None:
+            h.goto_st(*p)
+            if arm:
+                arm()
+            h.click()
+            time.sleep(1.0)
+            return True
+    return False
+
+
+def run_saveload(h, acsi: bool) -> bool:
+    """Save to slot A through the game's menu, let the game run, load slot A through the menu, and compare.  The state a slot
+    holds ($3f768, $c6 sectors) is captured by the debugger at hd_sector's entry of the write (the buffer being written) and at
+    the load call's return into the game ($1bdd8: right after the read, before the game touches it); the file on the disk
+    (SAVEDISK.DAT in the ACSI image or the GEMDOS folder) is compared with it as well."""
+    out = h.R / "sl"
+    out.mkdir(exist_ok=True)
+    lo, n = STATE
+    for f in out.glob("*.bin"):
+        f.unlink()
+    n_ok = 0
+    (h.R / "sv.txt").write_text(f"savebin {out}/save.bin ${lo:x} ${n:x}\n")
+    if not file_dialog(h, "pm_btn_save.png", lambda: h.cmd(f"hatari-debug b pc = $bb00c && d3 = $8001 && d2 = $c6 :trace :once :file {h.R / 'sv.txt'}")):
+        print("  saveload: the FILE / SAVE buttons were not found")
+        return False
+    t = time.time()
+    while not (out / "save.bin").exists() or (out / "save.bin").stat().st_size < n:
+        if time.time() - t > 90:
+            print("  saveload: the save never reached hd_sector")
+            return False
+        time.sleep(1)
+        p = find_btn(h, "pm_btn_ok.png", quiet=True)        # the game asks before it overwrites a slot that is in use
+        if p is not None and n_ok < 3:
+            n_ok += 1
+            h.click_st(*p, wait=1.0)
+    time.sleep(5)                                           # the game runs on: the state moves away from the saved one
+    h.debug(f"savebin {out}/pre.bin ${lo:x} ${n:x}", 3.0)
+    (h.R / "l2.txt").write_text(f"savebin {out}/load.bin ${lo:x} ${n:x}\n")
+    (h.R / "l1.txt").write_text(f"b pc = $1bdd8 :trace :once :file {h.R / 'l2.txt'}\n")
+    if not file_dialog(h, "pm_btn_load.png", lambda: h.cmd(f"hatari-debug b pc = $bb00c && d3 = $8000 && d2 = $c6 :trace :once :file {h.R / 'l1.txt'}")):
+        print("  saveload: the FILE / LOAD buttons were not found")
+        return False
+    t = time.time()
+    while not (out / "load.bin").exists() or (out / "load.bin").stat().st_size < n:
+        if time.time() - t > 60:
+            print("  saveload: the load never returned")
+            return False
+        time.sleep(1)
+    time.sleep(2)
+    sv, pre, ld = ((out / f"{k}.bin").read_bytes() for k in ("save", "pre", "load"))
+    d_sl = sum(a != b for a, b in zip(sv, ld))
+    d_sp = sum(a != b for a, b in zip(sv, pre))
+    if acsi:
+        sd = subprocess.run(["mcopy", "-i", f"{h.R / 'hd.img'}@@{2 * 512}", "::SAVEDISK.DAT", str(out / "sd.dat")], capture_output=True,
+                            env=dict(os.environ, MTOOLS_SKIP_CHECK="1"))
+        disk = (out / "sd.dat").read_bytes() if sd.returncode == 0 else b""
+    else:
+        f = h.R / "C" / "SAVEDISK.DAT"
+        disk = f.read_bytes() if f.exists() else b""
+    d_disk = disk[512:512 + n] == sv
+    ok = d_sl == 0 and d_sp > 0 and d_disk and len(disk) == 800 * 512 and disk[:4] == b"POWE"
+    print(f"  saveload: state {n} B; saved vs loaded: {d_sl} differ; saved vs the state just before the load: {d_sp} differ; "
+          f"SAVEDISK.DAT slot A == saved: {d_disk} ({len(disk)} B); game iterates: {h.in_game()}")
+    return ok and h.in_game()
+
 
 
 def run_call(h, addr: int) -> bool:
@@ -842,7 +1039,7 @@ def run_call(h, addr: int) -> bool:
 
 
 def cmd_boot(disk, hd, machine, tos, mem, shots, peeks, dump, stop_at_title=False, fill=None, scenario=False, peeks1=None, call=None,
-             acsi=False):
+             acsi=False, saveload=False):
     sys.path.insert(0, str(HERE))
     import pm  # noqa: E402
     h = None
@@ -851,14 +1048,28 @@ def cmd_boot(disk, hd, machine, tos, mem, shots, peeks, dump, stop_at_title=Fals
         spans = []
         if fill:
             spans = free_spans(Path(fill))
+            if hd is not None:      # the swap buffer may spill past $EFFFF (hd_core.s SMAX): prove the rest of $F0000..$F5FFF free as well
+                t = time.time()
+                while h.peekl(0xBC000) != int.from_bytes(b"HDSW", "big"):      # hd_core `init` has run (long before the stage 2 hand-over)
+                    if time.time() - t > 120:
+                        raise TimeoutError("hd_core init never set READY")
+                    time.sleep(2)
+                s_end = (HD_SWAP_BASE + h.peekl(0xBC008) + 3) & ~3
+                if s_end < HD_SWAP_END:
+                    spans.append((max(s_end, IMG_END), HD_SWAP_END))
             lines = []
             for i, (lo, hi) in enumerate(spans):
                 f = h.R / f"f{i}.bin"
                 f.write_bytes(bytes(fill_byte(a) for a in range(lo, hi)))
                 lines.append(f"loadbin {f} ${lo:x}")
             (h.R / "fill.txt").write_text("\n".join(lines) + "\n")
-            h.cmd(f"hatari-debug b pc = ${BASE1:x} && (${BASE1:x}).w = $4eb9 :trace :once :file {h.R / 'fill.txt'}")
-            print(f"  fill armed at the stage 1 hand-over: {len(spans)} span(s), {sum(hi - lo for lo, hi in spans)} bytes")
+            if hd is not None:      # the HD build reads stage 1's SPRITE40.DAT through the overlay window (hd_core.s): free bytes in it hold that
+                                    # file afterwards by design, so its proof starts at the game's hand-over (the stage 1 half is the floppy's)
+                base, first, what = BASE2, 0x41F9, "stage 2"
+            else:
+                base, first, what = BASE1, 0x4EB9, "stage 1"
+            h.cmd(f"hatari-debug b pc = ${base:x} && (${base:x}).w = ${first:x} :trace :once :file {h.R / 'fill.txt'}")
+            print(f"  fill armed at the {what} hand-over: {len(spans)} span(s), {sum(hi - lo for lo, hi in spans)} bytes")
         if peeks1:
             (h.R / "peek1.txt").write_text("".join(f"m ${pk.partition(':')[0].lstrip('$')} {pk.partition(':')[2] or 8}\n" for pk in peeks1))
             h.cmd(f"hatari-debug b pc = $1360 :trace :once :file {h.R / 'peek1.txt'}")      # stage 1's `jmp $1008.w`, after its load
@@ -886,19 +1097,26 @@ def cmd_boot(disk, hd, machine, tos, mem, shots, peeks, dump, stop_at_title=Fals
                     print("   ", ln)
         if call:
             ok &= run_call(h, call)
+        if saveload:
+            ok &= run_saveload(h, acsi)
+        swap = None
+        if fill and hd is not None:
+            rlen = h.peekl(0xBC008)                       # hd_core.s RLEN: the swap buffer's length in this run
+            swap = (HD_SWAP_BASE, HD_SWAP_BASE + rlen)
+            print(f"  HD swap buffer: R = [$8, ${8 + rlen:x}) = {rlen} B at ${HD_SWAP_BASE:x}..${HD_SWAP_BASE + rlen - 1:x}, READY={h.peekl(0xBC000).to_bytes(4, 'big')!r}")
         if fill:
-            ok &= fill_report("map view", h.ram(0, 0x100000), spans)
+            ok &= fill_report("map view", h.ram(0, 0x100000), spans, swap)
         if scenario:
             n = h.scenario_get_men()
             print(f"  get_men: {n} people moving")
             if fill:
-                ok &= fill_report("get_men", h.ram(0, 0x100000), spans)
+                ok &= fill_report("get_men", h.ram(0, 0x100000), spans, swap)
             t = time.time()
             while h.iter_count() < 340 and time.time() - t < 240:
                 time.sleep(5)
             print(f"  battle: iteration {h.iter_count()}, MARKER={h.peekl(MARKER).to_bytes(4, 'big')!r}")
             if fill:
-                ok &= fill_report("battle", h.ram(0, 0x100000), spans)
+                ok &= fill_report("battle", h.ram(0, 0x100000), spans, swap)
         if dump:
             Path(dump).parent.mkdir(parents=True, exist_ok=True)
             Path(dump).write_bytes(h.ram(0, 0x100000))
@@ -908,7 +1126,9 @@ def cmd_boot(disk, hd, machine, tos, mem, shots, peeks, dump, stop_at_title=Fals
             h.shot(str(Path(shots) / f"{machine}_{tos}_{mem}.png"))
         return 0 if ok else 2
     except Exception as e:                      # noqa: BLE001
-        print(f"BOOT FAILED machine={machine} tos={tos} mem={mem}K: {e}")
+        print(f"BOOT FAILED machine={machine} tos={tos} mem={mem}K: {e!r}")
+        import traceback
+        traceback.print_exc()
         if h is not None:
             try:
                 print(f"  MARKER={h.peekl(MARKER).to_bytes(4, 'big')!r} FLAGS={h.peekl(FLAGS):#x}")
@@ -982,6 +1202,8 @@ def main():
     bo.add_argument("--title", action="store_true", help="only reach the title/intro (no game navigation)")
     bo.add_argument("--fill", help="manifest (build/<kind>.json): load a position-dependent pattern into every unused byte of $B8800..$EFFFF "
                                    "at the stage 1 hand-over and compare it afterwards (free-RAM proof)")
+    bo.add_argument("--saveload", action="store_true", help="after the map view: save to slot A through the game's own menu, load it back, compare "
+                                                            "(needs work/ref/pm_btn_{file,load,save}.png)")
     bo.add_argument("--scenario", action="store_true", help="after the map view: get_men, then wait for the battle (iteration 340)")
     a = ap.parse_args()
     patches = load_all()
@@ -997,7 +1219,7 @@ def main():
         cmd_live(selected(patches, a.only), Path(a.out), read_samples(a.samples), not a.no_ste)
     elif a.cmd == "boot":
         sys.exit(cmd_boot(Path(a.disk) if a.disk else None, Path(a.hd) if a.hd else None, a.machine, a.tos, a.mem,
-                          a.shots, a.peek, a.dump, a.title, a.fill, a.scenario, a.peek1, hx(a.call) if a.call else None, a.acsi))
+                          a.shots, a.peek, a.dump, a.title, a.fill, a.scenario, a.peek1, hx(a.call) if a.call else None, a.acsi, a.saveload))
 
 
 if __name__ == "__main__":
