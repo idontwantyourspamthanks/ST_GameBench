@@ -1,0 +1,13 @@
+### stand, units frozen (poke $2baec=$ffff), apply at +300 VBL
+stand --flips 10: window IDENTICAL; HUD bytes differing (buffer: n, rows) {'b58': (0, []), 'b68': (0, []), 'b78': (0, [])}; state-word offsets that differ {'s3b': ['0x1', '0x3']}; flips/1000VBL 78 -> 78; cycles/frame 1996496 -> 1996496 (+0.0 %)
+stand --flips 40: window IDENTICAL; HUD bytes differing (buffer: n, rows) {'b58': (0, []), 'b68': (0, []), 'b78': (0, [])}; state-word offsets that differ {'s3b': ['0x1', '0x3', '0x5', '0x21']}
+stand --flips 100: window IDENTICAL; HUD bytes differing (buffer: n, rows) {'b58': (25, [192, 193, 194, 195, 196, 197]), 'b68': (31, [192, 193, 194, 195, 196, 197]), 'b78': (21, [192, 193, 194, 195, 196, 197])}; state-word offsets that differ {'slot': ['0x39', '0x45', '0x52', '0x53'], 's3b': ['0x1', '0x5']}
+WINDOW ALL IDENTICAL
+### moving phase (apply right after restore): walk turn busy
+walk --flips 8: window IDENTICAL; HUD bytes differing (buffer: n, rows) {'b58': (0, []), 'b68': (0, []), 'b78': (0, [])}; state-word offsets that differ {}; flips/1000VBL 127 -> 162; cycles/frame 1231828 -> 965506 (-21.6 %)
+walk --flips 40: window IDENTICAL; HUD bytes differing (buffer: n, rows) {'b58': (0, []), 'b68': (0, []), 'b78': (0, [])}; state-word offsets that differ {'s3b': ['0x1', '0x5']}
+turn --flips 8: window DIFFER {'b58': 0, 'b68': 0, 'b78': 188}; HUD bytes differing (buffer: n, rows) {'b58': (0, []), 'b68': (0, []), 'b78': (0, [])}; state-word offsets that differ {}; flips/1000VBL 134 -> 258; cycles/frame 1166585 -> 605415 (-48.1 %)
+turn --flips 40: window IDENTICAL; HUD bytes differing (buffer: n, rows) {'b58': (0, []), 'b68': (0, []), 'b78': (0, [])}; state-word offsets that differ {'slot': ['0x35', '0x47'], 's3b': ['0x1', '0x3', '0x5', '0x21']}
+busy --flips 8: window IDENTICAL; HUD bytes differing (buffer: n, rows) {'b58': (0, []), 'b68': (0, []), 'b78': (0, [])}; state-word offsets that differ {}; flips/1000VBL 82 -> 228; cycles/frame 1905629 -> 687149 (-63.9 %)
+busy --flips 40: window IDENTICAL; HUD bytes differing (buffer: n, rows) {'b58': (0, []), 'b68': (0, []), 'b78': (0, [])}; state-word offsets that differ {'s3b': ['0x1', '0x3', '0x5']}
+WINDOW MISMATCH

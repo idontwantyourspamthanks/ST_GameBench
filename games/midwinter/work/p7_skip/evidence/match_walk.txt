@@ -1,0 +1,23 @@
+batch 0: base flip 2 (0x68000) == patched flip 2 (0x68000) inputs identical -> window IDENTICAL
+batch 0: base flip 3 (0x58000) == patched flip 3 (0x58000) inputs identical -> window IDENTICAL
+batch 0: base flip 4 (0x78000) == patched flip 4 (0x78000) inputs identical -> window IDENTICAL
+batch 0: base flip 5 (0x68000) == patched flip 5 (0x68000) inputs identical -> window IDENTICAL
+batch 0: base flip 6 (0x58000) == patched flip 6 (0x58000) inputs identical -> window IDENTICAL
+batch 0: base flip 7 (0x78000) == patched flip 7 (0x78000) inputs identical -> window IDENTICAL
+batch 0: base flip 8 (0x68000) == patched flip 8 (0x68000) inputs identical -> window IDENTICAL
+batch 0: base flip 10 (0x78000) == patched flip 10 (0x78000) inputs identical -> window IDENTICAL
+batch 0: base flip 11 (0x68000) == patched flip 11 (0x68000) inputs identical -> window IDENTICAL
+batch 0: base flip 12 (0x58000) == patched flip 12 (0x58000) inputs identical -> window IDENTICAL
+batch 0: base flip 13 (0x78000) == patched flip 13 (0x78000) inputs identical -> window IDENTICAL
+batch 0: base flip 14 (0x68000) == patched flip 14 (0x68000) inputs identical -> window IDENTICAL
+batch 0: base inputs distinct 13/13, patched 13/13
+batch 1: base flip 16 (0x78000) == patched flip 16 (0x78000) inputs identical -> window IDENTICAL
+batch 1: base flip 18 (0x58000) == patched flip 18 (0x58000) inputs identical -> window IDENTICAL
+batch 1: base flip 23 (0x68000) == patched flip 23 (0x68000) inputs identical -> window IDENTICAL
+batch 1: base inputs distinct 13/13, patched 13/13
+batch 2: base flip 38 (0x68000) / patched flip 37 (0x78000) inputs identical but drawn into different buffers: not compared (p4_pfx leaves ghost rays of the $20e4e effect in one buffer, see the note)
+batch 2: base flip 39 (0x58000) / patched flip 38 (0x68000) inputs identical but drawn into different buffers: not compared (p4_pfx leaves ghost rays of the $20e4e effect in one buffer, see the note)
+batch 2: base flip 39 (0x58000) == patched flip 39 (0x58000) inputs identical -> window IDENTICAL
+batch 2: base flip 40 (0x78000) == patched flip 40 (0x78000) inputs identical -> window IDENTICAL
+batch 2: base inputs distinct 13/13, patched 12/13
+SUMMARY pairs with identical inputs and the same buffer: 17 window identical: 17 DIFFER: 0 (cross-buffer pairs not compared: 2 )

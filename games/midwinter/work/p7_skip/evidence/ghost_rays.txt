@@ -1,0 +1,9 @@
+# enemy snapshot, state-matched capture (match.py), batch 2: window rows 51..181, pixel-wise, per buffer of the SAME flip.
+# every capture shows $58000 differing from $68000 and $78000 by 378 pixels (ghost rays of the $20e4e impact effect), in the base run too:
+base_2 33: 58 vs 68: 378 | 58 vs 78: 378 | 68 vs 78: 0
+sk_2 32  : 58 vs 68: 378 | 58 vs 78: 378 | 68 vs 78: 0
+base_2 32: 58 vs 68: 378 | 58 vs 78: 378 | 68 vs 78: 0
+base_2 34: 58 vs 68: 378 | 58 vs 78: 378 | 68 vs 78: 0
+sk_2 31  : 58 vs 68: 378 | 58 vs 78: 378 | 68 vs 78: 0
+sk_2 33  : 58 vs 68: 378 | 58 vs 78: 378 | 68 vs 78: 0
+# ghost_rays_base33_vs_patched32.png: top = base flip 33 (drawn into $78000, clean), bottom = patched flip 32 (drawn into $58000, rays in the sky); same inputs.

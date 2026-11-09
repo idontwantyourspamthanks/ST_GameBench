@@ -1,0 +1,21 @@
+Midwinter (HAGA HD version by PP) - patched build
+
+Changes vs the original HAGA release:
+- Game speed is fixed to real time: the world runs at 5 steps per second
+  whatever the CPU speed (Mega STE 16 MHz, TT, Falcon, accelerators).
+- The 3D view is drawn between those steps, so motion is smooth when the
+  machine can draw faster than 5 frames per second.
+- About 11-15% faster 3D display on a stock 8 MHz ST/STE, pixel-identical.
+- Standing still, the 3D view is only redrawn when something in it changes
+  (identical picture; up to about 5x faster while standing).
+- Direct controls: the mouse turns only while it moves; joystick/keyboard
+  turn at a constant rate while held and stop on release.
+- No grey fading while loading.
+- Works with 4 MB and more RAM on ST/STE/Mega STE.
+- The game's anti-tamper checksum on the 3D models is not run (it guarded
+  data nothing changes, and cost up to 7% of a frame).
+- Floppy set: the manual security check is skipped, as in the HD release.
+
+Requirements and usage are as in README.TXT (1 MB RAM minimum).
+Run RUNME.TOS from a hard disk / GEMDOS drive.
+Tested on Hatari: STE (TOS 1.62) at 1 MB, Mega STE (TOS 2.06) at 4 MB.

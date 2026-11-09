@@ -1,0 +1,11 @@
+stand --flips 10: IDENTICAL; flips/1000VBL 88 -> 220; cycles/frame 1794208 -> 710716 (-1083492, -60.39 %)
+stand --flips 40: IDENTICAL
+stand --flips 100: DIFFER {'b58': 41, 'b68': 40, 'b78': 45}
+MISMATCH
+walk --flips 8: DIFFER {'b58': 432, 'b68': 0, 'b78': 0}; flips/1000VBL 199 -> 446; cycles/frame 788407 -> 350433 (-437974, -55.55 %)
+walk --flips 40: IDENTICAL
+turn --flips 8: IDENTICAL; flips/1000VBL 202 -> 331; cycles/frame 775058 -> 473672 (-301386, -38.89 %)
+turn --flips 40: IDENTICAL
+busy --flips 8: IDENTICAL; flips/1000VBL 83 -> 299; cycles/frame 1902666 -> 523857 (-1378809, -72.47 %)
+busy --flips 40: IDENTICAL
+MISMATCH

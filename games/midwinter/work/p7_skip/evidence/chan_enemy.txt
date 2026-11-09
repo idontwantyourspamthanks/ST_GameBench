@@ -1,0 +1,21 @@
+passes 39 renders 6 render rbw bytes 14922 non-render written bytes 1023
+channels 110
+012c60-012c6b    12 ['nr'] w ['0x14562', '0x14568', '0x159be', '0x159c4', '0xb3230'] r ['0x1d0e4', '0x1d0ea', '0x1d4ba', '0x1d4c0']
+012c72-012c83    18 ['nr'] w ['0x15a3a', '0x15a40', '0x15a46', '0x15a72', '0x15a8a'] r ['0x16da2', '0x16da8', '0x16dae', '0x16db4', '0x16dba']
+012c98-012c99     2 ['nr'] w ['0xb3224', '0xb3318', '0xb3862'] r ['0x17112']
+012d0a-012d0d     4 ['nr'] w ['0xbdde'] r ['0x15812']
+0159a0-0159a3     4 ['nr'] w ['0x15976', '0x1597c'] r ['0x1d568', '0x1d56e']
+0171f8-017217    32 ['nr'] w ['0x1309e', '0x130a8', '0x144ca', '0x144d2', '0x15922'] r ['0x16dfe', '0x16e04', '0x16e10', '0x16e20', '0x16ea8']
+01721c-01721d     2 ['nr'] w ['0x14722'] r ['0x16df8']
+01bbe2-01bbe5     4 ['nr'] w ['0x14e62'] r ['0xb4504']
+01cdb0-01cdb7     8 ['nr'] w ['0x1f848', '0x1f84c'] r ['0x1d15c', '0x1d160']
+01cdc2-01cdc5     4 ['nr'] w ['0x1f7c6', '0x1f7ca', '0x1f7fa', '0x1f7fe'] r ['0x1d67c', '0x1d682']
+01ce08-01ce0f     8 ['nr'] w ['0x1f848', '0x1f84c'] r ['0x1d15c', '0x1d160']
+01ce1a-01ce1d     4 ['nr'] w ['0x1f7c6', '0x1f7ca'] r ['0x1d67c', '0x1d682']
+01ce26-01ce27     2 ['nr'] w ['0x206b4'] r ['0x1d68a']
+01d816-01d81b     6 ['nr'] w ['0x1d7ba', '0x1d7c0', '0x1d7c8', '0x1d804', '0x1d80a'] r ['0x1deb6', '0x1deba', '0x1debe']
+carried (render-written earlier, read by a later render before written): 30
+  012d4a-012d51 8 readers ['0xb4200', '0xb420c', '0xb4228', '0xb4236']
+  018bda-018bdd 4 readers ['0x18bc4']
+  0b4800-0b4805 6 readers ['0xb449c']
+  0b4808-0b4813 12 readers ['0xb455e', '0xb4566', '0xb456c', '0xb4572']

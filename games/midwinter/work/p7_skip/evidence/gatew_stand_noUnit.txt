@@ -1,0 +1,4 @@
+stand --flips 10: window IDENTICAL; HUD bytes differing (buffer: n, rows) {'b58': (0, []), 'b68': (0, []), 'b78': (0, [])}; state-word offsets that differ {'s3b': ['0x0', '0x1', '0x5']}; flips/1000VBL 94 -> 488; cycles/frame 1668907 -> 320516 (-80.8 %)
+stand --flips 40: window IDENTICAL; HUD bytes differing (buffer: n, rows) {'b58': (10, [14, 15, 16, 20]), 'b68': (10, [14, 15, 16, 20]), 'b78': (10, [14, 15, 16, 20])}; state-word offsets that differ {'s3b': ['0x0', '0x1', '0x5']}
+stand --flips 100: window IDENTICAL; HUD bytes differing (buffer: n, rows) {'b58': (14, [14, 15, 16, 18, 19, 20]), 'b68': (14, [14, 15, 16, 18, 19, 20]), 'b78': (14, [14, 15, 16, 18, 19, 20])}; state-word offsets that differ {'s3b': ['0x0', '0x1', '0x3']}
+WINDOW ALL IDENTICAL

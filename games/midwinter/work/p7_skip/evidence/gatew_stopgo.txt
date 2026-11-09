@@ -1,0 +1,3 @@
+# gatew.py stand --flips 100 --poke 'w $2baec $ff $ff;w $1cdd0 $ff $ff' --poke-at '25:<heading 0x100>' --poke-at '60:<heading 0>'  (units frozen; stop-and-go: view turned at flip 25, back at flip 60)
+stand --flips 100: window IDENTICAL; HUD bytes differing (buffer: n, rows) {'b58': (14, [14, 15, 16, 18, 19, 20]), 'b68': (14, [14, 15, 16, 18, 19, 20]), 'b78': (14, [14, 15, 16, 18, 19, 20])}; state-word offsets that differ {'s3b': ['0x0', '0x1', '0x5', '0x21']}
+WINDOW ALL IDENTICAL

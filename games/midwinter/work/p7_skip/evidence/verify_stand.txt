@@ -1,0 +1,3 @@
+check 0: buffer $68000 A vs B differing bytes {'58': 0, '68': 0, '78': 0} OK  {'GEN': 74, 'NSKIP': 0, 'NREND': 76}
+check 20: buffer $58000 A vs B differing bytes {'58': 0, '68': 0, '78': 0} OK  {'GEN': 378, 'NSKIP': 214, 'NREND': 392}
+SUMMARY checked 30 identical 30 MISMATCH 0 counters {'GEN': 601, 'NSKIP': 324, 'NREND': 621, 'NCHG': 601, 'NMK': 0, 'NFORCE': 1, 'NINV': 0, 'NUNS': 0}

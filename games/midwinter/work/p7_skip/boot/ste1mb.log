@@ -1,0 +1,23 @@
+cell ste1mb ste 1.62 1024 games/midwinter/build/p7skip/game 
+boot_to_game ok in 112s; gstate {'x': 25600, 'z': 25600, 'speed': 0, 'heading': 0, 'action': 0, 'exit': 0}
+MWPO: b'MWPO'
+site $14e50: 4eb9000b5840 (new 4eb9000b5840)
+site $14e20: 4eb9000b5800 (new 4eb9000b5800)
+counters after boot (standing): {'GEN': 69, 'NSKIP': 4, 'NREND': 71, 'NCHG': 69, 'NMK': 0, 'NFORCE': 0, 'NINV': 1, 'NUNS': 0}
+STANDING, skip live / reverted (both sites), same session:
+  skip live: 222 flips / 1000 VBL (11.10 fps)  counter deltas {'NSKIP': 166, 'NREND': 67, 'NCHG': 63, 'NMK': 0, 'NFORCE': 0, 'NINV': 0, 'NUNS': 0}  pos (25600, 25600, 0)
+  skip reverted: 84 flips / 1000 VBL (4.20 fps)  counter deltas {'NSKIP': 0, 'NREND': 0, 'NCHG': 0, 'NMK': 0, 'NFORCE': 0, 'NINV': 0, 'NUNS': 0}  pos (25600, 25600, 0)
+  skip live: 155 flips / 1000 VBL (7.75 fps)  counter deltas {'NSKIP': 77, 'NREND': 90, 'NCHG': 86, 'NMK': 0, 'NFORCE': 0, 'NINV': 0, 'NUNS': 0}  pos (25600, 25600, 0)
+  skip reverted: 92 flips / 1000 VBL (4.60 fps)  counter deltas {'NSKIP': 0, 'NREND': 0, 'NCHG': 0, 'NMK': 0, 'NFORCE': 0, 'NINV': 0, 'NUNS': 0}  pos (25600, 25600, 0)
+walk (25600, 25600, 0) -> (25600, 28383, 0) moved
+WALKING (500 VBL windows):
+  skip live: 50 flips / 500 VBL (5.00 fps)  counter deltas {'NSKIP': 0, 'NREND': 64, 'NCHG': 64, 'NMK': 0, 'NFORCE': 0, 'NINV': 0, 'NUNS': 0}  pos (25600, 29559, 0)
+  skip reverted: 69 flips / 500 VBL (6.90 fps)  counter deltas {'NSKIP': 0, 'NREND': 0, 'NCHG': 0, 'NMK': 0, 'NFORCE': 0, 'NINV': 0, 'NUNS': 0}  pos (25600, 31034, 0)
+after stopping: pos (25600, 31034, 0) -> (25600, 31034, 0) counter delta {'NSKIP': 0, 'NREND': 59, 'NCHG': 45, 'NMK': 0, 'NFORCE': 0, 'NINV': 0, 'NUNS': 0}
+TURN: heading 0 -> 135 turned
+TURNING (500 VBL windows, pointer still displaced):
+  skip live: 41 flips / 500 VBL (4.10 fps)  counter deltas {'NSKIP': 0, 'NREND': 52, 'NCHG': 52, 'NMK': 0, 'NFORCE': 0, 'NINV': 0, 'NUNS': 0}  pos (25600, 31034, 135)
+  skip reverted: 42 flips / 500 VBL (4.20 fps)  counter deltas {'NSKIP': 0, 'NREND': 0, 'NCHG': 0, 'NMK': 0, 'NFORCE': 0, 'NINV': 0, 'NUNS': 0}  pos (25600, 31034, 135)
+after the turn (pointer centred): heading 135 counter delta {'NSKIP': 0, 'NREND': 24, 'NCHG': 24, 'NMK': 0, 'NFORCE': 0, 'NINV': 0, 'NUNS': 0}
+final counters {'GEN': 74, 'NSKIP': 0, 'NREND': 74, 'NCHG': 74, 'NMK': 0, 'NFORCE': 1, 'NINV': 0, 'NUNS': 0}
+RESULT flips/1000VBL standing {'new': [222, 155], 'orig': [84, 92]}

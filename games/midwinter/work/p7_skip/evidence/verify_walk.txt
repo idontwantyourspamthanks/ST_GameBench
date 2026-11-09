@@ -1,0 +1,4 @@
+check 0: buffer $78000 A vs B differing bytes {'58': 0, '68': 0, '78': 0} OK  {'GEN': 99, 'NSKIP': 0, 'NREND': 121}
+check 20: buffer $58000 A vs B differing bytes {'58': 0, '68': 0, '78': 0} OK  {'GEN': 100, 'NSKIP': 234, 'NREND': 124}
+no skip decision within 90 s (check 24 )
+SUMMARY checked 24 identical 24 MISMATCH 0 counters {'GEN': 552, 'NSKIP': 275, 'NREND': 688, 'NCHG': 552, 'NMK': 0, 'NFORCE': 1, 'NINV': 0, 'NUNS': 0}

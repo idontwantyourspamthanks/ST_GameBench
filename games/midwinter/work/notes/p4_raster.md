@@ -135,3 +135,17 @@ costs ~30-40 cy for each of the ~675 filled rows per frame (>= 20 k cy) -- more 
 4mb in_ski True
 ```
 (The 4 MB Mega STE run is faster because the 2.06 machine here runs the CPU at 8 MHz with a different cache/ROM timing profile [INFERENCE: not measured]; both walk and keep skiing.)
+
+## 8. Bug: ghost rays of the enemy-impact effect (found by MW1Static) and the fix `p4_pfx_ray`
+Cause (disassembly): `$1d710 jsr $20e4e` (sole caller) runs the impact effect: `$20e4e` sets the clip words `$2c376+$26..$2c` to `$171f0-$171f6`, then 64 x `$20f00` -> `jsr $6ed8` (line draw)
+draw rays directly into the draw buffer `$12d0a` over the window, after the sky fill. No polygon is involved, so `YMIN` (recorded at `$1b1ce`) never sees them. Unpatched, the next fill of that buffer
+erases the rays; with the clean prefix the sky rows were skipped and the rays stayed.
+Proof (state-matched, `/tmp/p7s/enemy.sav` = MW1Static's enemy snapshot, 1 MB; `/tmp/mw1r4/ray/cap.py` captures 13 consecutive flips, all three buffers, plus the render inputs
+`$12c60..$24` and the object slots; frames of the two runs with byte-identical inputs are compared on rows 51..181 of all 3 buffers):
+* base vs `p4_pfx_{ymin,fill,msg,replay}` (no ray fix), flips 28..40: base: 0 differing pixels between the three buffers; patched: `$78000` differs from `$58000`/`$68000` by **783 px** in every capture;
+  matched pairs vs base: `$78000` 783 px, `$58000`/`$68000` 0. Flips 2..14 (effect growing, 15-56 ray px per frame, rays present in the base too): patched identical to base in all three buffers, 13 of 13 pairs (the ghost only shows once the effect has ended and a skipped-sky buffer keeps its old rays).
+* Unpatched game: same snapshot, flips 28..40, the three buffers are identical (0 px) -> the unpatched game shows no ghost; the patch caused it.
+Fix: `p4_pfx_ray` (site `$1d710`, `jsr $20e4e` -> `jsr $b4700`; blob `clr.w YMIN; jmp $20e4e`): YMIN = 0 makes this frame's new KB[b] = 0 and the replay's min(old,new) = 0 (full replay), so the next fill of this buffer is a full fill.
+Gate after the fix: flips 28..40 and flips 2..14, all three buffers of every matched pair: **0 differing pixels** (26 of 26 pairs); mw1ab on stand/walk/turn/busy: `--only p4_pfx_ymin p4_pfx_fill p4_pfx_msg p4_pfx_replay p4_pfx_ray` and the combined set + `p4_pfx_ray` are IDENTICAL on all four snapshots at 8 and 40 flips (combined: stand -185833, walk -124897, turn -142181, busy -206361 cycles/frame; the ray path is idle in these scenes, so their numbers equal the earlier combined run).
+Other direct writers into the window after the sky fill: only `$117d8` (message, `p4_pfx_msg`) and this effect were found; the remaining `$6ed8` callers (`$d694..$d75a`) are HUD routines [INFERENCE: not traced into the window rows].
+Blob map addition: `$B4700` p4_pfx_ray.
