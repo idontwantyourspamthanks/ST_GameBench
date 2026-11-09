@@ -63,14 +63,8 @@ stage1: move.w  #$4e73,$90.w            ; the instruction HUNTER.TOS had at $b8 
         ifne    SND_FILE
         btst    #0,FLAGS+3.l
         beq.s   .done
-        lea     sname(pc),a0
-        lea     BANK.l,a1
-        move.l  #BANKCAP,d3
-        bsr.w   readfile
-        ble.s   .done
-        cmpi.l  #'HSND',BANK.l          ; no valid bank: the payload runs the original YM tick
-        beq.s   .done
-        clr.l   BANK.l
+        moveq   #0,d6                   ; the bank is a contiguous file on drive A: whole tracks per XBIOS Floprd (TOS' own
+        bsr.w   loadbank                ; Fread costs ~12 s more at real floppy timing, see floppy.md)
         endc
         ifne    SND_DISK
         btst    #0,FLAGS+3.l
@@ -282,6 +276,8 @@ sound_disk:
         clr.w   $ffff8240.w
 .ret:   rts
 
+        endc
+        ifne    SND_DISK+SND_FILE
 ; Read SND_SECS sectors from LSN SND_LSN of device d6 (SND_SPT sectors per track, 2 sides) to BANK.  Bad read or no 'HSND' -> no bank.
 loadbank:
         move.l  #SND_LSN,d3
@@ -331,9 +327,9 @@ loadbank:
         cmpi.l  #'HSND',BANK.l
         beq   .ok
 .bad:   clr.l   BANK.l
-        lea     m_bad(pc),a0
-        bsr   puts
 .ok:    rts
+        endc
+        ifne    SND_DISK
 
 ; VT52: ESC E clear, ESC p / ESC q reverse video on / off, ESC Y row col (+32) cursor
 m_title:dc.b    27,'E',27,'p',' HUNTER - STE SAMPLED SOUND         ',27,'q',13,10,10,0

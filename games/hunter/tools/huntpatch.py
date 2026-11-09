@@ -1115,7 +1115,7 @@ def cmd_build_floppy(patches, fps, out: Path, samples: bytes | None, zip_out: Pa
     tracks, spt = (int(x) for x in geometry.split("x"))
     equ = dict(PAYLOAD=IMG_BASE, PROBE=core_probe_addr(), FLAGS=FLAGS, PCAP=pcap, SCRATCH=FL_SCRATCH, STAGE=FL_STAGE, BANK=SAMPLE_BASE,
                BANKCAP=IMG_END - SAMPLE_BASE, CACHE=IMG_END, SND_FILE=1 if (samples is not None and not two_disk) else 0,
-               SND_DISK=1 if two_disk else 0, SND_LSN=0, SND_SECS=0, SND_SPT=FL_SND_SPT, SND_SER=FL_SND_SERIAL)
+               SND_DISK=1 if two_disk else 0, SND_LSN=1000, SND_SECS=1000, SND_SPT=FL_SND_SPT, SND_SER=FL_SND_SERIAL)   # LSN/SECS: placeholders >127 (same code size)
     d2 = None
     if samples is not None:
         if SAMPLE_BASE + len(samples) > IMG_END:
@@ -1130,7 +1130,23 @@ def cmd_build_floppy(patches, fps, out: Path, samples: bytes | None, zip_out: Pa
     extra = {"HNPATCH.BIN": payload}
     if samples is not None and not two_disk:
         extra["HNSOUND.BIN"] = samples
-    free = build_disk1(out / "HUNTER_disk1.st", tos, extra, tracks, spt)
+    d1p = out / "HUNTER_disk1.st"
+    free = build_disk1(d1p, tos, extra, tracks, spt)
+    if "HNSOUND.BIN" in extra:
+        # the stage reads the bank by raw sectors (whole tracks per XBIOS Floprd): find where the file lies, check it is
+        # contiguous, then rebuild with the real LSN (the stage size does not depend on it)
+        fat = Fat12(d1p.read_bytes())
+        ch = fat.chain(fat.first_cluster("HNSOUND.BIN"))
+        if ch != list(range(ch[0], ch[0] + len(ch))):
+            raise SystemExit("HNSOUND.BIN is not contiguous on disk 1")
+        equ.update(SND_LSN=(fat.data + (ch[0] - 2) * fat.cl) // 512, SND_SECS=(len(samples) + 511) // 512, SND_SPT=spt)
+        stage2 = floppy_stage(equ)
+        assert len(stage2) == len(stage)
+        stage, tos = stage2, build_hunter_tos(stage2, IMG_END)
+        free = build_disk1(d1p, tos, extra, tracks, spt)
+        fat = Fat12(d1p.read_bytes())
+        ch2 = fat.chain(fat.first_cluster("HNSOUND.BIN"))
+        assert (fat.data + (ch2[0] - 2) * fat.cl) // 512 == equ["SND_LSN"], "bank moved between passes"
     man = {"payload_base": IMG_BASE, "payload_len": len(img), "payload_file": len(payload), "marker": MARKER, "flags": FLAGS,
            "stage_len": len(stage), "geometry": geometry, "free_bytes": free, "cache_base": IMG_END, "used": _used,
            "bank": [SAMPLE_BASE, len(samples)] if samples is not None else None,

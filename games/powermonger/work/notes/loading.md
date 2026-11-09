@@ -123,10 +123,31 @@ WAR.PRG stack routine (text $1e4): `jmp hook1` ONLY if a patch has `; stage: 1` 
 ## 5. Free RAM (pattern method, hunter loading.md section 5)
 `pmpatch.py boot --fill build/<kind>.json --scenario`: at the stage 1 hand-over (Hatari breakpoint `pc = $576 && ($576).w = $4eb9`, `loadbin`) every byte of `$B8800..$EFFFF` that the payload does not use gets `fill_byte(a)` (non-zero, position dependent). Then the full cold boot (intro, name, options, chart, protection answer, map view), `get_men`, wait for the battle (iteration 340), and after each stage all 227328 bytes are compared:
 
-FILL_RESULTS
+| build / machine | pattern bytes in `$B8800..$EFFFF` | changed after map view / get_men (17 moving) / battle (iteration 353) | `$F0000..$F7FC7` non-zero |
+|---|---|---|---|
+| floppy, STE TOS 1.62, 1 MB | 227328 | **0 / 0 / 0** | 5 bytes (TOS stack) |
+| floppy, STE TOS 1.62, 4 MB | 227328 | **0 / 0 / 0** | 0 |
+| HD folder, STE TOS 1.62, 1 MB | 222632 (payload data `$BB000..$BCFFF` excluded) | **0 / 0 / 0** | 37 bytes at `$F7F46..` (stack of the GEMDOS emulation) |
+
+[obs] (first two rows were run with the first core revision, which differs from the final only in the size of `hook1/hook2/apply` inside `$B8000..$B87FF`; the third with the final one.) So **`$B8800..$EFFFF` (227328 B) is free through boot, loading, menus, map, get men and battle at 1 MB and 4 MB; `$F0000..$F7FFF` is not.** Plain ST 1 MB was not poisoned (same layout [INFERENCE])."
+
 
 ## 6. Cold boots (empty patch set = the build with no patch, only the carrier + hooks)
-BOOT_RESULTS
+| build | machine | TOS | RAM | result [obs, `pmpatch.py boot`] |
+|---|---|---|---|---|
+| floppy | STE | 1.62 | 1 MB | map view (in_game True), `MARKER='PMPO'`, `FLAGS=3` |
+| floppy | ST | 1.04 | 1 MB | map view, `PMPO`, `FLAGS=6` (probe ran, bus error, no DMA sound) |
+| HD folder (Hatari `--harddrive`) | STE | 1.62 | 1 MB | map view, `PMPO`, `FLAGS=3`, `HDBASE`="C:\\" |
+| HD folder | ST | 1.04 | 1 MB | map view, `PMPO`, `FLAGS=6` |
+| floppy | STE | 1.62 | 4 MB | map view (in_game True), `PMPO`, `FLAGS=3` (final build; also the first-core fill run) |
+| HD folder | STE | 1.62 | 4 MB | NOT run |
+
+**Wrong original byte** (`build --only test_poke1 test_poke2 --corrupt`: first optional site's orig byte flipped in the payload; test patches change 4 harmless bytes at `$56ff0` (stage 1 padding) and `$1bb2c` (save-disk text), `patches/test_poke*.s`):
+* floppy, stage 1 site corrupted: `MARKER='PMPF'`, map view reached (in_game True), `$1bb2c = 20285745` (" (WE", the stage 2 site was NOT written either).
+* floppy, `--only test_poke2 --corrupt` (stage 2 site): `PMPF`, map view, `$1bb2c = 20285745`.
+* HD folder, same stage 2 corruption: `PMPF`, map view, `$1bb2c = 20285745`: the mandatory `hd_*` sites are their own group, applied first, so the game still loads from the folder.
+**Positive**: floppy `--only test_poke1 test_poke2`: `PMPO`, `$1bb2c = 504d5032` ("PMP2"). The stage 1 half (`$56ff0` at pc `$1360`) was not captured (the `--peek1` log parser read the wrong log lines in that run; fixed afterwards, not re-run). The stage 1 hook itself is exercised in every HD boot (the `hd_s1` site must be applied or SPRITE40.DAT is never loaded) and in the floppy "stage 1 corrupted" run (it refused).
+
 
 ## 7. The HD build
 `pmpatch.py build --hd` -> `build/hd/`: `AUTO\WAR.PRG` (the same carrier; `hook1` installed), `DATA\*.DAT` (15 files extracted from the disk image, SPRITE40.DAT patched), `SAVEDISK.DAT` (409600 B = the save game disk image with the game's own sector 0), plus the `hd_*` patches (`patches/hd_*.s`) that replace the floppy code by GEMDOS calls:
@@ -139,10 +160,11 @@ BOOT_RESULTS
 | `hd_core` | blob `$BB000..` + data `$BC000..$BCFFF` | `uinit` (USER mode, before Super: Dgetdrv + Dgetpath -> `HDBASE` = "C:\" or "C:\dir\", so the folder the program was started from is the data folder), `init` (supervisor: snapshot of TOS's vector table `$8..$3ff`), `tos_in`/`tos_out` (SR `$2700`, private stack, TOS vectors installed / game's restored), `hd_load`, `hd_sector` |
 
 * Names are upper-cased (the game passes `data\sprite40.dat` in stage 1) and prefixed with `HDBASE`. A missing file makes `$d4d2` show the "insert the Powermonger disk" prompt and retry forever (as the original with a missing file).
-* `SAVEDISK.DAT`: reads of a missing disk fail (the game then says "PLEASE INSERT SAVE GAME DISK"); a write creates it (Fcreate) and seeks (sparse); the shipped file is a formatted disk so Load/Save work at once. HD_SAVE_RESULT
-* **Limits [INFERENCE, not tested on real hardware]**: the game overwrites the whole TPA and the low RAM TOS keeps its state in (on TOS 1.62 the GEMDOS current-basepage variable is at `$5662`, inside the first file's destination: [obs] Hatari prints "program ... accessing another program" for it). Hatari's GEMDOS emulation only reads the stacked arguments, so it works; real TOS GEMDOS + a resident ACSI/IDE driver would need TOS's low RAM state swapped as well (the vectors are, nothing else is). The HD build is therefore specified for Hatari `--harddrive` (GEMDOS emulation). HD_ACSI_RESULT
+* `SAVEDISK.DAT`: reads of a missing disk fail (the game then says "PLEASE INSERT SAVE GAME DISK"); a write creates it (Fcreate) and seeks (sparse); the shipped file is a formatted disk so Load/Save work at once. [obs] `build --hd --only test_hdsav` + `boot --hd ... --call $ce000` (the routine is run from the main loop through the debugger, so it executes after the game has trashed TOS's RAM): `{'write': 0, 'read': 0, 'compare': 0, 'sector0': 0, 'format': 0}` and the host copy of `SAVEDISK.DAT` is still 409600 B, sector 0 = "POWE..", sectors 5-6 = the pattern. The game's own Load/Save menu was not driven through the UI.
+* **Limits [INFERENCE, not tested on real hardware]**: the game overwrites the whole TPA and the low RAM TOS keeps its state in (on TOS 1.62 the GEMDOS current-basepage variable is at `$5662`, inside the first file's destination: [obs] Hatari prints "program ... accessing another program" for it). Hatari's GEMDOS emulation only reads the stacked arguments, so it works; real TOS GEMDOS + a resident ACSI/IDE driver would need TOS's low RAM state swapped as well (the vectors are, nothing else is). The HD build is therefore specified for Hatari `--harddrive` (GEMDOS emulation). **ACSI + HDDRIVER** (`boot --hd build/hd --acsi`, TOS 1.62 + `gamebench/hd` driver via `hunter.build_hd`): started, but it had not reached the name prompt after more than 5 minutes when this was written; no result. [INFERENCE] it fails for the reason given above (the game overwrites TOS's low RAM and the driver). Not supported/verified.
 
 ## 8. Gotchas
+* **Keyboard deadlock when a key arrives right after the game starts** [obs, `--trace acia`]: the game resets the ACIA at pc `$10e6` (a few frames after the `$10a6` hand-over) and only later enables the keyboard interrupt; the MFP reacts to the falling edge of the ACIA IRQ line only, so a key byte received in between leaves the IRQ asserted for good and the game never sees a key (`$fffc00 = $83`, `$18be` never runs). The harness presses `space` every 4 s during the intro; with the slow floppy loads that never collided, with the fast HD loads it did every time (name prompt without text). `pmpatch.py make_pm` therefore suppresses `key('space')` once `$10a6` holds `$41f9`. Not a patch problem (a real user who types in that window on the original game has the same risk).
 * The nested PRG at `$576` reuses its intro code regions as buffers: only the stage 1 hand-over image is a valid reference for stage 1 sites, never an idle dump.
 * `pc = $576` / `pc = $10a6` are also executed once earlier by the decoder (its own code is there). The first Hatari breakpoint hit is the decoder entry; test the first word (`($576).w = $4eb9`, `($10a6).w = $41f9`) to catch the hand-over.
 * Hatari `--trace fdc --trace-file` is block-buffered and very slow (60 s wall for 28 s emulated): use it only for the FAT/boot phase.
