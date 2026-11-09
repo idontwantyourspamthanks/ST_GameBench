@@ -355,6 +355,7 @@ def main():
     ap.add_argument("--points", type=int, default=1, help="start points (absolute VBLs, 37 apart) per snapshot")
     ap.add_argument("--walk", action="store_true", help="poke a different pointer position at every captured flip")
     ap.add_argument("--st", action="store_true", help="patched run with FLAGS=6 (plain-ST code path)")
+    ap.add_argument("--base-poke", action="append", default=[], help="like --poke but for the BASE run too (p3b_interp: --base-poke b8a80:0001 --poke b8a80:0001 forces predict-ahead off in both)")
     ap.add_argument("--poke", action="append", default=[], help="ADDR:HEXBYTES written in the patched run at the apply flip (repeatable), e.g. bd400:0002")
     ap.add_argument("--tonly", action="store_true", help="only tick-pass (T) frames are hard comparisons; render-only (R) frames that differ are counted (p3b_interp)")
     ap.add_argument("--no-fps", action="store_true")
@@ -380,8 +381,8 @@ def main():
                 bd = WORK / f"b_{tag_for(bnames, False)}" / f"{sp.stem}_{mhz}_{at}{'_w' if a.walk else ''}"
                 pd = WORK / f"p_{tag_for(pnames, a.st)}" / f"{sp.stem}_{mhz}_{at}{'_w' if a.walk else ''}"
                 with ThreadPoolExecutor(2) as ex:
-                    fb = ex.submit(one, sp, at, blive, bd, a.vbls, mhz, a.walk or a.neg, not a.no_fps)
-                    fp = ex.submit(one, sp, at, plive, pd, a.vbls, mhz, a.walk and not a.neg, not a.no_fps, False, tuple(a.poke))
+                    fb = ex.submit(one, sp, at, blive, bd, a.vbls, mhz, a.walk or a.neg, not a.no_fps, False, tuple(a.base_poke))
+                    fp = ex.submit(one, sp, at, plive, pd, a.vbls, mhz, a.walk and not a.neg, not a.no_fps, False, tuple(a.base_poke) + tuple(a.poke))
                     B, P = fb.result(), fp.result()
                 cok, cn, st = compare(B, P, a)
                 ok &= cok
