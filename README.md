@@ -6,21 +6,27 @@ This repository holds the tools, the patches and the full working notes. It does
 
 Finished so far: **Midwinter 2: Flames of Freedom** and **Midwinter**. [`games-to-build.md`](games-to-build.md) is the wish list.
 
-## What the Midwinter 2 patches do
+## What the patches do
+
+Both games get the same treatment: faster drawing with a byte-identical picture, game speed that no longer depends on the clock speed, and direct steering. The full evidence, disassembly and measurements are in each game's report.
+
+### Midwinter 2: Flames of Freedom — [`REPORT.md`](games/midwinter2/REPORT.md)
 
 Measured on an emulated 1 MB 8 MHz Atari STE, same scene, against the unpatched game:
 
-| | Original | Patched |
-|---|---|---|
-| Walking (3D view) | 56 frames | 69 frames (+23%), identical picture |
-| Standing still | about 4 fps | about 25 fps, identical picture |
-| Game speed on a 16 MHz machine | 2.3× too fast | correct (fixed real-time logic rate) |
-| On-foot motion on faster machines | 5 steps/s, jerky | smooth (25 Hz player steps) |
-| Steering | "yoke" (inputs set a turn rate that persists) | direct (turn while held / while the mouse moves) |
-| Loading screens | repeated grey flashes | none; screen changes load about 2× faster |
-| 4 MB+ machines | (patched builds hung; fixed) | work on 1-14 MB |
+- **Faster, same picture:** walking 56 → 69 frames (+23%); standing still about 4 → 25 fps (redraw of an unchanged view skipped).
+- **Correct speed on a 16 MHz machine**, where it used to run 2.3× too fast; on-foot motion is a smooth 25 Hz instead of 5 jerky steps/s.
+- **Direct steering** instead of the original "yoke" (where inputs set a turn rate that persists).
+- **Loading:** no repeated grey flashes, and screen changes load about 2× faster.
+- **4 MB+ machines:** patched builds no longer hang; they work on 1-14 MB.
 
-The plain-English write-up of how each change works, what the original code did and why it was changed is in [`games/midwinter2/REPORT.md`](games/midwinter2/REPORT.md).
+### Midwinter — [`REPORT.md`](games/midwinter/REPORT.md)
+
+Same method and tooling, applied to the older game: 11-15% fewer cycles per frame with all three screen buffers identical, and 63% fewer when standing still with the redraw skip on.
+
+- **Exact replay:** the world runs 5 steps per second of real time at 8 or 16 MHz, and every step matches the original's state, including the random-number stream.
+- **Faster at 8 MHz:** about 10% when moving, up to about 2× standing still. At 16 MHz you keep the extra frames (standing 7.8 → 19.0 fps) and the world no longer runs at double speed.
+- **Direct controls** replacing the shared "yoke" routine — verified on skis; the buggy and hang-glider patches are in place but were never driven in testing.
 
 ## How it was done (openly)
 
@@ -52,7 +58,7 @@ The agent "skills" in [`.omp/skills/`](.omp/skills/) capture the method, the emu
 
 The patches are for **PP's HAGA hard-disk versions** (2014) of the Midwinter games, which you need to obtain yourself. Each game's `README.md` lists the expected files and their MD5 sums. Put them in the game folder (`games/midwinter2/RUNME.TOS`, `HAGA`, `FILES/`, …). The patch tools verify every original byte they replace and refuse to build against anything else.
 
-Building a patched copy, for example Midwinter 2:
+The commands are identical in each game folder; `games/midwinter` uses `mw1patch.py` where `games/midwinter2` uses `mw2patch.py`. For Midwinter 2:
 
 ```sh
 cd games/midwinter2
