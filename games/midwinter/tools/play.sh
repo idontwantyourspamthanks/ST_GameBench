@@ -48,10 +48,9 @@ if [[ -z "$TOS" ]]; then
         megaste)     TOS="$TOSDIR/TOS_2_06.img" ;;
         tt|falcon)
             # Real TOS 3.06 (TT) / 4.04 (Falcon) if dropped into tos/, else EmuTOS.
-            for t in "$TOSDIR"/TOS_3_0*.img "$TOSDIR"/TOS_4_0*.img "$TOSDIR"/EmuTOS_1024k.img; do
-                [[ -f "$t" ]] || continue
-                case "$MACHINE:$(basename "$t")" in tt:TOS_4_*|falcon:TOS_3_*) continue ;; esac
-                TOS="$t"; break
+            if [[ $MACHINE == tt ]]; then prefs=(TOS_3_06_uk TOS_3_05_us); else prefs=(TOS_4_04 TOS_4_02 TOS_4_01); fi
+            for t in "${prefs[@]/#/$TOSDIR/}" "$TOSDIR/EmuTOS_1024k"; do
+                [[ -f "$t.img" ]] && { TOS="$t.img"; break; }
             done ;;
         *) echo "no default TOS for --machine $MACHINE; pass --tos FILE" >&2; exit 2 ;;
     esac
