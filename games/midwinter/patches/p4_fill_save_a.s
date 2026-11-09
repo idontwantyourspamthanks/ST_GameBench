@@ -1,5 +1,5 @@
 ; name: p4_fill_save_a
-; default: no
+; default: yes
 ; site: $1b1bc
 ; note: item #9 (render.md s8) fill trim, part 1/2 (with p4_fill_save_b; together). Fill setup sub_01b1bc saves/restores a0-a6
 ; note: around every polygon (64+68 cy). Registers it and its callees ($1b0e4, the solid variants $1aa44-$1b0e0,

@@ -14,8 +14,9 @@
 ;           the frame limiter for fast machines.
 ;         Behind by at least another whole step after this one: SKIP (D+6) = 1. The pass then
 ;           runs the simulation and the logic calls of the loop body ($14fac HUD feed + game
-;           clock, $202c6 $200e8 $1ffe0 $1fa0a spawn tests, $20d52 object update) but NOT the
-;           render calls and NOT the flip, and returns straight to the loop top, which tests
+;           clock, $c4f2 + $ca7e = the map units, which live at the tail of the HUD redraw
+;           $129d2 (timing.md section 4), $202c6 $200e8 $1ffe0 $1fa0a spawn tests, $20d52
+;           object update) but NOT the render calls and NOT the flip, and returns straight to the loop top, which tests
 ;           the exit flags ($14dfc, $12d76, $14dfe, $14ef6) after every step. The six render
 ;           calls ($129d2 $1580e $1d0a0 $18304 $19ce2 $1bbe6) and the flip are skipped
 ;           together (frameloop.md section 5: otherwise the draw buffer keeps the picture of

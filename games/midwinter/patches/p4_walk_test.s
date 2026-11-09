@@ -1,5 +1,5 @@
 ; name: p4_walk_test
-; default: no
+; default: yes
 ; site: $19de4
 ; note: item #3 (render.md s8), part 2/2 (needs p4_walk_pro, p4_walk_save, p4_walk_ret_a/b together).
 ; note: Terrain polygon driver sub_019d6a calls the walker (`bsr $19f20`, whose first act is the edge-window test

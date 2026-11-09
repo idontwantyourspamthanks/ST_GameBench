@@ -101,3 +101,7 @@ segment at all three bases and requires identical bytes.
   stage 1. The trampoline is unchanged and ends in `jmp $800.w`.
 - None of PP's RAM patches exist on floppy; a boot site that overlaps one aborts the build unless it is
   `media: floppy`.
+
+## Display patch gate
+`python3 tools/mw1ab.py --only <patches> [--base ...]` (see `work/notes/p4_raster.md` section 1): pixel identity of all three buffers on
+`stand/walk/turn/busy` snapshots plus exact cycles/frame. P4 raster/geometry set (`p4_*`, blobs `$B3C00-$B4FFF`): `work/notes/p4_raster.md`.

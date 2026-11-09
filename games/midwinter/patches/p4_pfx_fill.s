@@ -1,5 +1,5 @@
 ; name: p4_pfx_fill
-; default: no
+; default: yes
 ; site: $15830
 ; data: $b4800 20
 ; note: item #5 part 1/4 of the clean-prefix set p4_pfx_{fill,ymin,replay,msg} (ported from MW2 p4_hud_pfx_*; all four together; there is

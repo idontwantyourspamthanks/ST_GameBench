@@ -1,5 +1,5 @@
 ; name: p4_div_b
-; default: no
+; default: yes
 ; site: $1d164
 ; note: item #7 (render.md s8), site B. sub_01d14a object marker test (4 slots): `move.w $12c5a.l,d7 / divs.w d7,d0 / divs.w d7,d1`
 ; note: (d0=long $6(a0), d1=long $a(a0), 2 x ~150 cy). Ported from MW2 p4_proj_div. $12c5a is $0200 in the

@@ -1,5 +1,5 @@
 ; name: p3b_hud
-; default: no
+; default: yes
 ; site: $14e14
 ; orig: 4eb900014fac
 ; note: P3 partial B (needs p3b_head). The loop body's HUD feed + game clock call `jsr $14fac`.

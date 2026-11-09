@@ -1,5 +1,5 @@
 ; name: p4_div_a
-; default: no
+; default: yes
 ; site: $1d0ce
 ; note: item #7 (render.md s8), site A. sub_01d0a0 marker window test: `move.w $12c5a.l,d7 / divs.w d7,d0 / divs.w d7,d1`
 ; note: (d0=long $0(a0), d1=long $4(a0), 2 x ~150 cy). Ported from MW2 p4_proj_div. $12c5a is $0200 in the

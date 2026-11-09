@@ -1,5 +1,5 @@
 ; name: p3b_msg
-; default: no
+; default: yes
 ; site: $14e8a
 ; orig: 4eb900014e98
 ; note: P3 partial B (needs p3b_head). `jsr $14e98` counts the message timer $14ee4 down once per

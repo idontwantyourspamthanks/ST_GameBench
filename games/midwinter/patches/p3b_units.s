@@ -1,5 +1,5 @@
 ; name: p3b_units
-; default: no
+; default: yes
 ; site: $12a5e
 ; orig: 4eb90000c4f24eb90000ca7e
 ; note: P3 partial B (needs p3b_head; work/notes/timing.md section 4). The HUD redraw sub_0129d2

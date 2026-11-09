@@ -1,10 +1,10 @@
 ; name: p3b_head
-; default: no
+; default: yes
 ; site: $14e00
 ; orig: 610000fa6100e096
 ; data: $b3700 64
 ; note: P3 partial B (work/notes/timing.md); replaces tick_head (option A). Needs p3b_hook, p3b_hud,
-;       p3b_logic, p3b_msg. Head of the in-game frame loop sub_014e00. Real time = the game's VBL
+;       p3b_logic, p3b_msg, p3b_units. Head of the in-game frame loop sub_014e00. Real time = the game's VBL
 ;       counter $637e, exactly as tick_head. The 5 Hz game step ("tick", GRP = 10 VBL) is unchanged
 ;       (A); what is new is that the VIEW advances in 5 sub-steps of SUBT = 2 VBL (25 Hz) per tick:
 ;       a GROUP of 5 passes of the loop, each pass 2 VBL, PH = 1..5.

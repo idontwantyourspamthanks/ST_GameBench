@@ -1,5 +1,5 @@
 ; name: p4_ck_skip
-; default: no
+; default: yes
 ; site: $1dd18
 ; note: item #2 (render.md s8). sub_01dd14 (object set-up, 1-2x per frame) starts with `jsr $122f0`: the
 ; note: per-object anti-tamper byte sum (48 cy/byte over the object's model data, 2.6 % walk / 7.3 % stand).

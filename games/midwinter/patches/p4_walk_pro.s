@@ -1,5 +1,5 @@
 ; name: p4_walk_pro
-; default: no
+; default: yes
 ; site: $19ce6
 ; note: item #3 (render.md s8), part 1/2 (needs p4_walk_test, p4_walk_save, p4_walk_ret_a/b together).
 ; note: Frame prologue of the painter-list raster sub_019ce2: the 4 moves $19ce6-$19d0d copy the window $12d4a-$12d50

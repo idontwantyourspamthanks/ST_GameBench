@@ -1,5 +1,5 @@
 ; name: p5_ctl_turn
-; default: no
+; default: yes
 ; site: $12fe2
 ; data: $b3bf0 4
 ; note: P5 direct controls, part 1 of 2 (apply with p5_ctl_buggy; work/notes/p5_controls.md).

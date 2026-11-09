@@ -1,5 +1,5 @@
 ; name: p4_drv_edge
-; default: no
+; default: yes
 ; site: $19d8c
 ; note: item #10 (render.md s8). Terrain polygon driver sub_019d6a, per edge: $19d8c-$19de3 (88 bytes, 14 word loads
 ; note: through ring a1 / edge a2 / vertex a3 tables) resolves the edge (d5 = edge offset (a1,d6.w)) into its two

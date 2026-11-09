@@ -1,5 +1,5 @@
 ; name: p4_walk_save
-; default: no
+; default: yes
 ; site: $19f20
 ; note: item #4 (render.md s8), part 1/3 (with p4_walk_ret_a / p4_walk_ret_b; the three MUST be used together).
 ; note: sub_019f20 (edge walker) saves d0-d7/a0-a1 (88 cy) and restores them at $1a2c4/$1a610 (92 cy).

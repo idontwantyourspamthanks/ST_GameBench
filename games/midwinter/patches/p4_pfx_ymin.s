@@ -1,5 +1,5 @@
 ; name: p4_pfx_ymin
-; default: no
+; default: yes
 ; site: $1b1ce
 ; note: item #5 part 2/4. Fill setup sub_01b1bc (every polygon, terrain and objects): `move.w $1a618.l,d0` loads the
 ; note: polygon's first row (ymin; $7000 = no spans, skipped by the next compare). Record the frame's smallest in

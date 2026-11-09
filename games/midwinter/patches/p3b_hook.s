@@ -1,5 +1,5 @@
 ; name: p3b_hook
-; default: no
+; default: yes
 ; site: $13236
 ; orig: 6100fdaa33f900012c9800015114
 ; note: P3 partial B (needs p3b_head; work/notes/timing.md). $13236 is the single entry of the

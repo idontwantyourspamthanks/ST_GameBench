@@ -1,5 +1,5 @@
 ; name: p3b_logic
-; default: no
+; default: yes
 ; site: $14e32
 ; orig: 4eb9000202c64eb9000200e84eb90001ffe04eb90001fa0a4eb900020d52
 ; note: P3 partial B (needs p3b_head). The loop body's five logic calls (spawn tests $202c6 $200e8

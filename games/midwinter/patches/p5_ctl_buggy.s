@@ -1,5 +1,5 @@
 ; name: p5_ctl_buggy
-; default: no
+; default: yes
 ; site: $13618
 ; note: P5 direct controls, part 2 of 2 (needs p5_ctl_turn; work/notes/p5_controls.md).
 ;       Snow-buggy exertion test: `move.w $24faa.l,d0` compared the yoke accumulator with its

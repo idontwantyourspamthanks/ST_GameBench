@@ -1,5 +1,5 @@
 ; name: p4_pfx_replay
-; default: no
+; default: yes
 ; site: $1bbe6
 ; note: item #5 part 3/4 (port of MW2 p4_hud_pfx_replay). Goggles replay sub_01bbe6, called from the frame ($14e6c,
 ; note: return $14e72) after the terrain pass. Rows above YMIN are untouched sky and rows above top+8*KB[b] were

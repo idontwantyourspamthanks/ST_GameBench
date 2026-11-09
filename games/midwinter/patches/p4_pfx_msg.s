@@ -1,5 +1,5 @@
 ; name: p4_pfx_msg
-; default: no
+; default: yes
 ; site: $14ed6
 ; note: item #5 part 4/4. sub_014e98 draws the "ENEMY IN RANGE" message (x=$a0,y=$64 = inside the 3D window rows) with
 ; note: $117d8 AFTER the goggles replay of the same frame, into the draw buffer. Those pixels are not part of the

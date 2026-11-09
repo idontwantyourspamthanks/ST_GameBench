@@ -1,5 +1,5 @@
 ; name: p4_roll_23
-; default: no
+; default: yes
 ; site: $17050
 ; note: item #8 (render.md s8), site 24/24 of the vertex transform (ring strip loops $15a96-$17058, all 24 have the
 ; note: identical 24-byte shape `move.w d3,d6 / move.w d4,d7 / muls $17216,d3 / muls $17214,d7 / sub.l d7,d3 /
