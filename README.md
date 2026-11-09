@@ -4,7 +4,7 @@
 
 This repository holds the tools, the patches and the full working notes. It does **not** contain any game, any TOS ROM, or anything extracted from them. You need your own copies (see [Getting the game files](#getting-the-game-files)).
 
-The first finished project is **Midwinter 2: Flames of Freedom**. Midwinter (1) is in progress. [`games-to-build.md`](games-to-build.md) is the wish list.
+Finished so far: **Midwinter 2: Flames of Freedom** and **Midwinter**. [`games-to-build.md`](games-to-build.md) is the wish list.
 
 ## What the Midwinter 2 patches do
 
@@ -45,7 +45,7 @@ The agent "skills" in [`.omp/skills/`](.omp/skills/) capture the method, the emu
 | `tools/pp_depack.py` | Unpacks the self-extracting `RUNME.TOS` of PP's HAGA hard-disk conversions. |
 | `.omp/skills/` | Method, harness, PP-conversion internals and delegation rules. |
 | `games/midwinter2/` | **Midwinter 2: done.** `REPORT.md` (overview), `PLAN.md`, `patches/` (about 50 patch sources, 68000 assembly), `tools/` (patch builder, harness, launchers, packaging), `work/notes/` (reverse-engineering notes with evidence), `work/*/` (test scripts and raw logs). |
-| `games/midwinter/` | **Midwinter: in progress.** Same layout. |
+| `games/midwinter/` | **Midwinter: done.** Same layout; [`REPORT.md`](games/midwinter/REPORT.md). |
 | `tos/` | Empty: put your TOS images here (see `tos/README.md`). |
 
 ## Getting the game files

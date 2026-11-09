@@ -1,6 +1,6 @@
 # Midwinter (PP's HAGA hard-disk version)
 
-Status: **in progress**. See [`PLAN.md`](PLAN.md), [`patches/README.md`](patches/README.md) and `work/notes/`. The working patch system (`tools/mw1patch.py`), harness (`tools/mw1.py`) and patches are already usable. Not every patch is on by default yet.
+Status: **done**. Read [`REPORT.md`](REPORT.md) for what was changed and why, [`PLAN.md`](PLAN.md), [`patches/README.md`](patches/README.md) and `work/notes/` for the evidence.
 
 ## Files you need (not included)
 
@@ -16,4 +16,6 @@ Status: **in progress**. See [`PLAN.md`](PLAN.md), [`patches/README.md`](patches
 ```sh
 python3 tools/mw1patch.py verify
 python3 tools/mw1patch.py build [--floppy]
+tools/play.sh [--machine st|megast|ste|megaste|tt|falcon] [--ram KiB] [--original]
+tools/package.sh                     # zips into dist/
 ```
