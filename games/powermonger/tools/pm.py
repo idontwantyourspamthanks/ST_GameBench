@@ -66,6 +66,7 @@ VBLCNT = 0x6F304                           # long: VBL handler tick count ($1286
 SCREENS = (0x2DF7C, 0x2DF78)               # longs: the two screen buffers; $187a swaps them and writes $ff8200
 PROT_TYPE = 0x57FF8                        # word: protection question (0 = houses, 1 = people)
 PROT_ANS = 0x5878E                         # words: expected answers, [PROT_TYPE] -> houses, people, ...
+PROT_FLAG = 0x14E4E                        # long: "protection passed" = $2c (original code `6000 1374` until the answer is right; protection.md)
 PEOPLE, PEOPLE_N, PEOPLE_STRIDE = 0x51B66, 512, 0x32
 CAPTAINS, CAPTAINS_N, CAPTAINS_STRIDE = 0x4E514, 160, 0x20
 
@@ -135,10 +136,15 @@ def _methods():
         t = self.peekw(PROT_TYPE)
         return t, self.peekw(PROT_ANS + 2 * t)
 
+    def protection_removed(self) -> bool:
+        """True when the pm_noprot patch has preset the pass flag: the game then never asks the question."""
+        return self.peekl(PROT_FLAG) == 0x2C
+
     def boot_to_game(self, name: str = "Bench", skip_key: str = "space", log=print, t_name: float = 400,
                      check: bool = True) -> bool:
         """Cold boot -> intro (skipped with `skip_key`) -> name prompt -> option screen -> START NEW CONQUEST ->
-        territory chart -> the top-left island -> protection question (answer read from RAM) -> 3D map view.
+        territory chart -> the top-left island -> protection question (answer read from RAM; with the pm_noprot patch the
+        pass flag is already set, `protection_removed()`, and the question must NOT appear) -> 3D map view.
         Every stage waits for its screenshot gate; nothing depends on a fixed delay."""
         t0 = time.time()
         stamp = lambda s: log(f"[{time.time() - t0:5.0f}s vbl {self.vbl()}] {s}")
@@ -158,20 +164,31 @@ def _methods():
         if not self.wait_gate("chart", 60, 2.0):
             raise RuntimeError("territory chart not reached")
         stamp("territory chart")
+        removed = self.protection_removed()
         self.click_st(*ISLAND_XY, wait=1.0)
-        if not self.wait_gate("prot", 120, 3.0):
-            raise RuntimeError("protection question not reached")
-        stamp("protection question")
-        typ, ans = self.protection_answer()
-        digits = [(ans // 1000) % 10, (ans // 100) % 10, (ans // 10) % 10, ans % 10]
-        for x, n in zip(PROT_DIGIT_X, digits):
-            if n:
-                self.goto_st(x, PROT_UP_Y)
-                for _ in range(n):
-                    self.click(hold=0.15)
-                    time.sleep(0.4)
-        stamp(f"protection answer type {typ} value {ans}")
-        self.click_st(*PROT_OK_XY, wait=2.0)
+        if removed:         # no question (pm_noprot): the 3D view comes up by itself; seeing the question box is a failure
+            stamp("protection removed (flag $14e4e = $2c), no question expected")
+            t1 = time.time()
+            while not self.at("game"):
+                if self.at("prot"):
+                    raise RuntimeError("protection question appeared although the pass flag is preset")
+                if time.time() - t1 > 120:
+                    raise RuntimeError("3D map view not reached")
+                time.sleep(3.0)
+        else:
+            if not self.wait_gate("prot", 120, 3.0):
+                raise RuntimeError("protection question not reached")
+            stamp("protection question")
+            typ, ans = self.protection_answer()
+            digits = [(ans // 1000) % 10, (ans // 100) % 10, (ans // 10) % 10, ans % 10]
+            for x, n in zip(PROT_DIGIT_X, digits):
+                if n:
+                    self.goto_st(x, PROT_UP_Y)
+                    for _ in range(n):
+                        self.click(hold=0.15)
+                        time.sleep(0.4)
+            stamp(f"protection answer type {typ} value {ans}")
+            self.click_st(*PROT_OK_XY, wait=2.0)
         if not self.wait_gate("game", 90, 3.0):
             raise RuntimeError("3D map view not reached")
         if check and not self.in_game():
@@ -179,7 +196,7 @@ def _methods():
         stamp("3D map view")
         return True
 
-    for f in (at, mpos, goto_st, click_st, wait_gate, iter_count, in_game, protection_answer, boot_to_game):
+    for f in (at, mpos, goto_st, click_st, wait_gate, iter_count, in_game, protection_answer, protection_removed, boot_to_game):
         setattr(PM, f.__name__, f)
 
 
