@@ -1,5 +1,5 @@
 ; name: p4_ptr_a
-; default: no
+; default: yes
 ; stage: 2
 ; site: $1390
 ; orig: 20390001c49a
@@ -36,23 +36,23 @@ pIMG    equ     32
 
         org     $bd000
 ptr_a:  move.l  $1c49a.l,d0
-        beq.s   .full                   ; nothing drawn yet / hidden: the original draws
+        beq.w   .full                   ; nothing drawn yet / hidden: the original draws
         lea     P.l,a0
         cmp.l   pA4(a0),d0
-        bne.s   .full
+        bne.w   .full
         tst.w   pVALID(a0)
-        beq.s   .full
+        beq.w   .full
         tst.w   $2c1be.l
-        bne.s   .full                   ; animated pointer: the original advances the frame counter
+        bne.w   .full                   ; animated pointer: the original advances the frame counter
         move.l  $2df78.l,d1
         cmp.l   pBUF(a0),d1
-        bne.s   .full
+        bne.w   .full
         move.w  $2df92.l,d1
         cmp.w   pX(a0),d1
-        bne.s   .full
+        bne.w   .full
         move.w  $2df94.l,d1
         cmp.w   pY(a0),d1
-        bne.s   .full
+        bne.w   .full
         movea.l d0,a1                   ; the rectangle on screen
         lea     pIMG(a0),a2             ; what we left there
         move.w  pROWS(a0),d7
@@ -60,20 +60,20 @@ ptr_a:  move.l  $1c49a.l,d0
         cmpi.w  #$90,d6
         bne.s   .one
 .two:   cmpm.l  (a2)+,(a1)+
-        bne.s   .full
+        bne.w   .full
         cmpm.l  (a2)+,(a1)+
-        bne.s   .full
+        bne.w   .full
         cmpm.l  (a2)+,(a1)+
-        bne.s   .full
+        bne.w   .full
         cmpm.l  (a2)+,(a1)+
-        bne.s   .full
+        bne.w   .full
         adda.w  d6,a1
         dbra    d7,.two
         jmp     $14c4.l                 ; identical result: nothing to do
 .one:   cmpm.l  (a2)+,(a1)+
-        bne.s   .full
+        bne.w   .full
         cmpm.l  (a2)+,(a1)+
-        bne.s   .full
+        bne.w   .full
         adda.w  d6,a1
         dbra    d7,.one
         jmp     $14c4.l

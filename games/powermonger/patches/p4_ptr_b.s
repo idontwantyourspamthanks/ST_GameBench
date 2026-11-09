@@ -1,5 +1,5 @@
 ; name: p4_ptr_b
-; default: no
+; default: yes
 ; stage: 2
 ; site: $14c4
 ; orig: 08380001fc00
@@ -28,31 +28,31 @@ pIMG    equ     32
         org     $bd100
 ptr_b:  lea     P.l,a0
         tst.w   pFLAG(a0)
-        beq.s   .w
+        beq.w   .tx
         clr.w   pFLAG(a0)
         clr.w   pVALID(a0)
         tst.w   $2c1be.l
-        bne.s   .w                      ; animated: never cached
+        bne.w   .tx                      ; animated: never cached
         move.l  $2df78.l,d0
         cmp.l   pNBUF(a0),d0
-        bne.s   .w                      ; the inputs moved during the draw (flip / IKBD packet): no entry
+        bne.w   .tx                      ; the inputs moved during the draw (flip / IKBD packet): no entry
         move.w  $2df92.l,d0
         cmp.w   pNX(a0),d0
-        bne.s   .w
+        bne.w   .tx
         move.w  $2df94.l,d0
         cmp.w   pNY(a0),d0
-        bne.s   .w
+        bne.w   .tx
         movea.l $1c49a.l,a1
         move.l  a1,d0
-        beq.s   .w
+        beq.w   .tx
         move.w  $1c69e.l,d7
         cmpi.w  #15,d7
-        bhi.s   .w                      ; (unsigned) not 0..15 rows-1: leave it to the original
+        bhi.w   .tx                      ; (unsigned) not 0..15 rows-1: leave it to the original
         move.w  $1c6a0.l,d6
         cmpi.w  #$90,d6
         beq.s   .ok
         cmpi.w  #$98,d6
-        bne.s   .w
+        bne.w   .tx
 .ok:    move.l  pNBUF(a0),pBUF(a0)
         move.w  pNX(a0),pX(a0)
         move.w  pNY(a0),pY(a0)
@@ -74,6 +74,6 @@ ptr_b:  lea     P.l,a0
         adda.w  d6,a1
         dbra    d7,.c1
 .v:     move.w  #1,pVALID(a0)
-.w:     btst.b  #1,$fc00.w
-        beq.s   .w
+.tx:    btst.b  #1,$fffffc00.w
+        beq.s   .tx
         jmp     $14cc.l
