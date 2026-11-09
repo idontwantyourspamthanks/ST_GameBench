@@ -25,6 +25,8 @@ How a build works (the originals are never modified; everything goes to build/ga
 from __future__ import annotations
 
 import argparse
+import hashlib
+import os
 import json
 import re
 import shutil
@@ -40,12 +42,14 @@ ROOT = HERE.parent                       # games/hunter
 BENCH = ROOT.parent.parent               # gamebench
 sys.path.insert(0, str(BENCH / "tools"))
 from pp_depack import depack as pp_depack_program  # noqa: E402
+from fire_depack import depack_fire  # noqa: E402
 
 PATCHDIR = ROOT / "patches"
 BUILD = ROOT / "build"
 VASM = "vasmm68k_mot"
 TAILDUMP = ROOT / "work" / "dumps" / "boot" / "ram_tail_1mb.bin"    # 1 MB STE, TOS 1.62, at START's final `jmp $800.w`
 GAMEDUMP = ROOT / "work" / "dumps" / "boot" / "ram_game.bin"        # same machine, in the 3D view
+TAILDUMP_FL = ROOT / "work" / "dumps" / "boot" / "ram_tail_floppy_1mb.bin"   # Paper Bag floppy, 1 MB STE, at HUNTER.TOS' final `jmp $800.w`
 NOT_GAME = {"work", "tools", "build", "dist", "patches", ".omp", "alt", "__pycache__", "PLAN.md", "README.md"}
 
 # ---- the boot chain (work/notes/loading.md) ------------------------------------------------------------
@@ -149,6 +153,15 @@ def encode_reloc(offs):
 
 
 _cache: dict = {}
+MODE = {"floppy": False}                 # --floppy: originals come from the Paper Bag floppy release (see the floppy section below)
+
+
+def dump_path() -> Path:
+    """The RAM dump the derived tail image is compared against (regenerate: `taildump [--floppy]`)."""
+    p = TAILDUMP_FL if MODE["floppy"] else TAILDUMP
+    if not p.exists():
+        raise SystemExit(f"{p} is missing: run `huntpatch.py taildump{' --floppy' if MODE['floppy'] else ''}` first")
+    return p
 
 
 def start_program() -> bytes:
@@ -172,6 +185,8 @@ RUNTIME_OPERANDS = (0x1B618, 0x1B628, 0x1B630, 0x1B638)
 
 def volatile_ranges() -> list[tuple[int, int]]:
     """RAM ranges in $150..$424 that are machine dependent (never patch them)."""
+    if MODE["floppy"]:
+        return []                        # no START block on the floppy: everything below $12004 is the unpacked game
     if "vol" not in _cache:
         offs, _ = decode_reloc(start_program()[28 + START_TEXT:])
         vol = [(HOOK_RAM + o - HOOK_SRC, HOOK_RAM + o - HOOK_SRC + 4) for o in offs if HOOK_SRC <= o and o + 4 <= HOOK_SRC + HOOK_LEN]
@@ -182,6 +197,8 @@ def volatile_ranges() -> list[tuple[int, int]]:
 
 def tail_ram() -> dict[int, bytes]:
     """What RAM holds at START's final `jmp $800.w`, rebuilt from the shipped files (checked against the dump)."""
+    if MODE["floppy"]:
+        return {HUM_RAM: fl_tail()}
     if "tail" not in _cache:
         hum = (ROOT / "HUM.FIC").read_bytes()
         img = bytearray(lz_depack(hum[HUM_HDR:]))
@@ -198,6 +215,131 @@ def tail_bytes(addr: int, n: int):
         if base <= addr and addr + n <= base + len(b):
             return b[addr - base:addr - base + n]
     return None
+
+
+# ---- floppy release (Paper Bag crack): the resident game as RAM holds it at HUNTER.TOS' final `jmp $800.w` ------------------
+FL_DIR = ROOT / "alt" / "floppy"
+FL_IMG = FL_DIR / "Hunter (1991)(Activision)[cr Paper Bag].st"
+FL_MD5 = {"HUNTER.TOS": "af6d5930410063258ac65f4099fdab63", "800": "dc72caf78831f102dd9dc08cbbbe6cb9"}
+FL_STORES = (0x136, 0x22A)               # file offsets of HUNTER.TOS' run of `move.[bwl] #imm,abs.l` RAM patches (just before `bra.b $22e`)
+FL_LOADER = (0x120, 0x124, 0x232, 0x4F1)  # `lea $232(pc),a0 / lea $d30e.l,a1 / move.l #$4f0,d0 / move.b (a0)+,(a1)+`: PB's file loader -> $d30e
+FL_JMP_RAM = 0x6A124                     # `jmp $800.w` of the copy that runs at $6a000 (HUNTER.TOS file offset $22e)
+FL_SPLICE_T = 0x68                       # `lea $22a(pc),a0 / move.w #$4e71,(a0)`: the T-key branch patches $22a, which we need for our bsr
+FL_SPLICE_1 = 0xB8                       # `move.w #$4e73,$90.w` -> `bsr.w stage1 / nop`
+FL_SPLICE_2 = 0x22A                      # `bra.b $22e / nop / jmp $800.w` -> `bsr.w stage2 / jmp $800.w`
+
+
+class Fat12:
+    """Read-only FAT12 view of an Atari .st image (root directory only: that is all the Paper Bag disk has)."""
+
+    def __init__(self, img: bytes):
+        self.img = img
+        self.bps, self.spc, res, nfat, self.ndir, self.nsec, _media, spf, self.spt, self.sides = \
+            struct.unpack_from("<HBHBHHBHHH", img, 11)
+        self.fat0 = res * self.bps
+        self.root = (res + nfat * spf) * self.bps
+        self.data = self.root + self.ndir * 32
+        self.cl = self.spc * self.bps
+
+    def _fat(self, c: int) -> int:
+        o = self.fat0 + c * 3 // 2
+        v = self.img[o] | (self.img[o + 1] << 8)
+        return (v >> 4) if c & 1 else (v & 0xFFF)
+
+    def entries(self):
+        for i in range(self.ndir):
+            e = self.img[self.root + 32 * i:self.root + 32 * i + 32]
+            if e[0] == 0:
+                break
+            if e[0] == 0xE5 or e[11] & 0x08:
+                continue
+            name = e[:8].decode("latin1").rstrip() + ("." + e[8:11].decode("latin1").rstrip() if e[8:11].strip() else "")
+            yield name, struct.unpack_from("<H", e, 26)[0], struct.unpack_from("<I", e, 28)[0]
+
+    def chain(self, c: int) -> list[int]:
+        out = []
+        while 2 <= c < 0xFF0:
+            out.append(c)
+            c = self._fat(c)
+        return out
+
+    def read(self, name: str) -> bytes:
+        for n, c, size in self.entries():
+            if n == name:
+                b = b"".join(self.img[self.data + (k - 2) * self.cl:self.data + (k - 1) * self.cl] for k in self.chain(c))
+                return b[:size]
+        raise KeyError(name)
+
+    def first_cluster(self, name: str) -> int:
+        return next(c for n, c, _s in self.entries() if n == name)
+
+    def free_bytes(self) -> int:
+        n = (self.nsec * self.bps - self.data) // self.cl
+        return sum(1 for c in range(2, n + 2) if self._fat(c) == 0) * self.cl
+
+
+def fl_image() -> bytes:
+    if "flimg" not in _cache:
+        if not FL_IMG.exists():
+            raise SystemExit(f"floppy base image missing: {FL_IMG}")
+        _cache["flimg"] = FL_IMG.read_bytes()
+    return _cache["flimg"]
+
+
+def fl_file(name: str) -> bytes:
+    b = Fat12(fl_image()).read(name)
+    want = FL_MD5.get(name)
+    if want and hashlib.md5(b).hexdigest() != want:
+        raise SystemExit(f"{FL_IMG.name}: {name} is not the Paper Bag file this tool was written for (md5 {hashlib.md5(b).hexdigest()})")
+    return b
+
+
+def fl_tos() -> tuple[bytes, bytes]:
+    """(header, text) of the original HUNTER.TOS; no data/bss/symbols, 2 relocations."""
+    b = fl_file("HUNTER.TOS")
+    magic, t, d, bss, sym = struct.unpack_from(">HIIII", b, 0)
+    assert magic == 0x601A and d == 0 and bss == 0 and sym == 0 and len(b) == 28 + t + 6, "HUNTER.TOS layout"
+    return b[:28], b[28:28 + t]
+
+
+def fl_tail() -> bytes:
+    """The resident game ($800.., 71684 bytes) as HUNTER.TOS leaves it: file 800 unpacked (FIRE), then the cracker's own
+    `move.[bwl] #imm,abs.l` patches and its file loader copied to $d30e.  Executed here from the HUNTER.TOS bytes, so the
+    originals of every patch site come from the user's floppy release (checked against a RAM dump by `verify --floppy`)."""
+    if "fltail" in _cache:
+        return _cache["fltail"]
+    _hdr, t = fl_tos()
+    img = bytearray(depack_fire(fl_file("800")))
+    ram = {}
+    # the loader block: HUNTER.TOS file $232.. (0x4f1 bytes) -> $d30e
+    a0, a1, n = FL_LOADER[2], 0xD30E, FL_LOADER[3]
+    assert t[FL_LOADER[0] - 28:FL_LOADER[0] - 28 + 4] == bytes.fromhex("41fa0110") and t[FL_LOADER[1] - 28 + 2:FL_LOADER[1] - 28 + 6] == struct.pack(">I", a1)
+    ram[a1] = t[a0 - 28:a0 - 28 + n]
+    o = FL_STORES[0] - 28
+    while o + 28 < FL_STORES[1]:
+        op = struct.unpack_from(">H", t, o)[0]
+        if op == 0x23FC:                      # move.l #imm,abs.l
+            ram[struct.unpack_from(">I", t, o + 6)[0]] = t[o + 2:o + 6]; o += 10
+        elif op == 0x33FC:                    # move.w #imm,abs.l
+            ram[struct.unpack_from(">I", t, o + 4)[0]] = t[o + 2:o + 4]; o += 8
+        elif op == 0x13FC:                    # move.b #imm,abs.l
+            ram[struct.unpack_from(">I", t, o + 4)[0]] = t[o + 3:o + 4]; o += 8
+        elif op == 0x21FC:                    # move.l #imm,abs.w  (the $1e02 magic)
+            ram[struct.unpack_from(">h", t, o + 6)[0] & 0xFFFFFFFF] = t[o + 2:o + 6]; o += 8
+        elif op == 0x4FF9:                    # lea abs.l,a7 (the game's stack): no memory effect
+            o += 6
+        else:
+            raise SystemExit(f"HUNTER.TOS ${o + 28:x}: unexpected opcode {op:04x} in the patch run")
+    assert o + 28 == FL_STORES[1], hex(o + 28)
+    assert t[FL_STORES[1] - 28:FL_STORES[1] - 28 + 8] == bytes.fromhex("6002" "4e71" "4ef80800"), "HUNTER.TOS tail"
+    for a, b in ram.items():
+        if a == 0x7E800:                      # the cracker also stores a byte in the stack page: outside the game image
+            continue
+        if not (HUM_RAM <= a and a + len(b) <= HUM_RAM + len(img)):
+            raise SystemExit(f"cracker patch ${a:x}+{len(b)} outside the unpacked game")
+        img[a - HUM_RAM:a - HUM_RAM + len(b)] = b
+    _cache["fltail"] = bytes(img)
+    return _cache["fltail"]
 
 
 def file_bytes(rel: str) -> bytes:
@@ -282,7 +424,7 @@ class Patch:
 def load_all():
     ps, fps = [], []
     for f in sorted(PATCHDIR.glob("*.s")):
-        if f.name == "core.s":
+        if f.name in ("core.s", "core_floppy.s"):
             continue
         p = Patch(f)
         if p.image is not None:
@@ -363,6 +505,8 @@ def resolve(p: Patch):
         if (len(orig) - len(new)) % 2:
             raise SystemExit(f"{p.name}: new bytes leave an odd gap; pad to an even count")
         new += b"\x4e\x71" * ((len(orig) - len(new)) // 2)
+    if MODE["floppy"]:
+        return orig, new
     if PP_CONDITIONAL[0] < p.site + len(orig) and p.site < PP_CONDITIONAL[0] + PP_CONDITIONAL[1] and p.load is None:
         raise SystemExit(f"{p.name}: overlaps $a09e, which START rewrites when U (unlimited stamina) is pressed")
     return orig, new
@@ -515,13 +659,13 @@ def apply_file_patches(fps, out: Path):
 # ---- commands -------------------------------------------------------------------------------------------------------------
 def check_tail_image() -> bool:
     """The rebuilt START-tail RAM image must equal the RAM dump taken at that moment."""
-    d = TAILDUMP.read_bytes()
+    d = dump_path().read_bytes()
     ok = True
     vol = volatile_ranges()
     for base, b in tail_ram().items():
         n = sum(1 for i in range(len(b)) if not any(a <= base + i < z for a, z in vol))
         eq = all(d[base + i] == b[i] for i in range(len(b)) if not any(a <= base + i < z for a, z in vol))
-        print(f"tail image ${base:05x}..${base + len(b):05x} ({len(b)} B, {n} compared) vs {TAILDUMP.name}: "
+        print(f"tail image ${base:05x}..${base + len(b):05x} ({len(b)} B, {n} compared) vs {dump_path().name}: "
               f"{'IDENTICAL' if eq else 'DIFFERS'}")
         ok &= eq
     print("  machine-dependent (volatile) operands, not patchable: " + " ".join(f"${a:x}+4" for a, _z in vol))
@@ -533,8 +677,8 @@ def cmd_verify(patches, fps=()) -> int:
     if not check_tail_image():
         bad += 1
     core_segments()
-    d = TAILDUMP.read_bytes()
-    g = GAMEDUMP.read_bytes()
+    d = dump_path().read_bytes()
+    g = GAMEDUMP.read_bytes() if not MODE["floppy"] else b""
     for p in patches:
         try:
             orig, new = resolve(p)
@@ -542,7 +686,7 @@ def cmd_verify(patches, fps=()) -> int:
             print(f"{p.name:18s} site ${p.site:05x}: {e}")
             bad += 1
             continue
-        src = "START tail RAM" if p.load is None else f"{p.load[0]} @ ${p.load[1]:x}"
+        src = ("floppy tail RAM" if MODE["floppy"] else "START tail RAM") if p.load is None else f"{p.load[0]} @ ${p.load[1]:x}"
         print(f"{p.name:18s} site ${p.site:05x} phase {p.phase_of():8s} src {src} len {len(orig)}")
         print(f"    original : {orig.hex()}")
         print(f"    new      : {new.hex()}")
@@ -754,22 +898,312 @@ def cmd_boot(game: Path, machine: str, tos: str, mem: int, shots: Path | None, p
             h.close()
 
 
+# ---- floppy build (`build --floppy`; work/notes/floppy.md) ---------------------------------------------------------------------
+FL_SCRATCH = 0xB8200                     # 512-byte boot sector buffer of the loader stage (free RAM above the payload area)
+FL_SND_SERIAL = 0x485344                 # 24-bit volume serial of the sound disk ('HSD'): how the loader recognises it
+FL_SND_SPT = 9                           # sound disk: 720 KB (80 tracks x 2 sides x 9 sectors), 2 sectors per cluster
+FL_ST_ENV = dict(os.environ, MTOOLS_SKIP_CHECK="1")
+
+
+def mtools(*args: str, data: bytes | None = None) -> bytes:
+    r = subprocess.run(list(args), capture_output=True, env=FL_ST_ENV, input=data)
+    if r.returncode != 0:
+        raise SystemExit(f"{' '.join(args)} failed: {r.stderr.decode(errors='replace')}")
+    return r.stdout
+
+
+def core_probe_addr() -> int:
+    """Absolute address of core.s' `probe` (the STE detection) inside the payload: the floppy loader calls it early."""
+    p = Patch(PATCHDIR / "core.s")
+    lines = dict((org, ln) for org, ln in p.segments)[CORE_ORGS["entry"]]
+    src = "\n".join(p.preamble) + f"\n\torg\t${CORE_ORGS['entry']:x}\n" + "\n".join(lines) + "\n"
+    with tempfile.TemporaryDirectory() as td:
+        (Path(td) / "e.s").write_text(src)
+        r = subprocess.run([VASM, "-Fbin", "-m68000", "-quiet", "-L", str(Path(td) / "e.lst"), "-o", str(Path(td) / "e.bin"),
+                            str(Path(td) / "e.s")], capture_output=True, text=True)
+        if r.returncode != 0:
+            raise SystemExit(f"vasm failed on the core entry:\n{r.stderr}")
+        m = re.search(r"^probe\s+A:([0-9A-Fa-f]+)\s*$", (Path(td) / "e.lst").read_text(), re.M)
+    if not m:
+        raise SystemExit("core.s has no `probe` label")
+    return int(m.group(1), 16)
+
+
+def floppy_stage(equ: dict[str, int]) -> bytes:
+    """patches/core_floppy.s assembled (position independent: checked at two origins)."""
+    src = (PATCHDIR / "core_floppy.s").read_text().split("\n")
+    pre = "\n".join(f"{k}\tequ\t{v}" for k, v in equ.items())
+    body = [l for l in src if not re.match(r"^\s*org\b", l)]
+    a = assemble(0, body, pre)
+    b = assemble(0x1000, body, pre)
+    if a != b:
+        raise SystemExit("core_floppy.s is not position independent")
+    return a
+
+
+FL_CACHE = (0x72C, 0x7A0, 0x7FC)         # HUNTER.TOS file offsets: `lea $80200.l,a0` operands (lookup, store) and the `$7fe00` bytes-left long
+FL_CACHE_OLD, FL_CACHE_REM = 0x80200, 0x7FE00
+FL_STAGE = 0xB8400                       # where the loader stage reads HNPATCH.BIN before it unpacks the records (transient)
+
+
+def pack_payload(img: bytes) -> bytes:
+    """HNPATCH.BIN: records {dest.l, len.w (even), bytes} of the non-zero runs of the payload image (zero gaps of 16 bytes or
+    more are not stored; the loader stage clears the whole area first).  Round-trips against `unpack_payload`."""
+    recs = bytearray()
+    i, n = 0, len(img)
+    while True:
+        while i < n and img[i] == 0:
+            i += 1
+        if i >= n:
+            break
+        last = i                                         # last non-zero byte of this run
+        j = i
+        while j < n and j - last <= 16:
+            if img[j] != 0:
+                last = j
+            j += 1
+        end = last + 1
+        if (end - i) % 2:
+            end += 1                                     # even length: the next record header stays word aligned
+        chunk = bytes(img[i:end]).ljust(end - i, b"\0")
+        recs += struct.pack(">IH", IMG_BASE + i, len(chunk)) + chunk
+        i = end
+    return bytes(recs)
+
+
+def unpack_payload(recs: bytes, size: int) -> bytes:
+    out = bytearray(size)
+    o = 0
+    while o < len(recs):
+        a, ln = struct.unpack_from(">IH", recs, o)
+        out[a - IMG_BASE:a - IMG_BASE + ln] = recs[o + 6:o + 6 + ln]
+        o += 6 + ln
+    return bytes(out)
+
+
+def build_hunter_tos(stage: bytes, cache_base: int) -> bytes:
+    """The Paper Bag HUNTER.TOS with our loader stage appended to its text and these changes (see core_floppy.s):
+    $68 T-key patch of $22a off, $b8 `bsr.w stage1`, $22a `bsr.w stage2`, and the RAM file cache of the cracked loader
+    (`$80200`..`$FFFFF`, three constants in the helper that HUNTER.TOS copies to $80040) moved up to `cache_base`.
+    Relocation table unchanged (no new absolutes)."""
+    hdr, text = fl_tos()
+    t = bytearray(text)
+    off = len(t) + 28                                    # file-offset coordinate of the appended blob (all offsets here include the header)
+
+    def sp(at: int, old: str, new: bytes):
+        o = at - 28
+        assert bytes(t[o:o + len(new)]) == bytes.fromhex(old) and len(new) * 2 == len(old), f"HUNTER.TOS ${at:x}: {bytes(t[o:o + len(new)]).hex()}"
+        t[o:o + len(new)] = new
+    sp(FL_SPLICE_T, "41fa01c030bc4e71", bytes.fromhex("4e714e714e714e71"))
+    sp(FL_SPLICE_1, "31fc4e730090", b"\x61\x00" + struct.pack(">h", off - (FL_SPLICE_1 + 2)) + b"\x4e\x71")
+    sp(FL_SPLICE_2, "60024e714ef80800", b"\x61\x00" + struct.pack(">h", off + 4 - (FL_SPLICE_2 + 2)) + bytes.fromhex("4ef80800"))
+    sp(FL_CACHE[0], f"{FL_CACHE_OLD:08x}", struct.pack(">I", cache_base))
+    sp(FL_CACHE[1], f"{FL_CACHE_OLD:08x}", struct.pack(">I", cache_base))
+    sp(FL_CACHE[2], f"{FL_CACHE_REM:08x}", struct.pack(">I", 0x100000 - cache_base))
+    if len(stage) % 2:
+        stage += b"\0"
+    if off + len(stage) > 0x10A + 16388:
+        raise SystemExit("loader stage does not fit the 16388 bytes HUNTER.TOS copies to $6a000")
+    rel = fl_file("HUNTER.TOS")[28 + len(text):]
+    h = bytearray(hdr)
+    struct.pack_into(">I", h, 2, len(text) + len(stage))
+    return bytes(h) + bytes(t) + stage + rel
+
+
+def build_sound_disk(bank: bytes, path: Path, readme: bytes) -> dict:
+    """Two-disk set, disk 2: a valid 720 KB Atari FAT12 disk holding HNSOUND.BIN (the sample bank, contiguous) and README.TXT."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.unlink(missing_ok=True)
+    subprocess.run(["mkfs.fat", "-A", "-C", "-F", "12", "-s", "2", "-r", "112", "-R", "1", "-f", "2", "-S", "512",
+                    "-i", f"{int.from_bytes(FL_SND_SERIAL.to_bytes(3, 'big'), 'little'):06x}",   # Atari variant: the 3 serial bytes at $08 are little-endian
+                    "-n", "HUNTSOUND", str(path), "720"], check=True, capture_output=True)
+    with tempfile.TemporaryDirectory() as td:
+        (Path(td) / "HNSOUND.BIN").write_bytes(bank)
+        (Path(td) / "README.TXT").write_bytes(readme)
+        mtools("mcopy", "-i", str(path), str(Path(td) / "HNSOUND.BIN"), "::HNSOUND.BIN")
+        mtools("mcopy", "-i", str(path), str(Path(td) / "README.TXT"), "::README.TXT")
+    img = path.read_bytes()
+    fat = Fat12(img)
+    assert (fat.bps, fat.spc, fat.spt, fat.sides, fat.nsec) == (512, 2, FL_SND_SPT, 2, 1440), (fat.bps, fat.spc, fat.spt, fat.sides, fat.nsec)
+    ser = int.from_bytes(img[8:11], "big")
+    if ser != FL_SND_SERIAL:
+        raise SystemExit(f"sound disk serial is {ser:06x}, not {FL_SND_SERIAL:06x} (mkfs.fat -A -i)")
+    if sum(struct.unpack(">256H", img[:512])) & 0xFFFF == 0x1234:
+        raise SystemExit("sound disk boot sector sums to $1234 (would be executed)")
+    ch = fat.chain(fat.first_cluster("HNSOUND.BIN"))
+    if ch != list(range(ch[0], ch[0] + len(ch))) or fat.read("HNSOUND.BIN") != bank:
+        raise SystemExit("HNSOUND.BIN is not contiguous on the sound disk")
+    lsn = (fat.data + (ch[0] - 2) * fat.cl) // 512
+    return dict(lsn=lsn, secs=(len(bank) + 511) // 512, serial=ser, clusters=len(ch))
+
+
+def build_disk1(path: Path, tos: bytes, extra: dict[str, bytes], tracks: int, spt: int):
+    """Disk 1 = the Paper Bag disk with HUNTER.TOS replaced and `extra` files added.  Same geometry as the original (81 x 10 x 2):
+    edited in place with mtools; any other geometry: a fresh Atari FAT12 file system (2 sectors per cluster, which the cracked
+    loader's cluster arithmetic requires) with every file copied over by name (the loader finds files by name through the
+    BPB, it has no fixed sector numbers).  Returns the free bytes."""
+    old = fl_image()
+    fa = Fat12(old)
+    if (tracks, spt) == (fa.nsec // (fa.spt * fa.sides), fa.spt):
+        shutil.copy(FL_IMG, path)
+        mtools("mdel", "-i", str(path), "::HUNTER.TOS")
+        with tempfile.TemporaryDirectory() as td:
+            for name, b in [("HUNTER.TOS", tos)] + list(extra.items()):
+                (Path(td) / name).write_bytes(b)
+                mtools("mcopy", "-i", str(path), str(Path(td) / name), f"::{name}")
+    else:
+        path.unlink(missing_ok=True)
+        kb = tracks * spt * 2 // 2
+        subprocess.run(["mkfs.fat", "-A", "-C", "-F", "12", "-s", "2", "-r", "112", "-R", "1", "-f", "2", "-S", "512", "-M", "0xF9",
+                        "-g", f"2/{spt}", "-n", "HUNTER", str(path), str(kb)], check=True, capture_output=True)
+        with open(path, "r+b") as f:
+            f.seek(8)
+            f.write(old[8:11])                           # keep the original volume serial
+        with tempfile.TemporaryDirectory() as td:
+            for name, _c, _s in fa.entries():
+                b = tos if name == "HUNTER.TOS" else fa.read(name)
+                (Path(td) / name).write_bytes(b)
+                mtools("mcopy", "-i", str(path), str(Path(td) / name), f"::{name}")
+            for name, b in extra.items():
+                (Path(td) / name).write_bytes(b)
+                mtools("mcopy", "-i", str(path), str(Path(td) / name), f"::{name}")
+    new = path.read_bytes()
+    fb = Fat12(new)
+    if (fb.bps, fb.spc, fb.spt, fb.sides, fb.nsec) != (512, 2, spt, 2, tracks * spt * 2):
+        raise SystemExit(f"disk 1 geometry {(fb.bps, fb.spc, fb.spt, fb.sides, fb.nsec)}")
+    if new[8:11] != old[8:11]:
+        raise SystemExit("disk 1 serial changed")
+    na = {n for n, _c, _s in fa.entries()}
+    nb = {n for n, _c, _s in fb.entries()}
+    if nb != na | set(extra):
+        raise SystemExit(f"disk 1 directory differs: {sorted(nb ^ (na | set(extra)))}")
+    for n in na - {"HUNTER.TOS"}:
+        if fa.read(n) != fb.read(n):
+            raise SystemExit(f"disk 1: {n} changed")
+    for n, b in [("HUNTER.TOS", tos)] + list(extra.items()):
+        if fb.read(n) != b:
+            raise SystemExit(f"disk 1: {n} does not read back")
+    return fb.free_bytes()
+
+
+def disk2_readme() -> bytes:
+    return (b"HUNTER - STE SOUND DISK (disk 2)\r\n\r\nThis disk holds the sampled sound effects for the STE.\r\n"
+            b"Boot from HUNTER disk 1; the loader asks for this disk (STE, Mega STE, TT, Falcon) and then for disk 1 again.\r\n")
+
+
+def cmd_build_floppy(patches, fps, out: Path, samples: bytes | None, zip_out: Path | None, readme_path: Path,
+                     two_disk: bool = False, geometry: str = "auto"):
+    if fps or any(p.phase_of() == "deferred" for p in patches):
+        raise SystemExit("--floppy: deferred (`; load:`) and file (`; image:`) patches are HD-loader features and are not supported "
+                         "on the floppy (default patch set: boot sites only)")
+    if two_disk and samples is None:
+        raise SystemExit("--two-disk needs --samples")
+    if cmd_verify(patches, fps):
+        raise SystemExit("build aborted: verify failed")
+    img, sites, _core, _used, tbl_len = build_image(patches, None)
+    pcap = SAMPLE_BASE - IMG_BASE
+    if len(img) > pcap:
+        raise SystemExit(f"payload code {len(img)} B exceeds ${pcap:x} (the sample bank starts at ${SAMPLE_BASE:x})")
+    payload = pack_payload(img)
+    assert unpack_payload(payload, len(img)) == img, "payload records do not round-trip"
+    readme = readme_path.read_bytes() if readme_path.exists() else b""
+    if out.exists():
+        shutil.rmtree(out)
+    out.mkdir(parents=True)
+    if geometry == "auto":
+        geometry = "82x11" if (samples is not None and not two_disk) else "81x10"
+    tracks, spt = (int(x) for x in geometry.split("x"))
+    equ = dict(PAYLOAD=IMG_BASE, PROBE=core_probe_addr(), FLAGS=FLAGS, PCAP=pcap, SCRATCH=FL_SCRATCH, STAGE=FL_STAGE, BANK=SAMPLE_BASE,
+               BANKCAP=IMG_END - SAMPLE_BASE, CACHE=IMG_END, SND_FILE=1 if (samples is not None and not two_disk) else 0,
+               SND_DISK=1 if two_disk else 0, SND_LSN=0, SND_SECS=0, SND_SPT=FL_SND_SPT, SND_SER=FL_SND_SERIAL)
+    d2 = None
+    if samples is not None:
+        if SAMPLE_BASE + len(samples) > IMG_END:
+            raise SystemExit(f"samples {len(samples)} B exceed ${SAMPLE_BASE:x}..${IMG_END - 1:x}")
+        if samples[:4] != b"HSND":
+            raise SystemExit("the sample bank does not start with 'HSND'")
+    if two_disk:
+        d2 = build_sound_disk(samples, out / "HUNTER_disk2_sound.st", disk2_readme())
+        equ.update(SND_LSN=d2["lsn"], SND_SECS=d2["secs"])
+    stage = floppy_stage(equ)
+    tos = build_hunter_tos(stage, IMG_END)
+    extra = {"HNPATCH.BIN": payload}
+    if samples is not None and not two_disk:
+        extra["HNSOUND.BIN"] = samples
+    free = build_disk1(out / "HUNTER_disk1.st", tos, extra, tracks, spt)
+    man = {"payload_base": IMG_BASE, "payload_len": len(img), "payload_file": len(payload), "marker": MARKER, "flags": FLAGS,
+           "stage_len": len(stage), "geometry": geometry, "free_bytes": free, "cache_base": IMG_END, "used": _used,
+           "bank": [SAMPLE_BASE, len(samples)] if samples is not None else None,
+           "sound": "two-disk" if two_disk else ("single-disk" if samples is not None else "none"), "sound_disk": d2,
+           "sites": [{"name": s["name"], "addr": s["addr"], "phase": s["phase"]} for s in sites]}
+    (out / "manifest.json").write_text(json.dumps(man, indent=1))
+    d1 = out / "HUNTER_disk1.st"
+    print(f"built {out}: HUNTER_disk1.st ({d1.stat().st_size} B = {tracks} tracks x {spt} sectors x 2 sides, {free} B free)"
+          + (f", HUNTER_disk2_sound.st (bank {len(samples)} B at LSN {d2['lsn']}, {d2['secs']} sectors, serial {d2['serial']:06x})" if d2 else "")
+          + (f"; bank HNSOUND.BIN {len(samples)} B on disk 1" if samples is not None and not two_disk else "")
+          + ("" if samples is not None else "; no sound bank (lean set)"))
+    print(f"  HUNTER.TOS {len(tos)} B (stage {len(stage)} B appended; file cache moved to ${IMG_END:x}..$FFFFF), "
+          f"HNPATCH.BIN {len(payload)} B (payload image {len(img)} B -> ${IMG_BASE:x}..${IMG_BASE + len(img) - 1:x}), "
+          f"site table {tbl_len} B of {TABLE_END - TABLE}")
+    print(f"  {'site':8s} {'len':4s} orig -> new")
+    for s in sites:
+        print(f"  ${s['addr']:05x}  {len(s['orig']):4d} {s['orig'].hex()} -> {s['new'].hex()}   [{s['name']}]")
+    if zip_out:
+        import zipfile
+        zip_out.parent.mkdir(parents=True, exist_ok=True)
+        with zipfile.ZipFile(zip_out, "w", zipfile.ZIP_DEFLATED) as z:
+            z.write(d1, "HUNTER_disk1.st")
+            if d2:
+                z.write(out / "HUNTER_disk2_sound.st", "HUNTER_disk2_sound.st")
+            z.writestr("README.TXT", readme.decode("latin1").replace("\r\n", "\n").replace("\n", "\r\n"))
+        print(f"wrote {zip_out} ({zip_out.stat().st_size} B)")
+
+
+def cmd_taildump_floppy(out: Path):
+    """Regenerate the RAM dump of the ORIGINAL Paper Bag floppy at HUNTER.TOS' final `jmp $800.w` ($6a124).  ~30 s."""
+    sys.path.insert(0, str(HERE))
+    import huntfloppy  # noqa: E402
+    out = out.resolve()
+    out.unlink(missing_ok=True)
+    h = huntfloppy.HunterFloppy(FL_IMG)
+    try:
+        cf = h.R / "tail.txt"
+        cf.write_text(f"savebin {out} 0 $100000\n")
+        h.debug("b all", 0.3)
+        h.cmd(f"hatari-debug b pc = ${FL_JMP_RAM:x} :trace :once :file {cf}")
+        t = time.time()
+        time.sleep(10)
+        while not out.exists() and time.time() - t < 120:
+            h.keypress(57)                  # "Paper Bag presents": press a key
+            time.sleep(4)
+        time.sleep(2)
+        print(f"wrote {out} ({out.stat().st_size} B)" if out.exists() else "no dump written")
+        return 0 if out.exists() else 1
+    finally:
+        h.close()
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
     b = sub.add_parser("build")
     b.add_argument("--only", nargs="*", default=None)
-    b.add_argument("--out", default="build/game")
-    b.add_argument("--samples", default=None, help="raw sample bank bytes placed at $90000 (max 126976 B)")
+    b.add_argument("--out", default=None, help="default build/game (HD) or build/floppy (--floppy)")
+    b.add_argument("--samples", default=None, help="raw sample bank bytes: placed at $90000 in FILES/P (HD); --floppy: written to disk 2")
     b.add_argument("--fill", action="store_true", help="fill every unused payload byte with a pattern (free-RAM proof)")
     b.add_argument("--corrupt", action="store_true", help="TEST ONLY: corrupt the first orig byte in the payload (expects HNPF)")
+    b.add_argument("--floppy", action="store_true", help="build the floppy set from the Paper Bag release (alt/floppy): disk 1 [+ disk 2 with --samples]")
+    b.add_argument("--zip", nargs="?", const="auto", default=None, help="--floppy: also write dist/Hunter_patched_floppy_<date>.zip (or PATH)")
+    b.add_argument("--two-disk", action="store_true", help="--floppy: standard-format 2-disk set (sample bank on a 720 KB disk 2, prompt on STE) instead of one extended disk")
+    b.add_argument("--geometry", default="auto", help="--floppy: disk 1 TRACKSxSECTORS (default 82x11 with a bank on one disk, else the original 81x10)")
     lv = sub.add_parser("live")
     lv.add_argument("--only", nargs="*", default=None)
     lv.add_argument("--out", default="build/live/patches")
     lv.add_argument("--samples", default=None)
     lv.add_argument("--no-ste", action="store_true", help="set FLAGS as a plain ST (default: STE)")
     sub.add_parser("list")
-    sub.add_parser("verify")
+    vf = sub.add_parser("verify")
+    vf.add_argument("--floppy", action="store_true", help="derive the originals from the Paper Bag floppy release")
     bt = sub.add_parser("boot")
     bt.add_argument("--game", default="build/game")
     bt.add_argument("--machine", default="ste")
@@ -780,20 +1214,24 @@ def main():
     bt.add_argument("--play", type=float, default=0, help="hold Up+Left this many seconds in the 3D view before dumping")
     bt.add_argument("--peek", nargs="*", default=[], help="addr[:len] RAM bytes to print after the boot (hex addr)")
     td = sub.add_parser("taildump")
-    td.add_argument("--out", default=str(TAILDUMP))
+    td.add_argument("--out", default=None)
+    td.add_argument("--floppy", action="store_true", help="dump the original Paper Bag floppy (default: the HD build)")
     fc = sub.add_parser("fillcheck")
     fc.add_argument("dump")
     fc.add_argument("--manifest", default="build/game.json")
     a = ap.parse_args()
+    MODE["floppy"] = bool(getattr(a, "floppy", False))
     patches, fps = load_all()
     if a.cmd == "list":
         cmd_list(patches, fps)
     elif a.cmd == "verify":
+        if MODE["floppy"]:
+            patches, fps = [p for p in patches if p.phase_of() == "boot"], []
         sys.exit(cmd_verify(patches, fps))
     elif a.cmd == "boot":
         sys.exit(cmd_boot(ROOT / a.game, a.machine, a.tos, a.mem, ROOT / a.shots if a.shots else None, a.peek, a.dump, a.play))
     elif a.cmd == "taildump":
-        sys.exit(cmd_taildump(Path(a.out)))
+        sys.exit(cmd_taildump_floppy(Path(a.out or TAILDUMP_FL)) if MODE["floppy"] else cmd_taildump(Path(a.out or TAILDUMP)))
     elif a.cmd == "fillcheck":
         sys.exit(cmd_fillcheck(Path(a.dump), ROOT / a.manifest))
     else:
@@ -808,8 +1246,13 @@ def main():
             sel = [p for p in patches if p.name in names]
             fsel = [p for p in fps if p.name in names]
         smp = read_samples(a.samples)
-        if a.cmd == "build":
-            cmd_build(sel, fsel, ROOT / a.out, smp, a.fill, a.corrupt)
+        if a.cmd == "build" and MODE["floppy"]:
+            zp = None
+            if a.zip:
+                zp = ROOT / "dist" / f"Hunter_patched_floppy_{time.strftime('%Y-%m-%d')}.zip" if a.zip == "auto" else Path(a.zip)
+            cmd_build_floppy(sel, fsel, ROOT / (a.out or "build/floppy"), smp, zp, PATCHDIR / "FLOPPY.TXT", a.two_disk, a.geometry)
+        elif a.cmd == "build":
+            cmd_build(sel, fsel, ROOT / (a.out or "build/game"), smp, a.fill, a.corrupt)
         else:
             if fsel:
                 raise SystemExit("file patches are applied at build time, not live")

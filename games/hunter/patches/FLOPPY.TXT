@@ -1,0 +1,26 @@
+HUNTER (Activision, 1991) - floppy version with performance patches and STE sound
+===============================================================================
+
+What is in this set
+  HUNTER_disk1.st   the game disk: the Paper Bag floppy release with a new loader stage, the patch code and, for the
+                    STE sound, the sample bank.  ONE disk, extended format: 82 tracks x 11 sectors x 2 sides (923648 bytes).
+
+What changed
+  * Faster 3D view: the polygon filler, the edge set-up and the keyboard poll were rewritten; the picture is
+    identical to the original, pixel for pixel.
+  * STE sound (STE, Mega STE, TT, Falcon): the YM sound effects are replaced by the Amiga version's samples,
+    played through the STE DMA sound chip (mono, 6258 Hz, two voices; the engine pitch follows the speed).
+  * A plain ST keeps the original YM sound (the sample bank is not even read).
+  * The patches check every byte they replace; if the game code is not the expected one nothing is changed.
+
+How to start
+  Put HUNTER_disk1 in drive A (write enabled: the game saves to this disk) and switch on.  The disk autoruns
+  HUNTER.TOS; press a key at the "Paper Bag presents" screen.  The title ignores keys while the game loads: wait
+  until the menu appears.  Save games with ESC / Disk Operation / Save Game.
+
+Requirements
+  * 1 MB RAM or more (patch code, bank and file cache live above 512 KB; a 512 KB machine runs the unpatched game).
+  * The disk is in 11-sector format with 82 tracks: write it with a tool that supports it (Fastcopy, MSA-style
+    writers, Gotek/HxC: use the .st as is) and a drive that reaches track 81.  The image has no interleave: have the
+    writer apply a sector skew, otherwise the game loads slowly.
+  * Joystick in port 1 (cursor keys + fire on emulators).
