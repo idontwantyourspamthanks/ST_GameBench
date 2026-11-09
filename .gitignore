@@ -22,6 +22,10 @@ games/*/*.zip
 # Third-party game not part of this project
 games/steve-outrun/
 
+# Floppy images and files extracted from them (per-game intake)
+games/*/disks/
+games/*/extracted/
+
 # Anything containing game RAM, game data or game imagery
 **/work/snapshots/
 **/work/dumps/
