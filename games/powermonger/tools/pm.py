@@ -184,3 +184,144 @@ def _methods():
 
 
 _methods()
+
+
+def _methods2():
+    def ram(self, start: int = 0, length: int = 0x100000) -> bytes:
+        """Read `length` bytes of ST RAM at `start` through the debugger `savebin` (fast; `m` is 16 bytes/line)."""
+        p = self.R / "ram.bin"
+        if p.exists():
+            p.unlink()
+        self.debug(f"savebin {p} ${start:x} ${length:x}", 0.5)
+        t = time.time()
+        while not p.exists() or p.stat().st_size < length:
+            if time.time() - t > 30:
+                raise RuntimeError("savebin did not finish")
+            time.sleep(0.2)
+        time.sleep(0.2)
+        return p.read_bytes()
+
+    def people(self, d: bytes | None = None):
+        """List of 512 raw 0x32-byte person records."""
+        d = d if d is not None else self.ram(PEOPLE, PEOPLE_N * PEOPLE_STRIDE)
+        base = 0 if len(d) == PEOPLE_N * PEOPLE_STRIDE else PEOPLE
+        return [d[base + i * PEOPLE_STRIDE: base + (i + 1) * PEOPLE_STRIDE] for i in range(PEOPLE_N)]
+
+    def moving_people(self, gap: float = 0.4) -> int:
+        """Number of live person records whose position words (offsets 8, 10) change over `gap` seconds."""
+        a = self.people()
+        time.sleep(gap)
+        b = self.people()
+        n = 0
+        for x, y in zip(a, b):
+            if 0 < x[5] < 0x80 and x[8:12] != y[8:12]:
+                n += 1
+        return n
+
+    def save_snapshot(self, name: str) -> Path:
+        SNAP.mkdir(parents=True, exist_ok=True)
+        out = SNAP / f"{name}.sav"
+        self.savemem(str(out))
+        return out
+
+    def scenario_get_men(self, log=print, want: int = 6, timeout: float = 60) -> int:
+        """From the idle 3D view: centre the close-up on the grey village (overview click), choose the 3-sword icon,
+        then GET MEN. Waits until `want` people are moving. Returns the number moving."""
+        self.click_st(22, 51, wait=1.5)
+        self.click_st(*POSTURE3_XY, wait=0.8)
+        self.click_st(*GETMEN_XY, wait=1.0)
+        t = time.time()
+        n = 0
+        while time.time() - t < timeout:
+            n = self.moving_people()
+            log(f"moving people: {n}")
+            if n >= want:
+                break
+        return n
+
+    for f in (ram, people, moving_people, save_snapshot, scenario_get_men):
+        setattr(PM, f.__name__, f)
+
+
+_methods2()
+
+
+# ---- measurement ----------------------------------------------------------------------------------
+LOOP_SITES = (0x13040, 0x13046, 0x1304C, 0x13052, 0x13090, 0x13096, 0x130A4, 0x130AA, 0x130B0, 0x130B6, 0x130BC,
+              0x130C2, 0x130C8, 0x130CE, 0x130F6, 0x130FC, 0x1386C, 0x13872)      # jsr sites of the main loop body
+LOOP_NAMES = {
+    0x13040: "$127e6", 0x13046: "$6522", 0x1304C: "$d322 (captain proximity scan)", 0x13052: "$3e06",
+    0x13090: "VBL wait $1870", 0x13096: "$12ce0 (screen-window copy)", 0x130A4: "$178ae", 0x130AA: "$f898 (landscape + objects)",
+    0x130B0: "$1abaa (season/weather dissolve)", 0x130B6: "$17878", 0x130BC: "$165b2", 0x130C2: "$14b62",
+    0x130C8: "$6a3a", 0x130CE: "$7a56", 0x130F6: "$d23a", 0x130FC: "$7202", 0x1386C: "$187a (flip)", 0x13872: "$1a276"}
+
+
+def _methods3():
+    def profile_save(self, vbls: int, path: str, sim_iters: bool = False) -> int:
+        """Hatari `profile save` over ~vbls VBLs (instruction counts + cycles per address) into `path`.
+        Returns the number of VBL-handler executions inside the window (the exact frame count)."""
+        end = self.R / "prof_end.txt"
+        end.write_text(f"profile save {Path(path).resolve()}\n")
+        start = self._arm_vbl(vbls + 25, f" :file {end}")
+        time.sleep(0.3)
+        self.cmd("hatari-debug profile on")
+        self._wait_removed(start)
+        time.sleep(1.0)
+        txt = Path(path).read_text()
+        m = re.search(r"^\$00001282\s.*?\((\d+),", txt, re.M)
+        return int(m.group(1)) if m else 0
+
+    def cyc_trace(self, pcs, vbls: int = 100, tag: str = "ct"):
+        """Breakpoint at each pc in `pcs`; at every hit log (pc, CycleCounter, VBL). Cycle counts are the global
+        emulated CPU cycle counter (32 bit, wraps), so differences between consecutive hits are exact stage costs
+        including the interrupts that ran in between."""
+        self.debug("b all", 0.3)
+        f = self.R / f"{tag}.txt"
+        f.write_text("e pc\ne CycleCounter\ne VBL\n")
+        s0 = len(self._logtext())
+        v = self.vbl()
+        for pc in pcs:
+            self.cmd(f"hatari-debug b pc = ${pc:x} :trace :file {f}")
+            time.sleep(0.1)
+        self.cmd(f"hatari-debug b VBL > {v + vbls} :trace :once")
+        t = time.time()
+        while "Removed CPU breakpoint" not in self._logtext()[s0:]:
+            if time.time() - t > 600:
+                raise TimeoutError("cyc_trace")
+            time.sleep(0.5)
+        time.sleep(0.3)
+        out = self._logtext()[s0:]
+        self.debug("b all", 0.3)
+        res = []
+        for blk in out.split("Reading debugger commands")[1:]:
+            m = re.findall(r"\$([0-9a-f]+) \(hex\)", blk)
+            if len(m) >= 3:
+                res.append((int(m[0], 16), int(m[1], 16), int(m[2], 16)))
+        return res
+
+    def ram_at_vbls(self, offsets, prefix: str):
+        """Absolute-VBL deterministic RAM dumps: arms one VBL breakpoint per offset (frames from now) that runs
+        `e VBL` + `savebin prefix_<n>.bin`. Returns [(vbl_at_hit, bytes)]."""
+        self.debug("b all", 0.3)
+        v0 = self.vbl()
+        vs = [v0 + o for o in offsets]
+        s0 = len(self._logtext())
+        for v in vs:
+            f = self.R / f"dat_{v}.txt"
+            f.write_text(f"e VBL\nsavebin {prefix}_{v}.bin $0 $100000\n")
+            self.cmd(f"hatari-debug b VBL > {v} :trace :once :file {f}")
+            time.sleep(0.15)
+        t = time.time()
+        while self._logtext()[s0:].count("Removed CPU breakpoint") < len(vs):
+            if time.time() - t > 900:
+                raise TimeoutError("ram_at_vbls")
+            time.sleep(0.5)
+        time.sleep(0.6)
+        got = [int(x) for x in re.findall(r"#(\d+) \(dec\)", self._logtext()[s0:])]
+        return [(g, Path(f"{prefix}_{v}.bin").read_bytes()) for v, g in zip(vs, got)]
+
+    for f in (profile_save, cyc_trace, ram_at_vbls):
+        setattr(PM, f.__name__, f)
+
+
+_methods3()
