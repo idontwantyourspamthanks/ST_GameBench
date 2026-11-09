@@ -165,7 +165,7 @@ So the patched disk takes about 12 s longer to reach the menu: about 3 s for our
 
 ## 8. TT and Falcon
 
-*To be filled in from HunterTTF.* What is known so far: on TT 3.06 (4 MB) the floppy loader and patches ran (`HNPO`, flags 3, bank loaded) and the title is displayed, but the harness could not navigate on to the 3D view; the Falcon was not run. The DMA register sequence itself ran without a crash and played a tone on TOS 3.06 and 4.04 in Hatari.
+See `work/notes/ttfalcon.md`. Summary: the floppy build runs to the 3D view with DMA sound on TT 3.06 and Falcon 4.04 in Hatari (the original Paper Bag floppy does not: its FDC time-out loop is CPU-speed dependent); the HD build runs on TT 3.06 (ACSI + HDDRIVER; the unpatched game does not, because PP's cookie jar claims a Falcon); the Falcon HD build could not be tested (HDDRIVER 10.15 does not see Hatari's IDE/SCSI drive).
 
 ## 9. Delivered
 

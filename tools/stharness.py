@@ -368,12 +368,14 @@ class Hatari:
 
     def screen_matches(self, ref: Path, box: tuple[int, int, int, int], tol: float = 8.0) -> bool:
         """True if the screenshot region `box` (ST-screenshot coordinates: 832x588,
-        picture at (96,58)) matches the image `ref`. Borderless TT/Falcon shots
-        (640 wide) are shifted automatically."""
+        picture at (96,58)) matches the image `ref`. TT shots (640 x 436: picture at 0,0, statusbar below) and
+        Falcon shots (648 x 602: picture at 2,64; measured by an exact template match) are shifted automatically."""
         from PIL import Image, ImageChops, ImageStat
         img = Image.open(self.shot()).convert("RGB")
         if img.width == 640:
             box = (box[0] - 96, box[1] - 58, box[2] - 96, box[3] - 58)
+        elif img.width == 648:
+            box = (box[0] - 94, box[1] + 6, box[2] - 94, box[3] + 6)
         diff = ImageChops.difference(img.crop(box), Image.open(ref).convert("RGB"))
         return sum(ImageStat.Stat(diff).mean) / 3 < tol
 

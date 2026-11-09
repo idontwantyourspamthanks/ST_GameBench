@@ -1,6 +1,6 @@
 ; core.s -- Hunter patch delivery mechanism (always installed by huntpatch.py).  Evidence: work/notes/loading.md.
 ;
-; Three segments, assembled separately:
+; Four segments, assembled separately:
 ;   org $0      stub     position independent, 142 bytes, lives in the dead zero run of the patched START.TOS
 ;                        (text offset $7f20).  START's tail `lea $7e800,a7` (just before `jmp $800.w`) became
 ;                        `jmp stub`.  It reads FILES\P (the payload image) to $8BA00 with the GAME'S OWN loader
@@ -8,9 +8,11 @@
 ;                        'HNPA', calls hnentry (PAYLOAD+4), then restores every register and SR and does the original
 ;                        `lea $7e800,a7 / jmp $800.w`.  File missing / short: the game starts unpatched, no marker.
 ;   org $8ba00  hnentry  verify ALL boot sites, then apply them (all or nothing); 'HNPO'/'HNPF' at MARKER;
-;                        STE DMA sound hardware probe -> FLAGS.
-;   org $8bb00  hookexit replaces `jmp $d60a.l` at $1a6 (the single exit of the game's file hook $150) when
+;                        STE DMA sound hardware probe -> FLAGS; instruction/data cache flush (68020+).
+;   org $8bb40  hookexit replaces `jmp $d60a.l` at $1a6 (the single exit of the game's file hook $150) when
 ;                        any phase=deferred site exists; runs `apply` for the file that has just been read.
+;   org $7fc0   mchfix   TT only, 64 bytes in the same dead zone of START's text (see below): START's `jsr (a0)` that runs
+;                        the hard disk's root sector (text $590) became `bsr.w mchfix`.
 ; Site table (written by huntpatch.py): entries {addr.l len.w phase.w orig[len] new[len]}, addr 0 ends.
 ;   phase 0 = boot site (applied by entry), phase 1 = deferred (applied by apply when the finished file read
 ;   [$c073e dest, $c0358 byte count] covers the whole site; idempotent: orig -> write new; new -> done; else HNPF).
@@ -62,6 +64,27 @@ stub:   movem.l d0-d7/a0-a6,-(a7)
         lea     $7e800.l,a7             ; START's own instruction that the splice replaced
         jmp     $800.w
 
+        org     $7fc0
+; TT only.  The game's own cookie jar (D15R_F5.FIC, used on every TT/Falcon) says _MCH = Falcon.  START runs the root
+; sector of the disk (HDDRIVER) a second time inside that world; HDDRIVER trusts the jar and, on a "Falcon", does not scan
+; ACSI, so on a TT with an ACSI disk it found no drive and the game started on garbage (work/notes/ttfalcon.md).  START's
+; machine type byte (text $693) is 5 on a TT: put the real _MCH ($00020000) into the jar for the duration of that run only.
+mchfix: move.l  a1,-(a7)               ; a1 may matter to the root sector: keep it
+        lea     $693(pc),a1             ; START's machine type byte: 5 = TT
+        cmpi.b  #5,(a1)
+        movea.l (a7)+,a1                ; (movea leaves the flags)
+        bne.s   .plain
+        cmpi.l  #'_MCH',$d0ee4.l        ; D15R_F5's jar: _CPU,$1e,_MCH,$00030000
+        bne.s   .plain
+        move.l  $d0ee8.l,-(a7)
+        move.l  #$00020000,$d0ee8.l
+        jsr     (a0)                    ; the root sector (a0, d4, d5, d7 as START set them)
+        move.l  (a7)+,$d0ee8.l
+        bra.s   .out
+.plain: jsr     (a0)
+.out:   moveq   #$1c,d7                 ; START's instruction behind the jsr
+        rts
+
         org     $8ba00
         dc.l    'HNPA'
 hnentry: movem.l d0-d7/a0-a6,-(a7)
@@ -101,7 +124,35 @@ hnentry: movem.l d0-d7/a0-a6,-(a7)
         dbra    d1,.a2
         bra.s   .a1
 .tok:   move.l  #'HNPO',MARKER.l
-.tfail: movem.l (a7)+,d0-d7/a0-a6
+.tfail: bsr.w   cflush                 ; every exit: START and the sites wrote code with data writes
+        movem.l (a7)+,d0-d7/a0-a6
+        rts
+
+; Cache flush before the game runs (68020 and up; 68000/68010: nothing to do).  START depacks the game, applies PP's RAM
+; patches and copies the file hook with ordinary data writes, then we patch more; an instruction cache that still holds
+; lines of whatever ran at those addresses before (HDDRIVER's resident code on a TT/Falcon lives right there) would execute
+; stale bytes.  The CPU is found by executing instructions under temporary illegal/line-F handlers:
+;   movec cacr,d0   68020/030/040/060 execute it, 68000/68010 raise illegal instruction
+;   cpusha bc       68040/060 push + invalidate both caches; 68020/030 raise line F ($2c) -> clear CI + CD in the CACR
+; d0-d1/a0-a3 scratch.
+cflush: movea.l a7,a2                   ; the exception handler resets the stack here
+        movea.l $10.w,a1
+        movea.l $2c.w,a3
+        lea     .ctrap(pc),a0
+        move.l  a0,$10.w
+        move.l  a0,$2c.w
+        moveq   #0,d1                   ; stage 0: movec
+        dc.w    $4e7a,$0002             ; movec cacr,d0
+        moveq   #1,d1                   ; stage 1: cpusha
+        dc.w    $f4f8                   ; cpusha bc
+        bra.s   .cdone
+.ctrap: movea.l a2,a7                   ; drop the exception frame
+        tst.w   d1
+        beq.s   .cdone                  ; no CACR: 68000/68010
+        ori.w   #$0808,d0               ; 68020/030: CI (bit 3) + CD (bit 11): clear both caches
+        dc.w    $4e7b,$0002             ; movec d0,cacr
+.cdone: move.l  a1,$10.w
+        move.l  a3,$2c.w
         rts
 
 ; STE-class DMA sound probe (cookies are unreliable under Gamex).  d0-d3/a0-a2 scratch.
@@ -131,7 +182,7 @@ probe:  moveq   #2,d3                   ; bit1: probe ran
         move.l  d3,FLAGS.l
         rts
 
-        org     $8bb00
+        org     $8bb40
 hookexit:                               ; replaces `jmp $d60a.l` (4ef9 0000d60a) at $1a6
         movem.l d0-d7/a0-a6,-(a7)
         bsr.s   apply

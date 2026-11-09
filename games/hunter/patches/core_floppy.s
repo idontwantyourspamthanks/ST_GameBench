@@ -11,7 +11,8 @@
 ;              It also empties the head of the file cache that HUNTER.TOS' cracked loader keeps in RAM (CACHE, which
 ;              huntpatch.py moved above the payload: the original cache ran over $80200..$FFFFF and overwrote the payload).
 ;   +4 stage2  bsr'd from HUNTER.TOS $22a (the copy at $6a000: everything is in place, SR $2700, TOS dead), then the
-;              original `jmp $800.w`: runs the payload entry (verify ALL sites, apply all or nothing, 'HNPO'/'HNPF').
+;              original `jmp $800.w`: runs the payload entry (verify ALL sites, apply all or nothing, 'HNPO'/'HNPF'),
+;              scales the loader's FDC time-out for 68020+ CPUs (see ccache) and clears the caches.
 ; Equates injected by huntpatch.py: PAYLOAD PROBE FLAGS PCAP SCRATCH STAGE BANK BANKCAP CACHE SND_FILE SND_DISK SND_LSN SND_SECS
 ; SND_SPT SND_SER.  Two-disk mode: the sound disk is identified by the 24-bit volume serial at boot sector offset 8..10 (SND_SER);
 ; the game disk by the serial read from drive A at start, so the game disk is proven to be back in drive A before the game
@@ -22,12 +23,70 @@
         bra.w   stage2
 
 stage2: cmpi.l  #'HNPA',PAYLOAD.l
-        bne.s   .no
+        bne.s   .fl
         jsr     PAYLOAD+4.l
-.no:    rts
+.fl:    movem.l d0-d2/a0-a3,-(a7)       ; the game's entry registers stay as the loader left them
+        moveq   #0,d2
+        bsr.s   ccache                  ; d1 = CPU class: 0 = 68000/68010, 1 = 68020/030, 2 = 68040/060
+        tst.w   d1
+        beq.s   .st2
+        lea     $d51c.l,a0              ; the cracked loader's FDC wait: move.l #$70000,d2 / btst #5,$fa01 / ...
+        cmpi.w  #$243c,(a0)
+        bne.s   .st2                    ; not the expected loader: leave it alone
+        cmpi.l  #$70000,2(a0)
+        bne.s   .st2
+        move.l  #$700000,d0             ; 68020/030: 16 x the iterations
+        cmpi.w  #2,d1
+        bne.s   .setto
+        move.l  #$1c00000,d0            ; 68040/060: 64 x
+.setto: move.l  d0,2(a0)
+        moveq   #0,d2
+        bsr.s   ccache                  ; the loader and the sites wrote code with data writes: clear the caches
+.st2:   movem.l (a7)+,d0-d2/a0-a3
+        rts
+
+; The cracked loader (HUNTER.TOS, copied to $d30e) reads the disk with its own FDC code and waits for each command to
+; finish with a LOOP COUNT, `move.l #$70000,d2 / btst.b #5,$fa01.w / beq / subq.l #1,d2 / bne` (loader $d51c): about 2.4 s
+; at 8 MHz on a 68000, but only ~0.2 s at 32 MHz on a 68030 with the instruction cache on, i.e. shorter than a long seek.
+; The time-out fires, the sector read returns zeros, the boot sector's sectors-per-track byte (the loader's divisor) is 0
+; and the game dies with a division by zero at $d480 (observed on TT 3.06 and Falcon 4.04, work/notes/ttfalcon.md;
+; raising the constant by hand in the unpatched game makes it pass).  stage2 therefore raises the constant on a 68020+.
+; The same routine also clears the caches (START/the loader/our sites wrote code with data writes), and in stage1 (d2.b = 1)
+; switches the 68030 data cache off: the loader's DMA writes the sector behind the CPU's back and the 68030 does not snoop,
+; TOS' own drivers flush after every DMA and this loader does not [INFERENCE: Hatari's emulated data cache did not show the
+; problem, real TT/Falcon hardware is the case this guards].
+; The CPU is found by executing instructions under temporary illegal/line-F handlers:
+;   movec cacr,d0   68020/030/040/060 execute it, 68000/68010 raise illegal instruction
+;   cpusha bc       68040/060 push + invalidate both caches; 68020/030 raise line F ($2c)
+;   d2.b = 1: also disable the 68030 data cache (CACR bit 8); d2.b = 0: only clear.   Out: d1 = class.  d0-d1/a0-a3 scratch.
+ccache: movea.l a7,a2                   ; the exception handler resets the stack here
+        movea.l $10.w,a1                ; illegal instruction vector
+        movea.l $2c.w,a3                ; line-F vector
+        lea     .trap(pc),a0
+        move.l  a0,$10.w
+        move.l  a0,$2c.w
+        moveq   #0,d1                   ; class 0 until movec worked
+        dc.w    $4e7a,$0002             ; movec cacr,d0
+        moveq   #1,d1
+        dc.w    $f4f8                   ; cpusha bc
+        moveq   #2,d1                   ; no exception: 68040/060
+        bra.s   .out
+.trap:  movea.l a2,a7                   ; drop the exception frame
+        tst.w   d1
+        beq.s   .out                    ; no CACR: 68000/68010
+        tst.b   d2
+        beq.s   .clr
+        andi.w  #$feff,d0               ; ED = 0: data cache off
+.clr:   ori.w   #$0808,d0               ; CI + CD: clear both caches
+        dc.w    $4e7b,$0002             ; movec d0,cacr
+.out:   move.l  a1,$10.w
+        move.l  a3,$2c.w
+        rts
 
 stage1: move.w  #$4e73,$90.w            ; the instruction HUNTER.TOS had at $b8 (the splice replaced it)
         movem.l d0-d7/a0-a6,-(a7)
+        moveq   #1,d2
+        bsr.s   ccache                  ; 68030: data cache off before the loader's own FDC code runs
         cmpi.l  #$100000,$42e.w         ; phystop: the payload lives above $80000 (1 MB machines)
         blo.w   .done
         clr.l   CACHE.l                 ; empty cache (HUNTER.TOS' loader walks entries from here; RAM may be stale)

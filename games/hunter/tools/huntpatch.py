@@ -18,7 +18,7 @@ How a build works (the originals are never modified; everything goes to build/ga
     `$c0152`), checks the magic 'HNPA' and calls the core.  The core verifies the original bytes of EVERY boot
     site, then applies all of them or none ('HNPO' / 'HNPF' at $8BFF8) and probes for STE DMA sound ($8BFF0).
   * phase=deferred sites (a `; load: FILES/n $dest` header) are applied by the load hook: the single exit of the
-    game's file hook at $1a6 (`jmp $d60a.l`) becomes `jmp $8bb00`, which runs the applier on the file just read.
+    game's file hook at $1a6 (`jmp $d60a.l`) becomes `jmp $8bb40`, which runs the applier on the file just read.
   * `; image: FILES/n` file patches edit the build copy of a game file (like the HAGA patches of Midwinter).
   * The sample bank ($90000..$AEFFF, up to 126976 bytes) is appended to the payload with `--samples FILE`.
 """
@@ -59,6 +59,9 @@ START_TAIL = 0x686                       # text offset of `lea $7e800,a7` (4ff9 
 START_TAIL_ORIG = bytes.fromhex("4ff90007e8004ef80800")
 STUB_OFF = 0x7F20                        # text offset of the stub: inside the zero run $7f10..$80d0 (never written, see notes)
 STUB_END = 0x80D0
+MCHFIX_OFF = 0x7FC0                      # TT cookie fix (core.s `mchfix`), also in the dead zone
+START_ROOT = 0x590                       # `jsr (a0)` that runs the disk's root sector + `moveq #$1c,d7` (replaced by `bsr.w mchfix`)
+START_ROOT_ORIG = bytes.fromhex("4e907e1c")
 HOOK_SRC = 0x6A4                         # text offset of the game's file hook ($1b4ba), START copies 724 bytes to $150
 HOOK_RAM, HOOK_LEN = 0x150, 724
 HUM_RAM = 0x800                          # HUM.FIC (32-byte header + PP LZ) unpacks to $800.. (71684 bytes)
@@ -75,7 +78,7 @@ D15R_MAX = 70000                         # the game's file hook reads at most th
 # ---- payload layout ($8BA00..$AEFFF) ---------------------------------------------------------------------
 IMG_BASE, IMG_END = 0x8BA00, 0xAF000
 SAMPLE_BASE = 0x90000
-CORE_ORGS = {"stub": 0x0, "entry": 0x8BA00, "hook": 0x8BB00}
+CORE_ORGS = {"stub": 0x0, "mchfix": 0x7FC0, "entry": 0x8BA00, "hook": 0x8BB40}
 PREFIX_RANGES = {                        # blob orgs allowed per patch-name prefix (shared contract, inclusive ends)
     "p4_": (0x8C000, 0x8DFFF),           # Raster
     "snd_": (0x8E000, 0x8FFFF),          # Audio code, mixer state, ring buffer
@@ -460,8 +463,10 @@ def core_segments() -> dict[str, bytes]:
     again = assemble(0x1000, [l for l in by_org[0]], equ)
     if again != segs["stub"]:
         raise SystemExit("core.s stub is not position independent")
-    if STUB_OFF + len(segs["stub"]) > STUB_END:
-        raise SystemExit(f"stub ({len(segs['stub'])} B) does not fit the dead zone")
+    if STUB_OFF + len(segs["stub"]) > MCHFIX_OFF:
+        raise SystemExit(f"stub ({len(segs['stub'])} B) overlaps the TT cookie fix at text ${MCHFIX_OFF:x}")
+    if MCHFIX_OFF + len(segs["mchfix"]) > STUB_END:
+        raise SystemExit(f"TT cookie fix ({len(segs['mchfix'])} B) does not fit the dead zone")
     if CORE_ORGS["entry"] + len(segs["entry"]) > CORE_ORGS["hook"]:
         raise SystemExit("core entry segment overflows into the hook segment")
     if CORE_ORGS["hook"] + len(segs["hook"]) > TABLE:
@@ -598,7 +603,7 @@ def fill_byte(a: int) -> int:
 
 
 # ---- START.TOS -------------------------------------------------------------------------------------------------------
-def build_start(stub: bytes) -> bytes:
+def build_start(stub: bytes, mchfix: bytes) -> bytes:
     prog = start_program()
     hdr = bytearray(prog[:28])
     text = bytearray(start_text())
@@ -606,10 +611,13 @@ def build_start(stub: bytes) -> bytes:
     offs, end = decode_reloc(rel)
     assert end == len(rel) and encode_reloc(offs) == rel, "START reloc table does not round-trip"
     assert bytes(text[START_TAIL:START_TAIL + 10]) == START_TAIL_ORIG, "START tail bytes differ"
+    assert bytes(text[START_ROOT:START_ROOT + 4]) == START_ROOT_ORIG, "START root sector call differs"
     assert not any(text[STUB_OFF:STUB_END]), "START dead zone is not zero"
     assert START_TAIL + 2 not in offs
     text[STUB_OFF:STUB_OFF + len(stub)] = stub
+    text[MCHFIX_OFF:MCHFIX_OFF + len(mchfix)] = mchfix
     text[START_TAIL:START_TAIL + 6] = bytes.fromhex("4ef9") + struct.pack(">I", STUB_OFF)   # jmp stub (relocated)
+    text[START_ROOT:START_ROOT + 4] = bytes.fromhex("6100") + struct.pack(">h", MCHFIX_OFF - (START_ROOT + 2))   # bsr.w mchfix
     offs.append(START_TAIL + 2)
     offs.sort()
     return bytes(hdr) + bytes(text) + encode_reloc(offs)
@@ -737,7 +745,7 @@ def cmd_build(patches, fps, out: Path, samples=None, fill=False, corrupt=False):
     if out.exists():
         shutil.rmtree(out)
     copy_game(out)
-    (out / "START.TOS").write_bytes(build_start(core["stub"]))
+    (out / "START.TOS").write_bytes(build_start(core["stub"], core["mchfix"]))
     (out / "FILES" / "P").write_bytes(img)
     apply_file_patches(fps, out)
     man = {"img_base": IMG_BASE, "img_len": len(img), "fill": fill, "used": used, "marker": MARKER, "flags": FLAGS,

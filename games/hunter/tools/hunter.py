@@ -39,7 +39,7 @@ HD_DIR = BENCH / "hd"                                 # user-supplied HDDRIVER f
 HDD_ROOT = HD_DIR / "hddriver_root.bin"
 HDD_PBOOT = HD_DIR / "hddriver_pboot.bin"
 HDDRIVER_SYS = HD_DIR / "HDDRIVER.SYS"
-SKIP = {"work", "tools", "patches", "README.md", "PLAN.md", ".omp", "alt"}   # not game files
+SKIP = {"work", "tools", "patches", "README.md", "PLAN.md", ".omp", "alt", "build", "dist"}   # not game files
 
 
 def _fix_sum(sec: bytearray, want: int = 0x1234) -> None:
@@ -91,14 +91,20 @@ def build_hd(img: str | Path, game: Path = GAME, size_mb: int = 16, autorun: str
 
 class Hunter(Hatari):
     def __init__(self, snapshot: str | None = None, workdir: str | None = None, machine: str = "ste",
-                 tos: Path = TOS["1.62"], memsize_kb: int = 1024, extra: list[str] | None = None, **kw):
+                 tos: Path = TOS["1.62"], memsize_kb: int = 1024, extra: list[str] | None = None,
+                 bus: str | None = None, ttram_mb: int = 0, **kw):
         R = Path(workdir or tempfile.mkdtemp(prefix="strun-"))
         R.mkdir(parents=True, exist_ok=True)
         build_hd(R / "hd.img")
         kw.setdefault("overlay", Path("/nonexistent"))
         kw.setdefault("flip_reg", "($ff8203).b")        # the game flips between buffers that differ only in the mid byte
         kw.setdefault("files", [])                       # drive C of Hatari's GEMDOS emulation stays empty (and unmapped)
-        ex = ["--gemdos-drive", "skip", "--acsi", f"0={R / 'hd.img'}"] + (extra or [])
+        # bus: where the HD image sits. acsi = ST/STE/Mega STE/TT (default); ide = Falcon (TOS 4.04 only boots IDE/SCSI,
+        # not ACSI; default there); scsi = TT/Falcon SCSI (id 0).  See work/notes/ttfalcon.md.
+        bus = bus or ("ide" if machine == "falcon" else "acsi")
+        hd = {"acsi": ["--acsi", f"0={R / 'hd.img'}"], "scsi": ["--scsi", f"0={R / 'hd.img'}"],
+              "ide": ["--ide-master", str(R / "hd.img")]}[bus]
+        ex = ["--gemdos-drive", "skip"] + hd + (["--ttram", str(ttram_mb)] if ttram_mb else []) + (extra or [])
         if "--joy1" not in ex:
             # Without this the game sees a phantom joystick (it drives the boat/character on its own, ~100 units/s).
             # With 'keys' the cursor keys are joystick 1 (fire = Hatari's keyboard fire key).
