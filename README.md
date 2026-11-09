@@ -53,6 +53,7 @@ The agent "skills" in [`.omp/skills/`](.omp/skills/) capture the method, the emu
 | `games/midwinter2/` | **Midwinter 2: done.** `REPORT.md` (overview), `PLAN.md`, `patches/` (about 50 patch sources, 68000 assembly), `tools/` (patch builder, harness, launchers, packaging), `work/notes/` (reverse-engineering notes with evidence), `work/*/` (test scripts and raw logs). |
 | `games/midwinter/` | **Midwinter: done.** Same layout; [`REPORT.md`](games/midwinter/REPORT.md). |
 | `tos/` | Empty: put your TOS images here (see `tos/README.md`). |
+| `games/*/alt/` | Git-ignored: other versions of a game you own (e.g. the Amiga release), used as reference or as a source of assets at build time. |
 
 ## Getting the game files
 
