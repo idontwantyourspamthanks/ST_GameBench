@@ -1,0 +1,28 @@
+patch set: fal_ym p3b_delta p3b_interp p4_clamp p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri pm_credit pm_noprot pm_noprot_box pm_tooltip tick_click tick_click2 tick_click3 tick_head tick_men tick_pass tick_wx test_cpyold test_ovr
+run dir: /tmp/strun-yk7ql1nt
+[   83s vbl 4256] name prompt
+[   89s vbl 4573] option screen
+[  115s vbl 5848] territory chart
+[  125s vbl 6362] protection removed (flag $14e4e = $2c), no question expected
+[  143s vbl 7257] 3D map view
+in game after 144s, FLAGS=0x3
+after boot: (overruns, bytes, vbl of last) (34, 23146, 2565)
+moving people: 17
+get_men moving: 17 ovr (209, 35379, 3953)
+t=   17s iter=214 ovr=(461, 44484, 4913) ptr=(69,142) ikbd=(61,11) bus/addr errors in log=0
+t=   37s iter=291 ovr=(575, 53675, 5862) ptr=(84,199) ikbd=(319,89) bus/addr errors in log=0
+t=   56s iter=367 ovr=(784, 62801, 6831) ptr=(293,182) ikbd=(0,199) bus/addr errors in log=0
+t=   75s iter=445 ovr=(1101, 71807, 7792) ptr=(319,90) ikbd=(0,16) bus/addr errors in log=0
+t=   94s iter=521 ovr=(1419, 80911, 8756) ptr=(130,0) ikbd=(225,0) bus/addr errors in log=0
+t=  113s iter=598 ovr=(1656, 90076, 9708) ptr=(248,88) ikbd=(0,112) bus/addr errors in log=0
+t=  133s iter=674 ovr=(1756, 99330, 10639) ptr=(44,0) ikbd=(257,189) bus/addr errors in log=0
+t=  152s iter=752 ovr=(1991, 108414, 11641) ptr=(153,104) ikbd=(319,75) bus/addr errors in log=0
+t=  171s iter=829 ovr=(2290, 117477, 12597) ptr=(319,25) ikbd=(68,78) bus/addr errors in log=0
+t=  190s iter=906 ovr=(2627, 126567, 13556) ptr=(270,57) ikbd=(287,131) bus/addr errors in log=0
+t=  209s iter=982 ovr=(2879, 135698, 14520) ptr=(39,186) ikbd=(48,84) bus/addr errors in log=0
+t=  229s iter=1059 ovr=(2995, 144959, 15470) ptr=(193,92) ikbd=(290,127) bus/addr errors in log=0
+t=  248s iter=1137 ovr=(3228, 154103, 16448) ptr=(0,199) ikbd=(301,23) bus/addr errors in log=0
+t=  267s iter=1213 ovr=(3531, 163209, 17404) ptr=(38,0) ikbd=(0,191) bus/addr errors in log=0
+t=  286s iter=1290 ovr=(3816, 172317, 18362) ptr=(166,76) ikbd=(132,82) bus/addr errors in log=0
+t=  305s iter=1367 ovr=(4156, 181267, 19331) ptr=(319,129) ikbd=(245,145) bus/addr errors in log=0
+FINAL ovr (4165, 181561, 19358) errors 0

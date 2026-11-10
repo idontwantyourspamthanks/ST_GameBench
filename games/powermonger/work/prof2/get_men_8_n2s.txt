@@ -1,0 +1,64 @@
+Hatari CPU profile (Hatari v2.6.1)
+Cycles/second:	8021247
+Field names:	Executed instructions, Used cycles, Instruction cache misses, Data cache hits
+Field regexp:	^\$?([0-9A-Fa-f]+) .*% \(([^)]*)\)$
+ST_RAM:		0x000000-0x100000
+ROM_TOS:	0xe00000-0xe40000
+CARTRIDGE:	0xfa0000-0xfc0000
+# disassembly with profile data: <instructions percentage>% (<sum of instructions>, <sum of cycles>, <sum of i-cache misses>, <sum of d-cache hits>)
+$000018be             movem.l   d0-d2/a0-a1,-(a7)          0.29% (9, 432, 0, 0)
+$000018c2             lea.l     $fc00.w,a1                 0.29% (9, 72, 0, 0)
+$000018c6             move.b    (a1),d2                    0.29% (9, 168, 0, 0)
+$000018c8             btst.b    #$7,d2                     0.29% (9, 90, 0, 0)
+$000018cc             beq.b     $18d8                      0.29% (9, 90, 0, 0)
+$000018ce             btst.b    #$0,d2                     0.29% (9, 90, 0, 0)
+$000018d2             beq.b     $18d8                      0.29% (9, 90, 0, 0)
+$000018d4             bsr.w     $18e4                      0.29% (9, 180, 0, 0)
+$000018d8             bclr.b    #$6,$fa11.w                0.29% (9, 252, 0, 0)
+$000018de             movem.l   (a7)+,d0-d2/a0-a1          0.29% (9, 468, 0, 0)
+$000018e2             rte                                  0.29% (9, 180, 0, 0)
+$000018e4             move.b    $2(a1),d0                  0.29% (9, 180, 0, 0)
+$000018e8             tst.b     $1c48e.l                   0.29% (9, 144, 0, 0)
+$000018ee             bgt.b     $1924                      0.29% (9, 92, 0, 0)
+$000018f0             blt.b     $1914                      0.13% (4, 40, 0, 0)
+$000018f2             cmpi.b    #$f6,d0                    0.06% (2, 16, 0, 0)
+$000018f6             bcs.w     $1962                      0.06% (2, 24, 0, 0)
+$000018fa             cmpi.b    #$f7,d0                    0.06% (2, 16, 0, 0)
+$000018fe             bne.b     $190a                      0.06% (2, 20, 0, 0)
+$00001900             move.b    #$5,$1c48e.l               0.03% (1, 20, 0, 0)
+$00001908             rts                                  0.03% (1, 16, 0, 0)
+$0000190a             move.b    #$fe,$1c48e.l              0.03% (1, 20, 0, 0)
+$00001912             rts                                  0.03% (1, 16, 0, 0)
+$00001914             addq.b    #$1,$1c48e.l               0.06% (2, 40, 0, 0)
+$0000191a             bne.b     $1922                      0.06% (2, 20, 0, 0)
+$0000191c             move.b    d0,$2c1b8.l                0.03% (1, 16, 0, 0)
+$00001922             rts                                  0.06% (2, 32, 0, 0)
+$00001924             move.b    #$5,d1                     0.16% (5, 40, 0, 0)
+$00001928             sub.b     $1c48e.l,d1                0.16% (5, 80, 0, 0)
+$0000192e             ext.w     d1                         0.16% (5, 20, 0, 0)
+$00001930             lea.l     $1c491.l,a0                0.16% (5, 60, 0, 0)
+$00001936             move.b    d0,(a0,d1.w)               0.16% (5, 80, 0, 0)
+$0000193a             subq.b    #$1,$1c48e.l               0.16% (5, 100, 0, 0)
+$00001940             bne.b     $1960                      0.16% (5, 56, 0, 0)
+$00001942             move.b    $1c491.l,$1c48f.l          0.03% (1, 28, 0, 0)
+$0000194c             move.w    $1c492.l,$2df92.l          0.03% (1, 28, 0, 0)
+$00001956             move.w    $1c494.l,$2df94.l          0.03% (1, 28, 0, 0)
+$00001960             rts                                  0.16% (5, 80, 0, 0)
+[...]
+$00012ce0             movem.l   d1-d7/a3,-(a7)             0.03% (1, 72, 0, 0)
+$00012ce4             moveq     #$20,d1                    0.03% (1, 4, 0, 0)
+$00012ce6             move.w    #$1f3,d0                   0.03% (1, 8, 0, 0)
+$00012cea             movem.l   (a0)+,d2-d7/a2-a3         13.39% (414, 31520, 0, 0)
+$00012cee             movem.l   d2-d7/a2-a3,(a1)          13.39% (414, 29976, 0, 0)
+$00012cf2             adda.w    d1,a1                     13.36% (413, 3416, 0, 0)
+$00012cf4             movem.l   (a0)+,d2-d7/a2-a3         13.36% (413, 31500, 0, 0)
+$00012cf8             movem.l   d2-d7/a2-a3,(a1)          13.36% (413, 29904, 0, 0)
+$00012cfc             adda.w    d1,a1                     13.36% (413, 3416, 0, 0)
+$00012cfe             dbra      d0,$12cea                 13.36% (413, 4956, 0, 0)
+[...]
+$00013096             jsr       $12ce0.l                   0.03% (1, 20, 0, 0)
+[...]
+$0001c26c             rte                                  0.10% (3, 60, 0, 0)
+# <callee>: <caller1> = <calls> <types>[ <inclusive/totals>[ <exclusive/totals>]], <caller2> ..., <callee name>
+# types: u = unknown PC change, n = PC moved to next instruction, b = branch/jump, s = subroutine call, r = return from subroutine, e = exception, x = return from exception, 
+# totals: calls/instructions/cycles/i-misses/d-hits

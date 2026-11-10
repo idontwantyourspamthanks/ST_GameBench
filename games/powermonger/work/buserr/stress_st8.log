@@ -1,0 +1,40 @@
+patch set: fal_ym p3b_delta p3b_interp p4_clamp p4_ptr_a p4_ptr_b p4_spr p6_cpy p6_slope p6_tri pm_credit pm_noprot pm_noprot_box pm_tooltip snd_core snd_setup snd_start snd_stop tick_click tick_click2 tick_click3 tick_head tick_men tick_pass tick_wx test_ovr
+run dir: /tmp/strun-uzfbqwuy
+[   83s vbl 4253] name prompt
+[   89s vbl 4571] option screen
+[  117s vbl 5951] territory chart
+[  127s vbl 6466] protection removed (flag $14e4e = $2c), no question expected
+[  145s vbl 7360] 3D map view
+in game after 146s, FLAGS=0x3
+after boot: (overruns, bytes, vbl of last) (0, 23791, 0)
+moving people: 18
+get_men moving: 18 ovr (0, 36191, 0)
+t=   17s iter=218 ovr=(0, 45820, 0) ptr=(0,166) ikbd=(211,0) bus/addr errors in log=0
+t=   37s iter=294 ovr=(0, 55497, 0) ptr=(116,48) ikbd=(307,0) bus/addr errors in log=0
+t=   56s iter=370 ovr=(0, 65099, 0) ptr=(0,64) ikbd=(319,151) bus/addr errors in log=0
+t=   75s iter=448 ovr=(0, 74777, 0) ptr=(42,149) ikbd=(298,122) bus/addr errors in log=0
+t=   94s iter=521 ovr=(0, 84025, 0) ptr=(4,0) ikbd=(98,35) bus/addr errors in log=0
+t=  113s iter=598 ovr=(0, 93692, 0) ptr=(185,16) ikbd=(17,0) bus/addr errors in log=0
+t=  133s iter=675 ovr=(0, 103372, 0) ptr=(27,98) ikbd=(76,34) bus/addr errors in log=0
+t=  152s iter=751 ovr=(0, 113052, 0) ptr=(319,49) ikbd=(178,100) bus/addr errors in log=0
+t=  171s iter=786 ovr=(0, 117339, 0) ptr=(310,75) ikbd=(167,190) bus/addr errors in log=0
+t=  190s iter=863 ovr=(0, 127007, 0) ptr=(268,124) ikbd=(295,138) bus/addr errors in log=0
+t=  209s iter=939 ovr=(0, 136684, 0) ptr=(57,199) ikbd=(114,43) bus/addr errors in log=0
+t=  229s iter=1016 ovr=(0, 146366, 0) ptr=(111,35) ikbd=(310,170) bus/addr errors in log=0
+t=  248s iter=1093 ovr=(0, 156034, 0) ptr=(74,169) ikbd=(319,193) bus/addr errors in log=0
+t=  267s iter=1170 ovr=(0, 165712, 0) ptr=(319,135) ikbd=(258,180) bus/addr errors in log=0
+Traceback (most recent call last):
+  File "/home/ryan/Code/AtariST/gamebench/games/powermonger/tools/pmbuserr.py", line 181, in <module>
+    main()
+  File "/home/ryan/Code/AtariST/gamebench/games/powermonger/tools/pmbuserr.py", line 177, in main
+    sys.exit({"repro": repro, "stress": stress}[a.cmd](a) or 0)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/games/powermonger/tools/pmbuserr.py", line 135, in stress
+    x, y = h.peekw(pm.MOUSE_X), h.peekw(pm.MOUSE_Y)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/games/powermonger/tools/pmpatch.py", line 850, in peekw
+    return orig_peekw(addr)
+           ^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/tools/stharness.py", line 213, in peekw
+    
+IndexError: list index out of range

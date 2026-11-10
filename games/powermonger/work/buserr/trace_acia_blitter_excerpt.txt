@@ -1,0 +1,400 @@
+acia ikbd update irq irq_new=1 VBL=12510 HBL=116
+acia ikbd read fffc00 sr=0x83 video_cyc=59748 356@116 pc=18c6 instr_cycle 8
+acia ikbd read rdr data=0x00 new sr=0x02 overrun=no VBL=12510 HBL=116
+acia ikbd update irq irq_new=1 VBL=12510 HBL=136
+acia ikbd read fffc00 sr=0x83 video_cyc=69980 348@136 pc=18c6 instr_cycle 8
+acia ikbd read rdr data=0xe5 new sr=0x02 overrun=no VBL=12510 HBL=136
+blitter write ctrl=c0 ctrl_old=00 video_cyc=79424 64@155 pc=bd594 instr_cyc=16
+blitter write ctrl=c0 ctrl_old=01 video_cyc=79544 184@155 pc=bd594 instr_cyc=16
+blitter write ctrl=c0 ctrl_old=01 video_cyc=79664 304@155 pc=bd594 instr_cyc=16
+blitter write ctrl=c0 ctrl_old=01 video_cyc=79784 424@155 pc=bd594 instr_cyc=16
+blitter write ctrl=c0 ctrl_old=01 video_cyc=79944 72@156 pc=bd5b8 instr_cyc=16
+blitter write ctrl=c0 ctrl_old=01 video_cyc=80072 200@156 pc=bd5b8 instr_cyc=16
+acia ikbd update irq irq_new=1 VBL=12510 HBL=156
+acia ikbd read fffc00 sr=0x83 video_cyc=80232 360@156 pc=18c6 instr_cycle 8
+acia ikbd read rdr data=0x00 new sr=0x02 overrun=no VBL=12510 HBL=156
+blitter write ctrl=c0 ctrl_old=01 video_cyc=80632 248@157 pc=bd5b8 instr_cyc=16
+blitter write ctrl=c0 ctrl_old=01 video_cyc=81004 108@158 pc=bd5b8 instr_cyc=16
+acia ikbd update irq irq_new=1 VBL=12510 HBL=176
+acia ikbd read fffc00 sr=0x83 video_cyc=90464 352@176 pc=18c6 instr_cycle 8
+acia ikbd read rdr data=0xad new sr=0x02 overrun=no VBL=12510 HBL=176
+acia ikbd update irq irq_new=1 VBL=12510 HBL=196
+acia ikbd read fffc00 sr=0x83 video_cyc=100708 356@196 pc=18c6 instr_cycle 8
+acia ikbd read rdr data=0xfd new sr=0x02 overrun=no VBL=12510 HBL=196
+acia ikbd update irq irq_new=1 VBL=12510 HBL=216
+acia ikbd read fffc00 sr=0x83 video_cyc=110944 352@216 pc=18c6 instr_cycle 8
+acia ikbd read rdr data=0x00 new sr=0x02 overrun=no VBL=12510 HBL=216
+acia ikbd update irq irq_new=1 VBL=12510 HBL=236
+acia ikbd read fffc00 sr=0x83 video_cyc=121192 360@236 pc=18c6 instr_cycle 8
+acia ikbd read rdr data=0x02 new sr=0x02 overrun=no VBL=12510 HBL=236
+acia ikbd read fffc00 sr=0x02 video_cyc=972 460@1 pc=1378 instr_cycle 16
+acia ikbd write fffc02 tdr=0x0d video_cyc=1008 496@1 pc=1380 instr_cycle 16
+acia ikbd read fffc00 sr=0x02 video_cyc=15368 8@30 pc=bd1bc instr_cycle 16
+acia ikbd write fffc02 tdr=0x16 video_cyc=15412 52@30 pc=14cc instr_cycle 16
+blitter write ctrl=c0 ctrl_old=01 video_cyc=16004 132@31 pc=da05c instr_cyc=16
+blitter write ctrl=c0 ctrl_old=0a video_cyc=22824 296@44 pc=da05c instr_cyc=16
+blitter write ctrl=c0 ctrl_old=0a video_cyc=29324 140@57 pc=da05c instr_cyc=16
+acia ikbd update irq irq_new=1 VBL=12511 HBL=59
+acia ikbd read fffc00 sr=0x83 video_cyc=36172 332@70 pc=18c6 instr_cycle 8
+acia ikbd read rdr data=0xf7 new sr=0x02 overrun=no VBL=12511 HBL=70
+blitter write ctrl=c0 ctrl_old=0a video_cyc=36628 276@71 pc=da05c instr_cyc=16
+blitter write ctrl=c0 ctrl_old=0a video_cyc=43128 120@84 pc=da05c instr_cyc=16
+acia ikbd update irq irq_new=1 VBL=12511 HBL=93
+blitter write ctrl=c0 ctrl_old=0a video_cyc=49628 476@96 pc=da05c instr_cyc=16
+acia ikbd read fffc00 sr=0x83 video_cyc=56476 156@110 pc=18c6 instr_cycle 8
+acia ikbd read rdr data=0x00 new sr=0x02 overrun=no VBL=12511 HBL=110
+blitter write ctrl=c0 ctrl_old=0a video_cyc=56880 48@111 pc=da05c instr_cyc=16
+acia ikbd update irq irq_new=1 VBL=12511 HBL=113
+blitter write ctrl=c0 ctrl_old=0a video_cyc=63380 404@123 pc=da05c instr_cyc=16
+acia ikbd clock_rx overrun rsr=0xe5 unread rdr=0x00 VBL=12511 HBL=133
+acia ikbd read fffc00 sr=0x83 video_cyc=70228 84@137 pc=18c6 instr_cycle 8
+acia ikbd read rdr data=0x00 new sr=0x22 overrun=yes VBL=12511 HBL=137
+blitter write ctrl=c0 ctrl_old=0a video_cyc=70640 496@137 pc=da05c instr_cyc=16
+blitter write ctrl=c0 ctrl_old=0a video_cyc=77140 340@150 pc=da05c instr_cyc=16
+acia ikbd update irq irq_new=1 VBL=12511 HBL=153
+acia ikbd read fffc00 sr=0xa3 video_cyc=83988 20@164 pc=18c6 instr_cycle 8
+acia ikbd read rdr data=0x00 new sr=0x02 overrun=no VBL=12511 HBL=164
+blitter write ctrl=c0 ctrl_old=0a video_cyc=84796 316@165 pc=da05c instr_cyc=16
+acia ikbd update irq irq_new=1 VBL=12511 HBL=173
+acia ikbd read fffc00 sr=0x83 video_cyc=91660 12@179 pc=18c6 instr_cycle 8
+acia ikbd read rdr data=0xad new sr=0x02 overrun=no VBL=12511 HBL=179
+blitter write ctrl=c0 ctrl_old=0a video_cyc=92060 412@179 pc=da05c instr_cyc=16
+blitter write ctrl=c0 ctrl_old=0a video_cyc=98880 64@193 pc=da05c instr_cyc=16
+acia ikbd update irq irq_new=1 VBL=12511 HBL=193
+acia ikbd read fffc00 sr=0x83 video_cyc=105728 256@206 pc=18c6 instr_cycle 8
+acia ikbd read rdr data=0xfd new sr=0x02 overrun=no VBL=12511 HBL=206
+blitter write ctrl=c0 ctrl_old=0a video_cyc=106220 236@207 pc=da05c instr_cyc=16
+acia ikbd update irq irq_new=1 VBL=12511 HBL=213
+blitter write ctrl=c0 ctrl_old=0a video_cyc=112720 80@220 pc=da05c instr_cyc=16
+acia ikbd clock_rx overrun rsr=0x02 unread rdr=0x00 VBL=12511 HBL=233
+acia ikbd read fffc00 sr=0x83 video_cyc=119568 272@233 pc=18c6 instr_cycle 8
+acia ikbd read rdr data=0x00 new sr=0x22 overrun=yes VBL=12511 HBL=233
+blitter write ctrl=c0 ctrl_old=0a video_cyc=120172 364@234 pc=da05c instr_cyc=16
+blitter write ctrl=c0 ctrl_old=0a video_cyc=126672 208@247 pc=da05c instr_cyc=16
+blitter write ctrl=c0 ctrl_old=0a video_cyc=133172 52@260 pc=da05c instr_cyc=16
+blitter write ctrl=c0 ctrl_old=0a video_cyc=139672 408@272 pc=da05c instr_cyc=16
+blitter write ctrl=c0 ctrl_old=0a video_cyc=146492 60@286 pc=da05c instr_cyc=16
+acia ikbd read fffc00 sr=0x22 video_cyc=820 308@1 pc=1378 instr_cycle 16
+acia ikbd write fffc02 tdr=0x0d video_cyc=852 340@1 pc=1380 instr_cycle 16
+acia ikbd update irq irq_new=1 VBL=12512 HBL=58
+acia ikbd clock_rx overrun rsr=0x00 unread rdr=0xf7 VBL=12512 HBL=78
+acia ikbd clock_rx overrun rsr=0x00 unread rdr=0xf7 VBL=12512 HBL=98
+acia ikbd clock_rx overrun rsr=0xe5 unread rdr=0xf7 VBL=12512 HBL=118
+acia ikbd clock_rx overrun rsr=0x00 unread rdr=0xf7 VBL=12512 HBL=138
+acia ikbd clock_rx overrun rsr=0xad unread rdr=0xf7 VBL=12512 HBL=158
+acia ikbd clock_rx overrun rsr=0xf1 unread rdr=0xf7 VBL=12535 HBL=32
+acia ikbd clock_rx overrun rsr=0xff unread rdr=0xf7 VBL=12535 HBL=168
+acia ikbd clock_rx overrun rsr=0x02 unread rdr=0xf7 VBL=12535 HBL=188
+acia ikbd read fffc00 sr=0x02 video_cyc=42080 96@82 pc=e0363e instr_cycle 12
+acia ikbd write fffc02 tdr=0x80 video_cyc=83974 6@164 pc=e03652 instr_cycle 12
+acia ikbd read fffc00 sr=0x00 video_cyc=84064 96@164 pc=e0363e instr_cycle 12
+acia ikbd read fffc00 sr=0x00 video_cyc=84110 142@164 pc=e0363e instr_cycle 12
+acia ikbd read fffc00 sr=0x00 video_cyc=84150 182@164 pc=e0363e instr_cycle 12
+acia ikbd read fffc00 sr=0x00 video_cyc=84190 222@164 pc=e0363e instr_cycle 12
+acia ikbd read fffc00 sr=0x00 video_cyc=84230 262@164 pc=e0363e instr_cycle 12
+acia ikbd read fffc00 sr=0x00 video_cyc=84270 302@164 pc=e0363e instr_cycle 12
+acia ikbd read fffc00 sr=0x00 video_cyc=84310 342@164 pc=e0363e instr_cycle 12
+acia ikbd read fffc00 sr=0x00 video_cyc=84350 382@164 pc=e0363e instr_cycle 12
+acia ikbd read fffc00 sr=0x00 video_cyc=84390 422@164 pc=e0363e instr_cycle 12
+acia ikbd read fffc00 sr=0x00 video_cyc=84430 462@164 pc=e0363e instr_cycle 12
+acia ikbd read fffc00 sr=0x00 video_cyc=84470 502@164 pc=e0363e instr_cycle 12
+acia ikbd read fffc00 sr=0x00 video_cyc=84510 30@165 pc=e0363e instr_cycle 12
+acia ikbd read fffc00 sr=0x00 video_cyc=84550 70@165 pc=e0363e instr_cycle 12
+acia ikbd read fffc00 sr=0x00 video_cyc=84590 110@165 pc=e0363e instr_cycle 12
+acia ikbd read fffc00 sr=0x00 video_cyc=84630 150@165 pc=e0363e instr_cycle 12
+acia ikbd read fffc00 sr=0x00 video_cyc=84670 190@165 pc=e0363e instr_cycle 12
+acia ikbd read fffc00 sr=0x00 video_cyc=84710 230@165 pc=e0363e instr_cycle 12
+acia ikbd read fffc00 sr=0x00 video_cyc=84750 270@165 pc=e0363e instr_cycle 12
+acia ikbd read fffc00 sr=0x02 video_cyc=84790 310@165 pc=e0363e instr_cycle 12
+acia ikbd write fffc02 tdr=0x01 video_cyc=126686 222@247 pc=e03652 instr_cycle 12
+acia ikbd update irq irq_new=1 VBL=12569 HBL=17
+acia ikbd clock_rx overrun rsr=0xff unread rdr=0xf1 VBL=12569 HBL=73
+acia ikbd clock_rx overrun rsr=0x02 unread rdr=0xf1 VBL=12569 HBL=93
+acia ikbd read fffc00 sr=0x83 video_cyc=43676 156@85 pc=e03ce2 instr_cycle 12
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12575 HBL=85
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=21
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=23
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=24
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=26
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=27
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=29
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=30
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=32
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=33
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=35
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=37
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=38
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=40
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=41
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=43
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=44
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=46
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=48
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=50
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=51
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=53
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=54
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=56
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=58
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=60
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=61
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=63
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=64
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=66
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=68
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=70
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=71
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=73
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=74
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=76
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=78
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=80
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=81
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=83
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=84
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=86
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=88
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=90
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=91
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=93
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=94
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=96
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=98
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=100
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=101
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=103
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=104
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=106
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=108
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=110
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=111
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=113
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=114
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=116
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=118
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=120
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=121
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=123
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=124
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=126
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=128
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=130
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=131
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=133
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=134
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=136
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=138
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=140
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=141
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=143
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=144
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=146
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=148
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=150
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=151
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=153
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=154
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=156
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=158
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=160
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=161
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=163
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=164
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=166
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=168
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=170
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=171
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=173
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=174
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=176
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=178
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=180
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=181
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=183
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=184
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=186
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=188
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=190
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=191
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=193
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=194
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=196
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=198
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=200
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=201
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=203
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=204
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=206
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=208
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=210
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=211
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=213
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=214
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=216
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=218
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=220
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=221
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=223
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=224
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=226
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=228
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=230
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=231
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=233
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=234
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=236
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=238
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=240
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=241
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=243
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=244
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=246
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=248
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=250
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=251
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=253
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=254
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=256
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=258
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=260
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=261
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=263
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=264
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=266
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=268
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=270
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=271
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=273
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=274
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=276
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=278
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=280
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=281
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=283
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=284
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=286
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=288
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=290
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=291
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=293
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=294
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=296
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=298
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=300
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=301
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=303
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=304
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=306
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=308
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=310
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12649 HBL=311
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=2
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=4
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=5
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=7
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=9
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=11
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=12
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=14
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=15
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=17
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=19
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=21
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=22
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=24
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=25
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=27
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=29
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=31
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=32
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=34
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=35
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=37
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=39
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=41
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=42
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=44
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=45
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=47
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=49
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=51
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=52
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=54
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=55
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=57
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=59
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=61
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=62
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=64
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=65
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=67
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=69
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=71
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=72
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=74
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=75
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=77
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=79
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=81
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=82
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=84
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=85
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=87
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=89
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=91
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=92
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=94
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=95
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=97
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=99
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=101
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=102
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=104
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=105
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=107
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=109
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=111
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=112
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=114
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=115
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=117
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=119
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=121
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=122
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=124
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=125
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=127
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=129
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=131
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=132
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=134
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=135
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=137
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=139
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=141
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=142
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=144
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=145
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=147
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=149
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=151
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=152
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=154
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=155
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=157
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=159
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=161
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=162
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=164
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=165
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=167
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=169
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=171
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=172
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=174
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=175
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=177
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=179
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=181
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=182
+acia ikbd read rdr data=0xf1 new sr=0x22 overrun=yes VBL=12650 HBL=184

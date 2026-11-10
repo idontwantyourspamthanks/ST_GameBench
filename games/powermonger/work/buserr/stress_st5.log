@@ -1,0 +1,28 @@
+patch set: fal_ym p3b_delta p3b_interp p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri pm_credit pm_noprot pm_noprot_box pm_tooltip tick_click tick_click2 tick_click3 tick_head tick_men tick_pass tick_wx test_cpyold test_ovr
+run dir: /tmp/strun-ztimadw0
+[   83s vbl 4255] name prompt
+[   89s vbl 4573] option screen
+[  117s vbl 5952] territory chart
+[  127s vbl 6468] protection removed (flag $14e4e = $2c), no question expected
+Traceback (most recent call last):
+  File "/home/ryan/Code/AtariST/gamebench/games/powermonger/tools/pmbuserr.py", line 171, in <module>
+    st.add_argument("--keys", type=float, default=0.02)
+    ^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/games/powermonger/tools/pmbuserr.py", line 167, in main
+    st.add_argument("--out", default="/tmp/pmbe/st1")
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/games/powermonger/tools/pmbuserr.py", line 93, in stress
+    h = pmpatch.make_pm(disk, None, machine="ste", tos=pm.TOS["1.62"], memsize_kb=1024)
+        ^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/games/powermonger/tools/pm.py", line 172, in boot_to_game
+    while not self.at("game"):
+              ^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/games/powermonger/tools/pm.py", line 93, in at
+    return self.screen_matches(REF / ref, box, tol)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/tools/stharness.py", line 374, in screen_matches
+    img = Image.open(self.shot()).convert("RGB")
+                     ^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/tools/stharness.py", line 310, in shot
+    raise RuntimeError("no screenshot (Hatari busy, e.g. a dialog, or dead)")
+RuntimeError: no screenshot (Hatari busy, e.g. a dialog, or dead)

@@ -1,0 +1,25 @@
+fill armed at the stage 2 hand-over: 36084 bytes
+[   49s vbl 2560] name prompt
+[   56s vbl 2878] option screen
+[   73s vbl 3730] territory chart
+[   83s vbl 4245] protection removed (flag $14e4e = $2c), no question expected
+[   97s vbl 4978] 3D map view
+BOOT OK ste 1.62 1024K in_game=True marker=b'PMPO'
+  fill[map view]: 36084 pattern bytes in $6f30c..$77fff, 0 changed
+moving people: 17
+  get_men: 17 people moving
+  fill[get_men]: 36084 pattern bytes in $6f30c..$77fff, 0 changed
+  fill[query window]: 36084 pattern bytes in $6f30c..$77fff, 0 changed
+  battle: iteration 350
+  fill[battle]: 36084 pattern bytes in $6f30c..$77fff, 0 changed
+  save done: in_game=True iter 514
+  fill[after save]: 36084 pattern bytes in $6f30c..$77fff, 0 changed
+  load done: in_game=True iter 662
+  fill[after load]: 36084 pattern bytes in $6f30c..$77fff, 0 changed
+  saved vs loaded state: 0 bytes differ (101376/101376 B)
+  fill[after save + load + 10 s]: 36084 pattern bytes in $6f30c..$77fff, 0 changed
+FREE
+
+real	4m33.122s
+user	8m9.365s
+sys	0m25.678s

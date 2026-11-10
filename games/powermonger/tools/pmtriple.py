@@ -31,7 +31,7 @@ import pmtick as T  # noqa: E402
 from pm import PM, SNAP  # noqa: E402
 
 P7 = ["p7_triple_wait", "p7_triple_flip", "p7_triple_tail"]
-DEFAULTS = ["p4_ptr_a", "p4_ptr_b", "p4_spr", "p6_slope", "p6_tri", "p6_cpy", "pm_tooltip", "p3b_interp", "p3b_delta"]
+DEFAULTS = ["p4_ptr_a", "p4_ptr_b", "p4_spr", "p6_slope", "p6_tri", "p6_cpy", "p4_clamp", "pm_tooltip", "p3b_interp", "p3b_delta"]
 BUFA, BUFB, BUFC = 0x1C700, 0x24400, 0x70000
 PAT_LO, PAT_HI = 0x6F30C, 0x78000            # the proof range: after the FX.DAT / VBL counter words, up to the frame picture
 SHOTS = GAME / "work" / "shots"

@@ -1,0 +1,13 @@
+base set    : tick_head tick_pass tick_wx tick_men tick_click tick_click2 tick_click3 test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri p6_cpy pm_tooltip
+patched set : tick_head tick_pass tick_wx tick_men tick_click tick_click2 tick_click3 test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri p6_cpy pm_tooltip p7_triple_wait p7_triple_flip p7_triple_tail
+map_idle @8 MHz: IDENTICAL (back frames matched 50, shown+pointer matched 31, flips captured 63/63) | work/pass 2352776 -> 2357010 (+4234, +0.18 %, n 63/63) | paired 2352599 -> 2360540 (+0.34 %, n 50) | flips 63 -> 63 fps 3.241 -> 3.271 (+0.9 %) | base frames == the frame 2 flips earlier: 0/61; consecutive same-tick R frames identical: 0/0
+map_idle @16 MHz: IDENTICAL (back frames matched 161, shown+pointer matched 158, flips captured 175/163) | work/pass 1790003 -> 1795020 (+5017, +0.28 %, n 163/175) | paired 1790791 -> 1800421 (+0.54 %, n 161) | flips 163 -> 175 fps 8.241 -> 8.838 (+7.3 %) | base frames == the frame 2 flips earlier: 6/161; consecutive same-tick R frames identical: 6/6
+get_men @8 MHz: IDENTICAL (back frames matched 88, shown+pointer matched 55, flips captured 105/103) | work/pass 1439856 -> 1459969 (+20114, +1.40 %, n 103/105) | paired 1460379 -> 1476921 (+1.13 %, n 88) | flips 103 -> 105 fps 5.266 -> 5.374 (+2.0 %) | base frames == the frame 2 flips earlier: 0/101; consecutive same-tick R frames identical: 0/0
+get_men @16 MHz: IDENTICAL (back frames matched 213, shown+pointer matched 212, flips captured 237/214) | work/pass 1323799 -> 1330638 (+6839, +0.52 %, n 214/237) | paired 1323837 -> 1333665 (+0.74 %, n 213) | flips 214 -> 237 fps 10.797 -> 11.946 (+10.6 %) | base frames == the frame 2 flips earlier: 0/212; consecutive same-tick R frames identical: 55/55
+battle_320 @8 MHz: IDENTICAL (back frames matched 90, shown+pointer matched 55, flips captured 109/105) | work/pass 1407890 -> 1412618 (+4728, +0.34 %, n 105/109) | paired 1422551 -> 1433301 (+0.76 %, n 90) | flips 105 -> 109 fps 5.368 -> 5.590 (+4.1 %) | base frames == the frame 2 flips earlier: 0/103; consecutive same-tick R frames identical: 0/0
+battle_320 @16 MHz: IDENTICAL (back frames matched 231, shown+pointer matched 230, flips captured 252/232) | work/pass 1240060 -> 1248013 (+7952, +0.64 %, n 232/252) | paired 1240528 -> 1250116 (+0.77 %, n 231) | flips 232 -> 252 fps 11.765 -> 12.753 (+8.4 %) | base frames == the frame 2 flips earlier: 46/230; consecutive same-tick R frames identical: 74/74
+ALL IDENTICAL
+
+real	1m9.639s
+user	1m39.368s
+sys	0m6.506s

@@ -1,0 +1,22 @@
+# controls (section 3.1): c72de = tick only, cac12 = +p6_cpy (no p4_spr), cdd10 = +p4_spr, c82fd = +p6_cpy+p4_spr (10-row)
+c72de: reads 6862 overruns 0 first [] max latency HBL 1 hist>=8: []
+cac12: reads 7180 overruns 0 first [] max latency HBL 1 hist>=8: []
+cdd10: reads 7720 overruns 0 first [] max latency HBL 3 hist>=8: []
+c82fd: reads 111 overruns 9 first [(12511, 197), (12511, 237), (12522, 116)] max latency HBL 22 hist>=8: [(8, 1), (9, 1), (10, 1), (15, 1), (16, 1), (18, 1), (20, 1), (21, 1), (22, 3)]
+
+# rows sweep, shipped sets, see latency_summary below
+sg8g: reads 608 overruns 7 first [(12564, 194), (12577, 135), (12578, 78)] max latency HBL 21 hist>=8: [(8, 3), (9, 3), (10, 2), (11, 4), (12, 1), (13, 2), (14, 2), (15, 2), (16, 3), (17, 1), (18, 1), (19, 3), (20, 1), (21, 1)]
+sg5g: reads 9160 overruns 0 first [] max latency HBL 14 hist>=8: [(8, 12), (9, 13), (10, 11), (11, 7), (12, 6), (13, 2), (14, 1)]
+sg4g: reads 8320 overruns 0 first [] max latency HBL 11 hist>=8: [(8, 9), (9, 9), (10, 6), (11, 2)]
+sg8b: reads 310 overruns 7 first [(15641, 151), (15703, 125), (15703, 145)] max latency HBL 21 hist>=8: [(8, 2), (10, 2), (11, 2), (12, 2), (16, 2), (17, 2), (19, 1), (21, 1)]
+sg5b: reads 8080 overruns 0 first [] max latency HBL 13 hist>=8: [(8, 11), (9, 4), (10, 4), (11, 6), (12, 5), (13, 3)]
+sg4b: reads 8823 overruns 0 first [] max latency HBL 11 hist>=8: [(8, 8), (9, 8), (10, 4), (11, 1)]
+fg8: reads 11194 overruns 0 first [] max latency HBL 12 hist>=8: [(8, 9), (9, 13), (10, 13), (11, 2), (12, 1)]
+fg16: reads 9938 overruns 0 first [] max latency HBL 6 hist>=8: []
+fb8: reads 10574 overruns 0 first [] max latency HBL 11 hist>=8: [(8, 13), (9, 2), (10, 3), (11, 1)]
+fb16: reads 9117 overruns 0 first [] max latency HBL 3 hist>=8: []
+fm8: reads 9605 overruns 0 first [] max latency HBL 12 hist>=8: [(8, 43), (9, 25), (10, 17), (11, 16), (12, 1)]
+fm16: reads 9540 overruns 0 first [] max latency HBL 5 hist>=8: []
+x10: reads 16 overruns 11 first [(12511, 113), (12512, 78), (12512, 98)] max latency HBL 19746 hist>=8: [(8, 1), (10, 1), (12, 1), (13, 1), (15, 1), (19, 1), (25, 1), (19746, 1)]
+x5: reads 5452 overruns 0 first [] max latency HBL 13 hist>=8: [(8, 5), (9, 5), (10, 4), (11, 8), (12, 6), (13, 2)]
+x2: reads 6775 overruns 0 first [] max latency HBL 4 hist>=8: []

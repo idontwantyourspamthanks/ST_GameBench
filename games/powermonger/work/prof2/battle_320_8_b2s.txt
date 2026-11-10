@@ -1,0 +1,55 @@
+Hatari CPU profile (Hatari v2.6.1)
+Cycles/second:	8021247
+Field names:	Executed instructions, Used cycles, Instruction cache misses, Data cache hits
+Field regexp:	^\$?([0-9A-Fa-f]+) .*% \(([^)]*)\)$
+ST_RAM:		0x000000-0x100000
+ROM_TOS:	0xe00000-0xe40000
+CARTRIDGE:	0xfa0000-0xfc0000
+# disassembly with profile data: <instructions percentage>% (<sum of instructions>, <sum of cycles>, <sum of i-cache misses>, <sum of d-cache hits>)
+$00001870             tst.w     $2df8c.l                  49.01% (3203, 51584, 0, 0)
+$00001876             beq.b     $1870                     48.99% (3202, 38648, 0, 0)
+[...]
+$000018be             movem.l   d0-d2/a0-a1,-(a7)          0.09% (6, 288, 0, 0)
+$000018c2             lea.l     $fc00.w,a1                 0.09% (6, 48, 0, 0)
+$000018c6             move.b    (a1),d2                    0.09% (6, 108, 0, 0)
+$000018c8             btst.b    #$7,d2                     0.09% (6, 60, 0, 0)
+$000018cc             beq.b     $18d8                      0.09% (6, 60, 0, 0)
+$000018ce             btst.b    #$0,d2                     0.09% (6, 60, 0, 0)
+$000018d2             beq.b     $18d8                      0.09% (6, 60, 0, 0)
+$000018d4             bsr.w     $18e4                      0.09% (6, 120, 0, 0)
+$000018d8             bclr.b    #$6,$fa11.w                0.09% (6, 168, 0, 0)
+$000018de             movem.l   (a7)+,d0-d2/a0-a1          0.09% (6, 312, 0, 0)
+$000018e2             rte                                  0.09% (6, 120, 0, 0)
+$000018e4             move.b    $2(a1),d0                  0.09% (6, 120, 0, 0)
+$000018e8             tst.b     $1c48e.l                   0.09% (6, 96, 0, 0)
+$000018ee             bgt.b     $1924                      0.09% (6, 60, 0, 0)
+$000018f0             blt.b     $1914                      0.05% (3, 32, 0, 0)
+$000018f2             cmpi.b    #$f6,d0                    0.02% (1, 8, 0, 0)
+$000018f6             bcs.w     $1962                      0.02% (1, 12, 0, 0)
+$000018fa             cmpi.b    #$f7,d0                    0.02% (1, 8, 0, 0)
+$000018fe             bne.b     $190a                      0.02% (1, 12, 0, 0)
+[...]
+$0000190a             move.b    #$fe,$1c48e.l              0.02% (1, 20, 0, 0)
+$00001912             rts                                  0.02% (1, 16, 0, 0)
+$00001914             addq.b    #$1,$1c48e.l               0.03% (2, 40, 0, 0)
+$0000191a             bne.b     $1922                      0.03% (2, 20, 0, 0)
+$0000191c             move.b    d0,$2c1b8.l                0.02% (1, 16, 0, 0)
+$00001922             rts                                  0.03% (2, 32, 0, 0)
+$00001924             move.b    #$5,d1                     0.05% (3, 24, 0, 0)
+$00001928             sub.b     $1c48e.l,d1                0.05% (3, 48, 0, 0)
+$0000192e             ext.w     d1                         0.05% (3, 12, 0, 0)
+$00001930             lea.l     $1c491.l,a0                0.05% (3, 36, 0, 0)
+$00001936             move.b    d0,(a0,d1.w)               0.05% (3, 48, 0, 0)
+$0000193a             subq.b    #$1,$1c48e.l               0.05% (3, 60, 0, 0)
+$00001940             bne.b     $1960                      0.05% (3, 32, 0, 0)
+$00001942             move.b    $1c491.l,$1c48f.l          0.02% (1, 28, 0, 0)
+$0000194c             move.w    $1c492.l,$2df92.l          0.02% (1, 28, 0, 0)
+$00001956             move.w    $1c494.l,$2df94.l          0.02% (1, 28, 0, 0)
+$00001960             rts                                  0.05% (3, 48, 0, 0)
+[...]
+$00013090             jsr       $1870.l                    0.02% (1, 20, 0, 0)
+[...]
+$0001c26c             rte                                  0.05% (3, 60, 0, 0)
+# <callee>: <caller1> = <calls> <types>[ <inclusive/totals>[ <exclusive/totals>]], <caller2> ..., <callee name>
+# types: u = unknown PC change, n = PC moved to next instruction, b = branch/jump, s = subroutine call, r = return from subroutine, e = exception, x = return from exception, 
+# totals: calls/instructions/cycles/i-misses/d-hits

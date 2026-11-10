@@ -1,0 +1,17 @@
+[   49s vbl 2559] name prompt
+[   56s vbl 2877] option screen
+[   73s vbl 3731] territory chart
+[   83s vbl 4248] protection removed (flag $14e4e = $2c), no question expected
+[   98s vbl 4982] 3D map view
+BOOT OK ste_1.62_1024_hd_acsi after 98 s in_game=True marker=b'PMPO' flags=0x3
+  sites: {'0x13090': '4eb9000db200', '0x1386c': '4eb9000db100', '0x1898': '4eb9000db300'}
+  map view: (L, D) samples {'(A,C)': 9, '(B,A)': 9, '(C,B)': 9} IN=0 OURS=1
+moving people: 14
+  get_men: 14 people moving
+  get_men: (L, D) samples {'(A,C)': 9, '(B,A)': 9, '(C,B)': 9} IN=0 OURS=1
+  query window: (L, D) samples {'(A,C)': 6, '(B,A)': 6, '(C,B)': 6} IN=0 OURS=1 iter 336
+  saveload: state 101376 B; saved vs loaded: 0 differ; saved vs the state just before the load: 289 differ; SAVEDISK.DAT slot A == saved: True (409600 B); game iterates: True
+  after save + load: (L, D) samples {'(A,C)': 7, '(B,A)': 6, '(C,B)': 7} IN=0 OURS=1 iter 667 in_game=True
+  C $70000: 19449 non-zero bytes of 32000
+  16 MHz: passes 45 in 661 VBL, in_game=True
+COLD BOOT OK

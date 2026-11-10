@@ -1,0 +1,15 @@
+[   83s vbl 4253] name prompt
+[   89s vbl 4570] option screen
+[  117s vbl 5949] territory chart
+[  127s vbl 6464] protection removed (flag $14e4e = $2c), no question expected
+[  145s vbl 7358] 3D map view
+BOOT OK st_1.04_1024 after 146 s in_game=True marker=b'PMPO' flags=0x6
+  sites: {'0x13090': '4eb9000db200', '0x1386c': '4eb9000db100', '0x1898': '4eb9000db300'}
+  map view: (L, D) samples {'(A,C)': 7, '(B,A)': 6, '(C,B)': 6} IN=0 OURS=1
+moving people: 14
+  get_men: 14 people moving
+  get_men: (L, D) samples {'(A,C)': 8, '(B,A)': 8, '(C,B)': 8} IN=0 OURS=1
+  query window: (L, D) samples {'(A,C)': 4, '(B,A)': 4, '(C,B)': 3} IN=0 OURS=1 iter 330
+  C $70000: 19523 non-zero bytes of 32000
+  16 MHz: passes 45 in 661 VBL, in_game=True
+COLD BOOT OK

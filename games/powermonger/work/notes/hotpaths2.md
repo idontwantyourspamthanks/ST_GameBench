@@ -213,7 +213,7 @@ Assumptions (stated in the patch): `$f1e3` (record byte 1) is 0 and written by n
 Fallbacks: out-of-range vertex -> original (clipper); with `p6_tri` a flat triangle is native. Rate of `ofb` in the profiled scenes: 0-3 triangles per pass (2.7 in map_idle before flat support was added; none at the four compass headings tested afterwards).
 
 ### 4.2 `p6_cpy` (window copy on the STE blitter; site `$12ce0`, code `$da000`)
-20 chunks of 10 rows (HOG, 6 400 cycles each = 0.8 ms; a 7812-baud keyboard byte takes 1.28 ms, so the ACIA cannot overrun; interrupts are taken between chunks). Uses p4_spr's blitter decision word (`$bdc04 == $b17e0001`); otherwise (ST, TT, Falcon, no p4_spr) the original routine runs. Registers as the original leaves them.
+50 chunks of 4 rows (HOG, 2 560 cycles each = 0.32 ms). **Originally 20 chunks of 10 rows (6 400 cycles = 0.8 ms), on the argument that a 7812-baud keyboard byte takes 1.28 ms so the ACIA could not overrun: WRONG in Hatari, where an interrupt raised during a chunk can wait for TWO chunks; the IKBD reply (9 bytes per VBL) then overran, the mouse packet desynced and the VBL pointer code took a bus error (`work/notes/buserr.md`).** Interrupts are taken between chunks. Uses p4_spr's blitter decision word (`$bdc04 == $b17e0001`); otherwise (ST, TT, Falcon, no p4_spr) the original routine runs. Registers as the original leaves them.
 Hatari charges the blitter 8 cycles per word, so the gain is -35 k cycles per pass by the arithmetic and -58 k measured in `pmab` (-3.95 %); [INFERENCE] a real STE blitter at 8 MHz moves a word in 8 cycles too, so expect about -35 k = -2.4 % there, not -4 %.
 
 ## 5. The window copy `$12ce0`: writers, and why it was not made smaller

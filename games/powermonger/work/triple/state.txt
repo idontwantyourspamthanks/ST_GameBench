@@ -1,0 +1,42 @@
+### state map_idle 8
+map_idle 8 MHz: defaults 47 loop tops (ticks 37..92), defaults + p7 49 loop tops (ticks 37..91), missed loop tops 6
+compared 39 loop tops over 39 distinct world ticks (RAM $0-$60000, masks as pmtick.py MASKS + the three p7 sites)
+negative control: p7 tick k vs defaults tick k+1 differs in 39 of 39 loop tops
+RNG $2df84 differs in 0 loop tops; 3 distinct values
+men records whose x/z changed first -> last loop top: 20
+IDENTICAL
+### state map_idle 16
+map_idle 16 MHz: defaults 115 loop tops (ticks 44..99), defaults + p7 121 loop tops (ticks 44..99), missed loop tops 0
+compared 121 loop tops over 56 distinct world ticks (RAM $0-$60000, masks as pmtick.py MASKS + the three p7 sites)
+negative control: p7 tick k vs defaults tick k+1 differs in 119 of 119 loop tops
+RNG $2df84 differs in 0 loop tops; 3 distinct values
+men records whose x/z changed first -> last loop top: 20
+IDENTICAL
+### state get_men 8
+get_men 8 MHz: defaults 74 loop tops (ticks 135..190), defaults + p7 76 loop tops (ticks 135..190), missed loop tops 0
+compared 76 loop tops over 56 distinct world ticks (RAM $0-$60000, masks as pmtick.py MASKS + the three p7 sites)
+negative control: p7 tick k vs defaults tick k+1 differs in 75 of 75 loop tops
+RNG $2df84 differs in 0 loop tops; 4 distinct values
+men records whose x/z changed first -> last loop top: 20
+IDENTICAL
+### state get_men 16
+get_men 16 MHz: defaults 157 loop tops (ticks 144..200), defaults + p7 169 loop tops (ticks 145..200), missed loop tops 0
+compared 169 loop tops over 56 distinct world ticks (RAM $0-$60000, masks as pmtick.py MASKS + the three p7 sites)
+negative control: p7 tick k vs defaults tick k+1 differs in 168 of 168 loop tops
+RNG $2df84 differs in 0 loop tops; 3 distinct values
+men records whose x/z changed first -> last loop top: 19
+IDENTICAL
+### state battle_320 8
+battle_320 8 MHz: defaults 72 loop tops (ticks 347..402), defaults + p7 75 loop tops (ticks 347..402), missed loop tops 0
+compared 75 loop tops over 56 distinct world ticks (RAM $0-$60000, masks as pmtick.py MASKS + the three p7 sites)
+negative control: p7 tick k vs defaults tick k+1 differs in 74 of 74 loop tops
+RNG $2df84 differs in 0 loop tops; 5 distinct values
+men records whose x/z changed first -> last loop top: 36
+IDENTICAL
+### state battle_320 16
+battle_320 16 MHz: defaults 156 loop tops (ticks 356..411), defaults + p7 167 loop tops (ticks 356..411), missed loop tops 0
+compared 167 loop tops over 56 distinct world ticks (RAM $0-$60000, masks as pmtick.py MASKS + the three p7 sites)
+negative control: p7 tick k vs defaults tick k+1 differs in 165 of 165 loop tops
+RNG $2df84 differs in 0 loop tops; 5 distinct values
+men records whose x/z changed first -> last loop top: 30
+IDENTICAL

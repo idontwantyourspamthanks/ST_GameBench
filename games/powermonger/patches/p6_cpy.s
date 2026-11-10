@@ -10,8 +10,8 @@
 ;       loses a byte and the mouse packet desyncs (work/notes/buserr.md).  Measured in Hatari 2.6.1: an interrupt raised during a chunk is
 ;       taken after up to TWO chunks (not at the first gap), so 10-row chunks (6400 cycles) gave 21 HBL = 10 750 cycles > 1.28 ms: overruns, a
 ;       garbage pointer position and a bus error in the VBL pointer code within a second; 8 rows still overran (21 HBL), 5 rows peak 14 HBL, 4 rows
-;       peak 11 HBL (5 600 cycles, 55 % of the byte time), 2 rows 4 HBL.  The VBL and MFP interrupts are taken between chunks.  Whole copy ~134 k
-;       cycles instead of 163 k.  The CPU path (ST, and whenever p4_spr did not choose the blitter) is the original routine, entered after the
+;       peak 11 HBL (5 600 cycles, 55 % of the byte time), 2 rows 4 HBL.  The VBL and MFP interrupts are taken between chunks.  Whole copy ~133 k
+;       cycles (chunk period 2 660, measured with --trace blitter) instead of 163 k; the old 10-row version took 130 k.  The CPU path (ST, and whenever p4_spr did not choose the blitter) is the original routine, entered after the
 ;       displaced instructions.
 ;       Uses p4_spr's blitter decision ($bdc04 = $b17e0001: FLAGS bit0 AND the bus-error safe probe of the blitter's endmask registers, so TT / Falcon
 ;       and a patch set without p4_spr take the original path).  Registers as the original leaves them: a0 += 32000, a1 += 32000, d0.w = $ffff, a2 = the

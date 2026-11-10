@@ -1,0 +1,15 @@
+Hatari CPU profile (Hatari v2.6.1)
+Cycles/second:	16042494
+Field names:	Executed instructions, Used cycles, Instruction cache misses, Data cache hits
+Field regexp:	^\$?([0-9A-Fa-f]+) .*% \(([^)]*)\)$
+ST_RAM:		0x000000-0x100000
+ROM_TOS:	0xe00000-0xe40000
+CARTRIDGE:	0xfa0000-0xfc0000
+# disassembly with profile data: <instructions percentage>% (<sum of instructions>, <sum of cycles>, <sum of i-cache misses>, <sum of d-cache hits>)
+$00001870             tst.w     $2df8c.l                  49.98% (1436, 22976, 0, 0)
+$00001876             beq.b     $1870                     49.98% (1436, 17292, 0, 0)
+[...]
+$00013090             jsr       $1870.l                    0.03% (1, 20, 0, 0)
+# <callee>: <caller1> = <calls> <types>[ <inclusive/totals>[ <exclusive/totals>]], <caller2> ..., <callee name>
+# types: u = unknown PC change, n = PC moved to next instruction, b = branch/jump, s = subroutine call, r = return from subroutine, e = exception, x = return from exception, 
+# totals: calls/instructions/cycles/i-misses/d-hits
