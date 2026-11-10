@@ -29,3 +29,6 @@ This follows the Midwinter 2 job (`../midwinter2/PLAN.md`), using the method in 
 - **P5 Controls:** direct control.
 - **P6 Regression:** all machines and RAM sizes; data-disk save/load; joystick and keyboard modes.
 - **P7 Packaging:** zips, launcher scripts.
+
+## Release version
+Next release: **v1.1** (user, 2026-11-10). A credit line `v1.1 enhanced by dad_prg` goes on a startup screen (placement: user to choose).

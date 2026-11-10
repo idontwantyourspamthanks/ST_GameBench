@@ -79,6 +79,7 @@ MODE = 0xCE400           # test_walk data word: != 0 = pointer walks with the wo
 PXADDR = 0xCE402         # test_walk PX/PY words (the pointer position the IKBD packet handler copies)
 S1PC = 0x13096           # after `jsr $1870` (VBL wait) of the pass
 BUFS = (0x1C700, 0xFA00)  # both screen buffers, contiguous
+C3 = None                 # --c3 ADDR: a third 32000 B screen buffer (p7_triple: $70000) captured next to them at every flip
 D = 0xB8A00              # tick_head data block (+6 RON.w)
 WORK = Path("/tmp/pmab")
 SHORT = {"map_idle": "map_idle", "get_men": "get_men", "battle_320": "battle_320", "battle_260": "battle_260",
@@ -206,7 +207,8 @@ def one(snap: Path, at: int, live: str, out: Path, vbls: int, mhz: int, walk: bo
         cmds.append(f"b pc = ${S1PC:x} :trace :file {R / 's1.txt'}")
         (R / "cap.txt").write_text("\n".join([f"e ${FLIP:x}", "e VBL", "e CycleCounter", "e ($4bb3e).l", f"e (${D + 6:x}).w",
                                               "e ($2df78).l", "e ($2df7c).l", "e ($2df92).w", "e ($2df94).w",
-                                              f"savebin {fifo} ${BUFS[0]:x} ${BUFS[1]:x}"] + ([f"savebin {fifo} $78000 $7d00"] if bg else [])) + "\n")
+                                              f"savebin {fifo} ${BUFS[0]:x} ${BUFS[1]:x}"] + ([f"savebin {fifo} $78000 $7d00"] if bg else [])
+                                             + ([f"savebin {fifo} ${C3:x} $7d00"] if C3 else [])) + "\n")
         cmds.append(f"b pc = ${FLIP:x} :trace :file {R / 'cap.txt'}")
         end = R / "end.txt"
         end.write_text(f"b all\nsavebin {out}/end.flag $0 2\ne VBL\n")
@@ -253,15 +255,21 @@ def one(snap: Path, at: int, live: str, out: Path, vbls: int, mhz: int, walk: bo
                 work.append(w)
             last_s1 = None
     caps = [e for e in ev if e[0] == "c"]
-    FS = BUFS[1] + (32000 if bg else 0)
+    FS = BUFS[1] + (32000 if bg else 0) + (32000 if C3 else 0)
     nfr = len(frames) // FS
     recs = []
     for n, e in enumerate(caps[:nfr]):
         _, vbl, cyc, ticks, ron, shown, back, x, y = e
         s = bytes(frames[n * FS:n * FS + BUFS[1]])
-        bgimg = bytes(frames[n * FS + BUFS[1]:(n + 1) * FS]) if bg else None
-        bi = lambda a: a - BUFS[0]
-        sb, ss = s[bi(back):bi(back) + 32000], s[bi(shown):bi(shown) + 32000]
+        bgimg = bytes(frames[n * FS + BUFS[1]:n * FS + BUFS[1] + 32000]) if bg else None
+        c3img = bytes(frames[(n + 1) * FS - 32000:(n + 1) * FS]) if C3 else None
+
+        def grab(a):
+            if C3 and a == C3:
+                return c3img
+            assert BUFS[0] <= a and a + 32000 <= BUFS[0] + BUFS[1], f"screen buffer ${a:x} is outside the captured regions"
+            return s[a - BUFS[0]:a - BUFS[0] + 32000]
+        sb, ss = grab(back), grab(shown)
         recs.append(dict(n=n + 1, ticks=ticks, ron=ron, shown=shown, back=back, x=x, y=y, vbl=vbl, work=cap_work[n],
                          hb=hashlib.md5(sb).hexdigest(), hs=hashlib.md5(ss).hexdigest(), sb=sb, ss=ss, bg=bgimg))
     return dict(recs=recs, work=work, flips=len(caps), window=(caps[-1][1] - caps[0][1]) if len(caps) > 1 else 0, nsk=len(work))
@@ -359,10 +367,13 @@ def main():
     ap.add_argument("--poke", action="append", default=[], help="ADDR:HEXBYTES written in the patched run at the apply flip (repeatable), e.g. bd400:0002")
     ap.add_argument("--tonly", action="store_true", help="only tick-pass (T) frames are hard comparisons; render-only (R) frames that differ are counted (p3b_interp)")
     ap.add_argument("--no-fps", action="store_true")
+    ap.add_argument("--c3", help="HEXADDR of a third screen buffer to capture with the other two (p7_triple: 70000)")
     ap.add_argument("--neg", action="store_true", help="negative control: the BASE run walks the pointer, the patched run holds it still, and the shown "
                     "buffers are compared regardless of the pointer position: the gate must report DIFFER")
     ap.add_argument("--keep", action="store_true", help="keep the base captures cached between runs (default: recapture)")
     a = ap.parse_args()
+    global C3
+    C3 = int(a.c3, 16) if a.c3 else None
     WORK.mkdir(exist_ok=True)
     tick = [] if a.no_tick else TICK
     bnames, pnames = tick + TESTSET + a.base, tick + TESTSET + a.base + a.only

@@ -224,3 +224,6 @@ Expected total while moving: about 8-12% from items 1-4. Item 5 helps only stand
 Order: 0, then 1+2 (one agent, shared mask), then 4+3 (one agent, same cell path), then 5 (one agent; needs an exhaustive list of what makes the view change: animation, sea, fog flicker, objects moving while the player stands still).
 
 Gates are as in `mw2-patching`: abtest pixel-identical at `--flips 10/40`, cold boot at 1 MB, and the 4 MB check (the payload must stay clear of PP's cache).
+
+## Release version
+Next release: **v1.2** (user, 2026-11-10). A credit line `v1.2 enhanced by dad_prg` goes on a startup screen (placement: user to choose).

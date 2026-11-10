@@ -85,6 +85,7 @@ PREFIX_RANGES = {                         # blob orgs allowed per patch-name pre
     "pm_": (0xCD000, 0xCDFFF),       # PMTooltip: the 4 KB after p4_spr's cache; inside the HD overlay window, so restored from PMLATE.DAT like the rest
     "snd_": (0xD0000, 0xDCFFF),      # $DD000..$EFFFF: reserved for the real-hardware HD build's TOS swap buffer
     "p6_": (0xD5000, 0xDCFFF),       # PMPerf2: raster patches (triangle setup + fill + slope table): the snd_ range's unused tail after its 16 KB STAGE buffer; $CE000.. stays test_ (pmab's test_walk lives there)
+    "p7_": (0xDB000, 0xDBFFF),       # PMTriple: triple buffering (3 tiny hooks + data block T); inside p6_'s range after its code, in the HD overlay window
 }
 
 
