@@ -16,15 +16,24 @@
 ;       Level = the selected captain's posture word [$51538 + [$57fd2] + $3c]: 4 = 1 sword, 3 = 2, 2 = 3.
 ;       Text: the game's own 4x6 font (4 glyph columns per 16-px word, 4-plane blocks of 48 B at $8976 + 48 * (ch >> 2), column
 ;       ch & 3; the window code $8838 does the same) composed into BUF; background colour 1 of the glyphs becomes colour 0.
-;       The composed rows are rebuilt only when (target, level) changes; every rendered pass while a text is up copies 6 x 104 B.
-;       Data S ($cdc00): +0 LX.w +2 LY.w +4 ID.w +6 KEY.w +8 VAL.w, BUF at +$20 (6 rows x 104 B = cols 7..19), SB at +$290 (64 B).
-;       ALL WORDING IS IN THE TABLE AT THE END OF THIS FILE (entry = count byte 1|3, name, then 1 or 3 effect strings).
+;       The composed rows are rebuilt only when (target, level, keys on/off) changes; every rendered pass while a text is up copies 6 x 104 B.
+;       Data S ($cdc00): +0 LX.w +2 LY.w +4 ID.w +6 KEY.w +8 VAL.w +$A KF.w (key labels on: qol_keys writes 1 here every pass) +$E MAG.l ('PTIP' written
+;       by every hook call: qol_hover's liveness check) +$12 HK.w (the hover text that BUF currently holds, 0 = an icon text or none), BUF at +$20 (6 rows x 104 B =
+;       cols 7..19), SB at +$290 (64 B).
+;       Exports for qol_hover (jump table at $cd006 / $cd00c, never moves): compose_sb = SB (52 chars, space padded) -> BUF;  blit = BUF -> back buffer.
+;       ALL WORDING IS IN THE ONE TABLE AT THE END OF THIS FILE (org $cf000: entry = count byte 1|3, name, key label, then 1 or 3 effect strings;
+;       the label " (K)" is shown only while qol_keys is active; "Name (K): effect" must fit 52 characters, tools/pmtt_check.py).
 S       equ     $cdc00
+ET      equ     $cf000                  ; the wording table: 33 words (id -> entry offset in TXT), then the strings
+TXT     equ     $cf042
 sLX     equ     0
 sLY     equ     2
 sID     equ     4
 sKEY    equ     6
 sVAL    equ     8
+sKF     equ     $a
+sMAG    equ     $e
+sHK     equ     $12
 BUF     equ     S+$20
 SB      equ     S+$290
 FONT    equ     $8976
@@ -36,6 +45,9 @@ ID_COMP equ     32
         jsr     $cd000.l
 
         org     $cd000
+        jmp     hook.l                  ; $cd000: the site's target (jsr $cd000)
+        jmp     compose_sb.l            ; $cd006: export, qol_hover: SB -> BUF
+        jmp     blit.l                  ; $cd00c: export, qol_hover: BUF -> back buffer
 cell    macro                           ; \1 = cell 0..3, \2 = areg of the glyph block, \3 = dreg with the rotate count
         moveq   #0,d5
         move.b  (a2)+,d5
@@ -72,6 +84,7 @@ plane   macro                           ; \1 = plane byte offset 0,2,4,6
 
 hook:   movem.l d0-d7/a0-a6,-(a7)
         lea     S.l,a6
+        move.l  #$50544950,sMAG(a6)     ; 'PTIP': qol_hover checks this before it calls the exports
         move.w  $2df92.l,d0
         move.w  $2df94.l,d1
         tst.w   sVAL(a6)
@@ -100,7 +113,10 @@ hook:   movem.l d0-d7/a0-a6,-(a7)
 .lv:    move.w  d2,d5
         lsl.w   #2,d5
         add.w   d3,d5                   ; KEY = id*4 + level (never 0)
-        cmp.w   sKEY(a6),d5
+        tst.w   sKF(a6)
+        beq.s   .nk
+        add.w   #$100,d5                ; + key labels on (qol_keys): recompose when it appears
+.nk:    cmp.w   sKEY(a6),d5
         beq.s   .blit
         move.w  d5,sKEY(a6)
         bsr     compose
@@ -199,6 +215,7 @@ hit:    moveq   #0,d2
 
 ; d2 = id, d3 = level 0..2  ->  BUF (6 rows x 104 B).  Clobbers d0-d7, a0-a5.
 compose:
+        clr.w   S+sHK.l                 ; BUF no longer holds a hover text
         lea     ET.l,a0
         add.w   d2,d2
         move.w  (a0,d2.w),d4
@@ -219,7 +236,23 @@ compose:
         beq.s   .nmd
         move.b  d0,(a2)+
         bra.s   .nm
-.nmd:   cmp.w   #3,d4
+.nmd:   tst.w   S+sKF.l
+        beq.s   .ksk                    ; key labels off (no qol_keys): skip the key string
+        tst.b   (a1)
+        beq.s   .ksk                    ; this entry has no key label
+        move.b  #$20,(a2)+
+        move.b  #$28,(a2)+              ; " ("
+.kc:    move.b  (a1)+,d0
+        beq.s   .kd
+        move.b  d0,(a2)+
+        bra.s   .kc
+.kd:    move.b  #$29,(a2)+              ; ")"
+        bra.s   .col
+.ksk:   tst.b   (a1)+
+        bne.s   .ksk
+.col:   move.b  #$3a,(a2)+              ; ": "
+        move.b  #$20,(a2)+
+        cmp.w   #3,d4
         beq.s   .skp
         moveq   #0,d3
 .skp:   tst.w   d3
@@ -229,10 +262,11 @@ compose:
         subq.w  #1,d3
         bra.s   .skp
 .ef:    move.b  (a1)+,d0
-        beq.s   .efd
+        beq.s   compose_sb
         move.b  d0,(a2)+
         bra.s   .ef
-.efd:   lea     SB.l,a2
+compose_sb:                             ; export: SB holds the 52 characters (space padded) -> BUF.  Clobbers d0-d7, a0-a5.
+        lea     SB.l,a2
         lea     BUF.l,a3
         moveq   #12,d7
 .w:     move.l  (a2),d5
@@ -293,41 +327,47 @@ blit:   movea.l $2df7c.l,a1
         dbra    d0,.r
         rts
 
-; ---- all wording below: id -> entry ------------------------------------------------------------------------------
-; Entry = count byte (3: three effect strings for 1 / 2 / 3 swords, 1: one string), name, effect string(s).  name + effect
-; must fit in 52 characters (checked by tools/pmtt_check.py).  Levels: 1 sword = passive, 2 = neutral, 3 = aggressive.
-ET:     dc.w    0
-        dc.w    e1-TXT,e2-TXT,e3-TXT,e4-TXT,e5-TXT,e6-TXT,e7-TXT,e8-TXT,e9-TXT,e10-TXT
-        dc.w    0,e12-TXT,e13-TXT,e14-TXT,e15-TXT,e16-TXT,0,0
-        dc.w    e19-TXT,e20-TXT,e21-TXT,e22-TXT,e23-TXT
-        dc.w    e24-TXT,e25-TXT,e26-TXT,e27-TXT,e28-TXT,e29-TXT,e30-TXT,e31-TXT,e32-TXT
-TXT:    dc.b    0
-e1:     dc.b    1,"Send Captain: ",0,"walk to a spot you pick",0
-e2:     dc.b    3,"Transfer Men: ",0,"give 25% of the army",0,"give 50% of the army",0,"give the whole army",0
-e3:     dc.b    3,"Get Food: ",0,"take 25% of a village's food",0,"take 50% of a village's food",0,"take ALL of a village's food",0
-e4:     dc.b    3,"Get Men: ",0,"recruit a few men",0,"recruit more men",0,"recruit nearly every man",0
-e5:     dc.b    1,"Go Home: ",0,"army walks back to base",0
-e6:     dc.b    3,"Attack: ",0,"conquer, spare as many as you can",0,"conquer, some die and some live",0,"kill everyone and take everything",0
-e7:     dc.b    3,"Invent: ",0,"peaceful tools first",0,"a mix of tools",0,"weapons first",0
-e8:     dc.b    3,"Equip: ",0,"pick up 25% of the items",0,"pick up 50% of the items",0,"pick up all the items",0
-e9:     dc.b    3,"Drop Food: ",0,"leave 25% of your food",0,"leave 50% of your food",0,"leave ALL of your food",0
-e10:    dc.b    3,"Derank: ",0,"send 25% of the army home",0,"send 50% of the army home",0,"disband the whole army",0
-e12:    dc.b    3,"Drop Items: ",0,"leave 25% of spare stock",0,"leave 50% of spare stock",0,"leave all spare stock",0
-e13:    dc.b    3,"Supply Food: ",0,"ferry 25% of food, repeat",0,"ferry 50% of food, repeat",0,"ferry all the food, repeat",0
-e14:    dc.b    3,"Trade: ",0,"ploughs, boats, pots first",0,"boats, pikes, ploughs first",0,"cannons, catapults first",0
-e15:    dc.b    1,"Alliance: ",0,"pay tribute for a pact",0
-e16:    dc.b    1,"Spy: ",0,"scout a settlement",0
-e19:    dc.b    1,"Aggressive (3 swords): ",0,"takes all, kills all",0
-e20:    dc.b    1,"Neutral (2 swords): ",0,"takes half, spares some",0
-e21:    dc.b    1,"Passive (1 sword): ",0,"takes a quarter, spares most",0
-e22:    dc.b    1,"Query: ",0,"info on what you click",0
-e23:    dc.b    1,"Option: ",0,"speed, save/load, retire, pause",0
-e24:    dc.b    1,"Map: ",0,"height contours",0
-e25:    dc.b    1,"Map: ",0,"trees, houses, men",0
-e26:    dc.b    1,"Map: ",0,"settlements and roads",0
-e27:    dc.b    1,"Map: ",0,"settlement food (click: update)",0
-e28:    dc.b    1,"Rotate left: ",0,"click 90 deg, right-click fine",0
-e29:    dc.b    1,"Rotate right: ",0,"click 90 deg, right-click fine",0
-e30:    dc.b    1,"Zoom in: ",0,"right-click: closest",0
-e31:    dc.b    1,"Zoom out: ",0,"right-click: farthest",0
-e32:    dc.b    1,"Compass: ",0,"scroll the view",0
+; ---- all wording below (org $cf000, the qol_ range; ET / TXT are equs above because pmpatch assembles every org on its own) -----------------
+; Entry = count byte (3: three effect strings for 1 / 2 / 3 swords, 1: one string), name, key label, effect string(s).
+; Shown as "name (key): effect", the " (key)" only while qol_keys is active and the label is not empty; "name (key): effect" must fit
+; 52 characters (tools/pmtt_check.py checks every effect with and without the key).  Levels: 1 sword = passive, 2 = neutral, 3 = aggressive.
+; Key labels are physical key positions ([ ] are the keys right of P on a UK/US keyboard).
+        org     $cf000
+ETA:    dc.w    0
+        dc.w    e1-TXTA,e2-TXTA,e3-TXTA,e4-TXTA,e5-TXTA,e6-TXTA,e7-TXTA,e8-TXTA,e9-TXTA,e10-TXTA
+        dc.w    0,e12-TXTA,e13-TXTA,e14-TXTA,e15-TXTA,e16-TXTA,0,0
+        dc.w    e19-TXTA,e20-TXTA,e21-TXTA,e22-TXTA,e23-TXTA
+        dc.w    e24-TXTA,e25-TXTA,e26-TXTA,e27-TXTA,e28-TXTA,e29-TXTA,e30-TXTA,e31-TXTA,e32-TXTA
+TXTA:   dc.b    0
+        ifne    TXTA-TXT
+        fail    "TXT equ must equal the label TXTA (ET is 33 words)"
+        endc
+e1:     dc.b    1,"Send Captain",0,"G",0,"walk to a spot you pick",0
+e2:     dc.b    3,"Transfer Men",0,"X",0,"give 25% of the army",0,"give 50% of the army",0,"give the whole army",0
+e3:     dc.b    3,"Get Food",0,"F",0,"take 25% of a village's food",0,"take 50% of a village's food",0,"take ALL of a village's food",0
+e4:     dc.b    3,"Get Men",0,"M",0,"recruit a few men",0,"recruit more men",0,"recruit nearly every man",0
+e5:     dc.b    1,"Go Home",0,"H",0,"army walks back to base",0
+e6:     dc.b    3,"Attack",0,"A",0,"conquer, spare as many as you can",0,"conquer, some die and some live",0,"kill everyone and take everything",0
+e7:     dc.b    3,"Invent",0,"I",0,"ploughs, boats; iron: swords",0,"pikes; iron: swords",0,"bows, catapults; iron: swords, cannons",0   ; the traced rule of $5cde (work/notes/qol.md section 4); the village hover (qol_hover) names the exact item
+e8:     dc.b    3,"Equip",0,"E",0,"pick up 25% of the items",0,"pick up 50% of the items",0,"pick up all the items",0
+e9:     dc.b    3,"Drop Food",0,"D",0,"leave 25% of your food",0,"leave 50% of your food",0,"leave ALL of your food",0
+e10:    dc.b    3,"Derank",0,"R",0,"send 25% of the army home",0,"send 50% of the army home",0,"disband the whole army",0
+e12:    dc.b    3,"Drop Items",0,"N",0,"leave 25% of spare stock",0,"leave 50% of spare stock",0,"leave all spare stock",0
+e13:    dc.b    3,"Supply Food",0,"S",0,"ferry 25% of food, repeat",0,"ferry 50% of food, repeat",0,"ferry all the food, repeat",0
+e14:    dc.b    3,"Trade",0,"T",0,"ploughs, boats, pots first",0,"boats, pikes, ploughs first",0,"cannons, catapults first",0
+e15:    dc.b    1,"Alliance",0,"L",0,"pay tribute for a pact",0
+e16:    dc.b    1,"Spy",0,"Y",0,"scout a settlement",0
+e19:    dc.b    1,"Aggressive (3 swords)",0,"3",0,"takes all, kills all",0
+e20:    dc.b    1,"Neutral (2 swords)",0,"2",0,"takes half, spares some",0
+e21:    dc.b    1,"Passive (1 sword)",0,"1",0,"takes a quarter, spares most",0
+e22:    dc.b    1,"Query",0,"Q",0,"info on what you click",0
+e23:    dc.b    1,"Option",0,"O",0,"speed, save/load, retire, pause",0
+e24:    dc.b    1,"Map",0,"F1",0,"height contours",0
+e25:    dc.b    1,"Map",0,"F2",0,"trees, houses, men",0
+e26:    dc.b    1,"Map",0,"F3",0,"settlements and roads",0
+e27:    dc.b    1,"Map",0,"F4",0,"settlement food (click: update)",0
+e28:    dc.b    1,"Rotate left",0,"[",0,"click 90 deg, right-click fine",0
+e29:    dc.b    1,"Rotate right",0,"]",0,"click 90 deg, right-click fine",0
+e30:    dc.b    1,"Zoom in",0,"= or KP+",0,"right-click: closest",0
+e31:    dc.b    1,"Zoom out",0,"- or KP-",0,"right-click: farthest",0
+e32:    dc.b    1,"Compass (cursor keys)",0,0,"scroll the view",0

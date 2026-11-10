@@ -28,7 +28,15 @@
 ;                    still intact: WAR.PRG has not run a single instruction of its own yet).  `; init: $addr` header.
 ;   $B8790.. UINITTBL up to 11 longs: same, called earlier by `uinit` in USER mode (GEMDOS calls are safe there).
 ;                    `; uinit: $addr` header.  Routines get no arguments and may use every register.
+;   $B87BC.l ICMODE  0 (default) = the CPU caches stay off in the game; 1 = hook2 switches the INSTRUCTION cache back on (68020+; experiments only)
+;   $B87EC.l ICVAL    what hook2 writes to CACR for that (0 on a 68000/68010 or when TOS had its instruction cache off): $19 on a 68020/030, $8000 on a 68040/060
+; CPU caches (68020 and up, TT/Falcon): the game's two in-place depackers `rts` into addresses the decoder has just overwritten with data writes
+; (stage 0 -> stage 1 at $576, stage 1 -> stage 2 at $10A6), so a 68030 instruction cache runs stale decoder lines (Line-F at $672 on a TT, then
+; TOS hangs; work/notes/regression.md).  `init` (supervisor, before the game's first instruction) switches every cache off; the data cache stays off
+; for the whole run (the 030 does not snoop the game's raw FDC DMA, and HD loads go through GEMDOS); hook2 may re-enable the instruction cache.
 TABLE   equ $b8200
+ICMODE  equ $b87bc
+ICVAL   equ $b87ec
 UINITTBL equ $b8790
 INITTBL equ $b87c0
 FLAGS   equ $b87f0
@@ -36,7 +44,7 @@ MARKER  equ $b87f8
 IMG     equ $b8000
 HOOK1   equ $b8100
 HOOK2   equ $b8140
-APPLY   equ $b8190
+APPLY   equ $b81a0
 
         org     $0
 front:  lea     img(pc),a0              ; the payload records: right behind this stub
@@ -77,6 +85,7 @@ img:                                    ; payload records start here (not assemb
         bra.w   uinit                   ; IMG+8: user-mode init
 init:   movem.l d0-d7/a0-a6,-(a7)
         bsr.w   probe
+        bsr.w   cacroff
         lea     INITTBL.l,a2
         bra.s   tbl
 uinit:  movem.l d0-d7/a0-a6,-(a7)
@@ -115,6 +124,40 @@ probe:  moveq   #2,d3                   ; bit1: probe ran
         move.l  d3,FLAGS.l
         rts
 
+; Caches off (68020+; the 68000/68010 have none).  The CPU is found by executing instructions under temporary illegal / line-F handlers:
+;   movec cacr,d0   68020/030/040/060 execute it, 68000/68010 raise illegal instruction ($10)
+;   cpusha bc       68040/060 push + invalidate both caches; 68020/030 raise line F ($2c) -> CACR = CI + CD (clear both, EI/ED = 0)
+; d0-d2/a0-a3 scratch.  ICVAL gets what hook2 would need to write to switch the instruction cache back on.
+cacroff: movea.l a7,a2                  ; the exception handler resets the stack here
+        movea.l $10.w,a1
+        movea.l $2c.w,a3
+        lea     .ctrap(pc),a0
+        move.l  a0,$10.w
+        move.l  a0,$2c.w
+        moveq   #0,d1                   ; stage 0: movec
+        dc.w    $4e7a,$0002             ; movec cacr,d0
+        moveq   #1,d1                   ; stage 1: cpusha
+        dc.w    $f4f8                   ; cpusha bc
+        move.l  d0,d2                   ; 68040/060: caches pushed and invalidated; IE (bit 15) was TOS's instruction cache switch
+        andi.l  #$8000,d2
+        move.l  d2,ICVAL.l
+        moveq   #0,d0
+        dc.w    $4e7b,$0002             ; movec d0,cacr: everything off
+        bra.s   .cdone
+.ctrap: movea.l a2,a7                   ; drop the exception frame
+        tst.w   d1
+        beq.s   .cdone                  ; no CACR: 68000/68010
+        moveq   #0,d2                   ; 68020/030: d0 = TOS's CACR; EI is bit 0
+        btst    #0,d0
+        beq.s   .noi
+        moveq   #$19,d2                 ; EI + IBE + CI
+.noi:   move.l  d2,ICVAL.l
+        move.l  #$0808,d0               ; CI + CD: clear both caches, EI/ED = 0 -> off
+        dc.w    $4e7b,$0002             ; movec d0,cacr
+.cdone: move.l  a1,$10.w
+        move.l  a3,$2c.w
+        rts
+
         org     $b8100
 ; hook1 -- stage 1 hand-over.  Only installed when a patch has `; stage: 1` (WAR.PRG's copy routine then ends in
 ; `jmp hook1` instead of `rts`).  Applies the stage-1 sites (all or nothing) and continues at $576.
@@ -132,7 +175,7 @@ hook1:  movem.l d0-d7/a0-a6,-(a7)
         movem.l (a7)+,d0-d7/a0-a6
         jmp     $576.l                  ; what the original stub's `rts` did
 
-        org     $b8190
+        org     $b81a0
 ; apply -- d7 = site class = (stage - 1) + 2 * mandatory.  Pass 1 verifies the ORIGINAL bytes of every site of that class
 ; (nothing is written yet), pass 2 writes them.  Returns Z set if applied, Z clear if a mismatch refused the class.
 ; Clobbers d0-d6/a0-a4.
@@ -187,6 +230,14 @@ hook2:  movem.l d0-d7/a0-a6,-(a7)
         bsr.w   APPLY
         bne.s   .o2                     ; refused: nothing optional written, the mandatory ones are in, marker stays PMPF
         move.l  #'PMPO',MARKER.l
-.o2:    move.w  (a7)+,sr
+.o2:    bsr.w   cacron                  ; (caches are off since init; the game proper is in place)
+        move.w  (a7)+,sr
         movem.l (a7)+,d0-d7/a0-a6
         jmp     $10a6.l
+; hook2: the instruction cache back on if ICMODE says so (only ever a non-zero ICVAL on a 68020+, so never executed on a 68000)
+cacron: tst.l   ICMODE.l
+        beq.s   .r
+        move.l  ICVAL.l,d0
+        beq.s   .r
+        dc.w    $4e7b,$0002             ; movec d0,cacr
+.r:     rts

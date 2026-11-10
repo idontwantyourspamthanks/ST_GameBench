@@ -23,3 +23,4 @@ Study: `work/notes/{boot,baseline,frameloop,hotpaths,entities}.md`.
 - **P3 Performance and sound:** items 2–7 above.
 - **P4 Overdraw culling (approval needed), regression, packaging** (HD and floppy zips, launcher, report).
 - **P5 Men interpolation** (2026-11-09, user decision: predict-ahead / extrapolation, world still 4 ticks/s): `p3b_interp` + `p3b_delta`, `; default: no`; `work/notes/interp.md`.
+- **Release credit** (2026-11-10, user requirement; `pm_credit`, `; default: yes`, version **1.0**): a small `v<VERSION> enhanced by dad_prg` line, in one dim palette colour, at the very bottom (rows 194-199) of the main menu screen; the version is the `TXT:` line of `patches/pm_credit.s` (zip names and READMEs take it from there); `work/notes/credit.md`.

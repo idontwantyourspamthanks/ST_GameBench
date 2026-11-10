@@ -76,17 +76,27 @@ SAMPLE_BASE, SAMPLE_END = 0xD0000, 0xDD000          # sample bank limit = the sn
 HD_SWAP_BASE = 0xDD000                              # reserved: swap buffer S of the HD build (patches/hd_core.s: TOS's low-RAM region R)
 HD_SWAP_END = 0xF6000                               # S may spill past IMG_END up to here ($F0000..$F7F45 is never touched: loading.md section 5)
 HD_WINDOW = (0xBD000, 0xDD000)                      # the HD build's overlay window (hd_core.s OVL): stage 1's SPRITE40.DAT is read here
-HOOK1, HOOK2, APPLY = IMG_BASE + 0x100, IMG_BASE + 0x140, IMG_BASE + 0x190
+HOOK1, HOOK2, APPLY = IMG_BASE + 0x100, IMG_BASE + 0x140, IMG_BASE + 0x1A0
 CORE_ORGS = {"front": 0x0, "entry": IMG_BASE, "hook1": HOOK1, "hook2": HOOK2, "apply": APPLY}
 PREFIX_RANGES = {                         # blob orgs allowed per patch-name prefix (shared contract, inclusive ends)
-    "tick_": (0xB8800, 0xBAFFF), "p3b_": (0xB8800, 0xBAFFF), "test_": (0xCE000, 0xCFFFF),
+    "tick_": (0xB8800, 0xBAFFF), "p3b_": (0xB8800, 0xBAFFF), "test_": (0xCE000, 0xCEFFF),
     "hd_": (0xBB000, 0xBCFFF),
     "p4_": (0xBD000, 0xCDFFF),
     "pm_": (0xCD000, 0xCDFFF),       # PMTooltip: the 4 KB after p4_spr's cache; inside the HD overlay window, so restored from PMLATE.DAT like the rest
     "snd_": (0xD0000, 0xDCFFF),      # $DD000..$EFFFF: reserved for the real-hardware HD build's TOS swap buffer
     "p6_": (0xD5000, 0xDCFFF),       # PMPerf2: raster patches (triangle setup + fill + slope table): the snd_ range's unused tail after its 16 KB STAGE buffer; $CE000.. stays test_ (pmab's test_walk lives there)
     "p7_": (0xDB000, 0xDBFFF),       # PMTriple: triple buffering (3 tiny hooks + data block T); inside p6_'s range after its code, in the HD overlay window
+    "fal_": (0xDC000, 0xDC0FF),      # PMPack: Falcon fixes (YM mirror writes): the free page at the end of p6_'s range
+    "qol_": (0xCF000, 0xCFFFF),      # PMQoL: keys + village hover (4 KB carved from test_'s tail; test_*.s end below $CF000); in the HD overlay window (PMLATE.DAT $BD000-$DCFFF)
 }
+EXTRA_RANGES = {                          # a patch NAME (not prefix) that may also place blobs / data here (the image-overlap check still applies)
+    "pm_tooltip": [(0xCF000, 0xCF7FF)],  # its wording table (patches/pm_tooltip.s `TXT`), $CD000-$CDFFF is full of code + state + pm_credit
+}
+
+
+def ranges_of(name: str) -> list[tuple[int, int]]:
+    pre = next((k for k in PREFIX_RANGES if name.startswith(k)), None)
+    return ([PREFIX_RANGES[pre]] if pre else []) + EXTRA_RANGES.get(name, [])
 
 
 def core_equs() -> dict[str, int]:
@@ -466,18 +476,16 @@ def build_image(patches: list[Patch], samples: bytes | None = None, corrupt: boo
         for org, lines in p.segments:
             if org == p.site:
                 continue
-            pre = next((k for k in PREFIX_RANGES if p.name.startswith(k)), None)
-            if pre is None:
+            rg = ranges_of(p.name)
+            if not rg:
                 raise SystemExit(f"{p.name}: blob orgs need a name prefix from {sorted(PREFIX_RANGES)}")
-            lo, hi = PREFIX_RANGES[pre]
             b = assemble(org, lines, "\n".join(p.preamble))
-            if not (lo <= org and org + len(b) - 1 <= hi):
-                raise SystemExit(f"{p.name}: blob ${org:x}..${org + len(b) - 1:x} outside ${lo:x}..${hi:x}")
+            if not any(lo <= org and org + len(b) - 1 <= hi for lo, hi in rg):
+                raise SystemExit(f"{p.name}: blob ${org:x}..${org + len(b) - 1:x} outside " + ", ".join(f"${lo:x}..${hi:x}" for lo, hi in rg))
             blobs.append((org, b, p.name))
             used.append((org, org + len(b)))
         for a, ln in p.data:
-            pre = next((k for k in PREFIX_RANGES if p.name.startswith(k)), None)
-            if pre is None or not (PREFIX_RANGES[pre][0] <= a and a + ln - 1 <= PREFIX_RANGES[pre][1]):
+            if not any(lo <= a and a + ln - 1 <= hi for lo, hi in ranges_of(p.name)):
                 raise SystemExit(f"{p.name}: data ${a:x}+{ln} outside the range of its prefix")
             used.append((a, a + ln))
     if samples is not None:
@@ -924,7 +932,10 @@ def find_btn(h, ref: str, region=(96, 58, 736, 458), quiet: bool = False):
     import numpy as np
     from numpy.lib.stride_tricks import sliding_window_view
     from PIL import Image
-    img = np.asarray(Image.open(h.shot()).convert("L"), dtype=np.int16)
+    im0 = Image.open(h.shot())
+    ox, oy = {832: (96, 58), 640: (0, 0), 648: (2, 64)}.get(im0.width, (96, 58))        # ST / TT / Falcon screenshots
+    region = (region[0] - 96 + ox, region[1] - 58 + oy, region[2] - 96 + ox, region[3] - 58 + oy)
+    img = np.asarray(im0.convert("L"), dtype=np.int16)
     tpl = np.asarray(Image.open(REF / ref).convert("L"), dtype=np.int16)
     th, tw = tpl.shape
     x0, y0, x1, y1 = region
@@ -941,7 +952,7 @@ def find_btn(h, ref: str, region=(96, 58, 736, 458), quiet: bool = False):
             print(f"  find_btn: {ref} not found (best match {best[0]:.1f})")
             shutil.copy(h.shot(), f"/tmp/pm_find_{ref}")
         return None
-    return (int(best[1][0] - 96) // 2, int(best[1][1] - 58) // 2)
+    return (int(best[1][0] - ox) // 2, int(best[1][1] - oy) // 2)
 
 
 def file_dialog(h, button: str, arm=None):
