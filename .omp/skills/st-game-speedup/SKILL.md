@@ -18,6 +18,7 @@ Reference project: `games/midwinter2`. Its `PLAN.md` holds phases P0–P7 and it
   - a patch tool that verifies original bytes;
   - zips: HD folder plus a floppy set. **Ship both by default:** a floppy version is mandatory (most ST owners have no hard disk) and an HD version is expected too (essential on Mega STE/TT). Drop one only for a very good, stated reason. If the base release is HD-only, build the floppy set from a floppy release of the same game; if it is floppy-only, build an HD version (file loads) as well;
   - `play.sh`-style launcher scripts.
+  - **Release credit (mandatory):** every release shows a version and credit line, e.g. `v1.2 enhanced by dad_prg`, on a startup screen, so archivists can't mistake it for the original release. The user picks the screen and placement per game. Keep the version in one place per game (patch source or build config); it must appear in the README/PATCHES.TXT and zip names too.
 
 ## Phases
 1. **Harness and benchmarks.**
