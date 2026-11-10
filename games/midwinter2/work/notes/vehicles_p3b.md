@@ -104,3 +104,42 @@ Blobs: p3cp_head `$b8000`+ (below `$b8700`), `$b8700` NPC snapshot, `$b8f00` dat
 Done: **STE 1 MB (TOS 1.62) and Mega STE 4 MB (TOS 2.06, 16 MHz)**: cold boot to the map 108 s / 93 s, marker `MWPO` before and after, hook `$31570 = jsr $b8000`, head `$31486 = jsr $b8100`; on foot (5), Jeep (1), Speedboat (6), Biplane (12), Helicopter (13) all entered via the Raids map (types as wanted), no bus error. Pose per presented flip while turning: every flip carries a new pose (pose_changes = flips-1) on foot, Jeep, Biplane, Helicopter on both machines; mean flip gap STE 8 MHz 9-13 VBL, Mega STE 16 MHz 2.6 (Biplane), 5.9 (Jeep, Heli), 10.9 (foot) VBL. **Speedboat: the boat did not move during the turn window (0 pose changes in 6 / 11 flips), so smoothness of the boat was NOT shown on a cold boot** (it moved earlier; stopped/blocked). PH samples show the extra passes running (values 2-5) on Mega STE. Measured ticks/s 4.4-4.6 (target 5.0) on both, over a 400 VBL window [INFERENCE: includes a map-rebuild stall / 8 MHz frame-time bound; not investigated]. fps after the move at 8/16/32 MHz (STE): foot 11.2/25.0/25.0, Jeep 5.2/7.3/25.1, Speedboat 2.9/6.6/14.6, Biplane 1.4/19.1/23.1, Heli 5.2/19.3/25.0 (these include skip-fired stopped states); Mega STE: foot 4.0/11.3/19.1, Jeep 4.3/6.8/19.7, Speedboat 4.4/6.6/18.4, Biplane 3.8/17.6/21.3, Heli 4.4/12.2/21.3.
 **NOT done: TT (`--mmu true`), plain ST, floppy STE and floppy TT cold boots** (`coldboot.py tt4|st1` and `floppy_cold.py ste|tt` are written; floppy_cold.py has never been run). No frame strip was looked at by eye (images saved only).
 **Open design choice (not done): the deadline rule costs fps at saturated settings.** Standing at 16 MHz the first p3cp (extra passes ran late) gave on foot 8.25, Jeep 8.90, Speedboat 8.85, Crawler 13.85 fps; with the deadline rule 5.55, 5.85, 7.60, 10.25 (Section 7), because the machine cannot fit an extra frame between the end of PH 1 and the next tick start. A `SLACK` (allow an extra pass to end up to ~1 VBL late) would give some back at the price of 0-1 VBL tick-start jitter; not implemented or measured.
+
+## 11. Middle ground: an extra pass may end up to 1 VBL after the next PH 1 is due (user decision)
+`p3cp_head`: `SLACK = 6` clock units (1 VBL at 50 Hz) is added to the deadline budget; tuning word `SLKX` (`$b8fb2`, zero-initialised, only the gates poke it: -6 = the strict rule, +1000 = no rule). The clock grid is untouched (`ACC` keeps the due times), so a late PH 1 does not push later ticks back: measured intervals come in pairs such as 12/8 VBL, the mean stays 10.0 (foot 16 MHz: 172 ticks in 1712 VBL; option A 171 in 1700, every interval exactly 10).
+fps (`fps_rules.sh`, `fpsrun.py cand`, 1000 VBL, 2 MB STE; strict / middle / none, same snapshots and pokes as section 7):
+| type | scen | MHz | strict (SLKX=-6) | middle (default, SLACK 6) | none (first p3cp) |
+|---|---|---|---|---|---|
+| foot | stand | 8 | 3.80 | 3.80 | 3.80 |
+| Jeep | stand | 8 | 4.15 | 4.15 | 4.15 |
+| Speedboat | stand | 8 | 4.05 | 4.05 | 4.05 |
+| Crawler | stand | 8 | 5.25 | 5.30 | 6.40 |
+| Helicopter | stand | 8 | 25.05 | 25.05 | 25.05 |
+| foot | stand | 16 | 5.55 | 5.95 | 8.25 |
+| Jeep | stand | 16 | 5.85 | 7.60 | 8.90 |
+| Speedboat | stand | 16 | 7.60 | 8.00 | 8.85 |
+| Crawler | stand | 16 | 10.25 | 12.90 | 13.85 |
+| Helicopter | stand | 16 | 25.05 | 25.05 | 25.00 |
+| foot | stand | 32 | 21.70 | 23.20 | 23.15 |
+| Jeep | stand | 32 | 25.05 | 25.00 | 25.05 |
+| Speedboat | stand | 32 | 17.80 | 18.95 | 19.20 |
+| Crawler | stand | 32 | 25.05 | 25.05 | 25.05 |
+| Helicopter | stand | 32 | 25.05 | 25.00 | 25.05 |
+| foot | move | 8 | 5.25 | 5.25 | 6.35 |
+| Jeep | move | 8 | 5.00 | 5.05 | 5.25 |
+| Speedboat | move | 8 | 3.40 | 3.40 | 3.40 |
+| Crawler | move | 8 | 5.25 | 5.40 | 7.00 |
+| Helicopter | move | 8 | 5.10 | 5.20 | 5.45 |
+| foot | move | 16 | 10.90 | 12.80 | 13.70 |
+| Jeep | move | 16 | 9.55 | 10.35 | 11.25 |
+| Speedboat | move | 16 | 6.30 | 7.30 | 8.45 |
+| Crawler | move | 16 | 13.50 | 14.75 | 15.35 |
+| Helicopter | move | 16 | 10.15 | 10.30 | 11.70 |
+| foot | move | 32 | 24.95 | 25.00 | 24.95 |
+| Jeep | move | 32 | 22.05 | 22.45 | 22.75 |
+| Speedboat | move | 32 | 16.05 | 17.20 | 17.70 |
+| Crawler | move | 32 | 25.05 | 25.05 | 25.05 |
+| Helicopter | move | 32 | 23.65 | 23.90 | 24.10 |
+Lateness of PH 1 (`gaps.py`, 97 ticks, VBL of `$31586` minus the 10-VBL grid from tick 0; max / ticks later than 1 VBL): 16 MHz middle: foot 2/18, Jeep 4/5, Biplane 3/12, Helicopter 1/0; strict: foot 2/10, Jeep 4/1, Biplane 2/1, Helicopter 1/0; 32 MHz: at most 2 VBL in 1 tick of 97, usually 0. **The 1-VBL bound is NOT strictly guaranteed**: the clock and the pass-duration measure are VBL-quantised (measured duration = a multiple of 6 units, true value up to 6 less or more), so the knob is effectively binary (3 behaves as 0), and even the strict rule shows 2-4 VBL late ticks when PH 1 itself overruns. A hard bound would need a sub-VBL timer (e.g. the video address counter `$ff8209`); not done.
+Gates with the middle ground (default build): exactness subset on foot, Jeep, Speedboat, Biplane, Helicopter x stand, move+turn x 16/32 MHz: **20 of 20 identical**. Esc batch (4 vehicles x 5 phases x 16/32 MHz = 40): type changes on the SAME tick as A in **39 of 40**; one Jeep case (dv 16, 16 MHz) shifted by one tick (A consumed it at tick 1, P at tick 2; accepted jitter); state identical in 38 of 40 (the shifted one, and one Jeep 32 MHz run with the all-ticks-differ harness flake while the type tick matched).
+Tick rate: the 4.4-4.65 ticks/s of `coldboot.py` / `fpsrun.py` (hits of `$31586` over a 400-500 VBL window) is also 4.6 for the first p3cp and at 32 MHz standing, but a direct interval trace (`gaps.py`: VBL of every `$31586` hit, 800 VBL) gives 171-172 ticks in 1700 VBL for both option A and p3cp (5.0 per second, no gap > 14 VBL). [INFERENCE] the 4.6 is the window-end measurement of those two scripts (the VBL breakpoint is armed after the tick breakpoint over the fifo), not a slow world; the cold-boot figure was not re-measured with `gaps.py`. The catch-up code (clamp ACC to 3*GRP, `SKIP` = no render when another pass/tick is owed, resync after > 4*GRP) still exists in p3cp_head as in tick_head; it is not what the 4.6 shows.

@@ -98,7 +98,7 @@ fixed 5 Hz (the original speed on a 1 MB 8 MHz STE, about one tick per 10 VBL) a
   player and the picture at PH 1 are the unpatched game's for every vehicle type. PH 2-5 show the pose extrapolated from the tick that just ran
   (`T_end + (T_end - T_start) * (PH-1)/5`), refresh the view words, and run the HUD gauge draw + render + flip; no game logic runs in them. The
   live pose, view words, NPC table and sea-wave phase/pointer are put back to the end of the tick before the next PH 1, so every group end equals
-  the 5 Hz game's. An extra pass renders only when it ends before the next PH 1 is due, so the tick starts (the only place keys and the mouse are
+  the 5 Hz game's. An extra pass renders only when it ends no more than SLACK (1 VBL, tuning word SLKX) after the next PH 1 is due, so the tick starts (the only place keys and the mouse are
   read: Esc, J/K/mouse steering) stay on the original's 5 Hz schedule. Overshoot limits: no prediction after a type change, a jump (map re-centre,
   landing, eject), a collision/arrival result; altitude is never extrapolated downwards; the lean never. TAB[type] = 0 puts a type on the plain 5 Hz pass.
   Data: block D = $B42E0 (+0 LAST.l, +4 ACC.w, +6 PH, +8 SUB (1 = PH 1 of a group), +12 SKIP), own data $B8F00, NPC snapshot $B8700, code from $B8000 (below $B8700).

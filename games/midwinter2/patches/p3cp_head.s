@@ -23,7 +23,7 @@
 ;       not always base + phase: the map window rebuild $1dd7e resets it to the table base, and the next tick's sim reads it).
 ;       Real time: the tick_vbl clock ($B3400, 1/300 s): GRP = 60 units = 5 Hz, SUBT = 12 units = 40 ms.  PH 1 renders unless a whole tick (GRP) is owed (option A's
 ;       rule), PH 2-5 unless one more pass is owed or the render would not end before the next PH 1 is due (12 * (6 - PH) - lateness < the measured duration of the last two
-;       extra passes): a late PH 1 would read the keys (Esc) and the mouse a pass later than the original's tick does, so the tick starts stay on the original's schedule.
+;       extra passes): a PH 1 that starts late reads the keys (Esc) and the mouse later than the original's tick does, so a pass may end at most SLACK = 1 VBL after the next PH 1 is due (by the measured duration, VBL-quantised); the due times stay on the clock grid (ACC), so a late PH 1 does not push later ticks back.
 ;       TAB[type] = 0 keeps a type on the plain 5 Hz pass (also when $40b6 <> 0).
 ;       Shared word block D = $b42e0 (LAST.l +0, ACC.w +4, PH.w +6, SUB.w +8 (1 = PH 1 of a predicted group), +10 unused, SKIP.w +12 (read by p3c_render)).
 ;       Own data S = $b8f00.  Code: one segment at $b8000.
@@ -45,6 +45,8 @@ TS      equ     S+$a8                   ; clock at the start of the last extra p
 RF      equ     S+$ac                   ; the last pass rendered: measure it
 REST    equ     S+$ae                   ; estimated duration of an extra pass (units)
 RPV     equ     S+$b0                   ; the previous measure
+SLKX    equ     S+$b2                   ; tuning word (zero-initialised): added to SLACK, only the gates set it (-SLACK = strict rule, +1000 = no rule)
+SLACK   equ     6                       ; an extra pass may end up to one 50 Hz VBL (6 clock units) after the next PH 1 is due
 SH      equ     S+$30                   ; shadow of the end-of-tick state (51 words)
 RD      equ     S+$a0                   ; an extra render happened since the NPC table was restored
 NS      equ     $b8700                  ; NPC table $3532-$3cee after PH 1
@@ -176,6 +178,8 @@ head:   movem.l d0-d2/a0-a1,-(a7)
         sub.w   d0,d1                   ; (a late PH 1 would consume the input, e.g. Esc, a tick after the original does)
         mulu.w  #SUBT,d1
         sub.w   4(a0),d1
+        addi.w  #SLACK,d1               ; middle ground: PH 1 may start up to 1 VBL late (the grid is kept: ACC is not touched, the next due times do not move)
+        add.w   SLKX.l,d1
         cmp.w   REST.l,d1
         bge.s   .fits
         move.w  #1,12(a0)
