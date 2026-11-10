@@ -3,7 +3,7 @@
 Status: **done** (release packaging, 2026-11-10). A patched floppy and a patched hard-disk folder are built from the user's original disk. Triple buffering (`p7_*`) is not in this build yet (see REPORT.md section 12).
 
 - Plain-English account of the work: [`REPORT.md`](REPORT.md). Regression matrix: [`work/notes/regression.md`](work/notes/regression.md). Plan and decisions: [`PLAN.md`](PLAN.md).
-- Build and package: `tools/package.sh` (verifies the patches, builds both versions, writes `dist/Powermonger_patched_floppy_<date>.zip` and `dist/Powermonger_patched_hd_<date>.zip`, prints md5s). Needs `disks/protected.st`.
+- Build and package: `tools/package.sh` (verifies the patches, builds both versions, writes `dist/Powermonger_v<ver>_patched_floppy_<date>.zip` and `dist/Powermonger_v<ver>_patched_hd_<date>.zip`, prints md5s). Needs `disks/protected.st`.
 - Play in Hatari: `tools/play.sh` (patched floppy, STE), `--hd`, `--original`, `--machine st|megast|ste|megaste|tt|falcon`, `--ram`, `--mhz`.
 - Patch tool: `tools/pmpatch.py verify | list | build [--floppy|--hd] | live | boot`.
 
@@ -12,12 +12,12 @@ Status: **done** (release packaging, 2026-11-10). A patched floppy and a patched
 | File | MD5 |
 |---|---|
 | original `disks/protected.st` | `b0f6972e81067a5822c0b21e6d00b8dc` |
-| `Powermonger_patched.st` (floppy, 819200 B; the build is deterministic) | `2034757f0a116358e13799492b5e7e4a` |
-| HD `AUTO\WAR.PRG` (312653 B) | `d9f265af9c8568b3e4a81084570621f4` |
+| `Powermonger_patched.st` (floppy, 819200 B; the build is deterministic) | `f30569403c1f3b95beba8c2d10fb79a6` |
+| HD `AUTO\WAR.PRG` (313201 B) | `9c7b375ac1ffe176558a1ef1bcae4ca6` |
 | HD `DATA\SPRITE40.DAT` (101608 B, patched) | `ec8579b97e7c35078d63b7d4439eedb0` |
-| HD `PMLATE.DAT` (23285 B) | `cd0f828d007a68497c7b5f11d1779290` |
-| `dist/Powermonger_patched_floppy_2026-11-10.zip` (the zip md5 changes with every packaging run: file times) | `1f03ac3a24e3194ff30459dd72e77693` |
-| `dist/Powermonger_patched_hd_2026-11-10.zip` | `c93c6c21976651021ec856324d734ee1` |
+| HD `PMLATE.DAT` (23664 B) | `44f44608244ab68a8879dcf2ce413a39` |
+| `dist/Powermonger_v1.0_patched_floppy_2026-11-10.zip` (the zip md5 changes with every packaging run: file times) | `0cc15c97a8c9a6b04be7000665c3678e` |
+| `dist/Powermonger_v1.0_patched_hd_2026-11-10.zip` | `8143d20baec7554c643f4f71ed7f6c30` |
 
 The HD folder also holds `DATA\*.DAT` (14 other files, identical to the disk's) and `SAVEDISK.DAT` (409600 B, a formatted empty save disk). The zips' READMEs: `patches/README_FLOPPY.TXT`, `patches/README_HD.TXT`.
 
