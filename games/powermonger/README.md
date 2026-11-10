@@ -12,12 +12,12 @@ Status: **done** (release packaging, 2026-11-10). A patched floppy and a patched
 | File | MD5 |
 |---|---|
 | original `disks/protected.st` | `b0f6972e81067a5822c0b21e6d00b8dc` |
-| `Powermonger_patched.st` (floppy, 819200 B; the build is deterministic) | `f30569403c1f3b95beba8c2d10fb79a6` |
-| HD `AUTO\WAR.PRG` (313201 B) | `9c7b375ac1ffe176558a1ef1bcae4ca6` |
-| HD `DATA\SPRITE40.DAT` (101608 B, patched) | `ec8579b97e7c35078d63b7d4439eedb0` |
+| `Powermonger_patched.st` (floppy, 819200 B; the build is deterministic) | `3d116a3272af50ddc9d3a5bd39dc0a58` |
+| HD `AUTO\WAR.PRG` (313261 B) | `eb143fd0d92579f1fa58097de090161a` |
+| HD `DATA\SPRITE40.DAT` (101608 B, patched) | `37d28ff241b94d3f493f24e236e5a73b` |
 | HD `PMLATE.DAT` (23664 B) | `44f44608244ab68a8879dcf2ce413a39` |
-| `dist/Powermonger_v1.0_patched_floppy_2026-11-10.zip` (the zip md5 changes with every packaging run: file times) | `0cc15c97a8c9a6b04be7000665c3678e` |
-| `dist/Powermonger_v1.0_patched_hd_2026-11-10.zip` | `8143d20baec7554c643f4f71ed7f6c30` |
+| `dist/Powermonger_v1.0_patched_floppy_2026-11-10.zip` (the zip md5 changes with every packaging run: file times) | `e26f388686cc283e54abcc8d569eb694` |
+| `dist/Powermonger_v1.0_patched_hd_2026-11-10.zip` | `0e094fbdb4356d78b196d1cf1d4d7d2b` |
 
 The HD folder also holds `DATA\*.DAT` (14 other files, identical to the disk's) and `SAVEDISK.DAT` (409600 B, a formatted empty save disk). The zips' READMEs: `patches/README_FLOPPY.TXT`, `patches/README_HD.TXT`.
 

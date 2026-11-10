@@ -1,12 +1,13 @@
 ; name: fal_ym
 ; default: yes
 ; stage: 1
+; falcon: yes
 ; site: $b60c
 ; orig: 0dc9000022bb7018
 ; note: Falcon (work/notes/regression.md).  The title/intro program's sound interrupt (stage 1, $b5ee..$b624) writes the YM with
 ;       `movep.l d6,0(a1)` = four writes to $ff8800/02/04/06 (the ST decodes the mirrors as the same two registers), then a long
 ;       write of the next table entry to $ff8800.  A Falcon (Hatari) bus-errors on $ff8804/$ff8806 -> TOS bomb -> double bus error.
-;       Replacement on EVERY machine: the same register writes in the same order through $ff8800/$ff8802 only
+;       Applied ONLY on a Falcon (`; falcon: yes`: hook1 checks the _MCH cookie that `init` read; the ST/STE A/B WAV of the intro music with the replacement on every machine gave rho 0.95 and a different spectrum, regression.md): the same register writes in the same order through $ff8800/$ff8802 only
 ;       (two movep.w; the long write as its two live bytes: select = byte 0, data = byte 2).  d6 and a1 end as before;
 ;       a0 is saved.  The ST YM sees the identical register sequence; the IRQ costs about 70 cycles more [INFERENCE: not measured].
         org     $b60c

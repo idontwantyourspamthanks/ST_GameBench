@@ -76,7 +76,7 @@ SAMPLE_BASE, SAMPLE_END = 0xD0000, 0xDD000          # sample bank limit = the sn
 HD_SWAP_BASE = 0xDD000                              # reserved: swap buffer S of the HD build (patches/hd_core.s: TOS's low-RAM region R)
 HD_SWAP_END = 0xF6000                               # S may spill past IMG_END up to here ($F0000..$F7F45 is never touched: loading.md section 5)
 HD_WINDOW = (0xBD000, 0xDD000)                      # the HD build's overlay window (hd_core.s OVL): stage 1's SPRITE40.DAT is read here
-HOOK1, HOOK2, APPLY = IMG_BASE + 0x100, IMG_BASE + 0x140, IMG_BASE + 0x1A0
+HOOK1, HOOK2, APPLY = IMG_BASE + 0x140, IMG_BASE + 0x190, IMG_BASE + 0x1F0
 CORE_ORGS = {"front": 0x0, "entry": IMG_BASE, "hook1": HOOK1, "hook2": HOOK2, "apply": APPLY}
 PREFIX_RANGES = {                         # blob orgs allowed per patch-name prefix (shared contract, inclusive ends)
     "tick_": (0xB8800, 0xBAFFF), "p3b_": (0xB8800, 0xBAFFF), "test_": (0xCE000, 0xCEFFF),
@@ -333,6 +333,7 @@ class Patch:
         self.name = path.stem
         self.default = True
         self.site = None
+        self.falcon = False       # `; falcon: yes` (stage 1 only): applied by hook1 only when the _MCH cookie says Falcon (site class 4)
         self.mandatory = False    # `; mandatory: yes`: verified/applied as its own group before the optional sites
         self.stage = 2            # 1 = applied at WAR.PRG's hand-over ($576), 2 = at the game's ($10A6)
         self.orig = None
@@ -353,6 +354,7 @@ class Patch:
                 elif k == "default": self.default = v.lower() not in ("no", "false", "0")
                 elif k == "site": self.site = hx(v)
                 elif k == "stage": self.stage = int(v)
+                elif k == "falcon": self.falcon = v.lower() in ("yes", "true", "1")
                 elif k == "mandatory": self.mandatory = v.lower() in ("yes", "true", "1")
                 elif k == "orig": self.orig = bytes.fromhex(v.replace(" ", ""))
                 elif k == "data":
@@ -451,7 +453,7 @@ def build_image(patches: list[Patch], samples: bytes | None = None, corrupt: boo
         if p.site is None:
             continue
         orig, new = resolve(p)
-        sites.append(dict(name=p.name, addr=p.site, stage=p.stage, mandatory=p.mandatory, orig=orig, new=new))
+        sites.append(dict(name=p.name, addr=p.site, stage=p.stage, mandatory=p.mandatory, falcon=p.falcon, orig=orig, new=new))
     by_addr = sorted(sites, key=lambda s: (s["stage"], s["addr"]))
     for a, b in zip(by_addr, by_addr[1:]):
         if a["stage"] == b["stage"] and a["addr"] + len(a["orig"]) > b["addr"]:
@@ -461,7 +463,7 @@ def build_image(patches: list[Patch], samples: bytes | None = None, corrupt: boo
         orig = bytearray(s["orig"])
         if corrupt and s is next(x for x in sites if not x["mandatory"]):
             orig[0] ^= 0xFF                      # test only: the core must refuse (PMPF) and apply nothing
-        tbl += struct.pack(">IHH", s["addr"], len(orig), s["stage"] - 1 + 2 * s["mandatory"]) + bytes(orig) + s["new"]
+        tbl += struct.pack(">IHH", s["addr"], len(orig), 4 if s["falcon"] else s["stage"] - 1 + 2 * s["mandatory"]) + bytes(orig) + s["new"]
     tbl += b"\0\0\0\0"
     if TABLE + len(tbl) > TABLE_END:
         raise SystemExit(f"site table overflow: {len(tbl)} B > {TABLE_END - TABLE} B in ${TABLE:x}..${TABLE_END - 1:x}")
