@@ -1,0 +1,6 @@
+battle_320 16 MHz p7 triple buffer: events 1200 (VBL 694, flips 168), draw intervals checked 168, VBLs inside a draw interval checked 688: VIOLATIONS 0
+  (L, D) pairs at flip entry: (A,C) x56, (B,A) x56, (C,B) x56
+  VBLs between consecutive flips: min 3 max 5 mean 4.10 (0 would mean a flipped frame replaced one that was never shown)
+  cycles from a flip's return to the first draw (loop-head wait + logic stage): mean 15866 over 169 passes
+  cycles from a flip's return to the next VBL: mean 152697 over 169 flips
+NO TEARING

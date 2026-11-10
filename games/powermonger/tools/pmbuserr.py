@@ -80,6 +80,9 @@ def build(names, out):
     return out / "floppy" / "powermonger.st"
 
 
+QKEYS = ["f", "d", "h", "a", "m", "r", "n", "1", "2", "3", "bracketleft", "bracketright", "equal", "minus", "F1", "F2", "g", "e", "s"]   # the qol_keys commands (not o / q / i / x / t / y / l: windows)
+
+
 def stress(a):
     """Cold boot of a floppy build (defaults + test_ovr; --old: p6_cpy replaced by the 10-row chunk version) and a stress of host mouse /
     key events for --minutes of wall time from the map view through get_men and the battle.  Prints the ACIA overrun counter of test_ovr."""
@@ -122,7 +125,7 @@ def stress(a):
                 if n % 40 == 0:
                     h._xdo("mousemove", "--window", h.win, "416", "294")
                 if rnd.random() < a.keys:
-                    h._xdo("key", "--window", h.win, rnd.choice(["Shift_L", "Control_L", "Up", "Down", "Left", "Right"]))
+                    h._xdo("key", "--window", h.win, rnd.choice(["Shift_L", "Control_L", "Up", "Down", "Left", "Right"] + (QKEYS if a.qkeys else [])))
         th = [threading.Thread(target=mover, daemon=True) for _ in range(a.threads)]
         for t in th:
             t.start()
@@ -174,6 +177,7 @@ def main():
     st.add_argument("--no", nargs="*", default=[], help="default patches to leave out (p4_clamp: the control without the safety net)")
     st.add_argument("--threads", type=int, default=2)
     st.add_argument("--keys", type=float, default=0.02)
+    st.add_argument("--qkeys", action="store_true", help="also tap the qol_keys command keys (the keyboard interrupt hook of qol_keys2 runs for every make code)")
     st.add_argument("--getmen", action="store_true")
     st.add_argument("--mhz", type=int, default=8)
     a = ap.parse_args()

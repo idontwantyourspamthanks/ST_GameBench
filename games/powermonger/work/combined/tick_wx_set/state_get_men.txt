@@ -1,0 +1,6 @@
+get_men 8 MHz: defaults 73 loop tops (ticks 135..190), defaults + p7 75 loop tops (ticks 135..190), missed loop tops 0
+compared 75 loop tops over 56 distinct world ticks (RAM $0-$60000, masks as pmtick.py MASKS + the three p7 sites)
+negative control: p7 tick k vs defaults tick k+1 differs in 74 of 74 loop tops
+RNG $2df84 differs in 0 loop tops; 4 distinct values
+men records whose x/z changed first -> last loop top: 20
+IDENTICAL

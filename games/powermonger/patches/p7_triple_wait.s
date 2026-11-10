@@ -1,5 +1,5 @@
 ; name: p7_triple_wait
-; default: no
+; default: yes
 ; stage: 2
 ; site: $13090
 ; orig: 4eb900001870

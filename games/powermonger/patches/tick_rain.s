@@ -1,5 +1,5 @@
 ; name: tick_rain
-; default: no
+; default: yes
 ; site: $130b0
 ; orig: 4eb90001abaa
 ; note: P2 variant of tick_wx (REPLACES it: same site, `; default: no`; select one of the two). `jsr $1abaa` = season/weather step. The routine

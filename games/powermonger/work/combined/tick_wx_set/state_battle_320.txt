@@ -1,0 +1,6 @@
+battle_320 8 MHz: defaults 71 loop tops (ticks 347..401), defaults + p7 74 loop tops (ticks 347..402), missed loop tops 0
+compared 73 loop tops over 55 distinct world ticks (RAM $0-$60000, masks as pmtick.py MASKS + the three p7 sites)
+negative control: p7 tick k vs defaults tick k+1 differs in 72 of 72 loop tops
+RNG $2df84 differs in 0 loop tops; 5 distinct values
+men records whose x/z changed first -> last loop top: 36
+IDENTICAL

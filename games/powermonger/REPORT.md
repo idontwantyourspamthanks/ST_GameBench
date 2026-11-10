@@ -119,9 +119,16 @@ The new profile of the default set showed the terrain span fill (40–48% of all
 
 `patches/pm_noprot.s`, `pm_noprot_box.s`; note `protection.md`. The state "passed" is **one long word at `$14e4e`** in the game image (`$0000002c`); until it holds that, the renderer's handler for the first person (`$11bf4`) runs the check. `pm_noprot` writes `$2c` into the word at the hand-over and `pm_noprot_box` turns the "Please wait for the protection check" box into a no-op. The question is never asked, the real land is generated at once, and Save/Format stay enabled. The cold-boot test fails if the question box appears (`pm.py boot_to_game`), and checks the pass flag.
 
-## 8. Tooltips
+## 8. Tooltips, keys and village hover
 
 `patches/pm_tooltip.s`; note `tooltip.md`. The game has no hover help at all (every read of the pointer position is a click path). The hook before the HUD draw tests the pointer against the game's own hit-test tables (the same line tables the click uses, re-implemented in `pmtt_grid.py`: no divide overflow and no icon outside its cells over all 320 × 200 pixels) and writes a 52-character line in the game's font into the free part of the black bar at the top of the screen, for the command icons, the four map modes, rotate, zoom and the compass. The text depends on the posture setting (1/2/3 swords = 25/50/100%). Cost per frame: 416 cycles when the pointer is still, +0.16% cycles per pass while hovering; the screen differs from the unpatched game only inside rows 0–5, columns 7–19 (gate `pmtt_ab.py`: identical with the pointer away from every icon, tooltip rectangle only with it on one).
+
+**Keys** (`qol_keys`, `qol_keys2`; note `qol.md`). The game reads the keyboard only for the four cursor keys and the text windows, so every letter was free. A key does exactly what the click on its icon does: it writes the same words the mouse path writes (click position inside the icon's cell, found with the game's own hit test; left or right latch; the pass stamp) at the spot just before the click dispatch, so the command is handled in the same pass. A tap shorter than a pass (a pass is 0.125-0.26 s) is not lost: the keyboard interrupt only sets a pending flag, which the pass consumes. `1 2 3` postures, `A` Attack, `D` Drop Food, `E` Equip, `F` Get Food, `G` Send Captain, `H` Go Home, `I` Invent, `L` Alliance, `M` Get Men, `N` Drop Items, `O` Option, `Q` Query, `R` Derank, `S` Supply Food, `T` Trade, `X` Transfer Men, `Y` Spy, `F1`-`F4` the map icons, `[` `]` rotate, `=` `-` (also keypad) zoom, with Shift the fine rotation and the closest / farthest zoom (the right-click variants). Keys are ignored while typing, with a window open or paused. The icon tooltips show the key before the colon (`Get Food (F): take 25% of a village's food`); the longest text is 51 of the 52 characters the bar holds.
+
+**Village hover** (`qol_hover`, `qol_hover2`). Resting the pointer on a house for 0.2 s shows what that village's workshop is making and how far along it is (`<name>: making swords (45%)`, `workshop idle`, `no workshop`) in the same bar; with Invent selected it shows what the village would make (`Invent here: bows (wood nearby)`; the game's rule, replayed read-only: 276 of 276 scenarios match the game's own order code). The object under the pointer is found by hooking the game's sprite routine, which already tests the pointer against every drawn object.
+
+Gates: key == click world state identical over the whole low RAM (4 key sets, negative controls differ everywhere); hover state equality identical with the pointer resting on a village; the picture differs from the old default set only inside the tooltip bar.
+
 
 ## 9. Men interpolation
 
@@ -139,30 +146,44 @@ The new profile of the default set showed the terrain span fill (40–48% of all
 
 ## 11. Regression
 
-See `work/notes/regression.md` for the table with the exact numbers, the commands and the raw lines. Summary:
+`work/notes/regression.md` (the release candidate before triple buffering, keys and rain) and `work/notes/combined.md` (the final default set: triple buffering, keys, village hover, TT / Falcon pointer, intro timing, rain, IKBD fix) hold the exact numbers, commands and raw lines.
 
-Cold boots into the map view, then get_men, patched build (no triple buffering), Hatari 2.6.1; fps / world ticks per second:
+Cold boots into the map view, then get_men, final build, Hatari 2.6.1; fps / world ticks per second, with the figure of the previous release candidate (regression.md) in brackets:
 
 | Machine (floppy unless noted) | map view | get_men | notes |
 |---|---|---|---|
-| ST TOS 1.04, 1 MB, 8 MHz | 4.55 / 4.05 | 4.75 / 4.00 | YM sound; original 2.30 / 3.45 fps |
-| STE TOS 1.62, 1 MB | 4.60 / 4.00 | 5.40 / 4.00 | DMA sound; original 2.80 / 3.45 fps |
-| STE 4 MB | 4.60 / 4.00 | 5.35 / 3.95 | |
-| Mega STE TOS 2.06, 4 MB, 60 Hz, 8 / 16 MHz | 4.62 / 4.02, 9.84 / 3.96 | 5.52 / 4.02, 11.88 / 4.02 | |
-| TT TOS 3.06, 4 MB | 19.80 / 4.02 | 19.80 / 4.02 | CPU caches off |
-| Falcon TOS 4.04, 4 MB | 10.00 / 4.05 | 12.15 / 4.00 | CPU caches off, title-music fix |
-| HD (ACSI + HDDRIVER) STE 1 MB, Mega STE 4 MB, TT 4 MB | same as the floppy | same | Save and Load through the menu: 0 bytes differ |
-| HD, Hatari GEMDOS folder, STE | 4.60 / 4.00 | 5.30 / 4.00 | |
+| ST TOS 1.04, 1 MB, 8 MHz | 4.65 / 4.05 (4.55) | 4.85 / 4.00 (4.75) | YM sound; original 2.30 / 3.45 fps |
+| STE TOS 1.62, 1 MB | 4.85 / 4.00 (4.60) | 5.30 / 3.95 (5.40) | DMA sound; original 2.80 / 3.45 fps |
+| Mega STE TOS 2.06, 4 MB, 60 Hz, 8 / 16 MHz | 4.74 / 4.02, 10.20 / 3.96 (4.62, 9.84) | 5.58 / 4.02, 12.48 / 3.96 (5.52, 11.88) | |
+| TT TOS 3.06, 4 MB, 32 MHz | 22.62 / 4.02 (19.80) | 27.12 / 4.02 (19.80) | CPU caches off; pointer visible |
+| Falcon TOS 4.04, 4 MB | 11.40 / 4.00 (10.00) | 12.20 / 4.00 (12.15) | CPU caches off, title-music fix; pointer visible |
+| HD (ACSI + HDDRIVER) STE 1 MB | 4.85 / 4.00 (4.60) | 5.30 / 4.00 (5.35) | Save and Load through the menu: 0 bytes differ |
 
-On all of them the DMA sound plays (or the YM on the ST), the tooltips appear, the protection question is never asked and the world runs at 4.0 ticks/s. The patched game is **+98% / +38%** (ST) and **+64% / +57%** (STE) faster than the original in the map view / get_men at 8 MHz.
+On all of them: marker `PMPO`, the three screen buffers rotate (A, B, C), the pointer shows in 20 of 20 screenshots (TT: 198 of 200 over two boots, one shot without it and two partial: a 0.4 ms window around each flip), the key F selects Get Food, resting the pointer on a village shows its workshop in the bar, the DMA sound plays (or the YM on the ST), the protection question is never asked and the world runs at 4.0 ticks/s. The get_men figures vary by about 5% with the number of men the scenario sets moving (12-17). The patched game is **+102% / +41%** (ST) and **+73% / +54%** (STE) faster than the original in the map view / get_men at 8 MHz. Rain on (forced with a poke): STE 4.1 fps (8 MHz), TT 15.6 fps, drawn on every frame (30 of 30 and 34 of 34 consecutive frames).
 
 **TT and Falcon.** The original does not start on either: the game unpacks code over its own unpacker and the 68030's instruction cache keeps executing the old bytes (Line-F at `$672`, then TOS hangs or bombs). The loader now switches the CPU caches off on a 68020+ (data cache too: the 030 does not see the floppy DMA). The Falcon also bus-errors on the title music's writes to the sound chip's mirror addresses; `fal_ym` (applied on a Falcon only) does the same writes through the two real addresses. Switching the instruction cache back on in the game was tried on the TT and the game never reached the name prompt, so it stays off. The Falcon with a hard disk could not be tested (Hatari's Falcon has no ACSI, and HDDRIVER does not see its IDE disk); play.sh falls back to the GEMDOS folder there. Details: `loading.md` section 9 and `regression.md`.
 
 ## 12. Triple buffering
 
-[Placeholder, to be filled in by the lead when `p7_*` lands: what the original's double buffer plus window copy does, what changes, the cycle saving, the gate results and the regression re-run.]
+`patches/p7_triple_wait.s`, `p7_triple_flip.s`, `p7_triple_tail.s`; note `triple.md`. The original draws a frame into a back buffer, copies the 3D window from a clean picture and flips, and the main loop waits for the next vertical refresh at the top of the loop, before it starts the next frame. That wait pads every frame to a whole number of refreshes (on average half a refresh lost per frame, 3-4% of an 8-refresh pass, 8-11% of a 4-refresh pass).
 
-## 13. Known limits
+What changes: the wait moves to the flip (it waits for the refresh flag there, so flips stay at least one refresh apart and every flipped frame is shown), and the game gets a third screen buffer (`$70000-$77CFF`, proven free by the pattern test in 6 build/machine combinations). The buffer to draw into is computed at each flip so that it is neither the buffer being scanned, nor the one holding the pointer (the VBL handler draws the pointer into the shown buffer), nor a flipped frame that has not been shown yet. A hook at the end of every flip (also those of menus and dialogs, which keep the plain two-buffer flip) records who flipped last. Three sites, 144 bytes. World state, the tick rate and the sound are untouched.
+
+Gates, all on the combined default set (`work/notes/combined.md`): the frames (back buffer and shown buffer with the pointer, matched by world tick and pass kind) are identical to the previous default set on map_idle, get_men and battle_320 at 8 MHz (the tooltip bar excluded, since the text there changed); RAM state per world tick is identical; the video-base trace shows no tearing (0 violations in 7 runs, including a paused game where passes are shorter than a refresh: no frame is replaced before it was shown; the negative control without the wait reports 106 violations); the world rate is 4.00 ticks/s at 50 and 60 Hz. fps: +0.1-3.5% at 8 MHz (one flip is 1-1.6% of a 1000-refresh window), +8-10% at 16 MHz (`triple.md`; the combined set also costs about 1% of a pass for the keys, hover and the hooks). Cold boots with the three buffers rotating on every machine of section 11, and a save and a load through the game's menus (HD) return to the three-buffer loop.
+
+## 13. TT, Falcon and fast machines: pointer, intro, rain
+
+`patches/tt_ptr.s`, `pm_intro_a/b/c/pal.s`; note `tt.md`.
+
+- **Pointer.** The game's flip writes the new screen address, and the VBL handler draws the pointer into the shown buffer. An ST or STE latches the address at the next refresh, so the buffer the handler draws into is the one that is shown. Hatari's TT and Falcon video follow the register at once, so the pointer was missing for the rest of every frame after a flip (invisible in the menus, flickering on the map: 28 of 40 frames showed it; on the Falcon 16 of 20 frames). `tt_ptr` (TT and Falcon only: the `_MCH` cookie is read once at start) runs a verbatim copy of the VBL handler's pointer code inside the flip, right after the swap and before the address is written, so the new picture already holds the pointer when it is shown. Cost 0.4 ms per flip on a TT, one test on an ST / STE. It sits at the second half of the buffer swap (`$188c`) because the end of the flip belongs to triple buffering; both compose: the pointer record points into the buffer about to be shown at every flip return (134 of 134 on the TT, 66 of 66 on the Falcon), and 20 of 20 screenshots show the pointer.
+- **Rain** (`tick_rain`, replaces `tick_wx`; note `rain.md`). The season / weather routine `$1abaa` runs once per world tick, and it also DRAWS the rain into the back buffer, so on a fast machine only one frame in four or five had rain (6 of 31 consecutive frames on a TT, 13 of 25 on a 16 MHz STE). The patch keeps the original call on tick passes and, on a render-only pass, runs only the drawing, at the phase the next step would reach (`ACC` of the tick patch): the fall is smooth at any frame rate, and the world state is bit-identical (`$1aac8` is restored; state equality over the whole low RAM, three scenarios). Rain on every frame: TT 34 of 34, STE 8 and 16 MHz 20 of 20 and 25 of 25, ST 21 of 21 and 25 of 25. Cost while it rains: +13.8% cycles per render-only pass (the same drawing the original does on its tick pass); TT 17.9 -> 15.55 fps.
+- **Intro.** Stage 1's picture sequence is timed by three busy loops, 10 times shorter on a 32 MHz 68030 than on an 8 MHz ST. `pm_intro_a/b/c` replace them by waits in real time (100 ms, 160 ms and 8.41 s, counted on the intro's own refresh flag; 50 and 60 Hz). Nine palette stores wrote 20 bytes into a 16-byte palette; on a TT the extra long lands in the shifter mode register and the screen went black (text and castle never seen on a TT); `pm_intro_pal` makes them 16 bytes. On an ST / STE the pictures are bit-identical.
+
+## 14. The keyboard chip overrun (blitter chunks)
+
+`patches/p6_cpy.s`, `p4_clamp.s`; note `buserr.md`. With the 10-row blitter copy the keyboard chip's interrupt could wait up to 21 scan lines, longer than one byte of its 7812.5 baud stream. The chip then dropped a byte of the 6-byte mouse reply, the game's packet parser built a garbage pointer position and the VBL pointer code crashed with a bus error. The copy now runs in 50 chunks of 4 rows (2,560 cycles each, the worst interrupt latency 11-12 of 20 lines), and `p4_clamp` ignores any packet whose position is outside 320 x 200. 6-minute cold-boot stress runs with a moving mouse and keys: 0 overruns, 0 bus errors, also with triple buffering and the keys (`work/notes/combined.md`).
+
+## 15. Known limits
 
 - **TT/Falcon run with the CPU caches off** (instruction cache back on: the game does not start on a TT in Hatari).
 - **No real hardware was used.** Everything is Hatari 2.6.1. The DMA sound set-up (Microwire defaults, the DMA position read) is the one from Hunter and has only been seen in Hatari. The patches that probe for the STE with a bus-error guard are untried on a real ST.
@@ -175,9 +196,9 @@ On all of them the DMA sound plays (or the YM on the ST), the tooltips appear, t
 - **Saved games** of the original and of this version have the same format (the game state, 198 sectors); loading an old save into a patched game and the reverse was not tested.
 - **Not examined:** the intro/title program (stage 1) has its own sound code and is not touched; the 71 Hz mono mode is not handled (the game has none).
 
-## 14. Delivered
+## 16. Delivered
 
 - `dist/Powermonger_v1.0_patched_floppy_<date>.zip`: `Powermonger_patched.st` and `README.TXT`.
 - `dist/Powermonger_v1.0_patched_hd_<date>.zip`: `POWERMONGER\` with `AUTO\WAR.PRG`, `DATA\*.DAT`, `PMLATE.DAT`, `SAVEDISK.DAT` and `README.TXT` (hard-disk drivers and the TOS swap).
 - `tools/package.sh` (verify, build, zip, md5s) and `tools/play.sh` (launcher: machine and TOS choice, `--floppy` / `--hd`, `--original`).
-- The patch tool, 24 default patch files, the study notes, the test tools, and `work/notes/regression.md`.
+- The patch tool, 37 default patch files, the study notes, the test tools, `work/notes/regression.md` and `work/notes/combined.md`.

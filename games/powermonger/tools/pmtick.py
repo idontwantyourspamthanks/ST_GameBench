@@ -17,7 +17,9 @@ sys.path[:0] = [str(GAME.parent.parent / "tools"), str(HERE)]
 from pm import PM, SNAP  # noqa: E402
 
 PATCHDIR = GAME / "patches"
-NAMES = ["tick_head", "tick_pass", "tick_wx", "tick_men", "tick_click", "tick_click2", "tick_click3"]
+import os
+WX = os.environ.get("PM_WX", "tick_rain")      # tick_rain (default since the combined set) = the rain-per-frame variant of tick_wx (same site; notes/rain.md); PM_WX=tick_wx selects the old one
+NAMES = ["tick_head", "tick_pass", WX, "tick_men", "tick_click", "tick_click2", "tick_click3"]
 IMG_BASE = 0xB8800
 IMG_LEN = 0x400
 D = 0xB8A00
@@ -247,6 +249,8 @@ MASKS = [(0x1C700, 0x2C100, "screens"), (0x2C100, 0x2CC00, "stack"),
          (0x12952, 0x12CA0, "sound queue"), (0x58050, 0x58070, "sound channels"), (0xE3E2, 0xE3E6, "draw ptr scratch"), (0x12F58, 0x12F5A, "flip flag"),
          (0x8830, 0x8840, "scratch"), (0x2DEA4, 0x2DEA6, "key table, Alt: transient host input noise, also seen between two tick-only runs"),
          (0x2DF9E, 0x2DFA0, "right-button latch written by the IKBD handler in the VBL ($12d6-$136c): input event, time dependent")]
+if WX == "tick_rain":    # the pointer's save-under buffer ($1c49e, 16 rows x 16 B: the screen pixels under the arrow) holds rain pixels, which R frames now have (notes/rain.md)
+    MASKS.append((0x1C550, 0x1C59E, "pointer save-under: screen pixels"))
 
 
 def log_passes(h, live, mhz, vbls, tag, poke=()):

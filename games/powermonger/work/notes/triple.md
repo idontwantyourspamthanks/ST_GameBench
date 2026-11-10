@@ -1,7 +1,7 @@
 # Powermonger triple buffering (PMTriple): `p7_triple_wait` + `p7_triple_flip` + `p7_triple_tail`
 
 Tags: **[obs]** observed in Hatari 2.6.1 (raw output in `work/triple/*.txt`, reproducible with the command given); **[disasm]** read from `work/dumps/get_men.bin` with `tools/m68dis.py` (addresses given); **[INFERENCE]** not run.
-Patches (all `; default: no`, **all three are needed together**): `patches/p7_triple_wait.s` (site `$13090`, carries the data block), `p7_triple_flip.s` (site `$1386c`), `p7_triple_tail.s` (site `$1898`); code and data `$DB000-$DB3FF` (new prefix `p7_` = `$DB000-$DBFFF` in `pmpatch.py PREFIX_RANGES`).
+Patches (**`; default: yes` since 2026-11-10, the combined set: `combined.md`**; all three are needed together): `patches/p7_triple_wait.s` (site `$13090`, carries the data block), `p7_triple_flip.s` (site `$1386c`), `p7_triple_tail.s` (site `$1898`); code and data `$DB000-$DB3FF` (new prefix `p7_` = `$DB000-$DBFFF` in `pmpatch.py PREFIX_RANGES`).
 Third screen buffer C = `$70000-$77CFF` (32 000 B of RAM that nothing reserves; no `; data:` line, the patch never needs it zeroed).
 Gate tools: `tools/pmtriple.py` (`trace`, `state`, `fill`, `boot`), `tools/pmab.py --c3 70000` (third capture region), negative control `patches/test_nowait.s`. Conflicts: `p4_chase` and `test_nowait` (same site `$13090`).
 Everything: 1 MB STE / TOS 1.62 snapshots unless a row says otherwise; the default set below = `tick_* p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri p6_cpy pm_tooltip p3b_interp p3b_delta` (+ `test_walk*`, the pointer driver, in the pmab runs; `snd_*` is not part of any snapshot gate: its init runs at boot).

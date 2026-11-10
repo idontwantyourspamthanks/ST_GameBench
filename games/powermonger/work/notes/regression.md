@@ -56,3 +56,6 @@ Floppy md5 `3d116a3272af50ddc9d3a5bd39dc0a58`; HD `WAR.PRG` `eb143fd0d92579f1fa5
 * STE 1.62 floppy 1 MB: PMPO, 4.60 / 4.00 map view, 5.35 / 4.00 get_men.
 * HD ACSI STE 1.62 1 MB: PMPO, 4.60 / 4.00, 5.30 / 4.00; save and load `0 differ; 430 differ; SAVEDISK.DAT slot A == saved: True`.
 * Not re-run on rc2: ST, Mega STE, TT floppy, HD Mega STE / TT (same code paths as rc apart from the Falcon gate; the ST/STE intro WAV A/B above ran on rc2).
+
+## Update 2026-11-10 (PMIntegrate)
+The default set now also holds `p7_triple_*`, `qol_*`, `tick_rain` (instead of `tick_wx`), `tt_ptr` (TT + Falcon), `pm_intro_*`, `p4_clamp`. The per-machine table (cold boots, fps, pointer, key F, village hover, buffers) and every gate of the combined set are in `combined.md`; fps then: ST 4.65 / 4.85, STE 4.85 / 5.30, Mega STE 4.74 / 5.58 (8 MHz) and 10.20 / 12.48 (16 MHz), TT 22.62 / 27.12, Falcon 11.40 / 12.20, HD STE 4.85 / 5.30 (map view / get_men).

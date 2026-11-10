@@ -1,23 +1,25 @@
 # Powermonger (1990, Bullfrog / Electronic Arts)
 
-Status: **done** (release packaging, 2026-11-10). A patched floppy and a patched hard-disk folder are built from the user's original disk. Triple buffering (`p7_*`) is not in this build yet (see REPORT.md section 12).
+Status: **done** (combined release build, 2026-11-10). A patched floppy and a patched hard-disk folder are built from the user's original disk. Default patch set = fixed-rate world, DMA sound, faster drawing, men interpolation, no protection question, tooltips **and keyboard shortcuts and village hover (`qol_*`)**, **triple buffering (`p7_*`)**, **TT / Falcon pointer fix (`tt_ptr`)**, **real-time intro (`pm_intro_*`)**, **rain on every frame (`tick_rain`)**, **IKBD overrun fix (`p6_cpy` 4-row chunks + `p4_clamp`)**, version credit. Proof of the combined set: [`work/notes/combined.md`](work/notes/combined.md).
 
-- Plain-English account of the work: [`REPORT.md`](REPORT.md). Regression matrix: [`work/notes/regression.md`](work/notes/regression.md). Plan and decisions: [`PLAN.md`](PLAN.md).
+- Plain-English account of the work: [`REPORT.md`](REPORT.md). Regression matrix: [`work/notes/regression.md`](work/notes/regression.md) (release candidate) and [`work/notes/combined.md`](work/notes/combined.md) (final set, per-machine table). Plan and decisions: [`PLAN.md`](PLAN.md).
 - Build and package: `tools/package.sh` (verifies the patches, builds both versions, writes `dist/Powermonger_v<ver>_patched_floppy_<date>.zip` and `dist/Powermonger_v<ver>_patched_hd_<date>.zip`, prints md5s). Needs `disks/protected.st`.
 - Play in Hatari: `tools/play.sh` (patched floppy, STE), `--hd`, `--original`, `--machine st|megast|ste|megaste|tt|falcon`, `--ram`, `--mhz`.
 - Patch tool: `tools/pmpatch.py verify | list | build [--floppy|--hd] | live | boot`.
 
-### Release md5s (default patch set, no triple buffering)
+### Release md5s (final default patch set: keys, hover, triple buffering, TT / Falcon pointer, intro timing, rain, IKBD fix)
 
 | File | MD5 |
 |---|---|
 | original `disks/protected.st` | `b0f6972e81067a5822c0b21e6d00b8dc` |
-| `Powermonger_patched.st` (floppy, 819200 B; the build is deterministic) | `3d116a3272af50ddc9d3a5bd39dc0a58` |
-| HD `AUTO\WAR.PRG` (313261 B) | `eb143fd0d92579f1fa58097de090161a` |
+| `Powermonger_patched.st` (floppy, 819200 B; the build is deterministic; also `dist/Powermonger_patched_floppy_test.st`) | `71f65142efc05bd36a8495d090ce9d2e` |
+| HD `AUTO\WAR.PRG` (316721 B) | `246bf99b6c9cf20dfdfe5c7bf028f80c` |
 | HD `DATA\SPRITE40.DAT` (101608 B, patched) | `37d28ff241b94d3f493f24e236e5a73b` |
-| HD `PMLATE.DAT` (23664 B) | `44f44608244ab68a8879dcf2ce413a39` |
-| `dist/Powermonger_v1.0_patched_floppy_2026-11-10.zip` (the zip md5 changes with every packaging run: file times) | `e26f388686cc283e54abcc8d569eb694` |
-| `dist/Powermonger_v1.0_patched_hd_2026-11-10.zip` | `0e094fbdb4356d78b196d1cf1d4d7d2b` |
+| HD `PMLATE.DAT` (26345 B) | `59e567149ba88606e65f036a6801a2e8` |
+| `dist/Powermonger_v1.0_patched_floppy_2026-11-10.zip` (the zip md5 changes with every packaging run: file times) | `88b5c8f5cd7c788728984083a8ed2588` |
+| `dist/Powermonger_v1.0_patched_hd_2026-11-10.zip` | `6848c054aff416110aec94c5a7732b28` |
+
+The previous release candidate (no triple buffering / keys / rain; `work/notes/regression.md`) was floppy `3d116a3272af50ddc9d3a5bd39dc0a58`, `WAR.PRG` `eb143fd0d92579f1fa58097de090161a`.
 
 The HD folder also holds `DATA\*.DAT` (14 other files, identical to the disk's) and `SAVEDISK.DAT` (409600 B, a formatted empty save disk). The zips' READMEs: `patches/README_FLOPPY.TXT`, `patches/README_HD.TXT`.
 

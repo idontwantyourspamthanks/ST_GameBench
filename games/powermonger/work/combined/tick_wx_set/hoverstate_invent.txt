@@ -1,0 +1,5 @@
+get_men 8 MHz pokes ['w $57fd4 $00 $0e']: base 110 loop tops (ticks 135..261), with hover 107 (ticks 135..262)
+hover state at the end (P): HIT $4f970, text flag sHK 1, icon id 0, RES 223; (U): HIT $0
+compared 91 loop tops over 91 distinct world ticks
+negative control: tick k vs k+1 differs in 89 of 89 loop tops
+IDENTICAL (everything in $0-$60000 except the pmtick MASKS and the two hook sites)

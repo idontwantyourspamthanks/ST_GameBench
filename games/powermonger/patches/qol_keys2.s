@@ -1,5 +1,5 @@
 ; name: qol_keys2
-; default: no
+; default: yes
 ; stage: 2
 ; site: $199c
 ; orig: 13c00001c490

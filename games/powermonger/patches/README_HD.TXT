@@ -51,7 +51,9 @@ Machines
 Tested in Hatari only, never on real hardware: STE (TOS 1.62) 1 MB and
 Mega STE (TOS 2.06) 4 MB and TT (TOS 3.06) 4 MB with HDDRIVER on ACSI
 (each including a save and a load through the game's menu), and the
-GEMDOS folder on an STE. On a 68020 or better (TT, Falcon) the loader
+GEMDOS folder on an STE. The final build (with the keys, village hover
+and triple buffering described in the floppy README) was run on the
+STE + ACSI case, with a save and a load. On a 68020 or better (TT, Falcon) the loader
 switches the CPU caches off, see the floppy README. A Falcon: Hatari cannot give HDDRIVER a disk
 there, so the Falcon is only tested with the floppy version.
 

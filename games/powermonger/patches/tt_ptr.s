@@ -1,8 +1,8 @@
 ; name: tt_ptr
 ; default: yes
 ; stage: 2
-; site: $1898
-; orig: 33fc00000002df8c
+; site: $188c
+; orig: 23c00002df78
 ; init: $ba900
 ; note: TT: the mouse pointer was invisible in the front end (name, option, chart screens) and flickered in the map view
 ;       (PMTT, work/notes/tt.md).  The game's pointer is drawn by the VBL handler ($1390 block, into the DISPLAYED buffer [$2df78]) and the
@@ -12,19 +12,20 @@
 ;       flips right after every VBL handler, so the display switches to the other buffer, which holds no pointer yet, for the whole frame
 ;       (the pointer is drawn into the buffer that has just been put away); in the map view the pointer is missing for the part of every
 ;       flip frame after the flip.  The pointer pixel rows ARE written each VBL, and the mouse position words are right.
-;       Fix: on a TT only (`init`, supervisor, TOS's cookie jar still intact, sets LIVE from the _MCH cookie high word 2)
-;       the flip routine's last instruction `move.w #0,$2df8c.l` (8 bytes) becomes `jmp tt_flip; nop`: it runs it, then the VBL handler's own
+;       Fix: on a TT or Falcon only (`init`, supervisor, TOS's cookie jar still intact, sets LIVE from the _MCH cookie high word 2 / 3)
+;       the flip routine's `move.l d0,$2df78.l` ($188c, 6 bytes: the second half of the buffer swap; p7_triple_tail owns $1898 so this
+;       patch sits before the base write instead) becomes `jsr tt_flip`: it runs it, then the VBL handler's own
 ;       pointer code (a verbatim copy of the original bytes $1390..$14c3, branches are relative inside the block: restore the 16 saved
 ;       lines of the pointer at [$1c49a], save and draw at [$2df92]/[$2df94] into the NEW displayed buffer [$2df78]) with the VBL and HBL
-;       masked (SR IPL 4: the same context as the handler) so the handler cannot interleave, and `rts`.  The next VBL handler restores
+;       masked (SR IPL 4: the same context as the handler) so the handler cannot interleave, and `rts` (all registers kept: d0 is the base,
+;       written to $ff8201/03 by the instructions after the site).  The pointer is therefore drawn into the buffer BEFORE it is put on the display.  The next VBL handler restores
 ;       and redraws as before (on a latching video the result is the original's).  Cost: one extra pointer draw (12 k cycles at 8 MHz,
 ;       0.4 ms at 32 MHz) per flip, only on a TT.  ptr_a / ptr_b (their record is validated against [$1c49a] and [$2df78]) are
 ;       independent: the first VBL after this draw takes their full path.
 LIVE    equ     $baaf0                  ; byte: non-zero on a TT, set by `init`
 
-        org     $1898
-        jmp     $ba940.l
-        nop
+        org     $188c
+        jsr     $ba940.l
 
         org     $ba900
 init:   clr.b   LIVE.l
@@ -37,14 +38,16 @@ init:   clr.b   LIVE.l
         cmpi.l  #'_MCH',d0
         bne.s   .l
         swap    d1
-        cmpi.w  #2,d1                   ; TT only (Falcon: not tested, the VIDEL may behave differently)
+        cmpi.w  #2,d1                   ; TT
+        beq.s   .on
+        cmpi.w  #3,d1                   ; Falcon (the combined-set cold boot showed the pointer missing in 3 of 20 screenshots there, as on the TT)
         bne.s   .r
-        st      LIVE.l
+.on:    st      LIVE.l
 .r:     rts
 
         org     $ba940
 tt_flip:
-        move.w  #0,$2df8c.l             ; the displaced instruction
+        move.l  d0,$2df78.l             ; the displaced instruction (the flip's swap is done: [$2df78] = the buffer about to be shown)
         tst.b   LIVE.l
         beq.s   .out
         tst.w   $1c6b2.l                ; the pointer is hidden: the handler skips the whole block

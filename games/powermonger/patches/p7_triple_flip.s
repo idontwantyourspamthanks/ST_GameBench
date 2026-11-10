@@ -1,5 +1,5 @@
 ; name: p7_triple_flip
-; default: no
+; default: yes
 ; stage: 2
 ; site: $1386c
 ; orig: 4eb90000187a

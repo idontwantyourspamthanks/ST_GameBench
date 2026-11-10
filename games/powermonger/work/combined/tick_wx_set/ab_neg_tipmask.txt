@@ -1,0 +1,16 @@
+base set    : tick_head tick_pass tick_wx tick_men tick_click tick_click2 tick_click3 test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri p6_cpy p4_clamp pm_tooltip
+patched set : tick_head tick_pass tick_wx tick_men tick_click tick_click2 tick_click3 test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri p6_cpy p4_clamp pm_tooltip p7_triple_wait p7_triple_flip p7_triple_tail qol_keys qol_keys2 qol_hover qol_hover2
+get_men @8 MHz: DIFFER (back frames matched 84, shown+pointer matched 46, flips captured 106/100) | work/pass 1468615 -> 1440502 (-28113, -1.91 %, n 100/106) | paired 1482811 -> 1455273 (-1.86 %, n 84) | flips 100 -> 106 fps 5.133 -> 5.447 (+6.1 %) | base frames == the frame 2 flips earlier: 0/98; consecutive same-tick R frames identical: 0/0
+    p0:   BACK DIFFER key (tick 163, T) patched flip 1 / base flip 1: 4 B differ, rows 30-30, 16-px columns 5-6
+    p0:   BACK DIFFER key (tick 163, R) patched flip 2 / base flip 2: 4 B differ, rows 30-30, 16-px columns 5-6
+    p0:   SHOWN DIFFER (pointer 229,173) patched flip 2 / base flip 2: 86 B differ, rows 20-183, 16-px columns 5-19
+    p0:   BACK DIFFER key (tick 164, T) patched flip 3 / base flip 3: 4 B differ, rows 30-30, 16-px columns 5-6
+    p0:   SHOWN DIFFER (pointer 229,173) patched flip 3 / base flip 3: 48 B differ, rows 30-183, 16-px columns 5-14
+    p0:   BACK DIFFER key (tick 165, T) patched flip 4 / base flip 4: 4 B differ, rows 30-30, 16-px columns 5-6
+    p0:   SHOWN DIFFER (pointer 229,173) patched flip 4 / base flip 4: 78 B differ, rows 30-199, 16-px columns 5-14
+    p0:   BACK DIFFER key (tick 166, T) patched flip 6 / base flip 5: 4 B differ, rows 30-30, 16-px columns 5-6
+    p0:   BACK DIFFER key (tick 167, T) patched flip 7 / base flip 7: 4 B differ, rows 30-30, 16-px columns 5-6
+    p0:   BACK DIFFER key (tick 168, T) patched flip 8 / base flip 8: 4 B differ, rows 30-30, 16-px columns 5-6
+    p0:   SHOWN DIFFER (pointer 229,173) patched flip 8 / base flip 8: 103 B differ, rows 1-183, 16-px columns 0-14
+    p0:   BACK DIFFER key (tick 169, T) patched flip 9 / base flip 9: 6 B differ, rows 30-30, 16-px columns 5-6
+MISMATCH

@@ -1,0 +1,15 @@
+event breakpoints fired: click run 7 of 8, key run 7 of 8
+get_men 8 MHz: click run 55 loop tops (ticks 141..196), key run 55 (ticks 141..196); 8 events, one per 5 ticks from tick 139
+compared 55 loop tops over 55 distinct world ticks (0 key-run tops without a click-run top of the same pass: skipped)
+negative control: key run tick k vs click run tick k+1 differs in 53 of 53 loop tops
+event                tick      cmd    query  posture  heading     zoom      map     cell   (value at the tick of the event -> two ticks later, key run)
+1 passive              139   1a>1a     0>0      2>2     f0>f0     4>4      2>2     d8>b4 
+H go home              144   1a>1a     0>0      2>2     f0>f0     4>4      2>2     b4>a4 
+3 aggressive           149   1a>6      0>0      2>2     f0>f0     4>4      2>2     a4>d7 
+F get food             154    6>6      0>0      2>2     f0>f0     4>4      2>2     d7>d5 
+D drop food            159    6>6      0>0      2>2     f0>f0     4>4      2>2     d5>d9 
+R derank               164    6>6      0>0      2>2     f0>f0     4>4      2>2     d9>d6 
+N drop items           169    6>6      0>0      2>2     f0>f0     4>4      2>2     d6>94 
+2 neutral              174    6>6      0>0      2>3     f0>f0     4>4      2>2     94>94 
+camera words (heading, tilt, zoom, scroll, map mode) at the end of every event window: all equal
+IDENTICAL (everything in $0-$60000 except the pmtick MASKS and the two hook sites): every command issued by key == the same command issued by click

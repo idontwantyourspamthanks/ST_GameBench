@@ -1,0 +1,6 @@
+get_men 8 MHz p7 triple buffer: events 906 (VBL 691, flips 71), draw intervals checked 71, VBLs inside a draw interval checked 676: VIOLATIONS 0
+  (L, D) pairs at flip entry: (A,C) x24, (B,A) x24, (C,B) x23
+  VBLs between consecutive flips: min 8 max 13 mean 9.71 (0 would mean a flipped frame replaced one that was never shown)
+  cycles from a flip's return to the first draw (loop-head wait + logic stage): mean 46910 over 72 passes
+  cycles from a flip's return to the next VBL: mean 82544 over 72 flips
+NO TEARING

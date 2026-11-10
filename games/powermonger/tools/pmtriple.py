@@ -31,6 +31,7 @@ import pmtick as T  # noqa: E402
 from pm import PM, SNAP  # noqa: E402
 
 P7 = ["p7_triple_wait", "p7_triple_flip", "p7_triple_tail"]
+QOL = ["qol_keys", "qol_keys2", "qol_hover", "qol_hover2"]
 DEFAULTS = ["p4_ptr_a", "p4_ptr_b", "p4_spr", "p6_slope", "p6_tri", "p6_cpy", "p4_clamp", "pm_tooltip", "p3b_interp", "p3b_delta"]
 BUFA, BUFB, BUFC = 0x1C700, 0x24400, 0x70000
 PAT_LO, PAT_HI = 0x6F30C, 0x78000            # the proof range: after the FX.DAT / VBL counter words, up to the frame picture
@@ -157,7 +158,7 @@ def analyse(ev, label):
 
 
 def cmd_trace(a):
-    names = AB.TICK + AB.TESTSET + DEFAULTS + (["test_nowait"] if a.nowait else [] if a.orig else P7)
+    names = AB.TICK + AB.TESTSET + DEFAULTS + (["test_nowait"] if a.nowait else [] if a.orig else P7 + (QOL if a.qol else []))
     ev = trace_run(a.snap, a.mhz, names, a.vbls, pokes=["w $57ff2 $00 $01"] if a.pause else [])
     v, sp = analyse(ev, f"{a.snap} {a.mhz} MHz {'PAUSED ' if a.pause else ''}{'NEGATIVE CONTROL: double buffer, loop-head wait removed' if a.nowait else 'ORIGINAL double buffer' if a.orig else 'p7 triple buffer'}")
     ok = v == 0 and (not sp or min(sp) >= 1)
@@ -166,7 +167,7 @@ def cmd_trace(a):
 
 
 # ---- state: RAM equality per world tick ----------------------------------------------------------------------------
-T.SITE_MASKS += [(0x13090, 0x13096), (0x1386C, 0x13872), (0x1898, 0x18A0)]
+T.SITE_MASKS += [(0x13090, 0x13096), (0x1386C, 0x13872), (0x1898, 0x18A0), (0x12138, 0x1213E), (0x130B6, 0x130BC), (0x130FC, 0x13102), (0x199C, 0x199C + 6)]   # + the qol sites
 # the game's key table: host key events reach the ACIA handler at a time that depends on the pass timing.  `state --minus p6_cpy` (defaults against
 # defaults minus a patch that only changes the pass length) shows the same differences at $2de6c-$2dea8 without p7 involved; `--selfcmp` shows none.
 T.MASKS.append((0x2DE6C, 0x2DEA8, "key table (input timing)"))
@@ -180,7 +181,7 @@ def cmd_state(a):
     elif a.minus:
         lp = AB.make_live([n for n in base if n not in a.minus])   # timing-only control: defaults against defaults without e.g. p6_cpy (pixel- and state-neutral, different pass lengths)
     else:
-        lp = AB.make_live(base + P7)
+        lp = AB.make_live(base + P7 + (QOL if a.qol else []))
     res = {}
 
     def one(name, live):
@@ -463,6 +464,7 @@ def main():
         p.add_argument("vbls", type=int)
         p.add_argument("--selfcmp", action="store_true", help="state: noise control (defaults against defaults, no p7 on either side)")
         p.add_argument("--minus", nargs="*", default=[], help="state: control = defaults against defaults MINUS these patches (a timing difference without p7)")
+        p.add_argument("--qol", action="store_true", help="state / trace: the patched side also carries qol_keys qol_keys2 qol_hover qol_hover2 (the combined default set)")
         p.add_argument("--orig", action="store_true", help="trace: the default set WITHOUT p7 (the original double buffer) instead")
         p.add_argument("--pause", action="store_true", help="trace: poke the game's pause flag $57ff2 at the apply flip (passes without the landscape: shorter than a VBL, the flip wait is the only pacing)")
         p.add_argument("--nowait", action="store_true", help="trace: negative control = double buffer with the loop-head VBL wait removed (test_nowait)")

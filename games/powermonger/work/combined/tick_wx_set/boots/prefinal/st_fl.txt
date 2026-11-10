@@ -1,0 +1,25 @@
+CELL floppy st TOS 1.04 1024 KB
+[   83s vbl 4264] name prompt
+[   90s vbl 4582] option screen
+[  117s vbl 5965] territory chart
+[  128s vbl 6481] protection removed (flag $14e4e = $2c), no question expected
+[  145s vbl 7375] 3D map view
+RESULT boot: 149 s, in_game True, MARKER b'PMPO' FLAGS 0x6, sync $fe, tt_ptr LIVE $00
+RESULT sites: 8 of 8 live
+/home/ryan/Code/AtariST/gamebench/games/powermonger/tools/pmcombined.py:53: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  return sum(1 for p in ImageChops.difference(a, b).convert("L").getdata() if p > thr)
+RESULT pointer: pointer words (20, 118) after moving to (20, 118); 20 of 20 screenshots show the pointer (changed pixels in the 16x16 crop: min 112 median 112 max 112)
+RESULT pointer buffer: at 23 flip returns the pointer record [$1c49a] lies inside the new displayed buffer [$2df78] in 0 (hidden pointer: not drawn)
+RESULT key F: $57fd4 16 -> 6 (Get Food = 6) -> 0 after the second F
+RESULT hover: round 0: house sprite calls seen: 1 distinct (d0, d1, a3): [(193, 38, 326108)]; in the window 1
+/home/ryan/Code/AtariST/gamebench/games/powermonger/tools/pmcombined.py:53: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  return sum(1 for p in ImageChops.difference(a, b).convert("L").getdata() if p > thr)
+RESULT hover: sprite (193,38) obj $4f9dc, pointer on (197,42) = (197, 42): HIT $4f9dc, text flag 1, tooltip box pixels changed vs pointer away 724
+RESULT triple map view: (L, D) at flip entry {'(A,B)': 8, '(B,C)': 8, '(C,A)': 8}; buffers used ['A', 'B', 'C']; C $70000 non-zero 22033 B; IN/OURS 0/1
+RESULT map view: sync $fe (50 Hz), fps 4.65 (93 flips / 1000 VBL), 1001 VBL = 20.0 s, 160152 cycles/VBL, world ticks 80 = 3.996/s, loop passes 80 = 4.00/s
+moving people: 17
+RESULT get_men: 17 people moving
+RESULT get_men: sync $fe (50 Hz), fps 4.80 (96 flips / 1000 VBL), 1001 VBL = 20.0 s, 160107 cycles/VBL, world ticks 80 = 3.996/s, loop passes 80 = 4.00/s
+RESULT triple after get_men: (L, D) at flip entry {'(A,B)': 11, '(B,C)': 10, '(C,A)': 10}; buffers used ['A', 'B', 'C']; C $70000 non-zero 17123 B; IN/OURS 0/1
+RESULT after: in_game True MARKER b'PMPO'
+CELL DONE floppy st TOS 1.04 1024 KB: OK {'pointer': '20/20', 'ptrbuf': (23, 0), 'F': True, 'hover': True, 'triple_map': True, 'map0': {'tag': 'map view', 'hz': 50, 'fps': 4.65, 'ticks': 3.996, 'cyc': 160152}, 'get_men0': {'tag': 'get_men', 'hz': 50, 'fps': 4.8, 'ticks': 3.996, 'cyc': 160107}, 'triple_gm': True}

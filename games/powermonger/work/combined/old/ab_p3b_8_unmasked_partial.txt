@@ -1,0 +1,40 @@
+base set    : tick_head tick_pass tick_wx tick_men tick_click tick_click2 tick_click3 test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri p6_cpy p4_clamp pm_tooltip p3b_interp p3b_delta
+patched set : tick_head tick_pass tick_wx tick_men tick_click tick_click2 tick_click3 test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri p6_cpy p4_clamp pm_tooltip p3b_interp p3b_delta p7_triple_wait p7_triple_flip p7_triple_tail qol_keys qol_keys2 qol_hover qol_hover2
+map_idle @8 MHz: DIFFER (back frames matched 57, shown+pointer matched 51, R frames differing (allowed) 0, flips captured 62/62) | work/pass 2364290 -> 2390220 (+25931, +1.10 %, n 62/62) | paired 2363880 -> 2387068 (+0.98 %, n 57) | flips 62 -> 62 fps 3.216 -> 3.222 (+0.2 %) | base frames == the frame 2 flips earlier: 0/60; consecutive same-tick R frames identical: 0/0
+    p0:   BACK DIFFER key (tick 53, T) patched flip 2 / base flip 2: 201 B differ, rows 0-5, 16-px columns 9-16
+    p0:   BACK DIFFER key (tick 54, T) patched flip 3 / base flip 3: 189 B differ, rows 0-5, 16-px columns 10-17
+    p0:   SHOWN DIFFER (pointer 304,184) patched flip 3 / base flip 3: 201 B differ, rows 0-5, 16-px columns 9-16
+    p0:   BACK DIFFER key (tick 55, T) patched flip 4 / base flip 4: 189 B differ, rows 0-5, 16-px columns 10-17
+    p0:   SHOWN DIFFER (pointer 305,185) patched flip 4 / base flip 4: 189 B differ, rows 0-5, 16-px columns 10-17
+    p0:   BACK DIFFER key (tick 57, T) patched flip 5 / base flip 5: 153 B differ, rows 0-5, 16-px columns 7-13
+    p0:   SHOWN DIFFER (pointer 16,0) patched flip 5 / base flip 5: 189 B differ, rows 0-5, 16-px columns 10-17
+    p0:   SHOWN DIFFER (pointer 250,60) patched flip 6 / base flip 6: 153 B differ, rows 0-5, 16-px columns 7-13
+    p0:   BACK DIFFER key (tick 64, T) patched flip 11 / base flip 11: 218 B differ, rows 0-5, 16-px columns 9-17
+    p0:   SHOWN DIFFER (pointer 100,100) patched flip 12 / base flip 12: 218 B differ, rows 0-5, 16-px columns 9-17
+    p0:   BACK DIFFER key (tick 68, T) patched flip 14 / base flip 14: 189 B differ, rows 0-5, 16-px columns 10-17
+    p0:   BACK DIFFER key (tick 69, T) patched flip 15 / base flip 15: 201 B differ, rows 0-5, 16-px columns 9-16
+get_men @8 MHz: DIFFER (back frames matched 79, shown+pointer matched 44, R frames differing (allowed) 5, flips captured 101/99) | work/pass 1500123 -> 1515464 (+15341, +1.02 %, n 99/101) | paired 1530835 -> 1558264 (+1.79 %, n 79) | flips 99 -> 101 fps 5.046 -> 5.179 (+2.6 %) | base frames == the frame 2 flips earlier: 0/97; consecutive same-tick R frames identical: 0/0
+    p0:   BACK DIFFER key (tick 164, T) patched flip 3 / base flip 3: 189 B differ, rows 0-5, 16-px columns 10-17
+    p0:   BACK DIFFER key (tick 165, T) patched flip 4 / base flip 4: 177 B differ, rows 0-5, 16-px columns 9-16
+    p0:   SHOWN DIFFER (pointer 160,190) patched flip 4 / base flip 4: 189 B differ, rows 0-5, 16-px columns 10-17
+    p0:   BACK DIFFER key (tick 166, T) patched flip 6 / base flip 5: 189 B differ, rows 0-5, 16-px columns 10-17
+    p0:   BACK DIFFER key (tick 167, T) patched flip 7 / base flip 7: 189 B differ, rows 0-5, 16-px columns 10-17
+    p0:   BACK DIFFER key (tick 168, T) patched flip 8 / base flip 8: 136 B differ, rows 0-5, 16-px columns 7-13
+    p0:   SHOWN DIFFER (pointer 15,1) patched flip 8 / base flip 8: 189 B differ, rows 0-5, 16-px columns 10-17
+    p0:   BACK DIFFER key (tick 169, T) patched flip 9 / base flip 9: 153 B differ, rows 0-5, 16-px columns 7-13
+    p0:   SHOWN DIFFER (pointer 16,0) patched flip 9 / base flip 9: 136 B differ, rows 0-5, 16-px columns 7-13
+    p0:   SHOWN DIFFER (pointer 250,60) patched flip 10 / base flip 10: 153 B differ, rows 0-5, 16-px columns 7-13
+    p0:   BACK DIFFER key (tick 173, T) patched flip 15 / base flip 14: 231 B differ, rows 0-5, 16-px columns 9-17
+    p0:   SHOWN DIFFER (pointer 8,197) patched flip 16 / base flip 15: 231 B differ, rows 0-5, 16-px columns 9-17
+Traceback (most recent call last):
+  File "/home/ryan/Code/AtariST/gamebench/games/powermonger/tools/pmab.py", line 431, in <module>
+    bq, pq = mean(acc["bpw"]), mean(acc["ppw"])
+
+  File "/home/ryan/Code/AtariST/gamebench/games/powermonger/tools/pmab.py", line 397, in main
+    sp = snap_path(sn)
+                       
+  File "/home/ryan/.pyenv/versions/3.12.12/lib/python3.12/concurrent/futures/_base.py", line 451, in result
+    self._condition.wait(timeout)
+  File "/home/ryan/.pyenv/versions/3.12.12/lib/python3.12/threading.py", line 355, in wait
+    waiter.acquire()
+KeyboardInterrupt

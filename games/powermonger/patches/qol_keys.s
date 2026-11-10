@@ -1,5 +1,5 @@
 ; name: qol_keys
-; default: no
+; default: yes
 ; stage: 2
 ; site: $130fc
 ; orig: 4eb900007202

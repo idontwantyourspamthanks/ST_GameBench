@@ -1,0 +1,9 @@
+event breakpoints fired: click run 1 of 2, key run 1 of 2
+get_men 8 MHz: click run 53 loop tops (ticks 141..195), key run 54 (ticks 141..196); 2 events, one per 22 ticks from tick 139
+compared 52 loop tops over 52 distinct world ticks (2 key-run tops without a click-run top of the same pass: skipped)
+negative control: key run tick k vs click run tick k+1 differs in 50 of 50 loop tops
+event                tick      cmd    query  posture  heading     zoom      map     cell   (value at the tick of the event -> two ticks later, key run)
+[ rotate left          139   1a>1a     0>0      2>2     f0>f4     4>4      2>2     d8>d8 
+] rotate right         161   1a>1a     0>0      2>2     f4>30     4>4      2>2     d8>d8 
+camera words (heading, tilt, zoom, scroll, map mode) at the end of every event window: all equal
+IDENTICAL (everything in $0-$60000 except the pmtick MASKS and the two hook sites): every command issued by key == the same command issued by click

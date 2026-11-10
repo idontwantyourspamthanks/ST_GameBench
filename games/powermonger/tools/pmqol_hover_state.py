@@ -13,13 +13,14 @@ ap.add_argument("--mhz", type=int, default=8)
 ap.add_argument("--vbls", type=int, default=1000)
 ap.add_argument("--snap", default="get_men")
 a = ap.parse_args()
-pmtick.SITE_MASKS += [(0x12138, 0x1213E), (0x130B6, 0x130BC), (0x13034, 0x1303A), (0x194C, 0x1956), (0x1956, 0x1960)]   # + test_walk sites (the pointer driver both runs carry)
+pmtick.SITE_MASKS += [(0x12138, 0x1213E), (0x130B6, 0x130BC), (0x13034, 0x1303A), (0x194C, 0x1956), (0x1956, 0x1960), (0x13090, 0x13096), (0x1386C, 0x13872), (0x1898, 0x18A0)]   # + test_walk sites (the pointer driver both runs carry)
 pokes = ["w $ce0c0 $00 $df $00 $6c"]        # test_walk: the pointer held at (223,108) in BOTH runs (as pmqol_ab does)
 if a.item:
     pokes += ["w $4e520 $00 $04", "w $4e524 $00 $07"]
 if a.invent:
     pokes += ["w $57fd4 $00 $0e"]
-base = pmab.TICK + pmab.TESTSET + ["pm_tooltip"]
+P7 = ["p7_triple_wait", "p7_triple_flip", "p7_triple_tail"]        # default since the combined default set: both runs are three-buffered
+base = pmab.TICK + pmab.TESTSET + ["pm_tooltip"] + P7
 lu, lp = pmab.make_live(base), pmab.make_live(base + ["qol_hover", "qol_hover2"])
 _orig = pmtick.apply_cmds
 pmtick.apply_cmds = lambda live: _orig(live) + pokes        # pokes AFTER the loadbin (it would overwrite test_walk's table)

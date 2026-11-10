@@ -1,5 +1,5 @@
 ; name: qol_hover2
-; default: no
+; default: yes
 ; stage: 2
 ; site: $12138
 ; orig: 4a7900057fd4

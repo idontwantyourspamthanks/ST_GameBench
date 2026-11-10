@@ -40,6 +40,7 @@ if SET == 3:       # the 90-degree rotations take 16 passes (up to 17 ticks at 8
 else:
     EVENTS = EVENTS[8 * SET:8 * SET + 8]
 SPACING = 22 if SET == 3 else 5
+TICK0 = {"get_men": 135}
 WATCH = [("cmd", 0x57FD4), ("query", 0x57FEA), ("posture", 0x516FC), ("heading", 0xFF9A), ("zoom", 0x57FFC), ("map", 0x58098), ("cell", 0x5804C)]
 
 
@@ -64,7 +65,9 @@ def run(kind, snap, mhz, vbls, names, res):
         if mhz != 8:
             h.set_cpuclock(mhz)
         pmtick.at_flip(h, pmab.apply_cmds(live))
-        t0 = h.peekl(pmtick.TICKCNT) + 3
+        # the tick at the apply flip is a property of the snapshot (get_men: 135); reading it after the apply returned a value one tick later in about
+        # one run of three (host timing), which shifted the whole event schedule of one run against the other
+        t0 = TICK0.get(snap, h.peekl(pmtick.TICKCNT)) + 3
         sched = [(t0 + SPACING * i, ev) for i, ev in enumerate(EVENTS)]
         sched = [(T + 1, ev) for T, ev in sched]
         cur = h.R / "cur.bin"
@@ -134,12 +137,13 @@ def main():
     snap = sys.argv[1] if len(sys.argv) > 1 else "get_men"
     mhz = int(sys.argv[2]) if len(sys.argv) > 2 else 8
     vbls = int(sys.argv[3]) if len(sys.argv) > 3 else 700
-    pmtick.SITE_MASKS += [(0x130FC, 0x13102), (0x199C, 0x19A2)]
+    pmtick.SITE_MASKS += [(0x130FC, 0x13102), (0x199C, 0x19A2), (0x13090, 0x13096), (0x1386C, 0x13872), (0x1898, 0x18A0)]   # + the p7 sites
     # the camera animation (heading $ff9a + $12f56 steps of 4 PER PASS) and everything the renderer derives from it (view tables $3f364-$3f600,
     # $f1e0-$f1fc, $f894, $fec4, $ff9a-$ffa6) depend on how many passes a tick got, which differs by a few cycles between the two runs; camera
     # words are compared separately below at a settled tick.  The pointer save area is interrupt state.
     pmtick.SITE_MASKS += [(0xF1E0, 0xF200), (0xF890, 0xF89A), (0xFEC0, 0xFEC8), (0xFF90, 0xFFB0), (0x3F360, 0x3F600), (0x12F56, 0x12F58), (0x1C550, 0x1C5C0)]
-    names = {"A": pmab.TICK + ["pm_tooltip", "test_qolclick"], "B": pmab.TICK + ["pm_tooltip", "qol_keys", "qol_keys2"]}
+    P7 = ["p7_triple_wait", "p7_triple_flip", "p7_triple_tail"]        # default since the combined default set: both runs are three-buffered
+    names = {"A": pmab.TICK + ["pm_tooltip"] + P7 + ["test_qolclick"], "B": pmab.TICK + ["pm_tooltip"] + P7 + ["qol_keys", "qol_keys2"]}
     res = {}
     ts = [threading.Thread(target=run, args=(k, snap, mhz, vbls, names[k], res)) for k in "AB"]
     [t.start() for t in ts]
@@ -152,17 +156,30 @@ def main():
     bb = {}
     for it, k, b in B:
         bb.setdefault(k, b)
+    # exact pairing: the same (world tick, loop-pass counter $2df70, occurrence): a tick has several loop tops (an S pass and the render pass
+    # share one counter value), and a right-click latch ($2df98) / the zoom tables legitimately differ between them, so a key-run top is
+    # compared with the click-run top of the SAME pass, not with the first top of its tick (the dumps are polled, so either run may log a
+    # pass the other one missed; unpaired tops are skipped and counted)
+    exact = {}
+    for run_, tops in ((0, A), (1, B)):
+        seen = {}
+        for it, k, b in tops:
+            o = seen[(k, it)] = seen.get((k, it), -1) + 1
+            exact[(run_, k, it, o)] = b
     print(f"{snap} {mhz} MHz: click run {len(A)} loop tops (ticks {A[0][1]}..{A[-1][1]}), key run {len(B)} (ticks {B[0][1]}..{B[-1][1]}); {len(EVENTS)} events, one per {SPACING} ticks from tick {sched[0][0]}")
-    bad, n, ticks = {}, 0, set()
-    for it, k, b in B:
-        a = ab.get(k)
+    bad, n, ticks, unpaired = {}, 0, set(), 0
+    for (run_, k, it, o), b in exact.items():
+        if run_ != 1:
+            continue
+        a = exact.get((0, k, it, o))
         if a is None:
+            unpaired += 1
             continue
         n += 1
         ticks.add(k)
         for g in pmtick.group(pmtick.diff_words(a, b)):
             bad.setdefault(tuple(g), []).append((it, k))
-    print(f"compared {n} loop tops over {len(ticks)} distinct world ticks")
+    print(f"compared {n} loop tops over {len(ticks)} distinct world ticks ({unpaired} key-run tops without a click-run top of the same pass: skipped)")
     neg = sum(1 for it, k, b in B if ab.get(k + 1) is not None and pmtick.diff_words(ab[k + 1], b))
     print(f"negative control: key run tick k vs click run tick k+1 differs in {neg} of {sum(1 for it, k, b in B if ab.get(k + 1) is not None)} loop tops")
     # evidence that every event acted: the watched UI / world words just before and 1 tick after the event (key run)
@@ -196,6 +213,10 @@ def main():
         return 0
     for (lo, hi), its in sorted(bad.items())[:40]:
         print(f"DIFF ${lo:x}-${hi:x} in {len(its)} loop tops, first (iter, tick) {its[:4]}")
+    if bad:        # where each run's loop tops of the first differing tick are, and the right-click latch ($2df98), left latch ($2df96), cell ($5804c) at each
+        k0 = min(k for its in bad.values() for _, k in its)
+        for nm_, R_ in (("click run", A), ("key run  ", B)):
+            print(f"{nm_}: loop tops of ticks {k0 - 1}..{k0 + 1}: " + "; ".join(f"it {it} tick {k} L{W(b, 0x2DF96):x} R{W(b, 0x2DF98):x} cell {W(b, 0x5804C):x}" for it, k, b in R_ if k0 - 1 <= k <= k0 + 1))
     return 1
 
 

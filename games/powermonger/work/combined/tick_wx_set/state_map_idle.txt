@@ -1,0 +1,6 @@
+map_idle 8 MHz: defaults 48 loop tops (ticks 37..92), defaults + p7 52 loop tops (ticks 37..91), missed loop tops 3
+compared 45 loop tops over 45 distinct world ticks (RAM $0-$60000, masks as pmtick.py MASKS + the three p7 sites)
+negative control: p7 tick k vs defaults tick k+1 differs in 44 of 44 loop tops
+RNG $2df84 differs in 0 loop tops; 3 distinct values
+men records whose x/z changed first -> last loop top: 20
+IDENTICAL

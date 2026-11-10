@@ -72,13 +72,14 @@ sys.path[:0] = [str(GAME.parent.parent / "tools"), str(HERE)]
 from pm import PM, SNAP  # noqa: E402
 
 TESTSET = ['test_walk', 'test_walk2', 'test_walk3']
-TICK = ["tick_head", "tick_pass", "tick_wx", "tick_men", "tick_click", "tick_click2", "tick_click3"]
+TICK = ["tick_head", "tick_pass", os.environ.get("PM_WX", "tick_rain"), "tick_men", "tick_click", "tick_click2", "tick_click3"]     # tick_rain (default since the combined set) replaces tick_wx; PM_WX=tick_wx selects the old one (notes/rain.md)
 FLIP = 0x187A            # flip routine entry (called once per rendered pass)
 APPLYPC = 0x1880         # where the live set is applied: 2nd instruction of the flip routine (test_walk patches the first one: never write under the PC)
 MODE = 0xCE400           # test_walk data word: != 0 = pointer walks with the world tick
 PXADDR = 0xCE402         # test_walk PX/PY words (the pointer position the IKBD packet handler copies)
 S1PC = 0x13096           # after `jsr $1870` (VBL wait) of the pass
 BUFS = (0x1C700, 0xFA00)  # both screen buffers, contiguous
+TIPMASK = False           # --tipmask: the tooltip bar (rows 0-5, x >= 112) is zeroed in every captured frame before comparing (qol_keys / qol_hover change its TEXT)
 C3 = None                 # --c3 ADDR: a third 32000 B screen buffer (p7_triple: $70000) captured next to them at every flip
 D = 0xB8A00              # tick_head data block (+6 RON.w)
 WORK = Path("/tmp/pmab")
@@ -270,9 +271,18 @@ def one(snap: Path, at: int, live: str, out: Path, vbls: int, mhz: int, walk: bo
             assert BUFS[0] <= a and a + 32000 <= BUFS[0] + BUFS[1], f"screen buffer ${a:x} is outside the captured regions"
             return s[a - BUFS[0]:a - BUFS[0] + 32000]
         sb, ss = grab(back), grab(shown)
+        if TIPMASK:
+            sb, ss = tipmask(sb), tipmask(ss)
         recs.append(dict(n=n + 1, ticks=ticks, ron=ron, shown=shown, back=back, x=x, y=y, vbl=vbl, work=cap_work[n],
                          hb=hashlib.md5(sb).hexdigest(), hs=hashlib.md5(ss).hexdigest(), sb=sb, ss=ss, bg=bgimg))
     return dict(recs=recs, work=work, flips=len(caps), window=(caps[-1][1] - caps[0][1]) if len(caps) > 1 else 0, nsk=len(work))
+
+
+def tipmask(b: bytes) -> bytes:
+    m = bytearray(b)
+    for row in range(6):
+        m[row * 160 + 56:row * 160 + 160] = bytes(104)
+    return bytes(m)
 
 
 def keyof(r):
@@ -366,17 +376,23 @@ def main():
     ap.add_argument("--base-poke", action="append", default=[], help="like --poke but for the BASE run too (p3b_interp: --base-poke b8a80:0001 --poke b8a80:0001 forces predict-ahead off in both)")
     ap.add_argument("--poke", action="append", default=[], help="ADDR:HEXBYTES written in the patched run at the apply flip (repeatable), e.g. bd400:0002")
     ap.add_argument("--tonly", action="store_true", help="only tick-pass (T) frames are hard comparisons; render-only (R) frames that differ are counted (p3b_interp)")
+    ap.add_argument("--swap", nargs=2, metavar=("OLD", "NEW"), help="patched run only: replace patch OLD of the tick set by NEW (tick_rain replaces tick_wx: same site)")
     ap.add_argument("--no-fps", action="store_true")
     ap.add_argument("--c3", help="HEXADDR of a third screen buffer to capture with the other two (p7_triple: 70000)")
     ap.add_argument("--neg", action="store_true", help="negative control: the BASE run walks the pointer, the patched run holds it still, and the shown "
                     "buffers are compared regardless of the pointer position: the gate must report DIFFER")
+    ap.add_argument("--tipmask", action="store_true", help="zero the tooltip bar (rows 0-5, x >= 112) in every captured frame before comparing (qol_keys / qol_hover change its text, "
+                    "so the old default set shows other text there); everything else must be identical")
     ap.add_argument("--keep", action="store_true", help="keep the base captures cached between runs (default: recapture)")
     a = ap.parse_args()
-    global C3
+    global C3, TIPMASK
     C3 = int(a.c3, 16) if a.c3 else None
+    TIPMASK = a.tipmask
     WORK.mkdir(exist_ok=True)
     tick = [] if a.no_tick else TICK
     bnames, pnames = tick + TESTSET + a.base, tick + TESTSET + a.base + a.only
+    if a.swap:
+        pnames = [a.swap[1] if n == a.swap[0] else n for n in pnames]
     blive, plive = make_live(bnames), make_live(pnames, a.st)
     ok_all = True
     print(f"base set    : {' '.join(bnames)}\npatched set : {' '.join(pnames)}{'  [FLAGS=6, plain-ST path]' if a.st else ''}")

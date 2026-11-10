@@ -1,0 +1,33 @@
+event breakpoints fired: click run 7 of 8, key run 7 of 8
+get_men 8 MHz: click run 40 loop tops (ticks 141..195), key run 43 (ticks 141..194); 8 events, one per 5 ticks from tick 139
+compared 28 loop tops over 28 distinct world ticks (15 key-run tops without a click-run top of the same pass: skipped)
+negative control: key run tick k vs click run tick k+1 differs in 39 of 39 loop tops
+event                tick      cmd    query  posture  heading     zoom      map     cell   (value at the tick of the event -> two ticks later, key run)
+Shift+[ fine left      139   1a>1a     0>0      2>2     f0>f4     4>4      2>2     d8>a2 
+Shift+] fine right     144   1a>1a     0>0      2>2     f4>f4     4>2      2>2     a2>a2 
+Shift+= closest        149   1a>1a     0>0      2>2     f4>f4     2>7      2>2     a2>b2 
+Shift+- farthest       154   1a>1a     0>0      2>2     f4>f4     7>7      2>1     b2>b2 
+F2 map                 159   1a>1a     0>0      2>2     f4>f4     7>7      1>0     b2>b2 
+F1 map                 164   1a>1a     0>0      2>2     f4>f4     7>7      0>0     b2>c4 
+X transfer men         169   1a>0      0>0      2>2     f4>f4     7>7      0>0     c4>d8 
+S supply food          174    0>0      0>0      2>2     f4>f4     7>7      0>0     d8>d8 
+CAMERA Shift+[ fine left tick 143: click run {'heading': 240, 'tiltA': 130, 'tiltB': 320, 'zoom': 4, 'scrollx': 22, 'scrolly': 45, 'map': 2} key run {'heading': 244, 'tiltA': 130, 'tiltB': 320, 'zoom': 4, 'scrollx': 22, 'scrolly': 45, 'map': 2}
+CAMERA Shift+] fine right tick 148: click run {'heading': 244, 'tiltA': 130, 'tiltB': 320, 'zoom': 4, 'scrollx': 22, 'scrolly': 45, 'map': 2} key run {'heading': 244, 'tiltA': 130, 'tiltB': 320, 'zoom': 2, 'scrollx': 22, 'scrolly': 45, 'map': 2}
+CAMERA Shift+= closest tick 153: click run {'heading': 244, 'tiltA': 130, 'tiltB': 320, 'zoom': 2, 'scrollx': 22, 'scrolly': 45, 'map': 2} key run {'heading': 244, 'tiltA': 130, 'tiltB': 320, 'zoom': 7, 'scrollx': 22, 'scrolly': 45, 'map': 2}
+CAMERA Shift+- farthest tick 158: click run {'heading': 244, 'tiltA': 130, 'tiltB': 320, 'zoom': 7, 'scrollx': 22, 'scrolly': 45, 'map': 2} key run {'heading': 244, 'tiltA': 130, 'tiltB': 320, 'zoom': 7, 'scrollx': 22, 'scrolly': 45, 'map': 1}
+CAMERA F2 map tick 163: click run {'heading': 244, 'tiltA': 130, 'tiltB': 320, 'zoom': 7, 'scrollx': 22, 'scrolly': 45, 'map': 1} key run {'heading': 244, 'tiltA': 130, 'tiltB': 320, 'zoom': 7, 'scrollx': 22, 'scrolly': 45, 'map': 0}
+camera words (heading, tilt, zoom, scroll, map mode) at the end of every event window: 5 DIFFER
+DIFF $fdea-$fe04 in 2 loop tops, first (iter, tick) [(148, 148), (153, 153)]
+DIFF $2df90-$2df92 in 2 loop tops, first (iter, tick) [(168, 168), (173, 173)]
+DIFF $2df90-$2df98 in 1 loop tops, first (iter, tick) [(158, 158)]
+DIFF $2df90-$2df9a in 3 loop tops, first (iter, tick) [(143, 143), (148, 148), (153, 153)]
+DIFF $2df96-$2df98 in 1 loop tops, first (iter, tick) [(163, 163)]
+DIFF $2df98-$2df9a in 3 loop tops, first (iter, tick) [(144, 144), (149, 149), (154, 154)]
+DIFF $3f600-$3f720 in 1 loop tops, first (iter, tick) [(154, 154)]
+DIFF $57fd4-$57fd8 in 1 loop tops, first (iter, tick) [(173, 173)]
+DIFF $57fd6-$57fd8 in 1 loop tops, first (iter, tick) [(168, 168)]
+DIFF $57ffc-$57ffe in 2 loop tops, first (iter, tick) [(148, 148), (153, 153)]
+DIFF $5804c-$5804e in 4 loop tops, first (iter, tick) [(144, 144), (154, 154), (168, 168), (173, 173)]
+DIFF $58098-$5809a in 2 loop tops, first (iter, tick) [(158, 158), (163, 163)]
+click run: loop tops of ticks 142..144: it 142 tick 142 L0 R0 cell d8; it 143 tick 143 L0 R0 cell d8; it 144 tick 144 L0 R1 cell d8
+key run  : loop tops of ticks 142..144: it 142 tick 142 L0 R0 cell d8; it 143 tick 143 L0 R1 cell d8; it 144 tick 144 L0 R0 cell a2

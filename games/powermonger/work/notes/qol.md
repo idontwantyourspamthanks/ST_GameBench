@@ -1,7 +1,7 @@
 # Powermonger quality-of-life patches (PMQoL): keys, village hover, Invent prediction
 
 Tags: **[obs]** observed in Hatari 2.6.1 (1 MB STE TOS 1.62 snapshots / cold boots); **[disasm]** read from `work/dumps/get_men.bin` with `tools/m68dis.py` (addresses given); **[INFERENCE]** not verified.
-Patches (all `; default: no`, the lead decides what ships): `qol_keys` + `qol_keys2` (keys), `qol_hover` + `qol_hover2` (village hover + "Invent here"), changes in `pm_tooltip` (key labels, Invent wording, wording table moved to $CF000), test-only `test_qolclick`, `test_qolinv`.
+Patches (**`; default: yes` since 2026-11-10, the combined set: `combined.md`**): `qol_keys` + `qol_keys2` (keys), `qol_hover` + `qol_hover2` (village hover + "Invent here"), changes in `pm_tooltip` (key labels, Invent wording, wording table moved to $CF000), test-only `test_qolclick`, `test_qolinv`.
 Tools: `tools/pmqol_state.py` (key == click world-state gate), `tools/pmqol_ab.py` (pixel gate), `tools/pmqol_inv.py` (prediction vs the game's real order), `tools/qol_points.py` (click points vs the game's hit test), `tools/pmtt_check.py` (52-character wording check, now with and without the key label).
 
 ## 1. RAM layout (inside the approved `qol_` range $CF000-$CFFFF; `test_` is now $CE000-$CEFFF in `pmpatch.py PREFIX_RANGES`, `pm_tooltip` may also place its wording table at $CF000-$CF7FF via `EXTRA_RANGES`)

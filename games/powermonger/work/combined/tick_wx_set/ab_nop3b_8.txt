@@ -1,0 +1,42 @@
+base set    : tick_head tick_pass tick_wx tick_men tick_click tick_click2 tick_click3 test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri p6_cpy p4_clamp pm_tooltip
+patched set : tick_head tick_pass tick_wx tick_men tick_click tick_click2 tick_click3 test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri p6_cpy p4_clamp pm_tooltip p7_triple_wait p7_triple_flip p7_triple_tail qol_keys qol_keys2 qol_hover qol_hover2
+map_idle @8 MHz: DIFFER (back frames matched 53, shown+pointer matched 44, flips captured 62/62) | work/pass 2362952 -> 2391772 (+28820, +1.22 %, n 62/62) | paired 2366791 -> 2391216 (+1.03 %, n 53) | flips 62 -> 62 fps 3.216 -> 3.226 (+0.3 %) | base frames == the frame 2 flips earlier: 0/60; consecutive same-tick R frames identical: 0/0
+    p0:   BACK DIFFER key (tick 53, T) patched flip 2 / base flip 2: 201 B differ, rows 0-5, 16-px columns 9-16
+    p0:   BACK DIFFER key (tick 54, T) patched flip 3 / base flip 3: 189 B differ, rows 0-5, 16-px columns 10-17
+    p0:   SHOWN DIFFER (pointer 304,184) patched flip 3 / base flip 3: 201 B differ, rows 0-5, 16-px columns 9-16
+    p0:   BACK DIFFER key (tick 55, T) patched flip 4 / base flip 4: 189 B differ, rows 0-5, 16-px columns 10-17
+    p0:   SHOWN DIFFER (pointer 305,185) patched flip 4 / base flip 4: 189 B differ, rows 0-5, 16-px columns 10-17
+    p0:   BACK DIFFER key (tick 57, T) patched flip 5 / base flip 5: 153 B differ, rows 0-5, 16-px columns 7-13
+    p0:   SHOWN DIFFER (pointer 16,0) patched flip 5 / base flip 5: 189 B differ, rows 0-5, 16-px columns 10-17
+    p0:   SHOWN DIFFER (pointer 250,60) patched flip 6 / base flip 6: 153 B differ, rows 0-5, 16-px columns 7-13
+    p0:   BACK DIFFER key (tick 64, T) patched flip 11 / base flip 11: 218 B differ, rows 0-5, 16-px columns 9-17
+    p0:   SHOWN DIFFER (pointer 100,100) patched flip 12 / base flip 12: 218 B differ, rows 0-5, 16-px columns 9-17
+    p0:   BACK DIFFER key (tick 68, T) patched flip 14 / base flip 14: 189 B differ, rows 0-5, 16-px columns 10-17
+    p0:   BACK DIFFER key (tick 69, T) patched flip 15 / base flip 15: 201 B differ, rows 0-5, 16-px columns 9-16
+get_men @8 MHz: DIFFER (back frames matched 86, shown+pointer matched 54, flips captured 103/100) | work/pass 1468627 -> 1482495 (+13868, +0.94 %, n 100/103) | paired 1482322 -> 1506873 (+1.66 %, n 86) | flips 100 -> 103 fps 5.133 -> 5.293 (+3.1 %) | base frames == the frame 2 flips earlier: 0/98; consecutive same-tick R frames identical: 0/0
+    p0:   BACK DIFFER key (tick 164, T) patched flip 3 / base flip 3: 189 B differ, rows 0-5, 16-px columns 10-17
+    p0:   BACK DIFFER key (tick 165, T) patched flip 4 / base flip 4: 177 B differ, rows 0-5, 16-px columns 9-16
+    p0:   SHOWN DIFFER (pointer 160,190) patched flip 4 / base flip 4: 189 B differ, rows 0-5, 16-px columns 10-17
+    p0:   BACK DIFFER key (tick 166, T) patched flip 6 / base flip 5: 189 B differ, rows 0-5, 16-px columns 10-17
+    p0:   BACK DIFFER key (tick 167, T) patched flip 7 / base flip 7: 189 B differ, rows 0-5, 16-px columns 10-17
+    p0:   BACK DIFFER key (tick 168, T) patched flip 8 / base flip 8: 136 B differ, rows 0-5, 16-px columns 7-13
+    p0:   SHOWN DIFFER (pointer 15,1) patched flip 8 / base flip 8: 189 B differ, rows 0-5, 16-px columns 10-17
+    p0:   BACK DIFFER key (tick 169, T) patched flip 9 / base flip 9: 153 B differ, rows 0-5, 16-px columns 7-13
+    p0:   SHOWN DIFFER (pointer 16,0) patched flip 9 / base flip 9: 136 B differ, rows 0-5, 16-px columns 7-13
+    p0:   BACK DIFFER key (tick 173, T) patched flip 15 / base flip 14: 231 B differ, rows 0-5, 16-px columns 9-17
+    p0:   BACK DIFFER key (tick 176, T) patched flip 19 / base flip 18: 216 B differ, rows 0-5, 16-px columns 9-17
+    p0:   BACK DIFFER key (tick 178, T) patched flip 22 / base flip 21: 136 B differ, rows 0-5, 16-px columns 7-13
+battle_320 @8 MHz: DIFFER (back frames matched 94, shown+pointer matched 68, flips captured 108/105) | work/pass 1414368 -> 1430073 (+15706, +1.11 %, n 105/108) | paired 1424766 -> 1441538 (+1.18 %, n 94) | flips 105 -> 108 fps 5.368 -> 5.521 (+2.9 %) | base frames == the frame 2 flips earlier: 0/103; consecutive same-tick R frames identical: 0/0
+    p0:   BACK DIFFER key (tick 377, R) patched flip 2 / base flip 2: 153 B differ, rows 0-5, 16-px columns 7-13
+    p0:   SHOWN DIFFER (pointer 250,60) patched flip 3 / base flip 3: 153 B differ, rows 0-5, 16-px columns 7-13
+    p0:   BACK DIFFER key (tick 381, T) patched flip 6 / base flip 6: 231 B differ, rows 0-5, 16-px columns 9-17
+    p0:   BACK DIFFER key (tick 381, R) patched flip 7 / base flip 7: 231 B differ, rows 0-5, 16-px columns 9-17
+    p0:   SHOWN DIFFER (pointer 200,183) patched flip 7 / base flip 7: 231 B differ, rows 0-5, 16-px columns 9-17
+    p0:   SHOWN DIFFER (pointer 8,197) patched flip 8 / base flip 8: 231 B differ, rows 0-5, 16-px columns 9-17
+    p0:   BACK DIFFER key (tick 384, T) patched flip 10 / base flip 10: 216 B differ, rows 0-5, 16-px columns 9-17
+    p0:   BACK DIFFER key (tick 384, R) patched flip 11 / base flip 11: 216 B differ, rows 0-5, 16-px columns 9-17
+    p0:   SHOWN DIFFER (pointer 229,173) patched flip 11 / base flip 11: 216 B differ, rows 0-5, 16-px columns 9-17
+    p0:   SHOWN DIFFER (pointer 100,100) patched flip 12 / base flip 12: 216 B differ, rows 0-5, 16-px columns 9-17
+    p0:   BACK DIFFER key (tick 386, T) patched flip 13 / base flip 13: 136 B differ, rows 0-5, 16-px columns 7-13
+    p0:   SHOWN DIFFER (pointer 310,20) patched flip 14 / base flip 14: 136 B differ, rows 0-5, 16-px columns 7-13
+MISMATCH

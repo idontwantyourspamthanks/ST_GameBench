@@ -1,5 +1,5 @@
 ; name: p7_triple_tail
-; default: no
+; default: yes
 ; stage: 2
 ; site: $1898
 ; orig: 33fc00000002df8c

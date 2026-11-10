@@ -1,0 +1,2989 @@
+> b pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $cd780
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/pmtt/cmdd.txt' file on hit.
+> b pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $cd784
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/pmtt/cmdd.txt' file on hit.
+> b pc = $cd788 :trace :file /tmp/pmtt/cmdd.txt
+CPU condition breakpoint 3 with 1 condition(s) added:
+	pc = $cd788
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/pmtt/cmdd.txt' file on hit.
+> b pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+CPU condition breakpoint 4 with 1 condition(s) added:
+	pc = $cd7c0
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/pmtt/cmdd.txt' file on hit.
+WARN : Bus Error reading at address $ffff8901, PC=$b8052 addr_e3=b8052 op_e3=1038
+3. CPU breakpoint condition(s) matched 1 times.
+	pc = $cd788 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %101100000011 (bin), #2819 (dec), $b03 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 1 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110010101000 (bin), #3240 (dec), $ca8 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110101011001 (bin), #3417 (dec), $d59 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 2 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110101011110 (bin), #3422 (dec), $d5e (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 2 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110101011110 (bin), #3422 (dec), $d5e (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 3 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110101100011 (bin), #3427 (dec), $d63 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 3 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110101100011 (bin), #3427 (dec), $d63 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 4 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110101101000 (bin), #3432 (dec), $d68 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 4 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110101101000 (bin), #3432 (dec), $d68 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 5 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110101101101 (bin), #3437 (dec), $d6d (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 5 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110101101101 (bin), #3437 (dec), $d6d (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 6 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110101110010 (bin), #3442 (dec), $d72 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 6 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110101110010 (bin), #3442 (dec), $d72 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 7 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110101110111 (bin), #3447 (dec), $d77 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 7 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110101110111 (bin), #3447 (dec), $d77 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 8 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110101111100 (bin), #3452 (dec), $d7c (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 8 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110101111100 (bin), #3452 (dec), $d7c (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 9 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110110000001 (bin), #3457 (dec), $d81 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 9 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110110000001 (bin), #3457 (dec), $d81 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 10 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110110000110 (bin), #3462 (dec), $d86 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 10 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110110000110 (bin), #3462 (dec), $d86 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 11 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110110001011 (bin), #3467 (dec), $d8b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 11 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110110001011 (bin), #3467 (dec), $d8b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 12 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110110010000 (bin), #3472 (dec), $d90 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 12 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110110010000 (bin), #3472 (dec), $d90 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 13 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110110010101 (bin), #3477 (dec), $d95 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 13 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110110010101 (bin), #3477 (dec), $d95 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 14 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110110011010 (bin), #3482 (dec), $d9a (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 14 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110110011010 (bin), #3482 (dec), $d9a (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 15 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110110011111 (bin), #3487 (dec), $d9f (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 15 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110110011111 (bin), #3487 (dec), $d9f (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 16 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110110100100 (bin), #3492 (dec), $da4 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 16 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110110100100 (bin), #3492 (dec), $da4 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 17 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110110101001 (bin), #3497 (dec), $da9 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 17 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110110101001 (bin), #3497 (dec), $da9 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 18 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110110101110 (bin), #3502 (dec), $dae (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 18 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110110101110 (bin), #3502 (dec), $dae (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 19 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110110110011 (bin), #3507 (dec), $db3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 19 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110110110011 (bin), #3507 (dec), $db3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 20 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110110111000 (bin), #3512 (dec), $db8 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 20 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110110111000 (bin), #3512 (dec), $db8 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 21 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110110111101 (bin), #3517 (dec), $dbd (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 21 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110110111101 (bin), #3517 (dec), $dbd (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 22 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110111000010 (bin), #3522 (dec), $dc2 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 22 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110111000010 (bin), #3522 (dec), $dc2 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 23 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110111000111 (bin), #3527 (dec), $dc7 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 23 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110111000111 (bin), #3527 (dec), $dc7 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 24 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110111001100 (bin), #3532 (dec), $dcc (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 24 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110111001100 (bin), #3532 (dec), $dcc (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 25 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110111010001 (bin), #3537 (dec), $dd1 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 25 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110111010001 (bin), #3537 (dec), $dd1 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 26 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110111010110 (bin), #3542 (dec), $dd6 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 26 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110111010110 (bin), #3542 (dec), $dd6 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 27 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110111011011 (bin), #3547 (dec), $ddb (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 27 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110111011011 (bin), #3547 (dec), $ddb (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 28 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110111100000 (bin), #3552 (dec), $de0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 28 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110111100000 (bin), #3552 (dec), $de0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 29 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110111100101 (bin), #3557 (dec), $de5 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 29 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110111100101 (bin), #3557 (dec), $de5 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 30 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110111101010 (bin), #3562 (dec), $dea (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 30 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110111101010 (bin), #3562 (dec), $dea (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 31 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110111101111 (bin), #3567 (dec), $def (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 31 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110111101111 (bin), #3567 (dec), $def (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 32 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110111110100 (bin), #3572 (dec), $df4 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 32 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110111110100 (bin), #3572 (dec), $df4 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 33 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110111111001 (bin), #3577 (dec), $df9 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 33 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110111111001 (bin), #3577 (dec), $df9 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 34 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110111111110 (bin), #3582 (dec), $dfe (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 34 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %110111111110 (bin), #3582 (dec), $dfe (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 35 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111000000011 (bin), #3587 (dec), $e03 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 35 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111000000011 (bin), #3587 (dec), $e03 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 36 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111000001000 (bin), #3592 (dec), $e08 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 36 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111000001000 (bin), #3592 (dec), $e08 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 37 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111000001101 (bin), #3597 (dec), $e0d (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 37 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111000001101 (bin), #3597 (dec), $e0d (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 38 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111000010010 (bin), #3602 (dec), $e12 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 38 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111000010010 (bin), #3602 (dec), $e12 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 39 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111000010111 (bin), #3607 (dec), $e17 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 39 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111000010111 (bin), #3607 (dec), $e17 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 40 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111000011100 (bin), #3612 (dec), $e1c (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 40 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111000011100 (bin), #3612 (dec), $e1c (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 41 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111000100001 (bin), #3617 (dec), $e21 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 41 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111000100001 (bin), #3617 (dec), $e21 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 42 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111000100110 (bin), #3622 (dec), $e26 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 42 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111000100110 (bin), #3622 (dec), $e26 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 43 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111000101011 (bin), #3627 (dec), $e2b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 43 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111000101011 (bin), #3627 (dec), $e2b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 44 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111000110000 (bin), #3632 (dec), $e30 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 44 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111000110000 (bin), #3632 (dec), $e30 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 45 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111000110101 (bin), #3637 (dec), $e35 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 45 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111000110101 (bin), #3637 (dec), $e35 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 46 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111000111010 (bin), #3642 (dec), $e3a (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 46 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111000111010 (bin), #3642 (dec), $e3a (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 47 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111000111111 (bin), #3647 (dec), $e3f (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 47 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111000111111 (bin), #3647 (dec), $e3f (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 48 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111001000100 (bin), #3652 (dec), $e44 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 48 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111001000100 (bin), #3652 (dec), $e44 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 49 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111001001001 (bin), #3657 (dec), $e49 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 49 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111001001001 (bin), #3657 (dec), $e49 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 50 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111001001110 (bin), #3662 (dec), $e4e (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 50 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111001001110 (bin), #3662 (dec), $e4e (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 51 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111001010011 (bin), #3667 (dec), $e53 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 51 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111001010011 (bin), #3667 (dec), $e53 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 52 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111001011000 (bin), #3672 (dec), $e58 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 52 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111001011000 (bin), #3672 (dec), $e58 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 53 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111001011101 (bin), #3677 (dec), $e5d (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 53 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111001011101 (bin), #3677 (dec), $e5d (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 54 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111001100010 (bin), #3682 (dec), $e62 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 54 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111001100010 (bin), #3682 (dec), $e62 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 55 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111001100111 (bin), #3687 (dec), $e67 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 55 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111001100111 (bin), #3687 (dec), $e67 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 56 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111001101100 (bin), #3692 (dec), $e6c (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 56 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111001101100 (bin), #3692 (dec), $e6c (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 57 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111001110001 (bin), #3697 (dec), $e71 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 57 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111001110001 (bin), #3697 (dec), $e71 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 58 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111001110110 (bin), #3702 (dec), $e76 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 58 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111001110110 (bin), #3702 (dec), $e76 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 59 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111001111011 (bin), #3707 (dec), $e7b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 59 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111001111011 (bin), #3707 (dec), $e7b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 60 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111010000000 (bin), #3712 (dec), $e80 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 60 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111010000000 (bin), #3712 (dec), $e80 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 61 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111010000101 (bin), #3717 (dec), $e85 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 61 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111010000101 (bin), #3717 (dec), $e85 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 62 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111010001010 (bin), #3722 (dec), $e8a (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 62 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111010001010 (bin), #3722 (dec), $e8a (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 63 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111010001111 (bin), #3727 (dec), $e8f (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 63 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111010001111 (bin), #3727 (dec), $e8f (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 64 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111010010100 (bin), #3732 (dec), $e94 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 64 times.
+	pc = $cd780 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111010010100 (bin), #3732 (dec), $e94 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 65 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111010011001 (bin), #3737 (dec), $e99 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 1 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111110010011 (bin), #3987 (dec), $f93 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 66 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111110011011 (bin), #3995 (dec), $f9b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 2 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111110011011 (bin), #3995 (dec), $f9b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 67 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111110100011 (bin), #4003 (dec), $fa3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 3 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111110100011 (bin), #4003 (dec), $fa3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 68 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111110101011 (bin), #4011 (dec), $fab (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 4 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111110101011 (bin), #4011 (dec), $fab (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 69 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111110110011 (bin), #4019 (dec), $fb3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 5 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111110110011 (bin), #4019 (dec), $fb3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 70 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111110111011 (bin), #4027 (dec), $fbb (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 6 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111110111011 (bin), #4027 (dec), $fbb (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 71 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111111000011 (bin), #4035 (dec), $fc3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 7 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111111000011 (bin), #4035 (dec), $fc3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 72 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111111001011 (bin), #4043 (dec), $fcb (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 8 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111111001011 (bin), #4043 (dec), $fcb (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 73 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111111010011 (bin), #4051 (dec), $fd3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 9 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111111010011 (bin), #4051 (dec), $fd3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 74 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111111011011 (bin), #4059 (dec), $fdb (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 10 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111111011011 (bin), #4059 (dec), $fdb (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 75 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111111100011 (bin), #4067 (dec), $fe3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 11 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111111100011 (bin), #4067 (dec), $fe3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 76 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111111101011 (bin), #4075 (dec), $feb (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 12 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111111101011 (bin), #4075 (dec), $feb (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 77 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111111110011 (bin), #4083 (dec), $ff3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 13 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111111110011 (bin), #4083 (dec), $ff3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 78 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111111111011 (bin), #4091 (dec), $ffb (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 14 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %111111111011 (bin), #4091 (dec), $ffb (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 79 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000000000011 (bin), #4099 (dec), $1003 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 15 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000000000011 (bin), #4099 (dec), $1003 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 80 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000000001011 (bin), #4107 (dec), $100b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 16 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000000001011 (bin), #4107 (dec), $100b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 81 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000000010011 (bin), #4115 (dec), $1013 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 17 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000000010011 (bin), #4115 (dec), $1013 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 82 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000000011011 (bin), #4123 (dec), $101b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 18 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000000011011 (bin), #4123 (dec), $101b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 83 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000000100011 (bin), #4131 (dec), $1023 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 19 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000000100011 (bin), #4131 (dec), $1023 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 84 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000000101011 (bin), #4139 (dec), $102b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 20 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000000101011 (bin), #4139 (dec), $102b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 85 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000000110011 (bin), #4147 (dec), $1033 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 21 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000000110011 (bin), #4147 (dec), $1033 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 86 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000000111011 (bin), #4155 (dec), $103b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 22 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000000111011 (bin), #4155 (dec), $103b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 87 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000001000011 (bin), #4163 (dec), $1043 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 23 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000001000011 (bin), #4163 (dec), $1043 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 88 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000001001011 (bin), #4171 (dec), $104b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 24 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000001001011 (bin), #4171 (dec), $104b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 89 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000001010011 (bin), #4179 (dec), $1053 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 25 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000001010011 (bin), #4179 (dec), $1053 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 90 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000001011011 (bin), #4187 (dec), $105b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 26 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000001011011 (bin), #4187 (dec), $105b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 91 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000001100011 (bin), #4195 (dec), $1063 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 27 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000001100011 (bin), #4195 (dec), $1063 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 92 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000001101011 (bin), #4203 (dec), $106b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 28 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000001101011 (bin), #4203 (dec), $106b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 93 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000001110011 (bin), #4211 (dec), $1073 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 29 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000001110011 (bin), #4211 (dec), $1073 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 94 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000001111011 (bin), #4219 (dec), $107b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 30 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000001111011 (bin), #4219 (dec), $107b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 95 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000010000011 (bin), #4227 (dec), $1083 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 31 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000010000011 (bin), #4227 (dec), $1083 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 96 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000010001011 (bin), #4235 (dec), $108b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 32 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000010001011 (bin), #4235 (dec), $108b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 97 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000010010011 (bin), #4243 (dec), $1093 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 33 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000010010011 (bin), #4243 (dec), $1093 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 98 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000010011011 (bin), #4251 (dec), $109b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 34 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000010011011 (bin), #4251 (dec), $109b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 99 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000010100011 (bin), #4259 (dec), $10a3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 35 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000010100011 (bin), #4259 (dec), $10a3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 100 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000010101011 (bin), #4267 (dec), $10ab (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 36 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000010101011 (bin), #4267 (dec), $10ab (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 101 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000010110011 (bin), #4275 (dec), $10b3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 37 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000010110011 (bin), #4275 (dec), $10b3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 102 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000010111011 (bin), #4283 (dec), $10bb (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 38 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000010111011 (bin), #4283 (dec), $10bb (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 103 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000011000011 (bin), #4291 (dec), $10c3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 39 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000011000011 (bin), #4291 (dec), $10c3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 104 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000011001011 (bin), #4299 (dec), $10cb (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 40 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000011001011 (bin), #4299 (dec), $10cb (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 105 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000011010011 (bin), #4307 (dec), $10d3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 41 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000011010011 (bin), #4307 (dec), $10d3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 106 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000011011011 (bin), #4315 (dec), $10db (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 42 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000011011011 (bin), #4315 (dec), $10db (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 107 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000011100011 (bin), #4323 (dec), $10e3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 43 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000011100011 (bin), #4323 (dec), $10e3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 108 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000011101011 (bin), #4331 (dec), $10eb (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 44 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000011101011 (bin), #4331 (dec), $10eb (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 109 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000011110011 (bin), #4339 (dec), $10f3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 45 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000011110011 (bin), #4339 (dec), $10f3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 110 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000011111011 (bin), #4347 (dec), $10fb (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 46 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000011111011 (bin), #4347 (dec), $10fb (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 111 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000100000011 (bin), #4355 (dec), $1103 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 47 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000100000011 (bin), #4355 (dec), $1103 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 112 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000100001011 (bin), #4363 (dec), $110b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 48 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000100001011 (bin), #4363 (dec), $110b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 113 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000100010011 (bin), #4371 (dec), $1113 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 49 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000100010011 (bin), #4371 (dec), $1113 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 114 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000100011011 (bin), #4379 (dec), $111b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 50 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000100011011 (bin), #4379 (dec), $111b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 115 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000100100011 (bin), #4387 (dec), $1123 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 51 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000100100011 (bin), #4387 (dec), $1123 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 116 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000100101011 (bin), #4395 (dec), $112b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 52 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000100101011 (bin), #4395 (dec), $112b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 117 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000100110011 (bin), #4403 (dec), $1133 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+3. CPU breakpoint condition(s) matched 2 times.
+	pc = $cd788 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1000110100001 (bin), #4513 (dec), $11a1 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 118 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1001101000101 (bin), #4933 (dec), $1345 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+3. CPU breakpoint condition(s) matched 3 times.
+	pc = $cd788 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1001101100101 (bin), #4965 (dec), $1365 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 119 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1010100001001 (bin), #5385 (dec), $1509 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 53 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1010110110000 (bin), #5552 (dec), $15b0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 120 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1010110111000 (bin), #5560 (dec), $15b8 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 54 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1010110111000 (bin), #5560 (dec), $15b8 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 121 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1010111000000 (bin), #5568 (dec), $15c0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 55 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1010111000000 (bin), #5568 (dec), $15c0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 122 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1010111001000 (bin), #5576 (dec), $15c8 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 56 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1010111001000 (bin), #5576 (dec), $15c8 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 123 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1010111010000 (bin), #5584 (dec), $15d0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 57 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1010111010000 (bin), #5584 (dec), $15d0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 124 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1010111011000 (bin), #5592 (dec), $15d8 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 58 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1010111011000 (bin), #5592 (dec), $15d8 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 125 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1010111100000 (bin), #5600 (dec), $15e0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 59 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1010111100000 (bin), #5600 (dec), $15e0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 126 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1010111101000 (bin), #5608 (dec), $15e8 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 60 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1010111101000 (bin), #5608 (dec), $15e8 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 127 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1010111110000 (bin), #5616 (dec), $15f0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 61 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1010111110000 (bin), #5616 (dec), $15f0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 128 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1010111111000 (bin), #5624 (dec), $15f8 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 62 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1010111111000 (bin), #5624 (dec), $15f8 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 129 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011000000000 (bin), #5632 (dec), $1600 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 63 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011000000000 (bin), #5632 (dec), $1600 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 130 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011000001000 (bin), #5640 (dec), $1608 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 64 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011000001000 (bin), #5640 (dec), $1608 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 131 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011000010000 (bin), #5648 (dec), $1610 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 65 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011000010000 (bin), #5648 (dec), $1610 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 132 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011000011000 (bin), #5656 (dec), $1618 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 66 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011000011000 (bin), #5656 (dec), $1618 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 133 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011000100000 (bin), #5664 (dec), $1620 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 67 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011000100000 (bin), #5664 (dec), $1620 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 134 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011000101000 (bin), #5672 (dec), $1628 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 68 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011000101000 (bin), #5672 (dec), $1628 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 135 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011000110000 (bin), #5680 (dec), $1630 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 69 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011000110000 (bin), #5680 (dec), $1630 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 136 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011000111000 (bin), #5688 (dec), $1638 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 70 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011000111000 (bin), #5688 (dec), $1638 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 137 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011001000000 (bin), #5696 (dec), $1640 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 71 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011001000000 (bin), #5696 (dec), $1640 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 138 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011001001000 (bin), #5704 (dec), $1648 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 72 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011001001000 (bin), #5704 (dec), $1648 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 139 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011001010000 (bin), #5712 (dec), $1650 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 73 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011001010000 (bin), #5712 (dec), $1650 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 140 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011001011000 (bin), #5720 (dec), $1658 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 74 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011001011000 (bin), #5720 (dec), $1658 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 141 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011001100000 (bin), #5728 (dec), $1660 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 75 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011001100000 (bin), #5728 (dec), $1660 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 142 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011001101000 (bin), #5736 (dec), $1668 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 76 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011001101000 (bin), #5736 (dec), $1668 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 143 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011001110000 (bin), #5744 (dec), $1670 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 77 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011001110000 (bin), #5744 (dec), $1670 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 144 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011001111000 (bin), #5752 (dec), $1678 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 78 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011001111000 (bin), #5752 (dec), $1678 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 145 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011010000000 (bin), #5760 (dec), $1680 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 79 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011010000000 (bin), #5760 (dec), $1680 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 146 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011010001000 (bin), #5768 (dec), $1688 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 80 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011010001000 (bin), #5768 (dec), $1688 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 147 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011010010000 (bin), #5776 (dec), $1690 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 81 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011010010000 (bin), #5776 (dec), $1690 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 148 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011010011000 (bin), #5784 (dec), $1698 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 82 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011010011000 (bin), #5784 (dec), $1698 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 149 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011010100000 (bin), #5792 (dec), $16a0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 83 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011010100000 (bin), #5792 (dec), $16a0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 150 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011010101000 (bin), #5800 (dec), $16a8 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 84 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011010101000 (bin), #5800 (dec), $16a8 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 151 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011010110000 (bin), #5808 (dec), $16b0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 85 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011010110000 (bin), #5808 (dec), $16b0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 152 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011010111000 (bin), #5816 (dec), $16b8 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 86 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011010111000 (bin), #5816 (dec), $16b8 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 153 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011011000000 (bin), #5824 (dec), $16c0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 87 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011011000000 (bin), #5824 (dec), $16c0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 154 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1011011001000 (bin), #5832 (dec), $16c8 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 88 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100000000011 (bin), #6147 (dec), $1803 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 155 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100000001011 (bin), #6155 (dec), $180b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 89 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100000001011 (bin), #6155 (dec), $180b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 156 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100000010011 (bin), #6163 (dec), $1813 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 90 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100000010011 (bin), #6163 (dec), $1813 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 157 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100000011011 (bin), #6171 (dec), $181b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 91 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100000011011 (bin), #6171 (dec), $181b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 158 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100000100011 (bin), #6179 (dec), $1823 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 92 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100000100011 (bin), #6179 (dec), $1823 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 159 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100000101011 (bin), #6187 (dec), $182b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 93 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100000101011 (bin), #6187 (dec), $182b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 160 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100000110011 (bin), #6195 (dec), $1833 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 94 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100000110011 (bin), #6195 (dec), $1833 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 161 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100000111011 (bin), #6203 (dec), $183b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 95 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100000111011 (bin), #6203 (dec), $183b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 162 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100001000011 (bin), #6211 (dec), $1843 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 96 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100001000011 (bin), #6211 (dec), $1843 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 163 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100001001011 (bin), #6219 (dec), $184b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 97 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100001001011 (bin), #6219 (dec), $184b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 164 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100001010011 (bin), #6227 (dec), $1853 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 98 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100001010011 (bin), #6227 (dec), $1853 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 165 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100001011011 (bin), #6235 (dec), $185b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 99 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100001011011 (bin), #6235 (dec), $185b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 166 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100001100011 (bin), #6243 (dec), $1863 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 100 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100001100011 (bin), #6243 (dec), $1863 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 167 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100001101011 (bin), #6251 (dec), $186b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 101 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100001101011 (bin), #6251 (dec), $186b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 168 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100001110011 (bin), #6259 (dec), $1873 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 102 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100001110011 (bin), #6259 (dec), $1873 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 169 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100001111011 (bin), #6267 (dec), $187b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 103 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100001111011 (bin), #6267 (dec), $187b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 170 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100010000011 (bin), #6275 (dec), $1883 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 104 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100010000011 (bin), #6275 (dec), $1883 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 171 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100010001011 (bin), #6283 (dec), $188b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 105 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100010001011 (bin), #6283 (dec), $188b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 172 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100010010011 (bin), #6291 (dec), $1893 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 106 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100010010011 (bin), #6291 (dec), $1893 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 173 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100010011011 (bin), #6299 (dec), $189b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 107 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100010011011 (bin), #6299 (dec), $189b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 174 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100010100011 (bin), #6307 (dec), $18a3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 108 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100010100011 (bin), #6307 (dec), $18a3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 175 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100010101011 (bin), #6315 (dec), $18ab (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 109 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100010101011 (bin), #6315 (dec), $18ab (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 176 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100010110011 (bin), #6323 (dec), $18b3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 110 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100010110011 (bin), #6323 (dec), $18b3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 177 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100010111011 (bin), #6331 (dec), $18bb (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 111 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100010111011 (bin), #6331 (dec), $18bb (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 178 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100011000011 (bin), #6339 (dec), $18c3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 112 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100011000011 (bin), #6339 (dec), $18c3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 179 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100011001011 (bin), #6347 (dec), $18cb (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 113 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100011001011 (bin), #6347 (dec), $18cb (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 180 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100011010011 (bin), #6355 (dec), $18d3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 114 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100011010011 (bin), #6355 (dec), $18d3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 181 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100011011011 (bin), #6363 (dec), $18db (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 115 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100011011011 (bin), #6363 (dec), $18db (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 182 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100011100011 (bin), #6371 (dec), $18e3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 116 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100011100011 (bin), #6371 (dec), $18e3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 183 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100011101011 (bin), #6379 (dec), $18eb (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 117 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100011101011 (bin), #6379 (dec), $18eb (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 184 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100011110011 (bin), #6387 (dec), $18f3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 118 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100011110011 (bin), #6387 (dec), $18f3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 185 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100011111011 (bin), #6395 (dec), $18fb (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 119 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100011111011 (bin), #6395 (dec), $18fb (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 186 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100100000011 (bin), #6403 (dec), $1903 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 120 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100100000011 (bin), #6403 (dec), $1903 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 187 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100100001011 (bin), #6411 (dec), $190b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 121 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100100001011 (bin), #6411 (dec), $190b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 188 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100100010011 (bin), #6419 (dec), $1913 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 122 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100100010011 (bin), #6419 (dec), $1913 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 189 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100100011011 (bin), #6427 (dec), $191b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 123 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100100011011 (bin), #6427 (dec), $191b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 190 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100100100011 (bin), #6435 (dec), $1923 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 124 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100100100011 (bin), #6435 (dec), $1923 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 191 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100100101011 (bin), #6443 (dec), $192b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 125 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100100101011 (bin), #6443 (dec), $192b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 192 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100100110011 (bin), #6451 (dec), $1933 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 126 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100100110011 (bin), #6451 (dec), $1933 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 193 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100100111011 (bin), #6459 (dec), $193b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 127 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100100111011 (bin), #6459 (dec), $193b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 194 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100101000011 (bin), #6467 (dec), $1943 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 128 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100101000011 (bin), #6467 (dec), $1943 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 195 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100101001011 (bin), #6475 (dec), $194b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 129 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100101001011 (bin), #6475 (dec), $194b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 196 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100101010011 (bin), #6483 (dec), $1953 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 130 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100101010011 (bin), #6483 (dec), $1953 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 197 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100101011011 (bin), #6491 (dec), $195b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 131 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100101011011 (bin), #6491 (dec), $195b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 198 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100101100011 (bin), #6499 (dec), $1963 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 132 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100101100011 (bin), #6499 (dec), $1963 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 199 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100101101011 (bin), #6507 (dec), $196b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 133 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100101101011 (bin), #6507 (dec), $196b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 200 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100101110011 (bin), #6515 (dec), $1973 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 134 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100101110011 (bin), #6515 (dec), $1973 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 201 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100101111011 (bin), #6523 (dec), $197b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 135 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100101111011 (bin), #6523 (dec), $197b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 202 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100110000011 (bin), #6531 (dec), $1983 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 136 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100110000011 (bin), #6531 (dec), $1983 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 203 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100110001011 (bin), #6539 (dec), $198b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 137 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100110001011 (bin), #6539 (dec), $198b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 204 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100110010011 (bin), #6547 (dec), $1993 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 138 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100110010011 (bin), #6547 (dec), $1993 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 205 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100110011011 (bin), #6555 (dec), $199b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 139 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100110011011 (bin), #6555 (dec), $199b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 206 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100110100011 (bin), #6563 (dec), $19a3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 140 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100110100011 (bin), #6563 (dec), $19a3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 207 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100110101011 (bin), #6571 (dec), $19ab (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 141 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100110101011 (bin), #6571 (dec), $19ab (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 208 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100110110011 (bin), #6579 (dec), $19b3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 142 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100110110011 (bin), #6579 (dec), $19b3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 209 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100110111011 (bin), #6587 (dec), $19bb (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 143 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100110111011 (bin), #6587 (dec), $19bb (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 210 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100111000011 (bin), #6595 (dec), $19c3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 144 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100111000011 (bin), #6595 (dec), $19c3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 211 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100111001011 (bin), #6603 (dec), $19cb (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 145 times.
+	pc = $cd784 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100111001011 (bin), #6603 (dec), $19cb (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 212 times.
+	pc = $cd7c0 :trace :file /tmp/pmtt/cmdd.txt
+Reading debugger commands from '/tmp/pmtt/cmdd.txt'...
+Changed to input file dir '/tmp/pmtt'.
+> e VBL
+= %1100111010011 (bin), #6611 (dec), $19d3 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2' dir.
