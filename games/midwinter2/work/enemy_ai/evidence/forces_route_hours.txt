@@ -1,0 +1,130 @@
+route100e4 00 16 10 12 03 0b 01 ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+fce8 2590 1268 0000 24f0 1278 0016 24e0 12b8 0016 2490 1338 0016 2468 13f0 0016 2320 1400 0016 22b0 13c0 0016 2190 10d0 0016 2048 1118 0010 1f38 1060 0010 1c00 1070 0010 1be0 10a8 0010 1bd0 105c 0012 1ab8 1068 0012 19cc 1034 0012 19b0 0fe8 0012
+93ae/93b0 0000 0001
+force0 2590 1268 000c 0000 0000 0009 00c0 0000 0001 ffff 0000 fcee 0008 c000 0666 00a0 0000 2590 1268 0000 0000 ffff ffff 0032
+force1 2590 1268 0004 0000 0000 0008 00c0 0000 0001 ffff 0000 fcee 0008 c000 0666 00a0 0000 2590 1268 0000 0000 ffff ffff 0032
+force2 2590 1268 0006 0000 0000 0014 00c0 0000 0001 ffff 0000 fcee 0008 c000 0666 00a0 0000 2590 1268 0000 0000 ffff ffff 0032
+force3 2590 1268 000a 0000 0000 000a 00c0 0000 0001 ffff 0000 fcee 0007 c000 0666 00a0 0000 2590 1268 0000 0000 ffff ffff 0000
+force4 2590 1268 0005 0000 0000 0006 00c0 0000 0001 ffff 0000 fcee 0007 c000 0666 00a0 0000 2590 1268 0000 0000 ffff ffff 0000
+force5 2590 1268 0003 0000 0000 0012 00c0 0000 0001 ffff 0000 fcee 0007 c000 0666 00a0 0000 2590 1268 0000 0000 ffff ffff 0000
+eb8c 2216 eb90 2160
+--- hour 1 eb8c=2220 eb90=2220 eb96=ffff
+ f0 x=9616 y=4712 str=12 thr=0 losses=0 typ=9 c=00c0 e=0000 spd=8 seg=0/160 loc=0000 wait=0 tmr=65535
+ f3 x=9546 y=4718 str=10 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=7 seg=70/160 loc=0000 wait=0 tmr=65535
+ f7 x=9616 y=4712 str=20 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=12 seg=0/160 loc=0000 wait=0 tmr=65535
+--- hour 2 eb8c=2280 eb90=2280 eb96=ffff
+ f0 x=9616 y=4712 str=12 thr=0 losses=0 typ=9 c=00c0 e=0000 spd=8 seg=0/160 loc=0000 wait=0 tmr=65535
+ f3 x=9476 y=4725 str=10 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=7 seg=140/160 loc=0000 wait=0 tmr=65535
+ f7 x=9616 y=4712 str=20 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=12 seg=0/160 loc=0000 wait=0 tmr=65535
+--- hour 3 eb8c=2340 eb90=2340 eb96=ffff
+ f0 x=9616 y=4712 str=12 thr=0 losses=0 typ=9 c=00c0 e=0000 spd=8 seg=0/160 loc=0000 wait=0 tmr=65535
+ f3 x=9443 y=4777 str=10 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=7 seg=50/65 loc=0016 wait=0 tmr=65535
+ f7 x=9616 y=4712 str=20 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=12 seg=0/160 loc=0000 wait=0 tmr=65535
+--- hour 4 eb8c=2401 eb90=2400 eb96=ffff
+ f0 x=9616 y=4712 str=12 thr=0 losses=0 typ=9 c=00c0 e=0000 spd=8 seg=0/160 loc=0000 wait=0 tmr=65535
+ f3 x=9408 y=4843 str=10 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=7 seg=55/145 loc=0016 wait=0 tmr=65535
+ f7 x=9616 y=4712 str=20 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=12 seg=0/160 loc=0000 wait=0 tmr=65535
+--- hour 5 eb8c=2460 eb90=2460 eb96=ffff
+ f0 x=9616 y=4712 str=12 thr=0 losses=0 typ=9 c=00c0 e=0000 spd=8 seg=0/160 loc=0000 wait=0 tmr=65535
+ f3 x=9370 y=4903 str=10 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=7 seg=125/145 loc=0016 wait=0 tmr=65535
+ f7 x=9616 y=4712 str=20 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=12 seg=0/160 loc=0000 wait=0 tmr=65535
+--- hour 6 eb8c=2520 eb90=2520 eb96=ffff
+ f0 x=9536 y=4719 str=12 thr=0 losses=0 typ=9 c=00c0 e=0000 spd=8 seg=80/160 loc=0000 wait=0 tmr=65535
+ f3 x=9348 y=4968 str=10 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=7 seg=50/188 loc=0016 wait=0 tmr=65535
+ f7 x=9616 y=4712 str=20 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=12 seg=0/160 loc=0000 wait=0 tmr=65535
+--- hour 7 eb8c=2580 eb90=2580 eb96=ffff
+ f0 x=9456 y=4727 str=12 thr=0 losses=0 typ=9 c=00c0 e=0000 spd=8 seg=0/66 loc=0016 wait=0 tmr=65535
+ f3 x=9334 y=5037 str=10 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=7 seg=120/188 loc=0016 wait=0 tmr=65535
+ f7 x=9616 y=4712 str=20 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=12 seg=0/160 loc=0000 wait=0 tmr=65535
+--- hour 8 eb8c=2640 eb90=2640 eb96=ffff
+ f0 x=9430 y=4808 str=12 thr=0 losses=0 typ=9 c=00c0 e=0000 spd=8 seg=14/145 loc=0016 wait=0 tmr=65535
+ f3 x=9319 y=5105 str=10 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=7 seg=2/327 loc=0016 wait=0 tmr=65535
+ f7 x=9616 y=4712 str=20 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=12 seg=0/160 loc=0000 wait=0 tmr=65535
+--- hour 9 eb8c=2701 eb90=2700 eb96=ffff
+ f0 x=9387 y=4876 str=12 thr=0 losses=0 typ=9 c=00c0 e=0000 spd=8 seg=94/145 loc=0016 wait=0 tmr=65535
+ f3 x=9247 y=5108 str=10 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=7 seg=72/327 loc=0016 wait=0 tmr=65535
+ f7 x=9616 y=4712 str=20 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=12 seg=0/160 loc=0000 wait=0 tmr=65535
+--- hour 10 eb8c=2760 eb90=2760 eb96=ffff
+ f0 x=9351 y=4952 str=12 thr=0 losses=0 typ=9 c=00c0 e=0000 spd=8 seg=29/183 loc=0016 wait=0 tmr=65535
+ f3 x=9177 y=5111 str=10 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=7 seg=142/327 loc=0016 wait=0 tmr=65535
+ f7 x=9616 y=4712 str=20 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=12 seg=0/160 loc=0000 wait=0 tmr=65535
+--- hour 11 eb8c=2820 eb90=2820 eb96=ffff
+ f0 x=9334 y=5031 str=12 thr=0 losses=0 typ=9 c=00c0 e=0000 spd=8 seg=109/183 loc=0016 wait=0 tmr=65535
+ f3 x=9107 y=5114 str=10 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=7 seg=212/327 loc=0016 wait=0 tmr=65535
+ f7 x=9616 y=4712 str=20 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=12 seg=0/160 loc=0000 wait=0 tmr=65535
+--- hour 12 eb8c=2880 eb90=2880 eb96=ffff
+ f0 x=9318 y=5109 str=12 thr=0 losses=0 typ=9 c=00c0 e=0000 spd=8 seg=6/326 loc=0016 wait=0 tmr=65535
+ f3 x=9037 y=5117 str=10 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=7 seg=282/327 loc=0016 wait=0 tmr=65535
+ f7 x=9616 y=4712 str=20 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=12 seg=0/160 loc=0000 wait=0 tmr=65535
+--- hour 13 eb8c=2940 eb90=2940 eb96=ffff
+ f0 x=9232 y=5111 str=12 thr=0 losses=0 typ=9 c=00c0 e=0000 spd=8 seg=86/326 loc=0016 wait=0 tmr=65535
+ f3 x=8966 y=5107 str=10 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=7 seg=25/125 loc=0016 wait=0 tmr=65535
+ f7 x=9616 y=4712 str=20 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=12 seg=0/160 loc=0000 wait=0 tmr=65535
+--- hour 14 eb8c=3001 eb90=3000 eb96=ffff
+ f0 x=9152 y=5114 str=12 thr=0 losses=0 typ=9 c=00c0 e=0000 spd=8 seg=166/326 loc=0016 wait=0 tmr=65535
+ f3 x=8905 y=5071 str=10 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=7 seg=95/125 loc=0016 wait=0 tmr=65535
+ f7 x=9616 y=4712 str=20 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=12 seg=0/160 loc=0000 wait=0 tmr=65535
+--- hour 15 eb8c=3060 eb90=3060 eb96=ffff
+ f0 x=9072 y=5117 str=12 thr=0 losses=0 typ=9 c=00c0 e=0000 spd=8 seg=246/326 loc=0016 wait=0 tmr=65535
+ f3 x=8860 y=5015 str=10 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=7 seg=40/800 loc=0016 wait=0 tmr=65535
+ f7 x=9616 y=4712 str=20 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=12 seg=0/160 loc=0000 wait=0 tmr=65535
+--- hour 16 eb8c=3120 eb90=3120 eb96=ffff
+ f0 x=8992 y=5119 str=12 thr=0 losses=0 typ=9 c=00c0 e=0000 spd=8 seg=0/128 loc=0016 wait=0 tmr=65535
+ f3 x=8836 y=4950 str=10 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=7 seg=110/800 loc=0016 wait=0 tmr=65535
+ f7 x=9496 y=4723 str=20 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=12 seg=120/160 loc=0000 wait=0 tmr=65535
+--- hour 17 eb8c=3180 eb90=3180 eb96=ffff
+ f0 x=8922 y=5079 str=12 thr=0 losses=0 typ=9 c=00c0 e=0000 spd=8 seg=80/128 loc=0016 wait=0 tmr=65535
+ f3 x=8811 y=4884 str=10 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=7 seg=180/800 loc=0016 wait=0 tmr=65535
+ f7 x=9430 y=4809 str=20 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=12 seg=16/147 loc=0016 wait=0 tmr=65535
+--- hour 18 eb8c=3240 eb90=3240 eb96=ffff
+ f0 x=8868 y=5026 str=12 thr=0 losses=0 typ=9 c=00c0 e=0000 spd=8 seg=32/805 loc=0016 wait=0 tmr=65535
+ f3 x=8786 y=4818 str=10 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=7 seg=250/800 loc=0016 wait=0 tmr=65535
+ f7 x=9365 y=4910 str=20 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=12 seg=136/147 loc=0016 wait=0 tmr=65535
+--- hour 19 eb8c=3301 eb90=3300 eb96=ffff
+ f0 x=8839 y=4951 str=12 thr=0 losses=0 typ=9 c=00c0 e=0000 spd=8 seg=112/805 loc=0016 wait=0 tmr=65535
+ f3 x=8761 y=4753 str=10 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=7 seg=320/800 loc=0016 wait=0 tmr=65535
+ f7 x=9336 y=5026 str=20 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=12 seg=109/188 loc=0016 wait=0 tmr=65535
+--- hour 20 eb8c=3360 eb90=3360 eb96=ffff
+ f0 x=8811 y=4876 str=12 thr=0 losses=0 typ=9 c=00c0 e=0000 spd=8 seg=192/805 loc=0016 wait=0 tmr=65535
+ f3 x=8737 y=4687 str=10 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=7 seg=390/800 loc=0016 wait=0 tmr=65535
+ f7 x=9277 y=5109 str=20 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=12 seg=41/326 loc=0016 wait=0 tmr=65535
+--- hour 21 eb8c=3420 eb90=3420 eb96=ffff
+ f0 x=8782 y=4801 str=12 thr=0 losses=0 typ=9 c=00c0 e=0000 spd=8 seg=272/805 loc=0016 wait=0 tmr=65535
+ f3 x=8712 y=4622 str=10 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=7 seg=460/800 loc=0016 wait=0 tmr=65535
+ f7 x=9157 y=5113 str=20 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=12 seg=161/326 loc=0016 wait=0 tmr=65535
+--- hour 22 eb8c=3480 eb90=3480 eb96=ffff
+ f0 x=8256 y=8205 str=2595 thr=21536 losses=4146 typ=8240 c=3720 e=3032 spd=16723 seg=2595/8205 loc=2030 wait=13344 tmr=8224
+ f3 x=8687 y=4556 str=10 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=7 seg=530/800 loc=0016 wait=0 tmr=65535
+ f7 x=9037 y=5118 str=20 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=12 seg=281/326 loc=0016 wait=0 tmr=65535
+--- hour 23 eb8c=3540 eb90=3480 eb96=ffff
+ f0 x=8754 y=4727 str=12 thr=0 losses=0 typ=9 c=00c0 e=0000 spd=8 seg=352/805 loc=0016 wait=0 tmr=65535
+ f3 x=8687 y=4556 str=10 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=7 seg=530/800 loc=0016 wait=0 tmr=65535
+ f7 x=9037 y=5118 str=20 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=12 seg=281/326 loc=0016 wait=0 tmr=65535
+--- hour 24 eb8c=3540 eb90=3480 eb96=ffff
+ f0 x=8754 y=4727 str=12 thr=0 losses=0 typ=9 c=00c0 e=0000 spd=8 seg=352/805 loc=0016 wait=0 tmr=65535
+ f3 x=8687 y=4556 str=10 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=7 seg=530/800 loc=0016 wait=0 tmr=65535
+ f7 x=9037 y=5118 str=20 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=12 seg=281/326 loc=0016 wait=0 tmr=65535
+--- hour 25 eb8c=3540 eb90=3480 eb96=ffff
+ f0 x=8754 y=4727 str=12 thr=0 losses=0 typ=9 c=00c0 e=0000 spd=8 seg=352/805 loc=0016 wait=0 tmr=65535
+ f3 x=8687 y=4556 str=10 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=7 seg=530/800 loc=0016 wait=0 tmr=65535
+ f7 x=9037 y=5118 str=20 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=12 seg=281/326 loc=0016 wait=0 tmr=65535
+--- hour 26 eb8c=3540 eb90=3480 eb96=ffff
+ f0 x=8754 y=4727 str=12 thr=0 losses=0 typ=9 c=00c0 e=0000 spd=8 seg=352/805 loc=0016 wait=0 tmr=65535
+ f3 x=8687 y=4556 str=10 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=7 seg=530/800 loc=0016 wait=0 tmr=65535
+ f7 x=9037 y=5118 str=20 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=12 seg=281/326 loc=0016 wait=0 tmr=65535
+--- hour 27 eb8c=3540 eb90=3480 eb96=ffff
+ f0 x=8754 y=4727 str=12 thr=0 losses=0 typ=9 c=00c0 e=0000 spd=8 seg=352/805 loc=0016 wait=0 tmr=65535
+ f3 x=8687 y=4556 str=10 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=7 seg=530/800 loc=0016 wait=0 tmr=65535
+ f7 x=9037 y=5118 str=20 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=12 seg=281/326 loc=0016 wait=0 tmr=65535
+--- hour 28 eb8c=3540 eb90=3480 eb96=ffff
+ f0 x=8754 y=4727 str=12 thr=0 losses=0 typ=9 c=00c0 e=0000 spd=8 seg=352/805 loc=0016 wait=0 tmr=65535
+ f3 x=8687 y=4556 str=10 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=7 seg=530/800 loc=0016 wait=0 tmr=65535
+ f7 x=9037 y=5118 str=20 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=12 seg=281/326 loc=0016 wait=0 tmr=65535
+--- hour 29 eb8c=3540 eb90=3480 eb96=ffff
+ f0 x=8754 y=4727 str=12 thr=0 losses=0 typ=9 c=00c0 e=0000 spd=8 seg=352/805 loc=0016 wait=0 tmr=65535
+ f3 x=8687 y=4556 str=10 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=7 seg=530/800 loc=0016 wait=0 tmr=65535
+ f7 x=9037 y=5118 str=20 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=12 seg=281/326 loc=0016 wait=0 tmr=65535
+--- hour 30 eb8c=3540 eb90=3480 eb96=ffff
+ f0 x=8754 y=4727 str=12 thr=0 losses=0 typ=9 c=00c0 e=0000 spd=8 seg=352/805 loc=0016 wait=0 tmr=65535
+ f3 x=8687 y=4556 str=10 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=7 seg=530/800 loc=0016 wait=0 tmr=65535
+ f7 x=9037 y=5118 str=20 thr=0 losses=0 typ=10 c=00c0 e=0000 spd=12 seg=281/326 loc=0016 wait=0 tmr=65535

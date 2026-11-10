@@ -7,7 +7,7 @@ sys.path.insert(0,'work/enemy_ai'); sys.path.insert(0,'tools')
 from live import *
 
 NS=5
-def main(vbls=1500, gtype=0, outfile='/tmp/ai/spawn_trace.txt', dx=14, dy=3, gidx=4, pokes=None, setup=None, snap='ingame_lobos_foot', ns=NS):
+def main(vbls=1500, gtype=0, outfile='/tmp/ai/spawn_trace.txt', dx=14, dy=3, gidx=4, pokes=None, setup=None, snap='ingame_lobos_foot', ns=NS, pre=None):
     h=start(snap)
     try:
         time.sleep(3)
@@ -22,6 +22,7 @@ def main(vbls=1500, gtype=0, outfile='/tmp/ai/spawn_trace.txt', dx=14, dy=3, gid
         cmds=''.join('m $%x 66\n'%(0x3532+0x42*i) for i in range(ns))+'m $6820 8\nm $6282 2\nm $66e6 8\nm $764c 2\ne VBL\n'
         open(cf,'w').write(cmds)
         h.debug('b all',0.3)
+        if pre: pre(h)
         n0=len(h._logtext())
         h.cmd('hatari-debug b pc = $35b0a :trace :file %s'%cf)
         v=h.vbl()

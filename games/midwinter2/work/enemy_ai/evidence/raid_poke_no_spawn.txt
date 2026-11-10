@@ -1,0 +1,16 @@
+> b pc = $35b0a :trace :file /tmp/ai/c1.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $35b0a
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/ai/c1.txt' file on hit.
+> e VBL
+= %1100101101010000111 (bin), #416391 (dec), $65a87 (hex)
+> b VBL > 417291 :trace :once
+CPU condition breakpoint 2 with 1 condition(s) added:
+	VBL > 417291
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+2. CPU breakpoint condition(s) matched 1 times.
+	VBL > 417291 :once :trace
+Removed CPU breakpoint 2:
+	VBL > 417291 :once :trace
