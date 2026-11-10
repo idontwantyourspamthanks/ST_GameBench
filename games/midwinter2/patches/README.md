@@ -183,7 +183,7 @@ no default patch uses; they needed 380 B, more than the $B4E00-$B4EFF that was l
 `FFA_boot.st` (patched), `FFB_graphics.st`, `FFC_missions.st` (verbatim copies of FILES/FFB, FFC),
 `FFD_campaign_blank.st` (verbatim FILES/FFD: a blank TOS-formatted 720K disk) and `README.TXT` (from
 `patches/FLOPPY.TXT`, with the patch list and md5s). `--zip` also writes
-`dist/Midwinter2_patched_floppies_<date>.zip`. Evidence and test log: `work/notes/floppy.md`.
+`dist/Midwinter2_v<version>_patched_floppies_<date>.zip`. Evidence and test log: `work/notes/floppy.md`.
 - **Boot path.** The FFA boot sector (word sum `$1234`) loads FFA file 1 (the 4096-byte stub, image offset
   `$200`) to `$4D9A6`; the stub loads file 8 (`$806`) and file 9 (`$3104`) with its own FDC code and ends with
   `jmp $3104.w` at `$4DAA0`. RUNME, PP's patcher (`$4BC-$59C`) and the HAGA service never run, so none of
@@ -218,3 +218,15 @@ are not drawn (pixel-identical on the 32000 visible bytes per buffer; the invisi
 - `p7_ck_poly` (`$1fa9a`): terrain polygons clipped at the window bottom, tested with one F-table lookup before clip/walk/fill. `p7_ck_obj` (`$3bb6e`): object polygons.
   Cycles/frame vs the p4 set: foot -2.9 %, walking -3.1 %, banked turn -1.3 %.
 - `p7_ck_fill` (`$38c6e`): drops bottom fill rows under opaque runs and row 200; -0.6 % foot, +0.2 % walking after the cull: not recommended as default.
+
+## Release credit (`mw2_credit`, st-game-speedup "Release credit"; work/notes/credit.md)
+`mw2_credit` (`default: yes`, boot site `$1f5f0`, blob `$B9000`): a dim `v<VERSION> enhanced by dad_prg` at the bottom (rows 188-196, colour
+index 2 = `$630`, the game's own font, centred) of the orange MIDWINTER II logo screen, drawn into both screen buffers so it stays up on the
+floppy "Insert Graphics Disk" prompt and on the HD loading screen. The palette and the logo art are untouched.
+- **One place for the version:** the `; version:` header of `patches/mw2_credit.s`. `mw2patch.py` replaces `@VERSION@` with it in that
+  source's string, in `PATCHES.TXT` and in the floppy `README.TXT` (`FLOPPY.TXT`); `mw2patch.py version` prints it and `mw2patch.py doc FILE`
+  renders a doc; `tools/package.sh` uses it for the zip names `Midwinter2_v<VERSION>_patched[_floppies]_<date>.zip`.
+- **Boot site inside an overlay range:** `$1f5f0` is in the FFB f1 overlay range (`$18d96-$210b2`, loaded long after), so the in-game dump
+  `ram_ingame_lobos.bin` shows overlay code there. For a `phase: boot` site in such a range `verify` compares against
+  `work/dumps/ram_boot_hd1mb.bin` (RAM at game entry `$312a8` of an unpatched 1 MB HD boot; the floppy boot dump
+  `ram_boot_fl1mb.bin` differs only at PP's patch addresses).

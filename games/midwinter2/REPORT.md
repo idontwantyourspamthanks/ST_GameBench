@@ -160,6 +160,7 @@ A new renderer is the other route.
 
 ## 9. Delivered
 
-- `dist/Midwinter2_patched_<date>.zip`: hard-disk folder. `dist/Midwinter2_patched_floppies_<date>.zip`: floppy set.
+- `dist/Midwinter2_v<version>_patched_<date>.zip`: hard-disk folder. `dist/Midwinter2_v<version>_patched_floppies_<date>.zip`: floppy set. The version (1.2) lives in one place, `patches/mw2_credit.s`.
+- **Release credit:** the orange MIDWINTER II logo screen (the loading screen on both builds; on floppy it is followed by "Insert Graphics Disk") shows a small dim `v1.2 enhanced by dad_prg` at the bottom (`mw2_credit`, `work/notes/credit.md`). Only 343 black pixels change (rows 188-196, colour 2 of the screen's own palette), in both screen buffers; cold boots to the 3D view with MWPO on STE and plain ST, floppy and HD.
 - `tools/play.sh`, `tools/play-tt.sh`, `tools/package.sh`.
-- The patch tool, 52 patch sources, the study notes and the test tooling, so every result can be reproduced.
+- The patch tool, 53 patch sources, the study notes and the test tooling, so every result can be reproduced.

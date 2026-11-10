@@ -1,4 +1,5 @@
 Midwinter 2 (HAGA HD version by PP) - patched build, 2026-11-08
+Release v@VERSION@ enhanced by dad_prg
 
 Changes vs the original HAGA release:
 - Game speed is fixed to real time: the world no longer speeds up on
@@ -18,6 +19,9 @@ Changes vs the original HAGA release:
   (the unpatched game was fine). The patched build now keeps the loader's
   200 KB chunked caching on those machines, as on 1-2 MB; loading takes a few
   seconds longer than the unpatched game does at 4 MB. TT/Falcon are unchanged.
+- Version line: the orange MIDWINTER II logo screen (shown while the game loads, before the intro) carries a small, dim
+  "v@VERSION@ enhanced by dad_prg" at the bottom, so this release can not be mistaken for the original. Nothing else on the
+  screen changes.
 
 Requirements and usage are as in README.TXT (1 MB RAM minimum).
 Run RUNME.TOS from a hard disk / GEMDOS drive.

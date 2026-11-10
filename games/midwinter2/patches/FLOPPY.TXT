@@ -1,4 +1,5 @@
 Midwinter 2 (Atari ST) - patched FLOPPY set, {DATE}
+Release v@VERSION@ enhanced by dad_prg
 
 This is the original floppy game (the disk images shipped with PP's HD release) with
 the same speed, display and control patches as the patched hard-disk build:
@@ -8,6 +9,8 @@ the same speed, display and control patches as the patched hard-disk build:
 - About 15% faster 3D display on a stock 8 MHz ST/STE, pixel-identical.
 - Direct controls: the mouse turns only while it moves; joystick/keyboard turn at
   a constant rate while held and stop on release.
+The orange MIDWINTER II logo screen (the one with "Insert Graphics Disk - press any key") shows a small, dim
+"v@VERSION@ enhanced by dad_prg" at the bottom; nothing else on it changes.
 (The "no grey fading while loading" fix of the HD build does not apply: there is no
 loader service on floppy and nothing fades.)
 

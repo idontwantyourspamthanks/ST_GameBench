@@ -31,6 +31,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 RUNME_SRC = ROOT / "work" / "dumps" / "RUNME_unpacked.tos"
 RAMDUMP = ROOT / "work" / "dumps" / "ram_ingame_lobos.bin"
+RAMDUMP_BOOT = ROOT / "work" / "dumps" / "ram_boot_hd1mb.bin"   # HD, 1 MB, unpatched: RAM at game entry ($312a8), PP's patches applied
 PATCHDIR = ROOT / "patches"
 VASM = "vasmm68k_mot"
 
@@ -176,6 +177,23 @@ HDR_RE = re.compile(r"^;\s*([a-z]+):\s*(.*)$")
 # give the file offset and the expected ORIGINAL bytes.
 HB_ORG_RE = re.compile(r"^\s*org\s+HB\s*\+\s*\$([0-9a-fA-F]+)\s*$", re.I)
 
+VERSION_TAG = "@VERSION@"          # replaced by the `; version:` header of the patch that defines it (patches/mw2_credit.s)
+CREDIT = "enhanced by dad_prg"
+
+
+def release_version() -> str:
+    """The release version: the `; version:` header of patches/mw2_credit.s, the single place it is defined."""
+    for f in sorted(PATCHDIR.glob("*.s")):
+        m = re.search(r"^;\s*version:\s*(\S+)\s*$", f.read_text(), re.M)
+        if m:
+            return m.group(1)
+    raise SystemExit("no `; version:` header in patches/*.s")
+
+
+def render_doc(text: str) -> str:
+    """README / PATCHES.TXT / FLOPPY.TXT: @VERSION@ -> the release version."""
+    return text.replace(VERSION_TAG, release_version())
+
 class Patch:
     def __init__(self, path: Path):
         self.path = path
@@ -192,7 +210,12 @@ class Patch:
         self.edits = []           # file patch: (file offset, expected original bytes)
         self.fsegments = []       # file patch: (file offset, source lines)
         cur = None
-        for line in path.read_text().splitlines():
+        text = path.read_text()
+        vm = re.search(r"^;\s*version:\s*(\S+)\s*$", text, re.M)
+        self.version = vm.group(1) if vm else None
+        if self.version:
+            text = text.replace(VERSION_TAG, self.version)       # the one place the release version is defined (mw2_credit.s)
+        for line in text.splitlines():
             if cur is None and re.match(r"^\s*\w+\s+equ\s+", line):
                 self.preamble.append(line)
                 continue
@@ -441,7 +464,10 @@ def check_site(addr: int, orig: bytes, phase: str | None = None):
     """Return (ok, image_ok, dump_ok, image_bytes, dump_bytes)."""
     ib = image_at(addr, len(orig), phase)
     exp = expected_ram(addr, len(orig), phase)
-    ram = RAMDUMP.read_bytes()
+    # A boot site that lies inside a later overlay (FFB f1 over $18d96-$210b2) is overwritten in the in-game dump:
+    # compare it with the RAM of an unpatched boot at game entry instead.
+    ovl = [r for r in LOAD_RANGES if r[2] != "FFA" and r[0] <= addr and addr + len(orig) <= r[1]]
+    ram = (RAMDUMP_BOOT if phase == "boot" and ovl else RAMDUMP).read_bytes()
     db = ram[addr:addr + len(orig)]
     return ib == orig and exp == orig and db == orig, ib == orig, db == exp, ib, db
 
@@ -716,7 +742,7 @@ def cmd_build_floppy(patches, out: Path, zip_path: Path | None = None, fpatches=
     txt = ((PATCHDIR / "FLOPPY.TXT").read_text()
            .replace("{DATE}", datetime.date.today().isoformat())
            .replace("{PATCHES}", names).replace("{MD5}", md5s))
-    (out / "README.TXT").write_text(txt)
+    (out / "README.TXT").write_text(render_doc(txt))
     print(f"built floppy set in {out}: {', '.join(n for _, n in FLOPPY_DISKS)} + README.TXT; "
           f"{len(patches)} patch(es); payload {len(img)} B = FFA file {PAYLOAD_FILE} -> $B3000")
     for fp in fpatches:
@@ -745,13 +771,22 @@ def main():
                    help="build three floppy images (FFA with the payload as file 10, FFB, FFC) "
                         "plus a blank campaign disk instead of the HD game directory")
     b.add_argument("--zip", nargs="?", const="", default=None, metavar="PATH",
-                   help="with --floppy: also write dist/Midwinter2_patched_floppies_<date>.zip")
+                   help="with --floppy: also write dist/Midwinter2_v<version>_patched_floppies_<date>.zip (or PATH)")
     lv = sub.add_parser("live")
     lv.add_argument("--only", nargs="*", default=None)
     lv.add_argument("--out", default="build/live/patches")
     sub.add_parser("list")
     sub.add_parser("verify")
+    sub.add_parser("version", help="print the release version (the `; version:` header of patches/mw2_credit.s)")
+    rd = sub.add_parser("doc", help="print a doc file with @VERSION@ replaced (README / PATCHES.TXT)")
+    rd.add_argument("file")
     a = ap.parse_args()
+    if a.cmd == "version":
+        print(release_version())
+        return
+    if a.cmd == "doc":
+        sys.stdout.write(render_doc(Path(a.file).read_text()))
+        return
     patches = load_patches()
     fpatches = load_file_patches()
     if a.cmd == "list":
@@ -780,7 +815,7 @@ def main():
                                  "there is no HAGA service on floppy")
             import datetime
             zp = None if a.zip is None else ROOT / (
-                a.zip or f"dist/Midwinter2_patched_floppies_{datetime.date.today().isoformat()}.zip")
+                a.zip or f"dist/Midwinter2_v{release_version()}_patched_floppies_{datetime.date.today().isoformat()}.zip")
             cmd_build_floppy(sel, ROOT / (a.out or "build/floppy"), zp, fsel)
         elif a.cmd == "build":
             if a.zip is not None:
