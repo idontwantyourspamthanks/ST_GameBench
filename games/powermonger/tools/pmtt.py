@@ -56,14 +56,16 @@ class TT(pm.PM):          # PM's navigation methods; PM.__init__ is bypassed (th
         a = list(im.crop((0, 0, w, h - 45)).getdata())
         return sum(1 for p in a if p > 200) > 0.95 * len(a) and sum(1 for p in a if p < 100) > 0.02 * len(a)
 
-    def start_game(self, log=print, key="p"):
+    def start_game(self, log=print, key="p", repeat=1):
         """Wait for the PMBOOT prompt (3 s window) and press P."""
         t = time.time()
         while not self.prompt_up():
             if time.time() - t > 120:
                 raise RuntimeError("PMBOOT prompt never seen")
             time.sleep(0.1)
-        self.key(key)
+        for _ in range(repeat):           # the prompt is up for ~3 s; on some machines the first look is a false positive
+            self.key(key)
+            time.sleep(0.4)
         log(f"P pressed at VBL {self.vbl()}")
 
     def to_map(self, log=print, **kw):
