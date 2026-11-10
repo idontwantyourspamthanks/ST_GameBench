@@ -223,8 +223,46 @@ def check_stage2(g):
 if __name__ == '__main__':
     raw, pre, sh, diff = check_stage2(g)
     # lighting on the real post-pad heights
-    A, B = light(sh[0])
-    badA = [(x, y) for y in range(100) for x in range(100) if A[y][x] != sh[1][y][x]]
-    badB = [(x, y) for y in range(100) for x in range(100) if B[y][x] != sh[2][y][x]]
-    print('shade byte A mismatches', len(badA), 'B mismatches', len(badB))
-    print('first mismatches A', [(x, y, A[y][x], sh[1][y][x]) for x, y in badA[:12]])
+    # road cells ($40 class stamped by $1c9d2 before the lighting pass) are given as presets; everything else is computed
+    preset = ([[(v & 0xf0) if v >= 64 else 0 for v in r] for r in sh[1]], [[(v & 0xf0) if v >= 64 else 0 for v in r] for r in sh[2]])
+    A, B = light(sh[0], preset)
+    bad = [(x, y) for y in range(100) for x in range(100) if (A[y][x], B[y][x]) != (sh[1][y][x], sh[2][y][x])]
+    inner = [(x, y) for x, y in bad if x < 99 and y < 99]
+    print(f'lighting: {len(bad)} cells differ in total, {len(inner)} outside the last row/column (those read memory past the grid in the original)')
+
+# ---------------------------------------------------------------- stage 3: trees ($1be92)
+def trees(H, mask):
+    """$1be92 on raw (pre-doubling) heights H[y][x]; mask = 100x100 object/road marks ($78000: roads 3, objects 1, trees 2). Returns [(x, y, type)]."""
+    out = []
+    for y in range(4, 98, 2):
+        for x in range(4, 98, 2):
+            h = H[y][x]
+            if h >= 0x14:
+                if h >= 0x1770: continue
+                t = 0xff
+            else:
+                t = 0xfe
+                if h > -180: continue                 # cmp.w #$ff4c,d2 ; bgt skip: type $fe only in deep water
+            if (h + H[y - 1][x] + H[y][x + 1] + H[y - 1][x + 1]) & 0x1f: continue     # 1-in-32 gate on N, E, NE corners
+            if mask[y][x]: continue
+            if any(mask[y + dy][x + dx] for dy in (-1, 0, 1) for dx in (-1, 0, 1) if (dx, dy) != (0, 0)): continue
+            o = 0
+            for dy in range(-2, 3):
+                for dx in range(-2, 3):
+                    if max(abs(dx), abs(dy)) == 2: o |= mask[y + dy][x + dx]
+            if o not in (0, 2): continue
+            mask[y][x] = 2
+            out.append((x, y, t))
+    return out
+
+if __name__ == '__main__':
+    ex = open('/tmp/terr/exit.bin', 'rb').read()
+    n = struct.unpack('>h', ex[0x6f78:0x6f7a])[0]
+    real = set()
+    for i in range(n + 1):
+        a = 0x4bfa8 + 16 * i
+        x = struct.unpack('>i', ex[a + 0x12:a + 0x16])[0]; y = struct.unpack('>i', ex[a + 0x16:a + 0x1a])[0]
+        real.add((((x >> 8) - 1) // 2, 99 - (((y >> 8) - 1) // 2), ex[a + 0x1d]))
+    mask = [[3 if sh[1][y][x] >= 64 else 0 for x in range(100)] for y in range(100)]     # road cells carry mark 3 ($1ca7a)
+    mine = set(trees(raw[0], mask))
+    print(f'trees: replica {len(mine)}, RAM marker records {len(real)}, identical sets: {mine == real}')
