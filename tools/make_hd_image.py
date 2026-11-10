@@ -283,14 +283,14 @@ VERSIONS: dict[str, str] = {}
 
 
 def versions() -> dict[str, str]:
-    """Release versions as the games' own tools report them; Midwinters have none of their own (the patched builds)."""
+    """Release versions as the games' own tools report them (each reads its credit patch)."""
     v = {}
-    for key, game, tool in (("MIDWINTR", "midwinter", "mw1patch"), ("HUNTER", "hunter", "huntpatch")):
+    for key, game, tool in (("MIDWINTR", "midwinter", "mw1patch"), ("MIDWINT2", "midwinter2", "mw2patch"),
+                            ("HUNTER", "hunter", "huntpatch")):
         try:
             v[key] = "v" + py(game, tool, "version").strip()
         except SystemExit:
             v[key] = "patched"
-    v["MIDWINT2"] = "patched"
     try:
         import re
         t = (GAMES / "powermonger" / "patches" / "pm_credit.s").read_text()
