@@ -1,4 +1,5 @@
 Midwinter (HAGA/PP conversion images) - patched floppy set, {DATE}
+Release v@VERSION@ enhanced by dad_prg
 
 Disks (400 KB single-sided, 10 sectors x 80 tracks, raw .st images):
   MWA.st   boot disk (patched: patch loader + payload in free sectors, original game otherwise)
@@ -6,6 +7,8 @@ Disks (400 KB single-sided, 10 sectors x 80 tracks, raw .st images):
   MWC.st   save/data disk, unchanged (use your own save disk if you have one)
 
 Patches in this set: {PATCHES}
+
+The Game Options screen shows a small, dim "v@VERSION@ enhanced by dad_prg" in its bottom-left corner; nothing else on it changes.
 
 Boot from MWA.st in drive A. When the game shows "Insert graphics disk" swap MWB.st into
 drive A and press a key. PP's hard-disk fixes are not part of a floppy boot (original FDC

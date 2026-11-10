@@ -1,4 +1,5 @@
 Midwinter (HAGA HD version by PP) - patched build
+Release v@VERSION@ enhanced by dad_prg
 
 Changes vs the original HAGA release:
 - Game speed is fixed to real time: the world runs at 5 steps per second
@@ -15,6 +16,8 @@ Changes vs the original HAGA release:
 - The game's anti-tamper checksum on the 3D models is not run (it guarded
   data nothing changes, and cost up to 7% of a frame).
 - Floppy set: the manual security check is skipped, as in the HD release.
+- Version line: the Game Options screen (the main menu with PLAY) shows a small, dim "v@VERSION@ enhanced by dad_prg" in its
+  bottom-left corner, so this release can not be mistaken for the original. Nothing else on the screen changes.
 
 Requirements and usage are as in README.TXT (1 MB RAM minimum).
 Run RUNME.TOS from a hard disk / GEMDOS drive.

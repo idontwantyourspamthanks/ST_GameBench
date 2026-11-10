@@ -186,7 +186,8 @@ These inputs were found by tracing the reads, not by guessing. If the last three
 
 ## 8. Delivered
 
-- `dist/Midwinter_patched_<date>.zip`: hard-disk folder `MW1PATCH/`, with `PATCHES.TXT`.
-- `dist/Midwinter_patched_floppies_<date>.zip`: floppy set; the security check is skipped.
+- `dist/Midwinter_v<VERSION>_patched_<date>.zip`: hard-disk folder `MW1PATCH/`, with `PATCHES.TXT`.
+- `dist/Midwinter_v<VERSION>_patched_floppies_<date>.zip`: floppy set; the security check is skipped.
 - `tools/play.sh` (launcher for any machine) and `tools/package.sh`.
-- The patch tool, 59 patch sources (55 on by default), the study notes and the test tools.
+- The patch tool, 60 patch sources (56 on by default), the study notes and the test tools.
+- **Release credit v1.1:** `patches/mw_credit.s` draws `v1.1 enhanced by dad_prg` (game font, colour 5 of the menu's own palette, 211 pixels) in the bottom-left corner of the Game Options screen, HD and floppy; the version is set only by its `; version:` header (`work/notes/credit.md`).

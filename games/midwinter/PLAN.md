@@ -31,4 +31,4 @@ This follows the Midwinter 2 job (`../midwinter2/PLAN.md`), using the method in 
 - **P7 Packaging:** zips, launcher scripts.
 
 ## Release version
-Next release: **v1.1** (user, 2026-11-10). A credit line `v1.1 enhanced by dad_prg` goes on a startup screen (placement: user to choose).
+Next release: **v1.1** (user, 2026-11-10). A credit line `v1.1 enhanced by dad_prg` is drawn on the Game Options screen (the main menu, user's choice; not the title) by `patches/mw_credit.s`, which also holds the version (`; version:`); see `work/notes/credit.md`.

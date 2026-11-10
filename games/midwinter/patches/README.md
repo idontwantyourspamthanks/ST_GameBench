@@ -12,6 +12,7 @@ Header comment lines before the first `org`; then one code segment per `org`:
 carries the site; the tool takes the original bytes from that file in the image)
 `; data: $addr len` (blob-owned zero-init data reservation, repeatable)
 `; media: floppy` (built only by `build --floppy`; `orig` = raw image bytes, see "Floppy build").
+`; version: 1.1` (only `mw_credit.s`: THE one place of the release version, see "Release credit").
 The segment whose `org` equals the site yields the NEW bytes (must be <= orig length, nop-padded).
 Segments with another `org` are BLOB code at a fixed org in the free payload area `$B3100-$B9FFF`.
 `patches/core.s` holds the mechanism (trampoline / load-hook exit / deferred applier).
@@ -73,7 +74,7 @@ rts` from the unchanged `(a7)` frame.
   "FVPF SECURITY CHECK" which a floppy boot lacks.
 
 ## Tool
-`python3 tools/mw1patch.py build [--only N ...] [--out build/game] | build --floppy | list | verify | files | live`
+`python3 tools/mw1patch.py build [--only N ...] [--out build/game] | build --floppy | list | verify | files | live | version | doc FILE`
 `build` aborts when `verify` fails. `files` prints the stage tables and the game's directory tables with their
 xor checksums. `live` writes `<out>.img` (payload) + `<out>.json` (sites) for applying a patch set to a snapshot
 (the load hook is omitted: in a snapshot every overlay is already loaded).
@@ -88,6 +89,14 @@ Same HAGA, same two patches as MW2, both `default: yes`:
   whole 400 KB image to `$81000-$E5000`, over the payload; the patch keeps the 200000-byte chunk cache.
 HAGA moves with RAM size (`$F8000` 1 MB, `$1F8000` 2 MB, `$3F8000` 4 MB+), so the tool assembles each
 segment at all three bases and requires identical bytes.
+
+## Release credit (`mw_credit`, blob `$B9000`)
+`v<VERSION> enhanced by dad_prg` on the Game Options screen (the main menu with PLAY and the toggles), drawn with the game's own small
+font in two lines in the empty bottom-left corner, colour 5 of the screen's own palette. Evidence and gates: `work/notes/credit.md`.
+The version lives only in the `; version:` header of `patches/mw_credit.s`: `mw1patch.py` substitutes it for `@VERSION@` in that
+file's string and in `PATCHES.TXT` / `FLOPPY.TXT` (`mw1patch.py doc FILE`), `mw1patch.py version` prints it for `tools/package.sh`
+(zip names `Midwinter_v<VERSION>_patched_<date>.zip` / `..._patched_floppies_<date>.zip`).
+Blob ranges in use (all `default: yes` sets): `$B3100-$B4FFF` P3/P4/P5, `$B5000-$B6840` P7, `$B9000-$B91FF` `mw_credit`.
 
 ## Floppy build (`build --floppy`)
 `python3 tools/mw1patch.py build --floppy [--only N ...] [--out build/floppy] [--zip [PATH]]` writes

@@ -17,5 +17,8 @@ Status: **done**. Read [`REPORT.md`](REPORT.md) for what was changed and why, [`
 python3 tools/mw1patch.py verify
 python3 tools/mw1patch.py build [--floppy]
 tools/play.sh [--machine st|megast|ste|megaste|tt|falcon] [--ram KiB] [--original]
-tools/package.sh                     # zips into dist/
+tools/package.sh                     # zips into dist/ (Midwinter_v<VERSION>_patched_..._<date>.zip)
+python3 tools/mw1patch.py version    # the release version
 ```
+
+**Release credit:** the Game Options screen (both builds) shows a small, dim `v<VERSION> enhanced by dad_prg` in its bottom-left corner, drawn by `patches/mw_credit.s`. The version is set in one place, the `; version:` header of that file; `package.sh` and the README/PATCHES.TXT texts take it from there (`mw1patch.py version` / `doc`). Evidence: `work/notes/credit.md`.

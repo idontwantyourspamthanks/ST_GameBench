@@ -225,6 +225,24 @@ HDR_RE = re.compile(r"^;\s*([a-z]+):\s*(.*)$")
 HB_ORG_RE = re.compile(r"^\s*org\s+HB\s*\+\s*\$([0-9a-fA-F]+)\s*$", re.I)
 
 
+VERSION_TAG = "@VERSION@"          # replaced by the `; version:` header of the patch that defines it (patches/mw_credit.s)
+CREDIT = "enhanced by dad_prg"
+
+
+def release_version() -> str:
+    """The release version: the `; version:` header of patches/mw_credit.s, the single place it is defined."""
+    for f in sorted(PATCHDIR.glob("*.s")):
+        m = re.search(r"^;\s*version:\s*(\S+)\s*$", f.read_text(), re.M)
+        if m:
+            return m.group(1)
+    raise SystemExit("no `; version:` header in patches/*.s")
+
+
+def render_doc(text: str) -> str:
+    """README / PATCHES.TXT: @VERSION@ -> the release version."""
+    return text.replace(VERSION_TAG, release_version())
+
+
 class Patch:
     def __init__(self, path: Path):
         self.path = path
@@ -242,7 +260,12 @@ class Patch:
         self.edits = []           # file patch: (file offset, expected original bytes)
         self.fsegments = []       # file patch: (file offset, source lines)
         cur = None
-        for line in path.read_text().splitlines():
+        text = path.read_text()
+        vm = re.search(r"^;\s*version:\s*(\S+)\s*$", text, re.M)
+        self.version = vm.group(1) if vm else None
+        if self.version:
+            text = text.replace(VERSION_TAG, self.version)       # the one place the release version is defined (mw_credit.s)
+        for line in text.splitlines():
             if cur is None and re.match(r"^\s*\w+\s+equ\s+", line):
                 self.preamble.append(line)
                 continue
@@ -795,6 +818,7 @@ def cmd_build_floppy(patches, out: Path, zip_path: Path | None = None, fpatches=
     tpl = PATCHDIR / "FLOPPY.TXT"
     txt = (tpl.read_text().replace("{DATE}", datetime.date.today().isoformat())
            .replace("{PATCHES}", names).replace("{MD5}", md5s)) if tpl.exists() else ""
+    txt = render_doc(txt)
     if txt:
         (out / "README.TXT").write_text(txt)
     print(f"built floppy set in {out}: {', '.join(n for _, n in FLOPPY_DISKS)}; "
@@ -825,7 +849,7 @@ def main():
     b.add_argument("--out", default=None, help="default build/game, or build/floppy with --floppy")
     b.add_argument("--floppy", action="store_true", help="build patched MWA/MWB/MWC floppy images")
     b.add_argument("--zip", nargs="?", const="", default=None, metavar="PATH",
-                   help="with --floppy: also write dist/Midwinter1_patched_floppies_<date>.zip")
+                   help="with --floppy: also write dist/Midwinter_v<version>_patched_floppies_<date>.zip (or PATH)")
     lv = sub.add_parser("live")
     lv.add_argument("--only", nargs="*", default=None)
     lv.add_argument("--out", default="build/live/patches")
@@ -833,7 +857,16 @@ def main():
     sub.add_parser("list")
     sub.add_parser("verify")
     sub.add_parser("files")
+    sub.add_parser("version", help="print the release version (the `; version:` header of patches/mw_credit.s)")
+    rd = sub.add_parser("doc", help="print a doc file with @VERSION@ replaced (README / PATCHES.TXT)")
+    rd.add_argument("file")
     a = ap.parse_args()
+    if a.cmd == "version":
+        print(release_version())
+        return
+    if a.cmd == "doc":
+        sys.stdout.write(render_doc(Path(a.file).read_text()))
+        return
     patches = load_patches()
     fpatches = load_file_patches()
     if a.cmd == "list":
@@ -864,7 +897,7 @@ def main():
                                  "there is no HAGA service on floppy")
             import datetime
             zp = None if a.zip is None else ROOT / (
-                a.zip or f"dist/Midwinter1_patched_floppies_{datetime.date.today().isoformat()}.zip")
+                a.zip or f"dist/Midwinter_v{release_version()}_patched_floppies_{datetime.date.today().isoformat()}.zip")
             cmd_build_floppy(sel, ROOT / (a.out or "build/floppy"), zp, fsel)
         elif a.cmd == "build":
             if a.zip is not None:
