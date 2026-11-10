@@ -101,4 +101,4 @@ The primary target is 1 MB, so use the `1mb_*` snapshots for anything measured.
 ## Concurrency
 - Several harness instances can run at once. Displays are reserved atomically via `/tmp/.mw2harness-display-N`, and stale locks are reclaimed.
 - Keep it to at most 2–3 concurrent cold boots: `boot_to_game` uses wall-clock sleeps and misses clicks under load.
-- **Vehicle test states:** Raids -> pick an island (Space -> question icon -> thumbs-up -> In); islands start with different vehicles. Save snapshots there to test vehicles.
+- **Vehicle test states:** `tools/mw2raids.py` (`enter_raid`, `cold_to_raid_map`) drives Raids -> island (hover + Space) -> `?` -> thumbs up -> 3D view. 41 islands start in 15 vehicle types; `work/notes/raids.md` has the island/vehicle table and per-vehicle snapshots `work/snapshots/raid_<vehicle>_<island>.sav`. `$6220 = 13` is the Helicopter (the old "foot" snapshots are helicopter cockpits); true on foot is 5 (Esc from a ground vehicle; Esc from a flyer gives Parachute 17; hold the key 0.6 s).
