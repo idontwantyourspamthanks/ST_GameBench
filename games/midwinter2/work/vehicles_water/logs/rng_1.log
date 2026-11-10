@@ -1,0 +1,1076 @@
+> b VBL > 153775 && pc = $26e98 :trace :once :file /tmp/mw2run-pn83elek/apply.txt
+CPU condition breakpoint 1 with 2 condition(s) added:
+	VBL > 153775 && pc = $26e98
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-pn83elek/apply.txt' file on hit.
+1. CPU breakpoint condition(s) matched 1 times.
+	VBL > 153775 && pc = $26e98 :once :trace :file /tmp/mw2run-pn83elek/apply.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/apply.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> loadbin /tmp/vw/t3.img $b3000
+  Read 0x8000 bytes.
+> w $33f50 $4e $b9 $00 $0b $42 $34
+Wrote 6 'b' values starting from 0x33f50.
+> w $3461e $4e $b9 $00 $0b $42 $94 $4e $71
+Wrote 8 'b' values starting from 0x3461e.
+> w $345e0 $4e $b9 $00 $0b $41 $be
+Wrote 6 'b' values starting from 0x345e0.
+> w $344f8 $4e $b9 $00 $0b $41 $3e
+Wrote 6 'b' values starting from 0x344f8.
+> w $33dc6 $4e $b9 $00 $0b $4c $00 $4e $71
+Wrote 8 'b' values starting from 0x33dc6.
+> w $33be6 $4e $b9 $00 $0b $41 $26
+Wrote 6 'b' values starting from 0x33be6.
+> w $31486 $4e $b9 $00 $0b $40 $00 $4e $71
+Wrote 8 'b' values starting from 0x31486.
+> w $31576 $4e $b9 $00 $0b $4e $20
+Wrote 6 'b' values starting from 0x31576.
+> w $33e30 $4e $b9 $00 $0b $4e $a0 $4e $71
+Wrote 8 'b' values starting from 0x33e30.
+> w $33e46 $4e $b9 $00 $0b $4e $40
+Wrote 6 'b' values starting from 0x33e46.
+> w $33bf8 $4e $b9 $00 $0b $4e $80
+Wrote 6 'b' values starting from 0x33bf8.
+> w $6fba $00 $96 $00 $00
+Wrote 4 'b' values starting from 0x6fba.
+> w $6fb6 $ff $60 $00 $00
+Wrote 4 'b' values starting from 0x6fb6.
+> w $b4e00 $00 $00 $00 $40
+Wrote 4 'b' values starting from 0xb4e00.
+> b pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $26fd0
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-pn83elek/hit.txt' file on hit.
+> b pc = $31486 :trace :file /tmp/mw2run-pn83elek/hit2.txt
+CPU condition breakpoint 3 with 1 condition(s) added:
+	pc = $31486
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-pn83elek/hit2.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+Removed CPU breakpoint 1:
+	VBL > 153775 && pc = $26e98 :once :trace :file /tmp/mw2run-pn83elek/apply.txt
+2. CPU breakpoint condition(s) matched 1 times.
+	pc = $31486 :trace :file /tmp/mw2run-pn83elek/hit2.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m $b42e6 2
+000B42E6: 00 00                                            ..
+> m $6220 2
+00006220: 00 06                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 00 00 00 24 00 03 4d a4 00 03 4b 56  ..o¶...$..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 01                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 2 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 00 00 00 28 00 03 4d a4 00 03 4b 56  ..o¶...(..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 01                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 3 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 03 4d c4 00 03 4b 64 00 00 00 00 ff ff e8 00  ..Mג..Kd....¯¯Φ.
+> m $b42e6 2
+000B42E6: 00 01                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 4 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 03 4d da 00 03 4b 64 00 00 00 00 ff ff e8 00  ..Mם..Kd....¯¯Φ.
+> m $b42e6 2
+000B42E6: 00 01                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 5 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 00 00 00 30 00 03 4d a4 00 03 4b 56  ..o¶...0..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 01                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 2 times.
+	pc = $31486 :trace :file /tmp/mw2run-pn83elek/hit2.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m $b42e6 2
+000B42E6: 00 01                                            ..
+> m $6220 2
+00006220: 00 06                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 3 times.
+	pc = $31486 :trace :file /tmp/mw2run-pn83elek/hit2.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m $b42e6 2
+000B42E6: 00 02                                            ..
+> m $6220 2
+00006220: 00 06                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 4 times.
+	pc = $31486 :trace :file /tmp/mw2run-pn83elek/hit2.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m $b42e6 2
+000B42E6: 00 03                                            ..
+> m $6220 2
+00006220: 00 06                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 5 times.
+	pc = $31486 :trace :file /tmp/mw2run-pn83elek/hit2.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m $b42e6 2
+000B42E6: 00 04                                            ..
+> m $6220 2
+00006220: 00 06                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 6 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0f 70 00 23 00 03 4d a4 00 03 4b 56  ..o¶.p.#..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 7 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0f 70 00 27 00 03 4d a4 00 03 4b 56  ..o¶.p.'..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 8 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0f 70 00 2f 00 03 4d a4 00 03 4b 56  ..o¶.p./..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 9 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FC6: 00 03 6a 06 00 00 63 e0 00 00 00 23 00 57 02 62  ..j...cα...#.W.b
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 6 times.
+	pc = $31486 :trace :file /tmp/mw2run-pn83elek/hit2.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+> m $6220 2
+00006220: 00 06                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 10 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0f 50 00 23 00 03 4d a4 00 03 4b 56  ..o¶.P.#..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 01                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 11 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0f 50 00 27 00 03 4d a4 00 03 4b 56  ..o¶.P.'..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 01                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 12 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0f 50 00 2f 00 03 4d a4 00 03 4b 56  ..o¶.P./..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 01                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 7 times.
+	pc = $31486 :trace :file /tmp/mw2run-pn83elek/hit2.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m $b42e6 2
+000B42E6: 00 01                                            ..
+> m $6220 2
+00006220: 00 06                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 8 times.
+	pc = $31486 :trace :file /tmp/mw2run-pn83elek/hit2.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m $b42e6 2
+000B42E6: 00 02                                            ..
+> m $6220 2
+00006220: 00 06                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 9 times.
+	pc = $31486 :trace :file /tmp/mw2run-pn83elek/hit2.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m $b42e6 2
+000B42E6: 00 03                                            ..
+> m $6220 2
+00006220: 00 06                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 10 times.
+	pc = $31486 :trace :file /tmp/mw2run-pn83elek/hit2.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m $b42e6 2
+000B42E6: 00 04                                            ..
+> m $6220 2
+00006220: 00 06                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 13 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0e b0 00 23 00 03 4d a4 00 03 4b 56  ..o¶.ã.#..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 14 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0e b0 00 27 00 03 4d a4 00 03 4b 56  ..o¶.ã.'..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 15 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0e b0 00 2f 00 03 4d a4 00 03 4b 56  ..o¶.ã./..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 11 times.
+	pc = $31486 :trace :file /tmp/mw2run-pn83elek/hit2.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+> m $6220 2
+00006220: 00 06                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 16 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0e 90 00 23 00 03 4d a4 00 03 4b 56  ..o¶.É.#..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 01                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 17 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0e 90 00 27 00 03 4d a4 00 03 4b 56  ..o¶.É.'..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 01                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 18 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0e 90 00 2f 00 03 4d a4 00 03 4b 56  ..o¶.É./..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 01                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 12 times.
+	pc = $31486 :trace :file /tmp/mw2run-pn83elek/hit2.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m $b42e6 2
+000B42E6: 00 01                                            ..
+> m $6220 2
+00006220: 00 06                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 13 times.
+	pc = $31486 :trace :file /tmp/mw2run-pn83elek/hit2.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m $b42e6 2
+000B42E6: 00 02                                            ..
+> m $6220 2
+00006220: 00 06                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 14 times.
+	pc = $31486 :trace :file /tmp/mw2run-pn83elek/hit2.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m $b42e6 2
+000B42E6: 00 03                                            ..
+> m $6220 2
+00006220: 00 06                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 15 times.
+	pc = $31486 :trace :file /tmp/mw2run-pn83elek/hit2.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m $b42e6 2
+000B42E6: 00 04                                            ..
+> m $6220 2
+00006220: 00 06                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 19 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0d f0 00 23 00 03 4d a4 00 03 4b 56  ..o¶.≡.#..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 20 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0d f0 00 27 00 03 4d a4 00 03 4b 56  ..o¶.≡.'..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 21 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0d f0 00 2f 00 03 4d a4 00 03 4b 56  ..o¶.≡./..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 16 times.
+	pc = $31486 :trace :file /tmp/mw2run-pn83elek/hit2.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+> m $6220 2
+00006220: 00 06                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 22 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0d c0 00 23 00 03 4d a4 00 03 4b 56  ..o¶.ĳ.#..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 01                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 23 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0d c0 00 27 00 03 4d a4 00 03 4b 56  ..o¶.ĳ.'..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 01                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 24 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0d c0 00 2f 00 03 4d a4 00 03 4b 56  ..o¶.ĳ./..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 01                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 17 times.
+	pc = $31486 :trace :file /tmp/mw2run-pn83elek/hit2.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m $b42e6 2
+000B42E6: 00 01                                            ..
+> m $6220 2
+00006220: 00 06                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 18 times.
+	pc = $31486 :trace :file /tmp/mw2run-pn83elek/hit2.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m $b42e6 2
+000B42E6: 00 02                                            ..
+> m $6220 2
+00006220: 00 06                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 19 times.
+	pc = $31486 :trace :file /tmp/mw2run-pn83elek/hit2.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m $b42e6 2
+000B42E6: 00 03                                            ..
+> m $6220 2
+00006220: 00 06                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 20 times.
+	pc = $31486 :trace :file /tmp/mw2run-pn83elek/hit2.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m $b42e6 2
+000B42E6: 00 04                                            ..
+> m $6220 2
+00006220: 00 06                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 25 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0d 20 00 23 00 03 4d a4 00 03 4b 56  ..o¶. .#..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 26 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0d 20 00 27 00 03 4d a4 00 03 4b 56  ..o¶. .'..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 27 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0d 20 00 2f 00 03 4d a4 00 03 4b 56  ..o¶. ./..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 28 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FC6: 00 03 6a 06 00 00 63 eb 00 00 00 34 05 5a 02 08  ..j...cδ...4.Z..
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 29 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FCA: 00 02 6f bc 00 00 00 65 00 02 f6 f0 00 02 f1 f6  ..o¶...e..÷≡..±÷
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 30 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FCA: 00 02 6f bc 00 00 00 06 00 02 f6 fc 00 02 f1 f6  ..o¶......÷ⁿ..±÷
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 31 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FD2: 00 02 f7 06 00 02 f1 f6 00 06 00 00 4a 6a 00 00  ..≈...±÷....Jj..
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 32 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FCA: 00 02 6f bc 00 00 00 65 00 02 f6 f0 00 02 f1 f6  ..o¶...e..÷≡..±÷
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 33 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FCA: 00 02 6f bc 00 00 00 06 00 02 f6 fc 00 02 f1 f6  ..o¶......÷ⁿ..±÷
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 34 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FD2: 00 02 f7 06 00 02 f1 f6 00 06 00 00 4a 6a 00 00  ..≈...±÷....Jj..
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 35 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FCA: 00 02 6f bc 00 00 00 65 00 02 f6 f0 00 02 f1 f6  ..o¶...e..÷≡..±÷
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 36 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FCA: 00 02 6f bc 00 00 00 06 00 02 f6 fc 00 02 f1 f6  ..o¶......÷ⁿ..±÷
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 37 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FD2: 00 02 f7 06 00 02 f1 f6 00 06 00 00 4a 6a 00 00  ..≈...±÷....Jj..
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 21 times.
+	pc = $31486 :trace :file /tmp/mw2run-pn83elek/hit2.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+> m $6220 2
+00006220: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 38 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0c f0 00 23 00 03 4d a4 00 03 4b 56  ..o¶.≡.#..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 39 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0c f0 00 27 00 03 4d a4 00 03 4b 56  ..o¶.≡.'..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 40 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0c f0 00 2f 00 03 4d a4 00 03 4b 56  ..o¶.≡./..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 22 times.
+	pc = $31486 :trace :file /tmp/mw2run-pn83elek/hit2.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+> m $6220 2
+00006220: 00 15                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 41 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0c f0 00 23 00 03 4d a4 00 03 4b 56  ..o¶.≡.#..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 42 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0c f0 00 27 00 03 4d a4 00 03 4b 56  ..o¶.≡.'..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 43 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0c f0 00 2f 00 03 4d a4 00 03 4b 56  ..o¶.≡./..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 23 times.
+	pc = $31486 :trace :file /tmp/mw2run-pn83elek/hit2.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+> m $6220 2
+00006220: 00 15                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 44 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0c f0 00 23 00 03 4d a4 00 03 4b 56  ..o¶.≡.#..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 45 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0c f0 00 27 00 03 4d a4 00 03 4b 56  ..o¶.≡.'..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 46 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0c f0 00 2f 00 03 4d a4 00 03 4b 56  ..o¶.≡./..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 24 times.
+	pc = $31486 :trace :file /tmp/mw2run-pn83elek/hit2.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+> m $6220 2
+00006220: 00 15                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 47 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0c f0 00 23 00 03 4d a4 00 03 4b 56  ..o¶.≡.#..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 48 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0c f0 00 27 00 03 4d a4 00 03 4b 56  ..o¶.≡.'..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 49 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0c f0 00 2f 00 03 4d a4 00 03 4b 56  ..o¶.≡./..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 25 times.
+	pc = $31486 :trace :file /tmp/mw2run-pn83elek/hit2.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+> m $6220 2
+00006220: 00 15                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 50 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0c f0 00 23 00 03 4d a4 00 03 4b 56  ..o¶.≡.#..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 51 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0c f0 00 27 00 03 4d a4 00 03 4b 56  ..o¶.≡.'..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 52 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0c f0 00 2f 00 03 4d a4 00 03 4b 56  ..o¶.≡./..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 53 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00008002: 00 03 6a 84 00 03 5b e6 00 03 5a 56 00 00 76 86  ..jä..[µ..ZV..vå
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 54 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00008002: 00 03 6a ba 00 03 5b e6 00 03 5a 56 00 00 76 86  ..j´..[µ..ZV..vå
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 26 times.
+	pc = $31486 :trace :file /tmp/mw2run-pn83elek/hit2.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+> m $6220 2
+00006220: 00 15                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 55 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0c f0 00 23 00 03 4d a4 00 03 4b 56  ..o¶.≡.#..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 56 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0c f0 00 27 00 03 4d a4 00 03 4b 56  ..o¶.≡.'..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 57 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0c f0 00 2f 00 03 4d a4 00 03 4b 56  ..o¶.≡./..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 58 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00008002: 00 03 6a 84 00 03 5c cc 00 03 5a 56 00 00 76 86  ..jä..\כ..ZV..vå
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 59 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00008002: 00 03 6a ba 00 03 5c cc 00 03 5a 56 00 00 76 86  ..j´..\כ..ZV..vå
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 27 times.
+	pc = $31486 :trace :file /tmp/mw2run-pn83elek/hit2.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+> m $6220 2
+00006220: 00 15                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 60 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0c f0 00 23 00 03 4d a4 00 03 4b 56  ..o¶.≡.#..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 61 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0c f0 00 27 00 03 4d a4 00 03 4b 56  ..o¶.≡.'..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 62 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0c f0 00 2f 00 03 4d a4 00 03 4b 56  ..o¶.≡./..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 63 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00008002: 00 03 6a 84 00 03 5c cc 00 03 5a 56 00 00 76 86  ..jä..\כ..ZV..vå
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 64 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00008002: 00 03 6a ba 00 03 5c cc 00 03 5a 56 00 00 76 86  ..j´..\כ..ZV..vå
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 28 times.
+	pc = $31486 :trace :file /tmp/mw2run-pn83elek/hit2.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+> m $6220 2
+00006220: 00 15                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 65 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0c f0 00 23 00 03 4d a4 00 03 4b 56  ..o¶.≡.#..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 66 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0c f0 00 27 00 03 4d a4 00 03 4b 56  ..o¶.≡.'..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 67 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0c f0 00 2f 00 03 4d a4 00 03 4b 56  ..o¶.≡./..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 68 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00008002: 00 03 6a 84 00 03 5c cc 00 03 5a 56 00 00 76 86  ..jä..\כ..ZV..vå
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 69 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00008002: 00 03 6a ba 00 03 5c cc 00 03 5a 56 00 00 76 86  ..j´..\כ..ZV..vå
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 29 times.
+	pc = $31486 :trace :file /tmp/mw2run-pn83elek/hit2.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+> m $6220 2
+00006220: 00 15                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 70 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0c f0 00 23 00 03 4d a4 00 03 4b 56  ..o¶.≡.#..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 71 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0c f0 00 27 00 03 4d a4 00 03 4b 56  ..o¶.≡.'..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 72 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0c f0 00 2f 00 03 4d a4 00 03 4b 56  ..o¶.≡./..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 30 times.
+	pc = $31486 :trace :file /tmp/mw2run-pn83elek/hit2.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+> m $6220 2
+00006220: 00 15                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 73 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0c f0 00 23 00 03 4d a4 00 03 4b 56  ..o¶.≡.#..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 74 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0c f0 00 27 00 03 4d a4 00 03 4b 56  ..o¶.≡.'..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 75 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0c f0 00 2f 00 03 4d a4 00 03 4b 56  ..o¶.≡./..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 31 times.
+	pc = $31486 :trace :file /tmp/mw2run-pn83elek/hit2.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+> m $6220 2
+00006220: 00 15                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 76 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0c f0 00 23 00 03 4d a4 00 03 4b 56  ..o¶.≡.#..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 77 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0c f0 00 27 00 03 4d a4 00 03 4b 56  ..o¶.≡.'..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 78 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0c f0 00 2f 00 03 4d a4 00 03 4b 56  ..o¶.≡./..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 32 times.
+	pc = $31486 :trace :file /tmp/mw2run-pn83elek/hit2.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+> m $6220 2
+00006220: 00 15                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 79 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0c f0 00 23 00 03 4d a4 00 03 4b 56  ..o¶.≡.#..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 80 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0c f0 00 27 00 03 4d a4 00 03 4b 56  ..o¶.≡.'..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 81 times.
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+Reading debugger commands from '/tmp/mw2run-pn83elek/hit.txt'...
+Changed to input file dir '/tmp/mw2run-pn83elek'.
+> m a7 16
+00007FDE: 00 02 6f bc 0c f0 00 2f 00 03 4d a4 00 03 4b 56  ..o¶.≡./..Mñ..KV
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+> b all
+Removed CPU breakpoint 2:
+	pc = $31486 :trace :file /tmp/mw2run-pn83elek/hit2.txt
+Removed CPU breakpoint 1:
+	pc = $26fd0 :trace :file /tmp/mw2run-pn83elek/hit.txt
+CPU breakpoints: 0

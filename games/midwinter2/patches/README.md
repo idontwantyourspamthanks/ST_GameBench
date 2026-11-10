@@ -230,3 +230,8 @@ floppy "Insert Graphics Disk" prompt and on the HD loading screen. The palette a
   `ram_ingame_lobos.bin` shows overlay code there. For a `phase: boot` site in such a range `verify` compares against
   `work/dumps/ram_boot_hd1mb.bin` (RAM at game entry `$312a8` of an unpatched 1 MB HD boot; the floppy boot dump
   `ram_boot_fl1mb.bin` differs only at PP's patch addresses).
+
+## Vehicle work (2026-11-10, all `default: no`; `work/notes/vehicles_p3b.md`)
+- `p3cp_head` + `p3c_sim` (+ `p3b_render`): predict-ahead 25 Hz player motion for every vehicle type; the original tick runs once per group, the extra passes display a predicted pose. `p3c_head`: interpolated alternative. Replace `p3b_head/pos/hdg/alt/bank/save/probe`; do not mix.
+- `p3b_alt_fix`, `p3b_head_fix`: fixes for the shipped p3b (bank coefficients, wave phase once per group, type table); untested (gate hung).
+- `p7_skip_render_t`: type-table variant of `p7_skip_render`. `p4_hud_crop_{clip,fill,replay}_t`: type-table crop (visual tradeoff).

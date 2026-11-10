@@ -1,0 +1,1224 @@
+> b VBL > 154800 && pc = $26e98 :trace :once :file /tmp/mw2run-q9fvor38/apply.txt
+CPU condition breakpoint 1 with 2 condition(s) added:
+	VBL > 154800 && pc = $26e98
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-q9fvor38/apply.txt' file on hit.
+1. CPU breakpoint condition(s) matched 1 times.
+	VBL > 154800 && pc = $26e98 :once :trace :file /tmp/mw2run-q9fvor38/apply.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/apply.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> loadbin /tmp/vw/t3.img $b3000
+  Read 0x8000 bytes.
+> w $33f50 $4e $b9 $00 $0b $42 $34
+Wrote 6 'b' values starting from 0x33f50.
+> w $3461e $4e $b9 $00 $0b $42 $94 $4e $71
+Wrote 8 'b' values starting from 0x3461e.
+> w $345e0 $4e $b9 $00 $0b $41 $be
+Wrote 6 'b' values starting from 0x345e0.
+> w $344f8 $4e $b9 $00 $0b $41 $3e
+Wrote 6 'b' values starting from 0x344f8.
+> w $33dc6 $4e $b9 $00 $0b $4c $00 $4e $71
+Wrote 8 'b' values starting from 0x33dc6.
+> w $33be6 $4e $b9 $00 $0b $41 $26
+Wrote 6 'b' values starting from 0x33be6.
+> w $345aa $4e $b9 $00 $0b $4f $40 $4e $71
+Wrote 8 'b' values starting from 0x345aa.
+> w $31486 $4e $b9 $00 $0b $40 $00 $4e $71
+Wrote 8 'b' values starting from 0x31486.
+> w $31576 $4e $b9 $00 $0b $4e $20
+Wrote 6 'b' values starting from 0x31576.
+> w $33e30 $4e $b9 $00 $0b $4e $a0 $4e $71
+Wrote 8 'b' values starting from 0x33e30.
+> w $33e46 $4e $b9 $00 $0b $4e $40
+Wrote 6 'b' values starting from 0x33e46.
+> w $33bf8 $4e $b9 $00 $0b $4e $80
+Wrote 6 'b' values starting from 0x33bf8.
+> w $33d4c $4e $b9 $00 $0b $4f $c0 $4e $71
+Wrote 8 'b' values starting from 0x33d4c.
+> w $6fba $00 $96 $00 $00
+Wrote 4 'b' values starting from 0x6fba.
+> w $6fb6 $ff $60 $00 $00
+Wrote 4 'b' values starting from 0x6fb6.
+> w $b4e00 $00 $00 $00 $40
+Wrote 4 'b' values starting from 0xb4e00.
+> w $b4e04 $00 $01
+Wrote 2 'b' values starting from 0xb4e04.
+> b pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $31486
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-q9fvor38/hit.txt' file on hit.
+> b pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+CPU condition breakpoint 3 with 1 condition(s) added:
+	pc = $3158c
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt' file on hit.
+> b pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+CPU condition breakpoint 4 with 1 condition(s) added:
+	pc = $1dcae
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-q9fvor38/hit3.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+Removed CPU breakpoint 1:
+	VBL > 154800 && pc = $26e98 :once :trace :file /tmp/mw2run-q9fvor38/apply.txt
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 0
+= %0 (bin), #0 (dec), $0 (hex)
+> m $b42e6 2
+000B42E6: 00 00                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 1 times.
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 1
+= %1 (bin), #1 (dec), $1 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+3. CPU breakpoint condition(s) matched 1 times.
+	pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit3.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 2
+= %10 (bin), #2 (dec), $2 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 2 times.
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 0
+= %0 (bin), #0 (dec), $0 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 2 times.
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 1
+= %1 (bin), #1 (dec), $1 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+3. CPU breakpoint condition(s) matched 2 times.
+	pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit3.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 2
+= %10 (bin), #2 (dec), $2 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 3 times.
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 0
+= %0 (bin), #0 (dec), $0 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 3 times.
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 1
+= %1 (bin), #1 (dec), $1 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+3. CPU breakpoint condition(s) matched 3 times.
+	pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit3.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 2
+= %10 (bin), #2 (dec), $2 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 4 times.
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 0
+= %0 (bin), #0 (dec), $0 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 4 times.
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 1
+= %1 (bin), #1 (dec), $1 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+3. CPU breakpoint condition(s) matched 4 times.
+	pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit3.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 2
+= %10 (bin), #2 (dec), $2 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 5 times.
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 0
+= %0 (bin), #0 (dec), $0 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 5 times.
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 1
+= %1 (bin), #1 (dec), $1 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+3. CPU breakpoint condition(s) matched 5 times.
+	pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit3.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 2
+= %10 (bin), #2 (dec), $2 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 6 times.
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 0
+= %0 (bin), #0 (dec), $0 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 6 times.
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 1
+= %1 (bin), #1 (dec), $1 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+3. CPU breakpoint condition(s) matched 6 times.
+	pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit3.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 2
+= %10 (bin), #2 (dec), $2 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 7 times.
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 0
+= %0 (bin), #0 (dec), $0 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 7 times.
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 1
+= %1 (bin), #1 (dec), $1 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+3. CPU breakpoint condition(s) matched 7 times.
+	pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit3.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 2
+= %10 (bin), #2 (dec), $2 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 8 times.
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 0
+= %0 (bin), #0 (dec), $0 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 8 times.
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 1
+= %1 (bin), #1 (dec), $1 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+3. CPU breakpoint condition(s) matched 8 times.
+	pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit3.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 2
+= %10 (bin), #2 (dec), $2 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 9 times.
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 0
+= %0 (bin), #0 (dec), $0 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 9 times.
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 1
+= %1 (bin), #1 (dec), $1 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+3. CPU breakpoint condition(s) matched 9 times.
+	pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit3.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 2
+= %10 (bin), #2 (dec), $2 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 10 times.
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 0
+= %0 (bin), #0 (dec), $0 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 10 times.
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 1
+= %1 (bin), #1 (dec), $1 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+3. CPU breakpoint condition(s) matched 10 times.
+	pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit3.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 2
+= %10 (bin), #2 (dec), $2 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 11 times.
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 0
+= %0 (bin), #0 (dec), $0 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 11 times.
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 1
+= %1 (bin), #1 (dec), $1 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+3. CPU breakpoint condition(s) matched 11 times.
+	pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit3.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 2
+= %10 (bin), #2 (dec), $2 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 12 times.
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 0
+= %0 (bin), #0 (dec), $0 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 12 times.
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 1
+= %1 (bin), #1 (dec), $1 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+3. CPU breakpoint condition(s) matched 12 times.
+	pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit3.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 2
+= %10 (bin), #2 (dec), $2 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 13 times.
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 0
+= %0 (bin), #0 (dec), $0 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 13 times.
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 1
+= %1 (bin), #1 (dec), $1 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+3. CPU breakpoint condition(s) matched 13 times.
+	pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit3.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 2
+= %10 (bin), #2 (dec), $2 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 14 times.
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 0
+= %0 (bin), #0 (dec), $0 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 14 times.
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 1
+= %1 (bin), #1 (dec), $1 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+3. CPU breakpoint condition(s) matched 14 times.
+	pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit3.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 2
+= %10 (bin), #2 (dec), $2 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 15 times.
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 0
+= %0 (bin), #0 (dec), $0 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 15 times.
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 1
+= %1 (bin), #1 (dec), $1 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+3. CPU breakpoint condition(s) matched 15 times.
+	pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit3.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 2
+= %10 (bin), #2 (dec), $2 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 16 times.
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 0
+= %0 (bin), #0 (dec), $0 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 16 times.
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 1
+= %1 (bin), #1 (dec), $1 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+3. CPU breakpoint condition(s) matched 16 times.
+	pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit3.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 2
+= %10 (bin), #2 (dec), $2 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 17 times.
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 0
+= %0 (bin), #0 (dec), $0 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 17 times.
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 1
+= %1 (bin), #1 (dec), $1 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+3. CPU breakpoint condition(s) matched 17 times.
+	pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit3.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 2
+= %10 (bin), #2 (dec), $2 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 18 times.
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 0
+= %0 (bin), #0 (dec), $0 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 18 times.
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 1
+= %1 (bin), #1 (dec), $1 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+3. CPU breakpoint condition(s) matched 18 times.
+	pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit3.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 2
+= %10 (bin), #2 (dec), $2 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 19 times.
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 0
+= %0 (bin), #0 (dec), $0 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 19 times.
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 1
+= %1 (bin), #1 (dec), $1 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+3. CPU breakpoint condition(s) matched 19 times.
+	pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit3.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 2
+= %10 (bin), #2 (dec), $2 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 20 times.
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 0
+= %0 (bin), #0 (dec), $0 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 20 times.
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 1
+= %1 (bin), #1 (dec), $1 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+3. CPU breakpoint condition(s) matched 20 times.
+	pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit3.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 2
+= %10 (bin), #2 (dec), $2 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 21 times.
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 0
+= %0 (bin), #0 (dec), $0 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 21 times.
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 1
+= %1 (bin), #1 (dec), $1 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+3. CPU breakpoint condition(s) matched 21 times.
+	pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit3.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 2
+= %10 (bin), #2 (dec), $2 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 22 times.
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 0
+= %0 (bin), #0 (dec), $0 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 22 times.
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 1
+= %1 (bin), #1 (dec), $1 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+3. CPU breakpoint condition(s) matched 22 times.
+	pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit3.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 2
+= %10 (bin), #2 (dec), $2 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 23 times.
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 0
+= %0 (bin), #0 (dec), $0 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 23 times.
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 1
+= %1 (bin), #1 (dec), $1 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+3. CPU breakpoint condition(s) matched 23 times.
+	pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit3.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 2
+= %10 (bin), #2 (dec), $2 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 24 times.
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 0
+= %0 (bin), #0 (dec), $0 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 24 times.
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 1
+= %1 (bin), #1 (dec), $1 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+3. CPU breakpoint condition(s) matched 24 times.
+	pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit3.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 2
+= %10 (bin), #2 (dec), $2 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 25 times.
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 0
+= %0 (bin), #0 (dec), $0 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 25 times.
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 1
+= %1 (bin), #1 (dec), $1 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+3. CPU breakpoint condition(s) matched 25 times.
+	pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit3.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 2
+= %10 (bin), #2 (dec), $2 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 26 times.
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 0
+= %0 (bin), #0 (dec), $0 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 26 times.
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 1
+= %1 (bin), #1 (dec), $1 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+3. CPU breakpoint condition(s) matched 26 times.
+	pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit3.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 2
+= %10 (bin), #2 (dec), $2 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 27 times.
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 0
+= %0 (bin), #0 (dec), $0 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 27 times.
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 1
+= %1 (bin), #1 (dec), $1 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+3. CPU breakpoint condition(s) matched 27 times.
+	pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit3.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 2
+= %10 (bin), #2 (dec), $2 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 28 times.
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 0
+= %0 (bin), #0 (dec), $0 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 28 times.
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 1
+= %1 (bin), #1 (dec), $1 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+3. CPU breakpoint condition(s) matched 28 times.
+	pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit3.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 2
+= %10 (bin), #2 (dec), $2 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 29 times.
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 0
+= %0 (bin), #0 (dec), $0 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 29 times.
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 1
+= %1 (bin), #1 (dec), $1 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+3. CPU breakpoint condition(s) matched 29 times.
+	pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit3.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 2
+= %10 (bin), #2 (dec), $2 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 30 times.
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 0
+= %0 (bin), #0 (dec), $0 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 30 times.
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 1
+= %1 (bin), #1 (dec), $1 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+3. CPU breakpoint condition(s) matched 30 times.
+	pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit3.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 2
+= %10 (bin), #2 (dec), $2 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 31 times.
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 0
+= %0 (bin), #0 (dec), $0 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 31 times.
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 1
+= %1 (bin), #1 (dec), $1 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+3. CPU breakpoint condition(s) matched 31 times.
+	pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit3.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 2
+= %10 (bin), #2 (dec), $2 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 32 times.
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 0
+= %0 (bin), #0 (dec), $0 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 32 times.
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 1
+= %1 (bin), #1 (dec), $1 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+3. CPU breakpoint condition(s) matched 32 times.
+	pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit3.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 2
+= %10 (bin), #2 (dec), $2 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 33 times.
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 0
+= %0 (bin), #0 (dec), $0 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 33 times.
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 1
+= %1 (bin), #1 (dec), $1 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+3. CPU breakpoint condition(s) matched 33 times.
+	pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit3.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 2
+= %10 (bin), #2 (dec), $2 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 34 times.
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 0
+= %0 (bin), #0 (dec), $0 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 34 times.
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 1
+= %1 (bin), #1 (dec), $1 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+3. CPU breakpoint condition(s) matched 34 times.
+	pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit3.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 2
+= %10 (bin), #2 (dec), $2 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 35 times.
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 0
+= %0 (bin), #0 (dec), $0 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 35 times.
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 1
+= %1 (bin), #1 (dec), $1 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+3. CPU breakpoint condition(s) matched 35 times.
+	pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit3.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 2
+= %10 (bin), #2 (dec), $2 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 36 times.
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 0
+= %0 (bin), #0 (dec), $0 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 36 times.
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 1
+= %1 (bin), #1 (dec), $1 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+3. CPU breakpoint condition(s) matched 36 times.
+	pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit3.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 2
+= %10 (bin), #2 (dec), $2 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 37 times.
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 0
+= %0 (bin), #0 (dec), $0 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 37 times.
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 1
+= %1 (bin), #1 (dec), $1 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+3. CPU breakpoint condition(s) matched 37 times.
+	pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit3.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 2
+= %10 (bin), #2 (dec), $2 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 38 times.
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 0
+= %0 (bin), #0 (dec), $0 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 38 times.
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 1
+= %1 (bin), #1 (dec), $1 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+3. CPU breakpoint condition(s) matched 38 times.
+	pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit3.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 2
+= %10 (bin), #2 (dec), $2 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 39 times.
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 0
+= %0 (bin), #0 (dec), $0 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 39 times.
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 1
+= %1 (bin), #1 (dec), $1 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+3. CPU breakpoint condition(s) matched 39 times.
+	pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit3.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 2
+= %10 (bin), #2 (dec), $2 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 40 times.
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 0
+= %0 (bin), #0 (dec), $0 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 40 times.
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 1
+= %1 (bin), #1 (dec), $1 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+3. CPU breakpoint condition(s) matched 40 times.
+	pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit3.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 2
+= %10 (bin), #2 (dec), $2 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 41 times.
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 0
+= %0 (bin), #0 (dec), $0 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 41 times.
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 1
+= %1 (bin), #1 (dec), $1 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+3. CPU breakpoint condition(s) matched 41 times.
+	pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit3.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 2
+= %10 (bin), #2 (dec), $2 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 42 times.
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 0
+= %0 (bin), #0 (dec), $0 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 42 times.
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 1
+= %1 (bin), #1 (dec), $1 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+3. CPU breakpoint condition(s) matched 42 times.
+	pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit3.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 2
+= %10 (bin), #2 (dec), $2 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+1. CPU breakpoint condition(s) matched 43 times.
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 0
+= %0 (bin), #0 (dec), $0 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+2. CPU breakpoint condition(s) matched 43 times.
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Reading debugger commands from '/tmp/mw2run-q9fvor38/hit2.txt'...
+Changed to input file dir '/tmp/mw2run-q9fvor38'.
+> e 1
+= %1 (bin), #1 (dec), $1 (hex)
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+> b all
+Removed CPU breakpoint 3:
+	pc = $1dcae :trace :file /tmp/mw2run-q9fvor38/hit3.txt
+Removed CPU breakpoint 2:
+	pc = $3158c :trace :file /tmp/mw2run-q9fvor38/hit2.txt
+Removed CPU breakpoint 1:
+	pc = $31486 :trace :file /tmp/mw2run-q9fvor38/hit.txt
+CPU breakpoints: 0

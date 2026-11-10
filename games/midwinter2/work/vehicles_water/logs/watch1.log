@@ -1,0 +1,163 @@
+> b VBL > 153775 && pc = $26e98 :trace :once :file /tmp/mw2run-9iybli4i/apply.txt
+CPU condition breakpoint 1 with 2 condition(s) added:
+	VBL > 153775 && pc = $26e98
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-9iybli4i/apply.txt' file on hit.
+1. CPU breakpoint condition(s) matched 1 times.
+	VBL > 153775 && pc = $26e98 :once :trace :file /tmp/mw2run-9iybli4i/apply.txt
+Reading debugger commands from '/tmp/mw2run-9iybli4i/apply.txt'...
+Changed to input file dir '/tmp/mw2run-9iybli4i'.
+> loadbin /tmp/vw/t3.img $b3000
+  Read 0x8000 bytes.
+> w $33f50 $4e $b9 $00 $0b $42 $34
+Wrote 6 'b' values starting from 0x33f50.
+> w $3461e $4e $b9 $00 $0b $42 $94 $4e $71
+Wrote 8 'b' values starting from 0x3461e.
+> w $345e0 $4e $b9 $00 $0b $41 $be
+Wrote 6 'b' values starting from 0x345e0.
+> w $344f8 $4e $b9 $00 $0b $41 $3e
+Wrote 6 'b' values starting from 0x344f8.
+> w $33dc6 $4e $b9 $00 $0b $4c $00 $4e $71
+Wrote 8 'b' values starting from 0x33dc6.
+> w $33be6 $4e $b9 $00 $0b $41 $26
+Wrote 6 'b' values starting from 0x33be6.
+> w $31486 $4e $b9 $00 $0b $40 $00 $4e $71
+Wrote 8 'b' values starting from 0x31486.
+> w $31576 $4e $b9 $00 $0b $4e $20
+Wrote 6 'b' values starting from 0x31576.
+> w $33e30 $4e $b9 $00 $0b $4e $a0 $4e $71
+Wrote 8 'b' values starting from 0x33e30.
+> w $33e46 $4e $b9 $00 $0b $4e $40
+Wrote 6 'b' values starting from 0x33e46.
+> w $33bf8 $4e $b9 $00 $0b $4e $80
+Wrote 6 'b' values starting from 0x33bf8.
+> w $6fba $00 $96 $00 $00
+Wrote 4 'b' values starting from 0x6fba.
+> w $6fb6 $ff $60 $00 $00
+Wrote 4 'b' values starting from 0x6fb6.
+> w $b4e00 $00 $00 $00 $40
+Wrote 4 'b' values starting from 0xb4e00.
+> b ($6220).w ! ($6220).w :trace :file /tmp/mw2run-9iybli4i/hit.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	( $6220 ) . w ! ( $6220 ) . w
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-9iybli4i/hit.txt' file on hit.
+-> Track value changes, show value(s) when matched.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+Removed CPU breakpoint 1:
+	VBL > 153775 && pc = $26e98 :once :trace :file /tmp/mw2run-9iybli4i/apply.txt
+  $6220 = $b
+1. CPU breakpoint condition(s) matched 1 times.
+	( $6220 ) . w ! ( $6220 ) . w :trace :file /tmp/mw2run-9iybli4i/hit.txt
+Reading debugger commands from '/tmp/mw2run-9iybli4i/hit.txt'...
+Changed to input file dir '/tmp/mw2run-9iybli4i'.
+> r
+  D0 00000006   D1 00000078   D2 00006200   D3 00003100 
+  D4 0000000E   D5 0000FEA7   D6 FFFFFFFF   D7 0000FFFF 
+  A0 0006F800   A1 0006F7C0   A2 00079F80   A3 0007D244 
+  A4 0007C718   A5 0007BE8C   A6 0000770E   A7 0000802A 
+USP  000B1F40 ISP  0000802A 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch 0c78 (CMP) ff80 (ILLEGAL) Chip latch 00000000
+00032e62 0c78 ff80 764c           cmp.w #$ff80,$0000764c.w [0023]
+Next PC: 00032e68
+> m $6220 2
+00006220: 00 0b                                            ..
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $b42e6 6
+000B42E6: 00 05 00 01 00 01                                ......
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+  $6220 = $5
+1. CPU breakpoint condition(s) matched 2 times.
+	( $6220 ) . w ! ( $6220 ) . w :trace :file /tmp/mw2run-9iybli4i/hit.txt
+Reading debugger commands from '/tmp/mw2run-9iybli4i/hit.txt'...
+Changed to input file dir '/tmp/mw2run-9iybli4i'.
+> r
+  D0 00000006   D1 00000078   D2 00006200   D3 00003100 
+  D4 0000000E   D5 0000FEA7   D6 FFFFFFFF   D7 0000FFFF 
+  A0 0006F800   A1 0006F7C0   A2 00079F80   A3 0007D244 
+  A4 0007C718   A5 0007BE8C   A6 0000770E   A7 0000802A 
+USP  000B1F40 ISP  0000802A 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch 3200 (MOVE) c2fc (MULU) Chip latch 00000000
+00032e70 3200                     move.w d0,d1
+Next PC: 00032e72
+> m $6220 2
+00006220: 00 05                                            ..
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $b42e6 6
+000B42E6: 00 05 00 01 00 01                                ......
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+  $6220 = $15
+1. CPU breakpoint condition(s) matched 3 times.
+	( $6220 ) . w ! ( $6220 ) . w :trace :file /tmp/mw2run-9iybli4i/hit.txt
+Reading debugger commands from '/tmp/mw2run-9iybli4i/hit.txt'...
+Changed to input file dir '/tmp/mw2run-9iybli4i'.
+> r
+  D0 0000FF4E   D1 0000FFDB   D2 00000025   D3 0000FFF2 
+  D4 0000FFB9   D5 0000FFDB   D6 00002C15   D7 00000001 
+  A0 00018574   A1 00004A8A   A2 00079F80   A3 0007D244 
+  A4 0007C718   A5 0007BE8C   A6 0000770E   A7 00007FEE 
+USP  000B1F40 ISP  00007FEE 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch 33f8 (MOVE) 6880 (Bcc) Chip latch 00000000
+00033612 33f8 6880 0001 8112      move.w $00006880.w [0000],$00018112 [0002]
+Next PC: 0003361a
+> m $6220 2
+00006220: 00 15                                            ..
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $b42e6 6
+000B42E6: 00 05 00 00 00 00                                ......
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+  $6220 = $b
+1. CPU breakpoint condition(s) matched 4 times.
+	( $6220 ) . w ! ( $6220 ) . w :trace :file /tmp/mw2run-9iybli4i/hit.txt
+Reading debugger commands from '/tmp/mw2run-9iybli4i/hit.txt'...
+Changed to input file dir '/tmp/mw2run-9iybli4i'.
+> r
+  D0 00000015   D1 00000078   D2 00006200   D3 00003100 
+  D4 FFFFFEFE   D5 0000FEB8   D6 0000FFFF   D7 0000FFFF 
+  A0 0006F800   A1 0006F7C0   A2 00079F50   A3 0007D178 
+  A4 0007C718   A5 0007BE58   A6 0000770E   A7 0000802A 
+USP  000B1F40 ISP  0000802A 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch 0c78 (CMP) ff80 (ILLEGAL) Chip latch 00000000
+00032e62 0c78 ff80 764c           cmp.w #$ff80,$0000764c.w [0009]
+Next PC: 00032e68
+> m $6220 2
+00006220: 00 0b                                            ..
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $b42e6 6
+000B42E6: 00 05 00 00 00 00                                ......
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+  $6220 = $5
+1. CPU breakpoint condition(s) matched 5 times.
+	( $6220 ) . w ! ( $6220 ) . w :trace :file /tmp/mw2run-9iybli4i/hit.txt
+Reading debugger commands from '/tmp/mw2run-9iybli4i/hit.txt'...
+Changed to input file dir '/tmp/mw2run-9iybli4i'.
+> r
+  D0 00000015   D1 00000078   D2 00006200   D3 00003100 
+  D4 FFFFFEFE   D5 0000FEB8   D6 0000FFFF   D7 0000FFFF 
+  A0 0006F800   A1 0006F7C0   A2 00079F50   A3 0007D178 
+  A4 0007C718   A5 0007BE58   A6 0000770E   A7 0000802A 
+USP  000B1F40 ISP  0000802A 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch 3200 (MOVE) c2fc (MULU) Chip latch 00000000
+00032e70 3200                     move.w d0,d1
+Next PC: 00032e72
+> m $6220 2
+00006220: 00 05                                            ..
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $b42e6 6
+000B42E6: 00 05 00 00 00 00                                ......
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_water' dir.
+> b all
+Removed CPU breakpoint 1:
+	( $6220 ) . w ! ( $6220 ) . w :trace :file /tmp/mw2run-9iybli4i/hit.txt
+CPU breakpoints: 0

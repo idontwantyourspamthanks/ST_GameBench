@@ -230,3 +230,9 @@ Next release: **v1.2** (user, 2026-11-10). A credit line `v1.2 enhanced by dad_p
 
 ## Test scenarios (user tip, 2026-11-10)
 - **Vehicles:** Raids -> different islands start with different vehicles. Select an island with Space -> question icon -> thumbs-up icon -> In. Use this for vehicle snapshots (render patches, controls, p7_cockpit per-vehicle cockpit lists, enemy AI per type).
+
+## Correction and vehicle work (2026-11-10)
+- **`$6220` is a 0-based vehicle index** (Tank 0, Jeep 1, Truck 2, Bus 3, Train 4, on foot 5, Speedboat 6, Crawler 7, Minisub 8, Submarine 9, Ship 10, Frogman 11, Biplane 12, Helicopter 13, Zeppelin 14, Balloon 15, Rocket Pack 16, Parachute 17, Flying Boat 18, Hovercraft 19, Flying Sub 20, Swimming 21). **13 is the Helicopter**; every earlier "on foot" / "foot" snapshot and measurement in this plan, `tick_inventory.md`, `timing.md`, `p7_static_skip.md` and the P3b/P7 rows above is the Helicopter. The shipped v1.2 `p3b_*` (25 Hz sub-steps), `p7_skip_*` (static-frame skip) and the optional `p4_hud_crop_*` are gated on `$6220 = 13` and act on the Helicopter only. True on foot (type 5) and the other 20 types run the plain 5 Hz path, and `p7_skip` never fires for them (measured, `REPORT.md` section 4).
+- **P3c / P3cp (open, all `default: no`):** type-independent 25 Hz player motion; the original 5 Hz tick runs once per group of five 40 ms passes and the other passes display a pose (p3cp: predicted ahead, user's choice; p3c: interpolated). Group-end world state equal to option A for every type (`work/notes/vehicles_p3b.md`). Needs the lead's review before any default flips.
+- **Defects found in v1.2:** `p3b_alt` uses the sub-pass bank coefficients (fix `p3b_alt_fix`), the sea wave phase advances per rendered frame and the sim reads it (fix in `p3b_head_fix`, by construction in p3c/p3cp).
+

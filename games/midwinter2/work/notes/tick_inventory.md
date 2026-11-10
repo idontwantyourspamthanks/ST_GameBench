@@ -1,5 +1,7 @@
 # Tick inventory: what a 25 Hz logic tick (P3 option B) has to scale
 
+> **Correction (2026-11-10, MW2VehImpl).** In this note "foot", "on foot" and "type 13" mean the **Helicopter**: `$6220 = 13` is the Helicopter (0-based vehicle index: Tank 0, Jeep 1, Truck 2, Bus 3, Train 4, on foot 5, Speedboat 6, Crawler 7, Minisub 8, Submarine 9, Ship 10, Frogman 11, Biplane 12, Helicopter 13, Zeppelin 14, Balloon 15, Rocket Pack 16, Parachute 17, Flying Boat 18, Hovercraft 19, Flying Sub 20, Swimming 21; `raids.md`). The snapshots called "foot" / "walking" are helicopter cockpits. The validated partial-B design (p3b) and the shipped v1.2 `p3b_*` patches therefore apply to the Helicopter only; every other vehicle, **including true on foot (type 5)**, runs the plain 5 Hz path. Two defects of the shipped p3b (bank coefficients `$7652/$7654` in `p3b_alt`, sea wave phase per rendered frame) and the type-independent replacement (p3c / p3cp) are in `vehicles_p3b.md`.
+
 Author: TickInventory2. Scope: the in-game frame loop logic block `$31486-$315a4` (`frameloop.md`), which P3 option A runs at 5 Hz (`TICK = 10` VBL). Evidence is cited as disassembly addresses (`tools/m68dis.py` on `work/dumps/ram_ingame_lobos.bin`) or raw Hatari output (§5). Anything unobserved is marked **[INFERENCE]**.
 
 ## 0. Summary

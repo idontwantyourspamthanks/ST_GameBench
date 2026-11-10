@@ -1,0 +1,16 @@
+fin_speedboat: type 6  ticks 28  ORIG-formula==game 28/28  SPLIT==game 28/28 []
+fin_ship: type 10  ticks 28  ORIG-formula==game 28/28  SPLIT==game 28/28 []
+fin_hover: type 19  ticks 28  ORIG-formula==game 28/28  SPLIT==game 28/28 []
+crw2: type 7  ticks 25  ORIG-formula==game 25/25  SPLIT==game 25/25 []
+   bank ($3461a, clamp True): ORIG 31/31 SPLIT 31/31
+swim3: type 21  ticks 31  ORIG-formula==game 31/31  SPLIT==game 31/31 []
+   depth ($34586 $764c += $6740>>... clamp): ORIG 16/16 SPLIT 16/16
+sub3: type 9  ticks 16  ORIG-formula==game 16/16  SPLIT==game 16/16 []
+   bank ($3461a, clamp False): ORIG 16/16 SPLIT 16/16
+   alt with the shipped p3b_alt (unfrozen $7652): 8/16 ticks equal
+   alt/speed ($33f40 bit6): ORIG 16/16 SPLIT 16/16
+mini3: type 8  ticks 16  ORIG-formula==game 16/16  SPLIT==game 16/16 []
+   bank ($3461a, clamp False): ORIG 16/16 SPLIT 16/16
+   alt with the shipped p3b_alt (unfrozen $7652): 8/16 ticks equal
+   alt/speed ($33f40 bit6): ORIG 16/16 SPLIT 16/16
+frog2: type 11  ticks 16  ORIG-formula==game 16/16  SPLIT==game 16/16 []
