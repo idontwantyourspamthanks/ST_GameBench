@@ -169,8 +169,34 @@ See `work/notes/ttfalcon.md`. Summary: the floppy build runs to the 3D view with
 
 ## 9. Delivered
 
-- `dist/Hunter_patched_hd_<date>.zip`: folder `HUNTER/` with PP's files, the patched `START.TOS`, `FILES/P` (patches plus sample bank) and `PATCHES.TXT`.
-- `dist/Hunter_patched_floppy_<date>.zip`: `HUNTER_disk1.st` (one disk, 82 × 11) and `README.TXT`.
-- `dist/Hunter_patched_floppy_2disk_<date>.zip`: the standard-format two-disk alternative.
+- `dist/Hunter_v<VERSION>_patched_hd_<date>.zip`: folder `HUNTER/` with PP's files, the patched `START.TOS`, `FILES/P` (patches plus sample bank) and `PATCHES.TXT`.
+- `dist/Hunter_v<VERSION>_patched_floppy_<date>.zip`: `HUNTER_disk1.st` (one disk, 82 × 11) and `README.TXT`.
+- `dist/Hunter_v<VERSION>_patched_floppy_2disk_<date>.zip`: the standard-format two-disk alternative.
 - `tools/play.sh` (launcher for any machine, HD or `--floppy`, `--original`) and `tools/package.sh`.
-- The patch tool, 4 default patches (`p4_ikbd`, `p4_edge`, `p4_poly`, `snd_core`), the study notes and the test tools.
+- The patch tool, 5 default patches (`p4_ikbd`, `p4_edge`, `p4_poly`, `snd_core`, `hn_credit`), the study notes and the test tools.
+
+The zips are named `Hunter_v<VERSION>_patched_<hd|floppy|floppy_2disk>_<date>.zip` (see section 10).
+
+## 10. Release credit (version line on the title screen)
+
+`patches/hn_credit.s`; note `work/notes/credit.md`; gate tool `tools/huntcredit.py`.
+
+Every release shows `v<VERSION> enhanced by dad_prg` so that archivists can tell it from the original. **Version 1.0.**
+- **Where:** the bottom of the Hunter title screen (blue, orange icon boxes at the sides; shown while the game loads and until SPACE), under ACTIVISION. The same screen in the HD and the floppy build; the "Paper Bag presents" screen exists only on the floppy.
+- **How it hooks:** the title is the IFF picture `FILES/6`. Both loaders return into the same resident code, which ends with `jsr $10ea2.l` (the in-place IFF decoder, `$d61c`). That one 6-byte boot-phase site is hooked: the original call runs, and if the picture just decoded is the title (destination `$23000` and the title's CMAP) the text is drawn into the bitmap. No deferred hook, no loader-stage code; the original-bytes check covers it like every other site.
+- **Look:** own 4x6 font in the patch (digits, `.`, `_` and the letters of the credit; 6 bytes per glyph), centred, rows 194..199, colour index 10 (`$444`, the dim grey already in the title palette; the palette is not changed). The area is black in the original picture (rows 196..199 everywhere, and the strip between the side boxes); the text never touches the tip of the V of ACTIVISION.
+- **One place for the version:** the `; version:` header of `hn_credit.s`. `huntpatch.py` puts it in the string; `huntpatch.py version` gives it to `package.sh`, which uses it in the three zip names (`Hunter_v1.0_patched_{hd,floppy,floppy_2disk}_<date>.zip`) and in `PATCHES.TXT` / the floppy `README.TXT` (`@VERSION@` in `patches/*.TXT`).
+
+**Checks** (Hatari, STE TOS 1.62, 1 MB unless noted):
+
+| Check | Result |
+|---|---|
+| Title bitmap right after the decode, HD: unpatched game dir vs patched | 190 pixels differ, all in x 100..218, y 194..199; original colour 0 under every one, new colour 10 |
+| Same, floppy: unmodified Paper Bag `.st` vs patched | 190 pixels differ, same box, same colours; the decoded bitmaps of HD and floppy are byte-identical |
+| Screenshots (`work/shots/credit_{hd,floppy}_{orig,patched}.png`, `credit_hd_patched_st.png`) | the line is legible under ACTIVISION and stays through the title animation, on STE and plain ST |
+| `huntpatch.py verify` and `verify --floppy` | ALL OK; site `$d61c` original `4eb900010ea2` matches both dumps |
+| Cold boot HD, STE 1 MB / STE 4 MB / ST (TOS 1.04) 1 MB, full default set | 3D view reached, `HNPO`, FLAGS 3 / 3 / 6, 5.0 fps in each (unchanged) |
+| Cold boot floppy (one disk, 82x11, real FDC timing), STE 1 MB | 3D view after 88 s, `HNPO`, FLAGS 3, 4.8 fps (unchanged) |
+| Cold boot floppy, plain ST 1.04 1 MB (fast FDC) | 3D view after 70 s, `HNPO`, FLAGS 6, 5.0 fps. The blind-click harness run of the same disk ended on an "Are you sure" menu, with and without the credit patch (harness timing), so the run above used the stage gates with a looser colour tolerance. |
+
+No text is visible in the 3D view (screenshot after the HD cold boot; file E is loaded to `$23000` before it).

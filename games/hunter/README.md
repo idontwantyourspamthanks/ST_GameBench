@@ -2,7 +2,9 @@
 
 Status: **done** (HD and floppy releases, see `REPORT.md`). Activision, 1991: a 3D open-world island game (vehicles, boats, aircraft).
 
-Build: `tools/package.sh` (zips into `dist/`); play: `tools/play.sh [--floppy] [--original] [--machine ste]`.
+Build: `tools/package.sh` (zips into `dist/`, named `Hunter_v<VERSION>_patched_..._<date>.zip`); play: `tools/play.sh [--floppy] [--original] [--machine ste]`.
+
+**Release credit:** the title screen (both builds) shows a small, dim `v<VERSION> enhanced by dad_prg` at the bottom, drawn by `patches/hn_credit.s`. The version is set in one place, the `; version:` header of that file; `package.sh` and the README/PATCHES.TXT texts take it from there (`tools/huntpatch.py version`). Gate tool: `tools/huntcredit.py`.
 
 PP's packaging here is the older Gamex loader (`START.TOS` + `HUNTER.PCH` + `GXUT251.PRG`), not the HAGA system used by the Midwinter conversions. 1 MB minimum; ST(E), Mega ST(E), Falcon.
 

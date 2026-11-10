@@ -1,4 +1,5 @@
 HUNTER (Activision, 1991) - floppy version with performance patches and STE sound
+Release v@VERSION@ enhanced by dad_prg
 ===============================================================================
 
 What is in this set
@@ -11,6 +12,7 @@ What changed
   * STE sound (STE, Mega STE, TT, Falcon): the YM sound effects are replaced by the Amiga version's samples,
     played through the STE DMA sound chip (mono, 6258 Hz, two voices; the engine pitch follows the speed).
   * A plain ST keeps the original YM sound (the sample bank is not even read).
+  * The title screen shows a small, dim "v@VERSION@ enhanced by dad_prg" at the bottom; nothing else on it changes.
   * The patches check every byte they replace; if the game code is not the expected one nothing is changed.
 
 How to start

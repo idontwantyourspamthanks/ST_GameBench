@@ -83,6 +83,7 @@ PREFIX_RANGES = {                        # blob orgs allowed per patch-name pref
     "p4_": (0x8C000, 0x8DFFF),           # Raster
     "snd_": (0x8E000, 0x8FFFF),          # Audio code, mixer state, ring buffer
     "test_": (0x8DC00, 0x8DFFF),         # loader self-tests
+    "hn_": (0x8D400, 0x8DBFF),           # Hunter-specific patches (release credit); free between p4_poly's tables and test_
 }
 
 
@@ -361,6 +362,24 @@ HDR_RE = re.compile(r"^;\s*([a-z]+):\s*(.*)$")
 HB_ORG_RE = re.compile(r"^\s*org\s+HB\s*\+\s*\$([0-9a-fA-F]+)\s*$", re.I)
 
 
+VERSION_TAG = "@VERSION@"                # replaced by the `; version:` header of the patch that defines it (patches/hn_credit.s)
+CREDIT = "enhanced by dad_prg"
+
+
+def release_version() -> str:
+    """The release version: the `; version:` header of patches/hn_credit.s, the single place it is defined."""
+    for f in sorted(PATCHDIR.glob("*.s")):
+        m = re.search(r"^;\s*version:\s*(\S+)\s*$", f.read_text(), re.M)
+        if m:
+            return m.group(1)
+    raise SystemExit("no `; version:` header in patches/*.s")
+
+
+def render_doc(text: str) -> str:
+    """README / PATCHES.TXT: @VERSION@ -> the release version."""
+    return text.replace(VERSION_TAG, release_version())
+
+
 def hx(v: str) -> int:
     return int(v.strip().lstrip("$"), 16) if v.strip().startswith("$") else int(v, 0)
 
@@ -382,7 +401,12 @@ class Patch:
         self.edits = []           # file patch: (file offset, expected original bytes)
         self.fsegments = []       # file patch: (file offset, lines)
         cur = None
-        for line in path.read_text().splitlines():
+        text = path.read_text()
+        vm = re.search(r"^;\s*version:\s*(\S+)\s*$", text, re.M)
+        self.version = vm.group(1) if vm else None
+        if self.version:
+            text = text.replace(VERSION_TAG, self.version)       # the one place the release version is defined (hn_credit.s)
+        for line in text.splitlines():
             if cur is None and re.match(r"^\s*\w+\s+equ\s+", line):
                 self.preamble.append(line)
                 continue
@@ -986,7 +1010,7 @@ def unpack_payload(recs: bytes, size: int) -> bytes:
         a, ln = struct.unpack_from(">IH", recs, o)
         out[a - IMG_BASE:a - IMG_BASE + ln] = recs[o + 6:o + 6 + ln]
         o += 6 + ln
-    return bytes(out)
+    return bytes(out[:size])                              # the last record may carry one pad byte past an odd-length image
 
 
 def build_hunter_tos(stage: bytes, cache_base: int) -> bytes:
@@ -1114,7 +1138,7 @@ def cmd_build_floppy(patches, fps, out: Path, samples: bytes | None, zip_out: Pa
         raise SystemExit(f"payload code {len(img)} B exceeds ${pcap:x} (the sample bank starts at ${SAMPLE_BASE:x})")
     payload = pack_payload(img)
     assert unpack_payload(payload, len(img)) == img, "payload records do not round-trip"
-    readme = readme_path.read_bytes() if readme_path.exists() else b""
+    readme = render_doc(readme_path.read_text()).encode("latin1") if readme_path.exists() else b""
     if out.exists():
         shutil.rmtree(out)
     out.mkdir(parents=True)
@@ -1217,7 +1241,7 @@ def main():
     b.add_argument("--fill", action="store_true", help="fill every unused payload byte with a pattern (free-RAM proof)")
     b.add_argument("--corrupt", action="store_true", help="TEST ONLY: corrupt the first orig byte in the payload (expects HNPF)")
     b.add_argument("--floppy", action="store_true", help="build the floppy set from the Paper Bag release (alt/floppy): disk 1 [+ disk 2 with --samples]")
-    b.add_argument("--zip", nargs="?", const="auto", default=None, help="--floppy: also write dist/Hunter_patched_floppy_<date>.zip (or PATH)")
+    b.add_argument("--zip", nargs="?", const="auto", default=None, help="--floppy: also write dist/Hunter_v<version>_patched_floppy_<date>.zip (or PATH)")
     b.add_argument("--two-disk", action="store_true", help="--floppy: standard-format 2-disk set (sample bank on a 720 KB disk 2, prompt on STE) instead of one extended disk")
     b.add_argument("--geometry", default="auto", help="--floppy: disk 1 TRACKSxSECTORS (default 82x11 with a bank on one disk, else the original 81x10)")
     lv = sub.add_parser("live")
@@ -1226,6 +1250,9 @@ def main():
     lv.add_argument("--samples", default=None)
     lv.add_argument("--no-ste", action="store_true", help="set FLAGS as a plain ST (default: STE)")
     sub.add_parser("list")
+    sub.add_parser("version", help="print the release version (the `; version:` header of patches/hn_credit.s)")
+    rd = sub.add_parser("doc", help="print a doc file with @VERSION@ replaced (README / PATCHES.TXT)")
+    rd.add_argument("file")
     vf = sub.add_parser("verify")
     vf.add_argument("--floppy", action="store_true", help="derive the originals from the Paper Bag floppy release")
     bt = sub.add_parser("boot")
@@ -1245,6 +1272,12 @@ def main():
     fc.add_argument("--manifest", default="build/game.json")
     a = ap.parse_args()
     MODE["floppy"] = bool(getattr(a, "floppy", False))
+    if a.cmd == "version":
+        print(release_version())
+        return
+    if a.cmd == "doc":
+        sys.stdout.write(render_doc(Path(a.file).read_text()))
+        return
     patches, fps = load_all()
     if a.cmd == "list":
         cmd_list(patches, fps)
@@ -1273,7 +1306,7 @@ def main():
         if a.cmd == "build" and MODE["floppy"]:
             zp = None
             if a.zip:
-                zp = ROOT / "dist" / f"Hunter_patched_floppy_{time.strftime('%Y-%m-%d')}.zip" if a.zip == "auto" else Path(a.zip)
+                zp = ROOT / "dist" / f"Hunter_v{release_version()}_patched_floppy_{time.strftime('%Y-%m-%d')}.zip" if a.zip == "auto" else Path(a.zip)
             cmd_build_floppy(sel, fsel, ROOT / (a.out or "build/floppy"), smp, zp, PATCHDIR / "FLOPPY.TXT", a.two_disk, a.geometry)
         elif a.cmd == "build":
             cmd_build(sel, fsel, ROOT / (a.out or "build/game"), smp, a.fill, a.corrupt)

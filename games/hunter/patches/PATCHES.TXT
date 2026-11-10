@@ -1,4 +1,5 @@
 Hunter (Activision 1991) - patched build of PP's Gamex hard-disk version
+Release v@VERSION@ enhanced by dad_prg
 
 What changed against the original release:
 - Faster 3D view on a stock 8 MHz ST/STE, pixel-identical to the original:
@@ -10,6 +11,8 @@ What changed against the original release:
   version's samples, played through the STE DMA sound chip (mono, 6258 Hz, two voices).
   The engine pitch follows the speed, as on the Amiga. Costs about 0.2% of the CPU when
   nothing plays, up to about 10% with two sounds. A plain ST keeps the original YM sound.
+- Version line: the title screen shows a small, dim "v@VERSION@ enhanced by dad_prg" at the bottom, so this release can not be
+  mistaken for the original. Nothing else on the screen changes.
 - Every patch checks the original bytes it replaces first. If anything is not as
   expected, nothing is changed and the game starts as before.
 - Nothing else in the game is changed: controls, game speed and saves work as in PP's release.
