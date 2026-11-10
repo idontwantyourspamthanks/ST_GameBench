@@ -90,7 +90,8 @@ PREFIX_RANGES = {                         # blob orgs allowed per patch-name pre
     "qol_": (0xCF000, 0xCFFFF),      # PMQoL: keys + village hover (4 KB carved from test_'s tail; test_*.s end below $CF000); in the HD overlay window (PMLATE.DAT $BD000-$DCFFF)
 }
 EXTRA_RANGES = {                          # a patch NAME (not prefix) that may also place blobs / data here (the image-overlap check still applies)
-    "pm_tooltip": [(0xCF000, 0xCF7FF)],  # its wording table (patches/pm_tooltip.s `TXT`), $CD000-$CDFFF is full of code + state + pm_credit
+    "pm_tooltip": [(0xCF000, 0xCF7FF)],
+    "qol_keys": [(0xCD460, 0xCD6FF)], "qol_keys2": [(0xCD460, 0xCD6FF)], "qol_hover": [(0xCD460, 0xCD6FF)], "qol_hover2": [(0xCD460, 0xCD6FF)],   # data blocks + the two small hooks: pm_tooltip's code ends at $CD444, pm_credit starts at $CDB00, so $CD460-$CD6FF is free  # its wording table (patches/pm_tooltip.s `TXT`), $CD000-$CDFFF is full of code + state + pm_credit
 }
 
 

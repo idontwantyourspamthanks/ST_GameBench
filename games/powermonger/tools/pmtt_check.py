@@ -13,7 +13,7 @@ longest = (0, "")
 for m in re.finditer(r'^(e\d+):\s+dc\.b\s+(\d),(.*)$', s, re.M):
     cnt = int(m.group(2))
     # tokens: quoted strings and bare 0 terminators; an empty string is the lone 0 right after the name's 0
-    toks = re.findall(r'"[^"]*"|\b0\b', m.group(3))
+    toks = re.findall(r'"[^"]*"|\b0\b', m.group(3).replace('",3,"', "\x03"))
     strs, cur_open = [], False
     i = 0
     while i < len(toks):
@@ -30,9 +30,11 @@ for m in re.finditer(r'^(e\d+):\s+dc\.b\s+(\d),(.*)$', s, re.M):
         bad += 1
         continue
     name, key, effs = strs[0], strs[1], strs[2:]
-    for e in effs:
+    for e0 in effs:
         for k in ("", key):
             n += 1
+            off, _, on = e0.partition("\x03")
+            e = on if (k and on) else off
             line = name + (f" ({k})" if k else "") + ": " + e
             if len(line) > longest[0]:
                 longest = (len(line), line)

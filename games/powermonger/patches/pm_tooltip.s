@@ -261,10 +261,20 @@ compose:
         bne.s   .s1
         subq.w  #1,d3
         bra.s   .skp
-.ef:    move.b  (a1)+,d0
+.ef:    tst.w   S+sKF.l                 ; an effect may be "text without keys" $03 "text with keys"
+        beq.s   .ef2
+        movea.l a1,a0
+.fm:    move.b  (a0)+,d0
+        beq.s   .ef2                    ; no marker: copy the string as it is
+        cmp.b   #3,d0
+        bne.s   .fm
+        movea.l a0,a1                   ; keys on: the text after the marker
+.ef2:   move.b  (a1)+,d0
+        beq.s   compose_sb
+        cmp.b   #3,d0                   ; keys off: stop at the marker
         beq.s   compose_sb
         move.b  d0,(a2)+
-        bra.s   .ef
+        bra.s   .ef2
 compose_sb:                             ; export: SB holds the 52 characters (space padded) -> BUF.  Clobbers d0-d7, a0-a5.
         lea     SB.l,a2
         lea     BUF.l,a3
@@ -331,6 +341,7 @@ blit:   movea.l $2df7c.l,a1
 ; Entry = count byte (3: three effect strings for 1 / 2 / 3 swords, 1: one string), name, key label, effect string(s).
 ; Shown as "name (key): effect", the " (key)" only while qol_keys is active and the label is not empty; "name (key): effect" must fit
 ; 52 characters (tools/pmtt_check.py checks every effect with and without the key).  Levels: 1 sword = passive, 2 = neutral, 3 = aggressive.
+; An effect may carry a keys-only variant: "text without keys" , $03 (dc.b 3) , "text with keys" (used when qol_keys is active).
 ; Key labels are physical key positions ([ ] are the keys right of P on a UK/US keyboard).
         org     $cf000
 ETA:    dc.w    0
@@ -366,8 +377,8 @@ e24:    dc.b    1,"Map",0,"F1",0,"height contours",0
 e25:    dc.b    1,"Map",0,"F2",0,"trees, houses, men",0
 e26:    dc.b    1,"Map",0,"F3",0,"settlements and roads",0
 e27:    dc.b    1,"Map",0,"F4",0,"settlement food (click: update)",0
-e28:    dc.b    1,"Rotate left",0,"[",0,"click 90 deg, right-click fine",0
-e29:    dc.b    1,"Rotate right",0,"]",0,"click 90 deg, right-click fine",0
-e30:    dc.b    1,"Zoom in",0,"= or KP+",0,"right-click: closest",0
-e31:    dc.b    1,"Zoom out",0,"- or KP-",0,"right-click: farthest",0
+e28:    dc.b    1,"Rotate left",0,"[",0,"click 90 deg, right-click fine",3,"90 deg; right-click/Shift+[: fine",0
+e29:    dc.b    1,"Rotate right",0,"]",0,"click 90 deg, right-click fine",3,"90 deg; right-click/Shift+]: fine",0
+e30:    dc.b    1,"Zoom in",0,"= or KP+",0,"right-click: closest",3,"right-click or Shift: closest",0
+e31:    dc.b    1,"Zoom out",0,"- or KP-",0,"right-click: farthest",3,"right-click or Shift: farthest",0
 e32:    dc.b    1,"Compass (cursor keys)",0,0,"scroll the view",0

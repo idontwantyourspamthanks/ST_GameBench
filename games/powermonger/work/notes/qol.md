@@ -7,16 +7,16 @@ Tools: `tools/pmqol_state.py` (key == click world-state gate), `tools/pmqol_ab.p
 ## 1. RAM layout (inside the approved `qol_` range $CF000-$CFFFF; `test_` is now $CE000-$CEFFF in `pmpatch.py PREFIX_RANGES`, `pm_tooltip` may also place its wording table at $CF000-$CF7FF via `EXTRA_RANGES`)
 | range | owner |
 |---|---|
-| $CD000-$CD427 | pm_tooltip code (jump table at $CD000: hook, `compose_sb` $CD006, `blit` $CD00C), state S at $CDC00 (+$A key-labels flag, +$E liveness 'PTIP', +$12 hover-text flag); `pm_credit` $CDB00 untouched |
-| $CF000-$CF6BE | pm_tooltip wording table (ET, TXT, entries; `EXTRA_RANGES` in pmpatch.py) |
-| $CF6C0-$CF783 | qol_keys data: KS (33 B), REP, OWN9E, ANY, PEND (128 B, written by the keyboard interrupt) |
-| $CF788-$CF7B7 | qol_hover data HS |
-| $CF7B8-$CF7E1 | qol_keys2: KH (interrupt hook) |
-| $CF7E4-$CF85B | qol_hover2: HVHOOK (the sprite hook) |
+| $CD000-$CD443 | pm_tooltip code (jump table at $CD000: hook, `compose_sb` $CD006, `blit` $CD00C), state S at $CDC00 (+$A key-labels flag, +$E liveness 'PTIP', +$12 hover-text flag); `pm_credit` $CDB00 untouched |
+| $CD460-$CD523 | qol_keys data: KS (33 B), REP, OWN9E, ANY ($CD4A2), PEND (128 B at $CD4A4, written by the keyboard interrupt) |
+| $CD530-$CD559 | qol_keys2: KH (interrupt hook) |
+| $CD560-$CD5D7 | qol_hover2: HVHOOK (the sprite hook) |
+| $CD5E0-$CD60F | qol_hover data HS (HIT at $CD5E2) |
+| $CF000-$CF73E | pm_tooltip wording table (ET, TXT, entries) |
 | $CF860-$CFA7F | qol_keys: pass hook + click table KT |
 | $CFA80-$CFFF3 | qol_hover: pass hook (`bra.w` vector, `predict` export $CFA84), strings |
 
-(About 12 bytes are left; the layout is packed. The wording table may not grow past $CF6BF without moving the data blocks.)
+(The qol data blocks and the two small hooks sit in the $CD460-$CD6FF gap of the pm_ range, allowed to the four qol_ patches by `EXTRA_RANGES`; $CF740-$CF85F is free, so the wording table has about 290 bytes of room. pm_tooltip's own blob stays below $CD444; pm_credit and S are untouched.)
 
 ## 2. Keys (feature 1 + 2)
 ### 2.1 What the game already does with the keyboard [disasm]
@@ -56,11 +56,11 @@ Conclusion: nothing but the cursor keys is taken, so every letter below is free.
 | X | $2d | Transfer Men (2) | Transfer Men (X): |
 | Y | $15 | Spy (16) | Spy (Y): |
 | F1 F2 F3 F4 | $3b-$3e | map icons contours / objects / settlements / food (24-27) | Map (F1): ... |
-| `[` / `]` | $1a / $1b | rotate left / right 90 degrees (rect 0 / 1); Shift = the fine step | Rotate left ([): click 90 deg, right-click fine |
-| `=` or KP+ / `-` or KP- | $0d $4e / $0c $4a | zoom in / out one step (rect 2 / 3); Shift = closest / farthest | Zoom in (= or KP+): right-click: closest |
+| `[` / `]` | $1a / $1b | rotate left / right 90 degrees (rect 0 / 1); Shift = the fine step | Rotate left ([): 90 deg; right-click/Shift+[: fine (keys on) |
+| `=` or KP+ / `-` or KP- | $0d $4e / $0c $4a | zoom in / out one step (rect 2 / 3); Shift = closest / farthest | Zoom in (= or KP+): right-click or Shift: closest (keys on) |
 | cursor keys | (the game's own) | scroll the view; the compass has no key of its own | Compass (cursor keys): scroll the view |
 
-Wording rule (the lead's): the approved wording is unchanged, the label is inserted before the colon: `Name (K): effect`. Overflow check `tools/pmtt_check.py`: 101 texts, with and without the label, longest 51 characters (`Passive (1 sword) (1): takes a quarter, spares most`), no overflow. PROPOSED, not done (they would need rewording): the Shift variants do not fit in the rotate / zoom lines (`Rotate left ([): click 90 deg, right-click fine` is 47, adding `/Shift+[` makes 55); e.g. `Rotate left ([): 90 deg; right-click or Shift+[: fine` (51).
+Wording rule (the lead's): the approved wording is unchanged, the label is inserted before the colon: `Name (K): effect`. Overflow check `tools/pmtt_check.py`: 101 texts, with and without the label, longest 51 characters (`Passive (1 sword) (1): takes a quarter, spares most`), no overflow. DONE (user-approved pattern, adjusted to fit): an effect may carry a keys-only variant after a `$03` byte (pm_tooltip table): keys off keeps the old text, keys on shows `Rotate left ([): 90 deg; right-click/Shift+[: fine` (50), `Rotate right (]): 90 deg; right-click/Shift+]: fine` (51; the `or` form of the approved sentence is 53 / 54), `Zoom in (= or KP+): right-click or Shift: closest` (49), `Zoom out (- or KP-): right-click or Shift: farthest` (51). Screenshot `work/shots/qol_rotate_zoom_sheet.png` (keys on above, off below).
 
 ## 3. Village workshop hover (feature 3)
 ### 3.1 Records [disasm unless noted]
@@ -124,3 +124,8 @@ WOOD  5e80: forest farther than 20 -> 5ee4 pot.  d1 = 0: merchant ? c = $e catap
 * The Invent icon tooltip (feature 4a) states the rule by level; it cannot name one item because the result depends on the target village (see section 4).
 * Patch pairs: qol_keys needs qol_keys2 for taps shorter than a pass (alone it is harmless but never fires), qol_hover needs qol_hover2 and pm_tooltip (alone it shows nothing); qol_keys2 / qol_hover2 alone are harmless.
 * The ISR hook sits in the ACIA handler; hd_kbd (HD build, site `$18e4`) was not combined with it.
+
+## 7. Follow-up gates (lead's request)
+* **Hover state equality** `tools/pmqol_hover_state.py` (U = tick set + test_walk + pm_tooltip, P = U + qol_hover + qol_hover2; pointer held on a house of settlement 0 at (223,108) in both runs; hover proven active in P: HIT $4f970, text flag 1; 1600 VBL at 8 MHz; whole RAM $0-$60000 at every loop top compared per world tick, pmtick masks + the hover/test_walk sites; the tooltip buffer is at $CDC00, outside the range): workshop text (sword 7/14) **IDENTICAL** 75 loop tops / 75 ticks, workshop text + Invent selected **IDENTICAL** 87 / 87, Invent selected (idle workshop) **IDENTICAL** 86 / 86; negative controls differ everywhere (74/74, 85/85, 95/95 loop tops).
+* **Key-vs-click and the prediction gate re-run after the relayout above**: 4 key sets IDENTICAL (49 / 50 / 39 / 58 loop tops), prediction 276 / 276, 0 mismatches.
+* **HD build with hd_kbd**: `pmpatch.py build --hd --only <defaults> qol_keys qol_keys2 qol_hover qol_hover2` (hd_core / hd_kbd / hd_load / hd_s1 / hd_sector added by the tool; hd_kbd mandatory site OK). 1 MB STE TOS 1.62, ACSI + HDDRIVER (`boot_to_game`) and Hatari GEMDOS folder, both: in game, marker PMPO, sites live, F -> `$57fd4` 6, `[` -> heading 240 -> 176 (one 90-degree step), `1` -> posture 4, mouse moves normally (100,100 -> 120,110), save to slot A + load through the game's own menu (`pmpatch.run_saveload`): saved == loaded, SAVEDISK.DAT == saved, game iterates; after the load the keys and the mouse still work (F toggles Get Food off again, as clicking the icon twice does). The kh hook runs in hd_core's replay path ($18e8) with d0/d1/a0 only, the registers hd_core documents as clobbered there. The village hover was not exercised in the HD boots; this HD build was made before the last wording-only edit of pm_tooltip (compose marker `$03`).

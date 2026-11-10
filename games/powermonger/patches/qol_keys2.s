@@ -8,13 +8,13 @@
 ;       `move.b d0,$1c490` (the game's "last key" byte) becomes `jsr KH`; KH does that same move, and for a make code sets
 ;       PEND[scancode] = 1 (+ 2 when Shift is down, $2df8a) in qol_keys' data block.  qol_keys consumes PEND once per pass, so a tap shorter
 ;       than a pass is not lost.  The handler already saved d0-d2/a0-a1 ($18be) and pushed a0 again ($1962): d0, d1, a0 are free here.
-PEND    equ     $cf704
-ANY     equ     $cf702
+PEND    equ     $cd4a4
+ANY     equ     $cd4a2
 
         org     $199c
-        jsr     $cf7b8.l
+        jsr     $cd530.l
 
-        org     $cf7b8
+        org     $cd530
 kh:     move.b  d0,$1c490.l             ; the displaced instruction
         tst.b   d0
         beq.s   .r                      ; a break code (d0 was cleared)

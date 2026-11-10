@@ -7,13 +7,13 @@
 ;       $12138 is the game's per-object pick (called for every drawn object sprite, d0/d1 = sprite top-left, a3 = the object record);
 ;       its first instruction `tst.w $57fd4` (command selected?) becomes `jsr HVHOOK`; HVHOOK ends with that same tst, so the flags the
 ;       following `bne.b $12154` tests are the original ones.  Nothing else changes; the pick / click behaviour is untouched.
-HS      equ     $cf788
+HS      equ     $cd5e0
 HIT     equ     2
 
         org     $12138
-        jsr     $cf7e4.l
+        jsr     $cd560.l
 
-        org     $cf7e4
+        org     $cd560
 ; ---- HVHOOK (called by qol_hover2 in place of `tst.w $57fd4` at $12138; must end with that tst) ---------------------------------------
 hvhook: tst.w   HS.l
         beq.s   .out

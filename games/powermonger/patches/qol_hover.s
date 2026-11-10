@@ -3,7 +3,7 @@
 ; stage: 2
 ; site: $130b6
 ; orig: 4eb900017878
-; data: $cf788 48
+; data: $cd5e0 48
 ; note: village hover tooltip (work/notes/qol.md).  Resting the pointer on a house of a settlement in the 3D view shows, in the top-bar tooltip
 ;       area (rows 0-5, columns 7-19, the same place and font as pm_tooltip), "<village name>: making <item>s (NN%)" = the settlement's
 ;       current invention and how far its countdown has run.  REQUIRES pm_tooltip (uses its compose / blit exports, checks its liveness
@@ -19,7 +19,7 @@
 ;       ($2(settlement), next = $8(house)) has a workshop (kind byte $7 = 7), else "<name>: no workshop".
 ;       How the house is found: the game's own object pick.  The sprite routine $12138 (called once per drawn object: d0/d1 = sprite
 ;       top-left, a3 = the object record) compares the pointer $2df92/$2df94 with the sprite square ($120ea / $12116 size by zoom) - that
-;       is what a Query click uses.  qol_hover2 (which carries HVHOOK, at $cf7e4) replaces its first instruction (`tst.w $57fd4`) with a call to HVHOOK, which
+;       is what a Query click uses.  qol_hover2 (which carries HVHOOK, at $cd560) replaces its first instruction (`tst.w $57fd4`) with a call to HVHOOK, which
 ;       returns after doing that same instruction; unarmed it costs one `tst.w` (about 60 cycles per call, ~55 calls per pass).  Armed it runs the
 ;       same square test with the live pointer and remembers the LAST object that hits and lies in the house table $4f916..$51536
 ;       (the last one drawn is the front one).  Armed only for ONE pass after the pointer and the view (scroll, heading, tilt, zoom words)
@@ -28,8 +28,8 @@
 ;       recomposed only when the key (settlement, item, percent) changes.  An icon tooltip of pm_tooltip (S+sID) or an open window
 ;       ($7a36) wins over the hover.
 ;       Site: `jsr $17878` ($130b6, the HUD call right after the landscape / object render $130aa): the pass hook; the sprite hook is qol_hover2.
-;       State HS ($cf788): +0 ARM.w +2 HIT.l +6 LX.w +8 LY.w +$A REST.l (VBL stamp of the last change) +$e RES.w +$10 HKEY.l +$14 SIG (7 words).
-HS      equ     $cf788
+;       State HS ($cd5e0): +0 ARM.w +2 HIT.l +6 LX.w +8 LY.w +$A REST.l (VBL stamp of the last change) +$e RES.w +$10 HKEY.l +$14 SIG (7 words).
+HS      equ     $cd5e0
 ARM     equ     0
 HIT     equ     2
 LX      equ     6

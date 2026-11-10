@@ -3,7 +3,7 @@
 ; stage: 2
 ; site: $130fc
 ; orig: 4eb900007202
-; data: $cf6c0 200
+; data: $cd460 200
 ; note: keyboard shortcuts for every command of the toolbar / icon grid (work/notes/qol.md has the key table).  A key press is turned into the
 ;       SAME click the mouse would have made: the click position words $2df8e/$2df90 are set to a point inside the icon's cell, the left
 ;       (or, for Shift + rotate / zoom, the right) button latch $2df96 (or $2df98 + $2df9e) is raised and $2df74 gets the click-lifetime
@@ -25,7 +25,7 @@
 ;       Scan codes are physical key positions: [ and ] are the keys right of P (labelled so on UK / US layouts, other letters elsewhere on
 ;       national layouts); the cursor keys keep scrolling, F1-F4 are the map icons, the number row or the keypad 1-3 the posture.
 ;       Click points: pmtt_grid.icon() centre of every cell (tools/qol_points.py regenerates and checks the table KT).
-D       equ     $cf6c0                  ; KS: 1 byte per KT entry (right-button repeat armed); +$3e REP.w; +$40 OWN9E.w; +$42 ANY.w; +$44 PEND: 128 bytes by scan code
+D       equ     $cd460                  ; KS: 1 byte per KT entry (right-button repeat armed); +$3e REP.w; +$40 OWN9E.w; +$42 ANY.w; +$44 PEND: 128 bytes by scan code
 KS      equ     D
 OWN9E   equ     D+$40
 ANY     equ     D+$42                   ; a press is (or may be) pending: written by qol_keys2 after PEND
