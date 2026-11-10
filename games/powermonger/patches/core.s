@@ -149,6 +149,8 @@ cacroff: movea.l a7,a2                  ; the exception handler resets the stack
 .ctrap: movea.l a2,a7                   ; drop the exception frame
         tst.w   d1
         beq.s   .cdone                  ; no CACR: 68000/68010
+        cmpi.w  #2,d1
+        beq.s   .cdone                  ; pmove below took line F: no PMMU (68020), the caches are already off
         moveq   #0,d2                   ; 68020/030: d0 = TOS's CACR; EI is bit 0
         btst    #0,d0
         beq.s   .noi
@@ -156,6 +158,16 @@ cacroff: movea.l a7,a2                  ; the exception handler resets the stack
 .noi:   move.l  d2,ICVAL.l
         move.l  #$0808,d0               ; CI + CD: clear both caches, EI/ED = 0 -> off
         dc.w    $4e7b,$0002             ; movec d0,cacr
+; 68030 PMMU: TOS 3.x keeps its translation tables in low RAM (TT TOS 3.06: root table at $700, CRP = $80000002_00000700) and the game's stage-0
+; copy overwrites them, so the next table walk faults (notes/tt_mmu.md).  TOS's map of $0..$ffffff is the identity (I/O through TT1), so
+; clearing TC.E (bit 31) leaves the game's address space as it is.  Caches are off (above); flush the ATC.
+        moveq   #2,d1                   ; a line F from here on ends the routine (.ctrap above)
+        subq.l  #4,a7
+        dc.w    $f017,$4200             ; pmove tc,(a7)
+        bclr    #7,(a7)                 ; TC.E = 0
+        dc.w    $f017,$4000             ; pmove (a7),tc
+        addq.l  #4,a7
+        dc.w    $f000,$2400             ; pflusha
 .cdone: move.l  a1,$10.w
         move.l  a3,$2c.w
         rts

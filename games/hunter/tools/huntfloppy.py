@@ -224,6 +224,7 @@ def main() -> int:
     ap.add_argument("--bp-save", default=None, help="save RAM $8BA00..$AEFFF to this file when the loader jumps to the game")
     ap.add_argument("--bp-load", default=None, help="load this file to $8BA00 at that moment (free-RAM poison pattern)")
     ap.add_argument("--fastfdc", default="no", help="Hatari --fastfdc yes|no (default no: real floppy timing)")
+    ap.add_argument("--hatari-opt", default="", help='extra Hatari options as ONE string, e.g. --hatari-opt="--mmu true"')
     ap.add_argument("--pb-at", type=float, default=12, help="seconds after power-on when the 'Paper Bag presents' key is pressed (TOS 2.06 + 4 MB: ~120)")
     a = ap.parse_args()
     sc = {}
@@ -236,7 +237,7 @@ def main() -> int:
         os.environ["SDL_AUDIODRIVER"] = "dummy"
     drives = a.drives or (2 if a.path == "b" else 1)
     d2 = None if a.no_disk2 else a.disk2
-    ex = ["--sound", "50066"] if a.wav else []
+    ex = (["--sound", "50066"] if a.wav else []) + a.hatari_opt.split()
     h = HunterFloppy(a.disk1, d2, in_b=(a.path == "b"), drives=drives, machine=a.machine, tos=TOS[a.tos], memsize_kb=a.mem, extra=ex, fastfdc=a.fastfdc)
     stage = h._stage
     h._stage = lambda s, record, wait, timeout=120: stage(s, record, wait, max(timeout, 400))

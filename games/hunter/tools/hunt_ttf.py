@@ -161,14 +161,14 @@ def main() -> int:
     ap.add_argument("--game", default=str(GAME), help="HD build dir (default: the original game)")
     ap.add_argument("--bus", default=None)
     ap.add_argument("--poke-mch", default=None)
-    ap.add_argument("--hatari-opt", nargs="*", default=[])
+    ap.add_argument("--hatari-opt", default="", help='extra Hatari options as ONE string, e.g. --hatari-opt="--mmu true"')
     ap.add_argument("--play", type=float, default=0)
     ap.add_argument("--shots", default=None)
     ap.add_argument("--peek", nargs="*", default=[])
     ap.add_argument("--title-wait", type=float, default=150, help="seconds to wait for the animated title (a failing boot never gets there)")
     a = ap.parse_args()
     poke = int(a.poke_mch, 0) if a.poke_mch else None
-    return boot_hd(a.machine, a.tos, a.mem, Path(a.game).resolve(), a.bus, poke, a.hatari_opt, a.play,
+    return boot_hd(a.machine, a.tos, a.mem, Path(a.game).resolve(), a.bus, poke, a.hatari_opt.split(), a.play,
                    Path(a.shots) if a.shots else None, a.peek, a.title_wait)
 
 
