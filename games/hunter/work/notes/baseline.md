@@ -44,3 +44,5 @@ From the disassembly (no real-time source other than the VBL):
 - A frame limiter exists (`$1a6` counter / `$1a7` reload, spin at `$aaa2`) but the reload word is 11 in the cold-boot dump and 0 in the snapshots: inactive there.
 
 **Verdict: decoupled from CPU speed and frame rate (time-based on the 50 Hz VBL counter), with whole-VBL granularity.** What does depend on the frame rate is only smoothness: at 4.5-11 fps each frame moves the world by (elapsed VBLs) x (per-VBL step). Speeding up the renderer therefore needs no timing patch; the update rate will simply rise. [Car steady-state and NPC rates remain unmeasured.]
+
+(Added later: the 50 Hz basis of this verdict means the world runs 20 % fast on a 60 Hz display; `hn_hz` fixes that, see timing.md.)

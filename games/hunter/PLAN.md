@@ -18,7 +18,7 @@ Follows the Midwinter method (`.omp/skills/st-game-speedup`). User preferences c
 - **P0 Harness and benchmarks** (`HunterBench`): `tools/hunter.py`, snapshots, baseline, frame-rate coupling, hot paths.
 - **P1 Sound feasibility:** done (`work/notes/sound.md`).
 - **P2 Patch delivery** for Gamex.
-- **P3 Timing**, if the world speed is coupled to the frame rate.
+- **P3 Timing**, if the world speed is coupled to the frame rate. Not coupled to the frame rate (baseline.md), but coupled to the refresh: `hn_hz` makes the world real-time at 50 and 60 Hz (`work/notes/timing.md`).
 - **P4 Display speed-ups**, pixel-identical.
 - **P5 STE DMA sound.**
 - **P6 Regression, packaging.**

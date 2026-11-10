@@ -8,6 +8,10 @@
     snd_test.py overlap   WAV EFF1,VOL1,T1,EFF2,VOL2,T2,SECONDS       (two-voice proof)
     snd_test.py cost      [--snap ..] [--cfg orig:2 patch:2:15 ...] [--vbls 300] [--fps-vbls 600]
     snd_test.py coldboot  [--machine ste --tos 1.62 --mem 1024] [--record NAME]
+    snd_test.py ring      [--snap 1mb_foot_stand] [--vbls 900] [--mhz 8] [--keys Up] --live snd_hz --hz 60   (ring lead / underruns per top-up)
+    snd_test.py dur       WAV [--thr 0.08]                                   (onset and end of each sound in a capture)
+    mixcheck, record and ring take --live NAME (build/live/NAME.{img,json}: e.g. snd_hz = snd_core + hn_hz) and --hz 50|60
+    (60: `w $ff820a $00` at the apply flip).  Work note: work/notes/timing.md.
 
 `mixcheck`: breakpoints on the entry and the end of the mixer; for every tick the 1024-byte ring written by the 68000 is
 compared with a Python model of the mixer (same 16.16 stepping, same bank file) -> bit exact or not.
@@ -46,6 +50,7 @@ from hunter import Hunter, SNAP  # noqa: E402
 sys.path.insert(0, str(GAME.parent.parent / "tools"))
 
 LIVE = GAME / "build" / "live" / "snd"
+HZ = 50                                  # --hz 60: `w $ff820a $00` is added to the live apply (60 Hz refresh)
 BANKF = GAME / "build" / "hunter_snd.bin"
 PATCH = GAME / "patches" / "snd_core.s"
 REALHOME = Path.home()
@@ -112,6 +117,8 @@ def apply_live(h: Hunter, extra_cmds=(), timeout: float = 90, at: int = 0x5FEE) 
     for s in spec["sites"]:
         cmds.append(f"w ${s['addr']:x} " + " ".join(f"${b:02x}" for b in bytes.fromhex(s["new"])))
     cmds += list(extra_cmds)
+    if HZ == 60:
+        cmds.append("w $ff820a $00")
     f = h.R / "apply.txt"
     f.write_text("\n".join(cmds) + "\n")
     start = len(h._logtext())
@@ -555,6 +562,122 @@ def cmd_coldboot(a) -> int:
             h.close()
 
 
+def lst_addr(token: str) -> int:
+    """Address of the listing line that contains `token` (e.g. a local label `.okp:`) in a vasm listing of the patch."""
+    out = Path("/tmp/hsnd/lab2.bin")
+    lst = Path("/tmp/hsnd/lab2.lst")
+    subprocess.run(["vasmm68k_mot", "-Fbin", "-m68000", "-quiet", "-o", str(out), "-L", str(lst), str(PATCH)], check=True)
+    for ln in lst.read_text(errors="replace").splitlines():
+        m = re.match(r"^\d\d:([0-9A-F]{8})\s+(?:[0-9A-F]+)?\s*\t\s*\d+:\s*" + re.escape(token), ln)
+        if m:
+            return int(m.group(1), 16)
+    raise KeyError(token)
+
+
+def cmd_ring(a) -> int:
+    """Ring health of the mixer at 50 or 60 Hz: at every top-up (`.okp`) the lead (samples the write cursor is ahead of the
+    DMA position, D1) and the number of underrun resyncs (the `addi.w #16,d0` path), with two loops and re-injected explosions."""
+    okp = lst_addr(".okp:")
+    under = okp - 14                                     # addi.w #16,d0 / andi.w / move.w / moveq #16,d1 before `.okp`
+    h = make(a.snap, sound=False)
+    try:
+        time.sleep(2)
+        if a.mhz != 8:
+            h.set_cpuclock(a.mhz)
+        quiet = ["w $af0e $4e $75", "w $11398 $00 $00 $00", "w $11388 $ff $ff $ff"]
+        cf = h.R / "lead.txt"
+        cf.write_text("r\ne VBL\n")
+        cu = h.R / "under.txt"
+        cu.write_text("e VBL\n")
+        end = h.R / "end.txt"
+        end.write_text("b all\n")
+        v0 = h.vbl()
+        at = v0 + 40
+        pre = list(quiet) + ["w $11389 $0b", "w $1138e $00 $0f", "w $1138a $0d", "w $11390 $00 $0f"]   # engine (11) ch1 + rotor (13) ch2 at volume 15
+        pre += [f"b pc = ${okp:x} :trace :file {cf}", f"b pc = ${under:x} :trace :file {cu}"]
+        # explosions (effect 3, channel 0) every 70 VBL
+        inj = []
+        for k in range(1, a.vbls // 70):
+            f = h.R / f"inj{k}.txt"
+            f.write_text("w $11388 $03\nw $1138c $00 $0c\n")
+            inj.append(f"b VBL > {at + 70 * k} :trace :once :file {f}")
+        pre.append(f"b VBL > {at + a.vbls} :trace :once :file {end}")
+        app = h.R / "ring_apply.txt"
+        apply_live(h, [])                                # the live image (and 60 Hz) at the next flip; then arm the trace commands
+        app.write_text("\n".join(pre + inj) + "\n")
+        if len(max(pre + inj, key=len)) > 235:
+            raise ValueError("line too long")
+        st = len(h._logtext())
+        if a.keys:
+            h.hold(*a.keys)
+        h.cmd(f"hatari-debug b VBL > {v0 + 60} && pc = $5fee :trace :once :file {app}")
+        time.sleep(0.3)
+        h.cmd("hatari-option --fast-forward on")
+        t = time.time()
+        while h._logtext()[st:].count("Removed CPU breakpoint") < 2 + len(inj):
+            if time.time() - t > 600:
+                raise TimeoutError(h._logtext()[-1500:])
+            time.sleep(0.5)
+        time.sleep(0.5)
+        log = h._logtext()[st:]
+        if a.keys:
+            h.release(*a.keys)
+    finally:
+        h.close()
+    leads = []
+    for blk in log.split("CPU breakpoint condition(s) matched")[1:]:
+        if re.match(r"\s*\d+ times\.\s*pc = \$%x" % okp, blk, re.I):
+            m = re.search(r"D1\s+([0-9A-Fa-f]{8})", blk)
+            if m:
+                leads.append(int(m.group(1), 16) & 0xFFFF)
+    ublk = [blk for blk in log.split("CPU breakpoint condition(s) matched")[1:] if re.match(r"\s*\d+ times\.\s*pc = \$%x" % under, blk, re.I)]
+    nunder = len(ublk)
+    uv = [int(re.search(r"#(\d+) \(dec\)", b).group(1)) - v0 for b in ublk if re.search(r"#(\d+) \(dec\)", b)]
+    ticks = len(leads)
+    if getattr(a, "debug", False):
+        print(ublk[:2])
+    if not leads:
+        print("RING no top-ups seen\n" + log[-800:])
+        return 1
+    print(f"RING hz={a.hz} mhz={a.mhz} snap={a.snap} vbl={a.vbls}: top-ups {ticks}, lead before top-up min {min(leads)} max {max(leads)} "
+          f"mean {sum(leads) / len(leads):.1f} samples (TARGET 192; 1 VBL = {6258.3 / a.hz:.1f} samples), underrun resyncs {nunder}"
+          + (f" at VBL +{uv}" if uv else ""))
+    return 0
+
+
+def cmd_dur(a) -> int:
+    """Onset and end of the sound in a Hatari WAV capture of the DMA stream (one sample per 8-sample group of the 50066 Hz capture)."""
+    x, sr = load_wav(a.wav)
+    y = x[::8] if sr > 40000 else x
+    r = sr / 8 if sr > 40000 else sr
+    thr = a.thr * np.abs(y).max()
+    idx = np.nonzero(np.abs(y) > thr)[0]
+    if not len(idx):
+        print("DUR silent")
+        return 1
+    # activity per 10 ms block: runs separated by more than 150 ms of quiet are separate sounds
+    blk = int(r * 0.01)
+    act = np.array([np.abs(y[i:i + blk]).max() > thr for i in range(0, len(y) - blk, blk)])
+    runs, start = [], None
+    quiet = 0
+    for i, v in enumerate(act):
+        if v:
+            if start is None:
+                start = i
+            last = i
+            quiet = 0
+        elif start is not None:
+            quiet += 1
+            if quiet > 15:
+                runs.append((start * 0.01, (last + 1) * 0.01))
+                start = None
+    if start is not None:
+        runs.append((start * 0.01, (last + 1) * 0.01))
+    print(f"DUR {a.wav}: {len(y) / r:.2f} s capture, peak {np.abs(y).max():.0f}; sounds (onset-end s, length s): "
+          + ", ".join(f"{s:.2f}-{e:.2f} ({e - s:.2f})" for s, e in runs))
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -582,6 +705,12 @@ def main() -> int:
     ov = sub.add_parser("overlap")
     ov.add_argument("wav")
     ov.add_argument("spec", help="EFF1,VOL1,T1,EFF2,VOL2,T2,DURATION_S (voice 1 = loop started at T1; voice 2 starts at T2)")
+    rg = sub.add_parser("ring")
+    rg.add_argument("--snap", default="1mb_foot_stand")
+    rg.add_argument("--vbls", type=int, default=900)
+    rg.add_argument("--mhz", type=int, default=8)
+    rg.add_argument("--debug", action="store_true")
+    rg.add_argument("--keys", nargs="*", default=[])
     cb = sub.add_parser("coldboot")
     cb.add_argument("--machine", default="ste")
     cb.add_argument("--tos", default="1.62")
@@ -595,8 +724,18 @@ def main() -> int:
     c.add_argument("--cfg", nargs="*", default=["orig:0", "orig:2", "patch:0", "patch:1", "patch:2"], help="KIND:N, KIND orig|patch, N injected loops")
     c.add_argument("--vbls", type=int, default=300)
     c.add_argument("--fps-vbls", type=int, default=0)
+    for sp in (m, r, rg):
+        sp.add_argument("--live", default=None, help="live patch image under build/live/ (default snd): e.g. snd_hz = snd_core + hn_hz")
+        sp.add_argument("--hz", type=int, default=50, choices=(50, 60), help="force the refresh (60: poke $ff820a at the apply flip)")
+    dp = sub.add_parser("dur")
+    dp.add_argument("wav")
+    dp.add_argument("--thr", type=float, default=0.08, help="activity threshold, fraction of the peak of the 6258 Hz stream")
     a = ap.parse_args()
-    return {"mixcheck": cmd_mixcheck, "record": cmd_record, "cost": cmd_cost, "compare": cmd_compare, "coldboot": cmd_coldboot, "overlap": cmd_overlap}[a.cmd](a)
+    global LIVE, HZ
+    if getattr(a, "live", None):
+        LIVE = GAME / "build" / "live" / a.live
+    HZ = getattr(a, "hz", 50)
+    return {"mixcheck": cmd_mixcheck, "record": cmd_record, "cost": cmd_cost, "compare": cmd_compare, "coldboot": cmd_coldboot, "overlap": cmd_overlap, "ring": cmd_ring, "dur": cmd_dur}[a.cmd](a)
 
 
 if __name__ == "__main__":

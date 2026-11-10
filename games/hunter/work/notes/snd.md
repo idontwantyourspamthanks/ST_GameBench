@@ -8,7 +8,7 @@ Nothing from the ADF is committed: the bank is built into `build/hunter_snd.bin`
 - STE-class machines only (loader probe `FLAGS` bit0 at `$8BFF0`): the YM effects are silenced and the Amiga effects play through DMA sound, **mono, 6258 Hz, 2-voice software mixer**, mixed into a 1024-byte ring in a looped DMA frame.
 - Plain ST / Mega ST (`FLAGS` bit0 clear), or no bank (`'HSND'` missing at `$90000`): the payload runs the original tick unchanged (YM plays), cost = one `jmp` + a few tests.
 - The original driver (`FILES/4` at `$10FB2`) keeps running as the state machine (request bytes, priority/lock, durations, volume words); only its 16 YM absolute operands are redirected, and my code reads its state after each tick.
-- No timer, no interrupt: everything runs inside the existing VBL tick. The DMA is stopped when the 3D view is left, so the YM title/menu music is untouched.
+- No timer, no interrupt: everything runs inside the existing VBL tick. At 60 Hz the original driver tick and the scan run on world ticks only (5 of 6 VBL), the mixer tops the ring up every VBL: timing.md section 2. The DMA is stopped when the 3D view is left, so the YM title/menu music is untouched.
 
 ## 2. Hook and detection
 - Site `$C628` (the sound tick, `bsr`'d from the VBL handler `$C5F0` at `$C614`; only caller [disasm `--callers c628`]): `btst #7,$93(a5)` (6 B) becomes `jmp $8E000.l`. The remaining bytes (`beq.b $c638`, `movea.l $7f44(pc),a0`, `jmp $40(a0)`, `rts`) are dead code. The payload does the `btst` itself, so it can see the transition out of the 3D view (the original did nothing there).

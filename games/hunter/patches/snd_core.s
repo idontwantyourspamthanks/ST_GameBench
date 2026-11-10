@@ -15,8 +15,12 @@
 ; note: ($3e(obj) via the channel record $1de(a5)+8c: period = base - 4*speed, as the Amiga main code at $2dea).
 ; note: The 3D view left ($93 bit 7 clear): DMA stopped.  No timer, no new interrupt: everything runs inside the VBL tick.
 ; note: Memory: code $8e000..$8efff, state SV $8f000.., ring $8f800..$8fbff.  Preserves a5/a6/sp, uses d0-d7/a0-a4 (VBL saved them).
+; note: 50/60 Hz (hn_hz.s, work/notes/timing.md): HZ_SKIP (written by hn_hz each VBL) non-zero = this VBL is not a world tick (60 Hz: 1 in 6).
+; note: The original driver tick (state machine: request/priority/duration/volume) and the scan/voice allocation then wait, so effect durations
+; note: and envelopes run on 50 Hz-equivalent ticks; the mixer (snd_act) still tops up the ring to TARGET samples ahead of the DMA position every VBL.
 ENTRY   equ     $8e000
 FLAGS   equ     $8bff0
+HZ_SKIP equ     $8dbf2                  ; hn_hz.s: non-zero = this VBL is not a world tick (0 when hn_hz is not built)
 BANK    equ     $90000
 B_FX    equ     BANK+$100
 B_PRIO  equ     BANK+$300
@@ -77,8 +81,11 @@ snd_vbl:
         cmpi.b  #2,SV+v_mode
         beq.s   snd_run
 snd_pass:                               ; the original tick
+        tst.b   HZ_SKIP.l               ; hn_hz: not a world tick (60 Hz): the driver waits
+        bne.s   .rts
         movea.l $7f44.w,a0
         jmp     $40(a0)
+.rts:   rts
 snd_init0:                              ; once: STE hardware (loader probe) and sample bank present?
         move.b  #1,SV+v_mode
         btst    #0,FLAGS+3.l
@@ -98,8 +105,12 @@ snd_run:
         beq.s   .ok
         bsr     snd_ympatch
         movea.l $7f44.w,a0
-.ok:    jsr     $40(a0)                 ; the original state machine (its YM writes go to the scratch)
+.ok:    tst.b   HZ_SKIP.l               ; hn_hz: not a world tick (60 Hz): the driver state machine and the scan wait,
+        bne.s   .top                    ; only the mixer tops up the ring (voices and phases as the last tick left them)
+        jsr     $40(a0)                 ; the original state machine (its YM writes go to the scratch)
         bra     snd_update
+.top:   lea     SV.l,a4
+        bra     snd_act
 snd_off3d:                              ; 3D view not active: the original did nothing
         tst.b   SV+v_in3d
         beq.s   .rts
@@ -227,7 +238,7 @@ snd_update:
         tst.b   $11(a1)
         bne.s   .scan
         tst.b   $12(a1)
-        beq     .ret
+        beq     snd_ret
 .scan:  moveq   #2,d7
 .sc:    move.w  d7,d0
         add.w   d0,d0
@@ -405,6 +416,7 @@ snd_update:
 .upn:   lea     x_size(a3),a3
         dbra    d6,.up
 ; ---- active voices: a2 = first, a3 = second, d5 = count
+snd_act:
         lea     v_vox0(a4),a2
         lea     v_vox1(a4),a3
         moveq   #0,d5
@@ -426,7 +438,7 @@ snd_update:
 .c2:    tst.b   v_dma(a4)
         bne.s   .on
         tst.w   d5
-        beq     .ret
+        beq     snd_ret
         clr.w   v_wr(a4)                ; start: fill the first TARGET samples, then enable the DMA at the ring start
         moveq   #TARGET/8,d0
         bsr     snd_mix
@@ -480,7 +492,7 @@ snd_update:
         st      x_ch(a3)
 .pn:    lea     x_size(a3),a3
         dbra    d6,.pl
-.ret:   rts
+snd_ret: rts
 snd_place:                              ; d7 = channel: take a free voice slot and start it
         lea     v_vox0(a4),a3
         tst.b   x_ch(a3)

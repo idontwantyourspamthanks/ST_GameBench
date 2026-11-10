@@ -11,11 +11,16 @@ What changed against the original release:
   version's samples, played through the STE DMA sound chip (mono, 6258 Hz, two voices).
   The engine pitch follows the speed, as on the Amiga. Costs about 0.2% of the CPU when
   nothing plays, up to about 10% with two sounds. A plain ST keeps the original YM sound.
+- 50/60 Hz: the original game counts display refreshes. It asks the shifter for 50 Hz when it starts, but wherever the
+  screen runs at 60 Hz anyway (hardware or an adapter that ignores that, an emulator set to 60 Hz) everything that moves or
+  counts down ran 20% too fast: walking and driving, turning, NPCs, projectiles, the game clock, stamina and message
+  timers, and the length of the sound effects. Now the world runs in real time at 50 and 60 Hz (50 "world ticks" per second
+  whatever the refresh; 5 of every 6 refreshes at 60 Hz). At 50 Hz the game plays exactly as before.
 - Version line: the title screen shows a small, dim "v@VERSION@ enhanced by dad_prg" at the bottom, so this release can not be
   mistaken for the original. Nothing else on the screen changes.
 - Every patch checks the original bytes it replaces first. If anything is not as
   expected, nothing is changed and the game starts as before.
-- Nothing else in the game is changed: controls, game speed and saves work as in PP's release.
+- Nothing else in the game is changed: controls and saves work as in PP's release, and at 50 Hz so does the game speed.
 
 How it is delivered:
 - START.TOS is replaced by a patched copy (unpacked); it also reads the extra file FILES\P

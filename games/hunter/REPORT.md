@@ -26,7 +26,7 @@ It needs a real hard-disk driver on a FAT disk (Hatari's plain GEMDOS drive does
 
 A frame always lasts a whole number of 50 Hz refreshes (standing: 11.0 refreshes = 4.5 fps), so a 1% saving can be invisible until it crosses a refresh boundary.
 
-**Game speed.** Unlike Midwinter, the world is **not** tied to the frame rate. Movement and the NPCs multiply by the number of refreshes the previous frame took (`$1ac(a5)`), and nothing reads the real-time clocks. Measured walking on foot: 101.4 units/s at 8 MHz against 100.4 units/s at 16 MHz. So no timing patch was needed; a faster renderer only makes the motion smoother.
+**Game speed.** Unlike Midwinter, the world is **not** tied to the frame rate. Movement and the NPCs multiply by the number of refreshes the previous frame took (`$1ac(a5)`), and nothing reads the real-time clocks. Measured walking on foot: 101.4 units/s at 8 MHz against 100.4 units/s at 16 MHz. So no timing patch was needed; a faster renderer only makes the motion smoother. (It does depend on the display refresh: at 60 Hz the same code runs 20% fast, fixed in section 11.)
 
 **Where the time goes.** The 3D render is 74–88% of a frame; about 61% of the walking frame is polygon scan conversion, edge set-up and span fills. The joystick poll in the 50 Hz interrupt wasted 2.4% of all cycles in a delay loop.
 
@@ -149,7 +149,7 @@ So the patched disk takes about 12 s longer to reach the menu: about 3 s for our
 - **Span fill trimming.** The middle loops are 44–49% of the fill cost, but only 3.8–4 groups per multi-group span; unrolling or `movem` pays only from about 8. Estimated at most 1.2% for 16 generated routines: not done.
 - **Keeping span masks between rows.** 36% of spans repeat the row above, but keeping the masks costs about 116 cycles against 130 to recompute.
 - **Vertex-transform cache.** The inputs repeat when the camera is still (up to 82% hits), but while moving the matrix changes every frame, so walking gains nothing, and the lookup costs about 100 cycles.
-- **Timing patch.** Not needed: the world speed is already based on the 50 Hz counter.
+- **Timing patch for the frame rate.** Not needed: the world speed is based on the VBL counter, not on the frame rate. (A refresh patch was added later: section 11.)
 - **Three-voice mixer at 12.5 kHz.** Estimated up to about 27% of an already saturated game; replaced by two voices at 6,258 Hz after listening to the previews.
 - **Replicants floppy as the base.** A different game build, permanent trainer; Paper Bag is identical to PP's.
 - **Floppy-only fixes that were not needed:** loader rewrite (a .st cannot express interleave, and 11 sectors per track cost nothing in Hatari).
@@ -173,7 +173,7 @@ See `work/notes/ttfalcon.md`. Summary: the floppy build runs to the 3D view with
 - `dist/Hunter_v<VERSION>_patched_floppy_<date>.zip`: `HUNTER_disk1.st` (one disk, 82 × 11) and `README.TXT`.
 - `dist/Hunter_v<VERSION>_patched_floppy_2disk_<date>.zip`: the standard-format two-disk alternative.
 - `tools/play.sh` (launcher for any machine, HD or `--floppy`, `--original`) and `tools/package.sh`.
-- The patch tool, 5 default patches (`p4_ikbd`, `p4_edge`, `p4_poly`, `snd_core`, `hn_credit`), the study notes and the test tools.
+- The patch tool, 6 default patches (`p4_ikbd`, `p4_edge`, `p4_poly`, `snd_core`, `hn_credit`, `hn_hz`), the study notes and the test tools.
 
 The zips are named `Hunter_v<VERSION>_patched_<hd|floppy|floppy_2disk>_<date>.zip` (see section 10).
 
@@ -200,3 +200,24 @@ Every release shows `v<VERSION> enhanced by dad_prg` so that archivists can tell
 | Cold boot floppy, plain ST 1.04 1 MB (fast FDC) | 3D view after 70 s, `HNPO`, FLAGS 6, 5.0 fps. The blind-click harness run of the same disk ended on an "Are you sure" menu, with and without the credit patch (harness timing), so the run above used the stage gates with a looser colour tolerance. |
 
 No text is visible in the 3D view (screenshot after the HD cold boot; file E is loaded to `$23000` before it).
+
+## 11. 50/60 Hz: the world runs on world ticks
+
+`patches/hn_hz.s`, `patches/snd_core.s` (two tests added), gate tools `tools/hunthz.py` and `tools/snd_test.py ring|dur`; note `work/notes/timing.md`.
+
+**Problem.** The VBL handler counts VBLs, and the movement, the NPCs, the projectiles, the timers, the game clock, the stamina and breathing timers and the sound driver's effect durations all advance per VBL or per elapsed VBL (`$1aa/$1ac`). On a screen that really runs at 60 Hz everything ran 20% fast: 121.0 against 101.0 units/s walking, 550 against 457 driving, a turn rate of 15,278 against 12,748, the game clock 60 against 50 ticks/s, and sound effects 9-21% short. (The game asks the shifter for 50 Hz when it starts, so on hardware that honours that it never ran at 60 Hz; the problem appears where the display runs at 60 Hz anyway.)
+
+**What changed.** The handler's world block (counters, joystick copy, scripted schedule, timers, camera/turn ramps, game clock) now runs on world ticks. An accumulator in units of 1/300 s gets +6 per VBL at 50 Hz and +5 at 60 Hz (shifter sync mode, read every VBL); a tick is due when it reaches 6 (remainder carried), so at 50 Hz every VBL is a tick and the code path is the original one, at 60 Hz 5 of every 6 VBL are. The sound driver tick follows the same gate; the DMA mixer still tops its ring up every VBL (the ring lead is 85 samples at 60 Hz against 64 at 50 Hz, no underruns; the DMA rate and the pitch are fixed). Cost: +106 cycles per VBL (0.07%). Presentation stays per VBL (palette fades, mouse pointer, menu pauses).
+
+**Checks** (Hatari 2.6.1; 60 Hz is forced with a poke because the game selects 50 Hz itself):
+| Gate | Result |
+|---|---|
+| (a) 50 Hz: game state per frame against a same-cost control hook, 9 snapshot/speed combinations, 1500 VBL each, 5418 bytes (all variables, player, NPCs, projectiles) per frame | bit-identical in every frame (133 to 472 frames per run). Against the plain unpatched game the runs stay identical until a frame crosses a refresh boundary because of the extra 106 cycles per VBL, as with any cost change |
+| (b) 60 Hz against 50 Hz at 8 and 16 MHz, `hn_hz`: walking | 100.94 / 101.0 and 100.47 / 100.49 units/s: 0.9994, 0.9998 |
+| driving | 456.05 / 457.0 and 446.3 / 447.27: 0.9979, 0.9978 |
+| turning (car, Up+Left) | 12,740 / 12,748 and 12,740 / 12,800: 0.9994, 0.9953 |
+| game clock and tick counter per real second at 60 Hz | 49.94 to 50.01 (50 at 50 Hz). Without `hn_hz` the same runs give 1.19 to 1.20 times the 50 Hz speed and 60 ticks/s |
+| (c) sound at 60 Hz (WAV capture) | explosion 2.75 s (50 Hz: 2.74), gunfire 0.58 (0.57), second explosion 1.60 (1.59), breathing envelopes 1.58 / 3.64 (1.59 / 3.64): within 0.01 s. Without the gate: 0.47, 1.34, 1.45, 2.86. Engine loop correlation with the model 0.9832 (50 Hz: 0.9833); mixer bit-exact in 624 of 624 mixer calls at 60 Hz; ring lead 74-96 samples, 0 underruns (50 Hz: 58-70, 0) |
+| (d) cold boots, default build, `HNPO` | HD STE TOS 1.62 1 MB (3D view after 47 s), floppy STE (91 s, real FDC timing), HD Mega STE TOS 2.06 4 MB (129 s; TOS boots at 60 Hz, the game switches to 50 Hz while it loads): walking 100.0-100.9 units/s and 49.96-50.01 ticks/s at 60 Hz, at 8 and 16 MHz |
+
+**Limits.** Real hardware, TT and Falcon video modes were not run. The detection reads `$ff820a` bit 1, the register the game itself writes. Palette fades and menu pauses stay per VBL (20% short at 60 Hz, as before). Release text: `PATCHES.TXT` and the floppy `README.TXT` mention the change; at 50 Hz nothing changes.

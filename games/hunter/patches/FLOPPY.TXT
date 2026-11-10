@@ -12,6 +12,9 @@ What changed
   * STE sound (STE, Mega STE, TT, Falcon): the YM sound effects are replaced by the Amiga version's samples,
     played through the STE DMA sound chip (mono, 6258 Hz, two voices; the engine pitch follows the speed).
   * A plain ST keeps the original YM sound (the sample bank is not even read).
+  * 50/60 Hz: the original counts display refreshes. It asks for 50 Hz itself, but where the screen runs at 60 Hz anyway
+    (hardware or an adapter that ignores that, an emulator set to 60 Hz) the world (walking, driving, turning, NPCs, timers,
+    game clock, sound effect lengths) ran 20% too fast. It now runs in real time at 50 and 60 Hz; at 50 Hz nothing changes.
   * The title screen shows a small, dim "v@VERSION@ enhanced by dad_prg" at the bottom; nothing else on it changes.
   * The patches check every byte they replace; if the game code is not the expected one nothing is changed.
 
