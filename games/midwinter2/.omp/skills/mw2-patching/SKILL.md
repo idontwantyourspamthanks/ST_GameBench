@@ -68,7 +68,7 @@ PP's resident loader service is the HAGA file, which moves with RAM size. Patch 
 | `$B3900` | `p4_proj_axis` |
 | `$B3C00` | `p4_walk*` |
 | `$B4000-$B42FF` | `p3b_*` scheduler/integrators |
-| `$B40F2` | `tick_vbl` |
+| `$B3700` | `tick_vbl` (30 B) |
 | `$B4300-$B46FF` | `p5_ctl_*` |
 | `$B4700-$B4BFF` | `p4_blit_*` (off) |
 | `$B4C00` | `p3b_probe` |
@@ -89,7 +89,7 @@ PP's resident loader service is the HAGA file, which moves with RAM size. Patch 
   - Hook only game and low-RAM addresses. PP's resident service moves with RAM size: `$1F7554` on 2 MB, `$F7554` on 1 MB.
   - Use runtime detection for hardware features.
   - `$5a0`/`$42e` are clobbered by PP, so probe the hardware under a bus-error trap instead. `p4_blit_sky` has a working STE/ST/Mega STE probe.
-- **Timers:** use the patched free-running VBL clock (`tick_vbl`, long at `$B3400`).
+- **Timers:** use the patched free-running clock (`tick_vbl`, long at `$B3400`, units of 1/300 s: +6 per 50 Hz VBL, +5 per 60 Hz VBL).
   - `$7020` is cleared every frame and by game wait loops.
   - `$770c` wraps at 6.
 - **Snapshot gates:** a patch that only matters at boot or load time still needs a cold-boot test, since snapshots already hold loaded code.

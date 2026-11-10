@@ -3,7 +3,8 @@
 Private live builder (assembles patches/tick_*.s with vasm, writes build/tick/live.{img,json}) until PMLoader's pmpatch.py exists.
 
     python3 tools/pmtick.py live                       # build the live image
-    python3 tools/pmtick.py rate  SNAP MHZ VBLS [--unpatched]   # world tick rate, fps, pass kinds
+    python3 tools/pmtick.py rate  SNAP MHZ VBLS [--unpatched] [--hz 50|60]   # world ticks per emulated second (atomic samples), passes/s
+    python3 tools/pmtick.py cold  --disk build/floppy/powermonger.st [--mem 1024] [--machine ste] [--tos 1.62] [--hz 50|60] [--vbls 4000]
     python3 tools/pmtick.py ab    SNAP MHZ VBLS        # per-tick state equality vs unpatched (full RAM $0-$60000, masks in MASKS)
 """
 from __future__ import annotations
@@ -113,26 +114,71 @@ def rd(h, a, n):
     return bytes(bs[:n])
 
 
+def sample_at(h, target, exprs, timeout=600):
+    """Debugger `e` values at ONE stop: the first VBL > target. {expr: int}"""
+    f = h.R / f"smp{target}.txt"
+    f.write_text("".join(f"e {e}\n" for e in exprs))
+    h.debug("b all", 0.3)
+    start = len(h._logtext())
+    h.cmd(f"hatari-debug b VBL > {target} :trace :once :file {f}")
+    wait_gone(h, start, timeout)
+    out = {}
+    for m in re.finditer(r"> e (.+)\n(?:  .*\n)*= (.*)", h._logtext()[start:]):
+        out[m.group(1)] = int(re.search(r"\$([0-9a-fA-F]+) \(hex\)", m.group(2)).group(1), 16)   # CycleCounter prints negative in dec
+    return out
+
+
 def cmd_rate(a):
+    """World ticks per EMULATED second. --hz 60 pokes $ff820a at the flip (Hatari then runs 60 frames/s); emulated time = VBL / hz,
+    both ends sampled atomically with the CPU cycle counter (cycles per VBL = 8 MHz / hz is the proof of the refresh rate)."""
     live = build_live()
     h = PM(snapshot=str(SNAP / f"{a.snap}.sav"))
     try:
         time.sleep(1.5)
         if a.mhz != 8:
             h.set_cpuclock(a.mhz)
+        cmds = (apply_cmds(live) if not a.unpatched else ["e VBL"]) + (["w $ff820a $00"] if a.hz == 60 else [])
+        at_flip(h, cmds)
+        time.sleep(1.0)
+        sync = rd(h, 0xFF820A, 1)[0]
+        ex = ["VBL", "CycleCounter", f"(${TICKCNT:x}).l", f"(${ITER:x}).l"] + ([] if a.unpatched else [f"(${D + o:x}).l" for o in (8, 12, 16)])
+        s0 = sample_at(h, h.vbl() + 40, ex)
+        s1 = sample_at(h, s0["VBL"] + a.vbls, ex)
+        dv = s1["VBL"] - s0["VBL"]
+        secs = dv / a.hz
+        t = s1[ex[2]] - s0[ex[2]]; it = s1[ex[3]] - s0[ex[3]]
+        print(f"RESULT {a.snap} {a.mhz} MHz {a.hz} Hz sync ${sync:02x} {'orig' if a.unpatched else 'patched'}: {dv} VBL = {secs:.2f} s, "
+              f"{((s1['CycleCounter'] - s0['CycleCounter']) & 0xFFFFFFFF) / dv:.0f} cycles/VBL, world ticks {t} = {t / secs:.3f}/s, passes {it} = {it / secs:.3f}/s")
         if not a.unpatched:
-            at_flip(h, apply_cmds(live))
-        v0 = h.vbl(); t0 = h.peekl(TICKCNT); i0 = h.peekl(ITER)
-        d0 = rd(h, D, 24) if not a.unpatched else b""
-        f = h.fps(a.vbls)
-        v1 = h.vbl(); t1 = h.peekl(TICKCNT); i1 = h.peekl(ITER)
-        d1 = rd(h, D, 24) if not a.unpatched else b""
-        dv = v1 - v0
-        print(f"{a.snap} {a.mhz} MHz {'orig' if a.unpatched else 'patched'}: {dv} VBL, flips {f['flips']} (fps {f['flips']*50/a.vbls:.2f}), "
-              f"world ticks {t1-t0} ({(t1-t0)*50/dv:.3f}/s), passes {i1-i0} ({(i1-i0)*50/dv:.3f}/s)")
-        if d0:
-            L = lambda b, o: int.from_bytes(b[o:o+4], 'big')
-            print(f"  tick passes {L(d1,8)-L(d0,8)}, R passes {L(d1,12)-L(d0,12)}, S (skip) passes {L(d1,16)-L(d0,16)}")
+            print("  tick passes %d, R passes %d, S passes %d" % tuple(s1[e] - s0[e] for e in ex[4:]))
+    finally:
+        h.close()
+
+
+def cmd_cold(a):
+    """Cold boot of a built floppy (`pmpatch.py build --floppy --out DIR`) to the 3D map, then world ticks per emulated second at 8 and
+    16 MHz. --hz forces the refresh (pokes $ff820a); without it the booted refresh is reported and used."""
+    from pm import TOS
+    h = PM(disk=Path(a.disk).resolve(), memsize_kb=a.mem, machine=a.machine, tos=TOS[a.tos])
+    try:
+        t0 = time.time()
+        h.boot_to_game()
+        sync = rd(h, 0xFF820A, 1)[0]
+        print(f"boot {time.time() - t0:.0f} s; marker {rd(h, 0xB87F8, 4)!r}; $13020 {rd(h, 0x13020, 6).hex()}; "
+              f"sync $ff820a = ${sync:02x} -> booted at {50 if sync & 2 else 60} Hz", flush=True)
+        if a.hz == 60 and sync & 2:
+            h.debug("w $ff820a $00", 0.5); time.sleep(1.0)
+        hz = a.hz or (50 if sync & 2 else 60)
+        ex = ["VBL", "CycleCounter", f"(${TICKCNT:x}).l"]
+        for mhz in (8, 16):
+            if mhz == 16:
+                h.set_cpuclock(16)
+            time.sleep(1.0)
+            s0 = sample_at(h, h.vbl() + 40, ex)
+            s1 = sample_at(h, s0["VBL"] + a.vbls, ex)
+            dv = s1["VBL"] - s0["VBL"]; t = s1[ex[2]] - s0[ex[2]]
+            print(f"RESULT cold {a.machine} TOS {a.tos} {a.mem} KB {mhz} MHz {hz} Hz: {dv} VBL = {dv / hz:.2f} s, "
+                  f"{((s1['CycleCounter'] - s0['CycleCounter']) & 0xFFFFFFFF) / dv:.0f} cycles/VBL, world ticks {t} = {t / (dv / hz):.3f}/s", flush=True)
     finally:
         h.close()
 
@@ -343,6 +389,10 @@ if __name__ == "__main__":
     sub.add_parser("live")
     r = sub.add_parser("rate"); r.add_argument("snap"); r.add_argument("mhz", type=int); r.add_argument("vbls", type=int)
     r.add_argument("--unpatched", action="store_true")
+    r.add_argument("--hz", type=int, choices=[50, 60], default=50, help="display refresh to run at (60: pokes $ff820a at the flip)")
+    c = sub.add_parser("cold"); c.add_argument("--disk", required=True); c.add_argument("--mem", type=int, default=1024)
+    c.add_argument("--machine", default="ste"); c.add_argument("--tos", default="1.62"); c.add_argument("--vbls", type=int, default=4000)
+    c.add_argument("--hz", type=int, choices=[50, 60], default=None)
     i = sub.add_parser("input"); i.add_argument("snap"); i.add_argument("mhz", type=int); i.add_argument("--unpatched", action="store_true")
     q = sub.add_parser("ab"); q.add_argument("snap"); q.add_argument("mhz", type=int); q.add_argument("vbls", type=int)
     q.add_argument("--poke", action="append", default=[])
@@ -352,6 +402,8 @@ if __name__ == "__main__":
         print(build_live())
     elif a.cmd == "rate":
         cmd_rate(a)
+    elif a.cmd == "cold":
+        cmd_cold(a)
     elif a.cmd == "input":
         cmd_input(a)
     elif a.cmd == "ab":

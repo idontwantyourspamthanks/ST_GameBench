@@ -6,8 +6,11 @@
 ; note: P2 fixed-rate world tick (work/notes/timing.md). Head of the world logic of the main loop pass
 ;       (sub_012fd8, `lea.l $14e20.l,a2` at $13020 just before `tst.w $57ff2` / `addq.l #1,$2df70`).
 ;       Real time = the game's VBL counter $6f304 (long, +1 per VBL in the VBL handler; the low word
-;       $6f306 is used, deltas mod 65536). One TICK = 12.5 VBL = 4.00 world steps/s (TK = 25 half-VBL).
-;       ACC (D+2) = real time not yet simulated, in half-VBL.
+;       $6f306 is used, deltas mod 65536) times the length of a VBL in 1/300 s units, read from the
+;       shifter sync mode at every look ($ff820a bit 1: 1 = 50 Hz = 6 units, 0 = 60 Hz = 5 units), so
+;       the world runs at the same real-time rate on 50 and 60 Hz displays (timing.md section 11).
+;       One TICK = TK = 75 units = 0.25 s = 4.00 world steps/s (12.5 VBL at 50 Hz, 15 VBL at 60 Hz).
+;       ACC (D+2) = real time not yet simulated, in 1/300 s units.
 ;       Three kinds of pass (flags SKIP D+4, RON D+6, read by tick_pass / tick_wx / tick_men):
 ;         T  ACC >= TK: a world tick. The pass is the ORIGINAL pass (logic1 $127e6 $6522 $d322 $3e06,
 ;            render, $1abaa weather+season, HUD, $14b62 men, UI/keys, flip).
@@ -17,10 +20,10 @@
 ;            clock `$2df70` (also stored as a timestamp by $3e06, compared by $6522) and `$4bb3e`, and logic1, do not run;
 ;            tick_wx / tick_men skip `$1abaa` and `$14b62`. View limits, render, HUD, UI/click
 ;            dispatch, camera keys and the flip run as in any pass.
-;       Catch-up is clamped to 3 ticks; a gap of more than 4 ticks (disk load, menus) resyncs (one tick,
+;       Catch-up is clamped to 3 ticks; a gap of more than 4 ticks (1 s: disk load, menus) resyncs (one tick,
 ;       no burst). While `$57ff2` (pause) is set the pass is the original and the clock is kept.
 ;       Data D = $B8A00 (zero): +0 LAST.w +2 ACC.w +4 SKIP.w +6 RON.w +8 TICKS.l +12 RPASS.l +16 SPASS.l +32 PASS.l
-TK      equ     25
+TK      equ     75
 D       equ     $b8a00
 oLAST   equ     0
 oACC    equ     2
@@ -43,12 +46,16 @@ head:   movem.l d0-d2/a0,-(a7)
         move.w  d0,d1
         sub.w   oLAST(a0),d1            ; VBLs since the previous pass (mod 65536)
         move.w  d0,oLAST(a0)
-        cmpi.w  #50,d1
+        moveq   #5,d2                   ; 60 Hz: 5 units per VBL
+        btst    #1,$ffff820a.w          ; shifter sync mode: bit 1 set = 50 Hz
+        beq.s   .rate
+        moveq   #6,d2                   ; 50 Hz: 6 units per VBL
+.rate:  mulu.w  d2,d1                   ; d1.l = real time since the previous pass, 1/300 s
+        cmpi.l  #4*TK,d1
         bls.s   .acc
         move.w  #TK,oACC(a0)            ; first entry / back from a menu or disk load: resync, one tick
         bra.s   .tick
-.acc:   add.w   d1,d1                   ; half-VBL
-        add.w   d1,oACC(a0)
+.acc:   add.w   d1,oACC(a0)
         cmpi.w  #TK,oACC(a0)
         blt.s   .ronly
 .tick:  subi.w  #TK,oACC(a0)

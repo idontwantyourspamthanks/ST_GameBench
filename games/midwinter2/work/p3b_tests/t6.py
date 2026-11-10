@@ -6,6 +6,8 @@ tag=sys.argv[4] if len(sys.argv)>4 else ''
 snap=str(ROOT/'work/snapshots/1mb_ingame_walking.sav')
 import os
 extra=['w $26aca $4e $71 $4e $71']+['w $%x $%02x $%02x'%(a,hd>>8,hd&255) for a in (0x6742,0x6294,0x764a)]
+if os.environ.get('HZ60'):        # 60 Hz display: Hatari switches the monitor at the next frame
+    extra.append('w $ff820a $00')
 if os.environ.get('POKEXY'):
     X,Y=map(int,os.environ['POKEXY'].split(','))
     extra.append('w $66e6 '+' '.join('$%02x'%b for b in X.to_bytes(4,'big')+Y.to_bytes(4,'big')))

@@ -37,7 +37,7 @@ TICK = 10 VBL = 5 steps/s, as MW2. The original's natural pace at 8 MHz is scene
 walking / turning (`simtiming.md` section 4), i.e. 4 to 7.5 as the task states. Walking and standing are what the player does most; 5 is
 8 % above the walking pace and 23 % above standing, and 32 % below the (lighter) turning frames. A game minute lasts 21/5 = 4.2 s
 (5.2 s standing and 2.9 s turning in the original). 10 VBL also divides into five whole 2-VBL sub-steps, so B needs no fractional VBLs.
-[INFERENCE] Since the VBL is the time base the tick follows the video refresh: a 60 Hz monitor gives 6 steps/s, as in MW2.
+Since the first version used the VBL as the time base the tick followed the video refresh (a 60 Hz monitor gave 6 steps/s); section 10 makes it real time.
 
 ## 3. Option A: `tick_head` (site `$14e00`, 8 B -> `jsr $b3100.l ; nop`, blob `$B3100-$B31BB`)
 
@@ -296,4 +296,39 @@ boot 103 s; marker MWPO; $14e00 4eb9000b31004e71; $b3100 48e7e080; state {'x': 2
 * Static scenes: a standing player with no turn re-renders identical sub-step frames (25/s if the CPU allows). A static-frame skip keyed on `$12c60/$12c64/$12c98` would be valid (the view only changes on sub-steps), but must hook render calls only.
 * `E`/`DX`/`DZ` are words (`$12c98` is a word); `trunc(k*E/5)` is truncation, so a turn of 1-4 units/tick moves the view only at PH 5 (heading granularity is 2 anyway: `& $3fe`).
 * The first 3 hits of a Hatari `:file` breakpoint after arming were not logged in my traces; tick pairing is by state, not by index.
-* TICK follows the VBL rate (50 Hz: 5 steps/s; 60 Hz: 6). [INFERENCE: not run on a 60 Hz or mono setup.]
+* TICK is real time at 50 and 60 Hz (section 10). 71 Hz mono: not handled (the game is low-res colour only).
+
+## 10. 50/60 Hz: the tick is real time, not a VBL count (TickHz)
+
+**Problem.** `tick_head` / `p3b_head` counted `$637e` VBLs (GRP = 10, SUBT = 2): a 60 Hz display ran the world at 6 steps/s. Hatari with TOS 2.06 `--machine megaste` boots at 60 Hz by itself (`$ff820a = $fc`, section 10 cold boots).
+
+**Change (`patches/tick_head.s` and `patches/p3b_head.s`; no other patch touches the clock).**
+* The VBL counter is still `$637e`; each look converts the VBLs since the previous look into units of 1/300 s: `btst #1,$ffff820a.w` (shifter sync mode, bit 1 set = 50 Hz) -> 6 units per VBL, clear (60 Hz) -> 5 (`mulu.w d0,d1`, long compare, because a counter wrap gives up to 65535 x 6).
+* `GRP` = 60 units = 0.2 s (5 steps/s, 10 VBL at 50 Hz, 12 VBL at 60 Hz), `SUBT` = 12 units = 0.04 s (the 25 Hz view sub-step: 2 VBL at 50 Hz, 2.4 VBL at 60 Hz, so at 60 Hz the sub-steps are paced by the accumulator, not by whole VBLs). `ACC` (D+2) is in units; clamp `3*GRP` = 180 (`moveq` no longer fits: `move.w #3*GRP,d0`), resync above `4*GRP` = 240 units = 0.8 s. Same scheduler otherwise; data layout and blob addresses unchanged (`head` + `substep` still fit at `$B3100-$B338D`).
+* The group structure is untouched, so group-end exactness (sections 6, 8.1) is a property of the code that did not change; it is re-proved below at 60 Hz.
+* The sync mode is read at every look, so a runtime switch is followed; a switch between two looks is charged at the new rate for one interval.
+* 71.25 Hz (mono) is not representable in whole units of 1/300 s and the game has no mono mode: not handled.
+
+**Gate 1: ticks per emulated second.** `python3 tools/mw1tick.py rate --only <set> --snapshot 1mb_ski_walk --mhz 8 16 --hz 50 60` (new; `--hz 60` pokes `w $ff820a $00` at the apply flip, Hatari then runs 60 frames/s; tick rows are the loop tops with PH in {0,5}; rate = ticks over the VBL span between the first and last row / hz; cycles per VBL (8 MHz / hz) prove the refresh):
+```
+tick_head (A):  8 MHz 50 Hz: 160343 cycles/VBL, 157 ticks in 1559 VBL = 31.18 s: 5.035 ticks/s     16 MHz 50 Hz: 320441 cycles/VBL, 156 ticks in 31.18 s: 5.003
+                8 MHz 60 Hz: 133598 cycles/VBL, 157 ticks in 1872 VBL = 31.20 s: 5.032 ticks/s     16 MHz 60 Hz: 267120 cycles/VBL, 156 ticks in 31.18 s: 5.003
+p3b_* (B):      8 MHz 50 Hz: 160296 cycles/VBL, 155 ticks in 1544 VBL = 30.88 s: 5.019 ticks/s     16 MHz 50 Hz: 320588 cycles/VBL, 157 ticks in 31.38 s: 5.003
+                8 MHz 60 Hz: 133615 cycles/VBL, 155 ticks in 1857 VBL = 30.95 s: 5.008 ticks/s     16 MHz 60 Hz: 267180 cycles/VBL, 156 ticks in 31.18 s: 5.003
+```
+(+0.7 % at 8 MHz in A is the same at 50 and 60 Hz: the first interval of a restored snapshot is a catch-up burst [INFERENCE].) At 60 Hz the B group is 5 passes of 2.4 VBL: 259 view sub-passes over 65 ticks (4.0 per tick) in the equality run below.
+
+**Gate 2: group-end equality** (`mw1tick.py ab`, section 8.1 method; `--poke 'w $ff820a $00'` puts BOTH the unpatched and the patched run at 60 Hz):
+```
+B 50 Hz: 1mb_ski_walk 8 MHz 77 ticks IDENTICAL, 16 MHz 74 IDENTICAL; 1mb_ski_turn 8 MHz 77 IDENTICAL, 16 MHz 73 IDENTICAL
+B 60 Hz: 1mb_ski_walk 8 MHz 65 ticks IDENTICAL, 16 MHz 62 IDENTICAL; 1mb_ski_turn 8 MHz 65 IDENTICAL, 16 MHz 61 IDENTICAL
+A 60 Hz: 1mb_ski_walk 8 MHz 65 ticks IDENTICAL, 16 MHz 62 IDENTICAL
+```
+**Gate 3: cold boot of the default build** (`mw1patch.py build --out /tmp/tickhz/mw1`; `mw1tick.py cold --game DIR --mem M --machine X --tos T [--hz 60]`, 1800 VBL at 60 Hz, walk):
+```
+boot 112 s; marker MWPO; $14e00 4eb9000b31004e71; sync $ff820a = $fe -> boot refresh 50 Hz; measuring at 60 Hz (sync byte now $fc)      (1 MB STE TOS 1.62, forced to 60 Hz)
+   8 MHz: 156 ticks in 31.08 s = 5.019 ticks/s; ... clock 364->371      16 MHz: 157 ticks in 31.43 s = 4.995 ticks/s; ... clock 372->379
+boot 103 s; marker MWPO; $14e00 4eb9000b31004e71; sync $ff820a = $fc -> boot refresh 60 Hz; measuring at 60 Hz                         (4 MB Mega STE TOS 2.06, native 60 Hz)
+   8 MHz: 156 ticks in 31.17 s = 5.005 ticks/s; ... clock 364->372      16 MHz: 156 ticks in 31.08 s = 5.019 ticks/s; ... clock 372->380
+```
+The game clock still moves one minute per 21 ticks (7-8 minutes in 31 s at both refreshes).

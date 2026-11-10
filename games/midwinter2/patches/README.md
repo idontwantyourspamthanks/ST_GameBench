@@ -93,9 +93,9 @@ Background: work/notes/tick_inventory.md (sections 4-6). The original game runs 
 logic block once per rendered frame, so the world speeds up with the frame rate. The
 patches below run the world at a fixed 5 Hz (the original speed on a 1 MB 8 MHz STE,
 about one tick per 10 VBL) and the player's motion at 25 Hz.
-- `tick_vbl` ($262d0): a free-running VBL clock at $B3400 in the VBL handler (blob $B40F2).
+- `tick_vbl` ($262d0): a free-running VBL clock at $B3400 in the VBL handler (blob $B3700), in units of 1/300 s (+6 per 50 Hz VBL, +5 per 60 Hz VBL).
 - `p3b_head` ($31486): the scheduler. Foot passes (type `$6220` = 13, `$40b6` = 0) are
-  2-VBL sub-ticks, PH = 1..5 (5 sub-ticks = one 5 Hz tick of 10 VBL). Sub-ticks 1-4 run only
+  12-unit (0.04 s = 2 VBL at 50 Hz, 2.4 VBL at 60 Hz) sub-ticks, PH = 1..5 (5 sub-ticks = one 5 Hz tick of 60 units of 1/300 s). Sub-ticks 1-4 run only
   the player sim (`jsr $33bca`) and render when on time (jump into the loop at $3158c);
   sub-tick 5 is the world tick, the whole logic block exactly as before. Every other
   type gets one 10-VBL pass per tick (PH = 5), i.e. the old 5 Hz behaviour. It waits when

@@ -74,8 +74,8 @@ get_men 8 MHz fps {'vbls': 1000, 'flips': 77, 'fps': 3.85, 'vbls_per_frame': 12.
 battle_320 8 MHz fps {'vbls': 1000, 'flips': 76, 'fps': 3.8, 'vbls_per_frame': 13.16} iter 346 -> 435 in 1187 VBL = 3.749 passes/s 13.34 VBL/pass
 ```
 map_idle 8 MHz: 2.33 passes/s (21 VBL/pass; a sample IRQ is playing, 26 % of the CPU, `hotpaths.md`). 16 MHz: get_men 7.86, battle_320 8.26, map_idle 6.26.
-Approved by the lead: **TK = 25 half-VBL = 12.5 VBL = 4.00 ticks/s** (1.04-1.07 x the 8 MHz pace in busy scenes). On a 60 Hz display it would be 4.8 /s
-(the VBL is the time base, as in Midwinter; the game itself boots "60hz" but ran at 50 Hz here, RGB 50 Hz in the status bar) [INFERENCE for 60 Hz].
+Approved by the lead: **TK = 25 half-VBL = 12.5 VBL = 4.00 ticks/s** (1.04-1.07 x the 8 MHz pace in busy scenes). On a 60 Hz display the first version (a pure VBL count) ran at 4.8 /s;
+since section 11 the VBL length is read from `$ff820a` and the tick is 0.25 s of real time at 50 and 60 Hz.
 
 ## 4. Design (4 hooks + 3 operand redirects)
 
@@ -174,8 +174,47 @@ The strong statement is the byte-identical tick-pass frames (section 5).
 Recommendation: build it after the P3 speedups, since at 8 MHz (frame >= tick) it changes nothing and at 16 MHz the first thing a user sees is 8 identical-frame pairs.
 
 ## 10. Limits / open
-* World speed follows the VBL rate (50 Hz PAL: 4.00; 60 Hz: 4.8) [INFERENCE].
+* World speed is real time at 50 and 60 Hz (section 11). 71 Hz mono: not handled (the game is low-res colour only).
 * Camera/scroll/rotate speed still follows the frame rate (section 2).
 * Windows/messages (query, "You have been defeated", message timers) were not exercised: if a HUD/UI routine counts passes, it now counts frames (R passes). No such counter was found in the call-site diffs or by scanning the UI code for read-modify-writes on absolute words (only UI scratch `$7a30-$7a39`, `$2df6c`, `$71fd/$71fe`, `$580a0`); a UI test run is open.
 * `$57fee > 1` (speed slider) not tested with the patch.
 * `tools/pmtick.py` builds its own live image from `patches/tick_*.s` (vasm, `$B8800` base); the contract's `pmpatch.py live` was not used for the gates.
+
+## 11. 50/60 Hz: the tick is real time, not a VBL count (TickHz)
+
+**Problem.** The first `tick_head` counted VBLs (TK = 25 half-VBL = 12.5 VBL). A 60 Hz display (US TOS defaults, NTSC, TOS 2.06 on a Mega STE) ran the world at 4.8 ticks/s.
+Hatari with TOS 2.06 `--machine megaste` boots at 60 Hz by itself: `sync $ff820a = $fc` after the cold boot below, which matches the 4.8 ticks/s seen on a real Mega STE.
+
+**Change (`patches/tick_head.s` only; `tick_pass`, `tick_wx`, `tick_men`, `tick_click*` untouched; `p3b_interp.s` rescaled).**
+* Time base: the VBL counter `$6f306` as before, but each look converts the VBLs since the previous pass to units of 1/300 s: `btst #1,$ffff820a.w` (shifter sync mode, bit 1 set = 50 Hz) -> 6 units per VBL, clear -> 5 units (60 Hz). The mode is read at every look, so a runtime switch is followed; a switch between two looks is charged at the new rate for one interval (<= one pass).
+* `TK` = 75 units = 0.25 s (12.5 VBL at 50 Hz, 15 VBL at 60 Hz): the same 4.00 ticks/s. `ACC` (D+2) is now in units of 1/300 s, clamp 3 ticks = 225, resync threshold 4 ticks = 300 units = 1 s (was 50 VBL = 1 s at 50 Hz, 0.83 s at 60 Hz). The delta is `mulu.w` d1 x (5|6), compared as a long (a 16-bit counter wrap gives up to 65535 x 6).
+* No VBL hook was needed (the counter is the game's). 71.25 Hz (mono) is not representable in whole units of 1/300 s and the game has no mono mode: not handled.
+* `p3b_interp` (men interpolation) reads `ACC`: FQ = ACC x 256/TK became `mulu.w #874,d0 ; lsr.l #8` (256/75 = 3.4133, 874/256 = 3.4141) and the tick-pass offset `+25` became `+75`. Nothing else reads D+2.
+* Unchanged: data layout, blob addresses (`head` is 184 B, `tick_pass` sits at `$b8900`).
+
+**Gate 1: ticks per emulated second.** `python3 tools/pmtick.py rate SNAP MHZ VBLS --hz 50|60` (new `--hz`: pokes `w $ff820a $00` at the flip for 60; both ends are ONE atomic debugger stop with `e VBL`, `e CycleCounter` and the tick counter `$4bb3e`; emulated seconds = VBL / hz; the proof of the refresh is the cycle counter per VBL: 8 MHz / 50 = 160 k, / 60 = 133 k). 80 s windows, get_men, 1 MB STE TOS 1.62:
+```
+RESULT get_men 8 MHz 50 Hz sync $fe patched: 4001 VBL = 80.02 s, 160244 cycles/VBL, world ticks 321 = 4.011/s, passes 321 = 4.011/s
+RESULT get_men 8 MHz 60 Hz sync $fc patched: 4801 VBL = 80.02 s, 133585 cycles/VBL, world ticks 321 = 4.012/s, passes 321 = 4.012/s
+RESULT get_men 16 MHz 50 Hz sync $fe patched: 4001 VBL = 80.02 s, 320445 cycles/VBL, world ticks 320 = 3.999/s, passes 320 = 3.999/s
+RESULT get_men 16 MHz 60 Hz sync $fc patched: 4801 VBL = 80.02 s, 267168 cycles/VBL, world ticks 320 = 3.999/s, passes 320 = 3.999/s
+```
+(an 8 MHz window gives 321 instead of 320 ticks, +0.3 % [INFERENCE: the catch-up debt of a restored snapshot].) Before the change the same snapshot at 60 Hz would give 4.8/s (a tick = 12.5 VBL = 0.208 s) [INFERENCE from the formula; the unpatched-by-this-change image was not re-run].
+
+**Gate 2: per-tick state equality** (`pmtick.py ab`, whole RAM `$0-$60000` with the section 5 masks; `--poke 'w $ff820a $00'` runs BOTH the unpatched and the patched side at 60 Hz):
+```
+get_men 16 MHz 50 Hz: 99 loop tops over 48 ticks IDENTICAL, negative control 100/100, RNG differs 0, frame of each tick 48 of 48 byte-identical
+get_men 16 MHz 60 Hz: 79 loop tops over 38 ticks IDENTICAL, negative control 81/81, RNG differs 0, frame of each tick 38 of 38 byte-identical
+battle_320 8 MHz 60 Hz: 42 loop tops over 42 ticks IDENTICAL, negative control 42/42, RNG differs 0, frame 36 of 42 identical (the others are S passes without a render; 50 Hz 8 MHz: 50 of 54)
+```
+
+**Gate 3: cold boot of the default floppy build** (`pmpatch.py build --floppy --out /tmp/tickhz/pm`; `pmtick.py cold --disk ... [--machine --tos --mem --hz]`, boots with `boot_to_game`, measures at 8 then 16 MHz, 3000 VBL = 50 s):
+```
+boot 143 s; marker b'PMPO'; $13020 4eb9000b8800; sync $ff820a = $fe -> booted at 50 Hz          (1 MB STE TOS 1.62; refresh then forced to 60 with `w $ff820a $00`)
+RESULT cold ste TOS 1.62 1024 KB 8 MHz 60 Hz: 3001 VBL = 50.02 s, 133603 cycles/VBL, world ticks 200 = 3.999/s
+RESULT cold ste TOS 1.62 1024 KB 16 MHz 60 Hz: 3001 VBL = 50.02 s, 267127 cycles/VBL, world ticks 200 = 3.999/s
+boot 147 s; marker b'PMPO'; $13020 4eb9000b8800; sync $ff820a = $fc -> booted at 60 Hz          (4 MB Mega STE TOS 2.06, native 60 Hz, no poke)
+RESULT cold megaste TOS 2.06 4096 KB 8 MHz 60 Hz: 3001 VBL = 50.02 s, 133569 cycles/VBL, world ticks 200 = 3.999/s
+RESULT cold megaste TOS 2.06 4096 KB 16 MHz 60 Hz: 3001 VBL = 50.02 s, 267160 cycles/VBL, world ticks 199 = 3.979/s
+```
+Limits: the sync mode is only read, never written. A game that rewrites `$ff820a` (none seen: it stayed `$fc`/`$fe` over 80 s runs) is followed. Camera/scroll speed and the sound are still per frame / per VBL (section 2).

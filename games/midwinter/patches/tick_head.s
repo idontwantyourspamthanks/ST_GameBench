@@ -6,11 +6,13 @@
 ; note: P3 fixed logic tick, OPTION A (work/notes/timing.md). Replaces the head of the in-game
 ;       frame loop sub_014e00 (`bsr.w $14efc` key poll + `bsr.w $12e9c` simulation step) with a
 ;       scheduler that makes the simulation advance at a fixed real-time rate of one step per
-;       GRP = 10 VBL (5 steps/s) whatever the frame rate.
-;       Real time = the game's own free-running VBL counter $637e (word, +1 per VBL in the
-;       action mode, `$61ac addq.w #1,$637e`; frameloop.md/simtiming.md section 5); no VBL patch.
-;         ACC (D+2) = real time not yet simulated, in VBLs (word).
-;         Ahead (ACC < GRP after adding the VBLs since the last look): spin on $637e. This is
+;       GRP = 60 units of 1/300 s = 0.2 s (5 steps/s) whatever the frame rate AND the display refresh rate.
+;       Real time = the game's own free-running VBL counter $637e (word, +1 per VBL in the action
+;       mode, `$61ac addq.w #1,$637e`; frameloop.md/simtiming.md section 5) times the length of a VBL
+;       in 1/300 s units, read from the shifter sync mode at every look ($ff820a bit 1: 1 = 50 Hz =
+;       6 units, 0 = 60 Hz = 5 units); no VBL patch (timing.md section 10).
+;         ACC (D+2) = real time not yet simulated, in 1/300 s units (word).
+;         Ahead (ACC < GRP after adding the time since the last look): spin on $637e. This is
 ;           the frame limiter for fast machines.
 ;         Behind by at least another whole step after this one: SKIP (D+6) = 1. The pass then
 ;           runs the simulation and the logic calls of the loop body ($14fac HUD feed + game
@@ -21,11 +23,11 @@
 ;           calls ($129d2 $1580e $1d0a0 $18304 $19ce2 $1bbe6) and the flip are skipped
 ;           together (frameloop.md section 5: otherwise the draw buffer keeps the picture of
 ;           three flips ago). The key word $12afc is rewritten by every $14efc poll.
-;         Catch-up is clamped to 3 steps; a gap of more than 4 steps (or a counter that went
-;           backwards because menu code cleared $637e) resyncs: one pass, no burst.
+;         Catch-up is clamped to 3 steps; a gap of more than 4 steps (0.8 s) or a counter that went
+;           backwards because menu code cleared $637e resyncs: one pass, no burst.
 ;       Data block D = $B3700 (zero at boot), same layout as p3b_head:
 ;         D+0 LAST.w  D+2 ACC.w  D+4 PH.w  D+6 SKIP.w ...
-GRP     equ     10
+GRP     equ     60                      ; 1/300 s units: 0.2 s
 D       equ     $b3700
 oLAST   equ     0
 oACC    equ     2
@@ -37,12 +39,17 @@ oSKIP   equ     6
         org     $b3100
 tick:   movem.l d0-d2/a0,-(a7)
         lea     D.l,a0
-        moveq   #GRP,d2                 ; d2 = VBLs this pass consumes
+        moveq   #GRP,d2                 ; d2 = 1/300 s units this pass consumes
 .wait:  move.w  $637e.l,d0
         move.w  d0,d1
         sub.w   oLAST(a0),d1            ; VBLs since the previous look (mod 65536)
         move.w  d0,oLAST(a0)
-        cmpi.w  #4*GRP,d1
+        moveq   #5,d0                   ; 60 Hz: 5 units per VBL
+        btst    #1,$ffff820a.w          ; shifter sync mode: bit 1 set = 50 Hz
+        beq.s   .rate
+        moveq   #6,d0                   ; 50 Hz: 6 units per VBL
+.rate:  mulu.w  d0,d1                   ; d1.l = real time since the previous look, 1/300 s
+        cmpi.l  #4*GRP,d1
         bls.s   .acc
         moveq   #0,d1                   ; first entry, back from another screen, or $637e
         move.b  d2,d1                   ; cleared/wrapped: resync, one pass, no burst
@@ -51,7 +58,7 @@ tick:   movem.l d0-d2/a0,-(a7)
         cmp.w   oACC(a0),d2
         bgt.s   .wait                   ; ahead of real time: wait for VBLs
         sub.w   d2,oACC(a0)             ; this pass simulates one step
-        moveq   #3*GRP,d0
+        move.w  #3*GRP,d0
         cmp.w   oACC(a0),d0
         bge.s   .noclamp
         move.w  d0,oACC(a0)             ; bound the catch-up

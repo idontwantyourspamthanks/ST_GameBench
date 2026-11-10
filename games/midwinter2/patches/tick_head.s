@@ -5,18 +5,19 @@
 ; data: $b3404 12
 ; note: P3 fixed-tick, part 2 (option A). It runs at the head of the in-game
 ;       frame loop ($31486, work/notes/frameloop.md) and makes the game logic
-;       advance at a fixed real-time rate of one tick per TICK VBLs, whatever
-;       the frame rate.
-;         ACC ($B3408.l) = real time not yet simulated, in VBLs.
+;       advance at a fixed real-time rate of one tick per TICK clock units (1/300 s,
+;       the tick_vbl clock adds 6 per 50 Hz VBL and 5 per 60 Hz VBL), whatever
+;       the frame rate and the display refresh rate.
+;         ACC ($B3408.l) = real time not yet simulated, in 1/300 s units.
 ;         Ahead (ACC < TICK): spin until the VBL clock (tick_vbl, $B3400)
 ;         catches up. This is the frame limiter for fast machines.
 ;         Behind by another whole tick after this one: set SKIP ($B3404.w) so
 ;         tick_render skips render+flip and loops straight back here.
 ;         Catch-up is clamped to 3 ticks.
 ;       LAST ($B3400 snapshot) is kept at $B340C.l.
-;       TICK = 10 VBL (5 Hz) is about the original speed on a 1 MB 8 MHz STE,
+;       TICK = 60 units = 0.2 s (5 Hz, 10 VBL at 50 Hz) is about the original speed on a 1 MB 8 MHz STE,
 ;       where unpatched frames take 9.6-11.9 VBL (work/baseline.md).
-TICK    equ     10
+TICK    equ     60
 CLOCK   equ     $b3400
 SKIP    equ     $b3404
 ACC     equ     $b3408

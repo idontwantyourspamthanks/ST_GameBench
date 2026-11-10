@@ -5,20 +5,21 @@
 ; data: $b42e0 32
 ; note: P3 partial-B scheduler (work/notes/tick_inventory.md sections 4-6); replaces
 ;       tick_head (option A). It runs at the head of the in-game frame loop ($31486).
-;       Real time comes from the tick_vbl clock ($B3400, VBL units).
+;       Real time comes from the tick_vbl clock ($B3400): a long in units of 1/300 s,
+;       every VBL adds 6 (50 Hz) or 5 (60 Hz), so the tick rate is the same on both.
 ;       FOOT pass (type $6220 = 13 and $40b6 = 0, the only type validated for the
-;       25 Hz player step): one pass = one SUBT = 2 VBL sub-tick, PH walks 1..5.
+;       25 Hz player step): one pass = one SUBT = 12 units (0.04 s) sub-tick, PH walks 1..5.
 ;         PH 1-4  sub-tick: only the player sim (jsr $33bca), then render if on
 ;                 time (jump into the loop at $3158c) or straight back to the head.
 ;         PH 5    world tick: the whole logic block, exactly as option A (5 Hz).
-;       Any other type: one pass = one GRP = 10 VBL tick, PH = 5, i.e. option A.
-;       Real time not yet simulated is ACC (VBLs). Ahead (ACC < the pass length):
+;       Any other type: one pass = one GRP = 60 units (0.2 s, 5 Hz) tick, PH = 5, i.e. option A.
+;       Real time not yet simulated is ACC (1/300 s units). Ahead (ACC < the pass length):
 ;       spin on the VBL clock (frame limiter). Another pass owed after this one:
 ;       SKIP = 1, so no render this pass (p3b_render handles PH 5; PH 1-4 never
-;       reach the render). Catch-up is clamped to 3*GRP VBL; a gap longer than
-;       4*GRP VBL resyncs (one pass, no burst), as tick_head.
+;       reach the render). Catch-up is clamped to 3*GRP units; a gap longer than
+;       4*GRP units resyncs (one pass, no burst), as tick_head.
 ;       Data block D = $B42E0 (zero at boot), used by every p3b_* hook and p5_ctl_x:
-;         D+0  LAST.l  clock at the previous look      D+4  ACC.w  VBLs owed
+;         D+0  LAST.l  clock at the previous look      D+4  ACC.w  1/300 s owed
 ;         D+6  PH.w    1..5                            D+8  SUB.w  1 = 1/5 foot step
 ;         D+10 HOLD.w  1 = foot pass 2..5 of a group   D+12 SKIP.w 1 = no render now
 ;         D+14 HF.w, D+16 SACC.w (p3b_hdg)  D+18 BACC.w (p3b_bank)
@@ -29,8 +30,8 @@
 ;         bres ($B40DC): Bresenham step. In: d1.w = e2, a1 -> remainder word. Out:
 ;           d0.l = 2*q with q = floor((rem+e2)/5), remainder updated. Clobbers d1, d2.
 ;       Preserves d0-d2/a0; a6 and the displaced jsr as tick_head.
-GRP     equ     10
-SUBT    equ     2
+GRP     equ     60                      ; 1/300 s units: 0.2 s
+SUBT    equ     12                      ; 0.04 s
 CLOCK   equ     $b3400
 D       equ     $b42e0
         org     $31486
@@ -40,7 +41,7 @@ D       equ     $b42e0
         org     $b4000
         movem.l d0-d2/a0,-(a7)
         lea     D.l,a0
-        moveq   #GRP,d2                 ; d2 = VBLs this pass consumes
+        moveq   #GRP,d2                 ; d2 = clock units this pass consumes
         cmpi.w  #13,$6220.w
         bne.s   .wait
         tst.w   $40b6.w
@@ -48,10 +49,9 @@ D       equ     $b42e0
         moveq   #SUBT,d2                ; foot: 25 Hz sub-tick
 .wait:  move.l  CLOCK.l,d0
         move.l  d0,d1
-        sub.l   (a0),d1                 ; VBLs since the previous look
+        sub.l   (a0),d1                 ; 1/300 s since the previous look
         move.l  d0,(a0)
-        moveq   #4*GRP,d0
-        cmp.l   d0,d1
+        cmpi.l  #4*GRP,d1
         bls.s   .acc
         moveq   #0,d1                   ; first entry or back from another screen:
         move.b  d2,d1                   ; resync, one pass, no catch-up burst
@@ -60,7 +60,7 @@ D       equ     $b42e0
         cmp.w   4(a0),d2
         bgt.s   .wait                   ; ahead of real time: wait for VBLs
         sub.w   d2,4(a0)                ; this pass simulates one unit
-        moveq   #3*GRP,d0
+        move.w  #3*GRP,d0
         cmp.w   4(a0),d0
         bge.s   .noclamp
         move.w  d0,4(a0)                ; bound the catch-up
@@ -71,8 +71,7 @@ D       equ     $b42e0
         addq.w  #1,12(a0)               ; another pass owed: no render now
 .ontime:
         moveq   #5,d0                   ; PH of a full (option A) pass
-        clr.w   8(a0)                   ; SUB
-        clr.w   10(a0)                  ; HOLD
+        clr.l   8(a0)                   ; SUB (8) and HOLD (10), adjacent words
         cmpi.w  #SUBT,d2
         bne.s   .set
         move.w  6(a0),d0

@@ -14,10 +14,10 @@
 ;       position change, 0 when the change was more than STEP in an axis = teleport, spawn, landing...) writes
 ;       x/z low byte + (delta*FQ)>>8, clamped to 0..255 (the cell edge; the high byte, i.e. the chain cell, is untouched),
 ;       calls $f898, then writes the saved words back: the people table is bit-identical outside of the render.
-;       FQ (256 = one tick = 12.5 VBL = 25 half-VBL; at most 384): the time since the tick the records describe, i.e. ACC (tick_head's
-;       half-VBL accumulator: lateness plus time since the tick pass) * 256/25 on a render-only pass (ACC < 25); on a tick pass the
+;       FQ (256 = one tick = 75 units of 1/300 s = 0.25 s; at most 384): the time since the tick the records describe, i.e. ACC (tick_head's
+;       1/300 s accumulator: lateness plus time since the tick pass) * 256/75 on a render-only pass (ACC < 75); on a tick pass the
 ;       render still shows the people as the PREVIOUS tick left them (the men update runs after it) and ACC has already had the tick
-;       taken off, so FQ = (ACC + 25) * 256/25: the same straight line, which keeps the frame sequence monotonic (FQ = 0 on tick passes
+;       taken off, so FQ = (ACC + 75) * 256/75: the same straight line, which keeps the frame sequence monotonic (FQ = 0 on tick passes
 ;       makes every man jump back one step at each tick pass). PD+0 TOFF != 0 forces 0 there: the frame of the tick-only build, for
 ;       the pixel gate (tools/pmab.py --tonly --poke b8a80:0001) and for comparison, not for play.
 ;       Pause ($57ff2), an empty list (p3b_delta keeps it empty while no render-only pass happens: an 8 MHz machine) or FQ = 0: no offset,
@@ -41,14 +41,14 @@ ap:     movem.l d0-d7/a0-a2,-(a7)
         bne.w   .go
         move.w  PD+2.l,d6               ; NMOV
         beq.w   .go
-        move.w  D+2.l,d0                ; ACC: half-VBLs since the last tick (render-only pass: < 25) ...
+        move.w  D+2.l,d0                ; ACC: 1/300 s since the last tick (render-only pass: < 75) ...
         tst.w   D+6.l                   ; RON
         bne.s   .fq
         tst.w   PD.l                    ; TOFF
         bne.w   .go
-        add.w   #25,d0                  ; ... tick pass: ACC is what is left after the tick was taken off: one tick more
-.fq:    mulu.w  #1311,d0
-        lsr.l   #7,d0                   ; *256/25
+        add.w   #75,d0                  ; ... tick pass: ACC is what is left after the tick was taken off: one tick more
+.fq:    mulu.w  #874,d0
+        lsr.l   #8,d0                   ; *256/75 (874/256 = 3.4141, 256/75 = 3.4133)
         cmpi.w  #384,d0
         bls.s   .have
         move.w  #384,d0                 ; at most 1.5 steps ahead

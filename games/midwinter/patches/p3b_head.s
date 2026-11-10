@@ -5,9 +5,11 @@
 ; data: $b3700 64
 ; note: P3 partial B (work/notes/timing.md); replaces tick_head (option A). Needs p3b_hook, p3b_hud,
 ;       p3b_logic, p3b_msg, p3b_units. Head of the in-game frame loop sub_014e00. Real time = the game's VBL
-;       counter $637e, exactly as tick_head. The 5 Hz game step ("tick", GRP = 10 VBL) is unchanged
-;       (A); what is new is that the VIEW advances in 5 sub-steps of SUBT = 2 VBL (25 Hz) per tick:
-;       a GROUP of 5 passes of the loop, each pass 2 VBL, PH = 1..5.
+;       counter $637e times the length of a VBL in 1/300 s units, read from the shifter sync mode at every look
+;       ($ff820a bit 1: 1 = 50 Hz = 6 units, 0 = 60 Hz = 5 units), as tick_head (timing.md section 10). The 5 Hz game
+;       step ("tick", GRP = 60 units = 0.2 s) is unchanged
+;       (A); what is new is that the VIEW advances in 5 sub-steps of SUBT = 12 units = 0.04 s (25 Hz) per tick:
+;       a GROUP of 5 passes of the loop, each pass 12 units, PH = 1..5.
 ;         PH 1  key poll $14efc, then the mode step $12d5e (= $131ae, ski/walk state machine) with
 ;               SPLIT = 1. The state machine runs to its common exit $13236, where p3b_hook takes
 ;               over: turn ($12fe2, once per tick, fresh input), group end heading HG = H0 + E,
@@ -32,12 +34,12 @@
 ;       Scheduling is as tick_head, in units of the pass length (SUBT or GRP): ahead -> spin on
 ;       $637e; another pass owed -> SKIP = 1 (no render, no flip: after the sim of a sub pass the
 ;       head returns to the loop top; after a world pass it runs the logic calls of the body, see
-;       wskip); catch-up clamped to 3*GRP VBL; gap > 4*GRP VBL resyncs.
+;       wskip); catch-up clamped to 3*GRP units; gap > 4*GRP units resyncs (one pass, no burst).
 ;       Data block D = $B3700 (zero at boot):
 ;         D+0 LAST.w  D+2 ACC.w  D+4 PH.w  D+6 SKIP.w  D+8 SPLIT.w  D+10 H0.w  D+12 E.w
 ;         D+14 HG.w  D+16 X0.l  D+20 Z0.l  D+24 DX.w  D+26 DZ.w  D+28 MODE.l  D+32 NOLOGIC.w
-GRP     equ     10
-SUBT    equ     2
+GRP     equ     60                      ; 1/300 s units: 0.2 s
+SUBT    equ     12                      ; 0.04 s
 D       equ     $b3700
 oLAST   equ     0
 oACC    equ     2
@@ -61,7 +63,7 @@ oNOLOG  equ     32
 tick:   movem.l d0-d2/a0,-(a7)
         lea     D.l,a0
         clr.w   oNOLOG(a0)
-        moveq   #GRP,d2                 ; d2 = VBLs this pass consumes (A pass)
+        moveq   #GRP,d2                 ; d2 = 1/300 s units this pass consumes (A pass)
         cmpi.l  #$14ac4,20(a7)          ; caller = the loop ($14ac0 bsr.w)?
         bne.s   .forceA
         move.w  oPH(a0),d0
@@ -88,7 +90,12 @@ tick:   movem.l d0-d2/a0,-(a7)
         move.w  d0,d1
         sub.w   oLAST(a0),d1            ; VBLs since the previous look (mod 65536)
         move.w  d0,oLAST(a0)
-        cmpi.w  #4*GRP,d1
+        moveq   #5,d0                   ; 60 Hz: 5 units per VBL
+        btst    #1,$ffff820a.w          ; shifter sync mode: bit 1 set = 50 Hz
+        beq.s   .rate
+        moveq   #6,d0                   ; 50 Hz: 6 units per VBL
+.rate:  mulu.w  d0,d1                   ; d1.l = real time since the previous look, 1/300 s
+        cmpi.l  #4*GRP,d1
         bls.s   .acc
         moveq   #0,d1                   ; first entry / back from another screen / $637e cleared:
         move.b  d2,d1                   ; resync, one pass, no catch-up burst
@@ -97,7 +104,7 @@ tick:   movem.l d0-d2/a0,-(a7)
         cmp.w   oACC(a0),d2
         bgt.s   .wait                   ; ahead of real time: wait for VBLs
         sub.w   d2,oACC(a0)             ; this pass consumes one unit
-        moveq   #3*GRP,d0
+        move.w  #3*GRP,d0
         cmp.w   oACC(a0),d0
         bge.s   .noclamp
         move.w  d0,oACC(a0)             ; bound the catch-up
