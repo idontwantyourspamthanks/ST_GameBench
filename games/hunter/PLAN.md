@@ -12,6 +12,8 @@ Follows the Midwinter method (`.omp/skills/st-game-speedup`). User preferences c
   - **Samples:** extracted at build time from the user's own Amiga ADF (`tools/amiga_extract.py`, `games/hunter/alt/`). Never stored in git.
   - **Open:** how to deliver the payload through the Gamex loader; STE detection by hardware probe (the cookies are unreliable under Gamex); 4 MB free-RAM check.
 
+- **68030 data cache off while the floppy loader runs (user decision, keep for now):** the 68030 does not snoop FDC DMA and the Paper Bag loader never flushes; Hatari doesn't show the problem, so this is real-hardware caution (fps cost unmeasured).
+
 ## Phases
 - **P0 Harness and benchmarks** (`HunterBench`): `tools/hunter.py`, snapshots, baseline, frame-rate coupling, hot paths.
 - **P1 Sound feasibility:** done (`work/notes/sound.md`).

@@ -74,3 +74,6 @@ The walking snapshot has the player walking toward X = 0 at 0xb per 25 Hz sub-ti
 No accumulator overflow (`ACC` stays <= 48 at 8 MHz, <= 18 at 16 MHz), no counter wrap and no resync loop were seen; the marker `$3148e` is simply not reached while `$4f5a` (the world logic) is inside the rebuild. Not a measurement artefact: the `$b4000` head entries (`trace.py`) show a 289-VBL gap with no entry; the marker gap in `mw2tick.py` (297 VBL) is the 285-VBL rebuild plus the normal ~10-12 VBL tick interval around it [INFERENCE: 285 + 12].
 Gates: no patch changed, so the group-end exactness gates (`t6.py`/`cmp6hz.py`, 41 groups at 50/60 Hz, 8/16 MHz) were not re-run: [INFERENCE] nothing in them touches this path (41 groups, 8 MHz, from the start state; no check was made that X stays above `$1388`). The only edit is a comment in `tools/mw2tick.py` naming the stall.
 Consequence for players: walking 40 cells in the same direction freezes the game for about 5.7 s at 16 MHz and 11.5 s at 8 MHz, as the original does; speeding that rebuild up is a separate optimisation (`$1c846`-`$1c956`, `$27462`, `$33822` are its hot spots), not a timing fix.
+
+
+**User decision (2026-11-10):** the local-map rebuild freeze is accepted as the original game's behaviour; not optimised.
