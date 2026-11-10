@@ -5,8 +5,8 @@
 ; data: $b42e0 32
 ; data: $b8700 1984
 ; data: $b8f00 256
-; note: P3c = the type-independent 25 Hz player step (work/notes/vehicles_p3b.md).  Replaces p3b_head AND p3b_pos/hdg/alt/bank/save/probe
-;       (do not mix: those hooks assume SUB = 1 means "run the 1/5 step").  Needs p3c_sim (second site, $31570) and p3b_render ($3158c, unchanged).
+; note: P3c = the type-independent 25 Hz player step, INTERPOLATED alternative to p3cp_head (work/notes/vehicles_p3b.md; not shipping).  It does NOT have the later p3cp fixes
+;       (wave pointer restore, deadline-aware extra passes) and was not re-gated: do not ship it as is.  Do not combine with p3cp_head.  Needs p3c_sim ($31570) and p3c_render ($3158c).
 ;       Idea: the 5 Hz tick runs ONCE per group of five 40 ms passes, completely unmodified (PH 1), so the world state at the end of every
 ;       group is the original game's by construction, for every vehicle type, including the ones that cannot be split exactly (the
 ;       exponential parachute fall, the speed ramp, probes, derivative/integrator controls, fatigue).  The passes in between only
@@ -17,10 +17,9 @@
 ;                 HUD, clock, ...) and the render, i.e. option A's tail.
 ;       Interpolated: X, Y, heading ($6742 $6294 $764a), bank, pitch, altitude $764c, lean.  Not interpolated (display = end-of-tick):
 ;       everything else.  A tick whose pose jumps (type change, recentre of the map, |dX|,|dY|,|dAlt| > $1000) or does not move is shown unchanged.
-;       Real time = the tick_vbl clock ($B3400, units of 1/300 s) as p3b_head: GRP = 60 units = 5 Hz, SUBT = 12 units = 40 ms.
+;       Real time = the tick_vbl clock ($B3400, units of 1/300 s): GRP = 60 units = 5 Hz, SUBT = 12 units = 40 ms.
 ;       TAB[type] = 0 keeps a type on the plain 5 Hz pass (option A) (also when $40b6 <> 0).
-;       Shared word block D = $b42e0 as p3b_head (LAST.l +0, ACC.w +4, PH.w +6, SUB.w +8 (1 = PH 1 of an interpolated group), HOLD.w +10 (always 0:
-;       the sim runs once per group, so p5_ctl_x consumes input once per tick), SKIP.w +12 (read by p3b_render)).
+;       Shared word block D = $b42e0 (LAST.l +0, ACC.w +4, PH.w +6, SUB.w +8 (1 = PH 1 of an interpolated group), +10 unused, SKIP.w +12 (read by p3c_render)).
 ;       Own data S = $b8f00: P0 (pose before the tick) +0, INT +$20, GV (a group is open: shadow valid) +$22, shadow of the end-of-tick state +$30.
 ;       Code: one segment at $b8000 (hook first: p3c_sim jumps to it), hook / head / helpers / tables.
 GRP     equ     60

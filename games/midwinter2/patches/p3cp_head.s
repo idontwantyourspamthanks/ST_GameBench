@@ -5,8 +5,8 @@
 ; data: $b42e0 32
 ; data: $b8700 1984
 ; data: $b8f00 256
-; note: P3cp = the PREDICT-AHEAD 25 Hz player step, type independent (work/notes/vehicles_p3b.md).  Replaces p3b_head AND p3b_pos/hdg/alt/bank/save/probe
-;       (do not mix).  Needs p3c_sim ($31570, the hook; it only records the pose before the tick here) and p3b_render ($3158c, unchanged).
+; note: P3cp = the PREDICT-AHEAD 25 Hz player step, type independent (work/notes/vehicles_p3b.md).  It is the game's scheduler (replaces v1.2's p3b_head and the p3b_pos/hdg/alt/bank/save/probe
+;       integrators, which are gone) and needs p3c_sim ($31570, the hook; it only records the pose before the tick here) and p3c_render ($3158c, unchanged).
 ;       Per group of five 40 ms passes:
 ;         PH 1    the ORIGINAL tick, completely unmodified and complete (pre-calls, player sim, post-calls, render at the pose the original shows, flip,
 ;                 post-flip handler), so the world, the player and the picture at PH 1 are the unpatched game's by construction, for every vehicle type
@@ -18,12 +18,15 @@
 ;       Overshoot limits: no prediction in a tick that changed the type, that jumped (|dX|,|dY|,|dAlt| > $1000, |dHeading| > 256, |dBank|,|dPitch| > 128: recentre of the
 ;       map, landing, eject), that ended with a collision/arrival result ($676e) or a landing ($767e), nor in the FIRST group after such a jump.  Altitude is never extrapolated downwards
 ;       (the camera could end up below the terrain) and the lean (view tilt) never.  Stopping after a move shows the extra frames' pose snap back by up to 4/5 of a tick step.
-;       Not a game input: the extra frames' renders write the NPC records (+$36.., visibility counters) and advance the sea wave phase ($1dcae); the NPC table
-;       is restored from a snapshot taken after PH 1 and the wave phase advances once per tick.
+;       Not a game input: the extra frames' renders write the NPC records (+$36.., visibility counters) and advance the sea wave phase ($1dcae-$1dcca: $1877c and the pointer
+;       $1dfba); the NPC table is restored from a snapshot taken after PH 1, and the wave phase AND pointer are restored from the values the PH 1 render left (the pointer is
+;       not always base + phase: the map window rebuild $1dd7e resets it to the table base, and the next tick's sim reads it).
 ;       Real time: the tick_vbl clock ($B3400, 1/300 s): GRP = 60 units = 5 Hz, SUBT = 12 units = 40 ms.  PH 1 renders unless a whole tick (GRP) is owed (option A's
-;       rule), PH 2-5 unless one more pass is owed.  TAB[type] = 0 keeps a type on the plain 5 Hz pass (also when $40b6 <> 0).
-;       Shared word block D = $b42e0 as p3b_head (LAST.l +0, ACC.w +4, PH.w +6, SUB.w +8 (1 = PH 1 of a predicted group), HOLD.w +10 (always 0: the tick runs
-;       once per group, so p5_ctl_x consumes input once per tick), SKIP.w +12 (read by p3b_render)).  Own data S = $b8f00.  Code: one segment at $b8000.
+;       rule), PH 2-5 unless one more pass is owed or the render would not end before the next PH 1 is due (12 * (6 - PH) - lateness < the measured duration of the last two
+;       extra passes): a late PH 1 would read the keys (Esc) and the mouse a pass later than the original's tick does, so the tick starts stay on the original's schedule.
+;       TAB[type] = 0 keeps a type on the plain 5 Hz pass (also when $40b6 <> 0).
+;       Shared word block D = $b42e0 (LAST.l +0, ACC.w +4, PH.w +6, SUB.w +8 (1 = PH 1 of a predicted group), +10 unused, SKIP.w +12 (read by p3c_render)).
+;       Own data S = $b8f00.  Code: one segment at $b8000.
 GRP     equ     60
 SUBT    equ     12
 CLOCK   equ     $b3400
@@ -32,10 +35,16 @@ S       equ     $b8f00
 P0      equ     S+0                     ; pose before the tick: X.l Y.l $6742 $6294 $764a $6746 $674a $764c $674e $6220 (24 bytes)
 INT     equ     S+$20                   ; the group shows predicted poses
 GV      equ     S+$22                   ; the hook ran in this group (P0 valid)
-WV      equ     S+$24                   ; sea wave phase of this tick
+WV      equ     S+$24                   ; sea wave phase the tick's sim and PH 1 render saw
 JP      equ     S+$28                   ; the previous tick's pose jumped
 PLIVE   equ     S+$2a                   ; the live pose is a predicted one (restore it)
-WVV     equ     S+$2c                   ; WV valid
+WX      equ     S+$2c                   ; an extra render altered the live wave phase / pointer (EPH/EPT hold the end-of-tick values)
+EPH     equ     S+$2e                   ; $1877c after PH 1
+EPT     equ     S+$a4                   ; $1dfba after PH 1 (long; the original's $1dd7e, the window rebuild, resets it to the table base without touching the phase)
+TS      equ     S+$a8                   ; clock at the start of the last extra pass (long)
+RF      equ     S+$ac                   ; the last pass rendered: measure it
+REST    equ     S+$ae                   ; estimated duration of an extra pass (units)
+RPV     equ     S+$b0                   ; the previous measure
 SH      equ     S+$30                   ; shadow of the end-of-tick state (51 words)
 RD      equ     S+$a0                   ; an extra render happened since the NPC table was restored
 NS      equ     $b8700                  ; NPC table $3532-$3cee after PH 1
@@ -81,6 +90,21 @@ hook:   tst.w   D+8.l                   ; SUB: PH 1 of a predicted group?
 ; ---- head of the in-game frame loop ($31486) --------------------------------------------------------------------------------------------
 head:   movem.l d0-d2/a0-a1,-(a7)
         lea     D.l,a0
+        tst.w   RF.l
+        beq.s   .nm
+        clr.w   RF.l
+        move.l  CLOCK.l,d0
+        sub.l   TS.l,d0                 ; clock units the last extra pass took (VBL granularity)
+        cmpi.l  #GRP,d0
+        bls.s   .m1
+        moveq   #GRP,d0
+.m1:    move.w  RPV.l,d1
+        move.w  d0,RPV.l
+        cmp.w   d1,d0
+        bge.s   .m2
+        move.w  d1,d0
+.m2:    move.w  d0,REST.l               ; REST = the longer of the last two
+.nm:
         moveq   #GRP,d2                 ; d2 = clock units this pass consumes
         move.w  $6220.w,d0
         cmpi.w  #21,d0
@@ -101,8 +125,10 @@ head:   movem.l d0-d2/a0-a1,-(a7)
         move.b  d2,d1
         clr.w   4(a0)
         clr.w   6(a0)                   ; PH = 0: the next predicted pass is PH 1
-        clr.w   WVV.l                   ; wave phase: take the live one again
-        bsr     fixup                   ; a group cut short: live pose and NPC table back to the end of their tick
+        clr.w   REST.l                  ; no extra-pass duration known yet
+        clr.w   RPV.l
+        clr.w   RF.l
+        bsr     fixup                   ; a group cut short: live pose, NPC table and wave state back to the end of their tick
 .acc:   add.w   d1,4(a0)
         cmp.w   4(a0),d2
         bgt.s   .wait                   ; ahead of real time: wait for VBLs
@@ -131,8 +157,10 @@ head:   movem.l d0-d2/a0-a1,-(a7)
         tst.w   GV.l
         bne.s   .cont
         moveq   #1,d0                   ; no group is open (never started, or the loop was left): start one
-.first: bsr     fixup                   ; live pose and NPC table back to the end of the previous tick
-        bsr     wavetick
+.first: tst.w   REST.l                 ; the estimate only grows when an extra pass renders: let it shrink by one unit per group, so a
+        beq.s   .rd                     ; stale long measure (a map rebuild inside a pass) is probed again after a while
+        subq.w  #1,REST.l
+.rd:    bsr     fixup                   ; live pose and NPC table back to the end of the previous tick
         clr.w   GV.l
         move.w  d0,6(a0)
         move.w  #1,8(a0)                ; SUB = 1: the hook at $31570 records the pose before this tick
@@ -144,6 +172,15 @@ head:   movem.l d0-d2/a0-a1,-(a7)
         lea     $770e.w,a6              ; displaced
         jmp     $4f5a.w                 ; displaced jsr, as a tail call: the pre-calls follow
 .cont:  move.w  d0,6(a0)                ; PH 2-5: extra frame
+        moveq   #6,d1                   ; render only if it ends before the next PH 1 is due: 12 * (6 - PH) - lateness >= the duration of the last extra passes
+        sub.w   d0,d1                   ; (a late PH 1 would consume the input, e.g. Esc, a tick after the original does)
+        mulu.w  #SUBT,d1
+        sub.w   4(a0),d1
+        cmp.w   REST.l,d1
+        bge.s   .fits
+        move.w  #1,12(a0)
+.fits:
+        move.l  CLOCK.l,TS.l            ; start of this extra pass (its duration is measured at the next head entry)
         movem.l (a7)+,d0-d2/a0-a1
         addq.l  #4,a7                   ; drop the return into $3148e
         cmpi.w  #2,D+6.l
@@ -159,6 +196,7 @@ head:   movem.l d0-d2/a0-a1,-(a7)
         tst.w   D+12.l
         bne.s   .loop
         move.w  #1,RD.l
+        move.w  #1,RF.l
         lea     $770e.w,a6
         jmp     $3158c.l                ; HUD gauges, view setup, renderer, flip
 .loop:  jmp     $31486.l
@@ -181,28 +219,27 @@ cap0:   movem.l d0/a0,-(a7)
         move.w  $764c.w,(a0)+           ; +18
         move.w  $674e.w,(a0)+           ; +20
         move.w  $6220.w,(a0)+           ; +22
+        move.w  $1877c.l,WV.l           ; wave phase of the tick (a render advances it)
         move.w  #1,GV.l
         movem.l (a7)+,d0/a0
         rts
 
-; ---- sea wave phase: the original advances it (+8, $1dcae) after every render; here once per tick, before the pre-calls of the tick -------------
-wavetick:
-        movem.l d0,-(a7)
-        tst.w   WVV.l
-        bne.s   .wv
-        move.w  $1877c.l,WV.l           ; first group: the live phase
-        move.w  #1,WVV.l
-        bra.s   .set
-.wv:    move.w  WV.l,d0
-        addq.w  #8,d0
-        andi.w  #$7e,d0
-        move.w  d0,WV.l
-.set:   bsr     rewave
-        movem.l (a7)+,d0
+; ---- wave state: PH 2 takes the live end-of-tick phase and pointer (the original's); the extra renders run at WV; the next tick restores them ----
+wavesave:
+        move.w  $1877c.l,EPH.l
+        move.l  $1dfba.l,EPT.l
         rts
+wavefix:
+        tst.w   WX.l
+        beq.s   .r
+        clr.w   WX.l
+        move.w  EPH.l,$1877c.l
+        move.l  EPT.l,$1dfba.l
+.r:     rts
 
 ; ---- shadow = end-of-tick state; INT = 1 if the next frames may show predicted poses ----------------------------------------------------------
-cap1:   movem.l d0-d2/d4-d6/a0-a3,-(a7)
+cap1:   bsr     wavesave
+        movem.l d0-d2/d4-d6/a0-a3,-(a7)
         lea     RTAB(pc),a2
         lea     SH.l,a1
 .reg:   move.w  (a2)+,d1
@@ -279,7 +316,8 @@ npcfix: tst.w   RD.l
 .r:     rts
 
 ; ---- the wave phase of the tick (each render advances it) ------------------------------------------------------------------------------------
-rewave: move.l  a0,-(a7)
+rewave: move.w  #1,WX.l
+        move.l  a0,-(a7)
         move.w  WV.l,$1877c.l
         moveq   #0,d0
         move.w  WV.l,d0
@@ -291,6 +329,7 @@ rewave: move.l  a0,-(a7)
 
 ; ---- live pose, view words and NPC table back to the end of the tick ----------------------------------------------------------------------------
 fixup:  bsr     npcfix
+        bsr     wavefix
 restore:
         tst.w   PLIVE.l
         beq.s   .r

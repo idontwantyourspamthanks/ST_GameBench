@@ -1,20 +1,14 @@
 #!/usr/bin/env python3
-"""fpsrun.py CONFIG SNAP MHZ [SCEN]: fps over 1000 VBL after applying the patch set at a flip. CONFIG: orig | v12 | cand | cand_nsk (cand without p7_skip) | candc (cand + type-table crop 13 only...)
+"""fpsrun.py CONFIG SNAP MHZ [SCEN]: fps over 1000 VBL after applying the patch set at a flip. CONFIG: orig | cand (defaults + p3cp_head + p3c_sim + p7_skip_render) | cand_nsk (cand without p7_skip_*)
 SCEN: stand (default) | move (forward + turn pokes as runtype)."""
 import sys, subprocess
 sys.path.insert(0, '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_p3b')
 from vt import *
 import runtype
 cfg, snap, mhz = sys.argv[1], sys.argv[2], int(sys.argv[3]); scen = sys.argv[4] if len(sys.argv) > 4 else 'stand'
-def default_names():
-    out = subprocess.run([sys.executable, str(GAME/'tools/mw2patch.py'), 'list'], capture_output=True, text=True, cwd=GAME).stdout
-    return [l.split()[0] for l in out.splitlines()[1:] if len(l.split()) > 2 and l.split()[1] == 'yes' and 'HAGA' not in l and not l.startswith(('pp_', 'floppy')) and l.split()[0] != 'mw2_credit']
-drop = {'p3b_head', 'p3b_pos', 'p3b_hdg', 'p3b_alt', 'p3b_bank', 'p3b_save', 'p3b_probe'}
 if cfg == 'orig': names = None
-elif cfg == 'v12': names = default_names()
-elif cfg in ('cand', 'cand_nsk'):
-    names = [n for n in default_names() if n not in drop and n != 'p7_skip_render'] + ['p3cp_head', 'p3c_sim', 'p7_skip_render_t']
-    if cfg == 'cand_nsk': names = [n for n in names if not n.startswith('p7_skip')]
+elif cfg == 'cand': names = cand_names()
+elif cfg == 'cand_nsk': names = [n for n in cand_names() if not n.startswith('p7_skip')]
 live = build_live(names, 'fps_' + cfg) if names else None
 h = Hatari(snapshot=str(SNAP/snap), memsize_kb=2048)
 try:

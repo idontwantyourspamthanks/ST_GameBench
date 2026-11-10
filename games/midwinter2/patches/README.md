@@ -88,46 +88,33 @@ never modified.
 Capacity: `PAYLOAD_LEN` = $8000 bytes ($B3000-$BAFFF): core $B3000-$B30FF, site table + byte pool
 $B3100-$B33FF, blob code/data from $B3400 (`BLOB_MIN`) to $BAFFF (`BLOB_MAX`).
 
-## Game-speed patches (P3, partial B: 5 Hz world, 25 Hz foot motion)
-Background: work/notes/tick_inventory.md (sections 4-6). The original game runs its whole
-logic block once per rendered frame, so the world speeds up with the frame rate. The
-patches below run the world at a fixed 5 Hz (the original speed on a 1 MB 8 MHz STE,
-about one tick per 10 VBL) and the player's motion at 25 Hz.
+## Game-speed patches (P3: 5 Hz world, 25 Hz player view for EVERY vehicle type; work/notes/vehicles_p3b.md)
+Background: work/notes/tick_inventory.md (sections 4-6), work/notes/timing.md. The original game runs its whole
+logic block once per rendered frame, so the world speeds up with the frame rate. The patches below run the world at a
+fixed 5 Hz (the original speed on a 1 MB 8 MHz STE, about one tick per 10 VBL) and show the player's motion at 25 Hz.
 - `tick_vbl` ($262d0): a free-running VBL clock at $B3400 in the VBL handler (blob $B3700), in units of 1/300 s (+6 per 50 Hz VBL, +5 per 60 Hz VBL).
-- `p3b_head` ($31486): the scheduler. Foot passes (type `$6220` = 13, `$40b6` = 0) are
-  12-unit (0.04 s = 2 VBL at 50 Hz, 2.4 VBL at 60 Hz) sub-ticks, PH = 1..5 (5 sub-ticks = one 5 Hz tick of 60 units of 1/300 s). Sub-ticks 1-4 run only
-  the player sim (`jsr $33bca`) and render when on time (jump into the loop at $3158c);
-  sub-tick 5 is the world tick, the whole logic block exactly as before. Every other
-  type gets one 10-VBL pass per tick (PH = 5), i.e. the old 5 Hz behaviour. It waits when
-  ahead of real time (frame limiter), sets SKIP when another pass is owed (no render),
-  clamps the catch-up to 30 VBL and resyncs after a gap longer than 40 VBL (as `tick_head`).
-  Scheduler data block D = $B42E0 (+0 LAST.l, +4 ACC.w, +6 PH, +8 SUB, +10 HOLD, +12 SKIP,
-  +14 HF, +16 SACC, +18 BACC, +20/+24 ACCX/ACCY, +28 ALT). SUB = this pass is a 1/5 foot
-  step, HOLD = foot pass 2..5 of a group. Shared helpers `fdiv5` ($B40C8) and `bres` ($B40DC).
-- `p3b_render` ($3158c): the HUD gauge draw ($19f54) runs once per presented frame (its dirty
-  counters are per screen buffer) and the world pass skips it together with the render when
-  SKIP is set (replaces `tick_render`).
-- `p3b_pos` ($344f8), `p3b_hdg` ($345e0), `p3b_alt` ($33f50), `p3b_bank` ($3461e): split the
-  position integrator, heading, `$764c` route accumulator and bank into 1/5 steps with exact
-  remainder accumulators (heading and position along the heading the 5 Hz tick ends on), so
-  that the state at the end of every group is bit-identical to the 5 Hz game. When SUB = 0 they
-  replay the replaced instructions and the original code runs.
-- `p3b_save` ($33be6, "patch 7"): the pre-move position/route copies `$66ee/$66f2/$66fe`
-  (used by the collision reverts) are saved only on the first pass of a group.
-- `p3b_probe` ($33dc6, blob $B4C00): the collision/terrain probe `$34006` (two calls, two thirds of
-  the cost of `$33bca`) and the arrival test run only on the world pass of a foot group, as in the 5 Hz
-  game; on sub-ticks 1-4 it clears `$676e` and branches straight to `$33e34`.
-- `p5_ctl_x` consumes fresh input only on the first pass of a group (HOLD = 0), the yaw is
-  reused for passes 2..5, so a group turns exactly as one 5 Hz tick did.
-- Option A (`tick_head` at $31486 + `tick_render` at $3159c, with `tick_vbl`) remains in the
-  tree with `default: no` as the reference build; it cannot be combined with `p3b_*`.
-  Its blobs sit at $B4000/$B4110 and overlap the p3b blobs, so the tool refuses both together.
-- Only the foot type (13) is validated for 25 Hz. Types 15/16/17/20 have private
-  accumulators and keep the 5 Hz step.
+- `p3cp_head` ($31486, `default: no` until flipped): the scheduler, PREDICT-AHEAD. Per group of five 40 ms passes (PH = 1..5, 60 clock units):
+  PH 1 is the ORIGINAL tick, unmodified and complete (pre-calls, player sim, post-calls, render, flip, post-flip handler), so the world, the
+  player and the picture at PH 1 are the unpatched game's for every vehicle type. PH 2-5 show the pose extrapolated from the tick that just ran
+  (`T_end + (T_end - T_start) * (PH-1)/5`), refresh the view words, and run the HUD gauge draw + render + flip; no game logic runs in them. The
+  live pose, view words, NPC table and sea-wave phase/pointer are put back to the end of the tick before the next PH 1, so every group end equals
+  the 5 Hz game's. An extra pass renders only when it ends before the next PH 1 is due, so the tick starts (the only place keys and the mouse are
+  read: Esc, J/K/mouse steering) stay on the original's 5 Hz schedule. Overshoot limits: no prediction after a type change, a jump (map re-centre,
+  landing, eject), a collision/arrival result; altitude is never extrapolated downwards; the lean never. TAB[type] = 0 puts a type on the plain 5 Hz pass.
+  Data: block D = $B42E0 (+0 LAST.l, +4 ACC.w, +6 PH, +8 SUB (1 = PH 1 of a group), +12 SKIP), own data $B8F00, NPC snapshot $B8700, code from $B8000 (below $B8700).
+- `p3c_sim` ($31570): the second site of p3cp_head; the sim call becomes `jsr $b8000.l`, the hook that records the pose before the tick.
+- `p3c_render` ($3158c, blob $B4102): the HUD gauge draw ($19f54) runs once per presented frame (its dirty counters are per screen buffer) and a pass with
+  SKIP set (another pass owed, or an extra pass past its deadline) skips the render and the gauge draw together.
+- `p3c_head` (`default: no`): the interpolated alternative (not shipping, not re-gated after the p3cp fixes; do not combine with p3cp_head).
+- `p5_ctl_x` consumes fresh input once per tick (the player sim runs once per group).
+- Option A (`tick_head` at $31486 + `tick_render` at $3159c, with `tick_vbl`) remains in the tree with `default: no` as the reference build
+  (every gate compares p3cp against it); it cannot be combined with p3cp_head (same site).
+- Gone (v1.2, helicopter only, `git log` has them): `p3b_head`, `p3b_pos`, `p3b_hdg`, `p3b_alt`, `p3b_bank`, `p3b_save`, `p3b_probe`, `p3b_alt_fix`, `p3b_head_fix`.
+  `p3b_render` is now `p3c_render`.
 
 Payload is $8000 bytes ($B3000-$BAFFF). The site table + byte pool may use $B3100-$B33FF; blob code
 starts at $B3400. Blob owners in $B3400-$B4EFF are listed in the mw2-patching skill; $B4F00-$BAFFF
-(about 26 KB) is free for new patches.
+(about 26 KB) is free for new patches, except $B8000-$B8FFF (p3cp_head).
 
 ## Blitter experiments (blob $B4700-$B4BFF; work/notes/blitter.md)
 - `p4_blit_sky` ($1b996, `default: no`): sky fill through the STE blitter in HOG mode, pixel-identical,
@@ -231,7 +218,7 @@ floppy "Insert Graphics Disk" prompt and on the HD loading screen. The palette a
   `work/dumps/ram_boot_hd1mb.bin` (RAM at game entry `$312a8` of an unpatched 1 MB HD boot; the floppy boot dump
   `ram_boot_fl1mb.bin` differs only at PP's patch addresses).
 
-## Vehicle work (2026-11-10, all `default: no`; `work/notes/vehicles_p3b.md`)
-- `p3cp_head` + `p3c_sim` (+ `p3b_render`): predict-ahead 25 Hz player motion for every vehicle type; the original tick runs once per group, the extra passes display a predicted pose. `p3c_head`: interpolated alternative. Replace `p3b_head/pos/hdg/alt/bank/save/probe`; do not mix.
-- `p3b_alt_fix`, `p3b_head_fix`: fixes for the shipped p3b (bank coefficients, wave phase once per group, type table); untested (gate hung).
-- `p7_skip_render_t`: type-table variant of `p7_skip_render`. `p4_hud_crop_{clip,fill,replay}_t`: type-table crop (visual tradeoff).
+## Vehicle work (2026-11-10; `work/notes/vehicles_p3b.md`)
+- Candidate default set (the three `default: no` patches the lead flips: `p3cp_head`, `p3c_sim`, `p7_skip_render`; everything else listed here is already `yes`): see the table in `work/notes/vehicles_p3b.md` section 9.
+- `p7_skip_render`: the static-frame skip, now gated by a per-type table (all 22 types) instead of the Helicopter-only test of v1.2.
+- `p4_hud_crop_{clip,fill,replay}` and the `_t` variants: the REJECTED visual-tradeoff crop experiment; they stay `default: no`.

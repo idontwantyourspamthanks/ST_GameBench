@@ -2,9 +2,8 @@
 ; default: no
 ; site: $31570
 ; orig: 4eb900033bca
-; note: P3c second site (work/notes/vehicles_p3b.md; needs p3c_head, which carries the code).  The frame loop calls the player sim `jsr $33bca.l`
-;       at $31570; the call becomes `jsr $b8000.l` (hook of p3c_head).  Plain pass (SUB = 0): the original call as a tail call.  PH 1 of an
-;       interpolated group: pose before, the original tick, shadow of the end state, then straight to the render path ($3158c) instead of
-;       the post-calls $31576.., which run at PH 5.
+; note: Second site of p3cp_head (and of the p3c_head alternative; work/notes/vehicles_p3b.md; needs one of them, which carries the code).  The frame loop calls the player sim
+;       `jsr $33bca.l` at $31570; the call becomes `jsr $b8000.l` (the hook, first in both heads).  Plain pass or an extra pass: the original call as a tail call.  PH 1 of a
+;       predicted group (p3cp_head): it records the pose before the tick, then the original sim and the rest of the original tick follow unchanged.
         org     $31570
         jsr     $b8000.l

@@ -7,15 +7,9 @@
 ;       `moveq #0,d0`, once per logic tick, in sub_034142. Every one of the 22 vehicle
 ;       types uses the X axis for yaw (apply selector 4 = $345c4, rate selector 2 =
 ;       direct). The yoke store ($6fb6) is no longer used as a persistent rate.
-;       With the P3 partial-B scheduler (p3b_head) the player sim, and with it this
-;       consumer, runs on every 2-VBL sub-tick of a foot group (5 per 5 Hz tick). Fresh
-;       input is consumed on the FIRST pass of a group only (HOLD = 0, the same
-;       once-per-tick window as option A: the counters/accumulators are read and
-;       cleared there, the mouse dx and J/K held fractions keep accumulating over the
-;       other four passes); passes 2..5 (HOLD = 1) reuse the same $6766 from PREV, so
-;       the yaw per group is identical to the 5 Hz game and the heading/position
-;       exactness of p3b_hdg/p3b_pos (constant e per group) holds. Without p3b_head
-;       HOLD stays 0 (zero data) and every call is fresh, as before.
+;       The player sim runs once per 5 Hz tick (p3cp_head: once per group of five 40 ms passes; the extra
+;       passes run no game logic), so every call consumes fresh input: the counters/accumulators are
+;       read and cleared there, the mouse dx and the J/K held fractions accumulate until the next tick.
 ;       a0 = per-type control block ($54dc0+type*$3e) on entry; preserved.
 ;       M mode   $6766 = mouse dx accumulated since the previous tick * MOUSE_GAIN/256
 ;                (toward zero, capped at +-MOUSE_CAP), $6fb6 cleared. No motion, no turn.
@@ -29,7 +23,6 @@ MOUSE_GAIN equ  384                     ; 8.8 fixed: $6766 units per mouse count
 MOUSE_CAP  equ  1000                    ; |$6766| cap (keeps $6766*scale inside a word)
 YAW_PCT    equ  50                      ; J/K yaw rate, % of the old full-yoke rate
 YAW_NUM    equ  YAW_PCT*256/100
-HOLD    equ     $b42ea                  ; p3b_head: 1 = pass 2..5 of a 25 Hz foot group
 ELAPSED equ     $b46c0
 CNTL    equ     $b46c2
 CNTR    equ     $b46c4
@@ -39,8 +32,6 @@ PREV    equ     $b46c6
 
         org     $b4400
         movem.l d2-d5,-(a7)
-        tst.w   HOLD.l
-        bne.s   .prev                   ; P3 partial-B sub-pass: keep the group's yaw
         move.w  sr,d5
         tst.w   $eb7a.l
         bne.w   .mouse

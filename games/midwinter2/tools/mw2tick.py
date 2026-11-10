@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""World-tick rate gate for the MW2 timing patches (p3b_head set or tick_head, with tick_vbl), at 50 and 60 Hz.
+"""World-tick rate gate for the MW2 timing patches (p3cp_head set or tick_head, with tick_vbl), at 50 and 60 Hz.
 
-    python3 tools/mw2tick.py rate --only tick_vbl p3b_head p3b_render p3b_pos p3b_hdg p3b_alt p3b_bank p3b_save p3b_probe \
+    python3 tools/mw2tick.py rate --only tick_vbl p3cp_head p3c_sim p3c_render \
             [--snapshot work/snapshots/1mb_ingame_walking.sav] [--mhz 8 16] [--hz 50 60] [--vbls 1500]
     python3 tools/mw2tick.py cold --game build/x [--mem 1024] [--machine ste] [--tos 1.62] [--hz 50|60] [--vbls 1500]
 
 A world tick = one arrival at `$3148e`, the instruction after the head of the in-game frame loop (`$31486`: `lea $770e.w,a6 ; jsr $4f5a`, which
-tick_head and p3b_head replace by a call into the blob that tail-calls `$4f5a`; p3b sub-tick passes drop their return and never reach `$3148e`).
+tick_head and p3cp_head replace by a call into the blob that tail-calls `$4f5a`; p3cp extra passes (PH 2-5) drop their return and never reach `$3148e`).
 (`$4f5a` itself is NOT once per tick: it is a shared subroutine, 2 hits per tick measured.) The tool logs `e VBL` at every call and reports
 (n - 1) ticks per (VBL span / hz) seconds of EMULATED time, so there is no window quantisation. The display refresh is read back from
 `$ff820a` and proved with the CPU cycles per VBL (8 MHz / 50 = 160 k, 8 MHz / 60 = 133 k).
@@ -30,7 +30,7 @@ GAME = HERE.parent
 sys.path.insert(0, str(HERE))
 from mw2harness import Hatari  # noqa: E402
 
-TICK_PC = 0x3148E       # first instruction after the loop head's displaced `jsr $4f5a` (reached once per world tick; p3b sub-tick passes jump away)
+TICK_PC = 0x3148E       # first instruction after the loop head's displaced `jsr $4f5a` (reached once per world tick; p3cp extra passes jump away)
 SYNC = 0xFF820A
 
 

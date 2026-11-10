@@ -47,8 +47,10 @@ def main():
         late = ['%d:7687=ff' % (dv0 + 4 * i) for i in range(10)]
         pk = []
     tag = f'{NAMES[t]}_{scen}_{mhz}'
-    cmdA = ['python3', HERE + '/vgate.py', 'run', snap, tag + '_A', 'A', '--ticks', ticks, '--mhz', mhz, '--poke'] + pk + (['--late'] + late if late else [])
-    cmdB = ['python3', HERE + '/vgate.py', 'run', snap, tag + '_' + sset.replace(':','_').replace(',','_')[:20], sset, '--ticks', ticks, '--mhz', mhz, '--poke'] + pk + (['--late'] + late if late else [])
+    sync = f'/tmp/vg/{tag}.sync'
+    if os.path.exists(sync): os.remove(sync)
+    cmdA = ['python3', HERE + '/vgate.py', 'run', snap, tag + '_A', 'A', '--ticks', ticks, '--mhz', mhz, '--sync', sync, '--poke'] + pk + (['--late'] + late if late else [])
+    cmdB = ['python3', HERE + '/vgate.py', 'run', snap, tag + '_' + sset.replace(':','_').replace(',','_')[:20], sset, '--ticks', ticks, '--mhz', mhz, '--sync', sync, '--poke'] + pk + (['--late'] + late if late else [])
     pa = subprocess.Popen(cmdA, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
     pb = subprocess.Popen(cmdB, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
     oa = pa.communicate()[0]; ob = pb.communicate()[0]

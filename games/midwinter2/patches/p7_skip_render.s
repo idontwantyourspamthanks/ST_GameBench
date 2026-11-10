@@ -1,10 +1,11 @@
 ; name: p7_skip_render
-; default: yes
+; default: no
 ; site: $1dbbe
 ; orig: 203866e604800000 6400
 ; phase: deferred
 ; data: $b6000 5248
-; note: P7 item 5(a), static-frame skip (work/notes/p7_static_skip.md).  Master renderer $1dbbe (reached by
+; note: P7 item 5(a), static-frame skip (work/notes/p7_static_skip.md).  The vehicle gate is the type table TYP[$6220] at the end of the blob (work/notes/vehicles_p3b.md; every
+;       type on; it replaced the Helicopter-only `cmpi.w #13,$6220` of v1.2).  Master renderer $1dbbe (reached by
 ;       `jsr $5056` at $315a4 and $325d8).  When nothing the 3D window depends on has changed since the image
 ;       that sits in the BACK buffer was drawn, return without drawing: the back buffer already holds the
 ;       identical picture (the window rows 58-199 are written only by the renderer, work/notes/p7_static_skip.md
@@ -62,8 +63,12 @@ MK1     equ     MK0+MKL
         org     $b7510
 HK56:   cmpi.l  #$315a8,(a7)
         bne     .other
-        cmpi.w  #13,$6220.w
-        bne     .nofoot
+        move.w  $6220.w,d7
+        cmpi.w  #21,d7
+        bhi     .nofoot
+        lea     TYP(pc),a6
+        tst.b   (a6,d7.w)
+        beq     .nofoot
         tst.w   $40b6.w
         bne     .nofoot
         tst.w   $7590.w
@@ -330,3 +335,6 @@ MKCOPY: move.w  $6f78.w,d0
 .z:     rts
 .ov:    moveq   #1,d3
         rts
+; TYP[$6220]: 1 = the static-frame skip may fire for this vehicle type (every type passes the pixel gate, work/notes/vehicles_p3b.md)
+TYP:    dc.b    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+        dc.b    0,0

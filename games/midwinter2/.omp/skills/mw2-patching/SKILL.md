@@ -67,11 +67,12 @@ PP's resident loader service is the HAGA file, which moves with RAM size. Patch 
 | `$B3880` | `p4_proj_div` |
 | `$B3900` | `p4_proj_axis` |
 | `$B3C00` | `p4_walk*` |
-| `$B4000-$B42FF` | `p3b_*` scheduler/integrators |
+| `$B42E0-$B42FF` | `p3cp_head` data block D (scheduler words, SKIP) |
+| `$B4102` | `p3c_render` |
 | `$B3700` | `tick_vbl` (30 B) |
 | `$B4300-$B46FF` | `p5_ctl_*` |
 | `$B4700-$B4BFF` | `p4_blit_*` (off) |
-| `$B4C00` | `p3b_probe` |
+| `$B8000-$B8FFF` | `p3cp_head` (code from $B8000 (below $B8700), NPC snapshot $B8700-$B8EBF, data $B8F00-$B8FFF); `p3c_head` (alternative) uses the same range |
 | `$B44C0-$B4693` | `p4_hud_pfx_*`/`p4_hud_reset` (default) and the crop prototype (they conflict) |
 
 - **Free RAM on a 1 MB machine** in game: `$B2852-$E83E5`. Only the payload is copied there, though.

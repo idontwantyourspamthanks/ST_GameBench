@@ -7,11 +7,11 @@
 ;       $770c every VBL, but the game clears $7020 per frame and in its own
 ;       wait loops, and $770c wraps at 6, so neither is a usable clock. This
 ;       routes both increments through the blob and adds a free-running REAL-TIME
-;       clock (long at $B3400, never cleared) used by tick_head / p3b_head, in units
+;       clock (long at $B3400, never cleared) used by tick_head / p3cp_head, in units
 ;       of 1/300 s: every VBL adds the length of that frame, read from the shifter
 ;       sync mode ($ff820a bit 1: 1 = 50 Hz = 6 units, 0 = 60 Hz = 5 units), so the
 ;       world ticks at the same rate on 50 and 60 Hz displays (work/notes/timing.md).
-;       Blob at $B3700 (30 bytes; the old $B40F2 slot had only 16 bytes before p3b_render).
+;       Blob at $B3700 (30 bytes; the old $B40F2 slot had only 16 bytes before the render hook, now p3c_render).
         org     $262d0
         jsr     $b3700.l
         nop

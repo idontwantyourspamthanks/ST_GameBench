@@ -1,26 +1,14 @@
 #!/usr/bin/env python3
 """latency.py CONFIG SNAP MHZ [TRIALS]: input-to-display latency. A heading input (-300 counts on $6fb6) is poked at known VBLs (different
 phases of the 5 Hz tick); latency = VBL of the first presented flip whose live heading $6742 differs from the pre-poke heading, minus the poke VBL.
-CONFIG: orig | p3b (default set) | p3c (default set - p3b motion hooks + p3c) | p3cp (p3c predict variant, if built)."""
+CONFIG: orig (unpatched) | cand (the shipping candidate: defaults + p3cp_head + p3c_sim + p7_skip_render)."""
 import sys, re, subprocess, json, statistics
 sys.path.insert(0, '/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_p3b')
 from vt import *
 cfg, snap, mhz = sys.argv[1], sys.argv[2], int(sys.argv[3]); trials = int(sys.argv[4]) if len(sys.argv) > 4 else 8
-def default_names():
-    out = subprocess.run([sys.executable, str(GAME/'tools/mw2patch.py'), 'list'], capture_output=True, text=True, cwd=GAME).stdout
-    names = []
-    for l in out.splitlines()[1:]:
-        p = l.split()
-        if len(p) > 2 and p[1] == 'yes' and 'HAGA' not in l and not l.startswith(('pp_','floppy')) and p[0] not in ('mw2_credit',):
-            names.append(p[0])
-    return names
 if cfg == 'orig': live = None
-elif cfg == 'p3b': live = build_live([n for n in default_names()], 'lat_p3b')
-elif cfg in ('p3c', 'p3cp'):
-    drop = {'p3b_head', 'p3b_pos', 'p3b_hdg', 'p3b_alt', 'p3b_bank', 'p3b_save', 'p3b_probe'}
-    names = [n for n in default_names() if n not in drop] + ['p3c_head', 'p3c_sim']
-    if cfg == 'p3cp': names = [n for n in names if n not in ('p3c_head', 'p3b_render')] + ['p3cp_head', 'p3b_render']
-    live = build_live(names, 'lat_' + cfg)
+elif cfg == 'cand': live = build_live(cand_names(), 'lat_cand')
+else: raise SystemExit('CONFIG: orig | cand')
 h = Hatari(snapshot=str(SNAP/snap), memsize_kb=2048)
 try:
     if mhz != 8: h.set_cpuclock(mhz)

@@ -54,7 +54,7 @@ Baseline: the unpatched game managed **about 4 frames per second** on an 8 MHz S
 
 ## 4. Making game speed independent of frame rate
 
-`patches/tick_vbl.s`, `p3b_*.s`; notes `simtiming.md`, `frameloop.md`, `tick_inventory.md`.
+`patches/tick_vbl.s`, `p3cp_head.s`, `p3c_sim.s`, `p3c_render.s`; notes `simtiming.md`, `frameloop.md`, `tick_inventory.md`, `vehicles_p3b.md`.
 
 **What the original does.** The main loop at `$31486` runs the game logic once:
 - moving the player,
@@ -67,30 +67,37 @@ Then it draws the 3D view once and flips screens. Nothing measures real time: ea
 1. **A fixed logic rate** (`tick_vbl`, plus the scheduler at `$31486`).
    - We added a real-time clock: a counter bumped 50 times a second by the screen interrupt. The game's own counters were unusable, because it clears one every frame and the other wraps at 6.
    - At the top of the loop we now run the logic exactly 5 times a second of real time. If the machine is ahead, it waits. If it falls behind, it skips drawing a frame to catch up, limited to 3 steps. After a long gap, such as returning from a menu, it resynchronises instead of fast-forwarding.
-2. **Smooth Helicopter motion** (`p3b_*`; gated on `$6220 = 13`, which is the Helicopter, not on foot: see the correction below).
-   - A full 25 steps per second would have cost 88% more CPU, because every unit's logic is expensive. Instead, only the player's own movement runs 5× per step, each time 1/5 as far.
-   - Exact remainder arithmetic makes the five small steps add up to precisely the original step. Heading, lean, route/altitude and bank are all handled. Everything else in the world still updates 5 times a second.
-   - The collision check runs once, on the full step, exactly as before (`p3b_probe`). The camera may therefore creep a fraction into a wall before snapping back.
+2. **Smooth motion in every vehicle** (`p3cp_head`, predict-ahead; it replaces v1.2's Helicopter-only `p3b_*`, now removed).
+   - A full 25 steps per second would have cost 88% more CPU, because every unit's logic is expensive. Instead the original 5 Hz step runs once per group of five 40 ms passes, completely unchanged. The other four passes of the group redraw the view at a pose extrapolated from the step that just ran (the next step is assumed to repeat it), without running any game logic. Before the next real step the pose, view state, unit table and sea-wave state are put back, so the world at every 1/5-second checkpoint is exactly the original game's.
+   - This works for all 22 vehicle types, including the ones whose movement cannot be cut into fifths exactly (the parachute fall, speed ramps, the water probes). Moving, turning and the walking view therefore redraw as often as the machine can manage instead of 5 times a second.
+   - An extra frame is drawn only if it will be finished before the next real step is due, so the keys and mouse are read at the original's 5 Hz moments (Esc takes effect on the same step as in the unpatched game).
+   - The collision check runs once per real step, as before. When the vehicle stops, or turns back, the extra frames of that group may have shown up to 0.8 of one step beyond the final position, and the next real step snaps back (the measured overshoot is 0 at 8 MHz on foot and in the Jeep, up to 0.6-0.8 of a step in the Helicopter).
 
 **Result.**
-- World speed is the same at 8 and 16 MHz, and on TT/Falcon (about 26–28 units/s everywhere).
-- At every 1/5-second checkpoint, the player's position, heading and game clock are identical to the original game's step for step.
-- In the Helicopter, the view is redrawn as often as the machine can manage: about 9 fps in heavy scenes at 16 MHz and 23 fps in light ones, against a flat 5 before.
+- World speed is the same at 8 and 16 MHz, and on TT/Falcon (about 26-28 units/s everywhere), and at 50 and 60 Hz (5.00 ticks/s, `mw2tick.py rate`).
+- At every 1/5-second checkpoint, the player's position, heading, bank, altitude, the unit/effect tables, HUD state, clock, RNG and the terrain/sea probes are identical to the original game's step for step: 22 vehicle types x standing / move+turn / move+turn+button, 41 steps each, 16 and 32 MHz (section 4a).
+- Redraw rate (fps) of the candidate, standing / moving, 8 / 16 / 32 MHz: see section 4a.
 
-**Correction (2026-11-10): v1.2 smooths the Helicopter only.** `$6220` is a 0-based vehicle index (Tank 0, Jeep 1, Truck 2, Bus 3, Train 4, on foot 5, Speedboat 6, Crawler 7, Minisub 8, Submarine 9, Ship 10, Frogman 11, Biplane 12, Helicopter 13, ...). The scheduler `p3b_head`, `p7_skip_render` (and the optional `p4_hud_crop_*`) test `cmpi.w #13,$6220`, and 13 is the Helicopter: the snapshots earlier notes called "on foot" were helicopter cockpits. Every other vehicle, including true on foot, runs the plain 5 Hz option-A path and `p7_skip` never fires for it. Measured on the shipped v1.2 default set (live-applied to the Raids snapshots, 2 MB STE, fps over 1000 VBL; `work/vehicles_p3b/fpsrun.py`, `step1.py`):
+**Correction (2026-11-10): v1.2 smoothed the Helicopter only.** `$6220` is a 0-based vehicle index (Tank 0, Jeep 1, Truck 2, Bus 3, Train 4, on foot 5, Speedboat 6, Crawler 7, Minisub 8, Submarine 9, Ship 10, Frogman 11, Biplane 12, Helicopter 13, ...). v1.2's scheduler, `p7_skip_render` (and the optional `p4_hud_crop_*`) tested `cmpi.w #13,$6220`, and 13 is the Helicopter: the snapshots earlier notes called "on foot" were helicopter cockpits. Every other vehicle, including true on foot, ran the plain 5 Hz path. Measured on v1.2 (2 MB STE, fps over 1000 VBL; `work/vehicles_p3b/fpsrun.py`):
 
 | v1.2 situation | 8 MHz | 16 MHz | p7_skip |
 |---|---|---|---|
-| true on foot (type 5), standing | 3.85 fps (13.0 VBL/frame) | 5.00 fps | never fires (`NUNS` 95 per 1000 VBL, `NSKIP` 0) |
+| true on foot (type 5), standing | 3.85 fps (13.0 VBL/frame) | 5.00 fps | never fires |
 | Jeep (1), standing | 4.20 fps | 5.00 fps | never |
-| Helicopter (13), standing | 25.05 fps | 25.00 fps | fires (`NSKIP` 560 per 1000 VBL) |
+| Helicopter (13), standing | 25.05 fps | 25.00 fps | fires (560 skips per 1000 VBL) |
 | Helicopter, moving | 5.30 fps | 11.70 fps | not while moving |
-| true on foot, moving (forward + turn) | 5.00 fps | 5.05 fps | no |
+| true on foot, moving | 5.00 fps | 5.05 fps | no |
 
-So on foot gets neither the 25 Hz motion nor the 25 fps standing view that sections 6c and 7 describe; those numbers are Helicopter numbers. Two further defects of the shipped p3b were found by MW2VehAir: `p3b_alt` used the sin/cos of the sub-pass bank instead of the previous tick's, so with a mouse button held the Helicopter's altitude and speed differ from the 5 Hz game in 25 of 25 groups (altitude +1..+13, speed up to -20); and the sea wave phase (`$1877c`, advanced by every rendered frame) is read by the player sim, so over water the world result depended on the frame rate. Fixes: `p3b_alt_fix`, `p3b_head_fix`; and the type-independent `p3c`/`p3cp` (section 4a).
+Two further defects of the shipped p3b were found: `p3b_alt` used the sin/cos of the sub-pass bank instead of the previous tick's (with a mouse button held, the Helicopter's altitude and speed differed from the 5 Hz game in 25 of 25 groups), and the sea wave phase (advanced by every rendered frame, read by the player sim) made the world result over water depend on the frame rate. p3cp has neither: its sim runs unmodified once per group and the wave phase and wave pointer are restored per group.
 
-### 4a. Type-independent 25 Hz player motion (candidate, `default: no`)
-`p3cp` (predict-ahead, chosen by the user) and `p3c` (interpolated) run the original 5 Hz tick once per group of five 40 ms passes and let the other four passes show a pose; the world at every group end is the original's by construction. At 16 MHz the group-end state (player, NPC/effect/projectile tables, HUD, clock, RNG, probes) was identical to option A for all 22 vehicle types in stand / move+turn / move+turn+bank runs, apart from runs where option A itself skipped a render (identical at 32 MHz). Standing fps at 8/16 MHz v1.2 -> candidate: on foot 3.85/5.00 -> 3.80/8.25, Jeep 4.20/5.00 -> 4.15/8.90, Biplane 5.05/5.00 -> 10.15/22.25. Not yet done: cold boots on STE/Mega STE/TT/ST, Esc exactness. Details: `work/notes/vehicles_p3b.md`.
+### 4a. Type-independent 25 Hz player motion (`p3cp`; proposed default, `default: no` until flipped)
+Details and raw gate output: `work/notes/vehicles_p3b.md`.
+- **Exactness.** Group-end state equal to the 5 Hz reference (option A) for all 22 types x stand / move+turn / move+turn+button: 16 MHz 64 of 66 runs identical (the two others are the reference itself skipping a render: Hovercraft standing, Zeppelin with all inputs; both identical at 32 MHz), 32 MHz 66 of 66 after reruns (a few first-pass runs started one step apart in the test harness and passed on rerun).
+- **Esc and the other keys** are consumed on the same step as in the original: 40 of 40 runs (Jeep -> on foot, Biplane -> Parachute, Speedboat -> Swimming/on foot, Helicopter -> Parachute; 5 phases around the step start; 16 and 32 MHz), with the type change verified.
+- **Speedboat.** The only real divergence found was the sea wave pointer: the game's map-window rebuild resets the pointer (not the phase) and the next step reads it; p3cp now saves and restores both.
+- **Input latency** (first visible change after a mouse impulse, mean, 8 / 16 MHz): on foot 411 / 224 ms (original 382 / 231), Jeep 316 / 196 (329 / 180), Helicopter 291 / 187 (329 / 140).
+- **Redraw rate**, candidate, 1000 VBL, 2 MB STE, standing: on foot 3.8 / 5.6 / 21.7 fps at 8 / 16 / 32 MHz; Jeep 4.2 / 5.9 / 25.1; Biplane 8.3 / 21.1 / 24.9; Helicopter 25.0 / 25.1 / 25.0; Speedboat 4.1 / 7.6 / 17.9; Bus 25.1 / 25.0 / 25.1. Moving: on foot 5.3 / 10.9 / 24.9; Jeep 5.0 / 9.5 / 22.1; Biplane 9.2 / 24.5 / 24.9; Helicopter 5.2 / 10.2 / 23.7; Speedboat 3.4 / 6.3 / 16.1 (all 15 vehicle types: `work/notes/vehicles_p3b.md` section 7). Cost of keeping the steps on the original's schedule: the Helicopter moving at 16 MHz draws 10.2 fps against v1.2's 11.7. At 8 MHz a frame takes 5-14 VBL, so the extra frames can hardly be drawn; the gain there is mainly in the types with light scenes.
+- **Cold boots:** STE 1 MB and Mega STE 4 MB (16 MHz) done: `MWPO`, on foot / Jeep / Speedboat / Biplane / Helicopter all entered, no bus error. TT (`--mmu true`), plain ST and the floppy builds are NOT yet run (`work/notes/vehicles_p3b.md` section 10).
 
 ## 5. Direct controls
 
@@ -138,8 +145,8 @@ The visor pillars and dashboard are drawn on top of the 3D view every frame, fro
 - **Not redrawing a picture that hasn't changed** (`p7_skip_*`)
   - *Original behaviour:* when standing still, every frame recomputed the identical picture, about 1.75 million cycles of work for zero change.
   - *Change:* a signature of everything the 3D renderer actually reads is compared each frame. That includes the camera, the player's state, every unit and map marker in range, and the sea-wave state. If it matches for two frames running, both screen buffers already hold the right picture, so the 3D drawing is skipped. The HUD still updates.
-  - *Coverage:* the inputs were found by tracing what the renderer reads, not by guessing. Anything not fully understood (vehicles, explosions, messages on screen) simply always redraws.
-  - *Result:* standing still in the Helicopter runs at about 25 fps instead of 4–6, the ceiling of the 25 Hz sub-tick timer. (Correction: the skip is gated on `$6220 = 13`, so it applies to the Helicopter only; on foot and in the other vehicles it never fires.)
+  - *Coverage:* the inputs were found by tracing what the renderer reads, not by guessing. Anything not fully understood (explosions, messages on screen) simply always redraws. The skip is on for every vehicle type (a per-type table); it only fires when the picture really is unchanged.
+  - *Result:* standing still in the Helicopter or the Bus runs at about 25 fps instead of 4–6, the ceiling of the 25 Hz pass timer; at 32 MHz also on foot and in the Jeep (267 and 337 skips per 1000 VBL). Pixel-identical on 15 vehicle snapshots at flips 10 and 40 and in a stop-and-go run (stand / go / stop / go) of all 22 types, every flip.
 
 ### 6d. Things tried and dropped
 - **The STE blitter** (a hardware fill/copy chip): filling the sky with it was identical but saved only 0.15%. The CPU's multi-register store is as fast as the blitter on an 8 MHz STE, and polygon spans are too short to benefit.
@@ -168,7 +175,7 @@ A new renderer is the other route.
 
 ## 8. Known limits and open items
 
-- **Smooth motion is Helicopter only** (not on foot, as earlier versions of this report said). All other vehicles still update 5 times a second, and the static-frame skip is Helicopter-only too. The type-independent replacement is described in section 4a and `work/notes/vehicles_p3b.md`.
+- **Smooth motion in every vehicle uses extrapolation**: when a turn or move stops, the extra frames of that last group can show a pose up to 0.8 of a step too far, and the next real step snaps back. Hovercraft (1.8 fps at 8 MHz) and the Zeppelin are frame-time bound anyway.
 - **Static-frame skip assumption:** terrain heights and object models are assumed never to change during play. If some mission event does change them, the view could stay stale until you move.
 - **TT under Hatari:** the top panel shows the 3D palette. This is a Hatari limitation (one palette per TT frame); a real TT should be fine.
 - **Untested:** campaign creation on floppy (Hatari discarded the writes), and real TT/Falcon TOS (only EmuTOS was available).

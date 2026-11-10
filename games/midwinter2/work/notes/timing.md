@@ -1,5 +1,7 @@
 # MW2 timing: 5 Hz world tick, 25 Hz foot sub-ticks, real time at 50 and 60 Hz
 
+> **Update (2026-11-10):** `p3b_head` and the other `p3b_*` patches described below are gone from the tree; the scheduler is `p3cp_head` (`vehicles_p3b.md`), which uses the same `tick_vbl` clock and the same GRP = 60 / SUBT = 12 units. The 50/60 Hz design and the gates below stand; the p3b-specific gate commands do not (use `mw2tick.py rate --only tick_vbl p3cp_head p3c_sim p3c_render`).
+
 Patches: `patches/tick_vbl.s` (the real-time clock), `patches/p3b_head.s` (the default scheduler: 5 Hz world, 25 Hz foot sub-ticks) or `patches/tick_head.s` + `tick_render.s` (option A, `default: no`).
 The design and the per-tick state equality are in `tick_inventory.md` (sections 4-6, the `t6`/`cmp6` gate in `work/p3b_tests/`); this file holds only what concerns the refresh rate.
 Evidence = raw output of `tools/mw2tick.py` (new), `work/p3b_tests/t6.py` + `cmp6hz.py`, `mw2patch.py`; Hatari 2.6.1; anything not run is `[INFERENCE]`.

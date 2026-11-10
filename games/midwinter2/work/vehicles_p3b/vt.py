@@ -49,3 +49,20 @@ def memb(h, addr, n):
 
 def sw(b): return int.from_bytes(b, 'big', signed=True)
 def uw(b): return int.from_bytes(b, 'big')
+
+
+def default_names():
+    """names of the `default: yes` boot/deferred patches (no HAGA file patches, no floppy_*, no credit)"""
+    out = subprocess.run([sys.executable, str(GAME / 'tools/mw2patch.py'), 'list'], capture_output=True, text=True, cwd=GAME).stdout
+    return [l.split()[0] for l in out.splitlines()[1:] if len(l.split()) > 2 and l.split()[1] == 'yes' and 'HAGA' not in l
+            and not l.startswith(('pp_', 'floppy')) and l.split()[0] != 'mw2_credit']
+
+CAND_OFF = set()
+def cand_names():
+    """the candidate set: defaults + p3cp_head + p3c_sim + p7_skip_render (the three `default: no` patches the lead flips); crop OFF"""
+    out = subprocess.run([sys.executable, str(GAME / 'tools/mw2patch.py'), 'list'], capture_output=True, text=True, cwd=GAME).stdout
+    have = {l.split()[0] for l in out.splitlines()[1:] if l.split()}
+    names = [n for n in default_names() if n not in CAND_OFF]
+    for n in ('p3cp_head', 'p3c_sim', 'p7_skip_render'):
+        if n in have and n not in names: names.append(n)
+    return names
