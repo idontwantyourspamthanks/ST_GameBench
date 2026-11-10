@@ -220,6 +220,9 @@ def main() -> int:
     ap.add_argument("--peek", nargs="*", default=[], help="ADDR:LEN (hex) RAM to print after the boot")
     ap.add_argument("--dump", default=None, help="save RAM $0..$fffff after the boot")
     ap.add_argument("--wav", default=None, help="record this many seconds of sound after the boot into work/snd/NAME.wav")
+    ap.add_argument("--quiet", action="store_true", help="with --wav: game triggers off ($af0e = rts) and channels idle, only the injected effect sounds")
+    ap.add_argument("--inject", default="3:1:12", help="with --wav: EFFECT:CHANNEL:VOLUME[,...] injected 0.5 s after the recording starts (3 = explosion, 10 = jeep engine loop)")
+    ap.add_argument("--prof", type=int, default=0, help="with --wav: Hatari profile over this many VBLs after the injection (payload and snd_expand cycles)")
     ap.add_argument("--shots", default=None)
     ap.add_argument("--bp-save", default=None, help="save RAM $8BA00..$AEFFF to this file when the loader jumps to the game")
     ap.add_argument("--bp-load", default=None, help="load this file to $8BA00 at that moment (free-RAM poison pattern)")
@@ -267,12 +270,27 @@ def main() -> int:
             import snd_test
             sv = snd_test.pk(h, snd_test.SV, 8)
             print(f"  payload mode={sv[0]} (2 = DMA sound, 1 = original YM) in3d={sv[1]} dma_on={sv[2]}")
+            if a.quiet:
+                for c in ("w $af0e $4e $75", "w $11398 $00 $00 $00", "w $11388 $ff $ff $ff"):
+                    h.debug(c, 0.2)
+                time.sleep(1.0)
             if snd_test.CAP.exists():
                 snd_test.CAP.unlink()
             h.cmd("hatari-shortcut recsound")
             t0 = time.time()
             time.sleep(0.5)
-            snd_test.inject(h, 3, 1, 12)
+            for spec in a.inject.split(","):
+                ie, ic, iv = (int(v) for v in spec.split(":"))
+                snd_test.inject(h, ie, ic, iv)
+            if a.prof:
+                lab = snd_test.labels()
+                time.sleep(2.0)
+                prof = h.profile(a.prof)
+                tot = sum(c for _, c in prof)
+                pay = sum(c for ad, c in prof if 0x8E000 <= ad < 0x8F000)
+                exp = sum(c for ad, c in prof if lab["snd_expand"] <= ad < lab["snd_update"])
+                print(f"  profile {a.prof} VBL: total {tot} cycles, payload $8e000..$8efff {pay} ({pay / a.prof:.0f}/VBL), "
+                      f"snd_expand {exp} ({exp / a.prof:.0f}/VBL, {100 * exp / max(tot, 1):.2f} % of all cycles)")
             while time.time() - t0 < float(a.wav):
                 time.sleep(0.1)
             h.cmd("hatari-shortcut recsound")

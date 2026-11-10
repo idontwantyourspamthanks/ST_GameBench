@@ -4,6 +4,7 @@
 ; orig: 082d00070093
 ; data: $8f000 256
 ; data: $8f800 1024
+; data: $8fc00 1024
 ; note: STE DMA sound for Hunter (work/notes/snd.md).  The site is the sound-driver tick `$C628` (`btst #7,$93(a5)` = "3D loop
 ; note: active", then `movea.l $7f44(pc),a0 / jmp $40(a0)`); it becomes `jmp $8e000.l` (6 B).  The payload does the btst itself.
 ; note: Plain ST (FLAGS bit0 clear), no bank ('HSND' at $90000 missing): the payload runs the ORIGINAL tick unchanged (YM plays).
@@ -14,7 +15,9 @@
 ; note: 16.16 phase stepping, 16 volume tables) into a 1024-byte DMA ring at 6258 Hz mono, engine pitch from the object speed
 ; note: ($3e(obj) via the channel record $1de(a5)+8c: period = base - 4*speed, as the Amiga main code at $2dea).
 ; note: The 3D view left ($93 bit 7 clear): DMA stopped.  No timer, no new interrupt: everything runs inside the VBL tick.
-; note: Memory: code $8e000..$8efff, state SV $8f000.., ring $8f800..$8fbff.  Preserves a5/a6/sp, uses d0-d7/a0-a4 (VBL saved them).
+; note: Memory: code $8e000..$8efff, state SV $8f000.., mix ring $8f800..$8fbff, Falcon DMA ring $8fc00..$8ffff.
+; note: Falcon (FLAGS bit3, core.s probe): the DMA cannot play 6258 Hz ($ff8921=$80 is silent there), so it runs at 12517 Hz ($81) from the Falcon
+; note: DMA ring; the mixer is unchanged (512-sample mix ring, 6258 Hz) and every mixed sample is written twice into the DMA ring (snd_expand).  Preserves a5/a6/sp, uses d0-d7/a0-a4 (VBL saved them).
 ; note: 50/60 Hz (hn_hz.s, work/notes/timing.md): HZ_SKIP (written by hn_hz each VBL) non-zero = this VBL is not a world tick (60 Hz: 1 in 6).
 ; note: The original driver tick (state machine: request/priority/duration/volume) and the scan/voice allocation then wait, so effect durations
 ; note: and envelopes run on 50 Hz-equivalent ticks; the mixer (snd_act) still tops up the ring to TARGET samples ahead of the DMA position every VBL.
@@ -31,6 +34,7 @@ B_VTAB  equ     BANK+$1000
 SV      equ     $8f000
 RING    equ     $8f800
 RL      equ     1024
+DRING   equ     $8fc00                  ; Falcon DMA ring (1024 B = 512 mixed samples, each twice)
 TARGET  equ     192
 K4      equ     9285653
 v_mode  equ     0
@@ -49,6 +53,11 @@ v_vol   equ     $20
 v_key   equ     $24
 v_keyp  equ     $2a
 v_scr   equ     $30
+v_rm    equ     $f0                     ; mix ring length - 1 (STE 1023, Falcon 511)
+v_msk   equ     $f2                     ; mix ring length - 8
+v_thr   equ     $f4                     ; underrun threshold: 3/4 of the mix ring
+v_rl    equ     $f6                     ; mix ring length in samples
+v_fal   equ     $f8                     ; non-zero: Falcon (12517 Hz DMA, samples doubled)
 v_vox0  equ     $40
 v_vox1  equ     $68
 x_ch    equ     0
@@ -74,12 +83,12 @@ snd_vbl:
         btst    #7,$93(a5)
         beq     snd_off3d
         cmpi.b  #2,SV+v_mode
-        beq.s   snd_run
+        beq     snd_run
         tst.b   SV+v_mode
         bne.s   snd_pass
         bsr     snd_init0
         cmpi.b  #2,SV+v_mode
-        beq.s   snd_run
+        beq     snd_run
 snd_pass:                               ; the original tick
         tst.b   HZ_SKIP.l               ; hn_hz: not a world tick (60 Hz): the driver waits
         bne.s   .rts
@@ -94,7 +103,18 @@ snd_init0:                              ; once: STE hardware (loader probe) and 
         bne.s   .rts
         cmpi.w  #2,BANK+4.l
         bne.s   .rts
-        move.b  #2,SV+v_mode
+        move.w  #RL-1,SV+v_rm
+        move.w  #RL-8,SV+v_msk
+        move.w  #RL*3/4,SV+v_thr
+        move.w  #RL,SV+v_rl
+        btst    #3,FLAGS+3.l            ; Falcon: mix ring of 512 samples, DMA ring of 1024 bytes
+        beq.s   .ste
+        move.w  #RL/2-1,SV+v_rm
+        move.w  #RL/2-8,SV+v_msk
+        move.w  #RL*3/8,SV+v_thr
+        move.w  #RL/2,SV+v_rl
+        st      SV+v_fal
+.ste:   move.b  #2,SV+v_mode
 .rts:   rts
 snd_run:
         tst.b   SV+v_in3d
@@ -210,13 +230,21 @@ snd_dmapos:                             ; d0.w = DMA read position inside the ri
         cmp.l   d0,d1
         bne.s   .rd
         lsr.l   #8,d0
+        tst.b   SV+v_fal
+        bne.s   .fal
         subi.l  #RING,d0
         andi.w  #RL-1,d0
+        rts
+.fal:   subi.l  #DRING,d0
+        andi.w  #RL-1,d0
+        lsr.w   #1,d0                   ; DMA bytes -> mixed samples (each is two bytes)
         rts
 snd_dmastart:
         lea     $ff8900.l,a0
         moveq   #0,d0
         move.b  d0,1(a0)
+        tst.b   SV+v_fal
+        bne.s   .fal
         move.b  #(RING>>16)&$ff,3(a0)
         move.b  #(RING>>8)&$ff,5(a0)
         move.b  #RING&$ff,7(a0)
@@ -224,8 +252,37 @@ snd_dmastart:
         move.b  #((RING+RL)>>8)&$ff,$11(a0)
         move.b  #(RING+RL)&$ff,$13(a0)
         move.b  #$80,$21(a0)            ; mono, 6258 Hz
-        move.b  #3,1(a0)                ; play + repeat
+.go:    move.b  #3,1(a0)                ; play + repeat
         rts
+.fal:   move.b  #(DRING>>16)&$ff,3(a0)
+        move.b  #(DRING>>8)&$ff,5(a0)
+        move.b  #DRING&$ff,7(a0)
+        move.b  #((DRING+RL)>>16)&$ff,$f(a0)
+        move.b  #((DRING+RL)>>8)&$ff,$11(a0)
+        move.b  #(DRING+RL)&$ff,$13(a0)
+        move.b  #$81,$21(a0)            ; mono, 12517 Hz: the Falcon's STE-compatible DMA plays nothing at $80 (6258 Hz)
+        bra.s   .go
+snd_expand:                             ; Falcon: the samples just mixed (v_wr, v_run1/v_run2 groups) -> DMA ring, each twice
+        lea     RING.l,a0
+        adda.w  v_wr(a4),a0
+        lea     DRING.l,a1
+        move.w  v_wr(a4),d0
+        adda.w  d0,a1
+        adda.w  d0,a1
+        move.w  v_run1(a4),d1
+        bsr.s   .run
+        lea     RING.l,a0
+        lea     DRING.l,a1
+        move.w  v_run2(a4),d1
+.run:   subq.w  #1,d1
+        bmi.s   .r
+.g:     rept    8
+        move.b  (a0)+,d0
+        move.b  d0,(a1)+
+        move.b  d0,(a1)+
+        endr
+        dbra    d1,.g
+.r:     rts
 ; ---------------------------------------------------------------------------------------------------------------
 snd_update:
         movea.l $7f44.w,a1
@@ -449,11 +506,11 @@ snd_act:
 .on:    bsr     snd_dmapos              ; d0 = play position; keep the write cursor TARGET samples ahead
         move.w  v_wr(a4),d1
         sub.w   d0,d1
-        andi.w  #RL-1,d1
-        cmpi.w  #768,d1
+        and.w   SV+v_rm,d1
+        cmp.w   SV+v_thr,d1
         bls.s   .okp
         addi.w  #16,d0                  ; underrun: resync just ahead of the DMA
-        andi.w  #RL-8,d0
+        and.w   SV+v_msk,d0
         move.w  d0,v_wr(a4)
         moveq   #16,d1
 .okp:   move.w  #TARGET,d0
@@ -546,7 +603,7 @@ snd_mix:                                ; d0 = groups of 8 outputs (>=1), d5 = v
         move.w  d5,-(sp)
         move.w  d0,v_n8(a4)
         move.w  v_wr(a4),d1
-        move.w  #RL,d2
+        move.w  v_rl(a4),d2
         sub.w   d1,d2
         lsr.w   #3,d2                   ; groups to the ring end
         cmp.w   d0,d2
@@ -575,10 +632,13 @@ snd_mix:                                ; d0 = groups of 8 outputs (>=1), d5 = v
 .od:    bsr     mix1d
         bra.s   .adv
 .z:     bsr     mixz
-.adv:   move.w  v_n8(a4),d0
+.adv:   tst.b   v_fal(a4)
+        beq.s   .nf
+        bsr     snd_expand
+.nf:    move.w  v_n8(a4),d0
         lsl.w   #3,d0
         add.w   v_wr(a4),d0
-        andi.w  #RL-1,d0
+        and.w   v_rm(a4),d0
         move.w  d0,v_wr(a4)
         move.w  (sp)+,d5
         rts

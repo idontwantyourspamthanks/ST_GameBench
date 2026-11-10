@@ -8,7 +8,8 @@ What changed against the original release:
   * the joystick poll in the 50 Hz interrupt no longer waits 350 microseconds each time.
   Together this is about 6.5% (standing) to 13.7% (walking) fewer CPU cycles per frame.
 - STE sound (STE, Mega STE, TT, Falcon): the YM sound effects are replaced by the Amiga
-  version's samples, played through the STE DMA sound chip (mono, 6258 Hz, two voices).
+  version's samples, played through the STE DMA sound chip (mono, 6258 Hz, two voices;
+  the Falcon's DMA cannot do 6258 Hz, there it runs at 12517 Hz with every sample doubled).
   The engine pitch follows the speed, as on the Amiga. Costs about 0.2% of the CPU when
   nothing plays, up to about 10% with two sounds. A plain ST keeps the original YM sound.
 - 50/60 Hz: the original game counts display refreshes. It asks the shifter for 50 Hz when it starts, but wherever the

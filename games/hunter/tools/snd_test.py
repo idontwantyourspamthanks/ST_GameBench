@@ -24,12 +24,13 @@ patched, with N injected sustained effects (13 = rotor, 11 = engine) at volume V
 `coldboot`: boots build/snd_game (made with `huntpatch.py build --only snd_core --samples build/hunter_snd.bin --out
 build/snd_game`) on a machine/TOS/RAM, reports marker, flags and payload mode, injects an explosion and records it.
 Needs build/hunter_snd.bin (tools/snd_build.py) and build/live/snd.{img,json} (`huntpatch.py live --only snd_core
---samples build/hunter_snd.bin --out build/live/snd`).  Scratch config: HOME=/tmp/hsnd/home (a copy of the user's Hatari
-config whose szYMCaptureFileName is /tmp/hsnd/cap.wav, so concurrent Hatari users do not share /tmp/hatari.wav).
+--samples build/hunter_snd.bin --out build/live/snd`).  Scratch config: HOME=/tmp/hsnd/home_<pid> (a copy of the user's Hatari
+config whose szYMCaptureFileName is /tmp/hsnd/cap_<pid>.wav, so concurrent Hatari users do not share /tmp/hatari.wav).
 """
 from __future__ import annotations
 
 import argparse
+import atexit
 import json
 import os
 import re
@@ -54,8 +55,10 @@ HZ = 50                                  # --hz 60: `w $ff820a $00` is added to 
 BANKF = GAME / "build" / "hunter_snd.bin"
 PATCH = GAME / "patches" / "snd_core.s"
 REALHOME = Path.home()
-HOME = Path("/tmp/hsnd/home")
-CAP = Path("/tmp/hsnd/cap.wav")
+# one scratch HOME (Hatari config incl. the WAV capture path) and one capture file per process: concurrent runs never share them
+HOME = Path(f"/tmp/hsnd/home_{os.getpid()}")
+CAP = Path(f"/tmp/hsnd/cap_{os.getpid()}.wav")
+atexit.register(lambda: (shutil.rmtree(HOME, ignore_errors=True), CAP.unlink(missing_ok=True)))
 BANK, RING, RL = 0x90000, 0x8F800, 1024
 SV = 0x8F000
 

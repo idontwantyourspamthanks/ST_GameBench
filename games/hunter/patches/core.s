@@ -19,7 +19,8 @@
 ;
 ; Interface for the other patch authors (fixed addresses):
 ;   $8BFF0.l FLAGS   bit0 = STE-class DMA sound hardware answers (bus-error safe probe + register read-back)
-;                    bit1 = the probe ran (so bit0 == 0 means a plain ST), bit2 = probe took a bus error
+;                    bit1 = the probe ran (so bit0 == 0 means a plain ST), bit2 = probe took a bus error,
+;                    bit3 = Falcon (bit0 set and the real _MCH cookie in TOS's jar $5a0 is $0003xxxx)
 ;   $8BFF8.l MARKER  'HNPO' every boot site applied, 'HNPF' refused (a verified original differed; nothing
 ;                    from the boot phase was written), all zero = the payload never ran
 TABLE   equ $8bc00
@@ -158,7 +159,9 @@ cflush: movea.l a7,a2                   ; the exception handler resets the stack
 ; STE-class DMA sound probe (cookies are unreliable under Gamex).  d0-d3/a0-a2 scratch.
 ; A plain ST/Mega ST bus-errors on $ff8901; STE, Mega STE, TT and Falcon answer, and the frame start
 ; (mid byte $ff8905) must read back what is written (only tried while the DMA is stopped).
-probe:  moveq   #2,d3                   ; bit1: probe ran
+probe:  move.l  FLAGS.l,d3              ; bit3 (Falcon) is sticky: the floppy stage 2 probes first, while TOS's jar still exists; the
+        andi.w  #8,d3                   ; game later overwrites it, and the payload entry probes again (FLAGS is zero before the first call)
+        ori.w   #2,d3                   ; bit1: probe ran
         movea.l a7,a2                   ; the bus error handler resets the stack here
         movea.l $8.w,a1
         lea     .berr(pc),a0
@@ -179,7 +182,21 @@ probe:  moveq   #2,d3                   ; bit1: probe ran
 .berr:  movea.l a2,a7
         bset    #2,d3
 .no:    move.l  a1,$8.w
-        move.l  d3,FLAGS.l
+        btst    #0,d3
+        beq.s   .fin
+        move.l  $5a0.w,d0               ; Falcon: _MCH cookie = $0003xxxx in TOS's own jar (STE/Mega STE $0001, TT $0002).  Read here, in
+        beq.s   .fin                    ; the payload entry / floppy stage 2, before the game's own jar (D15R_F5's says Falcon on a TT too)
+        movea.l d0,a0                   ; exists; Hatari's STE/TT do not bus-error on the Falcon registers, so no register probe
+.ck:    move.l  (a0)+,d0
+        beq.s   .fin
+        move.l  (a0)+,d1
+        cmpi.l  #'_MCH',d0
+        bne.s   .ck
+        swap    d1
+        cmpi.w  #3,d1
+        bne.s   .fin
+        bset    #3,d3
+.fin:   move.l  d3,FLAGS.l
         rts
 
         org     $8bb40
