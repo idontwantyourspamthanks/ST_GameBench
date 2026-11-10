@@ -71,11 +71,12 @@ IMG_BASE = 0xB3000
 ORG_TRAMP, ORG_HOOK, ORG_APPLY = 0xB3000, 0xB3070, 0xB3090
 CORE_END = 0xB3100          # trampoline/hookexit/apply occupy $B3000-$B30FF
 TABLE, TABLE_END = 0xBA000, 0xBB000   # site table + byte pool: 4 KB at the top of the payload
-BLOB_MIN, BLOB_MAX = 0xB3100, TABLE - 1   # blob/data orgs, inclusive last byte
+ORG_CPU = 0xB9F00         # cpufix segment (core.s + cpulib.s): CPU class, caches off, FDC waits; 256 B up to the site table
+BLOB_MIN, BLOB_MAX = 0xB3100, ORG_CPU - 1   # blob/data orgs, inclusive last byte
 MARKER = 0xB2FF8
 HOOK_SITE = 0x2789A        # sub_2783E single success exit (6-byte splice)
 HOOK_ORIG = bytes.fromhex("46df31df62f2")
-CORE_ORGS = {ORG_TRAMP, ORG_HOOK, ORG_APPLY}
+CORE_ORGS = {ORG_TRAMP, ORG_HOOK, ORG_APPLY, ORG_CPU}
 
 # ---- PP's own boot patches (loading.md 6): RAM = image + these -------------
 PP_PATCHES = {
@@ -262,7 +263,7 @@ class Patch:
 def load_patches():
     ps = []
     for f in sorted(PATCHDIR.glob("*.s")):
-        if f.name == "core.s":
+        if f.name in ("core.s", "cpulib.s", "floppy_cpu.s"):
             continue
         p = Patch(f)
         if p.site is not None:
@@ -272,7 +273,7 @@ def load_patches():
 def load_file_patches():
     ps = []
     for f in sorted(PATCHDIR.glob("*.s")):
-        if f.name == "core.s":
+        if f.name in ("core.s", "cpulib.s", "floppy_cpu.s"):
             continue
         p = Patch(f)
         if p.image is not None:
@@ -299,8 +300,10 @@ def core_segments(floppy: bool = False) -> dict[int, bytes]:
     # FLOPPY drops the replay of PP's displaced $2c574 patch (PP's patcher never runs
     # on floppy, and that patch is PP's skip of the game's security check)
     equ = "\n".join(p.preamble + (["FLOPPY equ 1"] if floppy else []))
+    lib = (PATCHDIR / "cpulib.s").read_text().splitlines()      # spliced in at core.s's `;@CPULIB` line
     segs = {}
     for org, lines in p.segments:
+        lines = [ln2 for ln in lines for ln2 in (lib if ln.strip() == ";@CPULIB" else [ln])]
         segs[org] = assemble(org, lines, equ)
     if set(segs) != CORE_ORGS:
         raise SystemExit(f"core.s orgs {sorted(segs)} != {sorted(CORE_ORGS)}")
@@ -385,8 +388,8 @@ def apply_file_patches(fpatches, out: Path):
 # ---- image build -------------------------------------------------------------
 def build_image(patches: list[Patch], floppy: bool = False):
     core = core_segments(floppy)
-    for org in (ORG_TRAMP, ORG_HOOK, ORG_APPLY):
-        nxt = {ORG_TRAMP: ORG_HOOK, ORG_HOOK: ORG_APPLY, ORG_APPLY: CORE_END}[org]
+    for org in (ORG_TRAMP, ORG_HOOK, ORG_APPLY, ORG_CPU):
+        nxt = {ORG_TRAMP: ORG_HOOK, ORG_HOOK: ORG_APPLY, ORG_APPLY: CORE_END, ORG_CPU: TABLE}[org]
         if org + len(core[org]) > nxt:
             raise SystemExit(f"core segment ${org:x} overflows (${len(core[org])} B)")
     sites = []
@@ -437,7 +440,7 @@ def build_image(patches: list[Patch], floppy: bool = False):
     img[TABLE - IMG_BASE + n * 16: TABLE - IMG_BASE + n * 16 + 4] = b"\0\0\0\0"
     img[TABLE - IMG_BASE + tbl_len: TABLE - IMG_BASE + tbl_len + len(pool)] = pool
     # blobs + reservations
-    placed = [(ORG_TRAMP, ORG_HOOK), (ORG_HOOK, ORG_APPLY), (ORG_APPLY, CORE_END),
+    placed = [(ORG_TRAMP, ORG_HOOK), (ORG_HOOK, ORG_APPLY), (ORG_APPLY, CORE_END), (ORG_CPU, ORG_CPU + len(core[ORG_CPU])),
               (TABLE, TABLE + tbl_len + len(pool))]
     for p in patches:
         for org, lines in p.segments:
@@ -657,6 +660,23 @@ FFA_BLANK_END = 80             # FFA track-sides 72-79 are blank ($F6); track-si
 FLOPPY_DISKS = [("FFA", "FFA_boot.st"), ("FFB", "FFB_graphics.st"),
                 ("FFC", "FFC_missions.st"), ("FFD", "FFD_campaign_blank.st")]
 
+# 68020+ block in the boot sector (patches/floppy_cpu.s + cpulib.s): reached by replacing the boot sector's final `jmp $4d9a6.l`.
+BOOT_JMP, BOOT_JMP_ORIG = 0xB4, bytes.fromhex("4ef90004d9a6")
+BOOT_CODE = 0xCA                                  # 308 zero bytes $CA-$1FD (the word at $1FE restores the $1234 sum)
+# FDC waits of the stub's and the game's copy of the driver: (address of the instruction, orig bytes up to the loop-count constant)
+STUB_FDC_WAITS = ((0x4DDEE, "203c00050000"), (0x4DE28, "3a3c0060"), (0x4DCFC, "3e3c0100"))
+GAME_FDC_WAITS = ((0x27CAE, "203c00050000"), (0x27CF0, "3a3c0060"), (0x27ABA, "3e3c0100"), (0x27C6A, "303c0180"))
+
+
+def boot_block() -> bytes:
+    """patches/floppy_cpu.s + cpulib.s assembled at org 0 (position independent: it runs from TOS's boot-sector buffer)."""
+    p = Patch(PATCHDIR / "floppy_cpu.s")
+    lib = (PATCHDIR / "cpulib.s").read_text().splitlines()
+    (org, lines), = p.segments
+    lines = [ln2 for ln in lines for ln2 in (lib if ln.strip() == ";@CPULIB" else [ln])]
+    return assemble(org, lines, "\n".join(p.preamble))
+
+
 def xor_cksum(b: bytes) -> int:
     """The game's directory checksum (sub_27A14 / stub sub_04dc90): XOR of BE words."""
     c = 0
@@ -707,6 +727,27 @@ def floppy_ffa(payload: bytes) -> bytes:
     bra = assemble(STUB_JMP_SITE, [f"\tbra.w\t${STAGE1_SITE:x}"])
     assert len(bra) == 4
     ffa[soff(STUB_JMP_SITE):soff(STUB_JMP_SITE) + 4] = bra
+    # 68020+ support (work/notes/tt.md): the boot sector's final jmp -> our block in its zero bytes (CPU class, caches off, TT -> ST low,
+    # longer waits in the stub's FDC driver); the boot sector's word sum is restored through the word at $1FE.
+    for a, orig in STUB_FDC_WAITS:
+        ob = bytes.fromhex(orig)
+        if bytes(ffa[soff(a):soff(a) + len(ob)]) != ob:
+            raise SystemExit(f"stub: FDC wait at ${a:x} is not {orig}")
+    g9 = _extract(bytes(ffa), *[e for e in _dirents(bytes(ffa), FFA_DIR_OFF) if e[0] == 9][0][2:5])
+    for a, orig in GAME_FDC_WAITS:                      # the game's copy is patched by core.s cpufix (FDCTAB) at run time
+        ob = bytes.fromhex(orig)
+        if g9[a - 0x3104:a - 0x3104 + len(ob)] != ob:
+            raise SystemExit(f"game: FDC wait at ${a:x} is not {orig}")
+    if bytes(ffa[BOOT_JMP:BOOT_JMP + 6]) != BOOT_JMP_ORIG:
+        raise SystemExit("boot sector: unexpected bytes at its final jmp")
+    blk = boot_block()
+    if BOOT_CODE + len(blk) > 0x1FE or any(ffa[BOOT_CODE:0x1FE][:len(blk)]):
+        raise SystemExit(f"boot block ({len(blk)} B at ${BOOT_CODE:x}) does not fit the zero bytes of the boot sector")
+    ffa[BOOT_CODE:BOOT_CODE + len(blk)] = blk
+    ffa[BOOT_JMP:BOOT_JMP + 6] = bytes.fromhex("6000%04x4e71" % (BOOT_CODE - (BOOT_JMP + 2)))      # bra.w boot block ; nop
+    ffa[0x1FE:0x200] = b"\0\0"
+    fix = (0x1234 - sum(struct.unpack(">256H", bytes(ffa[:512])))) & 0xFFFF
+    ffa[0x1FE:0x200] = struct.pack(">H", fix)
     # file 10: directory entry [cksum.w][offset.w = 0][track-side.b][len.u24], data
     struct.pack_into(">HHBBH", ffa, ent, xor_cksum(payload), 0, PAYLOAD_TS,
                      len(payload) >> 16, len(payload) & 0xFFFF)

@@ -12,14 +12,20 @@
 ;            Idempotent: orig bytes -> apply; new bytes -> already done;
 ;            anything else -> 'MWPF' marker, site left untouched.
 ; Site table at $BA000-$BAFFF (4 KB): entries {addr.l len.w phase.w orig.l new.l}, addr 0 ends.
+; $B9F00 cpufix:    (68020+ only, work/notes/tt.md) called first thing by the trampoline: finds the CPU class (cpulib.s, spliced in at the
+;            marker line), writes it to CPUFLAG ($B2FF4), switches the caches off and, on the floppy build, widens the game's own FDC
+;            waits (FDCTAB below).  On a 68000/68010 it returns at once, so ST/STE/Mega STE behave exactly as before.
 TABLE   equ $ba000
 MARKER  equ $b2ff8
 apply   equ $b3090
+cpufix  equ $b9f00
+CPUFLAG equ $b2ff4
 
         org     $b3000
 trampoline:
         movem.l d0-d7/a0-a6,-(a7)
         move.w  sr,-(a7)                ; keep flags/mode exactly as PP's patcher left them
+        jsr     cpufix.l                ; registers are all saved above; returns immediately on a 68000
         move.l  #'MWPF',MARKER.l        ; preset failure marker
         ; pass 1: verify the ORIGINAL bytes of every boot site; nothing is written yet
         lea     TABLE.l,a0
@@ -109,3 +115,38 @@ hookexit:                               ; replaces 33df 000062b8 at $10D6C
         bra.s   .aloop
 .afail: move.l  #'MWPF',MARKER.l
 .adone: rts
+
+        org     $b9f00
+cpufix_entry:
+        ifnd    FLOPPY
+        rts                             ; HD: nothing to do, and HAGA remaps low RAM on a TT ($5a0 is not TOS's jar there): never read it
+        endc
+        movem.l d0-d2/a0-a1,-(a7)
+        bsr.w   cl_detect
+        move.b  d0,CPUFLAG.l
+        beq.s   .x                      ; 68000/68010: nothing at all
+        ifd     FLOPPY
+        bsr.w   cl_cacheoff             ; floppy: no TOS caches policy; HD: PP's HAGA owns CACR on a TT, leave it alone
+        endc
+        lea     fdctab(pc),a0
+        bsr.w   cl_patch
+.x:     movem.l (a7)+,d0-d2/a0-a1
+        rts
+;@CPULIB
+fdctab:
+        ifd     FLOPPY
+        ; the game's own FDC driver (floppy build: PP's HD patches bypass it): timeout and three dbra delays, ~x32 / x4
+        dc.l    $11304
+        dc.w    4
+        dc.l    $00800000               ; was $40000   (sub_d3c0-style wait for the FDC interrupt)
+        dc.l    $112c4
+        dc.w    2
+        dc.l    $0600                   ; was $0180
+        dc.l    $110a6
+        dc.w    2
+        dc.l    $0400                   ; was $0100
+        dc.l    $1133a
+        dc.w    2
+        dc.l    $0080                   ; was $0020
+        endc
+        dc.l    0

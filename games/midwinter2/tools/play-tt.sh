@@ -7,4 +7,4 @@
 #
 # TOS: tos/TOS_3_06.img if you add one, otherwise EmuTOS (Atari never shipped a
 # TT TOS image with this project). Other options as for tools/play.sh.
-exec "$(dirname "${BASH_SOURCE[0]}")/play.sh" --machine tt --ram 2048 "$@"
+exec "$(dirname "${BASH_SOURCE[0]}")/play.sh" --machine tt --mmu true --ram 2048 "$@"

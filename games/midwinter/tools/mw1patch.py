@@ -79,11 +79,12 @@ IMG_BASE = 0xB3000
 ORG_TRAMP, ORG_HOOK, ORG_APPLY = 0xB3000, 0xB3070, 0xB3090
 CORE_END = 0xB3100          # trampoline/hookexit/apply occupy $B3000-$B30FF
 TABLE, TABLE_END = 0xBA000, 0xBB000   # site table + byte pool: 4 KB at the top of the payload
-BLOB_MIN, BLOB_MAX = 0xB3100, TABLE - 1   # blob/data orgs, inclusive last byte
+ORG_CPU = 0xB9F00         # cpufix segment (core.s + cpulib.s): CPU class, caches off, FDC waits; 256 B up to the site table
+BLOB_MIN, BLOB_MAX = 0xB3100, ORG_CPU - 1   # blob/data orgs, inclusive last byte
 MARKER = 0xB2FF8
 HOOK_SITE = 0x10D6C        # sub_010cd2 single success exit: move.w (a7)+,$62b8.l (6-byte splice)
 HOOK_ORIG = bytes.fromhex("33df000062b8")
-CORE_ORGS = {ORG_TRAMP, ORG_HOOK, ORG_APPLY}
+CORE_ORGS = {ORG_TRAMP, ORG_HOOK, ORG_APPLY, ORG_CPU}
 
 # ---- PP's own boot patches (work/notes/loading.md section 4): RAM = image + these ----
 # Applied by PP's patcher block (RUNME text $3b0-$482, running from the stack copy); all
@@ -315,7 +316,7 @@ class Patch:
 def load_patches():
     ps = []
     for f in sorted(PATCHDIR.glob("*.s")):
-        if f.name == "core.s":
+        if f.name in ("core.s", "cpulib.s", "floppy_cpu.s"):
             continue
         p = Patch(f)
         if p.site is not None:
@@ -326,7 +327,7 @@ def load_patches():
 def load_file_patches():
     ps = []
     for f in sorted(PATCHDIR.glob("*.s")):
-        if f.name == "core.s":
+        if f.name in ("core.s", "cpulib.s", "floppy_cpu.s"):
             continue
         p = Patch(f)
         if p.image is not None:
@@ -350,11 +351,15 @@ def assemble(org: int, lines: list[str], equ: str = "") -> bytes:
         return out.read_bytes()
 
 
-def core_segments() -> dict[int, bytes]:
+def core_segments(floppy: bool = False) -> dict[int, bytes]:
+    """The core.s segments.  `floppy` adds `FLOPPY equ 1` (the game's FDC waits are widened by cpufix on a 68020+); cpulib.s is
+    spliced in at core.s's `;@CPULIB` line."""
     p = Patch(PATCHDIR / "core.s")
-    equ = "\n".join(p.preamble)
+    equ = "\n".join(p.preamble) + ("\nFLOPPY\tequ\t1" if floppy else "")
+    lib = (PATCHDIR / "cpulib.s").read_text().splitlines()
     segs = {}
     for org, lines in p.segments:
+        lines = [ln2 for ln in lines for ln2 in (lib if ln.strip() == ";@CPULIB" else [ln])]
         segs[org] = assemble(org, lines, equ)
     if set(segs) != CORE_ORGS:
         raise SystemExit(f"core.s orgs {sorted(segs)} != {sorted(CORE_ORGS)}")
@@ -441,10 +446,10 @@ def apply_file_patches(fpatches, out: Path):
 
 
 # ---- image build -------------------------------------------------------------
-def build_image(patches: list[Patch]):
-    core = core_segments()
-    for org in (ORG_TRAMP, ORG_HOOK, ORG_APPLY):
-        nxt = {ORG_TRAMP: ORG_HOOK, ORG_HOOK: ORG_APPLY, ORG_APPLY: CORE_END}[org]
+def build_image(patches: list[Patch], floppy: bool = False):
+    core = core_segments(floppy)
+    for org in (ORG_TRAMP, ORG_HOOK, ORG_APPLY, ORG_CPU):
+        nxt = {ORG_TRAMP: ORG_HOOK, ORG_HOOK: ORG_APPLY, ORG_APPLY: CORE_END, ORG_CPU: TABLE}[org]
         if org + len(core[org]) > nxt:
             raise SystemExit(f"core segment ${org:x} overflows (${len(core[org])} B)")
     sites = []
@@ -495,7 +500,7 @@ def build_image(patches: list[Patch]):
     img[TABLE - IMG_BASE + n * 16: TABLE - IMG_BASE + n * 16 + 4] = b"\0\0\0\0"
     img[TABLE - IMG_BASE + tbl_len: TABLE - IMG_BASE + tbl_len + len(pool)] = pool
     # blobs + reservations
-    placed = [(ORG_TRAMP, ORG_HOOK), (ORG_HOOK, ORG_APPLY), (ORG_APPLY, CORE_END),
+    placed = [(ORG_TRAMP, ORG_HOOK), (ORG_HOOK, ORG_APPLY), (ORG_APPLY, CORE_END), (ORG_CPU, ORG_CPU + len(core[ORG_CPU])),
               (TABLE, TABLE + tbl_len + len(pool))]
     for p in patches:
         for org, lines in p.segments:
@@ -702,13 +707,13 @@ def cmd_build(patches, out: Path, fpatches=()):
               f"{s['orig'].hex()} -> {s['new'].hex()}   [{s['name']}]")
 
 
-def cmd_live(patches, out: Path):
+def cmd_live(patches, out: Path, floppy: bool = False):
     """Write what the boot installer would put in RAM, for applying a patch set to a running
     snapshot: the payload image (`<out>.img`, load at $B3000) and the site bytes (`<out>.json`).
     The load hook is omitted: in a snapshot every overlay is already loaded."""
     if cmd_verify(patches):
         raise SystemExit("live aborted: a site's orig does not match the game")
-    img, sites = build_image(patches)
+    img, sites = build_image(patches, floppy)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.with_suffix(".img").write_bytes(bytes(img))
     js = [{"addr": s["addr"], "orig": s["orig"].hex(), "new": s["new"].hex(), "name": s["name"]}
@@ -749,6 +754,27 @@ STAGE1_SRC = ["\tmove.l\t#$02c20040,$48646.l",   # stage-2 table entry 2: start 
 PAYLOAD_SECTOR = 706                             # 1-based absolute sector of the payload file
 FLOPPY_LAST_SECTOR = 800                         # last sector of the image
 FLOPPY_DISKS = [("MWA", "MWA.st"), ("MWB", "MWB.st"), ("MWC", "MWC.st")]
+STUB_RAM = 0xCFE4                                # boot stub load address; its image bytes start at MWA +$200
+STUB_OFF = 0x200
+STUB_ENTRY_SITE, STUB_ENTRY_ORIG = 0xD000, bytes.fromhex("4ff90000d618")      # lea $d618.l,a7 (first stub instruction)
+STUB_S2_SITE, STUB_S2_ORIG = 0xD05E, bytes.fromhex("4ef90003df44")            # jmp $3df44.l (the stub's jump into stage 2)
+STUB_CODE = 0xD7E0                                # zero run $D7E0-$DC5B in the stub block (1147 B, unreferenced; below $D618 is the stub's stack)
+STUB_S2_CODE = 0xD810                             # st_s2 in patches/floppy_cpu.s (padded to it)
+# FDC waits of the three copies of the driver (stub, stage-2, game): (instruction addr, orig bytes up to the loop-count constant at +2)
+FDC_WAITS = {"stub": ((0xD3C0, "203c00040000"), (0xD380, "303c0180"), (0xD202, "3e3c0100"), (0xD3FA, "3a3c0020")),
+             "stage2": ((0x3EF48, "203c00040000"), (0x3EF08, "303c0180"), (0x3EDE2, "3e3c0100"), (0x3EF82, "3a3c0020")),
+             "game": ((0x11302, "203c00040000"), (0x112C2, "303c0180"), (0x110A4, "3e3c0100"), (0x11338, "3a3c0020"))}
+GAME_FILE_SECTOR = 195                            # MWA: the resident game (loaded to $7E4)
+
+
+def stub_block() -> bytes:
+    """The boot-stub block (patches/floppy_cpu.s + cpulib.s) assembled at STUB_CODE."""
+    p = Patch(PATCHDIR / "floppy_cpu.s")
+    lib = (PATCHDIR / "cpulib.s").read_text().splitlines()
+    (org, lines), = p.segments
+    assert org == STUB_CODE
+    lines = [ln2 for ln in lines for ln2 in (lib if ln.strip() == ";@CPULIB" else [ln])]
+    return assemble(org, lines, "\n".join(p.preamble))
 
 
 def floppy_conflicts(sites):
@@ -791,6 +817,24 @@ def floppy_mwa(payload: bytes) -> bytes:
     jmp = assemble(FLOPPY_JMP_SITE, [f"\tjmp\t${STAGE1_SITE:x}.l"])
     assert len(jmp) == 6
     mwa[soff(FLOPPY_JMP_SITE):soff(FLOPPY_JMP_SITE) + 6] = jmp
+    # 68020+ support (work/notes/tt.md): CPU class, caches off, TT -> ST low, longer FDC waits.  Two splices into the boot stub, code in its free bytes.
+    def toff(a):
+        return STUB_OFF + a - STUB_RAM
+    goff = (GAME_FILE_SECTOR - 1) * SECTOR - GAME_RAM
+    for what, base in (("stub", toff), ("stage2", soff), ("game", lambda a: goff + a)):
+        for a, orig in FDC_WAITS[what]:
+            ob = bytes.fromhex(orig)
+            if bytes(mwa[base(a):base(a) + len(ob)]) != ob:
+                raise SystemExit(f"{what}: FDC wait at ${a:x} is not {orig}")
+    for a, orig in ((STUB_ENTRY_SITE, STUB_ENTRY_ORIG), (STUB_S2_SITE, STUB_S2_ORIG)):
+        if bytes(mwa[toff(a):toff(a) + 6]) != orig:
+            raise SystemExit(f"stub: unexpected bytes at ${a:x}")
+    blk = stub_block()
+    if STUB_CODE + len(blk) > 0xDC5C or any(mwa[toff(STUB_CODE):toff(STUB_CODE) + len(blk)]):
+        raise SystemExit(f"stub block ({len(blk)} B at ${STUB_CODE:x}) does not fit the free zero bytes")
+    mwa[toff(STUB_CODE):toff(STUB_CODE) + len(blk)] = blk
+    mwa[toff(STUB_ENTRY_SITE):toff(STUB_ENTRY_SITE) + 6] = assemble(STUB_ENTRY_SITE, [f"\tjmp\t${STUB_CODE:x}.l"])
+    mwa[toff(STUB_S2_SITE):toff(STUB_S2_SITE) + 6] = assemble(STUB_S2_SITE, [f"\tjmp\t${STUB_S2_CODE:x}.l"])
     mwa[lo:lo + len(payload)] = payload
     out = bytes(mwa)
     assert sector_file(out, PAYLOAD_SECTOR, len(payload)) == payload
@@ -801,7 +845,7 @@ def floppy_mwa(payload: bytes) -> bytes:
 def cmd_build_floppy(patches, out: Path, zip_path: Path | None = None, fpatches=()):
     if cmd_verify(patches):
         raise SystemExit("build aborted: a site's orig does not match the game")
-    img, sites = build_image(patches)
+    img, sites = build_image(patches, True)
     bad = floppy_conflicts(sites)
     if bad:
         raise SystemExit("build aborted: site differs on floppy:\n  " + "\n  ".join(bad))
@@ -907,7 +951,7 @@ def main():
             if fsel and a.only is not None:
                 raise SystemExit("file patches (HAGA) are not applicable to `live`: "
                                  "they are applied at build time, not in RAM")
-            cmd_live(sel, ROOT / a.out)
+            cmd_live(sel, ROOT / a.out, floppy)
 
 
 if __name__ == "__main__":
