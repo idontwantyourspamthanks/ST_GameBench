@@ -72,6 +72,11 @@ rts` from the unchanged `(a7)` frame.
   at `$53C30` set to `$FF`; RAM proof only.
 - `floppy_secbypass` (`media: floppy`, default no): `rts` at `$12050`, PP's bypass of the game's manual
   "FVPF SECURITY CHECK" which a floppy boot lacks.
+- `floppy_driveb` (`media: floppy`, default no, blob `$B9400-$B97FF`): two-drive floppy support. The game is hard-wired to drive A
+  (`$134(a6) = 2` at `$10CEA/$10334/$10F22`); the patch replaces the body of the file loader sub_010cd2 (`$10CEA-$10D6B`):
+  drive A as before, and only when the file check fails for the graphics disk (`$258A2 = $2590C`) the other drive is probed with a
+  bounded FDC read and, if it answers, the file is re-read from it; that drive is then the preferred one. The save disk (MWC)
+  stays on A. Evidence and test matrix: `work/notes/floppy_driveb.md`.
 
 ## Tool
 `python3 tools/mw1patch.py build [--only N ...] [--out build/game] | build --floppy | list | verify | files | live | version | doc FILE`
