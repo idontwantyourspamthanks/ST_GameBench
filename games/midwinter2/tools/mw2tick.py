@@ -93,7 +93,7 @@ def report(tag: str, hz: int, m: dict) -> str:
     n = len(rows) - 1
     cyc = ((c1 - c0) & 0xFFFFFFFF) / (v1 - v0)
     gp = [(a[0], b[0] - a[0]) for a, b in zip(rows, rows[1:])]
-    big = [(t - v0, g) for t, g in gp if g > 30]      # stalls (a modal screen / load in the scenario): not world ticks at the tick rate
+    big = [(t - v0, g) for t, g in gp if g > 30]      # stalls > 30 VBL: the game's own local-map rebuild (sub_031dee, ~92 Mcycles: 5.7 s at 16 MHz, 11.5 s at 8 MHz, once per 40 cells walked; work/notes/timing.md), not the tick rate
     steady = [g for _, g in gp if g <= 30]
     return (f"RESULT {tag}: sync ${m['sync']:02x}, {cyc:.0f} cycles/VBL, {n} ticks in {v1 - v0} VBL = {(v1 - v0) / hz:.2f} s: "
             f"{n * hz / (v1 - v0):.3f} ticks/s; without stalls > 30 VBL {big}: {len(steady)} ticks in {sum(steady)} VBL = "
