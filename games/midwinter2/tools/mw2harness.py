@@ -104,6 +104,9 @@ class Hatari:
         self.logpath = self.R / "log.txt"
         display = self._reserve_display()
         self.env = dict(os.environ, DISPLAY=f":{display}", SDL_VIDEODRIVER="x11")
+        # Never play emulated sound on the host speakers (WAV recording still works); HATARI_AUDIBLE=1 to hear it.
+        if os.environ.get("HATARI_AUDIBLE") != "1":
+            self.env["SDL_AUDIODRIVER"] = "dummy"
         self.env.pop("WAYLAND_DISPLAY", None)
         self.xvfb = subprocess.Popen(["Xvfb", f":{display}", "-screen", "0", "1024x768x24"],
                                      stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
