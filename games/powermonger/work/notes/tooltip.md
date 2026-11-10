@@ -101,3 +101,6 @@ Strips (top bar of each step): `work/shots/pmtt_cold_ste_sheet.png`, `pmtt_cold_
 * Windows (query windows, option menu) can cover icons; the tooltip then still names the icon under the window (only the map icons are suppressed while a window is open).
 * The tooltip is not drawn into the displayed buffer, so it follows the pointer by one frame time.
 * The rotate direction words and the Invent wording are the only [INFERENCE] texts.
+
+## 8. Later changes (PMQoL)
+Key labels, the Invent wording from the traced chooser, the wording table moved to $CF000 (`ET` / `TXT` equs) and the village hover are described in `qol.md`; the gate numbers in section 5 above predate them.

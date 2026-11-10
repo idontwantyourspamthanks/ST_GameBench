@@ -101,3 +101,4 @@ The primary target is 1 MB, so use the `1mb_*` snapshots for anything measured.
 ## Concurrency
 - Several harness instances can run at once. Displays are reserved atomically via `/tmp/.mw2harness-display-N`, and stale locks are reclaimed.
 - Keep it to at most 2–3 concurrent cold boots: `boot_to_game` uses wall-clock sleeps and misses clicks under load.
+- **Vehicle test states:** Raids -> pick an island (Space -> question icon -> thumbs-up -> In); islands start with different vehicles. Save snapshots there to test vehicles.

@@ -53,7 +53,7 @@ def event_cmds(kind, ev):
     right = 1 if (shift and flg & 1) else 0
     if kind == "A":
         return [bytes_cmd(0xCE900, [0, 1, x >> 8, x & 255, y >> 8, y & 255, 0, right])]
-    return [bytes_cmd(0xCF704 + sc, [3 if shift else 1]), bytes_cmd(0xCF702, [0, 1])]    # PEND[sc], then ANY (the order qol_keys2's interrupt hook uses)
+    return [bytes_cmd(0xCD4A4 + sc, [3 if shift else 1]), bytes_cmd(0xCD4A2, [0, 1])]    # PEND[sc], then ANY (the order qol_keys2's interrupt hook uses)
 
 
 def run(kind, snap, mhz, vbls, names, res):

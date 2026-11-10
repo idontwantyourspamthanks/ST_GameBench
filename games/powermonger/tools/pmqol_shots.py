@@ -67,7 +67,7 @@ def main():
             p = OUT / f"qol_{tag}.png"
             h.shot(str(p))
             bar(p, OUT / f"qol_{tag}_bar.png")
-            print(f"{tag}: pointer ({x},{y}) HIT ${h.peekl(0xCF78A):x} sHK {h.peekw(0xCDC12)} sID {h.peekw(0xCDC04)} -> {p.name}", flush=True)
+            print(f"{tag}: pointer ({x},{y}) HIT ${h.peekl(0xCD5E2):x} sHK {h.peekw(0xCDC12)} sID {h.peekw(0xCDC04)} -> {p.name}", flush=True)
             shots.append(tag)
 
         # settlement 0 (offset 0): the village in view at the snapshot

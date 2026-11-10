@@ -22,3 +22,6 @@ Follows the Midwinter method (`.omp/skills/st-game-speedup`). User preferences c
 - **P4 Display speed-ups**, pixel-identical.
 - **P5 STE DMA sound.**
 - **P6 Regression, packaging.**
+
+## Test scenarios (user tip, 2026-11-10)
+- **Demo mode** shows a range of interior and exterior scenes and vehicles: good for render gates (huntab.py), sound coverage of rarely-heard effects (sound.md: ids 0, 8, 9, 12 never heard live) and TT/Falcon checks.

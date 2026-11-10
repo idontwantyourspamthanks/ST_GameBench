@@ -227,3 +227,6 @@ Gates are as in `mw2-patching`: abtest pixel-identical at `--flips 10/40`, cold 
 
 ## Release version
 Next release: **v1.2** (user, 2026-11-10). A credit line `v1.2 enhanced by dad_prg` goes on a startup screen (placement: user to choose).
+
+## Test scenarios (user tip, 2026-11-10)
+- **Vehicles:** Raids -> different islands start with different vehicles. Select an island with Space -> question icon -> thumbs-up icon -> In. Use this for vehicle snapshots (render patches, controls, p7_cockpit per-vehicle cockpit lists, enemy AI per type).
