@@ -76,4 +76,4 @@ finally: h.close()        # ALWAYS: frees Xvfb, display claim, scratch game copy
 - **The first screenshot after a load may be black** (palette fade). That is not a crash; check game state.
 - **Hatari draws a TT frame with one palette**, so mid-frame palette splits (HUD vs 3D) look wrong on a Hatari TT but are fine on real hardware. Judge visuals on ST/STE/Mega STE.
 - **Concurrency:** keep to at most 2–3 cold boots at once, since wall-clock sleeps miss clicks under load. `/tmp` is a RAM disk; the scratch game copy is deleted on `close()`.
-- **TT and Falcon screenshots differ:** 640×436 with no border.
+- **TT and Falcon screenshots differ:** TT 640×436 (picture at 0,0, statusbar below), Falcon 648×602 (picture at 2,64); `screen_matches` shifts both. A TT/Falcon "CPU halted: double bus error" dialog blocks the fifo for good (every later call: "no screenshot"). TT hard disk = `--acsi`; Falcon TOS 4.04 has no ACSI (IDE/SCSI only).
