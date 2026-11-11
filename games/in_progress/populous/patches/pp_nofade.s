@@ -1,5 +1,5 @@
 ; name: pp_nofade
-; default: yes
+; default: no
 ; image: HAGA
 ; edit: $0ffc 61000168
 ; edit: $16d8 6100fa8c
