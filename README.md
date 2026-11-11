@@ -4,7 +4,7 @@
 
 This repository holds the tools, the patches and the full working notes. It does **not** contain any game, any TOS ROM, or anything extracted from them. You need your own copies (see [Getting the game files](#getting-the-game-files)).
 
-Done: **Midwinter**. In final testing: **Midwinter 2: Flames of Freedom**, **Hunter** and **Powermonger**. Upcoming games are listed in [`games/queue/README.md`](games/queue/README.md).
+Done: **Midwinter** and **Hunter**. In final testing: **Midwinter 2: Flames of Freedom** and **Powermonger**. Upcoming games are listed in [`games/queue/README.md`](games/queue/README.md).
 
 ## What the patches do
 
@@ -51,7 +51,8 @@ The agent "skills" in [`.omp/skills/`](.omp/skills/) capture the method, the emu
 | `tools/pp_depack.py` | Unpacks the self-extracting `RUNME.TOS` of PP's HAGA hard-disk conversions. |
 | `.omp/skills/` | Method, harness, PP-conversion internals and delegation rules. |
 | `games/in_progress/midwinter2/` | **Midwinter 2.** `REPORT.md` (overview), `PLAN.md`, `patches/` (patch sources, 68000 assembly), `tools/` (patch builder, harness, launchers, packaging), `work/notes/` (reverse-engineering notes with evidence), `work/*/` (test scripts and raw logs). |
-| `games/in_progress/hunter/`, `games/in_progress/powermonger/` | **Hunter, Powermonger.** Same layout; each has its own `REPORT.md`. |
+| `games/in_progress/powermonger/` | **Powermonger.** Same layout; its own `REPORT.md`. |
+| `games/done/hunter/` | **Hunter (v1.0): done.** Same layout; [`REPORT.md`](games/done/hunter/REPORT.md). |
 | `games/done/midwinter/` | **Midwinter (v1.1): done.** Same layout; [`REPORT.md`](games/done/midwinter/REPORT.md). |
 | `games/done/` | Games declared finished. A game moves here (`git mv`) when it's declared ready, and back to `in_progress/` if new work is needed. |
 | `games/queue/` | **Upcoming games:** one folder per game with a README (source, file list, loader type) and early notes; the game files in `originals/` are git-ignored. The list is [`games/queue/README.md`](games/queue/README.md). |

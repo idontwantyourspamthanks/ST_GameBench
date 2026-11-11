@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Powermonger patch delivery tool.  Modelled on games/in_progress/hunter/tools/huntpatch.py and games/done/midwinter/tools/mw1patch.py.
+"""Powermonger patch delivery tool.  Modelled on games/done/hunter/tools/huntpatch.py and games/done/midwinter/tools/mw1patch.py.
 Full reverse-engineering notes and evidence: work/notes/loading.md.
 
     python3 tools/pmpatch.py verify

@@ -98,13 +98,13 @@ The scene is slower by 0 to 8 % (one voice) and 2 to 13 % (two voices) while tho
 
 ## 10. Commands
 ```
-python3 games/in_progress/hunter/tools/snd_build.py                      # build/hunter_snd.bin from alt/amiga/*.adf
-cd games/in_progress/hunter && python3 tools/huntpatch.py live --only snd_core --samples build/hunter_snd.bin --out build/live/snd
+python3 games/done/hunter/tools/snd_build.py                      # build/hunter_snd.bin from alt/amiga/*.adf
+cd games/done/hunter && python3 tools/huntpatch.py live --only snd_core --samples build/hunter_snd.bin --out build/live/snd
 python3 tools/huntpatch.py build --only snd_core --samples build/hunter_snd.bin --out build/snd_game    # cold-boot build
-python3 games/in_progress/hunter/tools/snd_test.py mixcheck --inject 13:2:15@0 3:1:12@0.6
-python3 games/in_progress/hunter/tools/snd_test.py record NAME --snap 1mb_foot_stand --quiet --inject 3:1:12@1.0 --secs 6
-python3 games/in_progress/hunter/tools/snd_test.py compare work/snd/NAME.wav 3,12,1.0,2.5          # EFFECT,VOLUME,T_REQUEST,SECONDS
-python3 games/in_progress/hunter/tools/snd_test.py overlap work/snd/overlap.wav 13,10,1.0,3,12,3.0,6.0
-python3 games/in_progress/hunter/tools/snd_test.py cost --snap 1mb_foot_stand --cfg orig:2 patch:2:15 --vbls 300 --fps-vbls 600
-python3 games/in_progress/hunter/tools/snd_test.py coldboot --machine ste --tos 1.62 --mem 1024 --record NAME
+python3 games/done/hunter/tools/snd_test.py mixcheck --inject 13:2:15@0 3:1:12@0.6
+python3 games/done/hunter/tools/snd_test.py record NAME --snap 1mb_foot_stand --quiet --inject 3:1:12@1.0 --secs 6
+python3 games/done/hunter/tools/snd_test.py compare work/snd/NAME.wav 3,12,1.0,2.5          # EFFECT,VOLUME,T_REQUEST,SECONDS
+python3 games/done/hunter/tools/snd_test.py overlap work/snd/overlap.wav 13,10,1.0,3,12,3.0,6.0
+python3 games/done/hunter/tools/snd_test.py cost --snap 1mb_foot_stand --cfg orig:2 patch:2:15 --vbls 300 --fps-vbls 600
+python3 games/done/hunter/tools/snd_test.py coldboot --machine ste --tos 1.62 --mem 1024 --record NAME
 ```

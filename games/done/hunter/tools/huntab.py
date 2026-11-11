@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """A/B gate for Hunter display patches: identical picture + exact cycles per frame + fps.
 
-    python3 games/in_progress/hunter/tools/huntab.py --only p4_x [p4_y ...] [--base p4_z ...] \
+    python3 games/done/hunter/tools/huntab.py --only p4_x [p4_y ...] [--base p4_z ...] \
         [--snapshot foot_stand foot_walk car_stand car_drive car_turn hills_stand 4mb_foot_stand | path.sav ...] \
         [--points 3 | --views K] [--flips 1 6] [--vbls 600] [--no-fps] [--lock]
 

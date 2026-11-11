@@ -67,7 +67,7 @@ def test_image(src: Path, dst: Path, game: str, original: bool = False) -> Path:
 
 def hunter_tt_boot(h):
     """The TT/Falcon boot screens differ from the STE crops the harness gates on `hw`/`title1`: same sequence as
-    games/in_progress/hunter/tools/hunt_ttf.py (key at the HW screen, then gate on the animated title)."""
+    games/done/hunter/tools/hunt_ttf.py (key at the HW screen, then gate on the animated title)."""
     wait_drive_c(h)
     time.sleep(3)
     h.keypress(57)

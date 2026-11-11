@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Extract Hunter's sampled sound effects from the user's own Amiga ADF (Fairlight crack).
 
-Nothing from the ADF is stored in git: the default output dir games/in_progress/hunter/alt/amiga/samples/ is git-ignored.
+Nothing from the ADF is stored in git: the default output dir games/done/hunter/alt/amiga/samples/ is git-ignored.
 
 Disk layout (decoded from the bootblock and the game's trackloader, see work/notes/sound.md):
   * ADF = 160 tracks of 11 x 512 bytes (5632), but the game uses only 10 sectors (5120 bytes) per track.

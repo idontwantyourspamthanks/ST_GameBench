@@ -42,7 +42,7 @@ Builds: `pmpatch.py build --out build/mmu` of the working tree (with the other a
 Before the fix, the same HD image with `--mmu true` crashed as in section 1 (first run of this note).
 
 ## 4. Hunter
-Hunter needs no change: HD (ACSI + HDDRIVER) and floppy builds reach the 3D view on a TT with `--mmu true` (details in `games/in_progress/hunter/work/notes/ttfalcon.md`).
+Hunter needs no change: HD (ACSI + HDDRIVER) and floppy builds reach the 3D view on a TT with `--mmu true` (details in `games/done/hunter/work/notes/ttfalcon.md`).
 
 ## 5. Not done
 Real hardware; Falcon HD (not testable, see Hunter's ttfalcon.md); 68040/060 (their MMU is not handled; not reachable in Hatari here); the dist `.img`/`.vhd` is NOT rebuilt (`make_hd_image.py` is the lead's); `tools/package.sh` for Powermonger left to PMIntegrate so the md5s are taken once, after this change.

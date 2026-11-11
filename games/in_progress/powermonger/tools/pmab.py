@@ -4,7 +4,7 @@
     python3 tools/pmab.py [--only p4_x ...] [--base p4_y ...] [--snapshot map_idle get_men battle_320 | x.sav ...]
                           [--mhz 8 16] [--vbls 700] [--walk] [--st] [--poke ADDR:HEX] [--neg] [--no-fps]
 
-Adapted from games/in_progress/hunter/tools/huntab.py (see work/notes/p4_raster.md section 1 for the argument).  Hunter's world runs on
+Adapted from games/done/hunter/tools/huntab.py (see work/notes/p4_raster.md section 1 for the argument).  Hunter's world runs on
 the VBL counter; Powermonger's does too once the tick_* patches are in (world = 4.00 ticks/s from $6f304, `timing.md`).  A
 patch that makes a frame shorter therefore moves the SAME world state to a different pass, so "frame N after the start" is
 not comparable.  This gate removes the problem instead of locking frame lengths:
