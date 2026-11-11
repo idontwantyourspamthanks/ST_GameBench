@@ -36,7 +36,7 @@ WARROOM_SNAPSHOT = GAME_DIR / "work" / "snapshots" / "warroom_campaign.sav"
 def _enter_raids_from_hall(h: Hatari, level: tuple[int, int] = (175, 390)):
     """Corridor -> RAIDS door -> level of play -> island map."""
     for _ in range(4):
-        h.goto(300, 230); h.click()                           # RAIDS door (a Hatari TT needs 10-60 s to load the screen: poll)
+        h.goto(*((294, 216) if h.machine == "tt" else (300, 230))); h.click()   # RAIDS door (TT: its pointer lands elsewhere, measured by a click grid) (a Hatari TT needs 10-60 s to load the screen: poll)
         t0 = time.time()
         while time.time() - t0 < 60:
             time.sleep(3 if time.time() - t0 > 9 else 10 - (time.time() - t0))
