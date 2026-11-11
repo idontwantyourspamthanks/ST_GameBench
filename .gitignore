@@ -41,7 +41,9 @@ games/*/*/extracted/
 **/*.sav
 # Build outputs contain patched game files
 **/build/
-**/dist/
+games/**/dist/
+/dist/*
+!/dist/*.sh
 
 # --- Local / generated ------------------------------------------------------
 __pycache__/
