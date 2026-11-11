@@ -1,7 +1,7 @@
 # Populous
 
 - Slug: `populous`
-- Status: **queued, not started**
+- Status: **in progress** (study started 2026-11-11)
 - VHD source: `Atari3gb.vhd`, partition at offset 1840700928 (letters G-R), folder ::/P/POPULOUS
 - Local copy: `originals/POPULOUS` (git-ignored)
 - Loader: PP's HAGA conversion (RUNME.TOS + HAGA)
