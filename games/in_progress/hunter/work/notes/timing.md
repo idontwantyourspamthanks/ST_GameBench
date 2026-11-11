@@ -2,7 +2,7 @@
 
 Tags: **[obs]** observed in Hatari 2.6.1 (raw output below, tool `tools/hunthz.py`, `tools/snd_test.py`); **[disasm]** read from `tools/m68dis.py` on `work/dumps/ram_foot_walk.bin`; **[calc]** computed from 68000 timings, not measured.
 Files: `patches/hn_hz.s` (default yes, site `$c63c`, blob `$8da00`, state `$8dbf0`), `patches/snd_core.s` (reads `HZ_SKIP = $8dbf2`), `patches/test_hznop.s` (timing control, default no), `tools/hunthz.py` (gates a, b, d + driver tick count), `tools/snd_test.py` (`ring`, `dur`, `--live`, `--hz`).
-Precedent: `games/in_progress/powermonger/work/notes/timing.md` section 11, `games/in_progress/midwinter/work/notes/timing.md` section 10 (units of 1/300 s: +6 per 50 Hz VBL, +5 per 60 Hz VBL, mode from `$ff820a` bit 1).
+Precedent: `games/in_progress/powermonger/work/notes/timing.md` section 11, `games/done/midwinter/work/notes/timing.md` section 10 (units of 1/300 s: +6 per 50 Hz VBL, +5 per 60 Hz VBL, mode from `$ff820a` bit 1).
 
 ## 1. Inventory: what advances per VBL [disasm]
 

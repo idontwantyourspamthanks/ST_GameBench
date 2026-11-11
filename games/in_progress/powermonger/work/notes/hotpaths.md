@@ -79,7 +79,7 @@ Logic detail (get_men 8, cycles per pass): `$165b2` 32 k (army/status), `$15fa8`
 ```
 
 ## Landscape engine compared with Midwinter
-* Midwinter (`games/in_progress/midwinter/work/notes/render.md`): geometry (40 %) + raster (40 %) per frame, edge/DDA overhead dominates, interior stores 1.3 %, flat/dithered fills; a standing frame is recomputed identically (95 % redundant), so static-frame skip paid 5x. MW2 (`midwinter2/.../spanfill.md`): fill variants 11.6 %, walker 6 %.
+* Midwinter (`games/done/midwinter/work/notes/render.md`): geometry (40 %) + raster (40 %) per frame, edge/DDA overhead dominates, interior stores 1.3 %, flat/dithered fills; a standing frame is recomputed identically (95 % redundant), so static-frame skip paid 5x. MW2 (`midwinter2/.../spanfill.md`): fill variants 11.6 %, walker 6 %.
 * Powermonger: **raster-bound** (terrain fill 34-40 % + sprite blit 11-17 % + triangle setup 5-9 % + copy 8 %); geometry here is tiny (no per-vertex transform in the profile: the map is a fixed 64x64 height grid, `$3f364`, projected by table: `$f898` loop 2 %). Per pixel work is higher because each pixel of the terrain is a texel (dithered colour from `$e3e6` tables), with a mask RMW.
 * **Static-frame skip** (Midwinter's biggest win) applies only partly: in map_idle two consecutive flips differ by rain, animation tick `$57fec`, and walking men; a scroll/zoom/rotate-free scene without moving objects would redraw identical pixels. [INFERENCE] not measured.
 

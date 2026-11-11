@@ -13,8 +13,8 @@ description: Run, drive and measure Atari ST games in headless Hatari with gameb
 ```python
 import sys; sys.path.insert(0, 'tools')            # run from the gamebench root
 from stharness import Hatari, TOS
-h = Hatari(game_dir='games/in_progress/midwinter', snapshot='games/in_progress/midwinter/work/snapshots/x.sav')
-h = Hatari(game_dir='games/in_progress/midwinter', snapshot=None, memsize_kb=1024)   # cold boot, autoruns C:\RUNME.TOS
+h = Hatari(game_dir='games/done/midwinter', snapshot='games/done/midwinter/work/snapshots/x.sav')
+h = Hatari(game_dir='games/done/midwinter', snapshot=None, memsize_kb=1024)   # cold boot, autoruns C:\RUNME.TOS
 try: ...
 finally: h.close()        # ALWAYS: frees Xvfb, display claim, scratch game copy
 ```

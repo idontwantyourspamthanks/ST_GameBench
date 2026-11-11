@@ -4,7 +4,7 @@
 
 This repository holds the tools, the patches and the full working notes. It does **not** contain any game, any TOS ROM, or anything extracted from them. You need your own copies (see [Getting the game files](#getting-the-game-files)).
 
-Current games: **Midwinter 2: Flames of Freedom**, **Midwinter**, **Hunter** and **Powermonger**, all in final testing. Upcoming games are listed in [`games/queue/README.md`](games/queue/README.md).
+Done: **Midwinter**. In final testing: **Midwinter 2: Flames of Freedom**, **Hunter** and **Powermonger**. Upcoming games are listed in [`games/queue/README.md`](games/queue/README.md).
 
 ## What the patches do
 
@@ -20,7 +20,7 @@ Measured on an emulated 1 MB 8 MHz Atari STE, same scene, against the unpatched 
 - **Loading:** no repeated grey flashes, and screen changes load about 2× faster.
 - **4 MB+ machines:** patched builds no longer hang; they work on 1-14 MB.
 
-### Midwinter — [`REPORT.md`](games/in_progress/midwinter/REPORT.md)
+### Midwinter — [`REPORT.md`](games/done/midwinter/REPORT.md)
 
 Same method and tooling, applied to the older game: 11-15% fewer cycles per frame with all three screen buffers identical, and 63% fewer when standing still with the redraw skip on.
 
@@ -51,7 +51,8 @@ The agent "skills" in [`.omp/skills/`](.omp/skills/) capture the method, the emu
 | `tools/pp_depack.py` | Unpacks the self-extracting `RUNME.TOS` of PP's HAGA hard-disk conversions. |
 | `.omp/skills/` | Method, harness, PP-conversion internals and delegation rules. |
 | `games/in_progress/midwinter2/` | **Midwinter 2.** `REPORT.md` (overview), `PLAN.md`, `patches/` (patch sources, 68000 assembly), `tools/` (patch builder, harness, launchers, packaging), `work/notes/` (reverse-engineering notes with evidence), `work/*/` (test scripts and raw logs). |
-| `games/in_progress/midwinter/`, `games/in_progress/hunter/`, `games/in_progress/powermonger/` | **Midwinter, Hunter, Powermonger.** Same layout; each has its own `REPORT.md`. |
+| `games/in_progress/hunter/`, `games/in_progress/powermonger/` | **Hunter, Powermonger.** Same layout; each has its own `REPORT.md`. |
+| `games/done/midwinter/` | **Midwinter (v1.1): done.** Same layout; [`REPORT.md`](games/done/midwinter/REPORT.md). |
 | `games/done/` | Games declared finished. A game moves here (`git mv`) when it's declared ready, and back to `in_progress/` if new work is needed. |
 | `games/queue/` | **Upcoming games:** one folder per game with a README (source, file list, loader type) and early notes; the game files in `originals/` are git-ignored. The list is [`games/queue/README.md`](games/queue/README.md). |
 | `tos/` | Empty: put your TOS images here (see `tos/README.md`). |
@@ -62,7 +63,7 @@ The agent "skills" in [`.omp/skills/`](.omp/skills/) capture the method, the emu
 
 The patches are for **PP's HAGA hard-disk versions** (2014) of the Midwinter games, which you need to obtain yourself. Each game's `README.md` lists the expected files and their MD5 sums. Put them in the game folder (`games/in_progress/midwinter2/RUNME.TOS`, `HAGA`, `FILES/`, …). The patch tools verify every original byte they replace and refuse to build against anything else.
 
-The commands are identical in each game folder; `games/in_progress/midwinter` uses `mw1patch.py` where `games/in_progress/midwinter2` uses `mw2patch.py`. For Midwinter 2:
+The commands are identical in each game folder; `games/done/midwinter` uses `mw1patch.py` where `games/in_progress/midwinter2` uses `mw2patch.py`. For Midwinter 2:
 
 ```sh
 cd games/in_progress/midwinter2

@@ -1,4 +1,4 @@
-; cpulib.s — 68020+ helpers (identical copy of games/in_progress/midwinter/patches/cpulib.s: keep both in step).  NOT a patch: the patch tool splices this text
+; cpulib.s — 68020+ helpers (identical copy of games/done/midwinter/patches/cpulib.s: keep both in step).  NOT a patch: the patch tool splices this text
 ; into two places: the boot-sector block of FFA (patches/floppy_cpu.s) and the cpufix segment of core.s at $B9F00; the boot sector and stub run before the payload exists.
 ; Everything here is position independent and uses no exceptions, so it is safe on a plain 68000 (cl_detect returns 0 and nothing else is called).
 ; Written for the TT / Falcon / any 68020+ (work/notes/tt.md): the boot chain carries copies of an FDC driver whose waits are fixed loop counts tuned

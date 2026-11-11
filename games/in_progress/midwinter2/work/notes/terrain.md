@@ -411,7 +411,7 @@ So the "dithered fills" are two different things at once: (1) a 16-step *lightin
 
 The MW2 numbers (a 4-neighbour mean + noise, window pyramid, trees by hash gate) show the same author's design carried forward; the *differences* (noise scaling by slope, explicit seeded PRNG, baked lighting, roads, craters, area files) are real improvements, not a different algorithm.
 
-### 7.2 MW1 Atari ST renderer (`games/in_progress/midwinter/work/notes/render.md`) vs MW2
+### 7.2 MW1 Atari ST renderer (`games/done/midwinter/work/notes/render.md`) vs MW2
 
 * MW1 Atari draws a fixed **8 rings x 4 sides** grid of 21-column rows chosen by heading sector, transforms **182-191 vertices per frame with no slot cache**, projects before culling, 2D screen-space clipping per edge, one painter list for terrain and objects, 16 solid fill variants plus a two-pass 2-colour dither; MW2 culls hierarchically, caches vertices, clips in homogeneous space, orders terrain without sorting and has 112 fill variants. MW1's heights come from "the height map"; **its generator was not analysed on the Atari**, so whether it runs the same fractal on the ST is `[INFERENCE]` (the DOS decode says the data file is stored big-endian "Atari ST heritage").
 * Both share: edge -> per-scanline table -> unrolled DDA -> table-driven span fill, a masked-replay cockpit/goggles list, and a complete per-frame rebuild (no inter-frame caching).

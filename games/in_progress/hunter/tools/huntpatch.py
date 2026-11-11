@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Hunter (PP Gamex HD build) patch delivery tool.  Modelled on games/in_progress/midwinter/tools/mw1patch.py.
+"""Hunter (PP Gamex HD build) patch delivery tool.  Modelled on games/done/midwinter/tools/mw1patch.py.
 Full reverse-engineering notes and evidence: work/notes/loading.md.
 
     python3 tools/huntpatch.py verify
