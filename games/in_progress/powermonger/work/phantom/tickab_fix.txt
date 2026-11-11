@@ -1,0 +1,9 @@
+get_men 8 MHz: unpatched 85 passes (ticks 136..220), patched 54 loop tops (ticks 136..190)
+  patched log gaps (missed loop tops): 1
+  unpatched log gaps: 0
+compared 54 loop tops over 54 distinct world ticks
+negative control: patched tick k vs unpatched tick k+1 differs in 54 of 54 loop tops
+RNG $2df84 differs in 0 loop tops; RNG value changes over the run: 4 distinct; season counter $57fec 136..190
+displayed frame at the first loop top of each tick: 52 of 54 byte-identical to the unpatched frame of that tick
+men records whose x/z changed first->last loop top: 20
+IDENTICAL (everything in $0-$60000 except MASKS)

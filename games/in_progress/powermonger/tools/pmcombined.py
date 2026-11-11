@@ -33,7 +33,7 @@ from pm import TOS  # noqa: E402
 
 SITES = {"p7_wait": (0x13090, "4eb9000db200"), "p7_flip": (0x1386C, "4eb9000db100"), "p7_tail": (0x1898, "4eb9000db3004e71"),
          "tt_ptr": (0x188C, "4eb9000ba940"), "qol_hover": (0x130B6, "4eb9000cfa80"), "qol_hover2": (0x12138, "4eb9000cd560"),
-         "qol_keys": (0x130FC, "4eb9000cf860"), "qol_keys2": (0x199C, "4eb9000cd530")}
+         "qol_keys": (0x130FC, "4eb9000cf830"), "qol_keys2": (0x199C, "4eb9000cd610")}
 LIVE = 0xBAAF0
 GAME_OX_OY = {832: (96, 58), 640: (0, 0), 648: (2, 64)}      # screenshot width -> picture origin (as pmreg.tooltip)
 

@@ -129,6 +129,8 @@ The new profile of the default set showed the terrain span fill (40–48% of all
 
 Gates: key == click world state identical over the whole low RAM (4 key sets, negative controls differ everywhere); hover state equality identical with the pointer resting on a village; the picture differs from the old default set only inside the tooltip bar.
 
+**Phantom click at the start of play (found and fixed 2026-11-11, `phantom_click.md`).** The keyboard interrupt of `qol_keys2` recorded every key from the moment the game's keyboard handler exists, so the letters of the player's name, typed at the name prompt, were still pending when the map appeared and were replayed one per pass as icon clicks (a name with `R` = Derank disbanded the starting formation so the men never took their circle around the castle; `H` = Go Home issued an order; `A G M F Y S T` left a command selected for the first real click). Now only keys typed while the map loop runs count: the pass hook stamps the VBL counter, the interrupt drops a press that comes more than 150 VBLs after the last pass, and the first pass after such a gap clears all key state. Cold boots (floppy and hard disk, name `Ryan`): all 26 men in the camp formation (state `$0e`, 165-224 units from the captain) as in the unpatched game; the original run and the fixed run have the same positions.
+
 
 ## 9. Men interpolation
 

@@ -1,6 +1,6 @@
 # Powermonger (1990, Bullfrog / Electronic Arts)
 
-Status: **done** (combined release build, 2026-11-10). A patched floppy and a patched hard-disk folder are built from the user's original disk. Default patch set = fixed-rate world, DMA sound, faster drawing, men interpolation, no protection question, tooltips **and keyboard shortcuts and village hover (`qol_*`)**, **triple buffering (`p7_*`)**, **TT / Falcon pointer fix (`tt_ptr`)**, **real-time intro (`pm_intro_*`)**, **rain on every frame (`tick_rain`)**, **IKBD overrun fix (`p6_cpy` 4-row chunks + `p4_clamp`)**, version credit. Proof of the combined set: [`work/notes/combined.md`](work/notes/combined.md).
+Status: **done** (combined release build, 2026-11-10). A patched floppy and a patched hard-disk folder are built from the user's original disk. Default patch set = fixed-rate world, DMA sound, faster drawing, men interpolation, no protection question, tooltips **and keyboard shortcuts and village hover (`qol_*`)**, **triple buffering (`p7_*`)**, **TT / Falcon pointer fix (`tt_ptr`)**, **real-time intro (`pm_intro_*`)**, **rain on every frame (`tick_rain`)**, **IKBD overrun fix (`p6_cpy` 4-row chunks + `p4_clamp`)**, version credit. Proof of the combined set: [`work/notes/combined.md`](work/notes/combined.md). **Fix 2026-11-11:** the letters typed at the name prompt were replayed as icon clicks when the map appeared, so the first level started with a command selected / the troops out of their circle; only keys typed in the map view count now ([`work/notes/phantom_click.md`](work/notes/phantom_click.md)).
 
 - Plain-English account of the work: [`REPORT.md`](REPORT.md). Regression matrix: [`work/notes/regression.md`](work/notes/regression.md) (release candidate) and [`work/notes/combined.md`](work/notes/combined.md) (final set, per-machine table). Plan and decisions: [`PLAN.md`](PLAN.md).
 - Build and package: `tools/package.sh` (verifies the patches, builds both versions, writes `dist/Powermonger_v<ver>_patched_floppy_<date>.zip` and `dist/Powermonger_v<ver>_patched_hd_<date>.zip`, prints md5s). Needs `disks/protected.st`.
@@ -12,12 +12,12 @@ Status: **done** (combined release build, 2026-11-10). A patched floppy and a pa
 | File | MD5 |
 |---|---|
 | original `disks/protected.st` | `b0f6972e81067a5822c0b21e6d00b8dc` |
-| `Powermonger_patched.st` (floppy, 819200 B; the build is deterministic; also `dist/Powermonger_patched_floppy_test.st`) | `71f65142efc05bd36a8495d090ce9d2e` |
-| HD `AUTO\WAR.PRG` (316721 B) | `246bf99b6c9cf20dfdfe5c7bf028f80c` |
+| `Powermonger_patched.st` (floppy, 819200 B; the build is deterministic; also `dist/Powermonger_patched_floppy_test.st`) | `c84f7ee46c1b28fe7a30e6d3de6736fd` |
+| HD `AUTO\WAR.PRG` (316789 B) | `cfc4be29fe8cdee660ef79bab3a79490` |
 | HD `DATA\SPRITE40.DAT` (101608 B, patched) | `37d28ff241b94d3f493f24e236e5a73b` |
-| HD `PMLATE.DAT` (26345 B) | `59e567149ba88606e65f036a6801a2e8` |
-| `dist/Powermonger_v1.0_patched_floppy_2026-11-10.zip` (the zip md5 changes with every packaging run: file times) | `88b5c8f5cd7c788728984083a8ed2588` |
-| `dist/Powermonger_v1.0_patched_hd_2026-11-10.zip` | `6848c054aff416110aec94c5a7732b28` |
+| HD `PMLATE.DAT` (26407 B) | `1475daf32f6157a7e68b994dc10ffaa5` |
+| `dist/Powermonger_v1.0_patched_floppy_2026-11-11.zip` (the zip md5 changes with every packaging run: file times) | `fabc701e02e1bdc0f149f2fa2adb240f` |
+| `dist/Powermonger_v1.0_patched_hd_2026-11-11.zip` | `d1df1e73f001073fdc61f02096fc9d98` |
 
 The previous release candidate (no triple buffering / keys / rain; `work/notes/regression.md`) was floppy `3d116a3272af50ddc9d3a5bd39dc0a58`, `WAR.PRG` `eb143fd0d92579f1fa58097de090161a`.
 

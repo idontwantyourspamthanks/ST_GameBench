@@ -22,29 +22,45 @@
 ;       Shift + [ / ] / = / - (and keypad + -) = the RIGHT button on the rotate / zoom rectangles (fine step, closest / farthest zoom);
 ;       Shift + [ or ] also repeats every pass while both keys stay down, like holding the right button ($2df9e + $2df98 raised each pass).
 ;       The pm_tooltip key labels are switched on by writing 1 to its data word $cdc0a every pass (harmless when pm_tooltip is absent).
+;       Keys that are not typed into the map view are not shortcuts (work/notes/phantom_click.md): the pass hook stamps the VBL counter ($6f304) into
+;       LASTV every pass; qol_keys2 (the interrupt) only records a press while LASTV is at most WIN VBLs old, i.e. while this loop runs, and the first
+;       pass after a longer gap (game start: the letters of the name typed at the name prompt, a key pressed in a menu or during a disk access) flushes
+;       every key state (KS, REP, OWN9E, ANY, PEND) before anything is replayed as an icon click.
 ;       Scan codes are physical key positions: [ and ] are the keys right of P (labelled so on UK / US layouts, other letters elsewhere on
 ;       national layouts); the cursor keys keep scrolling, F1-F4 are the map icons, the number row or the keypad 1-3 the posture.
 ;       Click points: pmtt_grid.icon() centre of every cell (tools/qol_points.py regenerates and checks the table KT).
-D       equ     $cd460                  ; KS: 1 byte per KT entry (right-button repeat armed); +$3e REP.w; +$40 OWN9E.w; +$42 ANY.w; +$44 PEND: 128 bytes by scan code
+D       equ     $cd460                  ; KS: 1 byte per KT entry (right-button repeat armed); +$3e REP.w; +$40 OWN9E.w; +$42 ANY.w; +$44 PEND: 128 bytes by scan code; +$c4 LASTV.l
 KS      equ     D
 OWN9E   equ     D+$40
 ANY     equ     D+$42                   ; a press is (or may be) pending: written by qol_keys2 after PEND
 REP     equ     D+$3e                   ; some KS byte is set (a repeat is running)
 PEND    equ     D+$44                   ; written by qol_keys2 (interrupt), consumed here
+LASTV   equ     D+$c4                   ; VBL count ($6f304) of the previous pass hook; read by qol_keys2
+WIN     equ     150                     ; a press counts while the loop's last pass is at most this many VBLs old (3 s at 50 Hz; a pass is 13-26 VBLs)
 S_KF    equ     $cdc0a                  ; pm_tooltip: key labels on
 NK      equ     33
 
         org     $130fc
-        jsr     $cf860.l
+        jsr     $cf830.l
 
-        org     $cf860
+        org     $cf830
 hook:   movem.l d0-d5/a0-a4,-(a7)
         move.w  #1,S_KF.l
         tst.w   OWN9E.l                 ; a right-button state this patch raised last pass: drop it before the dispatch
         beq.s   .o9
         clr.w   OWN9E.l
         clr.w   $2df9e.l
-.o9:    moveq   #0,d4                   ; d4 <> 0: swallow the presses (typing, window open, paused)
+.o9:    move.l  $6f304.l,d0             ; the stamp: this pass, and the gap since the previous one
+        move.l  d0,d1
+        sub.l   LASTV.l,d1
+        move.l  d0,LASTV.l
+        cmp.l   #WIN,d1
+        bls.s   .run
+        lea     KS.l,a0                 ; first pass after a gap (game start / a menu / a disk access): drop every key state recorded meanwhile
+        moveq   #(LASTV-D)/4-1,d0
+.fl:    clr.l   (a0)+
+        dbra    d0,.fl
+.run:   moveq   #0,d4                   ; d4 <> 0: swallow the presses (typing, window open, paused)
         tst.b   $d03e.l
         bne.s   .inh
         tst.w   $7a36.l

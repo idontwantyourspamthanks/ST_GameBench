@@ -1,0 +1,48 @@
+[    8s vbl 509] P pressed
+[   55s vbl 2842] name prompt
+[   62s vbl 3185] option screen
+[   79s vbl 4044] territory chart
+key latch (qol_keys data $cd460 / ANY $cd4a2 / PEND $cd4a4) at the chart, before the island click:
+000CD460: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+000CD470: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+000CD480: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+000CD490: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+000CD4A0: 00 00                                            ..
+000CD4A2: 00 01                                            ..
+000CD4A4: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+000CD4B4: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+000CD4C4: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+000CD4D4: 00 00 00 00 00 00 00 00 00 01 00 00 00 00 00 00  ................
+000CD4E4: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+000CD4F4: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+000CD504: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+000CD514: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+[   91s vbl 4660] island clicked
+[  101s vbl 5189] 3D map view (HUD on screen)
+captain person $51f80 start x,z = (10360,13176); army = 26 live people within 1100 units at the first dump
+    pass 1: job  6 captain (10360,13176) moved     0  target bytes (  0,  0)  army 26: state $0e  0, distance to the captain min 40 max 56, farthest from the start 56
+   t+ 0.0s: job  6 captain (10360,13176) moved     0  target bytes (  0,  0)  army 26: state $0e 26, distance to the captain min 165 max 224, farthest from the start 224
+   t+ 2.8s: job  6 captain (10360,13176) moved     0  target bytes (  0,  0)  army 26: state $0e 26, distance to the captain min 165 max 224, farthest from the start 224
+   t+ 5.6s: job  6 captain (10360,13176) moved     0  target bytes (  0,  0)  army 26: state $0e 26, distance to the captain min 165 max 224, farthest from the start 224
+   t+ 8.4s: job  6 captain (10360,13176) moved     0  target bytes (  0,  0)  army 26: state $0e 26, distance to the captain min 165 max 224, farthest from the start 224
+   t+11.2s: job  6 captain (10360,13176) moved     0  target bytes (  0,  0)  army 26: state $0e 26, distance to the captain min 165 max 224, farthest from the start 224
+   t+14.0s: job  6 captain (10360,13176) moved     0  target bytes (  0,  0)  army 26: state $0e 26, distance to the captain min 165 max 224, farthest from the start 224
+   t+16.8s: job  6 captain (10360,13176) moved     0  target bytes (  0,  0)  army 26: state $0e 26, distance to the captain min 165 max 224, farthest from the start 224
+   t+19.6s: job  6 captain (10360,13176) moved     0  target bytes (  0,  0)  army 26: state $0e 26, distance to the captain min 165 max 224, farthest from the start 224
+   t+22.4s: job  6 captain (10360,13176) moved     0  target bytes (  0,  0)  army 26: state $0e 26, distance to the captain min 165 max 224, farthest from the start 224
+   t+25.2s: job  6 captain (10360,13176) moved     0  target bytes (  0,  0)  army 26: state $0e 26, distance to the captain min 165 max 224, farthest from the start 224
+   t+28.0s: job  6 captain (10360,13176) moved     0  target bytes (  0,  0)  army 26: state $0e 26, distance to the captain min 165 max 224, farthest from the start 224
+final: sel 1 job 6 cmd 0 iter 142
+pass log (first 12):
+vbl 5078 iter   1 stamp 0000 click 00140012 latches 0000000000000000 held 0000 cmd 0000 job 0006 win 0000 ANY 0001
+vbl 5134 iter   2 stamp 0000 click 00140012 latches 0000000000000000 held 0000 cmd 0000 job 0006 win 0000 ANY 0000
+vbl 5144 iter   2 stamp 0000 click 00140012 latches 0000000000000000 held 0000 cmd 0000 job 0006 win 0000 ANY 0000
+vbl 5156 iter   3 stamp 0000 click 00140012 latches 0000000000000000 held 0000 cmd 0000 job 0006 win 0000 ANY 0000
+vbl 5167 iter   4 stamp 0000 click 00140012 latches 0000000000000000 held 0000 cmd 0000 job 0006 win 0000 ANY 0000
+vbl 5178 iter   5 stamp 0000 click 00140012 latches 0000000000000000 held 0000 cmd 0000 job 0006 win 0000 ANY 0000
+vbl 5189 iter   6 stamp 0000 click 00140012 latches 0000000000000000 held 0000 cmd 0000 job 0006 win 0000 ANY 0000
+vbl 5200 iter   7 stamp 0000 click 00140012 latches 0000000000000000 held 0000 cmd 0000 job 0006 win 0000 ANY 0000
+vbl 5211 iter   8 stamp 0000 click 00140012 latches 0000000000000000 held 0000 cmd 0000 job 0006 win 0000 ANY 0000
+vbl 5222 iter   9 stamp 0000 click 00140012 latches 0000000000000000 held 0000 cmd 0000 job 0006 win 0000 ANY 0000
+vbl 5232 iter   9 stamp 0000 click 00140012 latches 0000000000000000 held 0000 cmd 0000 job 0006 win 0000 ANY 0000
+real keys: f: $57fd4 0 -> 6, f: $57fd4 6 -> 0

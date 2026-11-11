@@ -8,12 +8,13 @@ Tools: `tools/pmqol_state.py` (key == click world-state gate), `tools/pmqol_ab.p
 | range | owner |
 |---|---|
 | $CD000-$CD443 | pm_tooltip code (jump table at $CD000: hook, `compose_sb` $CD006, `blit` $CD00C), state S at $CDC00 (+$A key-labels flag, +$E liveness 'PTIP', +$12 hover-text flag); `pm_credit` $CDB00 untouched |
-| $CD460-$CD523 | qol_keys data: KS (33 B), REP, OWN9E, ANY ($CD4A2), PEND (128 B at $CD4A4, written by the keyboard interrupt) |
-| $CD530-$CD559 | qol_keys2: KH (interrupt hook) |
+| $CD460-$CD527 | qol_keys data: KS (33 B), REP, OWN9E, ANY ($CD4A2), PEND (128 B at $CD4A4, written by the keyboard interrupt), **LASTV ($CD524, long: the VBL count of the last pass hook; phantom_click.md)** |
+| $CD530-$CD55F | free (KH was here until 2026-11-11; it moved when the LASTV gate made it 62 bytes) |
 | $CD560-$CD5D7 | qol_hover2: HVHOOK (the sprite hook) |
 | $CD5E0-$CD60F | qol_hover data HS (HIT at $CD5E2) |
+| $CD610-$CD64D | qol_keys2: KH (interrupt hook) |
 | $CF000-$CF73E | pm_tooltip wording table (ET, TXT, entries) |
-| $CF860-$CFA7F | qol_keys: pass hook + click table KT |
+| $CF830-$CFA71 | qol_keys: pass hook + click table KT (it was $CF860-$CFA7F before the LASTV gate; $CF740-$CF82F stay free for the wording table) |
 | $CFA80-$CFFF3 | qol_hover: pass hook (`bra.w` vector, `predict` export $CFA84), strings |
 
 (The qol data blocks and the two small hooks sit in the $CD460-$CD6FF gap of the pm_ range, allowed to the four qol_ patches by `EXTRA_RANGES`; $CF740-$CF85F is free, so the wording table has about 290 bytes of room. pm_tooltip's own blob stays below $CD444; pm_credit and S are untouched.)
@@ -31,6 +32,7 @@ Conclusion: nothing but the cursor keys is taken, so every letter below is free.
 * The stamp: `movea.l $1373e,a4; move.l (a4),$2df74` - the operand of `move.l $2df70,d0` at `$1373c`, which `tick_click3` redirects to the pass counter; whichever is in force is the right stamp.
 * Taps shorter than a pass (a pass is 125-260 ms) must not be lost: `qol_keys2` (site `$199c`, the make-code path of the ACIA handler: `move.b d0,$1c490`) sets `PEND[scancode] = 1` (+2 with Shift) in the interrupt; `qol_keys` consumes PEND once per pass. Nothing else changes in the handler.
 * Ignored (the press is swallowed): typing (`$d03e`), any window open (`$7a36`: the option / query windows cover the icons), paused (`$57ff2`). A real mouse click still latched (`$2df96 | $2df98`) postpones a key by a pass.
+* **Only keys typed while the map loop runs count (fix of 2026-11-11, `phantom_click.md`).** The interrupt hook records every make code from the moment the game's own keyboard handler exists, so the letters of the player's name (typed at the name prompt) sat in PEND and were replayed as icon clicks, one per pass, from the first pass of the map (a name with `R` = Derank disbanded the starting formation, `H` = Go Home issued an order). Now `qol_keys` stamps `LASTV` ($CD524) = the VBL counter `$6f304` every pass, `qol_keys2` drops a press whose VBL count is more than `WIN` (150 = 3 s at 50 Hz) past `LASTV`, and the first pass after such a gap clears KS, REP, OWN9E, ANY and PEND before the scan.
 * Shift + `[` `]` `=` `-` (KP + -) raise the RIGHT button instead (`$2df98` + `$2df9e`, dropped again next pass): fine rotation step / closest / farthest zoom, like a right-click. Shift + `[` or `]` repeats every pass while both stay down (the held right button on a rotate arrow does the same).
 * The key labels in the tooltips are switched on by `qol_keys` writing 1 to pm_tooltip's `$CDC0A` every pass (so without qol_keys the tooltips are the old texts).
 
@@ -109,6 +111,7 @@ WOOD  5e80: forest farther than 20 -> 5ee4 pot.  d1 = 0: merchant ? c = $e catap
 | `predict` changes no state | read-only code (only `move`s from RAM, no write outside its registers / the stack); the pass hook's only RAM writes are HS (own block), pm_tooltip's BUF / S words and the back buffer; the key-vs-click gate runs carried no hover, so the world-state equality of the hover (pointer resting on a village, Invent selected) was NOT run through pmtick `ab` [not done] - the pixel gates above ran with the tick set and show the same frames outside the rectangle |
 | screenshots | `work/shots/qol_hover_sheet.png` (20 tooltip bars) and `qol_<tag>.png`: settlements 0 / 1 / 2 (names Tossogy, Ropmmer, Wombetes) with idle / sword 50 % / plough 85 % / pike 14 % / catapult 51 % / cannon 98 % / bow 78 % / 18 % / no workshop; Invent selected at 1 / 2 / 3 swords (boats or ploughs, pikes, catapults / bows: `wood nearby`), with a mine (`cannons (iron mine)`); icon tooltips with keys |
 | cold boot, default floppy set + qol_keys qol_keys2 qol_hover qol_hover2 (`pmpatch.py build --floppy --only <defaults> qol_*`, `/tmp/qol/bld`) | **STE TOS 1.62 and plain ST TOS 1.04, 1 MB: BOOT OK** (147 s each to the 3D view, marker `PMPO`, the four new sites `$130b6 $130fc $12138 $199c` live, pm_tooltip alive and key labels on, real key F -> `$57fd4` = 6, Invent icon tooltip composed with the key variant `sKEY` 285 = `$100 + 7*4 + 1`); village hover not exercised in the cold boots (the pointer was not on a house of the new game's view; the hover is covered by the snapshot runs) |
+| **stale keys (2026-11-11, `phantom_click.md`)** | the name typed at the name prompt is no longer replayed as icon clicks at the first pass of the map. Old build + name `Ryan`: army 0/26 in the formation, `$57fd4` = `$20` left over; fixed build: 26/26 (165-224 units from the captain), `$57fd4` 0; cold boots on the floppy (STE), the HD (ACSI + PMBOOT), the Mega STE and the TT, real `F` -> `$57fd4` 6 then 0. `pmab --tipmask` ALL IDENTICAL, `pmqol_state` (key == click) IDENTICAL, `pmtick ab` and `pmtriple state` IDENTICAL |
 
 ### Cost (cycles per pass, 8 MHz get_men, pass about 2.0 M cycles)
 * not hovering anything: +3.0 k (+0.15 %; the paired same-tick measurement says +5.0 k, +0.25 %; pmab's noise is about +-0.1 %): sprite hook about 55 calls x 62 cycles, pass hooks about 1 k, key hook about 0.2 k (it scans its 33 keys only when the interrupt hook set ANY or a repeat runs; before that optimisation it cost +7.3 k).

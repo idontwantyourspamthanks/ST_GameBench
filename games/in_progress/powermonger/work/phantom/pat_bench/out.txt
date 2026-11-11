@@ -1,0 +1,46 @@
+[   84s vbl 4293] name prompt
+[   90s vbl 4612] option screen
+[  118s vbl 5995] territory chart
+key latch (qol_keys data $cd460 / ANY $cd4a2 / PEND $cd4a4) at the chart, before the island click:
+000CD460: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+000CD470: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+000CD480: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+000CD490: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+000CD4A0: 00 00                                            ..
+000CD4A2: 00 01                                            ..
+000CD4A4: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+000CD4B4: 00 00 01 00 00 00 00 00 00 00 00 00 01 00 00 00  ................
+000CD4C4: 00 00 00 01 00 00 00 00 00 00 00 00 00 00 01 00  ................
+000CD4D4: 03 01 00 00 00 00 00 00 00 01 00 00 00 00 00 00  ................
+000CD4E4: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+000CD4F4: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+000CD504: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+000CD514: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+[  130s vbl 6606] island clicked
+[  143s vbl 7295] 3D map view (HUD on screen)
+captain person $51f80 start x,z = (10360,13176); army = 26 live people within 1100 units at the first dump
+    pass 1: job  6 captain (10360,13176) moved     0  target bytes (  0,  0)  army within 1100 of captain 26/26, of the start 26/26, farthest from the start 56
+   t+ 0.0s: job  6 captain (10360,13176) moved     0  target bytes ( 40, 51)  army within 1100 of captain 26/26, of the start 26/26, farthest from the start 222
+   t+ 2.8s: job  6 captain (10360,13176) moved     0  target bytes ( 40, 51)  army within 1100 of captain 26/26, of the start 26/26, farthest from the start 224
+   t+ 5.6s: job  6 captain (10360,13176) moved     0  target bytes ( 40, 51)  army within 1100 of captain 26/26, of the start 26/26, farthest from the start 224
+   t+ 8.4s: job  6 captain (10360,13176) moved     0  target bytes ( 40, 51)  army within 1100 of captain 26/26, of the start 26/26, farthest from the start 224
+   t+11.2s: job  6 captain (10360,13176) moved     0  target bytes ( 40, 51)  army within 1100 of captain 26/26, of the start 26/26, farthest from the start 224
+   t+14.0s: job  6 captain (10360,13176) moved     0  target bytes ( 40, 51)  army within 1100 of captain 26/26, of the start 26/26, farthest from the start 224
+   t+16.8s: job  6 captain (10360,13176) moved     0  target bytes ( 40, 51)  army within 1100 of captain 26/26, of the start 26/26, farthest from the start 224
+   t+19.6s: job  6 captain (10360,13176) moved     0  target bytes ( 40, 51)  army within 1100 of captain 26/26, of the start 26/26, farthest from the start 224
+   t+22.4s: job  6 captain (10360,13176) moved     0  target bytes ( 40, 51)  army within 1100 of captain 26/26, of the start 26/26, farthest from the start 224
+   t+25.2s: job  6 captain (10360,13176) moved     0  target bytes ( 40, 51)  army within 1100 of captain 26/26, of the start 26/26, farthest from the start 224
+   t+28.0s: job  6 captain (10360,13176) moved     0  target bytes ( 40, 51)  army within 1100 of captain 26/26, of the start 26/26, farthest from the start 224
+final: sel 1 job 6 cmd 16 iter 140
+pass log (first 12):
+vbl 7198 iter   1 stamp 0000 click 00140012 latches 0000000000000000 held 0000 cmd 0000 job 0006 win 0000 ANY 0001
+vbl 7256 iter   2 stamp 0000 click 012a009d latches 0000000000000000 held 0000 cmd 0010 job 0006 win 0000 ANY 0001
+vbl 7269 iter   3 stamp 0000 click 006400aa latches 0000000000000000 held 0000 cmd 0010 job 0007 win 0000 ANY 0001
+vbl 7283 iter   4 stamp 0000 click 00ad00bc latches 0000000000000000 held 0000 cmd 0010 job 0007 win 0000 ANY 0000
+vbl 7295 iter   5 stamp 0000 click 00ad00bc latches 0000000000000000 held 0000 cmd 0010 job 0006 win 0000 ANY 0000
+vbl 7305 iter   6 stamp 0000 click 00ad00bc latches 0000000000000000 held 0000 cmd 0010 job 0006 win 0000 ANY 0000
+vbl 7315 iter   6 stamp 0000 click 00ad00bc latches 0000000000000000 held 0000 cmd 0010 job 0006 win 0000 ANY 0000
+vbl 7326 iter   7 stamp 0000 click 00ad00bc latches 0000000000000000 held 0000 cmd 0010 job 0006 win 0000 ANY 0000
+vbl 7336 iter   8 stamp 0000 click 00ad00bc latches 0000000000000000 held 0000 cmd 0010 job 0006 win 0000 ANY 0000
+vbl 7346 iter   9 stamp 0000 click 00ad00bc latches 0000000000000000 held 0000 cmd 0010 job 0006 win 0000 ANY 0000
+vbl 7357 iter  10 stamp 0000 click 00ad00bc latches 0000000000000000 held 0000 cmd 0010 job 0006 win 0000 ANY 0000
