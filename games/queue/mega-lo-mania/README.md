@@ -24,3 +24,7 @@
 | MEGALOMA/MM240R.BMP | 77878 | da2894a132bd16af03a53a3b91b7d0a8 |
 | MEGALOMA/README.TXT | 291 | b4ac64a6ff23698bc991ba0a0692c452 |
 | MEGALOMA/RUNME.TOS | 3762 | 85f580b4797b5b17285bd92b80b92793 |
+
+## Requests
+
+- Request: have all the audio and music enabled at the same time.

@@ -50,3 +50,14 @@ When work on a game starts, move its folder from `games/queue/` to `games/in_pro
 | Baby Jo - Going Home | baby-jo | floppy (FAT) | user floppies | 6 cracks, base not chosen |
 | Castle Master (+ II: The Crypt) | castle-master | floppy (FAT; Empire crack non-FAT) | user floppies | 3 dumps + sequel |
 | Austerlitz | austerlitz | floppy (FAT) | user floppies | 1 image |
+
+## Ideas and requests
+
+Wishes from the original todo list (`games-to-build.md`, now folded in here). Games not yet in the queue need their files fetching first.
+
+- Mega Lo Mania (queued): have all the audio and music enabled at the same time.
+- Nebulus (queued): fix the input lag.
+- Mad Professor Mariarti (not queued): make it scroll like the Amiga version.
+- Outrun (not queued): make it smoother.
+- Space Harrier (not queued): STE version with overscan at 50 fps.
+- Afterburner (not queued): make it less shit.

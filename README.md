@@ -4,7 +4,7 @@
 
 This repository holds the tools, the patches and the full working notes. It does **not** contain any game, any TOS ROM, or anything extracted from them. You need your own copies (see [Getting the game files](#getting-the-game-files)).
 
-Finished so far: **Midwinter 2: Flames of Freedom** and **Midwinter**. [`games-to-build.md`](games-to-build.md) is the wish list.
+Current games: **Midwinter 2: Flames of Freedom**, **Midwinter**, **Hunter** and **Powermonger**, all in final testing. Upcoming games are listed in [`games/queue/README.md`](games/queue/README.md).
 
 ## What the patches do
 
@@ -50,8 +50,9 @@ The agent "skills" in [`.omp/skills/`](.omp/skills/) capture the method, the emu
 | `tools/m68dis.py` | 68000 disassembler for RAM dumps, with call-target labels, xrefs, callers and per-address profile cycles (uses [capstone](https://www.capstone-engine.org/)). |
 | `tools/pp_depack.py` | Unpacks the self-extracting `RUNME.TOS` of PP's HAGA hard-disk conversions. |
 | `.omp/skills/` | Method, harness, PP-conversion internals and delegation rules. |
-| `games/midwinter2/` | **Midwinter 2: done.** `REPORT.md` (overview), `PLAN.md`, `patches/` (about 50 patch sources, 68000 assembly), `tools/` (patch builder, harness, launchers, packaging), `work/notes/` (reverse-engineering notes with evidence), `work/*/` (test scripts and raw logs). |
-| `games/midwinter/` | **Midwinter: done.** Same layout; [`REPORT.md`](games/midwinter/REPORT.md). |
+| `games/midwinter2/` | **Midwinter 2.** `REPORT.md` (overview), `PLAN.md`, `patches/` (patch sources, 68000 assembly), `tools/` (patch builder, harness, launchers, packaging), `work/notes/` (reverse-engineering notes with evidence), `work/*/` (test scripts and raw logs). |
+| `games/midwinter/`, `games/hunter/`, `games/powermonger/` | **Midwinter, Hunter, Powermonger.** Same layout; each has its own `REPORT.md`. |
+| `games/queue/` | **Upcoming games:** one folder per game with a README (source, file list, loader type) and early notes; the game files in `originals/` are git-ignored. The list is [`games/queue/README.md`](games/queue/README.md). |
 | `tos/` | Empty: put your TOS images here (see `tos/README.md`). |
 | `hd/` | Git-ignored except its README: a hard-disk driver you supply, for games whose loader needs a real ACSI disk (Hunter). |
 | `games/*/alt/` | Git-ignored: other versions of a game you own (e.g. the Amiga release), used as reference or as a source of assets at build time. |
