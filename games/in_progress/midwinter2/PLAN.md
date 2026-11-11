@@ -226,7 +226,7 @@ Order: 0, then 1+2 (one agent, shared mask), then 4+3 (one agent, same cell path
 Gates are as in `mw2-patching`: abtest pixel-identical at `--flips 10/40`, cold boot at 1 MB, and the 4 MB check (the payload must stay clear of PP's cache).
 
 ## Release version
-Next release: **v1.2** (user, 2026-11-10). A credit line `v1.2 enhanced by dad_prg` goes on a startup screen (placement: user to choose).
+Released as **v1.2** (2026-11-10, Helicopter-only smoothing). **v1.3** (user, 2026-11-11): all-vehicle smoothing, redraw skip for all vehicles, the v1.2 defect fixes and TT support. Credit line `v1.3 enhanced by dad_prg` on the orange logo screen.
 
 ## Test scenarios (user tip, 2026-11-10)
 - **Vehicles:** Raids -> different islands start with different vehicles. Select an island with Space -> question icon -> thumbs-up icon -> In. Use this for vehicle snapshots (render patches, controls, p7_cockpit per-vehicle cockpit lists, enemy AI per type).

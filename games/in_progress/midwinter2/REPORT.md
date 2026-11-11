@@ -4,7 +4,7 @@ This is a plain-English account of the work on *Midwinter 2: Flames of Freedom* 
 
 ## What's new (2026-11-11)
 
-- **Smooth motion in all 22 vehicle types and on foot** (`p3cp_head` + `p3c_sim`), replacing v1.2's Helicopter-only scheme: the game's own 5 steps per second are unchanged and identical to the original's at every step; the view is redrawn between the steps at an extrapolated pose, as often as the machine manages (on foot / Jeep moving: 5 fps at 8 MHz, about 11-13 at 16 MHz, about 22-25 at 32 MHz). An extra frame is only drawn if it ends at most one 50 Hz frame after the next real step is due, so Esc and the mouse are read at the original's moments.
+- **v1.3.** Smooth motion in all 22 vehicle types and on foot** (`p3cp_head` + `p3c_sim`), replacing v1.2's Helicopter-only scheme: the game's own 5 steps per second are unchanged and identical to the original's at every step; the view is redrawn between the steps at an extrapolated pose, as often as the machine manages (on foot / Jeep moving: 5 fps at 8 MHz, about 11-13 at 16 MHz, about 22-25 at 32 MHz). An extra frame is only drawn if it ends at most one 50 Hz frame after the next real step is due, so Esc and the mouse are read at the original's moments.
 - **Static-frame skip for every vehicle type** (`p7_skip_render`, was Helicopter-only): standing still, the view is only redrawn when something in it changes.
 - World speed is exactly 5.0 steps per second on every machine tested: STE 8 MHz, plain ST, Mega STE 16 MHz, TT 32 MHz (direct per-step trace on cold boots).
 - Cold boots verified on HD (STE, ST, Mega STE, TT with `--mmu true`) and floppy (STE, TT): section 4a.
