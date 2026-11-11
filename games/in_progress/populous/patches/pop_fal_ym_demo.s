@@ -1,5 +1,5 @@
 ; name: pop_fal_ym_demo
-; default: no
+; default: yes
 ; prog: demo
 ; machine: falcon
 ; site: $cf98

@@ -1,5 +1,5 @@
 ; name: pop_fal_ym
-; default: no
+; default: yes
 ; prog: populous
 ; machine: falcon
 ; site: $171a8
