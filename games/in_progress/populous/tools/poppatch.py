@@ -38,8 +38,9 @@ from pp_depack import depack as pp_depack  # noqa: E402
 TNOM = 0xAD96                   # text base of DEMO.TOS / POPULOUS.TOS in PP's layout (loader.s keeps it)
 IMG_BASE = 0xB3000              # payload image: header, core, site table, blobs
 IMG_LIMIT = 0xC8000             # blobs must end below this ($C0000-$C7FFF is the land-score code's)
-ORG_HDR, ORG_APPLY = 0xB3000, 0xB3010
-TABLE, TABLE_END = 0xB3100, 0xB4000
+ORG_HDR, ORG_APPLY, ORG_CORE2, ORG_CORE2B = 0xB3000, 0xB3010, 0xB3E00, 0xB3F00
+META = 0xB3100                 # relocation list pointer.l, delta already applied.l, 2 spare longs
+TABLE, TABLE_END = 0xB3110, 0xB3E00
 BLOB_MIN, BLOB_MAX = 0xB4000, IMG_LIMIT - 1
 MARKER = 0xB3004
 # Words of POPULOUS.TOS text that change at run time (g0.bin vs the relocated image): a site must not touch them.
@@ -220,6 +221,7 @@ class Patch:
         self.site = None
         self.orig = None
         self.prog = 1
+        self.mask = 0                    # machine classes the site applies to (bit 0 ST, 1 STE/Mega STE, 2 TT, 3 Falcon); 0 = all
         self.data = []
         self.segments = []
         self.preamble = []
@@ -258,6 +260,12 @@ class Patch:
                     if v.strip().lower() not in ("floppy", "hd"):
                         raise SystemExit(f"{path}: media must be `floppy` or `hd`")
                     self.media = v.strip().lower()
+                elif k == "machine":
+                    self.mask = 0
+                    for w in re.split(r"[,\s]+", v.lower()):
+                        if w not in MACHINES:
+                            raise SystemExit(f"{path}: machine must be a list of {sorted(MACHINES)}")
+                        self.mask |= 1 << MACHINES[w]
                 elif k == "edit":
                     a, b = v.split(None, 1)
                     self.edits.append((int(a.lstrip("$"), 16), bytes.fromhex(b.replace(" ", ""))))
@@ -301,6 +309,69 @@ def load_file_patches():
 
 
 # ---- assembly ----------------------------------------------------------------------------------------
+MACHINES = {"st": 0, "ste": 1, "megaste": 1, "tt": 2, "falcon": 3}
+# Where the game's own bytes end (text base + text + data + bss) per program: a literal address in [TNOM, end) in a
+# patch source is an address of the game and moves with the program's load address (core.s `apply` adds the delta).
+PROG_END = {0: TNOM + 23896 + 916 + 266978, 1: TNOM + 91916 + 7916 + 107008}
+GD = 0x10000                    # the shift of the second assembly that finds the relocatable longs (reloc_assemble)
+LIT_RE = re.compile(r"(?<![\w$])(#?)\$([0-9a-fA-F]{4,8})\b(?!\s*\()")
+DC_SMALL_RE = re.compile(r"^\s*(?:\.?\w+:?\s+)?dc\.[bw]\b", re.I)
+
+
+def _split_comment(line: str):
+    q = None
+    for i, c in enumerate(line):
+        if q:
+            if c == q:
+                q = None
+        elif c in "'\"":
+            q = c
+        elif c == ";":
+            return line[:i], line[i:]
+    return line, ""
+
+
+def shift_game_literals(lines: list[str], lo: int, hi: int) -> list[str]:
+    """The source with every hex literal in [lo, hi) written as ($lit+GD).  Not shifted: a `#$xxxx` of exactly four digits
+    (a 16-bit immediate; write a long immediate game address with five or more digits, `#$0b6f4`), a `$xxxx(An)` displacement,
+    the operands of dc.b / dc.w."""
+    def rep(m):
+        v = int(m.group(2), 16)
+        if m.group(1) and len(m.group(2)) == 4:
+            return m.group(0)
+        return f"{m.group(1)}(${m.group(2)}+GD)" if lo <= v < hi else m.group(0)
+    out = []
+    for ln in lines:
+        code, cm = _split_comment(ln)
+        out.append((code if DC_SMALL_RE.match(code) else LIT_RE.sub(rep, code)) + cm)
+    return out
+
+
+def reloc_assemble(org: int, lines: list[str], preamble: list[str], prog: int, what: str):
+    """(bytes, [offsets of the longs that hold game addresses]).  The bytes are those of a plain assembly.  A second
+    assembly with every in-range literal shifted by GD = $10000 shows which longs follow the game's load address: they
+    differ by exactly GD.  Any other difference (a 16-bit field, a pc-relative reach across the shift) is an error."""
+    a = assemble(org, lines, "\n".join(preamble))
+    hi = PROG_END[prog]
+    org_b = org + GD if TNOM <= org < hi else org
+    b = assemble(org_b, shift_game_literals(lines, TNOM, hi), "GD equ $%x\n" % GD + "\n".join(shift_game_literals(preamble, TNOM, hi)))
+    if len(a) != len(b):
+        raise SystemExit(f"{what}: the shifted assembly has a different length (a game address in a size-dependent operand?)")
+    offs, i = [], 0
+    while i < len(a):
+        if a[i] == b[i]:
+            i += 1
+            continue
+        s = i - (org + i) % 2                    # the long's first byte: the carry may leave its top byte alone
+        la = a[s:s + 4]
+        lb = b[s:s + 4]
+        if s < 0 or len(la) < 4 or int.from_bytes(lb, "big") - int.from_bytes(la, "big") != GD:
+            raise SystemExit(f"{what}: byte +${i:x} depends on a game address but is not a 32-bit absolute (pc-relative or 16-bit use?)")
+        offs.append(s)
+        i = s + 4
+    return a, offs
+
+
 def assemble(org: int, lines: list[str], equ: str = "") -> bytes:
     src = equ + f"\n\torg\t${org:x}\n" + "\n".join(lines) + "\n"
     with tempfile.TemporaryDirectory() as td:
@@ -317,10 +388,14 @@ def assemble(org: int, lines: list[str], equ: str = "") -> bytes:
 def core_segments() -> dict[int, bytes]:
     p = Patch(PATCHDIR / "core.s")
     segs = {org: assemble(org, lines, "\n".join(p.preamble)) for org, lines in p.segments}
-    if set(segs) != {ORG_HDR, ORG_APPLY}:
-        raise SystemExit(f"core.s orgs {sorted(map(hex, segs))} != header + apply")
-    if ORG_APPLY + len(segs[ORG_APPLY]) > TABLE:
-        raise SystemExit("core.s apply overflows into the site table")
+    if set(segs) != {ORG_HDR, ORG_APPLY, ORG_CORE2, ORG_CORE2B}:
+        raise SystemExit(f"core.s orgs {sorted(map(hex, segs))} != header + apply + core2 + core2b")
+    if ORG_APPLY + len(segs[ORG_APPLY]) > META:
+        raise SystemExit("core.s apply overflows into the meta words")
+    if ORG_CORE2 + len(segs[ORG_CORE2]) > ORG_CORE2B:
+        raise SystemExit("core.s core2 overflows into core2b")
+    if ORG_CORE2B + len(segs[ORG_CORE2B]) > BLOB_MIN:
+        raise SystemExit("core.s core2b overflows into the blob area")
     return segs
 
 
@@ -392,18 +467,39 @@ def apply_file_patches(fpatches, out: Path):
 
 
 # ---- the payload image --------------------------------------------------------------------------------
-def site_new(p: Patch):
+RELOC_STATS: dict = {}
+
+
+def site_seg(p: Patch):
     seg = [s for s in p.segments if s[0] == p.site]
     if not seg:
         raise SystemExit(f"{p.name}: no org ${p.site:x} segment")
-    return assemble(p.site, seg[0][1], "\n".join(p.preamble))
+    return seg[0][1]
+
+
+def site_new(p: Patch):
+    return assemble(p.site, site_seg(p), "\n".join(p.preamble))
+
+
+def orig_relocs(addr: int, ln: int, prog: int, what: str):
+    """Offsets in [addr, addr+ln) of the longs that TOS's relocation of the program made game addresses."""
+    out = []
+    for o in program(prog)[3]:
+        ram = TNOM + o
+        if ram < addr + ln and addr < ram + 4:
+            if not (addr <= ram and ram + 4 <= addr + ln):
+                raise SystemExit(f"{what}: the site cuts through a relocated long at ${ram:x}")
+            if ram % 2:
+                raise SystemExit(f"{what}: relocated long at odd address ${ram:x}")
+            out.append(ram - addr)
+    return out
 
 
 def build_image(patches: list[Patch]):
     core = core_segments()
     sites = []
     for p in patches:
-        new = site_new(p)
+        new, nrel = reloc_assemble(p.site, site_seg(p), p.preamble, p.prog, f"{p.name} site ${p.site:x}")
         orig = p.orig if p.orig is not None else expected_ram(p.site, len(new), p.prog)
         if orig is None:
             raise SystemExit(f"{p.name}: site ${p.site:x} is outside the program's text/data")
@@ -413,7 +509,8 @@ def build_image(patches: list[Patch]):
             if (len(orig) - len(new)) % 2:
                 raise SystemExit(f"{p.name}: odd nop padding")
             new = new + b"\x4e\x71" * ((len(orig) - len(new)) // 2)
-        sites.append(dict(name=p.name, addr=p.site, orig=orig, new=new, prog=p.prog))
+        sites.append(dict(name=p.name, addr=p.site, orig=orig, new=new, prog=p.prog, mask=p.mask, nrel=nrel,
+                          orel=orig_relocs(p.site, len(orig), p.prog, f"{p.name} site ${p.site:x}")))
     by_addr = sorted(sites, key=lambda s: (s["prog"], s["addr"]))
     for s, t in zip(by_addr, by_addr[1:]):
         if s["prog"] == t["prog"] and s["addr"] + len(s["orig"]) > t["addr"]:
@@ -422,14 +519,24 @@ def build_image(patches: list[Patch]):
     tbl_len = n * 16 + 4
     pool = bytearray()
     ptrs = []
-    for s in sites:
+    relocs = []                                  # addresses (in the payload) of longs that hold game addresses
+    for i, s in enumerate(sites):
+        relocs.append(TABLE + i * 16)            # the site's own address
+        if len(pool) % 2:
+            pool += b"\0"
         o = len(pool); pool += s["orig"]
+        if len(pool) % 2:
+            pool += b"\0"
         nw = len(pool); pool += s["new"]
         ptrs.append((TABLE + tbl_len + o, TABLE + tbl_len + nw))
+        relocs += [TABLE + tbl_len + o + k for k in s["orel"]]
+        relocs += [TABLE + tbl_len + nw + k for k in s["nrel"]]
+    n_site = len(relocs)
     if TABLE + tbl_len + len(pool) > TABLE_END:
         raise SystemExit(f"site table + byte pool overflow ${TABLE:x}-${TABLE_END - 1:x}")
     placed = [(ORG_HDR, ORG_HDR + len(core[ORG_HDR])), (ORG_APPLY, ORG_APPLY + len(core[ORG_APPLY])),
-              (TABLE, TABLE + tbl_len + len(pool))]
+              (ORG_CORE2, ORG_CORE2 + len(core[ORG_CORE2])), (ORG_CORE2B, ORG_CORE2B + len(core[ORG_CORE2B])),
+              (META, META + 16), (TABLE, TABLE + tbl_len + len(pool))]
     blobs = []
     for p in patches:
         for org, lines in p.segments:
@@ -437,26 +544,36 @@ def build_image(patches: list[Patch]):
                 continue
             if not (BLOB_MIN <= org <= BLOB_MAX):
                 raise SystemExit(f"{p.name}: org ${org:x} outside the blob area ${BLOB_MIN:x}-${BLOB_MAX:x}")
-            b = assemble(org, lines, "\n".join(p.preamble))
+            b, brel = reloc_assemble(org, lines, p.preamble, p.prog, f"{p.name} blob ${org:x}")
             if org + len(b) > BLOB_MAX + 1:
                 raise SystemExit(f"{p.name}: blob overflows the image (ends ${org + len(b) - 1:x})")
             placed.append((org, org + len(b)))
             blobs.append((org, b))
+            relocs += [org + k for k in brel]
         for a, l in p.data:
             placed.append((a, a + l))
     placed.sort()
     for (a0, a1), (b0, b1) in zip(placed, placed[1:]):
         if a1 > b0:
             raise SystemExit(f"image overlap: ${a0:x}-${a1:x} vs ${b0:x}-${b1:x}")
+    relocs = sorted(set(relocs))
+    reloc_at = (max(e for _, e in placed) + 3) & ~3
+    if reloc_at + 4 * (len(relocs) + 1) > 0xCFC37:
+        raise SystemExit(f"the relocation list ends past $CFC36, the end of the proven free RAM (${reloc_at + 4 * (len(relocs) + 1):x})")
+    placed.append((reloc_at, reloc_at + 4 * (len(relocs) + 1)))
     top = max(e for _, e in placed)
     img = bytearray(((top - IMG_BASE) + 3) & ~3)
     for org, b in core.items():
         img[org - IMG_BASE:org - IMG_BASE + len(b)] = b
     for i, s in enumerate(sites):
-        struct.pack_into(">IHHII", img, TABLE - IMG_BASE + i * 16, s["addr"], len(s["orig"]), s["prog"], *ptrs[i])
+        struct.pack_into(">IHHII", img, TABLE - IMG_BASE + i * 16, s["addr"], len(s["orig"]), (s["mask"] << 8) | s["prog"], *ptrs[i])
     img[TABLE - IMG_BASE + tbl_len:TABLE - IMG_BASE + tbl_len + len(pool)] = pool
     for org, b in blobs:
         img[org - IMG_BASE:org - IMG_BASE + len(b)] = b
+    struct.pack_into(">II", img, META - IMG_BASE, reloc_at, 0)
+    for i, a in enumerate(relocs):
+        struct.pack_into(">I", img, reloc_at - IMG_BASE + 4 * i, a)
+    RELOC_STATS.update(total=len(relocs), sites=n_site, blobs=len(relocs) - n_site, at=reloc_at)
     return bytes(img), sites, [(a, e) for a, e in placed]
 
 
@@ -478,6 +595,10 @@ def check_site(addr: int, orig: bytes, prog: int):
     return ib == orig and dump_ok and not why, ib == orig, dump_ok, ib, db, why
 
 
+def mask_str(m: int) -> str:
+    return ",".join(n for n in ("st", "ste", "tt", "falcon") if m & (1 << MACHINES[n]))
+
+
 def cmd_verify(patches, fpatches=()):
     bad = 0
     for p in patches:
@@ -495,6 +616,15 @@ def cmd_verify(patches, fpatches=()):
             print(f"    {why}")
         if not ok:
             bad += 1
+    for p in patches:
+        try:
+            build_image([p])
+        except SystemExit as e:
+            print(f"{p.name}: build check FAILED: {e}")
+            bad += 1
+        else:
+            print(f"{p.name:18s} relocation: {RELOC_STATS['sites'] - 1} long(s) in the site bytes, {RELOC_STATS['blobs']} in the blobs"
+                  + (f"; machines {mask_str(p.mask)}" if p.mask else ""))
     bad += cmd_verify_files(fpatches)
     bad += cmd_verify_delivery()
     print("verify:", "ALL OK" if not bad else f"{bad} FAILED")
@@ -507,7 +637,7 @@ def cmd_list(patches, fpatches=()):
         blobs = ",".join(f"${o:x}" for o, _ in p.segments if o != p.site) or "-"
         data = ",".join(f"${a:x}+{l}" for a, l in p.data) or "-"
         ln = len(site_new(p))
-        dflt = ("yes" if p.default else "no") + (f" ({p.media})" if p.media else "")
+        dflt = ("yes" if p.default else "no") + (f" ({p.media})" if p.media else "") + (f" [{mask_str(p.mask)}]" if p.mask else "")
         pname = {v[0]: v[1] for v in PROGRAMS.values()}[p.prog]
         print(f"{p.name:18s} {dflt:8s} {pname:9s} ${p.site:05x}  {ln:4d} {blobs} / {data}")
     for p in fpatches:
@@ -815,9 +945,10 @@ def cmd_build(patches, out: Path, fpatches=()):
     apply_file_patches(fpatches, out)
     print(f"built {out} with {len(patches)} patch(es) + {len(fpatches)} file patch(es); payload {len(img)} B at ${IMG_BASE:x}")
     print(f"{'site':8s} {'prog':8s} {'len':4s} orig -> new")
+    print(f"relocation list: {RELOC_STATS['total']} longs at ${RELOC_STATS['at']:x}")
     for s in sites:
         print(f"${s['addr']:05x}  {'pop' if s['prog'] else 'demo':8s} {len(s['orig']):4d} "
-              f"{s['orig'].hex()} -> {s['new'].hex()}   [{s['name']}]")
+              f"{s['orig'].hex()} -> {s['new'].hex()}   [{s['name']}]" + (f" machines {mask_str(s['mask'])}" if s["mask"] else ""))
 
 
 def cmd_live(patches, out: Path):
@@ -829,7 +960,7 @@ def cmd_live(patches, out: Path):
     out.parent.mkdir(parents=True, exist_ok=True)
     out.with_suffix(".img").write_bytes(img)
     js = [{"addr": s["addr"], "orig": s["orig"].hex(), "new": s["new"].hex(), "name": s["name"]}
-          for s in sites if s["prog"] == 1]
+          for s in sites if s["prog"] == 1 and (s["mask"] == 0 or s["mask"] & 2)]    # live = STE snapshots
     out.with_suffix(".json").write_text(json.dumps({"img_base": IMG_BASE, "sites": js}, indent=1))
     print(f"wrote {out.with_suffix('.img')} and {out.with_suffix('.json')} ({len(js)} sites)")
 
@@ -953,9 +1084,10 @@ def cmd_build_floppy(patches, out: Path, fpatches=()):
     for fp in fpatches:
         print(f"skipped file patch {fp.name}: needs PP's HAGA service, which is not on floppy")
     print(f"{'site':8s} {'prog':8s} {'len':4s} orig -> new")
+    print(f"relocation list: {RELOC_STATS['total']} longs at ${RELOC_STATS['at']:x}")
     for s in sites:
         print(f"${s['addr']:05x}  {'pop' if s['prog'] else 'demo':8s} {len(s['orig']):4d} "
-              f"{s['orig'].hex()} -> {s['new'].hex()}   [{s['name']}]")
+              f"{s['orig'].hex()} -> {s['new'].hex()}   [{s['name']}]" + (f" machines {mask_str(s['mask'])}" if s["mask"] else ""))
 
 
 def main():

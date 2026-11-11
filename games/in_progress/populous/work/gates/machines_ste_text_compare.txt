@@ -1,0 +1,5 @@
+STE 1 MB HD, old core (HEAD) vs new core: text bytes 0xad96..0x214a1 differing: 2 at ['0x16d2d', '0x16f14']
+STE 1 MB HD, new core vs new core + pop_fal_ym_demo + pop_fal_ym: text bytes 0xad96..0x214a1 differing: 3 at ['0x16d29', '0x16d2d', '0x16f14']
+0x171a8 old 03c8880005888800 new 03c8880005888800 new+fal 03c8880005888800
+0xcf98 old 600000a2302e0008 new 600000a2302e0008 new+fal 600000a2302e0008
+(runtime-changed text words per poppatch.RUNTIME_TEXT: $16D2C-D, $16F13-5, $20063-5)

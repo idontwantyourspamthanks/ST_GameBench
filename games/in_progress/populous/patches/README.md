@@ -33,3 +33,35 @@ Payload: raw in POM's empty tracks 52-77 (directory on track 52); the floppy loa
 
 ## Patches
 `pop_noprot` (yes), `pop_credit` (yes, version), `pp_bigram_cache` (yes, HD), `pp_nofade` (no), `pop_land_score`, `pop_land_mul` (no, PopLandScore).
+
+## pop_ptr and pop_bgcopy (PopDisplay; both `; default: no`, blob range `$C2000-$C3FFF`)
+Evidence, gates and cycle counts: `work/notes/display.md`; the pixel gate is `tools/popabtest.py` (`gate`, `fps`, `copy`, `mutants`).
+* `pop_ptr` (site `$16d80`, 8 bytes -> `jsr $c2000` + `nop`; blob `$c2000`-`$c21f3`, data block `$c2400` + 448): the VBL routine `$16d70` restores
+  the pointer's saved background (`$16dea`) and redraws it (`$16e20`) into the displayed buffer in every VBL (11.8 k cycles, 7.4 % of a busy
+  frame at 8 MHz). The blob skips both when the result is provably the same bytes (address of the last draw `$16f12`, displayed buffer `$3c50c`,
+  pointer words `$24786/8`, shape `$2169a`, sheet `$3d572`, `$2498c/e` equal to what the last draw saw, the screen rectangle under the pointer ==
+  the image that draw left, the 160 shape bytes it read == the copy taken then); otherwise it runs the two original routines and records
+  what they left. A flip changes `$3c50c`, so the first VBL after a flip, the restore into the old buffer and every hide are the original path.
+* `pop_bgcopy` (site `$14a28`, 8 bytes -> `jmp $c2600` + `nop`; blob `$c2600`-`$c26cf`): the 32,000-byte copy `$3b016` -> `$3c510` at the start of
+  every pass by 13-register `movem` (146 k cycles instead of 257 k); flags, `d0` and all other registers as the original leaves them.
+* Gate: `python3 tools/popabtest.py gate` (three snapshots, 237 flips each, both buffers + world RAM per flip, two mid-frame samples per flip,
+  injected pointer script, junk under a still pointer); `--mutant NAME` runs a deliberately broken patch, which must fail.
+
+## Other machines: relocation, machine mask, pop_fal_ym_demo + pop_fal_ym (PopMachines; `; default: no`, blob range `$C4000-$C4FFF`)
+Evidence and cell outputs: `work/notes/machines.md`, `work/gates/machines_*.txt`.
+* **The text base moves.** TOS puts the Pexec'd program at the first free address: `$AD96` on ST/STE/Mega STE (the loader steers it there), but TOS 3.06 on a TT
+  has its own data up to `$E6FC` (text `$EBDE`, delta `$3E48`) and TOS 4.04 on a Falcon up to `$FA04` (text `$FFAC`, delta `$5216`). That is why the payload
+  reported `POPT` (nothing patched) there. The game itself is position independent (it Mallocs its buffers and takes the screen from Physbase).
+* **Every patch is relocated automatically.** poppatch assembles each site and blob twice, the second time with every hex literal in the program's own address range
+  (`$AD96` .. text+data+bss end) written `($lit+GD)`, GD = `$10000`; the 32-bit fields that differ by exactly GD are the game addresses. Their addresses go into a
+  relocation list at the top of the image (`$B3100` = list pointer, delta applied); `apply` adds `p_tbase - $AD96` to each once, then verifies and applies as before.
+  The original bytes of a site are relocated by the program's own relocation table. With delta 0 (ST/STE/Mega STE) nothing is touched.
+  Rules for sources: write game addresses as plain hex literals (a long immediate address with 5+ digits, `#$0b6f4`; a 4-digit `#$xxxx` is taken for a 16-bit
+  value, `dc.b/dc.w` operands and `$xxxx(An)` displacements are never shifted); no pc-relative reach between game text and a blob; no fixed addresses
+  outside the program's range and the payload ($B3000-$CFC36) for things that are not game variables (e.g. `$78000`, `$4f500` are Malloc/Physbase results, they move).
+  `poppatch verify` prints the relocated longs of every patch and fails on any other use of a game address.
+* **Machine mask.** Header `; machine: st, ste, tt, falcon` (megaste = ste): the site is verified and applied only on those machine classes (`_MCH` high word,
+  read by `apply` once with Supexec; `_CPU` too). Skipped sites leave the original bytes. `live` keeps only sites valid on an STE.
+* `apply` empties both CPU caches after the sites are written on a 68020+ (`movec cacr`, `cpusha bc` on 040/060).
+* `pop_fal_ym_demo` (DEMO `$cf98`) and `pop_fal_ym` (game `$171a8`), Falcon only: the sample interrupts write the three YM volumes with `movep.l d1,-$7800(a0)` =
+  `$ff8800/02/04/06`; a Falcon bus-errors on `$ff8804`. The blob (`jsr` + `nop` over 8 bytes) does the same register writes through `$ff8800/02` only.

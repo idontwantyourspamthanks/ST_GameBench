@@ -1,0 +1,28 @@
+menu after 16.038365364074707
+start page after 56.12946438789368
+payload header: 50 4f 50 50 50 4f 50 4f 00 00 00 02 01 03 01 00  D = 21014
+check_play (sig ok, turn, turn+2s): (True, 132, 217)
+busy scene set up; turns:
+  turn 490  npeeps 115  armageddon 0  (+70)
+  turn 575  npeeps 115  armageddon 0  (+155)
+  turn 661  npeeps 115  armageddon 0  (+241)
+  turn 740  npeeps 115  armageddon 0  (+320)
+320 turns in 27.2 s wall
+sound check: 41342 log line(s) mentioning $c4040 after the earthquake command; bus errors in log: 0
+> b pc = $c4040 :trace
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $c4040
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+> w $27060 $03 $2c $20
+Wrote 3 'b' values starting from 0x27060.
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $c4040 :trace
+1. CPU breakpoint condition(s) matched 2 times.
+	pc = $c4040 :trace
+1. CPU breakpoint condition(s) matched 3 times.
+	pc = $c4040 :trace
+1. CPU breakpoint condition(s) matched 4 times.
+	pc = $c4040 :trace
+1. CPU breakpoint condition(s) matched 5 times.
+	pc = $c4040 :trace
+1. CPU breakpoint condition(s) mat
