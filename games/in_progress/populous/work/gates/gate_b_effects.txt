@@ -1,0 +1,73 @@
+{'snap': 'busy_castles', 'pair': 'U vs P', 'effects_at': [823, 893, 983, 1043, 1183], 'peep_slots_at_checkpoints': [[(784, 96, 35, 2755), (1043, 109, 45, 2698), (1303, 6, 18, 3863)], [(784, 96, 35, 2755), (1043, 109, 45, 2698), (1303, 6, 18, 3863)]], 'turns': '783..1303', 'turn_records': 521, 'identical_records': 521, 'first_different_turn': None, 'hash_ranges': ['$21100-$2498f', '$249a4-$3d7ff', '$3f600-$4f4ff'], 'rng_seed_first_last': ('$4142', '$6138'), 'vbl_at_end': (39459, 37226), 'sp_at_checkpoints': ['$3f4f0']}
+  checkpoint turn 784: 209 differing bytes, 0 unexplained ranges
+    $465-$469 (2): TOS _vbclock/_frclock
+    $4bd-$4bd (1): TOS _hz_200
+    $ea4-$ea5 (2): TOS RAM below _membot $a84e
+    $2b89-$2b89 (1): TOS RAM below _membot $a84e
+    $5fae-$5faf (2): TOS RAM below _membot $a84e
+    $16d2d-$16d2d (1): game VBL counter (addq.l #1 at $16dde)
+    $18245-$1824b (6): site pop_land_score
+    $2005e-$2005e (1): IKBD packet byte counter (ACIA handler $1fff2)
+    $20797-$2079d (6): site pop_land_mul
+    $3f37f-$3f4b5 (187): dead stack below SP=$3f4f0
+  checkpoint turn 1043: 343 differing bytes, 0 unexplained ranges
+    $464-$469 (4): TOS _vbclock/_frclock
+    $4bc-$4bd (2): TOS _hz_200
+    $ea4-$ea5 (2): TOS RAM below _membot $a84e
+    $2b88-$2b89 (2): TOS RAM below _membot $a84e
+    $378b-$378b (1): TOS RAM below _membot $a84e
+    $5fad-$5faf (3): TOS RAM below _membot $a84e
+    $16d2c-$16d2d (2): game VBL counter (addq.l #1 at $16dde)
+    $18245-$1824b (6): site pop_land_score
+    $2005e-$2005e (1): IKBD packet byte counter (ACIA handler $1fff2)
+    $20797-$2079d (6): site pop_land_mul
+    $3f2e8-$3f4b5 (314): dead stack below SP=$3f4f0
+  checkpoint turn 1303: 316 differing bytes, 0 unexplained ranges
+    $464-$469 (4): TOS _vbclock/_frclock
+    $4bc-$4bd (2): TOS _hz_200
+    $2b88-$2b89 (2): TOS RAM below _membot $a84e
+    $378b-$378b (1): TOS RAM below _membot $a84e
+    $5fae-$5faf (2): TOS RAM below _membot $a84e
+    $16d2c-$16d2d (2): game VBL counter (addq.l #1 at $16dde)
+    $18245-$1824b (6): site pop_land_score
+    $20797-$2079d (6): site pop_land_mul
+    $3f2a1-$3f4b5 (291): dead stack below SP=$3f4f0
+{'snap': 'busy_quake_volcano', 'pair': 'U vs P', 'effects_at': [2089, 2159, 2249, 2309, 2449], 'peep_slots_at_checkpoints': [[(2050, 126, 37, 2387), (2309, 123, 48, 2269), (2569, 9, 30, 3840)], [(2050, 126, 37, 2387), (2309, 123, 48, 2269), (2569, 9, 30, 3840)]], 'turns': '2049..2569', 'turn_records': 521, 'identical_records': 521, 'first_different_turn': None, 'hash_ranges': ['$21100-$2498f', '$249a4-$3d7ff', '$3f600-$4f4ff'], 'rng_seed_first_last': ('$0120', '$5ebb'), 'vbl_at_end': (58668, 56263), 'sp_at_checkpoints': ['$3f4f0']}
+  checkpoint turn 2050: 140 differing bytes, 0 unexplained ranges
+    $465-$469 (2): TOS _vbclock/_frclock
+    $4bd-$4bd (1): TOS _hz_200
+    $ea4-$ea5 (2): TOS RAM below _membot $a84e
+    $2b88-$2b89 (2): TOS RAM below _membot $a84e
+    $5fae-$5faf (2): TOS RAM below _membot $a84e
+    $16d2d-$16d2d (1): game VBL counter (addq.l #1 at $16dde)
+    $18245-$1824b (6): site pop_land_score
+    $2005e-$2005e (1): IKBD packet byte counter (ACIA handler $1fff2)
+    $20797-$2079d (6): site pop_land_mul
+    $3f383-$3f449 (82): dead stack below SP=$3f4f0
+    $3f465-$3f4b5 (35): dead stack below SP=$3f4f0
+  checkpoint turn 2309: 300 differing bytes, 0 unexplained ranges
+    $464-$469 (4): TOS _vbclock/_frclock
+    $4bc-$4bd (2): TOS _hz_200
+    $ea4-$ea5 (2): TOS RAM below _membot $a84e
+    $2b88-$2b89 (2): TOS RAM below _membot $a84e
+    $378b-$378b (1): TOS RAM below _membot $a84e
+    $5fad-$5faf (3): TOS RAM below _membot $a84e
+    $16d2c-$16d2d (2): game VBL counter (addq.l #1 at $16dde)
+    $18245-$1824b (6): site pop_land_score
+    $20797-$2079d (6): site pop_land_mul
+    $3f2a1-$3f445 (254): dead stack below SP=$3f4f0
+    $3f478-$3f49b (15): dead stack below SP=$3f4f0
+    $3f4b1-$3f4b5 (3): dead stack below SP=$3f4f0
+  checkpoint turn 2569: 289 differing bytes, 0 unexplained ranges
+    $464-$469 (4): TOS _vbclock/_frclock
+    $4bc-$4bd (2): TOS _hz_200
+    $ea4-$ea5 (2): TOS RAM below _membot $a84e
+    $2b88-$2b89 (2): TOS RAM below _membot $a84e
+    $378b-$378b (1): TOS RAM below _membot $a84e
+    $5fad-$5faf (3): TOS RAM below _membot $a84e
+    $16d2c-$16d2d (2): game VBL counter (addq.l #1 at $16dde)
+    $18245-$1824b (6): site pop_land_score
+    $2005e-$2005e (1): IKBD packet byte counter (ACIA handler $1fff2)
+    $20797-$2079d (6): site pop_land_mul
+    $3f2a1-$3f449 (223): dead stack below SP=$3f4f0
+    $3f465-$3f4b5 (37): dead stack below SP=$3f4f0

@@ -1,0 +1,4 @@
+busy_castles unpatched: profile 155493780 cycles; $18244 calls 4747, 21412380 cycles own code = 13.77% ; $181d6 calls 84335, 29250756 cycles = 18.81% (346 per call) ; $20796 calls 12825, 390 cycles/call = 3.22%
+busy_castles patched:   profile 155494732 cycles; $18244 calls 7008 (interior 6105, edge 873), 1626 cycles/call = 7.33% ; other $181d6 calls 5285 = 1.11% ; $20796 calls 18537, 208 cycles/call = 2.49%
+busy_quake_volcano unpatched: profile 155557924 cycles; $18244 calls 5147, 23544472 cycles own code = 15.14% ; $181d6 calls 90527, 31408764 cycles = 20.19% (346 per call) ; $20796 calls 12490, 390 cycles/call = 3.14%
+busy_quake_volcano patched:   profile 155547480 cycles; $18244 calls 7678 (interior 6718, edge 953), 1689 cycles/call = 8.34% ; other $181d6 calls 6068 = 1.27% ; $20796 calls 18588, 208 cycles/call = 2.50%

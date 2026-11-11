@@ -1,0 +1,8 @@
+exhaust.py, mx[0] $ecec -> $fcec in the blob (expected: FAIL)
+{'snap': 'busy_castles', 'turn': 777, 'fuzz': (5, 2), 'ccr_in': 0, 'inputs': 8192, 'expected': 8192, 'emu_mismatch': 17, 'reg_faults': 0, 'py_orig_vs_new': 17, 'model_vs_orig': 0, 'nonzero': 1542, 'castle': 1}
+
+gates.py b, 120 turns, blob byte $c0055 $41 -> $40 (first score 64 instead of 65; expected: FAIL)
+{'snap': 'busy_castles', 'pair': 'U vs P', 'turns': '783..903', 'turn_records': 121, 'identical_records': 1, 'first_different_turn': 784, 'hash_ranges': ['$21100-$2498f', '$249a4-$3d7ff', '$3f600-$4f4ff'], 'rng_seed_first_last': ('$4142', '$5512'), 'vbl_at_end': (26210, 25404), 'sp_at_checkpoints': ['$3f4f0']}
+
+gates.py a-mutant:
+{'snap': 'busy_castles', 'turns': '777..806', 'score_calls': 2343, 'score_mismatch': 2095, 'score_reg_faults': 0, 'score_unrolled': 2103, 'score_edge': 240, 'mul_calls': 5653, 'mul_mismatch': 3083, 'mul_reg_faults': 0, 'mul_fast_path': 5653, 'logged': 200, 'first_records': ['4d000000dbb80000002e00000001000000000000002e04000000000000000000', '4d000000dbe80000002e00000001000000000000002e04000000000000000000', '4d000000dc2c0000002e00000001000000000000002e04000000000000000000', '4d000000dc4e0000002e00000001000000000000002e04000000000000000000', '4d000000dcce0000002e00000001000000000000002e04000000000000000000', '4d000000dcf00000002e00000001000000000000002e04000000000000000000']}

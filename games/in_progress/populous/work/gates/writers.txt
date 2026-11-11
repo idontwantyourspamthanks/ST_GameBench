@@ -1,0 +1,66 @@
+map_blk: constants pointing into the map: $36eb6 x 69, $36f04 x 1, $36f14 x 2, $36fda x 1
+map_blk: ? 2, ?flow 1, ?pointer kept 9, ARG 3, READ 34, WRITE 20
+  WRITE          routine $bc12: 00be7a lea.l $36eb6.l, a0  ->  00be80 clr.b (a0, d7.w)
+  WRITE          routine $c12c: 00c1f8 lea.l $36eb6.l, a0  ->  00c1fe move.b d0, (a0, d1.w)
+  WRITE          routine $c12c: 00c264 lea.l $36eb6.l, a0  ->  00c26a move.b d0, (a0, d1.w)
+  ?pointer kept  routine $c2b8: 00c2d8 lea.l $36eb6.l, a0  ->  00c2e4 move.b (a0), d0
+  WRITE          routine $c2b8: 00c3e6 lea.l $36eb6.l, a0  ->  00c3ec move.b d0, (a0, d5.w)
+  ?pointer kept  routine $db8a: 00dfea lea.l $36eb6.l, a0  ->  00dff4 move.l d0, -$8(a6)
+  ?pointer kept  routine $f6f0: 00faae lea.l $36eb6.l, a0  ->  00faba move.b (a0), d0
+  ?pointer kept  routine $f6f0: 00fc2a lea.l $36eb6.l, a0  ->  00fc36 move.b (a0), d0
+  ?pointer kept  routine $f6f0: 00fda6 lea.l $36eb6.l, a0  ->  00fdb2 move.b (a0), d0
+  WRITE          routine $103a4: 01042a lea.l $36eb6.l, a0  ->  010430 move.b #$f, (a0, d6.w)
+  WRITE          routine $103a4: 010496 lea.l $36eb6.l, a0  ->  01049c move.b #$f, (a0, d6.w)
+  WRITE          routine $103a4: 010530 lea.l $36eb6.l, a0  ->  010536 move.b d0, (a0, d6.w)
+  WRITE          routine $103a4: 0105ac lea.l $36eb6.l, a0  ->  0105b2 move.b #$f, (a0, d6.w)
+  WRITE          routine $103a4: 01061e lea.l $36eb6.l, a0  ->  010624 move.b d0, (a0, d6.w)
+  WRITE          routine $108f6: 010abc lea.l $36eb6.l, a0  ->  010ac2 move.b #$42, (a0, d0.w)
+  WRITE          routine $108f6: 010b54 lea.l $36eb6.l, a0  ->  010b5a move.b #$42, (a0, d0.w)
+  WRITE          routine $1140c: 011442 lea.l $36eb6.l, a0  ->  011448 clr.b (a0, d7.w)
+  WRITE          routine $1267a: 0128e2 lea.l $36eb6.l, a0  ->  0128ee move.b #$2f, (a0)
+  ?pointer kept  routine $12a52: 012b3a lea.l $36eb6.l, a0  ->  012b46 move.b (a0), d0
+  WRITE          routine $12a52: 012bbc lea.l $36eb6.l, a0  ->  012bc8 move.b #$35, (a0)
+  ?pointer kept  routine $12e44: 012efa lea.l $36eb6.l, a0  ->  012f06 move.b (a0), d0
+  ?pointer kept  routine $12e44: 012f20 lea.l $36eb6.l, a0  ->  012f2c move.b (a0), d0
+  WRITE          routine $12e44: 012f62 lea.l $36eb6.l, a0  ->  012f6e move.b d0, (a0)
+  WRITE          routine $12fc2: 01328a lea.l $36eb6.l, a0  ->  013290 move.b #$35, (a0, d0.w)
+  WRITE          routine $12fc2: 0132d4 lea.l $36eb6.l, a0  ->  0132da move.b d0, (a0, d1.w)
+  WRITE          routine $1363a: 013738 lea.l $36eb6.l, a0  ->  01373e addq.b #$1, (a0, d0.w)
+  ?              routine $143a2: 0143b2 movea.l #$36eb6, a1
+  ?              routine $143a2: 014450 subi.l #$36eb6, d6
+  ?flow          routine $18244: 018266 lea.l $36eb6.l, a0
+  ARG            routine $1dbd6: 01dc98 pea.l $36eb6.l
+  ARG            routine $1dbd6: 01dd76 pea.l $36eb6.l
+  ARG            routine $1e184: 01e28c pea.l $36eb6.l
+  ?pointer kept  routine $1e750: 01ed6c lea.l $36eb6.l, a0  ->  01ed78 move.b (a0), d0
+  WRITE          routine $1e750: 01edc6 lea.l $36eb6.l, a0  ->  01edd2 move.b d0, (a0)
+  WRITE          routine $1e750: 01ee1c lea.l $36eb6.l, a0  ->  01ee22 move.b #$f, (a0, d0.w)
+map_bk2: constants pointing into the map: $3c560 x 40, $3d041 x 2, $3d06e x 1
+map_bk2: ? 1, ?flow 1, ?pointer kept 2, ARG 3, READ 13, WRITE 20
+  WRITE          routine $bc12: 00be8e lea.l $3c560.l, a0  ->  00be94 clr.b (a0, d7.w)
+  WRITE          routine $c12c: 00c27c lea.l $3c560.l, a0  ->  00c282 clr.b (a0, d0.w)
+  ?pointer kept  routine $f332: 00f468 lea.l $3c560.l, a0  ->  00f474 move.b (a0), d0
+  WRITE          routine $103a4: 0103fc lea.l $3c560.l, a0  ->  010402 clr.b (a0, d6.w)
+  WRITE          routine $103a4: 010468 lea.l $3c560.l, a0  ->  01046e clr.b (a0, d6.w)
+  WRITE          routine $103a4: 0104b0 lea.l $3c560.l, a0  ->  0104b6 clr.b (a0, d0.w)
+  WRITE          routine $103a4: 010500 lea.l $3c560.l, a0  ->  010506 move.b d0, (a0, d6.w)
+  WRITE          routine $103a4: 01057e lea.l $3c560.l, a0  ->  010584 clr.b (a0, d6.w)
+  WRITE          routine $103a4: 0105ee lea.l $3c560.l, a0  ->  0105f4 clr.b (a0, d6.w)
+  WRITE          routine $103a4: 010666 lea.l $3c560.l, a0  ->  01066c move.b d0, (a0, d1.w)
+  WRITE          routine $108f6: 010a84 lea.l $3c560.l, a0  ->  010a8a addi.b #$15, (a0, d0.w)
+  WRITE          routine $108f6: 010bac lea.l $3c560.l, a0  ->  010bb2 addi.b #$15, (a0, d0.w)
+  WRITE          routine $112ae: 011372 lea.l $3c560.l, a0  ->  01137c move.b d0, (a0, d1.w)
+  WRITE          routine $112ae: 0113c0 lea.l $3c560.l, a0  ->  0113ca move.b d0, (a0, d7.w)
+  WRITE          routine $1140c: 011438 lea.l $3c560.l, a0  ->  01143e clr.b (a0, d7.w)
+  WRITE          routine $1267a: 0128fe lea.l $3c560.l, a0  ->  01290a clr.b (a0)
+  WRITE          routine $12e44: 012f94 lea.l $3c560.l, a0  ->  012fa0 move.b d0, (a0)
+  WRITE          routine $12fc2: 013208 lea.l $3c560.l, a0  ->  01320e move.b d0, (a0, d1.w)
+  ?              routine $143a2: 0143be movea.l #$3c560, a2
+  ?flow          routine $18244: 01826c lea.l $3c560.l, a1
+  ARG            routine $1dbd6: 01dcb0 pea.l $3c560.l
+  ARG            routine $1dbd6: 01dda0 pea.l $3c560.l
+  ARG            routine $1e184: 01e2ac pea.l $3c560.l
+  ?pointer kept  routine $1e750: 01ecd0 lea.l $3c560.l, a0  ->  01ecdc move.b (a0), d0
+  WRITE          routine $1e750: 01ed2a lea.l $3c560.l, a0  ->  01ed36 move.b d0, (a0)
+  WRITE          routine $1e750: 01ee4c lea.l $3c560.l, a0  ->  01ee52 clr.b (a0, d0.w)
+  WRITE          routine $1e750: 01eebc lea.l $3c560.l, a0  ->  01eec8 clr.b (a0)

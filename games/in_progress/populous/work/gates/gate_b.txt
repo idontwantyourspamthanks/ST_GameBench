@@ -1,0 +1,71 @@
+{'snap': 'busy_castles', 'pair': 'U vs P', 'turns': '783..1303', 'turn_records': 521, 'identical_records': 521, 'first_different_turn': None, 'hash_ranges': ['$21100-$2498f', '$249a4-$3d7ff', '$3f600-$4f4ff'], 'rng_seed_first_last': ('$4142', '$00ec'), 'vbl_at_end': (40309, 37655), 'sp_at_checkpoints': ['$3f4f0']}
+  checkpoint turn 784: 209 differing bytes, 0 unexplained ranges
+    $465-$469 (2): TOS _vbclock/_frclock
+    $4bd-$4bd (1): TOS _hz_200
+    $ea4-$ea5 (2): TOS RAM below _membot $a84e
+    $2b89-$2b89 (1): TOS RAM below _membot $a84e
+    $5fae-$5faf (2): TOS RAM below _membot $a84e
+    $16d2d-$16d2d (1): game VBL counter (addq.l #1 at $16dde)
+    $18245-$1824b (6): site pop_land_score
+    $2005e-$2005e (1): IKBD packet byte counter (ACIA handler $1fff2)
+    $20797-$2079d (6): site pop_land_mul
+    $3f37f-$3f4b5 (187): dead stack below SP=$3f4f0
+  checkpoint turn 1043: 328 differing bytes, 0 unexplained ranges
+    $464-$469 (4): TOS _vbclock/_frclock
+    $4bc-$4bd (2): TOS _hz_200
+    $2b89-$2b89 (1): TOS RAM below _membot $a84e
+    $378b-$378b (1): TOS RAM below _membot $a84e
+    $5fad-$5faf (3): TOS RAM below _membot $a84e
+    $16d2c-$16d2d (2): game VBL counter (addq.l #1 at $16dde)
+    $18245-$1824b (6): site pop_land_score
+    $20797-$2079d (6): site pop_land_mul
+    $3f2d4-$3f4b5 (303): dead stack below SP=$3f4f0
+  checkpoint turn 1303: 284 differing bytes, 0 unexplained ranges
+    $464-$469 (4): TOS _vbclock/_frclock
+    $4bc-$4bd (2): TOS _hz_200
+    $ea4-$ea5 (2): TOS RAM below _membot $a84e
+    $2b88-$2b89 (2): TOS RAM below _membot $a84e
+    $378b-$378b (1): TOS RAM below _membot $a84e
+    $5fad-$5faf (3): TOS RAM below _membot $a84e
+    $16d2c-$16d2d (2): game VBL counter (addq.l #1 at $16dde)
+    $18245-$1824b (6): site pop_land_score
+    $2005e-$2005e (1): IKBD packet byte counter (ACIA handler $1fff2)
+    $20797-$2079d (6): site pop_land_mul
+    $3f2d5-$3f4b5 (255): dead stack below SP=$3f4f0
+{'snap': 'busy_quake_volcano', 'pair': 'U vs P', 'turns': '2049..2569', 'turn_records': 521, 'identical_records': 521, 'first_different_turn': None, 'hash_ranges': ['$21100-$2498f', '$249a4-$3d7ff', '$3f600-$4f4ff'], 'rng_seed_first_last': ('$0120', '$2b54'), 'vbl_at_end': (59919, 56641), 'sp_at_checkpoints': ['$3f4f0']}
+  checkpoint turn 2050: 140 differing bytes, 0 unexplained ranges
+    $465-$469 (2): TOS _vbclock/_frclock
+    $4bd-$4bd (1): TOS _hz_200
+    $ea4-$ea5 (2): TOS RAM below _membot $a84e
+    $2b88-$2b89 (2): TOS RAM below _membot $a84e
+    $5fae-$5faf (2): TOS RAM below _membot $a84e
+    $16d2d-$16d2d (1): game VBL counter (addq.l #1 at $16dde)
+    $18245-$1824b (6): site pop_land_score
+    $2005e-$2005e (1): IKBD packet byte counter (ACIA handler $1fff2)
+    $20797-$2079d (6): site pop_land_mul
+    $3f383-$3f449 (82): dead stack below SP=$3f4f0
+    $3f465-$3f4b5 (35): dead stack below SP=$3f4f0
+  checkpoint turn 2309: 364 differing bytes, 0 unexplained ranges
+    $464-$469 (4): TOS _vbclock/_frclock
+    $4bc-$4bd (2): TOS _hz_200
+    $90d-$938 (28): BIOS register save area below _savptr=$93a
+    $2b89-$2b89 (1): TOS RAM below _membot $a84e
+    $378b-$378b (1): TOS RAM below _membot $a84e
+    $5fad-$5faf (3): TOS RAM below _membot $a84e
+    $16d2c-$16d2d (2): game VBL counter (addq.l #1 at $16dde)
+    $18245-$1824b (6): site pop_land_score
+    $2005e-$2005e (1): IKBD packet byte counter (ACIA handler $1fff2)
+    $20797-$2079d (6): site pop_land_mul
+    $24991-$249a1 (3): sample player state (timer-A handler $1717e)
+    $3f2c2-$3f4b5 (307): dead stack below SP=$3f4f0
+  checkpoint turn 2569: 384 differing bytes, 0 unexplained ranges
+    $464-$469 (4): TOS _vbclock/_frclock
+    $4bc-$4bd (2): TOS _hz_200
+    $ea4-$ea5 (2): TOS RAM below _membot $a84e
+    $2b88-$2b89 (2): TOS RAM below _membot $a84e
+    $378b-$378b (1): TOS RAM below _membot $a84e
+    $5fad-$5faf (3): TOS RAM below _membot $a84e
+    $16d2c-$16d2d (2): game VBL counter (addq.l #1 at $16dde)
+    $18245-$1824b (6): site pop_land_score
+    $20797-$2079d (6): site pop_land_mul
+    $3f2b8-$3f4b5 (356): dead stack below SP=$3f4f0
