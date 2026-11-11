@@ -51,6 +51,9 @@ TOS = {
     "4.00": TOS_DIR / "TOS_4_00.img", "4.01": TOS_DIR / "TOS_4_01.img",                 # Falcon
     "4.02": TOS_DIR / "TOS_4_02.img", "4.04": TOS_DIR / "TOS_4_04.img",
 }
+# The real TOS for each machine, used when `tos` isn't given (TT and Falcon included: EmuTOS is opt-in).
+MACHINE_TOS = {"st": TOS["1.04"], "megast": TOS["1.04"], "ste": TOS["1.62"], "megaste": TOS["2.06"],
+               "tt": TOS["3.06"], "falcon": TOS["4.04"]}
 # Directory names that are project scaffolding, never game files.
 NOT_GAME = {"work", "tools", "build", "dist", "patches", ".omp", "tos", "__pycache__"}
 
@@ -85,7 +88,7 @@ def retarget_snapshot(src: str | Path, dst: str | Path, new_workdir: str | Path)
 
 class Hatari:
     def __init__(self, game_dir: str | Path, snapshot: str | None = None,
-                 workdir: str | None = None, machine: str = "ste", tos: Path = TOS["1.62"],
+                 workdir: str | None = None, machine: str = "ste", tos: Path | None = None,
                  memsize_kb: int = 1024, files: list[str] | None = None,
                  overlay: Path | None = None, autorun: str = "C:\\RUNME.TOS",
                  flip_reg: str = "($ff8201).b", extra: list[str] | None = None):
@@ -95,6 +98,7 @@ class Hatari:
         game_dir/work/disk_overlay if it exists; e.g. a created campaign disk).
         flip_reg: the shifter register expression whose change marks a presented frame."""
         self.game_dir = Path(game_dir).resolve()
+        tos = tos or MACHINE_TOS[machine]
         self.flip_reg = flip_reg
         self.R = Path(workdir or tempfile.mkdtemp(prefix="strun-"))
         self.R.mkdir(parents=True, exist_ok=True)

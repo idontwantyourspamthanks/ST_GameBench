@@ -14,6 +14,10 @@ description: How to delegate Atari ST game reverse-engineering and patching work
   - Their output counts only after the lead or a Sonnet agent has run a gate on it in the emulator.
 - **Escalate on a stall:** if an agent spends more than about 30 minutes on one bug without new evidence, stop it. Then fix it yourself or hand it to a stronger model with a precise handoff.
   - Example: the jsr/jmp load-hook crash took the lead about 5 minutes after Qwen had spent 40 on it.
+- **`fable` (Fable model, user agent `~/.omp/agent/agents/fable.md`):** deep algorithm and design work, e.g. a game-family study or an exact rewrite of a hot routine. Use it sparingly.
+  - After any provider or network error, check the session log for the model that actually ran. One study silently fell back to Grok and never switched back; most of its output was wrong. (The user has since removed that fallback.)
+- **Changing a shared tool mid-wave** (`core.s`, the patch tool): broadcast it to the running agents (`write agent://all`) and tell them to rebuild before their final gates.
+- **Never default a patch on because "it's the same in another game"** (the lead did this with `pp_nofade` and broke Populous's LOAD). Defaults change only after that game's own gates.
 
 ## Task template
 Put the shared facts in `context`. Each task needs a target, the change, and acceptance tests.

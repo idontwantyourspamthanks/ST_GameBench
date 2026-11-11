@@ -44,12 +44,24 @@ Layout: `RUNME.TOS`, `HAGA`, `FILES/<disk images>`, an intro picture (`*.HST` ST
 - **RUNME relocation:** growing the data segment moves the bss. PC-relative references into bss (MW2: 4 × `lea d(pc)`) overflow at about 32 KB. MW2 rewrote them as `movea.l d(pc),aN` reading a pointer table, so they stay 4 bytes. Scan the whole text for them.
 - **Free RAM in game** (MW2, 1 MB): `$B2852-$E83E5`. PP's 1 MB service sits at `$F7554`/`$F8000`. 512 KB is impossible, because the chunk cache alone needs `$81000-$B1D40`.
 - **HAGA file patches:** HAGA moves with RAM size, so patch it as a file with position-independent code (MW2 tool: `; image: HAGA`, `; edit: <off> <orig>`). Never patch it at fixed RAM addresses.
+- **The delivery point differs per game; find it before copying MW2.** Three shapes so far:
+  - MW2/MW1: the game is in RAM when PP's patcher runs, so a trampoline replaces the patcher tail `jmp <entry>`.
+  - Populous: the game isn't in RAM until START GAME (PP's `POLA` runs the original `LOADER.PRG`, which Pexecs `DEMO.TOS` then `POPULOUS.TOS`). `poppatch.py` replaces `LOADER.PRG`: `Pexec(3)`, verify and apply, `Pexec(4)`.
+  - Populous 2: RUNME's stage block unpacks `P2M.FIC` to `$1770`; the trampoline replaces RUNME's own tail (`move.l #$1c42,$118.w` / `jmp $1770.w`).
+- **Programs that TOS loads (Pexec) move with the TOS version.** Populous's text base is `$AD96` on STE TOS 1.62, +`$3E48` on TT TOS 3.06 and +`$5216` on Falcon TOS 4.04. Every absolute address in a patch must be relocated at boot (`poppatch.py`: assemble twice, diff the 32-bit fields, add the delta in `core.s`), or nothing applies on TT/Falcon. Game images that HAGA or a boot stub loads to a fixed address (MW2) don't move.
+- **HAGA file patches are NOT portable between games, even though HAGA is identical.** `pp_nofade` is fine in MW2 but makes Populous's in-game LOAD bus-error (`PC=$16eca`). Test save and load with every HAGA patch, per game, before defaulting it on.
 
 ## Floppy path
 - The first image (FFA/MWA) is usually bootable: the boot sector sums to `$1234`, and it loads the boot stub, which loads the game.
 - RUNME, PP's patcher and HAGA never run on floppy. The game uses its original FDC driver, with no fade and no PP RAM patches.
 - MW2's floppy injection: the payload goes in a new file on disk A (free track-sides). A 32-byte stage 1 sits in dead stub code and calls the stub's own loader.
 - Watch for the game's disk-copy buffers covering the payload. MW2 halved one: `floppy_copybuf`.
+
+## PP's builds aren't always fully fixed
+- Populous: the copy-protection trap is still armed (`$edec-$ee16` compares the long at `$24` with `$54ac0842`): Armageddon is forced once 19 peep slots are used. Only long play reveals it.
+- Populous 2: in-game SAVE/LOAD is stubbed out (bus error; PP's README says so). Only HAGA statesaves work, and they need about 1 MB of disk.
+- Populous on TT/Falcon HD in Hatari: stock PP crashes on its 68030 path (`D15RF.FIC`); the floppy build works. Unresolved.
+- So: read PP's README.TXT, then test long play, save/load and every machine on the pristine build before blaming a patch.
 
 ## Checks for any HAGA game
 - Run the pristine game and the patched one side by side, at 1 MB, 2 MB and 4 MB, on Mega STE TOS 2.06, STE 1.62 and Mega ST 1.04. A "fails unpatched too" result is only valid against a truly pristine copy, not a zero-patch build that still contains your staging.

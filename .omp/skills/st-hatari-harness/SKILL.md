@@ -21,10 +21,11 @@ finally: h.close()        # ALWAYS: frees Xvfb, display claim, scratch game copy
 
 ## Constructor options
 - `machine`: `'st'|'megast'|'ste'|'megaste'|'tt'|'falcon'`.
-- `tos=TOS['1.04'|'1.62'|'2.06'|'emutos'|...]`. The images live in `gamebench/tos/`.
+- `tos=TOS['1.04'|'1.62'|'2.06'|'3.06'|'4.04'|'emutos'|...]`. The images live in `gamebench/tos/`.
+  - Omit `tos` and the harness picks the machine's real TOS (`MACHINE_TOS`): ST/Mega ST 1.04, STE 1.62, Mega STE 2.06, TT 3.06, Falcon 4.04.
   - TOS 1.06/1.62 are STE-only.
-  - Use 2.06 for a Mega STE.
-  - TT/Falcon only have EmuTOS here.
+  - Test TT and Falcon on the real TOS 3.06/4.04, as users run them. EmuTOS only on purpose: it loads programs at other addresses and behaves differently.
+  - TT: add `extra=['--mmu', 'true']`, as `dist/run_tt.sh` does.
 - `memsize_kb`: 1024 is the usual target.
 - `extra=['--joy1','keys']`: cursor keys act as joystick 1.
 - `files=[...]`: what to copy as C:. The default is the whole game dir minus scaffolding.
@@ -46,6 +47,13 @@ finally: h.close()        # ALWAYS: frees Xvfb, display claim, scratch game copy
   - It is only meaningful while the simulation is per-frame (before any timing patches).
   - Compare only the visible 32000 bytes of each buffer.
 - Also available: `h.peekw/peekl(addr)`, `h.debug('m $addr n')`, `h.dump(path)`, `h.vbl()`, `h.set_cpuclock(16)`.
+
+## Equality gates (patched vs unpatched)
+- **Match frames by world turn, not by flip number**, once a patch changes pass length: the faster run reaches the same turn sooner.
+- **Self-test the gate:** the stock game at 8 MHz vs 16 MHz must come out IDENTICAL, or the gate compares timing noise. Populous 2's stock game shows a hover-changed pointer shape one VBL later on 8 of 128 turns depending on speed; the gate must skip exactly those.
+- **Negative controls:** every gate must FAIL on a deliberately broken patch (a wrong blitter pass, a nopped compare). Paste both results.
+- **Hash the world RAM every turn**, and compare all RAM at a few checkpoints. Exclude only ranges you can explain (TOS timers, the VBL counter, the patch sites, dead stack, a sample player that advances in real time).
+- **Drive input as a pure function of the turn** (a test patch that walks the pointer and scrolls), so both runs see the same input.
 
 ## Input
 - **Mouse:** `h.rel(dx, dy)` moves about 1 host px per screenshot px (2× ST px). The pointer is NOT grabbed: past the window edge (about ±400 x, ±290 y from centre) motion is lost. `h.center()` warps it back, but the game sees that as motion.
@@ -69,6 +77,7 @@ finally: h.close()        # ALWAYS: frees Xvfb, display claim, scratch game copy
   - conditions combine: `b VBL > N && pc = $X`.
 - **Writes and loads:** `w $addr $xx $yy`, `loadbin file $addr`, `savebin file $addr $len`.
 - **Long command lines are silently truncated**: a 300-char `loadbin` path just printed the usage text. Keep paths short.
+- **A debugger write to the operand of the instruction at PC is ignored** (68000 prefetch). Redirect a `jsr` from a breakpoint on an EARLIER instruction.
 - `--trace gemdos` logs every file a loader opens, seeks and reads.
 - **Remote-control shortcuts:** `hatari-shortcut screenshot|savemem`, `hatari-event keypress N`, `hatari-option --cpuclock 16`. There is no `debug` shortcut; enter the debugger only via `:trace` breakpoints.
 

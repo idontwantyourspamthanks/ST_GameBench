@@ -52,3 +52,15 @@ Reference project: `games/in_progress/midwinter2`. Its `PLAN.md` holds phases P0
 - **Agents' "dead code" or "validated" claims were wrong more than once.** Re-run a live check before building on one.
 - **Long debugger lines truncate silently.** Patch-tool site tables and payload size have limits; check build errors.
 - **`/tmp` is RAM.** Never copy whole projects per emulator run.
+
+## Machine checklist (every game; learned on Powermonger and Populous)
+- **Falcon: YM register mirrors bus-error.** Sample players often write `$ff8800/02/04/06` with `movep.l d1,-$7800(a0)`; `$ff8804` and `$ff8806` crash a Falcon. Scan both programs for these and patch them Falcon-only (`fal_ym`, `pop_fal_ym`).
+- **TT/Falcon load Pexec'd programs at a different base**: relocate patches (see pp-haga-conversions).
+- **ST/Mega ST/TT have no blitter or enhanced joystick ports**: probe safely (cookie `_MCH`, or a bus-error-guarded read) and keep a CPU path.
+- **60 Hz**: some games refuse it or crash (Populous 2 checks `$ff820a` and draws garbage when forced). Test a 60 Hz STE (TOS 2.06 US) and the TT.
+- **Blitter HOG mode starves the IKBD ACIA**: long bursts lose mouse bytes, the parser reads garbage packets, and the game can bus-error. Keep bursts short (about 1,200 cycles) and add the position clamp (Powermonger `buserr.md`, Populous 2 `pop2_clamp`).
+
+## Estimating gains
+- **A hot-path share is not the gain.** Populous 2's sprite blit was 10% of a frame; the exact blitter port saved 4%, because the game's own front end stays and exact checks cost cycles. Promise measured numbers only.
+- **Check a study's model against the real routine** before designing on it (trace the routine's real outputs; Populous's land-score claim held, but only the trace proved it).
+- **Prefer a stateless rewrite to a cache** when a cache needs many invalidation hooks: Populous's inlined land score took 27 of 33 points with no state, while the cache needed hooks on 41 store sites for 4 more points.
