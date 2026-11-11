@@ -6,8 +6,6 @@ Stages: `games/queue/` (not started) -> `games/in_progress/` (being worked on) -
 
 | Title | Slug | Loader | Source folder | Notes |
 |---|---|---|---|---|
-| Populous | populous | PP's HAGA conversion | POPULOUS |  |
-| Populous 2 | populous-2 | PP's HAGA conversion | POPUL2 | alts: POPUL2H |
 | Formula One Grand Prix (F1GP) | f1gp | PP's HAGA conversion | F1GPU | alts: F1GP_GX |
 | F19 Stealth Fighter | f19-stealth-fighter | PP's HAGA conversion | F19SF |  |
 | Armour-Geddon | armour-geddon | Gamex | ARMOURG |  |
