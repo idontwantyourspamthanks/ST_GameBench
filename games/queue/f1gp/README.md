@@ -1,0 +1,37 @@
+# Formula One Grand Prix (F1GP)
+
+- Slug: `f1gp`
+- Status: **queued, not started**
+- VHD source: `Atari3gb.vhd`, partition at offset 1380526080 (letters 0-F), folder ::/F/F1GPU
+- Local copy: `originals/F1GPU` (git-ignored)
+- Loader: plain files / cracked PRG
+- Machine/RAM notes: HAGA, 1MB min.
+- Alternatives found on VHD (not copied): F1GP_GX (Gamex, START.TOS+.PCH), F1_GP (older plain/FIC layout with GAME.PRG)
+- Total: 22 files, 22250903 bytes
+
+## Files
+
+| path | bytes | md5 |
+|---|---:|---|
+| F1GPU/AS240R.BMP | 77878 | 8e1664728575b86765580f2dd4fc0e77 |
+| F1GPU/ASO | 3192160 | 9016d319c6ea7ebd585d3115d051e724 |
+| F1GPU/CONV_IMG.TOS | 318 | a5398cd7ce7d40ac9b38a57196b74e3f |
+| F1GPU/FAS240.HST | 61440 | 001c4d325f5334bfe8c49a8b5e7c5ae8 |
+| F1GPU/FILES/GP2 | 585112 | eb82d1ceb121584c117d73510b04dd80 |
+| F1GPU/FILES/GP4 | 455166 | 9ddef9891d17010bdc9835a7ecd92909 |
+| F1GPU/FILES/GPD | 737280 | 88cba80409604be5885486d60cce2f58 |
+| F1GPU/FILES/IRD | 211346 | 40ce03343243c52d9f5d516886c85e17 |
+| F1GPU/FILES/PL2 | 100424 | f1fb9f6dc920bcc9776e352dcd3252a4 |
+| F1GPU/FIN273.HST | 69888 | 283d9a34e83895cd8c4c0892e1f277d0 |
+| F1GPU/GAME.TOS | 29066 | 337125828e0833be9ce4d9c108071968 |
+| F1GPU/HAGA | 13448 | b34607ed9baecc5982a5a01ecaf5a3dd |
+| F1GPU/IN240R.BMP | 77878 | eaf294e60f0773e804de0e9bb9b4c27e |
+| F1GPU/INFO.TOS | 16470 | 5769a4e5caf2ef8bf5ec26a863a0b9cd |
+| F1GPU/INTRO.TOS | 17866 | 40899e394f777fb26fdd8e8ce154447b |
+| F1GPU/KEYS.TXT | 2506 | 4a54ba272003aac99b8bca7be58133bc |
+| F1GPU/LAS240.HST | 61440 | 95814ed48e58d180e22c7b7f4be8fb3e |
+| F1GPU/LIN273.HST | 69888 | 2e56569a2123d9e451460854d1c3079a |
+| F1GPU/LOG.TXT | 786 | e29cc200d0ec942929ab67494a9c6e60 |
+| F1GPU/MP_F1GP.TXT | 51941 | f728e99db5acb26093b76e2bff59bacb |
+| F1GPU/README.TXT | 1834 | a5c70fb5cf43016b22c290975a9699df |
+| F1GPU/SIL1992.LAV | 16416768 | cde40b26889f7f2b72102ed132469379 |
