@@ -8,7 +8,7 @@ When work on a game starts, move its folder from `games/queue/` to `games/in_pro
 |---|---|---|---|---|
 | Populous | populous | PP's HAGA conversion | POPULOUS |  |
 | Populous 2 | populous-2 | PP's HAGA conversion | POPUL2 | alts: POPUL2H |
-| Formula One Grand Prix (F1GP) | f1gp | plain files / cracked PRG | F1GPU | alts: F1GP_GX |
+| Formula One Grand Prix (F1GP) | f1gp | PP's HAGA conversion | F1GPU | alts: F1GP_GX |
 | F19 Stealth Fighter | f19-stealth-fighter | PP's HAGA conversion | F19SF |  |
 | Armour-Geddon | armour-geddon | Gamex | ARMOURG |  |
 | Advanced Tactical Fighter 2 (ATF 2) | atf-2 | PP's HAGA conversion | ATF2 |  |
@@ -46,3 +46,7 @@ When work on a game starts, move its folder from `games/queue/` to `games/in_pro
 | Speedball 2 | speedball-2 | PP's HAGA conversion | SPEEDB2 |  |
 | Xenon 2 | xenon-2 | PP's HAGA conversion | XENON2 | alts: XENON2A |
 | Zool | zool | PP's HAGA conversion | ZOOL | alts: Zool AGA variant not looked for beyond ZOOL; only ZOOL exists in Z. |
+| Mouse Trap | mouse-trap | floppy (FAT, AUTO folder) | user floppies | 2 images |
+| Baby Jo - Going Home | baby-jo | floppy (FAT) | user floppies | 6 cracks, base not chosen |
+| Castle Master (+ II: The Crypt) | castle-master | floppy (FAT; Empire crack non-FAT) | user floppies | 3 dumps + sequel |
+| Austerlitz | austerlitz | floppy (FAT) | user floppies | 1 image |

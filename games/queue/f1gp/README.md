@@ -4,7 +4,7 @@
 - Status: **queued, not started**
 - VHD source: `Atari3gb.vhd`, partition at offset 1380526080 (letters 0-F), folder ::/F/F1GPU
 - Local copy: `originals/F1GPU` (git-ignored)
-- Loader: plain files / cracked PRG
+- Loader: PP's HAGA conversion
 - Machine/RAM notes: HAGA, 1MB min.
 - Alternatives found on VHD (not copied): F1GP_GX (Gamex, START.TOS+.PCH), F1_GP (older plain/FIC layout with GAME.PRG)
 - Total: 22 files, 22250903 bytes
