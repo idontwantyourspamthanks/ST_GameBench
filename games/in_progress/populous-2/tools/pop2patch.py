@@ -124,6 +124,9 @@ MARKER = PB - 8
 CORE_END = PB + 0x100                 # trampoline: PB .. PB+$FF
 TABLE, TABLE_END = PB + 0x7000, PB + 0x8000        # site table + orig/new byte pool: 4 KB at the top
 BLOB_MIN, BLOB_MAX = CORE_END, TABLE - 1            # blob/data orgs, inclusive last byte
+# DATA_ONLY: $88000-$8FFFF is reserved for display-patch data (pop2_ptr_a, pop2_spr).  It is NOT in the payload image (the copy routine
+# does not zero it): patches reserve it with `; data: $88000 N` (overlap-checked like every `; data:`) and must init lazily behind a magic long.
+DATA_ONLY = (0x88000, 0x90000)
 PTRS_LEN = 8
 
 # The pc-relative `lea d(pc),aN` in RUNME that address bss: text offset -> (register, text-relative target).
@@ -419,6 +422,8 @@ def build_image(patches: list[Patch]):
             placed.append((org, org + len(b)))
             img[org - PB: org - PB + len(b)] = b
         for a, l in p.data:
+            if not ((BLOB_MIN <= a and a + l <= BLOB_MAX + 1) or (DATA_ONLY[0] <= a and a + l <= DATA_ONLY[1])):
+                raise SystemExit(f"{p.name}: data ${a:x}+{l} is outside the blob area ${BLOB_MIN:x}-${BLOB_MAX:x} and the data-only range ${DATA_ONLY[0]:x}-${DATA_ONLY[1] - 1:x}")
             placed.append((a, a + l))
     placed.sort()
     for (a0, a1), (b0, b1) in zip(placed, placed[1:]):

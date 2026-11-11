@@ -67,6 +67,8 @@ There is no load hook and no deferred phase: everything the game runs on is in R
 | `$80000-$800FF` | core: the trampoline (`patches/core.s`) |
 | `$80100-$86FFF` | blob code/data (`PB+$100` and up) |
 | `$87000-$87FFF` | site table (16 B/site + a 0 terminator) + orig/new byte pool (4 KB) |
+| `$84000-$86FFF` | display patches: `pop2_spr` (`$84000-$853xx`), `pop2_ptr_a/b` (`$86000`, `$86200`), `pop2_clamp` (`$86400`), test drivers `test_walk*` (`$86800`, data `$86f00`); work/notes/display.md |
+| `$88000-$8FFFF` | **data only, outside the payload image** (declare it with `; data: $88000 N`; the copy routine does not zero it, so a patch must init lazily behind a magic long): `pop2_ptr_a` `$88000-$881FF`, `pop2_spr` `$88200-$8FFFF` (blitter mode, cache tags, 16 slots). Free in play at 2 and 4 MB: delivery.md section 3 covers `$88000-$f7fff` |
 
 Chosen because it is free in play (see "Free RAM" in `work/notes/delivery.md`): it sits above the game image
 (which ends at `$7b380`) and below everything PP uses (`$81000` chunk cache at 4 MB, `$101000` P2D image,
