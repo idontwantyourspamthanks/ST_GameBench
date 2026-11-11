@@ -10,6 +10,13 @@ Facts the plan rests on: frame-coupled (6.0 turns/s busy, 8.9 at the start, 8 MH
 - Fixed tick: 6.25 turns per real second (8 VBLs at 50 Hz).
 - Floppy build wanted as well as HD (the game fits one disk).
 
+## Delivery findings (2026-11-11, `work/notes/delivery.md`)
+
+- Done: `tools/pop2patch.py`, payload `$80000-$87FFF`, free RAM proven at 2 and 4 MB, `pop2_credit` (main menu), HD and floppy builds (720K, one disk), `tools/package.sh`.
+- Works: STE 2/4 MB, Mega STE 4 MB (TOS 1.62, 50 Hz), Falcon 4 MB (TOS 4.04, 50 Hz), the floppy build on STE 2 MB.
+- **60 Hz is broken in the stock game**: "SORRY PAL MACHINES ONLY" (`$1836`/`$183c`), and with that branch forced (`pop2_ntsc`, `default: no`) the game draws garbage and dies; the same on the TT (60 Hz) with zero patches. Making it run at 60 Hz is a new work item, with the fixed tick (item 5).
+- **In-game SAVE/LOAD is broken in PP's build** (bus error; PP's README says so): PP replaced the disk layer at `$36efc` with a stub. HAGA's statesave works on HD only. Fixing it means routing the game's save through PP's file service (`pop2_save_a/b` are a partial start, `default: no`). New work item.
+
 ## Ranked work
 
 Gains are shares of the busy frame at 8 MHz and [INFERENCE] unless a measurement is named; days are [INFERENCE].
