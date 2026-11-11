@@ -1,5 +1,5 @@
 ; name: p7_skip_render
-; default: no
+; default: yes
 ; site: $1dbbe
 ; orig: 203866e604800000 6400
 ; phase: deferred

@@ -36,9 +36,15 @@ WARROOM_SNAPSHOT = GAME_DIR / "work" / "snapshots" / "warroom_campaign.sav"
 def _enter_raids_from_hall(h: Hatari, level: tuple[int, int] = (175, 390)):
     """Corridor -> RAIDS door -> level of play -> island map."""
     for _ in range(4):
-        h.goto(300, 230); h.click(); time.sleep(10)          # RAIDS door
-        if h.peekw(ISLAND_ID) == 0xFFFF and _screen_has_levels(h):
-            break
+        h.goto(300, 230); h.click()                           # RAIDS door (a Hatari TT needs 10-60 s to load the screen: poll)
+        t0 = time.time()
+        while time.time() - t0 < 60:
+            time.sleep(3 if time.time() - t0 > 9 else 10 - (time.time() - t0))
+            if h.peekw(ISLAND_ID) == 0xFFFF and _screen_has_levels(h):
+                break
+        else:
+            continue
+        break
     else:
         raise RuntimeError("never reached the level-of-play screen")
     h.goto(*level); h.click(); time.sleep(12)                # NOVICE -> select-mission map
@@ -49,7 +55,9 @@ def _screen_has_levels(h: Hatari) -> bool:
     """The level-of-play screen is the only one with a big black-suit portrait and
     four face buttons; test the 'SELECT LEVEL OF PLAY' caption row for white text."""
     from PIL import Image
-    img = Image.open(h.shot()).convert("RGB").crop((290, 322, 540, 346))
+    img = Image.open(h.shot()).convert("RGB")
+    ox, oy = (96, 58) if img.width == 640 else (0, 0)          # TT shots have no border
+    img = img.crop((290 - ox, 322 - oy, 540 - ox, 346 - oy))
     white = img.convert("L").point(lambda v: 255 if v > 200 else 0).histogram()[255]
     return white > 150
 
@@ -86,7 +94,10 @@ def _hud_up(h: Hatari) -> bool:
     """True once the 3D-view HUD frame is on screen (sky-blue / dark-blue panel pixels)."""
     from PIL import Image
     img = Image.open(h.shot()).convert("RGB")
-    return img.getpixel((100, 100)) == (0, 170, 238) and img.getpixel((730, 100)) == (0, 34, 136)
+    if img.width == 640:                                       # Hatari's TT draws one palette per frame: no HUD colours to test; use the view word
+        return h.peekw(VIEW) == 2
+    ox, oy = 0, 0
+    return img.getpixel((100 - ox, 100 - oy)) == (0, 170, 238) and img.getpixel((730 - ox, 100 - oy)) == (0, 34, 136)
 
 
 def enter_raid(h: Hatari, x: int, y: int, wait: float = 360, settle: float = 3, brief_shot: str | None = None) -> dict:

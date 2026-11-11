@@ -1,5 +1,5 @@
 ; name: p3c_sim
-; default: no
+; default: yes
 ; site: $31570
 ; orig: 4eb900033bca
 ; note: Second site of p3cp_head (and of the p3c_head alternative; work/notes/vehicles_p3b.md; needs one of them, which carries the code).  The frame loop calls the player sim

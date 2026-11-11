@@ -30,14 +30,19 @@ try:
     f = h.fps(1000)
     d1 = memb(h, 0xb6000, 64) if live else b''
     sk = (uw(d1[0x14:0x18]) - uw(d0[0x14:0x18])) if live and len(d1) >= 0x18 else None
-    # side measurement: ticks per second (hits of $31586, once per 5 Hz tick) over 500 VBL
-    lf = h.R / 'tk.txt'; lf.write_text('e VBL\n'); h.debug('b all', 0.3); st = len(h._logtext()); v0 = h.vbl()
+    # side measurement: ticks per second (hits of $31586, once per 5 Hz tick) over 500 VBL; the rate comes from the tick_vbl clock ($b3400, 1/300 s, real time)
+    # when the patch set is live (the VBL rate may be 50 OR 60 Hz: a fixed 50 Hz divisor under-reports a 60 Hz machine by 17 %)
+    lf = h.R / 'tk.txt'; lf.write_text('e VBL\nm $b3400 4\n'); h.debug('b all', 0.3); st = len(h._logtext()); v0 = h.vbl()
     h.cmd(f'hatari-debug b pc = $31586 :trace :file {lf}'); time.sleep(0.2)
     h.cmd(f'hatari-debug b VBL > {v0 + 500} :trace :once'); time.sleep(0.2)
     t0 = time.time()
     while 'Removed CPU breakpoint' not in h._logtext()[st:] and time.time() - t0 < 120: time.sleep(0.5)
-    vb = [int(x) for x in _re.findall(r'#(\d+) \(dec\)', h._logtext()[st:])]; h.debug('b all', 0.3)
-    tps = round((len(vb) - 1) * 50.0 / max(1, vb[-1] - vb[0]), 2) if len(vb) > 2 else None
+    # one (VBL, clock) pair per $31586 hit: the pairing drops the "#VBL" line of the window-END breakpoint, which a bare `#(\d+) \(dec\)` scan counts as a tick
+    # (that extra entry was the 4.4-4.65 ticks/s artefact: n/(span + tail) instead of n/span)
+    out = h._logtext()[st:]; h.debug('b all', 0.3)
+    pr = [(int(a), int(b.replace(' ', ''), 16)) for a, b in _re.findall(r'#(\d+) \(dec\)[^\n]*\n> m \$b3400 4\n0*b3400:\s+((?:[0-9a-f]{2} ){4})', out, _re.I)]
+    if live and len(pr) > 2: tps = round((len(pr) - 1) * 300.0 / max(1, pr[-1][1] - pr[0][1]), 2)      # tick_vbl clock = real time
+    else: tps = round((len(pr) - 1) * 50.0 / max(1, pr[-1][0] - pr[0][0]), 2) if len(pr) > 2 else None   # unpatched game: 50 Hz assumed
     print(f"FPS {cfg} {snap} type {ty} {mhz}MHz {scen}: {f['fps']:.2f} fps ({f['flips']} flips/1000 VBL, {f['vbls_per_frame']:.1f} VBL/frame) skip-count {sk} ticks/s {tps} slk {slk}")
 finally:
     h.close()

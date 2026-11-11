@@ -1,0 +1,16 @@
+ste insert-graphics prompt after 69 s
+ste game loop running (p3cp PH word 2) 40 s after the loading screen
+ste boot to the 3D view: 392 s type 13 marker b'MWPO'
+ste heli {"marker": "b'MWPO'", "type": 13, "view": 2, "hook": "4eb9000b8000", "head": "4eb9000b81004e71", "ticks": 36, "ticks_per_s": 4.986, "vbl_per_s": 50.0, "PH_samples": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], "moved": [25540, 25600, 23340, 25600], "posedump": [[21175, 22765, 25677, 810, 0], [21185, 22740, 25683, 810, 0], [21195, 22715, 25689, 810, 0], [21205, 22690, 25695, 810, 0], [21215, 22665, 25701, 810, 0], [21224, 22640, 25707, 810, 0], [21234, 22615, 25713, 810, 0], [21244, 22590, 25719, 810, 0], [21253, 22565, 25725, 810, 0], [21263, 22540, 25731, 810, 0], [21274, 22515, 25737, 810, 0], [21285, 22490, 25743, 810, 0]], "smooth_turn": {"flips": 12, "pose_changes": 11, "heading_changes": 0, "heading_span": 0, "distinct": 12, "mean_gap_vbl": 10.0, "max_gap_vbl": 11}, "strip": "/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_p3b/cold/fl_ste_heli.png", "fps": {"8": 5.2, "16": 10.9, "32": 25.1}, "bus_error": false, "marker_after": "b'MWPO'", "marker_boot": "4d57504f"}
+ste altitude $764c before the climb: 1945
+ste climbing: altitude $764c 1945
+ste climbing: altitude $764c 1945
+ste climbing: altitude $764c 1945
+ste climbing: altitude $764c 1945
+ste climbing: altitude $764c 1945
+ste climbing: altitude $764c 1945
+ste climbing: altitude $764c 1945
+ste climbing: altitude $764c 1945
+ste Esc from the Helicopter: type sequence (type, first flip VBL): [(5, 25057)]
+ste type 5 flips 439 flips whose pose (X,Y,heading,alt) differs from the previous flip 0 mean gap VBL 2.0
+ste foot {"marker": "b'MWPO'", "type": 5, "view": 2, "hook": "4eb9000b8000", "head": "4eb9000b81004e71", "ticks": 37, "ticks_per_s": 5.0, "vbl_per_s": 50.0, "PH_samples": [4, 1, 1, 1, 1, 1, 1, 1, 1, 5, 1, 1], "moved": [19846, 26464, 19846, 27520], "posedump": [[27591, 19846, 27808, 12, 0], [27601, 19846, 27820, 12, 0], [27611, 19846, 27832, 12, 0], [27620, 19846, 27844, 12, 0], [27630, 19846, 27856, 12, 0], [27641, 19846, 27868, 12, 0], [27651, 19846, 27880, 12, 0], [27661, 19846, 27892, 12, 0], [27670, 19846, 27904, 12, 0], [27676, 19846, 27911, 12, 0], [27683, 19846, 27916, 12, 0], [27691, 19846, 27928, 12, 0], [27701, 19846, 27940, 12, 0]], "smooth_turn": {"flips": 13, "pose_changes": 12, "heading_changes": 0, "heading_span": 0, "distinct": 13, "mean_gap_vbl": 9.17, "max_gap_vbl": 11}, "strip": "/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_p3b/cold/fl_ste_foot.png", "fps": {"8": 5.7, "16": 12.3, "32": 25.0}, "bus_error": false, "marker_after": "b'MWPO'"}

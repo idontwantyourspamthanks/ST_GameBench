@@ -4,14 +4,17 @@ Release v@VERSION@ enhanced by dad_prg
 Changes vs the original HAGA release:
 - Game speed is fixed to real time: the world no longer speeds up on
   faster machines (Mega STE 16 MHz, TT, Falcon, accelerators).
-- On foot, movement is smooth at whatever frame rate the machine manages.
+- Moving and turning is smoother in every vehicle and on foot: the game's 5 steps per
+  second are unchanged, but the view is redrawn between them as often as the machine
+  can manage, at a pose extrapolated from the last step (no game logic runs in the
+  extra frames; positions at each step are identical to the original game's).
 - About 20% faster 3D display on a stock 8 MHz ST/STE (18-23% in tests),
   pixel-identical: less wasted work on hidden terrain and cockpit overdraw.
 - Direct controls: the mouse turns only while it moves; joystick/keyboard
   turn at a constant rate while held and stop on release.
 - No grey fading while loading.
-- Standing still on foot, the 3D view is only redrawn when something in it
-  changes (about 25 fps instead of 5 while standing; identical picture).
+- Standing still, the 3D view is only redrawn when something in it changes
+  (about 25 fps instead of 5 in the quiet scenes; identical picture).
 - Floppy set: the manual security check is skipped, as in the HD release.
 - fixed: >=4 MB hang. With 4 MB or more RAM on an ST/STE/Mega STE, earlier
   patched builds stopped at the orange "Flames of Freedom" title. PP's loader

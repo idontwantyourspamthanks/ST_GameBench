@@ -10,15 +10,43 @@ import coldboot
 from coldboot import measure, posedump, smooth, strip, OUT
 from stharness import TOS
 CFG = {'ste': dict(machine='ste', tos=TOS['1.62'], memsize_kb=1024, extra=[], clock=None),
-       'tt': dict(machine='tt', tos=TOS['3.06'], memsize_kb=4096, extra=[], clock=32)}
+       'tt': dict(machine='tt', tos=TOS['3.06'], memsize_kb=4096, extra=['--mmu', 'true'], clock=32)}
 FT = GAME / 'work' / 'floppy_tests'
 
 def build(dst):
     names = cand_names() + ['floppy_copybuf', 'mw2_credit']
     subprocess.run([sys.executable, str(GAME / 'tools/mw2patch.py'), 'build', '--floppy', '--only', *names, '--out', str(dst)], check=True, cwd=GAME, stdout=subprocess.DEVNULL)
 
+def sdiff(h, ref, box):
+    """run_cell.py's comparison: the reference images are FULL ST screenshots (832x588); both are cropped to `box` (ST-screenshot coordinates; a TT shot has no border: shifted)"""
+    from PIL import Image, ImageChops, ImageStat
+    img = Image.open(h.shot()).convert('RGB')
+    ib = (box[0] - 96, box[1] - 58, box[2] - 96, box[3] - 58) if img.width == 640 else box
+    d = ImageChops.difference(img.crop(ib), Image.open(ref).convert('RGB').crop(box))
+    return sum(ImageStat.Stat(d).mean) / 3
+
 def matches(h, ref, box, tol=4.0):
-    return h.screen_matches(ref, box, tol=tol)
+    return sdiff(h, ref, box) < tol
+
+def esctrace(h, vbls):
+    """arm a per-flip dump, press Esc (hold 0.6 s) from the current vehicle, return [(vbl, X, Y, heading, alt, type)] over `vbls` VBL"""
+    lf = h.R / 'esc.txt'; lf.write_text('e VBL\nm $66e6 8\nm $6742 2\nm $764c 2\nm $6220 2\n')
+    h.debug('b all', 0.3); st = len(h._logtext()); v0 = h.vbl()
+    h.cmd(f'hatari-debug b ($ff8201).b ! ($ff8201).b :trace :file {lf}'); time.sleep(0.2)
+    h.cmd(f'hatari-debug b VBL > {v0 + vbls} :trace :once'); time.sleep(0.2)
+    h._xdo('keydown', '--window', h.win, 'Escape'); time.sleep(0.6)
+    h._xdo('keyup', '--window', h.win, 'Escape')
+    t = time.time()
+    while 'Removed CPU breakpoint' not in h._logtext()[st:]:
+        if time.time() - t > 900: break
+        time.sleep(0.5)
+    out = h._logtext()[st:]; h.debug('b all', 0.3)
+    rows = []
+    pat = r'#(\d+) \(dec\)[^\n]*\n> m \$66e6 8\n0*66e6:\s+((?:[0-9a-f]{2} ){8})[^\n]*\n> m \$6742 2\n0*6742:\s+(\w\w) (\w\w)[^\n]*\n> m \$764c 2\n0*764c:\s+(\w\w) (\w\w)[^\n]*\n> m \$6220 2\n0*6220:\s+(\w\w) (\w\w)'
+    for m in re.finditer(pat, out, re.I):
+        b = bytes.fromhex(m.group(2).replace(' ', ''))
+        rows.append((int(m.group(1)), sw(b[:4]), sw(b[4:]), int(m.group(3) + m.group(4), 16), int(m.group(5) + m.group(6), 16), int(m.group(7) + m.group(8), 16)))
+    return rows
 
 def main():
     mach = sys.argv[1]; c = CFG[mach]
@@ -37,7 +65,7 @@ def main():
         ins = FT / 'ref_insert_graphics.png'; box = (280, 360, 560, 420)
         while time.time() - t0 < 300:
             time.sleep(4)
-            if matches(h, ins, box, 0.3 * 8): break
+            if matches(h, ins, box, 0.3): break
         else:
             raise RuntimeError('never saw the Insert Graphics Disk prompt')
         print(mach, 'insert-graphics prompt after %d s' % (time.time() - t0), flush=True)
@@ -57,7 +85,7 @@ def main():
         def wait_match(t, timeout):
             t0 = time.time()
             while time.time() - t0 < timeout:
-                if h.screen_matches(t[0], t[1], tol=4.0): return True
+                if matches(h, t[0], t[1], 4.0): return True
                 time.sleep(3)
             return False
         def step(point, target, timeout=40, key=None):
@@ -84,20 +112,34 @@ def main():
             time.sleep(5)
         else:
             raise RuntimeError('did not reach the 3D view')
+        t1 = time.time()
+        while h.peekw(0xb42e6) == 0 and time.time() - t1 < 900: time.sleep(5)      # $6220/$700a are already set on the vehicle wireframe loading screen (slow on a TT): wait for the game loop (p3cp PH word)
+        print(mach, 'game loop running (p3cp PH word %d) %d s after the loading screen' % (h.peekw(0xb42e6), time.time() - t1), flush=True)
         time.sleep(30)
         print(mach, 'boot to the 3D view: %d s' % (time.time() - t0), 'type', h.peekw(0x6220), 'marker', memb(h, 0xb2ff8, 4), flush=True)
         if c['clock']: h.set_cpuclock(c['clock'])
-        d = measure(h, c, f'fl_{mach}_heli')
-        d['marker_boot'] = res['marker']
-        print(mach, 'heli', json.dumps(d, default=str), flush=True)
-        # Esc from the Helicopter -> Parachute -> (landing) on foot
+        if '--esc-first' not in sys.argv:
+            d = measure(h, c, f'fl_{mach}_heli')
+            d['marker_boot'] = res['marker']
+            print(mach, 'heli', json.dumps(d, default=str), flush=True)
+        # Esc from the Helicopter -> Parachute -> (landing) on foot: per-flip trace (VBL, X, Y, heading, altitude $764c, type) from just before the Esc.
+        # --esc-first: Esc while the Helicopter still stands at its start altitude (2000; after the forward flight of measure() it is down at the terrain, 1945, and Esc there gives on foot (5) directly;
+        # a poke of $764c does not survive: p3cp's fixup restores the pose words at every PH 1)
         h.set_cpuclock(c['clock'] or 8)
-        for _ in range(8):
-            h.key('Escape', hold=0.6); time.sleep(2)
-            if h.peekw(0x6220) != 13: break
-        t1 = h.peekw(0x6220); time.sleep(40); t2 = h.peekw(0x6220)
-        print(mach, 'Esc from the Helicopter: type', t1, '-> after 40 s', t2, flush=True)
-        if t2 == 5:
+        print(mach, 'altitude $764c before Esc:', h.peekw(0x764c), flush=True)
+        rows = esctrace(h, 900)
+        types = []
+        for r in rows:
+            if not types or types[-1][0] != r[5]: types.append((r[5], r[0]))
+        res['esc_types'] = types
+        print(mach, 'Esc from the Helicopter: type sequence (type, first flip VBL):', types, flush=True)
+        for ty in (17, 5):
+            sub = [r for r in rows if r[5] == ty]
+            if len(sub) > 2:
+                ch = sum(1 for x, y in zip(sub, sub[1:]) if x[1:5] != y[1:5])
+                print(mach, 'type', ty, 'flips', len(sub), 'flips whose pose (X,Y,heading,alt) differs from the previous flip', ch, 'mean gap VBL', round((sub[-1][0] - sub[0][0]) / (len(sub) - 1), 2), flush=True)
+        if h.peekw(0x6220) == 5:
+            time.sleep(5)
             d2 = measure(h, c, f'fl_{mach}_foot'); print(mach, 'foot', json.dumps(d2, default=str), flush=True)
     except Exception as e:
         print(mach, 'ERROR', repr(e), traceback.format_exc()[-800:], flush=True)

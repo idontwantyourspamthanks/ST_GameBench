@@ -80,6 +80,7 @@ class Hatari:
                  game_dir: Path = GAME_DIR, extra: list[str] | None = None):
         # Every instance gets its own scratch dir and Xvfb display, so several
         # harnesses (e.g. parallel subagents) never share a window, fifo or disk.
+        self.machine = machine
         self.R = Path(workdir or tempfile.mkdtemp(prefix="mw2run-"))
         self.R.mkdir(parents=True, exist_ok=True)
         (self.R / "shots").mkdir(exist_ok=True)
@@ -363,9 +364,10 @@ class Hatari:
 
     def goto(self, x: int, y: int):
         """Move the game pointer to screenshot pixel (x, y): home first, then move
-        relative to it. Home ≈ screenshot (114, 75)."""
+        relative to it. Home ≈ screenshot (114, 75), TT (107, 67)."""
         self.home()
-        self.rel(x - 114, y - 75)
+        hx, hy = (107, 67) if self.machine == 'tt' else (114, 75)    # TT: the picture has no border (measured in work/notes/tt.md)
+        self.rel(x - hx, y - hy)
         time.sleep(0.4)
 
     def boot_to_game(self, mode: str = "M") -> Path:

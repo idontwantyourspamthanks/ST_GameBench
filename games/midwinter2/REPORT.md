@@ -2,6 +2,13 @@
 
 This is a plain-English account of the work on *Midwinter 2: Flames of Freedom* (Atari ST, PP's 2014 hard-disk version). It covers what was changed, why, what the original code was doing at each point we changed, and what each change achieved. The detailed evidence (disassembly, measurements, test logs) is in `work/notes/`. The patch sources are in `patches/`.
 
+## What's new (2026-11-11)
+
+- **Smooth motion in all 22 vehicle types and on foot** (`p3cp_head` + `p3c_sim`), replacing v1.2's Helicopter-only scheme: the game's own 5 steps per second are unchanged and identical to the original's at every step; the view is redrawn between the steps at an extrapolated pose, as often as the machine manages (on foot / Jeep moving: 5 fps at 8 MHz, about 11-13 at 16 MHz, about 22-25 at 32 MHz). An extra frame is only drawn if it ends at most one 50 Hz frame after the next real step is due, so Esc and the mouse are read at the original's moments.
+- **Static-frame skip for every vehicle type** (`p7_skip_render`, was Helicopter-only): standing still, the view is only redrawn when something in it changes.
+- World speed is exactly 5.0 steps per second on every machine tested: STE 8 MHz, plain ST, Mega STE 16 MHz, TT 32 MHz (direct per-step trace on cold boots).
+- Cold boots verified on HD (STE, ST, Mega STE, TT with `--mmu true`) and floppy (STE, TT): section 4a.
+
 ## 1. Starting point
 
 There is no source code: only the compiled 68000 program inside PP's hard-disk conversion. PP's package contains:
@@ -90,14 +97,14 @@ Then it draws the 3D view once and flips screens. Nothing measures real time: ea
 
 Two further defects of the shipped p3b were found: `p3b_alt` used the sin/cos of the sub-pass bank instead of the previous tick's (with a mouse button held, the Helicopter's altitude and speed differed from the 5 Hz game in 25 of 25 groups), and the sea wave phase (advanced by every rendered frame, read by the player sim) made the world result over water depend on the frame rate. p3cp has neither: its sim runs unmodified once per group and the wave phase and wave pointer are restored per group.
 
-### 4a. Type-independent 25 Hz player motion (`p3cp`; proposed default, `default: no` until flipped)
+### 4a. Type-independent 25 Hz player motion (`p3cp`; shipped default since 2026-11-11)
 Details and raw gate output: `work/notes/vehicles_p3b.md`.
 - **Exactness.** Group-end state equal to the 5 Hz reference (option A) for all 22 types x stand / move+turn / move+turn+button: 16 MHz 64 of 66 runs identical (the two others are the reference itself skipping a render: Hovercraft standing, Zeppelin with all inputs; both identical at 32 MHz), 32 MHz 66 of 66 after reruns (a few first-pass runs started one step apart in the test harness and passed on rerun).
 - **Esc and the other keys** are consumed on the same step as in the original: 40 of 40 runs (Jeep -> on foot, Biplane -> Parachute, Speedboat -> Swimming/on foot, Helicopter -> Parachute; 5 phases around the step start; 16 and 32 MHz), with the type change verified.
 - **Speedboat.** The only real divergence found was the sea wave pointer: the game's map-window rebuild resets the pointer (not the phase) and the next step reads it; p3cp now saves and restores both.
 - **Input latency** (first visible change after a mouse impulse, mean, 8 / 16 MHz): on foot 411 / 224 ms (original 382 / 231), Jeep 316 / 196 (329 / 180), Helicopter 291 / 187 (329 / 140).
 - **Redraw rate**, candidate, 1000 VBL, 2 MB STE, standing: on foot 3.8 / 5.6 / 21.7 fps at 8 / 16 / 32 MHz; Jeep 4.2 / 5.9 / 25.1; Biplane 8.3 / 21.1 / 24.9; Helicopter 25.0 / 25.1 / 25.0; Speedboat 4.1 / 7.6 / 17.9; Bus 25.1 / 25.0 / 25.1. Moving: on foot 5.3 / 10.9 / 24.9; Jeep 5.0 / 9.5 / 22.1; Biplane 9.2 / 24.5 / 24.9; Helicopter 5.2 / 10.2 / 23.7; Speedboat 3.4 / 6.3 / 16.1 (all 15 vehicle types: `work/notes/vehicles_p3b.md` section 7). Cost of keeping the steps on the original's schedule: the Helicopter moving at 16 MHz draws 10.2 fps against v1.2's 11.7. At 8 MHz a frame takes 5-14 VBL, so the extra frames can hardly be drawn; the gain there is mainly in the types with light scenes.
-- **Cold boots:** STE 1 MB and Mega STE 4 MB (16 MHz) done: `MWPO`, on foot / Jeep / Speedboat / Biplane / Helicopter all entered, no bus error. TT (`--mmu true`), plain ST and the floppy builds are NOT yet run (`work/notes/vehicles_p3b.md` section 10).
+- **Cold boots (2026-11-11, `work/notes/vehicles_p3b.md` section 12):** HD on STE 1 MB, plain ST (TOS 1.04) 1 MB, Mega STE 4 MB (16 MHz) and TT with `--mmu true` (32 MHz), floppy on STE 1 MB and TT `--mmu true`: `MWPO`, on foot / Jeep / Helicopter entered (floppy: Lobos Helicopter, Esc -> Parachute -> on foot), no bus error. World rate by a direct per-step trace: 4.98-5.05 steps/s on every machine and vehicle (the 4.4-4.65 printed by the earlier test scripts was a measurement artefact: a stray log line counted as a step, and a fixed 50 Hz divisor on the 60 Hz machines). On HD, every presented frame while moving and turning carries a new pose (e.g. TT: 104 flips, 103 new poses; plain ST: 24 flips, 23 new poses); the contact sheets show steady motion with no tearing or flicker.
 
 ## 5. Direct controls
 

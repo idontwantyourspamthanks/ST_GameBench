@@ -93,7 +93,7 @@ Background: work/notes/tick_inventory.md (sections 4-6), work/notes/timing.md. T
 logic block once per rendered frame, so the world speeds up with the frame rate. The patches below run the world at a
 fixed 5 Hz (the original speed on a 1 MB 8 MHz STE, about one tick per 10 VBL) and show the player's motion at 25 Hz.
 - `tick_vbl` ($262d0): a free-running VBL clock at $B3400 in the VBL handler (blob $B3700), in units of 1/300 s (+6 per 50 Hz VBL, +5 per 60 Hz VBL).
-- `p3cp_head` ($31486, `default: no` until flipped): the scheduler, PREDICT-AHEAD. Per group of five 40 ms passes (PH = 1..5, 60 clock units):
+- `p3cp_head` ($31486, `default: yes`): the scheduler, PREDICT-AHEAD. Per group of five 40 ms passes (PH = 1..5, 60 clock units):
   PH 1 is the ORIGINAL tick, unmodified and complete (pre-calls, player sim, post-calls, render, flip, post-flip handler), so the world, the
   player and the picture at PH 1 are the unpatched game's for every vehicle type. PH 2-5 show the pose extrapolated from the tick that just ran
   (`T_end + (T_end - T_start) * (PH-1)/5`), refresh the view words, and run the HUD gauge draw + render + flip; no game logic runs in them. The
@@ -219,6 +219,6 @@ floppy "Insert Graphics Disk" prompt and on the HD loading screen. The palette a
   `ram_boot_fl1mb.bin` differs only at PP's patch addresses).
 
 ## Vehicle work (2026-11-10; `work/notes/vehicles_p3b.md`)
-- Candidate default set (the three `default: no` patches the lead flips: `p3cp_head`, `p3c_sim`, `p7_skip_render`; everything else listed here is already `yes`): see the table in `work/notes/vehicles_p3b.md` section 9.
+- Default set: `p3cp_head`, `p3c_sim` and `p7_skip_render` are `default: yes` since 2026-11-11 (cold boots on STE, Mega STE, TT, plain ST, floppy STE/TT: `work/notes/vehicles_p3b.md` sections 9-12).
 - `p7_skip_render`: the static-frame skip, now gated by a per-type table (all 22 types) instead of the Helicopter-only test of v1.2.
 - `p4_hud_crop_{clip,fill,replay}` and the `_t` variants: the REJECTED visual-tradeoff crop experiment; they stay `default: no`.

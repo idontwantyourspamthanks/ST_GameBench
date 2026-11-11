@@ -1,0 +1,8 @@
+ste insert-graphics prompt after 69 s
+ste game loop running (p3cp PH word 5) 40 s after the loading screen
+ste boot to the 3D view: 392 s type 13 marker b'MWPO'
+ste altitude $764c before Esc: 2000
+ste Esc from the Helicopter: type sequence (type, first flip VBL): [(13, 19960), (17, 19990), (5, 20469)]
+ste type 17 flips 15 flips whose pose (X,Y,heading,alt) differs from the previous flip 12 mean gap VBL 33.57
+ste type 5 flips 157 flips whose pose (X,Y,heading,alt) differs from the previous flip 0 mean gap VBL 2.35
+ste foot {"marker": "b'MWPO'", "type": 5, "view": 2, "hook": "4eb9000b8000", "head": "4eb9000b81004e71", "ticks": 37, "ticks_per_s": 5.042, "vbl_per_s": 50.0, "PH_samples": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], "moved": [25583, 25600, 24452, 25600], "posedump": [[22495, 24140, 25637, 812, 0], [22507, 24127, 25640, 812, 0], [22521, 24101, 25646, 812, 0], [22533, 24088, 25649, 812, 0], [22546, 24075, 25652, 812, 0], [22559, 24062, 25655, 812, 0], [22573, 24036, 25661, 812, 0], [22586, 24023, 25664, 812, 0], [22599, 24010, 25667, 812, 0]], "smooth_turn": {"flips": 9, "pose_changes": 8, "heading_changes": 0, "heading_span": 0, "distinct": 9, "mean_gap_vbl": 13.0, "max_gap_vbl": 14}, "strip": "/home/ryan/Code/AtariST/gamebench/games/midwinter2/work/vehicles_p3b/cold/fl_ste_foot.png", "fps": {"8": 5.0, "16": 12.8, "32": 25.1}, "bus_error": false, "marker_after": "b'MWPO'"}

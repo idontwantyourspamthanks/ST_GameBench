@@ -25,12 +25,13 @@ ISL = {'foot': (591, 231, 5), 'jeep': (446, 177, 1), 'speedboat': (275, 249, 6),
 def mk(c, snap=None):
     return Hatari(snapshot=snap, memsize_kb=c['memsize_kb'], game_dir=BUILD, machine=c['machine'], tos=c['tos'], extra=c['extra'])
 
-def posedump(h, vbls):
+def posedump(h, vbls, during=None):
     """pose at every presented flip over `vbls` VBL: [(vbl, X, Y, heading, bank)]"""
     lf = h.R / 'pose.txt'; lf.write_text('e VBL\nm $66e6 8\nm $6742 2\nm $6746 2\n')
     h.debug('b all', 0.3); s = len(h._logtext()); v0 = h.vbl()
     h.cmd(f'hatari-debug b ($ff8201).b ! ($ff8201).b :trace :file {lf}'); time.sleep(0.2)
     h.cmd(f'hatari-debug b VBL > {v0 + vbls} :trace :once'); time.sleep(0.2)
+    if during: during()                                   # input sent while the dump is armed (turn impulses)
     t = time.time()
     while 'Removed CPU breakpoint' not in h._logtext()[s:]:
         if time.time() - t > 300: break
@@ -45,7 +46,8 @@ def posedump(h, vbls):
 def strip(h, name, n=6, gap=0.3):
     imgs = []
     for i in range(n):
-        imgs.append(Image.open(h.shot()).convert('RGB').crop((96, 58, 736, 458)).resize((320, 200)))
+        im = Image.open(h.shot()).convert('RGB')
+        imgs.append(im.crop((0, 0, 640, 400) if im.width == 640 else (96, 58, 736, 458)).resize((320, 200)))   # a TT shot has no border
         time.sleep(gap)
     W = Image.new('RGB', (960, 400))
     for i, im in enumerate(imgs): W.paste(im, ((i % 3) * 320, (i // 3) * 200))
@@ -58,7 +60,8 @@ def smooth(rows):
     if len(rows) < 3: return dict(flips=len(rows))
     ch = sum(1 for a, b in zip(rows, rows[1:]) if a[1:4] != b[1:4])
     gaps = [b[0] - a[0] for a, b in zip(rows, rows[1:])]
-    return dict(flips=len(rows), pose_changes=ch, distinct=len({r[1:4] for r in rows}), mean_gap_vbl=round(sum(gaps) / len(gaps), 2), max_gap_vbl=max(gaps))
+    hc = sum(1 for a, b in zip(rows, rows[1:]) if a[3] != b[3])
+    return dict(flips=len(rows), pose_changes=ch, heading_changes=hc, heading_span=max(r[3] for r in rows) - min(r[3] for r in rows), distinct=len({r[1:4] for r in rows}), mean_gap_vbl=round(sum(gaps) / len(gaps), 2), max_gap_vbl=max(gaps))
 
 def measure(h, c, name):
     d = {}
@@ -68,7 +71,7 @@ def measure(h, c, name):
     # forward (mouse Y is the throttle), then measure the 5 Hz tick rate
     h.rel(0, -200); time.sleep(0.3); h.rel(0, -200); time.sleep(0.3)
     p0 = memb(h, 0x66e6, 8)
-    lf = h.R / 'tk.txt'; lf.write_text('e VBL\nm $b42e6 2\n')
+    lf = h.R / 'tk.txt'; lf.write_text('e VBL\nm $b3400 4\n')
     h.debug('b all', 0.3); s = len(h._logtext()); v0 = h.vbl()
     h.cmd(f'hatari-debug b pc = $31586 :trace :file {lf}'); time.sleep(0.2)
     h.cmd(f'hatari-debug b VBL > {v0 + 400} :trace :once'); time.sleep(0.2)
@@ -77,10 +80,14 @@ def measure(h, c, name):
         if time.time() - t > 900: break
         time.sleep(0.5)
     out = h._logtext()[s:]; h.debug('b all', 0.3)
-    vb = [int(x) for x in re.findall(r'#(\d+) \(dec\)', out)]
-    sync = h.peekw(0xff820a) >> 8; hz = 50 if sync & 2 else 60
-    d['hz'] = hz; d['ticks'] = len(vb)
-    d['ticks_per_s'] = round((len(vb) - 1) * hz / max(1, vb[-1] - vb[0]), 3) if len(vb) > 2 else None
+    # (VBL, clock) pairs: a bare `#(\d+) \(dec\)` scan also counts the window-END breakpoint's line as a tick (the 4.4-4.65 ticks/s artefact)
+    pr = [(int(a), int(b.replace(' ', ''), 16)) for a, b in re.findall(r'#(\d+) \(dec\)[^\n]*\n> m \$b3400 4\n0*b3400:\s+((?:[0-9a-f]{2} ){4})', out, re.I)]
+    vb = [a for a, b in pr]
+    # rate from the tick_vbl clock ($b3400, 1/300 s = real time): the VBL rate is 50 OR 60 Hz (the Mega STE cold boot runs 60 Hz) and the sync register read is unreliable on a TT
+    ck = [b for a, b in pr]
+    d['ticks'] = len(vb)
+    d['ticks_per_s'] = round((len(ck) - 1) * 300.0 / max(1, ck[-1] - ck[0]), 3) if len(ck) > 2 and len(ck) == len(vb) else None
+    d['vbl_per_s'] = round((vb[-1] - vb[0]) * 300.0 / max(1, ck[-1] - ck[0]), 2) if len(ck) > 2 else None
     d['PH_samples'] = [h.peekw(0xb42e6) for _ in range(12) if not time.sleep(0.07)]
     p1 = memb(h, 0x66e6, 8)
     d['moved'] = (sw(p0[:4]), sw(p0[4:]), sw(p1[:4]), sw(p1[4:]))
