@@ -1,0 +1,19 @@
+Populous 2 (HAGA HD version by PP) - patched build, {DATE}
+Release v@VERSION@ enhanced by dad_prg
+
+Changes vs the original HAGA release:
+{PATCHES}
+
+The main menu (the stone-framed screen with CREATE YOUR DEITY / CONQUEST
+GAME / CUSTOM GAME / LOAD GAME) carries a small "v@VERSION@ enhanced by
+dad_prg" line in the lower part of the slate panel; nothing else on the
+screen changes.
+
+Requirements and usage: as in README.TXT (2 MB RAM minimum).
+Run RUNME.TOS from a hard disk / GEMDOS drive, with FILES\ next to it.
+Tested on Hatari 2.6.1 (see the note below).
+
+The original game keeps its statesaves on the HD build: keypad / saves the
+game state to GS00.TOS, GS01.TOS, ... in the folder HAGA runs from (it looks
+for C:\GAMEX\ first). In-game SAVE GAME / LOAD GAME do not work in PP's build
+even unpatched (they crash); use the HAGA statesaves.

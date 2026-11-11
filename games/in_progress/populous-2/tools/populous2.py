@@ -5,9 +5,9 @@
     h = Populous2(snapshot=Populous2.SNAP / "busy1.sav")
     print(h.world_rate(Populous2.TURN, 500))
 
-boot_to_game() replays the inputs that reached the game once in the study run
-(2026-11-11); it has not been re-run since it was written down. Keys must be
-HELD (the intro and the game read them once per VBL or per pass).
+boot_to_game() cold boots to the first conquest battle (re-run on the patched build, 2 MB STE, 2026-11-11).
+Keys must be HELD (the intro and the game read them once per VBL or per pass).
+Populous2(game_dir=<build/hd>) runs a patched build; marker() reads pop2patch's marker.
 """
 from __future__ import annotations
 
@@ -53,23 +53,39 @@ class Populous2(Hatari):
         self.click(hold=0.4)
         time.sleep(wait)
 
-    def boot_to_game(self, name: str = "zeus") -> bool:
+    def marker(self) -> str:
+        """pop2patch's marker at $7fff8: 'P2PO' = every patch applied, 'P2PF' = a site mismatched, else not delivered."""
+        w = self.peekl(0x7FFF8)
+        return w.to_bytes(4, "big").decode("latin1") if w else ""
+
+    def boot_to_menu(self, timeout: float = 240) -> bool:
+        """Cold boot to the stone-framed main menu: hold Space once per screen (PP's hardware screen, the cover
+        picture, the Bullfrog logo, the credits - each reads the key once per VBL, so it must be HELD) until the
+        game's VBL ($70 = $18fa) is installed.  State-driven: no fixed waits except the first 14 s."""
+        t0 = time.time()
         time.sleep(14)
-        self.key("space", 0.6)              # PP's hardware screen
-        time.sleep(30)                      # cover, Bullfrog logo scroller
-        self.key("space", 0.6)              # -> credits
-        time.sleep(8)
-        self.key("space", 0.6)              # -> main menu
-        time.sleep(25)
-        self._click(384, 257)               # CONQUEST GAME: first time opens the deity screen
+        while time.time() - t0 < timeout:
+            self.key("space", 0.6)
+            time.sleep(6)
+            if self.peekl(0x70) == 0x18FA:
+                time.sleep(3)
+                return True
+        return False
+
+    def boot_to_game(self, name: str = "zeus", timeout: float = 240) -> bool:
+        """boot_to_menu(), then the first conquest battle (re-run 2026-11-11 on the patched build, 2 MB STE):
+        CONQUEST opens the deity screen, name + Return, PROCEED (back to the menu), CONQUEST, PROCEED on the
+        battle sheet, the manual question's OK (any answer is accepted, PP's $14a88 patch)."""
+        if not self.boot_to_menu(timeout):
+            return False
+        self._click(384, 257, 3)            # CONQUEST GAME: first time opens the deity screen
         self._click(260, 98, 1.0)           # name field
         for ch in name:
             self.key(ch, 0.3)
             time.sleep(0.4)
         self.key("Return", 0.3)
         time.sleep(1.0)
-        for xy in ((470, 418), (380, 410), (424, 426)):   # PROCEED reacts on its text row
-            self._click(*xy, 2.5)
+        self._click(424, 418, 3)            # PROCEED (reacts on its text row) -> main menu
         self._click(384, 258, 8)            # CONQUEST GAME -> battle sheet
         self._click(216, 448, 12)           # PROCEED (ST (60,195)); loads
         self._click(400, 420, 15)           # manual question: OK with 0000 is accepted
