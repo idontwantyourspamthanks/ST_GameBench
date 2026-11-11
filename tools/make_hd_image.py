@@ -372,12 +372,34 @@ def main():
         print(f"warning: games use {need} KB of a {a.size_kb} KB partition")
     VERSIONS.update(versions())
     img = Path(a.out) if a.out else DIST / f"AtariST_enhanced_games_{a.date}.img"
+    vhd = img.with_suffix(".vhd")
+    busy = [p for p in (img, vhd) if p.exists() and in_use(p)]
+    if busy:
+        raise SystemExit(f"refusing to overwrite {', '.join(map(str, busy))}: a running program (e.g. Hatari) has it open. "
+                         "Quit it first, or pass --out with a new file name.")
     img.parent.mkdir(parents=True, exist_ok=True)
     tgt, total, psz = build_image(img, folders, a.size_kb, a.date)
     md5 = hashlib.md5(img.read_bytes()).hexdigest()
     Path(str(img) + ".md5").write_text(f"{md5}  {img.name}\n")
     Path(str(img.with_suffix("")) + ".layout.txt").write_text(layout_text(img, tgt, total, psz, folders, md5, a.date))
-    print(f"{img}  {img.stat().st_size} bytes  md5 {md5}")
+    shutil.copyfile(img, vhd)              # same raw image under the name MiSTer and the run_*.sh launchers use
+    print(f"{img}  {img.stat().st_size} bytes  md5 {md5}  (also {vhd.name})")
+
+
+def in_use(path: Path) -> bool:
+    """True if any process on this machine has `path` open (Linux /proc), so it must not be rewritten under it."""
+    target = path.resolve()
+    for fd_dir in Path("/proc").glob("[0-9]*/fd"):
+        try:
+            for fd in fd_dir.iterdir():
+                try:
+                    if Path(os.readlink(fd)) == target:
+                        return True
+                except OSError:
+                    pass
+        except OSError:
+            pass
+    return False
 
 
 if __name__ == "__main__":
