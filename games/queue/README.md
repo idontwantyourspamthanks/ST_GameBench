@@ -44,6 +44,7 @@ Stages: `games/queue/` (not started) -> `games/in_progress/` (being worked on) -
 | Speedball 2 | speedball-2 | PP's HAGA conversion | SPEEDB2 |  |
 | Xenon 2 | xenon-2 | PP's HAGA conversion | XENON2 | alts: XENON2A |
 | Zool | zool | PP's HAGA conversion | ZOOL | alts: Zool AGA variant not looked for beyond ZOOL; only ZOOL exists in Z. |
+| Dungeon Master | dungeon-master | PP's HAGA conversion | DMHAGA | also copied: DM_ADMA (PP, STE DMA audio, 2 MB); alts: DMGX, DMH112 |
 | Mouse Trap | mouse-trap | floppy (FAT, AUTO folder) | user floppies | 2 images |
 | Baby Jo - Going Home | baby-jo | floppy (FAT) | user floppies | 6 cracks, base not chosen |
 | Castle Master (+ II: The Crypt) | castle-master | floppy (FAT; Empire crack non-FAT) | user floppies | 3 dumps + sequel |
