@@ -6,25 +6,25 @@ tos/*
 !tos/README.md
 
 # Game files: PP's HAGA conversions (RUNME.TOS, HAGA, disk images, intro art), originals, archives
-games/*/RUNME.TOS
-games/*/HAGA
-games/*/FILES/
-games/*/*.HST
-games/*/*.FIC
-games/*/*.PCH
-games/*/*.BMP
-games/*/*.SWR
-games/*/*.TXT
-games/*/*.PRG
-games/*/*.ST
-games/*/*.st
-games/*/*.zip
+games/*/*/RUNME.TOS
+games/*/*/HAGA
+games/*/*/FILES/
+games/*/*/*.HST
+games/*/*/*.FIC
+games/*/*/*.PCH
+games/*/*/*.BMP
+games/*/*/*.SWR
+games/*/*/*.TXT
+games/*/*/*.PRG
+games/*/*/*.ST
+games/*/*/*.st
+games/*/*/*.zip
 # Third-party game not part of this project
-games/steve-outrun/
+games/queue/steve-outrun-local/
 
 # Floppy images and files extracted from them (per-game intake)
-games/*/disks/
-games/*/extracted/
+games/*/*/disks/
+games/*/*/extracted/
 
 # Anything containing game RAM, game data or game imagery
 **/work/snapshots/
@@ -47,7 +47,7 @@ games/*/extracted/
 __pycache__/
 *.pyc
 .venv/
-games/*/tos/
+games/*/*/tos/
 **/*.img
 **/*.gz
 **/*.tos
@@ -56,7 +56,7 @@ games/*/tos/
 # Machine-local helpers (e.g. writing to a personal disk image)
 **/local_*
 # Other versions of a game (other platforms/releases; user-supplied, copyrighted)
-games/*/alt/
+games/*/*/alt/
 *.adf
 *.ADF
 *.ipf

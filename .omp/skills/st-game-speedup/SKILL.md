@@ -5,7 +5,7 @@ description: Method for speeding up and modernising a closed-source Atari ST gam
 
 # Speeding up an Atari ST game (method)
 
-Reference project: `games/midwinter2`. Its `PLAN.md` holds phases P0–P7 and its `work/notes/*.md` hold the evidence. The user's standing preferences are below.
+Reference project: `games/in_progress/midwinter2`. Its `PLAN.md` holds phases P0–P7 and its `work/notes/*.md` hold the evidence. The user's standing preferences are below.
 
 ## User preferences (carry over unless told otherwise)
 - **Target:** a 1 MB 8 MHz STE. Nothing may break on ST, Mega ST, Mega STE, TT or Falcon. Test 4 MB too.

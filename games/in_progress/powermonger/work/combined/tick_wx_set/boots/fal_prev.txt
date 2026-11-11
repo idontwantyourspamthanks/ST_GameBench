@@ -1,0 +1,18 @@
+CELL floppy falcon TOS 4.04 4096 KB
+[   73s vbl 3771] name prompt
+[   78s vbl 3982] option screen
+[  101s vbl 5149] territory chart
+[  111s vbl 5664] protection removed (flag $14e4e = $2c), no question expected
+[  126s vbl 6395] 3D map view
+RESULT boot: 129 s, in_game True, MARKER b'PMPO' FLAGS 0x3, sync $02, tt_ptr LIVE $00
+RESULT sites: 0 of 8 live; WRONG {'p7_wait': ('4eb900001870', '4eb9000db200'), 'p7_flip': ('4eb90000187a', '4eb9000db100'), 'p7_tail': ('33fc00000002df8c', '4eb9000db3004e71'), 'tt_ptr': ('23c00002df78', '4eb9000ba940'), 'qol_hover': ('4eb900017878', '4eb9000cfa80'), 'qol_hover2': ('4a7900057fd4', '4eb9000cd560'), 'qol_keys': ('4eb900007202', '4eb9000cf860'), 'qol_keys2': ('13c00001c490', '4eb9000cd530')}
+/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger/tools/pmcombined.py:53: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  return sum(1 for p in ImageChops.difference(a, b).convert("L").getdata() if p > thr)
+RESULT pointer: pointer words (20, 118) after moving to (20, 118); 16 of 20 screenshots show the pointer (changed pixels in the 16x16 crop: min 0 median 112 max 112)
+RESULT pointer buffer: at 60 flip returns the pointer record [$1c49a] lies inside the new displayed buffer [$2df78] in 0 (hidden pointer: not drawn)
+RESULT key F: $57fd4 0 -> 0 (Get Food = 6) -> 0 after the second F
+RESULT hover: round 0: house sprite calls seen: 1 distinct (d0, d1, a3): [(193, 38, 326108)]; in the window 1
+RESULT hover: HIT stayed 0 on [(193, 38, 326108)] (pointer (195, 40), text flag 0)
+RESULT triple map view: (L, D) at flip entry {'(A,B)': 30, '(B,A)': 30}; buffers used ['A', 'B']; C $70000 non-zero 0 B; IN/OURS 0/0
+RESULT after: in_game True MARKER b'PMPO'
+CELL DONE floppy falcon TOS 4.04 4096 KB: CHECK {'pointer': '16/20', 'ptrbuf': (60, 0), 'F': False, 'hover': False, 'triple_map': False}

@@ -8,7 +8,7 @@ description: How PP's HAGA hard-disk conversions of Atari ST games work (RUNME.T
 Layout: `RUNME.TOS`, `HAGA`, `FILES/<disk images>`, an intro picture (`*.HST` STE hi-colour, `*240R.BMP` TT/Falcon), and PP's `README.TXT`/`LOG.TXT`.
 - PP converted the original STX floppies to raw images and removed the protection ("manual deprot").
 - He applies his game fixes in RAM at boot. The image files are original, apart from his modified boot stub.
-- Worked example with full evidence: `games/midwinter2`. See its `work/notes/loading.md`, `bigram.md`, `load_fade.md`, `payload32k.md`, `floppy.md` and `patches/README.md`.
+- Worked example with full evidence: `games/in_progress/midwinter2`. See its `work/notes/loading.md`, `bigram.md`, `load_fade.md`, `payload32k.md`, `floppy.md` and `patches/README.md`.
 
 ## Components
 - **RUNME.TOS**

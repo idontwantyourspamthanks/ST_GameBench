@@ -2,7 +2,7 @@
 
 Games copied from the user VHD, not yet started. Each has `<slug>/originals/` (git-ignored, copyrighted game files) and `<slug>/README.md` (tracked: source path, file list with md5s, loader type, notes).
 
-When work on a game starts, move its folder from `games/queue/` to `games/in_progress/` (originals/ stays git-ignored).
+Stages: `games/queue/` (not started) -> `games/in_progress/` (being worked on) -> `games/done/` (declared ready; it can move back to in_progress if new features are needed). Move a game with `git mv`; `originals/` and other game files stay git-ignored at every stage.
 
 | Title | Slug | Loader | Source folder | Notes |
 |---|---|---|---|---|

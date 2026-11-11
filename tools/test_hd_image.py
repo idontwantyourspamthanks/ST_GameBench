@@ -5,7 +5,7 @@ r"""Boot one game from the all-games hard-disk image (tools/make_hd_image.py) in
         GAME = mw1 | mw2 | hunter | pm
 
 The image is never touched: a scratch copy gets a DESKTOP.INF with a `#Z` autorun line for the game (the shipped image has none), and, for
-mw2, the created campaign disk from games/midwinter2/work/disk_overlay as FILES\FFD (the shipped one is the blank campaign disk).  Then the
+mw2, the created campaign disk from games/in_progress/midwinter2/work/disk_overlay as FILES\FFD (the shipped one is the blank campaign disk).  Then the
 game's own harness navigates to its in-game view and the patch marker is read (MWPO / HNPO / PMPO).  Prints one `RESULT` line (raw).
 --saveload (pm): saves and loads through the game's own menu and compares POWERMON\SAVEDISK.DAT on the image.
 """
@@ -21,7 +21,17 @@ import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-GAMES = ROOT / "games"
+class _Games:
+    """`GAMES / "midwinter"` finds a game in whichever stage folder it lives (in_progress, done, queue)."""
+    def __truediv__(self, name: str) -> Path:
+        for stage in ("in_progress", "done", "queue"):
+            p = ROOT / "games" / stage / name
+            if p.is_dir():
+                return p
+        return ROOT / "games" / "in_progress" / name
+
+
+GAMES = _Games()
 sys.path.insert(0, str(ROOT / "tools"))
 from stharness import Hatari, TOS  # noqa: E402
 import make_hd_image as mk  # noqa: E402
@@ -57,7 +67,7 @@ def test_image(src: Path, dst: Path, game: str, original: bool = False) -> Path:
 
 def hunter_tt_boot(h):
     """The TT/Falcon boot screens differ from the STE crops the harness gates on `hw`/`title1`: same sequence as
-    games/hunter/tools/hunt_ttf.py (key at the HW screen, then gate on the animated title)."""
+    games/in_progress/hunter/tools/hunt_ttf.py (key at the HW screen, then gate on the animated title)."""
     wait_drive_c(h)
     time.sleep(3)
     h.keypress(57)

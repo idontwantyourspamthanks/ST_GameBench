@@ -1,0 +1,17 @@
+[
+ "cell spawn1mbv ste 1.62 1024 games/in_progress/midwinter/build/p7skip/game spawn",
+ "boot_to_game ok in 109s; gstate {'x': 25600, 'z': 25600, 'speed': 0, 'heading': 0, 'action': 0, 'exit': 0}",
+ "MWPO: b'MWPO'",
+ "site $14e50: 4eb9000b5840 (new 4eb9000b5840)",
+ "site $14e20: 4eb9000b5800 (new 4eb9000b5800)",
+ "counters after boot (standing): {'GEN': 69, 'NSKIP': 4, 'NREND': 71, 'NCHG': 69, 'NMK': 0, 'NFORCE': 0, 'NINV': 1, 'NUNS': 0}",
+ "training/mortars/bombers flags {'mortars': False, 'bombers': False, 'training': False}",
+ "  sample   0: slot3 flag 1 pos (27187,28086) dist (1587,2486) $26 1 counter deltas since the last sample {'NSKIP': 0, 'NREND': 18, 'NCHG': 18, 'NUNS': 0} act 0",
+ "  self-check of the skip decisions with the enemy active (A = buffers at the skip decision, B = after the forced render):",
+ "check 0: differing bytes {'58': 0, '68': 0, '78': 0} OK GEN 132 NSKIP 4",
+ "check 10: differing bytes {'58': 0, '68': 0, '78': 0} OK GEN 133 NSKIP 144",
+ "no skip decision within 40 s (check 11)",
+ "  self-check: 11 identical, 0 MISMATCH",
+ "  action mode ended (enemy reached the player) -> Decisions",
+ "enemy seen: True"
+]

@@ -35,12 +35,22 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent          # gamebench/
-GAMES = ROOT / "games"
+class _Games:
+    """`GAMES / "midwinter"` finds a game in whichever stage folder it lives (in_progress, done, queue)."""
+    def __truediv__(self, name: str) -> Path:
+        for stage in ("in_progress", "done", "queue"):
+            p = ROOT / "games" / stage / name
+            if p.is_dir():
+                return p
+        return ROOT / "games" / "in_progress" / name
+
+
+GAMES = _Games()
 HD = ROOT / "hd"
 DIST = ROOT / "dist"
 STAGE = DIST / "_stage"                                 # build outputs of this script (git-ignored with dist/)
 SECTOR = 512
-FIRST_LBA = 2                                           # as HDDRIVER's own formatter and gamebench/games/hunter/tools/hunter.py
+FIRST_LBA = 2                                           # as HDDRIVER's own formatter and gamebench/games/in_progress/hunter/tools/hunter.py
 MAX_PART_SECTORS = 65535                                # TOS < 2.06 BPB: 16-bit sector count
 DEFAULT_SIZE_KB = 32000                                 # one partition, 64000 sectors (31.25 MiB)
 VOLUME = "GAMES"
