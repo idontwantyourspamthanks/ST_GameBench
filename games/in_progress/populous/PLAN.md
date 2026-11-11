@@ -4,6 +4,12 @@ Study (second pass, 2026-11-11): `work/notes/boot.md`, `baseline.md`, `hotpaths.
 
 Facts the plan rests on: the world is frame-coupled (3.2 turns/s busy, 8.7 at the start, on 8 MHz; 2.1x at 16 MHz); a busy frame is 15.7 VBLs, 47% world logic, 39% drawing, 7.4% pointer.
 
+## Decisions (user, 2026-11-11)
+
+- Tooltip: line 1 in the red box (84,0)-(213,7), overflowing to the yellow second line (100,8)-(171,15); the game's own 8x8 font (`$180f4`, font `$2364a`). Shots: `work/shots/tt_candidates_rects.png`.
+- Fixed tick: 5 turns per real second.
+- Floppy build wanted as well as HD (the game fits one disk).
+
 ## Ranked work
 
 Gains are shares of the busy frame at 8 MHz and are [INFERENCE] unless a measurement is named; days are [INFERENCE].
@@ -24,7 +30,7 @@ Gains are shares of the busy frame at 8 MHz and are [INFERENCE] unless a measure
 | 11 | Triple buffering. | `p7_triple`, adapted | small at 8 MHz | low | 1.5 |
 | 12 | Other machines: Mega STE 16 MHz, TT, Falcon (the TT did not boot in Hatari with a GEMDOS drive: `boot.md`). | Powermonger `tt_ptr`, cache-off | | unknown | 2+ |
 
-Floppy version: the base is HD-only (PP's conversion of the STX). A floppy build needs the original disk image and the protection handled; not planned until the HD build is done (user to decide).
+Floppy version: wanted (user). Build it as Midwinter's `--floppy` does: the patched HAGA conversion (RUNME + game files) on a bootable single-sided or double-sided disk image with an AUTO launcher, so no original-disk protection is involved.
 
 ## Delivery plan
 

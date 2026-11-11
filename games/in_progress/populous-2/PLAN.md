@@ -4,6 +4,12 @@ Study (second pass, 2026-11-11): `work/notes/baseline.md`, `hotpaths.md`, `algor
 
 Facts the plan rests on: frame-coupled (6.0 turns/s busy, 8.9 at the start, 8 MHz; 2.05x at 16 MHz); a busy frame is 8.1 VBLs: 47% drawing, 32.5% world logic, 8.4% interrupts.
 
+## Decisions (user, 2026-11-11)
+
+- Tooltip: the black sky (120,0)-(255,7), second line (136,8)-(247,15), the game's font, as in `work/shots/tt_candidate_top_text.png` (approved as shown).
+- Fixed tick: 6.25 turns per real second (8 VBLs at 50 Hz).
+- Floppy build wanted as well as HD (the game fits one disk).
+
 ## Ranked work
 
 Gains are shares of the busy frame at 8 MHz and [INFERENCE] unless a measurement is named; days are [INFERENCE].
