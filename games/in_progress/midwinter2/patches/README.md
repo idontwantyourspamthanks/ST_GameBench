@@ -154,13 +154,18 @@ Use `--only <all defaults> pp_nofade` until it is made default.
   patch alone 11 calls/361 VBL and 56 calls/1816 VBL; with the default set (pp_nofade) 127 and 639 VBL. Details: `work/notes/bigram.md`.
 
 ## HUD overlay (cockpit visor + dashboard replay $30f2c; work/notes/cockpit.md)
-All `default: no`, blobs in the hole $B44C0-$B46BF (code $B44C0-$B467A, data block $B4680-$B4693), which
-no default patch uses; they needed 380 B, more than the $B4E00-$B4EFF that was left when the payload was $1F00 bytes.
-- Pixel-identical "clean prefix" set, apply ALL FOUR together: `p4_hud_pfx_ymin` ($38cd0, smallest polygon row
-  of the frame), `p4_hud_reset` ($28cc0, 3D-view entry: forget which rows are clean), `p4_hud_pfx_fill`
-  ($1b996 sky fill, deferred phase: skips the rows already clean) and `p4_hud_pfx_replay` ($30f2c: replays only
-  the rows terrain can have touched). abtest `--flips 10` and `--flips 40` exit 0 on both default snapshots;
-  1000-VBL abtest fps is within noise, 3000-VBL runs: foot 253 -> 263 flips, walking 276 -> 288 (+4 %).
+Blobs in the hole $B44C0-$B46BF (code $B44C0-$B467A, data block $B4680-$B4693), which no other patch uses;
+they needed 380 B, more than the $B4E00-$B4EFF that was left when the payload was $1F00 bytes.
+- Pixel-identical "clean prefix" set (`default: yes`), apply ALL FOUR together: `p4_hud_pfx_ymin` ($38cd0,
+  smallest polygon row of the frame), `p4_hud_reset` ($28cc0, 3D-view entry: forget which rows are clean),
+  `p4_hud_pfx_fill` ($1b996 sky fill, deferred phase: skips the rows already clean) and `p4_hud_pfx_replay`
+  ($30f2c: replays only the rows terrain can have touched). abtest `--flips 10` and `--flips 40` exit 0 on
+  both default snapshots; 1000-VBL abtest fps is within noise, 3000-VBL runs: foot 253 -> 263 flips,
+  walking 276 -> 288 (+4 %).
+  The clean prefix is also dropped whenever the cockpit replay is skipped, i.e. for `$6220` in {5, $15, $11}
+  (on foot, Swimming, Parachute: `$1dbee-$1dc04`), because those states change type without the 3D re-entry
+  `$28cc0`, so nothing redraws the overlay and the rows above the terrain would keep the previous overlay
+  (the half diving mask on exiting a boat). `work/notes/mask.md`.
 - Visual-tradeoff experiment, NOT for shipping without sign-off: `p4_hud_reset` + `p4_hud_crop_fill`
   ($1b99e) + `p4_hud_crop_clip` ($38c86) + `p4_hud_crop_replay` ($30f2c): the 3D window ends at line 181
   (foot mode only) and the dashboard band is drawn once per buffer. Excludes the `pfx` set (same sites).

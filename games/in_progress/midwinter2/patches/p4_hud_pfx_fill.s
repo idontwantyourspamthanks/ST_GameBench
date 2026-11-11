@@ -13,6 +13,14 @@
 ;       never replays the cockpit: found from the return addresses on entry ((a7) = $1dcaa and 4(a7) =
 ;       $1dbe2 for $1dbbe -> $505c -> $1dc12, or (a7) = $1dbee for the direct call at $1dbe8).  For any
 ;       other caller KB[b] is cleared first (full fill, buffer no longer known clean).
+;       The replay gate ($1dbee-$1dc04) skips the cockpit replay for $6220 in {5, $15, $11} (= on
+;       foot, Swimming, Parachute), and a type change inside those states does NOT go through the
+;       3D re-entry $28cc0 (sub_0335e0 at $3360c/$336ba writes $6220 only), so KB[b] would still
+;       claim the rows above the terrain hold "the final image" while they hold the PREVIOUS
+;       overlay: exiting a boat, the top rows of the diving mask stayed on screen (work/notes/mask.md).
+;       For those types KB[b] is cleared here (and the fill starts at line 58), i.e. the buffer is
+;       never reused: the original game's behaviour, which those types need because nothing redraws
+;       the overlay after the fill.
 KB      equ     $b4680
 YMIN    equ     $b4684
 
@@ -38,7 +46,14 @@ YMIN    equ     $b4684
         add.w   d0,d0
         lea     KB.l,a0
         move.w  (a0,d0.w),d1            ; KB[b]
-        move.w  d1,d2
+        move.w  $6220.w,d3              ; the replay is skipped for types 5, $15, $11 ...
+        moveq   #1,d4
+        asl.l   d3,d4
+        and.l   #$220020,d4             ; ... bits 5, 17, 21
+        beq.s   .keep
+        moveq   #0,d1                   ; nothing redraws the overlay later this frame
+        move.w  d1,(a0,d0.w)            ; so this buffer's clean prefix is the OLD overlay
+.keep:  move.w  d1,d2
         mulu.w  #1280,d2
         lea     $2440(a6),a6            ; line 58 (orig: move.l #$2440,d0 / adda.l d0,a6)
         adda.l  d2,a6
