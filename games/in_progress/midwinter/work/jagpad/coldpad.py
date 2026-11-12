@@ -77,8 +77,8 @@ try:
     time.sleep(2)
     r = show('after boot')
     P('MWPO marker:', r[0xb2ff8], ' sites:', h.peek(0x61e2, 8).hex(), h.peek(0x65e2, 6).hex(), h.peek(0x665e, 6).hex(), h.peek(0x6696, 6).hex())
-    if mach == 'ste':
-        assert r[0xb6bf0][0] == 1, 'STE: probe must say pad ports present'
+    if mach in ('ste', 'falcon'):
+        assert r[0xb6bf0][0] == 1, 'STE/Falcon: probe must say pad ports present'
         h.shot('/tmp/jag_cold_' + mach + '.png')
         DEV = {'pad': dict(left='left', right='right', up='up', down='down', fire='B', A='A'),
                'stick': dict(left='sleft', right='sright', up='sup', down='sdown', fire='sfire', A=None)}

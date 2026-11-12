@@ -5,13 +5,14 @@ import shutil, sys, tempfile, time
 from jlib import *
 import mw1
 
-D = Path(sys.argv[1] if len(sys.argv) > 1 else GAME / 'build' / 'jagfl')
+D = Path(GAME / 'build' / 'jagfl')
+MACH = sys.argv[1] if len(sys.argv) > 1 else 'ste'
 scratch = Path(tempfile.mkdtemp(prefix='mw1jfl-'))
 for s, d in (('MWA.st', 'mwboot.st'), ('MWB.st', 'mwgfx.st'), ('MWC.st', 'mwdata.st')):
     shutil.copy(D / s, scratch / d)
 empty = scratch / 'empty'; empty.mkdir()
 t0 = time.time()
-h = MW1(game_dir=empty, snapshot=None, machine='ste', memsize_kb=1024, autorun='',
+h = MW1(game_dir=empty, snapshot=None, machine=MACH, memsize_kb=1024 if MACH == 'ste' else 4096, autorun='',
         extra=['--disk-a', str(scratch / 'mwboot.st'), '--disk-b', str(scratch / 'mwgfx.st'), '--fastfdc', 'no'] + PAD)
 P = lambda *a: print(*a, flush=True)
 S = Sampler(h, [(0xb6bf0, 8), (0x24f98, 8), (0x24fba, 2), (0x12c98, 2), (0x15110, 2), (0x15112, 2), (0x12d5e, 4),

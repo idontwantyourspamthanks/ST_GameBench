@@ -1,5 +1,5 @@
 ; name: jag_mrg
-; default: no
+; default: yes
 ; site: $65e2
 ; orig: 34390002c328
 ; note: Jaguar pad support, part 2 of 4 (see jag_vbl; work/notes/jagpad.md).  $65c0 (VBL, every VBL) turns the latched IKBD joystick byte

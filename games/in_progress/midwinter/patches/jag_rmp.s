@@ -1,5 +1,5 @@
 ; name: jag_rmp
-; default: no
+; default: yes
 ; site: $6696
 ; orig: 14390002c32e
 ; note: Jaguar pad support, part 4 of 4 (see jag_vbl; work/notes/jagpad.md).  J-mode fire remap of the input funnel: `tst.w $2c178 / beq` then

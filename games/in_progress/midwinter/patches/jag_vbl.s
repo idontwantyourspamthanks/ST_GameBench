@@ -1,5 +1,5 @@
 ; name: jag_vbl
-; default: no
+; default: yes
 ; site: $61e2
 ; orig: 610003dc61000346
 ; data: $b6bf0 8
@@ -19,14 +19,17 @@
 ;         A, C, Option, Pause, 1, 2, 3  make / break of a key: $2c324 (last scancode), $2c29a[sc] = $ff / 0, $2c326 pending, the
 ;                     same bookkeeping as the IKBD ISR $64ac/$64cc; one make per press, one break per release, nothing repeats.
 ;                     A = `>` $34 (right button = stop) C = Space $39  Option = X $2d  Pause = P $19  1 = M $32  2 = S $1f  3 = H $23
-;       Detection (first VBL in J mode, cached in PADST: 0 unprobed / 1 pad ports / $ff none): 68000 CPU (the TT and Falcon are never
-;       touched), DMA sound $ff8901.b and blitter $ff8a3c.b answer, the Mega STE register $ff8e21.b does not (bus errors caught
-;       with the $8 vector swapped), then a guarded word write/read of $ff9202/$ff9200 whose idle value must be $ffxx / $xxxf.
-;       Machines without a pad: one `move.b PADST` + `bmi` per VBL.
+;       Detection (first VBL in J mode, cached in PADST: 0 unprobed / 1 pad ports / $ff none; the same layers as Hunter's jag_pad): bus errors are caught
+;       with the $8 vector swapped (a7 restored), 1. DMA sound $ff8901.b must answer (not a plain ST / Mega ST) and the SCU $ff8e01.b must
+;       bus-error (the Mega STE and the TT have an SCU, the STE and the Falcon have not): on a Mega STE / TT no pad register is ever touched;
+;       2. a guarded word write/read of $ff9202/$ff9200; 3. idle sanity: $ff9202 high byte $ff, $ff9200 low nibble $f.  No CPU gate: STE and Falcon.
+;       Polling: ONE row group per VBL, round robin 4,3,2,1 (select written at the end of one poll, read at the start of the next, 20 ms later, so
+;       no settle loop and no timing assumption about the CPU): each button is sampled at 12.5 Hz.  Machines without a pad: `move.b PADST` + `bmi`.
 PADST   equ     $b6bf0                  ; byte 0 unprobed, 1 pad ports present, $ff none
 PADJ    equ     $b6bf1                  ; byte: pad directions in the IKBD joystick byte layout (1 up, 2 down, 4 left, 8 right)
 PADBTN  equ     $b6bf2                  ; byte: 1 = pad fire held (B)
 PADOLD  equ     $b6bf4                  ; long: previous state S
+PADG    equ     $b6bf3                  ; byte: group (0 = group 4 .. 3 = group 1) selected at the end of the previous poll
 KEYMASK equ     (1<<4)|(1<<5)|(1<<11)|(1<<19)|(1<<21)|(1<<27)|(1<<29)
         org     $61e2
         jsr     $b6900.l
@@ -45,53 +48,46 @@ vbl:    move.b  PADST.l,d0
         jsr     $652e.l                 ; displaced: key poll
         rts
 
-; ---- read the pad and process the changes ---------------------------------------------------------------------------------------
-DEC     macro                           ; d1 = raw $ff9200, d2 = raw $ff9202 -> byte of the group in d3.b (bit 4 pause, 5 button, 0-3 rows; 1 = idle)
-        move.w  d2,d7
+; ---- read the pad (one group per VBL) and process the changes --------------------------------------------------------------------
+; The select of group k is written at the end of one VBL's poll and read at the start of the next one's (20 ms later: no settle loop), then the
+; next group is selected, round robin 4, 3, 2, 1: every group (so every button) is sampled every 4th VBL = 12.5 Hz.  The row stays selected
+; between VBLs.  S (PADOLD, 1 = pressed) is rebuilt by replacing the byte of the group that was just read.
+poll:   move.l  PADOLD.l,d3
+        tst.w   $2c178.l
+        bne.s   .j
+        moveq   #0,d3                   ; not joystick mode: the pad counts as released
+        bra.w   upd
+.j:     lea     $ffff9200.w,a0
+        move.w  (a0),d1                 ; the group selected at the end of the previous VBL
+        move.w  2(a0),d2
+        moveq   #0,d0
+        move.b  PADG.l,d0
+        move.w  d2,d7                   ; decode: bits 0-3 rows, bit 4 pause, bit 5 button (low = pressed on either port)
         lsr.w   #4,d7
-        and.w   d7,d2                   ; bits 8-11 = port A and port B rows (low = pressed on either)
+        and.w   d7,d2
         lsr.w   #8,d2
         move.w  d1,d7
         lsr.w   #2,d7
-        and.w   d7,d1                   ; bits 0,1 = pause, button of A and B
+        and.w   d7,d1
         andi.w  #3,d1
         lsl.w   #4,d1
         or.w    d1,d2
-        move.b  d2,d3
-        ror.l   #8,d3
-        endm
-
-poll:   moveq   #0,d3
-        tst.w   $2c178.l
-        beq.w   upd                     ; not joystick mode: the pad counts as released
-        lea     $ffff9200.w,a0
-        move.w  #$ffee,2(a0)            ; group 4 (Up Down Left Right, Pause, A)
-        moveq   #15,d6
-.w1:    dbra    d6,.w1                  ; ~23 us settle (8 MHz)
-        move.w  (a0),d1
-        move.w  2(a0),d2
-        move.w  #$ffdd,2(a0)            ; group 3 (`*` 7 4 1, B)
-        DEC                             ; decode group 4 while group 3 settles
-        moveq   #4,d6
-.w2:    dbra    d6,.w2
-        move.w  (a0),d1
-        move.w  2(a0),d2
-        move.w  #$ffbb,2(a0)            ; group 2 (`0` 8 5 2, C)
-        DEC
-        moveq   #4,d6
-.w3:    dbra    d6,.w3
-        move.w  (a0),d1
-        move.w  2(a0),d2
-        move.w  #$ff77,2(a0)            ; group 1 (`#` 9 6 3, Option)
-        DEC
-        moveq   #4,d6
-.w4:    dbra    d6,.w4
-        move.w  (a0),d1
-        move.w  2(a0),d2
-        move.w  #$ffff,2(a0)            ; no group driven
-        DEC
-        not.l   d3
-        and.l   #$3f3f3f3f,d3           ; S, 1 = pressed
+        not.b   d2
+        andi.l  #$3f,d2                 ; this group's byte, 1 = pressed (long: the shift below moves the whole register)
+        move.w  d0,d5
+        lsl.w   #3,d5                   ; bit offset of the group's byte in S
+        moveq   #-1,d6
+        clr.b   d6
+        rol.l   d5,d6                   ; $ffffff00 rotated: a hole at the group's byte
+        and.l   d6,d3
+        lsl.l   d5,d2
+        or.l    d2,d3
+        addq.b  #1,d0                   ; select the next group for the next VBL
+        andi.w  #3,d0
+        move.b  d0,PADG.l
+        add.w   d0,d0
+        lea     sels(pc),a1
+        move.w  (a1,d0.w),2(a0)
 
 upd:    move.l  PADOLD.l,d4
         cmp.l   d3,d4
@@ -139,6 +135,7 @@ upd:    move.l  PADOLD.l,d4
 .ke:    move.w  d6,sr
 .rts:   rts
 
+sels:   dc.w    $ffee,$ffdd,$ffbb,$ff77         ; group 4, 3, 2, 1 on port A and B together
 keymap: dc.b    5,$34                   ; A      -> '>' (right button: stop)
         dc.b    21,$39                  ; C      -> Space (grenade / bullets / missiles, glider 45 degree view)
         dc.b    29,$2d                  ; Option -> X (leave the action mode)
@@ -150,25 +147,18 @@ keymap: dc.b    5,$34                   ; A      -> '>' (right button: stop)
 
 ; ---- detection ---------------------------------------------------------------------------------------------------------------------
 probe:  move.b  #$ff,PADST.l            ; fail closed
-        moveq   #1,d0
-        suba.l  a0,a0
-        dc.w    $43f0,$0200             ; lea (0,a0,d0.w*2),a1: 1 on a 68000 (ignores the scale), 2 on a 68020+
-        cmpa.w  #1,a1
-        bne.s   .out                    ; TT / Falcon / accelerators: never touch the pad registers
         move.l  $8.w,d7                 ; bus error vector
         movea.l a7,a6
         lea     .be1(pc),a2
         move.l  a2,$8.w
         moveq   #0,d6
-        tst.b   $ffff8901.w             ; DMA sound: absent on ST / Mega ST
+        tst.b   $ffff8901.w             ; DMA sound: absent on ST / Mega ST (bus error)
         moveq   #1,d6
-        tst.b   $ffff8a3c.w             ; blitter: absent on a plain ST
+        tst.b   $ffff8e01.w             ; SCU: answers on a Mega STE and a TT (DIP bits at $ff9200, no pad); bus error on an STE / Falcon
         moveq   #2,d6
-        tst.b   $ffff8e21.w             ; Mega STE cache register: no bus error = Mega STE (DIP bits at $ff9200, no pad)
-        moveq   #3,d6
 .be1:   movea.l a6,a7
         move.l  d7,$8.w
-        cmp.b   #2,d6
+        cmp.b   #1,d6
         bne.s   .out
         lea     .be2(pc),a2
         move.l  a2,$8.w
@@ -187,5 +177,8 @@ probe:  move.b  #$ff,PADST.l            ; fail closed
         andi.w  #$000f,d5
         cmp.w   #$000f,d5
         bne.s   .out                    ; pause / buttons must idle high
+        clr.b   PADG.l
+        clr.l   PADOLD.l
+        move.w  #$ffee,$ffff9202.w      ; select group 4: the first poll reads it next VBL
         move.b  #1,PADST.l
 .out:   rts

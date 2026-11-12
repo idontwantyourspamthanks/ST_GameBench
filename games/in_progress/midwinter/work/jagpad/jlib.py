@@ -23,17 +23,27 @@ def s32(v): return v - (1 << 32) if v & 0x80000000 else v
 
 class Sampler:
     """One debugger `parse` file per sample: VBL + a list of (addr, len) peeks."""
+    n_inst = 0
+
     def __init__(self, h, items):
         self.h, self.items = h, items
-        self.f = h.R / 'sample.txt'
+        Sampler.n_inst += 1
+        self.f = h.R / f'sample{Sampler.n_inst}.txt'
         self.f.write_text('e VBL\n' + ''.join(f'm ${a:x} {n}\n' for a, n in items))
 
     def __call__(self):
+        for _ in range(6):
+            r = self._once()
+            if r is not None:
+                return r
+        raise RuntimeError('sampler: incomplete debugger output:\n' + self.last[-1500:])
+
+    def _once(self):
         h = self.h
         n = len(h._logtext())
         h.cmd(f'hatari-debug parse {self.f}')
         want = sum((n_ + 15) // 16 + (1 if (a % 16) + n_ > 16 and False else 0) for a, n_ in self.items)
-        for _ in range(60):
+        for _ in range(120):
             time.sleep(0.05)
             out = h._logtext()[n:]
             if len(re.findall(r'^[0-9A-F]{8}: ', out, re.M)) >= want and re.search(r'#\d+ \(dec\)', out):
@@ -46,6 +56,9 @@ class Sampler:
             a = int(a, 16)
             for i, x in enumerate(b.split()):
                 mem[a + i] = int(x, 16)
+        if any(a + i not in mem for a, n_ in self.items for i in range(n_)):
+            self.last = out
+            return None
         res = {'vbl': vbl}
         for a, n_ in self.items:
             res[a] = bytes(mem.get(a + i, 0) for i in range(n_))

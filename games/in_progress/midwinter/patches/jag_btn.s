@@ -1,5 +1,5 @@
 ; name: jag_btn
-; default: no
+; default: yes
 ; site: $665e
 ; orig: 141002420003
 ; note: Jaguar pad support, part 3 of 4 (see jag_vbl; work/notes/jagpad.md).  $665e is the button entry of the input funnel (reached from the

@@ -1,39 +1,40 @@
 config ste {'machine': 'ste', 'memsize_kb': 1024} ['--joy1', 'keys', '--configfile', '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter/work/jagpad/pad.cfg']
 boot_to_game J ok in 114 s, control mode J
-after boot   vbl=5803 PADST=01 PADJ=00 BTN=00 OLD=00000000 vec=(+0.0,+0.0) $24fba=0000 head=0 rate=0 speed=0 step=000131ae menu=0000 key24=00000000 acc=(0,0)
+after boot   vbl=5809 PADST=01 PADJ=00 BTN=00 OLD=00000000 vec=(+0.0,+0.0) $24fba=0000 head=0 rate=0 speed=0 step=000131ae menu=0000 key24=00000000 acc=(0,0)
+PADW (extra settle passes): 0000
 MWPO marker: b'MWPO'  sites: 4eb9000b69004e71 4eb9000b6c00 4eb9000b6c10 4eb9000b6c20
-ski idle     vbl=5953 PADST=01 PADJ=00 BTN=00 OLD=00000000 vec=(+0.0,+0.0) $24fba=0000 head=0 rate=0 speed=0 step=000131ae menu=0000 key24=00000000 acc=(0,0)
-  [ski     stick] L(dhead,dvbl,rate,vecx,accx)=(-230, 106, -2, -5.0, -35) R=(231, 106, 32, 5.0, 10) U(vecy,accy)=(-5.0, -245) D=(5.0, -15) fire($24fba set,speed,speed+1.5s,after release)=(['0002'], 225, 265, '0000')
-  [ski     pad  ] L(dhead,dvbl,rate,vecx,accx)=(-221, 106, -22, -5.0, -20) R=(222, 106, 25, 5.0, 40) U(vecy,accy)=(-5.0, -767) D=(5.0, -542) fire($24fba set,speed,speed+1.5s,after release)=(['0002'], 184, 221, '0000')
-hold A       vbl=7706 PADST=01 PADJ=00 BTN=00 OLD=00000020 vec=(+0.0,+0.0) $24fba=0001 head=5 rate=0 speed=0 step=000131ae menu=0000 key24=00000000 acc=(0,-512)
-rel A        vbl=7762 PADST=01 PADJ=00 BTN=00 OLD=00000000 vec=(+0.0,+0.0) $24fba=0000 head=5 rate=0 speed=0 step=000131ae menu=0000 key24=00000000 acc=(0,-512)
-  key C     : VBLs traced 126  makes {'0x39': 1}  breaks {'0x39': 1}
-  key n3    : VBLs traced 127  makes {'0x23': 1}  breaks {'0x23': 1}
+ski idle     vbl=5965 PADST=01 PADJ=00 BTN=00 OLD=00000000 vec=(+0.0,+0.0) $24fba=0000 head=0 rate=0 speed=0 step=000131ae menu=0000 key24=00000000 acc=(0,0)
+  [ski     stick] L(dhead,dvbl,rate,vecx,accx)=(-235, 105, -30, -5.0, -30) R=(242, 106, 3, 5.0, 10) U(vecy,accy)=(-5.0, -255) D=(5.0, -25) fire($24fba set,speed,speed+1.5s,after release)=(['0002'], 225, 264, '0000')
+  [ski     pad  ] L(dhead,dvbl,rate,vecx,accx)=(-217, 106, -25, -5.0, -35) R=(230, 106, 22, 5.0, 25) U(vecy,accy)=(-5.0, -747) D=(5.0, -552) fire($24fba set,speed,speed+1.5s,after release)=(['0002'], 169, 211, '0000')
+hold A       vbl=7718 PADST=01 PADJ=00 BTN=00 OLD=00000020 vec=(+0.0,+0.0) $24fba=0001 head=7 rate=0 speed=0 step=000131ae menu=0000 key24=00000000 acc=(0,-512)
+rel A        vbl=7774 PADST=01 PADJ=00 BTN=00 OLD=00000000 vec=(+0.0,+0.0) $24fba=0000 head=7 rate=0 speed=0 step=000131ae menu=0000 key24=00000000 acc=(0,-512)
+  key C     : VBLs traced 127  makes {'0x39': 1}  breaks {'0x39': 1}
+  key n3    : VBLs traced 126  makes {'0x23': 1}  breaks {'0x23': 1}
   key pause : VBLs traced 152  makes {'0x19': 1}  breaks {'0x19': 1}
   flips/50 VBL after the first pause press: 0
   key pause : VBLs traced 102  makes {'0x19': 1}  breaks {'0x19': 1}
-  flips/50 VBL after the second pause press: 6
+  flips/50 VBL after the second pause press: 7
   key n2    : VBLs traced 152  makes {'0x1f': 1}  breaks {'0x1f': 1}
-snipe?       vbl=8899 PADST=01 PADJ=00 BTN=00 OLD=00000000 vec=(+0.0,+0.0) $24fba=0000 head=10 rate=0 speed=0 step=00013f36 menu=0000 key24=00000000 acc=(20,0)
-  [snipe   stick] L(dhead,dvbl,rate,vecx,accx)=(896, 106, 0, -5.0, -485) R=(120, 106, 0, 5.0, -10) U(vecy,accy)=(-5.0, -255) D=(5.0, -35) fire($24fba set,speed,speed+1.5s,after release)=(['0002'], 0, 0, '0000')
-  [snipe   pad  ] L(dhead,dvbl,rate,vecx,accx)=(896, 106, 0, -5.0, -485) R=(118, 106, 0, 5.0, -10) U(vecy,accy)=(-5.0, -255) D=(5.0, -20) fire($24fba set,speed,speed+1.5s,after release)=(['0002'], 0, 0, '0000')
-  key n2    : VBLs traced 151  makes {'0x1f': 1}  breaks {'0x1f': 1}
-ski again?   vbl=10815 PADST=01 PADJ=00 BTN=00 OLD=00000000 vec=(+0.0,+0.0) $24fba=0000 head=6 rate=0 speed=0 step=000131ae menu=0000 key24=00000000 acc=(0,0)
-  key n1    : VBLs traced 152  makes {'0x32': 1}  breaks {'0x32': 1}
-map?         vbl=11077 PADST=01 PADJ=00 BTN=00 OLD=00000000 vec=(+0.0,+0.0) $24fba=0000 head=6 rate=0 speed=0 step=000131ae menu=0000 key24=00000000 acc=(0,0)
-map closed?  vbl=11352 PADST=01 PADJ=00 BTN=00 OLD=00000000 vec=(+0.0,+0.0) $24fba=0000 head=6 rate=0 speed=0 step=000131ae menu=0000 key24=00000000 acc=(0,0)
-map closed   vbl=11520 PADST=01 PADJ=00 BTN=00 OLD=00000000 vec=(+0.0,+0.0) $24fba=0000 head=6 rate=0 speed=0 step=000131ae menu=0000 key24=00000000 acc=(0,0)
+snipe?       vbl=8913 PADST=01 PADJ=00 BTN=00 OLD=00000000 vec=(+0.0,+0.0) $24fba=0000 head=12 rate=0 speed=0 step=00013f36 menu=0000 key24=00000000 acc=(28,0)
+  [snipe   stick] L(dhead,dvbl,rate,vecx,accx)=(898, 106, 0, -5.0, -477) R=(-896, 107, 0, 5.0, 3) U(vecy,accy)=(-5.0, -250) D=(5.0, -20) fire($24fba set,speed,speed+1.5s,after release)=(['0002'], 0, 0, '0000')
+  [snipe   pad  ] L(dhead,dvbl,rate,vecx,accx)=(904, 106, 0, -5.0, -462) R=(-902, 106, 0, 5.0, -2) U(vecy,accy)=(-5.0, -240) D=(5.0, -25) fire($24fba set,speed,speed+1.5s,after release)=(['0002'], 0, 0, '0000')
+  key n2    : VBLs traced 152  makes {'0x1f': 1}  breaks {'0x1f': 1}
+ski again?   vbl=10831 PADST=01 PADJ=00 BTN=00 OLD=00000000 vec=(+0.0,+0.0) $24fba=0000 head=10 rate=0 speed=0 step=000131ae menu=0000 key24=00000000 acc=(0,0)
+  key n1    : VBLs traced 151  makes {'0x32': 1}  breaks {'0x32': 1}
+map?         vbl=11094 PADST=01 PADJ=00 BTN=00 OLD=00000000 vec=(+0.0,+0.0) $24fba=0000 head=10 rate=0 speed=0 step=000131ae menu=0000 key24=00000000 acc=(0,0)
+map closed?  vbl=11369 PADST=01 PADJ=00 BTN=00 OLD=00000000 vec=(+0.0,+0.0) $24fba=0000 head=10 rate=0 speed=0 step=000131ae menu=0000 key24=00000000 acc=(0,0)
+map closed   vbl=11538 PADST=01 PADJ=00 BTN=00 OLD=00000000 vec=(+0.0,+0.0) $24fba=0000 head=10 rate=0 speed=0 step=000131ae menu=0000 key24=00000000 acc=(0,0)
   flips/50 VBL back in the ski view: 2
-buggy idle   vbl=11742 PADST=01 PADJ=00 BTN=00 OLD=00000000 vec=(+0.0,+0.0) $24fba=0000 head=6 rate=0 speed=0 step=0001359a menu=0000 key24=00000000 acc=(0,0)
-  [buggy   stick] L(dhead,dvbl,rate,vecx,accx)=(-252, 107, -25, -5.0, 0) R=(235, 106, 25, 5.0, 35) U(vecy,accy)=(-5.0, -255) D=(5.0, -5)
-  [buggy   pad  ] L(dhead,dvbl,rate,vecx,accx)=(-245, 106, -25, -5.0, -15) R=(250, 106, 25, 5.0, 0) U(vecy,accy)=(-5.0, -250) D=(5.0, -5)
-  [buggy   pad  ] L(dhead,dvbl,rate,vecx,accx)=(-235, 106, -25, -5.0, -30) R=(240, 106, 25, 5.0, 20) U(vecy,accy)=(-5.0, -255) D=(5.0, -5) fire($24fba set,speed,speed+1.5s,after release)=(['0002'], 0, 0, '0000')
-buggy C      vbl=13675 PADST=01 PADJ=00 BTN=00 OLD=00200000 vec=(+0.0,+0.0) $24fba=0000 head=6 rate=0 speed=0 step=0001359a menu=0000 key24=00000000 acc=(0,0)
-glider idle  vbl=13787 PADST=01 PADJ=00 BTN=00 OLD=00000000 vec=(+0.0,+0.0) $24fba=0000 head=6 rate=0 speed=0 step=0001373c menu=0000 key24=00000000 acc=(0,0)
-  [glider  stick] L(dhead,dvbl,rate,vecx,accx)=(-242, 106, -25, -5.0, -20) R=(247, 106, 25, 5.0, 5) U(vecy,accy)=(-5.0, -250) D=(5.0, -30)
-  [glider  pad  ] L(dhead,dvbl,rate,vecx,accx)=(-232, 107, -25, -5.0, -40) R=(240, 106, 25, 5.0, 25) U(vecy,accy)=(-5.0, -255) D=(5.0, -25)
-  [glider  pad  ] L(dhead,dvbl,rate,vecx,accx)=(-247, 107, -25, -5.0, -10) R=(230, 106, 25, 5.0, 45) U(vecy,accy)=(-5.0, -250) D=(5.0, -20) fire($24fba set,speed,speed+1.5s,after release)=(['0002'], 50, 100, '0000')
-glider C     vbl=15720 PADST=01 PADJ=00 BTN=00 OLD=00200000 vec=(+0.0,+0.0) $24fba=0000 head=6 rate=0 speed=0 step=0001373c menu=0000 key24=00000000 acc=(0,5)
+buggy idle   vbl=11760 PADST=01 PADJ=00 BTN=00 OLD=00000000 vec=(+0.0,+0.0) $24fba=0000 head=10 rate=0 speed=0 step=0001359a menu=0000 key24=00000000 acc=(0,0)
+  [buggy   stick] L(dhead,dvbl,rate,vecx,accx)=(-244, 107, -25, -5.0, -15) R=(249, 106, 25, 5.0, 0) U(vecy,accy)=(-5.0, -255) D=(5.0, -5)
+  [buggy   pad  ] L(dhead,dvbl,rate,vecx,accx)=(-237, 106, -25, -5.0, -30) R=(242, 106, 25, 5.0, 20) U(vecy,accy)=(-5.0, -240) D=(5.0, -20)
+  [buggy   pad  ] L(dhead,dvbl,rate,vecx,accx)=(-252, 106, -25, -5.0, 0) R=(232, 106, 25, 5.0, 35) U(vecy,accy)=(-5.0, -235) D=(5.0, -20) fire($24fba set,speed,speed+1.5s,after release)=(['0002'], 0, 0, '0000')
+buggy C      vbl=13692 PADST=01 PADJ=00 BTN=00 OLD=00200000 vec=(+0.0,+0.0) $24fba=0000 head=13 rate=0 speed=0 step=0001359a menu=0000 key24=00000000 acc=(0,0)
+glider idle  vbl=13804 PADST=01 PADJ=00 BTN=00 OLD=00000000 vec=(+0.0,+0.0) $24fba=0000 head=13 rate=0 speed=0 step=0001373c menu=0000 key24=00000000 acc=(0,0)
+  [glider  stick] L(dhead,dvbl,rate,vecx,accx)=(-235, 106, 0, -5.0, -35) R=(232, 106, 32, 5.0, 40) U(vecy,accy)=(-5.0, -255) D=(5.0, -25)
+  [glider  pad  ] L(dhead,dvbl,rate,vecx,accx)=(-230, 106, -28, -5.0, -30) R=(235, 107, 30, 5.0, 20) U(vecy,accy)=(-5.0, -245) D=(5.0, -30)
+  [glider  pad  ] L(dhead,dvbl,rate,vecx,accx)=(-227, 106, -25, -5.0, -35) R=(240, 106, 25, 5.0, 10) U(vecy,accy)=(-5.0, -245) D=(5.0, -30) fire($24fba set,speed,speed+1.5s,after release)=(['0002'], 43, 93, '0000')
+glider C     vbl=15740 PADST=01 PADJ=00 BTN=00 OLD=00200000 vec=(+0.0,+0.0) $24fba=0000 head=13 rate=0 speed=0 step=0001373c menu=0000 key24=00000000 acc=(0,0)
   key opt   : VBLs traced 119  makes {'0x2d': 1}  breaks {'0x2d': 1}
-after X      vbl=15984 PADST=01 PADJ=00 BTN=00 OLD=00000000 vec=(+0.0,+0.0) $24fba=0000 head=6 rate=0 speed=0 step=0001373c menu=0001 key24=00000000 acc=(0,5)
+after X      vbl=16004 PADST=01 PADJ=00 BTN=00 OLD=00000000 vec=(+0.0,+0.0) $24fba=0000 head=13 rate=0 speed=0 step=0001373c menu=0001 key24=00000000 acc=(0,0)
 total 320 s

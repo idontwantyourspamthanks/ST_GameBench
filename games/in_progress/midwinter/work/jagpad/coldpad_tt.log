@@ -1,7 +1,7 @@
 config tt {'machine': 'tt', 'memsize_kb': 4096} ['--mmu', 'true', '--joy1', 'keys', '--configfile', '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter/work/jagpad/pad.cfg']
 boot_to_game J ok in 95 s, control mode J
-after boot   vbl=5803 PADST=ff PADJ=00 BTN=00 OLD=00000000 vec=(+0.0,+0.0) $24fba=0000 head=0 rate=0 speed=0 step=000131ae menu=0000 key24=00000000 acc=(0,0)
+after boot   vbl=5805 PADST=ff PADJ=00 BTN=00 OLD=00000000 vec=(+0.0,+0.0) $24fba=0000 head=0 rate=0 speed=0 step=000131ae menu=0000 key24=00000000 acc=(0,0)
 MWPO marker: b'MWPO'  sites: 4eb9000b69004e71 4eb9000b6c00 4eb9000b6c10 4eb9000b6c20
 no pad ports on this machine: PADST must be $ff (the probe says no), nothing else to test
-B held       vbl=6038 PADST=ff PADJ=00 BTN=00 OLD=00000000 vec=(+0.0,+0.0) $24fba=0000 head=0 rate=0 speed=0 step=000131ae menu=0000 key24=00000000 acc=(0,0)
+B held       vbl=6040 PADST=ff PADJ=00 BTN=00 OLD=00000000 vec=(+0.0,+0.0) $24fba=0000 head=0 rate=0 speed=0 step=000131ae menu=0000 key24=00000000 acc=(0,0)
 total 102 s
