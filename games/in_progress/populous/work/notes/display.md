@@ -239,3 +239,141 @@ Not done: TT and Falcon (the build relocates the patches; the machines slice own
 ## 8. Files
 
 `patches/pop_ptr.s`, `patches/pop_bgcopy.s`, `tools/popabtest.py` (`gate`, `fps`, `copy`, `cpytest`, `mutants`), `work/gates/display_*.txt` (raw outputs quoted above), `work/scratch/popdisplay/boot_cell.py` (cold-boot cell).
+
+
+## 9. `pop_ptrfix`: the crash at `PC=$16eca` (PopDisplay, follow-up)
+
+Patch `patches/pop_ptrfix.s` (`; default: no`, site `$2003e` 30 bytes -> `jmp $c2800` + nops, blob `$c2800-$c283d`). Repro driver `work/scratch/popdisplay/load_repro.py`; raw outputs `work/gates/display_fix_controls.txt`, `display_gate_fix.txt`; screenshots `work/shots/pdfix/` (git-ignored).
+
+### Root cause: not a stale pointer, a misframed IKBD packet whose position is never checked
+
+What `$16eca` is, from the listing (`m68dis`, `work/dumps/busy.bin`):
+
+```
+016e20  move.w $24786.l,d1 / move.w $24788.l,d2           ; the pointer position, as the IKBD handler stored it
+016e2c  move.w #$f,d7                                       ; rows - 1
+016e30  subi.w #$b8,d2 / 016e34 ble.w $16e3a / 016e38 sub.w d2,d7     ; y > 184: fewer rows (y = 199 -> d7 = 0)
+016e3a  move.w d7,$2498c.l
+016e74  mulu.w #$a0,d2                                      ; d2 = y (reloaded at 016e56)
+016ec8  move.w (a4),(a6)+ / 016eca and.w d0,(a4) ...        ; a4 = $3c50c + y*160 + x/2: first read of the rectangle
+016f0c  dbra d7,$16eaa
+```
+
+Nothing limits y: the row count `d7 = 15 - (y - 184)` goes negative for y >= 200, so `dbra d7` runs about 65,500 rows (`$FFD0` for y = 247: 65,489 iterations), and a4 and the save pointer a6 (`$2478c`, 256 bytes) run through memory: bus error when a4 leaves RAM, or silent corruption of the game's data and stack before that. The saved position comes from the packet handler (`$1ffc8` -> `$1fff2`, `$2003e-$2005b`), which stores the three collected bytes into `$2478a/$24786/$24788` with no check. The game programs the IKBD for absolute mode with maximum 319 x 199 (`09 01 3f 00 c7` at `$1fd86`, read from the dump), so a genuine reply is always in range (the buttons byte has four bits [INFERENCE: IKBD manual; Hatari only sets bits 0-3]).
+
+**Evidence of the bad packet** (1 MB STE HD, `pp_nofade` only, `build/PopDisplay/rep_nofade`; breakpoint `pc = $2005c && ($24788).w > 199` dumps `$20061` and `$2478a` at the first bad store; LOAD pressed in the dialog):
+
+```
+> m $20061 6
+00020061: f7 00 00 6e 00 0c           buttons f7, x = $0000, y = $6e00
+> m $2478a 6
+0002478A: f7 00 00 00 ff ff
+WARN : Bus Error reading at address $49b500, PC=$16eca addr_e3=16eca op_e3=3cd4
+```
+
+`$4f500 + $6e00 * 160 + 0 = $49b500` (and `$57200 + $6e00 * 160 = $4a3200` for the other buffer): the address of the error. Five runs of this build (the fifth from `load_repro.py`) gave the same packet and the same crash (`$49b500`, `$49b500`, `$4a3200`, `$4a3200`, `$4a3200`); the follow-on errors are `Bus Error reading at address $0, PC=$0` and `Bus Error writing at address $ac9622fe, PC=$d8cec` (the runaway loop has trashed the stack). Stock PP on a Mega STE, same sequence (`originals/POPULOUS`, TOS 2.06, 16 MHz, LOAD then MOVE TO NEXT MAP): six bad packets, `00 00 7d 00 f7 0c` five times and `00 00 aa 00 f7 0c` once (x = 125 / 170, y = $00f7 = 247, header `$f7` in the y low byte), then `Address Error reading at address $2a8f, PC=$d5332` and endless `Address Error ... PC=$30cacf6` (the form of the crash depends on where the runaway write lands; PopBuildGate saw `$9fd730` = y `$f708` on the same machine).
+
+The packet is **misframed by one or more lost bytes**: the layout is (`f7`, buttons, x.hi, x.lo, y.hi, y.lo); the handler's five collected bytes (`$2005e` counts 5 down) contain the next reply's header `$f7` in a data slot: slot 0 -> buttons `$f7`; slot 1 -> x.hi; slot 3 -> y.hi (y = `$f7xx`, the `$f708` case); slot 4 -> y.lo (y = `xx*256 + $f7` >= 247, the Mega STE case). The `6e 00 0c` of the dump is the rest of the following reply: the handler takes bytes below `$f6` for key scancodes (`01fff6`-`020004`), so the tail is read as keys and the stream is back in step at the next `$f7` header.
+
+### Why timing matters
+
+PP's HAGA disk service swaps vectors for the game while it reads. A watch on `$118` (the ACIA interrupt vector) during one LOAD:
+
+```
+b ($118).l ! ($118).l :trace :file regs      (88 changes in one LOAD)
+  $118 = $e03ca0   (TOS 1.62's keyboard handler)   Next PC: 000f9328  (HAGA+$1328)
+  $118 = $1ffc8    (the game's handler)            Next PC: 000f941a  (HAGA+$141a)
+```
+
+`$f9328` and `$f941a` are inside HAGA's unrolled block swap (`2ad6 move.l (a6),(a5)+` / `2cc1 move.l d1,(a6)+` / `2215 move.l (a5),d1`, `m68dis` of `HAGA` at `$F8000`): on every service entry and exit it exchanges a block of low memory (the vector table) with its own copy, 44 times in one LOAD. The game polls the IKBD once per VBL (`016dd0 move.b #$d,$2(a6)`), the reply is six bytes at 7812 baud (about 8 ms for all six), and a disk call that falls inside those 8 ms hands part of the reply to TOS's handler and the rest to the game's [INFERENCE: the observed packets fit it; I did not trace single bytes]. With `pp_nofade` the calls are not slowed by the grey fade and fall differently against the VBL [INFERENCE: it crashed 5 of 5 runs on the STE and the unpatched PP does not on the STE; no measurement of the byte timing]; on a Mega STE the stock game crashed in the run above and in PopBuildGate's.
+
+### The fix
+
+`$2003e` is where the handler stores a completed reply (`02003e move.b $20061,$2478a` / `020048 move.w $20062,$24786` / `020052 move.w $20064,$24788` / `02005c rts`). The blob stores the three values only when buttons <= `$0f`, x <= 319 and y <= 199 (unsigned compares), and otherwise returns without touching the pointer variables (the dropped packet leaves the old position and buttons). A genuine reply is stored exactly as before. A misframed packet always carries `$f7` in some slot (buttons `$f7`, x.hi `$f7`, y.hi `$f7`, y.lo `$f7`), which the three checks catch; what can pass is a one-byte shift that puts the `$f7` into x.lo: x = 247 or 503, y = the next packet's two bytes: a bounded position, so no runaway loop. Registers and flags are not used by the caller after the stores (the handler's `rts` at `$2005c` is reached the same way).
+
+Raw check that it fires (same STE build + fix, `rep_nofade_fix`, breakpoint at the drop `rts`): `f7 00 00 6e 00` was dropped, `$2478a` kept `00 00 00 00 ff ff`, the game ran through LOAD (turn 278). On the Mega STE (`rep_fix`): `00 00 7d 00 f7` and `00 00 aa 00 f7` dropped (the very packets of the stock crash), LOAD and MOVE TO NEXT MAP survived (turn 620, then 228 on the new map). Default set + `pp_nofade` + `pop_ptrfix` on the Mega STE: `00 00 7d f7 00` (y = `$f700`, the PopBuildGate shape) dropped, LOAD + next map ran.
+
+### Gate (`popabtest.py`)
+
+The injection now delivers its position through the handler's own tail: the stub writes a packet into `$20061/$20062/$20064` and runs `jsr $2003e` (the three original stores in the unpatched run, the checked ones with `pop_ptrfix`); the handler's own packet processing is switched off with `$1ffe0 bsr.w $1fff2` -> `move.b 2(a1),d0` (the data byte is still read, so the interrupt is acknowledged). Garbage packets are delivered after the valid packet of 8 flips, in the patched runs only (`--garbage MASK`, default 15 for sets with `pop_ptrfix`): 1 = `(f7, x 0, y $6e00)`, 2 = y 250, 4 = x 400, 8 = buttons `$f7` with an in-range position. The reference run (unpatched, no garbage) must equal the patched run that dropped them.
+
+Full gate, three snapshots, 305 flips, one emulator at a time (`POPAB_JOBS=1`):
+
+```
+busy_castles         none                               IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 610 bad 0 (only in one run: ref 0, new 0)
+busy_castles         pop_ptr                            IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 610 bad 0 (only in one run: ref 0, new 0)
+busy_castles         pop_bgcopy                         IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 610 bad 0 (only in one run: ref 0, new 0)
+busy_castles         pop_ptr+pop_bgcopy                 IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 610 bad 0 (only in one run: ref 0, new 0)
+busy_castles         pop_ptrfix                         IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 610 bad 0 (only in one run: ref 0, new 0)
+busy_castles         pop_ptr+pop_bgcopy+pop_ptrfix      IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 610 bad 0 (only in one run: ref 0, new 0)
+busy_castles         pop_land_score+pop_land_mul+pop_ptr+pop_bgcopy+pop_ptrfix IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 610 bad 0 (only in one run: ref 0, new 0)
+busy_quake_volcano   none                               IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 610 bad 0 (only in one run: ref 0, new 0)
+busy_quake_volcano   pop_ptr                            IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 610 bad 0 (only in one run: ref 0, new 0)
+busy_quake_volcano   pop_bgcopy                         IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 610 bad 0 (only in one run: ref 0, new 0)
+busy_quake_volcano   pop_ptr+pop_bgcopy                 IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 610 bad 0 (only in one run: ref 0, new 0)
+busy_quake_volcano   pop_ptrfix                         IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 610 bad 0 (only in one run: ref 0, new 0)
+busy_quake_volcano   pop_ptr+pop_bgcopy+pop_ptrfix      IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 610 bad 0 (only in one run: ref 0, new 0)
+busy_quake_volcano   pop_land_score+pop_land_mul+pop_ptr+pop_bgcopy+pop_ptrfix IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 608 bad 0 (only in one run: ref 2, new 0)
+genesis_start        none                               IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 605 bad 0 (only in one run: ref 0, new 0)
+genesis_start        pop_ptr                            IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 603 bad 0 (only in one run: ref 2, new 2)
+genesis_start        pop_bgcopy                         IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 570 bad 0 (only in one run: ref 35, new 0)
+genesis_start        pop_ptr+pop_bgcopy                 IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 546 bad 0 (only in one run: ref 59, new 0)
+genesis_start        pop_ptrfix                         IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 604 bad 0 (only in one run: ref 1, new 1)
+genesis_start        pop_ptr+pop_bgcopy+pop_ptrfix      IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 545 bad 0 (only in one run: ref 60, new 0)
+genesis_start        pop_land_score+pop_land_mul+pop_ptr+pop_bgcopy+pop_ptrfix IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 385 bad 0 (only in one run: ref 220, new 0)
+GATE IDENTICAL (exit 0)
+```
+
+Controls (busy_castles; every kind must be dropped by the fix and must be visible to a game without it):
+
+```
+##### control: NO fix, garbage x=400 delivered to the unpatched game (must differ)
+busy_castles         none                               DIFFERENT: flips compared 305 (both buffers + world each), bad flips 8 (world only 16), mid-frame samples 610 bad 16 (only in one run: ref 0, new 0)
+GATE FAILED (exit 1)
+##### control: NO fix, garbage buttons=f7 with an in-range position (must differ)
+busy_castles         none                               DIFFERENT: flips compared 305 (both buffers + world each), bad flips 8 (world only 16), mid-frame samples 610 bad 16 (only in one run: ref 0, new 0)
+GATE FAILED (exit 1)
+##### control: NO fix, garbage y=250 (the pointer draw runs away: expect a stalled capture)
+busy_castles         none                               DIFFERENT: the capture stalled, the game stopped producing frames (crashed)
+GATE FAILED (exit 1)
+##### mutant fix_noy, garbage y=250 (must fail)
+busy_castles         pop_ptrfix@fix_noy                 DIFFERENT: the capture stalled, the game stopped producing frames (crashed)
+GATE FAILED (exit 1)
+##### mutant fix_nox, garbage x=400 (must differ)
+busy_castles         pop_ptrfix@fix_nox                 DIFFERENT: flips compared 305 (both buffers + world each), bad flips 8 (world only 16), mid-frame samples 610 bad 16 (only in one run: ref 0, new 0)
+GATE FAILED (exit 1)
+##### mutant fix_nobtn, garbage buttons=f7 (must differ)
+busy_castles         pop_ptrfix@fix_nobtn               DIFFERENT: flips compared 305 (both buffers + world each), bad flips 8 (world only 16), mid-frame samples 610 bad 16 (only in one run: ref 0, new 0)
+GATE FAILED (exit 1)
+##### the real fix, one garbage kind at a time: 1 fatal (f7,0,6e00) / 2 y=250 / 4 x=400 / 8 buttons f7 (must be identical)
+busy_castles         pop_ptrfix                         IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 610 bad 0 (only in one run: ref 0, new 0)
+GATE IDENTICAL (exit 0)
+busy_castles         pop_ptrfix                         IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 610 bad 0 (only in one run: ref 0, new 0)
+GATE IDENTICAL (exit 0)
+busy_castles         pop_ptrfix                         IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 610 bad 0 (only in one run: ref 0, new 0)
+GATE IDENTICAL (exit 0)
+busy_castles         pop_ptrfix                         IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 610 bad 0 (only in one run: ref 0, new 0)
+GATE IDENTICAL (exit 0)
+```
+
+An unpatched game given the y = 250 packet does not just differ, it stalls (the runaway loop), as above. The stub cannot show a mutant that removes only the buttons or only the x check as harmless: they differ at once (`fix_nobtn`, `fix_nox`).
+
+### Repro matrix (`load_repro.py`; HD builds; SAVE "tst", LOAD it, then MOVE TO NEXT MAP where noted)
+
+| machine | build | result |
+|---|---|---|
+| STE 1 MB TOS 1.62 | `pp_nofade` only | **crash**, 5 of 5: `Bus Error reading at address $49b500, PC=$16eca` (packet `f7 00 00 6e 00`) |
+| STE 1 MB | `pp_nofade` + `pop_ptrfix` | no error, LOAD ok (turns 267 and 278; in the second run the same packet was dropped) |
+| STE 1 MB | default set + `pp_nofade` + `pop_ptrfix` | no error, LOAD (turn 431) and next map ok; no bad packet occurred in this run |
+| Mega STE TOS 2.06 16 MHz | stock `originals/POPULOUS` | **crash** after LOAD + next map: 6 bad packets (y = 247), `Address Error ... PC=$d5332`, then `PC=$30cacf6` forever |
+| Mega STE | `pop_ptrfix` only | no error, LOAD + next map ok; 2 packets dropped (`00 00 7d 00 f7`, `00 00 aa 00 f7`) |
+| Mega STE | default set + `pp_nofade` + `pop_ptrfix` | no error, LOAD + next map ok; 1 packet dropped (`00 00 7d f7 00`) |
+| Mega STE | default set + `pp_nofade`, no fix | no error in this run, and no bad packet either (the misframe depends on timing) |
+
+### Is `pp_nofade` safe now?
+
+With `pop_ptrfix`: yes as far as these runs go: both machines pass LOAD and MOVE TO NEXT MAP, and every misframed packet seen was dropped; without it the STE crashes every time. `pp_nofade` should not be turned on without `pop_ptrfix`. Not tested: floppy (no HAGA there, so no fade patch), TT/Falcon, 2 and 4 MB, repeated LOADs, a hand test of saves with `pp_nofade` beyond the one SAVE + LOAD cycle. The fix covers the pointer; a lost byte can still turn a reply tail into a stray key press (`$0c`, `$0d`, buttons ...) exactly as in the stock game.
+
+### What I got wrong first
+
+I started from the IRC hypothesis, "a stale `$16f12` or a bad shape pointer after LOAD". A breakpoint on the first store of an out-of-range y (`pc = $2005c && ($24788).w > 199`) fires in the IKBD handler, before any draw has used the value, with the bad bytes still in `$20061`; so the bad state is the position itself, not the saved draw state.

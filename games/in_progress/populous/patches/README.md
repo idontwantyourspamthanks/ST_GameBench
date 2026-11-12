@@ -51,6 +51,12 @@ Evidence, gates and cycle counts: `work/notes/display.md`; the pixel gate is `to
 * Gate: `python3 tools/popabtest.py gate` (three snapshots, 289 flips each, both buffers + world RAM per flip, two mid-frame samples per flip,
   injected pointer script, junk / shape / x injections under a still pointer): IDENTICAL for every set; `--mutant NAME` runs a deliberately
   broken patch, which must fail (all 7 do). The gate removes two timing races of the original game from both runs (display.md section 3).
+* `pop_ptrfix` (PopDisplay; `; default: no`; site `$2003e` 30 bytes -> `jmp $c2800` + nops, blob `$c2800-$c283d`): the IKBD packet handler stores a reply into the
+  pointer variables unchecked; when the ACIA loses a byte (HAGA swaps the vector table, `$118` included, on every disk call) the next reply's `$f7` header lands in a data slot
+  and the pointer draw gets y = `$6e00` / `$f708` / 247: its row count `15 - (y - 184)` goes negative, `dbra` runs ~65,500 rows through memory (`Bus Error ... PC=$16eca` on an
+  STE with `pp_nofade`, `Address Error` on a Mega STE, stock PP included). The blob stores buttons <= `$0f`, x <= 319, y <= 199 as before and drops anything else.
+  Gate: garbage packets after 8 flips (`popabtest.py gate --garbage MASK`), IDENTICAL; mutants and unpatched controls fail (`work/notes/display.md` section 9).
+  `pp_nofade` should only be switched on together with it.
 
 ## Other machines: relocation, machine mask, pop_fal_ym_demo + pop_fal_ym (PopMachines; `; default: no`, blob range `$C4000-$C4FFF`)
 Evidence and cell outputs: `work/notes/machines.md`, `work/gates/machines_*.txt`.

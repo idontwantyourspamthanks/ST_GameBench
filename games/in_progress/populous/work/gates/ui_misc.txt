@@ -1,0 +1,10 @@
+(A) pointer words 0xc8,0x64 (on land), mode 2, key M: behaviour 1 -> 0, orders [(14, 0, 1)], land bytes unchanged: True, mode 2
+    keys Q then R (modes only): land bytes unchanged: True, mode 2, orders []
+(B) Space #1: pause = 1
+(B) Space #2: pause = 0
+(C1) A once: armed True, armageddon 0, orders []
+(C2) then X: armed False, fx 0
+(C3) A again after another key: armed True, armageddon 0, orders []
+(C4) 7 s later: armed False (ran out)
+(C5) A after the arm ran out: armed True, armageddon 0
+(C6) A A: armed False, armageddon flag $3d562 = 0, orders [(14, 0, 3)]

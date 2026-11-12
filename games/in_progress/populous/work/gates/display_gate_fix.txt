@@ -1,0 +1,54 @@
+T0 per snapshot: {'busy_castles': 870, 'busy_quake_volcano': 2136, 'genesis_start': 262}
+  ran busy_castles/ref: 305 flips, 610 samples, T0=870, 13.6 s
+  ran busy_castles/none: 305 flips, 610 samples, T0=870, 13.4 s
+  ran busy_castles/pop_ptr: 305 flips, 610 samples, T0=870, 13.3 s
+  ran busy_castles/pop_bgcopy: 305 flips, 610 samples, T0=870, 13.5 s
+  ran busy_castles/pop_ptr+pop_bgcopy: 305 flips, 610 samples, T0=870, 12.9 s
+  ran busy_castles/pop_ptrfix: 305 flips, 610 samples, T0=870, 14.0 s
+  ran busy_castles/pop_ptr+pop_bgcopy+pop_ptrfix: 305 flips, 610 samples, T0=870, 14.0 s
+  ran busy_castles/pop_land_score+pop_land_mul+pop_ptr+pop_bgcopy+pop_ptrfix: 305 flips, 610 samples, T0=870, 11.5 s
+  ran busy_quake_volcano/ref: 305 flips, 610 samples, T0=2136, 14.9 s
+  ran busy_quake_volcano/none: 305 flips, 610 samples, T0=2136, 14.5 s
+  ran busy_quake_volcano/pop_ptr: 305 flips, 610 samples, T0=2136, 14.8 s
+  ran busy_quake_volcano/pop_bgcopy: 305 flips, 610 samples, T0=2136, 14.2 s
+  ran busy_quake_volcano/pop_ptr+pop_bgcopy: 305 flips, 610 samples, T0=2136, 14.4 s
+  ran busy_quake_volcano/pop_ptrfix: 305 flips, 610 samples, T0=2136, 14.6 s
+  ran busy_quake_volcano/pop_ptr+pop_bgcopy+pop_ptrfix: 305 flips, 610 samples, T0=2136, 14.5 s
+  ran busy_quake_volcano/pop_land_score+pop_land_mul+pop_ptr+pop_bgcopy+pop_ptrfix: 305 flips, 608 samples, T0=2136, 11.9 s
+  ran genesis_start/ref: 305 flips, 605 samples, T0=262, 9.3 s
+  ran genesis_start/none: 305 flips, 605 samples, T0=262, 9.2 s
+  ran genesis_start/pop_ptr: 305 flips, 605 samples, T0=262, 9.2 s
+  ran genesis_start/pop_bgcopy: 305 flips, 570 samples, T0=262, 8.8 s
+  ran genesis_start/pop_ptr+pop_bgcopy: 305 flips, 546 samples, T0=262, 8.6 s
+  ran genesis_start/pop_ptrfix: 305 flips, 605 samples, T0=262, 9.1 s
+  ran genesis_start/pop_ptr+pop_bgcopy+pop_ptrfix: 305 flips, 545 samples, T0=262, 9.1 s
+  ran genesis_start/pop_land_score+pop_land_mul+pop_ptr+pop_bgcopy+pop_ptrfix: 305 flips, 385 samples, T0=262, 8.4 s
+
+== busy_castles: scenario (reference run) {"flips": 305, "pointer_still_flips": 164, "pointer_moved_flips": 140, "shapes": [0, 1, 2], "shape_changes": 4, "modes": [1, 2, 6], "mode_changes": 4, "paused_flips": 6, "button_flips": 24, "junk_flips": 9, "shape_flips": 7, "xpos_flips": 5, "hidden_at_flip": 0, "flips_with_terrain_change": 40, "distinct_views": 16}
+busy_castles         none                               IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 610 bad 0 (only in one run: ref 0, new 0)
+busy_castles         pop_ptr                            IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 610 bad 0 (only in one run: ref 0, new 0)
+busy_castles         pop_bgcopy                         IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 610 bad 0 (only in one run: ref 0, new 0)
+busy_castles         pop_ptr+pop_bgcopy                 IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 610 bad 0 (only in one run: ref 0, new 0)
+busy_castles         pop_ptrfix                         IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 610 bad 0 (only in one run: ref 0, new 0)
+busy_castles         pop_ptr+pop_bgcopy+pop_ptrfix      IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 610 bad 0 (only in one run: ref 0, new 0)
+busy_castles         pop_land_score+pop_land_mul+pop_ptr+pop_bgcopy+pop_ptrfix IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 610 bad 0 (only in one run: ref 0, new 0)
+
+== busy_quake_volcano: scenario (reference run) {"flips": 305, "pointer_still_flips": 164, "pointer_moved_flips": 140, "shapes": [0, 1, 2], "shape_changes": 4, "modes": [1, 2, 6], "mode_changes": 4, "paused_flips": 6, "button_flips": 24, "junk_flips": 9, "shape_flips": 7, "xpos_flips": 5, "hidden_at_flip": 0, "flips_with_terrain_change": 73, "distinct_views": 16}
+busy_quake_volcano   none                               IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 610 bad 0 (only in one run: ref 0, new 0)
+busy_quake_volcano   pop_ptr                            IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 610 bad 0 (only in one run: ref 0, new 0)
+busy_quake_volcano   pop_bgcopy                         IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 610 bad 0 (only in one run: ref 0, new 0)
+busy_quake_volcano   pop_ptr+pop_bgcopy                 IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 610 bad 0 (only in one run: ref 0, new 0)
+busy_quake_volcano   pop_ptrfix                         IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 610 bad 0 (only in one run: ref 0, new 0)
+busy_quake_volcano   pop_ptr+pop_bgcopy+pop_ptrfix      IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 610 bad 0 (only in one run: ref 0, new 0)
+busy_quake_volcano   pop_land_score+pop_land_mul+pop_ptr+pop_bgcopy+pop_ptrfix IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 608 bad 0 (only in one run: ref 2, new 0)
+
+== genesis_start: scenario (reference run) {"flips": 305, "pointer_still_flips": 164, "pointer_moved_flips": 140, "shapes": [0, 1, 2], "shape_changes": 4, "modes": [1, 2, 6], "mode_changes": 4, "paused_flips": 6, "button_flips": 24, "junk_flips": 9, "shape_flips": 7, "xpos_flips": 5, "hidden_at_flip": 0, "flips_with_terrain_change": 18, "distinct_views": 16}
+genesis_start        none                               IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 605 bad 0 (only in one run: ref 0, new 0)
+genesis_start        pop_ptr                            IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 603 bad 0 (only in one run: ref 2, new 2)
+genesis_start        pop_bgcopy                         IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 570 bad 0 (only in one run: ref 35, new 0)
+genesis_start        pop_ptr+pop_bgcopy                 IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 546 bad 0 (only in one run: ref 59, new 0)
+genesis_start        pop_ptrfix                         IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 604 bad 0 (only in one run: ref 1, new 1)
+genesis_start        pop_ptr+pop_bgcopy+pop_ptrfix      IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 545 bad 0 (only in one run: ref 60, new 0)
+genesis_start        pop_land_score+pop_land_mul+pop_ptr+pop_bgcopy+pop_ptrfix IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 385 bad 0 (only in one run: ref 220, new 0)
+
+GATE IDENTICAL (exit 0)

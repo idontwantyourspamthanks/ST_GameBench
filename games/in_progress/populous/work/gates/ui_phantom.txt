@@ -1,0 +1,28 @@
+# tools/popuitest.py phantom  (raw output; 3 runs, snapshot genesis_start, 1 MB STE TOS 1.62, live patches)
+### phantom --wide --set pop_noprot+pop_keys+pop_keys2          (CONTROL: no guards, WIN = 1500 VBL so the time window cannot help)
+before: {'mode': 2, 'beh': 1, 'view': (0, 0), 'music': 1, 'fx': 1, 'pause': 0} ring (0, 0) arm 0
+text entry running (started marker 0x220022 returned marker 0x0 )
+after typing 'RPMTQ' into the text entry: ring (0, 5) arm 0 state {'mode': 2, 'beh': 1, 'view': (0, 0), 'music': 1, 'fx': 1, 'pause': 0}
+text entry returned: 0x110011
+after Return + 6 s of map passes: ring (5, 5) arm 0 state {'mode': 1, 'beh': 3, 'view': (0, 0), 'music': 1, 'fx': 1, 'pause': 0} -> CHANGED (keys acted)
+after typing 'RPMTQ' with the Options dialog open: ring (5, 10) arm 0 state {'mode': 1, 'beh': 3, 'view': (0, 0), 'music': 1, 'fx': 1, 'pause': 0}
+after closing the dialog + 7 s: ring (10, 10) arm 0 state {'mode': 1, 'beh': 3, 'view': (0, 0), 'music': 1, 'fx': 1, 'pause': 0} -> CHANGED (keys acted)
+PHANTOM ['pop_noprot', 'pop_keys', 'pop_keys2'] text entry: KEYS ACTED | dialog: KEYS ACTED
+### phantom --wide                                              (all four key patches, WIN = 1500 VBL: only the guards can stop a typed key)
+before: {'mode': 2, 'beh': 1, 'view': (0, 0), 'music': 1, 'fx': 1, 'pause': 0} ring (0, 0) arm 0
+text entry running (started marker 0x220022 returned marker 0x0 )
+after typing 'RPMTQ' into the text entry: ring (5, 5) arm 0 state {'mode': 2, 'beh': 1, 'view': (0, 0), 'music': 1, 'fx': 1, 'pause': 0}
+text entry returned: 0x110011
+after Return + 6 s of map passes: ring (5, 5) arm 0 state {'mode': 2, 'beh': 1, 'view': (0, 0), 'music': 1, 'fx': 1, 'pause': 0} -> UNCHANGED
+after typing 'RPMTQ' with the Options dialog open: ring (5, 10) arm 0 state {'mode': 2, 'beh': 1, 'view': (0, 0), 'music': 1, 'fx': 1, 'pause': 0}
+after closing the dialog + 7 s: ring (10, 10) arm 0 state {'mode': 2, 'beh': 1, 'view': (0, 0), 'music': 1, 'fx': 1, 'pause': 0} -> UNCHANGED
+PHANTOM ['pop_noprot', 'pop_keys', 'pop_keys2', 'pop_keys3', 'pop_keys4'] text entry: no key acted | dialog: no key acted
+### phantom                                                      (all four key patches, shipped WIN = 150 VBL)
+before: {'mode': 2, 'beh': 1, 'view': (0, 0), 'music': 1, 'fx': 1, 'pause': 0} ring (0, 0) arm 0
+text entry running (started marker 0x220022 returned marker 0x0 )
+after typing 'RPMTQ' into the text entry: ring (2, 2) arm 0 state {'mode': 2, 'beh': 1, 'view': (0, 0), 'music': 1, 'fx': 1, 'pause': 0}
+text entry returned: 0x110011
+after Return + 6 s of map passes: ring (0, 0) arm 0 state {'mode': 2, 'beh': 1, 'view': (0, 0), 'music': 1, 'fx': 1, 'pause': 0} -> UNCHANGED
+after typing 'RPMTQ' with the Options dialog open: ring (0, 5) arm 0 state {'mode': 2, 'beh': 1, 'view': (0, 0), 'music': 1, 'fx': 1, 'pause': 0}
+after closing the dialog + 7 s: ring (0, 0) arm 0 state {'mode': 2, 'beh': 1, 'view': (0, 0), 'music': 1, 'fx': 1, 'pause': 0} -> UNCHANGED
+PHANTOM ['pop_noprot', 'pop_keys', 'pop_keys2', 'pop_keys3', 'pop_keys4'] text entry: no key acted | dialog: no key acted

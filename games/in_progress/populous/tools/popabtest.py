@@ -76,8 +76,9 @@ SNAP = GAME / "work" / "snapshots"
 SCRATCH = GAME / "build" / "PopDisplay"
 TURN = 0x3C506
 LOOP_PC = 0xB800            # `jsr $12fc2`: once per pass, the instruction before `jsr $db8a`; nothing patched is running there
+JOBS = int(os.environ.get("POPAB_JOBS", "2"))      # emulator instances at once (POPAB_JOBS=1 when only one is allowed)
 SNAPS = ["busy_castles", "busy_quake_volcano", "genesis_start"]
-SETS = [["pop_ptr"], ["pop_bgcopy"], ["pop_ptr", "pop_bgcopy"]]
+SETS = [["pop_ptr"], ["pop_bgcopy"], ["pop_ptr", "pop_bgcopy"], ["pop_ptrfix"], ["pop_ptr", "pop_bgcopy", "pop_ptrfix"]]
 
 BUFA, BUFB, BUFLEN = 0x4F500, 0x57200, 0x7D00
 WORLD, WORLD_LEN = 0x21100, 0x1C700            # $21100-$3d7ff: game data + bss, peeps, maps, pointer variables
@@ -90,6 +91,8 @@ LEFT, RIGHT = 4, 1                             # bits of $2478a ($16c96: left = 
 JUNK = 1                                       # flags bit 0: junk under the pointer in the 3rd VBL after this flip
 MOVING = 2                                     # flags bit 1: the pointer moves every VBL (speed runs only)
 SHAPE = 4                                      # flags bit 2: the shape rows the pointer draw reads are XORed for one VBL (3rd..4th)
+GARB = 16                                      # flags bit 4: IKBD garbage packets (the kinds enabled for the run, GARB_* below) after this flip's packet
+GARB_FATAL, GARB_Y, GARB_X, GARB_BTN = 1, 2, 4, 8   # kinds: (f7, 0, $6e00) as seen in the crashes; y = 250; x = 400; buttons $f7 with an in-range position
 XPOS = 8                                       # flags bit 3: pointer x ^ 1 for one VBL (3rd..4th): same word column, other shift
 KEYS = {"W": 0x67, "N": 0x69, "NE": 0x6C, "E": 0x6F, "S": 0x6D, "SW": 0x6A, "NW": 0x68, "SE": 0x6E}
 
@@ -184,6 +187,11 @@ def build_script() -> list[tuple]:
     move((100, 60), (118, 60), 18)
     hold(118, 60, 3)
     move((118, 60), (118, 70), 10)
+    # misframed IKBD packets (patched runs with pop_ptrfix only; the unpatched reference never sees them): after the valid packet of
+    # these flips the stub delivers up to four garbage packets, which pop_ptrfix must drop
+    for p in [(200, 100), (200, 100), (60, 30), (60, 30), (120, 150), (20, 190), (290, 120), (150, 5)]:
+        hold(*p, 1, fl=GARB)
+        hold(*p, 1)
     hold(200, 100, 6)
     return e
 
@@ -191,12 +199,13 @@ def build_script() -> list[tuple]:
 SCRIPT = build_script()
 
 # ---- the test scaffolding in the emulated machine (assembled with vasm at run time) ------------------------------------
-HDR, FLAGS, VCNT, TAB = 0x76400, 0x76410, 0x76412, 0x76500
+HDR, FLAGS, VCNT, GARBV, TAB = 0x76400, 0x76410, 0x76412, 0x76414, 0x76500
 CAPF, CAPS3, CAPS5 = 0x76300, 0x76320, 0x76340
-HOOK1, HOOK2 = 0x76000, 0x76100
+HOOK1, HOOK2 = 0x76000, 0x77000
 STUB_EQU = f"""HDR\tequ\t${HDR:x}
 FLAGS\tequ\t${FLAGS:x}
 VCNT\tequ\t${VCNT:x}
+GARBV\tequ\t${GARBV:x}
 TAB\tequ\t${TAB:x}
 NENT\tequ\t{len(SCRIPT)}
 """
@@ -213,11 +222,40 @@ hook:   movem.l d0-d2/a0,-(sp)
 .ok:    lsl.w   #3,d0
         lea     TAB.l,a0
         adda.w  d0,a0
-        move.w  (a0)+,$24786.l          ; pointer x / y, buttons: what the IKBD packet would have stored
-        move.w  (a0)+,$24788.l
-        move.b  (a0)+,$2478a.l
+        move.w  (a0)+,$20062.l          ; a reply packet as the ACIA handler leaves it ($20061 buttons, $20062 x, $20064 y) ...
+        move.w  (a0)+,$20064.l
+        move.b  (a0)+,$20061.l
         move.b  (a0)+,$37eec.l          ; the held key the main loop reads at $b94c
         move.w  (a0)+,FLAGS.l
+        jsr     $2003e.l                ; ... and the handler's own tail: three stores into $24786/8/a (pop_ptrfix: checked stores)
+        btst.b  #4,FLAGS+1.l            ; garbage packets after the valid one (only when the run enables them: GARBV)
+        beq.w   .ng
+        move.w  GARBV.l,d2
+        btst    #0,d2
+        beq.s   .g1
+        move.b  #$f7,$20061.l           ; the misframed packet of the crashes: (f7 00 00 6e 00): buttons $f7, x 0, y $6e00
+        clr.w   $20062.l
+        move.w  #$6e00,$20064.l
+        jsr     $2003e.l
+.g1:    btst    #1,d2
+        beq.s   .g2
+        clr.b   $20061.l                ; y = 250, in the stream of a lost byte (the Mega STE case)
+        move.w  #100,$20062.l
+        move.w  #250,$20064.l
+        jsr     $2003e.l
+.g2:    btst    #2,d2
+        beq.s   .g3
+        clr.b   $20061.l                ; x = 400
+        move.w  #400,$20062.l
+        move.w  #50,$20064.l
+        jsr     $2003e.l
+.g3:    btst    #3,d2
+        beq.s   .ng
+        move.b  #$f7,$20061.l           ; buttons $f7 with a valid position
+        move.w  #100,$20062.l
+        move.w  #50,$20064.l
+        jsr     $2003e.l
+.ng:
         jsr     $16c96.l                ; the VBL's click state machine on the new inputs (idempotent for later VBLs)
         clr.w   VCNT.l
         addq.w  #1,HDR+2.l
@@ -250,7 +288,7 @@ NOSTALE
         rts
 """
 STUB2 = f"""
-        org     $76100
+        org     $77000
 vbl:    movem.l d0-d2/a0,-(sp)
         move.w  VCNT.l,d0
         btst.b  #1,FLAGS+1.l            ; speed runs: the pointer moves every VBL
@@ -327,7 +365,8 @@ vbl:    movem.l d0-d2/a0,-(sp)
 VBL_SITE, VBL_ORIG = 0x16D88, bytes.fromhex("4a790002195e")          # tst.w $2195e.l
 FLIP_JSR = 0xB942                                                    # operand of `jsr $16f16.l` at $b940
 FLIP_ORIG = bytes.fromhex("00016f16")
-ACIA_STORES = (0x2003E, 30)                                          # three `move.? abs.l,abs.l` of the packet handler
+ACIA_SITE = 0x1FFE0                                                  # `bsr.w $1fff2` of the ACIA handler $1ffc8: no packet is processed
+ACIA_NEW = "$10 $29 $00 $02"                                         # move.b 2(a1),d0: the data byte is still read, so the interrupt is acknowledged
 
 
 def vasm(src: str) -> bytes:
@@ -366,6 +405,9 @@ MUTANTS = {
     "ptr_noshape": ("pop_ptr", [(".shape: move.w  $2169a.l,d2             ; the shape rows", ".shape: rts\n        move.w  $2169a.l,d2             ; the shape rows")]),
     "ptr_nopos": ("pop_ptr", [("        cmp.w   pX(a0),d1\n", "        cmp.w   d1,d1\n")]),
     "ptr_nobuf": ("pop_ptr", [("        cmp.l   pBUF(a0),d1\n        bne.w   full\n        move.w  $24786.l,d1", "        cmp.l   d1,d1\n        bne.w   full\n        move.w  $24786.l,d1")]),
+    "fix_noy": ("pop_ptrfix", [("        cmpi.w  #199,$20064.l           ; y 0..199\n        bhi.s   .drop\n", "")]),
+    "fix_nox": ("pop_ptrfix", [("        cmpi.w  #319,$20062.l           ; x 0..319\n        bhi.s   .drop\n", "")]),
+    "fix_nobtn": ("pop_ptrfix", [("cmpi.b  #$0f,$20061.l           ; buttons: four bits\n        bhi.s   .drop\n", "")]),
     "cpy_short": ("pop_bgcopy", [("        lea     31980(a0),a2", "        lea     31200(a0),a2")]),
     "cpy_tail": ("pop_bgcopy", [("        move.l  (a1)+,(a0)+             ; the flags the original ends with\n", "")]),
     "cpy_off": ("pop_bgcopy", [("movem.l d0-d7/a2-a6,364(a0)", "movem.l d0-d7/a2-a6,368(a0)")]),
@@ -439,7 +481,7 @@ def start_turn(snap: str) -> int:
         h.close()
 
 
-def run_capture(snap: str, live: str | None, flips: int, label: str, t0: int, fast: bool = True) -> dict:
+def run_capture(snap: str, live: str | None, flips: int, label: str, t0: int, garb: int = 0, fast: bool = True) -> dict:
     """Restore `snap`, apply the scaffolding (+ the live patch set) at turn `t0`, capture `flips` flips and the mid-frame samples."""
     h = Populous(snapshot=SNAP / f"{snap}.sav")
     try:
@@ -457,11 +499,13 @@ def run_capture(snap: str, live: str | None, flips: int, label: str, t0: int, fa
             p = h.R / f"seg_{a:x}.bin"
             p.write_bytes(b)
             cmds.append(f"loadbin {p} ${a:x}")
-        cmds.append(f"w ${ACIA_STORES[0]:x} " + " ".join(["$4e $71"] * (ACIA_STORES[1] // 2)))
+        cmds.append(f"w ${ACIA_SITE:x} {ACIA_NEW}")
+        if garb:
+            cmds.append(f"w ${GARBV:x} $00 ${garb:02x}")
         if live:
             spec = json.loads(Path(live + ".json").read_text())
             cmds.append(f"loadbin {Path(live + '.img').resolve()} ${spec['img_base']:x}")
-        cmds.append(f"w ${VBL_SITE:x} $4e $b9 $00 $07 $61 $00")                 # jsr $76100.l
+        cmds.append(f"w ${VBL_SITE:x} $4e $b9 $00 $07 $70 $00")                 # jsr $77000.l
         cmds.append(f"w ${FLIP_JSR:x} $00 $07 $60 $00")                          # jsr $16f16 -> jsr $76000
         if live:
             for s in spec["sites"]:
@@ -675,13 +719,20 @@ def cmd_gate(a) -> int:
     def do(job):
         sn, ns, tag = job
         live = lives.get((sn, tag))
+        if ns is None:                              # the reference run never sees garbage
+            garb = 0
+        else:
+            garb = (a.garbage if a.garbage is not None else 15) if "pop_ptrfix" in ns else (a.garbage or 0)
         t = time.time()
-        d = run_capture(sn, live, flips, f"{sn}/{tag}", t0s[sn])
+        try:
+            d = run_capture(sn, live, flips, f"{sn}/{tag}", t0s[sn], garb)
+        except TimeoutError as ex:                  # the emulated game stopped producing frames: it crashed (a y > 199 packet makes the
+            d = {"label": f"{sn}/{tag}", "recs": [], "t0": t0s[sn], "stalled": str(ex)[:300]}   # pointer's row loop run away: display.md)
         d["secs"] = round(time.time() - t, 1)
         return job, d
 
     results: dict = {}
-    with ThreadPoolExecutor(max_workers=2) as ex:
+    with ThreadPoolExecutor(max_workers=JOBS) as ex:
         for job, d in ex.map(do, jobs):
             results[(job[0], job[2])] = d
             print(f"  ran {d['label']}: {sum(1 for r in d['recs'] if r.tag == 1)} flips, {sum(1 for r in d['recs'] if r.tag != 1)} samples, "
@@ -695,6 +746,10 @@ def cmd_gate(a) -> int:
             tag = "+".join(ns) or "none"
             if a.mutant:
                 tag += "@" + a.mutant
+            if results[(sn, tag)].get("stalled"):
+                print(f"{sn:20s} {tag:34s} DIFFERENT: the capture stalled, the game stopped producing frames (crashed)")
+                rc |= 1
+                continue
             r = compare(ref, results[(sn, tag)])
             verdict = "IDENTICAL" if r["identical"] else "DIFFERENT"
             print(f"{sn:20s} {tag:34s} {verdict}: flips compared {r['flips']} (both buffers + world each), "
@@ -737,8 +792,8 @@ def rate(snap: str, names: list[str], turns: int, moving: bool, t0: int, out: di
             p.write_bytes(vasm(src))
             cmds.append(f"loadbin {p} ${HOOK2:x}")
             cmds.append(f"w ${FLAGS:x} $00 $02")
-            cmds.append(f"w ${ACIA_STORES[0]:x} " + " ".join(["$4e $71"] * (ACIA_STORES[1] // 2)))
-            cmds.append(f"w ${VBL_SITE:x} $4e $b9 $00 $07 $61 $00")
+            cmds.append(f"w ${ACIA_SITE:x} {ACIA_NEW}")
+            cmds.append(f"w ${VBL_SITE:x} $4e $b9 $00 $07 $70 $00")
         if live:
             for s in spec["sites"]:
                 cmds.append(f"w ${s['addr']:x} " + " ".join(f"${x:02x}" for x in bytes.fromhex(s["new"])))
@@ -802,7 +857,7 @@ def cmd_fps(a) -> int:
                 return
             except Exception as ex:   # noqa: BLE001
                 print("retry", key, repr(ex)[:200], flush=True)
-    with ThreadPoolExecutor(max_workers=2) as ex:
+    with ThreadPoolExecutor(max_workers=JOBS) as ex:
         list(ex.map(do, jobs))
     for sn in snaps:
         for ns in sets:
@@ -974,6 +1029,7 @@ def main() -> int:
     g.add_argument("--flips", type=int)
     g.add_argument("--mutant", choices=sorted(MUTANTS))
     g.add_argument("--keep")
+    g.add_argument("--garbage", type=int, help="garbage packet kinds delivered in the patched runs (bit mask 1 fatal, 2 y=250, 4 x=400, 8 buttons; default 15 for sets with pop_ptrfix, else 0)")
     g.add_argument("--keep-stale", action="store_true", help="do not remove the stale pointer restore race (default: removed in both runs)")
     f = sub.add_parser("fps")
     f.add_argument("--snap", nargs="*")

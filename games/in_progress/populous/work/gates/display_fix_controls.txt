@@ -1,0 +1,45 @@
+##### control: NO fix, garbage x=400 delivered to the unpatched game (must differ)
+
+== busy_castles: scenario (reference run) {"flips": 305, "pointer_still_flips": 164, "pointer_moved_flips": 140, "shapes": [0, 1, 2], "shape_changes": 4, "modes": [1, 2, 6], "mode_changes": 4, "paused_flips": 6, "button_flips": 24, "junk_flips": 9, "shape_flips": 7, "xpos_flips": 5, "hidden_at_flip": 0, "flips_with_terrain_change": 40, "distinct_views": 16}
+busy_castles         none                               DIFFERENT: flips compared 305 (both buffers + world each), bad flips 8 (world only 16), mid-frame samples 610 bad 16 (only in one run: ref 0, new 0)
+
+GATE FAILED (exit 1)
+##### control: NO fix, garbage buttons=f7 with an in-range position (must differ)
+
+== busy_castles: scenario (reference run) {"flips": 305, "pointer_still_flips": 164, "pointer_moved_flips": 140, "shapes": [0, 1, 2], "shape_changes": 4, "modes": [1, 2, 6], "mode_changes": 4, "paused_flips": 6, "button_flips": 24, "junk_flips": 9, "shape_flips": 7, "xpos_flips": 5, "hidden_at_flip": 0, "flips_with_terrain_change": 40, "distinct_views": 16}
+busy_castles         none                               DIFFERENT: flips compared 305 (both buffers + world each), bad flips 8 (world only 16), mid-frame samples 610 bad 16 (only in one run: ref 0, new 0)
+
+GATE FAILED (exit 1)
+##### control: NO fix, garbage y=250 (the pointer draw runs away: expect a stalled capture)
+
+== busy_castles: scenario (reference run) {"flips": 305, "pointer_still_flips": 164, "pointer_moved_flips": 140, "shapes": [0, 1, 2], "shape_changes": 4, "modes": [1, 2, 6], "mode_changes": 4, "paused
+busy_castles         none                               DIFFERENT: the capture stalled, the game stopped producing frames (crashed)
+
+GATE FAILED (exit 1)
+##### mutant fix_noy, garbage y=250 (must fail)
+
+== busy_castles: scenario (reference run) {"flips": 305, "pointer_still_flips": 164, "pointer_moved_flips": 140, "shapes": [0, 1, 2], "shape_changes": 4, "modes": [1, 2, 6], "mode_changes": 4, "paused
+busy_castles         pop_ptrfix@fix_noy                 DIFFERENT: the capture stalled, the game stopped producing frames (crashed)
+
+GATE FAILED (exit 1)
+##### mutant fix_nox, garbage x=400 (must differ)
+
+== busy_castles: scenario (reference run) {"flips": 305, "pointer_still_flips": 164, "pointer_moved_flips": 140, "shapes": [0, 1, 2], "shape_changes": 4, "modes": [1, 2, 6], "mode_changes": 4, "paused_flips": 6, "button_flips": 24, "junk_flips": 9, "shape_flips": 7, "xpos_flips": 5, "hidden_at_flip": 0, "flips_with_terrain_change": 40, "distinct_views": 16}
+busy_castles         pop_ptrfix@fix_nox                 DIFFERENT: flips compared 305 (both buffers + world each), bad flips 8 (world only 16), mid-frame samples 610 bad 16 (only in one run: ref 0, new 0)
+
+GATE FAILED (exit 1)
+##### mutant fix_nobtn, garbage buttons=f7 (must differ)
+
+== busy_castles: scenario (reference run) {"flips": 305, "pointer_still_flips": 164, "pointer_moved_flips": 140, "shapes": [0, 1, 2], "shape_changes": 4, "modes": [1, 2, 6], "mode_changes": 4, "paused_flips": 6, "button_flips": 24, "junk_flips": 9, "shape_flips": 7, "xpos_flips": 5, "hidden_at_flip": 0, "flips_with_terrain_change": 40, "distinct_views": 16}
+busy_castles         pop_ptrfix@fix_nobtn               DIFFERENT: flips compared 305 (both buffers + world each), bad flips 8 (world only 16), mid-frame samples 610 bad 16 (only in one run: ref 0, new 0)
+
+GATE FAILED (exit 1)
+##### the real fix, one garbage kind at a time: 1 fatal (f7,0,6e00) / 2 y=250 / 4 x=400 / 8 buttons f7 (must be identical)
+busy_castles         pop_ptrfix                         IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 610 bad 0 (only in one run: ref 0, new 0)
+GATE IDENTICAL (exit 0)
+busy_castles         pop_ptrfix                         IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 610 bad 0 (only in one run: ref 0, new 0)
+GATE IDENTICAL (exit 0)
+busy_castles         pop_ptrfix                         IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 610 bad 0 (only in one run: ref 0, new 0)
+GATE IDENTICAL (exit 0)
+busy_castles         pop_ptrfix                         IDENTICAL: flips compared 305 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 610 bad 0 (only in one run: ref 0, new 0)
+GATE IDENTICAL (exit 0)

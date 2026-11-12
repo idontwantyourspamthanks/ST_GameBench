@@ -1,0 +1,31 @@
+snapshot busy_castles turn 870, 60 turns, 16 MHz, 50 Hz
+busy_castles @16 MHz 50 Hz: DIFFER | world at pass tops: 104 compared (104 differ) over 60 turns, max 2 tops/turn | T frames 58 compared (58 differ; 0 excluded) | R frames: 47 (0 stability pairs, 0 unstable; 37 minimap compares, 0 differ, 9 turns excluded (minimap cell redrawn by the world)) | pass kinds T 59 R 47 S 0 | turns/s base 7.545 patched 5.008
+  WORLD DIFFER at pass top, turn 873 (VBL 21841): 4 ranges, first (addr, unpatched, patched) [('0x24787', '0800be', '4b00af'), ('0x2498d', '09', '0f'), ('0x249ed', '28', '20'), ('0x3c557', '08000000be', '4b000000af')]
+  WORLD DIFFER at pass top, turn 873 (VBL 21844): 4 ranges, first (addr, unpatched, patched) [('0x24787', '0800be', '4b00af'), ('0x2498d', '09', '0f'), ('0x249ed', '28', '20'), ('0x3c557', '08000000be', '4b000000af')]
+  WORLD DIFFER at pass top, turn 874 (VBL 21851): 5 ranges, first (addr, unpatched, patched) [('0x24787', '0800be', '4b00af'), ('0x2498d', '09', '0f'), ('0x249ed', '28', '20'), ('0x37eb9', '2b', '2c'), ('0x3c557', '08000000be', '4b000000af')]
+  T-FRAME DIFFER turn 873: 22577 bytes in 2 spans, rows [38]..[192]
+  T-FRAME DIFFER turn 874: 22087 bytes in 2 spans, rows [38]..[191]
+  T-FRAME DIFFER turn 875: 22089 bytes in 2 spans, rows [38]..[192]
+snapshot busy_castles turn 870, 60 turns, 16 MHz, 50 Hz
+busy_castles @16 MHz 50 Hz: DIFFER | world at pass tops: 58 compared (58 differ) over 60 turns, max 1 tops/turn | T frames 38 compared (30 differ; 0 excluded) | R frames: 20 (0 stability pairs, 0 unstable; 0 minimap compares, 0 differ, 0 turns excluded (minimap cell redrawn by the world)) | pass kinds T 39 R 20 S 0 | turns/s base 7.545 patched 7.564
+  WORLD DIFFER at pass top, turn 873 (VBL 21836): 7 ranges, first (addr, unpatched, patched) [('0x24786', '000800be', '013f00c7'), ('0x2498d', '090090', '000098'), ('0x37eb9', '2c', '2d'), ('0x3b261', '01', '00'), ('0x3b273', 'e4', 'e3'), ('0x3b283', '1a', '19')]
+  WORLD DIFFER at pass top, turn 874 (VBL 21843): 1 ranges, first (addr, unpatched, patched) [('0x3b261', '00', '01')]
+  WORLD DIFFER at pass top, turn 875 (VBL 21849): 3 ranges, first (addr, unpatched, patched) [('0x3b261', '01', '00'), ('0x3b273', '81', '80'), ('0x3b283', '7f', '7e')]
+  T-FRAME DIFFER turn 874: 15309 bytes in 12 spans, rows [4]..[183]
+  T-FRAME DIFFER turn 875: 18516 bytes in 12 spans, rows [4]..[191]
+  T-FRAME DIFFER turn 880: 19547 bytes in 9 spans, rows [4]..[199]
+snapshot busy_castles turn 870, 60 turns, 16 MHz, 50 Hz
+busy_castles @16 MHz 50 Hz: DIFFER | world at pass tops: 131 compared (0 differ) over 60 turns, max 3 tops/turn | T frames 58 compared (0 differ; 0 excluded) | R frames: 74 (17 stability pairs, 0 unstable; 58 minimap compares, 58 differ, 12 turns excluded (minimap cell redrawn by the world)) | pass kinds T 59 R 74 S 0 | turns/s base 7.545 patched 5.026
+  R MINIMAP != T MINIMAP turn 874: 160 bytes, minimap rows [4]..[60], world cell redrawn in turn 872..875: [871, 872]
+  R MINIMAP != T MINIMAP turn 875: 36 bytes, minimap rows [4]..[56], world cell redrawn in turn 873..876: [872]
+  R MINIMAP != T MINIMAP turn 876: 159 bytes, minimap rows [4]..[60], world cell redrawn in turn 874..877: []
+snapshot genesis_start turn 263, 60 turns, 16 MHz, 50 Hz, command at turn 283
+genesis_start @16 MHz 50 Hz: DIFFER | world at pass tops: 213 compared (148 differ) over 60 turns, max 4 tops/turn | T frames 58 compared (40 differ; 0 excluded) | R frames: 158 (98 stability pairs, 2 unstable; 118 minimap compares, 0 differ, 14 turns excluded (minimap cell redrawn by the world)) | pass kinds T 59 R 158 S 0 | turns/s base 16.667 patched 5.051
+  WORLD DIFFER at pass top, turn 283 (VBL 13127): 10 ranges, first (addr, unpatched, patched) [('0x35ca3', '00', '01'), ('0x36d27', '3c', '20'), ('0x37695', '0000', '1418'), ('0x376d5', '0000', '1211'), ('0x37ef7', '39', '20'), ('0x37f9b', 'e0', 'ca')]
+  WORLD DIFFER at pass top, turn 283 (VBL 13130): 17 ranges, first (addr, unpatched, patched) [('0x34401', '0000', '0101'), ('0x34441', '0000', '0101'), ('0x35c1f', '0000000000', '0100010001'), ('0x35ca1', '0000000000', '0100020001'), ('0x35d23', '0000000000', '0100010001'), ('0x36d27', '3c', '1f')]
+  WORLD DIFFER at pass top, turn 283 (VBL 13132): 23 ranges, first (addr, unpatched, patched) [('0x343c0', '00000000', '01010101'), ('0x34400', '00000000', '01020201'), ('0x34440', '00000000', '01020201'), ('0x34480', '00000000', '01010101'), ('0x35b9b', '0000000000000000', '0100010001000100'), ('0x35c1d', '0000000000000000', '0100020002000200')]
+  T-FRAME DIFFER turn 284: 2406 bytes in 1 spans, rows [24]..[39]
+  T-FRAME DIFFER turn 285: 2406 bytes in 1 spans, rows [24]..[39]
+  T-FRAME DIFFER turn 286: 2406 bytes in 1 spans, rows [24]..[39]
+  R-FRAME UNSTABLE turn 283: 170 bytes in 1 spans, rows [31]..[32]
+  R-FRAME UNSTABLE turn 283: 2406 bytes in 1 spans, rows [24]..[39]
