@@ -54,7 +54,7 @@ The agent "skills" in [`.omp/skills/`](.omp/skills/) capture the method, the emu
 | `games/done/midwinter2/` | **Midwinter 2 (v1.4, Jaguar pad): done.** `REPORT.md` (overview), `PLAN.md`, `patches/` (patch sources, 68000 assembly), `tools/` (patch builder, harness, launchers, packaging), `work/notes/` (reverse-engineering notes with evidence), `work/*/` (test scripts and raw logs). |
 | `games/done/powermonger/` | **Powermonger (v1.0): done.** Same layout; [`REPORT.md`](games/done/powermonger/REPORT.md). |
 | `games/in_progress/populous/`, `games/in_progress/populous-2/` | **Populous and Populous 2.** Same layout; `PLAN.md` and `work/notes/` (the shared Bullfrog-family study is `populous/work/notes/bullfrog_family.md`). |
-| `games/in_progress/hunter/` | **Hunter (v1.1, Jaguar pad): done.** Same layout; [`REPORT.md`](games/in_progress/hunter/REPORT.md). |
+| `games/in_progress/hunter/` | **Hunter (v1.1 released; v1.2 in progress: STE palette, Amiga sky, panel palette, triple buffering, item/weapon keys, HD save).** Same layout; [`REPORT.md`](games/in_progress/hunter/REPORT.md). |
 | `games/done/midwinter/` | **Midwinter (v1.2, Jaguar pad): done.** Same layout; [`REPORT.md`](games/done/midwinter/REPORT.md). |
 | `games/done/` | Games declared finished. A game moves here (`git mv`) when it's declared ready, and back to `in_progress/` if new work is needed. |
 | `games/queue/` | **Upcoming games:** one folder per game with a README (source, file list, loader type) and early notes; the game files in `originals/` are git-ignored. The list is [`games/queue/README.md`](games/queue/README.md). |
