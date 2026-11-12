@@ -54,9 +54,10 @@ Reference project: `games/in_progress/midwinter2`. Its `PLAN.md` holds phases P0
 - **`/tmp` is RAM.** Never copy whole projects per emulator run.
 
 ## Machine checklist (every game; learned on Powermonger and Populous)
+- **Start with `tools/hwscan.py`** on a dump of every program (game, title/demo) and on PP's resident code: it lists YM mirrors, sync checks, blitter, DMA sound, joypad, cache, TT/Falcon registers, MFP/ACIA and vector writes, with a risk note each.
 - **Falcon: YM register mirrors bus-error.** Sample players often write `$ff8800/02/04/06` with `movep.l d1,-$7800(a0)`; `$ff8804` and `$ff8806` crash a Falcon. Scan both programs for these and patch them Falcon-only (`fal_ym`, `pop_fal_ym`).
 - **TT/Falcon load Pexec'd programs at a different base**: relocate patches (see pp-haga-conversions).
-- **ST/Mega ST/TT have no blitter or enhanced joystick ports**: probe safely (cookie `_MCH`, or a bus-error-guarded read) and keep a CPU path.
+- **A plain ST and the TT have no blitter** (a Mega ST normally does); **only the STE and Falcon have the enhanced joystick ports** (a Mega STE reads its DIP switches at `$ff9200`). Probe safely (cookie `_MCH`, or a bus-error-guarded read) and keep a CPU path.
 - **60 Hz**: some games refuse it or crash (Populous 2 checks `$ff820a` and draws garbage when forced). Test a 60 Hz STE (TOS 2.06 US) and the TT.
 - **Blitter HOG mode starves the IKBD ACIA**: long bursts lose mouse bytes, the parser reads garbage packets, and the game can bus-error. Keep bursts short (about 1,200 cycles) and add the position clamp (Powermonger `buserr.md`, Populous 2 `pop2_clamp`).
 
