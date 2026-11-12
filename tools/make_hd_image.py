@@ -56,7 +56,8 @@ DEFAULT_SIZE_KB = 32000                                 # one partition, 64000 s
 VOLUME = "GAMES"
 
 # folder on C: -> game; versions/requirements for README.TXT are taken from the builds where possible (see readme_text)
-FOLDERS = ("MIDWINTR", "MW1ORIG", "MIDWINT2", "MW2ORIG", "HUNTER", "POWERMON", "POPULOUS", "POPS2", "AUTO")
+FOLDERS = ("MIDWINTR", "MW1ORIG", "MIDWINT2", "MW2ORIG", "HUNTER", "HUNTORIG", "POWERMON", "POPULOUS", "POPORIG", "POPS2",
+           "POP2ORIG", "AUTO")
 
 
 def run(cmd, cwd=None, quiet=True, env=None):
@@ -127,6 +128,18 @@ def build_midwinter2_orig() -> Path:
     dst.mkdir(parents=True)
     copy_names(g, dst, ["RUNME.TOS", "HAGA", "FF240R.BMP", "FFF273.HST", "LFF273.HST", "README.TXT", "LOG.TXT", "SOLUTION.TXT"])
     shutil.copytree(g / "FILES", dst / "FILES")               # its own blank campaign disk FFD
+    return dst
+
+
+def build_orig(src: Path, name: str) -> Path:
+    """An unpatched release for side-by-side comparison: every file of `src` except the bench's own scaffolding and notes."""
+    dst = STAGE / name
+    shutil.rmtree(dst, ignore_errors=True)
+    dst.mkdir(parents=True)
+    for p in sorted(src.iterdir()):
+        if p.name in ("alt", "build", "dist", "patches", "tools", "work", "originals", "tos") or p.suffix.lower() == ".md":
+            continue
+        (shutil.copytree if p.is_dir() else shutil.copy2)(p, dst / p.name)
     return dst
 
 
@@ -214,7 +227,11 @@ def build_populous2() -> Path:
 
 
 BUILDERS = {"MIDWINTR": build_midwinter, "MW1ORIG": build_midwinter_orig, "MIDWINT2": build_midwinter2, "MW2ORIG": build_midwinter2_orig,
-            "HUNTER": build_hunter, "POWERMON": build_powermonger, "POPULOUS": build_populous, "POPS2": build_populous2, "AUTO": build_auto}
+            "HUNTER": build_hunter, "HUNTORIG": lambda: build_orig(GAMES / "hunter", "HUNTORIG"),
+            "POWERMON": build_powermonger, "POPULOUS": build_populous,
+            "POPORIG": lambda: build_orig(GAMES / "populous" / "originals" / "POPULOUS", "POPORIG"),
+            "POPS2": build_populous2, "POP2ORIG": lambda: build_orig(GAMES / "populous-2" / "originals" / "POPUL2", "POP2ORIG"),
+            "AUTO": build_auto}
 
 
 # ---- 2. the disk ---------------------------------------------------------------------------------------------------------------
@@ -230,7 +247,8 @@ def readme_text(vers: dict[str, str], date: str) -> str:
 ==========================================================================
 
 Six games with dad_prg's patches (speed, sound, fixes) on one bootable
-hard disk image, plus PP's unpatched Midwinter and Midwinter 2 for side-by-side comparison:
+hard disk image, plus PP's unpatched releases of five of them (the *ORIG
+folders) for side-by-side comparison:
 HDDRIVER, one 31 MB partition = drive C:.  Nothing starts by itself except
 a 3-second question about Powermonger at boot.
 
@@ -241,9 +259,12 @@ a 3-second question about Powermonger at boot.
   C:\MIDWINT2  Midwinter 2            double-click RUNME.TOS     {vers['MIDWINT2']}
   C:\MW2ORIG   Midwinter 2 (original) double-click RUNME.TOS     PP's release, unpatched
   C:\HUNTER    Hunter                 double-click START.TOS     {vers['HUNTER']}
+  C:\HUNTORIG  Hunter (original)      double-click START.TOS     PP's release, unpatched
   C:\POWERMON  Powermonger            press P at boot (below)    {vers['POWERMON']}
   C:\POPULOUS  Populous               double-click RUNME.TOS     {vers['POPULOUS']}
+  C:\POPORIG   Populous (original)    double-click RUNME.TOS     PP's release, unpatched
   C:\POPS2     Populous 2             double-click RUNME.TOS     {vers['POPS2']}
+  C:\POP2ORIG  Populous 2 (original)  double-click RUNME.TOS     PP's release, unpatched
 
 Boot: HDDRIVER banner, then "Powermonger? P = start, else desktop". Press
 P within 3 seconds to start Powermonger; any other key (or waiting) goes
@@ -395,6 +416,8 @@ def layout_text(img: Path, tgt: str, total: int, psz: int, folders: dict[str, Pa
            "HUNTER": "Hunter (Gamex by PP, patched; FILES\\P = patch code + STE sample bank)",
            "POWERMON": "Powermonger (HD build, patched; start it from the boot prompt, see README.TXT)",
            "POPULOUS": "Populous (HAGA by PP, patched; PATCHED.TXT)", "POPS2": "Populous 2 (HAGA by PP, patched)",
+           "HUNTORIG": "Hunter (Gamex by PP, unpatched, for comparison)", "POPORIG": "Populous (HAGA by PP, unpatched, for comparison)",
+           "POP2ORIG": "Populous 2 (HAGA by PP, unpatched, for comparison)",
            "AUTO": "boot prompt PMBOOT.PRG (tools/hd_pmboot.s): P = start Powermonger, any other key / 3 s = desktop"}
     for name, src in folders.items():
         n = sum(1 for p in src.rglob("*") if p.is_file())
