@@ -48,6 +48,7 @@ The agent "skills" in [`.omp/skills/`](.omp/skills/) capture the method, the emu
 |---|---|
 | `tools/stharness.py` | Headless [Hatari](https://www.hatari-emu.org/) harness. Each instance gets a private Xvfb display, so input injection never touches your desktop. It handles snapshots, scripted mouse and keyboard input, fps, CPU profiles, world-speed measurement and deterministic A/B frame capture. |
 | `tools/m68dis.py` | 68000 disassembler for RAM dumps, with call-target labels, xrefs, callers and per-address profile cycles (uses [capstone](https://www.capstone-engine.org/)). |
+| `tools/hwscan.py` | Machine checklist up front: scans a 68000 RAM dump (with a code range) or a TOS program for ST-machine-specific hardware access (YM mirrors, blitter, DMA sound, joypad ports, Mega STE cache, TT/Falcon registers, `$ff820a` sync, MFP, ACIA, vector writes), following `lea`/`movea`/`d(An)` bases, with a risk level and a one-line note per access. |
 | `tools/pp_depack.py` | Unpacks the self-extracting `RUNME.TOS` of PP's HAGA hard-disk conversions. |
 | `.omp/skills/` | Method, harness, PP-conversion internals and delegation rules. |
 | `games/in_progress/midwinter2/` | **Midwinter 2.** `REPORT.md` (overview), `PLAN.md`, `patches/` (patch sources, 68000 assembly), `tools/` (patch builder, harness, launchers, packaging), `work/notes/` (reverse-engineering notes with evidence), `work/*/` (test scripts and raw logs). |
