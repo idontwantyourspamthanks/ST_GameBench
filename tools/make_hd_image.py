@@ -56,7 +56,7 @@ DEFAULT_SIZE_KB = 32000                                 # one partition, 64000 s
 VOLUME = "GAMES"
 
 # folder on C: -> game; versions/requirements for README.TXT are taken from the builds where possible (see readme_text)
-FOLDERS = ("MIDWINTR", "MW1ORIG", "MIDWINT2", "HUNTER", "POWERMON", "AUTO")
+FOLDERS = ("MIDWINTR", "MW1ORIG", "MIDWINT2", "HUNTER", "POWERMON", "POPULOUS", "POPS2", "AUTO")
 
 
 def run(cmd, cwd=None, quiet=True, env=None):
@@ -172,8 +172,38 @@ def build_auto() -> Path:
     return dst
 
 
+def build_populous() -> Path:
+    r"""= what populous/tools/package.sh puts into POPULOUS\: `poppatch.py build --hd` output plus PATCHED.TXT."""
+    out, dst = STAGE / "pop_build", STAGE / "POPULOUS"
+    py("populous", "poppatch", "verify")
+    shutil.rmtree(out, ignore_errors=True)
+    py("populous", "poppatch", "build", "--hd", "--out", out)
+    shutil.rmtree(dst, ignore_errors=True)
+    shutil.copytree(out, dst)
+    doc = py("populous", "poppatch", "doc", "patches/README_HD.TXT")
+    (dst / "PATCHED.TXT").write_bytes(doc.replace("\r\n", "\n").replace("\n", "\r\n").encode("latin-1", "replace"))
+    return dst
+
+
+def build_populous2() -> Path:
+    r"""= what populous-2/tools/package.sh puts into POPS2\: RUNME.TOS, HAGA, the .HST/.BMP/.TXT files, FILES\, PATCHES.TXT."""
+    out, dst = STAGE / "pop2_build", STAGE / "POPS2"
+    py("populous-2", "pop2patch", "verify")
+    shutil.rmtree(out, ignore_errors=True)
+    py("populous-2", "pop2patch", "build", "--out", out)
+    shutil.rmtree(dst, ignore_errors=True)
+    dst.mkdir(parents=True)
+    for pat in ("RUNME.TOS", "HAGA", "*.HST", "*.BMP", "*.TXT"):
+        for f in sorted(out.glob(pat)):
+            shutil.copy2(f, dst / f.name)
+    shutil.copytree(out / "FILES", dst / "FILES")
+    doc = py("populous-2", "pop2patch", "doc", "patches/PATCHES.TXT").replace("{DATE}", datetime.date.today().isoformat())
+    (dst / "PATCHES.TXT").write_bytes(doc.replace("\r\n", "\n").replace("\n", "\r\n").encode("latin-1", "replace"))
+    return dst
+
+
 BUILDERS = {"MIDWINTR": build_midwinter, "MW1ORIG": build_midwinter_orig, "MIDWINT2": build_midwinter2, "HUNTER": build_hunter,
-            "POWERMON": build_powermonger, "AUTO": build_auto}
+            "POWERMON": build_powermonger, "POPULOUS": build_populous, "POPS2": build_populous2, "AUTO": build_auto}
 
 
 # ---- 2. the disk ---------------------------------------------------------------------------------------------------------------
@@ -188,7 +218,7 @@ def readme_text(vers: dict[str, str], date: str) -> str:
     t = rf"""ATARI ST ENHANCED GAMES - HARD DISK  ({date})
 ==========================================================================
 
-Four games with dad_prg's patches (speed, sound, fixes) on one bootable
+Six games with dad_prg's patches (speed, sound, fixes) on one bootable
 hard disk image, plus PP's unpatched Midwinter for side-by-side comparison:
 HDDRIVER, one 31 MB partition = drive C:.  Nothing starts by itself except
 a 3-second question about Powermonger at boot.
@@ -200,6 +230,8 @@ a 3-second question about Powermonger at boot.
   C:\MIDWINT2  Midwinter 2            double-click RUNME.TOS     {vers['MIDWINT2']}
   C:\HUNTER    Hunter                 double-click START.TOS     {vers['HUNTER']}
   C:\POWERMON  Powermonger            press P at boot (below)    {vers['POWERMON']}
+  C:\POPULOUS  Populous               double-click RUNME.TOS     {vers['POPULOUS']}
+  C:\POPS2     Populous 2             double-click RUNME.TOS     {vers['POPS2']}
 
 Boot: HDDRIVER banner, then "Powermonger? P = start, else desktop". Press
 P within 3 seconds to start Powermonger; any other key (or waiting) goes
@@ -216,6 +248,9 @@ Requirements
    image. Boots through HDDRIVER (HDDRIVER.SYS in the root, do not delete).
  - Hunter: STE, Mega STE or TT for the sampled sound (DMA sound); a plain ST
    plays the original sound.
+ - Populous needs 1 MB; its hard-disk build does not start on a TT or
+   Falcon under Hatari (PP's loader): use the floppy version there.
+   Populous 2 needs 2 MB.
  - Tested in the Hatari emulator only (STE, Mega STE, TT; Hunter also on a
    plain ST). On a TT the Midwinters need the PMMU (Hatari: --mmu true, as
    run_tt.sh does); PP's unpatched Midwinter does not start on a TT.
@@ -310,7 +345,7 @@ def versions() -> dict[str, str]:
     """Release versions as the games' own tools report them (each reads its credit patch)."""
     v = {}
     for key, game, tool in (("MIDWINTR", "midwinter", "mw1patch"), ("MIDWINT2", "midwinter2", "mw2patch"),
-                            ("HUNTER", "hunter", "huntpatch")):
+                            ("HUNTER", "hunter", "huntpatch"), ("POPULOUS", "populous", "poppatch"), ("POPS2", "populous-2", "pop2patch")):
         try:
             v[key] = "v" + py(game, tool, "version").strip()
         except SystemExit:
@@ -330,7 +365,7 @@ def layout_text(img: Path, tgt: str, total: int, psz: int, folders: dict[str, Pa
     listing = run(["mdir", "-/", "-i", tgt, "::"], env=env)
     free = [l for l in listing.splitlines() if "bytes free" in l]
     t = [f"{img.name}  ({img.stat().st_size} bytes = {total} sectors of 512, raw disk image, md5 {md5})",
-         f"built {date} by tools/make_hd_image.py from the current default builds of the four games", "",
+         f"built {date} by tools/make_hd_image.py from the current default builds of the games", "",
          "Sector map",
          f"  LBA 0                 root sector: HDDRIVER boot code + AHDI partition table (checksum $1234)",
          f"  LBA 1                 unused",
@@ -346,12 +381,13 @@ def layout_text(img: Path, tgt: str, total: int, psz: int, folders: dict[str, Pa
            "MIDWINT2": "Midwinter 2 (HAGA by PP, patched)",
            "HUNTER": "Hunter (Gamex by PP, patched; FILES\\P = patch code + STE sample bank)",
            "POWERMON": "Powermonger (HD build, patched; start it from the boot prompt, see README.TXT)",
+           "POPULOUS": "Populous (HAGA by PP, patched; PATCHED.TXT)", "POPS2": "Populous 2 (HAGA by PP, patched)",
            "AUTO": "boot prompt PMBOOT.PRG (tools/hd_pmboot.s): P = start Powermonger, any other key / 3 s = desktop"}
     for name, src in folders.items():
         n = sum(1 for p in src.rglob("*") if p.is_file())
         t.append(f"  {name + chr(92):<14} {why[name]}: {n} files, {tree_kb(src)} KB" + (f", {VERSIONS[name]}" if name in VERSIONS else ""))
     t += ["", "Start of the games: see README.TXT in the root (Powermonger: press P at the boot prompt; the others: double-click",
-          "  MIDWINTR\\RUNME.TOS, MIDWINT2\\RUNME.TOS, HUNTER\\START.TOS on the desktop).", "",
+          "  MIDWINTR\\RUNME.TOS, MIDWINT2\\RUNME.TOS, POPULOUS\\RUNME.TOS, POPS2\\RUNME.TOS, HUNTER\\START.TOS on the desktop).", "",
           "Use",
           f"  real disk / SD card (ACSI2STM, UltraSatan, SCSI2SD + ACSI/SCSI bridge, ...): dd if={img.name} of=/dev/sdX bs=1M conv=fsync",
           "    (check the target device first; a bigger card works, the rest stays unpartitioned)",

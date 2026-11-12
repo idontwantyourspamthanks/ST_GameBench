@@ -36,7 +36,8 @@ sys.path.insert(0, str(ROOT / "tools"))
 from stharness import Hatari, TOS  # noqa: E402
 import make_hd_image as mk  # noqa: E402
 
-AUTORUN = {"mw1": "C:\\MIDWINTR\\RUNME.TOS", "mw2": "C:\\MIDWINT2\\RUNME.TOS", "hunter": "C:\\HUNTER\\START.TOS", "pm": None}      # pm: started from the AUTO-folder boot prompt (press P), no autorun line
+AUTORUN = {"mw1": "C:\\MIDWINTR\\RUNME.TOS", "mw2": "C:\\MIDWINT2\\RUNME.TOS", "hunter": "C:\\HUNTER\\START.TOS", "pm": None,      # pm: started from the AUTO-folder boot prompt (press P), no autorun line
+           "pop": "C:\\POPULOUS\\RUNME.TOS", "pop2": "C:\\POPS2\\RUNME.TOS"}
 ENV = dict(os.environ, MTOOLS_SKIP_CHECK="1")
 FIRST = mk.FIRST_LBA * mk.SECTOR
 
@@ -128,7 +129,7 @@ def main():
     a = ap.parse_args()
     R = Path(tempfile.mkdtemp(prefix="strun-"))
     SRC = test_image(Path(a.img), Path(tempfile.mkdtemp(prefix="hdsrc-")) / "test.img", a.game, a.original)
-    if a.game in ("mw1", "mw2"):
+    if a.game in ("mw1", "mw2", "pop", "pop2"):
         shutil.copy(SRC, R / "hd.img")
     kw = dict(machine=a.machine, tos=TOS[a.tos], memsize_kb=a.mem)
     mmu = ["--mmu", "true"] if a.machine == "tt" else []     # PP's HAGA on TOS 3.x needs the PMMU (dist/run_tt.sh)
@@ -170,6 +171,24 @@ def main():
             h.boot_to_game("M")
             res = (f"$6220={h.peekw(0x6220):#x} $700a={h.peekw(0x700A):#x} MARKER="
                    f"{(h.peekw(0xB2FF8).to_bytes(2, 'big') + h.peekw(0xB2FFA).to_bytes(2, 'big'))!r}")
+        elif a.game == "pop":
+            sys.path.insert(0, str(GAMES / "populous" / "tools"))
+            from populous import Populous
+            h = Populous(workdir=str(R), files=[], autorun="", extra=hd_args(R) + mmu, **kw)
+            wait_drive_c(h)
+            h.boot_to_game()
+            t0_ = h.peekw(h.TURN)
+            time.sleep(2)
+            ok = h.peekw(h.TURN) != t0_      # the harness' in_play() looks for the unpatched `jsr $14a28` at $b6f4, which the patched build replaces
+            res = (f"in_play={ok} MARKER={h.peekl(0xB3000).to_bytes(4, 'big')!r}+{h.peekl(0xB3004).to_bytes(4, 'big')!r} (POPP+POPO) turn={h.peekw(h.TURN)}"
+                   f" header={''.join(f'{h.peekl(0xB3000 + 4 * i):08x}' for i in range(4))} meta={''.join(f'{h.peekl(0xB3100 + 4 * i):08x}' for i in range(4))}")
+        elif a.game == "pop2":
+            sys.path.insert(0, str(GAMES / "populous-2" / "tools"))
+            from populous2 import Populous2
+            h = Populous2(workdir=str(R), files=[], autorun="", extra=hd_args(R) + mmu, **kw)
+            wait_drive_c(h)
+            ok = h.boot_to_game()
+            res = f"in_play={ok} MARKER={h.marker()!r} (P2PO) turn={h.peekw(h.TURN)}"
         else:
             sys.path.insert(0, str(GAMES / "hunter" / "tools"))
             sys.path.insert(0, str(GAMES / "powermonger" / "tools"))
