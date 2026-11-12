@@ -1,0 +1,116 @@
+{
+ "label": "hdimg_tt_start",
+ "cell": "tt",
+ "route": "start",
+ "phases": {
+  "world page (pointer over START/NEW buttons)": {
+   "frames": 179,
+   "visible": 179,
+   "flips": 0
+  },
+  "play, pointer in the left panel, still": {
+   "frames": 359,
+   "visible": 85,
+   "flips": 274
+  },
+  "play, pointer in the left panel, moving": {
+   "frames": 362,
+   "visible": 86,
+   "flips": 276
+  },
+  "play, pointer over the map": {
+   "frames": 179,
+   "visible": 39,
+   "flips": 135
+  },
+  "GAME SETUP dialog": {
+   "frames": 180,
+   "visible": 44,
+   "flips": 136
+  }
+ },
+ "D": 0,
+ "turn": 60,
+ "pixel_still": {
+  "book": {
+   "n": 6,
+   "shown1": 2,
+   "shown0": 4,
+   "shown2": 0,
+   "other0": 6,
+   "f12zero": 0,
+   "pos": [
+    [
+     40,
+     44
+    ]
+   ]
+  },
+  "panel": {
+   "n": 6,
+   "shown1": 0,
+   "shown0": 6,
+   "shown2": 0,
+   "other0": 5,
+   "f12zero": 0,
+   "pos": [
+    [
+     65,
+     164
+    ]
+   ]
+  },
+  "right": {
+   "n": 6,
+   "shown1": 2,
+   "shown0": 4,
+   "shown2": 0,
+   "other0": 4,
+   "f12zero": 0,
+   "pos": [
+    [
+     285,
+     159
+    ]
+   ]
+  },
+  "minimap": {
+   "n": 6,
+   "shown1": 3,
+   "shown0": 3,
+   "shown2": 0,
+   "other0": 6,
+   "f12zero": 0,
+   "pos": [
+    [
+     25,
+     19
+    ]
+   ]
+  },
+  "map": {
+   "n": 6,
+   "shown1": 1,
+   "shown0": 5,
+   "shown2": 0,
+   "other0": 6,
+   "f12zero": 5,
+   "pos": [
+    [
+     140,
+     119
+    ]
+   ]
+  }
+ },
+ "pixel_moving": {
+  "n": 14,
+  "shown1": 1,
+  "shown0": 13,
+  "shown2": 0,
+  "other0": 10,
+  "f12zero": 0,
+  "distinct_positions": 9
+ },
+ "errors": []
+}

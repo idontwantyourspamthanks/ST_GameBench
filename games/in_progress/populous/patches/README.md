@@ -88,6 +88,7 @@ screen when the routine runs, and the flip (every VBL on a TT) puts the other bu
 Falcon 6 of 26). Skipped on ST / STE / Mega STE.
 * `pop_tt_ptr` (site `$16f32` = the base write of the flip `$16f16`, 8 bytes -> `jsr $b8000` + `nop`): unless the pointer is hidden (`$16d26`), the blob restores and draws the pointer with the game's own
   `$16dea` / `$16e20` into the buffer about to be shown, the VBL level masked through the base write, then writes the base.
+* core probe (`core.s`): the CPU is found by the index-register scale test (no cookie jar needed); a 68020+ without `_MCH` (a TT booted through PP's HAGA has no jar: it was class 0 there and every machine-masked site was skipped) is machine class 4 = TT and Falcon sites both apply.
 * `pop_tt_ptr2` (site `$16d66` = the end of the pointer show `$16d5e`, 10 bytes -> `jmp $b8040`): the hover marker over the map (and the text printer, pause icon, dialogs) hide the pointer around their drawing in
   every pass; when the count is back at 0 the blob restores + draws the pointer into the displayed buffer at once (an STE draws it in the next VBL, within the pass; a TT's next VBL comes after the next flip).
 

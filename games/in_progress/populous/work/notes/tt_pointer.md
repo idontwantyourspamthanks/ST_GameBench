@@ -4,15 +4,8 @@ User report: on the TT the pointer is visible in the menus, but after NEW GAME +
 Fix: `patches/pop_tt_ptr.s` + `patches/pop_tt_ptr2.s` (both `; default: yes`, `; machine: tt, falcon`; ST / STE / Mega STE untouched). Tags: observed = raw output quoted or in `work/gates/ttptr_*`; [INFERENCE] = not run.
 Test scaffolding (not shipped): `work/scratch/ttptr/` (`ttp.py` boot, route, per-VBL sampler, buffer dumps + sprite search; `ttp2.py` full cell; `shotscan.py` screenshot counter; `run_ab.py`, `ste_*.py`). Hatari 2.6.1, TT = TOS 3.06 4 MB `--mmu true` VGA 32 MHz, Falcon = TOS 4.04 4 MB 16 MHz VGA (`mm.py` MACH table). Builds `build/PopTTPtr/{floppy_stock,floppy_def,floppy_fix,floppy_fix2,...}` (`poppatch.py build --floppy`): stock = no patches (payload only), def = the v1.0 default set (21 patches incl. `pp_*` HD-only ones not in a floppy), fix = def + `pop_tt_ptr`, fix2 = def + both.
 
-## 1. Which build the user runs: the HD build does not run on a Hatari TT here
-The task asked to check the HD image first. `AtariST_enhanced_games_2026-11-12.img` (autorun `C:\POPULOUS\RUNME.TOS` via DESKTOP.INF as `tools/test_hd_image.py` writes it), TT TOS 3.06, `--mmu true`, `--monitor vga`, with and without `--fast-boot`, 4 runs: PP's hardware screen, the cover picture, then after about 40 s Hatari shows `Detected double bus/address error => CPU halted!` (screenshot `work/shots/ttptr/x11_root.png`). `--trace cpu_exception` at that point:
-```
-Bus error writing at address $fffc3b PC=$3e3866.            (PP's RTC probe, caught)
-Bus error reading at address $70004c PC=$7270004e.
-cpu exception 2 currpc 7270004e ... newpc 23e24a2
-Bus error writing at address $7340e5 PC=$3eab64.
-```
-= exactly the stock-PP crash of `machines.md` section 2 (HAGA's 68030 path, `D15RF.FIC`; unresolved, independent of our patches: the same on the stock image). So I could not run the HD build on a TT; every TT/Falcon number below is the floppy build (same game code, same payload, same relocation; the HD build carries the same `pop_tt_ptr*` blobs). If the user's HD image runs on his machine the fix applies there the same way [INFERENCE: not observed].
+## 1. Which build the user runs: the HD build on a Hatari TT (corrected in section 6)
+First attempt (harness, 4 runs, with and without `--fast-boot`, `--monitor vga`): the HD image with PP's runme started by a DESKTOP.INF `#Z` autorun line (as `tools/test_hd_image.py` writes it) dies after the cover picture with `Bus error reading at address $70004c PC=$7270004e` / "CPU halted" (`work/shots/ttptr/x11_root.png`), the stock-PP crash of `machines.md` section 2. **That crash belongs to the autorun-at-boot start, not to the TT**: with exactly `dist/run_tt.sh`'s flags and RUNME.TOS started by double-clicking it from the TOS desktop the HD build boots and plays (section 6). All floppy numbers in sections 2-6 are floppy builds; section 6 repeats the key ones on the HD image.
 
 ## 2. Reproduction (floppy, route = the user's)
 Route in the harness (`ttp2.full_cell`): book menu CONQUEST -> world page -> **NEW GAME** (click) -> type `genesis` -> Return -> START GAME -> play; and the START GAME route. Metric (`ttp.measure`): a breakpoint at every entry of the VBL routine (`pc = $16d70 + D`, D = relocation delta read from the payload `$B3104`: TT 15958 = `$3E56`, Falcon 21026 = `$5222`) prints the video base (`$ff8201/03`), `$16f12` (address of the last pointer draw), `$3c50c`, `$3c510`, `info video`. The frame that just ended showed the buffer at the base (the flip writes the base right after the VBL routine); it showed the pointer iff `$16f12` lies inside that buffer. 
@@ -41,7 +34,7 @@ Frames showing the pointer / frames, flips in brackets (`work/gates/ttptr_matrix
 
 \* the stock game (no tick, 78 turns/s on a TT) loses its empty Genesis world within about 25 s emulated, so these three phases are the GAME LOST dialog (no flips: the dialog code does not flip, the pointer is drawn by the VBL routine as on an STE); they are not "setup / end" of a long game.
 \** the "end-of-world" phase of the def / fix2 cells is the GAME LOST dialog reached by fast-forward until the turn word stops. Whether the tick's render-only passes still flip behind a dialog differs from cell to cell (TT def: 147 flips, pointer in 0 frames; TT first fix build: 177 flips, 179/179 visible; TT fix2: 0 flips, 136/136; the GAME SETUP dialog on the TT def / fix2: flips every frame, 0/89 before, 107/107 after). With flips the dialog behaves like play; without, like an STE.
-- **The mechanism is the same on both routes and in every flipping screen; START GAME and NEW GAME differ only in nothing I could find**: both give 0 frames in play on the TT (the user's "1 in 5" was not reproduced: on my Hatari TT def has a flip in every frame: 353 of 353). The Falcon shows it in 1/4 to 1/3 of the frames (stock 104/295, def 76/299), which is the "flickery" description. I have not seen anything that depends on the route: the pointer state after the name entry is the same (`$16d26` back to 0 on the world page after it: 75/75 visible; the pointer is hidden by the game itself during the name entry: `$16d26` = 1 at 143 of 180 VBL entries, 0 at 37, raw `Counter({'00 01': 143, '00 00': 37})` on def; so "gone after typing" is play, not the entry).
+- **The mechanism is the same on both routes and in every flipping screen; START GAME and NEW GAME differ only in nothing I could find**: both give 0 frames in play on the TT (the user's "1 in 5" is the HD build, section 7: 85 of 359 frames; on the floppy TT def has a flip in every frame: 353 of 353). The Falcon shows it in 1/4 to 1/3 of the frames (stock 104/295, def 76/299), which is the "flickery" description. I have not seen anything that depends on the route: the pointer state after the name entry is the same (`$16d26` back to 0 on the world page after it: 75/75 visible; the pointer is hidden by the game itself during the name entry: `$16d26` = 1 at 143 of 180 VBL entries, 0 at 37, raw `Counter({'00 01': 143, '00 00': 37})` on def; so "gone after typing" is play, not the entry).
 - `pop_ptr` skip and `pop_ptrfix`: stock vs def make no difference on the TT (0/331 vs 0/358). pop_ptr's skip never fires in play on a TT (a flip every frame changes `$3c50c`: its first test); it is not part of the cause. `pop_ptrfix` is the IKBD packet filter, no video access.
 
 ## 3. Mechanism (listing lines)
@@ -81,76 +74,62 @@ Second cause (found when the first fix still showed no arrow over the map): the 
 5. **Cold boots of the packaged default set** (`work/scratch/poptick/cell.py`; `ttptr_cold_*.txt`; section 6).
 6. `poppatch.py verify`: ALL OK; `tools/package.sh`: section 6.
 
-## 6. Raw gate output
+## 6. The HD build under exactly `dist/run_tt.sh`'s flags (second round, after the lead's report)
+Launcher `work/scratch/ttptr/rawtt.py`: `hatari --machine tt --tos TOS_3_06_uk.img --memsize 4096 --cpuclock 32 --monitor vga --mmu true --gemdos-drive skip --acsi 0=<image> --confirm-quit no` + only `--cmd-fifo/--screenshot-dir`; no `--harddrive`, `--fast-boot`, `--sound off` (sound is dummy via SDL), `--grab` is switched on after the desktop with `hatari-shortcut mousegrab` (the host mouse is absolute on the desktop, relative in the game). Image `dist/AtariST_enhanced_games_2026-11-12.img` md5 `79ff7d1a870ee8d5ae64dd8287dfa265` (rebuilt by the lead with pop_tt_ptr + pop_tt_ptr2), unmodified, no DESKTOP.INF: desktop -> C: -> POPULOUS -> RUNME.TOS (double-click).
+* It boots: HW screen, cover, credits, book menu (about 65 s), CONQUEST, world page, play. The screenshots `raw_run_*.png`.
+* **But the fix was not applied on it.** Payload header on the HD TT: `50 4f 50 50 50 4f 50 4f 00 00 00 03 01 00 00 00`: marker `POPO`, `D = 0` (the HD loader puts the text at `$AD96` also on the TT), and MACHV = `01 00 00 00`: machine class 0, CPU class 0. `core.s` read `_MCH` / `_CPU` from the cookie jar `$5a0`, which on a TT booted through PP's HAGA is not TOS's (HAGA remaps low RAM with the PMMU: the Midwinter notes said so; no jar found), so every `; machine: tt, falcon` site was skipped (and the cache flush, which needs CPU class >= 1, was skipped too). Raw, same image, user's route, `ttptr_hdimg_tt_*.json`:
+  `play, pointer in the left panel, still: {'frames': 359, 'visible': 85, 'flips': 274}`, moving `85/360`, over the map `43/179`, GAME SETUP `42/180`; pixel check still `book 3/6, panel 0/6, right 2/6, minimap 1/6`, moving `7/14`. Screenshots 26 over 34 s: still 8/26, moving 6/26 (before; `ttptr_hd_shots_counts.json`). That is "visible about 1 frame in 4-5": the user's description. [INFERENCE: the user's earlier test predated an image with the fix, or ran with a jar; the lead reports the latest image looks good on his TT - I could not reproduce that on image 79ff7d1a.]
+* **Fix** (`patches/core.s` probe, `$B3E00`): the CPU class is now found without the jar (the index-register scale test of `cpulib.s cl_detect`, no exception), refined by `_CPU` when a jar exists; when no `_MCH` cookie is found on a 68020+ the machine class is 4 = "TT or Falcon" (`sel`: mask & $0c), so the TT sites apply, and the cache flush runs. A 68000 without a jar stays class 0, an STE/ST untouched (MACHV +3 = 1 when `_MCH` was found, +1 = 4 only for 68020+ without it). Nothing else changed; STE HD cold boot: `MACHV 01000000` as before.
+* Result (HD image with RUNME.TOS, HAGA, FILES\POLA of `poppatch build --hd` replaced by mcopy in a scratch copy; payload header `... 03 01 04 01 00` = class 4, CPU 1): NEW route `play still 359/359 (270 flips)`, moving `360/360`, over the map `177/179`, GAME SETUP `180/180`; pixel check still 6/6 at all five areas, moving 14/14; START route `359/359`, `361/361`, map `177/180`, setup `179/179`, pixel 6/6 x5, moving 14/14 (`ttptr_hdcls_tt_{new,start}.json`). Screenshots 26 over 34 s: still 25/26, moving 25/26 (the one missing shot each is a frame caught inside the VBL routine's own restore-redraw window: 1 of 26 = the 0.4 ms it takes of a 16.7 ms frame, the same as the original on an STE).
+* Floppy under the same flags (`rawtt.py` with `--disk-a`; header `... 02 01 02 01 01` = class 2, jar found): NEW route play still 360/360, moving 365/365, map 179/179, setup 179/179, pixel 6/6 x5 + moving 14/14; START route 359/359, 352/352, map 179/179, setup 179/179, pixel 6/6 x5, moving 14/14 (`ttptr_flraw_tt_{new,start}.json`).
+* Falcon: HD cannot be mounted by Hatari's Falcon (`machines.md` section 3); the floppy has the jar, class 3 as before.
 
-### poptick.py ab --release with pop_tt_ptr + pop_tt_ptr2 in both runs (STE snapshots, live image: the TT/Falcon sites are not applied)
-```
-base test_pwalk pop_noprot pop_credit pop_land_mul pop_land_score pop_ptr pop_bgcopy pop_fal_ym pop_fal_ym_demo pop_ptrfix pop_keys pop_keys2 pop_keys3 pop_keys4 pop_tooltip pop_tt_ptr pop_tt_ptr2
-patched +pop_tick pop_tick_render pop_tick_logic pop_tick_flip pop_tick_cmd pop_tick_dot
-snapshot busy_castles turn 870, 130 turns, 8 MHz, 50 Hz
-busy_castles @8 MHz 50 Hz: IDENTICAL | world at pass tops: 170 compared (0 differ) over 130 turns, max 2 tops/turn | T frames 128 compared (0 differ; 0 excluded) | R frames: 42 (0 stability pairs, 0 unstable; 31 minimap compares, 0 differ, 11 turns excluded (minimap cell redrawn by the world)) | pass kinds T 129 R 42 S 0 | turns/s base 6.006 patched 4.973
-base test_pwalk pop_noprot pop_credit pop_land_mul pop_land_score pop_ptr pop_bgcopy pop_fal_ym pop_fal_ym_demo pop_ptrfix pop_keys pop_keys2 pop_keys3 pop_keys4 pop_tooltip pop_tt_ptr pop_tt_ptr2
-patched +pop_tick pop_tick_render pop_tick_logic pop_tick_flip pop_tick_cmd pop_tick_dot
-snapshot genesis_start turn 263, 130 turns, 16 MHz, 50 Hz, view still
-genesis_start @16 MHz 50 Hz: IDENTICAL | world at pass tops: 556 compared (0 differ) over 130 turns, max 5 tops/turn | T frames 128 compared (0 differ; 0 excluded) | R frames: 432 (301 stability pairs, 0 unstable; 374 minimap compares, 0 differ, 16 turns excluded (minimap cell redrawn by the world); 428 render-only compares vs the original render, 0 differ) | pass kinds T 129 R 432 S 0 | turns/s base 20.156 patched 5.031
-```
+## 8. Raw gate output (STE gates were run before the `core.s` probe change; the live gate images do not contain core.s, so they are unaffected: `ttptr_ab_*.txt`, `ttptr_gate_away.txt`, all IDENTICAL, exit 0; the cold boots below are after it)
 
-### popuitest.py gate --away (13 non-tick patches + pop_tt_ptr + pop_tt_ptr2), exit 0
+### Cold boots of the packaged default set (after the probe change)
 ```
-script: 305 rows, rows on an icon: 0
-== busy_castles: T0 870; reference run 305 flips, 610 samples
-busy_castles         pop_noprot+pop_credit+pop_land_mul+pop_land_score+pop_ptr+pop_bgcopy+pop_fal_ym+pop_fal_ym_demo+pop_keys+pop_keys2+pop_keys3+pop_keys4+pop_tooltip+pop_tt_ptr+pop_tt_ptr2 IDENTICAL: flips compared 305 (both buffers + world each), mid-frame samples 610, bad flips 0, bad samples 0, world 0; samples in one run only: ref 0, new 0; excluded pre-script frames: 4 diffs ['252 bytes in 5 range(s), rows 2..6, first at row 2 byte 40', 'back(old frame + pointer) 252 bytes in 5 range(s), rows 2..6, first at 
-== busy_quake_volcano: T0 2136; reference run 305 flips, 610 samples
-busy_quake_volcano   pop_noprot+pop_credit+pop_land_mul+pop_land_score+pop_ptr+pop_bgcopy+pop_fal_ym+pop_fal_ym_demo+pop_keys+pop_keys2+pop_keys3+pop_keys4+pop_tooltip+pop_tt_ptr+pop_tt_ptr2 IDENTICAL: flips compared 305 (both buffers + world each), mid-frame samples 609, bad flips 0, bad samples 0, world 0; samples in one run only: ref 1, new 0; excluded pre-script frames: 4 diffs ['252 bytes in 5 range(s), rows 2..6, first at row 2 byte 40', 'back(old frame + pointer) 252 bytes in 5 range(s), rows 2..6, first at 
-== genesis_start: T0 263; reference run 305 flips, 608 samples
-genesis_start        pop_noprot+pop_credit+pop_land_mul+pop_land_score+pop_ptr+pop_bgcopy+pop_fal_ym+pop_fal_ym_demo+pop_keys+pop_keys2+pop_keys3+pop_keys4+pop_tooltip+pop_tt_ptr+pop_tt_ptr2 IDENTICAL: flips compared 305 (both buffers + world each), mid-frame samples 381, bad flips 0, bad samples 0, world 0; samples in one run only: ref 227, new 0; excluded pre-script frames: 4 diffs ['252 bytes in 5 range(s), rows 2..6, first at row 2 byte 40', 'back(old frame + pointer) 252 bytes in 5 range(s), rows 2..6, first a
-GATE IDENTICAL (exit 0)
-```
-
-### Cold boots of the packaged default set (`tools/package.sh` output, `ttptr_package.txt`)
-```
-96c5a01874ccf8250f496c3a3b85ae4a  build/dist_hd/RUNME.TOS
+836c09262432c43e61038ae256dc5e22  build/dist_hd/RUNME.TOS
 4dc289a7f1ef169f8ba7360914e301a5  build/dist_hd/FILES/POLA
 1074342dd4a917bafdc7d2a031e9b088  build/dist_hd/HAGA
-8bfbb3ad2f4aad9ddc6e544e6f159f2d  build/dist_floppy/Populous_boot.st
+52e56037b35932eecefe829570739a5e  build/dist_floppy/Populous_boot.st
 af93f79a467c48583608189eaff5f9d3  build/dist_floppy/Populous_save.st
-2e81eb2eb05dec64d4b608dfe1e205eb  dist/Populous_v1.0_patched_hd_2026-11-12.zip
-ce3dbb64a52f2aa2a24e45dda86f6dbe  dist/Populous_v1.0_patched_floppy_2026-11-12.zip
+31c9089dccedb11eb0893fa511ebc2a2  dist/Populous_v1.0_patched_hd_2026-11-12.zip
+3ec81a3397ecdc5f36e97d2bd401cdac  dist/Populous_v1.0_patched_floppy_2026-11-12.zip
 ```
-
 ```
 --- ttptr_cold_ste_hd.txt
 menu seen: True
 payload header: 50 4f 50 50 50 4f 50 4f 00 00 00 03 01 00 00 00  D = 0
 turn 63 -> 76; $b632 4ef9000ba000; tick marker 50 54 49 4b
 $ff820a = $fe -> 50 Hz
-RESULT cold ste gemdos dist_hd 8 MHz 50 Hz: 1501 VBL = 30.02 s, 160201 cycles/VBL (refresh seen 49.94 Hz), world turns 149 = 4.963/s | ticks 150 = 4.997/s; passes T 150 R 153 S 0 P 0
-ERRORS {'Bus Error': 1, 'Address Error': 0, 'double bus': 0, 'CPU halted': 0} log /tmp/strun-il_a3i2i/log.txt
-  ERRLINE WARN : Bus Error reading at address $ffff8e21, PC=$1789e addr_e3=1789e op_e3=1238
+RESULT cold ste gemdos dist_hd 8 MHz 50 Hz: 1501 VBL = 30.02 s, 160216 cycles/VBL (refresh seen 49.93 Hz), world turns 150 = 4.997/s | ticks 150 = 4.997/s; passes T 150 R 154 S 0 P 0
+ERRORS {'Bus Error': 1, 'Address Error': 0, 'double bus': 0, 'CPU halted': 0} log /tmp/strun-7_cmzh_p/log.txt
+  ERRLINE WARN : Bus Error reading at address $ffff8e21, PC=$17912 addr_e3=17912 op_e3=1238
 --- ttptr_cold_ste_floppy.txt
 menu seen: True
-payload header: 50 4f 50 50 50 4f 50 4f 00 00 00 02 01 01 00 00  D = 0
-turn 19 -> 32; $b632 4ef9000ba000; tick marker 50 54 49 4b
+payload header: 50 4f 50 50 50 4f 50 4f 00 00 00 02 01 01 00 01  D = 0 core2: 48 7a 00 0c 3f 3c 00 26 4e 4e 5c 8f 4e 75 13 fc
+turn 22 -> 35; $b632 4ef9000ba000; tick marker 50 54 49 4b
 $ff820a = $fe -> 50 Hz
-RESULT cold ste floppy Populous_boot.st 8 MHz 50 Hz: 1501 VBL = 30.02 s, 160240 cycles/VBL (refresh seen 49.93 Hz), world turns 151 = 5.030/s | ticks 150 = 4.997/s; passes T 150 R 159 S 0 P 0
-ERRORS {'Bus Error': 0, 'Address Error': 0, 'double bus': 0, 'CPU halted': 0} log /tmp/strun-3_tc_9vl/log.txt
+RESULT cold ste floppy Populous_boot.st 8 MHz 50 Hz: 1501 VBL = 30.02 s, 160248 cycles/VBL (refresh seen 49.92 Hz), world turns 150 = 4.997/s | ticks 150 = 4.997/s; passes T 150 R 158 S 0 P 0
+ERRORS {'Bus Error': 0, 'Address Error': 0, 'double bus': 0, 'CPU halted': 0} log /tmp/strun-u11jqhw5/log.txt
 --- ttptr_cold_tt_floppy.txt
-menu after 16.0364887714386
-start page after 38.47941732406616
-payload header: 50 4f 50 50 50 4f 50 4f 00 00 00 02 01 02 01 00  D = 15958
-turn 27 -> 40; $b632 4ef9000ba000; tick marker 50 54 49 4b
+menu after 16.03514266014099
+start page after 38.4794819355011
+payload header: 50 4f 50 50 50 4f 50 4f 00 00 00 02 01 02 01 01  D = 15958
+turn 29 -> 41; $b632 4ef9000ba000; tick marker 50 54 49 4b
 $ff820a = $01 -> 60 Hz
-RESULT cold tt floppy Populous_boot.st default MHz 50 Hz: 1501 VBL = 30.02 s, 640760 cycles/VBL (refresh seen 49.94 Hz), world turns 150 = 4.997/s | ticks 150 = 4.997/s; passes T 150 R 1350 S 0 P 0
-ERRORS {'Bus Error': 0, 'Address Error': 0, 'double bus': 0, 'CPU halted': 0} log /tmp/strun-agjn8hta/log.txt
+RESULT cold tt floppy Populous_boot.st default MHz 50 Hz: 1501 VBL = 30.02 s, 640855 cycles/VBL (refresh seen 49.93 Hz), world turns 150 = 4.997/s | ticks 150 = 4.997/s; passes T 150 R 1350 S 0 P 0
+ERRORS {'Bus Error': 0, 'Address Error': 0, 'double bus': 0, 'CPU halted': 0} log /tmp/strun-33dmq_u4/log.txt
 --- ttptr_cold_falcon_floppy.txt
-menu after 19.250630378723145
-start page after 59.346673011779785
-payload header: 50 4f 50 50 50 4f 50 4f 00 00 00 02 01 03 01 00  D = 21026
-turn 26 -> 39; $b632 4ef9000ba000; tick marker 50 54 49 4b
+menu after 19.250396490097046
+start page after 60.95296621322632
+payload header: 50 4f 50 50 50 4f 50 4f 00 00 00 02 01 03 01 01  D = 21026
+turn 27 -> 40; $b632 4ef9000ba000; tick marker 50 54 49 4b
 $ff820a = $02 -> 50 Hz
-RESULT cold falcon floppy Populous_boot.st default MHz 50 Hz: 2001 VBL = 40.02 s, 320472 cycles/VBL (refresh seen 49.93 Hz), world turns 200 = 4.998/s | ticks 200 = 4.998/s; passes T 200 R 1290 S 0 P 0
-ERRORS {'Bus Error': 0, 'Address Error': 0, 'double bus': 0, 'CPU halted': 0} log /tmp/strun-n9d3aspt/log.txt
+RESULT cold falcon floppy Populous_boot.st default MHz 50 Hz: 2001 VBL = 40.02 s, 320490 cycles/VBL (refresh seen 49.92 Hz), world turns 200 = 4.998/s | ticks 200 = 4.998/s; passes T 200 R 1291 S 0 P 0
+ERRORS {'Bus Error': 0, 'Address Error': 0, 'double bus': 0, 'CPU halted': 0} log /tmp/strun-62064ue4/log.txt
 --- ttptr_ste_site.txt
 in_play False marker b'POPO' $16f32: e04823c0ffff8200 (original e04823c0ffff8200) $16d66: 6c06427900016d264e75 (original 6c06427900016d264e75) blob $b8000: 4a7900016d266626
 ```
-The STE HD cell's one Bus Error is PP's boot probe of `$ffff8e21` (`release.md` section 5); the HD build could not be booted on a TT / Falcon (section 1), the floppy builds were.
+STE HD: `MACHV 01000000` (no jar through HAGA, 68000: class 0 as before); STE floppy header `... 01 01 00 01` (class 1, jar found); TT floppy `... 01 02 01 01`; Falcon floppy `... 01 03 01 01`. One earlier STE floppy run showed `01 01 00 00` (class 1 with the found flag 0) which I could not explain and did not see in two reruns.
+The STE HD cell's one Bus Error is PP's boot probe of `$ffff8e21` (`release.md` section 5).

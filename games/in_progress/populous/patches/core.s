@@ -19,7 +19,8 @@
 ;   'POPF' again if any site's original bytes differ (nothing is applied then: all or nothing per program).
 ; flags.l (FLAGS = $B3008): bit 0 DEMO.TOS sites applied, bit 1 POPULOUS.TOS sites applied.
 ; MACHV (= $B300C, 4 bytes, filled on the first `apply`): +0 probed flag, +1 machine class (_MCH high word: 0 ST, 1 STE and
-;   Mega STE, 2 TT, 3 Falcon), +2 CPU class (_CPU cookie: 0 68000/010, 1 68020/030, 2 68040/060), +3 0.
+;   Mega STE, 2 TT, 3 Falcon), +2 CPU class (index-register scale test, refined by the _CPU cookie: 0 68000/010, 1 68020/030, 2 68040/060), +3 1 if the machine
+;   cookie was found.  +1 = 4: a 68020+ with no cookie jar (TT booted through PP's HAGA): the sites of both TT and Falcon apply.
 IMG     equ     $b3000
 MARKER  equ     $b3004
 FLAGS   equ     $b3008
@@ -102,7 +103,12 @@ sel:    cmp.b   d7,d2
         beq.s   .yes
         moveq   #0,d3
         move.b  MACHV+1.l,d3
-        btst    d3,d2
+        cmpi.b  #4,d3
+        bne.s   .cl
+        andi.w  #$0c,d2                 ; class 4 = a 68020+ whose cookie jar was not found: the TT and Falcon sites
+        beq.s   .no
+        bra.s   .yes
+.cl:    btst    d3,d2
         beq.s   .no
 .yes:   moveq   #0,d2
         rts
@@ -117,7 +123,17 @@ mprobe: pea     probe(pc)
         addq.l  #6,a7
         rts
 probe:  move.b  #1,MACHV.l
-        movea.l $5a0.w,a0               ; _p_cookies
+        moveq   #1,d0                   ; the CPU first, without a cookie (cpulib.s cl_detect of the Midwinter games): a 68000/010 ignores the scale of
+        dc.w    $41fb,$0200             ; lea     (0,pc,d0.w*2),a0          an index register, a 68020+ applies it
+        dc.w    $43fb,$0000             ; lea     (0,pc,d0.w),a1
+        suba.l  a0,a1
+        move.l  a1,d1
+        moveq   #0,d2
+        cmp.l   #4,d1
+        beq.s   .c0
+        moveq   #1,d2
+.c0:    move.b  d2,MACHV+2.l
+        movea.l $5a0.w,a0               ; _p_cookies.  NOT TOS's jar on a TT booted through PP's HAGA (it remaps low RAM with the PMMU: no jar, work/notes/tt_pointer.md)
         move.l  a0,d0
         beq.s   .x
 .c:     move.l  (a0)+,d0                ; cookie id, 0 = end of the jar
@@ -127,6 +143,7 @@ probe:  move.b  #1,MACHV.l
         bne.s   .n1
         swap    d1
         move.b  d1,MACHV+1.l
+        move.b  #1,MACHV+3.l            ; machine class known
         bra.s   .c
 .n1:    cmpi.l  #'_CPU',d0
         bne.s   .c
@@ -139,7 +156,12 @@ probe:  move.b  #1,MACHV.l
         moveq   #2,d2
 .s:     move.b  d2,MACHV+2.l
         bra.s   .c
-.x:     rts
+.x:     tst.b   MACHV+3.l
+        bne.s   .r
+        tst.b   MACHV+2.l
+        beq.s   .r                      ; no machine cookie on a 68000: class 0, as before
+        move.b  #4,MACHV+1.l            ; 68020+ without a machine cookie: TT or Falcon
+.r:     rts
 
         org     $b3f00
 ; cflush: the patched code and the blobs were written with data moves: empty both CPU caches (68020 and up only).
