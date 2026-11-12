@@ -1,0 +1,17 @@
+== busy1 8 130 --no-walk
+busy1 @8 MHz 50 Hz: IDENTICAL | world at pass tops: 129 compared (0 differ) over 131 turns, max 1 tops/turn | T frames 107 compared (0 differ; 11 excluded: hover highlight stale after catch-up passes) | R frames: 0 (0 stability pairs, 0 unstable; 0 minimap compares, 0 differ; 0 turns excluded: minimap cell redrawn by the logic) | pass kinds T 119 R 0 S 11 | turns/s base 6.052 patched 6.208
+== busy1 16 130
+busy1 @16 MHz 50 Hz: DIFFER | world at pass tops: 322 compared (0 differ) over 131 turns, max 3 tops/turn | T frames 129 compared (8 differ; 0 excluded: hover highlight stale after catch-up passes) | R frames: 195 (69 stability pairs, 0 unstable; 190 minimap compares, 0 differ; 2 turns excluded: minimap cell redrawn by the logic) | pass kinds T 130 R 195 S 0 | turns/s base 11.733 patched 6.274
+  T-FRAME DIFFER turn 16140: 839 B differ, first at offset 57 (row 0), rows 0-15
+  T-FRAME DIFFER turn 16141: 839 B differ, first at offset 57 (row 0), rows 0-15
+  T-FRAME DIFFER turn 16172: 839 B differ, first at offset 57 (row 0), rows 0-15
+== busy1 8 130 --spin 12800
+busy1 @8 MHz 50 Hz: DIFFER | world at pass tops: 129 compared (0 differ) over 131 turns, max 1 tops/turn | T frames 93 compared (7 differ; 18 excluded: hover highlight stale after catch-up passes) | R frames: 0 (0 stability pairs, 0 unstable; 0 minimap compares, 0 differ; 0 turns excluded: minimap cell redrawn by the logic) | pass kinds T 112 R 0 S 18 | turns/s base 5.768 patched 6.214
+  T-FRAME DIFFER turn 16140: 839 B differ, first at offset 57 (row 0), rows 0-15
+  T-FRAME DIFFER turn 16141: 839 B differ, first at offset 57 (row 0), rows 0-15
+  T-FRAME DIFFER turn 16172: 839 B differ, first at offset 57 (row 0), rows 0-15
+== game_start 16 130
+game_start @16 MHz 50 Hz: DIFFER | world at pass tops: 506 compared (0 differ) over 131 turns, max 4 tops/turn | T frames 129 compared (8 differ; 0 excluded: hover highlight stale after catch-up passes) | R frames: 380 (249 stability pairs, 0 unstable; 369 minimap compares, 0 differ; 3 turns excluded: minimap cell redrawn by the logic) | pass kinds T 130 R 380 S 0 | turns/s base 24.074 patched 6.286
+  T-FRAME DIFFER turn 396: 839 B differ, first at offset 57 (row 0), rows 0-15
+  T-FRAME DIFFER turn 397: 839 B differ, first at offset 57 (row 0), rows 0-15
+  T-FRAME DIFFER turn 428: 839 B differ, first at offset 57 (row 0), rows 0-15

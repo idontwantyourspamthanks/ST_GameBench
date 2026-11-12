@@ -1,0 +1,31 @@
+base set    : test_walk test_walk2 test_walk3
+patched set : test_walk test_walk2 test_walk3 pop2_tooltip
+busy1 @8 MHz (base @8): DIFFER | turns compared: back 128, world 128, shown@S1+pointer 127, shown@flip+pointer 120 (shape-change passes not compared: 8) (skipped 2); flips captured 130/130; patched min VBL/pass 7 | work/pass 1216199 -> 1217937 (+0.14 %) | fps 6.184 -> 6.166 (-0.3 %), turns/s 6.184 -> 6.166
+   sprite entry coverage (base run): front end $2122e: 768, 16px front end $211be: 562, 16px 2-col $212b4: 562, neg-x shift $21322: 0, 1-col $21368: 0, 3-col (main) $213b0: 762, neg-x 3-col $2147e: 0, 2-col right edge $21530: 6
+      BACK DIFFER turn 16140: 839 B differ, first at offset 57 (row 0), rows 0-15
+      SHOWN@S1 DIFFER turn 16140 (pointer 96,170 / 96,170, shape 0x0/0x0): 839 B differ, first at offset 57 (row 0), rows 0-15
+      BACK DIFFER turn 16141: 839 B differ, first at offset 57 (row 0), rows 0-15
+      SHOWN@S1 DIFFER turn 16141 (pointer 96,170 / 96,170, shape 0x0/0x0): 839 B differ, first at offset 57 (row 0), rows 0-15
+      SHOWN DIFFER turn 16141 (pointer 96,170; shape 0x0/0x0, [$202e] 0x8d70/0x8d70): 839 B differ, first at offset 57 (row 0), rows 0-15
+      SHOWN DIFFER turn 16142 (pointer 310,100; shape 0x0/0x0, [$202e] 0xdf18/0xdf18): 839 B differ, first at offset 57 (row 0), rows 0-15
+      BACK DIFFER turn 16172: 839 B differ, first at offset 57 (row 0), rows 0-15
+      SHOWN@S1 DIFFER turn 16172 (pointer 96,170 / 96,170, shape 0x0/0x0): 839 B differ, first at offset 57 (row 0), rows 0-15
+      BACK DIFFER turn 16173: 839 B differ, first at offset 57 (row 0), rows 0-15
+      SHOWN@S1 DIFFER turn 16173 (pointer 96,170 / 96,170, shape 0x0/0x0): 839 B differ, first at offset 57 (row 0), rows 0-15
+      SHOWN DIFFER turn 16173 (pointer 96,170; shape 0x0/0x0, [$202e] 0x8d70/0x8d70): 839 B differ, first at offset 57 (row 0), rows 0-15
+      SHOWN DIFFER turn 16174 (pointer 310,100; shape 0x0/0x0, [$202e] 0xdf18/0xdf18): 839 B differ, first at offset 57 (row 0), rows 0-15
+game_start @8 MHz (base @8): DIFFER | turns compared: back 128, world 128, shown@S1+pointer 127, shown@flip+pointer 120 (shape-change passes not compared: 8) (skipped 2); flips captured 130/130; patched min VBL/pass 4 | work/pass 636987 -> 638561 (+0.25 %) | fps 11.007 -> 11.007 (+0.0 %), turns/s 11.007 -> 11.007
+   sprite entry coverage (base run): front end $2122e: 0, 16px front end $211be: 279, 16px 2-col $212b4: 279, neg-x shift $21322: 0, 1-col $21368: 0, 3-col (main) $213b0: 0, neg-x 3-col $2147e: 0, 2-col right edge $21530: 0
+      BACK DIFFER turn 396: 839 B differ, first at offset 57 (row 0), rows 0-15
+      SHOWN@S1 DIFFER turn 396 (pointer 96,170 / 96,170, shape 0x0/0x0): 839 B differ, first at offset 57 (row 0), rows 0-15
+      BACK DIFFER turn 397: 839 B differ, first at offset 57 (row 0), rows 0-15
+      SHOWN@S1 DIFFER turn 397 (pointer 96,170 / 96,170, shape 0x0/0x0): 839 B differ, first at offset 57 (row 0), rows 0-15
+      SHOWN DIFFER turn 397 (pointer 96,170; shape 0x0/0x0, [$202e] 0x8d70/0x8d70): 839 B differ, first at offset 57 (row 0), rows 0-15
+      SHOWN DIFFER turn 398 (pointer 310,100; shape 0x0/0x0, [$202e] 0xdf18/0xdf18): 839 B differ, first at offset 57 (row 0), rows 0-15
+      BACK DIFFER turn 428: 839 B differ, first at offset 57 (row 0), rows 0-15
+      SHOWN@S1 DIFFER turn 428 (pointer 96,170 / 96,170, shape 0x0/0x0): 839 B differ, first at offset 57 (row 0), rows 0-15
+      BACK DIFFER turn 429: 839 B differ, first at offset 57 (row 0), rows 0-15
+      SHOWN@S1 DIFFER turn 429 (pointer 96,170 / 96,170, shape 0x0/0x0): 839 B differ, first at offset 57 (row 0), rows 0-15
+      SHOWN DIFFER turn 429 (pointer 96,170; shape 0x0/0x0, [$202e] 0x8d70/0x8d70): 839 B differ, first at offset 57 (row 0), rows 0-15
+      SHOWN DIFFER turn 430 (pointer 310,100; shape 0x0/0x0, [$202e] 0xdf18/0xdf18): 839 B differ, first at offset 57 (row 0), rows 0-15
+MISMATCH
