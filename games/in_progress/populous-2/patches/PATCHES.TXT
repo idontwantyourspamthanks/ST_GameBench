@@ -2,7 +2,18 @@ Populous 2 (HAGA HD version by PP) - patched build, {DATE}
 Release v@VERSION@ enhanced by dad_prg
 
 Changes vs the original HAGA release:
-{PATCHES}
+- Fixed game speed: the world runs 6.25 turns per real second on every machine (ST, STE, Mega STE, TT, Falcon) at
+  50 and 60 Hz. The original ran one turn per drawn frame: about 6 to 9 a second on an 8 MHz STE, about twice that at
+  16 MHz, and faster still on a TT. The pointer, scrolling and tooltips stay smooth while the world waits; commands
+  given between turns are queued and run in order, one per turn, as on a stock 8 MHz STE.
+- Runs at 60 Hz: the game refused 60 Hz machines ("SORRY PAL MACHINES ONLY") and, past that, wiped memory when the
+  pointer reached the bottom of the screen. Both fixed; at 60 Hz it draws exactly the same frames as at 50 Hz.
+- Faster, same picture: sprites are drawn with the STE blitter (a pre-shifted cache on a plain ST), and the pointer is
+  only redrawn when something changed.
+- Tooltips: pointing at an icon shows its name and its key (the game's own F1-F6, 1-5 and keypad keys) in the sky at
+  the top of the screen.
+- Falcon: the sample player no longer risks a bus error on the Falcon's sound chip.
+- Garbled mouse packets (e.g. while the blitter is busy) are ignored instead of crashing the game.
 
 The main menu (the stone-framed screen with CREATE YOUR DEITY / CONQUEST
 GAME / CUSTOM GAME / LOAD GAME) carries a small "v@VERSION@ enhanced by
@@ -11,7 +22,8 @@ screen changes.
 
 Requirements and usage: as in README.TXT (2 MB RAM minimum).
 Run RUNME.TOS from a hard disk / GEMDOS drive, with FILES\ next to it.
-Tested on Hatari 2.6.1 (see the note below).
+Tested on Hatari 2.6.1: STE 2 and 4 MB (TOS 1.62, 8 and 16 MHz, 50 and 60 Hz), ST 2 MB (TOS 1.04), Mega STE 4 MB
+(TOS 2.06), TT 4 MB (TOS 3.06), Falcon 4 MB (TOS 4.04). Not tested on real hardware.
 
 The original game keeps its statesaves on the HD build: keypad / saves the
 game state to GS00.TOS, GS01.TOS, ... in the folder HAGA runs from (it looks

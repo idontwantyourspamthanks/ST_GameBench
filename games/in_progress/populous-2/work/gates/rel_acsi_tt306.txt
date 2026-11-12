@@ -1,0 +1,7 @@
+CELL acsi_tt306: media=acsi tt TOS default 4096 KB; boot 90s in_play=True marker='P2PO' $22f14=4ef900082000 sync=$01 (60 Hz) turn=137
+RESULT acsi_tt306 default MHz 60 Hz: 361 VBL = 6.02 s, 534138 cycles/VBL, world turns 38 = 6.316/s | ticks(D) 38 = 6.316/s; passes T 38 R 142 S 0 P 0 | refresh seen 59.91 Hz
+pointer 250,180 turn 323
+known probe lines (PP's $ffff8e21/$ffff8924 reads from RUNME PC $1b9xx = stock $139xx; pop2_spr's bus-error-safe blitter probe write $ffff8a28 at PC $8432x on an ST): 0
+LOG: 119 lines; bus/address-error/halt lines: 0
+
+RESULT acsi_tt306: ok=True marker='P2PO' errors=0

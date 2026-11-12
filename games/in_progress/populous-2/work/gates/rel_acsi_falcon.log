@@ -1,0 +1,231 @@
+INFO : Hatari v2.6.1, compiled on:  Feb  8 2026, 19:50:12
+INFO : Mounting IDE hard drive image /tmp/strun-6n1bgr4v/hd.img
+INFO : GEMDOS HDD emulation, D: <-> /tmp/strun-6n1bgr4v/C.
+ERROR: Microphone: SDL_OpenAudioDevice failed.
+WARN : Bus Error reading at address $fff00079, PC=$12624 addr_e3=12624 op_e3=4a13
+WARN : Bus Error reading at address $fff000b9, PC=$12624 addr_e3=12624 op_e3=4a13
+WARN : Bus Error reading at address $fff000f9, PC=$12624 addr_e3=12624 op_e3=4a13
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 0c b0                                            .ã
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 0c b0                                            .ã
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 0c b0                                            .ã
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 0c b0                                            .ã
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 0c b0                                            .ã
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 0c b0                                            .ã
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 0c b0                                            .ã
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 0c b0                                            .ã
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 0c b0                                            .ã
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 0c b0                                            .ã
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 0c b0                                            .ã
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 0c b0                                            .ã
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 0c b0                                            .ã
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 0c b0                                            .ã
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 0c b0                                            .ã
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 0c b0                                            .ã
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 0c b0                                            .ã
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 0c b0                                            .ã
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 0c b0                                            .ã
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 0c b0                                            .ã
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 0c b0                                            .ã
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 0c b0                                            .ã
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 0c b0                                            .ã
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 0c b0                                            .ã
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 0c b0                                            .ã
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 0c b0                                            .ã
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 0c b0                                            .ã
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 0c b0                                            .ã
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 0c b0                                            .ã
+> m $ff820a 1
+00FF820A: 02                                               .
+> m $7fff8 2
+0007FFF8: 00 00                                            ..
+> m $7fffa 2
+0007FFFA: 00 00                                            ..
+> m $22f14 6
+00022F14: 00 00 00 00 00 00                                ......
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $ff820a 1
+00FF820A: 02                                               .
+Command line with '2' arguments:
+- '--fast-forward'
+- 'on'
+> e VBL
+= %11000001010110 (bin), #12374 (dec), $3056 (hex)
+INFO : OS clock ticks / second: 100
+> b all
+CPU breakpoints: 0
+> b VBL > 12434 :trace :once :file /tmp/strun-6n1bgr4v/smp12434.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	VBL > 12434
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-6n1bgr4v/smp12434.txt' file on hit.
+1. CPU breakpoint condition(s) matched 1 times.
+	VBL > 12434 :once :trace :file /tmp/strun-6n1bgr4v/smp12434.txt
+Reading debugger commands from '/tmp/strun-6n1bgr4v/smp12434.txt'...
+Changed to input file dir '/tmp/strun-6n1bgr4v'.
+> e VBL
+= %11000100011000 (bin), #12568 (dec), $3118 (hex)
+> e CycleCounter
+= %11110000000010000001111001010100 (bin), #4027063892/-267903404 (dec), $f0081e54 (hex)
+> e ($3979a).l
+  value at ($3979a).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($8281c).l
+  value at ($8281c).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($8282c).l
+  value at ($8282c).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($82820).l
+  value at ($82820).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($82824).l
+  value at ($82824).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($82828).l
+  value at ($82828).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+Removed CPU breakpoint 1:
+	VBL > 12434 :once :trace :file /tmp/strun-6n1bgr4v/smp12434.txt
+> b all
+CPU breakpoints: 0
+> b VBL > 12868 :trace :once :file /tmp/strun-6n1bgr4v/smp12868.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	VBL > 12868
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-6n1bgr4v/smp12868.txt' file on hit.
+1. CPU breakpoint condition(s) matched 1 times.
+	VBL > 12868 :once :trace :file /tmp/strun-6n1bgr4v/smp12868.txt
+Reading debugger commands from '/tmp/strun-6n1bgr4v/smp12868.txt'...
+Changed to input file dir '/tmp/strun-6n1bgr4v'.
+> e VBL
+= %11001001000101 (bin), #12869 (dec), $3245 (hex)
+> e CycleCounter
+= %11110101110001000101011101110000 (bin), #4123285360/-171681936 (dec), $f5c45770 (hex)
+> e ($3979a).l
+  value at ($3979a).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($8281c).l
+  value at ($8281c).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($8282c).l
+  value at ($8282c).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($82820).l
+  value at ($82820).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($82824).l
+  value at ($82824).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($82828).l
+  value at ($82828).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+Removed CPU breakpoint 1:
+	VBL > 12868 :once :trace :file /tmp/strun-6n1bgr4v/smp12868.txt
+Command line with '2' arguments:
+- '--fast-forward'
+- 'off'
+WARN : PNG screen dump saved to: /tmp/strun-6n1bgr4v/shots/grab0001.png
+WARN : PNG screen dump saved to: /tmp/strun-6n1bgr4v/shots/grab0002.png
+WARN : PNG screen dump saved to: /tmp/strun-6n1bgr4v/shots/grab0003.png
+> m $393fa 2
+000393FA: 00 00                                            ..
+> m $393fc 2
+000393FC: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $7fff8 2
+0007FFF8: 00 00                                            ..
+> m $7fffa 2
+0007FFFA: 00 00                                            ..

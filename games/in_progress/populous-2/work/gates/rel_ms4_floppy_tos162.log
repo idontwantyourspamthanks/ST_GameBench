@@ -1,0 +1,175 @@
+INFO : Hatari v2.6.1, compiled on:  Feb  8 2026, 19:50:12
+INFO : Inserted disk '/tmp/p2rel_ms4_floppy_tos162.st' to drive A:.
+INFO : GEMDOS HDD emulation, C: <-> /tmp/strun-u78c3u81/C.
+ERROR: TOS versions 1.06 and 1.62 are for Atari STE only.
+ ==> Switching to STE mode now.
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 08 02                                            ..
+WARN : Bus Error reading at address $ffff8e21, PC=$172b6 addr_e3=172b6 op_e3=1238
+WARN : No GEMDOS dir '/tmp/strun-u78c3u81/C/GAMEX'
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 08 02                                            ..
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 08 02                                            ..
+> m $70 2
+00000070: 00 03                                            ..
+> m $72 2
+00000072: 23 02                                            #.
+> m $70 2
+00000070: 00 03                                            ..
+> m $72 2
+00000072: 23 02                                            #.
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 08 02                                            ..
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 92 a2                                            Æó
+> m $70 2
+00000070: 00 3f                                            .?
+> m $72 2
+00000072: 88 36                                            ê6
+> m $70 2
+00000070: 00 3f                                            .?
+> m $72 2
+00000072: 88 36                                            ê6
+> m $70 2
+00000070: 00 3f                                            .?
+> m $72 2
+00000072: 88 36                                            ê6
+> m $70 2
+00000070: 00 3f                                            .?
+> m $72 2
+00000072: 88 36                                            ê6
+> m $70 2
+00000070: 00 3f                                            .?
+> m $72 2
+00000072: 88 36                                            ê6
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $3979c 2
+0003979C: 00 62                                            .b
+> m $3979c 2
+0003979C: 00 6f                                            .o
+> m $ff820a 1
+00FF820A: fe                                               ³
+> m $7fff8 2
+0007FFF8: 50 32                                            P2
+> m $7fffa 2
+0007FFFA: 50 4f                                            PO
+> m $22f14 6
+00022F14: 4e f9 00 08 20 00                                N∙.. .
+> m $3979c 2
+0003979C: 00 80                                            .Ç
+> m $ff820a 1
+00FF820A: fe                                               ³
+Command line with '2' arguments:
+- '--fast-forward'
+- 'on'
+> e VBL
+= %10000111011100 (bin), #8668 (dec), $21dc (hex)
+INFO : OS clock ticks / second: 100
+> b all
+CPU breakpoints: 0
+> b VBL > 8728 :trace :once :file /tmp/strun-u78c3u81/smp8728.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	VBL > 8728
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-u78c3u81/smp8728.txt' file on hit.
+1. CPU breakpoint condition(s) matched 1 times.
+	VBL > 8728 :once :trace :file /tmp/strun-u78c3u81/smp8728.txt
+Reading debugger commands from '/tmp/strun-u78c3u81/smp8728.txt'...
+Changed to input file dir '/tmp/strun-u78c3u81'.
+> e VBL
+= %10010000100111 (bin), #9255 (dec), $2427 (hex)
+> e CycleCounter
+= %1011000011001101010110011111100 (bin), #1483123964 (dec), $5866acfc (hex)
+> e ($3979a).l
+  value at ($3979a).l = $d7
+= %11010111 (bin), #215 (dec), $d7 (hex)
+> e ($8281c).l
+  value at ($8281c).l = $d7
+= %11010111 (bin), #215 (dec), $d7 (hex)
+> e ($8282c).l
+  value at ($8282c).l = $d3
+= %11010011 (bin), #211 (dec), $d3 (hex)
+> e ($82820).l
+  value at ($82820).l = $9e
+= %10011110 (bin), #158 (dec), $9e (hex)
+> e ($82824).l
+  value at ($82824).l = $4
+= %100 (bin), #4 (dec), $4 (hex)
+> e ($82828).l
+  value at ($82828).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+Removed CPU breakpoint 1:
+	VBL > 8728 :once :trace :file /tmp/strun-u78c3u81/smp8728.txt
+> b all
+CPU breakpoints: 0
+> b VBL > 9555 :trace :once :file /tmp/strun-u78c3u81/smp9555.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	VBL > 9555
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-u78c3u81/smp9555.txt' file on hit.
+1. CPU breakpoint condition(s) matched 1 times.
+	VBL > 9555 :once :trace :file /tmp/strun-u78c3u81/smp9555.txt
+Reading debugger commands from '/tmp/strun-u78c3u81/smp9555.txt'...
+Changed to input file dir '/tmp/strun-u78c3u81'.
+> e VBL
+= %10011000110001 (bin), #9777 (dec), $2631 (hex)
+> e CycleCounter
+= %1011101011000111110111111111100 (bin), #1566830588 (dec), $5d63effc (hex)
+> e ($3979a).l
+  value at ($3979a).l = $118
+= %100011000 (bin), #280 (dec), $118 (hex)
+> e ($8281c).l
+  value at ($8281c).l = $118
+= %100011000 (bin), #280 (dec), $118 (hex)
+> e ($8282c).l
+  value at ($8282c).l = $114
+= %100010100 (bin), #276 (dec), $114 (hex)
+> e ($82820).l
+  value at ($82820).l = $cf
+= %11001111 (bin), #207 (dec), $cf (hex)
+> e ($82824).l
+  value at ($82824).l = $4
+= %100 (bin), #4 (dec), $4 (hex)
+> e ($82828).l
+  value at ($82828).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+Removed CPU breakpoint 1:
+	VBL > 9555 :once :trace :file /tmp/strun-u78c3u81/smp9555.txt
+Command line with '2' arguments:
+- '--fast-forward'
+- 'off'
+WARN : PNG screen dump saved to: /tmp/strun-u78c3u81/shots/grab0001.png
+WARN : PNG screen dump saved to: /tmp/strun-u78c3u81/shots/grab0002.png
+WARN : PNG screen dump saved to: /tmp/strun-u78c3u81/shots/grab0003.png
+> m $393fa 2
+000393FA: 00 fa                                            .·
+> m $393fc 2
+000393FC: 00 b4                                            .œ
+> m $3979c 2
+0003979C: 01 a8                                            .¿
+> m $7fff8 2
+0007FFF8: 50 32                                            P2
+> m $7fffa 2
+0007FFFA: 50 4f                                            PO

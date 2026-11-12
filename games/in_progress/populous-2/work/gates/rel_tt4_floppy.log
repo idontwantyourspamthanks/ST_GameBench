@@ -1,0 +1,128 @@
+INFO : Hatari v2.6.1, compiled on:  Feb  8 2026, 19:50:12
+INFO : Inserted disk '/tmp/p2rel_tt4_floppy.st' to drive A:.
+INFO : GEMDOS HDD emulation, C: <-> /tmp/strun-vbgsk9bp/C.
+WARN : No GEMDOS dir '/tmp/strun-vbgsk9bp/C/GAMEX'
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 0c 5a                                            .Z
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $ff820a 1
+00FF820A: 01                                               .
+> m $7fff8 2
+0007FFF8: 50 32                                            P2
+> m $7fffa 2
+0007FFFA: 50 4f                                            PO
+> m $22f14 6
+00022F14: 4e f9 00 08 20 00                                N∙.. .
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $ff820a 1
+00FF820A: 01                                               .
+Command line with '2' arguments:
+- '--fast-forward'
+- 'on'
+> e VBL
+= %1011111000000 (bin), #6080 (dec), $17c0 (hex)
+INFO : OS clock ticks / second: 100
+> b all
+CPU breakpoints: 0
+> b VBL > 6140 :trace :once :file /tmp/strun-vbgsk9bp/smp6140.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	VBL > 6140
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-vbgsk9bp/smp6140.txt' file on hit.
+1. CPU breakpoint condition(s) matched 1 times.
+	VBL > 6140 :once :trace :file /tmp/strun-vbgsk9bp/smp6140.txt
+Reading debugger commands from '/tmp/strun-vbgsk9bp/smp6140.txt'...
+Changed to input file dir '/tmp/strun-vbgsk9bp'.
+> e VBL
+= %1100010100110 (bin), #6310 (dec), $18a6 (hex)
+> e CycleCounter
+= %11001001000001100101001011010010 (bin), #3372634834/-922332462 (dec), $c90652d2 (hex)
+> e ($3979a).l
+  value at ($3979a).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($8281c).l
+  value at ($8281c).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($8282c).l
+  value at ($8282c).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($82820).l
+  value at ($82820).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($82824).l
+  value at ($82824).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($82828).l
+  value at ($82828).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+Removed CPU breakpoint 1:
+	VBL > 6140 :once :trace :file /tmp/strun-vbgsk9bp/smp6140.txt
+> b all
+CPU breakpoints: 0
+> b VBL > 6670 :trace :once :file /tmp/strun-vbgsk9bp/smp6670.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	VBL > 6670
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-vbgsk9bp/smp6670.txt' file on hit.
+1. CPU breakpoint condition(s) matched 1 times.
+	VBL > 6670 :once :trace :file /tmp/strun-vbgsk9bp/smp6670.txt
+Reading debugger commands from '/tmp/strun-vbgsk9bp/smp6670.txt'...
+Changed to input file dir '/tmp/strun-vbgsk9bp'.
+> e VBL
+= %1101000001111 (bin), #6671 (dec), $1a0f (hex)
+> e CycleCounter
+= %11010100011111101110011111100010 (bin), #3565086690/-729880606 (dec), $d47ee7e2 (hex)
+> e ($3979a).l
+  value at ($3979a).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($8281c).l
+  value at ($8281c).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($8282c).l
+  value at ($8282c).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($82820).l
+  value at ($82820).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($82824).l
+  value at ($82824).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($82828).l
+  value at ($82828).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+Removed CPU breakpoint 1:
+	VBL > 6670 :once :trace :file /tmp/strun-vbgsk9bp/smp6670.txt
+Command line with '2' arguments:
+- '--fast-forward'
+- 'off'
+WARN : PNG screen dump saved to: /tmp/strun-vbgsk9bp/shots/grab0001.png
+WARN : PNG screen dump saved to: /tmp/strun-vbgsk9bp/shots/grab0002.png
+WARN : PNG screen dump saved to: /tmp/strun-vbgsk9bp/shots/grab0003.png
+> m $393fa 2
+000393FA: 00 fa                                            .·
+> m $393fc 2
+000393FC: 00 b4                                            .œ
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $7fff8 2
+0007FFF8: 50 32                                            P2
+> m $7fffa 2
+0007FFFA: 50 4f                                            PO

@@ -1,0 +1,31 @@
+fdc set irq 0x0 source 0x1 VBL=1709 HBL=60
+fdc write 8606 ctrl=0x90 VBL=1709 video_cyc=61844 404@60 pc=e03e38
+fdc write 8606 ctrl=0x80 VBL=1709 video_cyc=61872 432@60 pc=e03e44
+fdc clear irq VBL=1709 HBL=61
+fdc read 8604 ctrl status=0x80 VBL=1709 video_cyc=63196 732@61 pc=e045ea
+fdc write 8606 ctrl=0x86 VBL=1709 video_cyc=63418 954@61 pc=e043b8
+fdc write 8604 data=0x12 VBL=1709 video_cyc=64446 958@62 pc=e045da
+fdc write 8604 data=0x12 VBL=1709 video_cyc=64446 958@62 pc=e045da
+fdc write 860e density=0x0 VBL=1709 video_cyc=64536 24@63 pc=e044ec
+fdc write 8606 ctrl=0x80 VBL=1709 video_cyc=64580 68@63 pc=e044fc
+fdc clear irq VBL=1709 HBL=64
+fdc read 8604 ctrl status=0x80 VBL=1709 video_cyc=65698 162@64 pc=e045ea
+fdc write 8604 data=0x1b VBL=1709 video_cyc=66950 390@65 pc=e045d2
+fdc write 8604 command=0x1b VBL=1709 video_cyc=66950 390@65 pc=e045d2
+fdc clear irq VBL=1709 HBL=65
+fdc type I seek dest_track=0x12 spinup=off verify=off steprate_ms=3 drive=0 tr=0x12 head_track=0x12 VBL=1709 video_cyc=66950 390@65 pc=e045d2
+fdc start motor without spinup VBL=1709 video_cyc=68394 810@66 pc=e0451c
+fdc complete command VBL=1709 video_cyc=68400 816@66 pc=e0451e
+fdc set irq 0x0 source 0x1 VBL=1709 HBL=66
+fdc clear irq VBL=1709 HBL=67
+fdc read 8604 ctrl status=0xa0 VBL=1709 video_cyc=69454 846@67 pc=e045e2
+fdc update index drive=0 side=0 counter=1 ip_time=549313476 VBL=1718 HBL=58
+fdc update index drive=0 side=0 counter=2 ip_time=552521974 VBL=1728 HBL=61
+fdc update index drive=0 side=0 counter=3 ip_time=555730472 VBL=1738 HBL=65
+fdc update index drive=0 side=0 counter=4 ip_time=558938970 VBL=1748 HBL=67
+GEMDOS 0x3D Fopen("P2D", read-only) at PC=0x3F9022
+-> to TOS
+fdc update index drive=0 side=0 counter=5 ip_time=562147468 VBL=1758 HBL=71
+fdc update index drive=0 side=0 counter=6 ip_time=565355966 VBL=1768 HBL=74
+WARN : Bus Error writing at address $e09527, PC=$3f94b8 addr_e3=3f94b8 op_e3=562
+WARN : Bus Error writing at address $7, PC=$e0fbe2 addr_e3=e0fbe2 op_e3=4268

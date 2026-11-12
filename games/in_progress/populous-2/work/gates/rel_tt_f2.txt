@@ -1,0 +1,15 @@
+EXCEPTION IndexError('list index out of range')
+LOG TAIL:
+INFO : Inserted disk '/tmp/p2rel_tt_f2.st' to drive A:.
+INFO : GEMDOS HDD emulation, C: <-> /tmp/strun-db_qjsmz/C.
+WARN : No GEMDOS dir '/tmp/strun-db_qjsmz/C/GAMEX'
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 0c 5a                                            .Z
+WARN : Closing 64 & unforcing 5 file handle(s) remaining at program 0x0 exit.
+> m $70 2
+00000070: 00 07                                            ..
+> m $72 2
+00000072: b3 80                                            øÇ
+BUS/HALT LINES:

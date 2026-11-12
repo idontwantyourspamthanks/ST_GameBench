@@ -1,0 +1,85 @@
+fdc write 8606 ctrl=0x80 VBL=2921 video_cyc=45100 396@44 pc=e03f16
+fdc clear irq VBL=2921 HBL=45
+fdc read 8604 ctrl status=0x80 VBL=2921 video_cyc=46544 824@45 pc=e03fee
+fdc write 8604 data=0x1b VBL=2921 video_cyc=47790 38@47 pc=e03fd6
+fdc write 8604 command=0x1b VBL=2921 video_cyc=47790 38@47 pc=e03fd6
+fdc clear irq VBL=2921 HBL=47
+fdc type I seek dest_track=0x4b spinup=off verify=off steprate_ms=3 drive=0 tr=0x4b head_track=0x4b VBL=2921 video_cyc=47790 38@47 pc=e03fd6
+fdc start motor without spinup VBL=2921 video_cyc=49240 472@48 pc=e03f36
+fdc complete command VBL=2921 video_cyc=49248 480@48 pc=e03f38
+fdc set irq 0x0 source 0x1 VBL=2921 HBL=48
+fdc clear irq VBL=2921 HBL=49
+fdc read 8604 ctrl status=0xa0 VBL=2921 video_cyc=50730 946@49 pc=e03fe6
+GEMDOS 0x3E Fclose(6) at PC 0xD1B4
+fdc clear irq VBL=2922 HBL=3
+fdc read 8604 ctrl status=0xa0 VBL=2922 video_cyc=3270 222@3 pc=e03fee
+fdc update index drive=0 side=0 counter=1 ip_time=681937943 VBL=2927 HBL=61
+fdc update index drive=0 side=0 counter=2 ip_time=685146441 VBL=2939 HBL=63
+fdc update index drive=0 side=0 counter=3 ip_time=688354939 VBL=2951 HBL=65
+fdc update index drive=0 side=0 counter=4 ip_time=691563437 VBL=2963 HBL=66
+fdc update index drive=0 side=0 counter=5 ip_time=694771935 VBL=2975 HBL=69
+fdc update index drive=0 side=0 counter=6 ip_time=697980433 VBL=2987 HBL=71
+fdc update index drive=0 side=0 counter=7 ip_time=701188931 VBL=2999 HBL=73
+fdc update index drive=0 side=0 counter=8 ip_time=704397429 VBL=3011 HBL=75
+fdc update index drive=0 side=0 counter=9 ip_time=707605927 VBL=3023 HBL=77
+fdc motor stopped VBL=3023 video_cyc=78500 268@77 pc=17b2
+GEMDOS 0x3D Fopen("P2D", read-only) at PC=0x3F9022
+-> to TOS
+BIOS 0x09 Mediach(0x0) at PC 0xE0FA24
+BIOS 0x04 Rwabs(0,0x61a8,1,16,0) at PC 0xE0FA24
+fdc change drive/side io_porta_old=0x5 io_porta_new=0x4 side 0->1 drive 0->0 VBL=3045 HBL=191
+fdc write 8606 ctrl=0x82 VBL=3045 video_cyc=194920 864@191 pc=e03f8c
+fdc write 8604 data=0x12 VBL=3045 video_cyc=196324 236@193 pc=e03fde
+fdc write 8604 track=0x12 VBL=3045 video_cyc=196324 236@193 pc=e03fde
+fdc write 8606 ctrl=0x84 VBL=3045 video_cyc=196356 268@193 pc=e03f96
+fdc write 8604 data=0x8 VBL=3045 video_cyc=197582 478@194 pc=e03fde
+fdc write 8604 sector=0x8 VBL=3045 video_cyc=197582 478@194 pc=e03fde
+fdc write dma address ff860d val=0xa8 VBL=3045 video_cyc=197614 510@194 pc=e03fa0
+fdc write dma address new=0x65a8 VBL=3045 video_cyc=197614 510@194 pc=e03fa0
+fdc write dma address ff860b val=0x61 VBL=3045 video_cyc=197634 530@194 pc=e03fa6
+fdc write dma address new=0x61a8 VBL=3045 video_cyc=197634 530@194 pc=e03fa6
+fdc write dma address ff8609 val=0x00 VBL=3045 video_cyc=197660 556@194 pc=e03fac
+fdc write dma address new=0x61a8 VBL=3045 video_cyc=197660 556@194 pc=e03fac
+fdc write 8606 ctrl=0x86 VBL=3045 video_cyc=197796 692@194 pc=e03e7c
+fdc write 8604 data=0x0 VBL=3045 video_cyc=199256 120@196 pc=e03fde
+fdc write 8604 data=0x0 VBL=3045 video_cyc=199256 120@196 pc=e03fde
+fdc write 860e density=0x0 VBL=3045 video_cyc=199428 292@196 pc=e03f06
+fdc write 8606 ctrl=0x80 VBL=3045 video_cyc=199492 356@196 pc=e03f16
+fdc clear irq VBL=3045 HBL=197
+fdc read 8604 ctrl status=0x20 VBL=3045 video_cyc=200936 784@197 pc=e03fee
+fdc write 8604 data=0x1f VBL=3045 video_cyc=202188 4@199 pc=e03fd6
+fdc write 8604 command=0x1f VBL=3045 video_cyc=202188 4@199 pc=e03fd6
+fdc clear irq VBL=3045 HBL=199
+fdc type I seek dest_track=0x0 spinup=off verify=on steprate_ms=3 drive=0 tr=0x12 head_track=0x4b VBL=3045 video_cyc=202188 4@199 pc=e03fd6
+fdc start motor without spinup VBL=3045 video_cyc=203638 438@200 pc=e03f36
+fdc init index drive=0 side=1 counter=0 ip_time=711036128 VBL=3045 HBL=200
+fdc update index drive=0 side=1 counter=1 ip_time=714244626 VBL=3048 HBL=73
+fdc type I verify track failed ID_TR=0x39 TR=0x0 crc_ok=1 head=0x39 drive=0 VBL=3050 video_cyc=174042 306@171 pc=e03f32
+fdc type I verify track failed ID_TR=0x39 TR=0x0 crc_ok=1 head=0x39 drive=0 VBL=3051 video_cyc=221612 124@218 pc=e03f38
+fdc type I verify track failed ID_TR=0x39 TR=0x0 crc_ok=1 head=0x39 drive=0 VBL=3053 video_cyc=1994 978@1 pc=e03f32
+fdc type I verify track failed ID_TR=0x39 TR=0x0 crc_ok=1 head=0x39 drive=0 VBL=3054 video_cyc=49556 788@48 pc=e03f38
+fdc type I verify track failed ID_TR=0x39 TR=0x0 crc_ok=1 head=0x39 drive=0 VBL=3055 video_cyc=97156 636@95 pc=e03f36
+fdc type I verify track failed ID_TR=0x39 TR=0x0 crc_ok=1 head=0x39 drive=0 VBL=3056 video_cyc=144744 472@142 pc=e03f36
+fdc type I verify track failed ID_TR=0x39 TR=0x0 crc_ok=1 head=0x39 drive=0 VBL=3057 video_cyc=192324 300@189 pc=e03f3e
+fdc update index drive=0 side=1 counter=1 ip_time=717453124 VBL=3060 HBL=84
+fdc type I verify track failed ID_TR=0x39 TR=0x0 crc_ok=1 head=0x39 drive=0 VBL=3060 video_cyc=85912 568@84 pc=e03f38
+fdc type I verify track failed ID_TR=0x39 TR=0x0 crc_ok=1 head=0x39 drive=0 VBL=3061 video_cyc=128368 352@126 pc=e03f3e
+fdc type I verify track failed ID_TR=0x39 TR=0x0 crc_ok=1 head=0x39 drive=0 VBL=3062 video_cyc=175956 188@173 pc=e03f38
+fdc type I verify track failed ID_TR=0x39 TR=0x0 crc_ok=1 head=0x39 drive=0 VBL=3063 video_cyc=223544 24@220 pc=e03f36
+fdc type I verify track failed ID_TR=0x39 TR=0x0 crc_ok=1 head=0x39 drive=0 VBL=3065 video_cyc=3912 864@3 pc=e03f36
+fdc type I verify track failed ID_TR=0x39 TR=0x0 crc_ok=1 head=0x39 drive=0 VBL=3066 video_cyc=51486 686@50 pc=e03f32
+fdc type I verify track failed ID_TR=0x39 TR=0x0 crc_ok=1 head=0x39 drive=0 VBL=3067 video_cyc=99064 512@97 pc=e03f38
+fdc type I verify track failed ID_TR=0x39 TR=0x0 crc_ok=1 head=0x39 drive=0 VBL=3068 video_cyc=146652 348@144 pc=e03f38
+fdc type I verify track failed ID_TR=0x39 TR=0x0 crc_ok=1 head=0x39 drive=0 VBL=3069 video_cyc=194252 196@191 pc=e03f36
+fdc update index drive=0 side=1 counter=2 ip_time=720661622 VBL=3072 HBL=86
+fdc type I verify track failed ID_TR=0x39 TR=0x0 crc_ok=1 head=0x39 drive=0 VBL=3072 video_cyc=87842 466@86 pc=e03f32
+fdc type I verify track failed ID_TR=0x39 TR=0x0 crc_ok=1 head=0x39 drive=0 VBL=3073 video_cyc=130296 248@128 pc=e03f36
+fdc type I verify track failed ID_TR=0x39 TR=0x0 crc_ok=1 head=0x39 drive=0 VBL=3074 video_cyc=177876 76@175 pc=e03f3e
+fdc type I verify track failed ID_TR=0x39 TR=0x0 crc_ok=1 head=0x39 drive=0 VBL=3075 video_cyc=225444 908@221 pc=e03f38
+fdc type I verify track failed ID_TR=0x39 TR=0x0 crc_ok=1 head=0x39 drive=0 VBL=3077 video_cyc=5852 772@5 pc=e03f3e
+fdc type I verify track failed ID_TR=0x39 TR=0x0 crc_ok=1 head=0x39 drive=0 VBL=3078 video_cyc=53420 588@52 pc=e03f38
+fdc type I verify track failed ID_TR=0x39 TR=0x0 crc_ok=1 head=0x39 drive=0 VBL=3079 video_cyc=101020 436@99 pc=e03f36
+fdc type I verify track failed ID_TR=0x39 TR=0x0 crc_ok=1 head=0x39 drive=0 VBL=3080 video_cyc=148598 262@146 pc=e03f32
+fdc type I verify track failed ID_TR=0x39 TR=0x0 crc_ok=1 head=0x39 drive=0 VBL=3081 video_cyc=196168 80@193 pc=e03f38
+fdc update index drive=0 side=1 counter=3 ip_time=723870120 VBL=3084 HBL=88
+fdc type I verify track failed ID_TR=0x39 TR=0x0 crc_ok=1 head=0x39 drive=0 VBL=3084 video_cyc=89760 352@88 pc=e03f36

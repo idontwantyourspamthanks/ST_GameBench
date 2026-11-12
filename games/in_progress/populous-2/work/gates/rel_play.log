@@ -1,0 +1,488 @@
+INFO : Hatari v2.6.1, compiled on:  Feb  8 2026, 19:50:12
+INFO : GEMDOS HDD emulation, C: <-> /tmp/strun-0to9p4s0/C.
+WARN : No GEMDOS dir '/tmp/strun-0to9p4s0/C/AUTO'
+WARN : Bus Error reading at address $ffff8e21, PC=$1b992 addr_e3=1b992 op_e3=1238
+WARN : No GEMDOS dir '/tmp/strun-0to9p4s0/C/GAMEX'
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: fd 90                                            ²É
+> m $70 2
+00000070: 00 03                                            ..
+> m $72 2
+00000072: 69 de                                            i∧
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $3979c 2
+0003979C: 00 62                                            .b
+> m $3979c 2
+0003979C: 00 6f                                            .o
+> m $7fff8 2
+0007FFF8: 50 32                                            P2
+> m $7fffa 2
+0007FFFA: 50 4f                                            PO
+> m $3979c 2
+0003979C: 00 7a                                            .z
+> m $82848 2
+00082848: 00 00                                            ..
+> m $8284a 2
+0008284A: 00 00                                            ..
+> m $8284c 2
+0008284C: 00 00                                            ..
+> m $8284e 2
+0008284E: 00 00                                            ..
+> m $82850 2
+00082850: 00 00                                            ..
+> m $82852 2
+00082852: 00 00                                            ..
+> b all
+CPU breakpoints: 0
+> b pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $292f8
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-0to9p4s0/disp.txt' file on hit.
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %10 (bin), #2 (dec), $2 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+WARN : PNG screen dump saved to: /tmp/strun-0to9p4s0/shots/grab0001.png
+1. CPU breakpoint condition(s) matched 2 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %10 (bin), #2 (dec), $2 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+WARN : PNG screen dump saved to: /tmp/strun-0to9p4s0/shots/grab0002.png
+1. CPU breakpoint condition(s) matched 3 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %10 (bin), #2 (dec), $2 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 4 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %100 (bin), #4 (dec), $4 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 5 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %10 (bin), #2 (dec), $2 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+WARN : PNG screen dump saved to: /tmp/strun-0to9p4s0/shots/grab0003.png
+> m $3979c 2
+0003979C: 01 49                                            .I
+1. CPU breakpoint condition(s) matched 6 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %100 (bin), #4 (dec), $4 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+> m $47372 2
+00047372: 00 0c                                            ..
+WARN : PNG screen dump saved to: /tmp/strun-0to9p4s0/shots/grab0004.png
+1. CPU breakpoint condition(s) matched 7 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %10010 (bin), #18 (dec), $12 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+> m $3979c 2
+0003979C: 01 72                                            .r
+> m $47372 2
+00047372: 00 0c                                            ..
+1. CPU breakpoint condition(s) matched 8 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %10 (bin), #2 (dec), $2 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+WARN : PNG screen dump saved to: /tmp/strun-0to9p4s0/shots/grab0005.png
+1. CPU breakpoint condition(s) matched 9 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %10100 (bin), #20 (dec), $14 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+> m $3979c 2
+0003979C: 01 9b                                            .¢
+> m $47372 2
+00047372: 00 0c                                            ..
+WARN : PNG screen dump saved to: /tmp/strun-0to9p4s0/shots/grab0006.png
+1. CPU breakpoint condition(s) matched 10 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %1110 (bin), #14 (dec), $e (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 11 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %100 (bin), #4 (dec), $4 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+> m $3979c 2
+0003979C: 01 c4                                            .ג
+> m $47372 2
+00047372: 00 0c                                            ..
+WARN : PNG screen dump saved to: /tmp/strun-0to9p4s0/shots/grab0007.png
+1. CPU breakpoint condition(s) matched 12 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %10000 (bin), #16 (dec), $10 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+> m $3979c 2
+0003979C: 01 ed                                            .φ
+> m $47372 2
+00047372: 00 0c                                            ..
+1. CPU breakpoint condition(s) matched 13 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %100 (bin), #4 (dec), $4 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 14 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %10010 (bin), #18 (dec), $12 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 15 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %10100 (bin), #20 (dec), $14 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 16 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %10010 (bin), #18 (dec), $12 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 17 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %10100 (bin), #20 (dec), $14 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 18 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %100 (bin), #4 (dec), $4 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 19 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %10010 (bin), #18 (dec), $12 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 20 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %10100 (bin), #20 (dec), $14 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 21 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %10010 (bin), #18 (dec), $12 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 22 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %10100 (bin), #20 (dec), $14 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 23 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %10010 (bin), #18 (dec), $12 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 24 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %100 (bin), #4 (dec), $4 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 25 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %10010 (bin), #18 (dec), $12 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 26 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %10010 (bin), #18 (dec), $12 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+WARN : PNG screen dump saved to: /tmp/strun-0to9p4s0/shots/grab0008.png
+1. CPU breakpoint condition(s) matched 27 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %100 (bin), #4 (dec), $4 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+WARN : PNG screen dump saved to: /tmp/strun-0to9p4s0/shots/grab0009.png
+WARN : PNG screen dump saved to: /tmp/strun-0to9p4s0/shots/grab0010.png
+1. CPU breakpoint condition(s) matched 28 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %100 (bin), #4 (dec), $4 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+WARN : PNG screen dump saved to: /tmp/strun-0to9p4s0/shots/grab0011.png
+> m $3979c 2
+0003979C: 02 cd                                            .ל
+> m $47372 2
+00047372: 00 0c                                            ..
+1. CPU breakpoint condition(s) matched 29 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %100 (bin), #4 (dec), $4 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 30 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %100 (bin), #4 (dec), $4 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 31 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %100 (bin), #4 (dec), $4 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 32 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %10 (bin), #2 (dec), $2 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 33 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %10 (bin), #2 (dec), $2 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 34 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %10 (bin), #2 (dec), $2 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 35 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %100 (bin), #4 (dec), $4 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 36 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %100 (bin), #4 (dec), $4 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 37 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %10 (bin), #2 (dec), $2 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 38 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %10 (bin), #2 (dec), $2 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 39 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %100 (bin), #4 (dec), $4 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 40 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %10 (bin), #2 (dec), $2 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 41 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %10 (bin), #2 (dec), $2 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 42 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %10 (bin), #2 (dec), $2 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 43 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %10 (bin), #2 (dec), $2 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 44 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %10 (bin), #2 (dec), $2 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+> m $82848 2
+00082848: 00 00                                            ..
+> m $8284a 2
+0008284A: 00 04                                            ..
+> m $8284c 2
+0008284C: 00 00                                            ..
+> m $8284e 2
+0008284E: 00 04                                            ..
+> m $82850 2
+00082850: 00 00                                            ..
+> m $82852 2
+00082852: 00 00                                            ..
+> m $3979c 2
+0003979C: 04 c0                                            .ĳ
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $3979c 2
+0003979C: 04 cb                                            .י
+1. CPU breakpoint condition(s) matched 45 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %10 (bin), #2 (dec), $2 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+> m $3979c 2
+0003979C: 04 d9                                            .ך
+> m $7fff8 2
+0007FFF8: 50 32                                            P2
+> m $7fffa 2
+0007FFFA: 50 4f                                            PO
+WARN : PNG screen dump saved to: /tmp/strun-0to9p4s0/shots/grab0012.png
+> m $3979c 2
+0003979C: 04 e4                                            .Σ
+1. CPU breakpoint condition(s) matched 46 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %10100 (bin), #20 (dec), $14 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 47 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %10100 (bin), #20 (dec), $14 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 48 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %10100 (bin), #20 (dec), $14 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 49 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %10100 (bin), #20 (dec), $14 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 50 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %10100 (bin), #20 (dec), $14 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 51 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %100 (bin), #4 (dec), $4 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+1. CPU breakpoint condition(s) matched 52 times.
+	pc = $292f8 :trace :file /tmp/strun-0to9p4s0/disp.txt
+Reading debugger commands from '/tmp/strun-0to9p4s0/disp.txt'...
+Changed to input file dir '/tmp/strun-0to9p4s0'.
+> e d0
+= %10 (bin), #2 (dec), $2 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+> m $3979c 2
+0003979C: 05 0d                                            ..
+> m $3979c 2
+0003979C: 05 1a                                            ..
+> m $3979c 2
+0003979C: 05 1e                                            ..

@@ -1,0 +1,7 @@
+CELL ms206_f2: media=floppy megaste TOS default 4096 KB; boot 161s in_play=True marker='P2PO' $22f14=4ef900082000 sync=$fc (60 Hz) turn=134
+RESULT ms206_f2 default MHz 60 Hz: 388 VBL = 6.47 s, 267554 cycles/VBL, world turns 41 = 6.340/s | ticks(D) 41 = 6.340/s; passes T 41 R 56 S 0 P 0 | refresh seen 59.80 Hz
+pointer 250,180 turn 360
+known probe lines (PP's $ffff8e21/$ffff8924 reads from RUNME PC $1b9xx = stock $139xx; pop2_spr's bus-error-safe blitter probe write $ffff8a28 at PC $8432x on an ST): 0
+LOG: 156 lines; bus/address-error/halt lines: 0
+
+RESULT ms206_f2: ok=True marker='P2PO' errors=0

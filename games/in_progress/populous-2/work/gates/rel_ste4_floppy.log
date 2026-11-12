@@ -1,0 +1,165 @@
+INFO : Hatari v2.6.1, compiled on:  Feb  8 2026, 19:50:12
+INFO : Inserted disk '/tmp/p2rel_ste4_floppy.st' to drive A:.
+INFO : GEMDOS HDD emulation, C: <-> /tmp/strun-avy8fjhq/C.
+WARN : Bus Error reading at address $ffff8e21, PC=$172b6 addr_e3=172b6 op_e3=1238
+WARN : No GEMDOS dir '/tmp/strun-avy8fjhq/C/GAMEX'
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 08 02                                            ..
+> m $70 2
+00000070: 00 03                                            ..
+> m $72 2
+00000072: 23 02                                            #.
+> m $70 2
+00000070: 00 03                                            ..
+> m $72 2
+00000072: 23 02                                            #.
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 08 02                                            ..
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 88 36                                            ê6
+> m $70 2
+00000070: 00 3f                                            .?
+> m $72 2
+00000072: 88 36                                            ê6
+> m $70 2
+00000070: 00 3f                                            .?
+> m $72 2
+00000072: 88 36                                            ê6
+> m $70 2
+00000070: 00 3f                                            .?
+> m $72 2
+00000072: 88 36                                            ê6
+> m $70 2
+00000070: 00 3f                                            .?
+> m $72 2
+00000072: 88 36                                            ê6
+> m $70 2
+00000070: 00 3f                                            .?
+> m $72 2
+00000072: 88 36                                            ê6
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $3979c 2
+0003979C: 00 62                                            .b
+> m $3979c 2
+0003979C: 00 6f                                            .o
+> m $ff820a 1
+00FF820A: fe                                               ³
+> m $7fff8 2
+0007FFF8: 50 32                                            P2
+> m $7fffa 2
+0007FFFA: 50 4f                                            PO
+> m $22f14 6
+00022F14: 4e f9 00 08 20 00                                N∙.. .
+> m $3979c 2
+0003979C: 00 80                                            .Ç
+> m $ff820a 1
+00FF820A: fe                                               ³
+Command line with '2' arguments:
+- '--fast-forward'
+- 'on'
+> e VBL
+= %10001000001100 (bin), #8716 (dec), $220c (hex)
+INFO : OS clock ticks / second: 100
+> b all
+CPU breakpoints: 0
+> b VBL > 8776 :trace :once :file /tmp/strun-avy8fjhq/smp8776.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	VBL > 8776
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-avy8fjhq/smp8776.txt' file on hit.
+1. CPU breakpoint condition(s) matched 1 times.
+	VBL > 8776 :once :trace :file /tmp/strun-avy8fjhq/smp8776.txt
+Reading debugger commands from '/tmp/strun-avy8fjhq/smp8776.txt'...
+Changed to input file dir '/tmp/strun-avy8fjhq'.
+> e VBL
+= %10010001100011 (bin), #9315 (dec), $2463 (hex)
+> e CycleCounter
+= %1011000111110010010111111001100 (bin), #1492725708 (dec), $58f92fcc (hex)
+> e ($3979a).l
+  value at ($3979a).l = $d8
+= %11011000 (bin), #216 (dec), $d8 (hex)
+> e ($8281c).l
+  value at ($8281c).l = $d8
+= %11011000 (bin), #216 (dec), $d8 (hex)
+> e ($8282c).l
+  value at ($8282c).l = $d4
+= %11010100 (bin), #212 (dec), $d4 (hex)
+> e ($82820).l
+  value at ($82820).l = $9f
+= %10011111 (bin), #159 (dec), $9f (hex)
+> e ($82824).l
+  value at ($82824).l = $4
+= %100 (bin), #4 (dec), $4 (hex)
+> e ($82828).l
+  value at ($82828).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+Removed CPU breakpoint 1:
+	VBL > 8776 :once :trace :file /tmp/strun-avy8fjhq/smp8776.txt
+> b all
+CPU breakpoints: 0
+> b VBL > 9615 :trace :once :file /tmp/strun-avy8fjhq/smp9615.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	VBL > 9615
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-avy8fjhq/smp9615.txt' file on hit.
+1. CPU breakpoint condition(s) matched 1 times.
+	VBL > 9615 :once :trace :file /tmp/strun-avy8fjhq/smp9615.txt
+Reading debugger commands from '/tmp/strun-avy8fjhq/smp9615.txt'...
+Changed to input file dir '/tmp/strun-avy8fjhq'.
+> e VBL
+= %10011010001101 (bin), #9869 (dec), $268d (hex)
+> e CycleCounter
+= %1011110010001000100010010110000 (bin), #1581532336 (dec), $5e4444b0 (hex)
+> e ($3979a).l
+  value at ($3979a).l = $11e
+= %100011110 (bin), #286 (dec), $11e (hex)
+> e ($8281c).l
+  value at ($8281c).l = $11e
+= %100011110 (bin), #286 (dec), $11e (hex)
+> e ($8282c).l
+  value at ($8282c).l = $11a
+= %100011010 (bin), #282 (dec), $11a (hex)
+> e ($82820).l
+  value at ($82820).l = $d3
+= %11010011 (bin), #211 (dec), $d3 (hex)
+> e ($82824).l
+  value at ($82824).l = $4
+= %100 (bin), #4 (dec), $4 (hex)
+> e ($82828).l
+  value at ($82828).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+Removed CPU breakpoint 1:
+	VBL > 9615 :once :trace :file /tmp/strun-avy8fjhq/smp9615.txt
+Command line with '2' arguments:
+- '--fast-forward'
+- 'off'
+WARN : PNG screen dump saved to: /tmp/strun-avy8fjhq/shots/grab0001.png
+WARN : PNG screen dump saved to: /tmp/strun-avy8fjhq/shots/grab0002.png
+WARN : PNG screen dump saved to: /tmp/strun-avy8fjhq/shots/grab0003.png
+> m $393fa 2
+000393FA: 00 fa                                            .·
+> m $393fc 2
+000393FC: 00 b4                                            .œ
+> m $3979c 2
+0003979C: 01 b2                                            .Ø
+> m $7fff8 2
+0007FFF8: 50 32                                            P2
+> m $7fffa 2
+0007FFFA: 50 4f                                            PO

@@ -1,0 +1,103 @@
+28 hits
+  $160c = $49
+1. CPU breakpoint condition(s) matched 23 times.
+	( $160c ) . w ! ( $160c ) . w :trace :file /tmp/strun-q6sghw3_/b.txt
+Reading debugger commands from '/tmp/strun-q6sghw3_/b.txt'...
+Changed to input file dir '/tmp/strun-q6sghw3_'.
+> r
+  D0 FFFF00A0   D1 000000A5   D2 0011A9A4   D3 00070009 
+  D4 00490001   D5 00000000   D6 00000000   D7 00000000 
+  A0 000015BA   A1 0000160A   A2 003FB274   A3 003F80AA 
+  A4 00005920   A5 00005D60   A6 FFFF8606   A7 00003060 
+USP  0000D742 ISP  00003060 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch 4247 (CLR) 4e75 (RTS) Chip latch 00000000
+00e03ec4 4247                     clr.w d7
+Next PC: 00e03ec6
+> m $160c 2
+-----
+  $160c = $4a
+1. CPU breakpoint condition(s) matched 24 times.
+	( $160c ) . w ! ( $160c ) . w :trace :file /tmp/strun-q6sghw3_/b.txt
+Reading debugger commands from '/tmp/strun-q6sghw3_/b.txt'...
+Changed to input file dir '/tmp/strun-q6sghw3_'.
+> r
+  D0 FFFF00A0   D1 000000A5   D2 0011A9A4   D3 00070009 
+  D4 004A0001   D5 00000000   D6 00000000   D7 00000000 
+  A0 000015BA   A1 0000160A   A2 003FB274   A3 003F80AA 
+  A4 00005920   A5 00005D60   A6 FFFF8606   A7 00003060 
+USP  0000D742 ISP  00003060 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch 4247 (CLR) 4e75 (RTS) Chip latch 00000000
+00e03ec4 4247                     clr.w d7
+Next PC: 00e03ec6
+> m $160c 2
+-----
+  $160c = $4b
+1. CPU breakpoint condition(s) matched 25 times.
+	( $160c ) . w ! ( $160c ) . w :trace :file /tmp/strun-q6sghw3_/b.txt
+Reading debugger commands from '/tmp/strun-q6sghw3_/b.txt'...
+Changed to input file dir '/tmp/strun-q6sghw3_'.
+> r
+  D0 FFFF00A0   D1 000000A5   D2 0011A9A4   D3 00070004 
+  D4 004B0001   D5 00000000   D6 00000000   D7 00000000 
+  A0 000015BA   A1 0000160A   A2 003FB274   A3 003F80AA 
+  A4 00005920   A5 00005D60   A6 FFFF8606   A7 00003060 
+USP  0000D742 ISP  00003060 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch 4247 (CLR) 4e75 (RTS) Chip latch 00000000
+00e03ec4 4247                     clr.w d7
+Next PC: 00e03ec6
+> m $160c 2
+-----
+  $160c = $12
+1. CPU breakpoint condition(s) matched 26 times.
+	( $160c ) . w ! ( $160c ) . w :trace :file /tmp/strun-q6sghw3_/b.txt
+Reading debugger commands from '/tmp/strun-q6sghw3_/b.txt'...
+Changed to input file dir '/tmp/strun-q6sghw3_'.
+> r
+  D0 005F0407   D1 00000000   D2 68AA0000   D3 68AA0000 
+  D4 5D600000   D5 2FC40800   D6 00120000   D7 00030000 
+  A0 00000003   A1 00030001   A2 00000000   A3 00000000 
+  A4 00000000   A5 003EBDD4   A6 000015F8   A7 003FB610 
+USP  003FB7A4 ISP  003FB610 
+SR=2700 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=7 STP=0
+Prefetch 4dee (LEA) 0030 (OR) Chip latch 00000000
+003f9364 4dee 0030                lea.l ($0030,a6) == $00001628,a6
+Next PC: 003f9368
+> m $160c 2
+-----
+  $160c = $0
+1. CPU breakpoint condition(s) matched 27 times.
+	( $160c ) . w ! ( $160c ) . w :trace :file /tmp/strun-q6sghw3_/b.txt
+Reading debugger commands from '/tmp/strun-q6sghw3_/b.txt'...
+Changed to input file dir '/tmp/strun-q6sghw3_'.
+> r
+  D0 FFFF00B2   D1 000005A4   D2 056200A5   D3 00070001 
+  D4 00000008   D5 00000001   D6 00000000   D7 000000A4 
+  A0 00E03EDE   A1 0000160A   A2 41FA0090   A3 00006896 
+  A4 00006896   A5 00005D60   A6 FFFF8606   A7 00002FEA 
+USP  003FB7A4 ISP  00002FEA 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4e75 (RTS) 0101 (BTST) Chip latch 00000000
+00e03edc 4e75                     rts  == $00e03ebc
+Next PC: 00e03ede
+> m $160c 2
+-----
+  $160c = $4b
+1. CPU breakpoint condition(s) matched 28 times.
+	( $160c ) . w ! ( $160c ) . w :trace :file /tmp/strun-q6sghw3_/b.txt
+Reading debugger commands from '/tmp/strun-q6sghw3_/b.txt'...
+Changed to input file dir '/tmp/strun-q6sghw3_'.
+> r
+  D0 FFFF0407   D1 00000000   D2 68AA0000   D3 68AA0000 
+  D4 5D600000   D5 30840800   D6 004B0000   D7 00030000 
+  A0 00000003   A1 00030001   A2 00000000   A3 00000000 
+  A4 00000000   A5 003DE590   A6 000015F8   A7 003FB610 
+USP  003FB7A4 ISP  003FB610 
+SR=2700 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=7 STP=0
+Prefetch 4dee (LEA) 0030 (OR) Chip latch 00000000
+003f9458 4dee 0030                lea.l ($0030,a6) == $00001628,a6
+Next PC: 003f945c
+> m $160c 2
+-----

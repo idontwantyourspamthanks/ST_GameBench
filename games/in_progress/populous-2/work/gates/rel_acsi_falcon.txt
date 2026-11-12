@@ -1,0 +1,9 @@
+CELL acsi_falcon: media=acsi falcon TOS default 4096 KB; boot 242s in_play=False marker='' $22f14=000000000000 sync=$02 (50 Hz) turn=0
+RESULT acsi_falcon default MHz 50 Hz: 301 VBL = 6.02 s, 319673 cycles/VBL, world turns 0 = 0.000/s | ticks(D) 0 = 0.000/s; passes T 0 R 0 S 0 P 0 | refresh seen 50.05 Hz
+pointer 0,0 turn 0
+known probe lines (PP's $ffff8e21/$ffff8924 reads from RUNME PC $1b9xx = stock $139xx; pop2_spr's bus-error-safe blitter probe write $ffff8a28 at PC $8432x on an ST): 0
+LOG: 227 lines; bus/address-error/halt lines: 3
+WARN : Bus Error reading at address $fff00079, PC=$12624 addr_e3=12624 op_e3=4a13
+WARN : Bus Error reading at address $fff000b9, PC=$12624 addr_e3=12624 op_e3=4a13
+WARN : Bus Error reading at address $fff000f9, PC=$12624 addr_e3=12624 op_e3=4a13
+RESULT acsi_falcon: ok=False marker='' errors=3

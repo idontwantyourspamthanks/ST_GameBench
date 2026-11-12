@@ -1,0 +1,160 @@
+INFO : Hatari v2.6.1, compiled on:  Feb  8 2026, 19:50:12
+INFO : Inserted disk '/tmp/p2rel_ms206_f2b.st' to drive A:.
+INFO : GEMDOS HDD emulation, C: <-> /tmp/strun-z4cw50up/C.
+WARN : No GEMDOS dir '/tmp/strun-z4cw50up/C/GAMEX'
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: da d4                                            םק
+> m $70 2
+00000070: 00 03                                            ..
+> m $72 2
+00000072: 47 22                                            G"
+> m $70 2
+00000070: 00 03                                            ..
+> m $72 2
+00000072: 47 22                                            G"
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 0c 06                                            ..
+> m $70 2
+00000070: 00 3f                                            .?
+> m $72 2
+00000072: 88 36                                            ê6
+> m $70 2
+00000070: 00 3f                                            .?
+> m $72 2
+00000072: 88 36                                            ê6
+> m $70 2
+00000070: 00 3f                                            .?
+> m $72 2
+00000072: 88 36                                            ê6
+> m $70 2
+00000070: 00 3f                                            .?
+> m $72 2
+00000072: 88 36                                            ê6
+> m $70 2
+00000070: 00 3f                                            .?
+> m $72 2
+00000072: 88 36                                            ê6
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $3979c 2
+0003979C: 00 67                                            .g
+> m $3979c 2
+0003979C: 00 74                                            .t
+> m $ff820a 1
+00FF820A: fc                                               ⁿ
+> m $7fff8 2
+0007FFF8: 50 32                                            P2
+> m $7fffa 2
+0007FFFA: 50 4f                                            PO
+> m $22f14 6
+00022F14: 4e f9 00 08 20 00                                N∙.. .
+> m $3979c 2
+0003979C: 00 86                                            .å
+> m $ff820a 1
+00FF820A: fc                                               ⁿ
+Command line with '2' arguments:
+- '--fast-forward'
+- 'on'
+> e VBL
+= %10011011110010 (bin), #9970 (dec), $26f2 (hex)
+INFO : OS clock ticks / second: 100
+> b all
+CPU breakpoints: 0
+> b VBL > 10030 :trace :once :file /tmp/strun-z4cw50up/smp10030.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	VBL > 10030
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-z4cw50up/smp10030.txt' file on hit.
+1. CPU breakpoint condition(s) matched 1 times.
+	VBL > 10030 :once :trace :file /tmp/strun-z4cw50up/smp10030.txt
+Reading debugger commands from '/tmp/strun-z4cw50up/smp10030.txt'...
+Changed to input file dir '/tmp/strun-z4cw50up'.
+> e VBL
+= %10100011010111 (bin), #10455 (dec), $28d7 (hex)
+> e CycleCounter
+= %10100001100111100110110001010100 (bin), #2711514196/-1583453100 (dec), $a19e6c54 (hex)
+> e ($3979a).l
+  value at ($3979a).l = $c6
+= %11000110 (bin), #198 (dec), $c6 (hex)
+> e ($8281c).l
+  value at ($8281c).l = $c6
+= %11000110 (bin), #198 (dec), $c6 (hex)
+> e ($8282c).l
+  value at ($8282c).l = $c4
+= %11000100 (bin), #196 (dec), $c4 (hex)
+> e ($82820).l
+  value at ($82820).l = $10d
+= %100001101 (bin), #269 (dec), $10d (hex)
+> e ($82824).l
+  value at ($82824).l = $2
+= %10 (bin), #2 (dec), $2 (hex)
+> e ($82828).l
+  value at ($82828).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+Removed CPU breakpoint 1:
+	VBL > 10030 :once :trace :file /tmp/strun-z4cw50up/smp10030.txt
+> b all
+CPU breakpoints: 0
+> b VBL > 10815 :trace :once :file /tmp/strun-z4cw50up/smp10815.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	VBL > 10815
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-z4cw50up/smp10815.txt' file on hit.
+1. CPU breakpoint condition(s) matched 1 times.
+	VBL > 10815 :once :trace :file /tmp/strun-z4cw50up/smp10815.txt
+Reading debugger commands from '/tmp/strun-z4cw50up/smp10815.txt'...
+Changed to input file dir '/tmp/strun-z4cw50up'.
+> e VBL
+= %10101001111010 (bin), #10874 (dec), $2a7a (hex)
+> e CycleCounter
+= %10101000010010100000111010010010 (bin), #2823425682/-1471541614 (dec), $a84a0e92 (hex)
+> e ($3979a).l
+  value at ($3979a).l = $f1
+= %11110001 (bin), #241 (dec), $f1 (hex)
+> e ($8281c).l
+  value at ($8281c).l = $f1
+= %11110001 (bin), #241 (dec), $f1 (hex)
+> e ($8282c).l
+  value at ($8282c).l = $ef
+= %11101111 (bin), #239 (dec), $ef (hex)
+> e ($82820).l
+  value at ($82820).l = $14b
+= %101001011 (bin), #331 (dec), $14b (hex)
+> e ($82824).l
+  value at ($82824).l = $2
+= %10 (bin), #2 (dec), $2 (hex)
+> e ($82828).l
+  value at ($82828).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+Removed CPU breakpoint 1:
+	VBL > 10815 :once :trace :file /tmp/strun-z4cw50up/smp10815.txt
+Command line with '2' arguments:
+- '--fast-forward'
+- 'off'
+WARN : PNG screen dump saved to: /tmp/strun-z4cw50up/shots/grab0001.png
+WARN : PNG screen dump saved to: /tmp/strun-z4cw50up/shots/grab0002.png
+WARN : PNG screen dump saved to: /tmp/strun-z4cw50up/shots/grab0003.png
+> m $393fa 2
+000393FA: 00 fa                                            .·
+> m $393fc 2
+000393FC: 00 b4                                            .œ
+> m $3979c 2
+0003979C: 01 74                                            .t
+> m $7fff8 2
+0007FFF8: 50 32                                            P2
+> m $7fffa 2
+0007FFFA: 50 4f                                            PO

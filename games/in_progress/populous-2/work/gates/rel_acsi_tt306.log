@@ -1,0 +1,123 @@
+INFO : Hatari v2.6.1, compiled on:  Feb  8 2026, 19:50:12
+INFO : Mounting ACSI HD image '/tmp/strun-zxsjbizt/hd.img'
+INFO : GEMDOS HDD emulation, D: <-> /tmp/strun-zxsjbizt/C.
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $3979c 2
+0003979C: 00 6a                                            .j
+> m $3979c 2
+0003979C: 00 77                                            .w
+> m $ff820a 1
+00FF820A: 01                                               .
+> m $7fff8 2
+0007FFF8: 50 32                                            P2
+> m $7fffa 2
+0007FFFA: 50 4f                                            PO
+> m $22f14 6
+00022F14: 4e f9 00 08 20 00                                N∙.. .
+> m $3979c 2
+0003979C: 00 89                                            .ë
+> m $ff820a 1
+00FF820A: 01                                               .
+Command line with '2' arguments:
+- '--fast-forward'
+- 'on'
+> e VBL
+= %1011000101010 (bin), #5674 (dec), $162a (hex)
+INFO : OS clock ticks / second: 100
+> b all
+CPU breakpoints: 0
+> b VBL > 5734 :trace :once :file /tmp/strun-zxsjbizt/smp5734.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	VBL > 5734
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-zxsjbizt/smp5734.txt' file on hit.
+1. CPU breakpoint condition(s) matched 1 times.
+	VBL > 5734 :once :trace :file /tmp/strun-zxsjbizt/smp5734.txt
+Reading debugger commands from '/tmp/strun-zxsjbizt/smp5734.txt'...
+Changed to input file dir '/tmp/strun-zxsjbizt'.
+> e VBL
+= %1011100100000 (bin), #5920 (dec), $1720 (hex)
+> e CycleCounter
+= %10111100100101000110100111001110 (bin), #3163843022/-1131124274 (dec), $bc9469ce (hex)
+> e ($3979a).l
+  value at ($3979a).l = $af
+= %10101111 (bin), #175 (dec), $af (hex)
+> e ($8281c).l
+  value at ($8281c).l = $af
+= %10101111 (bin), #175 (dec), $af (hex)
+> e ($8282c).l
+  value at ($8282c).l = $ae
+= %10101110 (bin), #174 (dec), $ae (hex)
+> e ($82820).l
+  value at ($82820).l = $288
+= %1010001000 (bin), #648 (dec), $288 (hex)
+> e ($82824).l
+  value at ($82824).l = $1
+= %1 (bin), #1 (dec), $1 (hex)
+> e ($82828).l
+  value at ($82828).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+Removed CPU breakpoint 1:
+	VBL > 5734 :once :trace :file /tmp/strun-zxsjbizt/smp5734.txt
+> b all
+CPU breakpoints: 0
+> b VBL > 6280 :trace :once :file /tmp/strun-zxsjbizt/smp6280.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	VBL > 6280
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-zxsjbizt/smp6280.txt' file on hit.
+1. CPU breakpoint condition(s) matched 1 times.
+	VBL > 6280 :once :trace :file /tmp/strun-zxsjbizt/smp6280.txt
+Reading debugger commands from '/tmp/strun-zxsjbizt/smp6280.txt'...
+Changed to input file dir '/tmp/strun-zxsjbizt'.
+> e VBL
+= %1100010001001 (bin), #6281 (dec), $1889 (hex)
+> e CycleCounter
+= %11001000000100101010110000100100 (bin), #3356666916/-938300380 (dec), $c812ac24 (hex)
+> e ($3979a).l
+  value at ($3979a).l = $d5
+= %11010101 (bin), #213 (dec), $d5 (hex)
+> e ($8281c).l
+  value at ($8281c).l = $d5
+= %11010101 (bin), #213 (dec), $d5 (hex)
+> e ($8282c).l
+  value at ($8282c).l = $d4
+= %11010100 (bin), #212 (dec), $d4 (hex)
+> e ($82820).l
+  value at ($82820).l = $316
+= %1100010110 (bin), #790 (dec), $316 (hex)
+> e ($82824).l
+  value at ($82824).l = $1
+= %1 (bin), #1 (dec), $1 (hex)
+> e ($82828).l
+  value at ($82828).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+Removed CPU breakpoint 1:
+	VBL > 6280 :once :trace :file /tmp/strun-zxsjbizt/smp6280.txt
+Command line with '2' arguments:
+- '--fast-forward'
+- 'off'
+WARN : PNG screen dump saved to: /tmp/strun-zxsjbizt/shots/grab0001.png
+WARN : PNG screen dump saved to: /tmp/strun-zxsjbizt/shots/grab0002.png
+WARN : PNG screen dump saved to: /tmp/strun-zxsjbizt/shots/grab0003.png
+> m $393fa 2
+000393FA: 00 fa                                            .·
+> m $393fc 2
+000393FC: 00 b4                                            .œ
+> m $3979c 2
+0003979C: 01 43                                            .C
+> m $7fff8 2
+0007FFF8: 50 32                                            P2
+> m $7fffa 2
+0007FFFA: 50 4f                                            PO

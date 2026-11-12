@@ -3,7 +3,13 @@ Release v@VERSION@ enhanced by dad_prg
 
 One bootable 720K disk with the whole game: the patched RUNME in AUTO\ (TOS
 runs it at boot), HAGA, the STE cover picture and FILES\ (the game data).
-{PATCHES}
+
+CHANGES (as in the hard-disk version)
+  Fixed game speed of 6.25 turns per real second on every machine at 50 and
+  60 Hz; the game now runs at 60 Hz; faster sprites and pointer with the same
+  picture; tooltips with each icon's name and key; garbled mouse packets no
+  longer crash the game. The floppy also needed a fix for TOS 2.06 (the
+  drive head position after PP's loader).
 
 DISK LAYOUT
   AUTO\RUNME.PRG   the game's start program (PP's RUNME.TOS, patched)
@@ -19,6 +25,11 @@ STARTING
 
 MEMORY
   2 MB RAM minimum (PP's conversion; 1 MB does not work).
+
+MACHINES
+  ST, STE and Mega STE (TOS 1.x and 2.06). On a TT or Falcon the floppy does
+  not start the game (PP's loader, unpatched too, under Hatari): use the
+  hard-disk version there, which runs on both.
 
 SAVING
   HAGA's keypad / statesave writes about 1 MB and does not fit on a floppy.

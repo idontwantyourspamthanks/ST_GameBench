@@ -1,0 +1,20 @@
+4016
+> r
+  D0 FFFF0004   D1 000005A4   D2 056200A5   D3 00070001 
+  D4 00000008   D5 00000001   D6 00100000   D7 00000000 
+  A0 000015B8   A1 0000160A   A2 41FA0090   A3 00006896 
+  A4 00006896   A5 00005D60   A6 FFFF8606   A7 00002FEE 
+USP  003FB7A4 ISP  00002FEE 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch 3e29 (MOVE) 0002 (OR) Chip latch 00000000
+00e03f90 3e29 0002                move.w ($0002,a1) == $0000160c [0012],d7
+Next PC: 00e03f94
+> m $15c0 64
+000015C0: 00 02 00 00 17 97 ff 00 00 00 00 00 00 00 00 08  .....ù¯.........
+000015D0: 00 01 00 01 00 00 61 a8 00 00 00 00 00 00 00 00  ......a¿........
+000015E0: 00 00 ff f5 ff f5 00 07 00 01 00 00 00 08 00 00  ..¯⌡¯⌡..........
+000015F0: 00 01 00 10 00 00 00 00 00 00 00 00 68 96 00 00  ............hû..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+Removed CPU breakpoint 1:
+	pc = $e03f90 :once :trace :file /tmp/strun-2bxbvpsl/b.txt
+

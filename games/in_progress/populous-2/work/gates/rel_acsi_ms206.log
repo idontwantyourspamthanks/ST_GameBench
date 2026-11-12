@@ -1,0 +1,144 @@
+INFO : Hatari v2.6.1, compiled on:  Feb  8 2026, 19:50:12
+INFO : Mounting ACSI HD image '/tmp/strun-rtdrv1gw/hd.img'
+INFO : GEMDOS HDD emulation, D: <-> /tmp/strun-rtdrv1gw/C.
+WARN : Bus Error reading at address $fff00039, PC=$f93c addr_e3=f93c op_e3=4a13
+WARN : Bus Error reading at address $fff00079, PC=$f93c addr_e3=f93c op_e3=4a13
+WARN : Bus Error reading at address $fff000b9, PC=$f93c addr_e3=f93c op_e3=4a13
+WARN : Bus Error reading at address $fff000f9, PC=$f93c addr_e3=f93c op_e3=4a13
+WARN : Bus Error reading at address $ffff8781, PC=$dfe2 addr_e3=dfe2 op_e3=1038
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 0c 06                                            ..
+> m $70 2
+00000070: 00 02                                            ..
+> m $72 2
+00000072: 1c ac                                            .¼
+> m $70 2
+00000070: 00 04                                            ..
+> m $72 2
+00000072: 88 fa                                            ê·
+> m $70 2
+00000070: 00 04                                            ..
+> m $72 2
+00000072: 88 fa                                            ê·
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $3979c 2
+0003979C: 00 67                                            .g
+> m $3979c 2
+0003979C: 00 74                                            .t
+> m $ff820a 1
+00FF820A: fc                                               ⁿ
+> m $7fff8 2
+0007FFF8: 50 32                                            P2
+> m $7fffa 2
+0007FFFA: 50 4f                                            PO
+> m $22f14 6
+00022F14: 4e f9 00 08 20 00                                N∙.. .
+> m $3979c 2
+0003979C: 00 86                                            .å
+> m $ff820a 1
+00FF820A: fc                                               ⁿ
+Command line with '2' arguments:
+- '--fast-forward'
+- 'on'
+> e VBL
+= %1110110001010 (bin), #7562 (dec), $1d8a (hex)
+INFO : OS clock ticks / second: 100
+> b all
+CPU breakpoints: 0
+> b VBL > 7622 :trace :once :file /tmp/strun-rtdrv1gw/smp7622.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	VBL > 7622
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-rtdrv1gw/smp7622.txt' file on hit.
+1. CPU breakpoint condition(s) matched 1 times.
+	VBL > 7622 :once :trace :file /tmp/strun-rtdrv1gw/smp7622.txt
+Reading debugger commands from '/tmp/strun-rtdrv1gw/smp7622.txt'...
+Changed to input file dir '/tmp/strun-rtdrv1gw'.
+> e VBL
+= %1111100111010 (bin), #7994 (dec), $1f3a (hex)
+> e CycleCounter
+= %1110010110010010110111000111100 (bin), #1925803580 (dec), $72c96e3c (hex)
+> e ($3979a).l
+  value at ($3979a).l = $c0
+= %11000000 (bin), #192 (dec), $c0 (hex)
+> e ($8281c).l
+  value at ($8281c).l = $c0
+= %11000000 (bin), #192 (dec), $c0 (hex)
+> e ($8282c).l
+  value at ($8282c).l = $be
+= %10111110 (bin), #190 (dec), $be (hex)
+> e ($82820).l
+  value at ($82820).l = $106
+= %100000110 (bin), #262 (dec), $106 (hex)
+> e ($82824).l
+  value at ($82824).l = $2
+= %10 (bin), #2 (dec), $2 (hex)
+> e ($82828).l
+  value at ($82828).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+Removed CPU breakpoint 1:
+	VBL > 7622 :once :trace :file /tmp/strun-rtdrv1gw/smp7622.txt
+> b all
+CPU breakpoints: 0
+> b VBL > 8354 :trace :once :file /tmp/strun-rtdrv1gw/smp8354.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	VBL > 8354
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-rtdrv1gw/smp8354.txt' file on hit.
+1. CPU breakpoint condition(s) matched 1 times.
+	VBL > 8354 :once :trace :file /tmp/strun-rtdrv1gw/smp8354.txt
+Reading debugger commands from '/tmp/strun-rtdrv1gw/smp8354.txt'...
+Changed to input file dir '/tmp/strun-rtdrv1gw'.
+> e VBL
+= %10000011001001 (bin), #8393 (dec), $20c9 (hex)
+> e CycleCounter
+= %1111001001001110011110001000010 (bin), #2032614466 (dec), $79273c42 (hex)
+> e ($3979a).l
+  value at ($3979a).l = $e9
+= %11101001 (bin), #233 (dec), $e9 (hex)
+> e ($8281c).l
+  value at ($8281c).l = $e9
+= %11101001 (bin), #233 (dec), $e9 (hex)
+> e ($8282c).l
+  value at ($8282c).l = $e7
+= %11100111 (bin), #231 (dec), $e7 (hex)
+> e ($82820).l
+  value at ($82820).l = $140
+= %101000000 (bin), #320 (dec), $140 (hex)
+> e ($82824).l
+  value at ($82824).l = $2
+= %10 (bin), #2 (dec), $2 (hex)
+> e ($82828).l
+  value at ($82828).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+Removed CPU breakpoint 1:
+	VBL > 8354 :once :trace :file /tmp/strun-rtdrv1gw/smp8354.txt
+Command line with '2' arguments:
+- '--fast-forward'
+- 'off'
+WARN : PNG screen dump saved to: /tmp/strun-rtdrv1gw/shots/grab0001.png
+WARN : PNG screen dump saved to: /tmp/strun-rtdrv1gw/shots/grab0002.png
+WARN : PNG screen dump saved to: /tmp/strun-rtdrv1gw/shots/grab0003.png
+> m $393fa 2
+000393FA: 00 fa                                            .·
+> m $393fc 2
+000393FC: 00 b4                                            .œ
+> m $3979c 2
+0003979C: 01 6a                                            .j
+> m $7fff8 2
+0007FFF8: 50 32                                            P2
+> m $7fffa 2
+0007FFFA: 50 4f                                            PO

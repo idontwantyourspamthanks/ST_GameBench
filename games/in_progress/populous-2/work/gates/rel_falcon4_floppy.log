@@ -1,0 +1,15 @@
+INFO : Hatari v2.6.1, compiled on:  Feb  8 2026, 19:50:12
+INFO : Inserted disk '/tmp/p2rel_falcon4_floppy.st' to drive A:.
+INFO : GEMDOS HDD emulation, C: <-> /tmp/strun-gokbwxzm/C.
+ERROR: Microphone: SDL_OpenAudioDevice failed.
+WARN : No GEMDOS dir '/tmp/strun-gokbwxzm/C/GAMEX'
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 0c b0                                            .ã
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 0c b0                                            .ã
+WARN : Bus Error writing at address $e09527, PC=$3f94b8 addr_e3=3f94b8 op_e3=562
+WARN : Bus Error writing at address $7, PC=$e0fbe2 addr_e3=e0fbe2 op_e3=4268
