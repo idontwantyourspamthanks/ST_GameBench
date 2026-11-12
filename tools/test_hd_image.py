@@ -131,6 +131,7 @@ def main():
     if a.game in ("mw1", "mw2"):
         shutil.copy(SRC, R / "hd.img")
     kw = dict(machine=a.machine, tos=TOS[a.tos], memsize_kb=a.mem)
+    mmu = ["--mmu", "true"] if a.machine == "tt" else []     # PP's HAGA on TOS 3.x needs the PMMU (dist/run_tt.sh)
     h = None
     tag = f"{a.game}{' UNPATCHED' if a.original else ''} {a.machine} TOS {a.tos} {a.mem}K"
     t0 = time.time()
@@ -153,7 +154,7 @@ def main():
         elif a.game == "mw1":
             sys.path.insert(0, str(GAMES / "midwinter" / "tools"))
             from mw1 import MW1
-            h = MW1(workdir=str(R), files=[], autorun="", extra=hd_args(R), **kw)
+            h = MW1(workdir=str(R), files=[], autorun="", extra=hd_args(R) + mmu, **kw)
             wait_drive_c(h)
             h.boot_to_game("M")
             res = f"in_ski={h.in_ski()} MARKER={h.peek(0xB2FF8, 4)!r} state={h.gstate()}"
@@ -164,7 +165,7 @@ def main():
             class MW2(Hatari):
                 boot_to_game = mw2harness.Hatari.boot_to_game
 
-            h = MW2(game_dir=GAMES / "midwinter2", workdir=str(R), files=[], overlay=Path("/nonexistent"), autorun="", extra=hd_args(R), **kw)
+            h = MW2(game_dir=GAMES / "midwinter2", workdir=str(R), files=[], overlay=Path("/nonexistent"), autorun="", extra=hd_args(R) + mmu, **kw)
             wait_drive_c(h)
             h.boot_to_game("M")
             res = (f"$6220={h.peekw(0x6220):#x} $700a={h.peekw(0x700A):#x} MARKER="
