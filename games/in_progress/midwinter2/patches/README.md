@@ -250,3 +250,15 @@ and read at the start of the next (a whole VBL of settle time, no wait loop), de
 - Blobs: `$B9500-$B97BB` (700 B), `$B9E00` (`jag_dir`), `$B9E20` (`jag_btn`), `$B9E40` (`jag_rd`, 12 B), data `$B9EA0-$B9EEF`.
 - Cost, STE 8 MHz (Hatari profile, 220 VBL): M / K mode 40 cycles per VBL; J mode 354 cycles per VBL (poll 196, three merge splices 158) = 0.22 % at 50 Hz, 0.27 % at 60 Hz, the same with or without a
   pad pressed. Machines without pad ports: 0.
+
+## `p8_tt_ptr`: pointer on the 2D screens of a TT / Falcon (`default: yes`, site `$26ea2`; notes: work/notes/map_pointer.md)
+- **Symptom (Hatari TT, any control mode):** on the island MAP screens (Raids map, campaign Control map) the menu pointer is not drawn at all, stock game included; it is visible on the screens that flip rarely
+  (level of play, island text pages, book, boss screen), which is why it seems to "disappear" after the pointer was seen on the previous page.
+- **Cause:** the pointer is drawn by the VBL handler (mode 0/1 routine `$264f0` -> `$266d4`) into the buffer `$67aa` = the buffer on display, at the start of the frame (HBL line 2). The map's main loop flips with `$26e98` at line 220 of the
+  same frame (`movep` to `$ff8201/03` first, swap after), so the display is switched to the other buffer, which holds no pointer. An ST / STE latches the base at the next frame start, so the handler draws into the buffer
+  that is shown; Hatari's TT/Falcon video takes the register at once.
+- **Fix (68020+ only):** the site is the first instruction of the base write (`lea $ff8201.l,a0`, 6 B), `jsr`'d into `$B4F00`: in modes 0/1 it sets `$67aa` to the buffer about to be shown, then does what the VBL handler does
+  (`$2684e` restore if `$6fc2`, then `$264f0`) with the VBL masked (IPL 4), so the pointer is already in the buffer when it goes on the display. The next VBL handler restores/redraws as usual. 3D view (mode 2): plain path.
+- **Detection:** the first call classifies the CPU with the index-register scale trick of `cpulib.s` (no exception, no cookie jar: HAGA remaps low RAM on a TT). A 68000/68010 (ST, STE, Mega STE) writes the 6 original bytes back to `$26ea2`:
+  those machines run the unpatched flip afterwards, 0 cycles. Data `TT_F` `$B4F80` (0 unprobed, 1 68000, 2 68020+); blob `$B4F00-$B4F7F` (128 B).
+- Cost on a TT: one pointer restore + draw (~12 k cycles at 8 MHz, 0.4 ms at 32 MHz) per 2D flip.

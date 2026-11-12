@@ -1,0 +1,28 @@
+> info video
+Video base   : 0x70000
+VBL counter  : 13106
+HBL line     : 222
+> m $67aa 4
+000067AA: 00 06 00 00                                      ....
+1. CPU breakpoint condition(s) matched 3 times.
+> info video
+Video base   : 0x60000
+VBL counter  : 13107
+HBL line     : 2
+> m $67aa 4
+000067AA: 00 06 00 00                                      ....
+2. CPU breakpoint condition(s) matched 2 times.
+> info video
+Video base   : 0x60000
+VBL counter  : 13107
+HBL line     : 220
+> m $770e 8
+0000770E: 00 07 00 00 00 06 00 00                          ........
+1. CPU breakpoint condition(s) matched 4 times.
+> info video
+Video base   : 0x60000
+VBL counter  : 13107
+HBL line     : 222
+> m $67aa 4
+000067AA: 00 07 00 00                                      ....
+> b all

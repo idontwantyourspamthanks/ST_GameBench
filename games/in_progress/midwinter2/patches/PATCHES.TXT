@@ -22,6 +22,12 @@ Changes vs the original HAGA release:
   (the unpatched game was fine). The patched build now keeps the loader's
   200 KB chunked caching on those machines, as on 1-2 MB; loading takes a few
   seconds longer than the unpatched game does at 4 MB. TT/Falcon are unchanged.
+- Atari Jaguar pad (new in v1.4; STE enhanced joystick ports, either port), in joystick mode: d-pad = stick,
+  B = fire, A / C = < / > (nose down / up, dive / climb), Option = Esc (leave vehicle), Pause = P,
+  keypad 1-9 / 0 = F1-F10, * / # = keypad - / +. Each button is read every 80 ms. Other machines run as before.
+- fixed (v1.4): on a TT the mouse pointer was missing on the map screens (also in the original release); it is
+  now drawn on every frame there. ST/STE/Mega STE are unchanged.
+- fixed: after leaving a boat, the frogman's diving mask could show only its top half.
 - Version line: the orange MIDWINTER II logo screen (shown while the game loads, before the intro) carries a small, dim
   "v@VERSION@ enhanced by dad_prg" at the bottom, so this release can not be mistaken for the original. Nothing else on the
   screen changes.
@@ -32,4 +38,4 @@ Run RUNME.TOS from a hard disk / GEMDOS drive.
 Create a campaign first: War Room -> Start New Campaign (copies the
 missions disk into FILES\FFD), then Control.
 Tested on Hatari: ST (TOS 1.04) and STE (TOS 1.62) at 1 and 4 MB, Mega STE
-(TOS 2.06) at 1, 2, 4, 8 and 14 MB, STE 16 MHz; TT/Falcon/Mega STE with EmuTOS.
+(TOS 2.06) at 1, 2, 4, 8 and 14 MB, STE 16 MHz, TT (TOS 3.06) at 4 MB.
