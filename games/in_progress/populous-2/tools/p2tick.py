@@ -9,6 +9,7 @@
     python3 tools/p2tick.py pointer60                                          the 60 Hz pointer trap ($1a6e) with and without pop2_ntsc2
     python3 tools/p2tick.py hz SNAP MHZ TURNS                                  the picture at 60 Hz == the picture at 50 Hz (unpatched + the 60 Hz fix)
     python3 tools/p2tick.py hold SNAP MHZ                                      the pointer-at-(0,0) hold in real time
+    python3 tools/p2tick.py cmdq SNAP MHZ [--cmds 14:00:00 5a:14:14] [--scenario order|held|overflow] [--controls]   the command queue (two commands within one tick)
     python3 tools/p2tick.py snd                                                sound sequencer steps per second at 50 / 60 Hz
 
 SNAP is busy1 or game_start (2 MB STE snapshots in work/snapshots).  --hz 60 pokes the shifter sync register ($ff820a) at the apply flip
@@ -198,7 +199,14 @@ def cmd_cold(a):
 # ---------------------------------------------------------------------------------------------------------------------------------
 # (a) world state by turn
 # ---------------------------------------------------------------------------------------------------------------------------------
-def one(snap, t0, live, out: Path, turns, mhz, hz, walk, patched, pokes=()):
+EXECPC = 0x292F8      # the executor's dispatch ($292dc..): d0 = the command byte (sign-extended), a command is about to run
+oQH, oQN, oQPUSH, oQPOP, oQDROP = 0x40, 0x42, 0x48, 0x4C, 0x50
+SLOTS = (0x473B0, 0x473C4)
+
+
+def one(snap, t0, live, out: Path, turns, mhz, hz, walk, patched, pokes=(), hooks=(), frames=True):
+    """hooks: [(condition, [debugger commands], once)] at the pass top ($1254e), e.g. ("($3979a).l = 16130", ["w $473b1 $14 $00 $00"], True).
+    Besides the tops/flips it records every command the executor runs (breakpoint at $292f8) and the queue counters at the end."""
     out.mkdir(parents=True, exist_ok=True)
     for f in out.glob("*"):
         f.unlink()
@@ -246,11 +254,17 @@ def one(snap, t0, live, out: Path, turns, mhz, hz, walk, patched, pokes=()):
         # every flip: the frame
         (R / "cap.txt").write_text("\n".join([f"e ${FLIP:x}", "e VBL", f"e (${TURN:x}).l", f"e (${D + oRON:x}).w", "e ($392e0).l", "e ($393fa).w", "e ($393fc).w",
                                               f"savebin {fifo} ${BUFS[0]:x} ${BUFS[1]:x}"]) + "\n")
-        cmds.append(f"b pc = ${FLIP:x} :trace :file {R / 'cap.txt'}")
+        if frames:
+            cmds.append(f"b pc = ${FLIP:x} :trace :file {R / 'cap.txt'}")
+        (R / "exe.txt").write_text(f"e ${EXECPC:x}\ne VBL\ne (${TURN:x}).l\ne d0\ne a0\n")
+        cmds.append(f"b pc = ${EXECPC:x} :trace :file {R / 'exe.txt'}")
+        for i, (cond, hc, once) in enumerate(hooks):
+            (R / f"hook{i}.txt").write_text("\n".join(hc) + "\n")
+            cmds.append(f"b pc = ${TOP:x} && {cond} :trace{' :once' if once else ''} :file {R / f'hook{i}.txt'}")
         (R / "cell.txt").write_text(f"e $1f74c\ne (${TURN:x}).l\n")
         cmds.append(f"b pc = $1f74c :trace :file {R / 'cell.txt'}")      # the logic redraws a minimap cell of the clean background ($1f6e0)
         end = R / "end.txt"
-        end.write_text(f"b all\nsavebin {out}/end.flag $0 2\ne VBL\n")
+        end.write_text(f"b all\nsavebin {out}/end.flag $0 2\ne VBL\n" + "".join(f"e (${D + o:x}).l\n" for o in (oQPUSH, oQPOP, oQDROP)))
         cmds.append(f"b pc = ${TOP:x} && (${TURN:x}).l = {t0 + turns} :trace :once :file {end}")
         app = R / "apply.txt"
         app.write_text("\n".join(cmds) + "\n")
@@ -299,7 +313,15 @@ def one(snap, t0, live, out: Path, turns, mhz, hz, walk, patched, pokes=()):
             order.append(("top", m[1], m[2]))
         elif m and m[0] == FLIP and len(m) >= 7:
             order.append(("flip", *m[1:7]))
-    recs = dict(tops=[], flips=[], kinds=kinds, cells=cells)
+    recs = dict(tops=[], flips=[], kinds=kinds, cells=cells, execs=[], counters={})
+    for blk in text.split("CPU breakpoint condition(s) matched")[1:]:
+        m = [int(v) for v in NUM.findall(blk)]
+        if len(m) >= 5 and m[0] == EXECPC:
+            recs["execs"].append(tuple(m[1:5]))              # (VBL, turn, command byte, slot address)
+    for nm, o in (("push", oQPUSH), ("pop", oQPOP), ("drop", oQDROP)):
+        mm = re.findall(rf"> e \(\${D + o:x}\)\.l\n(?:  .*\n)*= (.*)", text)
+        if mm:
+            recs["counters"][nm] = int(HEX.search(mm[-1]).group(1), 16)
     for o in order:
         need = TW if o[0] == "top" else TF
         if pos + need > len(buf):
@@ -463,6 +485,130 @@ def cmd_ab(a):
     if ncmp < 10 or nf < 5:
         ok = False
         print("  TOO FEW TURNS COMPARED")
+    sys.exit(0 if ok else 1)
+
+
+# ---------------------------------------------------------------------------------------------------------------------------------
+# command queue (pop2_tick_flip, work/notes/timing.md section 10)
+# ---------------------------------------------------------------------------------------------------------------------------------
+SCR = 0x83F00      # scratch word in the zero part of the data block (past the minimap dot list), counts the hooks that already fired
+
+
+def parse_cmd(t):
+    c, x, y = (int(v, 16) for v in t.split(":"))
+    return c, x, y
+
+
+def slot_poke(c):
+    return f"w $473b1 ${c[0]:02x} ${c[1]:02x} ${c[2]:02x}"
+
+
+def cmdq_hooks(kind, T, cmds, scenario, n_hold, force_s=False):
+    """Pass-top hooks.  Stock: one pass per turn, command i poked at the top of the pass that becomes turn T+1+i (executed by that pass).  Patched: the commands are
+    poked at the tops of the FIRST passes after turn T's pass (R passes: no executor; the poke is what the UI would have written at the end of the previous pass)."""
+    if scenario == "held":
+        c = cmds[0]
+        return [(f"($3979a).l > {T - 1} && ($3979a).l < {T + n_hold}", [slot_poke(c)], False)]
+    if kind == "stock":
+        return [(f"($3979a).l = {T + i}", [slot_poke(c)], True) for i, c in enumerate(cmds)]
+    if scenario == "overflow":     # at the first pass of the gap: the queue full of 8 no-ops ($0a), then ONE command arrives
+        pre = [AB.poke_cmd(f"{D + 0x40:x}:00000008"), AB.poke_cmd(f"{D + 0x60:x}:" + "000a0000" * 8)]
+        return [(f"($3979a).l = {T}", pre + [slot_poke(cmds[0])], True)]
+    # reversed: Hatari runs a matching breakpoint's file at once and goes on to the next breakpoint of the same pc, so the later hooks must be tested first
+    return [(f"($3979a).l = {T} && (${SCR:x}).w = {i}", [slot_poke(c), f"w ${SCR:x} $00 ${i + 1:02x}"] + ([f"w ${D + oACC:x} $00 $8c"] if force_s and i == len(cmds) - 1 else []), True)
+            for i, c in reversed(list(enumerate(cmds)))]
+
+
+def exec_list(r, cmds_only=True):
+    return [(t, c) for _, t, c, a_ in r["execs"] if a_ in SLOTS]
+
+
+def world_by_turn(r):
+    d = {}
+    for t in r["tops"]:
+        d.setdefault(t["turn"], []).append(t)
+    return d
+
+
+def mask_slots(w):
+    b = bytearray(mask_world(w))
+    b[SLOTS[0] - WORLD[0]:SLOTS[1] - WORLD[0]] = bytes(SLOTS[1] - SLOTS[0])
+    return bytes(b)
+
+
+def cmd_cmdq(a):
+    """Two (or more) different commands issued in consecutive passes of ONE tick, patched vs the stock game issuing them in consecutive passes (= consecutive turns).
+    Gate: the executor runs the same commands in the same turns and the world at every pass top of every turn is identical."""
+    WORK.mkdir(exist_ok=True)
+    bl = AB.make_live(WALK)
+    pl = AB.make_live(WALK + TICKSET)
+    sp = snap_path(a.snap)
+    t0 = AB.start_turn_for(sp)
+    T = t0 + 10
+    cmds = [parse_cmd(c) for c in a.cmds]
+    turns = 10 + (a.hold if a.scenario == "held" else len(cmds)) + 8
+    print(f"snapshot {a.snap}, apply at turn {t0}, commands (cmd,x,y) {cmds} {a.scenario}, first issued after turn {T}, {turns} turns, {a.mhz} MHz", flush=True)
+    def run(kind, with_cmds, out, patched, pokes=()):
+        hk = cmdq_hooks(kind, T, cmds, a.scenario, a.hold, a.force_s) if with_cmds else []
+        return one(sp, t0, pl if patched else bl, WORK / out, turns, a.mhz, 50, False, patched, pokes=tuple(pokes), hooks=hk, frames=False)
+
+    res = {}
+    plan = []
+    if a.scenario == "overflow":
+        plan = [("pat", dict(kind="patched", with_cmds=True, out="q_pat", patched=True))]
+    else:
+        plan = [("stock", dict(kind="stock", with_cmds=True, out="q_stock", patched=False)),
+                ("pat", dict(kind="patched", with_cmds=True, out="q_pat", patched=True))]
+        if a.controls:
+            plan += [("stock0", dict(kind="stock", with_cmds=False, out="q_stock0", patched=False)),
+                     ("neg", dict(kind="patched", with_cmds=True, out="q_neg", patched=True, pokes=["81100:4e75"]))]
+    for i in range(0, len(plan), 2):
+        grp = plan[i:i + 2]
+        with ThreadPoolExecutor(2) as ex:
+            fs = {k: ex.submit(run, **kw) for k, kw in grp}
+            for k, f in fs.items():
+                res[k] = f.result()
+    for k, r in res.items():
+        print(f"[{k}] commands run by the executor (turn, cmd): {exec_list(r)} | queue counters {r['counters']} | pass kinds "
+              f"T {sum(1 for x in r['kinds'] if not x[2] and not x[3])} R {sum(1 for x in r['kinds'] if x[3])} S {sum(1 for x in r['kinds'] if x[2])}", flush=True)
+
+    def compare(ref, other, lo):
+        rw = {t: v[0] for t, v in world_by_turn(res[ref]).items()}
+        n = bad = 0
+        first = []
+        for t, lst in sorted(world_by_turn(res[other]).items()):
+            if t < lo or t not in rw:
+                continue
+            for r_ in lst:
+                n += 1
+                if mask_slots(r_["world"]) != mask_slots(rw[t]["world"]):
+                    bad += 1
+                    if len(first) < 3:
+                        rg = diff_ranges(mask_slots(rw[t]["world"]), mask_slots(r_["world"]), WORLD[0])
+                        first.append(f"turn {t}: {len(rg)} ranges {[(hex(s_), hex(e_)) for s_, e_ in rg[:4]]}")
+        return n, bad, first
+
+    ok = True
+    if a.scenario == "overflow":
+        c = res["pat"]["counters"]
+        ex_ = exec_list(res["pat"])
+        good = c.get("drop") == 1 and c.get("pop") == 8 and len(ex_) == 8 and all(x[1] == 10 for x in ex_)
+        print(f"OVERFLOW {'OK' if good else 'FAIL'}: pushed {c.get('push')} (the one command that found a full queue is dropped, not pushed), dropped {c.get('drop')}, popped {c.get('pop')}, executed {len(ex_)} (8 no-ops, one per turn)")
+        sys.exit(0 if good else 1)
+    n, bad, first = compare("stock", "pat", T)
+    same_exec = exec_list(res["stock"]) == exec_list(res["pat"])
+    want = len(cmds) if a.scenario != "held" else a.hold
+    ran = len(exec_list(res["pat"]))
+    ok = bad == 0 and same_exec and ran == want and n >= 10
+    print(f"RESULT {a.scenario} stock vs patched: {'IDENTICAL' if ok else 'DIFFER'} | world at pass tops of turns >= {T}: {n} compared ({bad} differ) | executor runs equal (turn, cmd): {same_exec} ({ran} of {want} commands ran)")
+    for f in first:
+        print("   ", f)
+    if a.controls:
+        n0, bad0, _ = compare("stock", "stock0", T)
+        nn, badn, fn = compare("stock", "neg", T)
+        print(f"CONTROL commands have an effect: stock without commands differs from stock with them at {bad0} of {n0} pass tops ({'OK' if bad0 else 'FAIL: the commands change nothing, the test proves nothing'})")
+        print(f"CONTROL queue off (harvest of R passes disabled): differs at {badn} of {nn} pass tops, executor runs {exec_list(res['neg'])} ({'OK: the old behaviour loses a command' if badn else 'FAIL'})")
+        ok = ok and bad0 > 0 and badn > 0
     sys.exit(0 if ok else 1)
 
 
@@ -750,6 +896,13 @@ def main():
     c.add_argument("--clocks", nargs="*", type=int, default=[8, 16], help="CPU clocks to measure at (0 = the machine's default)")
     c.add_argument("--extra", default="", help="extra Hatari options as one string, e.g. \"--language us\"")
     sub.add_parser("pointer60")
+    cq = sub.add_parser("cmdq")
+    cq.add_argument("snap"); cq.add_argument("mhz", type=int)
+    cq.add_argument("--cmds", nargs="+", default=["14:00:00", "5a:14:14"], help="commands as cmd:x:y in hex, issued in consecutive passes")
+    cq.add_argument("--scenario", choices=["order", "held", "overflow"], default="order")
+    cq.add_argument("--hold", type=int, default=6, help="held: the first command is written at every pass top for this many turns")
+    cq.add_argument("--force-s", action="store_true", help="patched run: after the last command is queued, ACC is set to 140 so the next turn passes are catch-up (S) passes: the queue is popped by S passes")
+    cq.add_argument("--controls", action="store_true", help="also run: stock without commands, patched with the R-pass harvest disabled (both must differ)")
     hp = sub.add_parser("hold")
     hp.add_argument("snap"); hp.add_argument("mhz", type=int)
     sub.add_parser("snd")
@@ -760,7 +913,7 @@ def main():
     i = sub.add_parser("input")
     i.add_argument("snap"); i.add_argument("mhz", type=int); i.add_argument("--unpatched", action="store_true")
     a = ap.parse_args()
-    {"ab": cmd_ab, "rate": cmd_rate, "cold": cmd_cold, "clicks": cmd_clicks, "input": cmd_input, "hz": cmd_hz, "pointer60": cmd_pointer60, "snd": cmd_snd, "hold": cmd_hold}[a.cmd](a)
+    {"ab": cmd_ab, "rate": cmd_rate, "cold": cmd_cold, "clicks": cmd_clicks, "input": cmd_input, "hz": cmd_hz, "pointer60": cmd_pointer60, "snd": cmd_snd, "hold": cmd_hold, "cmdq": cmd_cmdq}[a.cmd](a)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,14 @@
+### p2tick.py rate game_start 8 4000
+RESULT game_start 8 MHz 50 Hz sync $fe patched: 4001 VBL = 80.02 s, 160251 cycles/VBL, world turns 501 = 6.261/s | ticks(D) 501 = 6.261/s; passes T 501 R 285 S 0 P 0
+### p2tick.py rate game_start 16 4000
+RESULT game_start 16 MHz 50 Hz sync $fe patched: 4001 VBL = 80.02 s, 320470 cycles/VBL, world turns 500 = 6.248/s | ticks(D) 500 = 6.248/s; passes T 500 R 909 S 0 P 0
+### p2tick.py rate busy1 8 4000
+RESULT busy1 8 MHz 50 Hz sync $fe patched: 4001 VBL = 80.02 s, 160235 cycles/VBL, world turns 499 = 6.236/s | ticks(D) 499 = 6.236/s; passes T 452 R 0 S 47 P 0
+### p2tick.py rate busy1 16 4000
+RESULT busy1 16 MHz 50 Hz sync $fe patched: 4001 VBL = 80.02 s, 320489 cycles/VBL, world turns 501 = 6.261/s | ticks(D) 501 = 6.261/s; passes T 501 R 663 S 0 P 0
+### p2tick.py rate busy1 8 4000 --hz 60 --ntsc
+RESULT busy1 8 MHz 60 Hz sync $fc patched: 4001 VBL = 66.68 s, 133591 cycles/VBL, world turns 417 = 6.253/s | ticks(D) 417 = 6.253/s; passes T 376 R 0 S 41 P 0
+### cold STE 2MB
+boot 107 s in_play=True marker 'P2PO' $22f14 4ef900082000 sync $ff820a = $fe -> booted at 50 Hz
+RESULT cold ste TOS 1.62 2048 KB 8 MHz 50 Hz: 2001 VBL = 40.02 s, 160226 cycles/VBL, world turns 250 = 6.247/s | ticks(D) 250 = 6.247/s; passes T 250 R 187 S 0 P 0 | refresh seen 49.93 Hz
+RESULT cold ste TOS 1.62 2048 KB 16 MHz 50 Hz: 2001 VBL = 40.02 s, 320381 cycles/VBL, world turns 250 = 6.247/s | ticks(D) 250 = 6.247/s; passes T 250 R 625 S 0 P 0 | refresh seen 49.94 Hz

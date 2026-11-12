@@ -100,7 +100,7 @@ The 320 B are the minimap dots: `$24244`-`$24296` plots one pixel per person int
 |---|---|---|---|
 | 1 | turn counter `$3979a`: `$22f7e move.l $3979a,d0` ... `$22f9c addi.l #1,d0` / `$22fa2 move.l d0,$3979a.l` | +1 per pass | +1 per turn pass (T, S) only (`pop2_tick`) |
 | 2 | world logic `$2309a $25652 $26644 $27faa $1fcce $29c7e $2a0b2` (`$1275c`-`$12786`) | once per pass | once per turn: skipped in R passes (`pop2_tick_logic`) |
-| 3 | command executor `$29226` (`$12798`) | once per pass: a held mouse button / key writes its command again every pass, so at 16 MHz the player would act twice per turn [INFERENCE: read from `$12cca`-`$12f6e` and `$29226`, not run with a held button] | once per turn (T, S passes; R passes skip it: the command waits in its slot, the UI writes it again) (`pop2_tick_flip`) |
+| 3 | command executor `$29226` (`$12798`) | once per pass: a held mouse button / key writes its command again every pass, so at 16 MHz the player would act twice per turn [INFERENCE: read from `$12cca`-`$12f6e` and `$29226`, not run with a held button] | once per turn pass (T, S, P), at most ONE command per player per turn pass; R passes skip it and queue what the UI wrote (section 10) (`pop2_tick_flip`) |
 | 4 | **click age** `$22f84 cmp.l $3940a,d0` / `ble.b $22f9c` / `clr.w $39402` / `clr.w $39404`; stamps `$1980`, `$19dc` `move.l $3979a.l,$3940a.l` | compares TURNS: with R passes (no turn++) an unhandled click would live two whole turns, with S passes (turns with no UI) it would be cleared before any UI pass saw it | aged per UI pass (T and R), never in S passes: `pop2_tick` reads the stamp, re-arms it with a sentinel (`$7fffffff`, so `$22f84` never clears), a stamp that changed = a fresh click (survives this pass), unchanged with a latch set = seen by a whole pass: cleared. Measured: `work/gates/clicks.txt` (below) |
 | 5 | pointer-at-(0,0) hold: `$22f14 move.w $393fa,d0 / add.w $393fc,d0 / bne $22f2e`, `$22f22 cmpi.l #8,$392d4 / ble.b $22f14` | no pass shorter than 9 VBL (0.18 s at 50 Hz) while the pointer is in the top-left corner | the same in real time: HOLD = 54 units of 1/300 s (9 VBL at 50 Hz, 11 at 60 Hz); never delays an S pass, so the world keeps its 6.25 turns/s |
 | 6 | 3-turn palette fade `$22f3c`-`$22f70` (`$22fc4 = turn + 3`, then `jsr $2218a`: 17 steps, one per VBL, blocking) | per turn | unchanged (it runs inside T/S passes through `$22f2e`) |
@@ -234,7 +234,7 @@ All four reach play with `$7fff8` = `P2PO` and `$22f14` = `4ef900082000` (the ti
 ## 8. Limits, open items, [INFERENCE]
 
 - Hatari only. 60 Hz on Falcon not reachable (section 5). Real-hardware refresh jitter: the time base is the VBL count, so it is exactly as accurate as the display refresh; a 50.0 Hz PAL display gives 6.25 turns/s, a 60 Hz one the same through the 5-unit step [INFERENCE for real hardware].
-- The R pass leaves the player's command in its slot until the next turn pass; two different commands issued between two turn passes (< 0.16 s) lose the first (single slot `$1(a)`). The original at 16 MHz would have run both [INFERENCE from `$29226`].
+- Commands: two different commands issued between two turn passes (< 0.16 s) used to lose the first (single slot `$1(a)`); since 2026-11-12 R passes queue them (section 10). Limits there: identical repeats within one tick count as one held input; a queue of 8 drops the newest on overflow; link games not run.
 - Link games (`$29cd0`, serial/MIDI) were not run; the exchange sits in the command executor and the 6-VBL wait `$29d52`, so it should follow the turn [INFERENCE].
 - The hover highlight can lag by the UI passes an S burst skips (cosmetic; the gate excludes those frames).
 - `pop2_tick_anim`: untested against a real kind-`$14` object (none exists in the snapshots).
@@ -254,4 +254,76 @@ python3 tools/p2tick.py cold --machine tt --tos 3.06 --mem 4096 --tag tt4mb --hz
 python3 tools/p2tick.py input busy1 16 [--unpatched]                # (c)
 python3 tools/p2tick.py clicks busy1 16 [--unpatched] [--force-s]
 python3 tools/p2tick.py snd
+python3 tools/p2tick.py cmdq game_start 16 --controls               # command queue: two commands in one tick (section 10)
 ```
+
+## 10. Command queue (2026-11-12, Pop2Queue; in `pop2_tick_flip`, blob `$81100`)
+
+**Where:** `patches/pop2_tick_flip.s` edited in place (the hook at `$1278c` already owns the executor call and a second patch cannot take the same site); a second `org` segment `PB+$1100` = `$81100-$811D2` holds the code, the FIFO lives in the tick's control block `D+$40`-`$7F` (`$82840`-`$8287F`, zero in the image). No new patch name, so `TICKSET` and every gate command are unchanged. `default: yes` like the rest of the tick.
+
+**The loss:** the UI writes the local player's slot at the END of a pass through `movea.l $473c4.l,a0 / move.b #cmd,$1(a0) / move.b x,$2(a0) / move.b y,$3(a0)` (about 35 `movea.l $473c4.l,a0` sites listed by `m68dis.py --xref 473c4`: `$12808 $12858 $128d6 $12abe ... $13202 $13328 ... $15f04`), the executor reads it in the NEXT pass (the executor `$12798` comes before the UI in the loop). Since the tick, an R pass has no executor, so a second command written before the next turn pass overwrote the first (`neg` run below).
+
+**One per turn, not all at once** (the choice asked for). The stock executor dispatches ONE command per slot per call and clears it:
+```
+029230  7000         moveq   #$0, d0
+029232  10280008     move.b  $8(a0), d0          ; slot type
+02923a  4ebb001c     jsr     $29258(pc, d0.w)    ; -> $292dc: move.b $1(a0),d0 ... jmp through the table at $29300
+02923e  42280001     clr.b   $1(a0)
+029242  42680002     clr.w   $2(a0)
+029246  41e8000a     lea.l   $a(a0), a0          ; next slot
+02924a  b1fc000473c4 cmpa.l  #$473c4, a0
+029250  6dde         blt.b   $29230
+012798  4eb900029226 jsr     $29226.l            ; one call per pass, one pass per turn at 8 MHz
+```
+and the UI writes one slot, so a second write in the same pass overwrites the first [INFERENCE: from the writers' code, not run]. So the stock game at 8 MHz runs at most one command per player per turn, in the order issued, each in the turn after it was issued. Measured on the unpatched game (executor breakpoint `$292f8`, a command poked at the top of consecutive passes = consecutive turns, `work/gates/cmdq.txt`): `[stock] commands run by the executor (turn, cmd): [(397, 20), (398, 90)]` and for the same command written at every pass top for 6 turns `[(397, 20), (398, 20), (399, 20), (400, 20), (401, 20), (402, 20)]`: one per turn. A queue that drained everything in the next turn would run a behaviour change and the effect next to it in ONE turn, a state the stock game never produced (and at 16 MHz the stock game ran one per PASS, which the tick had already removed), so the queue runs **at most one queued command per turn pass (T, S and P), oldest first**.
+
+**Design** (`patches/pop2_tick_flip.s`):
+- R pass, at the place of the skipped executor: `harv` moves the UI slot's command (3 bytes: command, x, y) to the tail of the 8-entry FIFO and clears the slot exactly as the executor does (`clr.b $1(a0) / clr.w $2(a0)`). The slot read is the one the UI writes through, `$473c4` (the local player).
+- T, S, P pass: if the queue is empty the executor runs the slot as in the stock game (no command ever queued = the stock game, byte for byte; computer-player slot 1 is written and executed inside the same turn pass and is never queued); otherwise `harv` appends the slot (order kept), the head is written into the slot and the executor runs: one queued command per turn pass. `LASTH` is cleared by every turn pass.
+- Repeats: held input rewrites the same command in every pass (keys `$63`-`$66`, `$44`, the mode `$1e`/`$32` path with the button held `$13088 tst.w $39406`). A command identical (command, x, y) to the last one queued since the previous turn pass is not queued again (`LASTH`), so a held input stays one command per turn. Evidence `held` run below. The stock game merges quick repeated clicks in the same way: the click latch is a flag set at the button-down edge only (`$19ba tst.w $39406 / bne.b $19e6`, `$19c2 tst.w $39402 / bne.b $19e6`, `$19ca move.w #1,$39402`, `$19e6 move.w #1,$39406`: the latch is only set when no button-held flag and no pending latch exist), two clicks inside one pass leave one latch. A DIFFERENT command is never merged (cases A,B,A all kept).
+- Overflow: `QMAX = 8`. A ninth pending command is dropped (the newest; `QDROP`), because the older ones were issued first; the queue is only full when more than 8 distinct commands are pending, i.e. a sustained rate above one new distinct command per turn (6.25/s) for more than 1.3 s. Counters `QPUSH D+$48`, `QPOP D+$4c`, `QDROP D+$50` (long) are for the gates.
+- Link games (`$29cd0`, slot types 6/8 in the executor table) were not run; the queue only touches the slot the UI writes and the command bytes, not the slot type.
+
+**Gates** (raw output `work/gates/cmdq.txt`; `tools/p2tick.py cmdq`, new: pokes the slot bytes `$473b1-$473b3` at pass tops, logs every executor dispatch (`$292f8`, `d0`, `a0`) and compares the world region `$39600-$473ff` at every pass top, with the slot bytes masked, patched vs stock by turn):
+```
+### cmdq game_start 16 --controls            (A = $14 behaviour change, B = $5a raise land at (20,20); A poked at the first R pass of turn 396's gap, B at the second)
+[stock] commands run by the executor (turn, cmd): [(397, 20), (398, 90)] | queue counters {'push': 0, 'pop': 0, 'drop': 0} | pass kinds T 20 R 0 S 0
+[pat]   commands run by the executor (turn, cmd): [(397, 20), (398, 90)] | queue counters {'push': 2, 'pop': 2, 'drop': 0} | pass kinds T 20 R 37 S 0
+RESULT order stock vs patched: IDENTICAL | world at pass tops of turns >= 396: 33 compared (0 differ) | executor runs equal (turn, cmd): True (2 of 2 commands ran)
+CONTROL commands have an effect: stock without commands differs from stock with them at 10 of 11 pass tops (OK)
+CONTROL queue off (harvest of R passes disabled): differs at 29 of 33 pass tops, executor runs [(397, 90)] (OK: the old behaviour loses a command)
+### cmdq busy1 16 --cmds 12:00:00 5a:14:14 --controls     [$12 behaviour + raise land]
+RESULT order stock vs patched: IDENTICAL | world 24 compared (0 differ) | executor runs equal: True (2 of 2) | controls OK (no commands: differs at 10 of 11; queue off: differs at 22 of 24, runs [(16133, 90)])
+### cmdq game_start 16 --force-s             (after the second command is queued ACC is forced to 140: the next turns are catch-up S passes, they pop the queue)
+[pat] ... queue counters {'push': 2, 'pop': 2, 'drop': 0} | pass kinds T 18 R 31 S 2
+RESULT order stock vs patched: IDENTICAL | world 27 compared (0 differ) | executor runs equal: True (2 of 2)
+### cmdq game_start 16 --scenario held --hold 6 --cmds 14:00:00     (the command written at EVERY pass top for 6 turns)
+[stock] (397, 20) (398, 20) (399, 20) (400, 20) (401, 20) (402, 20)        [pat] the same six, queue counters push 6 pop 6 drop 0, pass kinds T 24 R 45
+RESULT held stock vs patched: IDENTICAL | world 45 compared (0 differ) | executor runs equal: True (6 of 6)
+### cmdq game_start 16 --scenario overflow    (queue pre-filled with 8 no-ops, then one command arrives)
+[pat] executed (397..404, cmd $0a) | queue counters {'push': 0, 'pop': 8, 'drop': 1}
+OVERFLOW OK: dropped 1, popped 8, executed 8 (8 no-ops, one per turn)
+```
+No-command gates (`work/gates/ab_cmdq.txt`, no command is ever issued: the walk driver moves the pointer, never clicks): `p2tick.py ab` IDENTICAL on all six runs, with the same compared counts as section 4:
+```
+game_start @16 MHz 50 Hz: IDENTICAL | world 507 compared (0 differ) over 131 turns, max 4 tops/turn | T frames 129 (0 differ) | R frames 381 (0 unstable; 370 minimap compares, 0 differ) | T 130 R 381 S 0
+busy1 @16 MHz 50 Hz: IDENTICAL | world 325 compared (0 differ) | T 130 R 198 S 0
+busy1 @8 MHz 50 Hz: IDENTICAL | world 134 compared (0 differ) | T 121 R 5 S 9
+game_start @8 MHz 50 Hz: IDENTICAL | world 239 compared (0 differ) | T 130 R 111 S 0
+game_start @16 MHz 60 Hz: IDENTICAL | world 504 compared (0 differ), max 5 tops/turn | T 130 R 379 S 0
+busy1 @8 MHz 50 Hz +spin 12800: IDENTICAL | world 129 compared (0 differ) | T 112 R 0 S 18
+```
+Rates (`work/gates/rate_cold_cmdq.txt`, `rate_cmdq_long.txt`; 80 s windows, same method as section 5; 1-2 turns of window noise against the table in section 5):
+```
+game_start 8 MHz 50 Hz: 6.261/s (T 501 R 285 S 0) | 16 MHz: 6.248/s | busy1 8 MHz: 6.236/s (T 452 S 47) | busy1 16 MHz: 6.261/s | busy1 8 MHz 60 Hz: 6.253/s
+240 s windows: busy1 8 MHz 6.245/s (1499 turns, T 1115 S 384) | game_start 8 MHz 6.254/s (1501 turns)
+```
+Cold boot, HD build `build/Pop2Queue` (all default patches), STE 2 MB TOS 1.62, `p2tick.py cold --machine ste --tos 1.62 --mem 2048 --build build/Pop2Queue`:
+```
+boot 107 s in_play=True marker 'P2PO' $22f14 4ef900082000 sync $ff820a = $fe -> booted at 50 Hz
+RESULT cold ste TOS 1.62 2048 KB 8 MHz 50 Hz: 2001 VBL = 40.02 s, 160226 cycles/VBL, world turns 250 = 6.247/s | passes T 250 R 187 S 0 P 0
+RESULT cold ste TOS 1.62 2048 KB 16 MHz 50 Hz: 2001 VBL = 40.02 s, 320381 cycles/VBL, world turns 250 = 6.247/s | passes T 250 R 625 S 0 P 0
+```
+Screenshots `work/shots/tick_ste2mb_queue.png`, `tick_ste2mb_queue_end.png`.
+
+**Limits.** The test pokes the slot at pass tops, i.e. what the UI leaves there; no real mouse/keyboard session was driven. Identical-command merging is a deliberate (documented) drop of a duplicate, not of a distinct command. Link games not run. At 8 MHz in a busy scene there are no R passes (one pass per turn), so two distinct commands cannot be issued within one tick there; the queue then never fills and the executor sees the slot as in the stock game.

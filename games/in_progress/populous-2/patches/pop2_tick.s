@@ -29,6 +29,7 @@
 ; note: Data block D = PB+$2800 = $82800 (inside the zero-filled payload image, 6 KB; the control block is also armed lazily behind the magic 'P2TK' for the live images of the gates): +0 MAGIC.l +4 LAST.l +8 HREF.l +12 ACC.w +14 SKIP.w +16 RON.w
 ; note: +18 FRESH.w +20 SACC.w (pop2_tick_snd) +24 SLAST.l +28 TICKS.l +32 RPASS.l +36 SPASS.l +40 PPASS.l +44 TPASS.l +48 WPTR.l (minimap dot list write pointer);
 ; note: the dot list is at D+$100 (900 entries of 6 bytes, pop2_tick_dot_a).
+; note: +$40..+$7F: the command queue of pop2_tick_flip (QH.w QN.w LASTH.l QPUSH.l QPOP.l QDROP.l, entries D+$60..$7F); zero in the image; the first-call clear above zeroes it with the rest of the block.
 TK      equ     48
 HOLD    equ     54
 MAGIC   equ     $5032544b               ; 'P2TK'

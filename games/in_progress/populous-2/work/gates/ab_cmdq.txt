@@ -1,0 +1,30 @@
+### p2tick.py ab game_start 16 130
+base test_walk test_walk2 test_walk3
+patched +pop2_tick pop2_tick_render pop2_tick_logic pop2_tick_flip pop2_tick_dot_a pop2_tick_dot_b pop2_tick_snd pop2_tick_anim
+snapshot game_start turn 386, 130 turns, 16 MHz, 50 Hz
+game_start @16 MHz 50 Hz: IDENTICAL | world at pass tops: 507 compared (0 differ) over 131 turns, max 4 tops/turn | T frames 129 compared (0 differ; 0 excluded: hover highlight stale after catch-up passes) | R frames: 381 (250 stability pairs, 0 unstable; 370 minimap compares, 0 differ; 3 turns excluded: minimap cell redrawn by the logic) | pass kinds T 130 R 381 S 0 | turns/s base 24.074 patched 6.286
+### p2tick.py ab busy1 16 130
+base test_walk test_walk2 test_walk3
+patched +pop2_tick pop2_tick_render pop2_tick_logic pop2_tick_flip pop2_tick_dot_a pop2_tick_dot_b pop2_tick_snd pop2_tick_anim
+snapshot busy1 turn 16122, 130 turns, 16 MHz, 50 Hz
+busy1 @16 MHz 50 Hz: IDENTICAL | world at pass tops: 325 compared (0 differ) over 131 turns, max 3 tops/turn | T frames 129 compared (0 differ; 0 excluded: hover highlight stale after catch-up passes) | R frames: 198 (72 stability pairs, 0 unstable; 192 minimap compares, 0 differ; 2 turns excluded: minimap cell redrawn by the logic) | pass kinds T 130 R 198 S 0 | turns/s base 11.733 patched 6.274
+### p2tick.py ab busy1 8 130
+base test_walk test_walk2 test_walk3
+patched +pop2_tick pop2_tick_render pop2_tick_logic pop2_tick_flip pop2_tick_dot_a pop2_tick_dot_b pop2_tick_snd pop2_tick_anim
+snapshot busy1 turn 16122, 130 turns, 8 MHz, 50 Hz
+busy1 @8 MHz 50 Hz: IDENTICAL | world at pass tops: 134 compared (0 differ) over 131 turns, max 2 tops/turn | T frames 111 compared (0 differ; 9 excluded: hover highlight stale after catch-up passes) | R frames: 5 (0 stability pairs, 0 unstable; 4 minimap compares, 0 differ; 1 turns excluded: minimap cell redrawn by the logic) | pass kinds T 121 R 5 S 9 | turns/s base 6.190 patched 6.232
+### p2tick.py ab game_start 8 130
+base test_walk test_walk2 test_walk3
+patched +pop2_tick pop2_tick_render pop2_tick_logic pop2_tick_flip pop2_tick_dot_a pop2_tick_dot_b pop2_tick_snd pop2_tick_anim
+snapshot game_start turn 386, 130 turns, 8 MHz, 50 Hz
+game_start @8 MHz 50 Hz: IDENTICAL | world at pass tops: 239 compared (0 differ) over 131 turns, max 2 tops/turn | T frames 129 compared (0 differ; 0 excluded: hover highlight stale after catch-up passes) | R frames: 111 (0 stability pairs, 0 unstable; 107 minimap compares, 0 differ; 3 turns excluded: minimap cell redrawn by the logic) | pass kinds T 130 R 111 S 0 | turns/s base 10.998 patched 6.262
+### p2tick.py ab game_start 16 130 --hz 60
+base test_walk test_walk2 test_walk3 pop2_ntsc pop2_ntsc2
+patched +pop2_tick pop2_tick_render pop2_tick_logic pop2_tick_flip pop2_tick_dot_a pop2_tick_dot_b pop2_tick_snd pop2_tick_anim
+snapshot game_start turn 386, 130 turns, 16 MHz, 60 Hz
+game_start @16 MHz 60 Hz: IDENTICAL | world at pass tops: 504 compared (0 differ) over 131 turns, max 5 tops/turn | T frames 129 compared (0 differ; 0 excluded: hover highlight stale after catch-up passes) | R frames: 379 (247 stability pairs, 0 unstable; 367 minimap compares, 0 differ; 3 turns excluded: minimap cell redrawn by the logic) | pass kinds T 130 R 379 S 0 | turns/s base 20.000 patched 6.280
+### p2tick.py ab busy1 8 130 --spin 12800
+base test_walk test_walk2 test_walk3 test_tickspin
+patched +pop2_tick pop2_tick_render pop2_tick_logic pop2_tick_flip pop2_tick_dot_a pop2_tick_dot_b pop2_tick_snd pop2_tick_anim
+snapshot busy1 turn 16122, 130 turns, 8 MHz, 50 Hz
+busy1 @8 MHz 50 Hz: IDENTICAL | world at pass tops: 129 compared (0 differ) over 131 turns, max 1 tops/turn | T frames 93 compared (0 differ; 18 excluded: hover highlight stale after catch-up passes) | R frames: 0 (0 stability pairs, 0 unstable; 0 minimap compares, 0 differ; 0 turns excluded: minimap cell redrawn by the logic) | pass kinds T 112 R 0 S 18 | turns/s base 5.768 patched 6.226

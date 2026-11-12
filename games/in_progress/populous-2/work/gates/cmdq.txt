@@ -1,0 +1,32 @@
+### p2tick.py cmdq game_start 16 --controls
+snapshot game_start, apply at turn 386, commands (cmd,x,y) [(20, 0, 0), (90, 20, 20)] order, first issued after turn 396, 20 turns, 16 MHz
+[stock] commands run by the executor (turn, cmd): [(397, 20), (398, 90)] | queue counters {'push': 0, 'pop': 0, 'drop': 0} | pass kinds T 20 R 0 S 0
+[pat] commands run by the executor (turn, cmd): [(397, 20), (398, 90)] | queue counters {'push': 2, 'pop': 2, 'drop': 0} | pass kinds T 20 R 37 S 0
+[stock0] commands run by the executor (turn, cmd): [] | queue counters {'push': 0, 'pop': 0, 'drop': 0} | pass kinds T 20 R 0 S 0
+[neg] commands run by the executor (turn, cmd): [(397, 90)] | queue counters {'push': 0, 'pop': 0, 'drop': 0} | pass kinds T 20 R 37 S 0
+RESULT order stock vs patched: IDENTICAL | world at pass tops of turns >= 396: 33 compared (0 differ) | executor runs equal (turn, cmd): True (2 of 2 commands ran)
+CONTROL commands have an effect: stock without commands differs from stock with them at 10 of 11 pass tops (OK)
+CONTROL queue off (harvest of R passes disabled): differs at 29 of 33 pass tops, executor runs [(397, 90)] (OK: the old behaviour loses a command)
+### p2tick.py cmdq busy1 16 --cmds 12:00:00 5a:14:14 --controls
+snapshot busy1, apply at turn 16122, commands (cmd,x,y) [(18, 0, 0), (90, 20, 20)] order, first issued after turn 16132, 20 turns, 16 MHz
+[stock] commands run by the executor (turn, cmd): [(16133, 18), (16134, 90)] | queue counters {'push': 0, 'pop': 0, 'drop': 0} | pass kinds T 20 R 0 S 0
+[pat] commands run by the executor (turn, cmd): [(16133, 18), (16134, 90)] | queue counters {'push': 2, 'pop': 2, 'drop': 0} | pass kinds T 20 R 25 S 0
+[stock0] commands run by the executor (turn, cmd): [] | queue counters {'push': 0, 'pop': 0, 'drop': 0} | pass kinds T 20 R 0 S 0
+[neg] commands run by the executor (turn, cmd): [(16133, 90)] | queue counters {'push': 0, 'pop': 0, 'drop': 0} | pass kinds T 20 R 25 S 0
+RESULT order stock vs patched: IDENTICAL | world at pass tops of turns >= 16132: 24 compared (0 differ) | executor runs equal (turn, cmd): True (2 of 2 commands ran)
+CONTROL commands have an effect: stock without commands differs from stock with them at 10 of 11 pass tops (OK)
+CONTROL queue off (harvest of R passes disabled): differs at 22 of 24 pass tops, executor runs [(16133, 90)] (OK: the old behaviour loses a command)
+### p2tick.py cmdq game_start 16 --force-s
+snapshot game_start, apply at turn 386, commands (cmd,x,y) [(20, 0, 0), (90, 20, 20)] order, first issued after turn 396, 20 turns, 16 MHz
+[stock] commands run by the executor (turn, cmd): [(397, 20), (398, 90)] | queue counters {'push': 0, 'pop': 0, 'drop': 0} | pass kinds T 20 R 0 S 0
+[pat] commands run by the executor (turn, cmd): [(397, 20), (398, 90)] | queue counters {'push': 2, 'pop': 2, 'drop': 0} | pass kinds T 18 R 31 S 2
+RESULT order stock vs patched: IDENTICAL | world at pass tops of turns >= 396: 27 compared (0 differ) | executor runs equal (turn, cmd): True (2 of 2 commands ran)
+### p2tick.py cmdq game_start 16 --scenario held --hold 6 --cmds 14:00:00
+snapshot game_start, apply at turn 386, commands (cmd,x,y) [(20, 0, 0)] held, first issued after turn 396, 24 turns, 16 MHz
+[stock] commands run by the executor (turn, cmd): [(397, 20), (398, 20), (399, 20), (400, 20), (401, 20), (402, 20)] | queue counters {'push': 0, 'pop': 0, 'drop': 0} | pass kinds T 24 R 0 S 0
+[pat] commands run by the executor (turn, cmd): [(397, 20), (398, 20), (399, 20), (400, 20), (401, 20), (402, 20)] | queue counters {'push': 6, 'pop': 6, 'drop': 0} | pass kinds T 24 R 45 S 0
+RESULT held stock vs patched: IDENTICAL | world at pass tops of turns >= 396: 45 compared (0 differ) | executor runs equal (turn, cmd): True (6 of 6 commands ran)
+### p2tick.py cmdq game_start 16 --scenario overflow
+snapshot game_start, apply at turn 386, commands (cmd,x,y) [(20, 0, 0), (90, 20, 20)] overflow, first issued after turn 396, 20 turns, 16 MHz
+[pat] commands run by the executor (turn, cmd): [(397, 10), (398, 10), (399, 10), (400, 10), (401, 10), (402, 10), (403, 10), (404, 10)] | queue counters {'push': 0, 'pop': 8, 'drop': 1} | pass kinds T 20 R 37 S 0
+OVERFLOW OK: pushed 0 (the one command that found a full queue is dropped, not pushed), dropped 1, popped 8, executed 8 (8 no-ops, one per turn)
