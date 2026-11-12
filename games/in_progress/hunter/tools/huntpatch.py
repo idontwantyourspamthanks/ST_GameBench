@@ -18,7 +18,7 @@ How a build works (the originals are never modified; everything goes to build/ga
     `$c0152`), checks the magic 'HNPA' and calls the core.  The core verifies the original bytes of EVERY boot
     site, then applies all of them or none ('HNPO' / 'HNPF' at $8BFF8) and probes for STE DMA sound ($8BFF0).
   * phase=deferred sites (a `; load: FILES/n $dest` header) are applied by the load hook: the single exit of the
-    game's file hook at $1a6 (`jmp $d60a.l`) becomes `jmp $8bb40`, which runs the applier on the file just read.
+    game's file hook at $1a6 (`jmp $d60a.l`) becomes `jmp $8bb60`, which runs the applier on the file just read.
   * `; image: FILES/n` file patches edit the build copy of a game file (like the HAGA patches of Midwinter).
   * The sample bank ($90000..$AEFFF, up to 126976 bytes) is appended to the payload with `--samples FILE`.
 """
@@ -78,12 +78,13 @@ D15R_MAX = 70000                         # the game's file hook reads at most th
 # ---- payload layout ($8BA00..$AEFFF) ---------------------------------------------------------------------
 IMG_BASE, IMG_END = 0x8BA00, 0xAF000
 SAMPLE_BASE = 0x90000
-CORE_ORGS = {"stub": 0x0, "mchfix": 0x7FC0, "entry": 0x8BA00, "hook": 0x8BB40}
+CORE_ORGS = {"stub": 0x0, "mchfix": 0x7FC0, "entry": 0x8BA00, "hook": 0x8BB60}
 PREFIX_RANGES = {                        # blob orgs allowed per patch-name prefix (shared contract, inclusive ends)
     "p4_": (0x8C000, 0x8DFFF),           # Raster
     "snd_": (0x8E000, 0x8FFFF),          # Audio code, mixer state, ring buffer
     "test_": (0x8DC00, 0x8DFFF),         # loader self-tests
     "hn_": (0x8D400, 0x8DBFF),           # Hunter-specific patches (release credit); free between p4_poly's tables and test_
+    "jag_": (0x8D600, 0x8D9FF),          # Jaguar pad (jag_pad poll + state, jag_stick merge); inside the hn_ window, between hn_credit and hn_hz
 }
 
 
@@ -392,6 +393,7 @@ class Patch:
         self.site = None
         self.orig = None
         self.phase = None
+        self.requires = []        # names of patches that must be selected with this one (one feature over several splice sites)
         self.load = None          # deferred: (game file, RAM destination of that file)
         self.data = []            # (addr, len) zero-init reservations
         self.segments = []        # (org, lines)
@@ -418,6 +420,7 @@ class Patch:
                 elif k == "site": self.site = hx(v)
                 elif k == "orig": self.orig = bytes.fromhex(v.replace(" ", ""))
                 elif k == "phase": self.phase = v.lower()
+                elif k == "requires": self.requires = v.split()
                 elif k == "load":
                     f, d = v.split()
                     self.load = (f, hx(d))
@@ -1302,6 +1305,9 @@ def main():
                 raise SystemExit(f"unknown patch(es): {sorted(unknown)}")
             sel = [p for p in patches if p.name in names]
             fsel = [p for p in fps if p.name in names]
+        missing = sorted({(p.name, r) for p in sel for r in p.requires if r not in {q.name for q in sel}})
+        if missing:
+            raise SystemExit("patch(es) selected without a required partner: " + ", ".join(f"{n} needs {r}" for n, r in missing))
         smp = read_samples(a.samples)
         if a.cmd == "build" and MODE["floppy"]:
             zp = None

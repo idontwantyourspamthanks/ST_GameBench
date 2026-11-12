@@ -35,7 +35,7 @@ Addresses below are from the 1 MB STE / TOS 1.62 reference run unless stated. ST
 ```
 START.TOS (shipped UNPACKED, ours)           FILES\P (payload image, ours)
   text $686: lea $7e800,a7 -> jmp stub  --->  $8BA00 'HNPA' hnentry: verify all sites, apply all or none, STE probe
-  text $7f20: 142-byte stub                   $8BB40 hookexit/apply (deferred sites)   $8BC00 site table
+  text $7f20: 142-byte stub                   $8BB60 hookexit/apply (deferred sites)   $8BC00 site table
                                               $8BFF0 FLAGS  $8BFF8 MARKER   $8C000.. blobs   $90000.. sample bank
 ```
 1. **Carrier = a patched copy of START.TOS, payload = an extra file `FILES\P`**, not appended to START: START's bss addresses (`$230c4`, `$230ca`, `$230e4`...) sit right behind its text, so growing the text/data would need the bss relocations rewritten (as mw1patch had to). Instead START keeps its exact layout: only 6 bytes change (`4ff9 0007e800` -> `4ef9 <text offset $7f20>`, one extra relocation entry at text `$688`, the reloc table is re-encoded and round-trip checked) and the stub lives in the **zero run `$7f10..$80d0`** of START's text. Proof that the run is dead: it is all zero in the tail dump (first non-zero byte `$80d0`; START writes variables only from `$80d0`) and no relocation or pc-relative operand points into it (`$80d0` is the lowest target). Shipped as an unpacked program (33766 B): no repacker needed; START's loader checksums are not involved (START has none on itself; the only `$1234` sums are on the disk's root and partition sectors, which are untouched).

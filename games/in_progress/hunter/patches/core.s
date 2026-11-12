@@ -9,7 +9,7 @@
 ;                        `lea $7e800,a7 / jmp $800.w`.  File missing / short: the game starts unpatched, no marker.
 ;   org $8ba00  hnentry  verify ALL boot sites, then apply them (all or nothing); 'HNPO'/'HNPF' at MARKER;
 ;                        STE DMA sound hardware probe -> FLAGS; instruction/data cache flush (68020+).
-;   org $8bb40  hookexit replaces `jmp $d60a.l` at $1a6 (the single exit of the game's file hook $150) when
+;   org $8bb60  hookexit replaces `jmp $d60a.l` at $1a6 (the single exit of the game's file hook $150) when
 ;                        any phase=deferred site exists; runs `apply` for the file that has just been read.
 ;   org $7fc0   mchfix   TT only, 64 bytes in the same dead zone of START's text (see below): START's `jsr (a0)` that runs
 ;                        the hard disk's root sector (text $590) became `bsr.w mchfix`.
@@ -20,7 +20,8 @@
 ; Interface for the other patch authors (fixed addresses):
 ;   $8BFF0.l FLAGS   bit0 = STE-class DMA sound hardware answers (bus-error safe probe + register read-back)
 ;                    bit1 = the probe ran (so bit0 == 0 means a plain ST), bit2 = probe took a bus error,
-;                    bit3 = Falcon (bit0 set and the real _MCH cookie in TOS's jar $5a0 is $0003xxxx)
+;                    bit3 = Falcon (bit0 set, the _MCH cookie in the jar at $5a0 is $0003xxxx AND a read of the SCU $ff8e01 bus-errors: the
+;                    jar alone said Falcon on a TT HD boot, where D15R_F5's own jar is already installed)
 ;   $8BFF8.l MARKER  'HNPO' every boot site applied, 'HNPF' refused (a verified original differed; nothing
 ;                    from the boot phase was written), all zero = the payload never ran
 TABLE   equ $8bc00
@@ -195,11 +196,20 @@ probe:  move.l  FLAGS.l,d3              ; bit3 (Falcon) is sticky: the floppy st
         swap    d1
         cmpi.w  #3,d1
         bne.s   .fin
+        movea.l a7,a2                   ; The jar can lie: on a TT HD boot it is D15R_F5's (_MCH = Falcon) and bit3 came out set.  The TT (and the
+        movea.l $8.w,a1                 ; Mega STE) have the SCU at $ff8e01, a Falcon has not: a bus error there confirms the Falcon.
+        lea     .nscu(pc),a0
+        move.l  a0,$8.w
+        tst.b   $ffff8e01.w
+        move.l  a1,$8.w                 ; it answered: a TT, not a Falcon
+        bra.s   .fin
+.nscu:  movea.l a2,a7                   ; (entered by the bus error)
+        move.l  a1,$8.w
         bset    #3,d3
 .fin:   move.l  d3,FLAGS.l
         rts
 
-        org     $8bb40
+        org     $8bb60
 hookexit:                               ; replaces `jmp $d60a.l` (4ef9 0000d60a) at $1a6
         movem.l d0-d7/a0-a6,-(a7)
         bsr.s   apply
