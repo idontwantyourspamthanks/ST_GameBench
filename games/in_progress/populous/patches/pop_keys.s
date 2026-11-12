@@ -1,5 +1,5 @@
 ; name: pop_keys
-; default: no
+; default: yes
 ; prog: populous
 ; site: $bb7c
 ; orig: 303900021d8e

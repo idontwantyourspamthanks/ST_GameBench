@@ -1,5 +1,5 @@
 ; name: pop_keys4
-; default: no
+; default: yes
 ; prog: populous
 ; site: $1a508
 ; orig: 4e5600004a790003d566

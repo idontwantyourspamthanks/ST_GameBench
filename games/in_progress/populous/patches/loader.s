@@ -107,13 +107,29 @@ run:    pea     env(pc)
         addq.l  #6,a7
 .none:  moveq   #0,d5
         bra.w   .go
-.got:   bsr.w   readpay
-        endc
+; The BIOS runs on the caller's stack (TOS: `move usp,a7` in the trap 13/14 handler) and Floprd with the interrupts that nest on it
+; goes ~170 bytes deep.  The loader's own stack is the 128-byte command-line area of its base page, with the process descriptor's
+; reserved words ($30-$7F: on TOS 4.04 the handle count at +$3a and the handle table pointer at +$3c) right below it, so a
+; deep call overwrote them and the next Pexec failed with ENHNDL (-35).  readpay and apply therefore run on a stack in the
+; payload block (the 1 KB below the directory buffer); the old stack pointer is kept on it.
+.got:   movea.l #PAYLOAD+PSPAN-512,a0
+        move.l  a7,-(a0)
+        movea.l a0,a7
+        bsr.w   readpay
+        cmpi.l  #'POPP',PAYLOAD.l
+        bne.s   .nsw
+        move.w  d3,d0
+        movea.l a5,a1
+        jsr     PAYLOAD+$10.l           ; apply (all registers kept)
+.nsw:   movea.l (a7),a7
+        bra.s   .go
+        else
         cmpi.l  #'POPP',PAYLOAD.l
         bne.s   .go
         move.w  d3,d0
         movea.l a5,a1
         jsr     PAYLOAD+$10.l           ; apply (all registers kept)
+        endc
 .go:    clr.l   -(a7)
         move.l  a5,-(a7)
         clr.l   -(a7)

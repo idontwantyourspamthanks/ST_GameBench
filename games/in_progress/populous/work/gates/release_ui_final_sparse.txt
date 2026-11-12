@@ -1,0 +1,26 @@
+in play: True marker 0x504f504f
+key          REAL KEY: orders / change                                    CLICK: orders / change
+knight       [(14, 0, 5)]   {'mana': -7472}                               | [(14, 0, 5)]   {} | key->order 5 VBL
+view_knight  []             {'view': ((0, 0), (2, 18))}                   | []             {'view': ((2, 18), (8, 18))} | key->order None VBL
+view_battle  []             {}                                            | []             {} | key->order None VBL
+query        []             {'mode': (2, 1)}                              | []             {} | key->order None VBL
+raise        []             {'mode': (1, 2)}                              | []             {} | key->order None VBL
+magnet_mode  []             {'mode': (2, 6)}                              | []             {} | key->order None VBL
+to_magnet    [(14, 0, 1)]   {'beh': (1, 0)}                               | [(14, 0, 1)]   {} | key->order 1 VBL
+settle       [(14, 1, 1)]   {'beh': (0, 1)}                               | [(14, 1, 1)]   {} | key->order 4 VBL
+gather       [(14, 2, 1)]   {'beh': (1, 2)}                               | [(14, 2, 1)]   {} | key->order 5 VBL
+fight        [(14, 3, 1)]   {'beh': (2, 3)}                               | [(14, 3, 1)]   {} | key->order 6 VBL
+view_leader  []             {'view': ((8, 18), (9, 16))}                  | []             {'view': ((9, 16), (12, 14))} | key->order None VBL
+view_magnet  []             {'view': ((12, 14), (6, 10))}                 | []             {} | key->order None VBL
+view_house   []             {'view': ((6, 10), (6, 2))}                   | []             {'view': ((6, 2), (12, 7))} | key->order None VBL
+music        []             {'music': (1, 0)}                             | []             {'music': (0, 1)} | key->order None VBL
+music        []             {'music': (1, 0)}                             | []             {'music': (0, 1)} | key->order None VBL
+effects      []             {'fx': (1, 0)}                                | []             {'fx': (0, 1)} | key->order None VBL
+effects      []             {'fx': (1, 0)}                                | []             {'fx': (0, 1)} | key->order None VBL
+swamp        []             {'mode': (6, 10)}                             | []             {} | key->order None VBL
+earthquake   [(3, 12, 7)]   {'mana': -2472}                               | [(3, 12, 7)]   {'mana': -2462} | key->order 0 VBL
+volcano      [(6, 12, 7)]   {'mana': -9960}                               | [(6, 12, 7)]   {'mana': -9959} | key->order 1 VBL
+flood        [(14, 0, 4)]   {'mana': -39962}                              | [(14, 0, 4)]   {} | key->order 1 VBL
+pause        [(14, 0, 6)]   {'pause': (0, 1)}                             | [(14, 0, 6)]   {'pause': (1, 0)} | key->order 12 VBL
+pause        [(14, 0, 6)]   {'pause': (0, 1)}                             | [(14, 0, 6)]   {'pause': (1, 0)} | key->order 2 VBL
+armageddon   [(14, 0, 3)]   {}                                            | [(14, 0, 3)]   {} | key->order 2 VBL

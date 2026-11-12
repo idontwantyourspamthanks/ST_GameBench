@@ -1,5 +1,5 @@
 ; name: pop_tooltip
-; default: no
+; default: yes
 ; prog: populous
 ; site: $b93a
 ; orig: 4eb90000d4c0

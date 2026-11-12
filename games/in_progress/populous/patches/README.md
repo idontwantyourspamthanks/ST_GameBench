@@ -19,8 +19,10 @@ A site may not overlap the words that change at run time (`$16D2C-D`, `$16F13-5`
 * `FILES/POLA` (PP's launcher): its data holds the original LOADER.PRG LZ-packed; replaced by `patches/loader.s` (same footprint: text `$240`).
   The loader does Pexec(3) (load+relocate), calls the payload's `apply`, then Pexec(4); it also Mfree's what mode 3 leaves behind. The Mshrink size
   ends its block at `$AC92`, so the game base page is `$AC96` (text `$AD96`) wherever RUNME was started.
-* `RUNME.TOS`: unpacked image + the payload appended to its data; a `jmp` at text `$360` runs a stage routine copying the payload to `$B3000`
-  (bss pointers fixed as in MW2). The payload (`patches/core.s`): header `'POPP'`, marker `$B3004` (`POPO` all applied, `POPF` mismatch/preset,
+* `RUNME.TOS`: unpacked image + the used parts of the payload (segment table + segments, `runme_segments`) appended to its data; a `jmp` at text `$360` runs a stage routine
+  copying every segment to its address (bss pointers fixed as in MW2). Only the copied bytes (16.9 KB for the full release set, whose image spans 88 KB from `$B3000` to
+  `$C8964`) move RUNME's bss: PP's own low-RAM check (`Too much low RAM occupied`, RUNME text `$ca`-`$d0`) counts it, and it failed on a 1 MB STE with TOS 2.06 once the whole
+  contiguous image (88 KB) was carried (82 KB passed, 86 KB failed; bisected with a dummy data block); the gaps between segments are not written. The payload (`patches/core.s`): header `'POPP'`, marker `$B3004` (`POPO` all applied, `POPF` mismatch/preset,
   `POPT` text base differs), flags `$B3008` (bit0 DEMO, bit1 POPULOUS), `apply` at `$B3010`, site table `$B3100`, blobs `$B4000+`.
   Verify-then-apply, all or nothing per program.
 * `HAGA`: `pp_bigram_cache` (default yes; without it the 4 MB whole-image cache overwrites `$B1D40-$CFC36`), `pp_nofade` (default no).
@@ -29,7 +31,10 @@ A site may not overlap the words that change at run time (`$16D2C-D`, `$16F13-5`
 ## Delivery (floppy)
 Physical disk 80x10x2: side 0 = POP's first 800 sectors (FAT volume, BPB 800 sectors, AUTO\LOADER.PRG replaced), side 1 = POM (title music; the game reads it raw).
 Payload: raw in POM's empty tracks 52-77 (directory on track 52); the floppy loader reads it after each Pexec(3) (Pexec clears all free RAM), keeps
-`$B3000..` away from the game with Mshrink + Malloc. `Populous_save.st` is a blank 720K save disk (swap it in when the game saves; it asks for the original disk back).
+`$B3000..` away from the game with Mshrink + Malloc. **The payload read and `apply` run on a stack inside the payload block** (1 KB below the directory buffer; PSPAN = segments
++ 1536): the BIOS trap handlers run on the caller's user stack, the loader's own stack is the 128-byte command-line area of its base page, and on TOS 4.04 the process descriptor
+words right below it (handle count `$3a`, handle table `$3c`) were overwritten by a deep Floprd + interrupt nesting; the next `Pexec` then failed with ENHNDL (-35) on the Falcon
+(`work/gates/release_falcon_diag.txt`). `Populous_save.st` is a blank 720K save disk (swap it in when the game saves; it asks for the original disk back).
 
 ## Patches
 `pop_noprot` (yes), `pop_credit` (yes, version), `pp_bigram_cache` (yes, HD), `pp_nofade` (no), `pop_land_score`, `pop_land_mul` (no, PopLandScore).

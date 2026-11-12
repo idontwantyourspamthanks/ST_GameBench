@@ -1,0 +1,42 @@
+PopRelease: Falcon floppy "Pexec(3,"populous.tos") fails after the DEMO stage" -- raw excerpts (Hatari 2.6.1, Falcon TOS 4.04, 4 MB; probes in work/scratch/release/)
+
+1. d0 at the instruction after the Pexec trap ($FCE4 = `lea.l ($0010,a7),a7`, Hatari's log PC for the trap is the next instruction; the tst.l d0 is at $FCE8)
+   (pexec_probe.py, break `pc = $fce4`, three builds with the same default set; payload spans: tick-only $14600, dummy data to $C9000 -> $16600, full release $16600)
+   floppy_full  (default + 6 tick + 5 UI):   D0 FFFFFFDD  ... A3 000C9400   (Malloc(0x16600): payload block $B3000-$C9600)
+   floppy_tickonly (default + pop_tick):      D0 FFFFFFDD  ... A3 000C7400
+   floppy_dummy (default + 4 KB data block):  D0 FFFFFFDD  ... A3 000C9400
+   floppy_def (default set only):             D0 0000FEAC  ... A3 000C5400   (works: d0 = the new base page)
+   _membot ($432) = 0000f99c, phystop ($42e) = 00400000 in every run.
+   Malloc(-1) in the failing run (code injected at the loader's command-line area $FBEC, `move.l #-1,-(a7); move.w #$48,-(a7); trap #1`): D0 003CA8BC = 3.97 MB free:
+   NOT a memory shortage.
+
+2. -35 = ENHNDL.  Break on `d0 = $ffffffdd` after the loader's Mfree($B3000) (pexec_probe2.py): first hit in ROM $E1B106 (TOS 4.04 GEMDOS open-file function $E1B0AE):
+   e1b0fa: bsr.w $e1a724        ; find a free handle
+   e1b0fe: move.l d0, d6
+   e1b100: tst.w d6
+   e1b102: bpl.b $e1b10a
+   e1b104: moveq #$dd, d0       ; no handle: ENHNDL
+   $E1A724: movea.l $6ee4.l,a0 / move.w $3a(a0),d7 (number of handles) / ... movea.l $3c(a0),a0 / adda.w #$18,a0  (handle table, handles from 6)
+   Registers at the hit: D6 FFFFFFFF.
+
+3. The loader's process descriptor $FB6C+$30..$3F:
+   with the default set at the failing point:   00 00 00 00 00 00 00 00 00 00 00 19 00 00 fb 06   (+$3a = $0019 handles, +$3c = $FB06 table)
+   with the tick / dummy / full set:             00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff ff   (+$3a = 0, +$3c = $0000FFFF)
+   pdpoll.py (m $fb9c 16 every 0.3 s, dummy build):
+     0.6 VBL 159: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+     8.6 VBL 635: 00 00 00 00 00 00 00 00 00 00 00 19 00 00 fb 06
+    13.9 VBL 957: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff ff      <- between the loader's payload read and the DEMO start
+
+4. Who writes it (pexec_probe4.py: arm at the loader's first instruction `pc = $fc6c`, then `b a7 < $fbc0 && a7 > $fb6c`):
+   Pexec(3,"demo.tos") ... Mshrink(0xFEAC, 0xA3154) ... Malloc(0x16600)   <- the payload Malloc, then the payload read by XBIOS Floprd
+   hit: D6 0000001F D7 00000004 A0 000004DE A6 FFFF8606 A7 0000FBBA  USP 0000FC4C  SR=2608  Prefetch 00e03c64 08380001   `00e03c62 bsr.b $00e03cae`  (flopcmd, ROM)
+   i.e. XBIOS Floprd runs on a stack that starts at the loader's USP ($FC4C: the base page's 128-byte command-line area ends at $FC6C) and is at $FBBA, $92 bytes lower,
+   and a deeper point of the call (and the interrupts that nest on it) reached $FBA4.  Reason: the BIOS trap handler of TOS 4.04 ($E00D76 trap 14, $E00D7C trap 13):
+     e00d9e: btst.b #$d, d0        ; saved SR: supervisor?
+     e00da2: bne.b $e00da6
+     e00da4: move usp, a7          ; user caller: the BIOS runs on the USER stack
+   so the stack grows down through the command line ($FBEC-$FC6C), then through the process descriptor ($FB6C+$30..$7F: handle count at +$3a, handle table at +$3c).
+
+5. After the fix (loader.s: readpay + apply on a stack in the payload block, old SP kept on it):
+   pdpoll.py, dummy build, same run: 8.6 VBL 635: ... 00 19 00 00 fb 06 and it stays;  GEMDOS trace: one `Pexec(3, "populous.tos", ...)` and no Pexec(0) fallback.
+   floppy_full cold boot: see release_cold_falcon_floppy.txt (4.998 turns/s).

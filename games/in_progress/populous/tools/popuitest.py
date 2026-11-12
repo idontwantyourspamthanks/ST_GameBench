@@ -445,16 +445,18 @@ def cmd_gate(a):
         print(f"== {sn}: T0 {t0}; reference run {sum(1 for r in ref['recs'] if r.tag == 1)} flips, {sum(1 for r in ref['recs'] if r.tag != 1)} samples", flush=True)
         for spec in a.set:
             names = spec.split("+")
-            live = pab.live_image(names, a.mutant, f"{sn}_{spec}_{a.mutant}".replace("+", "_"))
+            import hashlib
+            # a short file name: the debugger truncates long `loadbin` lines silently (a set of 13 names gave a path past 200 chars, the image never loaded, the game jumped to 0)
+            live = pab.live_image(names, a.mutant, f"{sn}_{hashlib.md5(spec.encode()).hexdigest()[:10]}_{a.mutant}")
             new = pab.run_capture(sn, live, len(rows), f"{sn}/{spec}", t0)
             r = pab.compare(ref, new, verbose=False)
             early = [m for m in r["flip_bad"] + r["sample_bad"] if idx_of(m[0]) <= PRE_SCRIPT_FLIPS]
             fb = [m for m in r["flip_bad"] if idx_of(m[0]) > PRE_SCRIPT_FLIPS]
             sb = [m for m in r["sample_bad"] if idx_of(m[0]) > PRE_SCRIPT_FLIPS]
             wb_ = [m for m in r["world_bad"] if idx_of(m[0]) > PRE_SCRIPT_FLIPS]
-            ok = r["flips"] > 0 and not fb and not sb and not wb_ and not r["only_ref"] and not r["only_new"]
+            ok = r["flips"] > 0 and not fb and not sb and not wb_      # samples that exist in one run only (a faster patched frame has fewer VBLs) are reported, as popabtest does
             print(f"{sn:20s} {spec:55s} {'IDENTICAL' if ok else 'DIFFERENT'}: flips compared {r['flips']} (both buffers + world each), mid-frame samples {r['samples']}, "
-                  f"bad flips {len(fb)}, bad samples {len(sb)}, world {len(wb_)}; excluded pre-script frames: {len(early)} diffs "
+                  f"bad flips {len(fb)}, bad samples {len(sb)}, world {len(wb_)}; samples in one run only: ref {r['only_ref']}, new {r['only_new']}; excluded pre-script frames: {len(early)} diffs "
                   f"{sorted({m[1] for m in early})[:2]}", flush=True)
             for m in (fb + sb + wb_)[:8]:
                 print("    ", m)
@@ -964,13 +966,29 @@ def cmd_final(a):
         h.goto(*CONQUEST_XY, home_xy=HOME); h.click(hold=0.4); time.sleep(9)
         for _ in range(4):
             h.goto(*START_XY, home_xy=HOME); h.click(hold=0.4); time.sleep(12)
-            if h.in_play():
+            if h.in_play() or "4e f9 00 0c 52 00" in h.debug("m $b6f4 6", 0.5).lower():
                 break
-        print("in play:", h.in_play(), "marker", hex(h.peekl(0xB3004)))
+        print("in play:", h.in_play() or "4e f9 00 0c 52 00" in h.debug("m $b6f4 6", 0.5).lower(), "marker", hex(h.peekl(0xB3004)))
         h.debug(wb(0x3B270, 99999, 4), 0.3)
-        f = h.R / "o.txt"; f.write_text("m $21e4a 3\n")
-        h.cmd(f"hatari-debug b pc = $bbfa && ($21e4a).b ! 0 :trace :file {f}")
+        f = h.R / "o.txt"; f.write_text("m $21e4a 3\ne VBL\n")
+        h.cmd(f"hatari-debug b pc = ${a.orders_pc} && ($21e4a).b ! 0 :trace :file {f}")
+        kf = h.R / "k.txt"; kf.write_text("e VBL\n")
+        h.cmd(f"hatari-debug b pc = $2008c :trace :file {kf}")       # the key store of pop_keys2: the VBL at which the key reached the game
         time.sleep(0.5)
+
+        def latency(n0):
+            """VBLs from the key's arrival ($2008c) to the first order it caused ($bbfa)."""
+            blocks = h._logtext()[n0:].split("CPU breakpoint condition(s) matched")[1:]
+            vk = vo = None
+            for blk in blocks:
+                m = re.search(r"> e VBL\n(?:  .*\n)*?= .*?#(\d+)", blk)
+                if not m:
+                    continue
+                if "pc = $2008c" in blk and vo is None:
+                    vk = int(m.group(1))
+                elif f"pc = ${a.orders_pc}" in blk and vk is not None and vo is None:
+                    vo = int(m.group(1))
+            return (vo - vk) if vk is not None and vo is not None else None
 
         def orders(n0):
             return [tuple(int(x, 16) for x in o) for o in re.findall(r"(?im)^0*21e4a: ([0-9a-f]{2}) ([0-9a-f]{2}) ([0-9a-f]{2})", h._logtext()[n0:]) if o[0] != "00"]
@@ -997,7 +1015,7 @@ def cmd_final(a):
             h.cmd(f"hatari-debug b pc = $bba6 :trace :once :file {g}"); h.cmd(f"hatari-debug b pc = $bbc4 :trace :once :file {g2}")
             time.sleep(3.0)
             d = snap(); ob = orders(n1)
-            print(f"{n:12s} {str(oa):14s} {str(delta(b, c)):45s} | {str(ob):14s} {delta(c, d)}", flush=True)
+            print(f"{n:12s} {str(oa):14s} {str(delta(b, c)):45s} | {str(ob):14s} {delta(c, d)} | key->order {latency(n0)} VBL", flush=True)
     finally:
         h.close()
 
@@ -1019,6 +1037,7 @@ def main():
     sub.add_parser("words")
     fn = sub.add_parser("final")
     fn.add_argument("--path", default="build/PopUI/hd_final")
+    fn.add_argument("--orders-pc", default="bbfa", help="where the orders are read: bbfa (the executor call site, original code), 1e750 (the executor itself, when pop_tick_cmd moved the call site)")
     co = sub.add_parser("cost")
     co.add_argument("--snap", default="busy_castles")
     co.add_argument("--live", required=True)

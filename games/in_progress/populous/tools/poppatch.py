@@ -647,9 +647,10 @@ def cmd_list(patches, fpatches=()):
 
 
 # ---- RUNME.TOS (HD staging of the payload, MW2 design) -----------------------------------------------------
-# RUNME's unpacked image gains the payload in its data segment; a `jmp` at text $360 (the last move before PP's
-# loader hands over to HAGA at $388) runs a copy routine that puts the image at $B3000 and replays the displaced
-# `move.l $40e(pc),$60c.w`.  The bss moves up by N bytes, so the four pc-relative `lea d(pc),aN` that reach it
+# RUNME's unpacked image gains the used parts of the payload (segment table + segments, runme_segments) in its data
+# segment; a `jmp` at text $360 (the last move before PP's loader hands over to HAGA at $388) runs a copy routine that puts
+# every segment at its RAM address and replays the displaced `move.l $40e(pc),$60c.w`.  The bss moves up by N bytes (the
+# bytes copied, not the span of the image: PP's low-RAM check counts them), so the four pc-relative `lea d(pc),aN` that reach it
 # become `movea.l d(pc),aN` loads from two relocated pointer slots, and every relocated long that points into the
 # bss is adjusted (build_runme).
 TEXT_LEN, DATA_LEN = 0x404E, 22
@@ -668,21 +669,26 @@ def runme_unpacked() -> bytes:
     return pp_depack((GAMEDIR / "RUNME.TOS").read_bytes())
 
 
-def stage_code(nlongs: int):
-    """The copy routine, assembled at text offset OLD_BSS; returns (bytes, offset of its `jmp` long in the bytes)."""
+def stage_code(tabn: int):
+    """The copy routine, assembled at text offset OLD_BSS: copies every segment of the table that follows it (dest.l, longs - 1 .w; a zero
+    long ends it) from the data that follows the table to its RAM address.  Returns the bytes up to the `tab:` label."""
     src = [f"\torg\t${OLD_BSS:x}",
-           "\tmovem.l\td0/a0-a1,-(a7)",
-           "\tlea\timg(pc),a0",
-           f"\tlea\t${IMG_BASE:x}.l,a1",
-           f"\tmove.w\t#{nlongs - 1},d0",
+           "\tmovem.l\td0-d1/a0-a2,-(a7)",
+           "\tlea\ttab(pc),a2",
+           f"\tlea\ttab+{tabn}(pc),a0",
+           ".s:\tmove.l\t(a2)+,d1",
+           "\tbeq.s\t.e",
+           "\tmovea.l\td1,a1",
+           "\tmove.w\t(a2)+,d0",
            ".l:\tmove.l\t(a0)+,(a1)+",
            "\tdbra\td0,.l",
-           "\tmovem.l\t(a7)+,d0/a0-a1",
+           "\tbra.s\t.s",
+           ".e:\tmovem.l\t(a7)+,d0-d1/a0-a2",
            f"\tmove.l\t${STAGE_ORIG_TARGET:x}(pc),$60c.w",
            f"\tjmp\t${RESUME_TXT:x}.l",
            "\tcnop\t0,2",
            "ptrs:\tdc.l\t0,0",
-           "img:"]
+           "tab:"]
     with tempfile.TemporaryDirectory() as td:
         s = Path(td) / "st.s"
         s.write_text("\n".join(src) + "\n")
@@ -697,7 +703,25 @@ def stage_code(nlongs: int):
 STAGE_ORIG_TARGET = STAGE_TXT + 2 + struct.unpack_from(">h", STAGE_ORIG, 2)[0]       # $40e
 
 
-def build_runme(img: bytes) -> bytes:
+def runme_segments(img: bytes, ranges):
+    """The used parts of the payload image for RUNME's data segment: [(dest, bytes)], every length a multiple of 4 (the copy is by longs;
+    the padding is the image's own bytes), gaps below 256 bytes merged.  What lies between the segments is never copied: the bss of RUNME
+    (and PP's low-RAM check, `Too much low RAM occupied`, which counts it) grows by the copied bytes only."""
+    rs = []
+    for a, e in sorted(ranges):
+        if rs and a - rs[-1][1] < 256:
+            rs[-1][1] = max(rs[-1][1], e)
+        else:
+            rs.append([a, e])
+    out = []
+    for a, e in rs:
+        e = a + ((e - a + 3) & ~3)
+        assert a % 2 == 0 and e - IMG_BASE <= len(img) and (e - a) // 4 - 1 <= 0xFFFF
+        out.append((a, img[a - IMG_BASE:e - IMG_BASE]))
+    return out
+
+
+def build_runme(segs) -> bytes:
     src = runme_unpacked()
     text_len, data_len, bss_len = struct.unpack_from(">III", src, 2)
     if (text_len, data_len) != (TEXT_LEN, DATA_LEN):
@@ -707,10 +731,10 @@ def build_runme(img: bytes) -> bytes:
     offs = prg_relocs(src)
     if bytes(text[STAGE_TXT:STAGE_TXT + 6]) != STAGE_ORIG:
         raise SystemExit("RUNME text $360 is not the expected `move.l $40e(pc),$60c.w`")
-    nlongs = len(img) // 4
-    assert len(img) % 4 == 0 and nlongs - 1 <= 0xFFFF
-    stage = stage_code(nlongs)
-    ptrs_off = len(stage) - 8                              # the `dc.l 0,0` pointer slots end the routine; the image follows
+    tab = b"".join(struct.pack(">IH", d, len(b) // 4 - 1) for d, b in segs) + bytes(4)
+    img = tab + b"".join(b for _, b in segs)
+    stage = stage_code(len(tab))
+    ptrs_off = len(stage) - 8                              # the `dc.l 0,0` pointer slots end the routine; the table and the segments follow
     assert stage[ptrs_off - 6:ptrs_off - 4] == b"\x4e\xf9" and stage[ptrs_off:] == bytes(8)
     n = len(stage) + len(img)
     # 1. stage hook
@@ -936,14 +960,16 @@ def cmd_verify_delivery() -> int:
 def cmd_build(patches, out: Path, fpatches=()):
     if cmd_verify(patches, fpatches):
         raise SystemExit("build aborted: a site's orig does not match the game")
-    img, sites, _ = build_image(patches)
-    runme = build_runme(img)
+    img, sites, ranges = build_image(patches)
+    segs = runme_segments(img, ranges)
+    runme = build_runme(segs)
     shutil.rmtree(out, ignore_errors=True)
     shutil.copytree(GAMEDIR, out)
     (out / "RUNME.TOS").write_bytes(runme)
     (out / "FILES" / "POLA").write_bytes(build_pola())
     apply_file_patches(fpatches, out)
-    print(f"built {out} with {len(patches)} patch(es) + {len(fpatches)} file patch(es); payload {len(img)} B at ${IMG_BASE:x}")
+    print(f"built {out} with {len(patches)} patch(es) + {len(fpatches)} file patch(es); payload {len(img)} B span at ${IMG_BASE:x}, "
+          f"{sum(len(b) for _, b in segs)} B in {len(segs)} segment(s) copied by RUNME")
     print(f"{'site':8s} {'prog':8s} {'len':4s} orig -> new")
     print(f"relocation list: {RELOC_STATS['total']} longs at ${RELOC_STATS['at']:x}")
     for s in sites:
@@ -1072,7 +1098,7 @@ def cmd_build_floppy(patches, out: Path, fpatches=()):
     if bad:
         raise SystemExit("build aborted: site differs on floppy:\n  " + "\n  ".join(bad))
     segs = payload_segments(img, ranges)
-    pspan = max(d + ((len(b) + 5119) // 5120) * 5120 for d, b in segs) - IMG_BASE + 512
+    pspan = max(d + ((len(b) + 5119) // 5120) * 5120 for d, b in segs) - IMG_BASE + 1536   # + 1 KB loader stack + 512 B directory buffer (loader.s)
     game = interleave(floppy_pop(pspan), floppy_pom(segs))
     assert len(game) == 819200
     out.mkdir(parents=True, exist_ok=True)

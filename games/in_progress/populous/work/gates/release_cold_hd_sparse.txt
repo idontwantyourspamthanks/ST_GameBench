@@ -1,0 +1,26 @@
+### cell.py ste gemdos build/PopRelease/hd --clocks 8 16 --hz 50 --tag rel_ste1
+payload header: 50 4f 50 50 50 4f 50 4f 00 00 00 03 01 00 00 00  D = 0
+turn 63 -> 76; $b632 4ef9000c5000; tick marker 50 54 49 4b
+RESULT cold ste gemdos hd 8 MHz 50 Hz: 1501 VBL = 30.02 s, 160254 cycles/VBL (refresh seen 49.92 Hz), world turns 150 = 4.997/s | ticks 150 = 4.997/s; passes T 150 R 156 S 0 P 0
+RESULT cold ste gemdos hd 16 MHz 50 Hz: 1501 VBL = 30.02 s, 320508 cycles/VBL (refresh seen 49.92 Hz), world turns 151 = 5.030/s | ticks 150 = 4.997/s; passes T 150 R 493 S 0 P 0
+ERRORS {'Bus Error': 1, 'Address Error': 0, 'double bus': 0, 'CPU halted': 0} log /tmp/strun-2_3rdx3h/log.txt
+  ERRLINE WARN : Bus Error reading at address $ffff8e21, PC=$17830 addr_e3=17830 op_e3=1238
+### cell.py ste gemdos build/PopRelease/hd --mem 4096 --clocks 8 --hz 50 --tag rel_ste4
+payload header: 50 4f 50 50 50 4f 50 4f 00 00 00 03 01 00 00 00  D = 0
+turn 63 -> 76; $b632 4ef9000c5000; tick marker 50 54 49 4b
+RESULT cold ste gemdos hd 8 MHz 50 Hz: 1501 VBL = 30.02 s, 160173 cycles/VBL (refresh seen 49.95 Hz), world turns 150 = 4.997/s | ticks 151 = 5.030/s; passes T 151 R 155 S 0 P 0
+ERRORS {'Bus Error': 1, 'Address Error': 0, 'double bus': 0, 'CPU halted': 0} log /tmp/strun-b65z4nap/log.txt
+  ERRLINE WARN : Bus Error reading at address $ffff8e21, PC=$17830 addr_e3=17830 op_e3=1238
+### cell.py st gemdos build/PopRelease/hd --clocks 8 --hz 50 --tag rel_st1
+payload header: 50 4f 50 50 50 4f 50 4f 00 00 00 03 01 00 00 00  D = 0
+turn 63 -> 76; $b632 4ef9000c5000; tick marker 50 54 49 4b
+RESULT cold st gemdos hd 8 MHz 50 Hz: 1501 VBL = 30.02 s, 160226 cycles/VBL (refresh seen 49.93 Hz), world turns 150 = 4.997/s | ticks 150 = 4.997/s; passes T 150 R 154 S 0 P 0
+ERRORS {'Bus Error': 3, 'Address Error': 0, 'double bus': 0, 'CPU halted': 0} log /tmp/strun-ho9uiliw/log.txt
+  ERRLINE WARN : Bus Error reading at address $ffff8e21, PC=$17850 addr_e3=17850 op_e3=1238
+  ERRLINE WARN : Bus Error reading at address $ffff8924, PC=$1787e addr_e3=1787e op_e3=4a38
+  ERRLINE WARN : Bus Error reading at address $ffff8a00, PC=$d0926 addr_e3=d0926 op_e3=4a78
+### cell.py megaste gemdos build/PopRelease/hd --clocks 16 --hz 50 --tag rel_ms16
+payload header: 50 4f 50 50 50 4f 50 4f 00 00 00 03 01 00 00 00  D = 0
+turn 68 -> 81; $b632 4ef9000c5000; tick marker 50 54 49 4b
+RESULT cold megaste gemdos hd 16 MHz 50 Hz: 1501 VBL = 30.02 s, 320452 cycles/VBL (refresh seen 49.93 Hz), world turns 150 = 4.997/s | ticks 151 = 5.030/s; passes T 151 R 297 S 0 P 0
+ERRORS {'Bus Error': 0, 'Address Error': 0, 'double bus': 0, 'CPU halted': 0} log /tmp/strun-z5yr6gcn/log.txt

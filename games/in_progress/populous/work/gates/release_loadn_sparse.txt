@@ -1,0 +1,10 @@
+### cell.py ste 2.06 1MB 60Hz
+payload header: 50 4f 50 50 50 4f 50 4f 00 00 00 03 01 00 00 00  D = 0
+turn 63 -> 76; $b632 4ef9000c5000; tick marker 50 54 49 4b
+RESULT cold ste gemdos hd 8 MHz 60 Hz: 1801 VBL = 30.02 s, 133602 cycles/VBL (refresh seen 59.88 Hz), world turns 149 = 4.964/s | ticks 150 = 4.997/s; passes T 150 R 151 S 0 P 0
+ERRORS {'Bus Error': 1, 'Address Error': 0, 'double bus': 0, 'CPU halted': 0} log /tmp/strun-0mtqogb3/log.txt
+  ERRLINE WARN : Bus Error reading at address $ffff8e21, PC=$1d0ac addr_e3=1d0ac op_e3=1238
+{'tag': 'ste1mb', 'playing': True, 'marker': '0x504f504f', 'turn_saved': 108, 'loads (turn before, 6 s after)': [(132, 127), (150, 128), (151, 127), (150, 128), (151, 127)], 'turn_before_nextmap': 128, 'turn_after_nextmap': 51, 'playing_end': True, 'errors': [], 'errors_total_incl_boot_probes': 1, 'dropped_packets': []}
+{'tag': 'ste4mb', 'playing': True, 'marker': '0x504f504f', 'turn_saved': 113, 'loads (turn before, 6 s after)': [(136, 127), (150, 128), (151, 128), (151, 128), (151, 128)], 'turn_before_nextmap': 128, 'turn_after_nextmap': 51, 'playing_end': True, 'errors': [], 'errors_total_incl_boot_probes': 1, 'dropped_packets': ['00 00 6e f7 08 0c', '00 00 6e f7 08 0c', '00 00 6e f7 08 0c', '00 00 f7 08 00 0c', '00 00 6e f7 08 0c']}
+{'tag': 'st1mb', 'playing': True, 'marker': '0x504f504f', 'turn_saved': 108, 'loads (turn before, 6 s after)': [(131, 127), (150, 128), (151, 127), (150, 127), (151, 127)], 'turn_before_nextmap': 127, 'turn_after_nextmap': 50, 'playing_end': True, 'errors': [], 'errors_total_incl_boot_probes': 3, 'dropped_packets': []}
+{'tag': 'megaste16', 'playing': True, 'marker': '0x504f504f', 'turn_saved': 112, 'loads (turn before, 6 s after)': [(135, 134), (157, 135), (158, 135), (158, 135), (158, 135)], 'turn_before_nextmap': 135, 'turn_after_nextmap': 56, 'playing_end': True, 'errors': [], 'errors_total_incl_boot_probes': 0, 'dropped_packets': ['00 f7 00 00 6e 0c', '00 00 6e 00 f7 0c', '00 00 6e 00 f7 0c', '00 00 6e 00 f7 0c', '00 00 6e 00 f7 0c', '00 00 6e 00 f7 0c']}

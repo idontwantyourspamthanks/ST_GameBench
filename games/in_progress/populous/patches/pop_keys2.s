@@ -1,5 +1,5 @@
 ; name: pop_keys2
-; default: no
+; default: yes
 ; prog: populous
 ; site: $2008c
 ; orig: 13c000037eec

@@ -1,5 +1,5 @@
 ; name: pop_tick
-; default: no
+; default: yes
 ; site: $0b632
 ; orig: 3039 0003b03c
 ; data: $c6000 3680

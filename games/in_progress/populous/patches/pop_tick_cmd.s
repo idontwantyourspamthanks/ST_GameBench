@@ -1,5 +1,5 @@
 ; name: pop_tick_cmd
-; default: no
+; default: yes
 ; site: $0bbf8
 ; orig: 4267 4eb9 0001e750
 ; note: Fixed-rate world tick, part 5 of 6 (needs pop_tick and pop_tick_flip; work/notes/timing.md).  End of a pass: `clr.w -(a7)` / `jsr $1e750` (executes both players' queued commands -

@@ -1,5 +1,5 @@
 ; name: pop_tick_render
-; default: no
+; default: yes
 ; site: $0b6f4
 ; orig: 4eb9 00014a28
 ; note: Fixed-rate world tick, part 2 of 6 (needs pop_tick; work/notes/timing.md).  `jsr $14a28` (copy of the clean background into the back buffer) starts the render stage of

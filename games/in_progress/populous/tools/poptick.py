@@ -33,6 +33,7 @@ from stharness import TOS  # noqa: E402
 
 TICKSET = ["pop_tick", "pop_tick_render", "pop_tick_logic", "pop_tick_flip", "pop_tick_cmd", "pop_tick_dot"]
 DEFAULTS = ["pop_noprot", "pop_credit", "pop_land_mul", "pop_land_score", "pop_ptr", "pop_bgcopy", "pop_fal_ym", "pop_fal_ym_demo"]
+RELEASE = DEFAULTS + ["pop_ptrfix", "pop_keys", "pop_keys2", "pop_keys3", "pop_keys4", "pop_tooltip"]    # the release set minus the tick (PopRelease)
 WALK = ["test_pwalk"]
 D = 0xC6000
 oACC, oSKIP, oRON, oREC, oFLAGS, oTICKS, oRPASS, oSPASS, oPPASS, oTPASS = 12, 14, 16, 18, 20, 28, 32, 36, 40, 44
@@ -181,7 +182,7 @@ def report(tag, s0, s1, ex, hz, patched, extra="", cpu_mhz=None):
 
 
 def cmd_rate(a):
-    names = ([] if a.unpatched else TICKSET) + (DEFAULTS if a.defaults else []) + (["test_pwalk"] if a.spin else [])
+    names = ([] if a.unpatched else TICKSET) + (RELEASE if a.release else DEFAULTS if a.defaults else []) + (["test_pwalk"] if a.spin else [])
     live = make_live(names) if names else None
     h = Populous(snapshot=snap_path(a.snap))
     try:
@@ -466,7 +467,7 @@ def cmd_ab(a):
     global NOMASK
     NOMASK = a.nomask
     WORKD.mkdir(exist_ok=True)
-    base = WALK + (DEFAULTS if a.defaults else [])
+    base = WALK + (RELEASE if a.release else DEFAULTS if a.defaults else [])
     bl = make_live(base)
     pl = make_live(base + TICKSET + (["test_rtog_a", "test_rtog_b"] if a.render and not a.no_rtog else []))
     sp = snap_path(a.snap)
@@ -787,6 +788,7 @@ def main():
     q.add_argument("--spin", type=int, default=0, help="both runs burn N dbra iterations (10 cycles each) per turn: slow world logic, so S passes happen")
     q.add_argument("--still", action="store_true", help="pointer walk only, the view stays")
     q.add_argument("--defaults", action="store_true", help="both runs carry the default patch set")
+    q.add_argument("--release", action="store_true", help="both runs carry the release set without the tick (defaults + pop_ptrfix + pop_keys* + pop_tooltip)")
     q.add_argument("--render", action="store_true", help="also capture the render stage at $b800 and compare R passes with the original render")
     q.add_argument("--dump", help="directory for the frames of failing minimap compares")
     q.add_argument("--nomask", action="store_true", help="no masks: list every differing address range (shows what the masks hide)")
@@ -800,7 +802,7 @@ def main():
     r.add_argument("snap"); r.add_argument("mhz", type=int); r.add_argument("vbls", type=int)
     r.add_argument("--hz", type=int, choices=[50, 60], default=50)
     r.add_argument("--unpatched", action="store_true"); r.add_argument("--spin", type=int, default=0)
-    r.add_argument("--defaults", action="store_true")
+    r.add_argument("--defaults", action="store_true"); r.add_argument("--release", action="store_true")
     c = sub.add_parser("cold")
     c.add_argument("--machine", default="ste"); c.add_argument("--tos", default="1.62"); c.add_argument("--mem", type=int, default=1024)
     c.add_argument("--hz", type=int, nargs="*", choices=[50, 60], default=None); c.add_argument("--build", default="build/PopTiming/hd")

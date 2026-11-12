@@ -1,5 +1,5 @@
 ; name: pop_tick_logic
-; default: no
+; default: yes
 ; site: $0b800
 ; orig: 4eb9 00012fc2
 ; note: Fixed-rate world tick, part 3 of 6 (needs pop_tick and pop_tick_dot; work/notes/timing.md).  `jsr $12fc2` is the first call of the world block of a pass ($b800 `jsr $12fc2` /

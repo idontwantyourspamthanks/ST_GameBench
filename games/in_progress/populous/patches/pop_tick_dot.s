@@ -1,5 +1,5 @@
 ; name: pop_tick_dot
-; default: no
+; default: yes
 ; site: $1672a
 ; orig: 4eb9 000167b0
 ; note: Fixed-rate world tick, part 6 of 6 (needs pop_tick and pop_tick_logic; work/notes/timing.md).  `$166f0(cell, colour)` (a minimap dot for a cell: x = $40 + cx - cy, y = (cx + cy) / 2) ends with

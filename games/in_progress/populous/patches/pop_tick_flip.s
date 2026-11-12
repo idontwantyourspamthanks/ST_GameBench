@@ -1,5 +1,5 @@
 ; name: pop_tick_flip
-; default: no
+; default: yes
 ; site: $0b940
 ; orig: 4eb9 00016f16
 ; note: Fixed-rate world tick, part 4 of 6 (needs pop_tick and pop_tick_cmd; work/notes/timing.md).  `jsr $16f16` is the flip (wait for the VBL flag $16d28, swap $3c510/$3c50c, write

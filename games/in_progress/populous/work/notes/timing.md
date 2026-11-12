@@ -10,7 +10,7 @@ Evidence = disassembly lines of `work/dumps/busy.bin` (`tools/m68dis.py`), raw t
 
 | item | result |
 |---|---|
-| world speed | **5.000 turns per real second** (10 VBL per turn at 50 Hz, 12 at 60 Hz) on STE 8 and 16 MHz, Mega STE, TT and Falcon, at 50 and 60 Hz where Hatari allows it (sections 5, 7; Falcon not measured). Unpatched: 3.2-17 (snapshots, 8/16 MHz), 25 (TT), 42 (Falcon). |
+| world speed | **5.000 turns per real second** (10 VBL per turn at 50 Hz, 12 at 60 Hz) on STE 8 and 16 MHz, Mega STE, TT and Falcon, at 50 and 60 Hz where Hatari allows it (sections 5, 7; Falcon floppy 4.998 after PopRelease's loader fix). Unpatched: 3.2-17 (snapshots, 8/16 MHz), 25 (TT), 42 (Falcon). |
 | (a) world state by turn | IDENTICAL on 12 matrix runs (3 snapshots x 8/16 MHz x 50/60 Hz, 130 turns each, the whole world region `$21100-$3d7ff` compared at EVERY pass top: 3,000+ compares, 0 differences), 8 slow-machine runs with catch-up passes, 4 command runs, shield countdown, the event of turn `$1000`, 3 runs with the default patch set; 82-262 render-only frames per snapshot equal to the original render; 5 negative controls DIFFER (section 5) |
 | (c) responsiveness | pointer: first change 93 ms after a host mouse move (original 82 ms); scroll key held: 18.9 steps/s while the world makes 5.1 turns/s (original 16.7 steps/s at 16.7 turns/s); 28 of 38 steps were made in render-only passes while the turn waited (section 7) |
 | default set | HD build = default set (`pop_land_*`, `pop_ptr`, `pop_bgcopy`, `pop_noprot`, `pop_credit`, `pp_bigram_cache`, `pop_fal_ym*`) + the six tick patches: cold boots in section 8 |
@@ -188,11 +188,11 @@ Snapshots, default set in both runs (`poptick.py rate SNAP MHZ 4000 --defaults [
 | Mega STE 4 MB TOS 2.06 | HD | 8, 16 | 50, 60 | 4.998, 4.998, 4.982, 4.999 (8 MHz needed catch-up passes) |
 | TT 4 MB TOS 3.06 | HD | 32 | 50, 60 | 4.998, 4.999 |
 | TT | floppy (text delta $3E48: relocation proven) | 32 | 50, 60 | 5.015, 4.999 |
-| Falcon 4 MB TOS 4.04 | HD / floppy | - | - | NOT MEASURED (below) |
+| Falcon 4 MB TOS 4.04 | floppy (text delta $5216, PopRelease) | 16 | 50 | 4.998 (HD: not reachable in Hatari) |
 
 ## 8. Limits and open items
 
-- **Falcon: no cold boot reached play with the tick build.** HD: the menu was never detected by the scratch cell. Floppy: with the default set alone the Falcon floppy reaches `POPO`; with the tick set the loader's `Pexec(3,"populous.tos")` fails after the DEMO stage (GEMDOS trace) and the game never starts. Cause not found (the same floppy works on STE and TT). Not a proven tick fault, not excluded; first suspect is the larger floppy payload (each patch file is a separate segment padded to a 5120-byte track).
+- **Falcon floppy: fixed by PopRelease** (`work/notes/release.md` section 1): the loader's stack ran into the process descriptor (BIOS runs on the user stack) and the second `Pexec` failed with ENHNDL; the fix moves the loader's payload read to a stack in the payload block. Falcon floppy cold boot with the tick: 4.998 turns/s. Falcon HD: not reachable (Hatari, stock PP).
 - Link games are not run: the tick is off (kind P) while `$3c524` is set.
 - A click is taken by the next turn pass (up to 0.2 s later); two commands issued within one turn lose the first (single slot).
 - Catch-up passes carry no UI: a machine too slow for the scene scrolls slowly (section 6).

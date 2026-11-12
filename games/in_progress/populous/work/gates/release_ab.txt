@@ -1,0 +1,16 @@
+base test_pwalk pop_noprot pop_credit pop_land_mul pop_land_score pop_ptr pop_bgcopy pop_fal_ym pop_fal_ym_demo pop_ptrfix pop_keys pop_keys2 pop_keys3 pop_keys4 pop_tooltip
+patched +pop_tick pop_tick_render pop_tick_logic pop_tick_flip pop_tick_cmd pop_tick_dot
+snapshot busy_castles turn 870, 130 turns, 8 MHz, 50 Hz
+busy_castles @8 MHz 50 Hz: IDENTICAL | world at pass tops: 170 compared (0 differ) over 130 turns, max 2 tops/turn | T frames 128 compared (0 differ; 0 excluded) | R frames: 42 (0 stability pairs, 0 unstable; 30 minimap compares, 0 differ, 12 turns excluded (minimap cell redrawn by the world)) | pass kinds T 129 R 42 S 0 | turns/s base 6.000 patched 4.973
+base test_pwalk pop_noprot pop_credit pop_land_mul pop_land_score pop_ptr pop_bgcopy pop_fal_ym pop_fal_ym_demo pop_ptrfix pop_keys pop_keys2 pop_keys3 pop_keys4 pop_tooltip
+patched +pop_tick pop_tick_render pop_tick_logic pop_tick_flip pop_tick_cmd pop_tick_dot
+snapshot genesis_start turn 263, 130 turns, 8 MHz, 50 Hz
+genesis_start @8 MHz 50 Hz: IDENTICAL | world at pass tops: 262 compared (0 differ) over 130 turns, max 3 tops/turn | T frames 128 compared (0 differ; 0 excluded) | R frames: 135 (7 stability pairs, 0 unstable; 117 minimap compares, 0 differ, 16 turns excluded (minimap cell redrawn by the world)) | pass kinds T 129 R 135 S 0 | turns/s base 9.729 patched 5.012
+base test_pwalk pop_noprot pop_credit pop_land_mul pop_land_score pop_ptr pop_bgcopy pop_fal_ym pop_fal_ym_demo pop_ptrfix pop_keys pop_keys2 pop_keys3 pop_keys4 pop_tooltip
+patched +pop_tick pop_tick_render pop_tick_logic pop_tick_flip pop_tick_cmd pop_tick_dot
+snapshot busy_castles turn 870, 130 turns, 16 MHz, 50 Hz
+busy_castles @16 MHz 50 Hz: IDENTICAL | world at pass tops: 437 compared (0 differ) over 130 turns, max 4 tops/turn | T frames 128 compared (0 differ; 0 excluded) | R frames: 311 (182 stability pairs, 0 unstable; 216 minimap compares, 0 differ, 38 turns excluded (minimap cell redrawn by the world)) | pass kinds T 129 R 311 S 0 | turns/s base 12.476 patched 5.016
+base test_pwalk pop_noprot pop_credit pop_land_mul pop_land_score pop_ptr pop_bgcopy pop_fal_ym pop_fal_ym_demo pop_ptrfix pop_keys pop_keys2 pop_keys3 pop_keys4 pop_tooltip
+patched +pop_tick pop_tick_render pop_tick_logic pop_tick_flip pop_tick_cmd pop_tick_dot
+snapshot genesis_start turn 263, 130 turns, 16 MHz, 50 Hz, view still
+genesis_start @16 MHz 50 Hz: IDENTICAL | world at pass tops: 557 compared (0 differ) over 130 turns, max 5 tops/turn | T frames 128 compared (0 differ; 0 excluded) | R frames: 432 (302 stability pairs, 0 unstable; 376 minimap compares, 0 differ, 16 turns excluded (minimap cell redrawn by the world); 429 render-only compares vs the original render, 0 differ) | pass kinds T 129 R 432 S 0 | turns/s base 20.156 patched 5.023
