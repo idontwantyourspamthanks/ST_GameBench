@@ -281,9 +281,9 @@ Requirements
    image. Boots through HDDRIVER (HDDRIVER.SYS in the root, do not delete).
  - Hunter: STE, Mega STE or TT for the sampled sound (DMA sound); a plain ST
    plays the original sound.
- - Populous needs 1 MB; its hard-disk build does not start on a TT or
-   Falcon under Hatari (PP's loader): use the floppy version there.
-   Populous 2 needs 2 MB.
+ - Populous needs 1 MB; on a TT start it from the desktop (it runs from
+   this disk there). Populous 2 needs 2 MB (Mega STE / TT, or an STE with
+   2 MB or more).
  - Tested in the Hatari emulator only (STE, Mega STE, TT; Hunter also on a
    plain ST). On a TT the Midwinters need the PMMU (Hatari: --mmu true, as
    run_tt.sh does); PP's unpatched Midwinter does not start on a TT.
@@ -299,6 +299,10 @@ Saving
    has its own blank campaign disk.
  - Hunter: as in PP's release.
  - Powermonger: Option -> File -> Save/Load, in POWERMON\SAVEDISK.DAT.
+ - Populous: the game's own Save/Load, into FILES\POP in its folder.
+ - Populous 2: the game's own SAVE/LOAD GAME does not work in PP's
+   conversion (it crashes, unpatched too); use HAGA's statesave on the
+   keypad (/) instead, which writes GS00.TOS... next to the game.
 
 The disk is a raw image: write it to a real disk / SD card (dd, Win32 Disk
 Imager) or use it as is in an HD emulator. The partition is under 32 MB so
