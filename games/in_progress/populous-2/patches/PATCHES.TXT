@@ -16,6 +16,8 @@ Changes vs the original HAGA release:
 - Fixed: on a TT or Falcon the mouse pointer was missing on the menus and in play (also in PP's release); it is now drawn
   every frame there. ST, STE and Mega STE are unchanged.
 - Garbled mouse packets (e.g. while the blitter is busy) are ignored instead of crashing the game.
+- The manual question (Zeus's statue question: "how many statues have been built in the likeness of this head") is skipped:
+  the game starts straight into play. PP's build already accepted any answer; now the screen does not appear at all.
 
 The main menu (the stone-framed screen with CREATE YOUR DEITY / CONQUEST
 GAME / CUSTOM GAME / LOAD GAME) carries a small "v@VERSION@ enhanced by

@@ -8,8 +8,9 @@ CHANGES (as in the hard-disk version)
   Fixed game speed of 6.25 turns per real second on every machine at 50 and
   60 Hz; the game now runs at 60 Hz; faster sprites and pointer with the same
   picture; tooltips with each icon's name and key; garbled mouse packets no
-  longer crash the game. The floppy also needed a fix for TOS 2.06 (the
-  drive head position after PP's loader).
+  longer crash the game; the manual question (Zeus's statue question) is
+  skipped. The floppy also needed a fix for TOS 2.06 (the drive head
+  position after PP's loader).
 
 DISK LAYOUT
   AUTO\RUNME.PRG   the game's start program (PP's RUNME.TOS, patched)

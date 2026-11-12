@@ -1,0 +1,90 @@
+# cold boots, raw output of tools/p2noquest.py (this report, 2026-11-12). build/nq_ref = default patches (still asks), build/nq_hd = default + pop2_noquest.
+## reference conquest STE (asks)
+ref_ste2_conquest: RESULT line: marker 'P2PO' flag$39612=0x1 $3960a=0x1 turn=0x8f question_hits=1 turn 0x66 -> 0x7d in_play=True (question_hits=1 at turn=0x7, shot 06_question)
+## noquest conquest STE 2MB
+nq_ste2_conquest: menu=True after 41 s marker 'P2PO' mem 2048 KB ste
+  shot nq_ste2_conquest_01_menu.png: flag$39612=0x0 $3960a=0x1 turn=0x0 question_hits=0
+  shot nq_ste2_conquest_02_deity_screen.png: flag$39612=0x0 $3960a=0x1 turn=0x0 question_hits=0
+  shot nq_ste2_conquest_03_back_to_menu.png: flag$39612=0x0 $3960a=0x1 turn=0x0 question_hits=0
+  shot nq_ste2_conquest_04_battle_sheet.png: flag$39612=0x0 $3960a=0x1 turn=0x0 question_hits=0
+  shot nq_ste2_conquest_05_proceed_loading.png: flag$39612=0x1 $3960a=0x1 turn=0x26 question_hits=0
+  shot nq_ste2_conquest_06_after_load_wait.png: flag$39612=0x1 $3960a=0x1 turn=0xce question_hits=0
+  shot nq_ste2_conquest_07_play.png: flag$39612=0x1 $3960a=0x1 turn=0x118 question_hits=0
+RESULT nq_ste2_conquest: marker 'P2PO' flag$39612=0x1 $3960a=0x1 turn=0x145 question_hits=0 turn 0x11c -> 0x133 in_play=True
+
+## reference + noquest custom
+ref_ste2_custom: menu=True after 41 s marker 'P2PO' mem 2048 KB ste
+  shot ref_ste2_custom_01_menu.png: flag$39612=0x0 $3960a=0x1 turn=0x0 question_hits=0
+  shot ref_ste2_custom_02_deity_screen.png: flag$39612=0x0 $3960a=0x1 turn=0x0 question_hits=0
+  shot ref_ste2_custom_03_back_to_menu.png: flag$39612=0x0 $3960a=0x1 turn=0x0 question_hits=0
+  shot ref_ste2_custom_04_custom_clicked.png: flag$39612=0x0 $3960a=0x0 turn=0x0 question_hits=0
+  shot ref_ste2_custom_05_question.png: flag$39612=0x0 $3960a=0x1 turn=0x7 question_hits=1
+  shot ref_ste2_custom_06_play.png: flag$39612=0x1 $3960a=0x1 turn=0x63 question_hits=1
+RESULT ref_ste2_custom: marker 'P2PO' flag$39612=0x1 $3960a=0x1 turn=0x90 question_hits=1 turn 0x66 -> 0x7d in_play=True
+nq_ste2_custom: menu=True after 41 s marker 'P2PO' mem 2048 KB ste
+  shot nq_ste2_custom_01_menu.png: flag$39612=0x0 $3960a=0x1 turn=0x0 question_hits=0
+  shot nq_ste2_custom_02_deity_screen.png: flag$39612=0x0 $3960a=0x1 turn=0x0 question_hits=0
+  shot nq_ste2_custom_03_back_to_menu.png: flag$39612=0x0 $3960a=0x1 turn=0x0 question_hits=0
+  shot nq_ste2_custom_04_custom_clicked.png: flag$39612=0x0 $3960a=0x0 turn=0x0 question_hits=0
+  shot nq_ste2_custom_05_after_load_wait.png: flag$39612=0x1 $3960a=0x1 turn=0xa8 question_hits=0
+  shot nq_ste2_custom_06_play.png: flag$39612=0x1 $3960a=0x1 turn=0xf2 question_hits=0
+RESULT nq_ste2_custom: marker 'P2PO' flag$39612=0x1 $3960a=0x1 turn=0x11f question_hits=0 turn 0xf6 -> 0x10c in_play=True
+
+## deity + load
+nq_ste2_deity: menu=True after 41 s marker 'P2PO' mem 2048 KB ste
+  shot nq_ste2_deity_01_menu.png: flag$39612=0x0 $3960a=0x1 turn=0x0 question_hits=0
+  shot nq_ste2_deity_02_deity_screen.png: flag$39612=0x0 $3960a=0x1 turn=0x0 question_hits=0
+  shot nq_ste2_deity_03_back_to_menu.png: flag$39612=0x0 $3960a=0x1 turn=0x0 question_hits=0
+RESULT nq_ste2_deity: marker 'P2PO' flag$39612=0x0 $3960a=0x1 turn=0x0 question_hits=0 turn 0x0 -> 0x0 in_play=False
+nq_ste2_load: menu=True after 41 s marker 'P2PO' mem 2048 KB ste
+  shot nq_ste2_load_01_menu.png: flag$39612=0x0 $3960a=0x1 turn=0x0 question_hits=0
+  shot nq_ste2_load_02_load_screen.png: flag$39612=0x0 $3960a=0x0 turn=0x0 question_hits=0
+  shot nq_ste2_load_03_load_clicked.png: flag$39612=0x0 $3960a=0x0 turn=0x0 question_hits=0
+RESULT nq_ste2_load: marker '' flag$39612=0x0 $3960a=0x0 turn=0x0 question_hits=0 turn 0x0 -> 0x0 in_play=False
+
+## ref load
+ref_ste2_load: menu=True after 41 s marker 'P2PO' mem 2048 KB ste
+  shot ref_ste2_load_01_menu.png: flag$39612=0x0 $3960a=0x1 turn=0x0 question_hits=0
+  shot ref_ste2_load_02_load_screen.png: flag$39612=0x0 $3960a=0x1 turn=0x0 question_hits=0
+  shot ref_ste2_load_03_load_clicked.png: flag$39612=0x0 $3960a=0x1 turn=0x0 question_hits=0
+RESULT ref_ste2_load: marker 'P2PO' flag$39612=0x0 $3960a=0x1 turn=0x0 question_hits=0 turn 0x0 -> 0x0 in_play=False
+
+## megaste + tt
+nq_megaste4_conquest: menu=True after 41 s marker 'P2PO' mem 4096 KB megaste
+  shot nq_megaste4_conquest_01_menu.png: flag$39612=0x0 $3960a=0x1 turn=0x0 question_hits=0
+  shot nq_megaste4_conquest_02_deity_screen.png: flag$39612=0x0 $3960a=0x1 turn=0x0 question_hits=0
+  shot nq_megaste4_conquest_03_back_to_menu.png: flag$39612=0x0 $3960a=0x1 turn=0x0 question_hits=0
+  shot nq_megaste4_conquest_04_battle_sheet.png: flag$39612=0x0 $3960a=0x1 turn=0x0 question_hits=0
+  shot nq_megaste4_conquest_05_proceed_loading.png: flag$39612=0x1 $3960a=0x1 turn=0x3c question_hits=0
+  shot nq_megaste4_conquest_06_after_load_wait.png: flag$39612=0x1 $3960a=0x1 turn=0xe4 question_hits=0
+  shot nq_megaste4_conquest_07_play.png: flag$39612=0x1 $3960a=0x1 turn=0x12e question_hits=0
+RESULT nq_megaste4_conquest: marker 'P2PO' flag$39612=0x1 $3960a=0x1 turn=0x15c question_hits=0 turn 0x132 -> 0x149 in_play=True
+nq_tt4_conquest: menu=True after 26 s marker 'P2PO' mem 4096 KB tt
+  shot nq_tt4_conquest_01_menu.png: flag$39612=0x0 $3960a=0x1 turn=0x0 question_hits=0
+  shot nq_tt4_conquest_02_deity_screen.png: flag$39612=0x0 $3960a=0x1 turn=0x0 question_hits=0
+  shot nq_tt4_conquest_03_back_to_menu.png: flag$39612=0x0 $3960a=0x1 turn=0x0 question_hits=0
+  shot nq_tt4_conquest_04_battle_sheet.png: flag$39612=0x0 $3960a=0x1 turn=0x0 question_hits=0
+  shot nq_tt4_conquest_05_proceed_loading.png: flag$39612=0x1 $3960a=0x1 turn=0x48 question_hits=0
+  shot nq_tt4_conquest_06_after_load_wait.png: flag$39612=0x1 $3960a=0x1 turn=0xf0 question_hits=0
+  shot nq_tt4_conquest_07_play.png: flag$39612=0x1 $3960a=0x1 turn=0x13a question_hits=0
+RESULT nq_tt4_conquest: marker 'P2PO' flag$39612=0x1 $3960a=0x1 turn=0x167 question_hits=0 turn 0x13e -> 0x154 in_play=True
+
+## floppy
+nq_floppy_ste2_conquest: menu=True after 104 s marker 'P2PO' mem 2048 KB ste
+  shot nq_floppy_ste2_conquest_01_menu.png: flag$39612=0x0 $3960a=0x1 turn=0x0 question_hits=0
+  shot nq_floppy_ste2_conquest_02_deity_screen.png: flag$39612=0x0 $3960a=0x1 turn=0x0 question_hits=0
+  shot nq_floppy_ste2_conquest_03_back_to_menu.png: flag$39612=0x0 $3960a=0x1 turn=0x0 question_hits=0
+  shot nq_floppy_ste2_conquest_04_battle_sheet.png: flag$39612=0x0 $3960a=0x1 turn=0x0 question_hits=0
+  shot nq_floppy_ste2_conquest_05_proceed_loading.png: flag$39612=0x1 $3960a=0x1 turn=0x26 question_hits=0
+  shot nq_floppy_ste2_conquest_06_after_load_wait.png: flag$39612=0x1 $3960a=0x1 turn=0xce question_hits=0
+  shot nq_floppy_ste2_conquest_07_play.png: flag$39612=0x1 $3960a=0x1 turn=0x118 question_hits=0
+RESULT nq_floppy_ste2_conquest: marker 'P2PO' flag$39612=0x1 $3960a=0x1 turn=0x145 question_hits=0 turn 0x11c -> 0x133 in_play=True
+nq_floppy_megaste4_conquest: menu=True after 96 s marker 'P2PO' mem 4096 KB megaste
+  shot nq_floppy_megaste4_conquest_01_menu.png: flag$39612=0x0 $3960a=0x1 turn=0x0 question_hits=0
+  shot nq_floppy_megaste4_conquest_02_deity_screen.png: flag$39612=0x0 $3960a=0x1 turn=0x0 question_hits=0
+  shot nq_floppy_megaste4_conquest_03_back_to_menu.png: flag$39612=0x0 $3960a=0x1 turn=0x0 question_hits=0
+  shot nq_floppy_megaste4_conquest_04_battle_sheet.png: flag$39612=0x0 $3960a=0x1 turn=0x0 question_hits=0
+  shot nq_floppy_megaste4_conquest_05_proceed_loading.png: flag$39612=0x1 $3960a=0x1 turn=0x3c question_hits=0
+  shot nq_floppy_megaste4_conquest_06_after_load_wait.png: flag$39612=0x1 $3960a=0x1 turn=0xe4 question_hits=0
+  shot nq_floppy_megaste4_conquest_07_play.png: flag$39612=0x1 $3960a=0x1 turn=0x12f question_hits=0
+RESULT nq_floppy_megaste4_conquest: marker 'P2PO' flag$39612=0x1 $3960a=0x1 turn=0x15b question_hits=0 turn 0x133 -> 0x149 in_play=True

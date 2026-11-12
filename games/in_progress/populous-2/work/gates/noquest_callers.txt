@@ -1,0 +1,4 @@
+scan of game_start.bin $1770-$7b380 for any reference to $148b2:
+  32-bit absolute at $20a14: bytes 4eb9000148b2
+also: the only ordinary code reference is the one above.
+020a12: jsr $148b2.l

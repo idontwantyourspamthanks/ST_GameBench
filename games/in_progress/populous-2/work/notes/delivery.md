@@ -91,7 +91,8 @@ changes. It is also below `$100000`, so HAGA's statesave (which writes the first
 
 * **The manual question is still asked** ("HOW MANY STATUES HAVE BEEN BUILT IN THE LIKENESS OF THIS HEAD",
   `work/shots/c51.png`); PP's own patch makes `cmp.w d1,d2` at `$14a86` followed by `bne` into `bra` — any
-  answer is accepted (`0000` + OK works). No harm to play, so **no patch of ours**.
+  answer is accepted (`0000` + OK works). *Superseded 2026-11-12: the screen is now skipped altogether by `pop2_noquest`
+  (`work/notes/noquest.md`).*
 * **No vector/trap protection found.** Populous 1's trap is a `Supexec` read of the long at `$24` compared
   with `$2a560421*2`. Populous 2 has no `trap #$e`-based `Supexec` call in its code, no absolute read of the
   vectors at `$08`-`$bc` in the linear disassembly of `$1770`-`$3e000`, and no second comparison with a key.

@@ -1,0 +1,120 @@
+pop2_clamp         site $01cc6 len 10   [P2M.FIC unpacked + PP's patches]
+    declared orig : 13f90000202500002023
+    expected      : 13f90000202500002023  (match)
+    ram dump      : 13f90000202500002023  (match)   [work/dumps/game_start.bin]
+pop2_credit        site $15338 len 6   [P2M.FIC unpacked + PP's patches]
+    declared orig : 4eb900001b9a
+    expected      : 4eb900001b9a  (match)
+    ram dump      : 4eb900001b9a  (match)   [work/dumps/game_start.bin]
+pop2_fal_ym        site $2a938 len 8   [P2M.FIC unpacked + PP's patches]
+    declared orig : 21fc0002aa4e0134
+    expected      : 21fc0002aa4e0134  (match)
+    ram dump      : 21fc0002aa4e0134  (match)   [work/dumps/game_start.bin]
+pop2_floppy_head   site $01770 len 6   [P2M.FIC unpacked + PP's patches]
+    declared orig : 2e7c00012522
+    expected      : 2e7c00012522  (match)
+    ram dump      : 2e7c00012522  (match)   [work/dumps/game_start.bin]
+pop2_noquest       site $20a02 len 22   [P2M.FIC unpacked + PP's patches]
+    declared orig : 4a7900039612660e4a790003960a67064eb9000148b2
+    expected      : 4a7900039612660e4a790003960a67064eb9000148b2  (match)
+    ram dump      : 4a7900039612660e4a790003960a67064eb9000148b2  (match)   [work/dumps/game_start.bin]
+pop2_ntsc          site $0183c len 4   [P2M.FIC unpacked + PP's patches]
+    declared orig : 66000030
+    expected      : 66000030  (match)
+    ram dump      : 66000030  (match)   [work/dumps/game_start.bin]
+pop2_ntsc2         site $01a6e len 4   [P2M.FIC unpacked + PP's patches]
+    declared orig : 670005ac
+    expected      : 670005ac  (match)
+    ram dump      : 670005ac  (match)   [work/dumps/game_start.bin]
+pop2_ptr_a         site $01a1a len 6   [P2M.FIC unpacked + PP's patches]
+    declared orig : 20390000202e
+    expected      : 20390000202e  (match)
+    ram dump      : 20390000202e  (match)   [work/dumps/game_start.bin]
+pop2_ptr_b         site $01b34 len 8   [P2M.FIC unpacked + PP's patches]
+    declared orig : 33fc0001000392cc
+    expected      : 33fc0001000392cc  (match)
+    ram dump      : 33fc0001000392cc  (match)   [work/dumps/game_start.bin]
+pop2_save_a        site $00140 len 6   [PP's stub block (RUNME text $3f8)]
+    declared orig : 48e73ffe2849
+    expected      : 48e73ffe2849  (match)
+    ram dump      : 48e73ffe2849  (match)   [work/dumps/game_start.bin]
+pop2_save_b        site $0020e len 8   [PP's stub block (RUNME text $3f8)]
+    declared orig : 30804ef90002cc9c
+    expected      : 30804ef90002cc9c  (match)
+    ram dump      : 30804ef90002cc9c  (match)   [work/dumps/game_start.bin]
+pop2_spr           site $213b0 len 6   [P2M.FIC unpacked + PP's patches]
+    declared orig : 727844015342
+    expected      : 727844015342  (match)
+    ram dump      : 727844015342  (match)   [work/dumps/game_start.bin]
+pop2_spr16         site $212b4 len 6   [P2M.FIC unpacked + PP's patches]
+    declared orig : 727044015342
+    expected      : 727044015342  (match)
+    ram dump      : 727044015342  (match)   [work/dumps/game_start.bin]
+pop2_tick          site $22f14 len 12   [P2M.FIC unpacked + PP's patches]
+    declared orig : 3039000393fad079000393fc
+    expected      : 3039000393fad079000393fc  (match)
+    ram dump      : 3039000393fad079000393fc  (match)   [work/dumps/game_start.bin]
+pop2_tick_anim     site $20c3e len 22   [P2M.FIC unpacked + PP's patches]
+    declared orig : 584241f9000329024a7020006e04d47020003742000a
+    expected      : 584241f9000329024a7020006e04d47020003742000a  (match)
+    ram dump      : 584241f9000329024a7020006e04d47020003742000a  (match)   [work/dumps/game_start.bin]
+pop2_tick_dot_a    site $24296 len 6   [P2M.FIC unpacked + PP's patches]
+    declared orig : 4eb900020058
+    expected      : 4eb900020058  (match)
+    ram dump      : 4eb900020058  (match)   [work/dumps/game_start.bin]
+pop2_tick_dot_b    site $27942 len 6   [P2M.FIC unpacked + PP's patches]
+    declared orig : 4eb900020058
+    expected      : 4eb900020058  (match)
+    ram dump      : 4eb900020058  (match)   [work/dumps/game_start.bin]
+pop2_tick_flip     site $1278c len 18   [P2M.FIC unpacked + PP's patches]
+    declared orig : 4eb900001bfe4eb90002d4c84eb900029226
+    expected      : 4eb900001bfe4eb90002d4c84eb900029226  (match)
+    ram dump      : 4eb900001bfe4eb90002d4c84eb900029226  (match)   [work/dumps/game_start.bin]
+pop2_tick_logic    site $12746 len 8   [P2M.FIC unpacked + PP's patches]
+    declared orig : 4a7900039796663e
+    expected      : 4a7900039796663e  (match)
+    ram dump      : 4a7900039796663e  (match)   [work/dumps/game_start.bin]
+pop2_tick_render   site $12554 len 8   [P2M.FIC unpacked + PP's patches]
+    declared orig : 0c79000800039766
+    expected      : 0c79000800039766  (match)
+    ram dump      : 0c79000800039766  (match)   [work/dumps/game_start.bin]
+pop2_tick_snd      site $0191e len 6   [P2M.FIC unpacked + PP's patches]
+    declared orig : 4eb90002b29a
+    expected      : 4eb90002b29a  (match)
+    ram dump      : 4eb90002b29a  (match)   [work/dumps/game_start.bin]
+pop2_tooltip       site $12740 len 6   [P2M.FIC unpacked + PP's patches]
+    declared orig : 4eb90001334a
+    expected      : 4eb90001334a  (match)
+    ram dump      : 4eb90001334a  (match)   [work/dumps/game_start.bin]
+pop2_tt_ptr        site $01c16 len 6   [P2M.FIC unpacked + PP's patches]
+    declared orig : e04821c08200
+    expected      : e04821c08200  (match)
+    ram dump      : e04821c08200  (match)   [work/dumps/game_start.bin]
+test_blit          site $12548 len 6   [P2M.FIC unpacked + PP's patches]
+    declared orig : 4eb900001bf4
+    expected      : 4eb900001bf4  (match)
+    ram dump      : 4eb900001bf4  (match)   [work/dumps/game_start.bin]
+test_hog           site $12548 len 6   [P2M.FIC unpacked + PP's patches]
+    declared orig : 4eb900001bf4
+    expected      : 4eb900001bf4  (match)
+    ram dump      : 4eb900001bf4  (match)   [work/dumps/game_start.bin]
+test_tickspin      site $12548 len 6   [P2M.FIC unpacked + PP's patches]
+    declared orig : 4eb900001bf4
+    expected      : 4eb900001bf4  (match)
+    ram dump      : 4eb900001bf4  (match)   [work/dumps/game_start.bin]
+test_walk          site $22fa2 len 6   [P2M.FIC unpacked + PP's patches]
+    declared orig : 23c00003979a
+    expected      : 23c00003979a  (match)
+    ram dump      : 23c00003979a  (match)   [work/dumps/game_start.bin]
+test_walk2         site $01cd0 len 10   [P2M.FIC unpacked + PP's patches]
+    declared orig : 33f900002026000393fa
+    expected      : 33f900002026000393fa  (match)
+    ram dump      : 33f900002026000393fa  (match)   [work/dumps/game_start.bin]
+test_walk3         site $01cda len 10   [P2M.FIC unpacked + PP's patches]
+    declared orig : 33f900002028000393fc
+    expected      : 33f900002028000393fc  (match)
+    ram dump      : 33f900002028000393fc  (match)   [work/dumps/game_start.bin]
+RUNME stage hook  text $0318: 46fc2700  (match)
+RUNME PP tail     text $03da: 21fc00001c4201184ef81770  (match)
+RUNME bss pc-relative references: 4 `lea d(pc),aN`, no others
+verify: ALL OK
