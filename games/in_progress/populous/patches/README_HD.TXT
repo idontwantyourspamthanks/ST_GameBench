@@ -25,6 +25,7 @@ Changes against PP's release:
   during disk access; such packets are now ignored.
 - Loading no longer fades to grey, and is faster.
 - Falcon: the sound no longer crashes the title and the game; TT and Falcon run the patched game.
+- TT and Falcon: the mouse pointer is now shown in play (it was missing on the TT and flickered on the Falcon).
 - HAGA no longer overwrites the patch code on 4 MB machines.
 - A small credit line on the title menu.
 

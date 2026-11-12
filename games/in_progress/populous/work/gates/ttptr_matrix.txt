@@ -1,0 +1,25 @@
+frames whose displayed buffer holds the last pointer draw / frames sampled at VBL entry (flips in brackets); Hatari 2.6.1, floppy builds, VBL sampler (ttp.py)
+| cell | world page | name entry empty | name entry typed | world page after name | play still (panel) | play moving (panel) | play over map | GAME SETUP | end-of-world dialog |
+|---|---|---|---|---|---|---|---|---|---|
+| stock_tt_new | 112/112 (0) | 0/180 (0) | 0/119 (0) | 75/75 (0) | 0/331 (331) | 0/360 (360) | 56/56 (0) | 73/73 (0) | 93/93 (0) |
+| stock_tt_start | 113/113 (0) | - | - | - | 0/360 (360) | 0/361 (361) | 55/55 (0) | 75/75 (0) | 95/95 (0) |
+| def_tt_new | 70/70 (0) | 0/131 (0) | 0/88 (0) | 47/47 (0) | 0/358 (358) | 0/348 (348) | 0/118 (118) | 0/89 (89) | 0/147 (147) |
+| def_tt_start | 69/69 (0) | - | - | - | 0/353 (353) | 0/323 (323) | 0/116 (116) | 0/87 (87) | 0/138 (138) |
+| fix2_tt_new | 125/125 (0) | 114/172 (0) | 50/119 (0) | 88/88 (0) | 359/359 (359) | 363/363 (363) | 120/120 (120) | 107/107 (107) | 136/136 (0) |
+| fix2_tt_start | 127/127 (0) | - | - | - | 351/351 (351) | 367/367 (367) | 119/119 (119) | 119/119 (119) | 132/132 (0) |
+| stock_falcon_new | 87/87 (0) | 0/57 (0) | 0/61 (0) | 80/80 (0) | 104/295 (191) | 95/235 (140) | 99/99 (0) | 99/99 (0) | 149/149 (0) |
+| stock_falcon_start | 150/150 (0) | - | - | - | 105/299 (194) | 123/301 (178) | 99/99 (0) | 99/99 (0) | 117/117 (0) |
+| def_falcon_new | 149/149 (0) | 0/149 (0) | 0/100 (0) | 99/99 (0) | 75/299 (224) | 74/303 (229) | 22/93 (70) | 23/90 (67) | 149/149 (0) |
+| def_falcon_start | 149/149 (0) | - | - | - | 76/299 (223) | 73/299 (226) | 22/92 (69) | 22/92 (70) | 140/140 (0) |
+| fix2_falcon_new | 149/149 (0) | 94/149 (0) | 32/99 (0) | 99/99 (0) | 298/298 (220) | 305/305 (228) | 99/99 (72) | 99/99 (74) | 149/149 (0) |
+| fix2_falcon_start | 149/149 (0) | - | - | - | 300/300 (222) | 306/306 (229) | 98/99 (72) | 99/99 (74) | 149/149 (0) |
+
+pixel check (fixed builds): displayed buffer holds exactly one pointer sprite (shapes 0-6) at the pointer position, the other buffer none; samples = VBL entries
+fix_tt_new: still book 6/6, panel 6/6, right 6/6, minimap 6/6 | moving 14/14 (9 positions)
+fix_tt_start: still book 6/6, panel 6/6, right 6/6, minimap 6/6 | moving 14/14 (8 positions)
+fix_falcon_new: still book 6/6, panel 6/6, right 6/6, minimap 6/6 | moving 14/14 (8 positions)
+fix_falcon_start: still book 6/6, panel 6/6, right 6/6, minimap 6/6 | moving 14/14 (7 positions)
+fix2_tt_new: still book 6/6, panel 6/6, right 6/6, minimap 6/6, map 6/6 | moving 14/14 (10 positions)
+fix2_tt_start: still book 6/6, panel 6/6, right 6/6, minimap 6/6, map 6/6 | moving 14/14 (8 positions)
+fix2_falcon_new: still book 6/6, panel 6/6, right 6/6, minimap 6/6, map 6/6 | moving 14/14 (9 positions)
+fix2_falcon_start: still book 6/6, panel 6/6, right 6/6, minimap 6/6, map 6/6 | moving 14/14 (8 positions)

@@ -1,0 +1,192 @@
+{
+ "label": "def_falcon_start",
+ "cell": "falcon",
+ "image": "/home/ryan/Code/AtariST/gamebench/games/in_progress/populous/build/PopTTPtr/floppy_def/Populous_boot.st",
+ "route": "start",
+ "phases": {
+  "world page (pointer over START/NEW buttons)": {
+   "frames": 149,
+   "visible": 149,
+   "flips": 0
+  },
+  "play, pointer in the left panel, still": {
+   "frames": 299,
+   "visible": 76,
+   "flips": 223
+  },
+  "play, pointer in the left panel, moving": {
+   "frames": 299,
+   "visible": 73,
+   "flips": 226
+  },
+  "play, pointer over the map": {
+   "frames": 92,
+   "visible": 22,
+   "flips": 69
+  },
+  "GAME SETUP dialog": {
+   "frames": 92,
+   "visible": 22,
+   "flips": 70
+  },
+  "end of world dialog": {
+   "frames": 140,
+   "visible": 140,
+   "flips": 0
+  }
+ },
+ "t_menu": 18.253287076950073,
+ "D": 21026,
+ "turn": [
+  14
+ ],
+ "pixel_still": {
+  "book": {
+   "n": 6,
+   "shown1": 2,
+   "shown0": 4,
+   "shown2": 0,
+   "other0": 6,
+   "f12zero": 0,
+   "pos": [
+    [
+     40,
+     45
+    ]
+   ]
+  },
+  "panel": {
+   "n": 6,
+   "shown1": 0,
+   "shown0": 6,
+   "shown2": 0,
+   "other0": 4,
+   "f12zero": 0,
+   "pos": [
+    [
+     65,
+     165
+    ]
+   ]
+  },
+  "right": {
+   "n": 6,
+   "shown1": 2,
+   "shown0": 4,
+   "shown2": 0,
+   "other0": 5,
+   "f12zero": 0,
+   "pos": [
+    [
+     285,
+     160
+    ]
+   ]
+  },
+  "minimap": {
+   "n": 6,
+   "shown1": 0,
+   "shown0": 6,
+   "shown2": 0,
+   "other0": 6,
+   "f12zero": 0,
+   "pos": [
+    [
+     25,
+     20
+    ]
+   ]
+  }
+ },
+ "pixel_moving": {
+  "n": 14,
+  "shown1": 3,
+  "shown0": 11,
+  "shown2": 0,
+  "other0": 11,
+  "f12zero": 0,
+  "distinct_positions": 5
+ },
+ "pixel_dialog": [
+  {
+   "shown": [
+    [
+     1,
+     295,
+     170
+    ]
+   ],
+   "other": [],
+   "f12": 405456
+  },
+  {
+   "shown": [],
+   "other": [],
+   "f12": 405456
+  },
+  {
+   "shown": [],
+   "other": [],
+   "f12": 405456
+  },
+  {
+   "shown": [],
+   "other": [
+    [
+     1,
+     295,
+     170
+    ]
+   ],
+   "f12": 373456
+  }
+ ],
+ "end_turn": 4264,
+ "pixel_end": [
+  {
+   "shown": [
+    [
+     1,
+     295,
+     170
+    ]
+   ],
+   "other": [],
+   "f12": 405456
+  },
+  {
+   "shown": [
+    [
+     1,
+     295,
+     170
+    ]
+   ],
+   "other": [],
+   "f12": 405456
+  },
+  {
+   "shown": [
+    [
+     1,
+     295,
+     170
+    ]
+   ],
+   "other": [],
+   "f12": 405456
+  },
+  {
+   "shown": [
+    [
+     1,
+     295,
+     170
+    ]
+   ],
+   "other": [],
+   "f12": 405456
+  }
+ ],
+ "errors": []
+}

@@ -1,0 +1,226 @@
+{
+ "label": "fix_tt_start",
+ "cell": "tt",
+ "image": "/home/ryan/Code/AtariST/gamebench/games/in_progress/populous/build/PopTTPtr/floppy_fix/Populous_boot.st",
+ "route": "start",
+ "phases": {
+  "world page (pointer over START/NEW buttons)": {
+   "frames": 119,
+   "visible": 119,
+   "flips": 0
+  },
+  "play, pointer in the left panel, still": {
+   "frames": 321,
+   "visible": 321,
+   "flips": 321
+  },
+  "play, pointer in the left panel, moving": {
+   "frames": 362,
+   "visible": 362,
+   "flips": 362
+  },
+  "play, pointer over the map": {
+   "frames": 118,
+   "visible": 0,
+   "flips": 118
+  },
+  "GAME SETUP dialog": {
+   "frames": 102,
+   "visible": 102,
+   "flips": 102
+  },
+  "end of world dialog": {
+   "frames": 179,
+   "visible": 179,
+   "flips": 177
+  }
+ },
+ "t_menu": 18.25509548187256,
+ "D": 15958,
+ "turn": [
+  16
+ ],
+ "pixel_still": {
+  "book": {
+   "n": 6,
+   "shown1": 6,
+   "shown0": 0,
+   "shown2": 0,
+   "other0": 6,
+   "f12zero": 0,
+   "pos": [
+    [
+     40,
+     45
+    ]
+   ]
+  },
+  "panel": {
+   "n": 6,
+   "shown1": 6,
+   "shown0": 0,
+   "shown2": 0,
+   "other0": 6,
+   "f12zero": 0,
+   "pos": [
+    [
+     65,
+     165
+    ]
+   ]
+  },
+  "right": {
+   "n": 6,
+   "shown1": 6,
+   "shown0": 0,
+   "shown2": 0,
+   "other0": 6,
+   "f12zero": 0,
+   "pos": [
+    [
+     285,
+     160
+    ]
+   ]
+  },
+  "minimap": {
+   "n": 6,
+   "shown1": 6,
+   "shown0": 0,
+   "shown2": 0,
+   "other0": 6,
+   "f12zero": 0,
+   "pos": [
+    [
+     25,
+     20
+    ]
+   ]
+  }
+ },
+ "pixel_moving": {
+  "n": 14,
+  "shown1": 14,
+  "shown0": 0,
+  "shown2": 0,
+  "other0": 14,
+  "f12zero": 0,
+  "distinct_positions": 8
+ },
+ "pixel_dialog": [
+  {
+   "shown": [
+    [
+     1,
+     295,
+     170
+    ]
+   ],
+   "other": [],
+   "f12": 400336
+  },
+  {
+   "shown": [
+    [
+     1,
+     295,
+     170
+    ]
+   ],
+   "other": [],
+   "f12": 400336
+  },
+  {
+   "shown": [
+    [
+     1,
+     295,
+     170
+    ]
+   ],
+   "other": [],
+   "f12": 400336
+  },
+  {
+   "shown": [
+    [
+     1,
+     295,
+     170
+    ]
+   ],
+   "other": [],
+   "f12": 368336
+  }
+ ],
+ "end_turn": 3676,
+ "pixel_end": [
+  {
+   "shown": [
+    [
+     1,
+     295,
+     170
+    ]
+   ],
+   "other": [],
+   "f12": 400336
+  },
+  {
+   "shown": [
+    [
+     1,
+     295,
+     170
+    ],
+    [
+     7,
+     216,
+     136
+    ]
+   ],
+   "other": [
+    [
+     7,
+     216,
+     136
+    ]
+   ],
+   "f12": 400336
+  },
+  {
+   "shown": [
+    [
+     1,
+     295,
+     170
+    ],
+    [
+     7,
+     216,
+     128
+    ]
+   ],
+   "other": [
+    [
+     7,
+     216,
+     128
+    ]
+   ],
+   "f12": 368336
+  },
+  {
+   "shown": [
+    [
+     1,
+     295,
+     170
+    ]
+   ],
+   "other": [],
+   "f12": 368336
+  }
+ ],
+ "errors": []
+}

@@ -1,0 +1,6 @@
+menu seen: True
+payload header: 50 4f 50 50 50 4f 50 4f 00 00 00 02 01 01 00 00  D = 0
+turn 19 -> 32; $b632 4ef9000ba000; tick marker 50 54 49 4b
+$ff820a = $fe -> 50 Hz
+RESULT cold ste floppy Populous_boot.st 8 MHz 50 Hz: 1501 VBL = 30.02 s, 160240 cycles/VBL (refresh seen 49.93 Hz), world turns 151 = 5.030/s | ticks 150 = 4.997/s; passes T 150 R 159 S 0 P 0
+ERRORS {'Bus Error': 0, 'Address Error': 0, 'double bus': 0, 'CPU halted': 0} log /tmp/strun-3_tc_9vl/log.txt

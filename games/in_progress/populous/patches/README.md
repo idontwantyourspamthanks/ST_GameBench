@@ -82,6 +82,15 @@ Evidence and cell outputs: `work/notes/machines.md`, `work/gates/machines_*.txt`
 * `pop_fal_ym_demo` (DEMO `$cf98`) and `pop_fal_ym` (game `$171a8`), Falcon only: the sample interrupts write the three YM volumes with `movep.l d1,-$7800(a0)` =
   `$ff8800/02/04/06`; a Falcon bus-errors on `$ff8804`. The blob (`jsr` + `nop` over 8 bytes) does the same register writes through `$ff8800/02` only.
 
+## pop_tt_ptr + pop_tt_ptr2: the pointer on a TT / Falcon (PopTTPtr; `; default: yes`, `; machine: tt, falcon`, blobs `$B8000-$B8037` and `$B8040-$B806D`)
+Evidence, before/after statistics and gates: `work/notes/tt_pointer.md`. Hatari's TT / Falcon video take a new screen base at once, but the pointer is drawn by the VBL routine into the buffer that is on the
+screen when the routine runs, and the flip (every VBL on a TT) puts the other buffer on the screen right after: the pointer was never in the shown buffer in play (TT: 0 of 26 screenshots show it,
+Falcon 6 of 26). Skipped on ST / STE / Mega STE.
+* `pop_tt_ptr` (site `$16f32` = the base write of the flip `$16f16`, 8 bytes -> `jsr $b8000` + `nop`): unless the pointer is hidden (`$16d26`), the blob restores and draws the pointer with the game's own
+  `$16dea` / `$16e20` into the buffer about to be shown, the VBL level masked through the base write, then writes the base.
+* `pop_tt_ptr2` (site `$16d66` = the end of the pointer show `$16d5e`, 10 bytes -> `jmp $b8040`): the hover marker over the map (and the text printer, pause icon, dialogs) hide the pointer around their drawing in
+  every pass; when the count is back at 0 the blob restores + draws the pointer into the displayed buffer at once (an STE draws it in the next VBL, within the pass; a TT's next VBL comes after the next flip).
+
 ## pop_tick set: the world at 5 turns per real second (PopTiming; six patches, all `; default: no`, blobs `$Ba000-$Ba9FF`, data `$Bb000` + 3680)
 Evidence, tables, gates and cold boots: `work/notes/timing.md`; gate tool `tools/poptick.py` (`ab`, `rate`, `cold`, `clicks`, `input`, `pause`); raw outputs `work/gates/tick_*.txt`.
 The game is frame coupled: one pass of the play loop (`$b632`-`$bc06`) = one world turn (`addq.w #1,$3c506`, `$db96`) = one full redraw = one flip, as fast as the CPU goes

@@ -20,6 +20,7 @@ Changes against the original:
 - Fixed: the copy-protection check that ended every game with Armageddon once more than 18 peeps existed now passes.
 - Fixed: garbled mouse packets during disk access are ignored (they could crash the game).
 - Falcon: the sound no longer crashes the title and the game.
+- TT and Falcon: the mouse pointer is now shown in play (it was missing on the TT and flickered on the Falcon).
 - A small credit line on the title menu.
 
 Tested on Hatari: STE 1 MB (TOS 1.62), TT 4 MB (TOS 3.06), Falcon 4 MB (TOS 4.04). Not tested on real hardware.
