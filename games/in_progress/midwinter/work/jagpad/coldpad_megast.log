@@ -1,0 +1,8 @@
+config megast {'machine': 'megast', 'memsize_kb': 1024} ['--joy1', 'keys', '--configfile', '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter/work/jagpad/pad.cfg']
+boot_to_game J ok in 114 s, control mode J
+after boot   vbl=5843 PADST=ff PADJ=00 BTN=00 OLD=00000000 vec=(+0.0,+0.0) $24fba=0000 head=0 rate=0 speed=0 step=000131ae menu=0000 key24=00000000 acc=(0,0)
+MWPO marker: b'MWPO'  sites: 4eb9000b69004e71 4eb9000b6c00 4eb9000b6c10 4eb9000b6c20
+no pad ports on this machine: PADST must be $ff (the probe says no), nothing else to test
+cost without pad ports: 134.4 cycles/VBL in the blob (incl. the displaced calls' jsr), 0.119 % of the profiled cycles
+B held       vbl=6196 PADST=ff PADJ=00 BTN=00 OLD=00000000 vec=(+0.0,+0.0) $24fba=0000 head=0 rate=0 speed=0 step=000131ae menu=0000 key24=00000000 acc=(0,0)
+total 124 s

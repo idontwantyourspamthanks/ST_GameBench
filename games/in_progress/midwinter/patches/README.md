@@ -102,6 +102,8 @@ The version lives only in the `; version:` header of `patches/mw_credit.s`: `mw1
 file's string and in `PATCHES.TXT` / `FLOPPY.TXT` (`mw1patch.py doc FILE`), `mw1patch.py version` prints it for `tools/package.sh`
 (zip names `Midwinter_v<VERSION>_patched_<date>.zip` / `..._patched_floppies_<date>.zip`).
 Blob ranges in use (all `default: yes` sets): `$B3100-$B4FFF` P3/P4/P5, `$B5000-$B6840` P7, `$B9000-$B91FF` `mw_credit`.
+`default: no` sets: `$B6900-$B6B37` code, `$B6BF0-$B6BF7` data (`jag_vbl`), `$B6C00-$B6C35` three stubs (`jag_mrg` `$B6C00`, `jag_btn` `$B6C10`, `jag_rmp` `$B6C20`): Jaguar pad (below);
+`$B9200` `sync_blip`; `$B9400-$B97FF` `floppy_driveb`. Free: `$B6C40-$B8FFF`, `$B9800-$B9EFF`.
 
 ## Floppy build (`build --floppy`)
 `python3 tools/mw1patch.py build --floppy [--only N ...] [--out build/floppy] [--zip [PATH]]` writes
@@ -119,3 +121,18 @@ Blob ranges in use (all `default: yes` sets): `$B3100-$B4FFF` P3/P4/P5, `$B5000-
 ## Display patch gate
 `python3 tools/mw1ab.py --only <patches> [--base ...]` (see `work/notes/p4_raster.md` section 1): pixel identity of all three buffers on
 `stand/walk/turn/busy` snapshots plus exact cycles/frame. P4 raster/geometry set (`p4_*`, blobs `$B3C00-$B4FFF`): `work/notes/p4_raster.md`.
+
+## Jaguar pad (`jag_vbl` `jag_mrg` `jag_btn` `jag_rmp`, all `default: no`, apply the four together)
+Atari Jaguar pads on the STE enhanced joystick ports (`$FF9200/$FF9202`, read by the hardware, not the IKBD). Study `reports/jaguar_pad_study.md`; evidence, tests and numbers
+`work/notes/jagpad.md`, scripts `work/jagpad/`. **Joystick mode (J) only**: in M and K mode nothing is read.
+| patch | site | change |
+|---|---|---|
+| `jag_vbl` | `$61e2` (8 B: `bsr.w $65c0` / `bsr.w $652e`) | `jsr $B6900.l` / `nop`: pad poll, then the two displaced calls; holds the whole blob (poll, probe, key table) |
+| `jag_mrg` | `$65e2` (6 B: `move.w $2c328.l,d2`) | the latched IKBD joystick byte `OR` `PADJ`: pad directions in the stick's own layout, so `$65c0` builds the same `$24f98/$24f9c` vector and the funnel `$66c0` feeds `$24faa/$24fae` (what `p5_ctl_turn` consumes) |
+| `jag_btn` | `$665e` (6 B: `move.b (a0),d2` / `andi.w #3,d2`) | button byte `OR` `PADBTN` (pad B = the IKBD right-button bit a joystick fire produces) |
+| `jag_rmp` | `$6696` (6 B: `move.b $2c32e.l,d2`) | returns `$f9` while `PADBTN` is set, so the game's J-mode remap makes `$24fba = 2` (left button) |
+State bytes `$B6BF0` `PADST` (0 unprobed, 1 pad ports, `$FF` none), `$B6BF1` `PADJ`, `$B6BF2` `PADBTN`, `$B6BF4` `PADOLD.l` (`; data: $B6BF0 8`). Map: D-pad = stick, B = fire (left button), A = `>`
+(right button), C = Space, Option = X, Pause = P, 1 = M, 2 = S, 3 = H (key make on press, break on release, never repeats; the game's own key bookkeeping `$64b6..$64e2`).
+Detection on the first J-mode VBL: 68000 only (TT/Falcon never touched), guarded `$FF8901` + `$FF8A3C` answer and `$FF8E21` bus-errors (= STE, not ST/Mega ST/Mega STE), guarded word
+read of the pad registers with an idle sanity check. ~980 cycles per VBL (Hatari profile; ~1130 by instruction timing) = 0.6-0.7 % of a VBL on an STE, `move.b PADST` + `bmi` on every other machine. Build: `build --only <default set> jag_vbl jag_mrg jag_btn jag_rmp`.
+
