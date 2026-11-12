@@ -1,2 +1,14 @@
+script: 305 rows, rows on an icon: 0
+== busy_castles: T0 869; reference run 305 flips, 610 samples
+busy_castles         pop_tooltip                                             DIFFERENT: flips compared 305 (both buffers + world each), mid-frame samples 610, bad flips 606, bad samples 604, world 9; excluded pre-script frames: 7 diffs ['243 bytes in 10 range(s), rows 2..14, first at row 2 byte 40', 'back(old frame + pointer) 243 bytes in 10 range(s), rows 2..14, first at row 2 byte 40']
+GATE FAILED (exit 1)
 busy_castles pop_keys+pop_keys2+pop_keys3+pop_keys4+pop_tooltip: flips compared 303; flips with the pointer on / just left an icon 94, others 209; flips whose screen differs 82; flips with a differing byte outside the rectangles 0; diffs with the pointer away 0; world RAM differs in 0 flips
 TTRECT OK
+busy_castles pop_keys+pop_keys2+pop_keys3+pop_keys4+pop_tooltip @tt_wide: flips compared 303; flips with the pointer on / just left an icon 94, others 209; flips whose screen differs 82; flips with a differing byte outside the rectangles 6; diffs with the pointer away 0; world RAM differs in 0 flips
+    (146, 'outside the rectangles', [432, 434, 438, 592, 596, 598])
+    (147, 'outside the rectangles', [432, 434, 438, 592, 596, 598])
+    (148, 'outside the rectangles', [432, 434, 438, 592, 596, 598])
+    (149, 'outside the rectangles', [432, 434, 438, 592, 596, 598])
+    (150, 'outside the rectangles', [432, 434, 438, 592, 596, 598])
+    (151, 'outside the rectangles', [432, 434, 438, 592, 596, 598])
+TTRECT FAILED

@@ -1,0 +1,68 @@
+# cold boots of the five-patch UI set (raw output).  HD: build/PopUI/hd (pop_noprot pop_credit pp_bigram_cache + pop_keys..pop_keys4 + pop_tooltip);
+# floppy: build/PopUI/floppy (same without pp_bigram_cache).  `python3 tools/popuitest.py cold NAME --medium hd|floppy --path ...`; TT: /tmp scaffold over work/scratch/machines/pm_cells.py
+### STE TOS 1.62 1 MB, HD build (PP's HAGA, RUNME.TOS)
+in play: True
+payload header: 50 4f 50 50 50 4f 50 4f 00 00 00 03 01 00 00 00 -> marker POPO
+pop_keys $bb7c     4e b9 00 0c 70 00
+pop_keys2 $2008c   4e b9 00 0c 73 00
+pop_keys3 $200a6   4e f9 00 0c 73 80 4e 71 4e 71
+pop_keys4 $1a508   4e f9 00 0c 73 c0 4e 71 4e 71
+pop_tooltip $b93a  4e b9 00 0c 74 00
+turn counter: 139 -> 159
+real key Q: mode 2->1 behaviour 1->1 view (0, 0)->(0, 0) ring (1, 1)
+real key R: mode 1->2 behaviour 1->1 view (0, 0)->(0, 0) ring (2, 2)
+real key M: mode 2->2 behaviour 1->0 view (0, 0)->(0, 0) ring (3, 3)
+real key T: mode 2->2 behaviour 0->3 view (0, 0)->(0, 0) ring (4, 4)
+real key L: mode 2->2 behaviour 3->3 view (0, 0)->(3, 14) ring (5, 5)
+pointer words 0xf 0x7d
+shots: work/shots/ui_cold_ste_hd_hover.png work/shots/ui_cold_ste_hd_away.png
+### STE TOS 1.62 1 MB, floppy build (Populous_boot.st)
+in play: True
+payload header: 50 4f 50 50 50 4f 50 4f 00 00 00 02 01 01 00 00 -> marker POPO
+pop_keys $bb7c     4e b9 00 0c 70 00
+pop_keys2 $2008c   4e b9 00 0c 73 00
+pop_keys3 $200a6   4e f9 00 0c 73 80 4e 71 4e 71
+pop_keys4 $1a508   4e f9 00 0c 73 c0 4e 71 4e 71
+pop_tooltip $b93a  4e b9 00 0c 74 00
+turn counter: 86 -> 106
+real key Q: mode 2->1 behaviour 1->1 view (0, 0)->(0, 0) ring (1, 1)
+real key R: mode 1->2 behaviour 1->1 view (0, 0)->(0, 0) ring (2, 2)
+real key M: mode 2->2 behaviour 1->0 view (0, 0)->(0, 0) ring (3, 3)
+real key T: mode 2->2 behaviour 0->3 view (0, 0)->(0, 0) ring (4, 4)
+real key L: mode 2->2 behaviour 3->3 view (0, 0)->(10, 13) ring (5, 5)
+pointer words 0xf 0x7d
+shots: work/shots/ui_cold_ste_floppy_hover.png work/shots/ui_cold_ste_floppy_away.png
+### TT TOS 3.06 4 MB 32 MHz --mmu, floppy build (game text base moved: D = $3e48 = 15944; addresses below are game address + D, blobs are not moved)
+menu after 14.435519456863403
+start page after 36.87729358673096
+start page True
+D = 15944 payload header 50 4f 50 50 50 4f 50 4f 00 00 00 02 01 02 01 00
+pop_keys $bb7c     4e b9 00 0c 70 00
+pop_keys2 $2008c   4e b9 00 0c 73 00
+pop_keys3 $200a6   4e f9 00 0c 73 80 4e 71 4e 71
+pop_keys4 $1a508   4e f9 00 0c 73 c0 4e 71 4e 71
+pop_tooltip $b93a  4e b9 00 0c 74 00
+check_play (True, 548, 703)
+real key Q {'mode': 2, 'beh': 1, 'view': (0, 0), 'ring': '0x0'} -> {'mode': 1, 'beh': 1, 'view': (0, 0), 'ring': '0x101'}
+real key R {'mode': 1, 'beh': 1, 'view': (0, 0), 'ring': '0x101'} -> {'mode': 2, 'beh': 1, 'view': (0, 0), 'ring': '0x202'}
+real key M {'mode': 2, 'beh': 1, 'view': (0, 0), 'ring': '0x202'} -> {'mode': 2, 'beh': 0, 'view': (0, 0), 'ring': '0x303'}
+real key T {'mode': 2, 'beh': 0, 'view': (0, 0), 'ring': '0x303'} -> {'mode': 2, 'beh': 3, 'view': (0, 0), 'ring': '0x404'}
+real key L {'mode': 2, 'beh': 3, 'view': (0, 0), 'ring': '0x404'} -> {'mode': 2, 'beh': 3, 'view': (2, 5), 'ring': '0x505'}
+shot work/shots/ui_tt_floppy_hover.png
+### Falcon TOS 4.04 4 MB 16 MHz, floppy build with pop_fal_ym + pop_fal_ym_demo (D = $5216 = 21014)
+menu after 17.65368342399597
+start page after 57.82473111152649
+start page True
+D = 21014 payload header 50 4f 50 50 50 4f 50 4f 00 00 00 02 01 03 01 00
+pop_keys $bb7c     4e b9 00 0c 70 00
+pop_keys2 $2008c   4e b9 00 0c 73 00
+pop_keys3 $200a6   4e f9 00 0c 73 80 4e 71 4e 71
+pop_keys4 $1a508   4e f9 00 0c 73 c0 4e 71 4e 71
+pop_tooltip $b93a  4e b9 00 0c 74 00
+check_play (True, 288, 367)
+real key Q {'mode': 2, 'beh': 1, 'view': (0, 0), 'ring': '0x0'} -> {'mode': 1, 'beh': 1, 'view': (0, 0), 'ring': '0x101'}
+real key R {'mode': 1, 'beh': 1, 'view': (0, 0), 'ring': '0x101'} -> {'mode': 2, 'beh': 1, 'view': (0, 0), 'ring': '0x202'}
+real key M {'mode': 2, 'beh': 1, 'view': (0, 0), 'ring': '0x202'} -> {'mode': 2, 'beh': 0, 'view': (0, 0), 'ring': '0x303'}
+real key T {'mode': 2, 'beh': 0, 'view': (0, 0), 'ring': '0x303'} -> {'mode': 2, 'beh': 3, 'view': (0, 0), 'ring': '0x404'}
+real key L {'mode': 2, 'beh': 3, 'view': (0, 0), 'ring': '0x404'} -> {'mode': 2, 'beh': 3, 'view': (9, 10), 'ring': '0x505'}
+shot work/shots/ui_falcon_floppy_hover.png

@@ -76,3 +76,40 @@ Evidence and cell outputs: `work/notes/machines.md`, `work/gates/machines_*.txt`
 * `apply` empties both CPU caches after the sites are written on a 68020+ (`movec cacr`, `cpusha bc` on 040/060).
 * `pop_fal_ym_demo` (DEMO `$cf98`) and `pop_fal_ym` (game `$171a8`), Falcon only: the sample interrupts write the three YM volumes with `movep.l d1,-$7800(a0)` =
   `$ff8800/02/04/06`; a Falcon bus-errors on `$ff8804`. The blob (`jsr` + `nop` over 8 bytes) does the same register writes through `$ff8800/02` only.
+
+## pop_tick set: the world at 5 turns per real second (PopTiming; six patches, all `; default: no`, blobs `$C5000-$C59FF`, data `$C6000` + 3680)
+Evidence, tables, gates and cold boots: `work/notes/timing.md`; gate tool `tools/poptick.py` (`ab`, `rate`, `cold`, `clicks`, `input`, `pause`); raw outputs `work/gates/tick_*.txt`.
+The game is frame coupled: one pass of the play loop (`$b632`-`$bc06`) = one world turn (`addq.w #1,$3c506`, `$db96`) = one full redraw = one flip, as fast as the CPU goes
+(3.2 turns/s on a busy 8 MHz STE, 25 on a TT, 42 on a Falcon). The user's choice is FIVE TURNS PER REAL SECOND on every machine, at 50 and 60 Hz (10 resp. 12 VBL per turn).
+Time base: the game's VBL counter `$16d2a` in units of 1/300 s (6 per VBL at 50 Hz, 5 at 60 Hz; `btst #1,$ffff820a.w`, read at every look). Every pass is T (a turn: the original pass),
+S (catch-up: world, no frame), R (ahead of real time: frame and UI, no world) or P (paused, paint mode or a link game: the original pass, clock parked).
+* `pop_tick` (`$b632`, 6 B -> `jmp $c5000`): the look at the pass top; kind, accumulator (clamp 3 turns), data block `$c6000` (flags SKIP `+14`, RON `+16`, REC `+18`, FLAGS `+20`, counters `+28..+44`, dot-list pointer `+48`, dot list `+$100`).
+* `pop_tick_render` (`$b6f4`, `jsr $14a28` -> `jmp $c5200`): S passes skip the render stage (jump to `$b800`).
+* `pop_tick_logic` (`$b800`, `jsr $12fc2` -> `jmp $c5300`): R passes skip the world (`$12fc2`, `$db8a`) and the block `$b8ec-$b93a` (shield countdown `$3b03e`, event of turn `$1000`), replay the minimap dots and go on at `$b93a`.
+* `pop_tick_flip` (`$b940`, `jsr $16f16` -> `jmp $c5400`): S passes skip flip, keys and UI (they run the command executor and loop); R passes hide FRESH click latches (`$3d566`, `$3c514` = 0) from the UI of the pass.
+* `pop_tick_cmd` (`$bbf8`, 8 B -> `jmp $c5500` + `nop`): R passes skip the command executor `$1e750` (one command per turn) and put the hidden latches back.
+* `pop_tick_dot` (`$1672a`, `jsr $167b0` inside `$166f0` -> `jsr $c5600`): records the minimap dots of a turn pass (560 entries), S passes plot nothing.
+* Test only (never in a build): `test_pwalk` (`$b6e2`: pointer and view as a function of the turn; `SPINN` burns cycles per turn = a slow machine), `test_rtog_a/b` (`$b6fa`, `$b7f0`: water phase toggled for the render-only compare).
+* The tick is off (kind P) while `$3b2b2` (pause), `$3b2b4` (paint mode) or `$3c524` (link game: `$1e7e6 tst.w $3c524` selects the serial command exchange `$1ff14/$1fe4c`) is set.
+* Other agents' sites kept intact: `$b93a` (`jsr $d4c0`, pop_tooltip) is entered by R passes with `jmp $b93a`; `$bb7c` (pop_keys) and `$200a6` run once per UI pass (T and R passes), not in S passes.
+
+## Keys and tooltips: pop_keys, pop_keys2, pop_keys3, pop_keys4, pop_tooltip (PopUI; all `; default: no`; blobs `$C7000-$C7901`, data `$C8000+32` and `$C8200+1184`)
+Evidence, key table, wording and gates: `work/notes/ui_impl.md`, raw outputs `work/gates/ui_*.txt`, shots `work/shots/ui_*.png`; tool `tools/popuitest.py`.
+* **Keys: take all four** (`pop_keys` = pass hook + tables, `pop_keys2` = key recorder in the ACIA interrupt, `pop_keys3` = typed-text guard, `pop_keys4` = dialog guard; each checks that `pop_keys`
+  is installed before it touches its data). Keys (physical positions): `R` raise / lower, `Q` query, `P` papal magnet mode, `M` `S` `G` `T` walkers go to the magnet / settle / gather / fight,
+  `E` earthquake, `W` swamp, `K` knight, `V` volcano, `F` flood, `A` twice Armageddon, `L` view leader, `Z` view magnet, `B` view battle, `N` view knight, `H` view own building, `Space` pause, `U` music, `X` effects.
+  The keypad scroll is the game's own and unchanged.
+  * `pop_keys` (site `$bb7c` = `move.w $21d8e.l,d0`, 6 bytes -> `jsr $c7000`): once per pass takes the next key from the ring and calls the game's own icon handler `$c420(left?)` with the click position at
+    the icon's cell centre (both click latches 0 for the length of the call, because the VBL routine `$16c96` copies the live pointer into the click position while a latch is idle), so mana checks,
+    greyed icons, mode changes and the 3 order bytes at `$21e4a` are the game's. A key waits while the player's order byte is non-zero (one order at a time) and while a real click is latched.
+  * `pop_keys2` (`$2008c` = `move.b d0,$37eec.l`, the make-code store): scan code -> action number into a 16-entry ring (`KD+12`), only while `$16d2a` - LASTV <= 150 VBLs (a pass stamps LASTV).
+  * `pop_keys3` (`$200a6`, 10 bytes -> `jmp` + 2 nops): a poll of the text-key converter from anywhere but the main loop (return address `$b94c`) empties the ring; `pop_keys4` (`$1a508`, 10 bytes): the same at every poll of the dialog button test.
+  * Armageddon: the first `A` arms (`KD+4`), the second within 150 VBLs fires; any other key disarms.
+  * Data `KD` `$c8000`: +0 LASTV.l +4 ARMT.l +8 spare.w +10 QH.b +11 QT.b +12 Q[16].
+* **`pop_tooltip`** (site `$b93a` = `jsr $d4c0.l`, 6 bytes -> `jsr $c7400`): hovering an icon prints its name, key and (spells) manna cost in the game's own 8x8 font (`$2364a`): line 1 in (84,0)-(213,7)
+  (16 characters), line 2 in (100,8)-(171,15) (9 characters), merged into the BACK buffer after `$d4c0` and before the flip (every pass starts from the clean-background copy, so nothing is erased and nothing is left
+  behind when the pointer leaves; with the pointer off the icons the frames are byte-identical to the original). Hit test = the game's own `$c420` geometry. The key labels appear only with `pop_keys` installed.
+  Data `T` `$c8200`: +0 CX +2 CY +4 CID +6 SHOWN +8 KEYS +10 NG1 +12 NG2 +14 TXT1[24] +38 TXT2[16] +56 C1[720] +776 C2[400].
+* Blob map: `pop_keys` `$c7000-$c7143` (hook), `$c7200-$c7229` (KT), `$c7243-$c72bd` (ACT); `pop_keys2` `$c7300-$c7377`; `pop_keys3` `$c7380-$c73b5`; `pop_keys4` `$c73c0-$c73ff`; `pop_tooltip` `$c7400-$c7901`.
+* Gates (all passed, see ui_impl.md section 6): key == click 23/23 identical in both mana scenarios (control mutant 17/23); real keys through IKBD / ACIA for all 23 presses; pointer-away pixel gate IDENTICAL (3 snapshots,
+  both buffers + world + mid-frame samples; mutant fails); tooltip diffs confined to the two rectangles (mutant fails); typed text / dialog keys never act (control without the guards: they act); cold boots STE HD + floppy, TT floppy, Falcon floppy.
