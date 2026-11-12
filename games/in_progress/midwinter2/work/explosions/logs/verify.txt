@@ -1,0 +1,243 @@
+floppy_copybuf     site $0e566 phase boot     src FFA f9 len 2
+    declared orig : 0050
+    image  bytes  : 0050  (match)
+    ramdump bytes : 0050  (match)
+jag_btn            site $26bea phase boot     src FFA f9 len 6
+    declared orig : 141002420003
+    image  bytes  : 141002420003  (match)
+    ramdump bytes : 141002420003  (match)
+jag_dir            site $26b66 phase boot     src FFA f9 len 8
+    declared orig : 7000720014280001
+    image  bytes  : 7000720014280001  (match)
+    ramdump bytes : 7000720014280001  (match)
+jag_poll           site $262f6 phase boot     src FFA f9 len 6
+    declared orig : 4cdf7fff4e73
+    image  bytes  : 4cdf7fff4e73  (match)
+    ramdump bytes : 4cdf7fff4e73  (match)
+mw2_credit         site $1f5f0 phase boot     src FFA f9 len 6
+    declared orig : 3d7c00a0000e
+    image  bytes  : 3d7c00a0000e  (match)
+    ramdump bytes : 3d7c00a0000e  (match)
+p3c_head           site $31486 phase boot     src FFA f9 len 8
+    declared orig : 4df8770e4eb84f5a
+    image  bytes  : 4df8770e4eb84f5a  (match)
+    ramdump bytes : 4df8770e4eb84f5a  (match)
+p3c_render         site $3158c phase boot     src FFA f9 len 8
+    declared orig : 4eb850b04a786298
+    image  bytes  : 4eb850b04a786298  (match)
+    ramdump bytes : 4eb850b04a786298  (match)
+p3c_sim            site $31570 phase boot     src FFA f9 len 6
+    declared orig : 4eb900033bca
+    image  bytes  : 4eb900033bca  (match)
+    ramdump bytes : 4eb900033bca  (match)
+p3cp_head          site $31486 phase boot     src FFA f9 len 8
+    declared orig : 4df8770e4eb84f5a
+    image  bytes  : 4df8770e4eb84f5a  (match)
+    ramdump bytes : 4df8770e4eb84f5a  (match)
+p4_blit_hist       site $38d14 phase boot     src FFA f9 len 6
+    declared orig : 024600016704
+    image  bytes  : 024600016704  (match)
+    ramdump bytes : 024600016704  (match)
+p4_blit_sky        site $1b996 phase deferred src FFB f1 len 6
+    declared orig : 48e7fffe2c78
+    image  bytes  : 48e7fffe2c78  (match)
+    ramdump bytes : 48e7fffe2c78  (match)
+p4_grid            site $1d768 phase deferred src FFB f1 len 6
+    declared orig : 41f90006c000
+    image  bytes  : 41f90006c000  (match)
+    ramdump bytes : 41f90006c000  (match)
+p4_hud_crop_clip   site $38c86 phase boot     src FFA f9 len 6
+    declared orig : 3e39000180ec
+    image  bytes  : 3e39000180ec  (match)
+    ramdump bytes : 3e39000180ec  (match)
+p4_hud_crop_clip_t site $38c86 phase boot     src FFA f9 len 6
+    declared orig : 3e39000180ec
+    image  bytes  : 3e39000180ec  (match)
+    ramdump bytes : 3e39000180ec  (match)
+p4_hud_crop_fill   site $1b99e phase deferred src FFB f1 len 8
+    declared orig : 203c00002440ddc0
+    image  bytes  : 203c00002440ddc0  (match)
+    ramdump bytes : 203c00002440ddc0  (match)
+p4_hud_crop_fill_t site $1b99e phase deferred src FFB f1 len 8
+    declared orig : 203c00002440ddc0
+    image  bytes  : 203c00002440ddc0  (match)
+    ramdump bytes : 203c00002440ddc0  (match)
+p4_hud_crop_replay site $30f2c phase boot     src FFA f9 len 8
+    declared orig : 48e7fffe207871c0
+    image  bytes  : 48e7fffe207871c0  (match)
+    ramdump bytes : 48e7fffe207871c0  (match)
+p4_hud_crop_replay_t site $30f2c phase boot     src FFA f9 len 8
+    declared orig : 48e7fffe207871c0
+    image  bytes  : 48e7fffe207871c0  (match)
+    ramdump bytes : 48e7fffe207871c0  (match)
+p4_hud_pfx_circle  site $1d188 phase deferred src FFB f1 len 6
+    declared orig : 4eb850204e75
+    image  bytes  : 4eb850204e75  (match)
+    ramdump bytes : 4eb850204e75  (match)
+p4_hud_pfx_fill    site $1b996 phase deferred src FFB f1 len 6
+    declared orig : 48e7fffe2c78
+    image  bytes  : 48e7fffe2c78  (match)
+    ramdump bytes : 48e7fffe2c78  (match)
+p4_hud_pfx_replay  site $30f2c phase boot     src FFA f9 len 8
+    declared orig : 48e7fffe207871c0
+    image  bytes  : 48e7fffe207871c0  (match)
+    ramdump bytes : 48e7fffe207871c0  (match)
+p4_hud_pfx_ymin    site $38cd0 phase boot     src FFA f9 len 6
+    declared orig : 300242009440
+    image  bytes  : 300242009440  (match)
+    ramdump bytes : 300242009440  (match)
+p4_hud_reset       site $28cc0 phase boot     src FFA f9 len 8
+    declared orig : 6100fd9e41f8732c
+    image  bytes  : 6100fd9e41f8732c  (match)
+    ramdump bytes : 6100fd9e41f8732c  (match)
+p4_proj_axis       site $3bfa2 phase boot     src FFA f9 len 6
+    declared orig : 3015322d0006
+    image  bytes  : 3015322d0006  (match)
+    ramdump bytes : 3015322d0006  (match)
+p4_proj_cols       site $3c02a phase boot     src FFA f9 len 6
+    declared orig : 301032280006
+    image  bytes  : 301032280006  (match)
+    ramdump bytes : 301032280006  (match)
+p4_proj_div        site $200ce phase deferred src FFB f1 len 8
+    declared orig : 3e3866e081c783c7
+    image  bytes  : 3e3866e081c783c7  (match)
+    ramdump bytes : 3e3866e081c783c7  (match)
+p4_walk            site $3c5e2 phase boot     src FFA f9 len 6
+    declared orig : 48e7fffe41f9
+    image  bytes  : 48e7fffe41f9  (match)
+    ramdump bytes : 48e7fffe41f9  (match)
+p4_walk_c4         site $3c5c4 phase boot     src FFA f9 len 6
+    declared orig : 48e7fffe4441
+    image  bytes  : 48e7fffe4441  (match)
+    ramdump bytes : 48e7fffe4441  (match)
+p4_walk_ret        site $3d316 phase boot     src FFA f9 len 2
+    declared orig : 7fff
+    image  bytes  : 7fff  (match)
+    ramdump bytes : 7fff  (match)
+p4_walk_tab        site $0501a phase boot     src FFA f9 len 6
+    declared orig : 4ef90003c5c4
+    image  bytes  : 4ef90003c5c4  (match)
+    ramdump bytes : 4ef90003c5c4  (match)
+p5_ctl_vbl         site $262c8 phase boot     src FFA f9 len 8
+    declared orig : 6100088e61000950
+    image  bytes  : 6100088e61000950  (match)
+    ramdump bytes : 6100088e61000950  (match)
+p5_ctl_x           site $34152 phase boot     src FFA f9 len 6
+    declared orig : 6100069e7000
+    image  bytes  : 6100069e7000  (match)
+    ramdump bytes : 6100069e7000  (match)
+p7_cell_cull       site $1d974 phase deferred src FFB f1 len 6
+    declared orig : 117c00ff000a
+    image  bytes  : 117c00ff000a  (match)
+    ramdump bytes : 117c00ff000a  (match)
+p7_cell_pre        site $1d8d4 phase deferred src FFB f1 len 8
+    declared orig : 48e7fffe3e3867c4
+    image  bytes  : 48e7fffe3e3867c4  (match)
+    ramdump bytes : 48e7fffe3e3867c4  (match)
+p7_ck_enter        site $1fa54 phase deferred src FFB f1 len 6
+    declared orig : 49f90007c718
+    image  bytes  : 49f90007c718  (match)
+    ramdump bytes : 49f90007c718  (match)
+p7_ck_exit         site $1dcae phase deferred src FFB f1 len 6
+    declared orig : 50790001877c
+    image  bytes  : 50790001877c  (match)
+    ramdump bytes : 50790001877c  (match)
+p7_ck_fill         site $38c6e phase boot     src FFA f9 len 10
+    declared orig : 48e7fffe41f90007b6b0
+    image  bytes  : 48e7fffe41f90007b6b0  (match)
+    ramdump bytes : 48e7fffe41f90007b6b0  (match)
+p7_ck_obj          site $3bb6e phase boot     src FFA f9 len 12
+    declared orig : 48e7fffe33fcf000000180ec
+    image  bytes  : 48e7fffe33fcf000000180ec  (match)
+    ramdump bytes : 48e7fffe33fcf000000180ec  (match)
+p7_ck_poly         site $1fa9a phase deferred src FFB f1 len 6
+    declared orig : 4a416700000e
+    image  bytes  : 4a416700000e  (match)
+    ramdump bytes : 4a416700000e  (match)
+p7_ck_tab          site $30f26 phase boot     src FFA f9 len 6
+    declared orig : 4cdf7fff4e75
+    image  bytes  : 4cdf7fff4e75  (match)
+    ramdump bytes : 4cdf7fff4e75  (match)
+p7_skip_enter      site $28cf6 phase boot     src FFA f9 len 8
+    declared orig : 33fc000200018124
+    image  bytes  : 33fc000200018124  (match)
+    ramdump bytes : 33fc000200018124  (match)
+p7_skip_gate       site $1b6be phase deferred src FFB f1 len 8
+    declared orig : 48e7fffe4eb84f90
+    image  bytes  : 48e7fffe4eb84f90  (match)
+    ramdump bytes : 48e7fffe4eb84f90  (match)
+p7_skip_render     site $1dbbe phase deferred src FFB f1 len 10
+    declared orig : 203866e6048000006400
+    image  bytes  : 203866e6048000006400  (match)
+    ramdump bytes : 203866e6048000006400  (match)
+p7_skip_scn        site $1dc12 phase deferred src FFB f1 len 6
+    declared orig : 31fc000867c4
+    image  bytes  : 31fc000867c4  (match)
+    ramdump bytes : 31fc000867c4  (match)
+p7_skip_wv1        site $1dafc phase deferred src FFB f1 len 8
+    declared orig : 301032000240007e
+    image  bytes  : 301032000240007e  (match)
+    ramdump bytes : 301032000240007e  (match)
+p7_skip_wv2        site $1fd1c phase deferred src FFB f1 len 8
+    declared orig : 207ae29c0241007e
+    image  bytes  : 207ae29c0241007e  (match)
+    ramdump bytes : 207ae29c0241007e  (match)
+p7_skip_wv3        site $1fd9a phase deferred src FFB f1 len 8
+    declared orig : 207ae21e0241007e
+    image  bytes  : 207ae21e0241007e  (match)
+    ramdump bytes : 207ae21e0241007e  (match)
+p8_tt_ptr          site $26ea2 phase boot     src FFA f9 len 6
+    declared orig : 41f900ff8201
+    image  bytes  : 41f900ff8201  (match)
+    ramdump bytes : 41f900ff8201  (match)
+sync_blip          site $03104 phase boot     src FFA f9 len 6
+    declared orig : 4ef9000312a8
+    image  bytes  : 4ef9000312a8  (match)
+    ramdump bytes : 4ef9000312a8  (match)
+test_blob16k       site $2b4c0 phase boot     src FFA f9 len 2
+    declared orig : 4e71
+    image  bytes  : 4e71  (match)
+    ramdump bytes : 4e71  (match)
+test_framecount    site $3159c phase boot     src FFA f9 len 8
+    declared orig : 427870204eb85086
+    image  bytes  : 427870204eb85086  (match)
+    ramdump bytes : 427870204eb85086  (match)
+test_sky           site $1b9a8 phase deferred src FFB f1 len 2
+    declared orig : 70ff
+    image  bytes  : 70ff  (match)
+    ramdump bytes : 70ff  (match)
+tick_head          site $31486 phase boot     src FFA f9 len 8
+    declared orig : 4df8770e4eb84f5a
+    image  bytes  : 4df8770e4eb84f5a  (match)
+    ramdump bytes : 4df8770e4eb84f5a  (match)
+tick_render        site $3159c phase boot     src FFA f9 len 8
+    declared orig : 427870204eb85086
+    image  bytes  : 427870204eb85086  (match)
+    ramdump bytes : 427870204eb85086  (match)
+tick_vbl           site $262d0 phase boot     src FFA f9 len 8
+    declared orig : 527870205278770c
+    image  bytes  : 527870205278770c  (match)
+    ramdump bytes : 527870205278770c  (match)
+pp_bigram_cache    image HAGA  1 edit(s)
+    HB+$3228 len  2  orig 2412
+        file  2412  (match)
+        dump  2412  (match)
+        new   602a  (same length)
+pp_nofade          image HAGA  4 edit(s)
+    HB+$0ffc len  4  orig 61000168
+        file  61000168  (match)
+        dump  61000168  (match)
+        new   6100027a  (same length)
+    HB+$16d8 len  4  orig 6100fa8c
+        file  6100fa8c  (match)
+        dump  6100fa8c  (match)
+        new   6100fb9e  (same length)
+    HB+$1460 len 36  orig 43fa004622b8007045fafe3821ca007046fc2300323a003643fa003e30015240eb48d2c0
+        file  43fa004622b8007045fafe3821ca007046fc2300323a003643fa003e30015240eb48d2c0  (match)
+        dump  43fa004622b8007045fafe3821ca007046fc2300323a003643fa003e30015240eb48d2c0  (match)
+        new   103a0b2867402f38007045fafe3621ca0070323a00383001eb4843fb005c46fc23004e71  (same length)
+    HB+$149c len 12  orig 46fc270021fa000600704e75
+        file  46fc270021fa000600704e75  (match)
+        dump  46fc270021fa000600704e75  (match)
+        new   46fc270021df00704e714e75  (same length)
+verify: ALL OK

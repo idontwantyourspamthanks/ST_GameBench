@@ -1,0 +1,16 @@
+### abtest --flips 10
+1mb_ingame_walking: pixels IDENTICAL; fps base 3.2 (64 flips) -> patched 6.7 (133 flips)
+   base /home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2/build/ab/base/1mb_ingame_walking_21500_10
+   patched /home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2/build/ab/p4_grid+27-7c97e6fa/1mb_ingame_walking_21500_10
+1mb_ingame_foot: pixels DIFFER (36 bytes); fps base 6.9 (138 flips) -> patched 25.1 (501 flips)
+   base /home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2/build/ab/base/1mb_ingame_foot_17900_10
+   patched /home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2/build/ab/p4_grid+27-7c97e6fa/1mb_ingame_foot_17900_10
+exit 1
+### abtest --flips 40
+1mb_ingame_walking: pixels IDENTICAL; fps base 3.0 (59 flips) -> patched 3.6 (73 flips)
+   base /home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2/build/ab/base/1mb_ingame_walking_21500_40
+   patched /home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2/build/ab/p4_grid+27-7c97e6fa/1mb_ingame_walking_21500_40
+1mb_ingame_foot: pixels IDENTICAL; fps base 4.2 (84 flips) -> patched 27.4 (549 flips)
+   base /home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2/build/ab/base/1mb_ingame_foot_17900_40
+   patched /home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2/build/ab/p4_grid+27-7c97e6fa/1mb_ingame_foot_17900_40
+exit 0

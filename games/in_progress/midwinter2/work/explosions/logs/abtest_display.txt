@@ -1,0 +1,8 @@
+### abtest --flips 10
+1mb_ingame_walking: pixels IDENTICAL; fps base 3.1 (63 flips) -> patched 3.4 (67 flips)
+1mb_ingame_foot: pixels IDENTICAL; fps base 4.2 (85 flips) -> patched 27.4 (549 flips)
+exit 0
+### abtest --flips 40
+1mb_ingame_walking: pixels IDENTICAL; fps base 2.8 (56 flips) -> patched 3.4 (68 flips)
+1mb_ingame_foot: pixels IDENTICAL; fps base 4.2 (84 flips) -> patched 27.4 (548 flips)
+exit 0

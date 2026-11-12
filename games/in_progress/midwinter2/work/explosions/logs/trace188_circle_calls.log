@@ -1,0 +1,2798 @@
+> b VBL > 154200 && pc = $26e98 :trace :once :file /tmp/mw2run-dgpd71zh/apply.txt
+CPU condition breakpoint 1 with 2 condition(s) added:
+	VBL > 154200 && pc = $26e98
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-dgpd71zh/apply.txt' file on hit.
+1. CPU breakpoint condition(s) matched 1 times.
+	VBL > 154200 && pc = $26e98 :once :trace :file /tmp/mw2run-dgpd71zh/apply.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/apply.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> loadbin /home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2/build/veh/trace188.img $b3000
+  Read 0x8000 bytes.
+> w $1b996 $4e $f9 $00 $0b $45 $00
+Wrote 6 'b' values starting from 0x1b996.
+> w $30f2c $4e $f9 $00 $0b $45 $80 $4e $71
+Wrote 8 'b' values starting from 0x30f2c.
+> w $38cd0 $4e $f9 $00 $0b $44 $c0
+Wrote 6 'b' values starting from 0x38cd0.
+> w $28cc0 $4e $f9 $00 $0b $44 $e0 $4e $71
+Wrote 8 'b' values starting from 0x28cc0.
+> w $35fe $00 $00 $66 $ee
+Wrote 4 'b' values starting from 0x35fe.
+> w $3602 $00 $00 $62 $12
+Wrote 4 'b' values starting from 0x3602.
+> w $362e $00 $01
+Wrote 2 'b' values starting from 0x362e.
+> b pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $1d188
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+Removed CPU breakpoint 1:
+	VBL > 154200 && pc = $26e98 :once :trace :file /tmp/mw2run-dgpd71zh/apply.txt
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 4288FF00   D2 32480050   D3 01E30000 
+  D4 FFFF00A2   D5 00003160   D6 000042E0   D7 FFFF001A 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B71C   A3 0007BA3C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 00                                      ....
+> m $7b6b0 48
+0007B6B0: 32 48 c0 00 32 e0 ff fe 33 80 ff fc 34 20 ff f0  2Hĳ.2α¯³3Ç¯ⁿ4 ¯≡
+0007B6C0: 34 c0 ff e0 35 60 ff e0 36 00 ff c0 36 a0 ff 80  4ĳ¯α5`¯α6.¯ĳ6á¯Ç
+0007B6D0: 37 40 ff 80 37 e0 ff 80 38 80 ff 00 39 20 ff 00  7@¯Ç7α¯Ç8Ç¯.9 ¯.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 2 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 4288FF00   D2 32480050   D3 01E30000 
+  D4 FFFF00A2   D5 00003160   D6 000042E0   D7 FFFF001A 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B71C   A3 0007BA3C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 00                                      ....
+> m $7b6b0 48
+0007B6B0: 32 48 c0 00 32 e0 ff fe 33 80 ff fc 34 20 ff f0  2Hĳ.2α¯³3Ç¯ⁿ4 ¯≡
+0007B6C0: 34 c0 ff e0 35 60 ff e0 36 00 ff c0 36 a0 ff 80  4ĳ¯α5`¯α6.¯ĳ6á¯Ç
+0007B6D0: 37 40 ff 80 37 e0 ff 80 38 80 ff 00 39 20 ff 00  7@¯Ç7α¯Ç8Ç¯.9 ¯.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 3 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 4328FF00   D2 32E80050   D3 01E30000 
+  D4 FFFF00A2   D5 00003200   D6 00004380   D7 FFFF001A 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B71C   A3 0007BA3C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 00                                      ....
+> m $7b6b0 48
+0007B6B0: 32 e8 c0 00 33 80 ff fe 34 20 ff fc 34 c0 ff f0  2Φĳ.3Ç¯³4 ¯ⁿ4ĳ¯≡
+0007B6C0: 35 60 ff e0 36 00 ff e0 36 a0 ff c0 37 40 ff 80  5`¯α6.¯α6á¯ĳ7@¯Ç
+0007B6D0: 37 e0 ff 80 38 80 ff 80 39 20 ff 00 39 c0 ff 00  7α¯Ç8Ç¯Ç9 ¯.9ĳ¯.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 4 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 4328FF00   D2 32E80050   D3 01E30000 
+  D4 FFFF00A2   D5 00003200   D6 00004380   D7 FFFF001A 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B71C   A3 0007BA3C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 00                                      ....
+> m $7b6b0 48
+0007B6B0: 32 e8 c0 00 33 80 ff fe 34 20 ff fc 34 c0 ff f0  2Φĳ.3Ç¯³4 ¯ⁿ4ĳ¯≡
+0007B6C0: 35 60 ff e0 36 00 ff e0 36 a0 ff c0 37 40 ff 80  5`¯α6.¯α6á¯ĳ7@¯Ç
+0007B6D0: 37 e0 ff 80 38 80 ff 80 39 20 ff 00 39 c0 ff 00  7α¯Ç8Ç¯Ç9 ¯.9ĳ¯.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 5 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 4328FF00   D2 32E80050   D3 01C80000 
+  D4 FFFF00A2   D5 00003200   D6 00004380   D7 FFFF001A 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B71C   A3 0007BA3C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 00                                      ....
+> m $7b6b0 48
+0007B6B0: 32 e8 c0 00 33 80 ff fe 34 20 ff fc 34 c0 ff f0  2Φĳ.3Ç¯³4 ¯ⁿ4ĳ¯≡
+0007B6C0: 35 60 ff e0 36 00 ff e0 36 a0 ff c0 37 40 ff 80  5`¯α6.¯α6á¯ĳ7@¯Ç
+0007B6D0: 37 e0 ff 80 38 80 ff 80 39 20 ff 00 39 c0 ff 00  7α¯Ç8Ç¯Ç9 ¯.9ĳ¯.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 6 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 4328FF00   D2 32E80050   D3 01E30000 
+  D4 FFFF00A2   D5 00003200   D6 00004380   D7 FFFF001A 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B71C   A3 0007BA3C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 00                                      ....
+> m $7b6b0 48
+0007B6B0: 32 e8 c0 00 33 80 ff fe 34 20 ff fc 34 c0 ff f0  2Φĳ.3Ç¯³4 ¯ⁿ4ĳ¯≡
+0007B6C0: 35 60 ff e0 36 00 ff e0 36 a0 ff c0 37 40 ff 80  5`¯α6.¯α6á¯ĳ7@¯Ç
+0007B6D0: 37 e0 ff 80 38 80 ff 80 39 20 ff 00 39 c0 ff 00  7α¯Ç8Ç¯Ç9 ¯.9ĳ¯.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 7 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 4328FF00   D2 32E80050   D3 01E30000 
+  D4 FFFF00A2   D5 00003200   D6 00004380   D7 FFFF001A 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B71C   A3 0007BA3C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 00                                      ....
+> m $7b6b0 48
+0007B6B0: 32 e8 c0 00 33 80 ff fe 34 20 ff fc 34 c0 ff f0  2Φĳ.3Ç¯³4 ¯ⁿ4ĳ¯≡
+0007B6C0: 35 60 ff e0 36 00 ff e0 36 a0 ff c0 37 40 ff 80  5`¯α6.¯α6á¯ĳ7@¯Ç
+0007B6D0: 37 e0 ff 80 38 80 ff 80 39 20 ff 00 39 c0 ff 00  7α¯Ç8Ç¯Ç9 ¯.9ĳ¯.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 8 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 4328FF00   D2 32E80050   D3 01E30000 
+  D4 FFFF00A2   D5 00003200   D6 00004380   D7 FFFF001A 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B71C   A3 0007BA3C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 00                                      ....
+> m $7b6b0 48
+0007B6B0: 32 e8 c0 00 33 80 ff fe 34 20 ff fc 34 c0 ff f0  2Φĳ.3Ç¯³4 ¯ⁿ4ĳ¯≡
+0007B6C0: 35 60 ff e0 36 00 ff e0 36 a0 ff c0 37 40 ff 80  5`¯α6.¯α6á¯ĳ7@¯Ç
+0007B6D0: 37 e0 ff 80 38 80 ff 80 39 20 ff 00 39 c0 ff 00  7α¯Ç8Ç¯Ç9 ¯.9ĳ¯.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 9 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 4328FF00   D2 32E80050   D3 01C80000 
+  D4 FFFF00A2   D5 00003200   D6 00004380   D7 FFFF001A 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B71C   A3 0007BA3C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 00                                      ....
+> m $7b6b0 48
+0007B6B0: 32 e8 c0 00 33 80 ff fe 34 20 ff fc 34 c0 ff f0  2Φĳ.3Ç¯³4 ¯ⁿ4ĳ¯≡
+0007B6C0: 35 60 ff e0 36 00 ff e0 36 a0 ff c0 37 40 ff 80  5`¯α6.¯α6á¯ĳ7@¯Ç
+0007B6D0: 37 e0 ff 80 38 80 ff 80 39 20 ff 00 39 c0 ff 00  7α¯Ç8Ç¯Ç9 ¯.9ĳ¯.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 10 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 4328FF00   D2 32E80050   D3 01E30000 
+  D4 FFFF00A2   D5 00003200   D6 00004380   D7 FFFF001A 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B71C   A3 0007BA3C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 00                                      ....
+> m $7b6b0 48
+0007B6B0: 32 e8 c0 00 33 80 ff fe 34 20 ff fc 34 c0 ff f0  2Φĳ.3Ç¯³4 ¯ⁿ4ĳ¯≡
+0007B6C0: 35 60 ff e0 36 00 ff e0 36 a0 ff c0 37 40 ff 80  5`¯α6.¯α6á¯ĳ7@¯Ç
+0007B6D0: 37 e0 ff 80 38 80 ff 80 39 20 ff 00 39 c0 ff 00  7α¯Ç8Ç¯Ç9 ¯.9ĳ¯.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 11 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 40A8FF00   D2 35680060   D3 01420000 
+  D4 FFFF009E   D5 00003480   D6 00004100   D7 FFFF0012 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6FC   A3 0007BA1C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 00                                      ....
+> m $7b6b0 48
+0007B6B0: 35 68 c0 00 36 08 00 00 36 a0 ff fe 37 40 ff fc  5hĳ.6...6á¯³7@¯ⁿ
+0007B6C0: 37 e0 ff f8 38 80 ff f8 39 20 ff f0 39 c0 ff f0  7α¯°8Ç¯°9 ¯≡9ĳ¯≡
+0007B6D0: 3a 60 ff f0 3b 00 ff f0 3b a0 ff f0 3c 40 ff f0  :`¯≡;.¯≡;á¯≡<@¯≡
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 12 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 4008FF00   D2 34C80060   D3 01420000 
+  D4 FFFF009E   D5 000033E0   D6 00004060   D7 FFFF0012 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6FC   A3 0007BA1C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 00                                      ....
+> m $7b6b0 48
+0007B6B0: 34 c8 c0 00 35 68 00 00 36 00 ff fe 36 a0 ff fc  4זĳ.5h..6.¯³6á¯ⁿ
+0007B6C0: 37 40 ff f8 37 e0 ff f8 38 80 ff f0 39 20 ff f0  7@¯°7α¯°8Ç¯≡9 ¯≡
+0007B6D0: 39 c0 ff f0 3a 60 ff f0 3b 00 ff f0 3b a0 ff f0  9ĳ¯≡:`¯≡;.¯≡;á¯≡
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 13 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 40A8FF00   D2 35680060   D3 01420000 
+  D4 FFFF009E   D5 00003480   D6 00004100   D7 FFFF0012 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6FC   A3 0007BA1C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 00                                      ....
+> m $7b6b0 48
+0007B6B0: 35 68 c0 00 36 08 00 00 36 a0 ff fe 37 40 ff fc  5hĳ.6...6á¯³7@¯ⁿ
+0007B6C0: 37 e0 ff f8 38 80 ff f8 39 20 ff f0 39 c0 ff f0  7α¯°8Ç¯°9 ¯≡9ĳ¯≡
+0007B6D0: 3a 60 ff f0 3b 00 ff f0 3b a0 ff f0 3c 40 ff f0  :`¯≡;.¯≡;á¯≡<@¯≡
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 14 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 4008FF00   D2 34C80060   D3 01420000 
+  D4 FFFF009E   D5 000033E0   D6 00004060   D7 FFFF0012 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6FC   A3 0007BA1C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 00                                      ....
+> m $7b6b0 48
+0007B6B0: 34 c8 c0 00 35 68 00 00 36 00 ff fe 36 a0 ff fc  4זĳ.5h..6.¯³6á¯ⁿ
+0007B6C0: 37 40 ff f8 37 e0 ff f8 38 80 ff f0 39 20 ff f0  7@¯°7α¯°8Ç¯≡9 ¯≡
+0007B6D0: 39 c0 ff f0 3a 60 ff f0 3b 00 ff f0 3b a0 ff f0  9ĳ¯≡:`¯≡;.¯≡;á¯≡
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 15 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 40A8FF00   D2 35680060   D3 01420000 
+  D4 FFFF009E   D5 00003480   D6 00004100   D7 FFFF0012 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6FC   A3 0007BA1C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 00                                      ....
+> m $7b6b0 48
+0007B6B0: 35 68 c0 00 36 08 00 00 36 a0 ff fe 37 40 ff fc  5hĳ.6...6á¯³7@¯ⁿ
+0007B6C0: 37 e0 ff f8 38 80 ff f8 39 20 ff f0 39 c0 ff f0  7α¯°8Ç¯°9 ¯≡9ĳ¯≡
+0007B6D0: 3a 60 ff f0 3b 00 ff f0 3b a0 ff f0 3c 40 ff f0  :`¯≡;.¯≡;á¯≡<@¯≡
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 16 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 40A8FF00   D2 35680060   D3 01420000 
+  D4 FFFF009E   D5 00003480   D6 00004100   D7 FFFF0012 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6FC   A3 0007BA1C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 00                                      ....
+> m $7b6b0 48
+0007B6B0: 35 68 c0 00 36 08 00 00 36 a0 ff fe 37 40 ff fc  5hĳ.6...6á¯³7@¯ⁿ
+0007B6C0: 37 e0 ff f8 38 80 ff f8 39 20 ff f0 39 c0 ff f0  7α¯°8Ç¯°9 ¯≡9ĳ¯≡
+0007B6D0: 3a 60 ff f0 3b 00 ff f0 3b a0 ff f0 3c 40 ff f0  :`¯≡;.¯≡;á¯≡<@¯≡
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 17 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 40A8FF00   D2 35680060   D3 01420000 
+  D4 FFFF009E   D5 00003480   D6 00004100   D7 FFFF0012 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6FC   A3 0007BA1C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 00                                      ....
+> m $7b6b0 48
+0007B6B0: 35 68 c0 00 36 08 00 00 36 a0 ff fe 37 40 ff fc  5hĳ.6...6á¯³7@¯ⁿ
+0007B6C0: 37 e0 ff f8 38 80 ff f8 39 20 ff f0 39 c0 ff f0  7α¯°8Ç¯°9 ¯≡9ĳ¯≡
+0007B6D0: 3a 60 ff f0 3b 00 ff f0 3b a0 ff f0 3c 40 ff f0  :`¯≡;.¯≡;á¯≡<@¯≡
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 18 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 40A8FF00   D2 35680060   D3 01420000 
+  D4 FFFF009E   D5 00003480   D6 00004100   D7 FFFF0012 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6FC   A3 0007BA1C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 00                                      ....
+> m $7b6b0 48
+0007B6B0: 35 68 c0 00 36 08 00 00 36 a0 ff fe 37 40 ff fc  5hĳ.6...6á¯³7@¯ⁿ
+0007B6C0: 37 e0 ff f8 38 80 ff f8 39 20 ff f0 39 c0 ff f0  7α¯°8Ç¯°9 ¯≡9ĳ¯≡
+0007B6D0: 3a 60 ff f0 3b 00 ff f0 3b a0 ff f0 3c 40 ff f0  :`¯≡;.¯≡;á¯≡<@¯≡
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 19 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 40A8FF00   D2 35680060   D3 01420000 
+  D4 FFFF009E   D5 00003480   D6 00004100   D7 FFFF0012 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6FC   A3 0007BA1C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 00                                      ....
+> m $7b6b0 48
+0007B6B0: 35 68 c0 00 36 08 00 00 36 a0 ff fe 37 40 ff fc  5hĳ.6...6á¯³7@¯ⁿ
+0007B6C0: 37 e0 ff f8 38 80 ff f8 39 20 ff f0 39 c0 ff f0  7α¯°8Ç¯°9 ¯≡9ĳ¯≡
+0007B6D0: 3a 60 ff f0 3b 00 ff f0 3b a0 ff f0 3c 40 ff f0  :`¯≡;.¯≡;á¯≡<@¯≡
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 20 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 40A8FF00   D2 35680060   D3 01420000 
+  D4 FFFF009E   D5 00003480   D6 00004100   D7 FFFF0012 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6FC   A3 0007BA1C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 00                                      ....
+> m $7b6b0 48
+0007B6B0: 35 68 c0 00 36 08 00 00 36 a0 ff fe 37 40 ff fc  5hĳ.6...6á¯³7@¯ⁿ
+0007B6C0: 37 e0 ff f8 38 80 ff f8 39 20 ff f0 39 c0 ff f0  7α¯°8Ç¯°9 ¯≡9ĳ¯≡
+0007B6D0: 3a 60 ff f0 3b 00 ff f0 3b a0 ff f0 3c 40 ff f0  :`¯≡;.¯≡;á¯≡<@¯≡
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 21 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 40A8FF00   D2 35680060   D3 01540000 
+  D4 FFFF009E   D5 00003480   D6 00004100   D7 FFFF0012 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6FC   A3 0007BA1C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 00                                      ....
+> m $7b6b0 48
+0007B6B0: 35 68 c0 00 36 08 00 00 36 a0 ff fe 37 40 ff fc  5hĳ.6...6á¯³7@¯ⁿ
+0007B6C0: 37 e0 ff f8 38 80 ff f8 39 20 ff f0 39 c0 ff f0  7α¯°8Ç¯°9 ¯≡9ĳ¯≡
+0007B6D0: 3a 60 ff f0 3b 00 ff f0 3b a0 ff f0 3c 40 ff f0  :`¯≡;.¯≡;á¯≡<@¯≡
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 22 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 4008FF00   D2 34C80060   D3 01540000 
+  D4 FFFF009E   D5 000033E0   D6 00004060   D7 FFFF0012 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6FC   A3 0007BA1C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 00                                      ....
+> m $7b6b0 48
+0007B6B0: 34 c8 c0 00 35 68 00 00 36 00 ff fe 36 a0 ff fc  4זĳ.5h..6.¯³6á¯ⁿ
+0007B6C0: 37 40 ff f8 37 e0 ff f8 38 80 ff f0 39 20 ff f0  7@¯°7α¯°8Ç¯≡9 ¯≡
+0007B6D0: 39 c0 ff f0 3a 60 ff f0 3b 00 ff f0 3b a0 ff f0  9ĳ¯≡:`¯≡;.¯≡;á¯≡
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 23 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 40A8FF00   D2 35680060   D3 01540000 
+  D4 FFFF009E   D5 00003480   D6 00004100   D7 FFFF0012 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6FC   A3 0007BA1C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 00                                      ....
+> m $7b6b0 48
+0007B6B0: 35 68 c0 00 36 08 00 00 36 a0 ff fe 37 40 ff fc  5hĳ.6...6á¯³7@¯ⁿ
+0007B6C0: 37 e0 ff f8 38 80 ff f8 39 20 ff f0 39 c0 ff f0  7α¯°8Ç¯°9 ¯≡9ĳ¯≡
+0007B6D0: 3a 60 ff f0 3b 00 ff f0 3b a0 ff f0 3c 40 ff f0  :`¯≡;.¯≡;á¯≡<@¯≡
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 24 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 4008FF00   D2 34C80060   D3 01540000 
+  D4 FFFF009E   D5 000033E0   D6 00004060   D7 FFFF0012 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6FC   A3 0007BA1C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 00                                      ....
+> m $7b6b0 48
+0007B6B0: 34 c8 c0 00 35 68 00 00 36 00 ff fe 36 a0 ff fc  4זĳ.5h..6.¯³6á¯ⁿ
+0007B6C0: 37 40 ff f8 37 e0 ff f8 38 80 ff f0 39 20 ff f0  7@¯°7α¯°8Ç¯≡9 ¯≡
+0007B6D0: 39 c0 ff f0 3a 60 ff f0 3b 00 ff f0 3b a0 ff f0  9ĳ¯≡:`¯≡;.¯≡;á¯≡
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 25 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 40A8FF00   D2 35680060   D3 01540000 
+  D4 FFFF009E   D5 00003480   D6 00004100   D7 FFFF0012 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6FC   A3 0007BA1C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 00                                      ....
+> m $7b6b0 48
+0007B6B0: 35 68 c0 00 36 08 00 00 36 a0 ff fe 37 40 ff fc  5hĳ.6...6á¯³7@¯ⁿ
+0007B6C0: 37 e0 ff f8 38 80 ff f8 39 20 ff f0 39 c0 ff f0  7α¯°8Ç¯°9 ¯≡9ĳ¯≡
+0007B6D0: 3a 60 ff f0 3b 00 ff f0 3b a0 ff f0 3c 40 ff f0  :`¯≡;.¯≡;á¯≡<@¯≡
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 26 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 40A8FF00   D2 35680060   D3 01540000 
+  D4 FFFF009E   D5 00003480   D6 00004100   D7 FFFF0012 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6FC   A3 0007BA1C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 00                                      ....
+> m $7b6b0 48
+0007B6B0: 35 68 c0 00 36 08 00 00 36 a0 ff fe 37 40 ff fc  5hĳ.6...6á¯³7@¯ⁿ
+0007B6C0: 37 e0 ff f8 38 80 ff f8 39 20 ff f0 39 c0 ff f0  7α¯°8Ç¯°9 ¯≡9ĳ¯≡
+0007B6D0: 3a 60 ff f0 3b 00 ff f0 3b a0 ff f0 3c 40 ff f0  :`¯≡;.¯≡;á¯≡<@¯≡
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 27 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 40A8FF00   D2 35680060   D3 01540000 
+  D4 FFFF009E   D5 00003480   D6 00004100   D7 FFFF0012 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6FC   A3 0007BA1C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 00                                      ....
+> m $7b6b0 48
+0007B6B0: 35 68 c0 00 36 08 00 00 36 a0 ff fe 37 40 ff fc  5hĳ.6...6á¯³7@¯ⁿ
+0007B6C0: 37 e0 ff f8 38 80 ff f8 39 20 ff f0 39 c0 ff f0  7α¯°8Ç¯°9 ¯≡9ĳ¯≡
+0007B6D0: 3a 60 ff f0 3b 00 ff f0 3b a0 ff f0 3c 40 ff f0  :`¯≡;.¯≡;á¯≡<@¯≡
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 28 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 40A8FF00   D2 35680060   D3 01540000 
+  D4 FFFF009E   D5 00003480   D6 00004100   D7 FFFF0012 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6FC   A3 0007BA1C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 00                                      ....
+> m $7b6b0 48
+0007B6B0: 35 68 c0 00 36 08 00 00 36 a0 ff fe 37 40 ff fc  5hĳ.6...6á¯³7@¯ⁿ
+0007B6C0: 37 e0 ff f8 38 80 ff f8 39 20 ff f0 39 c0 ff f0  7α¯°8Ç¯°9 ¯≡9ĳ¯≡
+0007B6D0: 3a 60 ff f0 3b 00 ff f0 3b a0 ff f0 3c 40 ff f0  :`¯≡;.¯≡;á¯≡<@¯≡
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 29 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 40A8FF00   D2 35680060   D3 01540000 
+  D4 FFFF009E   D5 00003480   D6 00004100   D7 FFFF0012 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6FC   A3 0007BA1C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 00                                      ....
+> m $7b6b0 48
+0007B6B0: 35 68 c0 00 36 08 00 00 36 a0 ff fe 37 40 ff fc  5hĳ.6...6á¯³7@¯ⁿ
+0007B6C0: 37 e0 ff f8 38 80 ff f8 39 20 ff f0 39 c0 ff f0  7α¯°8Ç¯°9 ¯≡9ĳ¯≡
+0007B6D0: 3a 60 ff f0 3b 00 ff f0 3b a0 ff f0 3c 40 ff f0  :`¯≡;.¯≡;á¯≡<@¯≡
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 30 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 40A8FF00   D2 35680060   D3 01540000 
+  D4 FFFF009E   D5 00003480   D6 00004100   D7 FFFF0012 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6FC   A3 0007BA1C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 00                                      ....
+> m $7b6b0 48
+0007B6B0: 35 68 c0 00 36 08 00 00 36 a0 ff fe 37 40 ff fc  5hĳ.6...6á¯³7@¯ⁿ
+0007B6C0: 37 e0 ff f8 38 80 ff f8 39 20 ff f0 39 c0 ff f0  7α¯°8Ç¯°9 ¯≡9ĳ¯≡
+0007B6D0: 3a 60 ff f0 3b 00 ff f0 3b a0 ff f0 3c 40 ff f0  :`¯≡;.¯≡;á¯≡<@¯≡
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 31 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 4288FF00   D2 32480050   D3 01FE0000 
+  D4 FFFF00A2   D5 00003160   D6 000042E0   D7 FFFF001A 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B71C   A3 0007BA3C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 00                                      ....
+> m $7b6b0 48
+0007B6B0: 32 48 c0 00 32 e0 ff fe 33 80 ff fc 34 20 ff f0  2Hĳ.2α¯³3Ç¯ⁿ4 ¯≡
+0007B6C0: 34 c0 ff e0 35 60 ff e0 36 00 ff c0 36 a0 ff 80  4ĳ¯α5`¯α6.¯ĳ6á¯Ç
+0007B6D0: 37 40 ff 80 37 e0 ff 80 38 80 ff 00 39 20 ff 00  7@¯Ç7α¯Ç8Ç¯.9 ¯.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 32 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 4288FF00   D2 32480050   D3 01FE0000 
+  D4 FFFF00A2   D5 00003160   D6 000042E0   D7 FFFF001A 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B71C   A3 0007BA3C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 00                                      ....
+> m $7b6b0 48
+0007B6B0: 32 48 c0 00 32 e0 ff fe 33 80 ff fc 34 20 ff f0  2Hĳ.2α¯³3Ç¯ⁿ4 ¯≡
+0007B6C0: 34 c0 ff e0 35 60 ff e0 36 00 ff c0 36 a0 ff 80  4ĳ¯α5`¯α6.¯ĳ6á¯Ç
+0007B6D0: 37 40 ff 80 37 e0 ff 80 38 80 ff 00 39 20 ff 00  7@¯Ç7α¯Ç8Ç¯.9 ¯.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 33 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 4328FF00   D2 32E80050   D3 01FE0000 
+  D4 FFFF00A2   D5 00003200   D6 00004380   D7 FFFF001A 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B71C   A3 0007BA3C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 00                                      ....
+> m $7b6b0 48
+0007B6B0: 32 e8 c0 00 33 80 ff fe 34 20 ff fc 34 c0 ff f0  2Φĳ.3Ç¯³4 ¯ⁿ4ĳ¯≡
+0007B6C0: 35 60 ff e0 36 00 ff e0 36 a0 ff c0 37 40 ff 80  5`¯α6.¯α6á¯ĳ7@¯Ç
+0007B6D0: 37 e0 ff 80 38 80 ff 80 39 20 ff 00 39 c0 ff 00  7α¯Ç8Ç¯Ç9 ¯.9ĳ¯.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 34 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 4328FF00   D2 32E80050   D3 01FE0000 
+  D4 FFFF00A2   D5 00003200   D6 00004380   D7 FFFF001A 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B71C   A3 0007BA3C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 00                                      ....
+> m $7b6b0 48
+0007B6B0: 32 e8 c0 00 33 80 ff fe 34 20 ff fc 34 c0 ff f0  2Φĳ.3Ç¯³4 ¯ⁿ4ĳ¯≡
+0007B6C0: 35 60 ff e0 36 00 ff e0 36 a0 ff c0 37 40 ff 80  5`¯α6.¯α6á¯ĳ7@¯Ç
+0007B6D0: 37 e0 ff 80 38 80 ff 80 39 20 ff 00 39 c0 ff 00  7α¯Ç8Ç¯Ç9 ¯.9ĳ¯.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 35 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 4328FF00   D2 32E80050   D3 02190000 
+  D4 FFFF00A2   D5 00003200   D6 00004380   D7 FFFF001A 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B71C   A3 0007BA3C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 00                                      ....
+> m $7b6b0 48
+0007B6B0: 32 e8 c0 00 33 80 ff fe 34 20 ff fc 34 c0 ff f0  2Φĳ.3Ç¯³4 ¯ⁿ4ĳ¯≡
+0007B6C0: 35 60 ff e0 36 00 ff e0 36 a0 ff c0 37 40 ff 80  5`¯α6.¯α6á¯ĳ7@¯Ç
+0007B6D0: 37 e0 ff 80 38 80 ff 80 39 20 ff 00 39 c0 ff 00  7α¯Ç8Ç¯Ç9 ¯.9ĳ¯.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 36 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 4328FF00   D2 32E80050   D3 01FE0000 
+  D4 FFFF00A2   D5 00003200   D6 00004380   D7 FFFF001A 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B71C   A3 0007BA3C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 00                                      ....
+> m $7b6b0 48
+0007B6B0: 32 e8 c0 00 33 80 ff fe 34 20 ff fc 34 c0 ff f0  2Φĳ.3Ç¯³4 ¯ⁿ4ĳ¯≡
+0007B6C0: 35 60 ff e0 36 00 ff e0 36 a0 ff c0 37 40 ff 80  5`¯α6.¯α6á¯ĳ7@¯Ç
+0007B6D0: 37 e0 ff 80 38 80 ff 80 39 20 ff 00 39 c0 ff 00  7α¯Ç8Ç¯Ç9 ¯.9ĳ¯.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 37 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 4328FF00   D2 32E80050   D3 01FE0000 
+  D4 FFFF00A2   D5 00003200   D6 00004380   D7 FFFF001A 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B71C   A3 0007BA3C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 00                                      ....
+> m $7b6b0 48
+0007B6B0: 32 e8 c0 00 33 80 ff fe 34 20 ff fc 34 c0 ff f0  2Φĳ.3Ç¯³4 ¯ⁿ4ĳ¯≡
+0007B6C0: 35 60 ff e0 36 00 ff e0 36 a0 ff c0 37 40 ff 80  5`¯α6.¯α6á¯ĳ7@¯Ç
+0007B6D0: 37 e0 ff 80 38 80 ff 80 39 20 ff 00 39 c0 ff 00  7α¯Ç8Ç¯Ç9 ¯.9ĳ¯.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 38 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 4328FF00   D2 32E80050   D3 01FE0000 
+  D4 FFFF00A2   D5 00003200   D6 00004380   D7 FFFF001A 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B71C   A3 0007BA3C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 00                                      ....
+> m $7b6b0 48
+0007B6B0: 32 e8 c0 00 33 80 ff fe 34 20 ff fc 34 c0 ff f0  2Φĳ.3Ç¯³4 ¯ⁿ4ĳ¯≡
+0007B6C0: 35 60 ff e0 36 00 ff e0 36 a0 ff c0 37 40 ff 80  5`¯α6.¯α6á¯ĳ7@¯Ç
+0007B6D0: 37 e0 ff 80 38 80 ff 80 39 20 ff 00 39 c0 ff 00  7α¯Ç8Ç¯Ç9 ¯.9ĳ¯.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 39 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 4328FF00   D2 32E80050   D3 02190000 
+  D4 FFFF00A2   D5 00003200   D6 00004380   D7 FFFF001A 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B71C   A3 0007BA3C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 00                                      ....
+> m $7b6b0 48
+0007B6B0: 32 e8 c0 00 33 80 ff fe 34 20 ff fc 34 c0 ff f0  2Φĳ.3Ç¯³4 ¯ⁿ4ĳ¯≡
+0007B6C0: 35 60 ff e0 36 00 ff e0 36 a0 ff c0 37 40 ff 80  5`¯α6.¯α6á¯ĳ7@¯Ç
+0007B6D0: 37 e0 ff 80 38 80 ff 80 39 20 ff 00 39 c0 ff 00  7α¯Ç8Ç¯Ç9 ¯.9ĳ¯.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 40 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 4328FF00   D2 32E80050   D3 01FE0000 
+  D4 FFFF00A2   D5 00003200   D6 00004380   D7 FFFF001A 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B71C   A3 0007BA3C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 00                                      ....
+> m $7b6b0 48
+0007B6B0: 32 e8 c0 00 33 80 ff fe 34 20 ff fc 34 c0 ff f0  2Φĳ.3Ç¯³4 ¯ⁿ4ĳ¯≡
+0007B6C0: 35 60 ff e0 36 00 ff e0 36 a0 ff c0 37 40 ff 80  5`¯α6.¯α6á¯ĳ7@¯Ç
+0007B6D0: 37 e0 ff 80 38 80 ff 80 39 20 ff 00 39 c0 ff 00  7α¯Ç8Ç¯Ç9 ¯.9ĳ¯.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 41 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00060000   D1 36A0FFF8   D2 26600050   D3 02200000 
+  D4 FFFF0097   D5 00002580   D6 00003700   D7 FFFF001A 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B71C   A3 0007BA3C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 26 60 fe 00 27 00 f0 00 27 a0 e0 00 28 40 80 00  &`³.'.≡.'áα.(@Ç.
+0007B6C0: 28 e0 00 00 29 80 00 00 2a 18 ff fe 2a b8 ff fc  (α..)Ç..*.¯³*Õ¯ⁿ
+0007B6D0: 2b 58 ff fc 2b f8 ff fc 2c 98 ff f8 2d 38 ff f8  +X¯ⁿ+°¯ⁿ,ÿ¯°-8¯°
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 42 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00060000   D1 3428FFE0   D2 24880050   D3 02200000 
+  D4 FFFF00A5   D5 000023A0   D6 00003480   D7 FFFF0019 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B718   A3 0007BA38 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 24 88 c0 00 25 28 80 00 25 c0 ff fe 26 60 ff fc  $êĳ.%(Ç.%ĳ¯³&`¯ⁿ
+0007B6C0: 27 00 ff fc 27 a0 ff f8 28 40 ff f0 28 e0 ff f0  '.¯ⁿ'á¯°(@¯≡(α¯≡
+0007B6D0: 29 80 ff f0 2a 20 ff e0 2a c0 ff e0 2b 60 ff e0  )Ç¯≡* ¯α*ĳ¯α+`¯α
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 43 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00060000   D1 41E0FFE0   D2 32E00050   D3 014A0000 
+  D4 FFFF0094   D5 00003200   D6 00004240   D7 FFFF0018 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B714   A3 0007BA34 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 32 e0 f8 00 33 80 e0 00 34 20 80 00 34 c0 00 00  2α°.3Çα.4 Ç.4ĳ..
+0007B6C0: 35 58 ff fe 35 f8 ff fc 36 98 ff fc 37 38 ff f8  5X¯³5°¯ⁿ6ÿ¯ⁿ78¯°
+0007B6D0: 37 d8 ff f8 38 78 ff f0 39 18 ff f0 39 b8 ff f0  7ן¯°8x¯≡9.¯≡9Õ¯≡
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 44 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00060000   D1 3EC0FE00   D2 2E800050   D3 02200000 
+  D4 FFFF0091   D5 00002DA0   D6 00003F20   D7 FFFF001A 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B71C   A3 0007BA3C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 2e 80 80 00 2f 18 ff fc 2f b8 ff f8 30 58 ff e0  .ÇÇ./.¯ⁿ/Õ¯°0X¯α
+0007B6C0: 30 f8 ff c0 31 98 ff c0 32 38 ff 80 32 d8 ff 00  0°¯ĳ1ÿ¯ĳ28¯Ç2ן¯.
+0007B6D0: 33 78 ff 00 34 18 ff 00 34 b8 fe 00 35 58 fe 00  3x¯.4.¯.4Õ³.5X³.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 45 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00060000   D1 4288F000   D2 33880050   D3 01F80000 
+  D4 FFFF009D   D5 000032A0   D6 000042E0   D7 FFFF0018 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B714   A3 0007BA34 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 33 80 ff fc 34 20 ff f0 34 c0 ff c0 35 60 ff 80  3Ç¯ⁿ4 ¯≡4ĳ¯ĳ5`¯Ç
+0007B6C0: 36 00 ff 00 36 a0 fe 00 37 40 fe 00 37 e0 fc 00  6.¯.6á³.7@³.7αⁿ.
+0007B6D0: 38 80 fc 00 39 20 f8 00 39 c0 f8 00 3a 60 f8 00  8Çⁿ.9 °.9ĳ°.:`°.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 46 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00060000   D1 3C40FFFC   D2 2D400050   D3 028F0000 
+  D4 FFFF0097   D5 00002C60   D6 00003CA0   D7 FFFF0018 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B714   A3 0007BA34 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 2d 40 ff 00 2d e0 fc 00 2e 80 f0 00 2f 20 e0 00  -@¯.-αⁿ..Ç≡./ α.
+0007B6C0: 2f c0 c0 00 30 60 80 00 31 00 80 00 31 a0 00 00  /ĳĳ.0`Ç.1.Ç.1á..
+0007B6D0: 32 40 00 00 32 d8 ff fe 33 78 ff fe 34 18 ff fe  2@..2ן¯³3x¯³4.¯³
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 47 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00060000   D1 41F0F800   D2 32F00050   D3 014A0000 
+  D4 FFFF00AE   D5 00003200   D6 00004240   D7 FFFF0018 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B714   A3 0007BA34 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 32 e8 ff fe 33 88 ff f8 34 28 ff e0 34 c8 ff c0  2Φ¯³3ê¯°4(¯α4ז¯ĳ
+0007B6C0: 35 68 ff 80 36 08 ff 00 36 a8 ff 00 37 48 fe 00  5h¯Ç6.¯.6¿¯.7H³.
+0007B6D0: 37 e8 fe 00 38 88 fc 00 39 28 fc 00 39 c8 fc 00  7Φ³.8êⁿ.9(ⁿ.9זⁿ.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 48 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00060000   D1 3ED0FF00   D2 2E900050   D3 02200000 
+  D4 FFFF00B2   D5 00002DA0   D6 00003F20   D7 FFFF001A 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B71C   A3 0007BA3C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 2e 90 c0 00 2f 28 ff fe 2f c8 ff fc 30 68 ff f0  .Éĳ./(¯³/ז¯ⁿ0h¯≡
+0007B6C0: 31 08 ff e0 31 a8 ff e0 32 48 ff c0 32 e8 ff 80  1.¯α1¿¯α2H¯ĳ2Φ¯Ç
+0007B6D0: 33 88 ff 80 34 28 ff 80 34 c8 ff 00 35 68 ff 00  3ê¯Ç4(¯Ç4ז¯.5h¯.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 49 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00060000   D1 4288FFFC   D2 33880050   D3 01F80000 
+  D4 FFFF00A7   D5 000032A0   D6 000042E0   D7 FFFF0018 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B714   A3 0007BA34 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 33 88 ff 00 34 28 fc 00 34 c8 f0 00 35 68 e0 00  3ê¯.4(ⁿ.4ז≡.5hα.
+0007B6C0: 36 08 c0 00 36 a8 80 00 37 48 80 00 37 e8 00 00  6.ĳ.6¿Ç.7HÇ.7Φ..
+0007B6D0: 38 88 00 00 39 20 ff fe 39 c0 ff fe 3a 60 ff fe  8ê..9 ¯³9ĳ¯³:`¯³
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 50 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00060000   D1 3C50E000   D2 2D500050   D3 028F0000 
+  D4 FFFF00AC   D5 00002C60   D6 00003CA0   D7 FFFF0018 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B714   A3 0007BA34 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 2d 48 ff f8 2d e8 ff e0 2e 88 ff 80 2f 28 ff 00  -H¯°-Φ¯α.ê¯Ç/(¯.
+0007B6C0: 2f c8 fe 00 30 68 fc 00 31 08 fc 00 31 a8 f8 00  /ז³.0hⁿ.1.ⁿ.1¿°.
+0007B6D0: 32 48 f8 00 32 e8 f0 00 33 88 f0 00 34 28 f0 00  2H°.2Φ≡.3ê≡.4(≡.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 51 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00060000   D1 3920FFF8   D2 2DE00060   D3 008E0000 
+  D4 FFFF0093   D5 00002D00   D6 00003980   D7 FFFF0012 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6FC   A3 0007BA1C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 2d e0 fe 00 2e 80 f8 00 2f 20 f0 00 2f c0 e0 00  -α³..Ç°./ ≡./ĳα.
+0007B6C0: 30 60 c0 00 31 00 c0 00 31 a0 80 00 32 40 80 00  0`ĳ.1.ĳ.1áÇ.2@Ç.
+0007B6D0: 32 e0 80 00 33 80 80 00 34 20 80 00 34 c0 80 00  2αÇ.3ÇÇ.4 Ç.4ĳÇ.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 52 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00060000   D1 3568FFFC   D2 2B680060   D3 01610000 
+  D4 FFFF00A4   D5 00002A80   D6 000035C0   D7 FFFF0010 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6F4   A3 0007BA14 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 2b 68 ff c0 2c 08 ff 00 2c a8 fe 00 2d 48 fc 00  +h¯ĳ,.¯.,¿³.-Hⁿ.
+0007B6C0: 2d e8 f8 00 2e 88 f8 00 2f 28 f0 00 2f c8 f0 00  -Φ°..ê°./(≡./ז≡.
+0007B6D0: 30 68 f0 00 31 08 f0 00 31 a8 f0 00 32 48 f8 00  0h≡.1.≡.1¿≡.2H°.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 53 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00060000   D1 3880FFF0   D2 2E800060   D3 02B50000 
+  D4 FFFF0092   D5 00002DA0   D6 000038E0   D7 FFFF0010 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6F4   A3 0007BA14 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 2e 80 ff 00 2f 20 fc 00 2f c0 f8 00 30 60 f0 00  .Ç¯./ ⁿ./ĳ°.0`≡.
+0007B6C0: 31 00 e0 00 31 a0 e0 00 32 40 c0 00 32 e0 c0 00  1.α.1áα.2@ĳ.2αĳ.
+0007B6D0: 33 80 c0 00 34 20 c0 00 34 c0 c0 00 35 60 e0 00  3Çĳ.4 ĳ.4ĳĳ.5`α.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 54 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00060000   D1 36A80000   D2 2CA80060   D3 02B50000 
+  D4 FFFF0096   D5 00002BC0   D6 00003700   D7 FFFF0010 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6F4   A3 0007BA14 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 2c a0 ff f0 2d 40 ff c0 2d e0 ff 80 2e 80 ff 00  ,á¯≡-@¯ĳ-α¯Ç.Ç¯.
+0007B6C0: 2f 20 fe 00 2f c0 fe 00 30 60 fc 00 31 00 fc 00  / ³./ĳ³.0`ⁿ.1.ⁿ.
+0007B6D0: 31 a0 fc 00 32 40 fc 00 32 e0 fc 00 33 80 fe 00  1áⁿ.2@ⁿ.2αⁿ.3Ç³.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 55 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00060000   D1 3E288000   D2 34280060   D3 000D0000 
+  D4 FFFF0097   D5 00003340   D6 00003E80   D7 FFFF0010 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6F4   A3 0007BA14 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 34 20 ff f8 34 c0 ff e0 35 60 ff c0 36 00 ff 80  4 ¯°4ĳ¯α5`¯ĳ6.¯Ç
+0007B6C0: 36 a0 ff 00 37 40 ff 00 37 e0 fe 00 38 80 fe 00  6á¯.7@¯.7α³.8Ç³.
+0007B6D0: 39 20 fe 00 39 c0 fe 00 3a 60 fe 00 3b 00 ff 00  9 ³.9ĳ³.:`³.;.¯.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 56 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00060000   D1 3B00FFF0   D2 31000060   D3 02B50000 
+  D4 FFFF0092   D5 00003020   D6 00003B60   D7 FFFF0010 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6F4   A3 0007BA14 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 31 00 ff 00 31 a0 fc 00 32 40 f8 00 32 e0 f0 00  1.¯.1áⁿ.2@°.2α≡.
+0007B6C0: 33 80 e0 00 34 20 e0 00 34 c0 c0 00 35 60 c0 00  3Çα.4 α.4ĳĳ.5`ĳ.
+0007B6D0: 36 00 c0 00 36 a0 c0 00 37 40 c0 00 37 e0 e0 00  6.ĳ.6áĳ.7@ĳ.7αα.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 57 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00060000   D1 3BB00000   D2 31B00060   D3 00B70000 
+  D4 FFFF00A6   D5 000030C0   D6 00003C00   D7 FFFF0010 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6F4   A3 0007BA14 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 31 a8 ff f0 32 48 ff c0 32 e8 ff 80 33 88 ff 00  1¿¯≡2H¯ĳ2Φ¯Ç3ê¯.
+0007B6C0: 34 28 fe 00 34 c8 fe 00 35 68 fc 00 36 08 fc 00  4(³.4ז³.5hⁿ.6.ⁿ.
+0007B6D0: 36 a8 fc 00 37 48 fc 00 37 e8 fc 00 38 88 fe 00  6¿ⁿ.7Hⁿ.7Φⁿ.8ê³.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 58 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00060000   D1 3BB0C000   D2 31B00060   D3 01610000 
+  D4 FFFF00A8   D5 000030C0   D6 00003C00   D7 FFFF0010 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6F4   A3 0007BA14 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 31 a8 ff fc 32 48 ff f0 32 e8 ff e0 33 88 ff c0  1¿¯ⁿ2H¯≡2Φ¯α3ê¯ĳ
+0007B6C0: 34 28 ff 80 34 c8 ff 80 35 68 ff 00 36 08 ff 00  4(¯Ç4ז¯Ç5h¯.6.¯.
+0007B6D0: 36 a8 ff 00 37 48 ff 00 37 e8 ff 00 38 88 ff 80  6¿¯.7H¯.7Φ¯.8ê¯Ç
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 59 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00060000   D1 3EC8FFC0   D2 34C80060   D3 02700000 
+  D4 FFFF00A0   D5 000033E0   D6 00003F20   D7 FFFF0010 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6F4   A3 0007BA14 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 34 c8 fc 00 35 68 f0 00 36 08 e0 00 36 a8 c0 00  4זⁿ.5h≡.6.α.6¿ĳ.
+0007B6C0: 37 48 80 00 37 e8 80 00 38 88 00 00 39 28 00 00  7HÇ.7ΦÇ.8ê..9(..
+0007B6D0: 39 c8 00 00 3a 68 00 00 3b 08 00 00 3b a8 80 00  9ז..:h..;...;¿Ç.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 60 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00060000   D1 3CF0FE00   D2 31B00060   D3 008E0000 
+  D4 FFFF00AD   D5 000030C0   D6 00003D40   D7 FFFF0012 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6FC   A3 0007BA1C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 31 b0 80 00 32 48 ff fe 32 e8 ff fc 33 88 ff f8  1ãÇ.2H¯³2Φ¯ⁿ3ê¯°
+0007B6C0: 34 28 ff f0 34 c8 ff f0 35 68 ff e0 36 08 ff e0  4(¯≡4ז¯≡5h¯α6.¯α
+0007B6D0: 36 a8 ff e0 37 48 ff e0 37 e8 ff e0 38 88 ff e0  6¿¯α7H¯α7Φ¯α8ê¯α
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 61 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00060000   D1 37E0FFF0   D2 2CA00060   D3 02080000 
+  D4 FFFF0092   D5 00002BC0   D6 00003840   D7 FFFF0012 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6FC   A3 0007BA1C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 2c a0 fc 00 2d 40 f0 00 2d e0 e0 00 2e 80 c0 00  ,áⁿ.-@≡.-αα..Çĳ.
+0007B6C0: 2f 20 80 00 2f c0 80 00 30 60 00 00 31 00 00 00  / Ç./ĳÇ.0`..1...
+0007B6D0: 31 a0 00 00 32 40 00 00 32 e0 00 00 33 80 00 00  1á..2@..2α..3Ç..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 62 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00060000   D1 31A8FFFE   D2 26680060   D3 01860000 
+  D4 FFFF00A5   D5 00002580   D6 00003200   D7 FFFF0012 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6FC   A3 0007BA1C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 26 68 ff 80 27 08 fe 00 27 a8 fc 00 28 48 f8 00  &h¯Ç'.³.'¿ⁿ.(H°.
+0007B6C0: 28 e8 f0 00 29 88 f0 00 2a 28 e0 00 2a c8 e0 00  (Φ≡.)ê≡.*(α.*זα.
+0007B6D0: 2b 68 e0 00 2c 08 e0 00 2c a8 e0 00 2d 48 e0 00  +hα.,.α.,¿α.-Hα.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 63 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00060000   D1 37E0FFE0   D2 2CA00060   D3 000A0000 
+  D4 FFFF0091   D5 00002BC0   D6 00003840   D7 FFFF0012 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6FC   A3 0007BA1C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 2c a0 f8 00 2d 40 e0 00 2d e0 c0 00 2e 80 80 00  ,á°.-@α.-αĳ..ÇÇ.
+0007B6C0: 2f 20 00 00 2f c0 00 00 30 58 ff fe 30 f8 ff fe  / ../ĳ..0X¯³0°¯³
+0007B6D0: 31 98 ff fe 32 38 ff fe 32 d8 ff fe 33 78 ff fe  1ÿ¯³28¯³2ן¯³3x¯³
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 64 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00060000   D1 35680000   D2 2A280060   D3 000A0000 
+  D4 FFFF0096   D5 00002940   D6 000035C0   D7 FFFF0012 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6FC   A3 0007BA1C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 2a 20 ff c0 2a c0 ff 00 2b 60 fe 00 2c 00 fc 00  * ¯ĳ*ĳ¯.+`³.,.ⁿ.
+0007B6C0: 2c a0 f8 00 2d 40 f8 00 2d e0 f0 00 2e 80 f0 00  ,á°.-@°.-α≡..Ç≡.
+0007B6D0: 2f 20 f0 00 2f c0 f0 00 30 60 f0 00 31 00 f0 00  / ≡./ĳ≡.0`≡.1.≡.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 65 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00060000   D1 3B00FFFE   D2 2E800060   D3 00780000 
+  D4 FFFF0096   D5 00002DA0   D6 00003B60   D7 FFFF0014 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B704   A3 0007BA24 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 2e 80 ff 80 2f 20 fe 00 2f c0 fc 00 30 60 f8 00  .Ç¯Ç/ ³./ĳⁿ.0`°.
+0007B6C0: 31 00 f0 00 31 a0 e0 00 32 40 e0 00 32 e0 c0 00  1.≡.1áα.2@α.2αĳ.
+0007B6D0: 33 80 c0 00 34 20 c0 00 34 c0 c0 00 35 60 c0 00  3Çĳ.4 ĳ.4ĳĳ.5`ĳ.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 66 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00060000   D1 39C0FFE0   D2 2E800060   D3 000A0000 
+  D4 FFFF0091   D5 00002DA0   D6 00003A20   D7 FFFF0012 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6FC   A3 0007BA1C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 2e 80 f8 00 2f 20 e0 00 2f c0 c0 00 30 60 80 00  .Ç°./ α./ĳĳ.0`Ç.
+0007B6C0: 31 00 00 00 31 a0 00 00 32 38 ff fe 32 d8 ff fe  1...1á..28¯³2ן¯³
+0007B6D0: 33 78 ff fe 34 18 ff fe 34 b8 ff fe 35 58 ff fe  3x¯³4.¯³4Õ¯³5X¯³
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 67 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00060000   D1 38908000   D2 2D500060   D3 02440000 
+  D4 FFFF00A7   D5 00002C60   D6 000038E0   D7 FFFF0012 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6FC   A3 0007BA1C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 2d 48 ff e0 2d e8 ff 80 2e 88 ff 00 2f 28 fe 00  -H¯α-Φ¯Ç.ê¯./(³.
+0007B6C0: 2f c8 fc 00 30 68 fc 00 31 08 f8 00 31 a8 f8 00  /זⁿ.0hⁿ.1.°.1¿°.
+0007B6D0: 32 48 f8 00 32 e8 f8 00 33 88 f8 00 34 28 f8 00  2H°.2Φ°.3ê°.4(°.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 68 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00060000   D1 3930E000   D2 2DF00060   D3 01860000 
+  D4 FFFF00A9   D5 00002D00   D6 00003980   D7 FFFF0012 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6FC   A3 0007BA1C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 2d e8 ff f8 2e 88 ff e0 2f 28 ff c0 2f c8 ff 80  -Φ¯°.ê¯α/(¯ĳ/ז¯Ç
+0007B6C0: 30 68 ff 00 31 08 ff 00 31 a8 fe 00 32 48 fe 00  0h¯.1.¯.1¿³.2H³.
+0007B6D0: 32 e8 fe 00 33 88 fe 00 34 28 fe 00 34 c8 fe 00  2Φ³.3ê³.4(³.4ז³.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 69 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00060000   D1 3A68FF80   D2 2DE80060   D3 01400000 
+  D4 FFFF00A0   D5 00002D00   D6 00003AC0   D7 FFFF0014 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B704   A3 0007BA24 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 2d e8 e0 00 2e 88 80 00 2f 28 00 00 2f c0 ff fe  -Φα..êÇ./(../ĳ¯³
+0007B6C0: 30 60 ff fc 31 00 ff f8 31 a0 ff f8 32 40 ff f0  0`¯ⁿ1.¯°1á¯°2@¯≡
+0007B6D0: 32 e0 ff f0 33 80 ff f0 34 20 ff f0 34 c0 ff f0  2α¯≡3Ç¯≡4 ¯≡4ĳ¯≡
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 70 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00060000   D1 3C50FE00   D2 31100060   D3 02080000 
+  D4 FFFF00AD   D5 00003020   D6 00003CA0   D7 FFFF0012 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6FC   A3 0007BA1C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 31 10 80 00 31 a8 ff fe 32 48 ff fc 32 e8 ff f8  1.Ç.1¿¯³2H¯ⁿ2Φ¯°
+0007B6C0: 33 88 ff f0 34 28 ff f0 34 c8 ff e0 35 68 ff e0  3ê¯≡4(¯≡4ז¯α5h¯α
+0007B6D0: 36 08 ff e0 36 a8 ff e0 37 48 ff e0 37 e8 ff e0  6.¯α6¿¯α7H¯α7Φ¯α
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 71 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00060000   D1 34C0FFE0   D2 24880050   D3 01F40000 
+  D4 FFFF0096   D5 000023A0   D6 00003520   D7 FFFF001A 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B71C   A3 0007BA3C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 24 80 00 00 25 18 ff fe 25 b8 ff fc 26 58 ff f8  $Ç..%.¯³%Õ¯ⁿ&X¯°
+0007B6C0: 26 f8 ff f0 27 98 ff f0 28 38 ff e0 28 d8 ff e0  &°¯≡'ÿ¯≡(8¯α(ן¯α
+0007B6D0: 29 78 ff e0 2a 18 ff c0 2a b8 ff c0 2b 58 ff c0  )x¯α*.¯ĳ*Õ¯ĳ+X¯ĳ
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 72 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00060000   D1 32E8FFFC   D2 24900050   D3 00880000 
+  D4 FFFF00A9   D5 000023A0   D6 00003340   D7 FFFF0017 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B710   A3 0007BA30 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 24 88 00 00 25 20 ff fe 25 c0 ff fe 26 60 ff fc  $ê..% ¯³%ĳ¯³&`¯ⁿ
+0007B6C0: 27 00 ff fc 27 a0 ff fc 28 40 ff f8 28 e0 ff f8  '.¯ⁿ'á¯ⁿ(@¯°(α¯°
+0007B6D0: 29 80 ff f8 2a 20 ff f8 2a c0 ff f8 2b 60 ff f8  )Ç¯°* ¯°*ĳ¯°+`¯°
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 73 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00060000   D1 3F60FE00   D2 2CA00050   D3 010E0000 
+  D4 FFFF0093   D5 00002BC0   D6 00003FC0   D7 FFFF001E 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B72C   A3 0007BA4C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 2c a0 80 00 2d 38 ff fc 2d d8 ff f0 2e 78 ff e0  ,áÇ.-8¯ⁿ-ן¯≡.x¯α
+0007B6C0: 2f 18 ff c0 2f b8 ff 80 30 58 ff 00 30 f8 fe 00  /.¯ĳ/Õ¯Ç0X¯.0°³.
+0007B6D0: 31 98 fe 00 32 38 fc 00 32 d8 fc 00 33 78 fc 00  1ÿ³.28ⁿ.2ןⁿ.3xⁿ.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 74 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00060000   D1 3D80F800   D2 2C000050   D3 01F40000 
+  D4 FFFF0090   D5 00002B20   D6 00003DE0   D7 FFFF001C 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B724   A3 0007BA44 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 2b f8 ff fe 2c 98 ff f0 2d 38 ff c0 2d d8 ff 80  +°¯³,ÿ¯≡-8¯ĳ-ן¯Ç
+0007B6C0: 2e 78 ff 00 2f 18 fe 00 2f b8 fc 00 30 58 fc 00  .x¯./.³./Õⁿ.0Xⁿ.
+0007B6D0: 30 f8 f8 00 31 98 f8 00 32 38 f8 00 32 d8 f0 00  0°°.1ÿ°.28°.2ן≡.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 75 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00060000   D1 3E20FFFE   D2 2B600050   D3 018E0000 
+  D4 FFFF009B   D5 00002A80   D6 00003E80   D7 FFFF001E 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B72C   A3 0007BA4C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 2b 60 ff 80 2c 00 fc 00 2c a0 f0 00 2d 40 e0 00  +`¯Ç,.ⁿ.,á≡.-@α.
+0007B6C0: 2d e0 c0 00 2e 80 80 00 2f 20 00 00 2f b8 ff fe  -αĳ..ÇÇ./ ../Õ¯³
+0007B6D0: 30 58 ff fe 30 f8 ff fc 31 98 ff fc 32 38 ff fc  0X¯³0°¯ⁿ1ÿ¯ⁿ28¯ⁿ
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 76 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00060000   D1 3920FFC0   D2 27A00050   D3 021C0000 
+  D4 FFFF0095   D5 000026C0   D6 00003980   D7 FFFF001C 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B724   A3 0007BA44 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 27 a0 f0 00 28 40 80 00 28 d8 ff fe 29 78 ff fc  'á≡.(@Ç.(ן¯³)x¯ⁿ
+0007B6C0: 2a 18 ff f8 2a b8 ff f0 2b 58 ff e0 2b f8 ff e0  *.¯°*Õ¯≡+X¯α+°¯α
+0007B6D0: 2c 98 ff c0 2d 38 ff c0 2d d8 ff c0 2e 78 ff 80  ,ÿ¯ĳ-8¯ĳ-ן¯ĳ.x¯Ç
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 77 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00060000   D1 3F70FC00   D2 2CB00050   D3 010E0000 
+  D4 FFFF00B2   D5 00002BC0   D6 00003FC0   D7 FFFF001E 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B72C   A3 0007BA4C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 2c b0 00 00 2d 48 ff f8 2d e8 ff e0 2e 88 ff c0  ,ã..-H¯°-Φ¯α.ê¯ĳ
+0007B6C0: 2f 28 ff 80 2f c8 ff 00 30 68 fe 00 31 08 fc 00  /(¯Ç/ז¯.0h³.1.ⁿ.
+0007B6D0: 31 a8 fc 00 32 48 f8 00 32 e8 f8 00 33 88 f8 00  1¿ⁿ.2H°.2Φ°.3ê°.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 78 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00060000   D1 3D90FF00   D2 2C100050   D3 01F40000 
+  D4 FFFF00B3   D5 00002B20   D6 00003DE0   D7 FFFF001C 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B724   A3 0007BA44 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 2c 10 c0 00 2c a8 ff fe 2d 48 ff f8 2d e8 ff f0  ,.ĳ.,¿¯³-H¯°-Φ¯≡
+0007B6C0: 2e 88 ff e0 2f 28 ff c0 2f c8 ff 80 30 68 ff 80  .ê¯α/(¯ĳ/ז¯Ç0h¯Ç
+0007B6D0: 31 08 ff 00 31 a8 ff 00 32 48 ff 00 32 e8 fe 00  1.¯.1¿¯.2H¯.2Φ³.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 79 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00060000   D1 3E28FFF8   D2 2B680050   D3 018E0000 
+  D4 FFFF00A9   D5 00002A80   D6 00003E80   D7 FFFF001E 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B72C   A3 0007BA4C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 2b 68 fe 00 2c 08 f0 00 2c a8 c0 00 2d 48 80 00  +h³.,.≡.,¿ĳ.-HÇ.
+0007B6C0: 2d e8 00 00 2e 80 ff fe 2f 20 ff fc 2f c0 ff f8  -Φ...Ç¯³/ ¯ⁿ/ĳ¯°
+0007B6D0: 30 60 ff f8 31 00 ff f0 31 a0 ff f0 32 40 ff f0  0`¯°1.¯≡1á¯≡2@¯≡
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 80 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00060000   D1 3930E000   D2 27B00050   D3 021C0000 
+  D4 FFFF00AE   D5 000026C0   D6 00003980   D7 FFFF001C 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B724   A3 0007BA44 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 00 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 27 a8 ff f8 28 48 ff c0 28 e8 ff 00 29 88 fe 00  '¿¯°(H¯ĳ(Φ¯.)ê³.
+0007B6C0: 2a 28 fc 00 2a c8 f8 00 2b 68 f0 00 2c 08 f0 00  *(ⁿ.*ז°.+h≡.,.≡.
+0007B6D0: 2c a8 e0 00 2d 48 e0 00 2d e8 e0 00 2e 88 c0 00  ,¿α.-Hα.-Φα..êĳ.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 81 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 2D40E000   D2 24800050   D3 028F0000 
+  D4 FFFF008C   D5 000023A0   D6 00002DA0   D7 FFFF000E 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6EC   A3 0007BA0C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 05 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 24 78 f0 00 25 18 f0 00 25 b8 f0 00 26 58 f0 00  $x≡.%.≡.%Õ≡.&X≡.
+0007B6C0: 26 f8 f0 00 27 98 f0 00 28 38 f8 00 28 d8 f8 00  &°≡.'ÿ≡.(8°.(ן°.
+0007B6D0: 29 78 fc 00 2a 18 fc 00 2a b8 fe 00 2b 58 ff 00  )xⁿ.*.ⁿ.*Õ³.+X¯.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 82 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 2848FFFC   D2 00000050   D3 028F0000 
+  D4 FFFF00A7   D5 FFFF0028   D6 000028A0   D7 FFFF0006 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6CC   A3 0007B9EC 
+  A4 0007C718   A5 000035F8   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 05 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 24 88 80 00 25 28 80 00 25 c8 c0 00 26 68 e0 00  $êÇ.%(Ç.%זĳ.&hα.
+0007B6C0: 27 08 f0 00 27 a8 fc 00 28 48 ff 00 28 d8 f8 00  '.≡.'¿ⁿ.(H¯.(ן°.
+0007B6D0: 29 78 fc 00 2a 18 fc 00 2a b8 fe 00 2b 58 ff 00  )xⁿ.*.ⁿ.*Õ³.+X¯.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 83 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 43208000   D2 35600050   D3 01C40000 
+  D4 FFFF0089   D5 00003480   D6 00004380   D7 FFFF0016 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B70C   A3 0007BA2C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 05 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 35 58 ff e0 35 f8 ff 80 36 98 fe 00 37 38 fc 00  5X¯α5°¯Ç6ÿ³.78ⁿ.
+0007B6C0: 37 d8 f8 00 38 78 f8 00 39 18 f0 00 39 b8 f0 00  7ן°.8x°.9.≡.9Õ≡.
+0007B6D0: 3a 58 e0 00 3a f8 e0 00 3b 98 e0 00 3c 38 e0 00  :Xα.:°α.;ÿα.<8α.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 84 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 3CD8FF00   D2 2DD80050   D3 028F0000 
+  D4 FFFF0081   D5 00002D00   D6 00003D40   D7 FFFF0018 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B714   A3 0007BA34 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 05 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 2d d8 c0 00 2e 78 00 00 2f 10 ff fc 2f b0 ff f8  -ןĳ..x../.¯ⁿ/ã¯°
+0007B6C0: 30 50 ff f0 30 f0 ff e0 31 90 ff e0 32 30 ff c0  0P¯≡0≡¯α1É¯α20¯ĳ
+0007B6D0: 32 d0 ff c0 33 70 ff 80 34 10 ff 80 34 b0 ff 80  2ס¯ĳ3p¯Ç4.¯Ç4ã¯Ç
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 85 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 44688000   D2 36A80050   D3 00A60000 
+  D4 FFFF0099   D5 000035C0   D6 000044C0   D7 FFFF0016 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B70C   A3 0007BA2C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 05 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 36 a0 ff e0 37 40 ff 80 37 e0 fe 00 38 80 fc 00  6á¯α7@¯Ç7α³.8Çⁿ.
+0007B6C0: 39 20 f8 00 39 c0 f8 00 3a 60 f0 00 3b 00 f0 00  9 °.9ĳ°.:`≡.;.≡.
+0007B6D0: 3b a0 e0 00 3c 40 e0 00 3c e0 e0 00 3d 80 e0 00  ;áα.<@α.<αα.=Çα.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 86 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 39C0F800   D2 2AC00050   D3 00D80000 
+  D4 FFFF008E   D5 000029E0   D6 00003A20   D7 FFFF0018 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B714   A3 0007BA34 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 05 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 2a b8 ff fe 2b 58 ff f8 2b f8 ff e0 2c 98 ff c0  *Õ¯³+X¯°+°¯α,ÿ¯ĳ
+0007B6C0: 2d 38 ff 80 2d d8 ff 00 2e 78 ff 00 2f 18 fe 00  -8¯Ç-ן¯..x¯./.³.
+0007B6D0: 2f b8 fe 00 30 58 fc 00 30 f8 fc 00 31 98 fc 00  /Õ³.0Xⁿ.0°ⁿ.1ÿⁿ.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 87 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 43388000   D2 35780050   D3 01C40000 
+  D4 FFFF00B9   D5 00003480   D6 00004380   D7 FFFF0016 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B70C   A3 0007BA2C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 05 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 35 70 ff e0 36 10 ff 80 36 b0 fe 00 37 50 fc 00  5p¯α6.¯Ç6ã³.7Pⁿ.
+0007B6C0: 37 f0 f8 00 38 90 f8 00 39 30 f0 00 39 d0 f0 00  7≡°.8É°.90≡.9ס≡.
+0007B6D0: 3a 70 e0 00 3b 10 e0 00 3b b0 e0 00 3c 50 e0 00  :pα.;.α.;ãα.<Pα.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 88 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 3CF8FF00   D2 2DF80050   D3 028F0000 
+  D4 FFFF00C1   D5 00002D00   D6 00003D40   D7 FFFF0018 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B714   A3 0007BA34 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 05 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 2d f8 c0 00 2e 98 00 00 2f 30 ff fc 2f d0 ff f8  -°ĳ..ÿ../0¯ⁿ/ס¯°
+0007B6C0: 30 70 ff f0 31 10 ff e0 31 b0 ff e0 32 50 ff c0  0p¯≡1.¯α1ã¯α2P¯ĳ
+0007B6D0: 32 f0 ff c0 33 90 ff 80 34 30 ff 80 34 d0 ff 80  2≡¯ĳ3É¯Ç40¯Ç4ס¯Ç
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 89 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 4470E000   D2 36B00050   D3 00A60000 
+  D4 FFFF00AB   D5 000035C0   D6 000044C0   D7 FFFF0016 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B70C   A3 0007BA2C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 05 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 36 a8 ff f8 37 48 ff e0 37 e8 ff 80 38 88 ff 00  6¿¯°7H¯α7Φ¯Ç8ê¯.
+0007B6C0: 39 28 fe 00 39 c8 fe 00 3a 68 fc 00 3b 08 fc 00  9(³.9ז³.:hⁿ.;.ⁿ.
+0007B6D0: 3b a8 f8 00 3c 48 f8 00 3c e8 f8 00 3d 88 f8 00  ;¿°.<H°.<Φ°.=ê°.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 90 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 39D0FFF8   D2 2AD00050   D3 00D80000 
+  D4 FFFF00B6   D5 000029E0   D6 00003A20   D7 FFFF0018 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B714   A3 0007BA34 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 05 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 2a d0 fe 00 2b 70 f8 00 2c 10 e0 00 2c b0 c0 00  *ס³.+p°.,.α.,ãĳ.
+0007B6C0: 2d 50 80 00 2d f0 00 00 2e 90 00 00 2f 28 ff fe  -PÇ.-≡...É../(¯³
+0007B6D0: 2f c8 ff fe 30 68 ff fc 31 08 ff fc 31 a8 ff fc  /ז¯³0h¯ⁿ1.¯ⁿ1¿¯ⁿ
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 91 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 33808000   D2 29800060   D3 02B50000 
+  D4 FFFF0087   D5 000028A0   D6 000033E0   D7 FFFF0010 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6F4   A3 0007BA14 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 05 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 29 78 ff f8 2a 18 ff e0 2a b8 ff c0 2b 58 ff 80  )x¯°*.¯α*Õ¯ĳ+X¯Ç
+0007B6C0: 2b f8 ff 00 2c 98 ff 00 2d 38 fe 00 2d d8 fe 00  +°¯.,ÿ¯.-8³.-ן³.
+0007B6D0: 2e 78 fe 00 2f 18 fe 00 2f b8 fe 00 30 58 ff 00  .x³./.³./Õ³.0X¯.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 92 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 2E90F000   D2 24900060   D3 01D00000 
+  D4 FFFF00AA   D5 000023A0   D6 00002EE0   D7 FFFF0010 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6F4   A3 0007BA14 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 05 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 24 90 00 00 25 28 ff fc 25 c8 ff f8 26 68 ff f0  $É..%(¯ⁿ%ז¯°&h¯≡
+0007B6C0: 27 08 ff e0 27 a8 ff e0 28 48 ff c0 28 e8 ff c0  '.¯α'¿¯α(H¯ĳ(Φ¯ĳ
+0007B6D0: 29 88 ff c0 2a 28 ff c0 2a c8 ff c0 2b 68 ff e0  )ê¯ĳ*(¯ĳ*ז¯ĳ+h¯α
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 93 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 34C0C000   D2 2AC00060   D3 01610000 
+  D4 FFFF0088   D5 000029E0   D6 00003520   D7 FFFF0010 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6F4   A3 0007BA14 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 05 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 2a b8 ff fc 2b 58 ff f0 2b f8 ff e0 2c 98 ff c0  *Õ¯ⁿ+X¯≡+°¯α,ÿ¯ĳ
+0007B6C0: 2d 38 ff 80 2d d8 ff 80 2e 78 ff 00 2f 18 ff 00  -8¯Ç-ן¯Ç.x¯./.¯.
+0007B6D0: 2f b8 ff 00 30 58 ff 00 30 f8 ff 00 31 98 ff 80  /Õ¯.0X¯.0°¯.1ÿ¯Ç
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 94 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 3060FFC0   D2 26600060   D3 01610000 
+  D4 FFFF0090   D5 00002580   D6 000030C0   D7 FFFF0010 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6F4   A3 0007BA14 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 05 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 26 60 fc 00 27 00 f0 00 27 a0 e0 00 28 40 c0 00  &`ⁿ.'.≡.'áα.(@ĳ.
+0007B6C0: 28 e0 80 00 29 80 80 00 2a 20 00 00 2a c0 00 00  (αÇ.)ÇÇ.* ..*ĳ..
+0007B6D0: 2b 60 00 00 2c 00 00 00 2c a0 00 00 2d 40 80 00  +`..,...,á..-@Ç.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 95 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 3EC0FFF8   D2 36000060   D3 028F0000 
+  D4 FFFF0092   D5 00003520   D6 00003F20   D7 FFFF000E 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6EC   A3 0007BA0C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 05 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 36 00 ff 80 36 a0 fe 00 37 40 fc 00 37 e0 f8 00  6.¯Ç6á³.7@ⁿ.7α°.
+0007B6C0: 38 80 f8 00 39 20 f0 00 39 c0 f0 00 3a 60 f0 00  8Ç°.9 ≡.9ĳ≡.:`≡.
+0007B6D0: 3b 00 f0 00 3b a0 f0 00 3c 40 f8 00 3c e0 f8 00  ;.≡.;á≡.<@°.<α°.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 96 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 3880C000   D2 2E800060   D3 01610000 
+  D4 FFFF0088   D5 00002DA0   D6 000038E0   D7 FFFF0010 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6F4   A3 0007BA14 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 05 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 2e 78 ff fc 2f 18 ff f0 2f b8 ff e0 30 58 ff c0  .x¯ⁿ/.¯≡/Õ¯α0X¯ĳ
+0007B6C0: 30 f8 ff 80 31 98 ff 80 32 38 ff 00 32 d8 ff 00  0°¯Ç1ÿ¯Ç28¯.2ן¯.
+0007B6D0: 33 78 ff 00 34 18 ff 00 34 b8 ff 00 35 58 ff 80  3x¯.4.¯.4Õ¯.5X¯Ç
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 97 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 3B10FF00   D2 31100060   D3 00900000 
+  D4 FFFF00AE   D5 00003020   D6 00003B60   D7 FFFF0010 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6F4   A3 0007BA14 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 05 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 31 10 f0 00 31 b0 c0 00 32 50 80 00 32 f0 00 00  1.≡.1ãĳ.2PÇ.2≡..
+0007B6C0: 33 88 ff fe 34 28 ff fe 34 c8 ff fc 35 68 ff fc  3ê¯³4(¯³4ז¯ⁿ5h¯ⁿ
+0007B6D0: 36 08 ff fc 36 a8 ff fc 37 48 ff fc 37 e8 ff fe  6.¯ⁿ6¿¯ⁿ7H¯ⁿ7Φ¯³
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 98 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 3A70FFF0   D2 30700060   D3 01D00000 
+  D4 FFFF00B2   D5 00002F80   D6 00003AC0   D7 FFFF0010 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6F4   A3 0007BA14 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 05 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 30 70 ff 00 31 10 fc 00 31 b0 f8 00 32 50 f0 00  0p¯.1.ⁿ.1ã°.2P≡.
+0007B6C0: 32 f0 e0 00 33 90 e0 00 34 30 c0 00 34 d0 c0 00  2≡α.3Éα.40ĳ.4סĳ.
+0007B6D0: 35 70 c0 00 36 10 c0 00 36 b0 c0 00 37 50 e0 00  5pĳ.6.ĳ.6ãĳ.7Pα.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 99 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 3F68FFF8   D2 36A80060   D3 01630000 
+  D4 FFFF00A2   D5 000035C0   D6 00003FC0   D7 FFFF000E 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6EC   A3 0007BA0C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 05 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 36 a8 ff 80 37 48 fe 00 37 e8 fc 00 38 88 f8 00  6¿¯Ç7H³.7Φⁿ.8ê°.
+0007B6C0: 39 28 f8 00 39 c8 f0 00 3a 68 f0 00 3b 08 f0 00  9(°.9ז≡.:h≡.;.≡.
+0007B6D0: 3b a8 f0 00 3c 48 f0 00 3c e8 f8 00 3d 88 f8 00  ;¿≡.<H≡.<Φ°.=ê°.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 100 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 3C58FC00   D2 32580060   D3 02B50000 
+  D4 FFFF00BC   D5 00003160   D6 00003CA0   D7 FFFF0010 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6F4   A3 0007BA14 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 05 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 32 58 c0 00 32 f8 00 00 33 90 ff fe 34 30 ff fc  2Xĳ.2°..3É¯³40¯ⁿ
+0007B6C0: 34 d0 ff f8 35 70 ff f8 36 10 ff f0 36 b0 ff f0  4ס¯°5p¯°6.¯≡6ã¯≡
+0007B6D0: 37 50 ff f0 37 f0 ff f0 38 90 ff f0 39 30 ff f8  7P¯≡7≡¯≡8É¯≡90¯°
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 101 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 32400000   D2 27000060   D3 000A0000 
+  D4 FFFF0086   D5 00002620   D6 000032A0   D7 FFFF0012 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6FC   A3 0007BA1C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 05 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 26 f8 ff c0 27 98 ff 00 28 38 fe 00 28 d8 fc 00  &°¯ĳ'ÿ¯.(8³.(ןⁿ.
+0007B6C0: 29 78 f8 00 2a 18 f8 00 2a b8 f0 00 2b 58 f0 00  )x°.*.°.*Õ≡.+X≡.
+0007B6D0: 2b f8 f0 00 2c 98 f0 00 2d 38 f0 00 2d d8 f0 00  +°≡.,ÿ≡.-8≡.-ן≡.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 102 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 25D0F800   D2 FFFF0060   D3 02080000 
+  D4 FFFF00AC   D5 FFFF0028   D6 00002620   D7 FFFF0002 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6BC   A3 0007B9DC 
+  A4 0007C718   A5 000035F8   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 05 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 24 88 ff f0 25 28 ff f8 25 c8 ff fe 28 d8 fc 00  $ê¯≡%(¯°%ז¯³(ןⁿ.
+0007B6C0: 29 78 f8 00 2a 18 f8 00 2a b8 f0 00 2b 58 f0 00  )x°.*.°.*Õ≡.+X≡.
+0007B6D0: 2b f8 f0 00 2c 98 f0 00 2d 38 f0 00 2d d8 f0 00  +°≡.,ÿ≡.-8≡.-ן≡.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 103 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 3198FFFE   D2 26580060   D3 01860000 
+  D4 FFFF0085   D5 00002580   D6 00003200   D7 FFFF0012 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6FC   A3 0007BA1C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 05 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 26 58 ff 80 26 f8 fe 00 27 98 fc 00 28 38 f8 00  &X¯Ç&°³.'ÿⁿ.(8°.
+0007B6C0: 28 d8 f0 00 29 78 f0 00 2a 18 e0 00 2a b8 e0 00  (ן≡.)x≡.*.α.*Õα.
+0007B6D0: 2b 58 e0 00 2b f8 e0 00 2c 98 e0 00 2d 38 e0 00  +Xα.+°α.,ÿα.-8α.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 104 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 2CA0FF00   D2 24800060   D3 01860000 
+  D4 FFFF008E   D5 000023A0   D6 00002D00   D7 FFFF000D 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6E8   A3 0007BA08 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 05 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 24 78 ff f8 25 18 ff f0 25 b8 ff f0 26 58 ff f0  $x¯°%.¯≡%Õ¯≡&X¯≡
+0007B6C0: 26 f8 ff f0 27 98 ff f0 28 38 ff f0 28 d8 ff f0  &°¯≡'ÿ¯≡(8¯≡(ן¯≡
+0007B6D0: 29 78 ff f8 2a 18 ff f8 2a b8 ff fc 2b 58 ff fe  )x¯°*.¯°*Õ¯ⁿ+X¯³
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 105 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 37E0F800   D2 2A200060   D3 008C0000 
+  D4 FFFF008D   D5 00002940   D6 00003840   D7 FFFF0016 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B70C   A3 0007BA2C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 05 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 2a 18 ff fe 2a b8 ff f8 2b 58 ff e0 2b f8 ff c0  *.¯³*Õ¯°+X¯α+°¯ĳ
+0007B6C0: 2c 98 ff 80 2d 38 ff 80 2d d8 ff 00 2e 78 ff 00  ,ÿ¯Ç-8¯Ç-ן¯..x¯.
+0007B6D0: 2f 18 fe 00 2f b8 fe 00 30 58 fe 00 30 f8 fe 00  /.³./Õ³.0X³.0°³.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 106 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 35F8FFFE   D2 2AB80060   D3 01860000 
+  D4 FFFF0085   D5 000029E0   D6 00003660   D7 FFFF0012 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6FC   A3 0007BA1C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 05 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 2a b8 ff 80 2b 58 fe 00 2b f8 fc 00 2c 98 f8 00  *Õ¯Ç+X³.+°ⁿ.,ÿ°.
+0007B6C0: 2d 38 f0 00 2d d8 f0 00 2e 78 e0 00 2f 18 e0 00  -8≡.-ן≡..xα./.α.
+0007B6D0: 2f b8 e0 00 30 58 e0 00 30 f8 e0 00 31 98 e0 00  /Õα.0Xα.0°α.1ÿα.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 107 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 3390FFE0   D2 27100060   D3 01360000 
+  D4 FFFF00B2   D5 00002620   D6 000033E0   D7 FFFF0014 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B704   A3 0007BA24 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 05 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 27 10 f8 00 27 b0 e0 00 28 50 c0 00 28 f0 80 00  '.°.'ãα.(Pĳ.(≡Ç.
+0007B6C0: 29 90 00 00 2a 28 ff fe 2a c8 ff fe 2b 68 ff fc  )É..*(¯³*ז¯³+h¯ⁿ
+0007B6D0: 2c 08 ff fc 2c a8 ff fc 2d 48 ff fc 2d e8 ff fc  ,.¯ⁿ,¿¯ⁿ-H¯ⁿ-Φ¯ⁿ
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 108 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 34D80000   D2 28580060   D3 02080000 
+  D4 FFFF00B7   D5 00002760   D6 00003520   D7 FFFF0014 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B704   A3 0007BA24 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 05 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 28 50 ff c0 28 f0 ff 00 29 90 fe 00 2a 30 fc 00  (P¯ĳ(≡¯.)É³.*0ⁿ.
+0007B6C0: 2a d0 f8 00 2b 70 f0 00 2c 10 f0 00 2c b0 e0 00  *ס°.+p≡.,.≡.,ãα.
+0007B6D0: 2d 50 e0 00 2d f0 e0 00 2e 90 e0 00 2f 30 e0 00  -Pα.-≡α..Éα./0α.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 109 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 36A8FFE0   D2 28E80060   D3 000A0000 
+  D4 FFFF00A3   D5 00002800   D6 00003700   D7 FFFF0016 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B70C   A3 0007BA2C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 05 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 28 e8 f8 00 29 88 e0 00 2a 28 80 00 2a c8 00 00  (Φ°.)êα.*(Ç.*ז..
+0007B6C0: 2b 60 ff fe 2c 00 ff fe 2c a0 ff fc 2d 40 ff fc  +`¯³,.¯³,á¯ⁿ-@¯ⁿ
+0007B6D0: 2d e0 ff f8 2e 80 ff f8 2f 20 ff f8 2f c0 ff f8  -α¯°.Ç¯°/ ¯°/ĳ¯°
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 110 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 3B18FF00   D2 2FD80060   D3 000A0000 
+  D4 FFFF00BE   D5 00002EE0   D6 00003B60   D7 FFFF0012 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6FC   A3 0007BA1C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 05 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 2f d8 c0 00 30 78 00 00 31 10 ff fe 31 b0 ff fc  /ןĳ.0x..1.¯³1ã¯ⁿ
+0007B6C0: 32 50 ff f8 32 f0 ff f8 33 90 ff f0 34 30 ff f0  2P¯°2≡¯°3É¯≡40¯≡
+0007B6D0: 34 d0 ff f0 35 70 ff f0 36 10 ff f0 36 b0 ff f0  4ס¯≡5p¯≡6.¯≡6ã¯≡
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 111 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 2838FFFC   D2 FFFF0050   D3 021C0000 
+  D4 FFFF0089   D5 FFFF0024   D6 000028A0   D7 FFFF0006 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6CC   A3 0007B9EC 
+  A4 0007C718   A5 000035F8   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 05 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 24 70 ff fe 25 18 00 00 25 b8 80 00 26 58 c0 00  $p¯³%...%ÕÇ.&Xĳ.
+0007B6C0: 26 f8 e0 00 27 98 f8 00 28 38 ff 00 34 30 ff f0  &°α.'ÿ°.(8¯.40¯≡
+0007B6D0: 34 d0 ff f0 35 70 ff f0 36 10 ff f0 36 b0 ff f0  4ס¯≡5p¯≡6.¯≡6ã¯≡
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 112 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 2490E000   D2 FFFF0050   D3 01F40000 
+  D4 FFFF00AE   D5 FFFF001E   D6 000024E0   D7 FFFF0000 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B6B4   A3 0007B9D4 
+  A4 0007C718   A5 000035F8   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 05 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 24 88 ff f8 25 18 00 00 25 b8 80 00 26 58 c0 00  $ê¯°%...%ÕÇ.&Xĳ.
+0007B6C0: 26 f8 e0 00 27 98 f8 00 28 38 ff 00 34 30 ff f0  &°α.'ÿ°.(8¯.40¯≡
+0007B6D0: 34 d0 ff f0 35 70 ff f0 36 10 ff f0 36 b0 ff f0  4ס¯≡5p¯≡6.¯≡6ã¯≡
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 113 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 3D78E000   D2 29780050   D3 01770000 
+  D4 FFFF007F   D5 000028A0   D6 00003DE0   D7 FFFF0020 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B734   A3 0007BA54 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 05 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 29 70 ff e0 2a 10 ff 80 2a b0 fe 00 2b 50 f8 00  )p¯α*.¯Ç*ã³.+P°.
+0007B6C0: 2b f0 f0 00 2c 90 e0 00 2d 30 c0 00 2d d0 c0 00  +≡≡.,Éα.-0ĳ.-סĳ.
+0007B6D0: 2e 70 80 00 2f 10 80 00 2f b0 00 00 30 50 00 00  .pÇ./.Ç./ã..0P..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 114 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 39B8C000   D2 28380050   D3 021C0000 
+  D4 FFFF007D   D5 00002760   D6 00003A20   D7 FFFF001C 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B724   A3 0007BA44 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 05 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 28 30 ff f0 28 d0 ff 80 29 70 fe 00 2a 10 fc 00  (0¯≡(ס¯Ç)p³.*.ⁿ.
+0007B6C0: 2a b0 f8 00 2b 50 f0 00 2b f0 e0 00 2c 90 e0 00  *ã°.+P≡.+≡α.,Éα.
+0007B6D0: 2d 30 c0 00 2d d0 c0 00 2e 70 c0 00 2f 10 80 00  -0ĳ.-סĳ..pĳ./.Ç.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 115 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 3C40F800   D2 25C00050   D3 01C80000 
+  D4 FFFF0093   D5 000024E0   D6 00003CA0   D7 FFFF0024 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B744   A3 0007BA64 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 05 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 25 b8 ff f8 26 58 ff c0 26 f8 ff 00 27 98 fe 00  %Õ¯°&X¯ĳ&°¯.'ÿ³.
+0007B6C0: 28 38 f8 00 28 d8 f0 00 29 78 e0 00 2a 18 e0 00  (8°.(ן≡.)xα.*.α.
+0007B6D0: 2a b8 c0 00 2b 58 80 00 2b f8 80 00 2c 98 00 00  *Õĳ.+XÇ.+°Ç.,ÿ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 116 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 3238FFF0   D2 24800050   D3 00A00000 
+  D4 FFFF0088   D5 000023A0   D6 000032A0   D7 FFFF0016 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B70C   A3 0007BA2C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 05 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 24 70 ff 80 25 10 ff 80 25 b0 ff 00 26 50 ff 00  $p¯Ç%.¯Ç%ã¯.&P¯.
+0007B6C0: 26 f0 ff 00 27 90 ff 00 28 30 ff 00 28 d0 ff 00  &≡¯.'É¯.(0¯.(ס¯.
+0007B6D0: 29 70 ff 00 2a 10 ff 00 2a b0 ff 00 2b 50 ff 80  )p¯.*.¯.*ã¯.+P¯Ç
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 117 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 3D98FF80   D2 29980050   D3 01770000 
+  D4 FFFF00C5   D5 000028A0   D6 00003DE0   D7 FFFF0020 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B734   A3 0007BA54 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 05 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 29 98 80 00 2a 30 ff fe 2a d0 ff f8 2b 70 ff e0  )ÿÇ.*0¯³*ס¯°+p¯α
+0007B6C0: 2c 10 ff c0 2c b0 ff 80 2d 50 ff 00 2d f0 ff 00  ,.¯ĳ,ã¯Ç-P¯.-≡¯.
+0007B6D0: 2e 90 fe 00 2f 30 fe 00 2f d0 fc 00 30 70 fc 00  .É³./0³./סⁿ.0pⁿ.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 118 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 39D8FFE0   D2 28580050   D3 021C0000 
+  D4 FFFF00C6   D5 00002760   D6 00003A20   D7 FFFF001C 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B724   A3 0007BA44 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 05 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 28 58 f8 00 28 f8 c0 00 29 98 00 00 2a 30 ff fe  (X°.(°ĳ.)ÿ..*0¯³
+0007B6C0: 2a d0 ff fc 2b 70 ff f8 2c 10 ff f0 2c b0 ff f0  *ס¯ⁿ+p¯°,.¯≡,ã¯≡
+0007B6D0: 2d 50 ff e0 2d f0 ff e0 2e 90 ff e0 2f 30 ff c0  -P¯α-≡¯α.É¯α/0¯ĳ
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 119 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 3C50F000   D2 25D00050   D3 01C80000 
+  D4 FFFF00B2   D5 000024E0   D6 00003CA0   D7 FFFF0024 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B744   A3 0007BA64 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 05 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 25 c8 ff f0 26 68 ff 80 27 08 fe 00 27 a8 fc 00  %ז¯≡&h¯Ç'.³.'¿ⁿ.
+0007B6C0: 28 48 f0 00 28 e8 e0 00 29 88 c0 00 2a 28 c0 00  (H≡.(Φα.)êĳ.*(ĳ.
+0007B6D0: 2a c8 80 00 2b 68 00 00 2c 08 00 00 2c a0 ff fe  *זÇ.+h..,...,á¯³
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 120 times.
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+Reading debugger commands from '/tmp/mw2run-dgpd71zh/circ.txt'...
+Changed to input file dir '/tmp/mw2run-dgpd71zh'.
+> r
+  D0 00070000   D1 32588000   D2 24980050   D3 00A00000 
+  D4 FFFF00BD   D5 000023A0   D6 000032A0   D7 FFFF0016 
+  A0 0007B6B0   A1 0007B9D0   A2 0007B70C   A3 0007BA2C 
+  A4 0007B6B0   A5 0007B9D0   A6 000000A0   A7 00007F00 
+USP  000B1F40 ISP  00007F00 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5020 (ADD) Chip latch 00000000
+0001d188 4eb8 5020                jsr $00005020.w
+Next PC: 0001d18c
+> m $b4684 2
+000B4684: 00 66                                            .f
+> m $b4680 4
+000B4680: 00 05 00 05                                      ....
+> m $7b6b0 48
+0007B6B0: 24 88 ff fc 25 28 ff fc 25 c8 ff f8 26 68 ff f8  $ê¯ⁿ%(¯ⁿ%ז¯°&h¯°
+0007B6C0: 27 08 ff f8 27 a8 ff f8 28 48 ff f8 28 e8 ff f8  '.¯°'¿¯°(H¯°(Φ¯°
+0007B6D0: 29 88 ff f8 2a 28 ff f8 2a c8 ff f8 2b 68 ff fc  )ê¯°*(¯°*ז¯°+h¯ⁿ
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+> b all
+Removed CPU breakpoint 1:
+	pc = $1d188 :trace :file /tmp/mw2run-dgpd71zh/circ.txt
+CPU breakpoints: 0

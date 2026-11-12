@@ -168,6 +168,10 @@ they needed 380 B, more than the $B4E00-$B4EFF that was left when the payload wa
   (on foot, Swimming, Parachute: `$1dbee-$1dc04`), because those states change type without the 3D re-entry
   `$28cc0`, so nothing redraws the overlay and the rows above the terrain would keep the previous overlay
   (the half diving mask on exiting a boat). `work/notes/mask.md`.
+  `p4_hud_pfx_circle` ($1d188, deferred, blob $b4fc0; part of the set, apply with the four above): the
+  disc/explosion fill enters the span filler with a byte offset in d6, not its first row, so YMIN never covered
+  it and explosion circles above the horizon stayed on screen once the view turned; it lowers YMIN to cy - r
+  before the fill. `work/notes/explosions.md`.
 - Visual-tradeoff experiment, NOT for shipping without sign-off: `p4_hud_reset` + `p4_hud_crop_fill`
   ($1b99e) + `p4_hud_crop_clip` ($38c86) + `p4_hud_crop_replay` ($30f2c): the 3D window ends at line 181
   (foot mode only) and the dashboard band is drawn once per buffer. Excludes the `pfx` set (same sites).
