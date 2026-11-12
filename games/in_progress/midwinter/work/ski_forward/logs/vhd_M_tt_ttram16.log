@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter/work/ski_forward/fwd.py", line 41, in <module>
+    thi.wait_drive_c(h)
+  File "/home/ryan/Code/AtariST/gamebench/tools/test_hd_image.py", line 111, in wait_drive_c
+    raise RuntimeError("drive C never appeared (HDDRIVER not booted?)")
+RuntimeError: drive C never appeared (HDDRIVER not booted?)

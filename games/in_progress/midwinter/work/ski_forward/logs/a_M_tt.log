@@ -1,0 +1,30 @@
+config /home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter/build/MW1Ski/a M tt {'machine': 'tt', 'memsize_kb': 4096} ['--mmu', 'true', '--joy1', 'keys', '--monitor', 'vga', '--cpuclock', '32']
+boot_to_game M ok in 95 s; control mode M; mwpo b'MWPO'
+idle           vbl=5814 x=25600 z=25600 speed=0 head=0 turn=0 btn=0 leverY=0 accX=0 v152a8=0 f13548=0000 step=000131ae step24f40=0000000000000000 flags=ffff00000000 act=0 mwpo=b'MWPO'
+idle0          vbl=5820 x=25600 z=25600 speed=0 head=0 turn=0 btn=0 leverY=0 accX=0 v152a8=0 f13548=0000 step=000131ae step24f40=0000000000000000 flags=ffff00000000 act=0 mwpo=b'MWPO'
+idle1          vbl=5886 x=25600 z=25600 speed=0 head=0 turn=0 btn=0 leverY=0 accX=0 v152a8=0 f13548=0000 step=000131ae step24f40=0000000000000000 flags=ffff00000000 act=0 mwpo=b'MWPO'
+idle2          vbl=5952 x=25600 z=25600 speed=0 head=0 turn=0 btn=0 leverY=0 accX=0 v152a8=0 f13548=0000 step=000131ae step24f40=0000000000000000 flags=ffff00000000 act=0 mwpo=b'MWPO'
+--- walk started (left button)
+walk0          vbl=6033 x=25600 z=25630 speed=120 head=0 turn=0 btn=2 leverY=-512 accX=0 v152a8=7701 f13548=0400 step=000131ae step24f40=0000000000000000 flags=ffff00000000 act=0 mwpo=b'MWPO'
+walk1          vbl=6099 x=25600 z=25876 speed=225 head=0 turn=0 btn=0 leverY=-512 accX=0 v152a8=14433 f13548=0400 step=000131ae step24f40=0000000000000000 flags=ffff00000000 act=0 mwpo=b'MWPO'
+walk2          vbl=6166 x=25600 z=26240 speed=269 head=0 turn=0 btn=0 leverY=-512 accX=0 v152a8=17239 f13548=0400 step=000131ae step24f40=0000000000000000 flags=ffff00000000 act=0 mwpo=b'MWPO'
+walk3          vbl=6232 x=25600 z=26608 speed=265 head=0 turn=0 btn=0 leverY=-512 accX=0 v152a8=16960 f13548=0400 step=000131ae step24f40=0000000000000000 flags=ffff00000000 act=0 mwpo=b'MWPO'
+walk4          vbl=6297 x=25600 z=27005 speed=327 head=0 turn=0 btn=0 leverY=-512 accX=0 v152a8=20973 f13548=0400 step=000131ae step24f40=0000000000000000 flags=ffff00000000 act=0 mwpo=b'MWPO'
+walk5          vbl=6364 x=25600 z=27482 speed=356 head=0 turn=0 btn=0 leverY=-512 accX=0 v152a8=22821 f13548=0400 step=000131ae step24f40=0000000000000000 flags=ffff00000000 act=0 mwpo=b'MWPO'
+walk6          vbl=6429 x=25600 z=27954 speed=333 head=0 turn=0 btn=0 leverY=-512 accX=0 v152a8=21355 f13548=0400 step=000131ae step24f40=0000000000000000 flags=ffff00000000 act=0 mwpo=b'MWPO'
+walk7          vbl=6496 x=25600 z=28361 speed=235 head=0 turn=0 btn=0 leverY=-512 accX=0 v152a8=15098 f13548=0400 step=000131ae step24f40=0000000000000000 flags=ffff00000000 act=0 mwpo=b'MWPO'
+--- lever pulled back (mouse down / stick Down / KP2)
+back0          vbl=6599 x=25600 z=28633 speed=53 head=0 turn=0 btn=0 leverY=-462 accX=0 v152a8=3630 f13548=03ce step=000131ae step24f40=0000000000000000 flags=ffff00000000 act=0 mwpo=b'MWPO'
+back1          vbl=6665 x=25600 z=28693 speed=39 head=0 turn=0 btn=0 leverY=-462 accX=0 v152a8=2680 f13548=03ce step=000131ae step24f40=0000000000000000 flags=ffff00000000 act=0 mwpo=b'MWPO'
+back2          vbl=6731 x=25600 z=28744 speed=40 head=0 turn=0 btn=0 leverY=-462 accX=0 v152a8=2724 f13548=03ce step=000131ae step24f40=0000000000000000 flags=ffff00000000 act=0 mwpo=b'MWPO'
+--- lever pushed forward (mouse up / stick Up / KP8)
+fwd0           vbl=6835 x=25600 z=28831 speed=44 head=0 turn=0 btn=0 leverY=-512 accX=0 v152a8=2840 f13548=0400 step=000131ae step24f40=0000000000000000 flags=ffff00000000 act=0 mwpo=b'MWPO'
+fwd1           vbl=6901 x=25600 z=28892 speed=45 head=0 turn=0 btn=0 leverY=-512 accX=0 v152a8=2928 f13548=0400 step=000131ae step24f40=0000000000000000 flags=ffff00000000 act=0 mwpo=b'MWPO'
+fwd2           vbl=6967 x=25600 z=28952 speed=46 head=0 turn=0 btn=0 leverY=-512 accX=0 v152a8=2998 f13548=0400 step=000131ae step24f40=0000000000000000 flags=ffff00000000 act=0 mwpo=b'MWPO'
+fwd3           vbl=7033 x=25600 z=29014 speed=48 head=0 turn=0 btn=0 leverY=-512 accX=0 v152a8=3082 f13548=0400 step=000131ae step24f40=0000000000000000 flags=ffff00000000 act=0 mwpo=b'MWPO'
+--- stop (right button / ">")
+stop0          vbl=7114 x=25600 z=29083 speed=5 head=0 turn=0 btn=1 leverY=-512 accX=0 v152a8=350 f13548=0400 step=000131ae step24f40=0000000000000000 flags=ffff00000000 act=0 mwpo=b'MWPO'
+stop1          vbl=7181 x=25600 z=29084 speed=0 head=0 turn=0 btn=0 leverY=-512 accX=0 v152a8=1 f13548=0400 step=000131ae step24f40=0000000000000000 flags=ffff00000000 act=0 mwpo=b'MWPO'
+stop2          vbl=7247 x=25600 z=29084 speed=0 head=0 turn=0 btn=0 leverY=-512 accX=0 v152a8=0 f13548=0400 step=000131ae step24f40=0000000000000000 flags=ffff00000000 act=0 mwpo=b'MWPO'
+SUMMARY build=a mode=M machine=tt: walk0 x,z=(25600, 25630) walk7 x,z=(25600, 28361) |delta|max=2731 speed(walk7)=235 -> forward=YES
+total 123 s

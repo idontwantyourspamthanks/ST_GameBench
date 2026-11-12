@@ -1,0 +1,8 @@
+config vhdorig M tt {'machine': 'tt', 'memsize_kb': 4096} ['--mmu', 'true', '--joy1', 'keys', '--monitor', 'vga', '--cpuclock', '32']
+stock boot to options: False
+Traceback (most recent call last):
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter/work/ski_forward/fwd.py", line 89, in <module>
+    h.boot_to_game(MODE, check=(MACH not in ('tt', 'falcon')))
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter/tools/mw1.py", line 240, in boot_to_game
+    raise RuntimeError("Game Options screen not reached")
+RuntimeError: Game Options screen not reached
