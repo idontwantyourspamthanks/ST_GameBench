@@ -1,0 +1,8 @@
+python3 work/scratch/poptick/cell.py ste gemdos build/PopTiming/hd --clocks 8 16 --hz 50 60 --vbls 3000 --tag ste_hd     (HD build: default set + pop_tick set, STE 1 MB TOS 1.62)
+payload header: 50 4f 50 50 50 4f 50 4f 00 00 00 03 01 00 00 00  D = 0
+turn 63 -> 76; $b632 4ef9000c5000; tick marker 50 54 49 4b
+$ff820a = $fe -> 50 Hz
+RESULT cold ste gemdos hd 8 MHz 50 Hz: 3001 VBL = 60.02 s, 160254 cycles/VBL (refresh seen 49.92 Hz), world turns 300 = 4.998/s | ticks 300 = 4.998/s; passes T 300 R 312 S 0 P 0
+RESULT cold ste gemdos hd 16 MHz 50 Hz: 3001 VBL = 60.02 s, 320469 cycles/VBL (refresh seen 49.93 Hz), world turns 300 = 4.998/s | ticks 300 = 4.998/s; passes T 300 R 982 S 0 P 0
+RESULT cold ste gemdos hd 8 MHz 60 Hz: 3601 VBL = 60.02 s, 133576 cycles/VBL (refresh seen 59.89 Hz), world turns 300 = 4.999/s | ticks 300 = 4.999/s; passes T 300 R 250 S 0 P 0
+RESULT cold ste gemdos hd 16 MHz 60 Hz: 3601 VBL = 60.02 s, 267178 cycles/VBL (refresh seen 59.89 Hz), world turns 300 = 4.999/s | ticks 300 = 4.999/s; passes T 300 R 898 S 0 P 0

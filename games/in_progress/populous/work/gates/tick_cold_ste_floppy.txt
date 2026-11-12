@@ -1,0 +1,8 @@
+python3 work/scratch/poptick/cell.py ste floppy build/PopTiming/floppy/Populous_boot.st --clocks 8 16 --hz 50 60 --vbls 3000 --tag ste_floppy     (floppy build: default set without the HAGA file patch + pop_tick set, STE 1 MB TOS 1.62; second key at the credits, CONQUEST click 12 s later)
+payload header: 50 4f 50 50 50 4f 50 4f 00 00 00 02 01 01 00 00  D = 0
+turn 19 -> 32; $b632 4ef9000c5000; tick marker 50 54 49 4b
+$ff820a = $fe -> 50 Hz
+RESULT cold ste floppy Populous_boot.st 8 MHz 50 Hz: 3001 VBL = 60.02 s, 160241 cycles/VBL (refresh seen 49.92 Hz), world turns 301 = 5.015/s | ticks 300 = 4.998/s; passes T 300 R 319 S 0 P 0
+RESULT cold ste floppy Populous_boot.st 16 MHz 50 Hz: 3001 VBL = 60.02 s, 320466 cycles/VBL (refresh seen 49.93 Hz), world turns 300 = 4.998/s | ticks 300 = 4.998/s; passes T 300 R 987 S 0 P 0
+RESULT cold ste floppy Populous_boot.st 8 MHz 60 Hz: 3601 VBL = 60.02 s, 133575 cycles/VBL (refresh seen 59.89 Hz), world turns 300 = 4.999/s | ticks 300 = 4.999/s; passes T 300 R 254 S 0 P 0
+RESULT cold ste floppy Populous_boot.st 16 MHz 60 Hz: 3601 VBL = 60.02 s, 267154 cycles/VBL (refresh seen 59.89 Hz), world turns 301 = 5.015/s | ticks 300 = 4.999/s; passes T 300 R 901 S 0 P 0

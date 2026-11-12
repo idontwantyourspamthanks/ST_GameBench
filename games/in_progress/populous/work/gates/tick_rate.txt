@@ -1,0 +1,24 @@
+RESULT busy_castles 8 MHz 50 Hz sync $fe orig +defaults: 4001 VBL = 80.02 s, 160252 cycles/VBL, world turns 417 = 5.211/s
+RESULT busy_castles 8 MHz 50 Hz sync $fe patched +defaults: 4001 VBL = 80.02 s, 160235 cycles/VBL, world turns 400 = 4.999/s | ticks(D) 401 = 5.011/s; passes T 398 R 25 S 3 P 0
+RESULT busy_castles 16 MHz 50 Hz sync $fe orig +defaults: 4001 VBL = 80.02 s, 320464 cycles/VBL, world turns 857 = 10.710/s
+RESULT busy_castles 16 MHz 50 Hz sync $fe patched +defaults: 4001 VBL = 80.02 s, 320472 cycles/VBL, world turns 400 = 4.999/s | ticks(D) 400 = 4.999/s; passes T 400 R 715 S 0 P 0
+RESULT busy_quake_volcano 8 MHz 50 Hz sync $fe orig +defaults: 4001 VBL = 80.02 s, 160243 cycles/VBL, world turns 382 = 4.774/s
+RESULT busy_quake_volcano 8 MHz 50 Hz sync $fe patched +defaults: 4001 VBL = 80.02 s, 160239 cycles/VBL, world turns 399 = 4.986/s | ticks(D) 400 = 4.999/s; passes T 363 R 6 S 37 P 0
+RESULT busy_quake_volcano 16 MHz 50 Hz sync $fe orig +defaults: 4001 VBL = 80.02 s, 320438 cycles/VBL, world turns 819 = 10.235/s
+RESULT busy_quake_volcano 16 MHz 50 Hz sync $fe patched +defaults: 4001 VBL = 80.02 s, 320499 cycles/VBL, world turns 400 = 4.999/s | ticks(D) 400 = 4.999/s; passes T 400 R 709 S 0 P 0
+RESULT genesis_start 8 MHz 50 Hz sync $fe orig +defaults: 4001 VBL = 80.02 s, 160238 cycles/VBL, world turns 711 = 8.885/s
+RESULT genesis_start 8 MHz 50 Hz sync $fe patched +defaults: 4001 VBL = 80.02 s, 160245 cycles/VBL, world turns 400 = 4.999/s | ticks(D) 399 = 4.986/s; passes T 399 R 397 S 0 P 0
+RESULT genesis_start 16 MHz 50 Hz sync $fe orig +defaults: 4001 VBL = 80.02 s, 320471 cycles/VBL, world turns 1367 = 17.083/s
+RESULT genesis_start 16 MHz 50 Hz sync $fe patched +defaults: 4001 VBL = 80.02 s, 320463 cycles/VBL, world turns 400 = 4.999/s | ticks(D) 400 = 4.999/s; passes T 400 R 1325 S 0 P 0
+RESULT busy_castles 8 MHz 60 Hz sync $00 orig +defaults: 4001 VBL = 66.68 s, 133597 cycles/VBL, world turns 343 = 5.144/s
+RESULT busy_castles 8 MHz 60 Hz sync $fc patched +defaults: 4001 VBL = 66.68 s, 133582 cycles/VBL, world turns 333 = 4.994/s | ticks(D) 333 = 4.994/s; passes T 330 R 16 S 3 P 0
+RESULT busy_castles 16 MHz 60 Hz sync $00 orig +defaults: 4001 VBL = 66.68 s, 267150 cycles/VBL, world turns 713 = 10.692/s
+RESULT busy_castles 16 MHz 60 Hz sync $fc patched +defaults: 4001 VBL = 66.68 s, 267149 cycles/VBL, world turns 333 = 4.994/s | ticks(D) 334 = 5.009/s; passes T 334 R 591 S 0 P 0
+RESULT busy_quake_volcano 8 MHz 60 Hz sync $00 orig +defaults: 4001 VBL = 66.68 s, 133594 cycles/VBL, world turns 319 = 4.784/s
+RESULT busy_quake_volcano 8 MHz 60 Hz sync $fc patched +defaults: 4001 VBL = 66.68 s, 133595 cycles/VBL, world turns 333 = 4.994/s | ticks(D) 333 = 4.994/s; passes T 305 R 3 S 28 P 0
+RESULT busy_quake_volcano 16 MHz 60 Hz sync $00 orig +defaults: 4001 VBL = 66.68 s, 267182 cycles/VBL, world turns 681 = 10.212/s
+RESULT busy_quake_volcano 16 MHz 60 Hz sync $fc patched +defaults: 4001 VBL = 66.68 s, 267156 cycles/VBL, world turns 333 = 4.994/s | ticks(D) 333 = 4.994/s; passes T 333 R 584 S 0 P 0
+RESULT genesis_start 8 MHz 60 Hz sync $00 orig +defaults: 4001 VBL = 66.68 s, 133584 cycles/VBL, world turns 591 = 8.863/s
+RESULT genesis_start 8 MHz 60 Hz sync $fc patched +defaults: 4001 VBL = 66.68 s, 133586 cycles/VBL, world turns 334 = 5.009/s | ticks(D) 334 = 5.009/s; passes T 334 R 322 S 0 P 0
+RESULT genesis_start 16 MHz 60 Hz sync $00 orig +defaults: 4001 VBL = 66.68 s, 267187 cycles/VBL, world turns 1148 = 17.216/s
+RESULT genesis_start 16 MHz 60 Hz sync $fc patched +defaults: 4001 VBL = 66.68 s, 267170 cycles/VBL, world turns 334 = 5.009/s | ticks(D) 333 = 4.994/s; passes T 333 R 1097 S 0 P 0

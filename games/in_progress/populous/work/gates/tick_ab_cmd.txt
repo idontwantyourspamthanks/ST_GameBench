@@ -1,19 +1,8 @@
-snapshot busy_castles turn 870, 60 turns, 8 MHz, 50 Hz, command at turn 890
-busy_castles @8 MHz 50 Hz: DIFFER | world at pass tops: 58 compared (40 differ) over 60 turns, max 1 tops/turn | T frames 18 compared (11 differ; 0 excluded) | R frames: 0 (0 stability pairs, 0 unstable; 0 minimap compares, 0 differ, 0 turns excluded (minimap cell redrawn by the world)) | pass kinds T 19 R 0 S 40 | turns/s base 3.576 patched 4.933
-  WORLD DIFFER at pass top, turn 891 (VBL 22894): 4 ranges, first (addr, unpatched, patched) [('0x35ca3', '01', '00'), ('0x37695', '1418', '0000'), ('0x376d5', '1211', '0000'), ('0x3b273', '96', 'a4')]
-  WORLD DIFFER at pass top, turn 892 (VBL 22901): 4 ranges, first (addr, unpatched, patched) [('0x35ca3', '01', '00'), ('0x37695', '1418', '0000'), ('0x376d5', '1211', '0000'), ('0x3b273', '96', 'a4')]
-  WORLD DIFFER at pass top, turn 893 (VBL 22914): 4 ranges, first (addr, unpatched, patched) [('0x35ca3', '01', '00'), ('0x37695', '1418', '0000'), ('0x376d5', '1211', '0000'), ('0x3b273', '97', 'a5')]
-  T-FRAME DIFFER turn 893: 170 bytes in 1 spans, rows [31]..[32]
-  T-FRAME DIFFER turn 895: 170 bytes in 1 spans, rows [31]..[32]
-  T-FRAME DIFFER turn 899: 170 bytes in 1 spans, rows [31]..[32]
 snapshot busy_castles turn 870, 60 turns, 16 MHz, 50 Hz, command at turn 890
-busy_castles @16 MHz 50 Hz: DIFFER | world at pass tops: 128 compared (1 differ) over 60 turns, max 3 tops/turn | T frames 58 compared (0 differ; 0 excluded) | R frames: 71 (15 stability pairs, 0 unstable; 55 minimap compares, 0 differ, 12 turns excluded (minimap cell redrawn by the world)) | pass kinds T 59 R 71 S 0 | turns/s base 7.545 patched 5.008
-  WORLD DIFFER at pass top, turn 890 (VBL 22013): 1 ranges, first (addr, unpatched, patched) [('0x21e4a', '000000', '012020')]
-snapshot genesis_start turn 263, 60 turns, 8 MHz, 50 Hz, command at turn 283
-genesis_start @8 MHz 50 Hz: DIFFER | world at pass tops: 97 compared (1 differ) over 60 turns, max 2 tops/turn | T frames 58 compared (0 differ; 0 excluded) | R frames: 40 (0 stability pairs, 0 unstable; 30 minimap compares, 0 differ, 9 turns excluded (minimap cell redrawn by the world)) | pass kinds T 59 R 40 S 0 | turns/s base 7.867 patched 4.992
-  WORLD DIFFER at pass top, turn 283 (VBL 13480): 1 ranges, first (addr, unpatched, patched) [('0x21e4a', '000000', '012020')]
+busy_castles @16 MHz 50 Hz: IDENTICAL | world at pass tops: 127 compared (0 differ) over 60 turns, max 3 tops/turn | T frames 58 compared (0 differ; 0 excluded) | R frames: 70 (12 stability pairs, 0 unstable; 53 minimap compares, 0 differ, 13 turns excluded (minimap cell redrawn by the world)) | pass kinds T 59 R 70 S 0 | turns/s base 7.545 patched 5.026
 snapshot genesis_start turn 263, 60 turns, 16 MHz, 50 Hz, command at turn 283
-genesis_start @16 MHz 50 Hz: DIFFER | world at pass tops: 214 compared (3 differ) over 60 turns, max 4 tops/turn | T frames 58 compared (0 differ; 0 excluded) | R frames: 159 (99 stability pairs, 0 unstable; 118 minimap compares, 0 differ, 14 turns excluded (minimap cell redrawn by the world)) | pass kinds T 59 R 159 S 0 | turns/s base 16.667 patched 5.060
-  WORLD DIFFER at pass top, turn 283 (VBL 13129): 1 ranges, first (addr, unpatched, patched) [('0x21e4a', '000000', '012020')]
-  WORLD DIFFER at pass top, turn 283 (VBL 13131): 1 ranges, first (addr, unpatched, patched) [('0x21e4a', '000000', '012020')]
-  WORLD DIFFER at pass top, turn 283 (VBL 13133): 1 ranges, first (addr, unpatched, patched) [('0x21e4a', '000000', '012020')]
+genesis_start @16 MHz 50 Hz: IDENTICAL | world at pass tops: 214 compared (0 differ) over 60 turns, max 4 tops/turn | T frames 58 compared (0 differ; 0 excluded) | R frames: 159 (99 stability pairs, 0 unstable; 118 minimap compares, 0 differ, 14 turns excluded (minimap cell redrawn by the world)) | pass kinds T 59 R 159 S 0 | turns/s base 16.667 patched 5.060
+snapshot genesis_start turn 263, 60 turns, 8 MHz, 50 Hz, command at turn 283
+genesis_start @8 MHz 50 Hz: IDENTICAL | world at pass tops: 97 compared (0 differ) over 60 turns, max 2 tops/turn | T frames 58 compared (0 differ; 0 excluded) | R frames: 40 (0 stability pairs, 0 unstable; 30 minimap compares, 0 differ, 9 turns excluded (minimap cell redrawn by the world)) | pass kinds T 59 R 40 S 0 | turns/s base 7.867 patched 4.992
+snapshot busy_castles turn 870, 60 turns, 8 MHz, 50 Hz, command at turn 890
+busy_castles @8 MHz 50 Hz: IDENTICAL | world at pass tops: 58 compared (0 differ) over 60 turns, max 1 tops/turn | T frames 18 compared (0 differ; 0 excluded) | R frames: 0 (0 stability pairs, 0 unstable; 0 minimap compares, 0 differ, 0 turns excluded (minimap cell redrawn by the world)) | pass kinds T 19 R 0 S 40 | turns/s base 3.576 patched 4.925

@@ -1,32 +1,14 @@
 snapshot genesis_start turn 263, 60 turns, 16 MHz, 50 Hz
-genesis_start @16 MHz 50 Hz: IDENTICAL | world at pass tops: 206 compared (0 differ) over 60 turns, max 4 tops/turn | T frames 58 compared (0 differ; 0 excluded) | R frames: 151 (91 stability pairs, 0 unstable; 117 minimap compares, 0 differ, 12 turns excluded (minimap cell redrawn by the world)) | pass kinds T 59 R 151 S 0 | turns/s base 16.120 patched 5.043
+genesis_start @16 MHz 50 Hz: IDENTICAL | world at pass tops: 206 compared (0 differ) over 60 turns, max 4 tops/turn | T frames 58 compared (0 differ; 0 excluded) | R frames: 151 (91 stability pairs, 0 unstable; 117 minimap compares, 0 differ, 12 turns excluded (minimap cell redrawn by the world)) | pass kinds T 59 R 151 S 0 | turns/s base 16.033 patched 5.043
 snapshot genesis_start turn 263, 30 turns, 16 MHz, 50 Hz
 genesis_start @16 MHz 50 Hz: IDENTICAL | world at pass tops: 101 compared (0 differ) over 30 turns, max 4 tops/turn | T frames 28 compared (0 differ; 0 excluded) | R frames: 76 (46 stability pairs, 0 unstable; 57 minimap compares, 0 differ, 6 turns excluded (minimap cell redrawn by the world)) | pass kinds T 29 R 76 S 0 | turns/s base 16.477 patched 5.106
-file patches (HAGA) are not applicable to `live`: they are applied at build time
-Traceback (most recent call last):
-  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/populous/tools/poptick.py", line 755, in <module>
-    main()
-  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/populous/tools/poptick.py", line 751, in main
-    {"ab": cmd_ab, "rate": cmd_rate, "cold": cmd_cold, "clicks": cmd_clicks, "input": cmd_input}[a.cmd](a)
-  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/populous/tools/poptick.py", line 465, in cmd_ab
-    bl = make_live(base)
-         ^^^^^^^^^^^^^^^
-  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/populous/tools/poptick.py", line 70, in make_live
-    subprocess.run([sys.executable, str(HERE / "poppatch.py"), "live", "--only", *names, "--out", str(live)], check=True, cwd=GAME, stdout=subprocess.DEVNULL)
-  File "/home/ryan/.pyenv/versions/3.12.12/lib/python3.12/subprocess.py", line 571, in run
-    raise CalledProcessError(retcode, process.args,
-subprocess.CalledProcessError: Command '['/home/ryan/.pyenv/versions/3.12.12/bin/python3', '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous/tools/poppatch.py', 'live', '--only', 'test_pwalk', 'pop_noprot', 'pop_credit', 'pp_bigram_cache', 'pop_land_mul', 'pop_land_score', 'pop_ptr', 'pop_bgcopy', 'pop_fal_ym', 'pop_fal_ym_demo', '--out', '/tmp/poptick/live_49494bc3']' returned non-zero exit status 1.
-file patches (HAGA) are not applicable to `live`: they are applied at build time
-Traceback (most recent call last):
-  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/populous/tools/poptick.py", line 755, in <module>
-    main()
-  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/populous/tools/poptick.py", line 751, in main
-    {"ab": cmd_ab, "rate": cmd_rate, "cold": cmd_cold, "clicks": cmd_clicks, "input": cmd_input}[a.cmd](a)
-  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/populous/tools/poptick.py", line 465, in cmd_ab
-    bl = make_live(base)
-         ^^^^^^^^^^^^^^^
-  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/populous/tools/poptick.py", line 70, in make_live
-    subprocess.run([sys.executable, str(HERE / "poppatch.py"), "live", "--only", *names, "--out", str(live)], check=True, cwd=GAME, stdout=subprocess.DEVNULL)
-  File "/home/ryan/.pyenv/versions/3.12.12/lib/python3.12/subprocess.py", line 571, in run
-    raise CalledProcessError(retcode, process.args,
-subprocess.CalledProcessError: Command '['/home/ryan/.pyenv/versions/3.12.12/bin/python3', '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous/tools/poppatch.py', 'live', '--only', 'test_pwalk', 'pop_noprot', 'pop_credit', 'pp_bigram_cache', 'pop_land_mul', 'pop_land_score', 'pop_ptr', 'pop_bgcopy', 'pop_fal_ym', 'pop_fal_ym_demo', '--out', '/tmp/poptick/live_49494bc3']' returned non-zero exit status 1.
+  event of turn $1000 (`jsr $133b0` at $b932): unpatched 1 time(s) [4096], patched 1 time(s) [4096]
+snapshot genesis_start turn 263, 30 turns, 8 MHz, 60 Hz
+genesis_start @8 MHz 60 Hz: IDENTICAL | world at pass tops: 45 compared (0 differ) over 30 turns, max 2 tops/turn | T frames 28 compared (0 differ; 0 excluded) | R frames: 18 (0 stability pairs, 0 unstable; 14 minimap compares, 0 differ, 3 turns excluded (minimap cell redrawn by the world)) | pass kinds T 29 R 18 S 0 | turns/s base 7.733 patched 5.029
+  event of turn $1000 (`jsr $133b0` at $b932): unpatched 1 time(s) [4096], patched 1 time(s) [4096]
+snapshot genesis_start turn 263, 60 turns, 16 MHz, 50 Hz
+genesis_start @16 MHz 50 Hz: IDENTICAL | world at pass tops: 255 compared (0 differ) over 60 turns, max 5 tops/turn | T frames 58 compared (0 differ; 0 excluded) | R frames: 201 (140 stability pairs, 0 unstable; 156 minimap compares, 0 differ, 12 turns excluded (minimap cell redrawn by the world)) | pass kinds T 59 R 201 S 0 | turns/s base 20.922 patched 5.069
+snapshot busy_castles turn 870, 60 turns, 8 MHz, 50 Hz
+busy_castles @8 MHz 50 Hz: IDENTICAL | world at pass tops: 79 compared (0 differ) over 60 turns, max 2 tops/turn | T frames 58 compared (0 differ; 0 excluded) | R frames: 21 (0 stability pairs, 0 unstable; 17 minimap compares, 0 differ, 4 turns excluded (minimap cell redrawn by the world)) | pass kinds T 59 R 21 S 0 | turns/s base 6.120 patched 4.983
+snapshot busy_castles turn 870, 60 turns, 16 MHz, 60 Hz
+busy_castles @16 MHz 60 Hz: IDENTICAL | world at pass tops: 200 compared (0 differ) over 60 turns, max 4 tops/turn | T frames 58 compared (0 differ; 0 excluded) | R frames: 144 (85 stability pairs, 0 unstable; 110 minimap compares, 0 differ, 13 turns excluded (minimap cell redrawn by the world)) | pass kinds T 59 R 144 S 0 | turns/s base 12.643 patched 5.043

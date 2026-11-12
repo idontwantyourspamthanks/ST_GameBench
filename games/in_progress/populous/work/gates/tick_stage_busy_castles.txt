@@ -1,0 +1,68 @@
+back 0x57200 front 0x4f500
+b632->b6f4: ranges 2, screen bytes 0, other ranges 2 bytes 34
+     3b261-3b262 01 -> 00
+     3f4cf-3f4f0 0b00080000000400 -> 0000000000395700
+b6f4->b800: ranges 165, screen bytes 1298, other ranges 11 bytes 267
+     00465-0046a 9e0000349e -> a5000034a5
+     004bd-004be 01 -> 1b
+     00ea4-00ea6 1111 -> 4444
+     02b89-02b8a 30 -> a8
+     05faf-05fb0 10 -> 88
+     16d29-16d2e 0000002af1 -> 0100002af8
+     16f14-16f15 df -> 62
+     2005e-2005f 00 -> 04
+     3b04b-3b068 060065000b005700 -> 040066000a005700
+     3f404-3f456 81ea000000320000 -> 6d88000000a00000
+     3f465-3f4f0 0f0000ffff000000 -> 0c0000fff0000008
+b800->b80c: ranges 69, screen bytes 438, other ranges 31 bytes 313
+     00465-0046a a5000034a5 -> ad000034ad
+     004bd-004be 1b -> 3d
+     0091f-00920 01 -> 04
+     0092f-00938 b80003f4ac000206 -> e80003f448000160
+     00ea4-00ea6 4444 -> 1111
+     02b88-02b8a 02a8 -> 035c
+     05fae-05fb0 9088 -> 913c
+     16d2c-16d2e 2af8 -> 2b00
+     2005e-2005f 04 -> 00
+     3b305-3b306 01 -> 02
+     3b39f-3b3a0 01 -> 02
+     3b541-3b542 02 -> 03
+     3b607-3b608 02 -> 03
+     3b65f-3b660 01 -> 02
+     3b68b-3b68c 02 -> 03
+     3b6a1-3b6a2 02 -> 03
+     3b73b-3b73c 02 -> 03
+     3b77d-3b77e 02 -> 03
+     3b7bf-3b7c0 02 -> 03
+     3b843-3b844 01 -> 02
+     3b859-3b85a 01 -> 02
+     3b98d-3b98e 02 -> 03
+     3b9fb-3b9fc 02 -> 03
+     3ba11-3ba12 02 -> 03
+     3ba27-3ba28 02 -> 03
+     3ba95-3ba96 02 -> 03
+     3bac1-3bac2 02 -> 03
+     3bad7-3bad8 02 -> 03
+     3c507-3c508 21 -> 22
+     3f37f-3f456 a00000000600000d -> 0dac340000000000
+     3f4bb-3f4f0 0000230000003400 -> 2600000000000500
+b80c->b8ec: ranges 0, screen bytes 0, other ranges 0 bytes 0
+b8ec->b93a: ranges 0, screen bytes 0, other ranges 0 bytes 0
+b93a->b940: ranges 66, screen bytes 366, other ranges 2 bytes 66
+     3f49a-3f4da ffe4020d0009ffff -> 68e00000000b0000
+     3f4ee-3f4f0 b80c -> b940
+b940->b946: ranges 3, screen bytes 0, other ranges 3 bytes 14
+     16d29-16d2a 01 -> 00
+     3c50d-3c513 04f500000572 -> 0572000004f5
+     3f4e9-3f4f0 03f5720000b940 -> 016f1a0000b946
+b946->bb7c: ranges 1, screen bytes 0, other ranges 1 bytes 7
+     3f4e9-3f4f0 016f1a0000b946 -> 03b2740000b94c
+bb7c->bbf8: ranges 2, screen bytes 0, other ranges 2 bytes 27
+     3f4b6-3f4c6 ffff0003b2740003 -> 000000000000ffff
+     3f4e5-3f4f0 5e00020003b27400 -> aa00b40003f57200
+bbf8->bc02: ranges 5, screen bytes 0, other ranges 5 bytes 63
+     004bd-004be 3d -> 3e
+     00ea4-00ea6 1111 -> 2222
+     3f499-3f4ca 0168e00000000b00 -> 00002e0000000a00
+     3f4da-3f4dc bbd2 -> 0000
+     3f4e7-3f4f0 b40003f5720000bb -> 03f5720000bc0000
