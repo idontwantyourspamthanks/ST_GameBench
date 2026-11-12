@@ -1,0 +1,18 @@
+base set    : test_walk test_walk2 test_walk3
+patched set : test_walk test_walk2 test_walk3 pop2_tt_ptr
+game_start @8 MHz (base @8): DIFFER | turns compared: back 58, world 58, shown@S1+pointer 57, shown@flip+pointer 56 (shape-change passes not compared: 2) (skipped 2); flips captured 60/60; patched min VBL/pass 4 | work/pass 636227 -> 636245 (+0.00 %) | fps 11.049 -> 10.806 (-2.2 %), turns/s 11.049 -> 10.806
+   sprite entry coverage (base run): front end $2122e: 0, 16px front end $211be: 126, 16px 2-col $212b4: 126, neg-x shift $21322: 0, 1-col $21368: 0, 3-col (main) $213b0: 0, neg-x 3-col $2147e: 0, 2-col right edge $21530: 0
+      SHOWN@S1 DIFFER turn 389 (pointer 300,30 / 300,30, shape 0x0/0x0): 31 B differ, first at offset 4944 (row 30), rows 30-45
+      SHOWN DIFFER turn 389 (pointer 300,30; shape 0x0/0x0, [$202e] 0x3650/0x3650): 31 B differ, first at offset 4944 (row 30), rows 30-45
+      SHOWN DIFFER turn 390 (pointer 319,199; shape 0x0/0x0, [$202e] 0x11cf8/0x11cf8): 32 B differ, first at offset 4944 (row 30), rows 30-45
+      SHOWN DIFFER turn 392 (pointer 8,190; shape 0x0/0x0, [$202e] 0x116c0/0x116c0): 1 B differ, first at offset 31993 (row 199), rows 199-199
+      SHOWN@S1 DIFFER turn 394 (pointer 150,189 / 150,189, shape 0x0/0x0): 16 B differ, first at offset 30312 (row 189), rows 189-199
+      SHOWN DIFFER turn 394 (pointer 150,189; shape 0x0/0x0, [$202e] 0x11668/0x11668): 10 B differ, first at offset 30401 (row 190), rows 190-199
+      SHOWN@S1 DIFFER turn 395 (pointer 150,189 / 150,189, shape 0x0/0x0): 16 B differ, first at offset 30312 (row 189), rows 189-199
+      SHOWN DIFFER turn 395 (pointer 150,189; shape 0x0/0x0, [$202e] 0x9968/0x9968): 16 B differ, first at offset 30312 (row 189), rows 189-199
+      SHOWN@S1 DIFFER turn 396 (pointer 96,170 / 96,170, shape 0x0/0x0): 25 B differ, first at offset 27249 (row 170), rows 170-185
+      SHOWN DIFFER turn 396 (pointer 96,170; shape 0x0/0x0, [$202e] 0x10a70/0x10a70): 22 B differ, first at offset 30312 (row 189), rows 189-199
+      SHOWN@S1 DIFFER turn 397 (pointer 96,170 / 96,170, shape 0x0/0x0): 25 B differ, first at offset 27249 (row 170), rows 170-185
+      SHOWN DIFFER turn 397 (pointer 96,170; shape 0x0/0x0, [$202e] 0x8d70/0x8d70): 25 B differ, first at offset 27249 (row 170), rows 170-185
+MISMATCH
+EXIT 1

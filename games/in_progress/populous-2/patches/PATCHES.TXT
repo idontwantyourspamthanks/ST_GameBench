@@ -13,6 +13,8 @@ Changes vs the original HAGA release:
 - Tooltips: pointing at an icon shows its name and its key (the game's own F1-F6, 1-5 and keypad keys) in the sky at
   the top of the screen.
 - Falcon: the sample player no longer risks a bus error on the Falcon's sound chip.
+- Fixed: on a TT or Falcon the mouse pointer was missing on the menus and in play (also in PP's release); it is now drawn
+  every frame there. ST, STE and Mega STE are unchanged.
 - Garbled mouse packets (e.g. while the blitter is busy) are ignored instead of crashing the game.
 
 The main menu (the stone-framed screen with CREATE YOUR DEITY / CONQUEST

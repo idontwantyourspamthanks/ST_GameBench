@@ -380,12 +380,12 @@ def cmd_ab(a):
     WORK.mkdir(exist_ok=True)
     base = WALK + (["test_tickspin"] if a.spin else []) + (NTSCSET if a.hz == 60 else [])      # at 60 Hz both runs carry the 60 Hz fix (the walk drives the pointer below y = 184)
     bl = AB.make_live(base)
-    pl = AB.make_live(base + TICKSET)
+    pl = AB.make_live(base + TICKSET + list(a.extra))
     sp = snap_path(a.snap)
     t0 = AB.start_turn_for(sp)
     if a.spin:
         a.both_poke = list(a.both_poke) + [f"82700:{a.spin:04x}"]      # SPINN: N dbra iterations (10 cycles each) at the top of every pass in BOTH runs
-    print(f"base {' '.join(base)}\npatched +{' '.join(TICKSET)}\nsnapshot {a.snap} turn {t0}, {a.turns} turns, {a.mhz} MHz, {a.hz} Hz", flush=True)
+    print(f"base {' '.join(base)}\npatched +{' '.join(TICKSET + list(a.extra))}\nsnapshot {a.snap} turn {t0}, {a.turns} turns, {a.mhz} MHz, {a.hz} Hz", flush=True)
     with ThreadPoolExecutor(2) as ex:
         fb = ex.submit(one, sp, t0, bl, WORK / f"b_{sp.stem}_{a.mhz}", a.turns, a.mhz, a.hz, not a.no_walk, False, pokes=tuple(a.both_poke))
         fp = ex.submit(one, sp, t0, pl, WORK / f"p_{sp.stem}_{a.mhz}", a.turns, a.mhz, a.hz, not a.no_walk and not a.neg, True, pokes=tuple(a.both_poke) + tuple(a.poke))
@@ -880,6 +880,7 @@ def main():
     q.add_argument("--hz", type=int, choices=[50, 60], default=50)
     q.add_argument("--spin", type=int, default=0, help="both runs carry test_tickspin with this many dbra iterations (10 cycles each) burnt at the top of every pass: slow passes, so S passes happen (12800 = 0.8 VBL at 8 MHz)")
     q.add_argument("--no-walk", action="store_true"); q.add_argument("--neg", action="store_true")
+    q.add_argument("--extra", nargs="*", default=[], help="more patches in the PATCHED run only (e.g. pop2_tt_ptr)")
     q.add_argument("--watch", type=lambda v: int(v, 16), help="print the 16 bytes at this address (hex) at every pass top of both runs, per turn")
     q.add_argument("--dump", help="directory for the frames of failing minimap compares")
     q.add_argument("--poke", action="append", default=[], help="ADDR:HEXBYTES in the patched run only, at the apply flip (negative controls)")
