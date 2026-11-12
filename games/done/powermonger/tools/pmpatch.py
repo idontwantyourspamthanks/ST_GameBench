@@ -48,7 +48,7 @@ import time
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-ROOT = HERE.parent                       # games/in_progress/powermonger
+ROOT = HERE.parent                       # games/done/powermonger
 BENCH = ROOT.parent.parent.parent               # gamebench
 sys.path.insert(0, str(BENCH / "tools"))
 

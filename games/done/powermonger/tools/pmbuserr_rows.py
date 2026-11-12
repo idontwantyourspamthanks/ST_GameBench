@@ -5,7 +5,7 @@
 get_men: calls 37, max rows 24 [(1, 1), (2, 2), (24, 34)] (work/notes/buserr.md section 6).
 """
 import sys,time,re,collections,shutil
-sys.path.insert(0,'/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger/tools')
+sys.path.insert(0,'/home/ryan/Code/AtariST/gamebench/games/done/powermonger/tools')
 from pmab import *
 T=TICK+['p4_ptr_a','p4_ptr_b','p4_spr','p6_cpy']
 live=make_live(T)

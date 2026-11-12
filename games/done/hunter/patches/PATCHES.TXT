@@ -17,11 +17,17 @@ What changed against the original release:
   counts down ran 20% too fast: walking and driving, turning, NPCs, projectiles, the game clock, stamina and message
   timers, and the length of the sound effects. Now the world runs in real time at 50 and 60 Hz (50 "world ticks" per second
   whatever the refresh; 5 of every 6 refreshes at 60 Hz). At 50 Hz the game plays exactly as before.
+- Atari Jaguar pad (new in v1.1; STE and Falcon enhanced joystick ports, either port, two pads work too): the d-pad steers
+  like the joystick and A or B is fire. Keys: C = Return, Option = Space, Pause = P, * = Esc, 1 = R, 2 = Help, 3 = L,
+  4 = A, 5 = F, 6 = C, 7/9 = cursor up/down. Menus stay mouse-driven. Each button is read every 80 ms, so a very
+  short tap can be missed. Machines without the ports (ST, Mega ST, Mega STE, TT) run exactly as before, with no cost.
+- TT (new in v1.1): a TT booting from hard disk was taken for a Falcon by the sound code, which then used the Falcon's
+  rate. It now plays at the STE rate, as on the floppy.
 - Version line: the title screen shows a small, dim "v@VERSION@ enhanced by dad_prg" at the bottom, so this release can not be
   mistaken for the original. Nothing else on the screen changes.
 - Every patch checks the original bytes it replaces first. If anything is not as
   expected, nothing is changed and the game starts as before.
-- Nothing else in the game is changed: controls and saves work as in PP's release, and at 50 Hz so does the game speed.
+- Nothing else in the game is changed: keyboard, mouse and joystick controls and saves work as in PP's release, and at 50 Hz so does the game speed.
 
 How it is delivered:
 - START.TOS is replaced by a patched copy (unpacked); it also reads the extra file FILES\P
@@ -30,5 +36,6 @@ How it is delivered:
 
 Requirements and usage are as in README.TXT (1 MB RAM minimum).
 Run START.TOS from a hard disk as before (PP's HDDRIVER / AHDI setup).
-Tested on Hatari: STE (TOS 1.62) at 1 MB and 4 MB, Mega STE (TOS 2.06) at 4 MB, ST (TOS 1.04) at 1 MB.
+Tested on Hatari: STE (TOS 1.62) at 1 MB and 4 MB, Mega STE (TOS 2.06) at 4 MB, ST (TOS 1.04) at 1 MB, TT (TOS 3.06) at 4 MB;
+the Jaguar pad on the STE (HD and floppy) and the Falcon (TOS 4.04, floppy).
 Not tested on real hardware.

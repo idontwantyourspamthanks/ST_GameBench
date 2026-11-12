@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Powermonger (floppy, disks/protected.st) navigation + state access on top of tools/stharness.Hatari.
 
-    import sys; sys.path.insert(0, '<gamebench>/tools'); sys.path.insert(0, '<gamebench>/games/in_progress/powermonger/tools')
+    import sys; sys.path.insert(0, '<gamebench>/tools'); sys.path.insert(0, '<gamebench>/games/done/powermonger/tools')
     from pm import PM
     h = PM(); h.boot_to_game(); h.savemem(...); h.close()
 """

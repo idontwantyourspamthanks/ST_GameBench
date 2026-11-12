@@ -16,6 +16,9 @@ What changed
   * 50/60 Hz: the original counts display refreshes. It asks for 50 Hz itself, but where the screen runs at 60 Hz anyway
     (hardware or an adapter that ignores that, an emulator set to 60 Hz) the world (walking, driving, turning, NPCs, timers,
     game clock, sound effect lengths) ran 20% too fast. It now runs in real time at 50 and 60 Hz; at 50 Hz nothing changes.
+  * Atari Jaguar pad (STE and Falcon enhanced joystick ports): the d-pad steers like the joystick, A or B is fire;
+    C = Return, Option = Space, Pause = P, * = Esc, 1 = R, 2 = Help, 3 = L, 4 = A, 5 = F, 6 = C, 7/9 = cursor up/down.
+    Other machines run exactly as before.
   * The title screen shows a small, dim "v@VERSION@ enhanced by dad_prg" at the bottom; nothing else on it changes.
   * The patches check every byte they replace; if the game code is not the expected one nothing is changed.
 

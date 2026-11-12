@@ -1,6 +1,6 @@
 ; PMBOOT.PRG - AUTO-folder boot prompt for Powermonger on the all-games hard disk (tools/make_hd_image.py wraps it into a .PRG).
 ;
-; Why: the Powermonger HD build must be started from the AUTO folder (games/in_progress/powermonger/work/notes/loading.md section 7.1: it
+; Why: the Powermonger HD build must be started from the AUTO folder (games/done/powermonger/work/notes/loading.md section 7.1: it
 ; copies TOS's low RAM aside; started from the GEM desktop that region is too big and the game stops with "cannot swap the low
 ; RAM of TOS").  A bare AUTO\WAR.PRG would start the game on every boot; this program asks first:
 ;     "Powermonger? P = start, else desktop" (3 s, or any other key)
