@@ -1,5 +1,5 @@
 ; name: pop2_tooltip
-; default: no
+; default: yes
 ; site: $12740
 ; orig: 4eb90001334a
 ; note: Hover tooltips (work/notes/ui_impl.md, ui.md).  Site: `jsr $1334a.l` at $12740 in the play loop, the first instruction after the whole render stage
