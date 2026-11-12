@@ -25,7 +25,7 @@
 ;       rule), PH 2-5 unless one more pass is owed or the render would not end before the next PH 1 is due (12 * (6 - PH) - lateness < the measured duration of the last two
 ;       extra passes): a PH 1 that starts late reads the keys (Esc) and the mouse later than the original's tick does, so a pass may end at most SLACK = 1 VBL after the next PH 1 is due (by the measured duration, VBL-quantised); the due times stay on the clock grid (ACC), so a late PH 1 does not push later ticks back.
 ;       TAB[type] = 0 keeps a type on the plain 5 Hz pass (also when $40b6 <> 0).
-;       Shared word block D = $b42e0 (LAST.l +0, ACC.w +4, PH.w +6, SUB.w +8 (1 = PH 1 of a predicted group), +10 unused, SKIP.w +12 (read by p3c_render)).
+;       Shared word block D = $b42e0 (LAST.l +0, ACC.w +4, PH.w +6, SUB.w +8 (1 = PH 1 of a predicted group), EXTRA.w +10 (1 in an extra pass PH 2-5; read by p3cp_keys), SKIP.w +12 (read by p3c_render)).
 ;       Own data S = $b8f00.  Code: one segment at $b8000.
 GRP     equ     60
 SUBT    equ     12
@@ -174,6 +174,7 @@ head:   movem.l d0-d2/a0-a1,-(a7)
         lea     $770e.w,a6              ; displaced
         jmp     $4f5a.w                 ; displaced jsr, as a tail call: the pre-calls follow
 .cont:  move.w  d0,6(a0)                ; PH 2-5: extra frame
+        move.w  #1,10(a0)               ; EXTRA (the HOLD word D+10, cleared with SUB at every head entry): p3cp_keys skips the key / fire consumers in this pass
         moveq   #6,d1                   ; render only if it ends before the next PH 1 is due: 12 * (6 - PH) - lateness >= the duration of the last extra passes
         sub.w   d0,d1                   ; (a late PH 1 would consume the input, e.g. Esc, a tick after the original does)
         mulu.w  #SUBT,d1

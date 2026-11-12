@@ -29,6 +29,9 @@ Changes vs the original HAGA release:
   now drawn on every frame there. ST/STE/Mega STE are unchanged.
 - fixed (v1.4): after an explosion, parts of its circles could stay in the sky once the view turned (a bug in the
   faster sky redraw of the earlier patched releases; the original game was fine).
+- fixed (v1.4): on fast machines (TT, Mega STE) one press of the joystick button could throw 2-3 grenades or
+  missiles: the smooth in-between frames also read the fire button. Fire is now read once per world step (5 a second),
+  as the original does on a stock STE.
 - fixed (v1.3): after leaving a boat, the frogman's diving mask could show only its top half.
 - Version line: the orange MIDWINTER II logo screen (shown while the game loads, before the intro) carries a small, dim
   "v@VERSION@ enhanced by dad_prg" at the bottom, so this release can not be mistaken for the original. Nothing else on the

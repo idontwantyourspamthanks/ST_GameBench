@@ -1,0 +1,30 @@
+a_ste_foot_M press_ms {'down4': 80.1, 'down10': 200.3, 'down20': 400.6, 'down100': 2003.2} cycles/VBL 160214
+a_ste_foot_M ste mode M weapon 4 type 5 sel 4 ammo 250 -> 233 modes [0, 0, 65535]
+  down4     n=6  FIRE/press [0, 1, 0, 0, 0, 0]  SPAWN 1 SPAWN2 0 KEYC 1 TICK 1
+  down10    n=6  FIRE/press [1, 1, 0, 0, 0, 1]  SPAWN 3 SPAWN2 0 KEYC 3 TICK 3
+  down20    n=4  FIRE/press [0, 1, 1, 1]  SPAWN 3 SPAWN2 0 KEYC 3 TICK 3
+  down100   n=1  FIRE/press [1]  SPAWN 1 SPAWN2 0 KEYC 4 TICK 4
+a_ste_jeep_M press_ms {'down4': 80.1, 'down10': 200.3, 'down20': 400.6, 'down100': 2003.2} cycles/VBL 160139
+a_ste_jeep_M ste mode M weapon 16 type 1 sel 16 ammo 250 -> 237 modes [0, 0, 65535]
+  down4     n=6  FIRE/press [0, 0, 0, 0, 0, 0]  SPAWN 0 SPAWN2 0 KEYC 0 TICK 0
+  down10    n=6  FIRE/press [0, 1, 1, 1, 1, 1]  SPAWN 0 SPAWN2 0 KEYC 5 TICK 5
+  down20    n=4  FIRE/press [1, 1, 1, 1]  SPAWN 0 SPAWN2 0 KEYC 4 TICK 4
+  down100   n=1  FIRE/press [1]  SPAWN 0 SPAWN2 0 KEYC 6 TICK 6
+b_ste_foot_M press_ms {'down4': 80.1, 'down10': 200.3, 'down20': 400.6, 'down100': 2003.2} cycles/VBL 160237
+b_ste_foot_M ste mode M weapon 4 type 5 sel 4 ammo 250 -> 233 modes [0, 0, 65535]
+  down4     n=6  FIRE/press [0, 1, 0, 0, 0, 1]  SPAWN 2 SPAWN2 0 KEYC 2 TICK 3
+  down10    n=6  FIRE/press [0, 1, 0, 1, 0, 1]  SPAWN 3 SPAWN2 0 KEYC 3 TICK 7
+  down20    n=4  FIRE/press [1, 1, 1, 1]  SPAWN 4 SPAWN2 0 KEYC 4 TICK 11
+  down100   n=1  FIRE/press [1]  SPAWN 1 SPAWN2 0 KEYC 4 TICK 10
+b_ste_jeep_M press_ms {'down4': 80.1, 'down10': 200.3, 'down20': 400.6, 'down100': 2003.2} cycles/VBL 160233
+b_ste_jeep_M ste mode M weapon 16 type 1 sel 16 ammo 250 -> 233 modes [0, 0, 65535]
+  down4     n=6  FIRE/press [0, 0, 0, 1, 1, 0]  SPAWN 0 SPAWN2 0 KEYC 2 TICK 2
+  down10    n=6  FIRE/press [1, 0, 1, 1, 0, 1]  SPAWN 0 SPAWN2 0 KEYC 4 TICK 6
+  down20    n=4  FIRE/press [1, 1, 1, 1]  SPAWN 0 SPAWN2 0 KEYC 4 TICK 6
+  down100   n=1  FIRE/press [1]  SPAWN 0 SPAWN2 0 KEYC 7 TICK 11
+Traceback (most recent call last):
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2/work/fire/fire.py", line 156, in <module>
+    main()
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2/work/fire/fire.py", line 116, in main
+    time.sleep(2)
+KeyboardInterrupt

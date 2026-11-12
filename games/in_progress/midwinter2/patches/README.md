@@ -105,6 +105,7 @@ fixed 5 Hz (the original speed on a 1 MB 8 MHz STE, about one tick per 10 VBL) a
   landing, eject), a collision/arrival result; altitude is never extrapolated downwards; the lean never. TAB[type] = 0 puts a type on the plain 5 Hz pass.
   Data: block D = $B42E0 (+0 LAST.l, +4 ACC.w, +6 PH, +8 SUB (1 = PH 1 of a group), +12 SKIP), own data $B8F00, NPC snapshot $B8700, code from $B8000 (below $B8700).
 - `p3c_sim` ($31570): the second site of p3cp_head; the sim call becomes `jsr $b8000.l`, the hook that records the pose before the tick.
+- `p3cp_keys` ($315d0, blob $B7E00; `default: yes`, fire-rate fix, `work/notes/fire_rate.md`): the key fetch `$4f66`, the key/fire consumer `$50ce` and the F-key dispatcher `$30f72` at the end of the frame loop run only in PH 1 / plain passes. p3cp_head's extra passes (PH 2-5) share that tail and ran the consumer up to five times per 5 Hz tick, so a J-mode fire (`$6872` is a level re-armed every VBL while held) threw up to five grenades per tick. Flag: `EXTRA` = D+10 (`$B42EA`), set by p3cp_head's `.cont` path.
 - `p3c_render` ($3158c, blob $B4102): the HUD gauge draw ($19f54) runs once per presented frame (its dirty counters are per screen buffer) and a pass with
   SKIP set (another pass owed, or an extra pass past its deadline) skips the render and the gauge draw together.
 - `p3c_head` (`default: no`): the interpolated alternative (not shipping, not re-gated after the p3cp fixes; do not combine with p3cp_head).

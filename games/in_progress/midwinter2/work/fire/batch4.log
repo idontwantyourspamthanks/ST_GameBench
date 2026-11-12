@@ -1,0 +1,13 @@
+d_ms_foot_M press_ms {'down5': 83.5, 'down12': 200.4, 'down24': 400.8, 'down120': 2004.1} cycles/VBL 267102
+d_ms_foot_M megaste mode M weapon 4 type 5 sel 4 ammo 250 -> 234 modes [0, 0, 65535]
+  down5     n=6  FIRE/press [0, 0, 1, 0, 0, 0]  SPAWN 1 SPAWN2 0 KEYC 1 TICK 1
+  down12    n=6  FIRE/press [1, 1, 1, 1, 1, 1]  SPAWN 6 SPAWN2 0 KEYC 9 TICK 9
+  down24    n=4  FIRE/press [1, 1, 1, 1]  SPAWN 4 SPAWN2 0 KEYC 10 TICK 10
+  down120   n=1  FIRE/press [1]  SPAWN 1 SPAWN2 0 KEYC 14 TICK 14
+d_ms_jeep_M press_ms {'down5': 83.5, 'down12': 200.4, 'down24': 400.8, 'down120': 2004.1} cycles/VBL 267186
+d_ms_jeep_M megaste mode M weapon 16 type 1 sel 16 ammo 250 -> 233 modes [0, 0, 65535]
+  down5     n=6  FIRE/press [0, 1, 1, 1, 0, 0]  SPAWN 0 SPAWN2 0 KEYC 3 TICK 3
+  down12    n=6  FIRE/press [1, 1, 1, 1, 1, 1]  SPAWN 0 SPAWN2 0 KEYC 6 TICK 6
+  down24    n=4  FIRE/press [1, 1, 1, 1]  SPAWN 0 SPAWN2 0 KEYC 10 TICK 10
+  down120   n=1  FIRE/press [1]  SPAWN 0 SPAWN2 0 KEYC 13 TICK 13
+done

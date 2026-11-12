@@ -1,0 +1,1725 @@
+2. CPU breakpoint condition(s) matched 72 times.
+	pc = $1aaa4 :trace
+> m $ef8e 1
+0000EF8E: fa                                               ·
+2. CPU breakpoint condition(s) matched 73 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 74 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 23 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 75 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 76 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 77 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 24 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 78 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 79 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 80 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 25 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 81 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 82 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 83 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 26 times.
+	pc = $3148e :trace
+> b VBL > 15070 :trace :once :file /tmp/mw2run-scnntx8h/ev/e0.txt
+CPU condition breakpoint 6 with 1 condition(s) added:
+	VBL > 15070
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-scnntx8h/ev/e0.txt' file on hit.
+6. CPU breakpoint condition(s) matched 1 times.
+	VBL > 15070 :once :trace :file /tmp/mw2run-scnntx8h/ev/e0.txt
+Reading debugger commands from '/tmp/mw2run-scnntx8h/ev/e0.txt'...
+Changed to input file dir '/tmp/mw2run-scnntx8h/ev'.
+> e VBL
+= %11101100100000 (bin), #15136 (dec), $3b20 (hex)
+> e CycleCounter
+= %11100010001010010110111011101110 (bin), #3794366190/-500601106 (dec), $e2296eee (hex)
+> m $ef8e 1
+0000EF8E: fa                                               ·
+> w $7684 $00 $39
+Wrote 2 'b' values starting from 0x7684.
+> w $76bf $ff
+> w $75ac $ff $ff
+Wrote 2 'b' values starting from 0x75ac.
+> w $770a $00 $39
+Wrote 2 'b' values starting from 0x770a.
+> w $770c $00 $00
+Wrote 2 'b' values starting from 0x770c.
+> b VBL > 15075 :trace :once :file /tmp/mw2run-scnntx8h/ev/e1.txt
+CPU condition breakpoint 7 with 1 condition(s) added:
+	VBL > 15075
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-scnntx8h/ev/e1.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+7. CPU breakpoint condition(s) matched 1 times.
+	VBL > 15075 :once :trace :file /tmp/mw2run-scnntx8h/ev/e1.txt
+Reading debugger commands from '/tmp/mw2run-scnntx8h/ev/e1.txt'...
+Changed to input file dir '/tmp/mw2run-scnntx8h/ev'.
+> e VBL
+= %11101100100000 (bin), #15136 (dec), $3b20 (hex)
+> e CycleCounter
+= %11100010001010010110111011101110 (bin), #3794366190/-500601106 (dec), $e2296eee (hex)
+> m $ef8e 1
+0000EF8E: fa                                               ·
+> w $76bf $00
+> w $770a $00 $00
+Wrote 2 'b' values starting from 0x770a.
+> w $7708 $00 $39
+Wrote 2 'b' values starting from 0x7708.
+> b VBL > 15128 :trace :once :file /tmp/mw2run-scnntx8h/ev/e2.txt
+CPU condition breakpoint 8 with 1 condition(s) added:
+	VBL > 15128
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-scnntx8h/ev/e2.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+8. CPU breakpoint condition(s) matched 1 times.
+	VBL > 15128 :once :trace :file /tmp/mw2run-scnntx8h/ev/e2.txt
+Reading debugger commands from '/tmp/mw2run-scnntx8h/ev/e2.txt'...
+Changed to input file dir '/tmp/mw2run-scnntx8h/ev'.
+> e VBL
+= %11101100100000 (bin), #15136 (dec), $3b20 (hex)
+> e CycleCounter
+= %11100010001010010110111011101110 (bin), #3794366190/-500601106 (dec), $e2296eee (hex)
+> m $ef8e 1
+0000EF8E: fa                                               ·
+> w $7684 $00 $39
+Wrote 2 'b' values starting from 0x7684.
+> w $76bf $ff
+> w $75ac $ff $ff
+Wrote 2 'b' values starting from 0x75ac.
+> w $770a $00 $39
+Wrote 2 'b' values starting from 0x770a.
+> w $770c $00 $00
+Wrote 2 'b' values starting from 0x770c.
+> b VBL > 15133 :trace :once :file /tmp/mw2run-scnntx8h/ev/e3.txt
+CPU condition breakpoint 9 with 1 condition(s) added:
+	VBL > 15133
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-scnntx8h/ev/e3.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+9. CPU breakpoint condition(s) matched 1 times.
+	VBL > 15133 :once :trace :file /tmp/mw2run-scnntx8h/ev/e3.txt
+Reading debugger commands from '/tmp/mw2run-scnntx8h/ev/e3.txt'...
+Changed to input file dir '/tmp/mw2run-scnntx8h/ev'.
+> e VBL
+= %11101100100000 (bin), #15136 (dec), $3b20 (hex)
+> e CycleCounter
+= %11100010001010010110111011101110 (bin), #3794366190/-500601106 (dec), $e2296eee (hex)
+> m $ef8e 1
+0000EF8E: fa                                               ·
+> w $76bf $00
+> w $770a $00 $00
+Wrote 2 'b' values starting from 0x770a.
+> w $7708 $00 $39
+Wrote 2 'b' values starting from 0x7708.
+> b VBL > 15186 :trace :once :file /tmp/mw2run-scnntx8h/ev/e4.txt
+CPU condition breakpoint 10 with 1 condition(s) added:
+	VBL > 15186
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-scnntx8h/ev/e4.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+Removed CPU breakpoint 9:
+	VBL > 15133 :once :trace :file /tmp/mw2run-scnntx8h/ev/e3.txt
+Removed CPU breakpoint 8:
+	VBL > 15128 :once :trace :file /tmp/mw2run-scnntx8h/ev/e2.txt
+Removed CPU breakpoint 7:
+	VBL > 15075 :once :trace :file /tmp/mw2run-scnntx8h/ev/e1.txt
+Removed CPU breakpoint 6:
+	VBL > 15070 :once :trace :file /tmp/mw2run-scnntx8h/ev/e0.txt
+2. CPU breakpoint condition(s) matched 84 times.
+	pc = $1aaa4 :trace
+3. CPU breakpoint condition(s) matched 1 times.
+	pc = $1ab8e :trace
+4. CPU breakpoint condition(s) matched 1 times.
+	pc = $35152 :trace
+2. CPU breakpoint condition(s) matched 85 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 86 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 27 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 87 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 88 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 89 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 28 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 90 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 91 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 92 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 29 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 93 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 94 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 95 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 30 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 96 times.
+	pc = $1aaa4 :trace
+6. CPU breakpoint condition(s) matched 1 times.
+	VBL > 15186 :once :trace :file /tmp/mw2run-scnntx8h/ev/e4.txt
+Reading debugger commands from '/tmp/mw2run-scnntx8h/ev/e4.txt'...
+Changed to input file dir '/tmp/mw2run-scnntx8h/ev'.
+> e VBL
+= %11101101010011 (bin), #15187 (dec), $3b53 (hex)
+> e CycleCounter
+= %11100011110000110000001101011110 (bin), #3821208414/-473758882 (dec), $e3c3035e (hex)
+> m $ef8e 1
+0000EF8E: f9                                               ∙
+> w $7684 $00 $39
+Wrote 2 'b' values starting from 0x7684.
+> w $76bf $ff
+> w $75ac $ff $ff
+Wrote 2 'b' values starting from 0x75ac.
+> w $770a $00 $39
+Wrote 2 'b' values starting from 0x770a.
+> w $770c $00 $00
+Wrote 2 'b' values starting from 0x770c.
+> b VBL > 15191 :trace :once :file /tmp/mw2run-scnntx8h/ev/e5.txt
+CPU condition breakpoint 7 with 1 condition(s) added:
+	VBL > 15191
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-scnntx8h/ev/e5.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+Removed CPU breakpoint 6:
+	VBL > 15186 :once :trace :file /tmp/mw2run-scnntx8h/ev/e4.txt
+2. CPU breakpoint condition(s) matched 97 times.
+	pc = $1aaa4 :trace
+3. CPU breakpoint condition(s) matched 2 times.
+	pc = $1ab8e :trace
+4. CPU breakpoint condition(s) matched 2 times.
+	pc = $35152 :trace
+6. CPU breakpoint condition(s) matched 1 times.
+	VBL > 15191 :once :trace :file /tmp/mw2run-scnntx8h/ev/e5.txt
+Reading debugger commands from '/tmp/mw2run-scnntx8h/ev/e5.txt'...
+Changed to input file dir '/tmp/mw2run-scnntx8h/ev'.
+> e VBL
+= %11101101011000 (bin), #15192 (dec), $3b58 (hex)
+> e CycleCounter
+= %11100011111010111100100100100100 (bin), #3823880484/-471086812 (dec), $e3ebc924 (hex)
+> m $ef8e 1
+0000EF8E: f8                                               °
+> w $76bf $00
+> w $770a $00 $00
+Wrote 2 'b' values starting from 0x770a.
+> w $7708 $00 $39
+Wrote 2 'b' values starting from 0x7708.
+> b VBL > 15244 :trace :once :file /tmp/mw2run-scnntx8h/ev/e6.txt
+CPU condition breakpoint 7 with 1 condition(s) added:
+	VBL > 15244
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-scnntx8h/ev/e6.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+Removed CPU breakpoint 6:
+	VBL > 15191 :once :trace :file /tmp/mw2run-scnntx8h/ev/e5.txt
+2. CPU breakpoint condition(s) matched 98 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 31 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 99 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 100 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 101 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 32 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 102 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 103 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 104 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 33 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 105 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 106 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 107 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 34 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 108 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 109 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 110 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 35 times.
+	pc = $3148e :trace
+6. CPU breakpoint condition(s) matched 1 times.
+	VBL > 15244 :once :trace :file /tmp/mw2run-scnntx8h/ev/e6.txt
+Reading debugger commands from '/tmp/mw2run-scnntx8h/ev/e6.txt'...
+Changed to input file dir '/tmp/mw2run-scnntx8h/ev'.
+> e VBL
+= %11101110001101 (bin), #15245 (dec), $3b8d (hex)
+> e CycleCounter
+= %11100101100110111111100111110110 (bin), #3852204534/-442762762 (dec), $e59bf9f6 (hex)
+> m $ef8e 1
+0000EF8E: f8                                               °
+> w $7684 $00 $39
+Wrote 2 'b' values starting from 0x7684.
+> w $76bf $ff
+> w $75ac $ff $ff
+Wrote 2 'b' values starting from 0x75ac.
+> w $770a $00 $39
+Wrote 2 'b' values starting from 0x770a.
+> w $770c $00 $00
+Wrote 2 'b' values starting from 0x770c.
+> b VBL > 15249 :trace :once :file /tmp/mw2run-scnntx8h/ev/e7.txt
+CPU condition breakpoint 7 with 1 condition(s) added:
+	VBL > 15249
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-scnntx8h/ev/e7.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+Removed CPU breakpoint 6:
+	VBL > 15244 :once :trace :file /tmp/mw2run-scnntx8h/ev/e6.txt
+2. CPU breakpoint condition(s) matched 111 times.
+	pc = $1aaa4 :trace
+3. CPU breakpoint condition(s) matched 3 times.
+	pc = $1ab8e :trace
+4. CPU breakpoint condition(s) matched 3 times.
+	pc = $35152 :trace
+6. CPU breakpoint condition(s) matched 1 times.
+	VBL > 15249 :once :trace :file /tmp/mw2run-scnntx8h/ev/e7.txt
+Reading debugger commands from '/tmp/mw2run-scnntx8h/ev/e7.txt'...
+Changed to input file dir '/tmp/mw2run-scnntx8h/ev'.
+> e VBL
+= %11101110010010 (bin), #15250 (dec), $3b92 (hex)
+> e CycleCounter
+= %11100101110001001011111111001010 (bin), #3854876618/-440090678 (dec), $e5c4bfca (hex)
+> m $ef8e 1
+0000EF8E: f7                                               ≈
+> w $76bf $00
+> w $770a $00 $00
+Wrote 2 'b' values starting from 0x770a.
+> w $7708 $00 $39
+Wrote 2 'b' values starting from 0x7708.
+> b VBL > 15302 :trace :once :file /tmp/mw2run-scnntx8h/ev/e8.txt
+CPU condition breakpoint 7 with 1 condition(s) added:
+	VBL > 15302
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-scnntx8h/ev/e8.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+Removed CPU breakpoint 6:
+	VBL > 15249 :once :trace :file /tmp/mw2run-scnntx8h/ev/e7.txt
+2. CPU breakpoint condition(s) matched 112 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 113 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 36 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 114 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 115 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 116 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 37 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 117 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 118 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 119 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 38 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 120 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 121 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 122 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 39 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 123 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 124 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 125 times.
+	pc = $1aaa4 :trace
+6. CPU breakpoint condition(s) matched 1 times.
+	VBL > 15302 :once :trace :file /tmp/mw2run-scnntx8h/ev/e8.txt
+Reading debugger commands from '/tmp/mw2run-scnntx8h/ev/e8.txt'...
+Changed to input file dir '/tmp/mw2run-scnntx8h/ev'.
+> e VBL
+= %11101111000111 (bin), #15303 (dec), $3bc7 (hex)
+> e CycleCounter
+= %11100111011101001111000010011110 (bin), #3883200670/-411766626 (dec), $e774f09e (hex)
+> m $ef8e 1
+0000EF8E: f7                                               ≈
+> w $7684 $00 $39
+Wrote 2 'b' values starting from 0x7684.
+> w $76bf $ff
+> w $75ac $ff $ff
+Wrote 2 'b' values starting from 0x75ac.
+> w $770a $00 $39
+Wrote 2 'b' values starting from 0x770a.
+> w $770c $00 $00
+Wrote 2 'b' values starting from 0x770c.
+> b VBL > 15307 :trace :once :file /tmp/mw2run-scnntx8h/ev/e9.txt
+CPU condition breakpoint 7 with 1 condition(s) added:
+	VBL > 15307
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-scnntx8h/ev/e9.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+Removed CPU breakpoint 6:
+	VBL > 15302 :once :trace :file /tmp/mw2run-scnntx8h/ev/e8.txt
+1. CPU breakpoint condition(s) matched 40 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 126 times.
+	pc = $1aaa4 :trace
+3. CPU breakpoint condition(s) matched 4 times.
+	pc = $1ab8e :trace
+4. CPU breakpoint condition(s) matched 4 times.
+	pc = $35152 :trace
+6. CPU breakpoint condition(s) matched 1 times.
+	VBL > 15307 :once :trace :file /tmp/mw2run-scnntx8h/ev/e9.txt
+Reading debugger commands from '/tmp/mw2run-scnntx8h/ev/e9.txt'...
+Changed to input file dir '/tmp/mw2run-scnntx8h/ev'.
+> e VBL
+= %11101111001100 (bin), #15308 (dec), $3bcc (hex)
+> e CycleCounter
+= %11100111100111011011011001100110 (bin), #3885872742/-409094554 (dec), $e79db666 (hex)
+> m $ef8e 1
+0000EF8E: f6                                               ÷
+> w $76bf $00
+> w $770a $00 $00
+Wrote 2 'b' values starting from 0x770a.
+> w $7708 $00 $39
+Wrote 2 'b' values starting from 0x7708.
+> b VBL > 15360 :trace :once :file /tmp/mw2run-scnntx8h/ev/e10.txt
+CPU condition breakpoint 7 with 1 condition(s) added:
+	VBL > 15360
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-scnntx8h/ev/e10.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+Removed CPU breakpoint 6:
+	VBL > 15307 :once :trace :file /tmp/mw2run-scnntx8h/ev/e9.txt
+2. CPU breakpoint condition(s) matched 127 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 41 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 128 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 129 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 42 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 130 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 131 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 132 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 43 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 133 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 134 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 135 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 44 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 136 times.
+	pc = $1aaa4 :trace
+6. CPU breakpoint condition(s) matched 1 times.
+	VBL > 15360 :once :trace :file /tmp/mw2run-scnntx8h/ev/e10.txt
+Reading debugger commands from '/tmp/mw2run-scnntx8h/ev/e10.txt'...
+Changed to input file dir '/tmp/mw2run-scnntx8h/ev'.
+> e VBL
+= %11110000000001 (bin), #15361 (dec), $3c01 (hex)
+> e CycleCounter
+= %11101001010011011110011100111110 (bin), #3914196798/-380770498 (dec), $e94de73e (hex)
+> m $ef8e 1
+0000EF8E: f6                                               ÷
+> w $7684 $00 $39
+Wrote 2 'b' values starting from 0x7684.
+> w $76bf $ff
+> w $75ac $ff $ff
+Wrote 2 'b' values starting from 0x75ac.
+> w $770a $00 $39
+Wrote 2 'b' values starting from 0x770a.
+> w $770c $00 $00
+Wrote 2 'b' values starting from 0x770c.
+> b VBL > 15365 :trace :once :file /tmp/mw2run-scnntx8h/ev/e11.txt
+CPU condition breakpoint 7 with 1 condition(s) added:
+	VBL > 15365
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-scnntx8h/ev/e11.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+Removed CPU breakpoint 6:
+	VBL > 15360 :once :trace :file /tmp/mw2run-scnntx8h/ev/e10.txt
+2. CPU breakpoint condition(s) matched 137 times.
+	pc = $1aaa4 :trace
+3. CPU breakpoint condition(s) matched 5 times.
+	pc = $1ab8e :trace
+4. CPU breakpoint condition(s) matched 5 times.
+	pc = $35152 :trace
+1. CPU breakpoint condition(s) matched 45 times.
+	pc = $3148e :trace
+6. CPU breakpoint condition(s) matched 1 times.
+	VBL > 15365 :once :trace :file /tmp/mw2run-scnntx8h/ev/e11.txt
+Reading debugger commands from '/tmp/mw2run-scnntx8h/ev/e11.txt'...
+Changed to input file dir '/tmp/mw2run-scnntx8h/ev'.
+> e VBL
+= %11110000000110 (bin), #15366 (dec), $3c06 (hex)
+> e CycleCounter
+= %11101001011101101010110100000100 (bin), #3916868868/-378098428 (dec), $e976ad04 (hex)
+> m $ef8e 1
+0000EF8E: f5                                               ⌡
+> w $76bf $00
+> w $770a $00 $00
+Wrote 2 'b' values starting from 0x770a.
+> w $7708 $00 $39
+Wrote 2 'b' values starting from 0x7708.
+> b VBL > 15418 :trace :once :file /tmp/mw2run-scnntx8h/ev/e12.txt
+CPU condition breakpoint 7 with 1 condition(s) added:
+	VBL > 15418
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-scnntx8h/ev/e12.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+Removed CPU breakpoint 6:
+	VBL > 15365 :once :trace :file /tmp/mw2run-scnntx8h/ev/e11.txt
+2. CPU breakpoint condition(s) matched 138 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 139 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 46 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 140 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 141 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 47 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 142 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 143 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 48 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 144 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 145 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 49 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 146 times.
+	pc = $1aaa4 :trace
+6. CPU breakpoint condition(s) matched 1 times.
+	VBL > 15418 :once :trace :file /tmp/mw2run-scnntx8h/ev/e12.txt
+Reading debugger commands from '/tmp/mw2run-scnntx8h/ev/e12.txt'...
+Changed to input file dir '/tmp/mw2run-scnntx8h/ev'.
+> e VBL
+= %11110000111011 (bin), #15419 (dec), $3c3b (hex)
+> e CycleCounter
+= %11101011001001101101110111010110 (bin), #3945192918/-349774378 (dec), $eb26ddd6 (hex)
+> m $ef8e 1
+0000EF8E: f5                                               ⌡
+> w $7684 $00 $39
+Wrote 2 'b' values starting from 0x7684.
+> w $76bf $ff
+> w $75ac $ff $ff
+Wrote 2 'b' values starting from 0x75ac.
+> w $770a $00 $39
+Wrote 2 'b' values starting from 0x770a.
+> w $770c $00 $00
+Wrote 2 'b' values starting from 0x770c.
+> b VBL > 15430 :trace :once :file /tmp/mw2run-scnntx8h/ev/e13.txt
+CPU condition breakpoint 7 with 1 condition(s) added:
+	VBL > 15430
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-scnntx8h/ev/e13.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+Removed CPU breakpoint 6:
+	VBL > 15418 :once :trace :file /tmp/mw2run-scnntx8h/ev/e12.txt
+2. CPU breakpoint condition(s) matched 147 times.
+	pc = $1aaa4 :trace
+3. CPU breakpoint condition(s) matched 6 times.
+	pc = $1ab8e :trace
+4. CPU breakpoint condition(s) matched 6 times.
+	pc = $35152 :trace
+1. CPU breakpoint condition(s) matched 50 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 148 times.
+	pc = $1aaa4 :trace
+6. CPU breakpoint condition(s) matched 1 times.
+	VBL > 15430 :once :trace :file /tmp/mw2run-scnntx8h/ev/e13.txt
+Reading debugger commands from '/tmp/mw2run-scnntx8h/ev/e13.txt'...
+Changed to input file dir '/tmp/mw2run-scnntx8h/ev'.
+> e VBL
+= %11110001000111 (bin), #15431 (dec), $3c47 (hex)
+> e CycleCounter
+= %11101011100010001011100010011110 (bin), #3951605918/-343361378 (dec), $eb88b89e (hex)
+> m $ef8e 1
+0000EF8E: f4                                               ⌠
+> w $76bf $00
+> w $770a $00 $00
+Wrote 2 'b' values starting from 0x770a.
+> w $7708 $00 $39
+Wrote 2 'b' values starting from 0x7708.
+> b VBL > 15483 :trace :once :file /tmp/mw2run-scnntx8h/ev/e14.txt
+CPU condition breakpoint 7 with 1 condition(s) added:
+	VBL > 15483
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-scnntx8h/ev/e14.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+Removed CPU breakpoint 6:
+	VBL > 15430 :once :trace :file /tmp/mw2run-scnntx8h/ev/e13.txt
+2. CPU breakpoint condition(s) matched 149 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 51 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 150 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 151 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 52 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 152 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 153 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 53 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 154 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 155 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 54 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 156 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 157 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 55 times.
+	pc = $3148e :trace
+6. CPU breakpoint condition(s) matched 1 times.
+	VBL > 15483 :once :trace :file /tmp/mw2run-scnntx8h/ev/e14.txt
+Reading debugger commands from '/tmp/mw2run-scnntx8h/ev/e14.txt'...
+Changed to input file dir '/tmp/mw2run-scnntx8h/ev'.
+> e VBL
+= %11110001111100 (bin), #15484 (dec), $3c7c (hex)
+> e CycleCounter
+= %11101101001110001110100101110100 (bin), #3979929972/-315037324 (dec), $ed38e974 (hex)
+> m $ef8e 1
+0000EF8E: f4                                               ⌠
+> w $7684 $00 $39
+Wrote 2 'b' values starting from 0x7684.
+> w $76bf $ff
+> w $75ac $ff $ff
+Wrote 2 'b' values starting from 0x75ac.
+> w $770a $00 $39
+Wrote 2 'b' values starting from 0x770a.
+> w $770c $00 $00
+Wrote 2 'b' values starting from 0x770c.
+> b VBL > 15495 :trace :once :file /tmp/mw2run-scnntx8h/ev/e15.txt
+CPU condition breakpoint 7 with 1 condition(s) added:
+	VBL > 15495
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-scnntx8h/ev/e15.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+Removed CPU breakpoint 6:
+	VBL > 15483 :once :trace :file /tmp/mw2run-scnntx8h/ev/e14.txt
+2. CPU breakpoint condition(s) matched 158 times.
+	pc = $1aaa4 :trace
+3. CPU breakpoint condition(s) matched 7 times.
+	pc = $1ab8e :trace
+4. CPU breakpoint condition(s) matched 7 times.
+	pc = $35152 :trace
+2. CPU breakpoint condition(s) matched 159 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 56 times.
+	pc = $3148e :trace
+6. CPU breakpoint condition(s) matched 1 times.
+	VBL > 15495 :once :trace :file /tmp/mw2run-scnntx8h/ev/e15.txt
+Reading debugger commands from '/tmp/mw2run-scnntx8h/ev/e15.txt'...
+Changed to input file dir '/tmp/mw2run-scnntx8h/ev'.
+> e VBL
+= %11110010001000 (bin), #15496 (dec), $3c88 (hex)
+> e CycleCounter
+= %11101101100110101100010001001110 (bin), #3986342990/-308624306 (dec), $ed9ac44e (hex)
+> m $ef8e 1
+0000EF8E: f3                                               ≤
+> w $76bf $00
+> w $770a $00 $00
+Wrote 2 'b' values starting from 0x770a.
+> w $7708 $00 $39
+Wrote 2 'b' values starting from 0x7708.
+> b VBL > 15548 :trace :once :file /tmp/mw2run-scnntx8h/ev/e16.txt
+CPU condition breakpoint 7 with 1 condition(s) added:
+	VBL > 15548
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-scnntx8h/ev/e16.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+Removed CPU breakpoint 6:
+	VBL > 15495 :once :trace :file /tmp/mw2run-scnntx8h/ev/e15.txt
+2. CPU breakpoint condition(s) matched 160 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 161 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 57 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 162 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 163 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 58 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 164 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 165 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 59 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 166 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 167 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 60 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 168 times.
+	pc = $1aaa4 :trace
+6. CPU breakpoint condition(s) matched 1 times.
+	VBL > 15548 :once :trace :file /tmp/mw2run-scnntx8h/ev/e16.txt
+Reading debugger commands from '/tmp/mw2run-scnntx8h/ev/e16.txt'...
+Changed to input file dir '/tmp/mw2run-scnntx8h/ev'.
+> e VBL
+= %11110010111101 (bin), #15549 (dec), $3cbd (hex)
+> e CycleCounter
+= %11101111010010101111010100010100 (bin), #4014667028/-280300268 (dec), $ef4af514 (hex)
+> m $ef8e 1
+0000EF8E: f3                                               ≤
+> w $7684 $00 $39
+Wrote 2 'b' values starting from 0x7684.
+> w $76bf $ff
+> w $75ac $ff $ff
+Wrote 2 'b' values starting from 0x75ac.
+> w $770a $00 $39
+Wrote 2 'b' values starting from 0x770a.
+> w $770c $00 $00
+Wrote 2 'b' values starting from 0x770c.
+> b VBL > 15560 :trace :once :file /tmp/mw2run-scnntx8h/ev/e17.txt
+CPU condition breakpoint 7 with 1 condition(s) added:
+	VBL > 15560
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-scnntx8h/ev/e17.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+Removed CPU breakpoint 6:
+	VBL > 15548 :once :trace :file /tmp/mw2run-scnntx8h/ev/e16.txt
+2. CPU breakpoint condition(s) matched 169 times.
+	pc = $1aaa4 :trace
+3. CPU breakpoint condition(s) matched 8 times.
+	pc = $1ab8e :trace
+4. CPU breakpoint condition(s) matched 8 times.
+	pc = $35152 :trace
+1. CPU breakpoint condition(s) matched 61 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 170 times.
+	pc = $1aaa4 :trace
+6. CPU breakpoint condition(s) matched 1 times.
+	VBL > 15560 :once :trace :file /tmp/mw2run-scnntx8h/ev/e17.txt
+Reading debugger commands from '/tmp/mw2run-scnntx8h/ev/e17.txt'...
+Changed to input file dir '/tmp/mw2run-scnntx8h/ev'.
+> e VBL
+= %11110011001001 (bin), #15561 (dec), $3cc9 (hex)
+> e CycleCounter
+= %11101111101011001100111110111000 (bin), #4021079992/-273887304 (dec), $efaccfb8 (hex)
+> m $ef8e 1
+0000EF8E: f2                                               ≥
+> w $76bf $00
+> w $770a $00 $00
+Wrote 2 'b' values starting from 0x770a.
+> w $7708 $00 $39
+Wrote 2 'b' values starting from 0x7708.
+> b VBL > 15613 :trace :once :file /tmp/mw2run-scnntx8h/ev/e18.txt
+CPU condition breakpoint 7 with 1 condition(s) added:
+	VBL > 15613
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-scnntx8h/ev/e18.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+Removed CPU breakpoint 6:
+	VBL > 15560 :once :trace :file /tmp/mw2run-scnntx8h/ev/e17.txt
+2. CPU breakpoint condition(s) matched 171 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 62 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 172 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 173 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 63 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 174 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 175 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 64 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 176 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 177 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 65 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 178 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 179 times.
+	pc = $1aaa4 :trace
+6. CPU breakpoint condition(s) matched 1 times.
+	VBL > 15613 :once :trace :file /tmp/mw2run-scnntx8h/ev/e18.txt
+Reading debugger commands from '/tmp/mw2run-scnntx8h/ev/e18.txt'...
+Changed to input file dir '/tmp/mw2run-scnntx8h/ev'.
+> e VBL
+= %11110011111110 (bin), #15614 (dec), $3cfe (hex)
+> e CycleCounter
+= %11110001010111010000000010011000 (bin), #4049404056/-245563240 (dec), $f15d0098 (hex)
+> m $ef8e 1
+0000EF8E: f2                                               ≥
+> w $7684 $00 $39
+Wrote 2 'b' values starting from 0x7684.
+> w $76bf $ff
+> w $75ac $ff $ff
+Wrote 2 'b' values starting from 0x75ac.
+> w $770a $00 $39
+Wrote 2 'b' values starting from 0x770a.
+> w $770c $00 $00
+Wrote 2 'b' values starting from 0x770c.
+> b VBL > 15625 :trace :once :file /tmp/mw2run-scnntx8h/ev/e19.txt
+CPU condition breakpoint 7 with 1 condition(s) added:
+	VBL > 15625
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-scnntx8h/ev/e19.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+Removed CPU breakpoint 6:
+	VBL > 15613 :once :trace :file /tmp/mw2run-scnntx8h/ev/e18.txt
+1. CPU breakpoint condition(s) matched 66 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 180 times.
+	pc = $1aaa4 :trace
+3. CPU breakpoint condition(s) matched 9 times.
+	pc = $1ab8e :trace
+4. CPU breakpoint condition(s) matched 9 times.
+	pc = $35152 :trace
+2. CPU breakpoint condition(s) matched 181 times.
+	pc = $1aaa4 :trace
+6. CPU breakpoint condition(s) matched 1 times.
+	VBL > 15625 :once :trace :file /tmp/mw2run-scnntx8h/ev/e19.txt
+Reading debugger commands from '/tmp/mw2run-scnntx8h/ev/e19.txt'...
+Changed to input file dir '/tmp/mw2run-scnntx8h/ev'.
+> e VBL
+= %11110100001010 (bin), #15626 (dec), $3d0a (hex)
+> e CycleCounter
+= %11110001101111101101101101001010 (bin), #4055817034/-239150262 (dec), $f1bedb4a (hex)
+> m $ef8e 1
+0000EF8E: f1                                               ±
+> w $76bf $00
+> w $770a $00 $00
+Wrote 2 'b' values starting from 0x770a.
+> w $7708 $00 $39
+Wrote 2 'b' values starting from 0x7708.
+> b VBL > 15678 :trace :once :file /tmp/mw2run-scnntx8h/ev/e20.txt
+CPU condition breakpoint 7 with 1 condition(s) added:
+	VBL > 15678
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-scnntx8h/ev/e20.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+Removed CPU breakpoint 6:
+	VBL > 15625 :once :trace :file /tmp/mw2run-scnntx8h/ev/e19.txt
+1. CPU breakpoint condition(s) matched 67 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 182 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 183 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 68 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 184 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 185 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 69 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 186 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 187 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 70 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 188 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 189 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 71 times.
+	pc = $3148e :trace
+6. CPU breakpoint condition(s) matched 1 times.
+	VBL > 15678 :once :trace :file /tmp/mw2run-scnntx8h/ev/e20.txt
+Reading debugger commands from '/tmp/mw2run-scnntx8h/ev/e20.txt'...
+Changed to input file dir '/tmp/mw2run-scnntx8h/ev'.
+> e VBL
+= %11110100111111 (bin), #15679 (dec), $3d3f (hex)
+> e CycleCounter
+= %11110011011011110000110001100100 (bin), #4084141156/-210826140 (dec), $f36f0c64 (hex)
+> m $ef8e 1
+0000EF8E: f1                                               ±
+> w $7684 $00 $39
+Wrote 2 'b' values starting from 0x7684.
+> w $76bf $ff
+> w $75ac $ff $ff
+Wrote 2 'b' values starting from 0x75ac.
+> w $770a $00 $39
+Wrote 2 'b' values starting from 0x770a.
+> w $770c $00 $00
+Wrote 2 'b' values starting from 0x770c.
+> b VBL > 15690 :trace :once :file /tmp/mw2run-scnntx8h/ev/e21.txt
+CPU condition breakpoint 7 with 1 condition(s) added:
+	VBL > 15690
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-scnntx8h/ev/e21.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+Removed CPU breakpoint 6:
+	VBL > 15678 :once :trace :file /tmp/mw2run-scnntx8h/ev/e20.txt
+2. CPU breakpoint condition(s) matched 190 times.
+	pc = $1aaa4 :trace
+3. CPU breakpoint condition(s) matched 10 times.
+	pc = $1ab8e :trace
+4. CPU breakpoint condition(s) matched 10 times.
+	pc = $35152 :trace
+2. CPU breakpoint condition(s) matched 191 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 72 times.
+	pc = $3148e :trace
+6. CPU breakpoint condition(s) matched 1 times.
+	VBL > 15690 :once :trace :file /tmp/mw2run-scnntx8h/ev/e21.txt
+Reading debugger commands from '/tmp/mw2run-scnntx8h/ev/e21.txt'...
+Changed to input file dir '/tmp/mw2run-scnntx8h/ev'.
+> e VBL
+= %11110101001011 (bin), #15691 (dec), $3d4b (hex)
+> e CycleCounter
+= %11110011110100001110011011010010 (bin), #4090554066/-204413230 (dec), $f3d0e6d2 (hex)
+> m $ef8e 1
+0000EF8E: f0                                               ≡
+> w $76bf $00
+> w $770a $00 $00
+Wrote 2 'b' values starting from 0x770a.
+> w $7708 $00 $39
+Wrote 2 'b' values starting from 0x7708.
+> b VBL > 15743 :trace :once :file /tmp/mw2run-scnntx8h/ev/e22.txt
+CPU condition breakpoint 7 with 1 condition(s) added:
+	VBL > 15743
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-scnntx8h/ev/e22.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+Removed CPU breakpoint 6:
+	VBL > 15690 :once :trace :file /tmp/mw2run-scnntx8h/ev/e21.txt
+2. CPU breakpoint condition(s) matched 192 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 193 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 73 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 194 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 195 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 74 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 196 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 197 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 75 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 198 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 199 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 76 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 200 times.
+	pc = $1aaa4 :trace
+6. CPU breakpoint condition(s) matched 1 times.
+	VBL > 15743 :once :trace :file /tmp/mw2run-scnntx8h/ev/e22.txt
+Reading debugger commands from '/tmp/mw2run-scnntx8h/ev/e22.txt'...
+Changed to input file dir '/tmp/mw2run-scnntx8h/ev'.
+> e VBL
+= %11110110000000 (bin), #15744 (dec), $3d80 (hex)
+> e CycleCounter
+= %11110101100000010001011110100100 (bin), #4118878116/-176089180 (dec), $f58117a4 (hex)
+> m $ef8e 1
+0000EF8E: f0                                               ≡
+> w $7684 $00 $39
+Wrote 2 'b' values starting from 0x7684.
+> w $76bf $ff
+> w $75ac $ff $ff
+Wrote 2 'b' values starting from 0x75ac.
+> w $770a $00 $39
+Wrote 2 'b' values starting from 0x770a.
+> w $770c $00 $00
+Wrote 2 'b' values starting from 0x770c.
+> b VBL > 15755 :trace :once :file /tmp/mw2run-scnntx8h/ev/e23.txt
+CPU condition breakpoint 7 with 1 condition(s) added:
+	VBL > 15755
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-scnntx8h/ev/e23.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+Removed CPU breakpoint 6:
+	VBL > 15743 :once :trace :file /tmp/mw2run-scnntx8h/ev/e22.txt
+2. CPU breakpoint condition(s) matched 201 times.
+	pc = $1aaa4 :trace
+3. CPU breakpoint condition(s) matched 11 times.
+	pc = $1ab8e :trace
+4. CPU breakpoint condition(s) matched 11 times.
+	pc = $35152 :trace
+1. CPU breakpoint condition(s) matched 77 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 202 times.
+	pc = $1aaa4 :trace
+6. CPU breakpoint condition(s) matched 1 times.
+	VBL > 15755 :once :trace :file /tmp/mw2run-scnntx8h/ev/e23.txt
+Reading debugger commands from '/tmp/mw2run-scnntx8h/ev/e23.txt'...
+Changed to input file dir '/tmp/mw2run-scnntx8h/ev'.
+> e VBL
+= %11110110001100 (bin), #15756 (dec), $3d8c (hex)
+> e CycleCounter
+= %11110101111000101111001010101000 (bin), #4125291176/-169676120 (dec), $f5e2f2a8 (hex)
+> m $ef8e 1
+0000EF8E: ef                                               ∩
+> w $76bf $00
+> w $770a $00 $00
+Wrote 2 'b' values starting from 0x770a.
+> w $7708 $00 $39
+Wrote 2 'b' values starting from 0x7708.
+> b VBL > 15808 :trace :once :file /tmp/mw2run-scnntx8h/ev/e24.txt
+CPU condition breakpoint 7 with 1 condition(s) added:
+	VBL > 15808
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-scnntx8h/ev/e24.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+Removed CPU breakpoint 6:
+	VBL > 15755 :once :trace :file /tmp/mw2run-scnntx8h/ev/e23.txt
+2. CPU breakpoint condition(s) matched 203 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 78 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 204 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 205 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 79 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 206 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 207 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 80 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 208 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 209 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 81 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 210 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 211 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 82 times.
+	pc = $3148e :trace
+6. CPU breakpoint condition(s) matched 1 times.
+	VBL > 15808 :once :trace :file /tmp/mw2run-scnntx8h/ev/e24.txt
+Reading debugger commands from '/tmp/mw2run-scnntx8h/ev/e24.txt'...
+Changed to input file dir '/tmp/mw2run-scnntx8h/ev'.
+> e VBL
+= %11110111000001 (bin), #15809 (dec), $3dc1 (hex)
+> e CycleCounter
+= %11110111100100110010001100110100 (bin), #4153615156/-141352140 (dec), $f7932334 (hex)
+> m $ef8e 1
+0000EF8E: ef                                               ∩
+> w $7684 $00 $39
+Wrote 2 'b' values starting from 0x7684.
+> w $76bf $ff
+> w $75ac $ff $ff
+Wrote 2 'b' values starting from 0x75ac.
+> w $770a $00 $39
+Wrote 2 'b' values starting from 0x770a.
+> w $770c $00 $00
+Wrote 2 'b' values starting from 0x770c.
+> b VBL > 15832 :trace :once :file /tmp/mw2run-scnntx8h/ev/e25.txt
+CPU condition breakpoint 7 with 1 condition(s) added:
+	VBL > 15832
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-scnntx8h/ev/e25.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+Removed CPU breakpoint 6:
+	VBL > 15808 :once :trace :file /tmp/mw2run-scnntx8h/ev/e24.txt
+2. CPU breakpoint condition(s) matched 212 times.
+	pc = $1aaa4 :trace
+3. CPU breakpoint condition(s) matched 12 times.
+	pc = $1ab8e :trace
+4. CPU breakpoint condition(s) matched 12 times.
+	pc = $35152 :trace
+2. CPU breakpoint condition(s) matched 213 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 83 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 214 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 215 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 84 times.
+	pc = $3148e :trace
+6. CPU breakpoint condition(s) matched 1 times.
+	VBL > 15832 :once :trace :file /tmp/mw2run-scnntx8h/ev/e25.txt
+Reading debugger commands from '/tmp/mw2run-scnntx8h/ev/e25.txt'...
+Changed to input file dir '/tmp/mw2run-scnntx8h/ev'.
+> e VBL
+= %11110111011001 (bin), #15833 (dec), $3dd9 (hex)
+> e CycleCounter
+= %11111000010101101101100010110110 (bin), #4166441142/-128526154 (dec), $f856d8b6 (hex)
+> m $ef8e 1
+0000EF8E: ee                                               ∈
+> w $76bf $00
+> w $770a $00 $00
+Wrote 2 'b' values starting from 0x770a.
+> w $7708 $00 $39
+Wrote 2 'b' values starting from 0x7708.
+> b VBL > 15885 :trace :once :file /tmp/mw2run-scnntx8h/ev/e26.txt
+CPU condition breakpoint 7 with 1 condition(s) added:
+	VBL > 15885
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-scnntx8h/ev/e26.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+Removed CPU breakpoint 6:
+	VBL > 15832 :once :trace :file /tmp/mw2run-scnntx8h/ev/e25.txt
+2. CPU breakpoint condition(s) matched 216 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 217 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 85 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 218 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 219 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 86 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 220 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 221 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 87 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 222 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 223 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 88 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 224 times.
+	pc = $1aaa4 :trace
+6. CPU breakpoint condition(s) matched 1 times.
+	VBL > 15885 :once :trace :file /tmp/mw2run-scnntx8h/ev/e26.txt
+Reading debugger commands from '/tmp/mw2run-scnntx8h/ev/e26.txt'...
+Changed to input file dir '/tmp/mw2run-scnntx8h/ev'.
+> e VBL
+= %11111000001110 (bin), #15886 (dec), $3e0e (hex)
+> e CycleCounter
+= %11111010000001110000100110000010 (bin), #4194765186/-100202110 (dec), $fa070982 (hex)
+> m $ef8e 1
+0000EF8E: ee                                               ∈
+> w $7684 $00 $39
+Wrote 2 'b' values starting from 0x7684.
+> w $76bf $ff
+> w $75ac $ff $ff
+Wrote 2 'b' values starting from 0x75ac.
+> w $770a $00 $39
+Wrote 2 'b' values starting from 0x770a.
+> w $770c $00 $00
+Wrote 2 'b' values starting from 0x770c.
+> b VBL > 15909 :trace :once :file /tmp/mw2run-scnntx8h/ev/e27.txt
+CPU condition breakpoint 7 with 1 condition(s) added:
+	VBL > 15909
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-scnntx8h/ev/e27.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+Removed CPU breakpoint 6:
+	VBL > 15885 :once :trace :file /tmp/mw2run-scnntx8h/ev/e26.txt
+2. CPU breakpoint condition(s) matched 225 times.
+	pc = $1aaa4 :trace
+3. CPU breakpoint condition(s) matched 13 times.
+	pc = $1ab8e :trace
+4. CPU breakpoint condition(s) matched 13 times.
+	pc = $35152 :trace
+1. CPU breakpoint condition(s) matched 89 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 226 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 227 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 90 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 228 times.
+	pc = $1aaa4 :trace
+6. CPU breakpoint condition(s) matched 1 times.
+	VBL > 15909 :once :trace :file /tmp/mw2run-scnntx8h/ev/e27.txt
+Reading debugger commands from '/tmp/mw2run-scnntx8h/ev/e27.txt'...
+Changed to input file dir '/tmp/mw2run-scnntx8h/ev'.
+> e VBL
+= %11111000100110 (bin), #15910 (dec), $3e26 (hex)
+> e CycleCounter
+= %11111010110010101011111100010010 (bin), #4207591186/-87376110 (dec), $facabf12 (hex)
+> m $ef8e 1
+0000EF8E: ed                                               φ
+> w $76bf $00
+> w $770a $00 $00
+Wrote 2 'b' values starting from 0x770a.
+> w $7708 $00 $39
+Wrote 2 'b' values starting from 0x7708.
+> b VBL > 15962 :trace :once :file /tmp/mw2run-scnntx8h/ev/e28.txt
+CPU condition breakpoint 7 with 1 condition(s) added:
+	VBL > 15962
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-scnntx8h/ev/e28.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+Removed CPU breakpoint 6:
+	VBL > 15909 :once :trace :file /tmp/mw2run-scnntx8h/ev/e27.txt
+2. CPU breakpoint condition(s) matched 229 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 91 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 230 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 231 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 92 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 232 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 233 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 93 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 234 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 235 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 94 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 236 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 237 times.
+	pc = $1aaa4 :trace
+6. CPU breakpoint condition(s) matched 1 times.
+	VBL > 15962 :once :trace :file /tmp/mw2run-scnntx8h/ev/e28.txt
+Reading debugger commands from '/tmp/mw2run-scnntx8h/ev/e28.txt'...
+Changed to input file dir '/tmp/mw2run-scnntx8h/ev'.
+> e VBL
+= %11111001011011 (bin), #15963 (dec), $3e5b (hex)
+> e CycleCounter
+= %11111100011110101110111111010100 (bin), #4235915220/-59052076 (dec), $fc7aefd4 (hex)
+> m $ef8e 1
+0000EF8E: ed                                               φ
+> w $7684 $00 $39
+Wrote 2 'b' values starting from 0x7684.
+> w $76bf $ff
+> w $75ac $ff $ff
+Wrote 2 'b' values starting from 0x75ac.
+> w $770a $00 $39
+Wrote 2 'b' values starting from 0x770a.
+> w $770c $00 $00
+Wrote 2 'b' values starting from 0x770c.
+> b VBL > 15986 :trace :once :file /tmp/mw2run-scnntx8h/ev/e29.txt
+CPU condition breakpoint 7 with 1 condition(s) added:
+	VBL > 15986
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-scnntx8h/ev/e29.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+Removed CPU breakpoint 6:
+	VBL > 15962 :once :trace :file /tmp/mw2run-scnntx8h/ev/e28.txt
+1. CPU breakpoint condition(s) matched 95 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 238 times.
+	pc = $1aaa4 :trace
+3. CPU breakpoint condition(s) matched 14 times.
+	pc = $1ab8e :trace
+4. CPU breakpoint condition(s) matched 14 times.
+	pc = $35152 :trace
+2. CPU breakpoint condition(s) matched 239 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 96 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 240 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 241 times.
+	pc = $1aaa4 :trace
+6. CPU breakpoint condition(s) matched 1 times.
+	VBL > 15986 :once :trace :file /tmp/mw2run-scnntx8h/ev/e29.txt
+Reading debugger commands from '/tmp/mw2run-scnntx8h/ev/e29.txt'...
+Changed to input file dir '/tmp/mw2run-scnntx8h/ev'.
+> e VBL
+= %11111001110011 (bin), #15987 (dec), $3e73 (hex)
+> e CycleCounter
+= %11111101001111101010010101011100 (bin), #4248741212/-46226084 (dec), $fd3ea55c (hex)
+> m $ef8e 1
+0000EF8E: ec                                               ∮
+> w $76bf $00
+> w $770a $00 $00
+Wrote 2 'b' values starting from 0x770a.
+> w $7708 $00 $39
+Wrote 2 'b' values starting from 0x7708.
+> b VBL > 16039 :trace :once :file /tmp/mw2run-scnntx8h/ev/e30.txt
+CPU condition breakpoint 7 with 1 condition(s) added:
+	VBL > 16039
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-scnntx8h/ev/e30.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+Removed CPU breakpoint 6:
+	VBL > 15986 :once :trace :file /tmp/mw2run-scnntx8h/ev/e29.txt
+1. CPU breakpoint condition(s) matched 97 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 242 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 243 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 98 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 244 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 245 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 246 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 99 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 247 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 248 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 100 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 249 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 250 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 251 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 101 times.
+	pc = $3148e :trace
+6. CPU breakpoint condition(s) matched 1 times.
+	VBL > 16039 :once :trace :file /tmp/mw2run-scnntx8h/ev/e30.txt
+Reading debugger commands from '/tmp/mw2run-scnntx8h/ev/e30.txt'...
+Changed to input file dir '/tmp/mw2run-scnntx8h/ev'.
+> e VBL
+= %11111010101000 (bin), #16040 (dec), $3ea8 (hex)
+> e CycleCounter
+= %11111110111011101101011000100010 (bin), #4277065250/-17902046 (dec), $feeed622 (hex)
+> m $ef8e 1
+0000EF8E: ec                                               ∮
+> w $7684 $00 $39
+Wrote 2 'b' values starting from 0x7684.
+> w $76bf $ff
+> w $75ac $ff $ff
+Wrote 2 'b' values starting from 0x75ac.
+> w $770a $00 $39
+Wrote 2 'b' values starting from 0x770a.
+> w $770c $00 $00
+Wrote 2 'b' values starting from 0x770c.
+> b VBL > 16063 :trace :once :file /tmp/mw2run-scnntx8h/ev/e31.txt
+CPU condition breakpoint 7 with 1 condition(s) added:
+	VBL > 16063
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-scnntx8h/ev/e31.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+Removed CPU breakpoint 6:
+	VBL > 16039 :once :trace :file /tmp/mw2run-scnntx8h/ev/e30.txt
+2. CPU breakpoint condition(s) matched 252 times.
+	pc = $1aaa4 :trace
+3. CPU breakpoint condition(s) matched 15 times.
+	pc = $1ab8e :trace
+4. CPU breakpoint condition(s) matched 15 times.
+	pc = $35152 :trace
+2. CPU breakpoint condition(s) matched 253 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 254 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 102 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 255 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 256 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 103 times.
+	pc = $3148e :trace
+6. CPU breakpoint condition(s) matched 1 times.
+	VBL > 16063 :once :trace :file /tmp/mw2run-scnntx8h/ev/e31.txt
+Reading debugger commands from '/tmp/mw2run-scnntx8h/ev/e31.txt'...
+Changed to input file dir '/tmp/mw2run-scnntx8h/ev'.
+> e VBL
+= %11111011000000 (bin), #16064 (dec), $3ec0 (hex)
+> e CycleCounter
+= %11111111101100101000110000010010 (bin), #4289891346/-5075950 (dec), $ffb28c12 (hex)
+> m $ef8e 1
+0000EF8E: eb                                               δ
+> w $76bf $00
+> w $770a $00 $00
+Wrote 2 'b' values starting from 0x770a.
+> w $7708 $00 $39
+Wrote 2 'b' values starting from 0x7708.
+> b VBL > 16116 :trace :once :file /tmp/mw2run-scnntx8h/ev/e32.txt
+CPU condition breakpoint 7 with 1 condition(s) added:
+	VBL > 16116
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-scnntx8h/ev/e32.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+Removed CPU breakpoint 6:
+	VBL > 16063 :once :trace :file /tmp/mw2run-scnntx8h/ev/e31.txt
+2. CPU breakpoint condition(s) matched 257 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 258 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 259 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 104 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 260 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 261 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 105 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 262 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 263 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 264 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 106 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 265 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 266 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 267 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 107 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 268 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 269 times.
+	pc = $1aaa4 :trace
+6. CPU breakpoint condition(s) matched 1 times.
+	VBL > 16116 :once :trace :file /tmp/mw2run-scnntx8h/ev/e32.txt
+Reading debugger commands from '/tmp/mw2run-scnntx8h/ev/e32.txt'...
+Changed to input file dir '/tmp/mw2run-scnntx8h/ev'.
+> e VBL
+= %11111011110101 (bin), #16117 (dec), $3ef5 (hex)
+> e CycleCounter
+= %1011000101011110001110110 (bin), #23247990 (dec), $162bc76 (hex)
+> m $ef8e 1
+0000EF8E: eb                                               δ
+> w $7684 $00 $39
+Wrote 2 'b' values starting from 0x7684.
+> w $76bf $ff
+> w $75ac $ff $ff
+Wrote 2 'b' values starting from 0x75ac.
+> w $770a $00 $39
+Wrote 2 'b' values starting from 0x770a.
+> w $770c $00 $00
+Wrote 2 'b' values starting from 0x770c.
+> b VBL > 16236 :trace :once :file /tmp/mw2run-scnntx8h/ev/e33.txt
+CPU condition breakpoint 7 with 1 condition(s) added:
+	VBL > 16236
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-scnntx8h/ev/e33.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+Removed CPU breakpoint 6:
+	VBL > 16116 :once :trace :file /tmp/mw2run-scnntx8h/ev/e32.txt
+2. CPU breakpoint condition(s) matched 270 times.
+	pc = $1aaa4 :trace
+3. CPU breakpoint condition(s) matched 16 times.
+	pc = $1ab8e :trace
+4. CPU breakpoint condition(s) matched 16 times.
+	pc = $35152 :trace
+1. CPU breakpoint condition(s) matched 108 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 271 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 272 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 273 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 109 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 274 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 275 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 110 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 276 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 277 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 278 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 111 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 279 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 280 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 281 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 112 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 282 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 283 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 284 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 113 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 285 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 286 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 287 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 114 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 288 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 289 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 290 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 115 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 291 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 292 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 116 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 293 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 294 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 295 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 117 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 296 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 297 times.
+	pc = $1aaa4 :trace
+6. CPU breakpoint condition(s) matched 1 times.
+	VBL > 16236 :once :trace :file /tmp/mw2run-scnntx8h/ev/e33.txt
+Reading debugger commands from '/tmp/mw2run-scnntx8h/ev/e33.txt'...
+Changed to input file dir '/tmp/mw2run-scnntx8h/ev'.
+> e VBL
+= %11111101101101 (bin), #16237 (dec), $3f6d (hex)
+> e CycleCounter
+= %101001101010100011111111010 (bin), #87377914 (dec), $53547fa (hex)
+> m $ef8e 1
+0000EF8E: ea                                               Ω
+> w $76bf $00
+> w $770a $00 $00
+Wrote 2 'b' values starting from 0x770a.
+> w $7708 $00 $39
+Wrote 2 'b' values starting from 0x7708.
+> b VBL > 16289 :trace :once :file /tmp/mw2run-scnntx8h/ev/e34.txt
+CPU condition breakpoint 7 with 1 condition(s) added:
+	VBL > 16289
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-scnntx8h/ev/e34.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+Removed CPU breakpoint 6:
+	VBL > 16236 :once :trace :file /tmp/mw2run-scnntx8h/ev/e33.txt
+2. CPU breakpoint condition(s) matched 298 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 118 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 299 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 300 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 301 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 119 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 302 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 303 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 304 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 120 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 305 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 306 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 307 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 121 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 308 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 309 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 122 times.
+	pc = $3148e :trace
+6. CPU breakpoint condition(s) matched 1 times.
+	VBL > 16289 :once :trace :file /tmp/mw2run-scnntx8h/ev/e34.txt
+Reading debugger commands from '/tmp/mw2run-scnntx8h/ev/e34.txt'...
+Changed to input file dir '/tmp/mw2run-scnntx8h/ev'.
+> e VBL
+= %11111110100010 (bin), #16290 (dec), $3fa2 (hex)
+> e CycleCounter
+= %110111001010111100011001000 (bin), #115701960 (dec), $6e578c8 (hex)
+> m $ef8e 1
+0000EF8E: ea                                               Ω
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2' dir.
+Removed CPU breakpoint 6:
+	VBL > 16289 :once :trace :file /tmp/mw2run-scnntx8h/ev/e34.txt
+2. CPU breakpoint condition(s) matched 310 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 311 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 312 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 123 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 313 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 314 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 315 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 124 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 316 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 317 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 318 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 125 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 319 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 320 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 321 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 126 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 322 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 323 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 324 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 127 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 325 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 326 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 327 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 128 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 328 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 329 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 330 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 129 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 331 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 332 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 333 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 130 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 334 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 335 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 336 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 131 times.
+	pc = $3148e :trace
+2. CPU breakpoint condition(s) matched 337 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 338 times.
+	pc = $1aaa4 :trace
+2. CPU breakpoint condition(s) matched 339 times.
+	pc = $1aaa4 :trace
+1. CPU breakpoint condition(s) matched 132 times.
+	pc = $3148e :trace

@@ -1,0 +1,61 @@
+g_old_nojag press_ms {'down4': 80.1, 'down10': 200.3, 'down20': 400.6, 'down100': 2003.2} cycles/VBL 160250
+g_old_nojag ste mode J weapon 4 type 5 sel 4 ammo 250 -> 236 modes [65535, 0, 0]
+  down4     n=6  FIRE/press [0, 0, 0, 1, 1, 0]  SPAWN 2 SPAWN2 0 KEYC 2 TICK 2
+  down10    n=6  FIRE/press [0, 1, 1, 0, 1, 1]  SPAWN 4 SPAWN2 0 KEYC 4 TICK 6
+  down20    n=4  FIRE/press [1, 1, 1, 1]  SPAWN 4 SPAWN2 0 KEYC 4 TICK 9
+  down100   n=1  FIRE/press [4]  SPAWN 4 SPAWN2 0 KEYC 4 TICK 10
+g_old_jag press_ms {'down4': 80.1, 'down10': 200.3, 'down20': 400.6, 'down100': 2003.2} cycles/VBL 160254
+g_old_jag ste mode J weapon 4 type 5 sel 4 ammo 250 -> 236 modes [65535, 0, 0]
+  down4     n=6  FIRE/press [0, 0, 0, 1, 0, 1]  SPAWN 2 SPAWN2 0 KEYC 2 TICK 3
+  down10    n=6  FIRE/press [0, 1, 0, 1, 1, 1]  SPAWN 4 SPAWN2 0 KEYC 4 TICK 10
+  down20    n=4  FIRE/press [1, 1, 1, 1]  SPAWN 4 SPAWN2 0 KEYC 4 TICK 9
+  down100   n=1  FIRE/press [4]  SPAWN 4 SPAWN2 0 KEYC 4 TICK 10
+g_fix_nojag press_ms {'down4': 80.1, 'down10': 200.3, 'down20': 400.6, 'down100': 2003.2} cycles/VBL 160149
+g_fix_nojag ste mode J weapon 4 type 5 sel 4 ammo 250 -> 237 modes [65535, 0, 0]
+  down4     n=6  FIRE/press [0, 0, 0, 1, 1, 0]  SPAWN 2 SPAWN2 0 KEYC 2 TICK 2
+  down10    n=6  FIRE/press [0, 1, 1, 0, 1, 0]  SPAWN 3 SPAWN2 0 KEYC 3 TICK 4
+  down20    n=4  FIRE/press [1, 1, 1, 1]  SPAWN 4 SPAWN2 0 KEYC 4 TICK 8
+  down100   n=1  FIRE/press [4]  SPAWN 4 SPAWN2 0 KEYC 4 TICK 9
+g_fix_jag press_ms {'down4': 80.1, 'down10': 200.3, 'down20': 400.6, 'down100': 2003.2} cycles/VBL 160197
+g_fix_jag ste mode J weapon 4 type 5 sel 4 ammo 250 -> 236 modes [65535, 0, 0]
+  down4     n=6  FIRE/press [0, 0, 0, 1, 0, 1]  SPAWN 2 SPAWN2 0 KEYC 2 TICK 3
+  down10    n=6  FIRE/press [0, 1, 0, 1, 1, 1]  SPAWN 4 SPAWN2 0 KEYC 4 TICK 10
+  down20    n=4  FIRE/press [1, 1, 1, 1]  SPAWN 4 SPAWN2 0 KEYC 4 TICK 9
+  down100   n=1  FIRE/press [4]  SPAWN 4 SPAWN2 0 KEYC 4 TICK 10
+a_ste_jeep_J press_ms {'down4': 80.1, 'down10': 200.3, 'down20': 400.6, 'down100': 2003.2} cycles/VBL 160139
+a_ste_jeep_J ste mode J weapon 16 type 1 sel 16 ammo 250 -> 240 modes [65535, 0, 0]
+  down4     n=6  FIRE/press [0, 0, 0, 0, 0, 1]  SPAWN 0 SPAWN2 0 KEYC 1 TICK 1
+  down10    n=6  FIRE/press [1, 0, 1, 0, 1, 0]  SPAWN 0 SPAWN2 0 KEYC 3 TICK 3
+  down20    n=4  FIRE/press [1, 1, 1, 1]  SPAWN 0 SPAWN2 0 KEYC 4 TICK 4
+  down100   n=1  FIRE/press [5]  SPAWN 0 SPAWN2 0 KEYC 5 TICK 5
+b_ste_jeep_J press_ms {'down4': 80.1, 'down10': 200.3, 'down20': 400.6, 'down100': 2003.2} cycles/VBL 160253
+b_ste_jeep_J ste mode J weapon 16 type 1 sel 16 ammo 250 -> 235 modes [65535, 0, 0]
+  down4     n=6  FIRE/press [0, 0, 1, 0, 0, 0]  SPAWN 0 SPAWN2 0 KEYC 1 TICK 1
+  down10    n=6  FIRE/press [1, 1, 1, 1, 0, 1]  SPAWN 0 SPAWN2 0 KEYC 5 TICK 6
+  down20    n=4  FIRE/press [1, 2, 1, 1]  SPAWN 0 SPAWN2 0 KEYC 5 TICK 8
+  down100   n=1  FIRE/press [5]  SPAWN 0 SPAWN2 0 KEYC 5 TICK 9
+e_ste_jeep_J press_ms {'down4': 80.1, 'down10': 200.3, 'down20': 400.6, 'down100': 2003.2} cycles/VBL 160168
+e_ste_jeep_J ste mode J weapon 16 type 1 sel 16 ammo 250 -> 235 modes [65535, 0, 0]
+  down4     n=6  FIRE/press [0, 0, 1, 0, 1, 0]  SPAWN 0 SPAWN2 0 KEYC 2 TICK 2
+  down10    n=6  FIRE/press [1, 1, 0, 1, 1, 1]  SPAWN 0 SPAWN2 0 KEYC 5 TICK 7
+  down20    n=4  FIRE/press [1, 1, 2, 1]  SPAWN 0 SPAWN2 0 KEYC 5 TICK 6
+  down100   n=1  FIRE/press [6]  SPAWN 0 SPAWN2 0 KEYC 6 TICK 11
+d_ms_jeep_J press_ms {'down5': 83.5, 'down12': 200.4, 'down24': 400.8, 'down120': 2004.1} cycles/VBL 266980
+d_ms_jeep_J megaste mode J weapon 16 type 1 sel 16 ammo 250 -> 231 modes [65535, 0, 0]
+  down5     n=6  FIRE/press [0, 0, 0, 0, 1, 1]  SPAWN 0 SPAWN2 0 KEYC 2 TICK 2
+  down12    n=6  FIRE/press [1, 1, 1, 1, 1, 1]  SPAWN 0 SPAWN2 0 KEYC 6 TICK 6
+  down24    n=4  FIRE/press [2, 2, 2, 2]  SPAWN 0 SPAWN2 0 KEYC 8 TICK 8
+  down120   n=1  FIRE/press [11]  SPAWN 0 SPAWN2 0 KEYC 11 TICK 11
+c_tt_jeep_J press_ms {'down5': 83.5, 'down12': 200.4, 'down24': 400.8, 'down120': 2004.1} cycles/VBL 534194
+c_tt_jeep_J tt mode J weapon 16 type 1 sel 16 ammo 250 -> 197 modes [65535, 0, 0]
+  down5     n=6  FIRE/press [0, 0, 2, 1, 2, 2]  SPAWN 0 SPAWN2 0 KEYC 7 TICK 3
+  down12    n=6  FIRE/press [4, 3, 2, 3, 3, 3]  SPAWN 0 SPAWN2 0 KEYC 18 TICK 6
+  down24    n=4  FIRE/press [6, 5, 5, 6]  SPAWN 0 SPAWN2 0 KEYC 22 TICK 8
+  down120   n=1  FIRE/press [24]  SPAWN 0 SPAWN2 0 KEYC 24 TICK 10
+f_tt_jeep_J press_ms {'down5': 83.5, 'down12': 200.4, 'down24': 400.8, 'down120': 2004.1} cycles/VBL 534250
+f_tt_jeep_J tt mode J weapon 16 type 1 sel 16 ammo 250 -> 234 modes [65535, 0, 0]
+  down5     n=6  FIRE/press [0, 0, 0, 0, 0, 1]  SPAWN 0 SPAWN2 0 KEYC 1 TICK 1
+  down12    n=6  FIRE/press [1, 1, 1, 1, 1, 1]  SPAWN 0 SPAWN2 0 KEYC 6 TICK 6
+  down24    n=4  FIRE/press [2, 2, 2, 2]  SPAWN 0 SPAWN2 0 KEYC 8 TICK 8
+  down120   n=1  FIRE/press [10]  SPAWN 0 SPAWN2 0 KEYC 10 TICK 10
+done
