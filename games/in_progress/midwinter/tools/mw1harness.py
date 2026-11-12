@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Midwinter 1 (HAGA HD version) navigation on top of tools/stharness.Hatari.
 
-    import sys; sys.path.insert(0, '<gamebench>/tools'); sys.path.insert(0, '<gamebench>/games/done/midwinter/tools')
+    import sys; sys.path.insert(0, '<gamebench>/tools'); sys.path.insert(0, '<gamebench>/games/in_progress/midwinter/tools')
     from mw1harness import MW1
     h = MW1(game_dir=..., memsize_kb=1024)      # cold boot (autoruns C:\\RUNME.TOS)
     h.boot_to_options(); h.options_to_team()

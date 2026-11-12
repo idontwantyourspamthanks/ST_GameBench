@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """50/60 Hz gates for Hunter (patch hn_hz, work/notes/timing.md).
 
-    python3 games/done/hunter/tools/hunthz.py ab   --snapshot foot_walk --hold up   --vbls 600 [--lock] [--mhz 8]
-    python3 games/done/hunter/tools/hunthz.py rate --snapshot car_stand --hold up   --mhz 8 --hz 50 60 [--set ...]
-    python3 games/done/hunter/tools/hunthz.py table [--hz 50 60] [--mhz 8 16]      (gate b: base vs hn_hz, foot / car / car turn)
-    python3 games/done/hunter/tools/hunthz.py drv                                   (original driver ticks per VBL, STE and plain ST)
-    python3 games/done/hunter/tools/hunthz.py cold --kind hd --game build/game --machine ste --tos 1.62 --mem 1024 [--hz 50 60] --mhz 8 16
-    python3 games/done/hunter/tools/hunthz.py cold --kind floppy --game build/floppy/HUNTER_disk1.st ...
+    python3 games/in_progress/hunter/tools/hunthz.py ab   --snapshot foot_walk --hold up   --vbls 600 [--lock] [--mhz 8]
+    python3 games/in_progress/hunter/tools/hunthz.py rate --snapshot car_stand --hold up   --mhz 8 --hz 50 60 [--set ...]
+    python3 games/in_progress/hunter/tools/hunthz.py table [--hz 50 60] [--mhz 8 16]      (gate b: base vs hn_hz, foot / car / car turn)
+    python3 games/in_progress/hunter/tools/hunthz.py drv                                   (original driver ticks per VBL, STE and plain ST)
+    python3 games/in_progress/hunter/tools/hunthz.py cold --kind hd --game build/game --machine ste --tos 1.62 --mem 1024 [--hz 50 60] --mhz 8 16
+    python3 games/in_progress/hunter/tools/hunthz.py cold --kind floppy --game build/floppy/HUNTER_disk1.st ...
     ab --control: base = patch test_hznop (same cost as hn_hz, never skips): bit-identical frames expected at 50 Hz (gate a)
 
 Both runs restore the snapshot, and at the first flip ($5fee) after a start VBL apply the live patch set (`huntpatch.py live`),
@@ -420,7 +420,7 @@ def main():
     tp.add_argument("--only", nargs="*", default=None, help="base and/or hn_hz")
     cp = sub.add_parser("cold")
     cp.add_argument("--kind", choices=["hd", "floppy"], default="hd")
-    cp.add_argument("--game", required=True, help="HD: build dir (build/hz_game); floppy: the .st disk image path relative to games/done/hunter")
+    cp.add_argument("--game", required=True, help="HD: build dir (build/hz_game); floppy: the .st disk image path relative to games/in_progress/hunter")
     cp.add_argument("--machine", default="ste")
     cp.add_argument("--tos", default="1.62")
     cp.add_argument("--mem", type=int, default=1024)

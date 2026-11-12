@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 r"""Hunter (Activision 1991, PP's 2010 Gamex hard-disk version) navigation + state access on top of tools/stharness.Hatari.
 
-    import sys; sys.path.insert(0, '<gamebench>/tools'); sys.path.insert(0, '<gamebench>/games/done/hunter/tools')
+    import sys; sys.path.insert(0, '<gamebench>/tools'); sys.path.insert(0, '<gamebench>/games/in_progress/hunter/tools')
     from hunter import Hunter
     h = Hunter()                        # cold boot, 1 MB STE, TOS 1.62, ACSI image + HDDRIVER boot, autoruns C:\START.TOS
     h.boot_to_game()                    # HW screen -> title pictures -> menus -> Action -> name -> in the 3D view

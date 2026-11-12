@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Differential test of p4_poly against the original polygon code, polygon by polygon, in the running game (4 MB snapshot).
 
-    python3 games/done/hunter/tools/polydiff.py [--views 12] [--flips-per-view 3] [--snapshot 4mb_foot_stand]
+    python3 games/in_progress/hunter/tools/polydiff.py [--views 12] [--flips-per-view 3] [--snapshot 4mb_foot_stand]
 
 patches/test_polydiff.s hooks $7554 (the entry of the polygon body), runs p4_poly's blob and then the original code on the same
 input (the 3D window is saved/restored around them) and compares the 22400-byte window plus $1600/$1618. Counters at $8dfe0 are read

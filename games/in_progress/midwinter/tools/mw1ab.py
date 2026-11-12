@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """A/B gate for MW1 display patches: pixel identity of all 3 screen buffers + flips per 1000 VBL.
 
-    python3 games/done/midwinter/tools/mw1ab.py --only p4_x [p4_y ...] [--base p4_z ...] \
+    python3 games/in_progress/midwinter/tools/mw1ab.py --only p4_x [p4_y ...] [--base p4_z ...] \
         [--snapshot stand walk turn busy | path.sav ...] [--flips 8 40] [--no-fps]
 
 For every snapshot and every --flips N it:

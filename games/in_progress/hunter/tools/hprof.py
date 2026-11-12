@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Bucket a Hunter CPU profile (work/prof/<name>.txt: lines `addr cycles count`, hex addr) by function.
 
-    python3 games/done/hunter/tools/hprof.py work/dumps/ram_foot_stand.bin work/prof/foot_stand.txt [--top 15]
+    python3 games/in_progress/hunter/tools/hprof.py work/dumps/ram_foot_stand.bin work/prof/foot_stand.txt [--top 15]
 
 A function = from a jsr/bsr/jmp-abs target to the next target (same bucketing as tools/m68dis.py, range widened to
 $800-$A0000 because Hunter's engine is loaded up to $79714). Frames = executions of the flip instruction $5fee.

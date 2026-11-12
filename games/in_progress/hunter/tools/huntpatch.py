@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Hunter (PP Gamex HD build) patch delivery tool.  Modelled on games/done/midwinter/tools/mw1patch.py.
+"""Hunter (PP Gamex HD build) patch delivery tool.  Modelled on games/in_progress/midwinter/tools/mw1patch.py.
 Full reverse-engineering notes and evidence: work/notes/loading.md.
 
     python3 tools/huntpatch.py verify
@@ -38,7 +38,7 @@ import time
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-ROOT = HERE.parent                       # games/done/hunter
+ROOT = HERE.parent                       # games/in_progress/hunter
 BENCH = ROOT.parent.parent.parent               # gamebench
 sys.path.insert(0, str(BENCH / "tools"))
 from pp_depack import depack as pp_depack_program  # noqa: E402

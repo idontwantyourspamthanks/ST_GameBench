@@ -20,7 +20,7 @@ Measured on an emulated 1 MB 8 MHz Atari STE, same scene, against the unpatched 
 - **Loading:** no repeated grey flashes, and screen changes load about 2× faster.
 - **4 MB+ machines:** patched builds no longer hang; they work on 1-14 MB.
 
-### Midwinter — [`REPORT.md`](games/done/midwinter/REPORT.md)
+### Midwinter — [`REPORT.md`](games/in_progress/midwinter/REPORT.md)
 
 Same method and tooling, applied to the older game: 11-15% fewer cycles per frame with all three screen buffers identical, and 63% fewer when standing still with the redraw skip on.
 
@@ -37,7 +37,7 @@ The work was done by a human directing an AI coding agent, Claude, in the [omp](
   - **Its original bytes are verified:** the patcher applies all patches or none, and leaves a marker in RAM.
   - **It draws a byte-identical picture:** both or all three screen buffers are compared against the unpatched game at the same frame, from the same saved machine state.
   - **It speeds things up measurably:** CPU cycles per frame and frames per second.
-  - **It cold-boots** from the desktop into the 3D view on several machines (ST, STE, Mega STE, TT/Falcon via EmuTOS) and RAM sizes (1, 2 and 4 MB and more).
+  - **It cold-boots** from the desktop into the 3D view on several machines (ST, STE, Mega STE, TT with TOS 3.06, Falcon with TOS 4.04) and RAM sizes (1, 2 and 4 MB and more).
 - Agents' findings were re-checked live before anything was built on them. Some were wrong, and the notes record where.
 
 The agent "skills" in [`.omp/skills/`](.omp/skills/) capture the method, the emulator harness and the hard-won traps. They are written for the AI to read, but they work as a human guide too.
@@ -52,8 +52,9 @@ The agent "skills" in [`.omp/skills/`](.omp/skills/) capture the method, the emu
 | `.omp/skills/` | Method, harness, PP-conversion internals and delegation rules. |
 | `games/in_progress/midwinter2/` | **Midwinter 2.** `REPORT.md` (overview), `PLAN.md`, `patches/` (patch sources, 68000 assembly), `tools/` (patch builder, harness, launchers, packaging), `work/notes/` (reverse-engineering notes with evidence), `work/*/` (test scripts and raw logs). |
 | `games/in_progress/powermonger/` | **Powermonger.** Same layout; its own `REPORT.md`. |
-| `games/done/hunter/` | **Hunter (v1.0): done.** Same layout; [`REPORT.md`](games/done/hunter/REPORT.md). |
-| `games/done/midwinter/` | **Midwinter (v1.1): done.** Same layout; [`REPORT.md`](games/done/midwinter/REPORT.md). |
+| `games/in_progress/populous/`, `games/in_progress/populous-2/` | **Populous and Populous 2.** Same layout; `PLAN.md` and `work/notes/` (the shared Bullfrog-family study is `populous/work/notes/bullfrog_family.md`). |
+| `games/in_progress/hunter/` | **Hunter (v1.0 released; back in progress for Jaguar pad support).** Same layout; [`REPORT.md`](games/in_progress/hunter/REPORT.md). |
+| `games/in_progress/midwinter/` | **Midwinter (v1.1 released; back in progress for Jaguar pad support).** Same layout; [`REPORT.md`](games/in_progress/midwinter/REPORT.md). |
 | `games/done/` | Games declared finished. A game moves here (`git mv`) when it's declared ready, and back to `in_progress/` if new work is needed. |
 | `games/queue/` | **Upcoming games:** one folder per game with a README (source, file list, loader type) and early notes; the game files in `originals/` are git-ignored. The list is [`games/queue/README.md`](games/queue/README.md). |
 | `tos/` | Empty: put your TOS images here (see `tos/README.md`). |
@@ -64,7 +65,7 @@ The agent "skills" in [`.omp/skills/`](.omp/skills/) capture the method, the emu
 
 The patches are for **PP's HAGA hard-disk versions** (2014) of the Midwinter games, which you need to obtain yourself. Each game's `README.md` lists the expected files and their MD5 sums. Put them in the game folder (`games/in_progress/midwinter2/RUNME.TOS`, `HAGA`, `FILES/`, …). The patch tools verify every original byte they replace and refuse to build against anything else.
 
-The commands are identical in each game folder; `games/done/midwinter` uses `mw1patch.py` where `games/in_progress/midwinter2` uses `mw2patch.py`. For Midwinter 2:
+The commands are identical in each game folder; `games/in_progress/midwinter` uses `mw1patch.py` where `games/in_progress/midwinter2` uses `mw2patch.py`. For Midwinter 2:
 
 ```sh
 cd games/in_progress/midwinter2

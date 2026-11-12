@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Build the Hunter STE sample bank (loaded at $90000 by huntpatch.py --samples) from the user's own Amiga ADF.
 
-    python3 games/done/hunter/tools/snd_build.py [--adf PATH] [--out games/done/hunter/build/hunter_snd.bin] [--map]
+    python3 games/in_progress/hunter/tools/snd_build.py [--adf PATH] [--out games/in_progress/hunter/build/hunter_snd.bin] [--map]
 
-Nothing from the ADF is stored in git: the output goes to games/done/hunter/build/ (git-ignored).  The samples are
+Nothing from the ADF is stored in git: the output goes to games/in_progress/hunter/build/ (git-ignored).  The samples are
 read with tools/amiga_extract.py (load_sound).  The bank is consumed by patches/snd_core.s (the layout constants
 below MUST match its equates; the code checks the 'HSND' magic and the version word before it touches anything).
 

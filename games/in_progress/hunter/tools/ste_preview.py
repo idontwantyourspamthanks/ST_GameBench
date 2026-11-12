@@ -2,7 +2,7 @@
 """Render how Hunter's Amiga effects would sound through STE DMA sound, to choose an output rate and voice count.
 
 Reads the user's own ADF (via amiga_extract.load_sound); writes only into the git-ignored
-games/done/hunter/alt/amiga/preview/.  For every STE rate R (12517, 6258 Hz) it simulates the planned mixer:
+games/in_progress/hunter/alt/amiga/preview/.  For every STE rate R (12517, 6258 Hz) it simulates the planned mixer:
   * each voice steps through its 8-bit sample with a 16.16 phase increment native_rate/R (nearest sample,
     no interpolation, exactly what a 68000 mixer loop would do);
   * N voices are summed and divided by N (8-bit output: that's the headroom/resolution cost of mixing);

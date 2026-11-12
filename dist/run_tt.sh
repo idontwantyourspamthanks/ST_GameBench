@@ -2,7 +2,7 @@
 # Boot the all-games hard disk image in Hatari as a TT (TOS 3.06, 4 MB ST-RAM, 32 MHz).
 #   ./run_tt.sh [IMAGE]          default: the newest AtariST_enhanced_games_*.vhd/.img next to this script
 # The image is used directly, so game saves (e.g. Powermonger's SAVEDISK.DAT) persist in it.
-# --mmu true: Midwinter 1/2 (PP's HAGA) remap low RAM through the 68030 PMMU on TOS 3.x; without it TOS state is trashed (games/done/midwinter/work/notes/tt.md).
+# --mmu true: Midwinter 1/2 (PP's HAGA) remap low RAM through the 68030 PMMU on TOS 3.x; without it TOS state is trashed (games/in_progress/midwinter/work/notes/tt.md).
 # Hatari keys: F12 menu, AltGr+M mouse grab, AltGr+Q quit.
 set -euo pipefail
 HERE="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd -P)"
