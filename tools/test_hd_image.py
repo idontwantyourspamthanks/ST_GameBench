@@ -173,10 +173,22 @@ def main():
                    f"{(h.peekw(0xB2FF8).to_bytes(2, 'big') + h.peekw(0xB2FFA).to_bytes(2, 'big'))!r}")
         elif a.game == "pop":
             sys.path.insert(0, str(GAMES / "populous" / "tools"))
+            import populous
             from populous import Populous
             h = Populous(workdir=str(R), files=[], autorun="", extra=hd_args(R) + mmu, **kw)
             wait_drive_c(h)
-            h.boot_to_game()
+            # HDDRIVER + HAGA chunk reads are much slower than a GEMDOS drive: wait for the book menu instead of
+            # boot_to_game()'s fixed sleeps (they end before the game starts and leave the marker at POPF).
+            time.sleep(10)
+            h.key("space", 0.5)                                                    # PP's hardware screen
+            if not h.wait_for(GAMES / "populous" / "work/ref/menu_buttons.png", (550, 360, 735, 455), timeout=400, poll=3):
+                raise RuntimeError("never reached the Populous menu")
+            h.goto(*populous.CONQUEST_XY, home_xy=populous.HOME)
+            h.click(hold=0.4)
+            time.sleep(9)
+            h.goto(*populous.START_XY, home_xy=populous.HOME)
+            h.click(hold=0.4)
+            time.sleep(15)
             t0_ = h.peekw(h.TURN)
             time.sleep(2)
             ok = h.peekw(h.TURN) != t0_      # the harness' in_play() looks for the unpatched `jsr $14a28` at $b6f4, which the patched build replaces
@@ -223,7 +235,12 @@ def main():
                 disk = (R / "sd.dat").read_bytes() if sd.returncode == 0 else b""
                 sv = (R / "sl" / "save.bin").read_bytes()
                 res += f" POWERMON\\SAVEDISK.DAT {len(disk)} B, slot A == saved state: {disk[512:512 + len(sv)] == sv}, sector 0 {disk[:4]!r}"
-        print(f"RESULT {tag} OK {time.time() - t0:.0f}s {res}", flush=True)
+        # OK only when the game's patch marker says the patches were APPLIED and every in-game check is true
+        want = {"mw1": "MWPO", "mw2": "MWPO", "hunter": "HNPO", "pm": "PMPO", "pop": "POPO", "pop2": "P2PO"}[a.game]
+        good = (a.original or want in res) and "=False" not in res
+        print(f"RESULT {tag} {'OK' if good else 'FAILED'} {time.time() - t0:.0f}s {res}", flush=True)
+        if not good:
+            return 1
         shots = ROOT / "dist" / "_shots"
         shots.mkdir(exist_ok=True, parents=True)
         h.shot(str(shots / f"{a.game}_{a.machine}_{a.tos}_{a.mem}.png"))
