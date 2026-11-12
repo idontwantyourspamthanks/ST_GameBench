@@ -1,0 +1,60 @@
+##### mutant ptr_norect
+
+== busy_castles: scenario (reference run) {"flips": 289, "pointer_still_flips": 154, "pointer_moved_flips": 134, "shapes": [0, 1, 2], "shape_changes": 4, "modes": [1, 2, 6], "mode_changes": 4, "paused_flips": 6, "button_flips": 24, "junk_flips": 9, "shape_flips": 7, "xpos_flips": 5, "hidden_at_flip": 0, "flips_with_terrain_change": 39, "distinct_views": 16}
+busy_castles         pop_ptr@ptr_norect                 DIFFERENT: flips compared 289 (both buffers + world each), bad flips 9 (world only 0), mid-frame samples 578 bad 23 (only in one run: ref 0, new 0)
+
+GATE FAILED (exit 1)
+##### mutant ptr_noshape
+
+== busy_castles: scenario (reference run) {"flips": 289, "pointer_still_flips": 154, "pointer_moved_flips": 134, "shapes": [0, 1, 2], "shape_changes": 4, "modes": [1, 2, 6], "mode_changes": 4, "paused_flips": 6, "button_flips": 24, "junk_flips": 9, "shape_flips": 7, "xpos_flips": 5, "hidden_at_flip": 0, "flips_with_terrain_change": 39, "distinct_views": 16}
+busy_castles         pop_ptr@ptr_noshape                DIFFERENT: flips compared 289 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 578 bad 5 (only in one run: ref 0, new 0)
+
+GATE FAILED (exit 1)
+##### mutant ptr_nopos
+
+== busy_castles: scenario (reference run) {"flips": 289, "pointer_still_flips": 154, "pointer_moved_flips": 134, "shapes": [0, 1, 2], "shape_changes": 4, "modes": [1, 2, 6], "mode_changes": 4, "paused_flips": 6, "button_flips": 24, "junk_flips": 9, "shape_flips": 7, "xpos_flips": 5, "hidden_at_flip": 0, "flips_with_terrain_change": 39, "distinct_views": 16}
+busy_castles         pop_ptr@ptr_nopos                  DIFFERENT: flips compared 289 (both buffers + world each), bad flips 0 (world only 0), mid-frame samples 578 bad 3 (only in one run: ref 0, new 0)
+
+GATE FAILED (exit 1)
+##### mutant ptr_nobuf (needs --keep-stale: the scaffold's stale-restore removal forces the full path after every flip)
+
+== busy_castles: scenario (reference run) {"flips": 289, "pointer_still_flips": 154, "pointer_moved_flips": 134, "shapes": [0, 1, 2], "shape_changes": 4, "modes": [1, 2, 6], "mode_changes": 4, "paused_flips": 6, "button_flips": 24, "junk_flips": 9, "shape_flips": 7, "xpos_flips": 5, "hidden_at_flip": 0, "flips_with_terrain_change": 39, "distinct_views": 16}
+busy_castles         pop_ptr@ptr_nobuf                  DIFFERENT: flips compared 289 (both buffers + world each), bad flips 22 (world only 8), mid-frame samples 578 bad 22 (only in one run: ref 0, new 0)
+
+GATE FAILED (exit 1)
+##### mutant cpy_short
+
+== busy_castles: scenario (reference run) {"flips": 289, "pointer_still_flips": 154, "pointer_moved_flips": 134, "shapes": [0, 1, 2], "shape_changes": 4, "modes": [1, 2, 6], "mode_changes": 4, "paused_flips": 6, "button_flips": 24, "junk_flips": 9, "shape_flips": 7, "xpos_flips": 5, "hidden_at_flip": 0, "flips_with_terrain_change": 39, "distinct_views": 16}
+busy_castles         pop_bgcopy@cpy_short               DIFFERENT: flips compared 289 (both buffers + world each), bad flips 470 (world only 43), mid-frame samples 578 bad 466 (only in one run: ref 0, new 0)
+
+GATE FAILED (exit 1)
+##### mutant cpy_tail
+
+== busy_castles: scenario (reference run) {"flips": 289, "pointer_still_flips": 154, "pointer_moved_flips": 134, "shapes": [0, 1, 2], "shape_changes": 4, "modes": [1, 2, 6], "mode_changes": 4, "paused_flips": 6, "button_flips": 24, "junk_flips": 9, "shape_flips": 7, "xpos_flips": 5, "hidden_at_flip": 0, "flips_with_terrain_change": 39, "distinct_views": 16}
+busy_castles         pop_bgcopy@cpy_tail                DIFFERENT: flips compared 289 (both buffers + world each), bad flips 425 (world only 10), mid-frame samples 578 bad 418 (only in one run: ref 0, new 0)
+
+GATE FAILED (exit 1)
+##### mutant cpy_off
+
+== busy_castles: scenario (reference run) {"flips": 289, "pointer_still_flips": 154, "pointer_moved_flips": 134, "shapes": [0, 1, 2], "shape_changes": 4, "modes": [1, 2, 6], "mode_changes": 4, "paused_flips": 6, "button_flips": 24, "junk_flips": 9, "shape_flips": 7, "xpos_flips": 5, "hidden_at_flip": 0, "flips_with_terrain_change": 39, "distinct_views": 16}
+busy_castles         pop_bgcopy@cpy_off                 DIFFERENT: flips compared 289 (both buffers + world each), bad flips 575 (world only 109), mid-frame samples 578 bad 574 (only in one run: ref 0, new 0)
+
+GATE FAILED (exit 1)
+##### stale race kept (--keep-stale): timing-only change (land patches), pop_ptr, pop_bgcopy
+
+== busy_castles: scenario (reference run) {"flips": 289, "pointer_still_flips": 154, "pointer_moved_flips": 134, "shapes": [0, 1, 2], "shape_changes": 4, "modes": [1, 2, 6], "mode_changes": 4, "paused_flips": 6, "button_flips": 24, "junk_flips": 9, "shape_flips": 7, "xpos_flips": 5, "hidden_at_flip": 0, "flips_with_terrain_change": 39, "distinct_views": 16}
+busy_castles         pop_land_score+pop_land_mul        DIFFERENT: flips compared 289 (both buffers + world each), bad flips 2 (world only 0), mid-frame samples 578 bad 2 (only in one run: ref 0, new 0)
+busy_castles         pop_ptr                            DIFFERENT: flips compared 289 (both buffers + world each), bad flips 4 (world only 1), mid-frame samples 578 bad 4 (only in one run: ref 0, new 0)
+busy_castles         pop_bgcopy                         DIFFERENT: flips compared 289 (both buffers + world each), bad flips 2 (world only 1), mid-frame samples 578 bad 2 (only in one run: ref 0, new 0)
+
+== busy_quake_volcano: scenario (reference run) {"flips": 289, "pointer_still_flips": 154, "pointer_moved_flips": 134, "shapes": [0, 1, 2], "shape_changes": 4, "modes": [1, 2, 6], "mode_changes": 4, "paused_flips": 6, "button_flips": 24, "junk_flips": 9, "shape_flips": 7, "xpos_flips": 5, "hidden_at_flip": 0, "flips_with_terrain_change": 67, "distinct_views": 16}
+busy_quake_volcano   pop_land_score+pop_land_mul        DIFFERENT: flips compared 289 (both buffers + world each), bad flips 1 (world only 1), mid-frame samples 576 bad 0 (only in one run: ref 2, new 0)
+busy_quake_volcano   pop_ptr                            DIFFERENT: flips compared 289 (both buffers + world each), bad flips 3 (world only 1), mid-frame samples 578 bad 2 (only in one run: ref 0, new 0)
+busy_quake_volcano   pop_bgcopy                         DIFFERENT: flips compared 289 (both buffers + world each), bad flips 2 (world only 0), mid-frame samples 578 bad 2 (only in one run: ref 0, new 0)
+
+== genesis_start: scenario (reference run) {"flips": 289, "pointer_still_flips": 154, "pointer_moved_flips": 134, "shapes": [0, 1, 2], "shape_changes": 4, "modes": [1, 2, 6], "mode_changes": 4, "paused_flips": 6, "button_flips": 24, "junk_flips": 9, "shape_flips": 7, "xpos_flips": 5, "hidden_at_flip": 0, "flips_with_terrain_change": 17, "distinct_views": 16}
+genesis_start        pop_land_score+pop_land_mul        DIFFERENT: flips compared 289 (both buffers + world each), bad flips 2 (world only 0), mid-frame samples 566 bad 2 (only in one run: ref 7, new 3)
+genesis_start        pop_ptr                            DIFFERENT: flips compared 289 (both buffers + world each), bad flips 2 (world only 0), mid-frame samples 571 bad 2 (only in one run: ref 2, new 3)
+genesis_start        pop_bgcopy                         DIFFERENT: flips compared 289 (both buffers + world each), bad flips 1 (world only 1), mid-frame samples 543 bad 0 (only in one run: ref 30, new 0)
+
+GATE FAILED (exit 1)

@@ -1,0 +1,8 @@
+orig busy1 16 MHz: pointer: first $393fa change 83 ms after the move (9 change(s))
+   scroll Right held 2 s: 20 view steps, first after 72 ms, 9.7 steps/s (emulated); world turns during the steps 19 = 9.69/s
+patched busy1 16 MHz: pointer: first $393fa change 63 ms after the move (9 change(s))
+   scroll Right held 2 s: 22 view steps, first after 114 ms, 10.8 steps/s (emulated); world turns during the steps 12 = 6.19/s; steps made in render-only passes (turn waiting): 9
+orig busy1 8 MHz: pointer: first $393fa change 93 ms after the move (9 change(s))
+   scroll Right held 2 s: 11 view steps, first after 113 ms, 5.3 steps/s (emulated); world turns during the steps 10 = 5.26/s
+patched busy1 8 MHz: pointer: first $393fa change 94 ms after the move (9 change(s))
+   scroll Right held 2 s: 9 view steps, first after 184 ms, 4.6 steps/s (emulated); world turns during the steps 11 = 6.32/s; steps made in render-only passes (turn waiting): 0

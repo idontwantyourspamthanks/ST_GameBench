@@ -1,0 +1,15 @@
+== orig60: sync $00
+   pointer x,y = 150,199, turn 16030
+   2 s later: turn 16030, vector $70 = $11ac8 (the game's VBL handler is $18fa), $1a6e = $6700
+   screenshot /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/shots/ptr60_orig60.png
+   log: ['WARN : Bus Error writing at address $2, PC=$2022 addr_e3=2022 op_e3=24298']
+== fix60: sync $00
+   pointer x,y = 150,199, turn 16052
+   2 s later: turn 16077, vector $70 = $18fa (the game's VBL handler is $18fa), $1a6e = $4e71
+   screenshot /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/shots/ptr60_fix60.png
+   log: []
+== orig50: sync $fe
+   pointer x,y = 150,199, turn 16034
+   2 s later: turn 16058, vector $70 = $18fa (the game's VBL handler is $18fa), $1a6e = $6700
+   screenshot /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/shots/ptr60_orig50.png
+   log: []

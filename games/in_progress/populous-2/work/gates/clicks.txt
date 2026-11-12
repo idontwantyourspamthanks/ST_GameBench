@@ -1,0 +1,37 @@
+orig busy1 16 MHz: poke at the top of the pass that starts turn 16066 (stamp = 16065); per pass after its look: VBL turn kind latch402 latch404
+   VBL 140901 turn 16065 kind T latch 0 0
+   VBL 140905 turn 16066 kind T latch 1 1
+   VBL 140909 turn 16067 kind T latch 0 0
+   VBL 140913 turn 16068 kind T latch 0 0
+   VBL 140917 turn 16069 kind T latch 0 0
+   VBL 140921 turn 16070 kind T latch 0 0
+   VBL 140925 turn 16071 kind T latch 0 0
+   VBL 140929 turn 16072 kind T latch 0 0
+patched busy1 16 MHz: poke at the top of the pass that starts turn 16066 (stamp = 16065); per pass after its look: VBL turn kind latch402 latch404
+   VBL 140913 turn 16065 kind T latch 0 0
+   VBL 140917 turn 16065 kind R latch 1 1
+   VBL 140920 turn 16065 kind R latch 0 0
+   VBL 140923 turn 16066 kind T latch 0 0
+   VBL 140927 turn 16066 kind R latch 0 0
+   VBL 140930 turn 16067 kind T latch 0 0
+   VBL 140934 turn 16067 kind R latch 0 0
+   VBL 140937 turn 16068 kind T latch 0 0
+   VBL 140941 turn 16068 kind R latch 0 0
+   VBL 140944 turn 16068 kind R latch 0 0
+   VBL 140947 turn 16069 kind T latch 0 0
+   VBL 140951 turn 16069 kind R latch 0 0
+   VBL 140954 turn 16070 kind T latch 0 0
+   VBL 140958 turn 16070 kind R latch 0 0
+   VBL 140961 turn 16071 kind T latch 0 0
+   VBL 140965 turn 16071 kind R latch 0 0
+   VBL 140968 turn 16071 kind R latch 0 0
+   VBL 140971 turn 16072 kind T latch 0 0
+patched (forced catch-up) busy1 8 MHz: poke at the top of the pass that starts turn 16050 (stamp = 16049); per pass after its look: VBL turn kind latch402 latch404
+   VBL 140953 turn 16049 kind T latch 0 0
+   VBL 140961 turn 16050 kind S latch 1 1
+   VBL 140964 turn 16051 kind S latch 1 1
+   VBL 140967 turn 16052 kind S latch 1 1
+   VBL 140970 turn 16053 kind S latch 1 1
+   VBL 140973 turn 16054 kind T latch 1 1
+   VBL 140982 turn 16055 kind T latch 0 0
+   VBL 140991 turn 16056 kind T latch 0 0

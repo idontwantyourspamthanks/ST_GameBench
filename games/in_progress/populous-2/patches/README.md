@@ -67,6 +67,7 @@ There is no load hook and no deferred phase: everything the game runs on is in R
 | `$80000-$800FF` | core: the trampoline (`patches/core.s`) |
 | `$80100-$86FFF` | blob code/data (`PB+$100` and up) |
 | `$87000-$87FFF` | site table (16 B/site + a 0 terminator) + orig/new byte pool (4 KB) |
+| `$82000-$83FFF` | fixed-rate tick (`pop2_tick*`, work/notes/timing.md): code `$82000` (look/pass kinds), `$82200` render hook, `$82240` logic hook (+ minimap dot replay), `$82300` flip hook, `$82400` dot recorder, `$82500` sound step, `$82600` animation step; data block `PB+$2800` = `$82800-$83FFF` (control block + 900-entry minimap dot list, zero in the image, armed lazily behind 'P2TK'). Not `$8A000-$8BFFF`: that is inside `pop2_spr`'s data (`$88200-$8FFFF`) |
 | `$84000-$86FFF` | display patches: `pop2_spr` (`$84000-$853xx`), `pop2_ptr_a/b` (`$86000`, `$86200`), `pop2_clamp` (`$86400`), test drivers `test_walk*` (`$86800`, data `$86f00`); work/notes/display.md |
 | `$88000-$8FFFF` | **data only, outside the payload image** (declare it with `; data: $88000 N`; the copy routine does not zero it, so a patch must init lazily behind a magic long): `pop2_ptr_a` `$88000-$881FF`, `pop2_spr` `$88200-$8FFFF` (blitter mode, cache tags, 16 slots). Free in play at 2 and 4 MB: delivery.md section 3 covers `$88000-$f7fff` |
 
@@ -87,5 +88,11 @@ No HAGA file patches are shipped, so the floppy build has no HAGA edits.
 ## Test patches (`default: no`)
 - `pop2_save_a` (`$140`) + `pop2_save_b` (`$20e`): prototype for the in-game save/load, which PP's build
   breaks (see `work/notes/delivery.md`); applied together or not at all (same flag).
-- `pop2_ntsc` (`$183c`): the game's own PAL check (`btst.b #1,$820a.w` / `bne.w $186e`); on a 60 Hz machine
-  the untouched game shows "SORRY PAL MACHINES ONLY" and loops forever. Makes the branch unconditional.
+- `pop2_ntsc` (`$183c`) + `pop2_ntsc2` (`$1a6e`): the game's two NTSC protections, both `btst.b #1,$820a.w` (bit 1 set = 50 Hz).
+  `pop2_ntsc`: the PAL check at `$1836` (`bne.w $186e`); on a 60 Hz machine the untouched game shows "SORRY PAL MACHINES ONLY" and
+  loops forever; the patch makes the branch unconditional. `pop2_ntsc2`: the pointer code in the VBL handler (`$1a68`/`$1a6e`
+  `beq.w $201c`) which, at 60 Hz and with the pointer lower than y = 184, jumps to a loop that zero-fills RAM from address 0 (the
+  "garbage and bus errors"); the patch removes the branch. Both needed for 60 Hz (work/notes/timing.md section 1); `default: no`.
+- `pop2_tick*` (`default: no`, work/notes/timing.md): the fixed 6.25 turns/s world tick, 50 and 60 Hz: `pop2_tick` (pass-top look,
+  `$22f14`), `pop2_tick_render` (`$12554`), `pop2_tick_logic` (`$12746`), `pop2_tick_flip` (`$1278c`), `pop2_tick_dot_a` / `_b`
+  (`$24296`, `$27942`), `pop2_tick_snd` (`$191e`), `pop2_tick_anim` (`$20c3e`). They ship together; gate tool `tools/p2tick.py`. `test_tickspin` (`$12548`, word at `$82700`): test-only pass slow-down for the gates.

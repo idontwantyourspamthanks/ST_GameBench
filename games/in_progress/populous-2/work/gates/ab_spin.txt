@@ -1,0 +1,13 @@
+snapshot busy1 turn 16122, 130 turns, 8 MHz, 50 Hz
+busy1 @8 MHz 50 Hz: IDENTICAL | world at pass tops: 129 compared (0 differ) over 131 turns, max 1 tops/turn | T frames 93 compared (0 differ; 18 excluded: hover highlight stale after catch-up passes) | R frames: 0 (0 stability pairs, 0 unstable; 0 minimap compares, 0 differ; 0 turns excluded: minimap cell redrawn by the logic) | pass kinds T 112 R 0 S 18 | turns/s base 5.768 patched 6.226
+snapshot busy1 turn 16122, 130 turns, 8 MHz, 60 Hz
+busy1 @8 MHz 60 Hz: IDENTICAL | world at pass tops: 129 compared (0 differ) over 131 turns, max 1 tops/turn | T frames 87 compared (0 differ; 21 excluded: hover highlight stale after catch-up passes) | R frames: 0 (0 stability pairs, 0 unstable; 0 minimap compares, 0 differ; 0 turns excluded: minimap cell redrawn by the logic) | pass kinds T 109 R 0 S 21 | turns/s base 5.681 patched 6.210
+snapshot game_start turn 386, 130 turns, 8 MHz, 50 Hz
+game_start @8 MHz 50 Hz: IDENTICAL | world at pass tops: 136 compared (0 differ) over 131 turns, max 2 tops/turn | T frames 129 compared (0 differ; 0 excluded: hover highlight stale after catch-up passes) | R frames: 7 (0 stability pairs, 0 unstable; 7 minimap compares, 0 differ; 0 turns excluded: minimap cell redrawn by the logic) | pass kinds T 130 R 7 S 0 | turns/s base 6.533 patched 6.214
+snapshot game_start turn 386, 130 turns, 8 MHz, 60 Hz
+game_start @8 MHz 60 Hz: IDENTICAL | world at pass tops: 132 compared (0 differ) over 131 turns, max 2 tops/turn | T frames 129 compared (0 differ; 0 excluded: hover highlight stale after catch-up passes) | R frames: 4 (0 stability pairs, 0 unstable; 3 minimap compares, 0 differ; 0 turns excluded: minimap cell redrawn by the logic) | pass kinds T 130 R 4 S 0 | turns/s base 6.436 patched 6.245
+RESULT busy1 8 MHz 50 Hz sync $fe orig +spin 12800: 4001 VBL = 80.02 s, 160246 cycles/VBL, world turns 448 = 5.599/s
+RESULT busy1 8 MHz 50 Hz sync $fe patched +spin 12800: 4001 VBL = 80.02 s, 160217 cycles/VBL, world turns 500 = 6.248/s | ticks(D) 500 = 6.248/s; passes T 388 R 0 S 112 P 0
+RESULT busy1 8 MHz 60 Hz sync $fc patched +spin 12800: 4801 VBL = 80.02 s, 133582 cycles/VBL, world turns 500 = 6.249/s | ticks(D) 500 = 6.249/s; passes T 372 R 0 S 128 P 0
+RESULT game_start 8 MHz 50 Hz sync $fe orig +spin 45000: 4001 VBL = 80.02 s, 160224 cycles/VBL, world turns 464 = 5.799/s
+RESULT game_start 8 MHz 50 Hz sync $fe patched +spin 45000: 4001 VBL = 80.02 s, 160232 cycles/VBL, world turns 500 = 6.248/s | ticks(D) 500 = 6.248/s; passes T 423 R 0 S 77 P 0

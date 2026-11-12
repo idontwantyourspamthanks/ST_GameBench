@@ -34,18 +34,23 @@ Payload: raw in POM's empty tracks 52-77 (directory on track 52); the floppy loa
 ## Patches
 `pop_noprot` (yes), `pop_credit` (yes, version), `pp_bigram_cache` (yes, HD), `pp_nofade` (no), `pop_land_score`, `pop_land_mul` (no, PopLandScore).
 
-## pop_ptr and pop_bgcopy (PopDisplay; both `; default: no`, blob range `$C2000-$C3FFF`)
-Evidence, gates and cycle counts: `work/notes/display.md`; the pixel gate is `tools/popabtest.py` (`gate`, `fps`, `copy`, `mutants`).
-* `pop_ptr` (site `$16d80`, 8 bytes -> `jsr $c2000` + `nop`; blob `$c2000`-`$c21f3`, data block `$c2400` + 448): the VBL routine `$16d70` restores
-  the pointer's saved background (`$16dea`) and redraws it (`$16e20`) into the displayed buffer in every VBL (11.8 k cycles, 7.4 % of a busy
+## pop_ptr and pop_bgcopy (PopDisplay; both `; default: no`, blobs `$C2000-$C26CB`, data `$C2400` + 448)
+Evidence, gates and cycle counts: `work/notes/display.md`; the pixel gate is `tools/popabtest.py` (`gate`, `fps`, `copy`, `cpytest`, `mutants`).
+* `pop_ptr` (site `$16d80`, 8 bytes -> `jsr $c2000` + `nop`; blob `$c2000`-`$c2211`, data block `$c2400`): the VBL routine `$16d70` restores
+  the pointer's saved background (`$16dea`) and redraws it (`$16e20`) into the displayed buffer in every VBL (11.5 k cycles, 7.4 % of a busy
   frame at 8 MHz). The blob skips both when the result is provably the same bytes (address of the last draw `$16f12`, displayed buffer `$3c50c`,
   pointer words `$24786/8`, shape `$2169a`, sheet `$3d572`, `$2498c/e` equal to what the last draw saw, the screen rectangle under the pointer ==
   the image that draw left, the 160 shape bytes it read == the copy taken then); otherwise it runs the two original routines and records
-  what they left. A flip changes `$3c50c`, so the first VBL after a flip, the restore into the old buffer and every hide are the original path.
-* `pop_bgcopy` (site `$14a28`, 8 bytes -> `jmp $c2600` + `nop`; blob `$c2600`-`$c26cf`): the 32,000-byte copy `$3b016` -> `$3c510` at the start of
-  every pass by 13-register `movem` (146 k cycles instead of 257 k); flags, `d0` and all other registers as the original leaves them.
-* Gate: `python3 tools/popabtest.py gate` (three snapshots, 237 flips each, both buffers + world RAM per flip, two mid-frame samples per flip,
-  injected pointer script, junk under a still pointer); `--mutant NAME` runs a deliberately broken patch, which must fail.
+  what they left (the images only when the draw before had the same inputs, so a moving pointer pays about 0.7 k cycles per VBL). A flip changes
+  `$3c50c`, so the first VBL after a flip, the restore into the old buffer and every hide are the original path. Measured 11,470 -> about 5,100
+  cycles per VBL with a still pointer; +3 to +5 % turns/s at 8 MHz.
+* `pop_bgcopy` (site `$14a28`, 8 bytes -> `jmp $c2600` + `nop`; blob `$c2600`-`$c26cb`): the 32,000-byte copy `$3b016` -> `$3c510` at the start of
+  every pass by 13-register `movem` (247,619 -> 138,712 cycles per frame measured); flags, `d0` and all other registers as the original leaves
+  them (`popabtest.py cpytest`: 96 of 96 trials identical). +5 % turns/s on busy scenes, +13.5 % on the idle start.
+* Both together: +10.3 / +9.7 / +16.9 % turns/s (busy_castles / busy_quake_volcano / genesis_start), +12.5 / +12.4 / +18.3 % on top of the land patches.
+* Gate: `python3 tools/popabtest.py gate` (three snapshots, 289 flips each, both buffers + world RAM per flip, two mid-frame samples per flip,
+  injected pointer script, junk / shape / x injections under a still pointer): IDENTICAL for every set; `--mutant NAME` runs a deliberately
+  broken patch, which must fail (all 7 do). The gate removes two timing races of the original game from both runs (display.md section 3).
 
 ## Other machines: relocation, machine mask, pop_fal_ym_demo + pop_fal_ym (PopMachines; `; default: no`, blob range `$C4000-$C4FFF`)
 Evidence and cell outputs: `work/notes/machines.md`, `work/gates/machines_*.txt`.

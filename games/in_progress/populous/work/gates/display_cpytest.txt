@@ -1,0 +1,13 @@
+cpytest: 96 trials (random d0-d7/a0-a6, CCR 0..31 each three times, last longword 0 / negative / positive), registers + CCR + the 32,128-byte window incl. sentinels compared: 96 identical, 0 different
+## mutant cpy_tail
+trial 3: regs equal True ccr orig 00100 new 00000 window differs 1; first differing reg []
+trial 4: regs equal True ccr orig 01000 new 00000 window differs 1; first differing reg []
+cpytest: 96 trials (random d0-d7/a0-a6, CCR 0..31 each three times, last longword 0 / negative / positive), registers + CCR + the 32,128-byte window incl. sentinels compared: 0 identical, 96 different
+## mutant cpy_short
+trial 3: regs equal True ccr orig 00100 new 00000 window differs 1; first differing reg []
+trial 4: regs equal True ccr orig 01000 new 00000 window differs 1; first differing reg []
+cpytest: 96 trials (random d0-d7/a0-a6, CCR 0..31 each three times, last longword 0 / negative / positive), registers + CCR + the 32,128-byte window incl. sentinels compared: 0 identical, 96 different
+## mutant cpy_off
+trial 3: regs equal True ccr orig 00100 new 00100 window differs 1; first differing reg []
+trial 4: regs equal True ccr orig 01000 new 01000 window differs 1; first differing reg []
+cpytest: 96 trials (random d0-d7/a0-a6, CCR 0..31 each three times, last longword 0 / negative / positive), registers + CCR + the 32,128-byte window incl. sentinels compared: 0 identical, 96 different

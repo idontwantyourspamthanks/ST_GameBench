@@ -1,0 +1,8 @@
+RESULT game_start 8 MHz 60 Hz sync $00 orig: 4801 VBL = 80.02 s, 133580 cycles/VBL, world turns 708 = 8.848/s
+RESULT game_start 8 MHz 60 Hz sync $fc patched: 4801 VBL = 80.02 s, 133576 cycles/VBL, world turns 500 = 6.249/s | ticks(D) 500 = 6.249/s; passes T 500 R 245 S 0 P 0
+RESULT game_start 16 MHz 60 Hz sync $00 orig: 4801 VBL = 80.02 s, 267165 cycles/VBL, world turns 1507 = 18.834/s
+RESULT game_start 16 MHz 60 Hz sync $fc patched: 4801 VBL = 80.02 s, 267154 cycles/VBL, world turns 500 = 6.249/s | ticks(D) 500 = 6.249/s; passes T 500 R 1100 S 0 P 0
+RESULT busy1 8 MHz 60 Hz sync $00 orig: 4801 VBL = 80.02 s, 133603 cycles/VBL, world turns 478 = 5.974/s
+RESULT busy1 8 MHz 60 Hz sync $fc patched: 4801 VBL = 80.02 s, 133601 cycles/VBL, world turns 500 = 6.249/s | ticks(D) 500 = 6.249/s; passes T 452 R 0 S 48 P 0
+RESULT busy1 16 MHz 60 Hz sync $00 orig: 4801 VBL = 80.02 s, 267202 cycles/VBL, world turns 891 = 11.135/s
+RESULT busy1 16 MHz 60 Hz sync $fc patched: 4801 VBL = 80.02 s, 267183 cycles/VBL, world turns 500 = 6.249/s | ticks(D) 500 = 6.249/s; passes T 500 R 766 S 0 P 0
