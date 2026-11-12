@@ -1,0 +1,64 @@
+=== st
+M/J/K screen
+M accepted
+raid map after 110 s
+np_st entered {'island': 8, 'vehicle': 6, 'view': 2} marker b'MWPO'
+J idle         type= 6 head= 640 thr$6750=     0 spd$6772=     0 bank$6746=     0 alt$764c=    21 $6fbe=0000 $6872=0000 yaw=    0 J_ST=ff PADJ=00 BTN=00 S=00000000 keys=[]
+hold Left      type= 6 head= 640 thr$6750=     0 spd$6772=     0 bank$6746=     0 alt$764c=     0 $6fbe=0000 $6872=0000 yaw=    0 J_ST=ff PADJ=00 BTN=00 S=00000000 keys=[]
+hold Up        type= 6 head= 640 thr$6750=     0 spd$6772=     0 bank$6746=     0 alt$764c=   -46 $6fbe=0000 $6872=0000 yaw=    0 J_ST=ff PADJ=00 BTN=00 S=00000000 keys=[]
+hold x         type= 6 head= 640 thr$6750=     0 spd$6772=     0 bank$6746=     0 alt$764c=   -46 $6fbe=0000 $6872=0000 yaw=    0 J_ST=ff PADJ=00 BTN=00 S=00000000 keys=[]
+hold z         type=21 head=   0 thr$6750=     0 spd$6772=     0 bank$6746=     0 alt$764c=     6 $6fbe=0000 $6872=0000 yaw=    0 J_ST=ff PADJ=00 BTN=00 S=00000000 keys=[]
+hold v         type=21 head=   0 thr$6750=     0 spd$6772=     0 bank$6746=     0 alt$764c=    -1 $6fbe=0000 $6872=0000 yaw=    0 J_ST=ff PADJ=00 BTN=00 S=00000000 keys=[]
+hold o         type=21 head=   0 thr$6750=     0 spd$6772=     0 bank$6746=     0 alt$764c=     9 $6fbe=0000 $6872=0000 yaw=    0 J_ST=ff PADJ=00 BTN=00 S=00000000 keys=[]
+hold 1         type=21 head=   0 thr$6750=     0 spd$6772=     0 bank$6746=     0 alt$764c=   -28 $6fbe=0000 $6872=0000 yaw=    0 J_ST=ff PADJ=00 BTN=00 S=00000000 keys=[]
+hold p         type=21 head=   0 thr$6750=     0 spd$6772=     0 bank$6746=     0 alt$764c=   -10 $6fbe=0000 $6872=0000 yaw=    0 J_ST=ff PADJ=00 BTN=00 S=00000000 keys=[]
+np_st J_ST 255 expected 255 PASS sites ['4cdf7fff4e73', '700072001428', '141002420003'] p5 123875a9
+np_st bus-error log lines: ['WARN : Bus Error reading at address $ffff8e21, PC=$1babc addr_e3=1babc op_e3=1238', 'WARN : Bus Error reading at address $ffff8924, PC=$1baea addr_e3=1baea op_e3=4a38', 'WARN : Bus Error reading at address $ffff8901, PC=$b9700 addr_e3=b9700 op_e3=4a38']
+=== megast
+M/J/K screen
+M accepted
+raid map after 109 s
+np_megast entered {'island': 8, 'vehicle': 6, 'view': 2} marker b'MWPO'
+J idle         type= 6 head= 640 thr$6750=     0 spd$6772=     0 bank$6746=     0 alt$764c=    21 $6fbe=0000 $6872=0000 yaw=    0 J_ST=ff PADJ=00 BTN=00 S=00000000 keys=[]
+hold Left      type= 6 head= 640 thr$6750=     0 spd$6772=     0 bank$6746=     0 alt$764c=    34 $6fbe=0000 $6872=0000 yaw=    0 J_ST=ff PADJ=00 BTN=00 S=00000000 keys=[]
+hold Up        type= 6 head= 640 thr$6750=     0 spd$6772=     0 bank$6746=     0 alt$764c=   -74 $6fbe=0000 $6872=0000 yaw=    0 J_ST=ff PADJ=00 BTN=00 S=00000000 keys=[]
+hold x         type= 6 head= 640 thr$6750=     0 spd$6772=     0 bank$6746=     0 alt$764c=    -6 $6fbe=0000 $6872=0000 yaw=    0 J_ST=ff PADJ=00 BTN=00 S=00000000 keys=[]
+hold z         type=21 head=   0 thr$6750=     0 spd$6772=     0 bank$6746=     0 alt$764c=   -28 $6fbe=0000 $6872=0000 yaw=    0 J_ST=ff PADJ=00 BTN=00 S=00000000 keys=[]
+hold v         type=21 head=   0 thr$6750=     0 spd$6772=     0 bank$6746=     0 alt$764c=   -28 $6fbe=0000 $6872=0000 yaw=    0 J_ST=ff PADJ=00 BTN=00 S=00000000 keys=[]
+hold o         type=21 head=   0 thr$6750=     0 spd$6772=     0 bank$6746=     0 alt$764c=     9 $6fbe=0000 $6872=0000 yaw=    0 J_ST=ff PADJ=00 BTN=00 S=00000000 keys=[]
+hold 1         type=21 head=   0 thr$6750=     0 spd$6772=     0 bank$6746=     0 alt$764c=     6 $6fbe=0000 $6872=0000 yaw=    0 J_ST=ff PADJ=00 BTN=00 S=00000000 keys=[]
+hold p         type=21 head=   0 thr$6750=     0 spd$6772=     0 bank$6746=     0 alt$764c=   -29 $6fbe=0000 $6872=0000 yaw=    0 J_ST=ff PADJ=00 BTN=00 S=00000000 keys=[]
+np_megast J_ST 255 expected 255 PASS sites ['4cdf7fff4e73', '700072001428', '141002420003'] p5 123875a9
+np_megast bus-error log lines: ['WARN : Bus Error reading at address $ffff8e21, PC=$1babc addr_e3=1babc op_e3=1238', 'WARN : Bus Error reading at address $ffff8924, PC=$1baea addr_e3=1baea op_e3=4a38', 'WARN : Bus Error reading at address $ffff8901, PC=$b9700 addr_e3=b9700 op_e3=4a38']
+=== megaste
+M/J/K screen
+M accepted
+raid map after 94 s
+np_megaste entered {'island': 8, 'vehicle': 6, 'view': 2} marker b'MWPO'
+J idle         type= 6 head= 640 thr$6750=     0 spd$6772=     0 bank$6746=     0 alt$764c=    44 $6fbe=0000 $6872=0000 yaw=    0 J_ST=ff PADJ=00 BTN=00 S=00000000 keys=[]
+hold Left      type= 6 head= 640 thr$6750=     0 spd$6772=     0 bank$6746=     0 alt$764c=    45 $6fbe=0000 $6872=0000 yaw=    0 J_ST=ff PADJ=00 BTN=00 S=00000000 keys=[]
+hold Up        type= 6 head= 640 thr$6750=     0 spd$6772=     0 bank$6746=     0 alt$764c=    37 $6fbe=0000 $6872=0000 yaw=    0 J_ST=ff PADJ=00 BTN=00 S=00000000 keys=[]
+hold x         type= 6 head= 640 thr$6750=     0 spd$6772=     0 bank$6746=     0 alt$764c=    45 $6fbe=0000 $6872=0000 yaw=    0 J_ST=ff PADJ=00 BTN=00 S=00000000 keys=[]
+hold z         type= 6 head= 640 thr$6750=     0 spd$6772=     0 bank$6746=     0 alt$764c=    44 $6fbe=0000 $6872=0000 yaw=    0 J_ST=ff PADJ=00 BTN=00 S=00000000 keys=[]
+hold v         type= 6 head= 640 thr$6750=     0 spd$6772=     0 bank$6746=     0 alt$764c=    34 $6fbe=0000 $6872=0000 yaw=    0 J_ST=ff PADJ=00 BTN=00 S=00000000 keys=[]
+hold o         type= 6 head= 640 thr$6750=     0 spd$6772=     0 bank$6746=     0 alt$764c=   -51 $6fbe=0000 $6872=0000 yaw=    0 J_ST=ff PADJ=00 BTN=00 S=00000000 keys=[]
+hold 1         type= 6 head= 640 thr$6750=     0 spd$6772=     0 bank$6746=     0 alt$764c=   -63 $6fbe=0000 $6872=0000 yaw=    0 J_ST=ff PADJ=00 BTN=00 S=00000000 keys=[]
+hold p         type= 6 head= 640 thr$6750=     0 spd$6772=     0 bank$6746=     0 alt$764c=    21 $6fbe=0000 $6872=0000 yaw=    0 J_ST=ff PADJ=00 BTN=00 S=00000000 keys=[]
+np_megaste J_ST 255 expected 255 PASS sites ['4cdf7fff4e73', '700072001428', '141002420003'] p5 123875a9
+np_megaste bus-error log lines: []
+=== tt
+M/J/K screen
+M accepted
+raid map after 160 s
+np_tt entered {'island': 8, 'vehicle': 0, 'view': 2} marker b'MWPO'
+J idle         type= 6 head= 640 thr$6750=     0 spd$6772=     0 bank$6746=     0 alt$764c=    37 $6fbe=0000 $6872=0000 yaw=    0 J_ST=ff PADJ=00 BTN=00 S=00000000 keys=[]
+hold Left      type= 6 head= 640 thr$6750=     0 spd$6772=     0 bank$6746=     0 alt$764c=    48 $6fbe=0000 $6872=0000 yaw=    0 J_ST=ff PADJ=00 BTN=00 S=00000000 keys=[]
+hold Up        type=21 head=   0 thr$6750=     0 spd$6772=     0 bank$6746=     0 alt$764c=    10 $6fbe=0000 $6872=0000 yaw=    0 J_ST=ff PADJ=00 BTN=00 S=00000000 keys=[]
+hold x         type=21 head=   0 thr$6750=     0 spd$6772=     0 bank$6746=     0 alt$764c=     7 $6fbe=0000 $6872=0000 yaw=    0 J_ST=ff PADJ=00 BTN=00 S=00000000 keys=[]
+hold z         type=21 head=   0 thr$6750=     0 spd$6772=     0 bank$6746=     0 alt$764c=   -29 $6fbe=0000 $6872=0000 yaw=    0 J_ST=ff PADJ=00 BTN=00 S=00000000 keys=[]
+hold v         type=21 head=   0 thr$6750=     0 spd$6772=     0 bank$6746=     0 alt$764c=   -30 $6fbe=0000 $6872=0000 yaw=    0 J_ST=ff PADJ=00 BTN=00 S=00000000 keys=[]
+hold o         type=21 head=   0 thr$6750=     0 spd$6772=     0 bank$6746=     0 alt$764c=   -10 $6fbe=0000 $6872=0000 yaw=    0 J_ST=ff PADJ=00 BTN=00 S=00000000 keys=[]
+hold 1         type=21 head=   0 thr$6750=     0 spd$6772=     0 bank$6746=     0 alt$764c=   -19 $6fbe=0000 $6872=0000 yaw=    0 J_ST=ff PADJ=00 BTN=00 S=00000000 keys=[]
+hold p         type=21 head=   0 thr$6750=     0 spd$6772=     0 bank$6746=     0 alt$764c=   -21 $6fbe=0000 $6872=0000 yaw=    0 J_ST=ff PADJ=00 BTN=00 S=00000000 keys=[]
+np_tt J_ST 255 expected 255 PASS sites ['4cdf7fff4e73', '700072001428', '141002420003'] p5 123875a9
+np_tt bus-error log lines: []

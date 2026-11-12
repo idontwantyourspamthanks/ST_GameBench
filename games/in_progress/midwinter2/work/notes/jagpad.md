@@ -4,6 +4,10 @@ Author: JagMW2. Study: `gamebench/reports/jaguar_pad_study.md` (protocol, detect
 (Hatari 2.6.1, pad A emulation, `work/jagpad/*.py`, logs quoted below) or a disassembly line of `work/dumps/ram_ingame_lobos.bin`
 (`tools/m68dis.py`); anything else is marked **[INFERENCE]**. Real STE hardware with a real pad is **untested** (Hatari is the only evidence).
 
+> **UPDATE (lead follow-up): sections 1-10 describe the FIRST version (poll in the middle of the VBL at `$262c2`, 4 groups per VBL with a settle loop, `or.b` in `p5_ctl_vbl`, 0.73 %).
+> What ships now is section 11 (poll at the end of the VBL handler `$262f6`, Hunter-style one group per VBL, restore-on-no, `p5_ctl_vbl.s` untouched, 0.22 %, Falcon path present but off).
+> Sections 4 (mapping, climb/dive, Esc hold), 5 (J-mode identity) and 8-10 still hold; the numbers in 3, 6 and 7 are superseded by section 11.**
+
 ## 1. What was added
 
 | file | site | orig -> new | blob |
@@ -190,3 +194,59 @@ consumer (`$347f2`, and `p5_ctl_x` caps `MOUSE_CAP`), and the menu pointer is cl
 make index `d0 <= $7f` into the 128-byte table `$7686`; break: HAGA `$3f6: andi.w #$7f,d0 / jmp $26a28.l`). So a split packet can give wrong deltas / buttons, a data byte below `$f6` arriving at idle is taken as a scancode
 (a make without a break = a stuck key until the break arrives, e.g. `$7687` Esc), and a data byte of `$e5`/`$e6` at idle reaches HAGA's `$3ec` compare (`$3ea: cmp.b #$e5,d0 / beq.b $426`, `$3f0: cmp.b #$e6,d0 / beq.b $400`, `$400: movem.l d0-d7/a0-a6,-(a7) / moveq #$37,d0 / bra.b $43c`), which I did not trace
 (**[INFERENCE]**: PP's save-state / hot-key code). No crash path found; I did not run a misframing experiment.
+
+## 11. Follow-up for the lead (three items); this is the shipped design [obs unless marked]
+
+### 11.1 The default build without jag
+* Before: `p5_ctl_vbl.s` carried `or.b PADJ.l,d1` and read `$B9EE1`, which is zero payload RAM without jag (the image is `bytes(PAYLOAD_LEN)` zero-filled in `build_image`, nothing else reserves `$B9EA0-$B9EEF`, the payload is copied whole at 1/2/4 MB and loaded as FFA file 10 on floppy): true, but it relied on nobody ever using that address.
+* Now `p5_ctl_vbl.s` is byte-identical to its pre-jag version (`git diff 050e65d^ -- patches/p5_ctl_vbl.s` is empty). `jag_poll.s` has `; blobedit: $b433a 123875a9` and a segment `org $b433a / bsr.w $b9e40`; `tools/mw2patch.py` `build_image` applies it after all blobs are placed, only if the 4 bytes there are the declared ones (all zero = p5_ctl_vbl absent: skipped; anything else = abort).
+* Proof, raw: `build --out build/jag_def2` of the default set now vs `build/jag_def` made before any jag file existed:
+```
+65f74ee97abd3aed670bec8fb34da658  build/jag_def/RUNME.TOS      1074342dd4a917bafdc7d2a031e9b088  build/jag_def/HAGA
+65f74ee97abd3aed670bec8fb34da658  build/jag_def2/RUNME.TOS     1074342dd4a917bafdc7d2a031e9b088  build/jag_def2/HAGA          cmp: BYTE-IDENTICAL
+with jag (p5 present):   bytes at $b433a = 61005b04        without jag: 123875a9        payload $B9500-$B9EFF all zero without jag: True
+jag_poll alone (no p5):  bytes at $b433a = 00000000  (edit skipped)
+```
+A cold boot of the default set is therefore the old default build; no separate world-rate run is needed (same bytes).
+
+### 11.2 Cost (adopting Hunter's design)
+* **Poll at the end of the VBL handler** (`$262f6`, `movem.l (a7)+,d0-d7/a0-a6 / rte` = 6 B -> `jmp $b9500`): every register is free there (the handler saved all of them at `$26298`), so the poll needs no save/restore and no `jsr` + tail `jmp`; the movem/rte are replayed in the blob. (First version: mid-handler `jsr $27228` splice, `movem` of 9 registers.)
+* **One group per VBL**, round robin 4, 3, 2, 1; `jag_sel` word written at the end of one poll and the data read at the start of the next (a whole VBL of settle time, no wait loop); `move.l ($ff9200)` reads both registers; masked and compared with the group's last value; only a change (or the Esc deferral mark, bit 31 of group 1's stored value) runs the rebuild. Every group (D-pad and B included) is read every 4th VBL = 80 ms at 50 Hz, 67 ms at 60 Hz. **Why not faster for the D-pad / fire:** the game acts on input once per 5 Hz logic tick (200 ms; `$31568`/`$315d0`) and `p5_ctl_x` counts the VBLs a direction was held (the value persists between reads), so 80 ms read-latency / quantisation is invisible; a 4-6-slot schedule that reads group 4 every 2nd VBL would make the keypad/C/Option taps need 120 ms. Taps must last 80 ms (Option: its break is held 16 VBL).
+* **Restore on no:** the probe writes the original bytes back at `$262f6`, `$26b66`, `$26bea` and (if redirected) `$b433a`, so machines without pad ports run the unpatched code at 0 cycles (a 68030 icache that still holds the old jump runs a blob that handles the no case).
+* Measured (`work/jagpad/t_cycles.py`, STE 8 MHz, 220 VBL, snapshot `1mb_ingame_foot`; "net" = blob + site jump - the movem/rte moved from the site + splice deltas):
+```
+M mode                 TOTAL NET  40/VBL = 0.025 % at 50 Hz, 0.030 % at 60 Hz   (jmp 12 + tst.w 16 + beq 10 + 2)
+J mode, pad idle       TOTAL NET 354/VBL = 0.221 % at 50 Hz, 0.266 % at 60 Hz   poll 196 + jag_dir/jag_btn/jag_rd 144 + 14
+J mode, hold Up+z+o    TOTAL NET 354/VBL = 0.221 %                              (key work only on a change)
+J mode, hold 1+5+9+0   TOTAL NET 354/VBL = 0.221 %
+no pad ports (ST, Mega ST, Mega STE, TT):  0   (sites restored, cold boots below)
+```
+First version: 1172/VBL = 0.73 % / 0.88 %. Hunter: 0.13 %. The difference is the merge: Hunter has one merge splice (52 cycles), MW2 has three (`$26b66` `jsr`+`rts` and an absolute `or.b` = 56, `$26bea` = 52, p5's read via `bsr.w jag_rd` = 50; 158 together) because the pad has to reach three readers of the stick (the ramps, the select event, p5's counters). An idle-pad "uninstall the splices" trick was not done (68030 instruction-cache staleness, as Hunter noted).
+
+### 11.3 Falcon
+* The probe now follows Hunter's: guarded `tst.b $ff8901` (DMA sound), guarded `tst.b $ff8e01` (SCU: answers on Mega STE / TT, bus-errors on STE / Falcon), then the guarded word reads of `$ff9202`/`$ff9200` with every group deselected and the idle check. The bus-error vector is VBR+8 (`movec vbr,d5` on a 68020+), so a relocated vector table is safe. The longer Falcon settle is the whole-VBL settle (no loop to lengthen).
+* **MW2 does not run on a Hatari Falcon:** HD build = black screen (`falcon_min.py`, with and without jag); floppy build (`falcon_floppy.py`, FFA with the payload, disk swap to FFB at 80 s) = garbled "FLAMES OF FREEDOM" picture (ST low-res data in a Falcon video mode), `$b2ff8` zero, `$700a` junk, the game never starts (`work/jagpad/falcon_fl_boot.png`). So the Falcon path cannot be tested inside MW2: `FALCON equ 0` at the top of `jag_poll.s` keeps a 68020+ fail-closed (no vector swap, no hardware access, sites restored). Set `FALCON equ 1` to enable it.
+* The detection code itself was run on a Falcon in isolation (`work/jagpad/probe.s` = the probe block of `jag_poll.s` with FALCON = 1 plus a raw group scan, as a PRG; `probe_prg.py`, Hatari 2.6.1, pad A, host keys held):
+```
+== falcon TOS 4.04: probe verdict J_ST = 0x01   idle groups 4,3,2,1 raw $ff9200:$ff9202 = bfffffff x4 ($bfff: Falcon configuration bits in the high byte of $ff9200, masked off by $000fff00)
+   Up (group 4) ['bffffeff', ...]  B (group 3) [.., 'bffdffff', ..]  Option (group 1) [.., 'bffdffff']          bus error log: $ffff8e01 (the SCU probe)
+== ste TOS 1.62:    probe verdict J_ST = 0x01   Up fffffeff in group 4, B fffdffff in group 3, Option fffdffff in group 1   bus error log: $ffff8e01
+== tt TOS 3.06 / megaste TOS 2.06: 0xff (no bus errors logged: the SCU answers)   st / megast TOS 1.04: 0xff (bus error at $ffff8901)
+```
+
+### 11.4 Re-run gates (raw)
+`mw2patch.py verify`: ALL OK. Official abtest, display set (26) + jag_poll jag_dir jag_btn:
+```
+--flips 10: 1mb_ingame_walking: pixels IDENTICAL; fps base 4.5 (89 flips) -> patched 6.7 (134 flips) | 1mb_ingame_foot: pixels IDENTICAL; fps base 4.2 (84 flips) -> patched 22.9 (457 flips) | exit 0
+--flips 40: 1mb_ingame_walking: pixels IDENTICAL; fps base 2.5 (50 flips) -> patched 3.2 (64 flips)  | 1mb_ingame_foot: pixels IDENTICAL; fps base 6.5 (129 flips) -> patched 20.4 (408 flips) | exit 0
+```
+(fps differ from the earlier runs because other agents load the machine; only the pixel comparison is the gate.) J mode forced, no pad, `--joy1 none` (`t_abj.py`):
+```
+walking flips 10: IDENTICAL md5 b4c4bd76/79ee5610 = jag b4c4bd76/79ee5610 | foot flips 10: IDENTICAL 900a35d2/900a35d2 | walking flips 40: IDENTICAL 3a7e0798/ba3ba3a7 | foot flips 40: IDENTICAL d074417f/d074417f | exit 0 x2
+```
+Button table, cold boot STE HD 1 MB (`ste_cold2.log`), pad A, J forced after the 3D view: Lobos helicopter `Left yaw=-50 PADJ=04`, `Right +50 PADJ=08`, `Up thr=944 PADJ=01`, `C $6fbe=0001 keys=['34']`, `A $6fbe=0002 keys=['33']`, `B $6872=0001`, `* keys=['4a']`, `# keys=['4e']`, `P keys=['19']`, `1 keys=['3b']`;
+Jeep `Up thr=727`, `Left yaw=-200`, `Right +200`, A/C bank, B, Option tap -> type 1 -> 5; Speedboat Option tap -> 11, A `bank=-208 type=11`, C `type=21`. `J_ST=01`, sites `4ef9000b9512 4eb9000b9e00 4eb9000b9e20`, p5 `61005b04` on all three. Live snapshot (`t_foot.py`): every key `3b..44`, `4a`, `4e`, `19`, `33`, `34`, directions, B (`S=` shows each bit).
+No-port cold boots (`np_cold2.log`): ST / Mega ST / Mega STE / TT: `J_ST=ff`, sites `4cdf7fff4e73 700072001428 141002420003`, p5 `123875a9` (all originals restored), pad keys held (Left Up x z v o 1 p): `PADJ=00 S=00000000 keys=[]`, `MWPO`, game running; bus-error lines ST/Mega ST: `$ff8e21` (game's own, PC `$1babc`), `$ff8924` (game's own), `$ff8901` (the probe, PC `$b9700`); Mega STE: none; TT: none.
+
+Floppy cold boot STE (`jag_floppy.py`, new build): `J_ST=01`, sites `4ef9000b9512 4eb9000b9e00 4eb9000b9e20`, p5 `61005b04`; Left yaw=-50 head 312, Right +50, C `$6fbe=0001 bank=456 keys=['34']`, A `$6fbe=0002`, B `$6872=0001`, `*` `4a`, `#` `4e`, P `19` x2, 1 `3b`, Option tap -> type 13 -> 17.
+Per-button consumers on the new cold-booted Lobos state (`t_consumers2.py`, fresh restore per key): F1..F10 (pad 1-9, 0) -> `$30f92` once each; P -> `$1b384` once; Option -> `$1b446` once (type 13 -> 17); B -> `$1ab8e` (4 hits while held); `*` -> `$1ab2c`; `#` -> `$1ab54`.

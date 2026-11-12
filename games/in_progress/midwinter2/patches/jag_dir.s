@@ -1,5 +1,5 @@
 ; name: jag_dir
-; default: no
+; default: yes
 ; site: $26b66
 ; orig: 7000720014280001
 ; note: Atari Jaguar pad, part 2 of 3 (work/notes/jagpad.md; poll in jag_poll).  Joystick re-read $26b58 (J mode only: `tst.w $eb76 / beq rts` is its

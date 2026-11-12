@@ -11,13 +11,12 @@
 ;         ELAPSED.w ($B46C0) VBLs since the consumer (p5_ctl_x) last read the counters
 ;         CNTL.w    ($B46C2) VBLs left was held   CNTR.w ($B46C4) VBLs right was held
 ;         PREV.w    ($B46C6) last yaw written by the consumer (reused if ELAPSED = 0)
-;       Left  = joystick bit 2 of $75a9 (J mode, OR-ed with the Jaguar pad byte PADJ) or KP7/KP4/KP1 (K mode).
-;       Right = joystick bit 3 of $75a9 (J mode, OR-ed with PADJ) or KP9/KP6/KP3 (K mode).
+;       Left  = joystick bit 2 of $75a9 (J mode) or KP7/KP4/KP1 (K mode).
+;       Right = joystick bit 3 of $75a9 (J mode) or KP9/KP6/KP3 (K mode).
 ;       M mode counts nothing. All of d0-d7/a0-a6 are saved by the VBL handler.
 ELAPSED equ     $b46c0
 CNTL    equ     $b46c2
 CNTR    equ     $b46c4
-PADJ    equ     $b9ee1                  ; jag_poll's pad directions (IKBD joystick byte layout); zero without the jag_* patches
         org     $262c8
         jsr     $b4300.l
         nop
@@ -36,7 +35,6 @@ PADJ    equ     $b9ee1                  ; jag_poll's pad directions (IKBD joysti
         tst.w   $eb76.l                 ; joystick mode
         beq.s   .nj
         move.b  $75a9.w,d1
-        or.b    PADJ.l,d1               ; the Jaguar pad steers like the stick
         btst    #2,d1
         sne     d3
         btst    #3,d1

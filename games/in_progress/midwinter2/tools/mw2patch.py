@@ -209,6 +209,8 @@ class Patch:
         self.image = None         # file patch: game file (e.g. HAGA) edited in place
         self.media = None         # None = every build; "floppy" = only `build --floppy`
         self.edits = []           # file patch: (file offset, expected original bytes)
+        self.blobedits = {}       # `; blobedit: $addr <orig hex>`: edits another patch's blob in the image (see build_image)
+        self.edit_segments = []   # (org, source lines) of those edits
         self.fsegments = []       # file patch: (file offset, source lines)
         cur = None
         text = path.read_text()
@@ -231,6 +233,9 @@ class Patch:
                 elif k == "data":
                     a, l = v.split()
                     self.data.append((int(a.lstrip("$"), 16), int(l, 0)))
+                elif k == "blobedit":
+                    a, b = v.split(None, 1)
+                    self.blobedits[int(a.lstrip("$"), 16)] = bytes.fromhex(b.replace(" ", ""))
                 elif k == "image": self.image = v.strip()
                 elif k == "media":
                     if v.strip().lower() != "floppy":
@@ -254,6 +259,10 @@ class Patch:
             elif line.strip() and not line.strip().startswith(";"):
                 raise SystemExit(f"{path}: code before first org")
 
+    def _split_edits(self):
+        self.edit_segments = [sg for sg in self.segments if sg[0] in self.blobedits]
+        self.segments = [sg for sg in self.segments if sg[0] not in self.blobedits]
+
     def phase_of(self):
         if self.phase:
             return self.phase
@@ -266,6 +275,7 @@ def load_patches():
         if f.name in ("core.s", "cpulib.s", "floppy_cpu.s"):
             continue
         p = Patch(f)
+        p._split_edits()
         if p.site is not None:
             ps.append(p)
     return ps
@@ -460,6 +470,24 @@ def build_image(patches: list[Patch], floppy: bool = False):
     for (a0, a1), (b0, b1) in zip(placed, placed[1:]):
         if a1 > b0:
             raise SystemExit(f"image overlap: ${a0:x}-${a1:x} vs ${b0:x}-${b1:x}")
+    # blob edits: a patch rewrites a few bytes of ANOTHER patch's blob (e.g. jag_poll redirects a read in p5_ctl_vbl), so that the other patch's
+    # source stays byte-identical whether or not the first patch is in the set. The bytes there must be the declared original; all zero = the
+    # target patch is absent: skip; anything else = abort.
+    for p in patches:
+        for org, lines in p.edit_segments:
+            orig = p.blobedits[org]
+            if not (BLOB_MIN <= org and org + len(orig) <= BLOB_MAX + 1):
+                raise SystemExit(f"{p.name}: blobedit ${org:x} outside the blob area")
+            new = assemble(org, lines, "\n".join(p.preamble))
+            if len(new) > len(orig):
+                raise SystemExit(f"{p.name}: blobedit ${org:x}: new bytes longer than orig")
+            new += b"\x4e\x71" * ((len(orig) - len(new)) // 2)
+            cur = bytes(img[org - IMG_BASE: org - IMG_BASE + len(orig)])
+            if not any(cur):
+                continue
+            if cur != orig:
+                raise SystemExit(f"{p.name}: blobedit ${org:x} expects {orig.hex()}, the image has {cur.hex()}")
+            img[org - IMG_BASE: org - IMG_BASE + len(new)] = new
     return bytes(img), sites
 
 # ---- verification ------------------------------------------------------------

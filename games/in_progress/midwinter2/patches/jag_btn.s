@@ -1,5 +1,5 @@
 ; name: jag_btn
-; default: no
+; default: yes
 ; site: $26bea
 ; orig: 141002420003
 ; note: Atari Jaguar pad, part 3 of 3 (work/notes/jagpad.md; poll in jag_poll).  J-mode part of the joystick re-read $26b58:

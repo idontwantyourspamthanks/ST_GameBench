@@ -7,7 +7,9 @@ Header comment lines before the first `org`; then one code segment per `org`:
 `; phase: boot|deferred` (optional; auto: boot if in FFA file8/9, deferred if the
 address is re-loaded later from an overlay, e.g. FFB f1 -> $18d96)
 `; data: $addr len` (blob-owned zero-init data reservation, repeatable);
-`; media: floppy` (optional: built only by `build --floppy`, see "Floppy build").
+`; media: floppy` (optional: built only by `build --floppy`, see "Floppy build");
+`; blobedit: $addr <orig hex>` (optional, repeatable: the segment with that `org` rewrites bytes of ANOTHER patch's blob in the image, applied only if the bytes there equal
+`<orig hex>`; all zero = that patch is absent, skipped; anything else aborts the build; used by `jag_poll` on `p5_ctl_vbl`).
 The segment whose `org` equals the site yields the NEW bytes (must be <= orig
 length, nop-padded). Segments with org in $b31c0-$b31ff are BLOB code at a fixed
 org in free RAM: the payload `$B3000-$BAFFF` (32 KB; blob code from `$B3400`, see "Payload is $8000 bytes"
@@ -230,19 +232,21 @@ floppy "Insert Graphics Disk" prompt and on the HD loading screen. The palette a
 
 ## Jaguar pad (`jag_poll` + `jag_dir` + `jag_btn`, all `default: no`; work/notes/jagpad.md)
 A Jaguar pad in an STE enhanced joystick port (read directly by the hardware, not through the IKBD) acts in **joystick mode (J) only**; the mouse
-and keyboard modes are untouched. Apply the three together (`p5_ctl_vbl` already reads the pad byte, zero without them).
-- `jag_poll` (`$262c2`, the VBL handler's `jsr $27228`, tail-jumped from the blob at `$B9500`): once per VBL in J mode on a probed STE: group 4
-  (D-pad, A, Pause) every VBL plus one of groups 3/2/1 in turn (every button is seen at least every 3rd VBL), port A and port B OR-ed. Directions go to
-  `PADJ` (`$B9EE1`), B to `PADBTN` (`$B9EE2`), every other changed button makes / breaks a key through the game's own key bookkeeping
-  (`$7684`, `$7686`, `$75ac`, `$770a/$770c`, `$7708`; interrupts masked): A `,` (nose down / dive), C `.` (nose up / climb), Option Esc (leave the vehicle;
-  held for at least 16 VBLs, because the game polls `$7687` once per logic tick), Pause P, keypad 1-9 F1-F9, 0 F10, `*` keypad `-`, `#` keypad `+`; B = fire.
-- `jag_dir` (`$26b66`): ORs `PADJ` into the joystick byte of `$26b58`, so the ramps `$75b2..$75be` and `$6fb6/$6fba` see the pad like the stick.
-  `jag_btn` (`$26bea`): ORs `PADBTN` into the mouse-header buttons that become the select/fire event `$6872`.
-- `p5_ctl_vbl` (default) got one instruction, `or.b PADJ.l,d1`, so the direct-control yaw counters count the pad's left / right.
-- **Detection** (first poll in J mode, cached in `FLAG` `$B9EE0`, fail closed): 68000 only (TT and Falcon: no hardware access at all); guarded
-  reads (vector `$8` swapped, interrupts masked) of `$ff8901` and `$ff8a3c` must answer and `$ff8e21` must bus-error (STE; ST, Mega ST and Mega STE fail);
-  then a guarded word write/read of `$ff9202` / `$ff9200` with every group deselected must read idle (`$ffxx` / `$xxxf`). Words only: a byte read of
-  `$ff9200` bus-errors on a real STE. A disabled machine pays `cmpi.b` + `beq` + `jmp` (42 cycles) per VBL.
-- Blobs: code `$B9500-$B9867` (872 B, incl. 272 B of decode tables), `$B9E00` (`jag_dir`), `$B9E20` (`jag_btn`), data `$B9EE0-$B9EEF`.
-- Cost, STE 8 MHz (Hatari profile, 220 VBL): about 1056 cycles per VBL in `jag_poll` + 100 in `jag_dir`/`jag_btn` + 16 in `p5_ctl_vbl` = 1172
-  = 0.73 % of the CPU at 50 Hz (0.88 % at 60 Hz); the same with or without a pad (key bookkeeping runs only when a button changes). Mouse / keyboard mode: 68.
+and keyboard modes are untouched. Apply the three together. Design as Hunter's `jag_pad`: one row group per VBL, round robin, select written at the end of one VBL
+and read at the start of the next (a whole VBL of settle time, no wait loop), decoding only on a change, original bytes written back at every site when the probe says no.
+- `jag_poll` (`$262f6`, the end of the VBL handler, `movem.l (a7)+,d0-d7/a0-a6 / rte` -> `jmp $B9500`; the blob replays them): reads group 4, 3, 2, 1 in turn (each every
+  4th VBL, 80 ms at 50 Hz), port A and B OR-ed. Directions go to `PADJ` (`$B9EE1`), B to `PADBTN` (`$B9EE2`), every other changed button makes / breaks a key through the game's own key
+  bookkeeping (`$7684`, `$7686`, `$75ac`, `$770a/$770c`, `$7708`; interrupts masked): A `,` (nose down / dive), C `.` (nose up / climb), Option Esc (leave the vehicle; the break is held
+  back until 16 VBL after the press, because the game polls `$7687` once per logic tick), Pause P, keypad 1-9 F1-F9, 0 F10, `*` keypad `-`, `#` keypad `+`; B = fire.
+- `jag_dir` (`$26b66`): ORs `PADJ` into the joystick byte of `$26b58`, so the ramps `$75b2..$75be` and `$6fb6/$6fba` see the pad like the stick. `jag_btn` (`$26bea`): ORs `PADBTN` into the
+  mouse-header buttons that become the select/fire event `$6872`.
+- **`p5_ctl_vbl` is untouched.** `jag_poll` carries a `; blobedit: $b433a 123875a9` header: `tools/mw2patch.py` rewrites those 4 bytes of p5_ctl_vbl's blob (`move.b $75a9.w,d1` ->
+  `bsr.w jag_rd`, stick | pad) only when both patches are in the set, and aborts if the bytes there are not the declared ones (all zero = target absent: skipped). A set without the jag
+  patches is byte-identical to the one before them (`cmp` of RUNME.TOS / HAGA of the default build, work/notes/jagpad.md section 11).
+- **Detection** (first VBL, any mode, cached in `J_ST` `$B9EA0`): guarded `tst.b $ff8901` (DMA sound; ST / Mega ST bus-error = no) and guarded `tst.b $ff8e01` (SCU: answers on a Mega STE and a TT = no, bus-errors on
+  an STE and a Falcon), vector at VBR+8 (`movec` on a 68020+), then a guarded word write/read of `$ff9202` / `$ff9200` with every group deselected must read idle (`$ffxx` / `$xxxf`). Words only: a byte read of
+  `$ff9200` bus-errors on a real STE. On a no the probe writes the ORIGINAL bytes back to `$262f6`, `$26b66`, `$26bea` (and `$b433a` if redirected): the unpatched code, 0 cycles. **Falcon:** the code
+  path exists (`FALCON equ 1` at the top of `jag_poll.s`) but is off: MW2 does not run on a Hatari Falcon (HD: black screen; floppy: garbled intro, game never starts), so it could not be tested.
+- Blobs: `$B9500-$B97BB` (700 B), `$B9E00` (`jag_dir`), `$B9E20` (`jag_btn`), `$B9E40` (`jag_rd`, 12 B), data `$B9EA0-$B9EEF`.
+- Cost, STE 8 MHz (Hatari profile, 220 VBL): M / K mode 40 cycles per VBL; J mode 354 cycles per VBL (poll 196, three merge splices 158) = 0.22 % at 50 Hz, 0.27 % at 60 Hz, the same with or without a
+  pad pressed. Machines without pad ports: 0.

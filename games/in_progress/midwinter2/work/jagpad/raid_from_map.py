@@ -15,8 +15,8 @@ try:
     jmode(h); time.sleep(2)
     S(h, 'J idle')
     battery(h, seq.split(','))
-    d = memb(h, 0xb9ee0, 1)
-    print(tag, 'FLAG', d[0], 'PASS' if d[0] == 1 else 'FAIL')
+    d = memb(h, 0xb9ea0, 1)
+    print(tag, 'J_ST', d[0], 'PASS' if d[0] == 1 else 'FAIL', 'sites', [memb(h, a, 6).hex() for a in (0x262f6, 0x26b66, 0x26bea)], 'p5', memb(h, 0xb433a, 4).hex())
     print(tag, 'bus-error log lines:', bus_errors(h)[:6])
     h.shot(str(G / 'work/jagpad' / f'{tag}_end.png'))
 finally:

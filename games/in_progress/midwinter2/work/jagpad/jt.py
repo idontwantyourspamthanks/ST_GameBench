@@ -63,10 +63,10 @@ def keydown_list(h):
 
 
 def S(h, tag):
-    d = memb(h, 0xb9ee0, 16)
+    d = memb(h, 0xb9ea0, 32); pj = memb(h, 0xb9ee1, 2)
     print(f'{tag:14s} type={w(h,0x6220):2d} head={w(h,0x6742):4d} thr$6750={sw(h,0x6750):6d} spd$6772={sw(h,0x6772):6d} bank$6746={sw(h,0x6746):6d} '
           f'alt$764c={sw(h,0x764c):6d} $6fbe={w(h,0x6fbe):04x} $6872={w(h,0x6872):04x} yaw={sw(h,0x6766):5d} '
-          f'FLAG={d[0]} PADJ={d[1]:02x} BTN={d[2]:02x} GB={d[8:12].hex()} keys={keydown_list(h)}', flush=True)
+          f'J_ST={d[0]:02x} PADJ={pj[0]:02x} BTN={pj[1]:02x} S={d[20:24].hex()} keys={keydown_list(h)}', flush=True)
 
 
 def battery(h, seq, secs=2.5):

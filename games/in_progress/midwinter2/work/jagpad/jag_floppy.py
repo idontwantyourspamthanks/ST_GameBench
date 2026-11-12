@@ -33,7 +33,7 @@ try:
         h.cmd('hatari-event keypress 57'); time.sleep(5)
         if h.screen_matches(ref, (280, 350, 560, 420)): break
     else: raise RuntimeError('never reached the M/J/K screen')
-    print('M/J/K screen; marker', memb(h, 0xb2ff8, 4), 'sites', [memb(h, a, 6).hex() for a in (0x262c2, 0x26b66, 0x26bea)], flush=True)
+    print('M/J/K screen; marker', memb(h, 0xb2ff8, 4), 'sites', [memb(h, a, 6).hex() for a in (0x262f6, 0x26b66, 0x26bea)], flush=True)
     for _ in range(5):
         time.sleep(3); h.cmd('hatari-event keypress 50'); time.sleep(5)
         if not h.screen_matches(ref, (280, 350, 560, 420)): break
@@ -74,8 +74,8 @@ try:
     jmode(h); time.sleep(2)
     S(h, 'J idle')
     battery(h, seq.split(','))
-    d = memb(h, 0xb9ee0, 1)
-    print('floppy FLAG', d[0], 'PASS' if d[0] == 1 else 'FAIL')
+    d = memb(h, 0xb9ea0, 1)
+    print('floppy J_ST', d[0], 'PASS' if d[0] == 1 else 'FAIL', 'sites', [memb(h, a, 6).hex() for a in (0x262f6, 0x26b66, 0x26bea)], 'p5', memb(h, 0xb433a, 4).hex())
     print('bus-error log lines:', bus_errors(h)[:6])
     h.shot(str(G / 'work/jagpad/floppy_end.png'))
 except Exception as e:
