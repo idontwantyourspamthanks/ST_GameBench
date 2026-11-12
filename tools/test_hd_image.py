@@ -5,7 +5,7 @@ r"""Boot one game from the all-games hard-disk image (tools/make_hd_image.py) in
         GAME = mw1 | mw2 | hunter | pm
 
 The image is never touched: a scratch copy gets a DESKTOP.INF with a `#Z` autorun line for the game (the shipped image has none), and, for
-mw2, the created campaign disk from games/in_progress/midwinter2/work/disk_overlay as FILES\FFD (the shipped one is the blank campaign disk).  Then the
+mw2, the created campaign disk from games/done/midwinter2/work/disk_overlay as FILES\FFD (the shipped one is the blank campaign disk).  Then the
 game's own harness navigates to its in-game view and the patch marker is read (MWPO / HNPO / PMPO).  Prints one `RESULT` line (raw).
 --saveload (pm): saves and loads through the game's own menu and compares POWERMON\SAVEDISK.DAT on the image.
 """

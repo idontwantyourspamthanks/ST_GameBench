@@ -10,7 +10,7 @@ Done: **Midwinter** and **Hunter**. In final testing: **Midwinter 2: Flames of F
 
 Both games get the same treatment: faster drawing with a byte-identical picture, game speed that no longer depends on the clock speed, and direct steering. The full evidence, disassembly and measurements are in each game's report.
 
-### Midwinter 2: Flames of Freedom — [`REPORT.md`](games/in_progress/midwinter2/REPORT.md)
+### Midwinter 2: Flames of Freedom — [`REPORT.md`](games/done/midwinter2/REPORT.md)
 
 Measured on an emulated 1 MB 8 MHz Atari STE, same scene, against the unpatched game:
 
@@ -51,7 +51,7 @@ The agent "skills" in [`.omp/skills/`](.omp/skills/) capture the method, the emu
 | `tools/hwscan.py` | Machine checklist up front: scans a 68000 RAM dump (with a code range) or a TOS program for ST-machine-specific hardware access (YM mirrors, blitter, DMA sound, joypad ports, Mega STE cache, TT/Falcon registers, `$ff820a` sync, MFP, ACIA, vector writes), following `lea`/`movea`/`d(An)` bases, with a risk level and a one-line note per access. |
 | `tools/pp_depack.py` | Unpacks the self-extracting `RUNME.TOS` of PP's HAGA hard-disk conversions. |
 | `.omp/skills/` | Method, harness, PP-conversion internals and delegation rules. |
-| `games/in_progress/midwinter2/` | **Midwinter 2.** `REPORT.md` (overview), `PLAN.md`, `patches/` (patch sources, 68000 assembly), `tools/` (patch builder, harness, launchers, packaging), `work/notes/` (reverse-engineering notes with evidence), `work/*/` (test scripts and raw logs). |
+| `games/done/midwinter2/` | **Midwinter 2 (v1.4, Jaguar pad): done.** `REPORT.md` (overview), `PLAN.md`, `patches/` (patch sources, 68000 assembly), `tools/` (patch builder, harness, launchers, packaging), `work/notes/` (reverse-engineering notes with evidence), `work/*/` (test scripts and raw logs). |
 | `games/done/powermonger/` | **Powermonger (v1.0): done.** Same layout; [`REPORT.md`](games/done/powermonger/REPORT.md). |
 | `games/in_progress/populous/`, `games/in_progress/populous-2/` | **Populous and Populous 2.** Same layout; `PLAN.md` and `work/notes/` (the shared Bullfrog-family study is `populous/work/notes/bullfrog_family.md`). |
 | `games/done/hunter/` | **Hunter (v1.1, Jaguar pad): done.** Same layout; [`REPORT.md`](games/done/hunter/REPORT.md). |
@@ -64,12 +64,12 @@ The agent "skills" in [`.omp/skills/`](.omp/skills/) capture the method, the emu
 
 ## Getting the game files
 
-The patches are for **PP's HAGA hard-disk versions** (2014) of the Midwinter games, which you need to obtain yourself. Each game's `README.md` lists the expected files and their MD5 sums. Put them in the game folder (`games/in_progress/midwinter2/RUNME.TOS`, `HAGA`, `FILES/`, …). The patch tools verify every original byte they replace and refuse to build against anything else.
+The patches are for **PP's HAGA hard-disk versions** (2014) of the Midwinter games, which you need to obtain yourself. Each game's `README.md` lists the expected files and their MD5 sums. Put them in the game folder (`games/done/midwinter2/RUNME.TOS`, `HAGA`, `FILES/`, …). The patch tools verify every original byte they replace and refuse to build against anything else.
 
-The commands are identical in each game folder; `games/done/midwinter` uses `mw1patch.py` where `games/in_progress/midwinter2` uses `mw2patch.py`. For Midwinter 2:
+The commands are identical in each game folder; `games/done/midwinter` uses `mw1patch.py` where `games/done/midwinter2` uses `mw2patch.py`. For Midwinter 2:
 
 ```sh
-cd games/in_progress/midwinter2
+cd games/done/midwinter2
 python3 tools/mw2patch.py verify           # checks your files against the expected original bytes
 python3 tools/mw2patch.py build            # patched HD copy in build/game/ (originals untouched)
 python3 tools/mw2patch.py build --floppy   # patched floppy images in build/floppy/

@@ -1,0 +1,153 @@
+{
+ "label": "c_tt_J_g4",
+ "snapshot": "work/snapshots/fire_tt14_foot.sav",
+ "machine": "tt",
+ "mode": "J",
+ "weapon": 4,
+ "live": null,
+ "clock": null,
+ "rows": [
+  {
+   "ev": "down4",
+   "TICK": 0,
+   "KEYC": 1,
+   "FIRE": 1,
+   "SPAWN": 1
+  },
+  {
+   "ev": "up4",
+   "TICK": 5,
+   "KEYC": 15,
+   "FIRE": 0,
+   "SPAWN": 0
+  },
+  {
+   "ev": "down10",
+   "TICK": 0,
+   "KEYC": 2,
+   "FIRE": 2,
+   "SPAWN": 2
+  },
+  {
+   "ev": "up10",
+   "TICK": 5,
+   "KEYC": 13,
+   "FIRE": 0,
+   "SPAWN": 0
+  },
+  {
+   "ev": "down20",
+   "TICK": 1,
+   "KEYC": 5,
+   "FIRE": 5,
+   "SPAWN": 5
+  },
+  {
+   "ev": "up20",
+   "TICK": 4,
+   "KEYC": 10,
+   "FIRE": 0,
+   "SPAWN": 0
+  },
+  {
+   "ev": "down100",
+   "TICK": 9,
+   "KEYC": 14,
+   "FIRE": 14,
+   "SPAWN": 14
+  },
+  {
+   "ev": "up100",
+   "TICK": 4,
+   "KEYC": 5,
+   "FIRE": 0,
+   "SPAWN": 0
+  }
+ ],
+ "type": 5,
+ "view": 2,
+ "modes": [
+  65535,
+  0,
+  0
+ ],
+ "sel": 4,
+ "ammo0": 99,
+ "events": [
+  [
+   15045,
+   "down4"
+  ],
+  [
+   15049,
+   "up4"
+  ],
+  [
+   15099,
+   "down10"
+  ],
+  [
+   15109,
+   "up10"
+  ],
+  [
+   15159,
+   "down20"
+  ],
+  [
+   15179,
+   "up20"
+  ],
+  [
+   15229,
+   "down100"
+  ],
+  [
+   15329,
+   "up100"
+  ],
+  [
+   15379,
+   "end"
+  ]
+ ],
+ "ammo1": 77,
+ "marks": [
+  [
+   "down4",
+   15046
+  ],
+  [
+   "up4",
+   15050
+  ],
+  [
+   "down10",
+   15100
+  ],
+  [
+   "up10",
+   15110
+  ],
+  [
+   "down20",
+   15160
+  ],
+  [
+   "up20",
+   15180
+  ],
+  [
+   "down100",
+   15230
+  ],
+  [
+   "up100",
+   15330
+  ],
+  [
+   "end",
+   15380
+  ]
+ ]
+}

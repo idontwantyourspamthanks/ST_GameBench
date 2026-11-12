@@ -8,7 +8,7 @@ description: Run, drive and measure Atari ST games in headless Hatari with gameb
 `tools/stharness.py` (class `Hatari`) is the only way to drive Hatari here.
 - Each instance gets its own scratch dir (`/tmp/strun-*`) and its own Xvfb display, so it never touches the user's desktop and runs in parallel safely.
 - The game folder is copied to scratch as drive C:, so the originals are never written.
-- Game-specific navigation (`boot_to_game` etc.) goes in `games/<game>/tools/<game>.py` as a `Hatari` subclass. Worked example: `games/in_progress/midwinter2/tools/mw2harness.py`.
+- Game-specific navigation (`boot_to_game` etc.) goes in `games/<game>/tools/<game>.py` as a `Hatari` subclass. Worked example: `games/done/midwinter2/tools/mw2harness.py`.
 
 ```python
 import sys; sys.path.insert(0, 'tools')            # run from the gamebench root

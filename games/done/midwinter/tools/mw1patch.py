@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Midwinter 1 patch delivery tool (ported from games/in_progress/midwinter2/tools/mw2patch.py).
+"""Midwinter 1 patch delivery tool (ported from games/done/midwinter2/tools/mw2patch.py).
 
 Patches are vasm sources in patches/ (see patches/README.md for the format and the boot
 mechanism).  The tool assembles them, verifies every site's expected ORIGINAL bytes against
