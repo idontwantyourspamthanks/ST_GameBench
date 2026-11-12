@@ -74,6 +74,7 @@ PP's resident loader service is the HAGA file, which moves with RAM size. Patch 
 | `$B4700-$B4BFF` | `p4_blit_*` (off) |
 | `$B8000-$B8FFF` | `p3cp_head` (code from $B8000 (below $B8700), NPC snapshot $B8700-$B8EBF, data $B8F00-$B8FFF); `p3c_head` (alternative) uses the same range |
 | `$B44C0-$B4693` | `p4_hud_pfx_*`/`p4_hud_reset` (default) and the crop prototype (they conflict) |
+| `$B9500-$B9867`, `$B9E00-$B9E2F`, data `$B9EE0-$B9EEF` | `jag_poll`, `jag_dir`, `jag_btn` (Jaguar pad, `default: no`; `p5_ctl_vbl` reads the byte `$B9EE1`) |
 
 - **Free RAM on a 1 MB machine** in game: `$B2852-$E83E5`. Only the payload is copied there, though.
   - Below it, PP's stack-phase installer copy occupies `$B1F44-$B2853` (stack `$B1F40` downwards) on 1 MB and 4 MB; it ends before `$B3000`. Evidence: `work/notes/payload32k.md`.

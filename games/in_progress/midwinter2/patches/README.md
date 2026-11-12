@@ -227,3 +227,22 @@ floppy "Insert Graphics Disk" prompt and on the HD loading screen. The palette a
 - Default set: `p3cp_head`, `p3c_sim` and `p7_skip_render` are `default: yes` since 2026-11-11 (cold boots on STE, Mega STE, TT, plain ST, floppy STE/TT: `work/notes/vehicles_p3b.md` sections 9-12).
 - `p7_skip_render`: the static-frame skip, now gated by a per-type table (all 22 types) instead of the Helicopter-only test of v1.2.
 - `p4_hud_crop_{clip,fill,replay}` and the `_t` variants: the REJECTED visual-tradeoff crop experiment; they stay `default: no`.
+
+## Jaguar pad (`jag_poll` + `jag_dir` + `jag_btn`, all `default: no`; work/notes/jagpad.md)
+A Jaguar pad in an STE enhanced joystick port (read directly by the hardware, not through the IKBD) acts in **joystick mode (J) only**; the mouse
+and keyboard modes are untouched. Apply the three together (`p5_ctl_vbl` already reads the pad byte, zero without them).
+- `jag_poll` (`$262c2`, the VBL handler's `jsr $27228`, tail-jumped from the blob at `$B9500`): once per VBL in J mode on a probed STE: group 4
+  (D-pad, A, Pause) every VBL plus one of groups 3/2/1 in turn (every button is seen at least every 3rd VBL), port A and port B OR-ed. Directions go to
+  `PADJ` (`$B9EE1`), B to `PADBTN` (`$B9EE2`), every other changed button makes / breaks a key through the game's own key bookkeeping
+  (`$7684`, `$7686`, `$75ac`, `$770a/$770c`, `$7708`; interrupts masked): A `,` (nose down / dive), C `.` (nose up / climb), Option Esc (leave the vehicle;
+  held for at least 16 VBLs, because the game polls `$7687` once per logic tick), Pause P, keypad 1-9 F1-F9, 0 F10, `*` keypad `-`, `#` keypad `+`; B = fire.
+- `jag_dir` (`$26b66`): ORs `PADJ` into the joystick byte of `$26b58`, so the ramps `$75b2..$75be` and `$6fb6/$6fba` see the pad like the stick.
+  `jag_btn` (`$26bea`): ORs `PADBTN` into the mouse-header buttons that become the select/fire event `$6872`.
+- `p5_ctl_vbl` (default) got one instruction, `or.b PADJ.l,d1`, so the direct-control yaw counters count the pad's left / right.
+- **Detection** (first poll in J mode, cached in `FLAG` `$B9EE0`, fail closed): 68000 only (TT and Falcon: no hardware access at all); guarded
+  reads (vector `$8` swapped, interrupts masked) of `$ff8901` and `$ff8a3c` must answer and `$ff8e21` must bus-error (STE; ST, Mega ST and Mega STE fail);
+  then a guarded word write/read of `$ff9202` / `$ff9200` with every group deselected must read idle (`$ffxx` / `$xxxf`). Words only: a byte read of
+  `$ff9200` bus-errors on a real STE. A disabled machine pays `cmpi.b` + `beq` + `jmp` (42 cycles) per VBL.
+- Blobs: code `$B9500-$B9867` (872 B, incl. 272 B of decode tables), `$B9E00` (`jag_dir`), `$B9E20` (`jag_btn`), data `$B9EE0-$B9EEF`.
+- Cost, STE 8 MHz (Hatari profile, 220 VBL): about 1056 cycles per VBL in `jag_poll` + 100 in `jag_dir`/`jag_btn` + 16 in `p5_ctl_vbl` = 1172
+  = 0.73 % of the CPU at 50 Hz (0.88 % at 60 Hz); the same with or without a pad (key bookkeeping runs only when a button changes). Mouse / keyboard mode: 68.
