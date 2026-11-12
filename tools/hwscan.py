@@ -91,7 +91,7 @@ REGIONS = [
     (0xFF8900, 0xFF8925, "DMA_SOUND", "STE+", C, "STE DMA sound / microwire: bus error on an ST/Mega ST; Falcon redefines the block"),
     (0xFF8930, 0xFF895F, "FALCON_SOUND", "Falcon", C, "Falcon-only sound matrix / codec"),
     (0xFF8960, 0xFF8963, "NVRAM_RTC", "TT/Falcon", C, "TT/Falcon NVRAM/RTC"),
-    (0xFF8A00, 0xFF8A3F, "BLITTER", "STE/MSTE/Falcon (ST/Mega ST if fitted)", C, "blitter: bus error on an unfitted ST and on a TT; probe it; a HOG burst starves the IKBD ACIA"),
+    (0xFF8A00, 0xFF8A3F, "BLITTER", "STE/MSTE/Falcon/Mega ST (not plain ST, TT)", C, "blitter: bus error on a plain ST and on a TT; probe it; a HOG burst starves the IKBD ACIA"),
     (0xFF8C80, 0xFF8C87, "SCC", "MSTE/TT/Falcon", C, "SCC serial: Mega STE/TT/Falcon only"),
     (0xFF8E00, 0xFF8E1F, "SCU_VME", "MSTE/TT", C, "system control / VME mask: Mega STE and TT only"),
     (0xFF8E20, 0xFF8E21, "MSTE_CACHE", "MSTE", C, "Mega STE CPU speed/cache ($ff8e21): bus error on every other machine"),

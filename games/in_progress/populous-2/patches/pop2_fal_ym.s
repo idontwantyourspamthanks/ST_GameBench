@@ -1,10 +1,12 @@
 ; name: pop2_fal_ym
-; default: no
+; default: yes
 ; site: $2a938
 ; orig: 21fc0002aa4e0134
 ; note: Falcon only (hwscan.py found it; Populous's pop_fal_ym is the same fix).  The game's sample interrupt (MFP timer A, handler $2aa4e..$2aaa0,
 ; note: installed by $2a938 and $2a9aa) writes the three YM volumes with `lea.l $fa0f.w,a0 / movep.l d1,-$720f(a0) / movep.w d0,-$720f(a0)` at
-; note: $2aa74: a0 + -$720f = $ff8800, so the movep.l writes $ff8800 / $ff8802 / $ff8804 / $ff8806.  A Falcon bus-errors on the mirror pair.
+; note: $2aa74: a0 + -$720f = $ff8800, so the movep.l writes $ff8800 / $ff8802 / $ff8804 / $ff8806.  A Falcon bus-errors on the mirror pair WHEN $ff8007 BIT 5
+; note: IS SET (Hatari 2.6.1, Falcon TOS 4.04): a boot-time program writes $ff8007 = $45 before the game runs, so the stock game does not crash in that boot; with $65 (the TOS
+; note: default) it dies at $2aa74.  This patch is insurance for boots that leave bit 5 set; see README.md "pop2_fal_ym" for the evidence.
 ; note: pop2patch has no machine gate (the core applies every site on every machine), so the gate is a run-time one that costs the other machines
 ; note: nothing: the site is the one-off install of the timer-A vector at game start (`move.l #$2aa4e,$134.w`, 8 B -> `jsr` + nop).  The blob
 ; note: does that instruction, then reads the _MCH cookie ($5a0, high word 3 = Falcon, as Powermonger's fal_ym does).  Only on a Falcon it rewrites
