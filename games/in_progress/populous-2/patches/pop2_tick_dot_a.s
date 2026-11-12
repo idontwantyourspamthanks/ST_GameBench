@@ -1,5 +1,5 @@
 ; name: pop2_tick_dot_a
-; default: no
+; default: yes
 ; site: $24296
 ; orig: 4eb900020058
 ; note: Fixed-rate world tick, part 5 of 8 (needs pop2_tick and pop2_tick_logic; work/notes/timing.md).  The people loop plots one minimap pixel per person into the back

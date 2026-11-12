@@ -1,5 +1,5 @@
 ; name: pop2_tick
-; default: no
+; default: yes
 ; site: $22f14
 ; orig: 3039000393fa d079000393fc
 ; data: PB+$2800 6144

@@ -1,5 +1,5 @@
 ; name: pop_land_score
-; default: no
+; default: yes
 ; site: $18244
 ; orig: 4e55000048e77ee0
 ; note: The land score $18244(owner, cell) with the 17 calls of $181d6 inlined.

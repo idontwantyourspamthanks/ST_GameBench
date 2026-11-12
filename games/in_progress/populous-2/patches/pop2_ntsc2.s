@@ -1,5 +1,5 @@
 ; name: pop2_ntsc2
-; default: no
+; default: yes
 ; site: $1a6e
 ; orig: 670005ac
 ; note: Second half of the 60 Hz fix (pop2_ntsc is the first; work/notes/timing.md).  The game protects itself against NTSC in TWO places, both reading the

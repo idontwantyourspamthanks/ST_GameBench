@@ -1,5 +1,5 @@
 ; name: pop2_tick_anim
-; default: no
+; default: yes
 ; site: $20c3e
 ; orig: 584241f9000329024a7020006e04d47020003742000a
 ; note: Fixed-rate world tick, part 8 of 8 (needs pop2_tick; work/notes/timing.md).  The one place where DRAWING advances an animation: the draw routine for object kind $0a

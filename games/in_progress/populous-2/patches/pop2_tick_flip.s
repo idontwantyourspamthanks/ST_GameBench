@@ -1,5 +1,5 @@
 ; name: pop2_tick_flip
-; default: no
+; default: yes
 ; site: $1278c
 ; orig: 4eb900001bfe4eb90002d4c84eb900029226
 ; note: Fixed-rate world tick, part 4 of 8 (needs pop2_tick; work/notes/timing.md).  The end of the render part of a pass: `jsr $1bfe` (flip: swap $392dc/$392e0, set the

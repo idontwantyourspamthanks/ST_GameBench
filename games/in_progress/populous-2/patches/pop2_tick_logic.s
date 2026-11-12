@@ -1,5 +1,5 @@
 ; name: pop2_tick_logic
-; default: no
+; default: yes
 ; site: $12746
 ; orig: 4a7900039796663e
 ; note: Fixed-rate world tick, part 3 of 8 (needs pop2_tick; work/notes/timing.md).  The game's own pause test in front of the world logic block: `tst.w $39796.l` /

@@ -1,5 +1,5 @@
 ; name: pop2_ptr_a
-; default: no
+; default: yes
 ; site: $1a1a
 ; orig: 20390000202e
 ; data: $88000 512

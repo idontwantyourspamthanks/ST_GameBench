@@ -1,5 +1,5 @@
 ; name: pop2_tick_render
-; default: no
+; default: yes
 ; site: $12554
 ; orig: 0c79000800039766
 ; note: Fixed-rate world tick, part 2 of 8 (needs pop2_tick; work/notes/timing.md).  Catch-up passes (kind S, flag SKIP) draw nothing: `cmpi.w #8,$39766.l` at $12554 is the

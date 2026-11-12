@@ -1,5 +1,5 @@
 ; name: pop2_tick_snd
-; default: no
+; default: yes
 ; site: $191e
 ; orig: 4eb90002b29a
 ; note: Fixed-rate world tick, part 7 of 8 (work/notes/timing.md; independent of the others, needed only at 60 Hz).  Sound timing: the VBL handler $18fa calls the sample

@@ -1,5 +1,5 @@
 ; name: pop2_ptr_b
-; default: no
+; default: yes
 ; site: $1b34
 ; orig: 33fc0001000392cc
 ; note: Item 3, part B of two (needs pop2_ptr_a and its data block at $88000).  `move.w #1,$392cc.l` at $1b34: the end of the VBL pointer code (the

@@ -1,5 +1,5 @@
 ; name: pop2_spr
-; default: no
+; default: yes
 ; site: $213b0
 ; orig: 727844015342
 ; data: $88200 32256

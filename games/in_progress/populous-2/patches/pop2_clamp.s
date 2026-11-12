@@ -1,5 +1,5 @@
 ; name: pop2_clamp
-; default: no
+; default: yes
 ; site: $1cc6
 ; orig: 13f90000202500002023
 ; data: PB+$6f10 4

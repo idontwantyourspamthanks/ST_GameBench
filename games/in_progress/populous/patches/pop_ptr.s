@@ -1,5 +1,5 @@
 ; name: pop_ptr
-; default: no
+; default: yes
 ; site: $16d80
 ; orig: 61000068 6100009a
 ; data: $c2400 448

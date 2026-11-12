@@ -1,5 +1,5 @@
 ; name: pop_bgcopy
-; default: no
+; default: yes
 ; site: $14a28
 ; orig: 4e55000048e700c0
 ; note: The 32,000-byte copy of the clean background ($3b016, the book / icons / minimap picture at $78000) over the back

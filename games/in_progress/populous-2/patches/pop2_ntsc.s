@@ -1,5 +1,5 @@
 ; name: pop2_ntsc
-; default: no
+; default: yes
 ; site: $183c
 ; orig: 66000030
 ; note: First half of the 60 Hz fix (pop2_ntsc2 is the second; work/notes/timing.md).  The game's own PAL check.  Game entry ($1770) -> $1836: `btst.b #1,$820a.w`

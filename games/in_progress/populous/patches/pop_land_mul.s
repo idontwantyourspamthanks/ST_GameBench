@@ -1,5 +1,5 @@
 ; name: pop_land_mul
-; default: no
+; default: yes
 ; site: $20796
 ; orig: 4e56000048e7f100
 ; note: The C compiler's 32 x 32 multiply helper $20796 (368 call sites; arguments
