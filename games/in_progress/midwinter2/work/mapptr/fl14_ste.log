@@ -1,0 +1,29 @@
+  70.5s insert-graphics prompt
+ 103.2s M/J/K screen after 5 presses
+ 104.0s MWPO 000B2FF8: 4d 57 50 4f                                      MWPO
+ 109.0s credit string in RAM @ 0xb9091 v1.4 enhanced by dad_prg
+ 158.2s raids map reached; mode 2 island 0xffff
+ 162.8s map00 mode=2 flips/50vbl=0 px=38 py=163 arrow_px=0
+ 167.4s map01 mode=0 flips/50vbl=6 px=38 py=163 arrow_px=164
+ 174.0s map02 mode=0 flips/50vbl=11 px=98 py=93 arrow_px=164
+ 178.6s map03 mode=0 flips/50vbl=12 px=98 py=93 arrow_px=164
+ 183.3s map04 mode=0 flips/50vbl=12 px=98 py=93 arrow_px=164
+ 187.9s map05 mode=0 flips/50vbl=13 px=98 py=93 arrow_px=164
+ 194.5s map06 mode=0 flips/50vbl=12 px=173 py=68 arrow_px=164
+ 202.8s Insert Missions Disk prompt -> swapped A to FFC (#1)
+ 217.7s Insert Missions Disk prompt -> swapped A to FFC (#2)
+ 227.9s Insert Missions Disk prompt -> swapped A to FFC (#3)
+ 236.3s Insert Missions Disk prompt -> swapped A to FFC (#4)
+ 246.8s Insert Missions Disk prompt -> swapped A to FFC (#5)
+ 257.2s Insert Missions Disk prompt -> swapped A to FFC (#6)
+ 267.7s Insert Missions Disk prompt -> swapped A to FFC (#7)
+ 278.2s Insert Missions Disk prompt -> swapped A to FFC (#8)
+ 288.6s Insert Missions Disk prompt -> swapped A to FFC (#9)
+ 290.7s EXC RuntimeError('never reached the thumbs-up screen')
+Traceback (most recent call last):
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2/work/mapptr/fl14.py", line 88, in <module>
+    P('enter_raid', mw2raids.enter_raid(h, 446, 177))
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/midwinter2/tools/mw2raids.py", line 121, in enter_raid
+    raise RuntimeError("never reached the thumbs-up screen")
+RuntimeError: never reached the thumbs-up screen
