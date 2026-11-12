@@ -56,7 +56,7 @@ DEFAULT_SIZE_KB = 32000                                 # one partition, 64000 s
 VOLUME = "GAMES"
 
 # folder on C: -> game; versions/requirements for README.TXT are taken from the builds where possible (see readme_text)
-FOLDERS = ("MIDWINTR", "MW1ORIG", "MIDWINT2", "HUNTER", "POWERMON", "POPULOUS", "POPS2", "AUTO")
+FOLDERS = ("MIDWINTR", "MW1ORIG", "MIDWINT2", "MW2ORIG", "HUNTER", "POWERMON", "POPULOUS", "POPS2", "AUTO")
 
 
 def run(cmd, cwd=None, quiet=True, env=None):
@@ -116,6 +116,17 @@ def build_midwinter_orig() -> Path:
     dst.mkdir(parents=True)
     copy_names(g, dst, ["RUNME.TOS", "HAGA", "MW240R.BMP", "FMW273.HST", "LMW273.HST", "README.TXT", "LOG.TXT"])
     shutil.copytree(g / "FILES", dst / "FILES")               # its own copy of the data/save disk MWC
+    return dst
+
+
+def build_midwinter2_orig() -> Path:
+    """PP's unpatched Midwinter 2 (for side-by-side comparison): the original files of the game dir, nothing patched."""
+    g = GAMES / "midwinter2"
+    dst = STAGE / "MW2ORIG"
+    shutil.rmtree(dst, ignore_errors=True)
+    dst.mkdir(parents=True)
+    copy_names(g, dst, ["RUNME.TOS", "HAGA", "FF240R.BMP", "FFF273.HST", "LFF273.HST", "README.TXT", "LOG.TXT", "SOLUTION.TXT"])
+    shutil.copytree(g / "FILES", dst / "FILES")               # its own blank campaign disk FFD
     return dst
 
 
@@ -202,8 +213,8 @@ def build_populous2() -> Path:
     return dst
 
 
-BUILDERS = {"MIDWINTR": build_midwinter, "MW1ORIG": build_midwinter_orig, "MIDWINT2": build_midwinter2, "HUNTER": build_hunter,
-            "POWERMON": build_powermonger, "POPULOUS": build_populous, "POPS2": build_populous2, "AUTO": build_auto}
+BUILDERS = {"MIDWINTR": build_midwinter, "MW1ORIG": build_midwinter_orig, "MIDWINT2": build_midwinter2, "MW2ORIG": build_midwinter2_orig,
+            "HUNTER": build_hunter, "POWERMON": build_powermonger, "POPULOUS": build_populous, "POPS2": build_populous2, "AUTO": build_auto}
 
 
 # ---- 2. the disk ---------------------------------------------------------------------------------------------------------------
@@ -219,7 +230,7 @@ def readme_text(vers: dict[str, str], date: str) -> str:
 ==========================================================================
 
 Six games with dad_prg's patches (speed, sound, fixes) on one bootable
-hard disk image, plus PP's unpatched Midwinter for side-by-side comparison:
+hard disk image, plus PP's unpatched Midwinter and Midwinter 2 for side-by-side comparison:
 HDDRIVER, one 31 MB partition = drive C:.  Nothing starts by itself except
 a 3-second question about Powermonger at boot.
 
@@ -228,6 +239,7 @@ a 3-second question about Powermonger at boot.
   C:\MIDWINTR  Midwinter              double-click RUNME.TOS     {vers['MIDWINTR']}
   C:\MW1ORIG   Midwinter (original)   double-click RUNME.TOS     PP's release, unpatched
   C:\MIDWINT2  Midwinter 2            double-click RUNME.TOS     {vers['MIDWINT2']}
+  C:\MW2ORIG   Midwinter 2 (original) double-click RUNME.TOS     PP's release, unpatched
   C:\HUNTER    Hunter                 double-click START.TOS     {vers['HUNTER']}
   C:\POWERMON  Powermonger            press P at boot (below)    {vers['POWERMON']}
   C:\POPULOUS  Populous               double-click RUNME.TOS     {vers['POPULOUS']}
@@ -262,7 +274,8 @@ Saving
  - Midwinter: saves go to FILES\MWC (data disk image) in its folder (the
    original in MW1ORIG has its own copy).
  - Midwinter 2: create the campaign first (War Room -> Start New Campaign);
-   it is written to FILES\FFD. Back that file up.
+   it is written to FILES\FFD. Back that file up. The original in MW2ORIG
+   has its own blank campaign disk.
  - Hunter: as in PP's release.
  - Powermonger: Option -> File -> Save/Load, in POWERMON\SAVEDISK.DAT.
 
@@ -378,7 +391,7 @@ def layout_text(img: Path, tgt: str, total: int, psz: int, folders: dict[str, Pa
          "  README.TXT     the games, how to start them, versions, requirements",
          "  (no DESKTOP.INF: TOS uses its built-in default desktop; nothing starts by itself)"]
     why = {"MIDWINTR": "Midwinter (HAGA by PP, patched)", "MW1ORIG": "Midwinter (HAGA by PP, unpatched, for comparison)",
-           "MIDWINT2": "Midwinter 2 (HAGA by PP, patched)",
+           "MIDWINT2": "Midwinter 2 (HAGA by PP, patched)", "MW2ORIG": "Midwinter 2 (HAGA by PP, unpatched, for comparison)",
            "HUNTER": "Hunter (Gamex by PP, patched; FILES\\P = patch code + STE sample bank)",
            "POWERMON": "Powermonger (HD build, patched; start it from the boot prompt, see README.TXT)",
            "POPULOUS": "Populous (HAGA by PP, patched; PATCHED.TXT)", "POPS2": "Populous 2 (HAGA by PP, patched)",
