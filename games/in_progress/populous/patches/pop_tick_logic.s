@@ -9,14 +9,14 @@
 ;       $ecdc $106c2 $13308) plots one minimap pixel per object into the back buffer through `$167b0`; pop_tick_dot records those calls in a turn pass and this hook replays the list
 ;       here, at the place of the skipped logic, so the minimap of every frame of a turn shows the same dots.  Execution continues at $b93a (`jsr $d4c0`: the shield display, which
 ;       draws).  Any other pass: the displaced `jsr $12fc2`, then $b806.
-D       equ     $c6000
+D       equ     $bb000
 oRON    equ     16
 oWPTR   equ     48
 oDOTS   equ     $100
         org     $0b800
-        jmp     $c5300.l
+        jmp     $ba300.l
 
-        org     $c5300
+        org     $ba300
         tst.w   D+oRON.l
         bne.s   .r
         jsr     $12fc2.l

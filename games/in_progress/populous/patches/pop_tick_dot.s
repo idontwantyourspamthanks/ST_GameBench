@@ -8,15 +8,15 @@
 ;       top of every turn pass) in a turn pass (flag REC) and plots as before; in a catch-up pass (flag SKIP: no frame follows) it neither plots nor records.  pop_tick_logic replays the
 ;       list in render-only passes.  `$167b0` writes absolute pixel values (or / and of the mask with the colour bits), so a replay is idempotent.  A call the list is too small for is
 ;       plotted but not recorded (never happens: 208 people + 209 objects at most).
-D       equ     $c6000
+D       equ     $bb000
 oSKIP   equ     14
 oREC    equ     18
 oWPTR   equ     48
 oDOTS   equ     $100
         org     $1672a
-        jsr     $c5600.l
+        jsr     $ba600.l
 
-        org     $c5600
+        org     $ba600
         tst.w   D+oSKIP.l
         bne.s   .skip
         tst.w   D+oREC.l

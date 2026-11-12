@@ -8,14 +8,14 @@
 ;       once per TURN whatever the speed of the machine (a command is written only by a UI pass that takes a click, and pop_tick_flip hides fresh clicks from the UI of render-only
 ;       passes, so the commands come from turn passes).  It puts back the fresh click latches that pop_tick_flip hid (FLAGS bit 0 left $3d566, bit 1 right $3c514: written 0 again; the UI pass left
 ;       them at 1, or at 0 where the VBL routine latched a new press meanwhile) with interrupts masked, and goes on at $bc02.  Any other pass: the displaced instructions, then $bc00.
-D       equ     $c6000
+D       equ     $bb000
 oRON    equ     16
 oFLAGS  equ     20
         org     $0bbf8
-        jmp     $c5500.l
+        jmp     $ba500.l
         nop
 
-        org     $c5500
+        org     $ba500
         tst.w   D+oRON.l
         bne.s   .r
         clr.w   -(a7)

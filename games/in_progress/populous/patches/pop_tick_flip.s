@@ -12,14 +12,14 @@
 ;       command executor runs it.  Without the mask a button held across a turn boundary would have its command written again by the render-only passes after the turn pass and
 ;       executed AGAIN at the next turn: one extra raise / lower after every release (the original's held-button repeat is one per pass = one per turn).
 ;       Any other pass: the displaced `jsr $16f16`, then $b946.
-D       equ     $c6000
+D       equ     $bb000
 oSKIP   equ     14
 oRON    equ     16
 oFLAGS  equ     20
         org     $0b940
-        jmp     $c5400.l
+        jmp     $ba400.l
 
-        org     $c5400
+        org     $ba400
         tst.w   D+oSKIP.l
         bne.s   .s
         jsr     $16f16.l

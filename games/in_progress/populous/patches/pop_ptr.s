@@ -2,7 +2,7 @@
 ; default: yes
 ; site: $16d80
 ; orig: 61000068 6100009a
-; data: $c2400 448
+; data: $b7400 448
 ; note: The software mouse pointer.  The game's VBL routine $16d70 restores the saved background of the pointer ($16dea) and
 ;       redraws the pointer ($16e20) into the displayed buffer at EVERY VBL (about 11.5 k cycles, 7.4 % of a busy frame at
 ;       8 MHz, whether or not anything moved): `016d80 bsr.w $16dea` / `016d84 bsr.w $16e20`, reached only when the hide count
@@ -22,9 +22,9 @@
 ;       The images (rectangle, shape rows: ~2.5 k cycles to copy) are recorded only when a full draw finds the SAME inputs as
 ;       the draw before it (KEYV set): a pointer that moves every VBL pays the compare of the first few words and nothing
 ;       else, a pointer that stands still pays one extra full draw per frame.
-;       Data block P ($c2400): +0 KEYV.w +2 VALID.w +4 BUF.l +8 A4.l +12 X.w +14 Y.w +16 SHP.w +18 ROWS.w +20 STR.w +24 SHEET.l
-;       +32 IMG[256] (the drawn rectangle) +288 SHI[160] (the shape rows read by the draw).  Blob $c2000-$c23ff.
-P       equ     $c2400
+;       Data block P ($b7400): +0 KEYV.w +2 VALID.w +4 BUF.l +8 A4.l +12 X.w +14 Y.w +16 SHP.w +18 ROWS.w +20 STR.w +24 SHEET.l
+;       +32 IMG[256] (the drawn rectangle) +288 SHI[160] (the shape rows read by the draw).  Blob $b7000-$b73ff.
+P       equ     $b7400
 pKEYV   equ     0
 pVALID  equ     2
 pBUF    equ     4
@@ -39,10 +39,10 @@ pIMG    equ     32
 pSHI    equ     288
 
         org     $16d80
-        jsr     $c2000.l
+        jsr     $b7000.l
         nop
 
-        org     $c2000
+        org     $b7000
 ptr:    move.l  $16f12.l,d0
         beq.w   full                    ; nothing drawn / hidden: the original draws
         lea     P.l,a0

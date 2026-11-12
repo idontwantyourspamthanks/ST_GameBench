@@ -9,13 +9,13 @@
 ;       Any other operand runs the ORIGINAL code (displaced link/movem replayed,
 ;       then $2079e). Same product, same CCR (X = 0 as the original's `add.l d2,d3`
 ;       onto 0 leaves it), same registers. Evidence: work/notes/landscore.md.
-;       Blob $C1000-$C103F. Uses no data of its own.
+;       Blob $B6000-$B603F. Uses no data of its own.
 
         org     $20796
-        jmp     $c1000.l
+        jmp     $b6000.l
         nop
 
-        org     $c1000
+        org     $b6000
 lmul:   tst.w   4(sp)                   ; high word of the first operand
         bne.s   .slow
         tst.w   8(sp)                   ; high word of the second

@@ -184,7 +184,7 @@ KEYID = {"raise": 1, "query": 2, "magnet_mode": 3, "to_magnet": 4, "settle": 5, 
 ORDER = ["query", "raise", "magnet_mode", "to_magnet", "settle", "gather", "fight", "view_leader", "view_magnet", "view_battle",
          "view_knight", "view_house", "music", "effects", "music", "effects", "swamp", "earthquake", "knight", "volcano", "flood",
          "armageddon_arm", "armageddon"]
-KD = 0xC8000
+KD = 0xBd000
 MASK = [(0x24990, 0x249A4)]
 
 
@@ -915,7 +915,7 @@ def cmd_cold(a):
 
 
 def cmd_cost(a):
-    """CPU cycles spent inside the patch blobs ($c7000-$c7fff) per pass, from the emulator's profiler, on a busy snapshot at 8 MHz: pointer away
+    """CPU cycles spent inside the patch blobs ($bc000-$bcfff) per pass, from the emulator's profiler, on a busy snapshot at 8 MHz: pointer away
     from the icons, on an icon (tooltip up, steady), and with a key press every few passes is not measured (a key is a rare event)."""
     sess = Session(a.snap, a.live)
     h = sess.h
@@ -932,7 +932,7 @@ def cmd_cost(a):
             t0 = h.peekw(TURN)
             prof = h.profile(a.vbls)
             t1 = h.peekw(TURN)
-            blob = sum(c for ad, c in prof if 0xC7000 <= ad < 0xC8000)
+            blob = sum(c for ad, c in prof if 0xBc000 <= ad < 0xBd000)
             tot = sum(c for ad, c in prof)
             passes = (t1 - t0) & 0xFFFF
             print(f"{label:40s} blob cycles {blob:9d} over {passes} turns ({blob // max(passes, 1)} per pass); all profiled cycles {tot} "
@@ -966,9 +966,9 @@ def cmd_final(a):
         h.goto(*CONQUEST_XY, home_xy=HOME); h.click(hold=0.4); time.sleep(9)
         for _ in range(4):
             h.goto(*START_XY, home_xy=HOME); h.click(hold=0.4); time.sleep(12)
-            if h.in_play() or "4e f9 00 0c 52 00" in h.debug("m $b6f4 6", 0.5).lower():
+            if h.in_play() or "4e f9 00 0b a2 00" in h.debug("m $b6f4 6", 0.5).lower():
                 break
-        print("in play:", h.in_play() or "4e f9 00 0c 52 00" in h.debug("m $b6f4 6", 0.5).lower(), "marker", hex(h.peekl(0xB3004)))
+        print("in play:", h.in_play() or "4e f9 00 0b a2 00" in h.debug("m $b6f4 6", 0.5).lower(), "marker", hex(h.peekl(0xB3004)))
         h.debug(wb(0x3B270, 99999, 4), 0.3)
         f = h.R / "o.txt"; f.write_text("m $21e4a 3\ne VBL\n")
         h.cmd(f"hatari-debug b pc = ${a.orders_pc} && ($21e4a).b ! 0 :trace :file {f}")

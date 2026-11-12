@@ -15,11 +15,11 @@
 ;       drops the packet otherwise (the old position and buttons stay).  A genuine packet is stored exactly as before.
 ;       A misframed packet always carries $f7 in one of its slots (buttons > $0f, x.hi, y.hi or y.lo >= $f7 -> y > 199, or x = $f7 or
 ;       $1f7 with the rest bounded), so everything that can address outside the screen is dropped; what remains in range
-;       is an ordinary position.  Blob $c2800-$c283d.
+;       is an ordinary position.  Blob $b7800-$b783d.
         org     $2003e
-        jmp     $c2800.l
+        jmp     $b7800.l
 
-        org     $c2800
+        org     $b7800
 pfix:   cmpi.b  #$0f,$20061.l           ; buttons: four bits
         bhi.s   .drop
         cmpi.w  #319,$20062.l           ; x 0..319

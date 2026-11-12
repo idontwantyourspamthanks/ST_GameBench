@@ -12,10 +12,10 @@
 ; note: three register writes in the same order through $ff8800 / $ff8802 only (two movep.w for the long's two halves, then d2's).  d1 and
 ; note: a0 end as before; Powermonger's `fal_ym` does the same for its title music.
         org     $cf98
-        jsr     $c4000.l
+        jsr     $b9000.l
         nop
 
-        org     $c4000
+        org     $b9000
         swap    d1
         movep.w d1,-$7800(a0)           ; bytes 3,2 of the original movep.l: register select, value
         swap    d1

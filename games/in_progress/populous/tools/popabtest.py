@@ -832,8 +832,8 @@ def rate(snap: str, names: list[str], turns: int, moving: bool, t0: int, out: di
             vpf = r["vbls_per_frame"] or 1
             fl = 1000 / vpf
             rec.update({"profile_cycles": tot,
-                        "ptr_cycles_per_vbl": round((bucket(rows, 0x16DEA, 0x16F12) + bucket(rows, 0xC2000, 0xC2400)) / 1000),
-                        "copy_cycles_per_frame": round((bucket(rows, 0x14A28, 0x14A4E) + bucket(rows, 0xC2600, 0xC2700)) / fl)})
+                        "ptr_cycles_per_vbl": round((bucket(rows, 0x16DEA, 0x16F12) + bucket(rows, 0xB7000, 0xB7400)) / 1000),
+                        "copy_cycles_per_frame": round((bucket(rows, 0x14A28, 0x14A4E) + bucket(rows, 0xB7600, 0xB7700)) / fl)})
         out[key] = rec
     finally:
         h.close()
@@ -935,14 +935,14 @@ def cmd_copy(a) -> int:
 # ---- registers / flags / memory of the new copy against the original, same inputs ---------------------------------------
 def cpytest_source(n: int) -> str:
     """A test stub (runs in place of `jsr $db8a`, once): for every trial the ORIGINAL $14a28 (a verbatim copy at $77000) and the new
-    one ($c2600) run on the same random registers, a chosen CCR and a chosen last longword of the background; registers + SR are
+    one ($b7600) run on the same random registers, a chosen CCR and a chosen last longword of the background; registers + SR are
     stored after each, and the 32,128-byte window around the back buffer (64 sentinel bytes before / after, the buffer pre-filled with a pattern) is compared."""
     src = ["WIN\tequ\t$60000", "RES\tequ\t$68000", "TAB\tequ\t$75000", "\torg\t$72000",
            "test:\tmovem.l d0-d7/a0-a6,-(sp)"]
     for i in range(n):
         ccr = i % 32
         last = (0x00000000, 0x80000001, 0x7FFFFFFF)[i % 3]
-        for which, entry in (("o", 0x76A00), ("n", 0xC2600)):
+        for which, entry in (("o", 0x76A00), ("n", 0xB7600)):
             src += [f"\tmove.l\t#${last:08x},d0", "\tbsr\tprep",
                     f"\tmovem.l TAB+{64 * i}.l,d0-d7/a0-a6", f"\tmove.w\t#{ccr},ccr", f"\tjsr\t${entry:x}.l",
                     f"\tmovem.l d0-d7/a0-a6,RES+{128 * i + (0 if which == 'o' else 64)}.l",

@@ -2,7 +2,7 @@
 ; default: yes
 ; site: $0b632
 ; orig: 3039 0003b03c
-; data: $c6000 3680
+; data: $bb000 3680
 ; note: Fixed-rate world tick, part 1 of 6 (the set: pop_tick pop_tick_render pop_tick_logic pop_tick_flip pop_tick_cmd pop_tick_dot; work/notes/timing.md).
 ;       User's choice: the world runs FIVE TURNS PER REAL SECOND on every machine and at 50 and 60 Hz (10 VBL at 50 Hz, 12 at 60 Hz).  The game is frame coupled:
 ;       one pass of the play loop ($b632-$bc06, called once from $b54e) is one turn ($3c506, `addq.w #1,$3c506` at $db96 inside the world $db8a), one flip ($16f16)
@@ -20,11 +20,11 @@
 ;       Catch-up is bounded (ACC clamp 3 TK: at most four turns in a row without a frame); a gap of more than 40 VBL since the previous look (first look, a dialog, a load)
 ;       resyncs to one turn.  Everything per pass that the original counted is listed in work/notes/timing.md section 3.  Click latches ($3d566, $3c514) age at the end of
 ;       every UI pass in the original and still do (T and R passes; S passes run no UI, so a click waits for the next UI pass).
-;       Data block D = $c6000: +0 MAGIC.l +4 LAST.l +12 ACC.w +14 SKIP.w +16 RON.w +18 REC.w +28 TICKS.l +32 RPASS.l +36 SPASS.l +40 PPASS.l +44 TPASS.l +48 WPTR.l
+;       Data block D = $bb000: +0 MAGIC.l +4 LAST.l +12 ACC.w +14 SKIP.w +16 RON.w +18 REC.w +28 TICKS.l +32 RPASS.l +36 SPASS.l +40 PPASS.l +44 TPASS.l +48 WPTR.l
 ;       (write pointer of the minimap dot list, pop_tick_dot); the dot list is at D+$100 (560 entries of 6 bytes).  The block arms itself on the first look (magic 'PTIK').
 TK      equ     60
 MAGIC   equ     $5054494b
-D       equ     $c6000
+D       equ     $bb000
 oMAGIC  equ     0
 oLAST   equ     4
 oACC    equ     12
@@ -39,9 +39,9 @@ oTPASS  equ     44
 oWPTR   equ     48
 oDOTS   equ     $100
         org     $0b632
-        jmp     $c5000.l
+        jmp     $ba000.l
 
-        org     $c5000
+        org     $ba000
 tick:   movem.l d0-d4/a0-a1,-(a7)
         lea     D.l,a0
         cmpi.l  #MAGIC,oMAGIC(a0)

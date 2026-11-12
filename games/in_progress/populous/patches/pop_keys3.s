@@ -10,13 +10,13 @@
 ; note: become icon clicks later (the key recorder pop_keys2 records them in the interrupt, before anybody knows who will read them).
 ; note: Change: the first three instructions (`move.l a0,-(a7)` / `clr.l d0` / `move.b $2005f.l,d0`, 10 bytes) are replaced by a jmp to this
 ; note: blob, which runs them after its check and continues at $200b0.  Does nothing unless pop_keys' hook is in place.
-KD      equ     $c8000
+KD      equ     $bd000
         org     $200a6
-        jmp     $c7380.l
+        jmp     $bc380.l
         nop
         nop
 
-        org     $c7380
+        org     $bc380
 th:     cmpi.w  #$4eb9,$0bb7c.l         ; pop_keys installed?
         bne.s   .go
         cmpi.l  #$0b94c,(sp)            ; the main loop's own poll: not text

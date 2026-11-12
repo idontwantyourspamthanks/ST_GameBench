@@ -8,7 +8,7 @@
 ;   $B3110  site table (entries {addr.l len.w prog.w orig.l new.l}, addr 0 ends) + byte pool, up to $B3DFF
 ;                    prog.w = machine mask << 8 | program; mask 0 = every machine, else bit n = machine class n
 ;   $B3E00  core2    the supervisor-mode machine/CPU probe (256 bytes), $B3F00 core2b the cache flush
-;   $B4000  patch blobs ... $B7FFF is poppatch.py's, $C0000-$C7FFF is reserved for the land-score code.
+;   $B4000  patch blobs and data blocks, $B4000-$BDFFF (land-score code at $B5000); the whole payload must end below $C4000 (poppatch.py PAYLOAD_END)
 ;   top     the relocation list: addresses of the longs of the image that hold game addresses (see below)
 ; The game's text base is wherever TOS puts the Pexec'd program: $AD96 in PP's ST layout (loader.s steers it there),
 ; but TOS 3.06 on a TT leaves its own data up to $E6FC and TOS 4.04 on a Falcon up to $FA04, so the program lands higher.

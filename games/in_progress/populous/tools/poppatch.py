@@ -37,11 +37,14 @@ from pp_depack import depack as pp_depack  # noqa: E402
 # ---- where things are in RAM ---------------------------------------------------------------------
 TNOM = 0xAD96                   # text base of DEMO.TOS / POPULOUS.TOS in PP's layout (loader.s keeps it)
 IMG_BASE = 0xB3000              # payload image: header, core, site table, blobs
-IMG_LIMIT = 0xC8000             # blobs must end below this ($C0000-$C7FFF is the land-score code's)
+IMG_LIMIT = 0xBD000             # blob orgs must end below this (the blobs and data blocks live in $B5000-$BDFFF; the whole payload must end below $C4000)
 ORG_HDR, ORG_APPLY, ORG_CORE2, ORG_CORE2B = 0xB3000, 0xB3010, 0xB3E00, 0xB3F00
 META = 0xB3100                 # relocation list pointer.l, delta already applied.l, 2 spare longs
 TABLE, TABLE_END = 0xB3110, 0xB3E00
 BLOB_MIN, BLOB_MAX = 0xB4000, IMG_LIMIT - 1
+# PP's own code ("GOS", unpacked by HAGA from D15R?.FIC) is loaded at memtop - $34000 on a 1 MB machine: $CC000 with the stock memtop $100000, $C4000
+# once HDDRIVER has taken $F8000-$FFFFF (ACSI image boot, TOS 1.62), and then runs up to $D6CC0.  The payload (blobs, data, relocation list) must end below.
+PAYLOAD_END = 0xC4000
 MARKER = 0xB3004
 # Words of POPULOUS.TOS text that change at run time (g0.bin vs the relocated image): a site must not touch them.
 RUNTIME_TEXT = [(0x16D2C, 0x16D2E), (0x16F13, 0x16F16), (0x20063, 0x20066)]
@@ -558,8 +561,8 @@ def build_image(patches: list[Patch]):
             raise SystemExit(f"image overlap: ${a0:x}-${a1:x} vs ${b0:x}-${b1:x}")
     relocs = sorted(set(relocs))
     reloc_at = (max(e for _, e in placed) + 3) & ~3
-    if reloc_at + 4 * (len(relocs) + 1) > 0xCFC37:
-        raise SystemExit(f"the relocation list ends past $CFC36, the end of the proven free RAM (${reloc_at + 4 * (len(relocs) + 1):x})")
+    if reloc_at + 4 * (len(relocs) + 1) > PAYLOAD_END:
+        raise SystemExit(f"the payload ends past ${PAYLOAD_END - 1:x}, the end of the RAM that is free on every cell (${reloc_at + 4 * (len(relocs) + 1):x}); see PAYLOAD_END")
     placed.append((reloc_at, reloc_at + 4 * (len(relocs) + 1)))
     top = max(e for _, e in placed)
     img = bytearray(((top - IMG_BASE) + 3) & ~3)

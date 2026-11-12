@@ -3,7 +3,7 @@
 ; prog: populous
 ; site: $b93a
 ; orig: 4eb90000d4c0
-; data: $c8200 1184
+; data: $bd200 1184
 ; note: Hover tooltips for the icons (PopUI).  The pointer over an icon prints its name, its key and (spells) its manna cost at the top of the
 ; note: book page in the game's own 8x8 font ($2364a, 40 bytes per character: mask byte + 4 plane bytes per row, drawn with `and mask / or data`
 ; note: exactly as the text renderer $180f4 does): line 1 in the rectangle (84,0)-(213,7), 16 characters, line 2 in (100,8)-(171,15), 9 characters
@@ -21,10 +21,10 @@
 ; note: tooltip then merges the cache into the back buffer (and mask, or data: about 16 k cycles).
 ; note: Key labels: a string is `name 1 key 0 line2 0`: with pop_keys installed (`$bb7c` starts with `jsr`) the label `(key)` follows the name; a
 ; note: line 2 that starts with byte 2 is shown only then.  While the Armageddon arm of pop_keys is running (KD+4) the hint replaces any hover.
-; note: Data block T ($c8200): +0 CX.w +2 CY.w (pointer of the last hit test) +4 CID.w +6 SHOWN.w (icon the cache holds) +8 KEYS.w +10 NG1.w +12 NG2.w
-; note: +14 TXT1[24] +38 TXT2[16] +56 C1[720] +776 C2[400].  Blob $c7400-.
-T       equ     $c8200
-KD      equ     $c8000
+; note: Data block T ($bd200): +0 CX.w +2 CY.w (pointer of the last hit test) +4 CID.w +6 SHOWN.w (icon the cache holds) +8 KEYS.w +10 NG1.w +12 NG2.w
+; note: +14 TXT1[24] +38 TXT2[16] +56 C1[720] +776 C2[400].  Blob $bc400-.
+T       equ     $bd200
+KD      equ     $bd000
 AWIN    equ     150
 ID_ARM  equ     25
 tCX     equ     0
@@ -40,9 +40,9 @@ tC1     equ     56
 tC2     equ     776
 
         org     $b93a
-        jsr     $c7400.l
+        jsr     $bc400.l
 
-        org     $c7400
+        org     $bc400
 tt:     jsr     $0d4c0.l                ; the displaced call
         movem.l d0-d7/a0-a5,-(sp)
         lea     T.l,a3

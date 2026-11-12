@@ -12,12 +12,12 @@
 ;       Registers: everything is restored except d0.w = $ffff (the original leaves the dbra's -1 there; the high word of d0 is
 ;       kept).  No interrupt is masked; the longest uninterruptible instruction is a 13-register movem (116 cycles; the original's
 ;       is 20), far below the IKBD byte time (10 k cycles at 8 MHz) that limits a chunked copy.  The remaining bytes of the
-;       original routine are dead.  Blob $c2600-$c26ff.
+;       original routine are dead.  Blob $b7600-$b76ff.
         org     $14a28
-        jmp     $c2600.l
+        jmp     $b7600.l
         nop
 
-        org     $c2600
+        org     $b7600
 cpy:    movem.l d0-d7/a0-a6,-(sp)       ; 15 longs: d0 at 0(sp) ... a6 at 56(sp)
         move.w  #$ffff,2(sp)            ; the d0 the caller gets back: high word kept, low word -1
         movea.l $3c510.l,a0             ; destination: the back buffer

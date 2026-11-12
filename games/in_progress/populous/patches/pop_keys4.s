@@ -10,13 +10,13 @@
 ; note: never be replayed as an icon click when the dialog closes.  Together with pop_keys3 (the text poll $200a6) and the pass stamp of pop_keys.
 ; note: Change: `link.w a6,#0` + `tst.w $3d566.l` (10 bytes) become `jmp` + 2 nops; the blob runs them after the flush and continues at $1a512
 ; note: (the `bne.w` that reads the flags of the tst).  Does nothing unless pop_keys' hook is in place.
-KD      equ     $c8000
+KD      equ     $bd000
         org     $1a508
-        jmp     $c73c0.l
+        jmp     $bc3c0.l
         nop
         nop
 
-        org     $c73c0
+        org     $bc3c0
 dh:     cmpi.w  #$4eb9,$0bb7c.l         ; pop_keys installed?
         bne.s   .go
         move.b  KD+11.l,KD+10.l         ; head := tail

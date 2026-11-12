@@ -15,17 +15,17 @@
 ;         castle centre ($2a) within 2 of an edge (never seen in play)
 ;                                             -> the original loop, $181d6 inlined.
 ;       Evidence, proof and gates: work/notes/landscore.md.
-;       Blob $C0000-$C0FFF: code, then two 64-word constant tables. No variables.
+;       Blob $B5000-$B5FFF: code, then two 64-word constant tables. No variables.
 BLK     equ     $36eb6                  ; map_blk, 64 x 64 bytes
 BK      equ     $56aa                   ; map_bk2 ($3c560) - map_blk
 CNT     equ     $3b040                  ; output: castle pieces in the 3 x 3
 FLAT    equ     $37ef4                  ; output: 1 = a flat ($f) cell was counted
 
         org     $18244
-        jmp     $c0000.l
+        jmp     $b5000.l
         nop
 
-        org     $c0000
+        org     $b5000
 ; ---- one cell of the unrolled path -------------------------------------------
 ; d0 scratch, d1 flat flag, d2 = $f (flat tile, and 15 = the score step),
 ; d3 score, d4 = own field tile ($1f + owner), a0 = &map_blk[cell].

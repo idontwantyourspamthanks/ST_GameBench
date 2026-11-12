@@ -9,10 +9,10 @@
 ; note: $ff8800 / $ff8802 / $ff8804 / $ff8806 and a Falcon bus-errors on the mirror pair, so the first sound effect of a game would kill it.
 ; note: The blob writes the same three register pairs in the same order through $ff8800 / $ff8802 only.
         org     $171a8
-        jsr     $c4040.l
+        jsr     $b9040.l
         nop
 
-        org     $c4040
+        org     $b9040
         swap    d1
         movep.w d1,-$7800(a0)
         swap    d1

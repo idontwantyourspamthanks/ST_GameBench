@@ -3,7 +3,7 @@
 ; prog: populous
 ; site: $bb7c
 ; orig: 303900021d8e
-; data: $c8000 32
+; data: $bd000 32
 ; note: Keyboard shortcuts for the icons (PopUI).  Take all four: pop_keys (this: pass hook + tables), pop_keys2 (key recorder in the ACIA
 ; note: interrupt), pop_keys3 (typed-text guard) and pop_keys4 (dialog guard).
 ; note: A key does what a left click (a right click for the magnet and building views) on the icon's cell does: this hook calls the game's own icon
@@ -17,7 +17,7 @@
 ; note: position of a latched click.  Here both latches are 0 only for the length of the call ($16c96 then copies nothing), the click
 ; note: position is set first, and afterwards the latches are what a real click leaves ($c420's end $d09a makes a 0 latch 2; the idle one
 ; note: gets the main loop's `(word == 2) ? 2 : 1` rule from $bbcc-$bbf2).
-; note: Blob map: hook $c7000-$c71ff, KT $c7200, ACT $c7240-$c72bd; pop_keys2 $c7300, pop_keys3 $c7380, pop_keys4 $c73c0; pop_tooltip $c7400-$c7fff.
+; note: Blob map: hook $bc000-$bc1ff, KT $bc200, ACT $bc240-$bc2bd; pop_keys2 $bc300, pop_keys3 $bc380, pop_keys4 $bc3c0; pop_tooltip $bc400-$bcfff.
 ; note: Keys are only counted while the map loop runs: every pass stamps LASTV (KD+0) with the VBL counter $16d2a; pop_keys2 drops a press
 ; note: that comes more than WIN VBLs after the last stamp; the first pass after a gap clears the queue and the Armageddon arm; and
 ; note: pop_keys3 empties the queue on every poll of the text input $200a6 that does not come from the main loop and pop_keys4 on every
@@ -27,16 +27,16 @@
 ; note: does not advance $3c506, and Space has to un-pause.)
 ; note: A real click that is latched ($3d566 or $3c514 = 0) goes first; the key waits a pass.
 ; note: Armageddon needs the key twice within AWIN VBLs (any other key in between cancels); the first press only arms (pop_tooltip shows it).
-; note: Data block KD ($c8000): +0 LASTV.l  +4 ARMT.l (arm stamp + 1, 0 = none)  +8 spare.w
+; note: Data block KD ($bd000): +0 LASTV.l  +4 ARMT.l (arm stamp + 1, 0 = none)  +8 spare.w
 ; note:                       +10 QH.b  +11 QT.b  +12 Q[16] ring of action numbers (1-based row of ACT)
-KD      equ     $c8000
+KD      equ     $bd000
 WIN     equ     150
 AWIN    equ     150
-ACT     equ     $c7240
+ACT     equ     $bc240
         org     $bb7c
-        jsr     $c7000.l
+        jsr     $bc000.l
 
-        org     $c7000
+        org     $bc000
 hook:   movem.l d0-d7/a0-a6,-(sp)
         move.l  $16d2a.l,d0             ; the VBL counter
         move.l  d0,d1
@@ -122,7 +122,7 @@ hook:   movem.l d0-d7/a0-a6,-(sp)
 
 ; key table: scan code, action number (1-based row of ACT); 0 ends.  Scan codes are physical key positions (a US / UK layout's
 ; letters; a German keyboard's Z and Y are swapped, a French one's A Q Z W M differ).
-        org     $c7200
+        org     $bc200
 kt:     dc.b    $13,1                   ; R raise / lower
         dc.b    $10,2                   ; Q query
         dc.b    $19,3                   ; P papal magnet mode
@@ -147,7 +147,7 @@ kt:     dc.b    $13,1                   ; R raise / lower
         dc.b    0,0
 
 ; action rows: kind (0 left click, 1 right click, 2 Armageddon), pad, click x, click y (the centre of the icon's diamond, ui.md)
-        org     $c7240
+        org     $bc240
 act:    dc.b    0,0
         dc.w    96,184                  ; 1  raise / lower
         dc.b    0,0

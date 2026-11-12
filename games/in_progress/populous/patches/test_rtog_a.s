@@ -6,11 +6,11 @@
 ;       render, so the frame k+1 that the original renders from the world after turn k shows phase(k+1); a render-only pass of the tick (no toggle) shows phase(k).  To compare the
 ;       render of a render-only pass with the original's render of the next pass, this hook (after the background copy, before the terrain) toggles the phase in a render-only pass
 ;       (flag RON) and test_rtog_b toggles it back at the end of the render stage ($b7f0).  Any other pass: the displaced `clr.w $37ef0.l`.
-RON     equ     $c6010
+RON     equ     $bb010
         org     $0b6fa
-        jmp     $c5900.l
+        jmp     $ba900.l
 
-        org     $c5900
+        org     $ba900
         tst.w   RON.l
         beq.s   .n
         eori.w  #1,$3b260.l
