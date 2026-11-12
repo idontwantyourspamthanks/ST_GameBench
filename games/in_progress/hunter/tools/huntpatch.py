@@ -85,6 +85,7 @@ PREFIX_RANGES = {                        # blob orgs allowed per patch-name pref
     "test_": (0x8DC00, 0x8DFFF),         # loader self-tests
     "hn_": (0x8D400, 0x8DBFF),           # Hunter-specific patches (release credit); free between p4_poly's tables and test_
     "jag_": (0x8D600, 0x8D9FF),          # Jaguar pad (jag_pad poll + state, jag_stick merge); inside the hn_ window, between hn_credit and hn_hz
+    "key_": (0x8D816, 0x8D9BF),          # one-key items / weapon keys (key_item): the free gap between jag_pad's code and jag_stick's blob
 }
 
 
@@ -187,15 +188,25 @@ def start_text() -> bytes:
 # base/size x3: START text $1b618/$1b628/$1b630/$1b638, work/notes/loading.md section 3).
 RUNTIME_OPERANDS = (0x1B618, 0x1B628, 0x1B630, 0x1B638)
 
+# D15R, the game's own HD loader (D15R_H5.FIC, PP-LZ after the 32-byte header, depacked by START to $c0100).  Only its CODE is
+# a verifiable site source: $c0100..$c0733 (the variables start at $c0734).  Runtime-written bytes inside that range are excluded:
+# $c0358 (last Fread/Fwrite result), $c036e..$c03ed (register save area, saved MFP images).  The depack equals the 1 MB tail dump over
+# the rest of the range, and D15R_F5.FIC (TT/Falcon) unpacks to the same bytes there (`verify` checks both).
+D15R_RAM = 0xC0100
+D15R_CODE = 0x634
+D15R_VOL = ((0xC0358, 0xC035C), (0xC036E, 0xC03EE))
+D15R_HDR = 0x20
+
 
 def volatile_ranges() -> list[tuple[int, int]]:
-    """RAM ranges in $150..$424 that are machine dependent (never patch them)."""
+    """RAM ranges that are machine dependent or written at run time (never patch them): in the $150..$424 block, and in D15R's code range."""
     if MODE["floppy"]:
         return []                        # no START block on the floppy: everything below $12004 is the unpacked game
     if "vol" not in _cache:
         offs, _ = decode_reloc(start_program()[28 + START_TEXT:])
         vol = [(HOOK_RAM + o - HOOK_SRC, HOOK_RAM + o - HOOK_SRC + 4) for o in offs if HOOK_SRC <= o and o + 4 <= HOOK_SRC + HOOK_LEN]
         vol += [(HOOK_RAM + (a - START_BASE) - HOOK_SRC, HOOK_RAM + (a - START_BASE) - HOOK_SRC + 4) for a in RUNTIME_OPERANDS]
+        vol += list(D15R_VOL)
         _cache["vol"] = sorted(set(vol))
     return _cache["vol"]
 
@@ -209,8 +220,27 @@ def tail_ram() -> dict[int, bytes]:
         img = bytearray(lz_depack(hum[HUM_HDR:]))
         for a, b in PP_PATCHES.items():
             img[a - HUM_RAM:a - HUM_RAM + len(b)] = b
-        _cache["tail"] = {HOOK_RAM: start_text()[HOOK_SRC:HOOK_SRC + HOOK_LEN], HUM_RAM: bytes(img)}
+        _cache["tail"] = {HOOK_RAM: start_text()[HOOK_SRC:HOOK_SRC + HOOK_LEN], HUM_RAM: bytes(img), D15R_RAM: d15r_code("H5")}
     return _cache["tail"]
+
+
+def d15r_code(variant: str = "H5") -> bytes:
+    """The code of D15R_<variant>.FIC ($c0100..$c0733 once START has unpacked it)."""
+    key = "d15r" + variant
+    if key not in _cache:
+        raw = (ROOT / f"D15R_{variant}.FIC").read_bytes()
+        _cache[key] = lz_depack(raw[D15R_HDR:])[:D15R_CODE]
+    return _cache[key]
+
+
+def check_d15r_variants() -> bool:
+    """The D15R sites must also be right on the TT/Falcon loader (D15R_F5.FIC): same bytes over the verified code range."""
+    h5, f5 = d15r_code("H5"), d15r_code("F5")
+    diff = [D15R_RAM + i for i in range(D15R_CODE) if h5[i] != f5[i]
+            and not any(a <= D15R_RAM + i < z for a, z in D15R_VOL)]
+    print(f"D15R_F5.FIC vs D15R_H5.FIC over ${D15R_RAM:x}..${D15R_RAM + D15R_CODE - 1:x} (runtime-written bytes excluded): "
+          f"{'IDENTICAL' if not diff else 'DIFFERS at ' + ' '.join(f'${a:x}' for a in diff[:12])}")
+    return not diff
 
 
 def tail_bytes(addr: int, n: int):
@@ -394,6 +424,7 @@ class Patch:
         self.orig = None
         self.phase = None
         self.requires = []        # names of patches that must be selected with this one (one feature over several splice sites)
+        self.hdonly = False       # `; hdonly: yes`: the site only exists in the HD build; build/verify --floppy skip the patch
         self.load = None          # deferred: (game file, RAM destination of that file)
         self.data = []            # (addr, len) zero-init reservations
         self.segments = []        # (org, lines)
@@ -421,6 +452,7 @@ class Patch:
                 elif k == "orig": self.orig = bytes.fromhex(v.replace(" ", ""))
                 elif k == "phase": self.phase = v.lower()
                 elif k == "requires": self.requires = v.split()
+                elif k == "hdonly": self.hdonly = v.lower() not in ("no", "false", "0")
                 elif k == "load":
                     f, d = v.split()
                     self.load = (f, hx(d))
@@ -703,13 +735,15 @@ def check_tail_image() -> bool:
         print(f"tail image ${base:05x}..${base + len(b):05x} ({len(b)} B, {n} compared) vs {dump_path().name}: "
               f"{'IDENTICAL' if eq else 'DIFFERS'}")
         ok &= eq
-    print("  machine-dependent (volatile) operands, not patchable: " + " ".join(f"${a:x}+4" for a, _z in vol))
+    print("  machine-dependent (volatile) operands, not patchable: " + " ".join(f"${a:x}+{z - a}" for a, z in vol))
     return ok
 
 
 def cmd_verify(patches, fps=()) -> int:
     bad = 0
     if not check_tail_image():
+        bad += 1
+    if not MODE["floppy"] and not check_d15r_variants():
         bad += 1
     core_segments()
     d = dump_path().read_bytes()
@@ -746,7 +780,8 @@ def cmd_list(patches, fps):
         blobs = ",".join(f"${o:x}" for o, _ in p.segments if o != p.site) or "-"
         data = ",".join(f"${a:x}+{ln}" for a, ln in p.data) or "-"
         ln = len(site_bytes(p))
-        print(f"{p.name:20s} {'yes' if p.default else 'no':8s} ${p.site:06x} {p.phase_of():9s} {ln:4d} {blobs} / {data}")
+        print(f"{p.name:20s} {'yes' if p.default else 'no':8s} ${p.site:06x} {p.phase_of():9s} {ln:4d} {blobs} / {data}"
+              f"{'  [HD only: skipped by --floppy]' if p.hdonly else ''}")
     for p in fps:
         print(f"{p.name:20s} {'yes' if p.default else 'no':8s} {p.image:8s} {'file':9s} "
               f"{sum(len(b) for _, b in p.edits):4d} (file patch)")
@@ -1286,7 +1321,7 @@ def main():
         cmd_list(patches, fps)
     elif a.cmd == "verify":
         if MODE["floppy"]:
-            patches, fps = [p for p in patches if p.phase_of() == "boot"], []
+            patches, fps = [p for p in patches if p.phase_of() == "boot" and not p.hdonly], []
         sys.exit(cmd_verify(patches, fps))
     elif a.cmd == "boot":
         sys.exit(cmd_boot(ROOT / a.game, a.machine, a.tos, a.mem, ROOT / a.shots if a.shots else None, a.peek, a.dump, a.play))
@@ -1305,6 +1340,8 @@ def main():
                 raise SystemExit(f"unknown patch(es): {sorted(unknown)}")
             sel = [p for p in patches if p.name in names]
             fsel = [p for p in fps if p.name in names]
+        if MODE["floppy"]:
+            sel = [p for p in sel if not p.hdonly]       # `; hdonly: yes` patches: their sites are PP's HD loader, not on the floppy
         missing = sorted({(p.name, r) for p in sel for r in p.requires if r not in {q.name for q in sel}})
         if missing:
             raise SystemExit("patch(es) selected without a required partner: " + ", ".join(f"{n} needs {r}" for n, r in missing))
