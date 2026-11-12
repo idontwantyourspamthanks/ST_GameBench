@@ -1,0 +1,7 @@
+CELL tt4_floppy: media=floppy tt TOS default 4096 KB; boot 98s in_play=False marker='P2PO' $22f14=4ef900082000 sync=$01 (60 Hz) turn=0
+RESULT tt4_floppy default MHz 60 Hz: 361 VBL = 6.02 s, 533108 cycles/VBL, world turns 0 = 0.000/s | ticks(D) 0 = 0.000/s; passes T 0 R 0 S 0 P 0 | refresh seen 60.03 Hz
+pointer 250,180 turn 0
+known probe lines (PP's $ffff8e21/$ffff8924 reads from RUNME PC $1b9xx = stock $139xx; pop2_spr's bus-error-safe blitter probe write $ffff8a28 at PC $8432x on an ST): 0
+LOG: 124 lines; bus/address-error/halt lines: 0
+
+RESULT tt4_floppy: ok=False marker='P2PO' errors=0

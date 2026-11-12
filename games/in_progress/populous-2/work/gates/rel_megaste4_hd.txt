@@ -1,0 +1,10 @@
+CELL megaste4_hd: media=hd megaste TOS default 4096 KB; boot 106s in_play=True marker='P2PO' $22f14=4ef900082000 sync=$fc (60 Hz) turn=134
+RESULT megaste4_hd default MHz 60 Hz: 1801 VBL = 30.02 s, 267131 cycles/VBL, world turns 187 = 6.230/s | ticks(D) 187 = 6.230/s; passes T 187 R 263 S 0 P 0 | refresh seen 29.95 Hz  *** NOT 60 Hz: the VBL rate did not change, the turns/s above are computed with the wrong clock ***
+RESULT megaste4_hd default MHz 50 Hz: 1501 VBL = 30.02 s, 320441 cycles/VBL, world turns 187 = 6.229/s | ticks(D) 187 = 6.229/s; passes T 187 R 251 S 0 P 0 | refresh seen 24.97 Hz  *** NOT 50 Hz: the VBL rate did not change, the turns/s above are computed with the wrong clock ***
+tooltip cat2: diff vs none bbox (174, 58, 762, 585); shot rel_megaste4_hd_cat2.png
+tooltip strip4: diff vs none bbox (170, 58, 762, 585); shot rel_megaste4_hd_strip4.png
+pointer 250,180 turn 783
+known PP probe lines ($ffff8e21 read at RUNME PC $1b992; stock: PC $13968): 0
+LOG: 213 lines; bus/address-error/halt lines: 0
+
+RESULT megaste4_hd: ok=True marker='P2PO' errors=0

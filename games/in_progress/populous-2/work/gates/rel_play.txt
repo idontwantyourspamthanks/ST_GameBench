@@ -1,0 +1,15 @@
+in_play True marker P2PO turn 122
+queue QPUSH/QPOP/QDROP before ['0x0', '0x0', '0x0']
+strip 2: turn 329 mode 0xc
+strip 3: turn 370 mode 0xc
+strip 4: turn 411 mode 0xc
+strip 5: turn 452 mode 0xc
+strip 6: turn 493 mode 0xc
+turn before idle 717 mode 0xc
+executor dispatches: 43 [2, 2, 4, 2, 4, 18, 2, 20, 14, 4, 16, 4, 18, 20, 18, 20, 4, 18, 20, 18, 20, 18, 4, 18, 18, 4, 4, 4, 4, 4, 2, 2, 2, 4, 4, 2, 2, 4, 2, 2, 2, 2, 2]
+breakpoint hits line: ['44']
+queue after ['0x4', '0x4', '0x0'] delta push/pop/drop [4, 4, 0]
+turn 1216 in_play True marker P2PO
+statesave: GS00.TOS 1049310 turn at save 1252 in_play after True turn 1310
+bus/address errors in log: 1
+WARN : Bus Error reading at address $ffff8e21, PC=$1b992 addr_e3=1b992 op_e3=1238

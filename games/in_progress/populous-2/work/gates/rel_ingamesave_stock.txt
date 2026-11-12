@@ -1,0 +1,22 @@
+stock in_play True marker ''
+stock after SAVE GAME click: debugger not answering (machine halted/crashed) | screenshot ok: False
+   WARN : Bus Error reading at address $ffff8e21, PC=$13968 addr_e3=13968 op_e3=1238
+   WARN : Bus Error reading at address $5c40c82, PC=$5c40c82 addr_e3=18e op_e3=4e75
+   WARN : Address Error writing at address $84007c67, PC=$e09598 addr_e3=e09598 op_e3=48ee
+   8 repeats of: WARN : Address Error writing at address $84007c67, PC=$e09598 addr_e3=e09598 op_e3=48ee
+   16 repeats of: WARN : Address Error writing at address $84007c67, PC=$e09598 addr_e3=e09598 op_e3=48ee
+   32 repeats of: WARN : Address Error writing at address $84007c67, PC=$e09598 addr_e3=e09598 op_e3=48ee
+   64 repeats of: WARN : Address Error writing at address $84007c67, PC=$e09598 addr_e3=e09598 op_e3=48ee
+   128 repeats of: WARN : Address Error writing at address $84007c67, PC=$e09598 addr_e3=e09598 op_e3=48ee
+   256 repeats of: WARN : Address Error writing at address $84007c67, PC=$e09598 addr_e3=e09598 op_e3=48ee
+   512 repeats of: WARN : Address Error writing at address $84007c67, PC=$e09598 addr_e3=e09598 op_e3=48ee
+   660 repeats of: WARN : Address Error writing at address $84007c67, PC=$e09598 addr_e3=e09598 op_e3=48ee
+   WARN : Bus Error reading at address $fca0f6f4, PC=$fca0f6f4 addr_e3=fca0f6f4 op_e3=fa54
+   WARN : Bus Error writing at address $fffffffe, PC=$fa5a addr_e3=fa5a op_e3=48e5
+   8 repeats of: WARN : Bus Error writing at address $fffffffe, PC=$fa5a addr_e3=fa5a op_e3=48e5
+   16 repeats of: WARN : Bus Error writing at address $fffffffe, PC=$fa5a addr_e3=fa5a op_e3=48e5
+   32 repeats of: WARN : Bus Error writing at address $fffffffe, PC=$fa5a addr_e3=fa5a op_e3=48e5
+   64 repeats of: WARN : Bus Error writing at address $fffffffe, PC=$fa5a addr_e3=fa5a op_e3=48e5
+   128 repeats of: WARN : Bus Error writing at address $fffffffe, PC=$fa5a addr_e3=fa5a op_e3=48e5
+   256 repeats of: WARN : Bus Error writing at address $fffffffe, PC=$fa5a addr_e3=fa5a op_e3=48e5
+   512 repeats of: WARN : Bus Error writing at address $fffffffe, PC=$fa5a addr_e3=fa5a op_e3=48e5

@@ -1,0 +1,9 @@
+CELL ste2_floppy: media=floppy ste TOS default 2048 KB; boot 176s in_play=True marker='P2PO' $22f14=4ef900082000 sync=$fe (50 Hz) turn=128
+RESULT ste2_floppy default MHz 50 Hz: 1001 VBL = 20.02 s, 160237 cycles/VBL, world turns 125 = 6.244/s | ticks(D) 125 = 6.244/s; passes T 125 R 94 S 0 P 0 | refresh seen 49.93 Hz
+tooltip cat2: diff vs none bbox (184, 58, 762, 585); shot rel_ste2_floppy_cat2.png
+tooltip strip4: diff vs none bbox (198, 58, 730, 442); shot rel_ste2_floppy_strip4.png
+pointer 250,180 turn 502
+known probe lines (PP's $ffff8e21/$ffff8924 reads from RUNME PC $1b9xx = stock $139xx; pop2_spr's bus-error-safe blitter probe write $ffff8a28 at PC $8432x on an ST): 0
+LOG: 165 lines; bus/address-error/halt lines: 1
+WARN : Bus Error reading at address $ffff8e21, PC=$172b6 addr_e3=172b6 op_e3=1238
+RESULT ste2_floppy: ok=True marker='P2PO' errors=1

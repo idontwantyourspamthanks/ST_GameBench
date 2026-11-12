@@ -1,0 +1,10 @@
+CELL st2_hd: media=hd st TOS 1.04 2048 KB; boot 106s in_play=True marker='P2PO' $22f14=4ef900082000 sync=$fe (50 Hz) turn=128
+RESULT st2_hd default MHz 50 Hz: 1501 VBL = 30.02 s, 160195 cycles/VBL, world turns 188 = 6.262/s | ticks(D) 188 = 6.262/s; passes T 188 R 122 S 0 P 0 | refresh seen 49.94 Hz
+tooltip cat2: diff vs none bbox (184, 58, 732, 442); shot rel_st2_hd_cat2.png
+tooltip strip4: diff vs none bbox (184, 58, 724, 442); shot rel_st2_hd_strip4.png
+pointer 250,180 turn 663
+LOG: 131 lines; bus/address-error/halt lines: 3
+WARN : Bus Error reading at address $ffff8e21, PC=$1b9b2 addr_e3=1b9b2 op_e3=1238
+WARN : Bus Error reading at address $ffff8924, PC=$1b9e0 addr_e3=1b9e0 op_e3=4a38
+WARN : Bus Error writing at address $ffff8a28, PC=$84320 addr_e3=84320 op_e3=31fc
+RESULT st2_hd: ok=True marker='P2PO' errors=3

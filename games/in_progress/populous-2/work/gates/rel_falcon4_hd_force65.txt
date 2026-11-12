@@ -1,0 +1,16 @@
+CELL falcon4_hd_f65: media=hd falcon TOS default 4096 KB; boot 90s in_play=True marker='P2PO' $22f14=4ef900082000 sync=$02 (50 Hz) turn=130
+RESULT falcon4_hd_f65 default MHz 50 Hz: 201 VBL = 4.02 s, 319421 cycles/VBL, world turns 25 = 6.219/s | ticks(D) 25 = 6.219/s; passes T 25 R 62 S 0 P 0 | refresh seen 50.09 Hz
+tooltip cat2: diff vs none bbox (90, 64, 642, 598); shot rel_falcon4_hd_f65_cat2.png
+tooltip strip4: diff vs none bbox (106, 64, 642, 448); shot rel_falcon4_hd_f65_strip4.png
+pointer 250,180 turn 299
+SOUND: $2aa74 = 0x4eb90008 0x10804e71 (jsr 0x4eb900081080 expected: 4eb90008 108 04e71); $134=0x2aa4e
+forced: handler entry 0x4ef9000f; every IRQ does CPU write $ff8007:=$65
+round 0: matched breakpoints so far: 2
+matched:
+  2. CPU breakpoint condition(s) matched 1 times.
+  1. CPU breakpoint condition(s) matched 1 times.
+after: $2aa74 = 0x4eb90008; turn 387; in_play True; $2b60b..e = 1a0000000002
+known probe lines (PP's $ffff8e21/$ffff8924 reads from RUNME PC $1b9xx = stock $139xx; pop2_spr's bus-error-safe blitter probe write $ffff8a28 at PC $8432x on an ST): 0
+LOG: 178 lines; bus/address-error/halt lines: 0
+
+RESULT falcon4_hd_f65: ok=True marker='P2PO' errors=0

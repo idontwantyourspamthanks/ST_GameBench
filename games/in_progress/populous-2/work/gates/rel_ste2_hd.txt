@@ -1,0 +1,9 @@
+CELL ste2_hd_8: media=hd ste TOS default 2048 KB; boot 106s in_play=True marker='P2PO' $22f14=4ef900082000 sync=$fe (50 Hz) turn=129
+RESULT ste2_hd_8 8 MHz 50 Hz: 1501 VBL = 30.02 s, 160212 cycles/VBL, world turns 187 = 6.229/s | ticks(D) 187 = 6.229/s; passes T 187 R 141 S 0 P 0 | refresh seen 49.93 Hz
+RESULT ste2_hd_8 16 MHz 50 Hz: 1501 VBL = 30.02 s, 320498 cycles/VBL, world turns 188 = 6.262/s | ticks(D) 188 = 6.262/s; passes T 188 R 468 S 0 P 0 | refresh seen 49.92 Hz
+tooltip cat2: diff vs none bbox (170, 58, 762, 585); shot rel_ste2_hd_8_cat2.png
+tooltip strip4: diff vs none bbox (170, 58, 730, 442); shot rel_ste2_hd_8_strip4.png
+pointer 250,180 turn 845
+LOG: 217 lines; bus/address-error/halt lines: 1
+WARN : Bus Error reading at address $ffff8e21, PC=$1b992 addr_e3=1b992 op_e3=1238
+RESULT ste2_hd_8: ok=True marker='P2PO' errors=1

@@ -1,0 +1,36 @@
+CELL falcon4_nofal_f65: media=hd falcon TOS default 4096 KB; boot 90s in_play=True marker='P2PO' $22f14=4ef900082000 sync=$02 (50 Hz) turn=133
+RESULT falcon4_nofal_f65 default MHz 50 Hz: 206 VBL = 4.12 s, 320405 cycles/VBL, world turns 26 = 6.311/s | ticks(D) 26 = 6.311/s; passes T 26 R 64 S 0 P 0 | refresh seen 49.94 Hz
+tooltip cat2: diff vs none bbox (90, 64, 638, 448); shot rel_falcon4_nofal_f65_cat2.png
+tooltip strip4: diff vs none bbox (104, 64, 630, 599); shot rel_falcon4_nofal_f65_strip4.png
+pointer 250,180 turn 319
+SOUND: $2aa74 = 0x03c88df1 0x01888df1 (jsr 0x4eb900081080 expected: 4eb90008 108 04e71); $134=0x2aa4e
+forced: handler entry 0x4ef9000f; every IRQ does CPU write $ff8007:=$65
+round 0: matched breakpoints so far: 1
+round 1: matched breakpoints so far: 1
+round 2: matched breakpoints so far: 1
+round 3: matched breakpoints so far: 1
+round 4: matched breakpoints so far: 1
+round 5: matched breakpoints so far: 1
+matched:
+  2. CPU breakpoint condition(s) matched 1 times.
+EXCEPTION IndexError('list index out of range')
+LOG TAIL:
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+2. CPU breakpoint condition(s) matched 1 times.
+	pc = $2aa4e :once :trace
+Removed CPU breakpoint 2:
+	pc = $2aa4e :once :trace
+WARN : Bus Error writing at address $ffff8804, PC=$2aa74 addr_e3=2aa74 op_e3=3c8
+WARN : Bus Error reading at address $fffc00e0, PC=$e0f99e addr_e3=e0f99e op_e3=2e14
+WARN : Address Error reading at address $dc00e00f, PC=$dc00e00f addr_e3=dc00e00f op_e3=4e95
+8 repeats of: WARN : Address Error reading at address $dc00e00f, PC=$dc00e00f addr_e3=dc00e00f op_e3=4e95
+WARN : Bus Error reading at address $a900000, PC=$e0f99e addr_e3=e0f99e op_e3=2e14
+WARN : Address Error reading at address $dc00e00f, PC=$dc00e00f addr_e3=dc00e00f op_e3=4e95
+BUS/HALT LINES:
+WARN : Bus Error writing at address $ffff8804, PC=$2aa74 addr_e3=2aa74 op_e3=3c8
+WARN : Bus Error reading at address $fffc00e0, PC=$e0f99e addr_e3=e0f99e op_e3=2e14
+WARN : Address Error reading at address $dc00e00f, PC=$dc00e00f addr_e3=dc00e00f op_e3=4e95
+8 repeats of: WARN : Address Error reading at address $dc00e00f, PC=$dc00e00f addr_e3=dc00e00f op_e3=4e95
+WARN : Bus Error reading at address $a900000, PC=$e0f99e addr_e3=e0f99e op_e3=2e14
+WARN : Address Error reading at address $dc00e00f, PC=$dc00e00f addr_e3=dc00e00f op_e3=4e95

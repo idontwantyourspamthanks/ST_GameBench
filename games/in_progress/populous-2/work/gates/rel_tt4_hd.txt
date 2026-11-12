@@ -1,0 +1,9 @@
+CELL tt4_hd: media=hd tt TOS default 4096 KB; boot 90s in_play=True marker='P2PO' $22f14=4ef900082000 sync=$01 (60 Hz) turn=137
+RESULT tt4_hd default MHz 60 Hz: 1801 VBL = 30.02 s, 534208 cycles/VBL, world turns 188 = 6.263/s | ticks(D) 188 = 6.263/s; passes T 188 R 712 S 0 P 0 | refresh seen 59.90 Hz
+tooltip cat2: diff vs none bbox (88, 0, 640, 384); shot rel_tt4_hd_cat2.png
+tooltip strip4: diff vs none bbox (88, 0, 640, 384); shot rel_tt4_hd_strip4.png
+pointer 250,180 turn 475
+known probe lines (PP's $ffff8e21/$ffff8924 reads from RUNME PC $1b9xx = stock $139xx; pop2_spr's bus-error-safe blitter probe write $ffff8a28 at PC $8432x on an ST): 0
+LOG: 120 lines; bus/address-error/halt lines: 0
+
+RESULT tt4_hd: ok=True marker='P2PO' errors=0

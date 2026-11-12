@@ -1,0 +1,9 @@
+CELL megaste4_floppy: media=floppy megaste TOS default 4096 KB; boot 129s in_play=False marker='P2PO' $22f14=4ef900082000 sync=$fc (60 Hz) turn=0
+RESULT megaste4_floppy default MHz 60 Hz: 1201 VBL = 20.02 s, 267018 cycles/VBL, world turns 0 = 0.000/s | ticks(D) 0 = 0.000/s; passes T 0 R 0 S 0 P 0 | refresh seen 59.92 Hz
+tooltip cat2: diff vs none bbox None; shot rel_megaste4_floppy_cat2.png
+tooltip strip4: diff vs none bbox None; shot rel_megaste4_floppy_strip4.png
+pointer 250,180 turn 0
+known probe lines (PP's $ffff8e21/$ffff8924 reads from RUNME PC $1b9xx = stock $139xx; pop2_spr's bus-error-safe blitter probe write $ffff8a28 at PC $8432x on an ST): 0
+LOG: 141 lines; bus/address-error/halt lines: 1
+WARN : Bus Error reading at address $fffc7d2f, PC=$2d484 addr_e3=2d484 op_e3=16da
+RESULT megaste4_floppy: ok=False marker='P2PO' errors=1

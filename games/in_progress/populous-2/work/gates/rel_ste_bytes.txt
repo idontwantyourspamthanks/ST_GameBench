@@ -1,0 +1,5 @@
+compared $2a900..$2aa9f (416 bytes), ours (default set) vs stock PP cold boot, STE 2MB TOS 1.62
+differing offsets: ['0x2a938', '0x2a939', '0x2a93b', '0x2a93c', '0x2a93d', '0x2a93e', '0x2a93f']
+ours  $2a938: 4eb9000810004e71  stock: 21fc0002aa4e0134
+sample handler $2aa4e..$2aaa0 identical: True 3f002f012f08207c0006381242401018672823c80002aa5641f8fa0fe748223b0034303b003403c88df101888df108900005205f221f301f4e7311fc0000fa1951f90002b60c08b80005fa0f205f221f301f
+ours $2aa74: 03c88df101888df1
