@@ -56,7 +56,7 @@ DEFAULT_SIZE_KB = 32000                                 # one partition, 64000 s
 VOLUME = "GAMES"
 
 # folder on C: -> game; versions/requirements for README.TXT are taken from the builds where possible (see readme_text)
-FOLDERS = ("MIDWINTR", "MIDWINT2", "HUNTER", "POWERMON", "AUTO")
+FOLDERS = ("MIDWINTR", "MW1ORIG", "MIDWINT2", "HUNTER", "POWERMON", "AUTO")
 
 
 def run(cmd, cwd=None, quiet=True, env=None):
@@ -105,6 +105,17 @@ def build_midwinter() -> Path:
     copy_names(g, dst, ["README.TXT", "LOG.TXT"])
     shutil.copytree(g / "FILES", dst / "FILES")               # originals (MWC = data/save disk)
     (dst / "PATCHES.TXT").write_text(py("midwinter", "mw1patch", "doc", "patches/PATCHES.TXT"), encoding="latin-1", errors="replace")
+    return dst
+
+
+def build_midwinter_orig() -> Path:
+    """PP's unpatched Midwinter (for side-by-side comparison): the original files of the game dir, nothing patched."""
+    g = GAMES / "midwinter"
+    dst = STAGE / "MW1ORIG"
+    shutil.rmtree(dst, ignore_errors=True)
+    dst.mkdir(parents=True)
+    copy_names(g, dst, ["RUNME.TOS", "HAGA", "MW240R.BMP", "FMW273.HST", "LMW273.HST", "README.TXT", "LOG.TXT"])
+    shutil.copytree(g / "FILES", dst / "FILES")               # its own copy of the data/save disk MWC
     return dst
 
 
@@ -161,8 +172,8 @@ def build_auto() -> Path:
     return dst
 
 
-BUILDERS = {"MIDWINTR": build_midwinter, "MIDWINT2": build_midwinter2, "HUNTER": build_hunter, "POWERMON": build_powermonger,
-            "AUTO": build_auto}
+BUILDERS = {"MIDWINTR": build_midwinter, "MW1ORIG": build_midwinter_orig, "MIDWINT2": build_midwinter2, "HUNTER": build_hunter,
+            "POWERMON": build_powermonger, "AUTO": build_auto}
 
 
 # ---- 2. the disk ---------------------------------------------------------------------------------------------------------------
@@ -178,12 +189,14 @@ def readme_text(vers: dict[str, str], date: str) -> str:
 ==========================================================================
 
 Four games with dad_prg's patches (speed, sound, fixes) on one bootable
-hard disk image: HDDRIVER, one 31 MB partition = drive C:.  Nothing starts
-by itself except a 3-second question about Powermonger at boot.
+hard disk image, plus PP's unpatched Midwinter for side-by-side comparison:
+HDDRIVER, one 31 MB partition = drive C:.  Nothing starts by itself except
+a 3-second question about Powermonger at boot.
 
   FOLDER       GAME                   START                      VERSION
   -----------  ---------------------  -------------------------  -------
   C:\MIDWINTR  Midwinter              double-click RUNME.TOS     {vers['MIDWINTR']}
+  C:\MW1ORIG   Midwinter (original)   double-click RUNME.TOS     PP's release, unpatched
   C:\MIDWINT2  Midwinter 2            double-click RUNME.TOS     {vers['MIDWINT2']}
   C:\HUNTER    Hunter                 double-click START.TOS     {vers['HUNTER']}
   C:\POWERMON  Powermonger            press P at boot (below)    {vers['POWERMON']}
@@ -198,20 +211,21 @@ aside while it runs and only works when started from the AUTO folder
 the low RAM of TOS". AUTO\PMBOOT.PRG is the small program that asks.
 
 Requirements
- - Atari ST/STE, Mega ST/STE (or TT, see below) with 1 MB RAM or more, and an ACSI hard
+ - Atari ST/STE, Mega ST/STE or TT with 1 MB RAM or more, and an ACSI hard
    disk or an emulator of one (UltraSatan, ACSI2STM, ...) holding this
    image. Boots through HDDRIVER (HDDRIVER.SYS in the root, do not delete).
  - Hunter: STE, Mega STE or TT for the sampled sound (DMA sound); a plain ST
    plays the original sound.
  - Tested in the Hatari emulator only (STE, Mega STE, TT; Hunter also on a
-   plain ST). On a TT the Midwinters did not start from an ACSI/HDDRIVER
-   disk there (PP's unpatched versions neither); use an ST/STE/Mega STE.
+   plain ST). On a TT the Midwinters need the PMMU (Hatari: --mmu true, as
+   run_tt.sh does); PP's unpatched Midwinter does not start on a TT.
  - Keep resident AUTO programs and desk accessories to a minimum: Powermonger
    needs the TOS/driver memory (about 80 KB with HDDRIVER) to stay small.
  - Each folder has the game's own README.TXT and PATCHES.TXT (what changed).
 
 Saving
- - Midwinter: saves go to FILES\MWC (data disk image) in its folder.
+ - Midwinter: saves go to FILES\MWC (data disk image) in its folder (the
+   original in MW1ORIG has its own copy).
  - Midwinter 2: create the campaign first (War Room -> Start New Campaign);
    it is written to FILES\FFD. Back that file up.
  - Hunter: as in PP's release.
@@ -328,7 +342,8 @@ def layout_text(img: Path, tgt: str, total: int, psz: int, folders: dict[str, Pa
          "  HDDRIVER.SYS   HDDRIVER 10.15, started by the partition boot sector (must stay in the root)",
          "  README.TXT     the games, how to start them, versions, requirements",
          "  (no DESKTOP.INF: TOS uses its built-in default desktop; nothing starts by itself)"]
-    why = {"MIDWINTR": "Midwinter (HAGA by PP, patched)", "MIDWINT2": "Midwinter 2 (HAGA by PP, patched)",
+    why = {"MIDWINTR": "Midwinter (HAGA by PP, patched)", "MW1ORIG": "Midwinter (HAGA by PP, unpatched, for comparison)",
+           "MIDWINT2": "Midwinter 2 (HAGA by PP, patched)",
            "HUNTER": "Hunter (Gamex by PP, patched; FILES\\P = patch code + STE sample bank)",
            "POWERMON": "Powermonger (HD build, patched; start it from the boot prompt, see README.TXT)",
            "AUTO": "boot prompt PMBOOT.PRG (tools/hd_pmboot.s): P = start Powermonger, any other key / 3 s = desktop"}

@@ -10,8 +10,8 @@ Library use (game-specific navigation lives in games/<game>/tools/, which
 subclasses Hatari):
     import sys; sys.path.insert(0, "<gamebench>/tools")
     from stharness import Hatari, TOS
-    h = Hatari(game_dir="games/in_progress/midwinter", snapshot="games/in_progress/midwinter/work/snapshots/x.sav")
-    h = Hatari(game_dir="games/in_progress/midwinter", snapshot=None, memsize_kb=1024,
+    h = Hatari(game_dir="games/done/midwinter", snapshot="games/done/midwinter/work/snapshots/x.sav")
+    h = Hatari(game_dir="games/done/midwinter", snapshot=None, memsize_kb=1024,
                machine="megaste", tos=TOS["2.06"])          # cold boot, autoruns RUNME.TOS
     print(h.fps(250)); rows = h.profile(250); h.shot("out.png"); h.close()
 

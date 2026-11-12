@@ -1,6 +1,6 @@
 ; name: mw_credit
 ; default: yes
-; version: 1.1
+; version: 1.2
 ; site: $1088a
 ; orig: 61000112303c0000
 ; note: Release credit (st-game-speedup skill): a small, dim version line `v<VERSION> enhanced by dad_prg` on the Game Options screen

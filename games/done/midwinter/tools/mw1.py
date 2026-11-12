@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Midwinter 1 (PP's HAGA HD build) navigation + state access on top of tools/stharness.Hatari.
 
-    import sys; sys.path.insert(0, '<gamebench>/tools'); sys.path.insert(0, '<gamebench>/games/in_progress/midwinter/tools')
+    import sys; sys.path.insert(0, '<gamebench>/tools'); sys.path.insert(0, '<gamebench>/games/done/midwinter/tools')
     from mw1 import MW1
     h = MW1(memsize_kb=1024)            # cold boot (autoruns C:\\RUNME.TOS)
     h.boot_to_game('M')                 # 'M'ouse, 'J'oystick or 'K'eyboard -> Skiing 3D view, standing

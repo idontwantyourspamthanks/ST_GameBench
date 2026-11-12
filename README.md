@@ -20,7 +20,7 @@ Measured on an emulated 1 MB 8 MHz Atari STE, same scene, against the unpatched 
 - **Loading:** no repeated grey flashes, and screen changes load about 2× faster.
 - **4 MB+ machines:** patched builds no longer hang; they work on 1-14 MB.
 
-### Midwinter — [`REPORT.md`](games/in_progress/midwinter/REPORT.md)
+### Midwinter — [`REPORT.md`](games/done/midwinter/REPORT.md)
 
 Same method and tooling, applied to the older game: 11-15% fewer cycles per frame with all three screen buffers identical, and 63% fewer when standing still with the redraw skip on.
 
@@ -55,7 +55,7 @@ The agent "skills" in [`.omp/skills/`](.omp/skills/) capture the method, the emu
 | `games/done/powermonger/` | **Powermonger (v1.0): done.** Same layout; [`REPORT.md`](games/done/powermonger/REPORT.md). |
 | `games/in_progress/populous/`, `games/in_progress/populous-2/` | **Populous and Populous 2.** Same layout; `PLAN.md` and `work/notes/` (the shared Bullfrog-family study is `populous/work/notes/bullfrog_family.md`). |
 | `games/done/hunter/` | **Hunter (v1.1, Jaguar pad): done.** Same layout; [`REPORT.md`](games/done/hunter/REPORT.md). |
-| `games/in_progress/midwinter/` | **Midwinter (v1.1 released; back in progress for Jaguar pad support).** Same layout; [`REPORT.md`](games/in_progress/midwinter/REPORT.md). |
+| `games/done/midwinter/` | **Midwinter (v1.2, Jaguar pad): done.** Same layout; [`REPORT.md`](games/done/midwinter/REPORT.md). |
 | `games/done/` | Games declared finished. A game moves here (`git mv`) when it's declared ready, and back to `in_progress/` if new work is needed. |
 | `games/queue/` | **Upcoming games:** one folder per game with a README (source, file list, loader type) and early notes; the game files in `originals/` are git-ignored. The list is [`games/queue/README.md`](games/queue/README.md). |
 | `tos/` | Empty: put your TOS images here (see `tos/README.md`). |
@@ -66,7 +66,7 @@ The agent "skills" in [`.omp/skills/`](.omp/skills/) capture the method, the emu
 
 The patches are for **PP's HAGA hard-disk versions** (2014) of the Midwinter games, which you need to obtain yourself. Each game's `README.md` lists the expected files and their MD5 sums. Put them in the game folder (`games/in_progress/midwinter2/RUNME.TOS`, `HAGA`, `FILES/`, …). The patch tools verify every original byte they replace and refuse to build against anything else.
 
-The commands are identical in each game folder; `games/in_progress/midwinter` uses `mw1patch.py` where `games/in_progress/midwinter2` uses `mw2patch.py`. For Midwinter 2:
+The commands are identical in each game folder; `games/done/midwinter` uses `mw1patch.py` where `games/in_progress/midwinter2` uses `mw2patch.py`. For Midwinter 2:
 
 ```sh
 cd games/in_progress/midwinter2

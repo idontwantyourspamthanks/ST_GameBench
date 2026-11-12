@@ -16,10 +16,16 @@ Changes vs the original HAGA release:
 - The game's anti-tamper checksum on the 3D models is not run (it guarded
   data nothing changes, and cost up to 7% of a frame).
 - Floppy set: the manual security check is skipped, as in the HD release.
+- Atari Jaguar pad (new in v1.2; STE and Falcon enhanced joystick ports, either port), in joystick mode:
+  d-pad = stick, B = fire, A = >, C = Space, Option = X, Pause = P, 1 = M (map), 2 = S (sniper), 3 = H.
+  Each button is read every 80 ms. Machines without the ports (ST, Mega ST, Mega STE, TT) run as before.
+- 50/60 Hz (v1.1): at 60 Hz the world no longer runs 20% fast.
+- TT (v1.1): the floppy set runs on a TT; on a TT hard disk the game needs the PMMU (Hatari: --mmu true).
+- Floppy set (v1.1): the graphics disk may be put in drive B instead of swapping it into A.
 - Version line: the Game Options screen (the main menu with PLAY) shows a small, dim "v@VERSION@ enhanced by dad_prg" in its
   bottom-left corner, so this release can not be mistaken for the original. Nothing else on the screen changes.
 
 
 Requirements and usage are as in README.TXT (1 MB RAM minimum).
 Run RUNME.TOS from a hard disk / GEMDOS drive.
-Tested on Hatari: STE (TOS 1.62) at 1 MB, Mega STE (TOS 2.06) at 4 MB.
+Tested on Hatari: STE (TOS 1.62) at 1 MB, Mega STE (TOS 2.06) at 4 MB, TT (TOS 3.06) at 4 MB, Falcon (TOS 4.04, the pad).
