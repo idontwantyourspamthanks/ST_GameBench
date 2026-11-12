@@ -197,3 +197,39 @@ by `$3e48`: sites patched at `$bb7c + $3e48` ..., blobs and data not moved, keys
 * The Armageddon second press needs the same arm window at 50 and 60 Hz (150 VBLs = 3.0 / 2.5 s).
 * A QWERTZ / AZERTY keyboard's letters are physical positions.
 * Keys for the three dialog icons (Options, Game setup, Link) were not in the draft and are not added.
+
+## 10. Final real-key pass (cold boot, STE TOS 1.62 1 MB, HD build = default set + pop_keys..4 + pop_tooltip; `popuitest.py final`, `work/gates/ui_final_keys.txt`)
+
+Every key through IKBD / ACIA, orders logged at `$bbfa` (conditional breakpoint `($21e4a).b ! 0`; the earlier log parsing error was the unconditional per-pass breakpoint flooding the log, plus no retry on a lost `m` read; both fixed),
+then the same icon clicked by the debugger (as in the gate's reference) at `$bba6` with the position at `$bbc4`. A click repeats a state the key already set (mode, behaviour, spells' mana already spent), so its column is `{}` there;
+toggles (music, effects, pause) flip back. K was pressed first: the knight then gives N something to show (`view_knight` view (0,0) -> (10,18)); there is still no battle in this scene, so B shows nothing.
+Orders and effects, key vs click, are equal wherever both are visible: knight (14,0,5), to_magnet (14,0,1), settle (14,1,1), gather (14,2,1), fight (14,3,1), earthquake (3,12,6) both, volcano (6,12,6) both, flood (14,0,4), pause (14,0,6) both, Armageddon (14,0,3) both (two presses of A).
+```
+in play: True marker 0x504f504f
+key          REAL KEY: orders / change                                    CLICK: orders / change
+knight       [(14, 0, 5)]   {'mana': -7447}                               | [(14, 0, 5)]   {}
+view_knight  []             {'view': ((0, 0), (10, 18))}                  | []             {}
+view_battle  []             {}                                            | []             {}
+query        []             {'mode': (2, 1)}                              | []             {}
+raise        []             {'mode': (1, 2)}                              | []             {}
+magnet_mode  []             {'mode': (2, 6)}                              | []             {}
+to_magnet    [(14, 0, 1)]   {'beh': (1, 0)}                               | [(14, 0, 1)]   {}
+settle       [(14, 1, 1)]   {'beh': (0, 1)}                               | [(14, 1, 1)]   {}
+gather       [(14, 2, 1)]   {'beh': (1, 2)}                               | [(14, 2, 1)]   {}
+fight        [(14, 3, 1)]   {'beh': (2, 3)}                               | [(14, 3, 1)]   {}
+view_leader  []             {'view': ((10, 18), (7, 11))}                 | []             {'view': ((7, 11), (10, 11))}
+view_magnet  []             {'view': ((10, 11), (6, 10))}                 | []             {}
+view_house   []             {'view': ((6, 10), (6, 2))}                   | []             {'view': ((6, 2), (12, 6))}
+music        []             {'music': (1, 0)}                             | []             {'music': (0, 1)}
+music        []             {'music': (1, 0)}                             | []             {'music': (0, 1)}
+effects      []             {'fx': (1, 0)}                                | []             {'fx': (0, 1)}
+effects      []             {'fx': (1, 0)}                                | []             {'fx': (0, 1)}
+swamp        []             {'mode': (6, 10)}                             | []             {}
+earthquake   [(3, 12, 6)]   {'mana': -2481}                               | [(3, 12, 6)]   {'mana': -2477}
+volcano      [(6, 12, 6)]   {'mana': -9965}                               | [(6, 12, 6)]   {'mana': -9968}
+flood        [(14, 0, 4)]   {'mana': -39954}                              | [(14, 0, 4)]   {}
+pause        [(14, 0, 6)]   {'pause': (0, 1)}                             | [(14, 0, 6)]   {'pause': (1, 0)}
+pause        [(14, 0, 6)]   {'pause': (0, 1)}                             | [(14, 0, 6)]   {'pause': (1, 0)}
+armageddon   [(14, 0, 3)]   {}                                            | [(14, 0, 3)]   {}
+```
+Space pause / un-pause works (pause 0 -> 1 by key, 1 -> 0 by the click; again). Not shown here: a battle (B) and the swamp's mana (mode 10 reached; its cost is taken on placing).

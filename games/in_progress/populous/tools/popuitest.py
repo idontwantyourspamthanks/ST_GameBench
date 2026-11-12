@@ -939,6 +939,69 @@ def cmd_cost(a):
         sess.close()
 
 
+FINAL_SEQ = ["knight", "view_knight", "view_battle", "query", "raise", "magnet_mode", "to_magnet", "settle", "gather", "fight", "view_leader", "view_magnet",
+             "view_house", "music", "music", "effects", "effects", "swamp", "earthquake", "volcano", "flood", "pause", "pause", "armageddon"]
+
+
+def cmd_final(a):
+    """One clean real-key pass on a cold-booted HD build: every mapped key through IKBD/ACIA, orders logged at $bbfa for each, then the same icon
+    clicked (debugger-injected, as the gate's reference) for comparison."""
+    from populous import HOME, CONQUEST_XY, START_XY
+    from stharness import TOS
+    h = Populous(game_dir=GAME / a.path, snapshot=None, machine="ste", tos=TOS["1.62"], memsize_kb=1024)
+    for nm in ("peekw",):
+        orig = getattr(h, nm)
+        def robust(addr, _o=orig):
+            for _ in range(6):
+                try:
+                    return _o(addr)
+                except Exception:
+                    time.sleep(0.5)
+            raise RuntimeError(f"peek {addr:x} failed")
+        setattr(h, nm, robust)
+    try:
+        time.sleep(16); h.key("space", 0.5); time.sleep(28)
+        h.goto(*CONQUEST_XY, home_xy=HOME); h.click(hold=0.4); time.sleep(9)
+        for _ in range(4):
+            h.goto(*START_XY, home_xy=HOME); h.click(hold=0.4); time.sleep(12)
+            if h.in_play():
+                break
+        print("in play:", h.in_play(), "marker", hex(h.peekl(0xB3004)))
+        h.debug(wb(0x3B270, 99999, 4), 0.3)
+        f = h.R / "o.txt"; f.write_text("m $21e4a 3\n")
+        h.cmd(f"hatari-debug b pc = $bbfa && ($21e4a).b ! 0 :trace :file {f}")
+        time.sleep(0.5)
+
+        def orders(n0):
+            return [tuple(int(x, 16) for x in o) for o in re.findall(r"(?im)^0*21e4a: ([0-9a-f]{2}) ([0-9a-f]{2}) ([0-9a-f]{2})", h._logtext()[n0:]) if o[0] != "00"]
+
+        def snap():
+            r = rstate(h)
+            return {k: r[k] for k in ("mode", "beh", "view", "music", "fx", "pause", "mana")}
+
+        def delta(b, c):
+            return {k: (b[k], c[k]) for k in b if b[k] != c[k] and k != "mana"} | ({"mana": c["mana"] - b["mana"]} if abs(c["mana"] - b["mana"]) > 500 else {})
+        print(f"{'key':12s} {'REAL KEY: orders / change':60s} CLICK: orders / change")
+        scs = {n: ICONS[n] for n in ICONS}
+        for n in FINAL_SEQ:
+            sc, x, y, btn = ICONS[n]
+            nA = 2 if n == "armageddon" else 1
+            n0 = len(h._logtext()); b = snap()
+            for _ in range(nA):
+                h.keypress(sc); time.sleep(1.2)
+            time.sleep(1.5)
+            c = snap(); oa = orders(n0)
+            n1 = len(h._logtext())
+            g = h.R / "c.txt"; g.write_text("\n".join(click_cmds(x, y, btn)) + "\n")
+            g2 = h.R / "g.txt"; g2.write_text(wb(0x3C556, x) + "\n" + wb(0x3C55A, y) + "\n")
+            h.cmd(f"hatari-debug b pc = $bba6 :trace :once :file {g}"); h.cmd(f"hatari-debug b pc = $bbc4 :trace :once :file {g2}")
+            time.sleep(3.0)
+            d = snap(); ob = orders(n1)
+            print(f"{n:12s} {str(oa):14s} {str(delta(b, c)):45s} | {str(ob):14s} {delta(c, d)}", flush=True)
+    finally:
+        h.close()
+
+
 def main():
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -954,6 +1017,8 @@ def main():
     ky.add_argument("--only", nargs="*")
     ky.add_argument("--selftest", action="store_true")
     sub.add_parser("words")
+    fn = sub.add_parser("final")
+    fn.add_argument("--path", default="build/PopUI/hd_final")
     co = sub.add_parser("cost")
     co.add_argument("--snap", default="busy_castles")
     co.add_argument("--live", required=True)
@@ -999,6 +1064,8 @@ def main():
         return cmd_realkeys(a)
     if a.cmd == "ttrect":
         return cmd_ttrect(a)
+    if a.cmd == "final":
+        return cmd_final(a)
     if a.cmd == "cost":
         return cmd_cost(a)
     if a.cmd == "cold":
