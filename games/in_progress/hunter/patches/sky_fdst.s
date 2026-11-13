@@ -1,5 +1,5 @@
 ; name: sky_fdst
-; default: no
+; default: yes
 ; site: $6790
 ; orig: 43ee02402e2d0180
 ; requires: sky_vbl

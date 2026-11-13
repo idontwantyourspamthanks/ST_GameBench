@@ -326,9 +326,18 @@ def cmd_pix(a):
     import huntab
     huntab.WORK.mkdir(exist_ok=True)
     sets = {"sky": (PAL + SKY, 5), "panel": (PAL + SKY, 4), "pal": (PAL, None), "skyonly": (SKY, 1)}
+    if a.set == "full":                      # release gate: the whole default set (huntpatch default) against the same set without pal_/sky_
+        dflt = [l.split()[0] for l in subprocess.run([sys.executable, str(HERE / "huntpatch.py"), "list"], capture_output=True, text=True,
+                                                    cwd=GAME).stdout.splitlines()[2:] if len(l.split()) > 1 and l.split()[1] == "yes"]
+        dflt = [n for n in dflt if not n.startswith("tb_")]   # huntab's fixed-address page capture cannot follow triple buffering (hunttb_ab.py does)
+        sets["full"] = (dflt, None)
+        base_names = [n for n in dflt if n not in PAL + SKY + ["sky2_pnl"]]
+    else:
+        base_names = None
     names, cfg = sets[a.set]
-    live = mklive(names, "pix_" + a.set)
-    flips = [1, a.flip]
+    live = huntab.make_live(names) if a.set == "full" else mklive(names, "pix_" + a.set)
+    blive = huntab.make_live(base_names) if base_names is not None else None
+    flips = [2, a.flip] if a.set == "full" else [1, a.flip]
     allok = True
     for sn in a.snapshot:
         sp = huntab.snap_path(sn)
@@ -341,9 +350,9 @@ def cmd_pix(a):
             view = pi if a.views > 1 else None
             pk = huntab.pokes_for(view, True)
             sfx = "_L" + (f"_v{view}" if view is not None else "")
-            bd = huntab.WORK / "base0" / f"{sn}_{at}{sfx}_f{a.flip}"
+            bd = huntab.WORK / ("base0" if blive is None else "basefull") / f"{sn}_{at}{sfx}_f{a.flip}"
             pd = huntab.WORK / ("vis_" + a.set) / f"{sn}_{at}{sfx}"
-            b = huntab.one(sp, at, None, bd, flips, 100, False, True, pk)
+            b = huntab.one(sp, at, blive, bd, flips, 100, False, True, pk)
             p = huntab.one(sp, at, live, pd, flips, 100, False, False, pk + ([f"w ${CFG:x} ${cfg:02x}"] if cfg is not None else []))
             for n in flips:
                 for nm in huntab.BUFS:
@@ -359,7 +368,7 @@ def cmd_pix(a):
                     tot["pix"] += int(df.sum())
                     # the changed rows must be exactly the rows that had the dither: below them nothing else differs, and
                     # every changed pixel was one of the dither's colour-0 pixels
-                    if not good.all() or a.set != "sky" and a.set != "skyonly":
+                    if not good.all() or a.set not in ("sky", "skyonly", "full"):
                         ok = False
                         notes.append(f"view {pi} flip {n} {nm}: {int((~good).sum())} unexpected of {int(df.sum())} changed pixels, "
                                      f"rows {ys.min()}..{ys.max()}")

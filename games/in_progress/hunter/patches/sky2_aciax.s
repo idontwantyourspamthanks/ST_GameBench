@@ -1,5 +1,5 @@
 ; name: sky2_aciax
-; default: no
+; default: yes
 ; site: $b004
 ; orig: 4cdf1fff4e73
 ; requires: sky_vbl

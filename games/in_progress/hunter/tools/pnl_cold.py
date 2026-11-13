@@ -54,6 +54,24 @@ def report(h, tag, machine, sky_expected):
     time.sleep(1)
     v, pan = state(h)
     print(f"  after 10 s of walking: in_game={h.in_game()} pos={h.peek(0xAB2, 6).hex()} SKY_ST=${v['st']:02x} V_PAN={pan:#04x}; {pandata_ok(h)}", flush=True)
+    extras(h)
+
+
+def extras(h):
+    """Release gate: triple-buffering state and pages (as hunttb_cold) and the one-key items (as hunkeys cold)."""
+    from collections import Counter
+    import hunkeys as K
+    cnt = lambda b: int.from_bytes(b, "big")  # noqa: E731
+    names = {0x23000: "A", 0x2AD00: "B", 0x81000: "C"}
+    st = h.peek(0x8C1B2, 8)
+    seen = Counter()
+    for _ in range(60):
+        b = h.peek(0x94A, 8)
+        seen[(names.get(cnt(b[0:4]), hex(cnt(b[0:4]))), names.get(cnt(b[4:8]), hex(cnt(b[4:8]))))] += 1
+        time.sleep(0.05)
+    print(f"  TB state $8c1b2: {st.hex()} (mode {cnt(st[4:6])}: 1 = on, 2 = off); pages drawn {sorted({k[0] for k in seen})} shown {sorted({k[1] for k in seen})}", flush=True)
+    import numpy as np
+    K.pad_rows(K.T(h=h), [("h", "keyboard h (medical kit)", 14), ("g", "keyboard g (fuel can)", 15), ("KP_2", "keypad 2 (weapon 1)", 1)])
 
 
 def harden(h, _orig=hc.harden):

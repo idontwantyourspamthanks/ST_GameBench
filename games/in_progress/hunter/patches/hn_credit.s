@@ -1,6 +1,6 @@
 ; name: hn_credit
 ; default: yes
-; version: 1.1
+; version: 1.2
 ; site: $d61c
 ; orig: 4eb900010ea2
 ; note: Release credit (st-game-speedup skill): a small, dim version line `v<VERSION> enhanced by dad_prg` on the title screen.

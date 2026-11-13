@@ -1,6 +1,21 @@
 Hunter (Activision 1991) - patched build of PP's Gamex hard-disk version
 Release v@VERSION@ enhanced by dad_prg
 
+WHAT YOU GET ON YOUR MACHINE (v@VERSION@; 1 MB RAM is the minimum, 2 MB or more adds the Amiga dashboard)
+                         STE      Amiga sky  lit     Amiga   triple  DMA     Jaguar    keys +
+                         palette  + tint     panel   dash.   buffer  sound   pad       pause     HD save
+  ST / Mega ST, 1 MB     no       yes        yes     no      yes     no      no        yes       yes*
+  ST / Mega ST, 2 MB+    no       yes        yes     yes**   yes     no      no        yes       yes*
+  STE, 1 MB              yes      yes        yes     no      yes     yes     yes       yes       yes*
+  STE / Mega STE, 2 MB+  yes      yes        yes     yes     yes     yes     STE only  yes       yes*
+  TT                     yes      no         no      no      no      yes     no        yes       yes*
+  Falcon                 yes      no         no      no      no      yes     yes       yes       not tested
+  Sky bands, tint and lit panel need the line-by-line colour timing of a 68000 ST/STE; the TT and Falcon keep the
+  original dithered sky and their own palette (STE format). Triple buffering is for the 68000 machines only.
+  A plain ST keeps the original colours and the YM sound. Amiga dashboard = the Amiga's art and colours, 2 MB+ only.
+  * the save/load code is the same everywhere; the round trip was tested on the STE, Mega STE and TT (a Falcon cannot boot this HD image in the test setup).
+  ** by the same RAM and sky test as the STE; not run on a plain ST in the test setup.
+
 What changed against the original release:
 - Faster 3D view on a stock 8 MHz ST/STE, pixel-identical to the original:
   * the polygon filler was rewritten (rows outside the screen are skipped, edges are walked in blocks),
@@ -33,6 +48,16 @@ What changed against the original release:
   while the panel is up. It is only drawn into the 3D view's picture, so it works at 50 and 60 Hz, with the sky, and on the TT and Falcon.
 - Amiga dashboard (new in v1.2, patch sky2_pnl; ST, Mega ST, STE and Mega STE with 2 MB or more): the dashboard uses the Amiga version's
   colours and art. With less than 2 MB, and on the TT and Falcon, the dashboard is unchanged.
+- STE palette (new in v1.2, patches pal_fade, pal_load; STE, Mega STE, TT, Falcon): the game's colours are the Amiga's 12-bit
+  values; the STE can show all 4096 where the ST only shows 512, so by day the picture is half a colour step brighter and the
+  night and dusk fades are smoother. A plain ST keeps the original colours.
+- The Amiga's sky and sea (new in v1.2, patches sky_*; ST, Mega ST, STE, Mega STE): above the horizon the sky has the Amiga's six
+  colour bands, drawn exactly (every band changes colour on its own screen line), and the sea below it is a solid colour instead of
+  a dither. The horizon follows the camera height. At dawn and dusk the sky bands take warmer colours (this tint is new, not from the
+  Amiga). The dashboard is lit separately, so it keeps its day colours at night. Costs about 2% of the CPU. The TT and Falcon keep the
+  original dithered sky (their video timing is not safe for the bands; the STE palette still applies there).
+- Triple buffering (new in v1.2, patches tb_*; 68000 machines with 1 MB or more): the game draws into a third screen page, so it no
+  longer waits for the screen between frames: the 3D view is up to about 9% faster. On the TT and Falcon the original two pages are kept.
 - TT (new in v1.1): a TT booting from hard disk was taken for a Falcon by the sound code, which then used the Falcon's
   rate. It now plays at the STE rate, as on the floppy.
 - Save and Load work on the hard disk (new in v1.2). PP's build had them switched off: its file hook ignored the
@@ -59,6 +84,7 @@ How it is delivered:
 Requirements and usage are as in README.TXT (1 MB RAM minimum).
 Run START.TOS from a hard disk as before (PP's HDDRIVER / AHDI setup).  Saves go to FILES\SAVES.DIR and FILES\SLOT1..6.SAV
 in the game's folder; give the disk a few seconds after saving before switching off (HDDRIVER writes lazily).
-Tested on Hatari: STE (TOS 1.62) at 1 MB and 4 MB, Mega STE (TOS 2.06) at 4 MB, ST (TOS 1.04) at 1 MB, TT (TOS 3.06) at 4 MB;
-the Jaguar pad on the STE (HD and floppy) and the Falcon (TOS 4.04, floppy).
+Tested on Hatari (cold boots to the 3D view, sky/palette/dashboard/buffering as in the table, keys): HD build on STE (TOS 1.62) at 1 MB and
+2 MB, Mega STE (TOS 2.06) at 4 MB, ST (TOS 1.04) at 1 MB, TT (TOS 3.06) at 4 MB; save/load on the STE, Mega STE and TT; the Jaguar pad
+on the STE and the Falcon (TOS 4.04, floppy); 50 and 60 Hz.
 Not tested on real hardware.

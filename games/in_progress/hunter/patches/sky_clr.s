@@ -1,5 +1,5 @@
 ; name: sky_clr
-; default: no
+; default: yes
 ; site: $c8c2
 ; orig: 382d00385344
 ; requires: sky_vbl

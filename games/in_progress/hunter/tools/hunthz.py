@@ -112,7 +112,9 @@ def trace(snap: str, names: list[str] | None, hz: int, mhz: int, vbls: int, hold
             spec = json.loads(Path(live + ".json").read_text())
             cmds.append(f"loadbin {Path(live + '.img')} ${spec['img_base']:x}")
             for s in spec["sites"]:
-                cmds.append(f"w ${s['addr']:x} " + " ".join(f"${b:02x}" for b in bytes.fromhex(s["new"])))
+                raw = bytes.fromhex(s["new"])
+                for o in range(0, len(raw), 40):        # Hatari truncates debugger lines of ~240 characters silently
+                    cmds.append(f"w ${s['addr'] + o:x} " + " ".join(f"${b:02x}" for b in raw[o:o + 40]))
         if (hz == 60) if force60 is None else force60:
             cmds.append("w $ff820a $00")
         if lock:
@@ -207,7 +209,7 @@ def cmd_rate(a):
     names = a.set if a.set is not None else BASE_SET + ["hn_hz"]
     for hz in a.hz:
         for mhz in a.mhz:
-            t = trace(a.snapshot, names, hz, mhz, int(a.secs * hz) if a.secs else a.vbls, a.hold, "rate_" + "_".join(names), pokes=a.pokes)
+            t = trace(a.snapshot, names, hz, mhz, int(a.secs * hz) if a.secs else a.vbls, a.hold, "rate_" + str(abs(hash("_".join(names))) % 10**8), pokes=a.pokes)
             rows = t["rows"]
             if len(rows) < 3:
                 print(f"{a.snapshot} {hz} Hz {mhz} MHz: only {len(rows)} loop tops")

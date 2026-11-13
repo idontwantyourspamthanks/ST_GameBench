@@ -1,5 +1,5 @@
 ; name: sky_vblx
-; default: no
+; default: yes
 ; site: $c61c
 ; orig: 08ad0007008f
 ; requires: sky_vbl

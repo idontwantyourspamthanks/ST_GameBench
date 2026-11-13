@@ -280,7 +280,7 @@ def cmd_cold(a):
     from stharness import MACHINE_TOS, TOS
     if a.floppy:
         from huntfloppy import HunterFloppy
-        h = HunterFloppy(GAME / a.game, None, drives=1, machine=a.machine, tos=TOS[a.tos or {"ste": "1.62", "st": "1.04", "tt": "3.06"}[a.machine]],
+        h = HunterFloppy(GAME / a.game, None, drives=1, machine=a.machine, tos=TOS[a.tos or {"ste": "1.62", "st": "1.04", "tt": "3.06", "falcon": "4.04"}[a.machine]],
                          memsize_kb=a.mem, extra=J.pad_extra("a", False, mmu=a.machine == "tt"), fastfdc="no")
         stage = h._stage
         h._stage = lambda s, record, wait, timeout=120: stage(s, record, wait, max(timeout, 400))

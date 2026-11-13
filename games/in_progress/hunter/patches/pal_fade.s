@@ -1,5 +1,5 @@
 ; name: pal_fade
-; default: no
+; default: yes
 ; site: $67fc
 ; orig: 3002e75a024207774e75
 ; requires: pal_load

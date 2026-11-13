@@ -1,5 +1,5 @@
 ; name: sky_fill
-; default: no
+; default: yes
 ; site: $c84a
 ; orig: 286d0144d9ed01a2
 ; requires: sky_vbl

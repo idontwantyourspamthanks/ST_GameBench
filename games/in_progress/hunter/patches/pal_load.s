@@ -1,5 +1,5 @@
 ; name: pal_load
-; default: no
+; default: yes
 ; site: $6200
 ; orig: 3218e24902410777
 ; requires: pal_fade

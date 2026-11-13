@@ -1,5 +1,5 @@
 ; name: sky_ldst
-; default: no
+; default: yes
 ; site: $61fa
 ; orig: 43ee0240700f
 ; requires: sky_vbl
