@@ -1,5 +1,5 @@
 ; name: tb_vbl
-; default: no
+; default: yes
 ; site: $c600
 ; orig: 4a6d00ea6f04
 ; requires: tb_flip tb_frame

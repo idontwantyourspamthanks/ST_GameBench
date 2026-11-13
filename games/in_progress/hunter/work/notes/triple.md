@@ -170,21 +170,126 @@ and again after the disk menus were opened and a save attempted:
 ```
 The floppy loader's cache starts at `$AF000` and its stage-1 scratch is at `$B8400`, so the page is outside everything the loader
 touches; the game's save reads its state from the arena and writes to disk, the load reads a file into `$23000` via the `$150` hook,
-so neither reaches `$81000` [disasm of `$150` and the save path, notes `loading.md` section 2]. A *completed* save/load round trip
-on the floppy was not driven to the end (the menu clicks went back to the 3D view); the disk image md5 was unchanged, so no save
-was actually written in that attempt.
+so neither reaches `$81000` [disasm of `$150` and the save path, notes `loading.md` section 2]. The completed floppy save/load round trip is in section 5.5 (the earlier attempt only looked unsaved: Hatari writes the image back on eject).
 
-## 5. Not done (state at the end of this session)
+## 5. Open items closed (HunterTB2)
 
-* fps measured on foot_walk (7.92 -> 8.67 fps) and the cold-boot standing cell (5.0 -> 5.2); the other five scenes
-  were not timed.
-* **World rate not measured**: `world_rate($ab2)` returned 0.0 units/s in both runs on foot_walk (the probe did not
-  see the player move), so that check is void. The design does not touch `$1aa`/`$1ac`/`$1a7`, the latch or hn_hz's
-  world gate, so the world speed should be unchanged [INFERENCE] - it needs a working measurement.
-* Cold boots with tb_* on ST, Mega STE, TT (`--mmu true`) and Falcon floppy: only the HD STE 1 MB cold boot and the
-  floppy STE 1 MB cell were run.
-* The floppy save/load round trip (see 4.5) and the plain-ST floppy cell (the blind harness missed the menus).
-* `huntpatch.py build`/`build --floppy` with *every* v1.2 prefix at once (key_+sav_+pal_+sky_+sky2_+tb_+p4_+snd_+jag_+hn_):
-  the build with the default set + tb_* is OK for both.
-* `huntpatch.py build`/`build --floppy` with every v1.2 prefix at once (the individual build with
-  p4_*/snd_core/hn_*/jag_* + tb_* is OK: "built ... 11 patch(es)", payload `$8ba00..$ae4dd`).
+Tools (all in `tools/`): `hunttb_rate.py` (world rate and fps; reuses `hunthz.trace` but applies the live set at the 3D loop top `$253e`,
+because the tb flip never executes `$5fee`), `hunttb_cold.py` (cold boots, state word, page-pointer sampling), `hunttb_save.py` (floppy save/load).
+Builds: `build/tb2_hd`, `build/tb2_fl` = `hn_credit hn_hz jag_pad jag_stick p4_edge p4_ikbd p4_poly snd_core tb_flip tb_frame tb_vbl` (+ sample bank);
+`build/tb2_flc` = the same without tb_* (control). All numbers below are from the tb_flip with the `tbi` a0 fix of 5.1.
+
+### 5.1 A bug found by the cold boots, fixed: `tbi` clobbered a0
+First Falcon floppy cold boot with tb_* in the build never reached the 3D view: the CPU sat in `$5f7e` (profile top: `0x5f7e 292644 cycles`, `0x5f82 13996`),
+`$cc(a5)` stayed `$0f9e` over three samples a second apart while `$1a8(a5)` advanced (`1531, 1608, 16df`). `$5f7e` is the scripted-mode tick wait:
+```
+005f6a:  207a1ff0   movea.l  $7f5c(pc), a0
+005f6e:  d0ed00cc   adda.w   $cc(a5), a0
+005f78:  61000058   bsr.w    $5fd2          ; the flip, a0 is live across it
+005f7c:  3010       move.w   (a0), d0
+005f7e:  b06d01a8   cmp.w    $1a8(a5), d0
+005f82:  6efa       bgt.b    $5f7e
+```
+The first call of `tbf` runs the one-shot CPU probe `tbi`, which used `a0` (`lea .trap(pc),a0`) as scratch; the original flip only touches d0/d1. When the first flip
+is the one at `$5f78` (the mission page is a scripted-mode scene), `(a0)` is read from garbage. [INFERENCE] for the cause: the control disk without tb_* reached
+the 3D view on the same machine and the same navigation; after saving a0 in `tbi` (`tb_flip.s`, `move.l a0,-(a7)` ... `movea.l (a7)+,a0`) the Falcon cell ran through the mission
+page (`$cc(a5)` then moved: `0efe, 0f86, 0f5c`). The ST 1.04 / Mega STE HD cold boots before the fix passed because their first flip was not at `$5f78`.
+
+### 5.2 World rate, tb on vs the v1.1 set (item 1)
+`python3 tools/hunttb_rate.py world`: snapshot foot_walk, Up held (the `$d1` poke of hunthz), live set applied at `$253e`, window 1..9 s after the first loop top, counted in
+VBLs (fast-forward). `base` = `p4_ikbd p4_edge p4_poly snd_core hn_hz` (jag_* left out: `jag_stick`'s site `$c64c` is hunthz's stick-poke breakpoint), `tb` = base + `tb_flip tb_frame tb_vbl`.
+```
+set  hz MHz | u/s     | hn_hz ticks/s | clock ticks/s | frames/s | cycles/VBL
+base 50   8 |  100.98 |          50.0 |          50.0 |    6.684 | 160143
+base 50  16 |  100.51 |          50.0 |          50.0 |    14.16 | 320833
+base 60   8 |  100.93 |        50.021 |        50.021 |    6.624 | 133621
+base 60  16 |  100.49 |        49.959 |        49.959 |   13.459 | 267317
+tb   50   8 |  100.94 |          50.0 |          50.0 |    7.215 | 160293
+tb   50  16 |  100.42 |          50.0 |          50.0 |    15.578 | 320656
+tb   60   8 |  101.03 |        50.018 |        50.018 |    7.066 | 133724
+tb   60  16 |  100.41 |        49.998 |        49.998 |   15.472 | 267245
+```
+World rate (units/s, hn_hz ticks/s, game clock ticks/s) is the same with tb on and off at 8 and 16 MHz, 50 and 60 Hz (within 0.1 u/s = 0.1 %; the 16 MHz rows differ from the 8 MHz
+rows by 0.5 % in both sets, the known per-frame truncation of timing.md gate b); frames/s rise +7.9 % / +10.0 % (8 / 16 MHz, 50 Hz) and +6.7 % / +15 % (60 Hz).
+The first run of this table (before the 5.1 fix) printed the same tb rows to the last digit except `tb 60 16` (49.998 vs 50.002 ticks/s, 15.411 vs 15.472 fps).
+
+### 5.3 fps on the 7 scenes, 8 MHz, 50 Hz (item 2)
+`python3 tools/hunttb_rate.py fps --mhz 8`, 12 s per run (window 1..11 s), hold: none for the stand scenes, Up for foot_walk/car_drive, Up+Left for car_turn.
+```
+scene            MHz | base fps | tb fps | gain
+foot_stand         8 |    4.451 |  4.684 | +5.2 %   (VBL/frame 11.23 -> 10.67)
+foot_walk          8 |    6.998 |  7.475 | +6.8 %   (VBL/frame 7.14 -> 6.69)
+car_stand          8 |    5.556 |  5.882 | +5.9 %   (VBL/frame 9.00 -> 8.50)
+car_drive          8 |    7.143 |  7.449 | +4.3 %   (VBL/frame 7.00 -> 6.71)
+car_turn           8 |    6.442 |  6.883 | +6.8 %   (VBL/frame 7.76 -> 7.26)
+hills_stand        8 |    7.07  |  7.576 | +7.2 %   (VBL/frame 7.07 -> 6.60)
+4mb_foot_stand     8 |    4.723 |  4.99  | +5.7 %   (VBL/frame 10.59 -> 10.02)
+```
+(+4.3 .. +7.2 %: the VBL wait removed from each frame; frames are whole VBLs, so the gain is quantised.)
+
+The picture gate of 4.3 was re-run after the fix (`hunttb_ab.py ... --flips 1 2 3 4 --points 1`, 7 snapshots): every one `IDENTICAL (4 frames x 1 points)`, `ALL IDENTICAL`;
+patched pages A,C,B,A / B,C,A,B against base A,B,A,B / B,A,B,A (page C is used in every scene).
+
+### 5.4 Cold boots with tb_* in the build (item 3)
+`python3 tools/hunttb_cold.py hd|floppy --machine ...`: harness navigation to the 3D view, then the state block, the three sites and 60 samples of `$144/$148(a5)` (`$94a/$94e`).
+Mode word = last word of the 6 bytes after `$8c1b2` (VBL, last flip, mode): 1 = on, 2 = off.
+```
+ST 1.04 1 MB HD (blind boot):  BOOT hd machine=st in_game=True MARKER=b'HNPO' FLAGS=00000006
+  tb state $8c1b2: 0838083600010000  (VBL 2104, last flip 2102, mode 1)
+  sites: $5fd2=4ef90008c1c2 $5fc2=4eb90008c2c0 $c600=4eb90008c2f0
+  (draw $144, shown $148) samples: {('C', 'B'): 21, ('B', 'A'): 21, ('A', 'C'): 18}    fps 5.0, 10.0 VBL/frame
+Mega STE 2.06 4 MB HD:        BOOT hd machine=megaste in_game=True MARKER=b'HNPO' FLAGS=00000003
+  tb state $8c1b2: 05ad05a800010000  (VBL 1453, last flip 1448, mode 1)
+  samples: {('B', 'A'): 23, ('A', 'C'): 18, ('C', 'B'): 19}                              fps 8.6, 5.81 VBL/frame
+STE 1.62 1 MB floppy (hunttb_save.py): marker HNPO, in game True, tb state ...0001, pages {('C','B'): 21, ('B','A'): 18, ('A','C'): 21}
+TT 3.06 4 MB, --mmu true --monitor vga --cpuclock 32, HD:  BOOT hd machine=tt in_game=True MARKER=b'HNPO' FLAGS=00000003
+  tb state $8c1b2: 04aa000000020000  (VBL 1194, last flip 0, mode 2)      <- mode 2 = off; "last flip" stays 0 (the rotation never runs)
+  sites: $5fd2=4ef90008c1c2 $5fc2=4eb90008c2c0 $c600=4eb90008c2f0          <- patched, going to the original-flip path
+  samples: {('A', 'B'): 33, ('B', 'A'): 27}   pages drawn into: A, B only; VBL counter advancing (0x04aa -> 0x0c86); fps 50.0, 1.0 VBL/frame
+TT 3.06 4 MB, same flags, floppy: in_game=True MARKER=b'HNPO' FLAGS=00000003, tb state 1cdd000000020000 (mode 2), samples {('A','B'): 28, ('B','A'): 32}, fps 7.6
+Falcon 4.04 4 MB, --cpuclock 16, floppy: in_game=True MARKER=b'HNPO' FLAGS=0000000b, tb state 1fbe000000020000 (mode 2), samples {('A','B'): 33, ('B','A'): 27}, fps 6.6
+  (the 3D view needed one extra click on the mission page: the blind navigation's last click is sometimes lost on the Falcon; see 5.1 for the earlier failure)
+```
+On TT and Falcon tb is off (mode 2): the pages are only A and B, i.e. the original bchg/exg flip, and `tb_frame` takes `jmp $aaa2` (the original wait). The VBL counter still runs
+(`tb_vbl` in every mode). The TT/Falcon fps rows are the harness's own count on a different CPU/clock (not compared with tb off: nothing differs there).
+Not run: plain ST floppy, TT/Falcon with 1-2 MB, real hardware.
+
+### 5.5 Floppy save/load round trip with tb on (item 4)
+Why earlier attempts "failed": (a) `huntsave.py floppy` copies the scratch disk image *before* closing Hatari, and Hatari writes a modified `.st` back only when the image is ejected or
+Hatari exits, so it saw an unchanged image (md5 identical before/after) although the game had saved; (b) its `fsck.fat -n` returns 1 on this disk even unsaved (`Volume label 'HUNTER' stored in
+root directory and label '' stored in boot sector and different`), so its FLOPPY line says FAIL. `tools/hunttb_save.py` inserts another image in drive A and then the scratch image again (this makes Hatari write it back) and compares
+file contents. The menu navigation is `huntsave.Menus` (ESC -> row 3 Disk Operation -> row 2 Save / row 1 Load, name, Return; load ends on the mission page, one click into the world).
+```
+original disk md5 949746b37f1cbddb0d5af5507e138fb7
+marker b'HNPO' in game True | tb state 0b010aff0001 (mode word = last 2 bytes: 0001 = on)
+pages before the save: {('C', 'B'): 21, ('B', 'A'): 18, ('A', 'C'): 21}
+saved at (40526, 10133) | tb state 18fd18f70001 | pages after the save: {('B', 'A'): 23, ('A', 'C'): 19, ('C', 'B'): 18}
+disk md5 after the eject 5d324068d51c4677be2670b856dbb9f0  (changed: True); files whose content changed: ['00', '0F', '11']
+player at the save (40526, 10133) | moved to (40311, 10341) | after the load (40526, 10133)
+  RAM save-time vs RAM after-load $08efe+175 / $08246+32 / $0cde8+374 / $08ce8+192 / $09ab4+960 / $08266+16 / $55514+49152   all equal
+after the load: in_game True | tb state 29fb29f60001 | pages: {('A', 'C'): 19, ('B', 'A'): 17, ('C', 'B'): 24} | pos (40526, 10437)
+TBSAVE PASS
+```
+Slot 2 wrote the directory file `0F`, the slot file `11` and `00` (the loader's file; the same three the v1.1 floppy changes, floppy.md); the page rotation is unchanged by saving and loading.
+
+### 5.6 `--lock` / the frame limiter `$1a7` (item 5)
+`--lock` (`huntab.py`, `hunthz.py`) is a test-harness poke `w $9ad $0e` (`$1a7(a5)` = 15 VBL minimum frame time); it is not a game setting [disasm]:
+```
+00aaa2:  4a2d01a6     tst.b    $1a6(a5)
+00aaa8:  1b6d01a701a6 move.b   $1a7(a5), $1a6(a5)
+00c60a:  4a2d01a6     tst.b    $1a6(a5)
+00c610:  532d01a6     subq.b   #$1, $1a6(a5)
+```
+These are the only four references to `$1a6/$1a7(a5)` in `$800..$12003` (grep of `m68dis.py` output for `$1a7`, `$9ad`, `$9ac`, `$1a6`); nothing ever writes `$1a7`, so
+nothing in the code sets it. Observed: `$9ad` is `00` in every RAM dump (`ram_game/hw/main/mission/title2`, `ram_foot_stand`, `ram_foot_walk`, `ram_demo_sound`). The in-game ESC menu has
+exactly five rows (screenshot): `GAME OPTIONS` (title), `Resume Game`, `Re-brief`, `Disk Operation`, `Quit Game` - no speed/frame setting; the manual (`HUNTER.TXT`) has none. A debugger change-watch
+`b ($9ad).b ! ($9ad).b :trace` on the foot_stand snapshot saw **0 changes** over 4 s of walking, ESC menu, Disk Operation menu and Resume (control: the same kind of watch on `$9af`, the tick counter, hit at once).
+So the limiter is permanently 0: `$aaa2` then only waits for the next VBL, which is the "at most one flip per VBL" rule `tbf` already enforces. tb_ does not need to honour `$1a7`;
+it only matters for `--lock`-style test runs (use `test_tblock` for tb A/B gates, as 4.1 does). [INFERENCE] limits: a hacked game or a debugger poke can set `$1a7`; with tb on it would then be ignored
+(frames at most one per VBL instead of N). Nothing player-facing does that. (The old note "the reload word is 11 in the cold-boot dump" in baseline.md/frameloop.md is not what the dumps show: `$9ad` = 0.)
+
+### 5.7 Verdict
+Ready for `default: yes` on the evidence above: world rate unchanged (5.2), +4..7 % fps on all seven scenes at 8 MHz (5.3), identical pictures (5.3), ST/Mega STE on (mode 1), TT/Falcon off with the original flip (5.4),
+floppy save/load round trip works (5.5), the limiter is not a player setting (5.6). Nothing was flipped: the `; default: no` lines of `tb_flip.s`, `tb_frame.s`, `tb_vbl.s` and the prefix/README tables are the lead's to change (all three must change together: they `; requires:` each other).
+Residual risk [INFERENCE]: no real hardware (the `$ff8203/$ff8201` mid-frame write behaviour on a real 68000 shifter is the 68000 behaviour the original flip already relies on), no plain-ST floppy, and the 5.1 class of bug
+(a flip caller that keeps a register the original flip never touches): `tbf`/`tbi` now save d2, d3, a0, a2 and clobber only d0/d1 like the original; callers of `$5fd2` are only `$5f78` and `$5fc2` (`m68dis.py --callers 5fd2`).

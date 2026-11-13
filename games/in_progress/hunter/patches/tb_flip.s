@@ -1,5 +1,5 @@
 ; name: tb_flip
-; default: no
+; default: yes
 ; site: $5fd2
 ; orig: 203a1f98223a
 ; requires: tb_frame tb_vbl
@@ -95,8 +95,12 @@ tbm:    cmpi.l  #A,d0
         cmpi.l  #C,d0
 .r:     rts
 ; one-shot CPU probe: 68000 -> TBON = 1, 68020+ -> TBON = 2.  The exception handler resets a7 from a2 (any frame
-; size), exactly as core.s `cflush` does.  d0-a0/a2 scratch (the caller restores d2/d3; a2 is saved here).
-tbi:    move.l  a2,-(a7)
+; size), exactly as core.s `cflush` does.  d0/d1 scratch (the original flip clobbers exactly those); a0 and a2 are
+; saved here: the scripted-mode loop at $5f6a has a0 = its schedule pointer live across `bsr $5fd2` (`$5f78`), and the
+; first flip - hence the probe - can be that one (observed on a Falcon floppy cold boot: a0 lost, the tick wait at $5f7e
+; never ended).
+tbi:    move.l  a0,-(a7)
+        move.l  a2,-(a7)
         move.l  $10.w,-(a7)
         movea.l a7,a2
         lea     .trap(pc),a0
@@ -108,5 +112,6 @@ tbi:    move.l  a2,-(a7)
         moveq   #1,d0
 .done:  move.l  (a7)+,$10.w
         movea.l (a7)+,a2
+        movea.l (a7)+,a0
         move.w  d0,TBON.l
         rts
