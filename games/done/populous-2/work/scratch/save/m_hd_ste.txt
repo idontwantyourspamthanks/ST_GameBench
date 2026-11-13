@@ -1,0 +1,17 @@
+CELL m_hd_ste: {'media': 'hd', 'machine': 'ste', 'tos': 'default', 'mem': 2048} boot 105s in_play=True marker='P2PO' turn=171 $2cc5a=0x80300 $2cbe6=0x80300 $2cb10=0x80300
+SAVE T1: dump=False back_in_play=True turn_in_dump=None md5(dump)=d41d8cd98f00b204e9800998ecf8427e
+  T1.GAM on disk: 56690 B, equals RAM at write: False
+SAVE T2: dump=True back_in_play=True turn_in_dump=716 md5=b63a2d7a2c10c5561f2d2dbc1b99a374
+  T2.GAM on disk: 56690 B, equals RAM at write: True
+SAVE T1 again (overwrite): dump=True back_in_play=True turn_in_dump=806 md5=58b0512811e59760244c34a5032e27b4
+  T1.GAM on disk: 56690 B, equals the NEW RAM: True, differs from the first save: True
+DIRECTORY shot m_hd_ste_dir.png
+  cancel -> running True
+LOAD T2: dump=True RAM after read == RAM at T2 save: True; turn in RAM 716; turn now 737 running=True
+LOAD T1: dump=True RAM after read == RAM at the 2nd T1 save: True; turn now 827 running=True
+LOAD NOPE (missing): bp hit=True; RAM after the failed read == RAM before the call: True; shot m_hd_ste_missing.png (the game's DISK FILE ERROR box)
+after missing-file error: game running=False turn=900 in_play=False
+kept ['A2.bin', 'A3.bin', 'T1.GAM', 'T2.GAM']
+LOG bus/address-error/halt lines: 1
+   WARN : Bus Error reading at address $ffff8e21, PC=$1b992 addr_e3=1b992 op_e3=1238
+RESULT m_hd_ste: CHECK

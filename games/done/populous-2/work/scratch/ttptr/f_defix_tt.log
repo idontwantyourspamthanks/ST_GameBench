@@ -1,0 +1,25 @@
+boot_to_menu True 25s
+STAGE f_defix_tt_1menu: still 12/12 moving 12/12  scores still [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] moving [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+STAGE f_defix_tt_2deity: still 6/6 moving 6/6  scores still [1.0, 1.0, 1.0, 1.0, 1.0, 1.0] moving [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+STAGE f_defix_tt_3menu2: still 4/4 moving 4/4  scores still [1.0, 1.0, 1.0, 1.0] moving [1.0, 1.0, 1.0, 1.0]
+STAGE f_defix_tt_4sheet: still 12/12 moving 12/12  scores still [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] moving [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+STAGE f_defix_tt_5manualq: still 6/6 moving 6/6  scores still [1.0, 1.0, 1.0, 1.0, 1.0, 1.0] moving [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+in_play True
+Traceback (most recent call last):
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/ttptr/flow.py", line 34, in <module>
+    st("6map",(160,90),still=12,moving=12)
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/ttptr/flow.py", line 9, in st
+    def st(name,P,**k): return stage(h,f"{tag}_{name}",P,off=OFF,**k)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/ttptr/lib.py", line 129, in stage
+    sc=ptr_score(h,f,off); res.append(("m",q,sc))
+       ^^^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/ttptr/lib.py", line 92, in ptr_score
+    return ptr_score_at(png,(x,y,shp),px,off,mul)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/ttptr/lib.py", line 103, in ptr_score_at
+    im=openimg(png)
+       ^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/ttptr/lib.py", line 100, in openimg
+    raise RuntimeError("bad png "+str(png))
+RuntimeError: bad png /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/ttptr/f_defix_tt_6map_m09.png

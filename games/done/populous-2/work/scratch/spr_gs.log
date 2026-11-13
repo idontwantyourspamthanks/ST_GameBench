@@ -1,0 +1,7 @@
+base set    : test_walk test_walk2 test_walk3
+patched set : test_walk test_walk2 test_walk3 pop2_spr
+game_start @8 MHz (base @8): DIFFER | turns compared: back 128, shown+pointer 128, world 128 (skipped 2); flips captured 130/130; patched min VBL/pass 4 | work/pass 662649 -> 654015 (-1.30 %) | fps 10.626 -> 10.644 (+0.2 %), turns/s 10.626 -> 10.644
+      SHOWN DIFFER turn 451 (pointer 20,20 / 20,20): 109 B differ, first at offset 3208 (row 20), rows 20-35
+      SHOWN DIFFER turn 515 (pointer 20,20 / 20,20): 109 B differ, first at offset 3208 (row 20), rows 20-35
+MISMATCH
+EXIT 1

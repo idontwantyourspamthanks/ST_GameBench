@@ -1,0 +1,689 @@
+INFO : Hatari v2.6.1, compiled on:  Feb  8 2026, 19:50:12
+INFO : Mounting ACSI HD image '/tmp/strun-crmxydwt/hd.img'
+INFO : GEMDOS HDD emulation, D: <-> /tmp/strun-crmxydwt/C.
+WARN : Bus Error reading at address $fff00039, PC=$d51c addr_e3=d51c op_e3=4a13
+WARN : Bus Error reading at address $fff00079, PC=$d51c addr_e3=d51c op_e3=4a13
+WARN : Bus Error reading at address $fff000b9, PC=$d51c addr_e3=d51c op_e3=4a13
+WARN : Bus Error reading at address $fff000f9, PC=$d51c addr_e3=d51c op_e3=4a13
+WARN : Bus Error reading at address $ffff8781, PC=$bbc2 addr_e3=bbc2 op_e3=1038
+WARN : Bus Error reading at address $ffff8e21, PC=$27632 addr_e3=27632 op_e3=1238
+> m $70 2
+00000070: 00 01                                            ..
+> m $72 2
+00000072: ba 30                                            ´0
+> m $70 2
+00000070: 00 04                                            ..
+> m $72 2
+00000072: 26 7e                                            &~
+> m $70 2
+00000070: 00 04                                            ..
+> m $72 2
+00000072: 26 7e                                            &~
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $3979c 2
+0003979C: 00 92                                            .Æ
+> m $3979c 2
+0003979C: 00 9f                                            .ƒ
+> m $7fff8 2
+0007FFF8: 50 32                                            P2
+> m $7fffa 2
+0007FFFA: 50 4f                                            PO
+> m $3979c 2
+0003979C: 00 aa                                            .¬
+> m $3979c 2
+0003979C: 00 db                                            .ף
+> m $3979c 2
+0003979C: 00 db                                            .ף
+> m $3979c 2
+0003979C: 00 e0                                            .α
+> m $3979c 2
+0003979C: 00 eb                                            .δ
+> m $3979c 2
+0003979C: 00 ef                                            .∩
+> m $3979c 2
+0003979C: 01 07                                            ..
+> m $3979c 2
+0003979C: 01 07                                            ..
+> m $3979c 2
+0003979C: 01 0c                                            ..
+> m $3979c 2
+0003979C: 01 17                                            ..
+> m $3979c 2
+0003979C: 01 1b                                            ..
+> m $3979c 2
+0003979C: 01 32                                            .2
+> m $3979c 2
+0003979C: 01 32                                            .2
+> m $3979c 2
+0003979C: 01 37                                            .7
+> m $3979c 2
+0003979C: 01 42                                            .B
+> m $3979c 2
+0003979C: 01 46                                            .F
+> b pc = $2cc5e  :trace :once :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L3.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $2cc5e
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L3.txt' file on hit.
+> m $3979c 2
+0003979C: 01 61                                            .a
+> m $3979c 2
+0003979C: 01 61                                            .a
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L3.txt
+Reading debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L3.txt'...
+Changed to input file dir '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/out_loop_reset/L3.bin $39630 56690
+  Wrote 0xdd72 bytes.
+> r
+  D0 00000000   D1 0000DD72   D2 0000000F   D3 FFFFFF80 
+  D4 00000000   D5 00000000   D6 0000FFFF   D7 00015BB4 
+  A0 00015BB4   A1 00039630   A2 0000A000   A3 00036C82 
+  A4 0001C5FF   A5 000473C4   A6 0001C335   A7 00012202 
+USP  00167576 ISP  00012202 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4a80 (TST) 6702 (Bcc) Chip latch 00000000
+0002cc5e 4a80                     tst.l d0
+Next PC: 0002cc60
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save' dir.
+Removed CPU breakpoint 1:
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L3.txt
+> m $3979c 2
+0003979C: 01 35                                            .5
+> m $3979c 2
+0003979C: 01 40                                            .@
+> m $3979c 2
+0003979C: 01 44                                            .D
+> m $3979c 2
+0003979C: 01 5b                                            .[
+> m $3979c 2
+0003979C: 01 5b                                            .[
+> m $3979c 2
+0003979C: 01 60                                            .`
+> m $3979c 2
+0003979C: 01 6b                                            .k
+> m $3979c 2
+0003979C: 01 6e                                            .n
+> b pc = $2cc5e  :trace :once :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L5.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $2cc5e
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L5.txt' file on hit.
+> m $3979c 2
+0003979C: 01 8a                                            .è
+> m $3979c 2
+0003979C: 01 8a                                            .è
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L5.txt
+Reading debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L5.txt'...
+Changed to input file dir '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/out_loop_reset/L5.bin $39630 56690
+  Wrote 0xdd72 bytes.
+> r
+  D0 00000000   D1 0000DD72   D2 0000000F   D3 FFFFFF80 
+  D4 00000000   D5 00000000   D6 0000FFFF   D7 00015BB4 
+  A0 00015BB4   A1 00039630   A2 0000A000   A3 00036C82 
+  A4 0001C5FF   A5 000473C4   A6 0001C335   A7 00012202 
+USP  00167576 ISP  00012202 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4a80 (TST) 6702 (Bcc) Chip latch 00000000
+0002cc5e 4a80                     tst.l d0
+Next PC: 0002cc60
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save' dir.
+Removed CPU breakpoint 1:
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L5.txt
+> m $3979c 2
+0003979C: 01 5e                                            .^
+> m $3979c 2
+0003979C: 01 69                                            .i
+> m $3979c 2
+0003979C: 01 6d                                            .m
+> m $3979c 2
+0003979C: 01 84                                            .ä
+> m $3979c 2
+0003979C: 01 84                                            .ä
+> m $3979c 2
+0003979C: 01 89                                            .ë
+> m $3979c 2
+0003979C: 01 94                                            .ö
+> m $3979c 2
+0003979C: 01 98                                            .ÿ
+> b pc = $2cc5e  :trace :once :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L7.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $2cc5e
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L7.txt' file on hit.
+> m $3979c 2
+0003979C: 01 b3                                            .ø
+> m $3979c 2
+0003979C: 01 b3                                            .ø
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L7.txt
+Reading debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L7.txt'...
+Changed to input file dir '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/out_loop_reset/L7.bin $39630 56690
+  Wrote 0xdd72 bytes.
+> r
+  D0 00000000   D1 0000DD72   D2 0000000F   D3 FFFFFF80 
+  D4 00000000   D5 00000000   D6 0000FFFF   D7 00015BB4 
+  A0 00015BB4   A1 00039630   A2 00002300   A3 00036C82 
+  A4 0001C5FF   A5 000473C4   A6 0001C335   A7 00012202 
+USP  00167576 ISP  00012202 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4a80 (TST) 6702 (Bcc) Chip latch 00000000
+0002cc5e 4a80                     tst.l d0
+Next PC: 0002cc60
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save' dir.
+Removed CPU breakpoint 1:
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L7.txt
+> m $3979c 2
+0003979C: 01 87                                            .ç
+> m $3979c 2
+0003979C: 01 92                                            .Æ
+> m $3979c 2
+0003979C: 01 96                                            .û
+> m $3979c 2
+0003979C: 01 ad                                            .¡
+> m $3979c 2
+0003979C: 01 ad                                            .¡
+> m $3979c 2
+0003979C: 01 b2                                            .Ø
+> m $3979c 2
+0003979C: 01 bd                                            .©
+> m $3979c 2
+0003979C: 01 c0                                            .ĳ
+> b pc = $2cc5e  :trace :once :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L9.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $2cc5e
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L9.txt' file on hit.
+> m $3979c 2
+0003979C: 01 dc                                            .ץ
+> m $3979c 2
+0003979C: 01 dc                                            .ץ
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L9.txt
+Reading debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L9.txt'...
+Changed to input file dir '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/out_loop_reset/L9.bin $39630 56690
+  Wrote 0xdd72 bytes.
+> r
+  D0 00000000   D1 0000DD72   D2 0000000F   D3 FFFFFF80 
+  D4 00000000   D5 00000000   D6 0000FFFF   D7 00015BB4 
+  A0 00015BB4   A1 00039630   A2 0000A000   A3 00036C82 
+  A4 0001C5FF   A5 000473C4   A6 0001C335   A7 00012202 
+USP  00167576 ISP  00012202 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4a80 (TST) 6702 (Bcc) Chip latch 00000000
+0002cc5e 4a80                     tst.l d0
+Next PC: 0002cc60
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save' dir.
+Removed CPU breakpoint 1:
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L9.txt
+> m $3979c 2
+0003979C: 01 b0                                            .ã
+> m $3979c 2
+0003979C: 01 bb                                            .†
+> m $3979c 2
+0003979C: 01 bf                                            .™
+> m $3979c 2
+0003979C: 01 d6                                            .ש
+> m $3979c 2
+0003979C: 01 d6                                            .ש
+> m $3979c 2
+0003979C: 01 da                                            .ם
+> m $3979c 2
+0003979C: 01 e6                                            .µ
+> m $3979c 2
+0003979C: 01 e9                                            .Θ
+> b pc = $2cc5e  :trace :once :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L11.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $2cc5e
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L11.txt' file on hit.
+> m $3979c 2
+0003979C: 02 05                                            ..
+> m $3979c 2
+0003979C: 02 05                                            ..
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L11.txt
+Reading debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L11.txt'...
+Changed to input file dir '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/out_loop_reset/L11.bin $39630 56690
+  Wrote 0xdd72 bytes.
+> r
+  D0 00000000   D1 0000DD72   D2 0000000F   D3 FFFFFF80 
+  D4 00000000   D5 00000000   D6 0000FFFF   D7 00015BB4 
+  A0 00015BB4   A1 00039630   A2 0000A000   A3 00036C82 
+  A4 0001C5FF   A5 000473C4   A6 0001C335   A7 00012202 
+USP  00167576 ISP  00012202 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4a80 (TST) 6702 (Bcc) Chip latch 00000000
+0002cc5e 4a80                     tst.l d0
+Next PC: 0002cc60
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save' dir.
+Removed CPU breakpoint 1:
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L11.txt
+> m $3979c 2
+0003979C: 01 d9                                            .ך
+> m $3979c 2
+0003979C: 01 e4                                            .Σ
+> m $3979c 2
+0003979C: 01 e8                                            .Φ
+> m $3979c 2
+0003979C: 01 ff                                            .¯
+> m $3979c 2
+0003979C: 01 ff                                            .¯
+> m $3979c 2
+0003979C: 02 04                                            ..
+> m $3979c 2
+0003979C: 02 0f                                            ..
+> m $3979c 2
+0003979C: 02 12                                            ..
+> b pc = $2cc5e  :trace :once :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L13.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $2cc5e
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L13.txt' file on hit.
+> m $3979c 2
+0003979C: 02 2e                                            ..
+> m $3979c 2
+0003979C: 02 2e                                            ..
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L13.txt
+Reading debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L13.txt'...
+Changed to input file dir '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/out_loop_reset/L13.bin $39630 56690
+  Wrote 0xdd72 bytes.
+> r
+  D0 00000000   D1 0000DD72   D2 0000000F   D3 FFFFFF80 
+  D4 00000000   D5 00000000   D6 0000FFFF   D7 00015BB4 
+  A0 00015BB4   A1 00039630   A2 0000A000   A3 00036C82 
+  A4 0001C5FF   A5 000473C4   A6 0001C335   A7 00012202 
+USP  00167576 ISP  00012202 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4a80 (TST) 6702 (Bcc) Chip latch 00000000
+0002cc5e 4a80                     tst.l d0
+Next PC: 0002cc60
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save' dir.
+Removed CPU breakpoint 1:
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L13.txt
+> m $3979c 2
+0003979C: 02 02                                            ..
+> m $3979c 2
+0003979C: 02 0d                                            ..
+> m $3979c 2
+0003979C: 02 11                                            ..
+> m $3979c 2
+0003979C: 02 28                                            .(
+> m $3979c 2
+0003979C: 02 28                                            .(
+> m $3979c 2
+0003979C: 02 2c                                            .,
+> m $3979c 2
+0003979C: 02 38                                            .8
+> m $3979c 2
+0003979C: 02 3b                                            .;
+> b pc = $2cc5e  :trace :once :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L15.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $2cc5e
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L15.txt' file on hit.
+> m $3979c 2
+0003979C: 02 57                                            .W
+> m $3979c 2
+0003979C: 02 57                                            .W
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L15.txt
+Reading debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L15.txt'...
+Changed to input file dir '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/out_loop_reset/L15.bin $39630 56690
+  Wrote 0xdd72 bytes.
+> r
+  D0 00000000   D1 0000DD72   D2 0000000F   D3 FFFFFF80 
+  D4 00000000   D5 00000000   D6 0000FFFF   D7 00015BB4 
+  A0 00015BB4   A1 00039630   A2 00002300   A3 00036C82 
+  A4 0001C5FF   A5 000473C4   A6 0001C335   A7 00012202 
+USP  00167576 ISP  00012202 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4a80 (TST) 6702 (Bcc) Chip latch 00000000
+0002cc5e 4a80                     tst.l d0
+Next PC: 0002cc60
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save' dir.
+Removed CPU breakpoint 1:
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L15.txt
+> m $3979c 2
+0003979C: 02 2b                                            .+
+> m $3979c 2
+0003979C: 02 36                                            .6
+> m $3979c 2
+0003979C: 02 3a                                            .:
+> m $3979c 2
+0003979C: 02 51                                            .Q
+> m $3979c 2
+0003979C: 02 51                                            .Q
+> m $3979c 2
+0003979C: 02 55                                            .U
+> m $3979c 2
+0003979C: 02 61                                            .a
+> m $3979c 2
+0003979C: 02 65                                            .e
+> b pc = $2cc5e  :trace :once :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L17.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $2cc5e
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L17.txt' file on hit.
+> m $3979c 2
+0003979C: 02 80                                            .Ç
+> m $3979c 2
+0003979C: 02 80                                            .Ç
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L17.txt
+Reading debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L17.txt'...
+Changed to input file dir '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/out_loop_reset/L17.bin $39630 56690
+  Wrote 0xdd72 bytes.
+> r
+  D0 00000000   D1 0000DD72   D2 0000000F   D3 FFFFFF80 
+  D4 00000000   D5 00000000   D6 0000FFFF   D7 00015BB4 
+  A0 00015BB4   A1 00039630   A2 00002300   A3 00036C82 
+  A4 0001C5FF   A5 000473C4   A6 0001C335   A7 00012202 
+USP  00167576 ISP  00012202 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4a80 (TST) 6702 (Bcc) Chip latch 00000000
+0002cc5e 4a80                     tst.l d0
+Next PC: 0002cc60
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save' dir.
+Removed CPU breakpoint 1:
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L17.txt
+> m $3979c 2
+0003979C: 02 54                                            .T
+> m $3979c 2
+0003979C: 02 5f                                            ._
+> m $3979c 2
+0003979C: 02 63                                            .c
+> m $3979c 2
+0003979C: 02 7a                                            .z
+> m $3979c 2
+0003979C: 02 7a                                            .z
+> m $3979c 2
+0003979C: 02 7f                                            ..
+> m $3979c 2
+0003979C: 02 89                                            .ë
+> m $3979c 2
+0003979C: 02 8d                                            .ì
+> b pc = $2cc5e  :trace :once :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L19.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $2cc5e
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L19.txt' file on hit.
+> m $3979c 2
+0003979C: 02 a9                                            .⌐
+> m $3979c 2
+0003979C: 02 a9                                            .⌐
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L19.txt
+Reading debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L19.txt'...
+Changed to input file dir '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/out_loop_reset/L19.bin $39630 56690
+  Wrote 0xdd72 bytes.
+> r
+  D0 00000000   D1 0000DD72   D2 0000000F   D3 FFFFFF80 
+  D4 00000000   D5 00000000   D6 0000FFFF   D7 00015BB4 
+  A0 00015BB4   A1 00039630   A2 00002300   A3 00036C82 
+  A4 0001C5FF   A5 000473C4   A6 0001C335   A7 00012202 
+USP  00167576 ISP  00012202 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4a80 (TST) 6702 (Bcc) Chip latch 00000000
+0002cc5e 4a80                     tst.l d0
+Next PC: 0002cc60
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save' dir.
+Removed CPU breakpoint 1:
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L19.txt
+> m $3979c 2
+0003979C: 02 7d                                            .}
+> m $3979c 2
+0003979C: 02 88                                            .ê
+> m $3979c 2
+0003979C: 02 8c                                            .î
+> m $3979c 2
+0003979C: 02 a3                                            .ú
+> m $3979c 2
+0003979C: 02 a3                                            .ú
+> m $3979c 2
+0003979C: 02 a8                                            .¿
+> m $3979c 2
+0003979C: 02 b3                                            .ø
+> m $3979c 2
+0003979C: 02 b7                                            .Ã
+> b pc = $2cc5e  :trace :once :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L21.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $2cc5e
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L21.txt' file on hit.
+> m $3979c 2
+0003979C: 02 d2                                            .פ
+> m $3979c 2
+0003979C: 02 d2                                            .פ
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L21.txt
+Reading debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L21.txt'...
+Changed to input file dir '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/out_loop_reset/L21.bin $39630 56690
+  Wrote 0xdd72 bytes.
+> r
+  D0 00000000   D1 0000DD72   D2 0000000F   D3 FFFFFF80 
+  D4 00000000   D5 00000000   D6 0000FFFF   D7 00015BB4 
+  A0 00015BB4   A1 00039630   A2 0000A000   A3 00036C82 
+  A4 0001C5FF   A5 000473C4   A6 0001C335   A7 00012202 
+USP  00167576 ISP  00012202 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4a80 (TST) 6702 (Bcc) Chip latch 00000000
+0002cc5e 4a80                     tst.l d0
+Next PC: 0002cc60
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save' dir.
+Removed CPU breakpoint 1:
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L21.txt
+> m $3979c 2
+0003979C: 02 a6                                            .ª
+> m $3979c 2
+0003979C: 02 b1                                            .õ
+> m $3979c 2
+0003979C: 02 b5                                            .Œ
+> m $3979c 2
+0003979C: 02 cc                                            .כ
+> m $3979c 2
+0003979C: 02 cc                                            .כ
+> m $3979c 2
+0003979C: 02 d1                                            .ע
+> m $3979c 2
+0003979C: 02 dc                                            .ץ
+> m $3979c 2
+0003979C: 02 e0                                            .α
+> b pc = $2cc5e  :trace :once :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L23.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $2cc5e
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L23.txt' file on hit.
+> m $3979c 2
+0003979C: 02 fb                                            .√
+> m $3979c 2
+0003979C: 02 fb                                            .√
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L23.txt
+Reading debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L23.txt'...
+Changed to input file dir '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/out_loop_reset/L23.bin $39630 56690
+  Wrote 0xdd72 bytes.
+> r
+  D0 00000000   D1 0000DD72   D2 0000000F   D3 FFFFFF80 
+  D4 00000000   D5 00000000   D6 0000FFFF   D7 00015BB4 
+  A0 00015BB4   A1 00039630   A2 0000A000   A3 00036C82 
+  A4 0001C5FF   A5 000473C4   A6 0001C335   A7 00012202 
+USP  00167576 ISP  00012202 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4a80 (TST) 6702 (Bcc) Chip latch 00000000
+0002cc5e 4a80                     tst.l d0
+Next PC: 0002cc60
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save' dir.
+Removed CPU breakpoint 1:
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L23.txt
+> m $3979c 2
+0003979C: 02 cf                                            .נ
+> m $3979c 2
+0003979C: 02 da                                            .ם
+> m $3979c 2
+0003979C: 02 de                                            .∧
+> m $3979c 2
+0003979C: 02 f5                                            .⌡
+> m $3979c 2
+0003979C: 02 f5                                            .⌡
+> m $3979c 2
+0003979C: 02 fa                                            .·
+> m $3979c 2
+0003979C: 03 05                                            ..
+> m $3979c 2
+0003979C: 03 09                                            ..
+> b pc = $2cc5e  :trace :once :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L25.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $2cc5e
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L25.txt' file on hit.
+> m $3979c 2
+0003979C: 03 24                                            .$
+> m $3979c 2
+0003979C: 03 24                                            .$
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L25.txt
+Reading debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L25.txt'...
+Changed to input file dir '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/out_loop_reset/L25.bin $39630 56690
+  Wrote 0xdd72 bytes.
+> r
+  D0 00000000   D1 0000DD72   D2 0000000F   D3 FFFFFF80 
+  D4 00000000   D5 00000000   D6 0000FFFF   D7 00015BB4 
+  A0 00015BB4   A1 00039630   A2 00002300   A3 00036C82 
+  A4 0001C5FF   A5 000473C4   A6 0001C335   A7 00012202 
+USP  00167576 ISP  00012202 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4a80 (TST) 6702 (Bcc) Chip latch 00000000
+0002cc5e 4a80                     tst.l d0
+Next PC: 0002cc60
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save' dir.
+Removed CPU breakpoint 1:
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L25.txt
+> m $3979c 2
+0003979C: 02 f8                                            .°
+> m $3979c 2
+0003979C: 03 03                                            ..
+> m $3979c 2
+0003979C: 03 07                                            ..
+> m $3979c 2
+0003979C: 03 1e                                            ..
+> m $3979c 2
+0003979C: 03 1e                                            ..
+> m $3979c 2
+0003979C: 03 23                                            .#
+> m $3979c 2
+0003979C: 03 2e                                            ..
+> m $3979c 2
+0003979C: 03 32                                            .2
+> b pc = $2cc5e  :trace :once :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L27.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $2cc5e
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L27.txt' file on hit.
+> m $3979c 2
+0003979C: 03 4d                                            .M
+> m $3979c 2
+0003979C: 03 4d                                            .M
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L27.txt
+Reading debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L27.txt'...
+Changed to input file dir '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/out_loop_reset/L27.bin $39630 56690
+  Wrote 0xdd72 bytes.
+> r
+  D0 00000000   D1 0000DD72   D2 0000000F   D3 FFFFFF80 
+  D4 00000000   D5 00000000   D6 0000FFFF   D7 00015BB4 
+  A0 00015BB4   A1 00039630   A2 00002300   A3 00036C82 
+  A4 0001C5FF   A5 000473C4   A6 0001C335   A7 00012202 
+USP  00167576 ISP  00012202 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4a80 (TST) 6702 (Bcc) Chip latch 00000000
+0002cc5e 4a80                     tst.l d0
+Next PC: 0002cc60
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save' dir.
+Removed CPU breakpoint 1:
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L27.txt
+> m $3979c 2
+0003979C: 03 21                                            .!
+> m $3979c 2
+0003979C: 03 2c                                            .,
+> m $3979c 2
+0003979C: 03 30                                            .0
+> m $3979c 2
+0003979C: 03 47                                            .G
+> m $3979c 2
+0003979C: 03 47                                            .G
+> m $3979c 2
+0003979C: 03 4c                                            .L
+> m $3979c 2
+0003979C: 03 56                                            .V
+> m $3979c 2
+0003979C: 03 5a                                            .Z
+> b pc = $2cc5e  :trace :once :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L29.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $2cc5e
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L29.txt' file on hit.
+> m $3979c 2
+0003979C: 03 75                                            .u
+> m $3979c 2
+0003979C: 03 75                                            .u
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L29.txt
+Reading debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L29.txt'...
+Changed to input file dir '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/out_loop_reset/L29.bin $39630 56690
+  Wrote 0xdd72 bytes.
+> r
+  D0 00000000   D1 0000DD72   D2 0000000F   D3 FFFFFF80 
+  D4 00000000   D5 00000000   D6 0000FFFF   D7 00015BB4 
+  A0 00015BB4   A1 00039630   A2 00002300   A3 00036C82 
+  A4 0001C5FF   A5 000473C4   A6 0001C335   A7 00012202 
+USP  00167576 ISP  00012202 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4a80 (TST) 6702 (Bcc) Chip latch 00000000
+0002cc5e 4a80                     tst.l d0
+Next PC: 0002cc60
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save' dir.
+Removed CPU breakpoint 1:
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L29.txt
+> m $3979c 2
+0003979C: 03 4a                                            .J
+> m $3979c 2
+0003979C: 03 55                                            .U
+> m $3979c 2
+0003979C: 03 59                                            .Y

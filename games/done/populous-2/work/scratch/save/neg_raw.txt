@@ -1,0 +1,19 @@
+boot True P2PO 171
+requester True
+t+ 4 turn=223 $70=0x1c4c7
+t+ 9 turn=223 $70=0x1c4c7
+t+15 turn=223 $70=0x1c4c7
+t+21 turn=223 $70=0x1c4c7
+t+27 turn=223 $70=0x1c4c7
+t+33 turn=223 $70=0x1c4c7
+t+38 turn=223 $70=0x1c4c7
+T1.GAM on the host drive: []
+NA.bin written (the call was reached): False
+shot ok
+LOG bad lines: 2
+   WARN : Bus Error reading at address $ffff8e21, PC=$1b992 addr_e3=1b992 op_e3=1238
+   WARN : Address Error reading at address $23090001, PC=$22ff6 addr_e3=22ff6 op_e3=4e75
+Traceback (most recent call last):
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cell_neg.py", line 29, in <module>
+    P("LOG tail:", *h._logtext().splitlines()[-6:], sep="\n  ")
+TypeError: <lambda>() got an unexpected keyword argument 'sep'

@@ -1,0 +1,8 @@
+base set    : test_walk test_walk2 test_walk3
+patched set : test_walk test_walk2 test_walk3 pop2_ptr_a pop2_ptr_b
+busy1 @16 MHz (base @16): IDENTICAL | turns compared: back 128, world 128, shown@S1+pointer 127, shown@flip+pointer 120 (shape-change passes not compared: 8) (skipped 2); flips captured 130/130; patched min VBL/pass 4 | work/pass 1172549 -> 1161556 (-0.94 %) | fps 11.727 -> 11.792 (+0.5 %), turns/s 11.727 -> 11.792
+   sprite entry coverage (base run): front end $2122e: 768, 16px front end $211be: 562, 16px 2-col $212b4: 562, neg-x shift $21322: 0, 1-col $21368: 0, 3-col (main) $213b0: 762, neg-x 3-col $2147e: 0, 2-col right edge $21530: 6
+game_start @16 MHz (base @16): IDENTICAL | turns compared: back 128, world 128, shown@S1+pointer 127, shown@flip+pointer 120 (shape-change passes not compared: 8) (skipped 2); flips captured 130/130; patched min VBL/pass 2 | work/pass 609373 -> 608200 (-0.19 %) | fps 24.067 -> 23.978 (-0.4 %), turns/s 24.067 -> 23.978
+   sprite entry coverage (base run): front end $2122e: 0, 16px front end $211be: 279, 16px 2-col $212b4: 279, neg-x shift $21322: 0, 1-col $21368: 0, 3-col (main) $213b0: 0, neg-x 3-col $2147e: 0, 2-col right edge $21530: 0
+ALL IDENTICAL
+EXIT 0

@@ -1,0 +1,15 @@
+CELL m_acsi_mste: {'media': 'acsi', 'machine': 'megaste', 'tos': '2.06', 'mem': 4096, 'img': '/tmp/strun-syhwen72/hd.img'} boot 121s in_play=True marker='P2PO' turn=192 $2cc5a=0x80300 $2cbe6=0x80300 $2cb10=0x80300
+SAVE T1: dump=True back_in_play=True turn_in_dump=276 md5(dump)=e59f9523a63bce63852b5836c59bd361
+  T1.GAM on disk: None B, equals RAM at write: False
+SAVE T2: dump=True back_in_play=True turn_in_dump=586 md5=bca1e36d1d35e6b6cf7ac5a301138a95
+  T2.GAM on disk: None B, equals RAM at write: False
+SAVE T1 again (overwrite): dump=True back_in_play=True turn_in_dump=895 md5=87180e7a5128638487b357fd12d1657b
+  T1.GAM on disk: None B, equals the NEW RAM: False, differs from the first save: True
+DIRECTORY shot m_acsi_mste_dir.png
+  cancel -> running True
+LOAD T2: dump=True RAM after read == RAM at T2 save: True; turn in RAM 586; turn now 608 running=True
+LOAD T1: dump=True RAM after read == RAM at the 2nd T1 save: True; turn now 917 running=True
+LOAD NOPE (missing): bp hit=True; RAM after the failed read == RAM before the call: True; shot m_acsi_mste_missing.png (the game's DISK FILE ERROR box)
+after missing-file error: game running=False turn=993 in_play=False
+LOG bus/address-error/halt lines: 0
+RESULT m_acsi_mste: CHECK

@@ -1,0 +1,22 @@
+CELL m_acsi_ste: {'media': 'acsi', 'machine': 'ste', 'tos': 'default', 'mem': 2048, 'img': '/tmp/strun-77_sqnr4/hd.img'} boot 113s in_play=True marker='P2PO' turn=171 $2cc5a=0x80300 $2cbe6=0x80300 $2cb10=0x80300
+SAVE T1: dump=True back_in_play=True turn_in_dump=252 md5(dump)=89b4b656a9dc111f183e6e1df9afb233
+  T1.GAM on disk: None B, equals RAM at write: False
+SAVE T2: dump=False back_in_play=True turn_in_dump=None md5=d41d8cd98f00b204e9800998ecf8427e
+  T2.GAM on disk: None B, equals RAM at write: False
+SAVE T1 again (overwrite): dump=True back_in_play=True turn_in_dump=1241 md5=54c15a1a2a1a92c9cd49f62fe4acfd7c
+  T1.GAM on disk: None B, equals the NEW RAM: False, differs from the first save: True
+DIRECTORY shot m_acsi_ste_dir.png
+  cancel -> running True
+LOAD T2: dump=True RAM after read == RAM at T2 save: False; turn in RAM 560; turn now 581 running=True
+LOAD T1: dump=True RAM after read == RAM at the 2nd T1 save: True; turn now 1262 running=True
+LOAD NOPE (missing): bp hit=True; RAM after the failed read == RAM before the call: True; shot m_acsi_ste_missing.png (the game's DISK FILE ERROR box)
+after missing-file error: game running=False turn=1334 in_play=False
+kept ['A2.bin', 'A3.bin', 'T1.GAM', 'T2.GAM']
+LOG bus/address-error/halt lines: 6
+   WARN : Bus Error reading at address $fff00039, PC=$d51c addr_e3=d51c op_e3=4a13
+   WARN : Bus Error reading at address $fff00079, PC=$d51c addr_e3=d51c op_e3=4a13
+   WARN : Bus Error reading at address $fff000b9, PC=$d51c addr_e3=d51c op_e3=4a13
+   WARN : Bus Error reading at address $fff000f9, PC=$d51c addr_e3=d51c op_e3=4a13
+   WARN : Bus Error reading at address $ffff8781, PC=$bbc2 addr_e3=bbc2 op_e3=1038
+   WARN : Bus Error reading at address $ffff8e21, PC=$27632 addr_e3=27632 op_e3=1238
+RESULT m_acsi_ste: CHECK

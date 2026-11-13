@@ -1,0 +1,13 @@
+CELL ste1m: ICS floppy ste TOS default 1024 KB (full layout); boot 114s in_play=True marker='P2PO' $22f14=4ef900082000 (expect 4ef900082000) sync=$fe (50 Hz) turn=100
+payload $80000+32768: 4638 non-zero image bytes, 0 differ in RAM
+RESULT ste1m default MHz 50 Hz: 1501 VBL = 30.02 s, 160168 cycles/VBL, world turns 187 = 6.229/s | ticks(D) 187 = 6.229/s; passes T 187 R 141 S 0 P 0 | refresh seen 49.95 Hz
+tooltip cat2: diff vs none bbox (184, 58, 762, 585); shot ics_ste1m_cat2.png
+tooltip strip4: diff vs none bbox (198, 58, 732, 442); shot ics_ste1m_strip4.png
+pointer 250,180 turn 516
+SAVELOAD {'turn_at_req': 604, 'after_save_play': True, 'turn_before_load': 719, 'turn_after_load': 617, 'load_play': True}
+disk after save: ['       34 files             586 836 bytes', '                            119 808 bytes free'] ; GAM files ['T1       GAM     56690 1991-12-04  16:23 ']
+fsck.fat -n: /tmp/ics_ste1m_a.st: 35 files, 594/711 clusters
+known hardware-probe lines (the game's $ffff8e21/$ffff8924 reads at PC $13968/$139xx; pop2_spr's blitter probe $ffff8a28 on an ST): 0
+LOG: 168 lines; bus/address-error/halt lines: 0
+
+RESULT ste1m: ok=True marker='P2PO' errors=0

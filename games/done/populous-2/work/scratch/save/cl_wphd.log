@@ -1,0 +1,109 @@
+INFO : Hatari v2.6.1, compiled on:  Feb  8 2026, 19:50:12
+INFO : GEMDOS HDD emulation, C: <-> /tmp/strun-lhfaii8e/C.
+WARN : No GEMDOS dir '/tmp/strun-lhfaii8e/C/AUTO'
+WARN : Bus Error reading at address $ffff8e21, PC=$1b992 addr_e3=1b992 op_e3=1238
+WARN : No GEMDOS dir '/tmp/strun-lhfaii8e/C/GAMEX'
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: fd 90                                            ²É
+> m $70 2
+00000070: 00 03                                            ..
+> m $72 2
+00000072: 69 de                                            i∧
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $3979c 2
+0003979C: 00 92                                            .Æ
+> m $3979c 2
+0003979C: 00 9f                                            .ƒ
+> m $7fff8 2
+0007FFF8: 50 32                                            P2
+> m $7fffa 2
+0007FFFA: 50 4f                                            PO
+> m $3979c 2
+0003979C: 00 aa                                            .¬
+> b pc = $80300 && d0 = 1 :trace :once :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_80300_pre.txt
+CPU condition breakpoint 1 with 2 condition(s) added:
+	pc = $80300 && d0 = 1
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_80300_pre.txt' file on hit.
+> b pc = $2cbea  :trace :once :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cbea_ret.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $2cbea
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cbea_ret.txt' file on hit.
+> m $3979c 2
+0003979C: 00 e4                                            .Σ
+> m $3979c 2
+0003979C: 00 e4                                            .Σ
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $80300 && d0 = 1 :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_80300_pre.txt
+Reading debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_80300_pre.txt'...
+Changed to input file dir '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/out_cl_wphd_pre.bin $39630 56690
+  Wrote 0xdd72 bytes.
+> r
+  D0 00000001   D1 0000DD72   D2 00000022   D3 FFFFFFFF 
+  D4 FFFFFFF5   D5 FFFFFFFF   D6 00000001   D7 00015BB4 
+  A0 00015BB4   A1 00039630   A2 0000A000   A3 00015C0B 
+  A4 0001C5FF   A5 000473C4   A6 0001C335   A7 000121FE 
+USP  00167576 ISP  000121FE 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch 2f17 (MOVE) 48e7 (MVMLE) Chip latch 00000000
+00080300 2f17                     move.l (a7) == $000121fe [0002cbea],-(a7) == $000121fa [00039630]
+Next PC: 00080302
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+Removed CPU breakpoint 1:
+	pc = $80300 && d0 = 1 :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_80300_pre.txt
+WARN : PREVENTED: GEMDOS Fcreate("T1.GAM")
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $2cbea :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cbea_ret.txt
+Reading debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cbea_ret.txt'...
+Changed to input file dir '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/out_cl_wphd_ret.bin $39630 56690
+  Wrote 0xdd72 bytes.
+> r
+  D0 FFFFFFF3   D1 00000000   D2 00000022   D3 FFFFFFFF 
+  D4 FFFFFFF5   D5 FFFFFFFF   D6 00000001   D7 00015BB4 
+  A0 00015BB4   A1 00039630   A2 0000A000   A3 00015C0B 
+  A4 0001C5FF   A5 000473C4   A6 0001C335   A7 00012202 
+USP  00167576 ISP  00012202 
+SR=2308 T=00 S=1 M=0 X=0 N=1 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch 4a80 (TST) 6702 (Bcc) Chip latch 00000000
+0002cbea 4a80                     tst.l d0
+Next PC: 0002cbec
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+Removed CPU breakpoint 1:
+	pc = $2cbea :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cbea_ret.txt
+WARN : PNG screen dump saved to: /tmp/strun-lhfaii8e/shots/grab0001.png
+WARN : PNG screen dump saved to: /tmp/strun-lhfaii8e/shots/grab0002.png
+> m $3979c 2
+0003979C: 00 e5                                            .σ
+> m $3979c 2
+0003979C: 00 e5                                            .σ
+> m $3979c 2
+0003979C: 00 e5                                            .σ
+WARN : PNG screen dump saved to: /tmp/strun-lhfaii8e/shots/grab0003.png
+> m $3979c 2
+0003979C: 01 22                                            ."
+> m $3979c 2
+0003979C: 01 2e                                            ..
+> m $3979c 2
+0003979C: 01 31                                            .1
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $3979c 2
+0003979C: 01 3d                                            .=
+> m $3979c 2
+0003979C: 01 4a                                            .J

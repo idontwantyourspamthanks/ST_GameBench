@@ -1,0 +1,8 @@
+base set    : test_walk test_walk2 test_walk3
+patched set : test_walk test_walk2 test_walk3 pop2_ptr_a pop2_ptr_b
+busy1 @8 MHz (base @8): DIFFER | turns compared: back 58, world 58, shown@S1+pointer 57, shown@flip+pointer 54 (shape-change passes not compared: 4) (skipped 2); flips captured 60/60; patched min VBL/pass 7 | work/pass 1232038 -> 1200364 (-2.57 %) | fps 6.108 -> 6.250 (+2.3 %), turns/s 6.108 -> 6.250
+   sprite entry coverage (base run): front end $2122e: 384, 16px front end $211be: 280, 16px 2-col $212b4: 280, neg-x shift $21322: 0, 1-col $21368: 0, 3-col (main) $213b0: 381, neg-x 3-col $2147e: 0, 2-col right edge $21530: 3
+      SHOWN DIFFER turn 16144 (pointer 1,100; shape 0x0/0x0, [$202e] 0xde80/0xdf18): 105 B differ, first at offset 16000 (row 100), rows 100-110
+      SHOWN DIFFER turn 16176 (pointer 1,100; shape 0x0/0x0, [$202e] 0xde80/0xdf18): 105 B differ, first at offset 16000 (row 100), rows 100-110
+MISMATCH
+EXIT 1

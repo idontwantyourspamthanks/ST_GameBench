@@ -1,0 +1,2162 @@
+INFO : Hatari v2.6.1, compiled on:  Feb  8 2026, 19:50:12
+INFO : Mounting ACSI HD image '/tmp/strun-wrdtq4hj/hd.img'
+INFO : GEMDOS HDD emulation, D: <-> /tmp/strun-wrdtq4hj/C.
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $3979c 2
+0003979C: 00 b3                                            .ø
+> m $3979c 2
+0003979C: 00 c1                                            .Ĳ
+> m $7fff8 2
+0007FFF8: 50 32                                            P2
+> m $7fffa 2
+0007FFFA: 50 4f                                            PO
+> m $3979c 2
+0003979C: 00 cc                                            .כ
+> m $2cc5a 2
+0002CC5A: 00 08                                            ..
+> m $2cc5c 2
+0002CC5C: 03 00                                            ..
+> m $2cbe6 2
+0002CBE6: 00 08                                            ..
+> m $2cbe8 2
+0002CBE8: 03 00                                            ..
+> m $2cb10 2
+0002CB10: 00 08                                            ..
+> m $2cb12 2
+0002CB12: 03 00                                            ..
+> b pc = $80300 && d0 = 1 :trace :once :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_80300_A1.txt
+CPU condition breakpoint 1 with 2 condition(s) added:
+	pc = $80300 && d0 = 1
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_80300_A1.txt' file on hit.
+> m $3979c 2
+0003979C: 01 1e                                            ..
+> m $3979c 2
+0003979C: 01 1e                                            ..
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $80300 && d0 = 1 :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_80300_A1.txt
+Reading debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_80300_A1.txt'...
+Changed to input file dir '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/out_r3_acsi_tt/A1.bin $39630 56690
+  Wrote 0xdd72 bytes.
+> r
+  D0 00000001   D1 0000DD72   D2 00000022   D3 FFFFFFFF 
+  D4 FFFFFFF5   D5 FFFFFFFF   D6 00000001   D7 00015BB4 
+  A0 00015BB4   A1 00039630   A2 0000A000   A3 00015C0B 
+  A4 0001C5FF   A5 000473C4   A6 0001C335   A7 000121FE 
+USP  00366676 ISP  000121FE SFC  00000000 DFC  00000000 
+CACR 00000000 VBR  00000000 CAAR 00000000 MSP  00000000 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+0: 7FFF-7FFFFFFF-FFFFF800 +nan 
+1: 7FFF-7FFFFFFF-FFFFF800 +nan 
+2: 7FFF-7FFFFFFF-FFFFF800 +nan 
+3: 7FFF-7FFFFFFF-FFFFF800 +nan 
+4: 7FFF-7FFFFFFF-FFFFF800 +nan 
+5: 7FFF-7FFFFFFF-FFFFF800 +nan 
+6: 7FFF-7FFFFFFF-FFFFF800 +nan 
+7: 7FFF-7FFFFFFF-FFFFF800 +nan 
+FPSR: 00000000 FPCR: 00000000 FPIAR: 00000000 N=0 Z=0 I=0 NAN=0
+SRP: 0 CRP: 100002003FB7B0
+TT0: 00000000 TT1: 00000000 TC: 80C84440
+Prefetch 00080304 c0e043fa (1) 48e7 (MVMLE) c0e0 (MULU) 43fa (LEA) Chip latch 00000000
+00080300 2f17                     move.l (a7) == $000121fe [0002cbea],-(a7) == $000121fa [00039630]
+Next PC: 00080302
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save' dir.
+Removed CPU breakpoint 1:
+	pc = $80300 && d0 = 1 :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_80300_A1.txt
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+6 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0x5e! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+16 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+32 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+7 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+> m $3979c 2
+0003979C: 01 27                                            .'
+> m $3979c 2
+0003979C: 01 32                                            .2
+WARN : PNG screen dump saved to: /tmp/strun-wrdtq4hj/shots/grab0001.png
+> b pc = $80300 && d0 = 1 :trace :once :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_80300_A2.txt
+CPU condition breakpoint 1 with 2 condition(s) added:
+	pc = $80300 && d0 = 1
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_80300_A2.txt' file on hit.
+> m $3979c 2
+0003979C: 01 7a                                            .z
+> m $3979c 2
+0003979C: 01 7a                                            .z
+WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+5 repeats of: WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+WARN : Unknown BIOS call 0x810b! at PC 0xE134DA
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $80300 && d0 = 1 :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_80300_A2.txt
+Reading debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_80300_A2.txt'...
+Changed to input file dir '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/out_r3_acsi_tt/A2.bin $39630 56690
+  Wrote 0xdd72 bytes.
+> r
+  D0 00000001   D1 0000DD72   D2 00000022   D3 FFFFFFFF 
+  D4 FFFFFFF5   D5 FFFFFFFF   D6 00000001   D7 00015BB4 
+  A0 00015BB4   A1 00039630   A2 0000A000   A3 00015C0B 
+  A4 0001C5FF   A5 000473C4   A6 0001C335   A7 000121FE 
+USP  00366676 ISP  000121FE SFC  00000000 DFC  00000000 
+CACR 00000000 VBR  00000000 CAAR 00000000 MSP  00000000 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+0: 7FFF-7FFFFFFF-FFFFF800 +nan 
+1: 7FFF-7FFFFFFF-FFFFF800 +nan 
+2: 7FFF-7FFFFFFF-FFFFF800 +nan 
+3: 7FFF-7FFFFFFF-FFFFF800 +nan 
+4: 7FFF-7FFFFFFF-FFFFF800 +nan 
+5: 7FFF-7FFFFFFF-FFFFF800 +nan 
+6: 7FFF-7FFFFFFF-FFFFF800 +nan 
+7: 7FFF-7FFFFFFF-FFFFF800 +nan 
+FPSR: 00000000 FPCR: 00000000 FPIAR: 00000000 N=0 Z=0 I=0 NAN=0
+SRP: 0 CRP: 100002003FB7B0
+TT0: 00000000 TT1: 00000000 TC: 80C84440
+Prefetch 00080304 c0e043fa (1) 48e7 (MVMLE) c0e0 (MULU) 43fa (LEA) Chip latch 00000000
+00080300 2f17                     move.l (a7) == $000121fe [0002cbea],-(a7) == $000121fa [00039630]
+Next PC: 00080302
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save' dir.
+Removed CPU breakpoint 1:
+	pc = $80300 && d0 = 1 :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_80300_A2.txt
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0x5e! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+16 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+32 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+7 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+> m $3979c 2
+0003979C: 01 83                                            .â
+> m $3979c 2
+0003979C: 01 8e                                            .Ä
+> b pc = $80300 && d0 = 1 :trace :once :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_80300_A3.txt
+CPU condition breakpoint 1 with 2 condition(s) added:
+	pc = $80300 && d0 = 1
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_80300_A3.txt' file on hit.
+> m $3979c 2
+0003979C: 01 d6                                            .ש
+> m $3979c 2
+0003979C: 01 d6                                            .ש
+WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+5 repeats of: WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+WARN : Unknown BIOS call 0x810b! at PC 0xE134DA
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $80300 && d0 = 1 :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_80300_A3.txt
+Reading debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_80300_A3.txt'...
+Changed to input file dir '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/out_r3_acsi_tt/A3.bin $39630 56690
+  Wrote 0xdd72 bytes.
+> r
+  D0 00000001   D1 0000DD72   D2 00000022   D3 FFFFFFFF 
+  D4 FFFFFFF5   D5 FFFFFFFF   D6 00000001   D7 00015BB4 
+  A0 00015BB4   A1 00039630   A2 00002300   A3 00015C0B 
+  A4 0001C5FF   A5 000473C4   A6 0001C335   A7 000121FE 
+USP  00366676 ISP  000121FE SFC  00000000 DFC  00000000 
+CACR 00000000 VBR  00000000 CAAR 00000000 MSP  00000000 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+0: 7FFF-7FFFFFFF-FFFFF800 +nan 
+1: 7FFF-7FFFFFFF-FFFFF800 +nan 
+2: 7FFF-7FFFFFFF-FFFFF800 +nan 
+3: 7FFF-7FFFFFFF-FFFFF800 +nan 
+4: 7FFF-7FFFFFFF-FFFFF800 +nan 
+5: 7FFF-7FFFFFFF-FFFFF800 +nan 
+6: 7FFF-7FFFFFFF-FFFFF800 +nan 
+7: 7FFF-7FFFFFFF-FFFFF800 +nan 
+FPSR: 00000000 FPCR: 00000000 FPIAR: 00000000 N=0 Z=0 I=0 NAN=0
+SRP: 0 CRP: 100002003FB7B0
+TT0: 00000000 TT1: 00000000 TC: 80C84440
+Prefetch 00080304 c0e043fa (1) 48e7 (MVMLE) c0e0 (MULU) 43fa (LEA) Chip latch 00000000
+00080300 2f17                     move.l (a7) == $000121fe [0002cbea],-(a7) == $000121fa [00039630]
+Next PC: 00080302
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save' dir.
+Removed CPU breakpoint 1:
+	pc = $80300 && d0 = 1 :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_80300_A3.txt
+WARN : Unknown BIOS call 0x810b! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+7 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0x5e! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+16 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+32 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+7 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+> m $3979c 2
+0003979C: 01 df                                            .∞
+> m $3979c 2
+0003979C: 01 ea                                            .Ω
+> m $3979c 2
+0003979C: 02 0e                                            ..
+> m $3979c 2
+0003979C: 02 0e                                            ..
+WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+5 repeats of: WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+WARN : Unknown BIOS call 0x810b! at PC 0xE134DA
+WARN : Unknown BIOS call 0x810b! at PC 0xE134DA
+WARN : PNG screen dump saved to: /tmp/strun-wrdtq4hj/shots/grab0002.png
+> m $3979c 2
+0003979C: 02 24                                            .$
+> m $3979c 2
+0003979C: 02 31                                            .1
+> b pc = $2cc5e  :trace :once :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_B2.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $2cc5e
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_B2.txt' file on hit.
+> m $3979c 2
+0003979C: 02 47                                            .G
+> m $3979c 2
+0003979C: 02 47                                            .G
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+16 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_B2.txt
+Reading debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_B2.txt'...
+Changed to input file dir '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/out_r3_acsi_tt/B2.bin $39630 56690
+  Wrote 0xdd72 bytes.
+> r
+  D0 00000000   D1 0000DD72   D2 0000000F   D3 FFFFFF80 
+  D4 00000000   D5 00000000   D6 0000FFFF   D7 00015BB4 
+  A0 00015BB4   A1 00039630   A2 00002300   A3 00036C82 
+  A4 0001C5FF   A5 000473C4   A6 0001C335   A7 00012202 
+USP  00366676 ISP  00012202 SFC  00000000 DFC  00000000 
+CACR 00000000 VBR  00000000 CAAR 00000000 MSP  00000000 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+0: 7FFF-7FFFFFFF-FFFFF800 +nan 
+1: 7FFF-7FFFFFFF-FFFFF800 +nan 
+2: 7FFF-7FFFFFFF-FFFFF800 +nan 
+3: 7FFF-7FFFFFFF-FFFFF800 +nan 
+4: 7FFF-7FFFFFFF-FFFFF800 +nan 
+5: 7FFF-7FFFFFFF-FFFFF800 +nan 
+6: 7FFF-7FFFFFFF-FFFFF800 +nan 
+7: 7FFF-7FFFFFFF-FFFFF800 +nan 
+FPSR: 00000000 FPCR: 00000000 FPIAR: 00000000 N=0 Z=0 I=0 NAN=0
+SRP: 0 CRP: 100002003FB7B0
+TT0: 00000000 TT1: 00000000 TC: 80C84440
+Prefetch 0002cc64 20014cdf (1) 6702 (Bcc) 72ff (MOVE) 2001 (MOVE) Chip latch 00000000
+0002cc5e 4a80                     tst.l d0
+Next PC: 0002cc60
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save' dir.
+Removed CPU breakpoint 1:
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_B2.txt
+7 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+> m $3979c 2
+0003979C: 01 94                                            .ö
+> m $3979c 2
+0003979C: 01 98                                            .ÿ
+> m $3979c 2
+0003979C: 01 a5                                            .Ñ
+> b pc = $2cc5e  :trace :once :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_B1.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $2cc5e
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_B1.txt' file on hit.
+> m $3979c 2
+0003979C: 01 e0                                            .α
+> m $3979c 2
+0003979C: 01 e0                                            .α
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+16 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_B1.txt
+Reading debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_B1.txt'...
+Changed to input file dir '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/out_r3_acsi_tt/B1.bin $39630 56690
+  Wrote 0xdd72 bytes.
+> r
+  D0 00000000   D1 0000DD72   D2 0000000F   D3 FFFFFF80 
+  D4 00000000   D5 00000000   D6 0000FFFF   D7 00015BB4 
+  A0 00015BB4   A1 00039630   A2 00002300   A3 00036C82 
+  A4 0001C5FF   A5 000473C4   A6 0001C335   A7 00012202 
+USP  00366676 ISP  00012202 SFC  00000000 DFC  00000000 
+CACR 00000000 VBR  00000000 CAAR 00000000 MSP  00000000 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+0: 7FFF-7FFFFFFF-FFFFF800 +nan 
+1: 7FFF-7FFFFFFF-FFFFF800 +nan 
+2: 7FFF-7FFFFFFF-FFFFF800 +nan 
+3: 7FFF-7FFFFFFF-FFFFF800 +nan 
+4: 7FFF-7FFFFFFF-FFFFF800 +nan 
+5: 7FFF-7FFFFFFF-FFFFF800 +nan 
+6: 7FFF-7FFFFFFF-FFFFF800 +nan 
+7: 7FFF-7FFFFFFF-FFFFF800 +nan 
+FPSR: 00000000 FPCR: 00000000 FPIAR: 00000000 N=0 Z=0 I=0 NAN=0
+SRP: 0 CRP: 100002003FB7B0
+TT0: 00000000 TT1: 00000000 TC: 80C84440
+Prefetch 0002cc64 20014cdf (1) 6702 (Bcc) 72ff (MOVE) 2001 (MOVE) Chip latch 00000000
+0002cc5e 4a80                     tst.l d0
+Next PC: 0002cc60
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save' dir.
+Removed CPU breakpoint 1:
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_B1.txt
+5 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+> m $3979c 2
+0003979C: 01 f0                                            .≡
+> m $3979c 2
+0003979C: 01 f4                                            .⌠
+> m $3979c 2
+0003979C: 02 01                                            ..
+> b pc = $80300 && d0 = 0 :trace :once :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_80300_BXpre.txt
+CPU condition breakpoint 1 with 2 condition(s) added:
+	pc = $80300 && d0 = 0
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_80300_BXpre.txt' file on hit.
+> b pc = $2cc5e  :trace :once :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_BX.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $2cc5e
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_BX.txt' file on hit.
+> m $3979c 2
+0003979C: 02 3a                                            .:
+> m $3979c 2
+0003979C: 02 3a                                            .:
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $80300 && d0 = 0 :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_80300_BXpre.txt
+Reading debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_80300_BXpre.txt'...
+Changed to input file dir '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/out_r3_acsi_tt/BXpre.bin $39630 56690
+  Wrote 0xdd72 bytes.
+> r
+  D0 00000000   D1 0000DD72   D2 0000000F   D3 FFFFFF80 
+  D4 00000000   D5 00000000   D6 0000FFFF   D7 00015BB4 
+  A0 00015BB4   A1 00039630   A2 0000A000   A3 00036C82 
+  A4 0001C5FF   A5 000473C4   A6 0001C335   A7 000121FE 
+USP  00366676 ISP  000121FE SFC  00000000 DFC  00000000 
+CACR 00000000 VBR  00000000 CAAR 00000000 MSP  00000000 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+0: 7FFF-7FFFFFFF-FFFFF800 +nan 
+1: 7FFF-7FFFFFFF-FFFFF800 +nan 
+2: 7FFF-7FFFFFFF-FFFFF800 +nan 
+3: 7FFF-7FFFFFFF-FFFFF800 +nan 
+4: 7FFF-7FFFFFFF-FFFFF800 +nan 
+5: 7FFF-7FFFFFFF-FFFFF800 +nan 
+6: 7FFF-7FFFFFFF-FFFFF800 +nan 
+7: 7FFF-7FFFFFFF-FFFFF800 +nan 
+FPSR: 00000000 FPCR: 00000000 FPIAR: 00000000 N=0 Z=0 I=0 NAN=0
+SRP: 0 CRP: 100002003FB7B0
+TT0: 00000000 TT1: 00000000 TC: 80C84440
+Prefetch 00080304 c0e043fa (1) 48e7 (MVMLE) c0e0 (MULU) 43fa (LEA) Chip latch 00000000
+00080300 2f17                     move.l (a7) == $000121fe [0002cc5e],-(a7) == $000121fa [00039630]
+Next PC: 00080302
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save' dir.
+Removed CPU breakpoint 1:
+	pc = $80300 && d0 = 0 :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_80300_BXpre.txt
+8 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_BX.txt
+Reading debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_BX.txt'...
+Changed to input file dir '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/out_r3_acsi_tt/BX.bin $39630 56690
+  Wrote 0xdd72 bytes.
+> r
+  D0 FFFFFFDF   D1 00000000   D2 0000000F   D3 FFFFFF80 
+  D4 00000000   D5 00000000   D6 0000FFFF   D7 00015BB4 
+  A0 00015BB4   A1 00039630   A2 0000A000   A3 00036C82 
+  A4 0001C5FF   A5 000473C4   A6 0001C335   A7 00012202 
+USP  00366676 ISP  00012202 SFC  00000000 DFC  00000000 
+CACR 00000000 VBR  00000000 CAAR 00000000 MSP  00000000 
+SR=2308 T=00 S=1 M=0 X=0 N=1 Z=0 V=0 C=0 IM=3 STP=0
+0: 7FFF-7FFFFFFF-FFFFF800 +nan 
+1: 7FFF-7FFFFFFF-FFFFF800 +nan 
+2: 7FFF-7FFFFFFF-FFFFF800 +nan 
+3: 7FFF-7FFFFFFF-FFFFF800 +nan 
+4: 7FFF-7FFFFFFF-FFFFF800 +nan 
+5: 7FFF-7FFFFFFF-FFFFF800 +nan 
+6: 7FFF-7FFFFFFF-FFFFF800 +nan 
+7: 7FFF-7FFFFFFF-FFFFF800 +nan 
+FPSR: 00000000 FPCR: 00000000 FPIAR: 00000000 N=0 Z=0 I=0 NAN=0
+SRP: 0 CRP: 100002003FB7B0
+TT0: 00000000 TT1: 00000000 TC: 80C84440
+Prefetch 0002cc64 20014cdf (1) 6702 (Bcc) 72ff (MOVE) 2001 (MOVE) Chip latch 00000000
+0002cc5e 4a80                     tst.l d0
+Next PC: 0002cc60
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save' dir.
+Removed CPU breakpoint 1:
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_BX.txt
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : PNG screen dump saved to: /tmp/strun-wrdtq4hj/shots/grab0003.png
+WARN : PNG screen dump saved to: /tmp/strun-wrdtq4hj/shots/grab0004.png
+> m $3979c 2
+0003979C: 02 57                                            .W
+> m $3979c 2
+0003979C: 02 64                                            .d
+> m $3979c 2
+0003979C: 02 68                                            .h
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $3979c 2
+0003979C: 02 73                                            .s
+> m $3979c 2
+0003979C: 02 80                                            .Ç
+> m $3979c 2
+0003979C: 02 91                                            .æ
+> m $3979c 2
+0003979C: 02 91                                            .æ
+WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+5 repeats of: WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+WARN : Unknown BIOS call 0x810b! at PC 0xE134DA
+WARN : Unknown BIOS call 0x810b! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+10 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0x5e! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+16 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+32 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+7 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+> m $3979c 2
+0003979C: 02 98                                            .ÿ
+> m $3979c 2
+0003979C: 02 a3                                            .ú
+> m $3979c 2
+0003979C: 02 a7                                            .º
+> m $3979c 2
+0003979C: 02 bf                                            .™
+> m $3979c 2
+0003979C: 02 bf                                            .™
+WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+5 repeats of: WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+WARN : Unknown BIOS call 0x810b! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0x810b! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+12 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0x5e! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+16 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+32 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+7 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+> m $3979c 2
+0003979C: 02 c6                                            .ה
+> m $3979c 2
+0003979C: 02 d1                                            .ע
+> m $3979c 2
+0003979C: 02 d5                                            .ר
+> m $3979c 2
+0003979C: 02 ed                                            .φ
+> m $3979c 2
+0003979C: 02 ed                                            .φ
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+16 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0x40ff! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0x5e! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+16 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+32 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+7 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+> m $3979c 2
+0003979C: 02 f4                                            .⌠
+> m $3979c 2
+0003979C: 02 ff                                            .¯
+> m $3979c 2
+0003979C: 03 03                                            ..
+> m $3979c 2
+0003979C: 03 1b                                            ..
+> m $3979c 2
+0003979C: 03 1b                                            ..
+WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+5 repeats of: WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+WARN : Unknown BIOS call 0x810b! at PC 0xE134DA
+4 repeats of: WARN : Unknown BIOS call 0x810b! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+15 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0x40ff! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0x5e! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+16 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+32 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+7 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+> m $3979c 2
+0003979C: 03 22                                            ."
+> m $3979c 2
+0003979C: 03 2d                                            .-
+> m $3979c 2
+0003979C: 03 31                                            .1
+> m $3979c 2
+0003979C: 03 49                                            .I
+> m $3979c 2
+0003979C: 03 49                                            .I
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0xfffe! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xfffe! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0x40ff! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0x5e! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+16 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+32 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+7 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+> m $3979c 2
+0003979C: 03 50                                            .P
+> m $3979c 2
+0003979C: 03 5b                                            .[
+> m $3979c 2
+0003979C: 03 5f                                            ._
+> b pc = $2cc5e  :trace :once :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L5.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $2cc5e
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L5.txt' file on hit.
+> m $3979c 2
+0003979C: 03 7b                                            .{
+> m $3979c 2
+0003979C: 03 7b                                            .{
+WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+5 repeats of: WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+WARN : Unknown BIOS call 0x810b! at PC 0xE134DA
+5 repeats of: WARN : Unknown BIOS call 0x810b! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+16 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L5.txt
+Reading debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L5.txt'...
+Changed to input file dir '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/out_r3_acsi_tt/L5.bin $39630 56690
+  Wrote 0xdd72 bytes.
+> r
+  D0 00000000   D1 0000DD72   D2 0000000F   D3 FFFFFF80 
+  D4 00000000   D5 00000000   D6 0000FFFF   D7 00015BB4 
+  A0 00015BB4   A1 00039630   A2 0000A000   A3 00036C82 
+  A4 0001C5FF   A5 000473C4   A6 0001C335   A7 00012202 
+USP  00366676 ISP  00012202 SFC  00000000 DFC  00000000 
+CACR 00000000 VBR  00000000 CAAR 00000000 MSP  00000000 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+0: 7FFF-7FFFFFFF-FFFFF800 +nan 
+1: 7FFF-7FFFFFFF-FFFFF800 +nan 
+2: 7FFF-7FFFFFFF-FFFFF800 +nan 
+3: 7FFF-7FFFFFFF-FFFFF800 +nan 
+4: 7FFF-7FFFFFFF-FFFFF800 +nan 
+5: 7FFF-7FFFFFFF-FFFFF800 +nan 
+6: 7FFF-7FFFFFFF-FFFFF800 +nan 
+7: 7FFF-7FFFFFFF-FFFFF800 +nan 
+FPSR: 00000000 FPCR: 00000000 FPIAR: 00000000 N=0 Z=0 I=0 NAN=0
+SRP: 0 CRP: 100002003FB7B0
+TT0: 00000000 TT1: 00000000 TC: 80C84440
+Prefetch 0002cc64 20014cdf (1) 6702 (Bcc) 72ff (MOVE) 2001 (MOVE) Chip latch 00000000
+0002cc5e 4a80                     tst.l d0
+Next PC: 0002cc60
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save' dir.
+Removed CPU breakpoint 1:
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L5.txt
+9 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+> m $3979c 2
+0003979C: 02 c6                                            .ה
+> m $3979c 2
+0003979C: 02 d2                                            .פ
+> m $3979c 2
+0003979C: 02 d5                                            .ר
+> m $3979c 2
+0003979C: 02 ed                                            .φ
+> m $3979c 2
+0003979C: 02 ed                                            .φ
+WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+5 repeats of: WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+WARN : Unknown BIOS call 0x810b! at PC 0xE134DA
+5 repeats of: WARN : Unknown BIOS call 0x810b! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+4 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0xfffe! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xfffe! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0x40ff! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0x5e! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+16 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+32 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+7 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+> m $3979c 2
+0003979C: 02 f4                                            .⌠
+> m $3979c 2
+0003979C: 02 ff                                            .¯
+> m $3979c 2
+0003979C: 03 03                                            ..
+> b pc = $2cc5e  :trace :once :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L7.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $2cc5e
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L7.txt' file on hit.
+> m $3979c 2
+0003979C: 03 1f                                            ..
+> m $3979c 2
+0003979C: 03 1f                                            ..
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+16 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L7.txt
+Reading debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L7.txt'...
+Changed to input file dir '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/out_r3_acsi_tt/L7.bin $39630 56690
+  Wrote 0xdd72 bytes.
+> r
+  D0 00000000   D1 0000DD72   D2 0000000F   D3 FFFFFF80 
+  D4 00000000   D5 00000000   D6 0000FFFF   D7 00015BB4 
+  A0 00015BB4   A1 00039630   A2 0000A000   A3 00036C82 
+  A4 0001C5FF   A5 000473C4   A6 0001C335   A7 00012202 
+USP  00366676 ISP  00012202 SFC  00000000 DFC  00000000 
+CACR 00000000 VBR  00000000 CAAR 00000000 MSP  00000000 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+0: 7FFF-7FFFFFFF-FFFFF800 +nan 
+1: 7FFF-7FFFFFFF-FFFFF800 +nan 
+2: 7FFF-7FFFFFFF-FFFFF800 +nan 
+3: 7FFF-7FFFFFFF-FFFFF800 +nan 
+4: 7FFF-7FFFFFFF-FFFFF800 +nan 
+5: 7FFF-7FFFFFFF-FFFFF800 +nan 
+6: 7FFF-7FFFFFFF-FFFFF800 +nan 
+7: 7FFF-7FFFFFFF-FFFFF800 +nan 
+FPSR: 00000000 FPCR: 00000000 FPIAR: 00000000 N=0 Z=0 I=0 NAN=0
+SRP: 0 CRP: 100002003FB7B0
+TT0: 00000000 TT1: 00000000 TC: 80C84440
+Prefetch 0002cc64 20014cdf (1) 6702 (Bcc) 72ff (MOVE) 2001 (MOVE) Chip latch 00000000
+0002cc5e 4a80                     tst.l d0
+Next PC: 0002cc60
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save' dir.
+Removed CPU breakpoint 1:
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L7.txt
+15 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+> m $3979c 2
+0003979C: 03 22                                            ."
+> m $3979c 2
+0003979C: 03 2e                                            ..
+> m $3979c 2
+0003979C: 03 31                                            .1
+> m $3979c 2
+0003979C: 03 49                                            .I
+> m $3979c 2
+0003979C: 03 49                                            .I
+WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+5 repeats of: WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+WARN : Unknown BIOS call 0x810b! at PC 0xE134DA
+5 repeats of: WARN : Unknown BIOS call 0x810b! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0xfffe! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xfffe! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0x40ff! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0x5e! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+16 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+32 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+7 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+> m $3979c 2
+0003979C: 03 50                                            .P
+> m $3979c 2
+0003979C: 03 5b                                            .[
+> m $3979c 2
+0003979C: 03 5f                                            ._
+> b pc = $2cc5e  :trace :once :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L9.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $2cc5e
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L9.txt' file on hit.
+> m $3979c 2
+0003979C: 03 7b                                            .{
+> m $3979c 2
+0003979C: 03 7b                                            .{
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+16 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L9.txt
+Reading debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L9.txt'...
+Changed to input file dir '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/out_r3_acsi_tt/L9.bin $39630 56690
+  Wrote 0xdd72 bytes.
+> r
+  D0 00000000   D1 0000DD72   D2 0000000F   D3 FFFFFF80 
+  D4 00000000   D5 00000000   D6 0000FFFF   D7 00015BB4 
+  A0 00015BB4   A1 00039630   A2 00002300   A3 00036C82 
+  A4 0001C5FF   A5 000473C4   A6 0001C335   A7 00012202 
+USP  00366676 ISP  00012202 SFC  00000000 DFC  00000000 
+CACR 00000000 VBR  00000000 CAAR 00000000 MSP  00000000 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+0: 7FFF-7FFFFFFF-FFFFF800 +nan 
+1: 7FFF-7FFFFFFF-FFFFF800 +nan 
+2: 7FFF-7FFFFFFF-FFFFF800 +nan 
+3: 7FFF-7FFFFFFF-FFFFF800 +nan 
+4: 7FFF-7FFFFFFF-FFFFF800 +nan 
+5: 7FFF-7FFFFFFF-FFFFF800 +nan 
+6: 7FFF-7FFFFFFF-FFFFF800 +nan 
+7: 7FFF-7FFFFFFF-FFFFF800 +nan 
+FPSR: 00000000 FPCR: 00000000 FPIAR: 00000000 N=0 Z=0 I=0 NAN=0
+SRP: 0 CRP: 100002003FB7B0
+TT0: 00000000 TT1: 00000000 TC: 80C84440
+Prefetch 0002cc64 20014cdf (1) 6702 (Bcc) 72ff (MOVE) 2001 (MOVE) Chip latch 00000000
+0002cc5e 4a80                     tst.l d0
+Next PC: 0002cc60
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save' dir.
+Removed CPU breakpoint 1:
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L9.txt
+15 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+> m $3979c 2
+0003979C: 02 c6                                            .ה
+> m $3979c 2
+0003979C: 02 d2                                            .פ
+> m $3979c 2
+0003979C: 02 d5                                            .ר
+> m $3979c 2
+0003979C: 02 ed                                            .φ
+> m $3979c 2
+0003979C: 02 ed                                            .φ
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+10 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0xfffe! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xfffe! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0x40ff! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0x5e! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+16 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+32 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+7 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+> m $3979c 2
+0003979C: 02 f4                                            .⌠
+> m $3979c 2
+0003979C: 02 ff                                            .¯
+> m $3979c 2
+0003979C: 03 03                                            ..
+> b pc = $2cc5e  :trace :once :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L11.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $2cc5e
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L11.txt' file on hit.
+> m $3979c 2
+0003979C: 03 1f                                            ..
+> m $3979c 2
+0003979C: 03 1f                                            ..
+WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+5 repeats of: WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+WARN : Unknown BIOS call 0x810b! at PC 0xE134DA
+5 repeats of: WARN : Unknown BIOS call 0x810b! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+16 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L11.txt
+Reading debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L11.txt'...
+Changed to input file dir '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/out_r3_acsi_tt/L11.bin $39630 56690
+  Wrote 0xdd72 bytes.
+> r
+  D0 00000000   D1 0000DD72   D2 0000000F   D3 FFFFFF80 
+  D4 00000000   D5 00000000   D6 0000FFFF   D7 00015BB4 
+  A0 00015BB4   A1 00039630   A2 0000A000   A3 00036C82 
+  A4 0001C5FF   A5 000473C4   A6 0001C335   A7 00012202 
+USP  00366676 ISP  00012202 SFC  00000000 DFC  00000000 
+CACR 00000000 VBR  00000000 CAAR 00000000 MSP  00000000 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+0: 7FFF-7FFFFFFF-FFFFF800 +nan 
+1: 7FFF-7FFFFFFF-FFFFF800 +nan 
+2: 7FFF-7FFFFFFF-FFFFF800 +nan 
+3: 7FFF-7FFFFFFF-FFFFF800 +nan 
+4: 7FFF-7FFFFFFF-FFFFF800 +nan 
+5: 7FFF-7FFFFFFF-FFFFF800 +nan 
+6: 7FFF-7FFFFFFF-FFFFF800 +nan 
+7: 7FFF-7FFFFFFF-FFFFF800 +nan 
+FPSR: 00000000 FPCR: 00000000 FPIAR: 00000000 N=0 Z=0 I=0 NAN=0
+SRP: 0 CRP: 100002003FB7B0
+TT0: 00000000 TT1: 00000000 TC: 80C84440
+Prefetch 0002cc64 20014cdf (1) 6702 (Bcc) 72ff (MOVE) 2001 (MOVE) Chip latch 00000000
+0002cc5e 4a80                     tst.l d0
+Next PC: 0002cc60
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save' dir.
+Removed CPU breakpoint 1:
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L11.txt
+9 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+> m $3979c 2
+0003979C: 03 22                                            ."
+> m $3979c 2
+0003979C: 03 2e                                            ..
+> m $3979c 2
+0003979C: 03 31                                            .1
+> m $3979c 2
+0003979C: 03 49                                            .I
+> m $3979c 2
+0003979C: 03 49                                            .I
+WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+5 repeats of: WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+WARN : Unknown BIOS call 0x810b! at PC 0xE134DA
+5 repeats of: WARN : Unknown BIOS call 0x810b! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0xfffe! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xfffe! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0x40ff! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0x5e! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+16 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+32 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+7 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+> m $3979c 2
+0003979C: 03 50                                            .P
+> m $3979c 2
+0003979C: 03 5b                                            .[
+> m $3979c 2
+0003979C: 03 5f                                            ._
+> b pc = $2cc5e  :trace :once :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L13.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $2cc5e
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L13.txt' file on hit.
+> m $3979c 2
+0003979C: 03 7b                                            .{
+> m $3979c 2
+0003979C: 03 7b                                            .{
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+16 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L13.txt
+Reading debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L13.txt'...
+Changed to input file dir '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/out_r3_acsi_tt/L13.bin $39630 56690
+  Wrote 0xdd72 bytes.
+> r
+  D0 00000000   D1 0000DD72   D2 0000000F   D3 FFFFFF80 
+  D4 00000000   D5 00000000   D6 0000FFFF   D7 00015BB4 
+  A0 00015BB4   A1 00039630   A2 00002300   A3 00036C82 
+  A4 0001C5FF   A5 000473C4   A6 0001C335   A7 00012202 
+USP  00366676 ISP  00012202 SFC  00000000 DFC  00000000 
+CACR 00000000 VBR  00000000 CAAR 00000000 MSP  00000000 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+0: 7FFF-7FFFFFFF-FFFFF800 +nan 
+1: 7FFF-7FFFFFFF-FFFFF800 +nan 
+2: 7FFF-7FFFFFFF-FFFFF800 +nan 
+3: 7FFF-7FFFFFFF-FFFFF800 +nan 
+4: 7FFF-7FFFFFFF-FFFFF800 +nan 
+5: 7FFF-7FFFFFFF-FFFFF800 +nan 
+6: 7FFF-7FFFFFFF-FFFFF800 +nan 
+7: 7FFF-7FFFFFFF-FFFFF800 +nan 
+FPSR: 00000000 FPCR: 00000000 FPIAR: 00000000 N=0 Z=0 I=0 NAN=0
+SRP: 0 CRP: 100002003FB7B0
+TT0: 00000000 TT1: 00000000 TC: 80C84440
+Prefetch 0002cc64 20014cdf (1) 6702 (Bcc) 72ff (MOVE) 2001 (MOVE) Chip latch 00000000
+0002cc5e 4a80                     tst.l d0
+Next PC: 0002cc60
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save' dir.
+Removed CPU breakpoint 1:
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L13.txt
+15 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+> m $3979c 2
+0003979C: 02 c6                                            .ה
+> m $3979c 2
+0003979C: 02 d2                                            .פ
+> m $3979c 2
+0003979C: 02 d5                                            .ר
+> m $3979c 2
+0003979C: 02 ed                                            .φ
+> m $3979c 2
+0003979C: 02 ed                                            .φ
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+10 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0xfffe! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xfffe! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0x40ff! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0x5e! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+16 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+32 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+7 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+> m $3979c 2
+0003979C: 02 f4                                            .⌠
+> m $3979c 2
+0003979C: 02 ff                                            .¯
+> m $3979c 2
+0003979C: 03 03                                            ..
+> b pc = $2cc5e  :trace :once :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L15.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $2cc5e
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L15.txt' file on hit.
+> m $3979c 2
+0003979C: 03 1f                                            ..
+> m $3979c 2
+0003979C: 03 1f                                            ..
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+16 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L15.txt
+Reading debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L15.txt'...
+Changed to input file dir '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/out_r3_acsi_tt/L15.bin $39630 56690
+  Wrote 0xdd72 bytes.
+> r
+  D0 00000000   D1 0000DD72   D2 0000000F   D3 FFFFFF80 
+  D4 00000000   D5 00000000   D6 0000FFFF   D7 00015BB4 
+  A0 00015BB4   A1 00039630   A2 00002300   A3 00036C82 
+  A4 0001C5FF   A5 000473C4   A6 0001C335   A7 00012202 
+USP  00366676 ISP  00012202 SFC  00000000 DFC  00000000 
+CACR 00000000 VBR  00000000 CAAR 00000000 MSP  00000000 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+0: 7FFF-7FFFFFFF-FFFFF800 +nan 
+1: 7FFF-7FFFFFFF-FFFFF800 +nan 
+2: 7FFF-7FFFFFFF-FFFFF800 +nan 
+3: 7FFF-7FFFFFFF-FFFFF800 +nan 
+4: 7FFF-7FFFFFFF-FFFFF800 +nan 
+5: 7FFF-7FFFFFFF-FFFFF800 +nan 
+6: 7FFF-7FFFFFFF-FFFFF800 +nan 
+7: 7FFF-7FFFFFFF-FFFFF800 +nan 
+FPSR: 00000000 FPCR: 00000000 FPIAR: 00000000 N=0 Z=0 I=0 NAN=0
+SRP: 0 CRP: 100002003FB7B0
+TT0: 00000000 TT1: 00000000 TC: 80C84440
+Prefetch 0002cc64 20014cdf (1) 6702 (Bcc) 72ff (MOVE) 2001 (MOVE) Chip latch 00000000
+0002cc5e 4a80                     tst.l d0
+Next PC: 0002cc60
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save' dir.
+Removed CPU breakpoint 1:
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L15.txt
+15 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+> m $3979c 2
+0003979C: 03 22                                            ."
+> m $3979c 2
+0003979C: 03 2e                                            ..
+> m $3979c 2
+0003979C: 03 31                                            .1
+> m $3979c 2
+0003979C: 03 49                                            .I
+> m $3979c 2
+0003979C: 03 49                                            .I
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0xfffe! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xfffe! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0x40ff! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0x5e! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+16 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+32 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+7 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+> m $3979c 2
+0003979C: 03 50                                            .P
+> m $3979c 2
+0003979C: 03 5b                                            .[
+> m $3979c 2
+0003979C: 03 5f                                            ._
+> b pc = $2cc5e  :trace :once :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L17.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $2cc5e
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L17.txt' file on hit.
+> m $3979c 2
+0003979C: 03 7b                                            .{
+> m $3979c 2
+0003979C: 03 7b                                            .{
+WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+5 repeats of: WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+WARN : Unknown BIOS call 0x810b! at PC 0xE134DA
+5 repeats of: WARN : Unknown BIOS call 0x810b! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+16 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L17.txt
+Reading debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L17.txt'...
+Changed to input file dir '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/out_r3_acsi_tt/L17.bin $39630 56690
+  Wrote 0xdd72 bytes.
+> r
+  D0 00000000   D1 0000DD72   D2 0000000F   D3 FFFFFF80 
+  D4 00000000   D5 00000000   D6 0000FFFF   D7 00015BB4 
+  A0 00015BB4   A1 00039630   A2 0000A000   A3 00036C82 
+  A4 0001C5FF   A5 000473C4   A6 0001C335   A7 00012202 
+USP  00366676 ISP  00012202 SFC  00000000 DFC  00000000 
+CACR 00000000 VBR  00000000 CAAR 00000000 MSP  00000000 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+0: 7FFF-7FFFFFFF-FFFFF800 +nan 
+1: 7FFF-7FFFFFFF-FFFFF800 +nan 
+2: 7FFF-7FFFFFFF-FFFFF800 +nan 
+3: 7FFF-7FFFFFFF-FFFFF800 +nan 
+4: 7FFF-7FFFFFFF-FFFFF800 +nan 
+5: 7FFF-7FFFFFFF-FFFFF800 +nan 
+6: 7FFF-7FFFFFFF-FFFFF800 +nan 
+7: 7FFF-7FFFFFFF-FFFFF800 +nan 
+FPSR: 00000000 FPCR: 00000000 FPIAR: 00000000 N=0 Z=0 I=0 NAN=0
+SRP: 0 CRP: 100002003FB7B0
+TT0: 00000000 TT1: 00000000 TC: 80C84440
+Prefetch 0002cc64 20014cdf (1) 6702 (Bcc) 72ff (MOVE) 2001 (MOVE) Chip latch 00000000
+0002cc5e 4a80                     tst.l d0
+Next PC: 0002cc60
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save' dir.
+Removed CPU breakpoint 1:
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L17.txt
+9 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+> m $3979c 2
+0003979C: 02 c6                                            .ה
+> m $3979c 2
+0003979C: 02 d2                                            .פ
+> m $3979c 2
+0003979C: 02 d5                                            .ר
+> m $3979c 2
+0003979C: 02 ed                                            .φ
+> m $3979c 2
+0003979C: 02 ed                                            .φ
+WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+5 repeats of: WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+WARN : Unknown BIOS call 0x810b! at PC 0xE134DA
+5 repeats of: WARN : Unknown BIOS call 0x810b! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+4 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0xfffe! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xfffe! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0x40ff! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0x5e! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+16 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+32 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+7 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+> m $3979c 2
+0003979C: 02 f4                                            .⌠
+> m $3979c 2
+0003979C: 02 ff                                            .¯
+> m $3979c 2
+0003979C: 03 03                                            ..
+> b pc = $2cc5e  :trace :once :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L19.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $2cc5e
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L19.txt' file on hit.
+> m $3979c 2
+0003979C: 03 1f                                            ..
+> m $3979c 2
+0003979C: 03 1f                                            ..
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+16 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L19.txt
+Reading debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L19.txt'...
+Changed to input file dir '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/out_r3_acsi_tt/L19.bin $39630 56690
+  Wrote 0xdd72 bytes.
+> r
+  D0 00000000   D1 0000DD72   D2 0000000F   D3 FFFFFF80 
+  D4 00000000   D5 00000000   D6 0000FFFF   D7 00015BB4 
+  A0 00015BB4   A1 00039630   A2 0000A000   A3 00036C82 
+  A4 0001C5FF   A5 000473C4   A6 0001C335   A7 00012202 
+USP  00366676 ISP  00012202 SFC  00000000 DFC  00000000 
+CACR 00000000 VBR  00000000 CAAR 00000000 MSP  00000000 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+0: 7FFF-7FFFFFFF-FFFFF800 +nan 
+1: 7FFF-7FFFFFFF-FFFFF800 +nan 
+2: 7FFF-7FFFFFFF-FFFFF800 +nan 
+3: 7FFF-7FFFFFFF-FFFFF800 +nan 
+4: 7FFF-7FFFFFFF-FFFFF800 +nan 
+5: 7FFF-7FFFFFFF-FFFFF800 +nan 
+6: 7FFF-7FFFFFFF-FFFFF800 +nan 
+7: 7FFF-7FFFFFFF-FFFFF800 +nan 
+FPSR: 00000000 FPCR: 00000000 FPIAR: 00000000 N=0 Z=0 I=0 NAN=0
+SRP: 0 CRP: 100002003FB7B0
+TT0: 00000000 TT1: 00000000 TC: 80C84440
+Prefetch 0002cc64 20014cdf (1) 6702 (Bcc) 72ff (MOVE) 2001 (MOVE) Chip latch 00000000
+0002cc5e 4a80                     tst.l d0
+Next PC: 0002cc60
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save' dir.
+Removed CPU breakpoint 1:
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L19.txt
+15 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+> m $3979c 2
+0003979C: 03 22                                            ."
+> m $3979c 2
+0003979C: 03 2e                                            ..
+> m $3979c 2
+0003979C: 03 31                                            .1
+> m $3979c 2
+0003979C: 03 49                                            .I
+> m $3979c 2
+0003979C: 03 49                                            .I
+WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+5 repeats of: WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+WARN : Unknown BIOS call 0x810b! at PC 0xE134DA
+5 repeats of: WARN : Unknown BIOS call 0x810b! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0xfffe! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xfffe! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0x40ff! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0x5e! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+16 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+32 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+7 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+> m $3979c 2
+0003979C: 03 50                                            .P
+> m $3979c 2
+0003979C: 03 5b                                            .[
+> m $3979c 2
+0003979C: 03 5f                                            ._
+> b pc = $2cc5e  :trace :once :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L21.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $2cc5e
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L21.txt' file on hit.
+> m $3979c 2
+0003979C: 03 7b                                            .{
+> m $3979c 2
+0003979C: 03 7b                                            .{
+WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+5 repeats of: WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+WARN : Unknown BIOS call 0x810b! at PC 0xE134DA
+5 repeats of: WARN : Unknown BIOS call 0x810b! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+16 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L21.txt
+Reading debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L21.txt'...
+Changed to input file dir '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/out_r3_acsi_tt/L21.bin $39630 56690
+  Wrote 0xdd72 bytes.
+> r
+  D0 00000000   D1 0000DD72   D2 0000000F   D3 FFFFFF80 
+  D4 00000000   D5 00000000   D6 0000FFFF   D7 00015BB4 
+  A0 00015BB4   A1 00039630   A2 0000A000   A3 00036C82 
+  A4 0001C5FF   A5 000473C4   A6 0001C335   A7 00012202 
+USP  00366676 ISP  00012202 SFC  00000000 DFC  00000000 
+CACR 00000000 VBR  00000000 CAAR 00000000 MSP  00000000 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+0: 7FFF-7FFFFFFF-FFFFF800 +nan 
+1: 7FFF-7FFFFFFF-FFFFF800 +nan 
+2: 7FFF-7FFFFFFF-FFFFF800 +nan 
+3: 7FFF-7FFFFFFF-FFFFF800 +nan 
+4: 7FFF-7FFFFFFF-FFFFF800 +nan 
+5: 7FFF-7FFFFFFF-FFFFF800 +nan 
+6: 7FFF-7FFFFFFF-FFFFF800 +nan 
+7: 7FFF-7FFFFFFF-FFFFF800 +nan 
+FPSR: 00000000 FPCR: 00000000 FPIAR: 00000000 N=0 Z=0 I=0 NAN=0
+SRP: 0 CRP: 100002003FB7B0
+TT0: 00000000 TT1: 00000000 TC: 80C84440
+Prefetch 0002cc64 20014cdf (1) 6702 (Bcc) 72ff (MOVE) 2001 (MOVE) Chip latch 00000000
+0002cc5e 4a80                     tst.l d0
+Next PC: 0002cc60
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save' dir.
+Removed CPU breakpoint 1:
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L21.txt
+9 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+> m $3979c 2
+0003979C: 02 c7                                            .ו
+> m $3979c 2
+0003979C: 02 d2                                            .פ
+> m $3979c 2
+0003979C: 02 d5                                            .ר
+> m $3979c 2
+0003979C: 02 ed                                            .φ
+> m $3979c 2
+0003979C: 02 ed                                            .φ
+WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+5 repeats of: WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+WARN : Unknown BIOS call 0x810b! at PC 0xE134DA
+5 repeats of: WARN : Unknown BIOS call 0x810b! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+4 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0xfffe! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xfffe! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0x40ff! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0x5e! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+16 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+32 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+7 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+> m $3979c 2
+0003979C: 02 f4                                            .⌠
+> m $3979c 2
+0003979C: 02 ff                                            .¯
+> m $3979c 2
+0003979C: 03 03                                            ..
+> b pc = $2cc5e  :trace :once :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L23.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $2cc5e
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L23.txt' file on hit.
+> m $3979c 2
+0003979C: 03 1f                                            ..
+> m $3979c 2
+0003979C: 03 1f                                            ..
+WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+5 repeats of: WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+WARN : Unknown BIOS call 0x810b! at PC 0xE134DA
+5 repeats of: WARN : Unknown BIOS call 0x810b! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+16 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L23.txt
+Reading debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L23.txt'...
+Changed to input file dir '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/out_r3_acsi_tt/L23.bin $39630 56690
+  Wrote 0xdd72 bytes.
+> r
+  D0 00000000   D1 0000DD72   D2 0000000F   D3 FFFFFF80 
+  D4 00000000   D5 00000000   D6 0000FFFF   D7 00015BB4 
+  A0 00015BB4   A1 00039630   A2 00002300   A3 00036C82 
+  A4 0001C5FF   A5 000473C4   A6 0001C335   A7 00012202 
+USP  00366676 ISP  00012202 SFC  00000000 DFC  00000000 
+CACR 00000000 VBR  00000000 CAAR 00000000 MSP  00000000 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+0: 7FFF-7FFFFFFF-FFFFF800 +nan 
+1: 7FFF-7FFFFFFF-FFFFF800 +nan 
+2: 7FFF-7FFFFFFF-FFFFF800 +nan 
+3: 7FFF-7FFFFFFF-FFFFF800 +nan 
+4: 7FFF-7FFFFFFF-FFFFF800 +nan 
+5: 7FFF-7FFFFFFF-FFFFF800 +nan 
+6: 7FFF-7FFFFFFF-FFFFF800 +nan 
+7: 7FFF-7FFFFFFF-FFFFF800 +nan 
+FPSR: 00000000 FPCR: 00000000 FPIAR: 00000000 N=0 Z=0 I=0 NAN=0
+SRP: 0 CRP: 100002003FB7B0
+TT0: 00000000 TT1: 00000000 TC: 80C84440
+Prefetch 0002cc64 20014cdf (1) 6702 (Bcc) 72ff (MOVE) 2001 (MOVE) Chip latch 00000000
+0002cc5e 4a80                     tst.l d0
+Next PC: 0002cc60
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save' dir.
+Removed CPU breakpoint 1:
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L23.txt
+9 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+> m $3979c 2
+0003979C: 03 22                                            ."
+> m $3979c 2
+0003979C: 03 2e                                            ..
+> m $3979c 2
+0003979C: 03 31                                            .1
+> m $3979c 2
+0003979C: 03 49                                            .I
+> m $3979c 2
+0003979C: 03 49                                            .I
+WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+5 repeats of: WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+WARN : Unknown BIOS call 0x810b! at PC 0xE134DA
+5 repeats of: WARN : Unknown BIOS call 0x810b! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0xfffe! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xfffe! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0x40ff! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0x5e! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+16 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+32 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+7 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+> m $3979c 2
+0003979C: 03 50                                            .P
+> m $3979c 2
+0003979C: 03 5b                                            .[
+> m $3979c 2
+0003979C: 03 5f                                            ._
+> b pc = $2cc5e  :trace :once :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L25.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $2cc5e
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L25.txt' file on hit.
+> m $3979c 2
+0003979C: 03 7b                                            .{
+> m $3979c 2
+0003979C: 03 7b                                            .{
+WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+5 repeats of: WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+WARN : Unknown BIOS call 0x810b! at PC 0xE134DA
+5 repeats of: WARN : Unknown BIOS call 0x810b! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+16 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L25.txt
+Reading debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L25.txt'...
+Changed to input file dir '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/out_r3_acsi_tt/L25.bin $39630 56690
+  Wrote 0xdd72 bytes.
+> r
+  D0 00000000   D1 0000DD72   D2 0000000F   D3 FFFFFF80 
+  D4 00000000   D5 00000000   D6 0000FFFF   D7 00015BB4 
+  A0 00015BB4   A1 00039630   A2 00002300   A3 00036C82 
+  A4 0001C5FF   A5 000473C4   A6 0001C335   A7 00012202 
+USP  00366676 ISP  00012202 SFC  00000000 DFC  00000000 
+CACR 00000000 VBR  00000000 CAAR 00000000 MSP  00000000 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+0: 7FFF-7FFFFFFF-FFFFF800 +nan 
+1: 7FFF-7FFFFFFF-FFFFF800 +nan 
+2: 7FFF-7FFFFFFF-FFFFF800 +nan 
+3: 7FFF-7FFFFFFF-FFFFF800 +nan 
+4: 7FFF-7FFFFFFF-FFFFF800 +nan 
+5: 7FFF-7FFFFFFF-FFFFF800 +nan 
+6: 7FFF-7FFFFFFF-FFFFF800 +nan 
+7: 7FFF-7FFFFFFF-FFFFF800 +nan 
+FPSR: 00000000 FPCR: 00000000 FPIAR: 00000000 N=0 Z=0 I=0 NAN=0
+SRP: 0 CRP: 100002003FB7B0
+TT0: 00000000 TT1: 00000000 TC: 80C84440
+Prefetch 0002cc64 20014cdf (1) 6702 (Bcc) 72ff (MOVE) 2001 (MOVE) Chip latch 00000000
+0002cc5e 4a80                     tst.l d0
+Next PC: 0002cc60
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save' dir.
+Removed CPU breakpoint 1:
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L25.txt
+9 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+> m $3979c 2
+0003979C: 02 c6                                            .ה
+> m $3979c 2
+0003979C: 02 d2                                            .פ
+> m $3979c 2
+0003979C: 02 d5                                            .ר
+> m $3979c 2
+0003979C: 02 ed                                            .φ
+> m $3979c 2
+0003979C: 02 ed                                            .φ
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+10 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0xfffe! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xfffe! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0x40ff! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0x5e! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+16 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+32 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+7 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+> m $3979c 2
+0003979C: 02 f4                                            .⌠
+> m $3979c 2
+0003979C: 02 ff                                            .¯
+> m $3979c 2
+0003979C: 03 03                                            ..
+> b pc = $2cc5e  :trace :once :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L27.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $2cc5e
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L27.txt' file on hit.
+> m $3979c 2
+0003979C: 03 1f                                            ..
+> m $3979c 2
+0003979C: 03 1f                                            ..
+WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+5 repeats of: WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+WARN : Unknown BIOS call 0x810b! at PC 0xE134DA
+5 repeats of: WARN : Unknown BIOS call 0x810b! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+16 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L27.txt
+Reading debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L27.txt'...
+Changed to input file dir '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/out_r3_acsi_tt/L27.bin $39630 56690
+  Wrote 0xdd72 bytes.
+> r
+  D0 00000000   D1 0000DD72   D2 0000000F   D3 FFFFFF80 
+  D4 00000000   D5 00000000   D6 0000FFFF   D7 00015BB4 
+  A0 00015BB4   A1 00039630   A2 0000A000   A3 00036C82 
+  A4 0001C5FF   A5 000473C4   A6 0001C335   A7 00012202 
+USP  00366676 ISP  00012202 SFC  00000000 DFC  00000000 
+CACR 00000000 VBR  00000000 CAAR 00000000 MSP  00000000 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+0: 7FFF-7FFFFFFF-FFFFF800 +nan 
+1: 7FFF-7FFFFFFF-FFFFF800 +nan 
+2: 7FFF-7FFFFFFF-FFFFF800 +nan 
+3: 7FFF-7FFFFFFF-FFFFF800 +nan 
+4: 7FFF-7FFFFFFF-FFFFF800 +nan 
+5: 7FFF-7FFFFFFF-FFFFF800 +nan 
+6: 7FFF-7FFFFFFF-FFFFF800 +nan 
+7: 7FFF-7FFFFFFF-FFFFF800 +nan 
+FPSR: 00000000 FPCR: 00000000 FPIAR: 00000000 N=0 Z=0 I=0 NAN=0
+SRP: 0 CRP: 100002003FB7B0
+TT0: 00000000 TT1: 00000000 TC: 80C84440
+Prefetch 0002cc64 20014cdf (1) 6702 (Bcc) 72ff (MOVE) 2001 (MOVE) Chip latch 00000000
+0002cc5e 4a80                     tst.l d0
+Next PC: 0002cc60
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save' dir.
+Removed CPU breakpoint 1:
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L27.txt
+9 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+> m $3979c 2
+0003979C: 03 22                                            ."
+> m $3979c 2
+0003979C: 03 2e                                            ..
+> m $3979c 2
+0003979C: 03 31                                            .1
+> m $3979c 2
+0003979C: 03 49                                            .I
+> m $3979c 2
+0003979C: 03 49                                            .I
+WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+5 repeats of: WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+WARN : Unknown BIOS call 0x810b! at PC 0xE134DA
+5 repeats of: WARN : Unknown BIOS call 0x810b! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0xfffe! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xfffe! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0x40ff! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x9f00! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xa2! at PC 0xE134DA
+WARN : Unknown BIOS call 0x6000! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+2 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+WARN : Unknown BIOS call 0x5e! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+16 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+32 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+7 repeats of: WARN : Unknown BIOS call 0xffaf! at PC 0xE134DA
+> m $3979c 2
+0003979C: 03 50                                            .P
+> m $3979c 2
+0003979C: 03 5b                                            .[
+> m $3979c 2
+0003979C: 03 5f                                            ._
+> b pc = $2cc5e  :trace :once :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L29.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $2cc5e
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L29.txt' file on hit.
+> m $3979c 2
+0003979C: 03 7b                                            .{
+> m $3979c 2
+0003979C: 03 7b                                            .{
+WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+5 repeats of: WARN : Unknown BIOS call 0xa000! at PC 0xE134DA
+WARN : Unknown BIOS call 0x810b! at PC 0xE134DA
+5 repeats of: WARN : Unknown BIOS call 0x810b! at PC 0xE134DA
+WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+8 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+16 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L29.txt
+Reading debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L29.txt'...
+Changed to input file dir '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/out_r3_acsi_tt/L29.bin $39630 56690
+  Wrote 0xdd72 bytes.
+> r
+  D0 00000000   D1 0000DD72   D2 0000000F   D3 FFFFFF80 
+  D4 00000000   D5 00000000   D6 0000FFFF   D7 00015BB4 
+  A0 00015BB4   A1 00039630   A2 0000A000   A3 00036C82 
+  A4 0001C5FF   A5 000473C4   A6 0001C335   A7 00012202 
+USP  00366676 ISP  00012202 SFC  00000000 DFC  00000000 
+CACR 00000000 VBR  00000000 CAAR 00000000 MSP  00000000 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+0: 7FFF-7FFFFFFF-FFFFF800 +nan 
+1: 7FFF-7FFFFFFF-FFFFF800 +nan 
+2: 7FFF-7FFFFFFF-FFFFF800 +nan 
+3: 7FFF-7FFFFFFF-FFFFF800 +nan 
+4: 7FFF-7FFFFFFF-FFFFF800 +nan 
+5: 7FFF-7FFFFFFF-FFFFF800 +nan 
+6: 7FFF-7FFFFFFF-FFFFF800 +nan 
+7: 7FFF-7FFFFFFF-FFFFF800 +nan 
+FPSR: 00000000 FPCR: 00000000 FPIAR: 00000000 N=0 Z=0 I=0 NAN=0
+SRP: 0 CRP: 100002003FB7B0
+TT0: 00000000 TT1: 00000000 TC: 80C84440
+Prefetch 0002cc64 20014cdf (1) 6702 (Bcc) 72ff (MOVE) 2001 (MOVE) Chip latch 00000000
+0002cc5e 4a80                     tst.l d0
+Next PC: 0002cc60
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save' dir.
+Removed CPU breakpoint 1:
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_L29.txt
+9 repeats of: WARN : Unknown BIOS call 0xffff! at PC 0xE134DA
+> m $3979c 2
+0003979C: 02 c6                                            .ה
+> m $3979c 2
+0003979C: 02 d2                                            .פ
+> m $3979c 2
+0003979C: 02 d5                                            .ר

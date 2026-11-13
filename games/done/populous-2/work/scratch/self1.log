@@ -1,0 +1,6 @@
+base set    : test_walk test_walk2 test_walk3
+patched set : test_walk test_walk2 test_walk3
+busy1 @8 MHz (base @8): IDENTICAL | turns compared: back 38, shown+pointer 38, world 38 (skipped 2); flips captured 40/40; patched min VBL/pass 7 | work/pass 1137228 -> 1137228 (+0.00 %) | fps 6.610 -> 6.610 (+0.0 %), turns/s 6.610 -> 6.610
+   sprite entry coverage (base run): front end $2122e: 42, 16px front end $211be: 132, 16px 2-col $212b4: 132, neg-x shift $21322: 0, 1-col $21368: 0, 3-col (main) $213b0: 41, neg-x 3-col $2147e: 0, 2-col right edge $21530: 2
+ALL IDENTICAL
+EXIT 0

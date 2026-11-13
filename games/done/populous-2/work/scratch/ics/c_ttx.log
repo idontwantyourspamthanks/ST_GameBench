@@ -1,0 +1,14 @@
+CELL tt_x: ICS floppy tt TOS 3.06 4096 KB (full layout); boot 106s in_play=False marker='P2PO' $22f14=4ef900082000 (expect 4ef900082000) sync=$01 (60 Hz) turn=0
+payload $80000+32768: 4732 non-zero image bytes, 18 differ in RAM first at +$6c44
+RESULT tt_x default MHz 60 Hz: 361 VBL = 6.02 s, 533208 cycles/VBL, world turns 0 = 0.000/s | ticks(D) 0 = 0.000/s; passes T 0 R 0 S 0 P 0 | refresh seen 60.01 Hz
+Traceback (most recent call last):
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/ics/cell.py", line 66, in <module>
+    h.goto(HOME[0] + 2 * x, HOME[1] + 2 * y, HOME); time.sleep(2.5)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/tools/stharness.py", line 360, in goto
+    self.home()
+  File "/home/ryan/Code/AtariST/gamebench/tools/stharness.py", line 354, in home
+    self.rel(-800, -600, 20)
+  File "/home/ryan/Code/AtariST/gamebench/tools/stharness.py", line 345, in rel
+    time.sleep(0.04)
+KeyboardInterrupt

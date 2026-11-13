@@ -1,0 +1,15 @@
+CELL ikbd_reset: build=build/Pop2Save in_play=True marker='P2PO' turn=171 $2022=0x0
+t+ 3 turn=250 $2022=0x3 $2023=0x0 $70=0x18fa
+t+ 9 turn=288 $2022=0x0 $2023=0x0 $70=0x18fa
+t+15 turn=326 $2022=0x4 $2023=0x0 $70=0x18fa
+t+21 turn=363 $2022=0x0 $2023=0x0 $70=0x18fa
+t+27 turn=401 $2022=0x4 $2023=0x0 $70=0x18fa
+t+33 turn=438 $2022=0x0 $2023=0x0 $70=0x18fa
+t+39 turn=476 $2022=0x5 $2023=0x0 $70=0x18fa
+t+45 turn=513 $2022=0x0 $2023=0x0 $70=0x18fa
+t+51 turn=551 $2022=0x5 $2023=0x0 $70=0x18fa
+t+57 turn=589 $2022=0x0 $2023=0x0 $70=0x18fa
+poke applied: True
+LOG errors: 1
+   WARN : Bus Error reading at address $ffff8e21, PC=$1b992 addr_e3=1b992 op_e3=1238
+RESULT ikbd_reset: game running after the cut-reply save = True

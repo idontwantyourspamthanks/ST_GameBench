@@ -1,0 +1,20 @@
+CELL hd_ste2: {'media': 'hd', 'machine': 'ste', 'tos': 'default', 'mem': 2048} boot 105s in_play=True marker='P2PO' turn=171 $2cc5a=0x80300 $2cbe6=0x80300 $2cb10=0x80300
+SAVE T1: dump=True back_in_play=True turn_in_dump=252 md5(dump)=89b4b656a9dc111f183e6e1df9afb233
+  T1.GAM on disk: 56690 B, equals RAM at write: True
+SAVE T2: dump=True back_in_play=True turn_in_dump=342 md5=26b3cb1c322003961de249c63def62a8
+  T2.GAM on disk: 56690 B, equals RAM at write: True
+SAVE T1 again (overwrite): dump=True back_in_play=True turn_in_dump=432 md5=497c455a04a7e69cd13d006c2d00127b
+  T1.GAM on disk: 56690 B, equals the NEW RAM: True, differs from the first save: True
+DIRECTORY shot hd_ste2_dir.png
+  cancel -> running True
+LOAD T2: dump=True RAM after read == RAM at T2 save: True; turn in RAM 342; turn now 363 running=True
+LOAD T1: dump=True RAM after read == RAM at the 2nd T1 save: True; turn now 453 running=True
+LOAD NOPE (missing): bp hit=True; RAM unchanged by the failed read (== last good load): False; shot hd_ste2_missing.png
+after missing-file error: game running=False turn=523 in_play=False
+kept ['A2.bin', 'A3.bin', 'T1.GAM', 'T2.GAM']
+LOG bus/address-error/halt lines: 4
+   WARN : Bus Error reading at address $ffff8e21, PC=$1b992 addr_e3=1b992 op_e3=1238
+   Prefetch 48e7 (MVMLE) 3ffe (ILLEGAL) Chip latch 00000000
+   Prefetch 48e7 (MVMLE) 3ffe (ILLEGAL) Chip latch 00000000
+   Prefetch 48e7 (MVMLE) 3ffe (ILLEGAL) Chip latch 00000000
+RESULT hd_ste2: CHECK

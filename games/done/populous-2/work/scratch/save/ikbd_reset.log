@@ -1,0 +1,157 @@
+INFO : Hatari v2.6.1, compiled on:  Feb  8 2026, 19:50:12
+INFO : GEMDOS HDD emulation, C: <-> /tmp/strun-5oomuefz/C.
+WARN : No GEMDOS dir '/tmp/strun-5oomuefz/C/AUTO'
+WARN : Bus Error reading at address $ffff8e21, PC=$1b992 addr_e3=1b992 op_e3=1238
+WARN : No GEMDOS dir '/tmp/strun-5oomuefz/C/GAMEX'
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: fd 90                                            ²É
+> m $70 2
+00000070: 00 03                                            ..
+> m $72 2
+00000072: 69 de                                            i∧
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $3979c 2
+0003979C: 00 92                                            .Æ
+> m $3979c 2
+0003979C: 00 9f                                            .ƒ
+> m $7fff8 2
+0007FFF8: 50 32                                            P2
+> m $7fffa 2
+0007FFFA: 50 4f                                            PO
+> m $3979c 2
+0003979C: 00 ab                                            .½
+> m $2022 2
+00002022: 00 00                                            ..
+> b pc = $80300 && d0 = 1 :trace :once :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_ikbd_ikbd_reset.txt
+CPU condition breakpoint 1 with 2 condition(s) added:
+	pc = $80300 && d0 = 1
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_ikbd_ikbd_reset.txt' file on hit.
+> m $3979c 2
+0003979C: 00 e2                                            .Γ
+> m $3979c 2
+0003979C: 00 e2                                            .Γ
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $80300 && d0 = 1 :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_ikbd_ikbd_reset.txt
+Reading debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_ikbd_ikbd_reset.txt'...
+Changed to input file dir '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save'.
+> w $2022 $05
+> m $2022 2
+00002022: 05 00                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save' dir.
+Removed CPU breakpoint 1:
+	pc = $80300 && d0 = 1 :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_ikbd_ikbd_reset.txt
+> m $3979c 2
+0003979C: 00 fa                                            .·
+> m $2022 2
+00002022: 03 00                                            ..
+> m $2022 2
+00002022: 04 00                                            ..
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $3979c 2
+0003979C: 01 20                                            . 
+> m $2022 2
+00002022: 00 00                                            ..
+> m $2022 2
+00002022: 00 00                                            ..
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $3979c 2
+0003979C: 01 46                                            .F
+> m $2022 2
+00002022: 04 00                                            ..
+> m $2022 2
+00002022: 04 00                                            ..
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $3979c 2
+0003979C: 01 6b                                            .k
+> m $2022 2
+00002022: 00 00                                            ..
+> m $2022 2
+00002022: 00 00                                            ..
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $3979c 2
+0003979C: 01 91                                            .æ
+> m $2022 2
+00002022: 04 00                                            ..
+> m $2022 2
+00002022: 05 00                                            ..
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $3979c 2
+0003979C: 01 b6                                            .À
+> m $2022 2
+00002022: 00 00                                            ..
+> m $2022 2
+00002022: 00 00                                            ..
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $3979c 2
+0003979C: 01 dc                                            .ץ
+> m $2022 2
+00002022: 05 00                                            ..
+> m $2022 2
+00002022: 05 00                                            ..
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $3979c 2
+0003979C: 02 01                                            ..
+> m $2022 2
+00002022: 00 00                                            ..
+> m $2022 2
+00002022: 00 00                                            ..
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $3979c 2
+0003979C: 02 27                                            .'
+> m $2022 2
+00002022: 05 00                                            ..
+> m $2022 2
+00002022: 00 00                                            ..
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $3979c 2
+0003979C: 02 4d                                            .M
+> m $2022 2
+00002022: 00 00                                            ..
+> m $2022 2
+00002022: 00 00                                            ..
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $3979c 2
+0003979C: 02 5f                                            ._
+> m $3979c 2
+0003979C: 02 70                                            .p

@@ -1,0 +1,481 @@
+INFO : Hatari v2.6.1, compiled on:  Feb  8 2026, 19:50:12
+INFO : GEMDOS HDD emulation, C: <-> /tmp/strun-fixele1y/C.
+WARN : No GEMDOS dir '/tmp/strun-fixele1y/C/AUTO'
+WARN : Bus Error reading at address $ffff8e21, PC=$1b992 addr_e3=1b992 op_e3=1238
+WARN : No GEMDOS dir '/tmp/strun-fixele1y/C/GAMEX'
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: fd 90                                            ²É
+> m $70 2
+00000070: 00 03                                            ..
+> m $72 2
+00000072: 69 de                                            i∧
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $3979c 2
+0003979C: 00 92                                            .Æ
+> m $3979c 2
+0003979C: 00 9f                                            .ƒ
+> b pc = $140 :trace
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $140
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+> m $7fff8 2
+0007FFF8: 50 32                                            P2
+> m $7fffa 2
+0007FFFA: 50 4f                                            PO
+> m $3979c 2
+0003979C: 00 ad                                            .¡
+> m $148 2
+00000148: 00 0e                                            ..
+> b pc = $80300 && d0 = 1 :trace :once :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_80300_A1.bin.txt
+CPU condition breakpoint 2 with 2 condition(s) added:
+	pc = $80300 && d0 = 1
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_80300_A1.bin.txt' file on hit.
+> m $3979c 2
+0003979C: 00 c7                                            .ו
+> m $3979c 2
+0003979C: 00 c7                                            .ו
+2. CPU breakpoint condition(s) matched 1 times.
+	pc = $80300 && d0 = 1 :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_80300_A1.bin.txt
+Reading debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_80300_A1.bin.txt'...
+Changed to input file dir '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/out_lv_hd_ste/A1.bin $39630 56690
+  Wrote 0xdd72 bytes.
+> r
+  D0 00000001   D1 0000DD72   D2 00000022   D3 FFFFFFFF 
+  D4 FFFFFFF6   D5 FFFFFFFF   D6 00000001   D7 00015BB4 
+  A0 00015BB4   A1 00039630   A2 00002300   A3 00015C0C 
+  A4 0001C5FF   A5 000473C4   A6 0001C335   A7 000121FE 
+USP  00167576 ISP  000121FE 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch 2f17 (MOVE) 48e7 (MVMLE) Chip latch 00000000
+00080300 2f17                     move.l (a7) == $000121fe [0002cbea],-(a7) == $000121fa [00039630]
+Next PC: 00080302
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save' dir.
+Removed CPU breakpoint 2:
+	pc = $80300 && d0 = 1 :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_80300_A1.bin.txt
+> m $3979c 2
+0003979C: 00 ce                                            .מ
+> m $3979c 2
+0003979C: 00 da                                            .ם
+> b pc = $2cc5e  :trace :once :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_B1.bin.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $2cc5e
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_B1.bin.txt' file on hit.
+> m $3979c 2
+0003979C: 00 ef                                            .∩
+> m $3979c 2
+0003979C: 00 ef                                            .∩
+2. CPU breakpoint condition(s) matched 1 times.
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_B1.bin.txt
+Reading debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_B1.bin.txt'...
+Changed to input file dir '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/out_lv_hd_ste/B1.bin $39630 56690
+  Wrote 0xdd72 bytes.
+> r
+  D0 00000000   D1 0000DD72   D2 0000000F   D3 FFFFFF80 
+  D4 00000000   D5 00000000   D6 0000FFFF   D7 00015BB4 
+  A0 00015BB4   A1 00039630   A2 00002300   A3 00036C82 
+  A4 0001C5FF   A5 000473C4   A6 0001C335   A7 00012202 
+USP  00167576 ISP  00012202 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4a80 (TST) 6702 (Bcc) Chip latch 00000000
+0002cc5e 4a80                     tst.l d0
+Next PC: 0002cc60
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save' dir.
+Removed CPU breakpoint 2:
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_B1.bin.txt
+> m $3979c 2
+0003979C: 00 ca                                            .ט
+> m $3979c 2
+0003979C: 00 d6                                            .ש
+> m $3979c 2
+0003979C: 00 d9                                            .ך
+> m $3979c 2
+0003979C: 00 eb                                            .δ
+> m $3979c 2
+0003979C: 00 eb                                            .δ
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $140 :trace
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+1. CPU breakpoint condition(s) matched 2 times.
+	pc = $140 :trace
+1. CPU breakpoint condition(s) matched 3 times.
+	pc = $140 :trace
+1. CPU breakpoint condition(s) matched 4 times.
+	pc = $140 :trace
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $3979c 2
+0003979C: 00 42                                            .B
+> m $3979c 2
+0003979C: 00 4f                                            .O
+> m $3979c 2
+0003979C: 00 53                                            .S
+> m $7fff8 2
+0007FFF8: 50 32                                            P2
+> m $7fffa 2
+0007FFFA: 50 4f                                            PO
+> b pc = $80300 && d0 = 1 :trace :once :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_80300_A2.bin.txt
+CPU condition breakpoint 2 with 2 condition(s) added:
+	pc = $80300 && d0 = 1
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_80300_A2.bin.txt' file on hit.
+> m $3979c 2
+0003979C: 00 70                                            .p
+> m $3979c 2
+0003979C: 00 70                                            .p
+2. CPU breakpoint condition(s) matched 1 times.
+	pc = $80300 && d0 = 1 :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_80300_A2.bin.txt
+Reading debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_80300_A2.bin.txt'...
+Changed to input file dir '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/out_lv_hd_ste/A2.bin $39630 56690
+  Wrote 0xdd72 bytes.
+> r
+  D0 00000001   D1 0000DD72   D2 00000022   D3 FFFFFFFF 
+  D4 FFFFFFF6   D5 FFFFFFFF   D6 00000001   D7 00015BB4 
+  A0 00015BB4   A1 00039630   A2 0000A000   A3 00015C0C 
+  A4 0001C5FF   A5 000473C4   A6 0001C335   A7 000121FE 
+USP  00167576 ISP  000121FE 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch 2f17 (MOVE) 48e7 (MVMLE) Chip latch 00000000
+00080300 2f17                     move.l (a7) == $000121fe [0002cbea],-(a7) == $000121fa [00039630]
+Next PC: 00080302
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save' dir.
+Removed CPU breakpoint 2:
+	pc = $80300 && d0 = 1 :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_80300_A2.bin.txt
+> m $3979c 2
+0003979C: 00 77                                            .w
+> m $3979c 2
+0003979C: 00 83                                            .â
+> b pc = $2cc5e  :trace :once :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_B2.bin.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $2cc5e
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_B2.bin.txt' file on hit.
+> m $3979c 2
+0003979C: 00 99                                            .Ö
+> m $3979c 2
+0003979C: 00 99                                            .Ö
+2. CPU breakpoint condition(s) matched 1 times.
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_B2.bin.txt
+Reading debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_B2.bin.txt'...
+Changed to input file dir '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/out_lv_hd_ste/B2.bin $39630 56690
+  Wrote 0xdd72 bytes.
+> r
+  D0 00000000   D1 0000DD72   D2 0000000F   D3 FFFFFF80 
+  D4 00000000   D5 00000000   D6 0000FFFF   D7 00015BB4 
+  A0 00015BB4   A1 00039630   A2 00002300   A3 00036C82 
+  A4 0001C5FF   A5 000473C4   A6 0001C335   A7 00012202 
+USP  00167576 ISP  00012202 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4a80 (TST) 6702 (Bcc) Chip latch 00000000
+0002cc5e 4a80                     tst.l d0
+Next PC: 0002cc60
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save' dir.
+Removed CPU breakpoint 2:
+	pc = $2cc5e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_2cc5e_B2.bin.txt
+> m $3979c 2
+0003979C: 00 ca                                            .ט
+> m $3979c 2
+0003979C: 00 d5                                            .ר
+> m $3979c 2
+0003979C: 00 d9                                            .ך
+> m $3979c 2
+0003979C: 00 eb                                            .δ
+> m $3979c 2
+0003979C: 00 eb                                            .δ
+1. CPU breakpoint condition(s) matched 5 times.
+	pc = $140 :trace
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> b pc = $80300 && d0 = 1 :trace :once :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_80300_A3.bin.txt
+CPU condition breakpoint 2 with 2 condition(s) added:
+	pc = $80300 && d0 = 1
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_80300_A3.bin.txt' file on hit.
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..

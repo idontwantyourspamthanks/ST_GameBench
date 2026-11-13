@@ -1,0 +1,15 @@
+CELL m_hd_mste: {'media': 'hd', 'machine': 'megaste', 'tos': '2.06', 'mem': 4096} boot 105s in_play=True marker='P2PO' turn=192 $2cc5a=0x80300 $2cbe6=0x80300 $2cb10=0x80300
+SAVE T1: dump=True back_in_play=True turn_in_dump=275 md5(dump)=34357c62e816ac6f5d1609df8d0d4bdf
+  T1.GAM on disk: 56690 B, equals RAM at write: True
+SAVE T2: dump=True back_in_play=True turn_in_dump=367 md5=cc56dcc534909d102e8cc9973d964b11
+  T2.GAM on disk: 56690 B, equals RAM at write: True
+SAVE T1 again (overwrite): dump=True back_in_play=True turn_in_dump=458 md5=a5ee493353bbc07a90fa2fb71d99a4df
+  T1.GAM on disk: 56690 B, equals the NEW RAM: True, differs from the first save: True
+DIRECTORY shot m_hd_mste_dir.png
+  cancel -> running True
+LOAD T2: dump=True RAM after read == RAM at T2 save: True; turn in RAM 367; turn now 390 running=True
+LOAD T1: dump=True RAM after read == RAM at the 2nd T1 save: True; turn now 481 running=True
+LOAD NOPE (missing): bp hit=True; RAM after the failed read == RAM before the call: True; shot m_hd_mste_missing.png (the game's DISK FILE ERROR box)
+after missing-file error: game running=False turn=556 in_play=False
+LOG bus/address-error/halt lines: 0
+RESULT m_hd_mste: PASS

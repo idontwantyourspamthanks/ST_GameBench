@@ -1,0 +1,39 @@
+CELL loop_reset: {'media': 'acsi', 'machine': 'ste', 'tos': 'default', 'mem': 2048, 'img': '/tmp/strun-crmxydwt/hd.img'} in_play=True marker='P2PO' turn=170
+ 0 save l0 running=True turn=239 t=29s new_log_errors=0 ok
+ 1 save l1 running=True turn=283 t=29s new_log_errors=0 ok
+ 2 save l2 running=True turn=326 t=29s new_log_errors=0 ok
+ 3 load l3 running=True turn=324 t=30s new_log_errors=0 ok
+ 4 save l0 running=True turn=366 t=29s new_log_errors=0 ok
+ 5 load l1 running=True turn=365 t=30s new_log_errors=0 ok
+ 6 save l2 running=True turn=408 t=29s new_log_errors=0 ok
+ 7 load l3 running=True turn=406 t=30s new_log_errors=0 ok
+ 8 save l0 running=True turn=448 t=29s new_log_errors=0 ok
+ 9 load l1 running=True turn=447 t=30s new_log_errors=0 ok
+10 save l2 running=True turn=489 t=29s new_log_errors=0 ok
+11 load l3 running=True turn=488 t=30s new_log_errors=0 ok
+12 save l0 running=True turn=530 t=29s new_log_errors=0 ok
+13 load l1 running=True turn=529 t=30s new_log_errors=0 ok
+14 save l2 running=True turn=571 t=29s new_log_errors=0 ok
+15 load l3 running=True turn=570 t=30s new_log_errors=0 ok
+16 save l0 running=True turn=613 t=29s new_log_errors=0 ok
+17 load l1 running=True turn=611 t=30s new_log_errors=0 ok
+18 save l2 running=True turn=653 t=29s new_log_errors=0 ok
+19 load l3 running=True turn=652 t=30s new_log_errors=0 ok
+20 save l0 running=True turn=695 t=29s new_log_errors=0 ok
+21 load l1 running=True turn=693 t=30s new_log_errors=0 ok
+22 save l2 running=True turn=736 t=29s new_log_errors=0 ok
+23 load l3 running=True turn=734 t=30s new_log_errors=0 ok
+24 save l0 running=True turn=777 t=29s new_log_errors=0 ok
+25 load l1 running=True turn=775 t=30s new_log_errors=0 ok
+26 save l2 running=True turn=818 t=29s new_log_errors=0 ok
+27 load l3 running=True turn=816 t=30s new_log_errors=0 ok
+28 save l0 running=True turn=858 t=29s new_log_errors=0 ok
+29 load l1 running=True turn=857 t=30s new_log_errors=0 ok
+LOG lines: 6
+   WARN : Bus Error reading at address $fff00039, PC=$d51c addr_e3=d51c op_e3=4a13
+   WARN : Bus Error reading at address $fff00079, PC=$d51c addr_e3=d51c op_e3=4a13
+   WARN : Bus Error reading at address $fff000b9, PC=$d51c addr_e3=d51c op_e3=4a13
+   WARN : Bus Error reading at address $fff000f9, PC=$d51c addr_e3=d51c op_e3=4a13
+   WARN : Bus Error reading at address $ffff8781, PC=$bbc2 addr_e3=bbc2 op_e3=1038
+   WARN : Bus Error reading at address $ffff8e21, PC=$27632 addr_e3=27632 op_e3=1238
+RESULT loop_reset: PASS 30/30

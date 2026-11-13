@@ -1,0 +1,18 @@
+base set    : test_walk test_walk2 test_walk3
+patched set : test_walk test_walk2 test_walk3 pop2_spr pop2_spr16
+busy1 @8 MHz (base @8): DIFFER | turns compared: back 58, world 58, shown@S1+pointer 57, shown@flip+pointer 54 (shape-change passes not compared: 4) (skipped 2); flips captured 60/60; patched min VBL/pass 7 | work/pass 1232038 -> 1172513 (-4.83 %) | fps 6.108 -> 6.413 (+5.0 %), turns/s 6.108 -> 6.413
+   sprite entry coverage (base run): front end $2122e: 384, 16px front end $211be: 280, 16px 2-col $212b4: 280, neg-x shift $21322: 0, 1-col $21368: 0, 3-col (main) $213b0: 381, neg-x 3-col $2147e: 0, 2-col right edge $21530: 3
+      BACK DIFFER turn 16137: 295 B differ, first at offset 22667 (row 141), rows 141-171
+      SHOWN@S1 DIFFER turn 16137 (pointer 8,190 / 8,190, shape 0x0/0x0): 295 B differ, first at offset 22667 (row 141), rows 141-171
+      BACK DIFFER turn 16138: 295 B differ, first at offset 21379 (row 133), rows 133-163
+      SHOWN@S1 DIFFER turn 16138 (pointer 150,189 / 150,189, shape 0x0/0x0): 295 B differ, first at offset 21379 (row 133), rows 133-163
+      SHOWN DIFFER turn 16138 (pointer 150,189; shape 0x0/0x0, [$202e] 0x11668/0x11668): 295 B differ, first at offset 22667 (row 141), rows 141-171
+      BACK DIFFER turn 16139: 295 B differ, first at offset 20091 (row 125), rows 125-155
+      SHOWN@S1 DIFFER turn 16139 (pointer 150,189 / 150,189, shape 0x0/0x0): 295 B differ, first at offset 20091 (row 125), rows 125-155
+      SHOWN DIFFER turn 16139 (pointer 150,189; shape 0x0/0x0, [$202e] 0x9968/0x9968): 295 B differ, first at offset 21379 (row 133), rows 133-163
+      BACK DIFFER turn 16140: 295 B differ, first at offset 18803 (row 117), rows 117-147
+      SHOWN@S1 DIFFER turn 16140 (pointer 96,170 / 96,170, shape 0x0/0x0): 295 B differ, first at offset 18803 (row 117), rows 117-147
+      SHOWN DIFFER turn 16140 (pointer 96,170; shape 0x0/0x0, [$202e] 0x10a70/0x10a70): 295 B differ, first at offset 20091 (row 125), rows 125-155
+      BACK DIFFER turn 16141: 295 B differ, first at offset 17515 (row 109), rows 109-139
+MISMATCH
+EXIT 1

@@ -1,0 +1,1168 @@
+> b pc = $1c04 && ($3979a).l = 386 :trace :once :file /tmp/strun-dvl10n65/apply.txt
+CPU condition breakpoint 1 with 2 condition(s) added:
+	pc = $1c04 && ( $3979a ) . l = 386
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-dvl10n65/apply.txt' file on hit.
+Command line with '2' arguments:
+- '--fast-forward'
+- 'on'
+INFO : OS clock ticks / second: 100
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $1c04 && ( $3979a ) . l = 386 :once :trace :file /tmp/strun-dvl10n65/apply.txt
+Reading debugger commands from '/tmp/strun-dvl10n65/apply.txt'...
+Changed to input file dir '/tmp/strun-dvl10n65'.
+> loadbin /tmp/p2ab/live_34f507db.img $80000
+  Read 0x8000 bytes.
+> w $22fa2 $4e $f9 $00 $08 $68 $00
+Wrote 6 'b' values starting from 0x22fa2.
+> w $1cd0 $33 $f9 $00 $08 $6f $00 $00 $03 $93 $fa
+Wrote 10 'b' values starting from 0x1cd0.
+> w $1cda $33 $f9 $00 $08 $6f $02 $00 $03 $93 $fc
+Wrote 10 'b' values starting from 0x1cda.
+> w $86f00 $00 $a0 $00 $64
+Wrote 4 'b' values starting from 0x86f00.
+> w $86f04 $00 $03
+Wrote 2 'b' values starting from 0x86f04.
+> b pc = $1a1a && ($3979c).w > 416 && ($3979c).w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+CPU condition breakpoint 2 with 3 condition(s) added:
+	pc = $1a1a && ( $3979c ) . w > 416 && ( $3979c ) . w < 420
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-dvl10n65/ev.txt' file on hit.
+> b pc = $1b34 && ($3979c).w > 416 && ($3979c).w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+CPU condition breakpoint 3 with 3 condition(s) added:
+	pc = $1b34 && ( $3979c ) . w > 416 && ( $3979c ) . w < 420
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-dvl10n65/ev.txt' file on hit.
+> b pc = $1b4e && ($3979c).w > 416 && ($3979c).w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+CPU condition breakpoint 4 with 3 condition(s) added:
+	pc = $1b4e && ( $3979c ) . w > 416 && ( $3979c ) . w < 420
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-dvl10n65/ev.txt' file on hit.
+> b pc = $1b9a && ($3979c).w > 416 && ($3979c).w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+CPU condition breakpoint 5 with 3 condition(s) added:
+	pc = $1b9a && ( $3979c ) . w > 416 && ( $3979c ) . w < 420
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-dvl10n65/ev.txt' file on hit.
+> b pc = $1bfe && ($3979c).w > 416 && ($3979c).w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+CPU condition breakpoint 6 with 3 condition(s) added:
+	pc = $1bfe && ( $3979c ) . w > 416 && ( $3979c ) . w < 420
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-dvl10n65/ev.txt' file on hit.
+> b pc = $1254e && ($3979c).w > 416 && ($3979c).w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+CPU condition breakpoint 7 with 3 condition(s) added:
+	pc = $1254e && ( $3979c ) . w > 416 && ( $3979c ) . w < 420
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-dvl10n65/ev.txt' file on hit.
+> b ($3979c).w > 419 :trace :once :file /tmp/strun-dvl10n65/end.txt
+CPU condition breakpoint 8 with 1 condition(s) added:
+	( $3979c ) . w > 419
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-dvl10n65/end.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+Removed CPU breakpoint 1:
+	pc = $1c04 && ( $3979a ) . l = 386 :once :trace :file /tmp/strun-dvl10n65/apply.txt
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $1a1a && ( $3979c ) . w > 416 && ( $3979c ) . w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+Reading debugger commands from '/tmp/strun-dvl10n65/ev.txt'...
+Changed to input file dir '/tmp/strun-dvl10n65'.
+> e VBL
+= %110010010001101 (bin), #25741 (dec), $648d (hex)
+> e ($3979c).w
+  value at ($3979c).w = $1a1
+= %110100001 (bin), #417 (dec), $1a1 (hex)
+> e ($393fa).w
+  value at ($393fa).w = $a0
+= %10100000 (bin), #160 (dec), $a0 (hex)
+> e ($393fc).w
+  value at ($393fc).w = $64
+= %1100100 (bin), #100 (dec), $64 (hex)
+> e ($392dc).l
+  value at ($392dc).l = $2300
+= %10001100000000 (bin), #8960 (dec), $2300 (hex)
+> e ($202e).l
+  value at ($202e).l = $61d0
+= %110000111010000 (bin), #25040 (dec), $61d0 (hex)
+> e ($2246).w
+  value at ($2246).w = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($11d50).w
+  value at ($11d50).w = $300
+= %1100000000 (bin), #768 (dec), $300 (hex)
+> e CycleCounter
+= %11110101110111111000111011110100 (bin), #4125069044/-169898252 (dec), $f5df8ef4 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+2. CPU breakpoint condition(s) matched 1 times.
+	pc = $1b34 && ( $3979c ) . w > 416 && ( $3979c ) . w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+Reading debugger commands from '/tmp/strun-dvl10n65/ev.txt'...
+Changed to input file dir '/tmp/strun-dvl10n65'.
+> e VBL
+= %110010010001101 (bin), #25741 (dec), $648d (hex)
+> e ($3979c).w
+  value at ($3979c).w = $1a1
+= %110100001 (bin), #417 (dec), $1a1 (hex)
+> e ($393fa).w
+  value at ($393fa).w = $a0
+= %10100000 (bin), #160 (dec), $a0 (hex)
+> e ($393fc).w
+  value at ($393fc).w = $64
+= %1100100 (bin), #100 (dec), $64 (hex)
+> e ($392dc).l
+  value at ($392dc).l = $2300
+= %10001100000000 (bin), #8960 (dec), $2300 (hex)
+> e ($202e).l
+  value at ($202e).l = $61d0
+= %110000111010000 (bin), #25040 (dec), $61d0 (hex)
+> e ($2246).w
+  value at ($2246).w = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($11d50).w
+  value at ($11d50).w = $300
+= %1100000000 (bin), #768 (dec), $300 (hex)
+> e CycleCounter
+= %11110101110111111011010100001100 (bin), #4125078796/-169888500 (dec), $f5dfb50c (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 2 times.
+	pc = $1a1a && ( $3979c ) . w > 416 && ( $3979c ) . w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+Reading debugger commands from '/tmp/strun-dvl10n65/ev.txt'...
+Changed to input file dir '/tmp/strun-dvl10n65'.
+> e VBL
+= %110010010001110 (bin), #25742 (dec), $648e (hex)
+> e ($3979c).w
+  value at ($3979c).w = $1a1
+= %110100001 (bin), #417 (dec), $1a1 (hex)
+> e ($393fa).w
+  value at ($393fa).w = $a0
+= %10100000 (bin), #160 (dec), $a0 (hex)
+> e ($393fc).w
+  value at ($393fc).w = $64
+= %1100100 (bin), #100 (dec), $64 (hex)
+> e ($392dc).l
+  value at ($392dc).l = $2300
+= %10001100000000 (bin), #8960 (dec), $2300 (hex)
+> e ($202e).l
+  value at ($202e).l = $61d0
+= %110000111010000 (bin), #25040 (dec), $61d0 (hex)
+> e ($2246).w
+  value at ($2246).w = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($11d50).w
+  value at ($11d50).w = $300
+= %1100000000 (bin), #768 (dec), $300 (hex)
+> e CycleCounter
+= %11110101111000100000000010111100 (bin), #4125229244/-169738052 (dec), $f5e200bc (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+2. CPU breakpoint condition(s) matched 2 times.
+	pc = $1b34 && ( $3979c ) . w > 416 && ( $3979c ) . w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+Reading debugger commands from '/tmp/strun-dvl10n65/ev.txt'...
+Changed to input file dir '/tmp/strun-dvl10n65'.
+> e VBL
+= %110010010001110 (bin), #25742 (dec), $648e (hex)
+> e ($3979c).w
+  value at ($3979c).w = $1a1
+= %110100001 (bin), #417 (dec), $1a1 (hex)
+> e ($393fa).w
+  value at ($393fa).w = $a0
+= %10100000 (bin), #160 (dec), $a0 (hex)
+> e ($393fc).w
+  value at ($393fc).w = $64
+= %1100100 (bin), #100 (dec), $64 (hex)
+> e ($392dc).l
+  value at ($392dc).l = $2300
+= %10001100000000 (bin), #8960 (dec), $2300 (hex)
+> e ($202e).l
+  value at ($202e).l = $61d0
+= %110000111010000 (bin), #25040 (dec), $61d0 (hex)
+> e ($2246).w
+  value at ($2246).w = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($11d50).w
+  value at ($11d50).w = $300
+= %1100000000 (bin), #768 (dec), $300 (hex)
+> e CycleCounter
+= %11110101111000100010011011010100 (bin), #4125238996/-169728300 (dec), $f5e226d4 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 3 times.
+	pc = $1a1a && ( $3979c ) . w > 416 && ( $3979c ) . w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+Reading debugger commands from '/tmp/strun-dvl10n65/ev.txt'...
+Changed to input file dir '/tmp/strun-dvl10n65'.
+> e VBL
+= %110010010001111 (bin), #25743 (dec), $648f (hex)
+> e ($3979c).w
+  value at ($3979c).w = $1a1
+= %110100001 (bin), #417 (dec), $1a1 (hex)
+> e ($393fa).w
+  value at ($393fa).w = $a0
+= %10100000 (bin), #160 (dec), $a0 (hex)
+> e ($393fc).w
+  value at ($393fc).w = $64
+= %1100100 (bin), #100 (dec), $64 (hex)
+> e ($392dc).l
+  value at ($392dc).l = $2300
+= %10001100000000 (bin), #8960 (dec), $2300 (hex)
+> e ($202e).l
+  value at ($202e).l = $61d0
+= %110000111010000 (bin), #25040 (dec), $61d0 (hex)
+> e ($2246).w
+  value at ($2246).w = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($11d50).w
+  value at ($11d50).w = $300
+= %1100000000 (bin), #768 (dec), $300 (hex)
+> e CycleCounter
+= %11110101111001000111001011000000 (bin), #4125389504/-169577792 (dec), $f5e472c0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+2. CPU breakpoint condition(s) matched 3 times.
+	pc = $1b34 && ( $3979c ) . w > 416 && ( $3979c ) . w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+Reading debugger commands from '/tmp/strun-dvl10n65/ev.txt'...
+Changed to input file dir '/tmp/strun-dvl10n65'.
+> e VBL
+= %110010010001111 (bin), #25743 (dec), $648f (hex)
+> e ($3979c).w
+  value at ($3979c).w = $1a1
+= %110100001 (bin), #417 (dec), $1a1 (hex)
+> e ($393fa).w
+  value at ($393fa).w = $a0
+= %10100000 (bin), #160 (dec), $a0 (hex)
+> e ($393fc).w
+  value at ($393fc).w = $64
+= %1100100 (bin), #100 (dec), $64 (hex)
+> e ($392dc).l
+  value at ($392dc).l = $2300
+= %10001100000000 (bin), #8960 (dec), $2300 (hex)
+> e ($202e).l
+  value at ($202e).l = $61d0
+= %110000111010000 (bin), #25040 (dec), $61d0 (hex)
+> e ($2246).w
+  value at ($2246).w = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($11d50).w
+  value at ($11d50).w = $300
+= %1100000000 (bin), #768 (dec), $300 (hex)
+> e CycleCounter
+= %11110101111001001001100011011000 (bin), #4125399256/-169568040 (dec), $f5e498d8 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 4 times.
+	pc = $1a1a && ( $3979c ) . w > 416 && ( $3979c ) . w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+Reading debugger commands from '/tmp/strun-dvl10n65/ev.txt'...
+Changed to input file dir '/tmp/strun-dvl10n65'.
+> e VBL
+= %110010010010000 (bin), #25744 (dec), $6490 (hex)
+> e ($3979c).w
+  value at ($3979c).w = $1a1
+= %110100001 (bin), #417 (dec), $1a1 (hex)
+> e ($393fa).w
+  value at ($393fa).w = $a0
+= %10100000 (bin), #160 (dec), $a0 (hex)
+> e ($393fc).w
+  value at ($393fc).w = $64
+= %1100100 (bin), #100 (dec), $64 (hex)
+> e ($392dc).l
+  value at ($392dc).l = $2300
+= %10001100000000 (bin), #8960 (dec), $2300 (hex)
+> e ($202e).l
+  value at ($202e).l = $61d0
+= %110000111010000 (bin), #25040 (dec), $61d0 (hex)
+> e ($2246).w
+  value at ($2246).w = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($11d50).w
+  value at ($11d50).w = $300
+= %1100000000 (bin), #768 (dec), $300 (hex)
+> e CycleCounter
+= %11110101111001101110010011000100 (bin), #4125549764/-169417532 (dec), $f5e6e4c4 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+2. CPU breakpoint condition(s) matched 4 times.
+	pc = $1b34 && ( $3979c ) . w > 416 && ( $3979c ) . w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+Reading debugger commands from '/tmp/strun-dvl10n65/ev.txt'...
+Changed to input file dir '/tmp/strun-dvl10n65'.
+> e VBL
+= %110010010010000 (bin), #25744 (dec), $6490 (hex)
+> e ($3979c).w
+  value at ($3979c).w = $1a1
+= %110100001 (bin), #417 (dec), $1a1 (hex)
+> e ($393fa).w
+  value at ($393fa).w = $a0
+= %10100000 (bin), #160 (dec), $a0 (hex)
+> e ($393fc).w
+  value at ($393fc).w = $64
+= %1100100 (bin), #100 (dec), $64 (hex)
+> e ($392dc).l
+  value at ($392dc).l = $2300
+= %10001100000000 (bin), #8960 (dec), $2300 (hex)
+> e ($202e).l
+  value at ($202e).l = $61d0
+= %110000111010000 (bin), #25040 (dec), $61d0 (hex)
+> e ($2246).w
+  value at ($2246).w = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($11d50).w
+  value at ($11d50).w = $300
+= %1100000000 (bin), #768 (dec), $300 (hex)
+> e CycleCounter
+= %11110101111001110000101011011100 (bin), #4125559516/-169407780 (dec), $f5e70adc (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+5. CPU breakpoint condition(s) matched 1 times.
+	pc = $1bfe && ( $3979c ) . w > 416 && ( $3979c ) . w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+Reading debugger commands from '/tmp/strun-dvl10n65/ev.txt'...
+Changed to input file dir '/tmp/strun-dvl10n65'.
+> e VBL
+= %110010010010000 (bin), #25744 (dec), $6490 (hex)
+> e ($3979c).w
+  value at ($3979c).w = $1a1
+= %110100001 (bin), #417 (dec), $1a1 (hex)
+> e ($393fa).w
+  value at ($393fa).w = $a0
+= %10100000 (bin), #160 (dec), $a0 (hex)
+> e ($393fc).w
+  value at ($393fc).w = $64
+= %1100100 (bin), #100 (dec), $64 (hex)
+> e ($392dc).l
+  value at ($392dc).l = $2300
+= %10001100000000 (bin), #8960 (dec), $2300 (hex)
+> e ($202e).l
+  value at ($202e).l = $61d0
+= %110000111010000 (bin), #25040 (dec), $61d0 (hex)
+> e ($2246).w
+  value at ($2246).w = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($11d50).w
+  value at ($11d50).w = $300
+= %1100000000 (bin), #768 (dec), $300 (hex)
+> e CycleCounter
+= %11110101111001110111000100100100 (bin), #4125585700/-169381596 (dec), $f5e77124 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 5 times.
+	pc = $1a1a && ( $3979c ) . w > 416 && ( $3979c ) . w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+Reading debugger commands from '/tmp/strun-dvl10n65/ev.txt'...
+Changed to input file dir '/tmp/strun-dvl10n65'.
+> e VBL
+= %110010010010001 (bin), #25745 (dec), $6491 (hex)
+> e ($3979c).w
+  value at ($3979c).w = $1a1
+= %110100001 (bin), #417 (dec), $1a1 (hex)
+> e ($393fa).w
+  value at ($393fa).w = $a0
+= %10100000 (bin), #160 (dec), $a0 (hex)
+> e ($393fc).w
+  value at ($393fc).w = $64
+= %1100100 (bin), #100 (dec), $64 (hex)
+> e ($392dc).l
+  value at ($392dc).l = $a000
+= %1010000000000000 (bin), #40960 (dec), $a000 (hex)
+> e ($202e).l
+  value at ($202e).l = $61d0
+= %110000111010000 (bin), #25040 (dec), $61d0 (hex)
+> e ($2246).w
+  value at ($2246).w = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($11d50).w
+  value at ($11d50).w = $300
+= %1100000000 (bin), #768 (dec), $300 (hex)
+> e CycleCounter
+= %11110101111010010101011011001000 (bin), #4125710024/-169257272 (dec), $f5e956c8 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+2. CPU breakpoint condition(s) matched 5 times.
+	pc = $1b34 && ( $3979c ) . w > 416 && ( $3979c ) . w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+Reading debugger commands from '/tmp/strun-dvl10n65/ev.txt'...
+Changed to input file dir '/tmp/strun-dvl10n65'.
+> e VBL
+= %110010010010001 (bin), #25745 (dec), $6491 (hex)
+> e ($3979c).w
+  value at ($3979c).w = $1a1
+= %110100001 (bin), #417 (dec), $1a1 (hex)
+> e ($393fa).w
+  value at ($393fa).w = $a0
+= %10100000 (bin), #160 (dec), $a0 (hex)
+> e ($393fc).w
+  value at ($393fc).w = $64
+= %1100100 (bin), #100 (dec), $64 (hex)
+> e ($392dc).l
+  value at ($392dc).l = $a000
+= %1010000000000000 (bin), #40960 (dec), $a000 (hex)
+> e ($202e).l
+  value at ($202e).l = $ded0
+= %1101111011010000 (bin), #57040 (dec), $ded0 (hex)
+> e ($2246).w
+  value at ($2246).w = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($11d50).w
+  value at ($11d50).w = $300
+= %1100000000 (bin), #768 (dec), $300 (hex)
+> e CycleCounter
+= %11110101111010010111110011100000 (bin), #4125719776/-169247520 (dec), $f5e97ce0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+6. CPU breakpoint condition(s) matched 1 times.
+	pc = $1254e && ( $3979c ) . w > 416 && ( $3979c ) . w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+Reading debugger commands from '/tmp/strun-dvl10n65/ev.txt'...
+Changed to input file dir '/tmp/strun-dvl10n65'.
+> e VBL
+= %110010010010001 (bin), #25745 (dec), $6491 (hex)
+> e ($3979c).w
+  value at ($3979c).w = $1a1
+= %110100001 (bin), #417 (dec), $1a1 (hex)
+> e ($393fa).w
+  value at ($393fa).w = $a0
+= %10100000 (bin), #160 (dec), $a0 (hex)
+> e ($393fc).w
+  value at ($393fc).w = $64
+= %1100100 (bin), #100 (dec), $64 (hex)
+> e ($392dc).l
+  value at ($392dc).l = $a000
+= %1010000000000000 (bin), #40960 (dec), $a000 (hex)
+> e ($202e).l
+  value at ($202e).l = $ded0
+= %1101111011010000 (bin), #57040 (dec), $ded0 (hex)
+> e ($2246).w
+  value at ($2246).w = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($11d50).w
+  value at ($11d50).w = $300
+= %1100000000 (bin), #768 (dec), $300 (hex)
+> e CycleCounter
+= %11110101111010010111110111100100 (bin), #4125720036/-169247260 (dec), $f5e97de4 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 6 times.
+	pc = $1a1a && ( $3979c ) . w > 416 && ( $3979c ) . w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+Reading debugger commands from '/tmp/strun-dvl10n65/ev.txt'...
+Changed to input file dir '/tmp/strun-dvl10n65'.
+> e VBL
+= %110010010010010 (bin), #25746 (dec), $6492 (hex)
+> e ($3979c).w
+  value at ($3979c).w = $1a2
+= %110100010 (bin), #418 (dec), $1a2 (hex)
+> e ($393fa).w
+  value at ($393fa).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($393fc).w
+  value at ($393fc).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($392dc).l
+  value at ($392dc).l = $a000
+= %1010000000000000 (bin), #40960 (dec), $a000 (hex)
+> e ($202e).l
+  value at ($202e).l = $ded0
+= %1101111011010000 (bin), #57040 (dec), $ded0 (hex)
+> e ($2246).w
+  value at ($2246).w = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($11d50).w
+  value at ($11d50).w = $300
+= %1100000000 (bin), #768 (dec), $300 (hex)
+> e CycleCounter
+= %11110101111010111100100011110100 (bin), #4125870324/-169096972 (dec), $f5ebc8f4 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+2. CPU breakpoint condition(s) matched 6 times.
+	pc = $1b34 && ( $3979c ) . w > 416 && ( $3979c ) . w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+Reading debugger commands from '/tmp/strun-dvl10n65/ev.txt'...
+Changed to input file dir '/tmp/strun-dvl10n65'.
+> e VBL
+= %110010010010010 (bin), #25746 (dec), $6492 (hex)
+> e ($3979c).w
+  value at ($3979c).w = $1a2
+= %110100010 (bin), #418 (dec), $1a2 (hex)
+> e ($393fa).w
+  value at ($393fa).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($393fc).w
+  value at ($393fc).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($392dc).l
+  value at ($392dc).l = $a000
+= %1010000000000000 (bin), #40960 (dec), $a000 (hex)
+> e ($202e).l
+  value at ($202e).l = $ac88
+= %1010110010001000 (bin), #44168 (dec), $ac88 (hex)
+> e ($2246).w
+  value at ($2246).w = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($11d50).w
+  value at ($11d50).w = $300
+= %1100000000 (bin), #768 (dec), $300 (hex)
+> e CycleCounter
+= %11110101111010111111000100001100 (bin), #4125880588/-169086708 (dec), $f5ebf10c (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 7 times.
+	pc = $1a1a && ( $3979c ) . w > 416 && ( $3979c ) . w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+Reading debugger commands from '/tmp/strun-dvl10n65/ev.txt'...
+Changed to input file dir '/tmp/strun-dvl10n65'.
+> e VBL
+= %110010010010011 (bin), #25747 (dec), $6493 (hex)
+> e ($3979c).w
+  value at ($3979c).w = $1a2
+= %110100010 (bin), #418 (dec), $1a2 (hex)
+> e ($393fa).w
+  value at ($393fa).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($393fc).w
+  value at ($393fc).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($392dc).l
+  value at ($392dc).l = $a000
+= %1010000000000000 (bin), #40960 (dec), $a000 (hex)
+> e ($202e).l
+  value at ($202e).l = $ac88
+= %1010110010001000 (bin), #44168 (dec), $ac88 (hex)
+> e ($2246).w
+  value at ($2246).w = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($11d50).w
+  value at ($11d50).w = $300
+= %1100000000 (bin), #768 (dec), $300 (hex)
+> e CycleCounter
+= %11110101111011100011101011010000 (bin), #4126030544/-168936752 (dec), $f5ee3ad0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+2. CPU breakpoint condition(s) matched 7 times.
+	pc = $1b34 && ( $3979c ) . w > 416 && ( $3979c ) . w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+Reading debugger commands from '/tmp/strun-dvl10n65/ev.txt'...
+Changed to input file dir '/tmp/strun-dvl10n65'.
+> e VBL
+= %110010010010011 (bin), #25747 (dec), $6493 (hex)
+> e ($3979c).w
+  value at ($3979c).w = $1a2
+= %110100010 (bin), #418 (dec), $1a2 (hex)
+> e ($393fa).w
+  value at ($393fa).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($393fc).w
+  value at ($393fc).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($392dc).l
+  value at ($392dc).l = $a000
+= %1010000000000000 (bin), #40960 (dec), $a000 (hex)
+> e ($202e).l
+  value at ($202e).l = $ac88
+= %1010110010001000 (bin), #44168 (dec), $ac88 (hex)
+> e ($2246).w
+  value at ($2246).w = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($11d50).w
+  value at ($11d50).w = $300
+= %1100000000 (bin), #768 (dec), $300 (hex)
+> e CycleCounter
+= %11110101111011100110001011101000 (bin), #4126040808/-168926488 (dec), $f5ee62e8 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 8 times.
+	pc = $1a1a && ( $3979c ) . w > 416 && ( $3979c ) . w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+Reading debugger commands from '/tmp/strun-dvl10n65/ev.txt'...
+Changed to input file dir '/tmp/strun-dvl10n65'.
+> e VBL
+= %110010010010100 (bin), #25748 (dec), $6494 (hex)
+> e ($3979c).w
+  value at ($3979c).w = $1a2
+= %110100010 (bin), #418 (dec), $1a2 (hex)
+> e ($393fa).w
+  value at ($393fa).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($393fc).w
+  value at ($393fc).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($392dc).l
+  value at ($392dc).l = $a000
+= %1010000000000000 (bin), #40960 (dec), $a000 (hex)
+> e ($202e).l
+  value at ($202e).l = $ac88
+= %1010110010001000 (bin), #44168 (dec), $ac88 (hex)
+> e ($2246).w
+  value at ($2246).w = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($11d50).w
+  value at ($11d50).w = $300
+= %1100000000 (bin), #768 (dec), $300 (hex)
+> e CycleCounter
+= %11110101111100001010110011000000 (bin), #4126190784/-168776512 (dec), $f5f0acc0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+2. CPU breakpoint condition(s) matched 8 times.
+	pc = $1b34 && ( $3979c ) . w > 416 && ( $3979c ) . w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+Reading debugger commands from '/tmp/strun-dvl10n65/ev.txt'...
+Changed to input file dir '/tmp/strun-dvl10n65'.
+> e VBL
+= %110010010010100 (bin), #25748 (dec), $6494 (hex)
+> e ($3979c).w
+  value at ($3979c).w = $1a2
+= %110100010 (bin), #418 (dec), $1a2 (hex)
+> e ($393fa).w
+  value at ($393fa).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($393fc).w
+  value at ($393fc).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($392dc).l
+  value at ($392dc).l = $a000
+= %1010000000000000 (bin), #40960 (dec), $a000 (hex)
+> e ($202e).l
+  value at ($202e).l = $ac88
+= %1010110010001000 (bin), #44168 (dec), $ac88 (hex)
+> e ($2246).w
+  value at ($2246).w = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($11d50).w
+  value at ($11d50).w = $300
+= %1100000000 (bin), #768 (dec), $300 (hex)
+> e CycleCounter
+= %11110101111100001101010011011000 (bin), #4126201048/-168766248 (dec), $f5f0d4d8 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 9 times.
+	pc = $1a1a && ( $3979c ) . w > 416 && ( $3979c ) . w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+Reading debugger commands from '/tmp/strun-dvl10n65/ev.txt'...
+Changed to input file dir '/tmp/strun-dvl10n65'.
+> e VBL
+= %110010010010101 (bin), #25749 (dec), $6495 (hex)
+> e ($3979c).w
+  value at ($3979c).w = $1a2
+= %110100010 (bin), #418 (dec), $1a2 (hex)
+> e ($393fa).w
+  value at ($393fa).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($393fc).w
+  value at ($393fc).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($392dc).l
+  value at ($392dc).l = $a000
+= %1010000000000000 (bin), #40960 (dec), $a000 (hex)
+> e ($202e).l
+  value at ($202e).l = $ac88
+= %1010110010001000 (bin), #44168 (dec), $ac88 (hex)
+> e ($2246).w
+  value at ($2246).w = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($11d50).w
+  value at ($11d50).w = $300
+= %1100000000 (bin), #768 (dec), $300 (hex)
+> e CycleCounter
+= %11110101111100110001111011000100 (bin), #4126351044/-168616252 (dec), $f5f31ec4 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+2. CPU breakpoint condition(s) matched 9 times.
+	pc = $1b34 && ( $3979c ) . w > 416 && ( $3979c ) . w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+Reading debugger commands from '/tmp/strun-dvl10n65/ev.txt'...
+Changed to input file dir '/tmp/strun-dvl10n65'.
+> e VBL
+= %110010010010101 (bin), #25749 (dec), $6495 (hex)
+> e ($3979c).w
+  value at ($3979c).w = $1a2
+= %110100010 (bin), #418 (dec), $1a2 (hex)
+> e ($393fa).w
+  value at ($393fa).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($393fc).w
+  value at ($393fc).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($392dc).l
+  value at ($392dc).l = $a000
+= %1010000000000000 (bin), #40960 (dec), $a000 (hex)
+> e ($202e).l
+  value at ($202e).l = $ac88
+= %1010110010001000 (bin), #44168 (dec), $ac88 (hex)
+> e ($2246).w
+  value at ($2246).w = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($11d50).w
+  value at ($11d50).w = $300
+= %1100000000 (bin), #768 (dec), $300 (hex)
+> e CycleCounter
+= %11110101111100110100011011011100 (bin), #4126361308/-168605988 (dec), $f5f346dc (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+5. CPU breakpoint condition(s) matched 2 times.
+	pc = $1bfe && ( $3979c ) . w > 416 && ( $3979c ) . w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+Reading debugger commands from '/tmp/strun-dvl10n65/ev.txt'...
+Changed to input file dir '/tmp/strun-dvl10n65'.
+> e VBL
+= %110010010010101 (bin), #25749 (dec), $6495 (hex)
+> e ($3979c).w
+  value at ($3979c).w = $1a2
+= %110100010 (bin), #418 (dec), $1a2 (hex)
+> e ($393fa).w
+  value at ($393fa).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($393fc).w
+  value at ($393fc).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($392dc).l
+  value at ($392dc).l = $a000
+= %1010000000000000 (bin), #40960 (dec), $a000 (hex)
+> e ($202e).l
+  value at ($202e).l = $ac88
+= %1010110010001000 (bin), #44168 (dec), $ac88 (hex)
+> e ($2246).w
+  value at ($2246).w = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($11d50).w
+  value at ($11d50).w = $300
+= %1100000000 (bin), #768 (dec), $300 (hex)
+> e CycleCounter
+= %11110101111100111010011001100000 (bin), #4126385760/-168581536 (dec), $f5f3a660 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 10 times.
+	pc = $1a1a && ( $3979c ) . w > 416 && ( $3979c ) . w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+Reading debugger commands from '/tmp/strun-dvl10n65/ev.txt'...
+Changed to input file dir '/tmp/strun-dvl10n65'.
+> e VBL
+= %110010010010110 (bin), #25750 (dec), $6496 (hex)
+> e ($3979c).w
+  value at ($3979c).w = $1a2
+= %110100010 (bin), #418 (dec), $1a2 (hex)
+> e ($393fa).w
+  value at ($393fa).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($393fc).w
+  value at ($393fc).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($392dc).l
+  value at ($392dc).l = $2300
+= %10001100000000 (bin), #8960 (dec), $2300 (hex)
+> e ($202e).l
+  value at ($202e).l = $ac88
+= %1010110010001000 (bin), #44168 (dec), $ac88 (hex)
+> e ($2246).w
+  value at ($2246).w = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($11d50).w
+  value at ($11d50).w = $300
+= %1100000000 (bin), #768 (dec), $300 (hex)
+> e CycleCounter
+= %11110101111101011001000011001000 (bin), #4126511304/-168455992 (dec), $f5f590c8 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+2. CPU breakpoint condition(s) matched 10 times.
+	pc = $1b34 && ( $3979c ) . w > 416 && ( $3979c ) . w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+Reading debugger commands from '/tmp/strun-dvl10n65/ev.txt'...
+Changed to input file dir '/tmp/strun-dvl10n65'.
+> e VBL
+= %110010010010110 (bin), #25750 (dec), $6496 (hex)
+> e ($3979c).w
+  value at ($3979c).w = $1a2
+= %110100010 (bin), #418 (dec), $1a2 (hex)
+> e ($393fa).w
+  value at ($393fa).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($393fc).w
+  value at ($393fc).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($392dc).l
+  value at ($392dc).l = $2300
+= %10001100000000 (bin), #8960 (dec), $2300 (hex)
+> e ($202e).l
+  value at ($202e).l = $2f88
+= %10111110001000 (bin), #12168 (dec), $2f88 (hex)
+> e ($2246).w
+  value at ($2246).w = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($11d50).w
+  value at ($11d50).w = $300
+= %1100000000 (bin), #768 (dec), $300 (hex)
+> e CycleCounter
+= %11110101111101011011100011100000 (bin), #4126521568/-168445728 (dec), $f5f5b8e0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+6. CPU breakpoint condition(s) matched 2 times.
+	pc = $1254e && ( $3979c ) . w > 416 && ( $3979c ) . w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+Reading debugger commands from '/tmp/strun-dvl10n65/ev.txt'...
+Changed to input file dir '/tmp/strun-dvl10n65'.
+> e VBL
+= %110010010010110 (bin), #25750 (dec), $6496 (hex)
+> e ($3979c).w
+  value at ($3979c).w = $1a2
+= %110100010 (bin), #418 (dec), $1a2 (hex)
+> e ($393fa).w
+  value at ($393fa).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($393fc).w
+  value at ($393fc).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($392dc).l
+  value at ($392dc).l = $2300
+= %10001100000000 (bin), #8960 (dec), $2300 (hex)
+> e ($202e).l
+  value at ($202e).l = $2f88
+= %10111110001000 (bin), #12168 (dec), $2f88 (hex)
+> e ($2246).w
+  value at ($2246).w = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($11d50).w
+  value at ($11d50).w = $300
+= %1100000000 (bin), #768 (dec), $300 (hex)
+> e CycleCounter
+= %11110101111101011011100111100100 (bin), #4126521828/-168445468 (dec), $f5f5b9e4 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 11 times.
+	pc = $1a1a && ( $3979c ) . w > 416 && ( $3979c ) . w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+Reading debugger commands from '/tmp/strun-dvl10n65/ev.txt'...
+Changed to input file dir '/tmp/strun-dvl10n65'.
+> e VBL
+= %110010010010111 (bin), #25751 (dec), $6497 (hex)
+> e ($3979c).w
+  value at ($3979c).w = $1a3
+= %110100011 (bin), #419 (dec), $1a3 (hex)
+> e ($393fa).w
+  value at ($393fa).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($393fc).w
+  value at ($393fc).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($392dc).l
+  value at ($392dc).l = $2300
+= %10001100000000 (bin), #8960 (dec), $2300 (hex)
+> e ($202e).l
+  value at ($202e).l = $2f88
+= %10111110001000 (bin), #12168 (dec), $2f88 (hex)
+> e ($2246).w
+  value at ($2246).w = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($11d50).w
+  value at ($11d50).w = $300
+= %1100000000 (bin), #768 (dec), $300 (hex)
+> e CycleCounter
+= %11110101111110000000001010111000 (bin), #4126671544/-168295752 (dec), $f5f802b8 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+2. CPU breakpoint condition(s) matched 11 times.
+	pc = $1b34 && ( $3979c ) . w > 416 && ( $3979c ) . w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+Reading debugger commands from '/tmp/strun-dvl10n65/ev.txt'...
+Changed to input file dir '/tmp/strun-dvl10n65'.
+> e VBL
+= %110010010010111 (bin), #25751 (dec), $6497 (hex)
+> e ($3979c).w
+  value at ($3979c).w = $1a3
+= %110100011 (bin), #419 (dec), $1a3 (hex)
+> e ($393fa).w
+  value at ($393fa).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($393fc).w
+  value at ($393fc).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($392dc).l
+  value at ($392dc).l = $2300
+= %10001100000000 (bin), #8960 (dec), $2300 (hex)
+> e ($202e).l
+  value at ($202e).l = $2f88
+= %10111110001000 (bin), #12168 (dec), $2f88 (hex)
+> e ($2246).w
+  value at ($2246).w = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($11d50).w
+  value at ($11d50).w = $300
+= %1100000000 (bin), #768 (dec), $300 (hex)
+> e CycleCounter
+= %11110101111110000010101011010000 (bin), #4126681808/-168285488 (dec), $f5f82ad0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 12 times.
+	pc = $1a1a && ( $3979c ) . w > 416 && ( $3979c ) . w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+Reading debugger commands from '/tmp/strun-dvl10n65/ev.txt'...
+Changed to input file dir '/tmp/strun-dvl10n65'.
+> e VBL
+= %110010010011000 (bin), #25752 (dec), $6498 (hex)
+> e ($3979c).w
+  value at ($3979c).w = $1a3
+= %110100011 (bin), #419 (dec), $1a3 (hex)
+> e ($393fa).w
+  value at ($393fa).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($393fc).w
+  value at ($393fc).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($392dc).l
+  value at ($392dc).l = $2300
+= %10001100000000 (bin), #8960 (dec), $2300 (hex)
+> e ($202e).l
+  value at ($202e).l = $2f88
+= %10111110001000 (bin), #12168 (dec), $2f88 (hex)
+> e ($2246).w
+  value at ($2246).w = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($11d50).w
+  value at ($11d50).w = $300
+= %1100000000 (bin), #768 (dec), $300 (hex)
+> e CycleCounter
+= %11110101111110100111010010111100 (bin), #4126831804/-168135492 (dec), $f5fa74bc (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+2. CPU breakpoint condition(s) matched 12 times.
+	pc = $1b34 && ( $3979c ) . w > 416 && ( $3979c ) . w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+Reading debugger commands from '/tmp/strun-dvl10n65/ev.txt'...
+Changed to input file dir '/tmp/strun-dvl10n65'.
+> e VBL
+= %110010010011000 (bin), #25752 (dec), $6498 (hex)
+> e ($3979c).w
+  value at ($3979c).w = $1a3
+= %110100011 (bin), #419 (dec), $1a3 (hex)
+> e ($393fa).w
+  value at ($393fa).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($393fc).w
+  value at ($393fc).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($392dc).l
+  value at ($392dc).l = $2300
+= %10001100000000 (bin), #8960 (dec), $2300 (hex)
+> e ($202e).l
+  value at ($202e).l = $2f88
+= %10111110001000 (bin), #12168 (dec), $2f88 (hex)
+> e ($2246).w
+  value at ($2246).w = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($11d50).w
+  value at ($11d50).w = $300
+= %1100000000 (bin), #768 (dec), $300 (hex)
+> e CycleCounter
+= %11110101111110101001110011010100 (bin), #4126842068/-168125228 (dec), $f5fa9cd4 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 13 times.
+	pc = $1a1a && ( $3979c ) . w > 416 && ( $3979c ) . w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+Reading debugger commands from '/tmp/strun-dvl10n65/ev.txt'...
+Changed to input file dir '/tmp/strun-dvl10n65'.
+> e VBL
+= %110010010011001 (bin), #25753 (dec), $6499 (hex)
+> e ($3979c).w
+  value at ($3979c).w = $1a3
+= %110100011 (bin), #419 (dec), $1a3 (hex)
+> e ($393fa).w
+  value at ($393fa).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($393fc).w
+  value at ($393fc).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($392dc).l
+  value at ($392dc).l = $2300
+= %10001100000000 (bin), #8960 (dec), $2300 (hex)
+> e ($202e).l
+  value at ($202e).l = $2f88
+= %10111110001000 (bin), #12168 (dec), $2f88 (hex)
+> e ($2246).w
+  value at ($2246).w = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($11d50).w
+  value at ($11d50).w = $300
+= %1100000000 (bin), #768 (dec), $300 (hex)
+> e CycleCounter
+= %11110101111111001110011011000000 (bin), #4126992064/-167975232 (dec), $f5fce6c0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+2. CPU breakpoint condition(s) matched 13 times.
+	pc = $1b34 && ( $3979c ) . w > 416 && ( $3979c ) . w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+Reading debugger commands from '/tmp/strun-dvl10n65/ev.txt'...
+Changed to input file dir '/tmp/strun-dvl10n65'.
+> e VBL
+= %110010010011001 (bin), #25753 (dec), $6499 (hex)
+> e ($3979c).w
+  value at ($3979c).w = $1a3
+= %110100011 (bin), #419 (dec), $1a3 (hex)
+> e ($393fa).w
+  value at ($393fa).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($393fc).w
+  value at ($393fc).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($392dc).l
+  value at ($392dc).l = $2300
+= %10001100000000 (bin), #8960 (dec), $2300 (hex)
+> e ($202e).l
+  value at ($202e).l = $2f88
+= %10111110001000 (bin), #12168 (dec), $2f88 (hex)
+> e ($2246).w
+  value at ($2246).w = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($11d50).w
+  value at ($11d50).w = $300
+= %1100000000 (bin), #768 (dec), $300 (hex)
+> e CycleCounter
+= %11110101111111010000111011011000 (bin), #4127002328/-167964968 (dec), $f5fd0ed8 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 14 times.
+	pc = $1a1a && ( $3979c ) . w > 416 && ( $3979c ) . w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+Reading debugger commands from '/tmp/strun-dvl10n65/ev.txt'...
+Changed to input file dir '/tmp/strun-dvl10n65'.
+> e VBL
+= %110010010011010 (bin), #25754 (dec), $649a (hex)
+> e ($3979c).w
+  value at ($3979c).w = $1a3
+= %110100011 (bin), #419 (dec), $1a3 (hex)
+> e ($393fa).w
+  value at ($393fa).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($393fc).w
+  value at ($393fc).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($392dc).l
+  value at ($392dc).l = $2300
+= %10001100000000 (bin), #8960 (dec), $2300 (hex)
+> e ($202e).l
+  value at ($202e).l = $2f88
+= %10111110001000 (bin), #12168 (dec), $2f88 (hex)
+> e ($2246).w
+  value at ($2246).w = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($11d50).w
+  value at ($11d50).w = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e CycleCounter
+= %11110101111111110101100011000100 (bin), #4127152324/-167814972 (dec), $f5ff58c4 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+2. CPU breakpoint condition(s) matched 14 times.
+	pc = $1b34 && ( $3979c ) . w > 416 && ( $3979c ) . w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+Reading debugger commands from '/tmp/strun-dvl10n65/ev.txt'...
+Changed to input file dir '/tmp/strun-dvl10n65'.
+> e VBL
+= %110010010011010 (bin), #25754 (dec), $649a (hex)
+> e ($3979c).w
+  value at ($3979c).w = $1a3
+= %110100011 (bin), #419 (dec), $1a3 (hex)
+> e ($393fa).w
+  value at ($393fa).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($393fc).w
+  value at ($393fc).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($392dc).l
+  value at ($392dc).l = $2300
+= %10001100000000 (bin), #8960 (dec), $2300 (hex)
+> e ($202e).l
+  value at ($202e).l = $2f88
+= %10111110001000 (bin), #12168 (dec), $2f88 (hex)
+> e ($2246).w
+  value at ($2246).w = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($11d50).w
+  value at ($11d50).w = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e CycleCounter
+= %11110101111111111000000011011100 (bin), #4127162588/-167804708 (dec), $f5ff80dc (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+5. CPU breakpoint condition(s) matched 3 times.
+	pc = $1bfe && ( $3979c ) . w > 416 && ( $3979c ) . w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+Reading debugger commands from '/tmp/strun-dvl10n65/ev.txt'...
+Changed to input file dir '/tmp/strun-dvl10n65'.
+> e VBL
+= %110010010011010 (bin), #25754 (dec), $649a (hex)
+> e ($3979c).w
+  value at ($3979c).w = $1a3
+= %110100011 (bin), #419 (dec), $1a3 (hex)
+> e ($393fa).w
+  value at ($393fa).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($393fc).w
+  value at ($393fc).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($392dc).l
+  value at ($392dc).l = $2300
+= %10001100000000 (bin), #8960 (dec), $2300 (hex)
+> e ($202e).l
+  value at ($202e).l = $2f88
+= %10111110001000 (bin), #12168 (dec), $2f88 (hex)
+> e ($2246).w
+  value at ($2246).w = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($11d50).w
+  value at ($11d50).w = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e CycleCounter
+= %11110101111111111100011010011100 (bin), #4127180444/-167786852 (dec), $f5ffc69c (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+1. CPU breakpoint condition(s) matched 15 times.
+	pc = $1a1a && ( $3979c ) . w > 416 && ( $3979c ) . w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+Reading debugger commands from '/tmp/strun-dvl10n65/ev.txt'...
+Changed to input file dir '/tmp/strun-dvl10n65'.
+> e VBL
+= %110010010011011 (bin), #25755 (dec), $649b (hex)
+> e ($3979c).w
+  value at ($3979c).w = $1a3
+= %110100011 (bin), #419 (dec), $1a3 (hex)
+> e ($393fa).w
+  value at ($393fa).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($393fc).w
+  value at ($393fc).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($392dc).l
+  value at ($392dc).l = $a000
+= %1010000000000000 (bin), #40960 (dec), $a000 (hex)
+> e ($202e).l
+  value at ($202e).l = $2f88
+= %10111110001000 (bin), #12168 (dec), $2f88 (hex)
+> e ($2246).w
+  value at ($2246).w = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($11d50).w
+  value at ($11d50).w = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e CycleCounter
+= %11110110000000011100101011001000 (bin), #4127312584/-167654712 (dec), $f601cac8 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+2. CPU breakpoint condition(s) matched 15 times.
+	pc = $1b34 && ( $3979c ) . w > 416 && ( $3979c ) . w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+Reading debugger commands from '/tmp/strun-dvl10n65/ev.txt'...
+Changed to input file dir '/tmp/strun-dvl10n65'.
+> e VBL
+= %110010010011011 (bin), #25755 (dec), $649b (hex)
+> e ($3979c).w
+  value at ($3979c).w = $1a3
+= %110100011 (bin), #419 (dec), $1a3 (hex)
+> e ($393fa).w
+  value at ($393fa).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($393fc).w
+  value at ($393fc).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($392dc).l
+  value at ($392dc).l = $a000
+= %1010000000000000 (bin), #40960 (dec), $a000 (hex)
+> e ($202e).l
+  value at ($202e).l = $ac88
+= %1010110010001000 (bin), #44168 (dec), $ac88 (hex)
+> e ($2246).w
+  value at ($2246).w = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($11d50).w
+  value at ($11d50).w = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e CycleCounter
+= %11110110000000011111001011100000 (bin), #4127322848/-167644448 (dec), $f601f2e0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+6. CPU breakpoint condition(s) matched 3 times.
+	pc = $1254e && ( $3979c ) . w > 416 && ( $3979c ) . w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+Reading debugger commands from '/tmp/strun-dvl10n65/ev.txt'...
+Changed to input file dir '/tmp/strun-dvl10n65'.
+> e VBL
+= %110010010011011 (bin), #25755 (dec), $649b (hex)
+> e ($3979c).w
+  value at ($3979c).w = $1a3
+= %110100011 (bin), #419 (dec), $1a3 (hex)
+> e ($393fa).w
+  value at ($393fa).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($393fc).w
+  value at ($393fc).w = $14
+= %10100 (bin), #20 (dec), $14 (hex)
+> e ($392dc).l
+  value at ($392dc).l = $a000
+= %1010000000000000 (bin), #40960 (dec), $a000 (hex)
+> e ($202e).l
+  value at ($202e).l = $ac88
+= %1010110010001000 (bin), #44168 (dec), $ac88 (hex)
+> e ($2246).w
+  value at ($2246).w = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($11d50).w
+  value at ($11d50).w = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e CycleCounter
+= %11110110000000011111001111100100 (bin), #4127323108/-167644188 (dec), $f601f3e4 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+7. CPU breakpoint condition(s) matched 1 times.
+	( $3979c ) . w > 419 :once :trace :file /tmp/strun-dvl10n65/end.txt
+Reading debugger commands from '/tmp/strun-dvl10n65/end.txt'...
+Changed to input file dir '/tmp/strun-dvl10n65'.
+> b all
+CPU breakpoints: 7
+> savebin /tmp/strun-dvl10n65/end.flag $0 2
+  Wrote 0x2 bytes.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2' dir.
+Removed CPU breakpoint 7:
+	( $3979c ) . w > 419 :once :trace :file /tmp/strun-dvl10n65/end.txt
+Removed CPU breakpoint 6:
+	pc = $1254e && ( $3979c ) . w > 416 && ( $3979c ) . w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+Removed CPU breakpoint 5:
+	pc = $1bfe && ( $3979c ) . w > 416 && ( $3979c ) . w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+Removed CPU breakpoint 4:
+	pc = $1b9a && ( $3979c ) . w > 416 && ( $3979c ) . w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+Removed CPU breakpoint 3:
+	pc = $1b4e && ( $3979c ) . w > 416 && ( $3979c ) . w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+Removed CPU breakpoint 2:
+	pc = $1b34 && ( $3979c ) . w > 416 && ( $3979c ) . w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt
+Removed CPU breakpoint 1:
+	pc = $1a1a && ( $3979c ) . w > 416 && ( $3979c ) . w < 420 :trace :file /tmp/strun-dvl10n65/ev.txt

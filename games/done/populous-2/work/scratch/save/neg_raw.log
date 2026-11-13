@@ -1,0 +1,85 @@
+INFO : Hatari v2.6.1, compiled on:  Feb  8 2026, 19:50:12
+INFO : GEMDOS HDD emulation, C: <-> /tmp/strun-dqxvfmje/C.
+WARN : No GEMDOS dir '/tmp/strun-dqxvfmje/C/AUTO'
+WARN : Bus Error reading at address $ffff8e21, PC=$1b992 addr_e3=1b992 op_e3=1238
+WARN : No GEMDOS dir '/tmp/strun-dqxvfmje/C/GAMEX'
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: fd 90                                            ²É
+> m $70 2
+00000070: 00 03                                            ..
+> m $72 2
+00000072: 69 de                                            i∧
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $3979c 2
+0003979C: 00 92                                            .Æ
+> m $3979c 2
+0003979C: 00 9f                                            .ƒ
+> m $7fff8 2
+0007FFF8: 50 32                                            P2
+> m $7fffa 2
+0007FFFA: 50 4f                                            PO
+> m $3979c 2
+0003979C: 00 ab                                            .½
+> b pc = $80300 && d0 = 1 :trace :once :file /home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_80300_NA.txt
+CPU condition breakpoint 1 with 2 condition(s) added:
+	pc = $80300 && d0 = 1
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/save/cmd_80300_NA.txt' file on hit.
+> m $3979c 2
+0003979C: 00 de                                            .∧
+> m $3979c 2
+0003979C: 00 de                                            .∧
+WARN : Address Error reading at address $23090001, PC=$22ff6 addr_e3=22ff6 op_e3=4e75
+> m $3979c 2
+0003979C: 00 df                                            .∞
+> m $70 2
+00000070: 00 01                                            ..
+> m $72 2
+00000072: c4 c7                                            גו
+> m $3979c 2
+0003979C: 00 df                                            .∞
+> m $70 2
+00000070: 00 01                                            ..
+> m $72 2
+00000072: c4 c7                                            גו
+> m $3979c 2
+0003979C: 00 df                                            .∞
+> m $70 2
+00000070: 00 01                                            ..
+> m $72 2
+00000072: c4 c7                                            גו
+> m $3979c 2
+0003979C: 00 df                                            .∞
+> m $70 2
+00000070: 00 01                                            ..
+> m $72 2
+00000072: c4 c7                                            גו
+> m $3979c 2
+0003979C: 00 df                                            .∞
+> m $70 2
+00000070: 00 01                                            ..
+> m $72 2
+00000072: c4 c7                                            גו
+> m $3979c 2
+0003979C: 00 df                                            .∞
+> m $70 2
+00000070: 00 01                                            ..
+> m $72 2
+00000072: c4 c7                                            גו
+> m $3979c 2
+0003979C: 00 df                                            .∞
+> m $70 2
+00000070: 00 01                                            ..
+> m $72 2
+00000072: c4 c7                                            גו
+WARN : PNG screen dump saved to: /tmp/strun-dqxvfmje/shots/grab0001.png

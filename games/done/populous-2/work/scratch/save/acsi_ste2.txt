@@ -1,0 +1,10 @@
+CELL acsi_ste2: {'media': 'acsi', 'machine': 'ste', 'tos': 'default', 'mem': 2048, 'img': '/tmp/strun-r7tyvk6n/hd.img'} boot 113s in_play=True marker='P2PO' turn=170 $2cc5a=0x80300 $2cbe6=0x80300 $2cb10=0x80300
+SAVE T1: dump=True back_in_play=True turn_in_dump=252 md5(dump)=89b4b656a9dc111f183e6e1df9afb233
+  T1.GAM on disk: None B, equals RAM at write: False
+SAVE T2: dump=True back_in_play=True turn_in_dump=341 md5=51f94ac8d85b43e3c805283bfc40262f
+  T2.GAM on disk: None B, equals RAM at write: False
+SAVE T1 again (overwrite): dump=False back_in_play=False turn_in_dump=None md5=d41d8cd98f00b204e9800998ecf8427e
+  T1.GAM on disk: 56690 B, equals the NEW RAM: False, differs from the first save: False
+DIRECTORY shot acsi_ste2_dir.png
+  cancel -> running False
+LOAD T2: dump=False RAM after read == RAM at T2 save: False; turn in RAM None; turn now 0 running=False

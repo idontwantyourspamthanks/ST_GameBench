@@ -1,0 +1,9 @@
+== A: test_hog, NO clamp
+   garbage packets seen at $1cd0 (packet x/y words out of range): 2; first: [{'pkt_x': 63232, 'pkt_y': 150, 'x': 150, 'y': 180, 'turn': 16055, 'vbl': 141002}, {'pkt_x': 150, 'pkt_y': 63232, 'x': 150, 'y': 180, 'turn': 16060, 'vbl': 141046}]
+   Bus Error lines: ['WARN : Bus Error reading at address $9b0048, PC=$1aee addr_e3=1aee op_e3=3cd4']
+   run reached its end: True; end numbers (turn.w, VBL, DROPS): [16060, 141401, 0]
+== B: test_hog + pop2_clamp
+   garbage packets seen at $1cd0 (packet x/y words out of range): 0; first: []
+   Bus Error lines: []
+   run reached its end: True; end numbers (turn.w, VBL, DROPS): [16066, 141401, 5]
+EXIT 0

@@ -1,0 +1,7 @@
+CELL ikbd_noreset: build=build/Pop2SaveNoReset in_play=True marker='P2PO' turn=170 $2022=0x0
+t+ 3 turn=228 $2022=0x0 $2023=0xf7 $70=0xffe80010
+poke applied: True
+LOG errors: 2
+   WARN : Bus Error reading at address $ffff8e21, PC=$1b992 addr_e3=1b992 op_e3=1238
+   WARN : Address Error reading at address $296f, PC=$1934 addr_e3=1934 op_e3=4efb
+RESULT ikbd_noreset: game running after the cut-reply save = False

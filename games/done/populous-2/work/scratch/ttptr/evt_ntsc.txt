@@ -1,0 +1,76 @@
+txt'...
+Changed to input file dir '/tmp/strun-n6gng6a3'.
+> info video
+Video base   : 0x2300
+VBL counter  : 1944
+HBL line     : 25
+V-overscan   : none
+Refresh rate : 60 Hz
+Frame skips  : 0
+> m $392dc 8
+000392DC: 00 00 a0 00 00 00 23 00                          ..á...#.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/ttptr' dir.
+1. CPU breakpoint condition(s) matched 2 times.
+	pc = $1a1a && VBL > 1943 && VBL < 1947 :trace :file /tmp/strun-n6gng6a3/cd_draw.txt
+Reading debugger commands from '/tmp/strun-n6gng6a3/cd_draw.txt'...
+Changed to input file dir '/tmp/strun-n6gng6a3'.
+> info video
+Video base   : 0xa000
+VBL counter  : 1945
+HBL line     : 0
+V-overscan   : none
+Refresh rate : 60 Hz
+Frame skips  : 0
+> m $392dc 8
+000392DC: 00 00 a0 00 00 00 23 00                          ..á...#.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/ttptr' dir.
+2. CPU breakpoint condition(s) matched 2 times.
+	pc = $1c18 && VBL > 1943 && VBL < 1947 :trace :file /tmp/strun-n6gng6a3/cd_flip.txt
+Reading debugger commands from '/tmp/strun-n6gng6a3/cd_flip.txt'...
+Changed to input file dir '/tmp/strun-n6gng6a3'.
+> info video
+Video base   : 0xa000
+VBL counter  : 1945
+HBL line     : 25
+V-overscan   : none
+Refresh rate : 60 Hz
+Frame skips  : 0
+> m $392dc 8
+000392DC: 00 00 23 00 00 00 a0 00                          ..#...á.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/ttptr' dir.
+1. CPU breakpoint condition(s) matched 3 times.
+	pc = $1a1a && VBL > 1943 && VBL < 1947 :trace :file /tmp/strun-n6gng6a3/cd_draw.txt
+Reading debugger commands from '/tmp/strun-n6gng6a3/cd_draw.txt'...
+Changed to input file dir '/tmp/strun-n6gng6a3'.
+> info video
+Video base   : 0x2300
+VBL counter  : 1946
+HBL line     : 0
+V-overscan   : none
+Refresh rate : 60 Hz
+Frame skips  : 0
+> m $392dc 8
+000392DC: 00 00 23 00 00 00 a0 00                          ..#...á.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/ttptr' dir.
+2. CPU breakpoint condition(s) matched 3 times.
+	pc = $1c18 && VBL > 1943 && VBL < 1947 :trace :file /tmp/strun-n6gng6a3/cd_flip.txt
+Reading debugger commands from '/tmp/strun-n6gng6a3/cd_flip.txt'...
+Changed to input file dir '/tmp/strun-n6gng6a3'.
+> info video
+Video base   : 0x2300
+VBL counter  : 1946
+HBL line     : 25
+V-overscan   : none
+Refresh rate : 60 Hz
+Frame skips  : 0
+> m $392dc 8
+000392DC: 00 00 a0 00 00 00 23 00                          ..á...#.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/ttptr' dir.
+> b all
+Removed CPU breakpoint 3:
+	pc = $1c3a && VBL > 1943 && VBL < 1947 :trace :file /tmp/strun-n6gng6a3/cd_flip.txt
+Removed CPU breakpoint 2:
+	pc = $1c18 && VBL > 1943 && VBL < 1947 :trace :file /tmp/strun-n6gng6a3/cd_flip.txt
+Removed CPU breakpoint 1:
+	pc = $1a1a && VBL > 1943 && VBL < 1947 :trace :file /tmp/strun-n6gng6a3/cd_draw.txt
+CPU breakpoints: 0

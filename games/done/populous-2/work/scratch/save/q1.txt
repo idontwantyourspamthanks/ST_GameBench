@@ -1,0 +1,6 @@
+python3 cell_main.py --tag m_hd_ste --keep /tmp/p2keep_hd > m_hd_ste.txt 2>&1
+python3 cell_main.py --tag m_acsi_ste --media acsi --keep /tmp/p2keep_acsi > m_acsi_ste.txt 2>&1
+python3 cell_main.py --tag m_hd_mste --machine megaste --tos 2.06 --mem 4096 > m_hd_mste.txt 2>&1
+python3 cell_main.py --tag m_acsi_mste --media acsi --machine megaste --tos 2.06 --mem 4096 > m_acsi_mste.txt 2>&1
+python3 cell_main.py --tag m_hd_tt --machine tt --mem 4096 > m_hd_tt.txt 2>&1
+python3 cell_main.py --tag m_acsi_tt --media acsi --machine tt --mem 4096 > m_acsi_tt.txt 2>&1
