@@ -2,14 +2,14 @@ Hunter (Activision 1991) - patched build of PP's Gamex hard-disk version
 Release v@VERSION@ enhanced by dad_prg
 
 WHAT YOU GET ON YOUR MACHINE (v@VERSION@; 1 MB RAM is the minimum, 2 MB or more adds the Amiga dashboard)
-                         STE      Amiga sky  lit     Amiga   triple  DMA     Jaguar    keys +
-                         palette  + tint     panel   dash.   buffer  sound   pad       pause     HD save
-  ST / Mega ST, 1 MB     no       yes        yes     no      yes     no      no        yes       yes*
-  ST / Mega ST, 2 MB+    no       yes        yes     yes**   yes     no      no        yes       yes*
-  STE, 1 MB              yes      yes        yes     no      yes     yes     yes       yes       yes*
-  STE / Mega STE, 2 MB+  yes      yes        yes     yes     yes     yes     STE only  yes       yes*
-  TT                     yes      no         no      no      no      yes     no        yes       yes*
-  Falcon                 yes      no         no      no      no      yes     yes       yes       not tested
+                         STE      Amiga sky  lit     Amiga   triple  DMA     Jaguar    keys +                even
+                         palette  + tint     panel   dash.   buffer  sound   pad       pause     HD save     mouse
+  ST / Mega ST, 1 MB     no       yes        yes     no      yes     no      no        yes       yes*        yes
+  ST / Mega ST, 2 MB+    no       yes        yes     yes**   yes     no      no        yes       yes*        yes
+  STE, 1 MB              yes      yes        yes     no      yes     yes     yes       yes       yes*        yes
+  STE / Mega STE, 2 MB+  yes      yes        yes     yes     yes     yes     STE only  yes       yes*        yes
+  TT                     yes      no         no      no      no      yes     no        yes       yes*        yes
+  Falcon                 yes      no         no      no      no      yes     yes       yes       not tested  yes
   Sky bands, tint and lit panel need the line-by-line colour timing of a 68000 ST/STE; the TT and Falcon keep the
   original dithered sky and their own palette (STE format). Triple buffering is for the 68000 machines only.
   A plain ST keeps the original colours and the YM sound. Amiga dashboard = the Amiga's art and colours, 2 MB+ only.
@@ -58,6 +58,12 @@ What changed against the original release:
   original dithered sky (their video timing is not safe for the bands; the STE palette still applies there).
 - Triple buffering (new in v1.2, patches tb_*; 68000 machines with 1 MB or more): the game draws into a third screen page, so it no
   longer waits for the screen between frames: the 3D view is up to about 9% faster. On the TT and Falcon the original two pages are kept.
+- Even mouse pointer (new, patches ptr_*; every machine): the pointer moved by however many mouse reports had arrived since the last
+  screen refresh. An emulator that sends them 53 times per second against the 50 Hz refresh made the pointer stop for one refresh and
+  then jump double about every 0.3 s (at 60 Hz it stopped on about every third refresh), and the game halved only leftward and
+  upward movement, so left and up were slower than right and down. Now the pointer moves once per refresh by the mean of the last three
+  refreshes' motion, without losing or inventing any, and all four directions have the same speed (right and down are unchanged;
+  left and up are as fast as they are). The pointer follows the mouse one refresh later and stops two refreshes after it.
 - TT (new in v1.1): a TT booting from hard disk was taken for a Falcon by the sound code, which then used the Falcon's
   rate. It now plays at the STE rate, as on the floppy.
 - Save and Load work on the hard disk (new in v1.2). PP's build had them switched off: its file hook ignored the
@@ -74,7 +80,7 @@ What changed against the original release:
   mistaken for the original. Nothing else on the screen changes.
 - Every patch checks the original bytes it replaces first. If anything is not as
   expected, nothing is changed and the game starts as before.
-- Nothing else in the game is changed: keyboard, mouse and joystick controls and saves work as in PP's release, and at 50 Hz so does the game speed.
+- Nothing else in the game is changed: keyboard, mouse buttons and joystick controls and saves work as in PP's release, and at 50 Hz so does the game speed.
 
 How it is delivered:
 - START.TOS is replaced by a patched copy (unpacked); it also reads the extra file FILES\P
@@ -87,4 +93,6 @@ in the game's folder; give the disk a few seconds after saving before switching 
 Tested on Hatari (cold boots to the 3D view, sky/palette/dashboard/buffering as in the table, keys): HD build on STE (TOS 1.62) at 1 MB and
 2 MB, Mega STE (TOS 2.06) at 4 MB, ST (TOS 1.04) at 1 MB, TT (TOS 3.06) at 4 MB; save/load on the STE, Mega STE and TT; the Jaguar pad
 on the STE and the Falcon (TOS 4.04, floppy); 50 and 60 Hz.
+The even mouse pointer: motion measured refresh by refresh on the ST, STE, Mega STE and TT (HD build; STE also at 60 Hz); cold boots to the 3D view
+with the item table opened and clicked with the pointer on all of those, and on the STE, TT and Falcon floppy builds.
 Not tested on real hardware.

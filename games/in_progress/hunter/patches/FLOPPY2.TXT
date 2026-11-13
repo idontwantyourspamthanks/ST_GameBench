@@ -3,14 +3,14 @@ Release v@VERSION@ enhanced by dad_prg
 ===============================================================================
 
 WHAT YOU GET ON YOUR MACHINE (v@VERSION@; 1 MB RAM is the minimum, 2 MB or more adds the Amiga dashboard)
-                         STE      Amiga sky  lit     Amiga   triple  DMA     Jaguar    keys +
-                         palette  + tint     panel   dash.   buffer  sound   pad       pause
-  ST / Mega ST, 1 MB     no       yes        yes     no      yes     no      no        yes      
-  ST / Mega ST, 2 MB+    no       yes        yes     no***   yes     no      no        yes
-  STE, 1 MB              yes      yes        yes     no      yes     yes     yes       yes      
-  STE / Mega STE, 2 MB+  yes      yes        yes     yes     yes     yes     STE only  yes      
-  TT                     yes      no         no      no      no      yes     no        yes      
-  Falcon                 yes      no         no      no      no      yes     yes       yes      
+                         STE      Amiga sky  lit     Amiga   triple  DMA     Jaguar    keys +    even
+                         palette  + tint     panel   dash.   buffer  sound   pad       pause     mouse
+  ST / Mega ST, 1 MB     no       yes        yes     no      yes     no      no        yes       yes
+  ST / Mega ST, 2 MB+    no       yes        yes     no***   yes     no      no        yes       yes
+  STE, 1 MB              yes      yes        yes     no      yes     yes     yes       yes       yes
+  STE / Mega STE, 2 MB+  yes      yes        yes     yes     yes     yes     STE only  yes       yes
+  TT                     yes      no         no      no      no      yes     no        yes       yes
+  Falcon                 yes      no         no      no      no      yes     yes       yes       yes
   Sky bands, tint and lit panel need the line-by-line colour timing of a 68000 ST/STE; the TT and Falcon keep the
   original dithered sky and their own palette (STE format). Triple buffering is for the 68000 machines only.
   A plain ST keeps the original colours and the YM sound. Amiga dashboard = the Amiga's art and colours, 2 MB+ only.
@@ -46,3 +46,4 @@ Status: only the disk swap on one drive was cold-booted in Hatari; the second-dr
 
 Tested on Hatari (cold boots to the 3D view, sky/palette/dashboard/buffering as in the table, keys): the one-disk set on STE (TOS 1.62) at
 1 MB and 2 MB, ST (TOS 1.04) at 1 MB, Falcon (TOS 4.04) at 4 MB. The TT was tested with the hard-disk build only. Not tested on real hardware.
+Even mouse pointer: tested on the one-disk set (STE, TT, Falcon floppy cold boots; the ST row with the hard-disk build); the code is the same.

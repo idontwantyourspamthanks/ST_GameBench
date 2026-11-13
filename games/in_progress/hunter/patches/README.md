@@ -37,9 +37,10 @@ bank; `$8DC00-$8DFFF` is the `test_` window and is not usable for the release se
 | `$8ECEA-$8EFFF` prefix `sky2_` | v1.2 sky/panel state | hole between `snd_core`'s code (ends `$8ECE9`) and its state (`$8F000`); state `$8ECEA-$8ED7F`, `sky2_pnl` code `$8ED80-$8EE9D` (Amiga dashboard, `default: no`; free `$8EE9E-$8EFFF`) |
 | `$AE4E0-$AEF11` (in the sample bank) | `pnl_data.py` via `snd_build.py` | the packed Amiga panel block `'HPAN'` (2,610 B), read with the bank (HD `FILES\P`, floppy `HNSOUND.BIN`); work/notes/panel.md |
 | `$8CBBE-$8CFFF` prefix `help_` | `help_pause` | pause-screen controls guide: code + list A `$8CBBE-$8CDF3`, font + list B `$8CE80-$8CFF8` (around `p4_poly`'s `$8CE00` blob; site `$260a`; note `work/notes/help.md`) |
-| free spare | anyone | `$8D360-$8D3FF` (160), `$8D585-$8D5FF` (123), `$8D9D4-$8D9DF`, `$8DA3A-$8DBEF` (438), `$8DBF4-$8DBFF` (12), `$8BCA8-$8BFEF` (840, the site table's slack) |
+| free spare | anyone | `$8D360-$8D3FF` (160), `$8D585-$8D5FF` (123), `$8D9D4-$8D9DF`, `$8DB00-$8DBBF` (192), `$8DBD2-$8DBEF` (30), `$8DBF4-$8DBFF` (12), `$8BCA8-$8BFEF` (840, the site table's slack) |
 | `$8D400-$8DBFF` prefix `hn_` | `hn_credit` `$8D400-$8D584`, `hn_hz` `$8DA00-$8DA39` + state `$8DBF0` | Hunter specific |
 | `$8D600-$8D9FF` prefix `jag_` | `jag_pad` code `$8D600-$8D815`, `jag_stick` code `$8D9C0-$8D9D3`, `jag_pad` state `$8D9E0-$8D9FF` | Jaguar pad (inside the `hn_` window, between `hn_credit` and `hn_hz`; `$8D816-$8D9BF` is free) |
+| `$8DA3A-$8DBEF` prefix `ptr_` | `ptr_x` `$8DA40`, `ptr_y` `$8DA50`, `ptr_vbl` `$8DA70-$8DAFF`, state `$8DBC0-$8DBD1` | even mouse pointer (inside the `hn_` window, after `hn_hz`'s code; `hn_hz`'s state `$8DBF0` is above it) |
 | `$8DC00-$8DFFF` prefix `test_` | loader self-tests | not in the release set |
 | `$8E000-$8FFFF` prefix `snd_` | `snd_core` | mixer code `$8E000-$8ECE9`, state `$8F000`, tables `$8F800`, `$8FC00` |
 | `$90000-$AEFFF` | sample bank | built from the user's Amiga ADF |
@@ -73,6 +74,10 @@ can pick a free gap without guessing:
 | `$8D9C0` | `$8D9D3` | 20 | `jag_stick` |
 | `$8D9E0` | `$8D9FF` | 32 | `jag_pad` state |
 | `$8DA00` | `$8DA39` | 58 | `hn_hz` |
+| `$8DA40` | `$8DA49` | 10 | `ptr_x` |
+| `$8DA50` | `$8DA6B` | 28 | `ptr_y` |
+| `$8DA70` | `$8DAFF` | 144 | `ptr_vbl` |
+| `$8DBC0` | `$8DBD1` | 18 | `ptr_vbl` state (PX/PY filters + TX) |
 | `$8DBF0` | `$8DBF3` | 4 | `hn_hz` state |
 | `$8E000` | `$8ECE9` | 3306 | `snd_core` code |
 | `$8F000` | `$8F0FF` | 256 | `snd_core` state |
@@ -82,7 +87,20 @@ can pick a free gap without guessing:
 
 Free gaps from the same manifest (default set + tb_*): `$8BB56`(10), `$8BBEA`(22), `$8BCA8-$8BFEF`(840, the site table's own
 slack), `$8C014-$8C0FF`(`pal_`), `$8C1B1-$8C3FF`(`tb_`), `$8C72C-$8CDFF`(`sav_`), `$8CE80-$8CFFF`(384), `$8D360`(160),
-`$8D585`(123), `$8D81C-$8D9BF`(`key_`), `$8D9D4`(12), `$8DA3A-$8DBEF`(438), `$8ECEA-$8EFFF`(`sky2_`), `$8F100-$8F7FF`(`sky_`).
+`$8D585`(123), `$8D81C-$8D9BF`(`key_`), `$8D9D4`(12), `$8DB00-$8DBBF`(192), `$8DBD2-$8DBEF`(30), `$8ECEA-$8EFFF`(`sky2_`), `$8F100-$8F7FF`(`sky_`).
+
+## ptr_vbl + ptr_x + ptr_y: even mouse pointer (`default: yes`; HD and floppy; gates in `work/notes/mouse.md`)
+
+Sources `patches/ptr_vbl.s` (site `$c69a`, 8 B, blob `$8DA70`, state `$8DBC0`), `patches/ptr_x.s` (site `$b30e`, 6 B), `patches/ptr_y.s` (site `$b32c`, 6 B); the
+three require each other. Window `ptr_` = `$8DA3A-$8DBEF`. Gate tool `tools/huntmouse.py` (per-VBL motion log through the two `test_mlog*` loggers, `cons`, `model`, `cold`).
+
+**What it does.** The game moved its software pointer (`$d8/$da(a5)`, clamped to `0..$e4/$e6`) the moment an IKBD packet arrived and redrew it once per VBL, so a
+VBL saw however many packets had landed since the last one. Hatari sends them every 150000 8 MHz cycles (53.3 Hz) against the 50 Hz VBL: one VBL in about 14 saw
+none (the pointer stopped) and the next two (it jumped double); the X and Y bytes of one packet could land in different VBLs; and `ext.w d0 / bpl.b +2 / asr.w #1,d0`
+at `$b30e` and `$b32c` halved only NEGATIVE deltas, so left and up ran at 2/3 of the speed of right and down (the Amiga version's mouse code has no halving at all).
+Now `ptr_x`/`ptr_y` only collect a packet (both axes together, not halved) and `ptr_vbl` moves the pointer once per VBL, just before the redraw, by the mean of the last
+three VBLs' motion (exact: the division remainder is carried, so motion is neither lost nor invented). Right and down are unchanged; left and up are now as fast.
+Cost 150 cycles per VBL (0.09 %) with the mouse still, a few hundred while it moves. The pointer lags the mouse by one VBL and stops two VBLs after it.
 
 ## jag_pad + jag_stick: Atari Jaguar pad (`default: no`; HD and floppy builds)
 
