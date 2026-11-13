@@ -2,7 +2,8 @@
 ; default: yes
 ; site: $213b0
 ; orig: 727844015342
-; data: $88200 32256
+; data: DB+$200 4
+; data: DB+$204 32252 cache
 ; note: Item 2 (work/notes/display.md): masked 32 px sprite blits, ported from Powermonger's p4_spr.  $213b0 is the main variant of the sprite blitter $2122e
 ; note: (3 screen columns fully on screen: 8.75 % of a busy frame's cycles; Powermonger's routine at $124a8 has the same bytes `7278 4401 5342`): a0 = screen address
 ; note: of column c, row y (the clip front end $2122e has added y*160 + (x & $fff0)/2), a1 = sprite rows (20 B each = mask M0 P0..P3 | M1 Q0..Q3, already clipped
@@ -21,11 +22,11 @@
 ; note: rows) in 4 sets x 4 ways at $88400, tags at $88220, lazy init behind a magic word (the area is not in the payload image: no initial value is assumed).  s = 0, rows > 33 and
 ; note: a1 outside $20000-$7b37f take the original code.
 ; note: Registers as the original leaves them: a0 += 160*rows, a1 += 20*rows, d0 = s, d1 = $88, d2.w = $ffff, a2-a6 and the high word of d2 untouched, d3-d7 clobbered.
-BLT     equ     $88200                  ; long: $b17e000m
-HDR     equ     $88210                  ; long: magic
-TAGS    equ     $88220                  ; 4 sets x 80 B = 320 B -> $88360
-SCR     equ     $88360                  ; scratch: the ten rotated source longs of a row (40 B)
-SLOTS   equ     $88400
+BLT     equ     DB+$200                 ; long: $b17e000m
+HDR     equ     DB+$210                 ; long: magic
+TAGS    equ     DB+$220                 ; 4 sets x 80 B = 320 B -> DB+$360
+SCR     equ     DB+$360                 ; scratch: the ten rotated source longs of a row (40 B)
+SLOTS   equ     DB+$400
 SLOTSZ  equ     1856
 SRCOFF  equ     1188                    ; 33 rows x 36 B
 MAGIC   equ     $50525330               ; 'PRS0'
@@ -142,6 +143,7 @@ probe:  movem.l a2-a4,-(a7)
         rts
 
         org     PB+$4600
+        ifnd    LITE
 pre:    tst.w   d0
         beq.w   .cpu                    ; s = 0
         tst.w   d2
@@ -265,9 +267,16 @@ pre:    tst.w   d0
         neg.b   d1
         subq.w  #1,d2
         jmp     $213b6.l
+        else
+pre:    moveq   #$78,d1                 ; LITE (no cache: the 512 KB build): the plain ST takes the original code
+        neg.b   d1
+        subq.w  #1,d2
+        jmp     $213b6.l
+        endc
 
 ; build: a1 = sprite rows, d0 = s, d7 = rows, a3 = the cache entry (data pointer at 4(a3)).  Clobbers d1, d3-d7, a1, a2; keeps a3.
         org     PB+$4a00
+        ifnd    LITE
 build:  move.l  a3,-(a7)
         movea.l 4(a3),a2                ; output
         lea     SCR.l,a3                ; scratch: the ten rotated source longs of a row
@@ -368,9 +377,11 @@ build:  move.l  a3,-(a7)
         dbra    d7,.b
         movea.l (a7)+,a3
         rts
+        endc
 
 ; init: tags cleared, data pointers assigned (slot i at SLOTS + SLOTSZ*i, 4 ways per set), then the magic.  Clobbers d3, d4, a2, a3.
         org     PB+$5200
+        ifnd    LITE
 init:   lea     TAGS.l,a2
         lea     SLOTS.l,a3
         moveq   #3,d3
@@ -386,6 +397,7 @@ init:   lea     TAGS.l,a2
         dbra    d3,.s
         move.l  #MAGIC,HDR.l
         rts
+        endc
 
 ; ---- the 16 px variant ($212b4, patch pop2_spr16: it only holds the site, the code is here): rows of 10 B (mask M, planes P0..P3), 2 screen columns, row stride 160.
 ; Blitter only (xcount 2, NFSR: one source word per row feeds both destination words, source yinc 10, dest yinc 152); the plain-ST path is the original code.

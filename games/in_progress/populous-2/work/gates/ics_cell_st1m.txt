@@ -1,0 +1,12 @@
+CELL st1m: ICS floppy st TOS 1.04 1024 KB (full layout); boot 114s in_play=True marker='P2PO' $22f14=4ef900082000 (expect 4ef900082000) sync=$fe (50 Hz) turn=98
+payload $80000+32768: 4638 non-zero image bytes, 0 differ in RAM
+RESULT st1m default MHz 50 Hz: 1501 VBL = 30.02 s, 160237 cycles/VBL, world turns 188 = 6.262/s | ticks(D) 188 = 6.262/s; passes T 188 R 141 S 0 P 0 | refresh seen 49.93 Hz
+tooltip cat2: diff vs none bbox (182, 58, 728, 442); shot ics_st1m_cat2.png
+tooltip strip4: diff vs none bbox (182, 58, 736, 442); shot ics_st1m_strip4.png
+pointer 250,180 turn 651
+SAVELOAD {'turn_at_req': 731, 'after_save_play': True, 'turn_before_load': 855, 'turn_after_load': 744, 'load_play': True}
+disk after save: ['POP2     TOS    105426 1992-01-20   9:04 ', '       33 files             535 442 bytes', '                            172 032 bytes free'] ; T1.GAM []
+known hardware-probe lines (the game's $ffff8e21/$ffff8924 reads at PC $13968/$139xx; pop2_spr's blitter probe $ffff8a28 on an ST): 1
+LOG: 163 lines; bus/address-error/halt lines: 0
+
+RESULT st1m: ok=True marker='P2PO' errors=0

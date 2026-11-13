@@ -1,0 +1,11 @@
+$ P2_LAYOUT=ics-lowram p2abtest.py --only pop2_spr pop2_spr16 pop2_ptr_a pop2_ptr_b pop2_clamp --snapshot busy1 --mhz 8
+base set    : test_walk test_walk2 test_walk3
+patched set : test_walk test_walk2 test_walk3 pop2_spr pop2_spr16 pop2_ptr_a pop2_ptr_b pop2_clamp
+busy1 @8 MHz (base @8): IDENTICAL | turns compared: back 128, world 128, shown@S1+pointer 127, shown@flip+pointer 120 (shape-change passes not compared: 8) (skipped 2); flips captured 130/130; patched min VBL/pass 7 | work/pass 1216199 -> 1138351 (-6.40 %) | fps 6.184 -> 6.562 (+6.1 %), turns/s 6.18
+   sprite entry coverage (base run): front end $2122e: 768, 16px front end $211be: 562, 16px 2-col $212b4: 562, neg-x shift $21322: 0, 1-col $21368: 0, 3-col (main) $213b0: 762, neg-x 3-col $2147e: 0, 2-col right edge $21530: 6
+ALL IDENTICAL
+$ ... --neg (negative control)
+      BACK DIFFER turn 16128: 7896 B differ, first at offset 2586 (row 16), rows 16-191
+      WORLD DIFFER turn 16128: 8 B differ, first at offset 47 (row 11), rows 11-14112
+      SHOWN@S1 DIFFER turn 16128 (pointer 160,100 / 160,100, shape 0x300/0x300): 7887 B differ, first at offset 2586 (row 16), rows 16-191
+MISMATCH

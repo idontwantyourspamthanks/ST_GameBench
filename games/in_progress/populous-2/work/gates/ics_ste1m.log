@@ -1,0 +1,168 @@
+INFO : Hatari v2.6.1, compiled on:  Feb  8 2026, 19:50:12
+INFO : Inserted disk '/tmp/ics_ste1m_a.st' to drive A:.
+INFO : GEMDOS HDD emulation, C: <-> /tmp/strun-3kfm0hls/C.
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: ad 0c                                            ¡.
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 08 02                                            ..
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 08 02                                            ..
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $3979c 2
+0003979C: 00 45                                            .E
+> m $3979c 2
+0003979C: 00 53                                            .S
+> m $ff820a 1
+00FF820A: fe                                               ³
+> m $22f14 6
+00022F14: 4e f9 00 08 20 00                                N∙.. .
+> m $7fff8 2
+0007FFF8: 50 32                                            P2
+> m $7fffa 2
+0007FFFA: 50 4f                                            PO
+> m $3979c 2
+0003979C: 00 64                                            .d
+> savebin /tmp/strun-3kfm0hls/pl.bin 524288 $8000
+  Wrote 0x8000 bytes.
+> m $ff820a 1
+00FF820A: fe                                               ³
+Command line with '2' arguments:
+- '--fast-forward'
+- 'on'
+> e VBL
+= %1011111101000 (bin), #6120 (dec), $17e8 (hex)
+INFO : OS clock ticks / second: 100
+> b all
+CPU breakpoints: 0
+> b VBL > 6180 :trace :once :file /tmp/strun-3kfm0hls/smp6180.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	VBL > 6180
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-3kfm0hls/smp6180.txt' file on hit.
+1. CPU breakpoint condition(s) matched 1 times.
+	VBL > 6180 :once :trace :file /tmp/strun-3kfm0hls/smp6180.txt
+Reading debugger commands from '/tmp/strun-3kfm0hls/smp6180.txt'...
+Changed to input file dir '/tmp/strun-3kfm0hls'.
+> e VBL
+= %1100111111111 (bin), #6655 (dec), $19ff (hex)
+> e CycleCounter
+= %111111100100100100110000111100 (bin), #1066552380 (dec), $3f924c3c (hex)
+> e ($3979a).l
+  value at ($3979a).l = $c7
+= %11000111 (bin), #199 (dec), $c7 (hex)
+> e ($8281c).l
+  value at ($8281c).l = $c7
+= %11000111 (bin), #199 (dec), $c7 (hex)
+> e ($8282c).l
+  value at ($8282c).l = $c6
+= %11000110 (bin), #198 (dec), $c6 (hex)
+> e ($82820).l
+  value at ($82820).l = $92
+= %10010010 (bin), #146 (dec), $92 (hex)
+> e ($82824).l
+  value at ($82824).l = $1
+= %1 (bin), #1 (dec), $1 (hex)
+> e ($82828).l
+  value at ($82828).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/ics' dir.
+Removed CPU breakpoint 1:
+	VBL > 6180 :once :trace :file /tmp/strun-3kfm0hls/smp6180.txt
+> b all
+CPU breakpoints: 0
+> b VBL > 8155 :trace :once :file /tmp/strun-3kfm0hls/smp8155.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	VBL > 8155
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-3kfm0hls/smp8155.txt' file on hit.
+1. CPU breakpoint condition(s) matched 1 times.
+	VBL > 8155 :once :trace :file /tmp/strun-3kfm0hls/smp8155.txt
+Reading debugger commands from '/tmp/strun-3kfm0hls/smp8155.txt'...
+Changed to input file dir '/tmp/strun-3kfm0hls'.
+> e VBL
+= %1111111011100 (bin), #8156 (dec), $1fdc (hex)
+> e CycleCounter
+= %1001101111001101011000111001000 (bin), #1306964424 (dec), $4de6b1c8 (hex)
+> e ($3979a).l
+  value at ($3979a).l = $182
+= %110000010 (bin), #386 (dec), $182 (hex)
+> e ($8281c).l
+  value at ($8281c).l = $182
+= %110000010 (bin), #386 (dec), $182 (hex)
+> e ($8282c).l
+  value at ($8282c).l = $181
+= %110000001 (bin), #385 (dec), $181 (hex)
+> e ($82820).l
+  value at ($82820).l = $11f
+= %100011111 (bin), #287 (dec), $11f (hex)
+> e ($82824).l
+  value at ($82824).l = $1
+= %1 (bin), #1 (dec), $1 (hex)
+> e ($82828).l
+  value at ($82828).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/ics' dir.
+Removed CPU breakpoint 1:
+	VBL > 8155 :once :trace :file /tmp/strun-3kfm0hls/smp8155.txt
+Command line with '2' arguments:
+- '--fast-forward'
+- 'off'
+WARN : PNG screen dump saved to: /tmp/strun-3kfm0hls/shots/grab0001.png
+WARN : PNG screen dump saved to: /tmp/strun-3kfm0hls/shots/grab0002.png
+WARN : PNG screen dump saved to: /tmp/strun-3kfm0hls/shots/grab0003.png
+> m $393fa 2
+000393FA: 00 fa                                            .·
+> m $393fc 2
+000393FC: 00 b4                                            .œ
+> m $3979c 2
+0003979C: 02 04                                            ..
+> m $7fff8 2
+0007FFF8: 50 32                                            P2
+> m $7fffa 2
+0007FFFA: 50 4f                                            PO
+WARN : PNG screen dump saved to: /tmp/strun-3kfm0hls/shots/grab0004.png
+> m $3979c 2
+0003979C: 02 5c                                            .\
+WARN : PNG screen dump saved to: /tmp/strun-3kfm0hls/shots/grab0005.png
+WARN : PNG screen dump saved to: /tmp/strun-3kfm0hls/shots/grab0006.png
+WARN : PNG screen dump saved to: /tmp/strun-3kfm0hls/shots/grab0007.png
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $3979c 2
+0003979C: 02 73                                            .s
+> m $3979c 2
+0003979C: 02 80                                            .Ç
+> m $3979c 2
+0003979C: 02 cf                                            .נ
+WARN : PNG screen dump saved to: /tmp/strun-3kfm0hls/shots/grab0008.png
+WARN : PNG screen dump saved to: /tmp/strun-3kfm0hls/shots/grab0009.png
+> m $3979c 2
+0003979C: 02 69                                            .i
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $3979c 2
+0003979C: 02 74                                            .t
+> m $3979c 2
+0003979C: 02 82                                            .é
+WARN : PNG screen dump saved to: /tmp/strun-3kfm0hls/shots/grab0010.png
+INFO : Updated the contents of floppy image '/tmp/ics_ste1m_a.st'.
+INFO : Floppy A: has been removed from drive.

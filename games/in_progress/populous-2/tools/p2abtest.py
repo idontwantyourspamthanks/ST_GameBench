@@ -71,12 +71,16 @@ def snap_path(s: str) -> Path:
     return p if p.exists() else Populous2.SNAP / (s if s.endswith(".sav") else s + ".sav")
 
 
-def make_live(names: list[str]) -> str:
-    """pop2patch.py live image of `names`; sites cut into <= 40-byte `w` lines (Hatari truncates debugger lines of ~240 chars)."""
-    tag = hashlib.md5("+".join(names).encode()).hexdigest()[:8]
+# P2_LAYOUT=ics-lowram: the gate tests the ICS build's 512 KB layout (pop2patch.py live --base ics --layout lowram: the same patches relocated into $7b400-$7fff7).
+# The test_* patches (the walk input, test_tickspin) hold absolute addresses and stay in the $80000 layout; make_live returns "<test live>|<lowram live>" then.
+LAYOUT = os.environ.get("P2_LAYOUT", "")
+
+
+def _live_one(names: list[str], extra: list[str]) -> str:
+    tag = hashlib.md5(("+".join(names) + "|".join(extra)).encode()).hexdigest()[:8]
     live = WORK / f"live_{tag}"
     live.parent.mkdir(parents=True, exist_ok=True)
-    subprocess.run([sys.executable, str(HERE / "pop2patch.py"), "live", "--only", *names, "--out", str(live)],
+    subprocess.run([sys.executable, str(HERE / "pop2patch.py"), "live", *extra, "--only", *names, "--out", str(live)],
                    check=True, cwd=GAME, stdout=subprocess.DEVNULL)
     jp = Path(str(live) + ".json")
     spec = json.loads(jp.read_text())
@@ -90,10 +94,22 @@ def make_live(names: list[str]) -> str:
     return str(live)
 
 
+def make_live(names: list[str]) -> str:
+    """pop2patch.py live image of `names`; sites cut into <= 40-byte `w` lines (Hatari truncates debugger lines of ~240 chars)."""
+    if LAYOUT == "ics-lowram":
+        walk = [n for n in names if n.startswith("test_")]
+        rest = [n for n in names if not n.startswith("test_")]
+        parts = ([_live_one(walk, ["--base", "ics"])] if walk else []) + ([_live_one(rest, ["--base", "ics", "--layout", "lowram"])] if rest else [])
+        return "|".join(parts)
+    return _live_one(names, [])
+
+
 def apply_cmds(live: str) -> list[str]:
-    spec = json.loads(Path(live + ".json").read_text())
-    c = [f"loadbin {Path(live + '.img')} ${spec['img_base']:x}"]
-    c += [f"w ${s['addr']:x} " + " ".join(f"${b:02x}" for b in bytes.fromhex(s["new"])) for s in spec["sites"]]
+    c = []
+    for part in live.split("|"):
+        spec = json.loads(Path(part + ".json").read_text())
+        c += [f"loadbin {Path(part + '.img')} ${spec['img_base']:x}"]
+        c += [f"w ${s['addr']:x} " + " ".join(f"${b:02x}" for b in bytes.fromhex(s["new"])) for s in spec["sites"]]
     return c
 
 

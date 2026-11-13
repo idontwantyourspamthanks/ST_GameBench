@@ -1,0 +1,8 @@
+CELL tt306: ICS floppy tt TOS 3.06 4096 KB (full layout); boot 106s in_play=False marker='P2PO' $22f14=4ef900082000 (expect 4ef900082000) sync=$01 (60 Hz) turn=0
+payload $80000+32768: 4732 non-zero image bytes, 0 differ in RAM
+RESULT tt306 default MHz 60 Hz: 1801 VBL = 30.02 s, 534283 cycles/VBL, world turns 0 = 0.000/s | ticks(D) 0 = 0.000/s; passes T 0 R 0 S 0 P 0 | refresh seen 59.89 Hz
+Traceback (most recent call last):
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/ics/cell.py", line 66, in <module>
+    h.goto(HOME[0] + 2 * x, HOME[1] + 2 * y, HOME); time.sleep(2.5)
+                                                    ^^^^^^^^^^^^^^^
+KeyboardInterrupt

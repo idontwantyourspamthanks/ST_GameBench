@@ -1,0 +1,41 @@
+Populous 2 (Atari ST) - patched LOW-RAM FLOPPY build, {DATE}
+Release v@VERSION@ enhanced by dad_prg
+
+One bootable 720K disk with the whole game, built on the 1991 ICS release of the
+floppy game (the original Bullfrog files and its own loader, minus the ICS intro
+screen). It runs in 512 KB of RAM and the game's own SAVE GAME / LOAD GAME work
+on it, on the game disk itself, with room for 3 saves.
+
+Populous2_lowram.st is a 720K .st disk image (9 sectors, 2 sides, 80 tracks);
+write it to a real disk or load it as drive A: in an emulator.
+
+CHANGES (the same enhancements as the other two builds)
+{PATCHES}
+
+WHAT IS DIFFERENT FROM THE OTHER TWO BUILDS
+  - Runs in 512 KB (ST, STE; also 1 MB and more, TT/Falcon: see MACHINES).
+    The other floppy needs 2 MB.
+  - SAVE GAME / LOAD GAME work on this disk, like in the original release; no
+    second disk. The game writes NAME.GAM files (56,690 bytes) to the game disk.
+    The disk has room for 3 saves. Do not write-protect the disk if you want to
+    save; keep a copy of the .st.
+  - The manual question (Zeus's statue question) is skipped.
+  - The sprite cache for the plain ST (a speed-up for machines without a
+    blitter) is only in the 1 MB+ layout: with 512 KB a plain ST draws sprites
+    with the game's own code, like the original. The STE blitter speed-up, the
+    tooltips, the 60 Hz and fixed-speed tick, the pointer redraw skipping and
+    the bad-mouse-packet filter are the same in 512 KB and above.
+
+STARTING
+  Put the disk in drive A and reset. The Bullfrog logo and the credits follow;
+  hold Space through them if they wait for a key. The main menu shows
+  "v@VERSION@ enhanced by dad_prg" in the lower part of the slate panel.
+
+MEMORY AND MACHINES
+  512 KB RAM minimum (the game image ends at 505 KB); 1 MB and more use a
+  second copy of the same patches with a pre-shifted sprite cache for the plain ST.
+  Tested in Hatari 2.6.1 (not on real hardware): ST TOS 1.04 512 KB, STE TOS 1.62
+  512 KB and 1 MB, Mega STE TOS 2.06 4 MB at 60 Hz, Falcon TOS 4.04 4 MB.
+  Play, saving and loading all work on those. The TT (TOS 3.06) runs the game only
+  with its CPU set to 8 MHz: at 32 MHz the game's own floppy routine fails and the
+  game shows INSERT POPULOUS-II DISK; use the hard-disk version on a TT.

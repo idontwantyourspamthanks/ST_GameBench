@@ -1,0 +1,121 @@
+INFO : Hatari v2.6.1, compiled on:  Feb  8 2026, 19:50:12
+INFO : Inserted disk '/tmp/ics_tt306_a.st' to drive A:.
+INFO : GEMDOS HDD emulation, C: <-> /tmp/strun-fplywgwl/C.
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: eb 76                                            δv
+> m $70 2
+00000070: 00 e0                                            .α
+> m $72 2
+00000072: 0c 5a                                            .Z
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $70 2
+00000070: 00 00                                            ..
+> m $72 2
+00000072: 18 fa                                            .·
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $3979c 2
+0003979C: 00 00                                            ..
+> m $ff820a 1
+00FF820A: 01                                               .
+> m $22f14 6
+00022F14: 4e f9 00 08 20 00                                N∙.. .
+> m $7fff8 2
+0007FFF8: 50 32                                            P2
+> m $7fffa 2
+0007FFFA: 50 4f                                            PO
+> m $3979c 2
+0003979C: 00 00                                            ..
+> savebin /tmp/strun-fplywgwl/pl.bin 524288 $8000
+  Wrote 0x8000 bytes.
+> m $ff820a 1
+00FF820A: 01                                               .
+Command line with '2' arguments:
+- '--fast-forward'
+- 'on'
+> e VBL
+= %1101000001111 (bin), #6671 (dec), $1a0f (hex)
+INFO : OS clock ticks / second: 100
+> b all
+CPU breakpoints: 0
+> b VBL > 6731 :trace :once :file /tmp/strun-fplywgwl/smp6731.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	VBL > 6731
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-fplywgwl/smp6731.txt' file on hit.
+1. CPU breakpoint condition(s) matched 1 times.
+	VBL > 6731 :once :trace :file /tmp/strun-fplywgwl/smp6731.txt
+Reading debugger commands from '/tmp/strun-fplywgwl/smp6731.txt'...
+Changed to input file dir '/tmp/strun-fplywgwl'.
+> e VBL
+= %1101010101100 (bin), #6828 (dec), $1aac (hex)
+> e CycleCounter
+= %11011001100000101101000110110010 (bin), #3649229234/-645738062 (dec), $d982d1b2 (hex)
+> e ($3979a).l
+  value at ($3979a).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($8281c).l
+  value at ($8281c).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($8282c).l
+  value at ($8282c).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($82820).l
+  value at ($82820).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($82824).l
+  value at ($82824).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($82828).l
+  value at ($82828).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/ics' dir.
+Removed CPU breakpoint 1:
+	VBL > 6731 :once :trace :file /tmp/strun-fplywgwl/smp6731.txt
+> b all
+CPU breakpoints: 0
+> b VBL > 8628 :trace :once :file /tmp/strun-fplywgwl/smp8628.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	VBL > 8628
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-fplywgwl/smp8628.txt' file on hit.
+1. CPU breakpoint condition(s) matched 1 times.
+	VBL > 8628 :once :trace :file /tmp/strun-fplywgwl/smp8628.txt
+Reading debugger commands from '/tmp/strun-fplywgwl/smp8628.txt'...
+Changed to input file dir '/tmp/strun-fplywgwl'.
+> e VBL
+= %10000110110101 (bin), #8629 (dec), $21b5 (hex)
+> e CycleCounter
+= %10010110111011000000000101000 (bin), #316506152 (dec), $12dd8028 (hex)
+> e ($3979a).l
+  value at ($3979a).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($8281c).l
+  value at ($8281c).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($8282c).l
+  value at ($8282c).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($82820).l
+  value at ($82820).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($82824).l
+  value at ($82824).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+> e ($82828).l
+  value at ($82828).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/populous-2/work/scratch/ics' dir.
+Removed CPU breakpoint 1:
+	VBL > 8628 :once :trace :file /tmp/strun-fplywgwl/smp8628.txt
+Command line with '2' arguments:
+- '--fast-forward'
+- 'off'
+WARN : PNG screen dump saved to: /tmp/strun-fplywgwl/shots/grab0001.png

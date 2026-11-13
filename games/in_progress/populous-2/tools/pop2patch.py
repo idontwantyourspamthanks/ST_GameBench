@@ -17,12 +17,20 @@ build --floppy: a bootable 720K .st with the same RUNME in AUTO\\RUNME.PRG plus 
 pictures (the game fits one disk), see patches/README.md.
 live: <out>.img (the payload, load at PB) + <out>.json (site bytes) for snapshots; see
 stharness.Hatari.capture_frames(live=...).
+
+--base ics (verify | build | live | list | doc): the same patches on the ICS crack's floppy (work/notes/ics.md) instead of PP's HAGA
+conversion.  The game is the same image (the crack's POP2.TOS unpacks it to $1770, byte-identical to P2M.FIC unpacked), the delivery is
+different: build --base ics copies the ICS disk, drops AUTO\\ICS.PRG (the cracktro; it only installed a 10-byte stub at $140) and replaces POP2.TOS
+by `prefix + payloads + the crack's own POP2.TOS`: the prefix runs before the unpack, picks the `full` layout (RAM >= 1 MB: the PP layout at
+$80000) or the `lowram` layout (512 KB: packed into $7b400-$7fff7) by $42e, copies it, and hooks the crack's final `jmp $140.w`.  Patches
+with the header `; base: pp` (pop2_floppy_head, pop2_save*: HAGA / GEMDOS) are not part of the ICS build.
 """
 from __future__ import annotations
 
 import argparse
 import datetime
 import json
+import os
 import re
 import shutil
 import struct
@@ -93,7 +101,13 @@ def game_image() -> bytearray:
 STUB_RAM, STUB_TXT, STUB_LEN = 0x140, 0x3F8, 0x2BC
 
 
-def expected_ram(addr: int, ln: int):
+def expected_ram(addr: int, ln: int, patched: bool = True):
+    """The bytes RAM holds at `addr` when the trampoline runs (PP: P2M.FIC + PP's patches + PP's stub block; ICS: the crack's
+    POP2.TOS unpacked, + the crack's stub store when `patched`)."""
+    if BASE == "ics":
+        if addr < GAME_BASE or addr + ln > GAME_BASE + GAME_LEN:
+            return None
+        return bytes(ics_game_image(patched)[addr - GAME_BASE:addr - GAME_BASE + ln])
     if STUB_RAM <= addr and addr + ln <= STUB_RAM + STUB_LEN:
         o = STUB_TXT + addr - STUB_RAM
         return bytes(runme_source()[28 + o:28 + o + ln])
@@ -103,9 +117,113 @@ def expected_ram(addr: int, ln: int):
 
 
 def dump_bytes(addr: int, ln: int) -> bytes:
-    with RAMDUMP.open("rb") as f:
+    with (ICS_DUMP if BASE == "ics" else RAMDUMP).open("rb") as f:
         f.seek(addr)
         return f.read(ln)
+
+
+# ---- the ICS crack's game: what POP2.TOS builds in RAM (build --base ics) -----------------------------
+# The 1991 ICS disk (alt/ST, never modified; every build works on a copy): AUTO\LOADER.PRG Pexecs CREDITS.TOS and then POP2.TOS; POP2.TOS (text
+# 94,488 B, no relocations) switches to supervisor mode, blanks the palette, copies an Atomik-style packed block (text $128, $16ff0 B) to $1770, unpacks
+# it in place (498,704 B = $79c10, the game: byte-identical to PP's P2M.FIC unpacked) and ends `lea $1770.w,a7 / jmp $140.w`.  AUTO\ICS.PRG (the
+# cracktro) had written 10 bytes at $140: `move.l #$4e714e71,$14a88.l / jmp $1770.w`.  tools: mtools reads the disk.
+BASE = "pp"                                   # "pp" (PP's HAGA conversion, RUNME.TOS) or "ics" (the ICS crack's floppy, POP2.TOS)
+ICS_DISK = ROOT / "alt" / "ST" / "Populous II (1991)(Bullfrog)[cr ICS][512 kB].st"
+ICS_DUMP = ROOT / "work" / "dumps" / "ics_at140.bin"    # RAM $0-$7ffff of a 1 MB STE, TOS 1.62, at the breakpoint `pc = $140` (before the stub ran)
+ICS_STUB_PATCHES = {0x14A88: bytes.fromhex("4e714e71")}     # the crack's $140 stub: `move.l #$4e714e71,$14a88.l`
+POP2_PACK, POP2_PACK_LEN, POP2_TEXT_LEN = 0x128, 0x16FF0, 0x17118
+POP2_PRE = 0x16                                # POP2.TOS text $0-$15: Super + palette blank; $16 = `move.w #$2700,sr` (our prefix replays $0-$15 and jumps here)
+
+
+def mtools_out(*args) -> bytes:
+    r = subprocess.run(list(args), capture_output=True)
+    if r.returncode != 0:
+        raise SystemExit(f"{' '.join(args)} failed: {r.stderr.decode(errors='replace')}")
+    return r.stdout
+
+
+def ics_disk_file(name: str, disk: Path | None = None) -> bytes:
+    if shutil.which("mcopy") is None:
+        raise SystemExit("--base ics needs mtools (mcopy, mdel, mformat)")
+    return mtools_out("mcopy", "-n", "-i", str(disk or ICS_DISK), f"::{name}", "-")
+
+
+def atomik_depack(pk: bytes) -> bytes:
+    """The crack's decruncher (POP2.TOS text $56-$126), ported: a backward bit stream read as longs from the end of the packed block
+    (last long = unpacked length, then a checksum, then the first bit buffer); every match/literal is written downwards from the end.
+    The sentinel scheme of the original is kept (a buffer long is refilled when it shifts to zero, the new bit 0 comes from the
+    refill's `roxr` with X = 1).  Verified: 0 of 498,704 bytes differ from RAM at the `jmp $140` (verify prints it)."""
+    a0 = len(pk)
+
+    def rl():
+        nonlocal a0
+        a0 -= 4
+        return struct.unpack_from(">I", pk, a0)[0]
+    ln = rl(); d5 = rl(); d0 = rl(); d5 ^= d0
+    out = bytearray(ln)
+    a2 = ln
+
+    def bit():
+        nonlocal d0, d5
+        c = d0 & 1; d0 >>= 1
+        if d0 == 0:
+            d0 = rl(); d5 ^= d0
+            c = d0 & 1; d0 = (d0 >> 1) | 0x80000000
+        return c
+
+    def bits(n):
+        v = 0
+        for _ in range(n):
+            v = (v << 1) | bit()
+        return v
+    while a2 > 0:
+        if bit():                               # $aa
+            d2 = bits(2)
+            if d2 < 2:                          # $cc: 3-4 bytes, 9-10 bit distance
+                d3 = d2 + 2; off = bits(9 + d2)
+                for _ in range(d3 + 1):
+                    a2 -= 1; out[a2] = out[a2 + off]
+            elif d2 == 3:                       # $a2: long literal run, 8-bit count + 8
+                d3 = bits(8) + 8
+                for _ in range(d3 + 1):
+                    a2 -= 1; out[a2] = bits(8)
+            else:                               # $bc: 8-bit length, 12-bit distance
+                d3 = bits(8); off = bits(12)
+                for _ in range(d3 + 1):
+                    a2 -= 1; out[a2] = out[a2 + off]
+        elif bit():                             # $7a: 2 bytes, 8-bit distance
+            off = bits(8)
+            for _ in range(2):
+                a2 -= 1; out[a2] = out[a2 + off]
+        else:                                   # $7c: literal run, 3-bit count
+            d3 = bits(3)
+            for _ in range(d3 + 1):
+                a2 -= 1; out[a2] = bits(8)
+    if d5 != 0:
+        raise SystemExit(f"POP2.TOS packed block: checksum {d5:#x} != 0")
+    return bytes(out)
+
+
+_ics = {}
+def ics_pop2() -> bytes:
+    if "pop2" not in _ics:
+        _ics["pop2"] = ics_disk_file("POP2.TOS")
+    return _ics["pop2"]
+
+
+def ics_game_image(patched: bool = True) -> bytearray:
+    """The game as RAM holds it when our trampoline runs: POP2.TOS unpacked (+ the crack's stub store when `patched`)."""
+    if "game" not in _ics:
+        t = ics_pop2()[28:28 + POP2_TEXT_LEN]
+        img = atomik_depack(t[POP2_PACK:POP2_PACK + POP2_PACK_LEN])
+        if len(img) != GAME_LEN:
+            raise SystemExit(f"POP2.TOS unpacks to {len(img):#x} bytes, expected {GAME_LEN:#x}")
+        _ics["game"] = bytearray(img)
+    img = bytearray(_ics["game"])
+    if patched:
+        for a, b in ICS_STUB_PATCHES.items():
+            img[a - GAME_BASE:a - GAME_BASE + len(b)] = b
+    return img
 
 
 # ---- RUNME edit points (offsets into the unpacked image = text-relative) ---
@@ -145,15 +263,24 @@ HDR_RE = re.compile(r"^;\s*([a-z]+):\s*(.*)$")
 HB_ORG_RE = re.compile(r"^\s*org\s+HB\s*\+\s*\$([0-9a-fA-F]+)\s*$", re.I)
 VERSION_TAG = "@VERSION@"
 CREDIT = "enhanced by dad_prg"
-CORE_FILES = ("core.s",)
+CORE_FILES = ("core.s", "core_ics.s")
+
+
+DB_OFF = 0x8000                       # DB (the data-block base of pop2_ptr_*, pop2_spr) = PB + DB_OFF in the full layout ($88000, outside the payload image)
+
+
+def addr_kind(s: str):
+    """`P` for `PB+$x` (follows the patch's PB in a relocated layout), `D` for `DB+$x` (follows its data base DB), None for an absolute `$x`."""
+    s = s.strip()
+    return "P" if s.startswith("PB") else "D" if s.startswith("DB") else None
 
 
 def addr_expr(s: str) -> int:
-    """`$80100`, `PB+$100` -> absolute address."""
+    """`$80100`, `PB+$100`, `DB+$200` -> absolute address (at the default PB = $80000, DB = PB+$8000)."""
     s = s.strip()
-    m = re.fullmatch(r"PB\s*(?:\+\s*\$([0-9a-fA-F]+))?", s)
+    m = re.fullmatch(r"(PB|DB)\s*(?:\+\s*\$([0-9a-fA-F]+))?", s)
     if m:
-        return PB + (int(m.group(1), 16) if m.group(1) else 0)
+        return PB + (DB_OFF if m.group(1) == "DB" else 0) + (int(m.group(2), 16) if m.group(2) else 0)
     m = re.fullmatch(r"\$([0-9a-fA-F]+)", s)
     if m:
         return int(m.group(1), 16)
@@ -174,7 +301,7 @@ def render_doc(text: str) -> str:
     if "{PATCHES}" in text:
         lines = []
         for p in load_patches():
-            if not p.default:
+            if not p.default or p.base not in (None, BASE):
                 continue
             note = p.doc or next((n for n in p.notes if n.strip()), "")
             if len(note) > 150:
@@ -191,7 +318,9 @@ class Patch:
         self.default = True
         self.site = None
         self.orig = None          # declared (optional)
-        self.data = []            # (addr, len) reservations
+        self.data = []            # (addr, len, pb-relative?, tag) reservations; tag `cache` = the full layout only (lowram builds drop it)
+        self.base = None          # None = every base; "pp" = only PP's HAGA builds (HAGA / GEMDOS patches)
+        self.rel_orgs = set()     # segment orgs written `PB+$x` (they follow the patch's PB in a relocated layout)
         self.segments = []        # (org, source lines)
         self.preamble = []        # equ lines before the first org
         self.image = None         # file patch: game file (HAGA) edited in place
@@ -218,13 +347,17 @@ class Patch:
                 elif k == "site": self.site = addr_expr(v.split(";")[0])
                 elif k == "orig": self.orig = bytes.fromhex(v.split(";")[0].replace(" ", ""))
                 elif k == "data":
-                    a, l = v.split(";")[0].split()
-                    self.data.append((addr_expr(a), int(l, 0)))
+                    parts = v.split(";")[0].split()
+                    self.data.append((addr_expr(parts[0]), int(parts[1], 0), addr_kind(parts[0]), parts[2] if len(parts) > 2 else None))
                 elif k == "image": self.image = v.strip()
                 elif k == "media":
                     if v.strip().lower() != "floppy":
                         raise SystemExit(f"{path}: media must be `floppy`")
                     self.media = "floppy"
+                elif k == "base":
+                    if v.split(";")[0].strip().lower() not in ("pp", "ics"):
+                        raise SystemExit(f"{path}: base must be `pp` or `ics`")
+                    self.base = v.split(";")[0].strip().lower()
                 elif k == "edit":
                     a, b = v.split(None, 1)
                     self.edits.append((int(a.lstrip("$"), 16), bytes.fromhex(b.split(";")[0].replace(" ", ""))))
@@ -241,6 +374,8 @@ class Patch:
             m = ORG_RE.match(line)
             if m:
                 cur = (addr_expr(m.group(1)), [])
+                if addr_kind(m.group(1)) == "P":
+                    self.rel_orgs.add(cur[0])
                 self.segments.append(cur)
             elif cur is not None:
                 cur[1].append(line)
@@ -269,12 +404,13 @@ def load_file_patches():
 
 
 # ---- assembly ---------------------------------------------------------------
-def equ_preamble(p_preamble=()):
-    return "\n".join([f"PB\tequ\t${PB:x}"] + list(p_preamble))
+def equ_preamble(p_preamble=(), pb: int = PB, extra=(), db: int | None = None):
+    return "\n".join([f"PB\tequ\t${pb:x}", f"DB\tequ\t${pb + DB_OFF if db is None else db:x}"] + list(extra) + list(p_preamble))
 
 
-def assemble(org: int, lines: list[str], equ: str = "") -> bytes:
-    src = equ_preamble() + "\n" + equ + f"\n\torg\t${org:x}\n" + "\n".join(lines) + "\n"
+def assemble(org: int, lines: list[str], equ: str = "", pb: int = PB, extra=(), db: int | None = None) -> bytes:
+    """vasm one segment at `org`.  `pb` / `db` = the PB / data base this patch is placed at (relocated layouts), `extra` = layout equ lines (LITE)."""
+    src = equ_preamble(pb=pb, extra=extra, db=db) + "\n" + equ + f"\n\torg\t${org:x}\n" + "\n".join(lines) + "\n"
     with tempfile.TemporaryDirectory() as td:
         s = Path(td) / "seg.s"
         s.write_text(src)
@@ -286,7 +422,16 @@ def assemble(org: int, lines: list[str], equ: str = "") -> bytes:
         return out.read_bytes()
 
 
-def core_segment() -> bytes:
+def core_segment(layout=None) -> bytes:
+    """The trampoline at the layout's core address: core.s (PP) or core_ics.s (ICS: CORE / TABLE / MARKER come from the layout)."""
+    layout = layout or FULL
+    if BASE == "ics":
+        lines = [ln for ln in (PATCHDIR / "core_ics.s").read_text().splitlines() if not re.match(r"^\s*org\s", ln)]
+        equ = f"CORE\tequ\t${layout.core:x}\nTABLE\tequ\t${layout.table:x}\nMARKER\tequ\t${MARKER:x}"
+        b = assemble(layout.core, lines, equ)
+        if len(b) > layout.core_max:
+            raise SystemExit(f"core_ics overflows (${len(b):x} B)")
+        return b
     p = Patch(PATCHDIR / "core.s")
     if len(p.segments) != 1 or p.segments[0][0] != PB:
         raise SystemExit("core.s must hold exactly one segment, org PB")
@@ -362,12 +507,112 @@ def apply_file_patches(fpatches, out: Path):
         f.write_bytes(bytes(b))
 
 
-# ---- image build -------------------------------------------------------------
-def site_bytes(p: Patch):
+# ---- layouts: where the payload image lives -----------------------------------------------------------
+# `full` = the PP layout: every patch at PB = $80000, DB = $88000, the image $80000-$87fff, data-only blocks up to $8ffff.  `lowram` (ICS build, 512 KB
+# RAM: $80000 and up do not exist, the game image ends at $7b380) = the same patches packed into $7b400-$7fff7: patches that address one another through
+# PB (PB_FAMILY) keep their relative layout and share one PB (and one DB), every family is placed first-fit - its blobs and `PB+` data at the lowest PB, its
+# `DB+` data at the lowest DB - where nothing already placed overlaps (the 3.6 KB gap inside the tick family's span is filled by the small patches), `LITE`
+# is defined for the sources (pop2_spr drops the sprite cache: 32 KB of data and the code that builds it; a plain ST then runs the original blitter code).
+# A patch whose blobs or data are absolute addresses (the test_* patches) cannot be placed in it.
+LITE_LO, LITE_HI = 0x7B400, MARKER              # MARKER = $7fff8 in both layouts (core_ics.s `P2PO`/`P2PF`)
+LITE_CORE_MAX = 0x80
+LITE_TABLE_MAX = 0x400                          # site table + byte pool reservation (a fixed size: the blobs' addresses do not depend on the patch subset)
+PB_FAMILY = {n: "pop2_tick" for n in ("pop2_tick_anim", "pop2_tick_dot_a", "pop2_tick_dot_b", "pop2_tick_flip", "pop2_tick_logic",
+                                      "pop2_tick_render", "pop2_tick_snd", "test_tickspin")}
+PB_FAMILY.update({"pop2_spr16": "pop2_spr", "pop2_ptr_b": "pop2_ptr_a"})
+
+
+class Layout:
+    def __init__(self, name: str, lite: bool = False):
+        self.name, self.lite = name, lite
+        self.extra = ("LITE\tequ\t1",) if lite else ()
+        self.pbs: dict[str, int] = {}                 # patch name -> its PB (lowram only; every patch of `full` is at PB)
+        self.dbs: dict[str, int] = {}                 # patch name -> its DB (lowram only; `full`: PB + DB_OFF)
+        self.core, self.table, self.core_max = PB, TABLE, CORE_END - PB
+        self.lo, self.hi = PB, PB + PAYLOAD_LEN       # the image (bytes copied/verified): [lo, hi)
+
+    def pb(self, p: Patch) -> int:
+        return self.pbs.get(p.name, PB)
+
+    def db(self, p: Patch) -> int:
+        return self.dbs.get(p.name, PB + DB_OFF)
+
+    def org(self, p: Patch, org: int) -> int:
+        return org - PB + self.pb(p) if org in p.rel_orgs else org
+
+    def asm(self, p: Patch, org: int, lines: list[str]) -> bytes:
+        return assemble(org, lines, "\n".join(p.preamble), pb=self.pb(p), extra=self.extra, db=self.db(p))
+
+    def data(self, p: Patch):
+        """(addr, len) of the patch's data reservations in this layout (`cache` data only in the full one)."""
+        out = []
+        for a, l, kind, tag in p.data:
+            if self.lite and tag == "cache":
+                continue
+            out.append((a - PB + self.pb(p) if kind == "P" else a - PB - DB_OFF + self.db(p) if kind == "D" else a, l))
+        return out
+
+
+FULL = Layout("full")
+LOWRAM = Layout("lowram", lite=True)
+
+
+def place_lowram(patches: list[Patch], tbl_len: int) -> Layout:
+    lay = Layout("lowram", lite=True)
+    lay.core, lay.core_max, lay.table = LITE_LO, LITE_CORE_MAX, LITE_CORE_MAX + LITE_LO
+    if tbl_len > LITE_TABLE_MAX:
+        raise SystemExit(f"lowram: site table + byte pool {tbl_len} B > {LITE_TABLE_MAX}")
+    free_lo = lay.table + LITE_TABLE_MAX
+    fams: dict[str, list[Patch]] = {}
+    for p in patches:
+        fams.setdefault(PB_FAMILY.get(p.name, p.name), []).append(p)
+    items = []                                         # (family, "P" | "D", patches, [(offset from PB / DB, length)])
+    for key, ps in fams.items():
+        rng = {"P": [], "D": []}
+        for p in ps:
+            for org, lines in p.segments:
+                if org == p.site:
+                    continue
+                if org not in p.rel_orgs:
+                    raise SystemExit(f"{p.name}: blob org ${org:x} is absolute: not placeable in the lowram layout")
+                b = lay.asm(p, org, lines)
+                if b:
+                    rng["P"].append((org - PB, len(b)))
+            for a, l, kind, tag in p.data:
+                if tag == "cache" or l == 0:
+                    continue
+                if kind is None:
+                    raise SystemExit(f"{p.name}: data ${a:x} is absolute: not placeable in the lowram layout")
+                rng[kind].append((a - PB - (DB_OFF if kind == "D" else 0), l))
+        for kind in "PD":
+            if rng[kind]:
+                items.append((key, kind, ps, rng[kind]))
+    items.sort(key=lambda it: -(max(s + l for s, l in it[3]) - min(s for s, _ in it[3])))
+    placed = []
+    top = free_lo
+    for key, kind, ps, rngs in items:
+        base = (free_lo - min(s for s, _ in rngs) + 15) & ~15
+        while True:
+            absr = [(base + s, base + s + l) for s, l in rngs]
+            if max(e for _, e in absr) > LITE_HI:
+                raise SystemExit(f"lowram layout overflows ${LITE_LO:x}-${LITE_HI - 1:x} at {key} ({kind})")
+            if not any(a < pe and pa < b for a, b in absr for pa, pe in placed):
+                break
+            base += 16
+        placed += absr
+        top = max(top, max(e for _, e in absr))
+        for p in ps:
+            (lay.pbs if kind == "P" else lay.dbs)[p.name] = base
+    lay.lo, lay.hi = LITE_LO, (top + 15) & ~15
+    return lay
+
+
+def site_bytes(p: Patch, lay: Layout | None = None):
+    lay = lay or FULL
     seg = [s for s in p.segments if s[0] == p.site]
     if not seg:
         raise SystemExit(f"{p.name}: no org ${p.site:x} segment")
-    new = assemble(p.site, seg[0][1], "\n".join(p.preamble))
+    new = lay.asm(p, p.site, seg[0][1])
     orig = p.orig if p.orig is not None else expected_ram(p.site, len(new))
     if orig is None:
         raise SystemExit(f"{p.name}: site ${p.site:x} is outside the game image ${GAME_BASE:x}-${GAME_BASE + GAME_LEN:x} and PP's stub block ${STUB_RAM:x}-${STUB_RAM + STUB_LEN:x}")
@@ -380,61 +625,79 @@ def site_bytes(p: Patch):
     return orig, new
 
 
-def build_image(patches: list[Patch]):
-    core = core_segment()
+def site_list(patches: list[Patch], lay: Layout):
     sites = []
     for p in patches:
-        orig, new = site_bytes(p)
+        orig, new = site_bytes(p, lay)
         sites.append(dict(name=p.name, addr=p.site, orig=orig, new=new))
     by_addr = sorted(sites, key=lambda s: s["addr"])
     for s, t in zip(by_addr, by_addr[1:]):
         if s["addr"] + len(s["orig"]) > t["addr"]:
             raise SystemExit(f"site overlap: {s['name']} ${s['addr']:x}+{len(s['orig'])} vs {t['name']} ${t['addr']:x}")
     for s in sites:
-        for a, b in PP_PATCHES.items():
+        for a, b in (PP_PATCHES if BASE == "pp" else ICS_STUB_PATCHES).items():
             if s["addr"] < a + len(b) and a < s["addr"] + len(s["orig"]):
-                raise SystemExit(f"{s['name']}: site overlaps PP's patch at ${a:x}")
+                raise SystemExit(f"{s['name']}: site overlaps the {'PP' if BASE == 'pp' else 'crack'} patch at ${a:x}")
+    return sites
+
+
+def build_image(patches: list[Patch], lay: Layout | None = None):
+    """-> (image bytes at lay.lo, sites, layout).  `lay` = FULL (default) or the string `lowram` (placed here)."""
+    lay = lay or FULL
+    sites = site_list(patches, lay)
     n = len(sites)
     tbl_len = n * 16 + 4
+    pool_len = sum(len(s["orig"]) + len(s["new"]) for s in sites)
+    if lay.lite:
+        lay = place_lowram(patches, tbl_len + pool_len)
+        sites = site_list(patches, lay)
+    core = core_segment(lay)
     pool = bytearray()
     ptrs = []
     for s in sites:
         o = len(pool); pool += s["orig"]
         nw = len(pool); pool += s["new"]
-        ptrs.append((TABLE + tbl_len + o, TABLE + tbl_len + nw))
-    if TABLE + tbl_len + len(pool) > TABLE_END:
-        raise SystemExit(f"site table + byte pool overflow ${TABLE:x}-${TABLE_END - 1:x}")
-    img = bytearray(PAYLOAD_LEN)
-    img[:len(core)] = core
+        ptrs.append((lay.table + tbl_len + o, lay.table + tbl_len + nw))
+    if lay.lite:
+        blob_lo, blob_hi, data_only = lay.table + LITE_TABLE_MAX, lay.hi, None
+    else:
+        if TABLE + tbl_len + len(pool) > TABLE_END:
+            raise SystemExit(f"site table + byte pool overflow ${TABLE:x}-${TABLE_END - 1:x}")
+        blob_lo, blob_hi, data_only = BLOB_MIN, BLOB_MAX + 1, DATA_ONLY
+    img = bytearray(lay.hi - lay.lo)
+    img[lay.core - lay.lo:lay.core - lay.lo + len(core)] = core
     for i, s in enumerate(sites):
-        struct.pack_into(">IHHII", img, TABLE - PB + i * 16, s["addr"], len(s["orig"]), 0, ptrs[i][0], ptrs[i][1])
-    img[TABLE - PB + tbl_len: TABLE - PB + tbl_len + len(pool)] = pool
-    placed = [(PB, PB + len(core)), (TABLE, TABLE + tbl_len + len(pool))]
+        struct.pack_into(">IHHII", img, lay.table - lay.lo + i * 16, s["addr"], len(s["orig"]), 0, ptrs[i][0], ptrs[i][1])
+    img[lay.table - lay.lo + tbl_len: lay.table - lay.lo + tbl_len + len(pool)] = pool
+    placed = [(lay.core, lay.core + len(core)), (lay.table, lay.table + tbl_len + len(pool))]
     for p in patches:
         for org, lines in p.segments:
             if org == p.site:
                 continue
-            if not (BLOB_MIN <= org <= BLOB_MAX):
-                raise SystemExit(f"{p.name}: org ${org:x} outside blob area ${BLOB_MIN:x}-${BLOB_MAX:x}")
-            b = assemble(org, lines, "\n".join(p.preamble))
-            if org + len(b) > BLOB_MAX + 1:
-                raise SystemExit(f"{p.name}: blob overflows image")
-            placed.append((org, org + len(b)))
-            img[org - PB: org - PB + len(b)] = b
-        for a, l in p.data:
-            if not ((BLOB_MIN <= a and a + l <= BLOB_MAX + 1) or (DATA_ONLY[0] <= a and a + l <= DATA_ONLY[1])):
-                raise SystemExit(f"{p.name}: data ${a:x}+{l} is outside the blob area ${BLOB_MIN:x}-${BLOB_MAX:x} and the data-only range ${DATA_ONLY[0]:x}-${DATA_ONLY[1] - 1:x}")
+            a = lay.org(p, org)
+            b = lay.asm(p, a, lines)
+            if not b:
+                continue
+            if not (blob_lo <= a and a + len(b) <= blob_hi):
+                raise SystemExit(f"{p.name}: blob ${a:x}+{len(b)} is outside the blob area ${blob_lo:x}-${blob_hi - 1:x}")
+            placed.append((a, a + len(b)))
+            img[a - lay.lo: a - lay.lo + len(b)] = b
+        for a, l in lay.data(p):
+            if not ((blob_lo <= a and a + l <= blob_hi) or (data_only and data_only[0] <= a and a + l <= data_only[1])):
+                raise SystemExit(f"{p.name}: data ${a:x}+{l} is outside the blob area ${blob_lo:x}-${blob_hi - 1:x}" +
+                                 (f" and the data-only range ${data_only[0]:x}-${data_only[1] - 1:x}" if data_only else ""))
             placed.append((a, a + l))
     placed.sort()
     for (a0, a1), (b0, b1) in zip(placed, placed[1:]):
         if a1 > b0:
             raise SystemExit(f"image overlap: ${a0:x}-${a1:x} vs ${b0:x}-${b1:x}")
-    return bytes(img), sites
+    return bytes(img), sites, lay
 
 
 # ---- verification ------------------------------------------------------------
 def cmd_verify(patches, fpatches=()):
     bad = 0
+    ics = BASE == "ics"
     for p in patches:
         seg = [s for s in p.segments if s[0] == p.site]
         new = assemble(p.site, seg[0][1], "\n".join(p.preamble)) if seg else b""
@@ -442,21 +705,58 @@ def cmd_verify(patches, fpatches=()):
         if orig is None:
             orig = b""
         ib = expected_ram(p.site, len(orig)) or b""
+        # ICS: the dump was taken at `jmp $140`, before the crack's stub store ran: compare it with the unpacked image without that store
         db = dump_bytes(p.site, len(orig))
+        ibd = (expected_ram(p.site, len(orig), patched=False) or b"") if ics else ib
         iok = ib == orig and len(orig) > 0
-        dok = db == ib
-        where = ("PP's stub block (RUNME text $3f8)" if STUB_RAM <= p.site < STUB_RAM + STUB_LEN
-                 else "P2M.FIC unpacked + PP's patches")
+        dok = db == ibd
+        where = ("the crack's POP2.TOS unpacked + its $140 stub store" if ics else
+                 "PP's stub block (RUNME text $3f8)" if STUB_RAM <= p.site < STUB_RAM + STUB_LEN else "P2M.FIC unpacked + PP's patches")
         print(f"{p.name:18s} site ${p.site:05x} len {len(orig)}   [{where}]")
         print(f"    declared orig : {orig.hex()}")
         print(f"    expected      : {ib.hex()}  ({'match' if iok else 'MISMATCH'})")
-        print(f"    ram dump      : {db.hex()}  ({'match' if dok else 'MISMATCH'})   [work/dumps/game_start.bin]")
+        print(f"    ram dump      : {db.hex()}  ({'match' if dok else 'MISMATCH'})   [{'work/dumps/ics_at140.bin' if ics else 'work/dumps/game_start.bin'}]")
         if not (iok and dok):
             bad += 1
-    bad += cmd_verify_runme()
-    bad += cmd_verify_files(fpatches)
+    if ics:
+        bad += cmd_verify_ics()
+    else:
+        bad += cmd_verify_runme()
+        bad += cmd_verify_files(fpatches)
     print("verify:", "ALL OK" if not bad else f"{bad} FAILED")
     return 1 if bad else 0
+
+
+# POP2.TOS text $0-$15 (Super, palette blank), the `move.w #$2700,sr` that follows it, and the tail `lea $1770.w,a7 / jmp $140.w`
+POP2_HEAD = bytes.fromhex("42a73f3c00204e417000" "7207" "41f88240" "20c0" "51c9fffc")
+POP2_TAIL = bytes.fromhex("4ff81770" "4ef80140")
+
+
+def cmd_verify_ics() -> int:
+    """The ICS base: POP2.TOS (extracted from the disk with mtools) unpacks to the game; the unpacked image equals RAM at `jmp $140` byte for byte;
+    the edit points of our prefix (text $0-$15 replayed, $16 the displaced `move.w #$2700,sr`, the tail `jmp $140.w`) are what the prefix expects."""
+    bad = 0
+    pop = ics_pop2()
+    magic, tlen, dlen, blen, slen = struct.unpack_from(">HIIII", pop, 0)
+    ok = (magic, tlen, dlen, blen) == (0x601A, POP2_TEXT_LEN, 0, 0)
+    print(f"POP2.TOS header: magic ${magic:04x} text {tlen} data {dlen} bss {blen} symbols {slen} file {len(pop)} B  ({'match' if ok else 'MISMATCH'})")
+    bad += not ok
+    text = pop[28:28 + POP2_TEXT_LEN]
+    for name, off, orig in (("prefix source", 0, POP2_HEAD), ("sr store", POP2_PRE, bytes.fromhex("46fc2700")), ("tail", 0x4E, POP2_TAIL)):
+        got = text[off:off + len(orig)]
+        ok = got == orig
+        print(f"POP2.TOS {name:13s} text ${off:04x}: {got.hex()}  ({'match' if ok else 'MISMATCH'})")
+        bad += not ok
+    img = ics_game_image(patched=False)
+    dump = dump_bytes(GAME_BASE, GAME_LEN)
+    nd = sum(a != b for a, b in zip(img, dump))
+    print(f"unpack (atomik_depack, checksum 0): {len(img)} bytes; vs RAM dump at `jmp $140` {ICS_DUMP.name}: {nd} of {len(img)} differ  ({'match' if nd == 0 and len(dump) == len(img) else 'MISMATCH'})")
+    bad += nd != 0
+    stub = dump_bytes(0x140, 14)
+    ok = stub == bytes.fromhex("23fc4e714e7100014a88" "4ef81770")
+    print(f"the crack's $140 stub in the dump: {stub.hex()} = move.l #$4e714e71,$14a88.l / jmp $1770.w  ({'match' if ok else 'MISMATCH'})")
+    bad += not ok
+    return bad
 
 
 def cmd_verify_runme() -> int:
@@ -483,14 +783,14 @@ def cmd_verify_runme() -> int:
 
 
 def cmd_list(patches, fpatches=()):
-    print(f"{'name':18s} {'default':8s} {'site':8s} {'len':4s} blobs/data")
+    print(f"{'name':18s} {'default':8s} {'base':5s} {'site':8s} {'len':4s} blobs/data")
     for p in patches:
         blobs = ",".join(f"${o:x}" for o, _ in p.segments if o != p.site) or "-"
-        data = ",".join(f"${a:x}+{l}" for a, l in p.data) or "-"
+        data = ",".join(f"${a:x}+{l}" + (f" ({t})" if t else "") for a, l, _, t in p.data) or "-"
         seg = [s for s in p.segments if s[0] == p.site]
         ln = len(assemble(p.site, seg[0][1], "\n".join(p.preamble))) if seg else 0
         dflt = ("yes" if p.default else "no") + (" (floppy)" if p.media else "")
-        print(f"{p.name:18s} {dflt:8s} ${p.site:05x}  {ln:4d} {blobs} / {data}")
+        print(f"{p.name:18s} {dflt:8s} {p.base or 'any':5s} ${p.site:05x}  {ln:4d} {blobs} / {data}")
     for p in fpatches:
         offs = ",".join(f"${o:x}" for o, _ in p.edits)
         print(f"{p.name:18s} {'yes' if p.default else 'no':8s} {p.image}+{offs}  "
@@ -614,7 +914,7 @@ FILES_DIR = ["P2CR.TOS", "P2D", "P2M.FIC"]
 def cmd_build(patches, out: Path, fpatches=()):
     if cmd_verify(patches, fpatches):
         raise SystemExit("build aborted: a site's orig does not match the game")
-    img, sites = build_image(patches)
+    img, sites, _ = build_image(patches)
     runme = build_runme(img)
     shutil.rmtree(out, ignore_errors=True)
     (out / "FILES").mkdir(parents=True)
@@ -630,14 +930,16 @@ def cmd_build(patches, out: Path, fpatches=()):
         print(f"${s['addr']:05x}  {len(s['orig']):4d} {s['orig'].hex()} -> {s['new'].hex()}   [{s['name']}]")
 
 
-def cmd_live(patches, out: Path):
+def cmd_live(patches, out: Path, lay: Layout | None = None):
     if cmd_verify(patches):
         raise SystemExit("live aborted: a site's orig does not match the game")
-    img, sites = build_image(patches)
+    img, sites, lay = build_image(patches, lay)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.with_suffix(".img").write_bytes(img)
     js = [{"addr": s["addr"], "orig": s["orig"].hex(), "new": s["new"].hex(), "name": s["name"]} for s in sites]
-    out.with_suffix(".json").write_text(json.dumps({"img_base": PB, "sites": js}, indent=1))
+    pbs = {p.name: lay.pb(p) for p in patches}                      # where each patch's PB / DB is (the gates address the tick block D = PB+$2800 etc. through it)
+    dbs = {p.name: lay.db(p) for p in patches}
+    out.with_suffix(".json").write_text(json.dumps({"img_base": lay.lo, "layout": lay.name, "core": lay.core, "pb": pbs, "db": dbs, "sites": js}, indent=1))
     print(f"wrote {out.with_suffix('.img')} and {out.with_suffix('.json')} ({len(js)} sites)")
 
 
@@ -664,7 +966,7 @@ def cmd_build_floppy(patches, out: Path, fpatches=()):
         raise SystemExit("build --floppy needs mtools (mformat, mmd, mcopy)")
     if cmd_verify(patches, fpatches):
         raise SystemExit("build aborted: a site's orig does not match the game")
-    img, sites = build_image(patches)
+    img, sites, _ = build_image(patches)
     runme = build_runme(img)
     shutil.rmtree(out, ignore_errors=True)
     stage = out / "stage"
@@ -695,40 +997,251 @@ def cmd_build_floppy(patches, out: Path, fpatches=()):
         print(f"${s['addr']:05x}  {len(s['orig']):4d} {s['orig'].hex()} -> {s['new'].hex()}   [{s['name']}]")
 
 
+# ---- ICS floppy build (--base ics) ---------------------------------------------------------------------
+# The disk is a COPY of the 1991 ICS disk (alt/ST): AUTO\ICS.PRG goes (the cracktro; all it leaves behind is the 10-byte stub at $140, which our
+# trampoline replays), POP2.TOS is replaced by  prefix + LZ(payload(full) + payload(lowram)) + the crack's POP2.TOS  (the crack's code and packed block
+# unchanged: its `lea $128(pc)` / `lea $36(pc)` are relative to its own start).  The prefix = POP2.TOS text $0-$15 (Super, palette blank), then ours:
+# unpack the LZ stream (RUNME's own LZ format, lz_unpack) to a scratch area behind the end of this program's text (a Pexec'd program owns all the free RAM),
+# pick the payload by _phystop ($42e >= $100000: `full`, else `lowram`), `move.w #$4ef9,$140.w / move.l entry,$142.w` (the crack's final `jmp $140.w`
+# now enters our trampoline), zero the layout's range, copy the non-zero chunks, `bra.w` back into POP2.TOS at text $16.  All of this runs BEFORE the
+# unpack (which overwrites the TPA POP2.TOS was loaded into) and reads/writes nothing the unpack or the game uses ($140, and RAM >= $7b400).
+# Packing both payloads in ONE stream matters: the two layouts hold the same code at different addresses, so the second costs little (disk space is the
+# in-game saves: the ICS disk has room for exactly 3 of 56,690 B, and every cluster of POP2.TOS counts).
+# payload format: entry.l clear_lo.l clear_longs.l nchunks-1.w { dest.l len.w bytes (even) }*
+ICS_PREFIX = """\
+        clr.l   -(a7)                   ; POP2.TOS text $0-$15, verbatim: Super + palette blank
+        move.w  #$20,-(a7)
+        trap    #1
+        moveq   #0,d0
+        moveq   #7,d1
+        lea     $ffff8240.w,a0
+.p:     move.l  d0,(a0)+
+        dbra    d1,.p
+        lea     comp(pc),a0             ; both payloads, LZ-packed: 0 = end, 1..$7f literal run, $80+n = n+3 bytes at a 1-byte distance, $c0+n = n+4 bytes at a 2-byte distance
+        lea     orig(pc),a1
+        adda.l  #{scratch},a1           ; the scratch area: behind the end of this program's text
+        movea.l a1,a3
+.n:     moveq   #0,d0
+        move.b  (a0)+,d0
+        beq.s   .done
+        bmi.s   .m
+        subq.w  #1,d0
+.l:     move.b  (a0)+,(a1)+
+        dbra    d0,.l
+        bra.s   .n
+.m:     move.w  d0,d1
+        andi.w  #$3f,d1
+        moveq   #0,d2
+        move.b  (a0)+,d2
+        btst    #6,d0
+        beq.s   .near
+        lsl.w   #8,d2
+        move.b  (a0)+,d2
+        addq.w  #1,d1
+.near:  addq.w  #2,d1
+        movea.l a1,a2
+        suba.l  d2,a2
+.c:     move.b  (a2)+,(a1)+
+        dbra    d1,.c
+        bra.s   .n
+.done:  movea.l a3,a0                   ; the full payload
+        cmpi.l  #$100000,$42e.w         ; _phystop: >= 1 MB -> the full layout (PB = $80000), 512 KB -> the lowram one
+        bhs.s   .sel
+        adda.w  #{lenf},a0              ; the lowram payload follows it
+.sel:   move.w  #$4ef9,$140.w           ; the crack's `jmp $140.w` now runs `jmp entry.l`
+        move.l  (a0)+,$142.w
+        movea.l (a0)+,a1                ; zero-fill the layout's range
+        move.l  (a0)+,d1
+.z:     clr.l   (a1)+
+        subq.l  #1,d1
+        bne.s   .z
+        move.w  (a0)+,d2                ; chunks - 1
+.k:     movea.l (a0)+,a1
+        move.w  (a0)+,d1
+        lsr.w   #1,d1
+        subq.w  #1,d1
+.b:     move.w  (a0)+,(a1)+
+        dbra    d1,.b
+        dbra    d2,.k
+        bra.w   orig+$16                ; POP2.TOS text $16: `move.w #$2700,sr`
+comp:   ds.b    {nc}
+orig:
+"""
+
+
+def pack_payload(img: bytes, lay: Layout) -> bytes:
+    """The image as the prefix copies it: [lay.lo, lay.hi) zero-filled, then only the non-zero chunks (a chunk ends at a run of > 4 zero words)."""
+    words = len(img) // 2
+    nz = [img[2 * k:2 * k + 2] != b"\0\0" for k in range(words)]
+    chunks = []
+    k = 0
+    while k < words:
+        if not nz[k]:
+            k += 1
+            continue
+        s = last = k
+        while k < words and k - last <= 4:
+            if nz[k]:
+                last = k
+            k += 1
+        chunks.append((lay.lo + 2 * s, img[2 * s:2 * last + 2]))
+    assert chunks and all(len(b) % 2 == 0 and a % 2 == 0 for a, b in chunks)
+    clear_longs = (lay.hi - lay.lo) // 4
+    out = struct.pack(">III", lay.core, lay.lo, clear_longs) + struct.pack(">H", len(chunks) - 1)
+    for a, b in chunks:
+        out += struct.pack(">IH", a, len(b)) + b
+    return out
+
+
+def lz_pack(data: bytes) -> bytes:
+    """RUNME's LZ (lz_unpack's format): literal runs of 1..127, near matches (3..66 bytes, distance 1..255), far matches (4..67 bytes, distance <= 65535)."""
+    out = bytearray()
+    lit = bytearray()
+    pos: dict[bytes, list[int]] = {}
+
+    def flush():
+        while lit:
+            k = min(len(lit), 127)
+            out.append(k)
+            out.extend(lit[:k])
+            del lit[:k]
+    i, n = 0, len(data)
+    while i < n:
+        best_l, best_o = 0, 0
+        if i + 3 <= n:
+            for j in reversed(pos.get(data[i:i + 3], [])[-2000:]):
+                off = i - j
+                if off > 65535:
+                    break
+                l = 0
+                while i + l < n and l < 67 and data[j + l] == data[i + l]:
+                    l += 1
+                if (off <= 255 and l >= 3) or l >= 4:
+                    if l > best_l or (l == best_l and off < best_o):
+                        best_l, best_o = l, off
+        if best_l:
+            flush()
+            if best_o <= 255:
+                l = min(best_l, 66)
+                out += bytes([0x80 | (l - 3), best_o])
+            else:
+                l = min(best_l, 67)
+                out += bytes([0xC0 | (l - 4), best_o >> 8, best_o & 255])
+            step = l
+        else:
+            lit.append(data[i])
+            step = 1
+        for k in range(i, min(i + step, n - 2)):
+            pos.setdefault(data[k:k + 3], []).append(k)
+        i += step
+    flush()
+    out.append(0)
+    if len(out) % 2:
+        out.append(0)
+    assert lz_unpack(bytes(out)) == data
+    return bytes(out)
+
+
+def build_pop2(pf: bytes, pl: bytes) -> bytes:
+    pop = ics_pop2()
+    text = pop[28:28 + POP2_TEXT_LEN]
+    tail = pop[28 + POP2_TEXT_LEN + struct.unpack_from(">I", pop, 14)[0]:]     # the relocation table only (4 zero bytes: none): the 140-byte symbol table is dropped (1 cluster = a save)
+    if tail != b"\0\0\0\0":
+        raise SystemExit(f"POP2.TOS has a relocation table {tail.hex()}: not expected")
+    comp = lz_pack(pf + pl)
+    if len(pf) % 2 or len(pl) % 2 or len(pf) >= 0x7FFF:
+        raise SystemExit("odd payload length / lenf out of adda.w reach")
+    code = assemble(0, ICS_PREFIX.format(nc=len(comp), scratch=POP2_TEXT_LEN + 256, lenf=len(pf)).splitlines())
+    pre = len(code) - len(comp)
+    if code[:POP2_PRE] != POP2_HEAD:
+        raise SystemExit(f"prefix does not replay POP2.TOS text $0-$15: {code[:POP2_PRE].hex()}")
+    if pre % 2:
+        raise SystemExit("odd prefix length")
+    new_text = code[:pre] + comp + text
+    hdr = bytearray(pop[:28])
+    struct.pack_into(">I", hdr, 2, len(new_text))
+    struct.pack_into(">I", hdr, 14, 0)
+    return bytes(hdr) + new_text + tail
+
+
+def cmd_build_ics(patches, out: Path):
+    if cmd_verify(patches):
+        raise SystemExit("build aborted: a site's orig does not match the game")
+    full, sites, lf = build_image(patches, FULL)
+    low, sites_l, ll = build_image(patches, LOWRAM)
+    pf, pl = pack_payload(full, lf), pack_payload(low, ll)
+    pop2 = build_pop2(pf, pl)
+    shutil.rmtree(out, ignore_errors=True)
+    out.mkdir(parents=True)
+    disk = out / "Populous2_lowram.st"
+    shutil.copy(ICS_DISK, disk)
+    tmp = out / "POP2.TOS"
+    tmp.write_bytes(pop2)
+    ts = datetime.datetime(1992, 1, 20, 9, 4).timestamp()          # the crack's own file time
+    os.utime(tmp, (ts, ts))
+    before = mtools("mdir", "::", img=disk).strip().splitlines()[-1]
+    mtools("mdel", "::AUTO/ICS.PRG", img=disk)
+    mtools("mdel", "::POP2.TOS", img=disk)
+    mtools("mcopy", "-m", str(tmp), "::POP2.TOS", img=disk)
+    tmp.unlink()
+    free = mtools("mdir", "::", img=disk).strip().splitlines()[-1]
+    nfree = int(re.sub(r"[^0-9]", "", free.split("bytes")[0]))
+    save = 57344                                                    # one 56,690-byte save = 56 clusters of 1 KB
+    print(f"built {disk} ({disk.stat().st_size} B) with {len(patches)} patch(es) on the ICS crack's game")
+    print(f"  POP2.TOS {len(ics_pop2())} -> {len(pop2)} B (payloads: full {len(pf)} B + lowram {len(pl)} B, LZ-packed together to {len(lz_pack(pf + pl))} B); AUTO\\ICS.PRG removed")
+    print(f"  disk: before {before.strip()} | after {free.strip()} = {nfree // save} saves of 56,690 B")
+    for lay, img, s in ((lf, full, sites), (ll, low, sites_l)):
+        print(f"  layout {lay.name}: image ${lay.lo:05x}-${lay.hi - 1:05x} ({len(img)} B), core ${lay.core:05x}, table ${lay.table:05x}")
+    for s in sites:
+        print(f"${s['addr']:05x}  {len(s['orig']):4d} {s['orig'].hex()} -> {s['new'].hex()}   [{s['name']}]")
+
+
+
+
 
 
 def main():
+    global BASE
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    common = argparse.ArgumentParser(add_help=False)
+    common.add_argument("--base", choices=("pp", "ics"), default="pp",
+                        help="pp = PP's HAGA conversion (default); ics = the ICS crack's floppy (work/notes/ics.md)")
     sub = ap.add_subparsers(dest="cmd", required=True)
-    b = sub.add_parser("build")
+    b = sub.add_parser("build", parents=[common])
     b.add_argument("--only", nargs="*", default=None)
-    b.add_argument("--out", default=None, help="default build/hd, or build/floppy with --floppy")
+    b.add_argument("--out", default=None, help="default build/hd, build/floppy with --floppy, build/ics with --base ics")
     g = b.add_mutually_exclusive_group()
     g.add_argument("--hd", action="store_true", help="hard-disk game folder (the default)")
     g.add_argument("--floppy", action="store_true", help="bootable 720K floppy image")
-    lv = sub.add_parser("live")
+    lv = sub.add_parser("live", parents=[common])
     lv.add_argument("--only", nargs="*", default=None)
     lv.add_argument("--out", default="build/live/patches")
-    sub.add_parser("list")
-    sub.add_parser("verify")
+    lv.add_argument("--layout", choices=("full", "lowram"), default="full",
+                    help="full = PB $80000 (default); lowram = the 512 KB layout ($7b400-$7fff7, ICS build)")
+    sub.add_parser("list", parents=[common])
+    sub.add_parser("verify", parents=[common])
     sub.add_parser("version", help="print the release version (the `; version:` header of patches/pop2_credit.s)")
-    rd = sub.add_parser("doc", help="print a doc file with @VERSION@ replaced")
+    rd = sub.add_parser("doc", parents=[common], help="print a doc file with @VERSION@ replaced")
     rd.add_argument("file")
     a = ap.parse_args()
     if a.cmd == "version":
         print(release_version())
         return
+    BASE = getattr(a, "base", "pp")
     if a.cmd == "doc":
         sys.stdout.write(render_doc(Path(a.file).read_text()))
         return
     patches = load_patches()
     fpatches = load_file_patches()
     if a.cmd == "list":
-        cmd_list(patches, fpatches)
+        cmd_list(patches, fpatches)                    # every patch, with its base column
         return
+    patches = [p for p in patches if p.base in (None, BASE)]
+    if BASE == "ics":
+        fpatches = []
     if a.cmd == "verify":
         sys.exit(cmd_verify(patches, fpatches))
-    floppy = a.cmd == "build" and a.floppy
+    floppy = a.cmd == "build" and (a.floppy or BASE == "ics")
     ok_media = (None, "floppy") if floppy else (None,)
     if a.only is None:
         sel = [p for p in patches if p.default and p.media in ok_media]
@@ -744,14 +1257,19 @@ def main():
         sel = [p for p in patches if p.name in names]
         fsel = [p for p in fpatches if p.name in names]
     if a.cmd == "build":
-        if floppy:
+        if BASE == "ics":
+            cmd_build_ics(sel, ROOT / (a.out or "build/ics"))
+        elif floppy:
             cmd_build_floppy(sel, ROOT / (a.out or "build/floppy"), fsel)
         else:
             cmd_build(sel, ROOT / (a.out or "build/hd"), fsel)
     else:
         if fsel and a.only is not None:
             raise SystemExit("file patches (HAGA) are not applicable to `live`: they are applied at build time")
-        cmd_live(sel, ROOT / a.out)
+        lay = LOWRAM if a.layout == "lowram" else FULL
+        if lay.lite and BASE != "ics":
+            raise SystemExit("--layout lowram is the ICS build's layout: use --base ics")
+        cmd_live(sel, ROOT / a.out, lay)
 
 
 if __name__ == "__main__":

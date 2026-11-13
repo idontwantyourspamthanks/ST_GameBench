@@ -41,6 +41,8 @@ TICKSET = ["pop2_tick", "pop2_tick_render", "pop2_tick_logic", "pop2_tick_flip",
 NTSCSET = ["pop2_ntsc", "pop2_ntsc2"]
 WALK = ["test_walk", "test_walk2", "test_walk3"]
 D = 0x82800
+if AB.LAYOUT == "ics-lowram":      # P2_LAYOUT=ics-lowram: the tick block D = PB+$2800 of the relocated layout (pop2patch.py live --base ics --layout lowram)
+    D = json.loads(Path(AB._live_one(TICKSET, ["--base", "ics", "--layout", "lowram"]) + ".json").read_text())["pb"]["pop2_tick"] + 0x2800     # the whole tick family: its PB depends on the lowest blob (harvest at PB+$1100)
 oACC, oSKIP, oRON, oTICKS, oRPASS, oSPASS, oPPASS, oTPASS = 12, 14, 16, 28, 32, 36, 40, 44
 TURN = 0x3979A
 TOP = 0x1254E        # `jsr $22f14`: the pass top, before the tick look

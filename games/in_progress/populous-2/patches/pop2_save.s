@@ -1,5 +1,6 @@
 ; name: pop2_save
 ; default: yes
+; base: pp
 ; site: $2cc58
 ; orig: 4eb900036efc
 ; doc: in-game SAVE GAME / LOAD GAME and the saved-games list work: on a hard disk the saves are *.GAM files (56,690 bytes) in the game's FILES folder (or the drawer you type); on the floppy a separate formatted save disk goes in drive A when the game asks (Populous2_save.st: 12 saves)

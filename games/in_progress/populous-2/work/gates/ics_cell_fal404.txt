@@ -1,0 +1,13 @@
+CELL fal404: ICS floppy falcon TOS 4.04 4096 KB (full layout); boot 106s in_play=True marker='P2PO' $22f14=4ef900082000 (expect 4ef900082000) sync=$02 (50 Hz) turn=142
+payload $80000+32768: 4638 non-zero image bytes, 0 differ in RAM
+RESULT fal404 default MHz 50 Hz: 1501 VBL = 30.02 s, 320443 cycles/VBL, world turns 188 = 6.262/s | ticks(D) 188 = 6.262/s; passes T 188 R 562 S 0 P 0 | refresh seen 49.93 Hz
+tooltip cat2: diff vs none bbox (94, 78, 640, 462); shot ics_fal404_cat2.png
+tooltip strip4: diff vs none bbox (108, 78, 640, 462); shot ics_fal404_strip4.png
+pointer 250,180 turn 493
+SAVELOAD {'turn_at_req': 581, 'after_save_play': True, 'turn_before_load': 700, 'turn_after_load': 597, 'load_play': True}
+disk after save: ['       34 files             586 836 bytes', '                            119 808 bytes free'] ; GAM files ['T1       GAM     56690 1991-12-04  16:23 ']
+fsck.fat -n: /tmp/ics_fal404_a.st: 35 files, 594/711 clusters
+known hardware-probe lines (the game's $ffff8e21/$ffff8924 reads at PC $13968/$139xx; pop2_spr's blitter probe $ffff8a28 on an ST): 0
+LOG: 165 lines; bus/address-error/halt lines: 0
+
+RESULT fal404: ok=True marker='P2PO' errors=0

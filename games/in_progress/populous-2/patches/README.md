@@ -88,6 +88,25 @@ them on drive A exactly as on a hard disk. 681,179 bytes of files, 43,008 free. 
 (`LP2273.HST` for a plain ST, `P2240R.BMP` for TT/Falcon) do not fit; RUNME skips a picture it cannot open.
 No HAGA file patches are shipped, so the floppy build has no HAGA edits.
 
+## ICS floppy build (`--base ics`, work/notes/ics.md)
+`pop2patch.py verify|list|live|doc|build --base ics`: the same patches on the ICS crack's floppy (`alt/ST/Populous II (1991)(Bullfrog)[cr ICS][512 kB].st`, copied, never modified).
+The game is the same image (the crack's `POP2.TOS` = the Atomik-style packed block at text `$128` -> `$1770`, byte-identical to P2M.FIC unpacked; `pop2patch.py verify --base ics`
+unpacks it with a Python port of the decruncher and compares it with a RAM dump taken at its final `jmp $140.w`: 0 of 498,704 bytes differ), so every site, every blob and every
+original-bytes check is the same; what differs is the delivery and what is *not* applied.
+- **Delivery.** `build` copies the disk, deletes `AUTO\ICS.PRG` (the cracktro: all it leaves behind is a 10-byte stub at `$140`, `move.l #$4e714e71,$14a88.l / jmp $1770.w`) and replaces
+  `POP2.TOS` by `prefix + payload(full) + payload(lowram) + the crack's unchanged POP2.TOS`.  The prefix (vasm, `ICS_PREFIX` in the tool) replays POP2.TOS text `$0-$15` (Super, palette
+  blank), reads `_phystop` (`$42e`), picks the payload (>= 1 MB: `full`, else `lowram`), writes `jmp CORE.l` at `$140` (the crack's own final `jmp $140.w` now enters our
+  trampoline), zero-fills the layout's range, copies the non-zero chunks and branches back into POP2.TOS at `$16`; all of it before the unpack, which overwrites the TPA it was loaded
+  into.  The trampoline (`core_ics.s`) does the crack's `$14a88` store, then verify-then-apply exactly as `core.s`, marker `P2PO`/`P2PF` at `$7fff8`, `jmp $1770.w`.
+- **Layouts.** `full` = the PP layout (PB = `$80000`, 32 KB image, data to `$8ffff`), byte-identical blobs.  `lowram` = the same patches packed into `$7b400-$7fff7` (the game
+  image ends at `$7b380`, 512 KB RAM at `$80000`): patches that address one another through `PB` share one (`PB_FAMILY` in the tool), data blocks use `DB+` (`DB` = `PB+$8000` in `full`:
+  pop2_ptr_a/b, pop2_spr) so they can be placed apart from the code, `LITE` is defined for the sources (pop2_spr: no pre-shifted sprite cache), every family is placed first-fit by the tool.
+  A new header `; data: ADDR LEN cache` marks data dropped in `lowram`; `; base: pp` marks patches that are not part of the ICS build.
+- **Not applied on `--base ics`** (header `; base: pp`): `pop2_floppy_head` (HAGA's TOS-state swap: no HAGA), `pop2_save`, `pop2_save_w`, `pop2_save_d` (the GEMDOS conversion of the disk
+  layer: here the game's own FAT12/FDC layer is intact and saves to drive A already).  All other default patches are applied in both layouts.  PP's four RAM patches (`$1cf8`, `$14a88`, `$2cc98`,
+  `$36efc`) do not exist on this base; the one patch the crack made (`$14a88` = two nops after `cmp.w d1,d2`) is replayed by the trampoline.
+- `live --base ics --layout lowram|full` writes the image/json for the snapshot gates (`P2_LAYOUT=ics-lowram` makes `p2abtest.py` / `p2tick.py` apply it; the json carries every patch's PB/DB).
+
 ## In-game save / load (`default: yes`)
 - `pop2_save` (`$2cc58`, read + the shared GEMDOS blob at `$80300`) + `pop2_save_w` (`$2cbe4`, write) + `pop2_save_d` (`$2cb0e`, directory): PP's build replaced the game's disk layer
   (`$36efc`) by a stub, so SAVE GAME / LOAD GAME crashed. The three call sites now run a GEMDOS blob (Fopen/Fread, Fcreate/Fwrite + Dfree flush, Fsfirst/Fsnext) inside HAGA's TOS swap;

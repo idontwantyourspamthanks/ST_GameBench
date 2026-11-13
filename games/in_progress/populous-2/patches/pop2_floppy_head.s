@@ -1,5 +1,6 @@
 ; name: pop2_floppy_head
 ; default: yes
+; base: pp
 ; media: floppy
 ; site: $1770
 ; orig: 2e7c00012522

@@ -8,7 +8,7 @@
 ; note: address [$202e], ROWS = [$2232] (dbra count 0..15), STRIDE = [$2234] ($90 = two columns, $98 = one) and copies of the rows x (16|8) bytes now on
 ; note: screen and of the shape rows.  Then the displaced instruction and on to $1b3c.
 MAGIC   equ     $50545256
-PD      equ     $88000
+PD      equ     DB
 PTRB    equ     PB+$6200
         org     $1b34
         jmp     PTRB.l

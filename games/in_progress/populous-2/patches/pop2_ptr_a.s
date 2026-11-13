@@ -2,7 +2,7 @@
 ; default: yes
 ; site: $1a1a
 ; orig: 20390000202e
-; data: $88000 512
+; data: DB 512
 ; note: Item 3 (work/notes/display.md): software mouse pointer, part A of two (pop2_ptr_b records; either alone is harmless: the original runs every VBL).
 ; note: The VBL handler $18fa restores the pointer's saved rectangle ($2032 -> [$202e], 16 rows) and redraws it into the shown buffer [$392dc] at
 ; note: EVERY VBL ($1a1a-$1b30, about 9,900 cycles, 6.9 % of a busy frame; a pass is 8 VBLs, the screen changes once per pass).  This hook (at
@@ -15,7 +15,7 @@
 ; note: +0 FLAG.l (the draw ran) +4 VALID.l +8 BUF.l +12 A4.l +16 X.w +18 Y.w +20 SHP.w +22 ROWS.w (dbra count) +24 STR.w +28 NBUF.l +32 NX.w +34 NY.w
 ; note: +36 NSHP.w +40 IMG[256] +296 SHAPE[128].
 MAGIC   equ     $50545256               ; 'PTRV'
-PD      equ     $88000
+PD      equ     DB
 PTRA    equ     PB+$6000
         org     $1a1a
         jmp     PTRA.l
