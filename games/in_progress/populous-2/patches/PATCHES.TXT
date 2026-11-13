@@ -31,5 +31,4 @@ Tested on Hatari 2.6.1: STE 2 and 4 MB (TOS 1.62, 8 and 16 MHz, 50 and 60 Hz), S
 
 The original game keeps its statesaves on the HD build: keypad / saves the
 game state to GS00.TOS, GS01.TOS, ... in the folder HAGA runs from (it looks
-for C:\GAMEX\ first). In-game SAVE GAME / LOAD GAME do not work in PP's build
-even unpatched (they crash); use the HAGA statesaves.
+for C:\GAMEX\ first). In-game SAVE GAME / LOAD GAME work on ST/STE/Mega STE/TT, files NAME.GAM 56,690 B in FILES\ or the typed drawer; complete on disk when the game returns to play; not on the Falcon (DISK FILE ERROR; use the HAGA statesave).

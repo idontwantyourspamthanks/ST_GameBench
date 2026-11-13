@@ -1,7 +1,6 @@
 # Populous 2: in-game SAVE GAME / LOAD GAME (`pop2_save`, `pop2_save_w`, `pop2_save_d`)
 
-2026-11-13, Pop2Save3 (continues Pop2Save2). **Status: gates passed on the reworked design for HD media on STE / Mega STE / TT; the patches are STILL `; default: no`
-because a few gates are open (section 6). `tools/package.sh` was not run.** Evidence tags: [obs] = raw output of a cell in `work/scratch/save/` (`sv.py` library,
+2026-11-13, Pop2Save3 (continues Pop2Save2). **Status: all gates closed (Pop2SaveClose, 2026-11-13: full disk on ACSI, HD write-protect, lv2, p2tick ab / p2abtest / p2noquest regressions; raw outputs in `work/gates/save_*.txt`); the three patches are `; default: yes` and packaged.** Evidence tags: [obs] = raw output of a cell in `work/scratch/save/` (`sv.py` library,
 `cell_main.py`, `cell_level.py`, `cell_err.py`, `cell_floppy.py`), [disasm] = `tools/m68dis.py`, [INFERENCE] = unproven. Design and contract of the game's disk layer: see the header
 notes of `patches/pop2_save.s` (the three call sites `$2cb0e` dir / `$2cbe4` write / `$2cc58` read go to a GEMDOS blob run inside HAGA's own TOS swap).
 
@@ -40,7 +39,7 @@ Negative control for the raw-trap design (earlier, Pop2Save2): `neg_raw.txt`.
   Step 4 (RESTART MAP right after a LOAD) first run failed because the harness did not click PROCEED on the game's battle-settings screen (`rs1_after.png`); fixed; interactive PROCEED works (turn 74, running). The full cell rerun `lv2_hd_ste` was still running when I stopped: **open**.
 * Full disk on HD (ACSI): `cell_err.py --kind full` needs `size_mb=8` (mkfs.fat refused a 4 MB FAT16 with 2-sector clusters) and the OK y=184 fix: **not run**. The floppy full-disk case is covered above.
 
-## 4. Open items (why the defaults stay `no`)
+## 4. Open items: ALL CLOSED 2026-11-13 (Pop2SaveClose; outputs `work/gates/save_*.txt`; the list below is the history)
 1. `lv2_hd_ste` (level step 4) and `cell_err.py --kind full` on ACSI not finished.
 2. **`p2tick.py ab`, `p2abtest.py` and `p2noquest.py` regressions with the save patches in the default set were NOT run.**
 3. HD write-protect (`--protect-hd on`) and floppy on other TOS versions not run.

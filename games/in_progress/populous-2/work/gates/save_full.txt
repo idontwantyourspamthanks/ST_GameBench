@@ -1,0 +1,21 @@
+CELL cl_full: {'media': 'acsi', 'machine': 'ste', 'tos': 'default', 'mem': 2048, 'img': '/tmp/strun-57gmool5/hd.img'} kind=full in_play=True marker='P2PO' turn=170
+free bytes on the image before: 31744
+turn now 229 (the world is stopped while the game's requester / error box is up): frozen=True
+write call reached: True; returned to the game's wrapper ($2cbea): True; shot cl_full_after20s.png
+after the error box: game running=True turn=305 in_play=True
+free bytes on the image after : 31744
+ Volume in drive : is HUNTER     
+ Volume Serial Number is 1073-034F
+Directory for ::/FILES
+
+.            <DIR>     2026-11-13   3:33 
+..           <DIR>     2026-11-13   3:33 
+P2CR     TOS     23924 2026-11-13   3:33 
+P2D             418679 2026-11-13   3:33 
+P2M      FIC    104830 2026-11-13   3:33 
+        5 files             547 433 bytes
+                             31 744 bytes free
+
+
+fsck.fat -n: /tmp/p2err-jsft_3wd/part.img: 16 files, 8096/8127 clusters
+LOG errors beyond the boot probe: 0 total 0

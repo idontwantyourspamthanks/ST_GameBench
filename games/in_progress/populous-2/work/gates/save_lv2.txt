@@ -1,0 +1,10 @@
+CELL lv2_hd_ste: {'media': 'hd', 'machine': 'ste', 'tos': 'default', 'mem': 2048} boot 106s in_play=True marker='P2PO' turn=173 $148=14
+1. SAVE right after the load: dump=True back_in_play=True turn_in_dump=200; file == RAM at write: True
+2a. LOAD lv1: dump=True RAM == saved: True running=True turn=217
+2b. QUIT MAP right after the LOAD -> new conquest world: in_play=True turn=83 marker='P2PO' (59s); PP data-stub calls ($140) during the change: 4 (total 4)
+3a. SAVE right after the second world loaded: dump=True back_in_play=True; file == RAM at write: True; differs from the first world's save: True
+3b. LOAD lv1 (world 1) into world 2's session: RAM == saved: True running=True turn=217
+4. RESTART MAP right after the LOAD: running=True turn=74 in_play=True; $140 calls: 2
+   SAVE after the restart: dump=True running=True; file == RAM: True
+LOG errors: 0
+RESULT lv2_hd_ste: PASS

@@ -1,0 +1,15 @@
+CELL pkg_cold: {'media': 'hd', 'machine': 'ste', 'tos': 'default', 'mem': 2048} boot 105s in_play=True marker='P2PO' turn=171 $2cc5a=0x80300 $2cbe6=0x80300 $2cb10=0x80300
+SAVE T1: dump=True back_in_play=True turn_in_dump=253 md5(dump)=21e35e9d1f5039c4ce926e1cf4f75ceb
+  T1.GAM on disk: 56690 B, equals RAM at write: True
+SAVE T2: dump=True back_in_play=True turn_in_dump=344 md5=7e74ae00b90689faf781a1bef0430156
+  T2.GAM on disk: 56690 B, equals RAM at write: True
+SAVE T1 again (overwrite): dump=True back_in_play=True turn_in_dump=435 md5=b7e4dc02926c7ec6716cf3b2b1c40449
+  T1.GAM on disk: 56690 B, equals the NEW RAM: True, differs from the first save: True
+DIRECTORY shot pkg_cold_dir.png
+  cancel -> running True
+LOAD T2: dump=True RAM after read == RAM at T2 save: True; turn in RAM 344; turn now 365 running=True
+LOAD T1: dump=True RAM after read == RAM at the 2nd T1 save: True; turn now 456 running=True
+LOAD NOPE (missing): bp hit=True; RAM after the failed read == RAM before the call: True; shot pkg_cold_missing.png (the game's DISK FILE ERROR box)
+after missing-file error: game running=True turn=575 in_play=True
+LOG bus/address-error/halt lines: 0
+RESULT pkg_cold: PASS

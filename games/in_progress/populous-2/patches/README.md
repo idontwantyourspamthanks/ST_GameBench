@@ -88,9 +88,13 @@ them on drive A exactly as on a hard disk. 681,179 bytes of files, 43,008 free. 
 (`LP2273.HST` for a plain ST, `P2240R.BMP` for TT/Falcon) do not fit; RUNME skips a picture it cannot open.
 No HAGA file patches are shipped, so the floppy build has no HAGA edits.
 
+## In-game save / load (`default: yes`)
+- `pop2_save` (`$2cc58`, read + the shared GEMDOS blob at `$80300`) + `pop2_save_w` (`$2cbe4`, write) + `pop2_save_d` (`$2cb0e`, directory): PP's build replaced the game's disk layer
+  (`$36efc`) by a stub, so SAVE GAME / LOAD GAME crashed. The three call sites now run a GEMDOS blob (Fopen/Fread, Fcreate/Fwrite + Dfree flush, Fsfirst/Fsnext) inside HAGA's TOS swap;
+  `NAME.GAM` = 56,690 B in `FILES\` or the typed drawer; on the floppy build a separate save disk (`Populous2_save.st`). ST/STE/Mega STE/TT; the Falcon is refused (DISK FILE ERROR).
+  Applied together or not at all. Design and gates: `work/notes/save.md`.
+
 ## Test patches (`default: no`)
-- `pop2_save_a` (`$140`) + `pop2_save_b` (`$20e`): prototype for the in-game save/load, which PP's build
-  breaks (see `work/notes/delivery.md`); applied together or not at all (same flag).
 - `pop2_ntsc` (`$183c`) + `pop2_ntsc2` (`$1a6e`): the game's two NTSC protections, both `btst.b #1,$820a.w` (bit 1 set = 50 Hz).
   `pop2_ntsc`: the PAL check at `$1836` (`bne.w $186e`); on a 60 Hz machine the untouched game shows "SORRY PAL MACHINES ONLY" and
   loops forever; the patch makes the branch unconditional. `pop2_ntsc2`: the pointer code in the VBL handler (`$1a68`/`$1a6e`

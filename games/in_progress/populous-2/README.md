@@ -5,7 +5,7 @@
 - VHD source: `Atari3gb.vhd`, partition at offset 1840700928 (letters G-R), folder ::/P/POPUL2
 - Local copy: `originals/POPUL2` (git-ignored)
 - Loader: PP's HAGA conversion (RUNME.TOS + HAGA)
-- Machine/RAM notes: 2MB min; use HAGA state-saves, in-game save unsupported.
+- Machine/RAM notes: 2MB min; in-game SAVE/LOAD works (pop2_save*, not on the Falcon; HAGA state-saves still work).
 - Alternatives found on VHD (not copied): POPUL2H (plain unpacked data files + POPUL2.TOS, not a conversion)
 - Total: 11 files, 790948 bytes
 
