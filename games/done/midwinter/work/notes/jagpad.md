@@ -68,7 +68,7 @@ So the settle time is a whole VBL (20 ms): no `dbra` loop and no assumption abou
 (Team Tap). The first version of this patch read all four groups every VBL with 23 us waits: 977 cycles/VBL (0.61 %) on the STE.
 
 ### 1.4 Detection (first VBL with `$2c178 != 0`, cached in `PADST`: 0 unprobed / 1 pad ports / `$ff` none)
-Same layers as Hunter's `jag_pad` (`games/in_progress/hunter/patches/jag_pad.s`); the first version of this patch had a 68000-only gate, dropped at the lead's request so the Falcon gets the pad.
+Same layers as Hunter's `jag_pad` (`games/done/hunter/patches/jag_pad.s`); the first version of this patch had a 68000-only gate, dropped at the lead's request so the Falcon gets the pad.
 1. Guarded byte reads (vector `$8` swapped, `a7` restored by the handler, the pattern of `p4_blit_sky`): `$FF8901` (DMA sound) **must answer** (bus error on ST / Mega ST) and the SCU `$FF8E01`
    **must bus-error** (answers on a Mega STE and a TT, faults on an STE and a Falcon). A machine that fails either test never has a pad register read.
 2. Guarded word write `$FFFF -> $FF9202` and word reads of `$FF9202`/`$FF9200`: no bus error.

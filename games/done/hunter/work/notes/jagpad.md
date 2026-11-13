@@ -185,7 +185,7 @@ An earlier revision of the probe let `FLAGS` bit3 skip the SCU test; the TT HD r
 
 ## 7. Reproduce
 ```
-cd games/in_progress/hunter
+cd games/done/hunter
 DEF="p4_ikbd p4_edge p4_poly snd_core hn_credit hn_hz"
 python3 tools/huntpatch.py build --only $DEF jag_pad jag_stick --samples build/hunter_snd.bin --out build/jag_hd          # HD
 python3 tools/huntpatch.py build --floppy --only $DEF jag_pad jag_stick --samples build/hunter_snd.bin --out build/jag_fl # floppy

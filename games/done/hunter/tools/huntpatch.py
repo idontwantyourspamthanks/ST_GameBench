@@ -38,7 +38,7 @@ import time
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-ROOT = HERE.parent                       # games/in_progress/hunter
+ROOT = HERE.parent                       # games/done/hunter
 BENCH = ROOT.parent.parent.parent               # gamebench
 sys.path.insert(0, str(BENCH / "tools"))
 from pp_depack import depack as pp_depack_program  # noqa: E402

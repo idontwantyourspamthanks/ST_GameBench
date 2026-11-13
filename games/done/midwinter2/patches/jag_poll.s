@@ -5,7 +5,7 @@
 ; blobedit: $b433a 123875a9
 ; data: $b9ea0 80
 ; note: Atari Jaguar pad on the STE / Falcon enhanced joystick ports, part 1 of 3 (work/notes/jagpad.md; gamebench reports/jaguar_pad_study.md).
-;       Apply with jag_dir and jag_btn.  The design is Hunter's jag_pad (games/in_progress/hunter/patches/jag_pad.s): ONE row group per VBL,
+;       Apply with jag_dir and jag_btn.  The design is Hunter's jag_pad (games/done/hunter/patches/jag_pad.s): ONE row group per VBL,
 ;       round robin, the select written at the end of one VBL and its data read at the start of the next (the settle time is a whole VBL: no
 ;       wait loop, which is also what makes the Falcon's slower bus safe), nothing decoded unless the group's data changed, and the original
 ;       bytes written back at every site when the probe says no pad ports (a machine without them runs the unpatched code at 0 cycles).
