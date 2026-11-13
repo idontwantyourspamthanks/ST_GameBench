@@ -186,6 +186,7 @@ A new renderer is the other route.
 - **Static-frame skip assumption:** terrain heights and object models are assumed never to change during play. If some mission event does change them, the view could stay stale until you move.
 - **TT under Hatari:** the top panel shows the 3D palette. This is a Hatari limitation (one palette per TT frame); a real TT should be fine.
 - **Untested:** campaign creation on floppy (Hatari discarded the writes), and real TT/Falcon TOS (only EmuTOS was available).
+- **Open bug B1: the Crawler is slow on the TT** (user report, Hatari TT; most vehicles are fine). Not investigated yet; see `PLAN.md`, "Open bugs".
 
 ## 9. Delivered
 
