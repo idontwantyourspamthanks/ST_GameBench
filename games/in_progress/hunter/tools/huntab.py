@@ -180,8 +180,9 @@ def one(snap: Path, at: int, live: str | None, out: Path, flips: list[int], vbls
         for pc in (LOCK_RET, FLIP_ENTRY):
             cmds.append(f"b pc = ${pc:x} :trace :file {R / f't{pc:x}.txt'}")
         for n, cf in caps:
-            cnt = f" :{n}" if n > 1 else ""            # Hatari rejects a skip count of 1
-            cmds.append(f"b pc = ${FLIP:x}{cnt} :trace :once :file {cf}")
+            # The apply breakpoint leaves the CPU AT $5fee, so a capture breakpoint armed now fires on that same flip:
+            # count n + 1 hits, so "flips N" = the pages after N patched frames (HunterVisuals' control: flips 1 compared nothing).
+            cmds.append(f"b pc = ${FLIP:x} :{n + 1} :trace :once :file {cf}")
         end = R / "end.txt"
         end.write_text("b all\n")
         cmds.append(f"b VBL > {at + (vbls if fps else 150)} :trace :once :file {end}")
