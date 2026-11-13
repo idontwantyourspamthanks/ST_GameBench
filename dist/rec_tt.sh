@@ -9,9 +9,10 @@
 # or the video runs fast/slow against the sound.
 set -euo pipefail
 HERE="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd -P)"
+source "$HERE/_hatari.sh"   # HATARI (exported: run_tt.sh uses the same binary) and AVIREC
 OUT="${ATARI_VIDEO_DIR:-$HOME/Videos/AtariST}"
 mkdir -p "$OUT"
 FILE="$OUT/tt_$(date +%Y-%m-%d_%H%M%S).avi"
 echo "recording to $FILE"
 IMG=(); if [[ $# -gt 0 && "$1" != -* ]]; then IMG=("$1"); shift; fi   # optional IMAGE first
-exec "$HERE/run_tt.sh" "${IMG[@]}" --sound 44100 --avirecord --avi-fps "${AVI_FPS:-60}" --avi-vcodec png --png-level 3 --avi-file "$FILE" "$@"
+exec "$HERE/run_tt.sh" "${IMG[@]}" --sound 44100 "${AVIREC[@]}" --avi-fps "${AVI_FPS:-60}" --avi-vcodec png --png-level 3 --avi-file "$FILE" "$@"

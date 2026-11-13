@@ -26,6 +26,7 @@ finally: h.close()        # ALWAYS: frees Xvfb, display claim, scratch game copy
   - TOS 1.06/1.62 are STE-only.
   - Test TT and Falcon on the real TOS 3.06/4.04, as users run them. EmuTOS only on purpose: it loads programs at other addresses and behaves differently.
   - TT: add `extra=['--mmu', 'true']`, as `dist/run_tt.sh` does.
+  - Binary (`hatari_bin(machine)`, also used by mw2harness and `dist/run_*.sh` via `dist/_hatari.sh`): `$HATARI` for every machine; for TT/Falcon `$HATARI_TTF`, else `HATARI_TTF=` in the git-ignored `dist/hatari.local`; else the system `hatari`. Stock 2.6.1 shows ONE palette per TT/Falcon frame (raster palette changes invisible: MW2 panel, Hunter sky); the user's patched build (per-scanline TT/Videl palette) is set in their `dist/hatari.local`. Newer builds take `--avirecord <bool>`.
 - `memsize_kb`: 1024 is the usual target.
 - `extra=['--joy1','keys']`: cursor keys act as joystick 1.
 - `files=[...]`: what to copy as C:. The default is the whole game dir minus scaffolding.

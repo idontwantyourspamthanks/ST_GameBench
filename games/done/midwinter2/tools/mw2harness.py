@@ -115,7 +115,9 @@ class Hatari:
             if Path(f"/tmp/.X11-unix/X{display}").exists():
                 break
             time.sleep(0.1)
-        args = ["hatari", "--confirm-quit", "no", "--machine", machine, "--tos", str(tos),
+        sys.path.insert(0, str(Path(__file__).resolve().parents[4] / "tools"))
+        from stharness import hatari_bin  # noqa: E402  (one binary policy for every harness)
+        args = [hatari_bin(machine), "--confirm-quit", "no", "--machine", machine, "--tos", str(tos),
                 "--memsize", str(memsize_kb), "--monitor", "rgb", "--harddrive", str(drive),
                 "--fast-boot", "yes", "--sound", "off", "--grab",
                 "--cmd-fifo", str(self.fifo), "--screenshot-dir", str(self.R / "shots"),

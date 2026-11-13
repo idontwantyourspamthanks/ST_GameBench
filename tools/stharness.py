@@ -54,6 +54,24 @@ TOS = {
 # The real TOS for each machine, used when `tos` isn't given (TT and Falcon included: EmuTOS is opt-in).
 MACHINE_TOS = {"st": TOS["1.04"], "megast": TOS["1.04"], "ste": TOS["1.62"], "megaste": TOS["2.06"],
                "tt": TOS["3.06"], "falcon": TOS["4.04"]}
+
+
+def hatari_bin(machine: str) -> str:
+    """The Hatari binary, as dist/run_*.sh choose it: $HATARI for every machine; for TT and Falcon $HATARI_TTF, else
+    `HATARI_TTF=...` from the git-ignored dist/hatari.local (a Hatari with per-scanline TT/Videl palettes); else `hatari`."""
+    if os.environ.get("HATARI"):
+        return os.environ["HATARI"]
+    if machine in ("tt", "falcon"):
+        ttf = os.environ.get("HATARI_TTF")
+        local = BENCH / "dist" / "hatari.local"
+        if not ttf and local.exists():
+            m = re.search(r"^\s*HATARI_TTF=[\"']?([^\"'\s#]+)", local.read_text(), re.M)
+            ttf = m and m.group(1)
+        if ttf:
+            return ttf
+    return "hatari"
+
+
 # Directory names that are project scaffolding, never game files.
 NOT_GAME = {"work", "tools", "build", "dist", "patches", ".omp", "tos", "__pycache__"}
 
@@ -133,7 +151,7 @@ class Hatari:
             if Path(f"/tmp/.X11-unix/X{display}").exists():
                 break
             time.sleep(0.1)
-        args = ["hatari", "--confirm-quit", "no", "--machine", machine, "--tos", str(tos),
+        args = [hatari_bin(machine), "--confirm-quit", "no", "--machine", machine, "--tos", str(tos),
                 "--memsize", str(memsize_kb), "--monitor", "rgb", "--harddrive", str(drive),
                 "--fast-boot", "yes", "--sound", "off", "--grab",
                 "--cmd-fifo", str(self.fifo), "--screenshot-dir", str(self.R / "shots"),

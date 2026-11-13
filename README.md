@@ -79,6 +79,10 @@ tools/play.sh                              # run it in Hatari (needs TOS images 
 Requirements:
 - Linux, Python 3.10+, `hatari` (2.6+), `vasmm68k_mot` (vasm, Motorola syntax) for assembling patches;
 - for the test harness: `Xvfb`, `xdotool` and Python `capstone` + `Pillow`.
+- optional, for TT and Falcon: Hatari 2.6.x draws a TT/Falcon screen with one palette per frame, so mid-screen palette changes
+  (Midwinter 2's dashboard, Hunter's sky) don't show there. With a Hatari build that renders TT/Videl palettes per scanline, put
+  `HATARI_TTF=/path/to/that/hatari` in `dist/hatari.local` (git-ignored) or set `HATARI=` for one run; `dist/run_tt.sh`,
+  `run_falcon*.sh`, `rec_tt.sh`, `rec_falcon*.sh` and the test harnesses then use it. Without it they use the system `hatari`.
 
 ## Credits and legal
 
