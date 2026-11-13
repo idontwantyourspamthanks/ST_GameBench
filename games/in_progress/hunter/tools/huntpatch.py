@@ -86,6 +86,7 @@ PREFIX_RANGES = {                        # blob orgs allowed per patch-name pref
     "hn_": (0x8D400, 0x8DBFF),           # Hunter-specific patches (release credit); free between p4_poly's tables and test_
     "jag_": (0x8D600, 0x8D9FF),          # Jaguar pad (jag_pad poll + state, jag_stick merge); inside the hn_ window, between hn_credit and hn_hz
     "key_": (0x8D816, 0x8D9BF),          # one-key items / weapon keys (key_item): the free gap between jag_pad's code and jag_stick's blob
+    "help_": (0x8CBBE, 0x8CFFF),          # pause-screen controls guide (help_*): free gaps $8CBBE-$8CDFF and $8CE80-$8CFFF (p4_poly's $8CE00 blob between)
     "pal_": (0x8C014, 0x8C0FF),          # v1.2 STE 4096-colour palette: the gap between p4_ikbd and p4_edge code
     "tb_": (0x8C1B2, 0x8C3FF),           # v1.2 triple buffering: the gap after p4_edge code (work/notes/triple.md)
     "sav_": (0x8C72C, 0x8CDFF),          # v1.2 HD save/load: the gap after p4_poly code
