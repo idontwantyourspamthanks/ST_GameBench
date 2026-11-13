@@ -285,7 +285,9 @@ class Hatari:
             cmds.append(f"loadbin {Path(live + '.img').resolve()} ${spec['img_base']:x}")
             for s in spec["sites"]:
                 cmds.append(f"w ${s['addr']:x} " + " ".join(f"${b:02x}" for b in bytes.fromhex(s["new"])))
-        cnt = f" :{nth_flip}" if nth_flip > 1 else ""   # Hatari rejects a skip count of 1
+        # The apply breakpoint leaves the CPU AT the flip, so the capture breakpoint's first hit is that same flip: count
+        # nth_flip + 1 hits, so nth_flip = N means N patched frames (reports/gate_audit.md; N=1 used to compare nothing).
+        cnt = f" :{nth_flip + 1}"
         cmds.append(f"b pc = ${flip_addr:x}{cnt} :trace :once :file {cap}")
         app = self.R / "apply.txt"
         app.write_text("\n".join(cmds) + "\n")

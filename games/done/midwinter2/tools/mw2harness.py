@@ -276,7 +276,9 @@ class Hatari:
             for s in spec["sites"]:
                 new = bytes.fromhex(s["new"])
                 cmds.append(f"w ${s['addr']:x} " + " ".join(f"${b:02x}" for b in new))
-        cnt = f" :{nth_flip}" if nth_flip > 1 else ""   # Hatari rejects a skip count of 1
+        # The apply breakpoint leaves the CPU AT the flip, so count nth_flip + 1 hits: N = N patched frames
+        # (gamebench/reports/gate_audit.md; N=1 used to capture before any patched frame).
+        cnt = f" :{nth_flip + 1}"
         cmds.append(f"b pc = ${self.FLIP:x}{cnt} :trace :once :file {cap}")
         app = self.R / "apply.txt"
         app.write_text("\n".join(cmds) + "\n")
