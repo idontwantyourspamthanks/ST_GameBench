@@ -9,7 +9,7 @@
 # line on the main menu and @VERSION@ in PATCHES.TXT / FLOPPY.TXT.
 #
 # The HD zip: POPS2/ with the patched RUNME.TOS, the untouched HAGA, FILES\ and the pictures plus
-# PATCHES.TXT.  The floppy zip: Populous2_boot.st plus FLOPPY.TXT.
+# PATCHES.TXT.  The floppy zip: Populous2_boot.st, the blank formatted save disk Populous2_save.st (pop2_save asks for it) plus FLOPPY.TXT.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/.." && pwd -P)"
 cd "$ROOT"
@@ -31,7 +31,7 @@ rm -f "$HDZIP"
 
 FSTAGE=build/dist/floppy
 rm -rf "$FSTAGE" && mkdir -p "$FSTAGE"
-cp build/floppy/Populous2_boot.st "$FSTAGE/"
+cp build/floppy/Populous2_boot.st build/floppy/Populous2_save.st "$FSTAGE/"
 python3 tools/pop2patch.py doc patches/FLOPPY.TXT | sed "s/{DATE}/$DATE/" > "$FSTAGE/FLOPPY.TXT"
 FZIP="dist/Populous2_v${VER}_patched_floppy_${DATE}.zip"
 rm -f "$FZIP"

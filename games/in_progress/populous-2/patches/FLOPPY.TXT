@@ -32,7 +32,15 @@ MACHINES
   not start the game (PP's loader, unpatched too, under Hatari): use the
   hard-disk version there, which runs on both.
 
-SAVING
-  HAGA's keypad / statesave writes about 1 MB and does not fit on a floppy.
-  PP's conversion does not support the game's own SAVE GAME (it crashes even
-  unpatched, with no disk in the drive). Keep a hard-disk install for saving.
+SAVING (needs the second disk, Populous2_save.st)
+  The game disk is full, so the game's own SAVE GAME / LOAD GAME use a separate
+  formatted disk in drive A: Populous2_save.st (a blank 720K disk, 12 saves of
+  56,690 bytes each; write it to a real disk or keep copies of the .st).
+  Open the requester (first strip icon) and click SAVE or LOAD: while the game
+  disk is still in the drive the game asks INSERT SAVE DISK. Swap the disks,
+  click OK, type a name in FILE, click SAVE / LOAD. The saves are NAME.GAM
+  files in the root of the save disk, and the list shows them. Leave the save
+  disk in the drive while you play: the game needs the game disk only to start.
+  A full or write-protected save disk gives DISK FILE ERROR. The save is on the
+  disk when the game returns to play. Do not use the game disk for saving.
+  (HAGA's keypad / statesave still does not fit on a floppy.)

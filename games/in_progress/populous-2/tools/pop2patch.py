@@ -685,6 +685,9 @@ def cmd_build_floppy(patches, out: Path, fpatches=()):
     for f in FILES_DIR:
         mtools("mcopy", "-m", str(stage / "FILES" / f), f"::FILES/{f}", img=disk)
     free = mtools("mdir", "::", img=disk).strip().splitlines()[-1]
+    if any(p.name == "pop2_save" for p in patches):
+        # the save disk pop2_save's floppy mode asks for ("INSERT SAVE DISK"): a blank formatted 720K, 12 saves of 56,690 B
+        mtools("mformat", "-C", "-f", "720", "-v", "POP2SAVES", "-N", "504f5032", "-i", str(out / "Populous2_save.st"), "::")
     shutil.rmtree(stage)
     print(f"built {disk} ({disk.stat().st_size} B) with {len(patches)} patch(es) + {len(fpatches)} file patch(es); "
           f"payload {len(img)} B at ${PB:x}; {free.strip()}")

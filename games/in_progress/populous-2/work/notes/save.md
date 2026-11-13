@@ -1,34 +1,48 @@
-# Populous 2: in-game SAVE GAME / LOAD GAME on the HD build (`pop2_save`, `pop2_save_w`, `pop2_save_d`)
+# Populous 2: in-game SAVE GAME / LOAD GAME (`pop2_save`, `pop2_save_w`, `pop2_save_d`)
 
-2026-11-13, Pop2Save2. **Status: NOT finished. All three patches are `; default: no`. `tools/package.sh` was NOT run; PATCHES.TXT / FLOPPY.TXT unchanged.**
-Evidence tags: [disasm] = `tools/m68dis.py work/dumps/game_start.bin`, [obs] = raw output in `work/scratch/save/*.txt|*.log` (scripts there: `sv.py` library, `cell_*.py` cells), [INFERENCE] = unproven.
+2026-11-13, Pop2Save3 (continues Pop2Save2). **Status: gates passed on the reworked design for HD media on STE / Mega STE / TT; the patches are STILL `; default: no`
+because a few gates are open (section 6). `tools/package.sh` was not run.** Evidence tags: [obs] = raw output of a cell in `work/scratch/save/` (`sv.py` library,
+`cell_main.py`, `cell_level.py`, `cell_err.py`, `cell_floppy.py`), [disasm] = `tools/m68dis.py`, [INFERENCE] = unproven. Design and contract of the game's disk layer: see the header
+notes of `patches/pop2_save.s` (the three call sites `$2cb0e` dir / `$2cbe4` write / `$2cc58` read go to a GEMDOS blob run inside HAGA's own TOS swap).
 
-## 1. Contract of the game's disk layer [disasm]
-Callers of `jsr $36efc` (all other code in the disk layer is dead): `$2cb0e` d0=3 directory (wrapper `$2cae0`), `$2cbe4` d0=1 write (`$2cba6`), `$2cc58` d0=0 read (`$2cc1a`),
-`$2cd1a` d0=0 data file by number (stays on PP's `jmp $140`). Save = flat `$dd72` bytes at `$39630`. Wrapper return contract: d0=0 ok / else error; read compares d1==`$dd72`;
-directory returns d1 = count and 32-byte records `$fd,$0b,"NAME    GAM"` at a1 (caller keeps names ending GAM, `$2cb36-$2cb68`). Error -> game's own "DISK FILE ERROR" box (`$15874`, text `$1c12b`).
-Name string built by the requester (`$159f2-$15a6c`): `drawer\NAME.GAM`; default drawer is empty, so GEMDOS-relative = the current folder = `FILES\` (observed: `FILES\T1.GAM` on the Hatari GEMDOS drive and on the ACSI image). FILES\ chosen because it is what HAGA's snapshot state already has as cwd (RUNME's Dsetpath) and it is the same on HD, ACSI and floppy (`A:\FILES`).
+## 1. What changed in this round (all in `patches/pop2_save.s`)
+* **Durability**: after every write `Dfree` (drive of the path, else current) = reads the whole FAT, which makes GEMDOS write back its dirty directory / FAT buffers (idea and
+  mechanism from HunterSave's `sav_sync`; note its Dfree call pushes no drive word, mine does). Kill test (SIGKILL of Hatari N s after the save returned, then `fsck.fat -n` + `mtype`
+  of the image, ACSI + HDDRIVER): **without Dfree (`build/Pop2SaveNoFlush`) STE: 1 s, 5 s, 20 s all LOST** (`fsck: FATs differ ... /FILES/PERS.GAM Contains a free cluster (854)`, file unreadable);
+  **with it, 2 runs each at 1 / 5 / 20 s: clean + file == RAM at the write, on STE, Mega STE (TOS 2.06) and TT (TOS 3.06): 18 of 18.** A cold boot on the post-kill image loaded the save (RAM after read == RAM at the save).
+* **TT directory** was empty: cause = **Hatari's GEMDOS emulation**, not the PMMU view of the DTA. `gemdos.c` finds the DTA as `ReadLong(ReadLong(act_pd) + $20)` with `act_pd` = p_run, read from PHYSICAL memory, where on a TT
+  (HAGA swaps by PMMU remap) the game's RAM sits, not TOS's. [obs] with the original blob the TT list is empty (`ttn_dir.png`); the DTA written by Hatari has the right size/date (dump `tt_dta.bin`). Fix: during the dir call the
+  game-side copy of p_run (virtual `$200000 + p_run`) points at a fake basepage whose `+$20` = our DTA, restored afterwards; a real TOS never reads it. [obs] list shows T1/T2 (`r3_hd_tt_dir.png`). On ACSI the real TOS lists correctly (`r3_acsi_tt_dir.png`).
+* **Missing-file box**: OK dismisses it and returns to the requester; the button's hit row is **y = 184** in screenshot coordinates (the glyph centre y = 177 misses). Fixed in all cells; the cell then cancels and the game runs (`after missing-file error: game running=True ... in_play=True` in every run below).
+* **Floppy save-disk flow** (Main's request): the boot disk is full, so on the floppy (default drive A:/B:, no drawer typed) the saves go to the ROOT of a separate formatted disk (`Populous2_save.st`, blank 720K made by `pop2patch.py build --floppy`, 730,112 B free = 12 saves).
+  If the disk in the drive is the game disk (root has HAGA), has no room for a save, or cannot be read, the game's own message box (`$14b2e`, the call its DISK FILE ERROR path uses) shows **INSERT SAVE DISK**; OK repeats the call (one more silent try:
+  the first access after a swap can fail). TOS's disk-change detection does not run while the game owns the interrupts (GEMDOS kept answering from cached FAT/dir sectors after a swap, and would write the new disk with the old FAT), so every floppy-mode call first invalidates the BIOS cache buffers of A:/B: (`_bufl` `$4b2` lists, `b_bufdrv = -1`).
+  The game disk is **not needed again** (P2D is in RAM; a level change with the save disk in A: worked, 4 `$140` calls). [obs] on STE TOS 1.62 (`/tmp` cells driven interactively; screenshots `f4_*`, `f5_*`, `f6_*`, `fl_*` in `work/scratch/save`):
+  SAVE requester with the boot disk -> INSERT SAVE DISK (`f5_1_boot_box.png`); swap, OK, SAVE F1: `F1.GAM` 56,690 B on the ejected disk == RAM at the write, `fsck.fat` clean; LOAD from it == RAM at the save; directory lists it after a swap (`f4_load_list.png`);
+  empty valid disk: no box (`f5_2_emptydisk.png`); 12 saves fit (41,984 B left), the 13th: INSERT SAVE DISK then DISK FILE ERROR, nothing left behind, fsck clean (`f4_full_box1/3.png`); write-protected save disk (`--protect-floppy on`): DISK FILE ERROR, no AES alert, 0 log errors (`f6_wp_result.png`).
+  The critic-handler stub is therefore verified on the floppy driver. Untested: floppy on ST TOS 1.04 / Mega STE TOS 2.06 (PP's floppy loader itself fails on 2.06 per `release.md`).
+* **Falcon (item 7)**: unsupported, refused cleanly. [disasm] HAGA's swap-in (`HAGA+$1166`) handles machine type 5 (TT) with table entries 0 / 2 (`$200001`, `$1`, `$128a`..`$12c0`) but type 4 (Falcon) with entries `+$c0` / `+$c8` (`$200009`, `$19`) of another table. [obs] with the refusal removed and the TT alias, the Falcon call dies (Hatari log: `Bus Error reading at address $67f60010, PC=$e0fbd2` repeated, TOS 4.04 variables garbage, `fal1.log`), so the TT remap is not the Falcon's. [obs] the shipped blob on a Falcon (TOS 4.04, GEMDOS drive): SAVE -> DISK FILE ERROR box, OK, the game keeps running, 0 log errors, nothing written (`fal3_err.png`). Not pursued further.
 
-## 2. Design (patch source: `patches/pop2_save.s`; the three sites are `jsr $36efc` -> `jsr $80300`)
-GEMDOS re-implementation of the three commands (Fopen/Fseek/Fread/Fclose, Fcreate/Fwrite/Fclose + delete of a partial file, Fsfirst/Fsnext of `*.GAM` filtered to size `$dd72`), same registers in/out.
-**TOS safety: HAGA's own swap routines are called (not a raw trap).** [disasm] HAGA service `+$fc4` = prologue (save sr/regs/usp, private stacks), `+$17be` (MFP enables off, saved at +$33c4), `+$1166` (fade + swap TOS low RAM in), TOS calls, `+$1372` (swap out + fade), MFP restore, IKBD drain. The blob replicates the prologue/epilogue and calls the three routines after a signature check; base = `$328` (PP's stub uses it). Floppy head bookkeeping: all TOS access goes through HAGA's snapshot state, the game's raw FDC driver is no longer reached.
-Facts found the hard way:
-* The swapped range is machine dependent: `$8..$FA28` (STE, Hatari GEMDOS drive, `$1f8098=$0535`), `$8..$1B6C8` (ACSI+HDDRIVER, `$0923`, "hole" mode with two buffers), and on a **TT (machine type `$83`=5) the first MB is remapped through the PMMU** (table at HAGA+$37b0, block 0 <-> physical $200000; game's low MB visible at virtual `$200000+X` while TOS runs). Consequences: the directory buffer a1 (`$7000`) is inside the swapped range -> names are built in a private buffer and expanded after swap-out; on a TT the blob code/data must not live in the first MB, and the `$39630` buffer must be reached through the alias (done with a bounce buffer).
-* **IKBD**: a call that starts inside a mouse reply leaves the game's parser (`$2022`) mid-packet; the next reply's header `$f7` becomes the button byte (`$2023`=`$f7`), the VBL handler `jmp $1936(pc,d0.w)` goes through index -9 -> `Address Error reading at address $296f, PC=$1934`. Fix: `clr.b $2022` after the swap-out.
-* TOS critical-error handler (`$404`) replaced during the call by a stub returning the error code (the desktop AES one would open an alert from a suspended AES). Written, **not yet tested** (write-protect cell not run).
-
-## 3. Evidence collected
-All below on blob v1 (blob + data in payload `$80300`/`$81300`, copy-swap machines) unless marked v2.
-| gate | result [obs] |
+## 2. Gates on the final source (HD media; every cell: save T1, T2, overwrite T1, directory shot, LOAD T2 / T1 byte-compared to RAM at the save, LOAD missing name -> box -> OK -> cancel -> running, then 30 calls in a row)
+All `RESULT ... PASS`, 0 bus/address-error lines, 30/30 calls ok (cell output delivered in the run, not all kept as files; per-cell Hatari logs `r3_*.log`):
+| cell | result [obs] |
 |---|---|
-| STE 2 MB, Hatari GEMDOS drive | `m_hd_ste.txt`: save T1/T2, overwrite T1 (file == RAM at the write call, byte compare via a debugger dump at `$80300`&&d0=1), directory lists, LOAD T2/T1: RAM after read (`$2cc5e`) == RAM at save; missing name -> DISK FILE ERROR box (`m_hd_ste_missing.png`), RAM unchanged by the failed read. First save's dump was lost to a harness timing slip (the file itself was fine). |
-| Mega STE TOS 2.06 4 MB, GEMDOS drive | `m_hd_mste.txt`: all of the above PASS, 0 log errors |
-| STE / Mega STE with ACSI + HDDRIVER image | `m_acsi_ste.txt`, `m_acsi_mste.txt`: game side byte-exact (LOAD == save dumps); the "file on disk" checks read None: **unresolved whether that is Hatari's host write buffering or HDDRIVER's write-back cache holding the last save. The persistence cell (`cell_persist.py`, written) was not run: a save may be lost on a power-off [INFERENCE].** |
-| negative control: raw `trap #1` from game context (`build/Pop2SaveRaw`) | `neg_raw.txt/.log`: SAVE GAME's directory call dies (`Address Error reading at address $23090001, PC=$22ff6`), nothing written |
-| IKBD cause | `ikbd_noreset.txt`: poke `$2022`=5 at the call entry on the build without the reset -> `$2023=0xf7`, `Address Error reading at address $296f, PC=$1934`; `ikbd_reset.txt` (with reset): game keeps running. `loop_reset.txt`: 30 consecutive saves/loads on ACSI STE, no error (the crash had been hit within <=10 saves in 4 earlier runs). |
-| TT 4 MB, `--mmu true`, v1 | `m_hd_tt.txt`, `m_acsi_tt.txt`: FAIL (runaway TOS code, "Unknown BIOS call 0xf1e7"): v1 code/data sit in the remapped first MB |
-| TT, **v2** (current source: part A in payload installs part B (PIC, 1216 B) into HAGA+$3900+..., bounce buffer, alias) | interactive: SAVE `FILES\T1.GAM` 56,690 B == RAM at write; LOAD == saved; no log errors. **Directory list is EMPTY on the TT**: Fsfirst returns 0, Fsnext follows (`--trace gemdos`: `Fsetdta(0x3FB940)`, `Fsfirst("*.GAM")`, `Fsnext()`), but the DTA stays zero -> size filter drops it. Cause not found (DTA in HAGA's identity-mapped region; Hatari's GEMDOS emulation vs PMMU view is the suspect [INFERENCE]). v2 was not re-run on STE/Mega STE/ACSI. |
+| STE 2 MB TOS 1.62, GEMDOS drive | `r3_hd_ste`: PASS |
+| Mega STE 4 MB TOS 2.06, GEMDOS drive | `r3_hd_mste`: PASS |
+| TT 4 MB TOS 3.06 (`--mmu true --monitor vga --cpuclock 32`), GEMDOS drive | `r3_hd_tt`: PASS, directory lists T1 T2 |
+| Mega STE, ACSI + HDDRIVER image | `r3_acsi_mste`: PASS |
+| TT, ACSI + HDDRIVER | `r3_acsi_tt`: PASS, directory lists T1 T2 |
+| STE, ACSI + HDDRIVER | `r3_acsi_ste`: loop 30/30, all later checks PASS; the very first save's dump was missed by the debugger breakpoint (the file on disk is 56,690 B; the overwrite of the same name is byte-exact). `cell_main.py` now repeats a save whose dump was missed; `r_acsi_ste` earlier today (same blob minus floppy/TT code) had that first dump and PASSed |
+Negative control for the raw-trap design (earlier, Pop2Save2): `neg_raw.txt`.
 
-## 4. Not done (scripts exist in work/scratch/save, none run on the final source)
-persistence (cold boot load), level-change gates (`cell_level.py`), full-disk / write-protect / no-disk cells (`cell_err.py`, the missing-file box "OK" click did not dismiss it in my cell: unresolved), floppy (`cell_floppy.py`; decision proposal: boot disk has 43 KB free, a save is 56,690 B -> DISK FILE ERROR by design; user swaps in a formatted disk in A: and types `A:` in the DRAWER field; untested), TT/Mega STE re-runs with v2, `p2tick.py ab` / `p2abtest` / noquest regressions, PATCHES.TXT / FLOPPY.TXT, package.sh, flipping the defaults, Falcon (type 4 is refused with an error, untested), HAGA no-swap mode (`$af`) untested.
-Housekeeping: `pop2_save_a/b` removed (superseded). `patches/README.md` still describes them under "Test patches" and PLAN.md/README.md still say save is unsupported: update when the defaults flip. The header notes of `pop2_save.s` describe v1 partly (block at HAGA+$3900, bounce, TT alias, `$2022` reset, critic stub are in the code, not yet in the notes).
+## 3. Level / error gates
+* `cell_level.py` (STE hd): 1. save right after the world loaded: file == RAM; 2. LOAD then at once QUIT MAP -> new conquest world: in_play, 4 `$140` data calls; 3. save right after the second world: file == RAM, differs from the first; LOAD world 1 into world 2's session: RAM == saved. All true.
+  Step 4 (RESTART MAP right after a LOAD) first run failed because the harness did not click PROCEED on the game's battle-settings screen (`rs1_after.png`); fixed; interactive PROCEED works (turn 74, running). The full cell rerun `lv2_hd_ste` was still running when I stopped: **open**.
+* Full disk on HD (ACSI): `cell_err.py --kind full` needs `size_mb=8` (mkfs.fat refused a 4 MB FAT16 with 2-sector clusters) and the OK y=184 fix: **not run**. The floppy full-disk case is covered above.
+
+## 4. Open items (why the defaults stay `no`)
+1. `lv2_hd_ste` (level step 4) and `cell_err.py --kind full` on ACSI not finished.
+2. **`p2tick.py ab`, `p2abtest.py` and `p2noquest.py` regressions with the save patches in the default set were NOT run.**
+3. HD write-protect (`--protect-hd on`) and floppy on other TOS versions not run.
+4. `tools/package.sh` not run; `PATCHES.TXT` still says in-game save does not work (text to put in, once defaults flip: "In-game SAVE GAME / LOAD GAME work on ST/STE/Mega STE/TT, files NAME.GAM 56,690 B in FILES\ or the typed drawer; complete on disk when the game returns to play; not on the Falcon (DISK FILE ERROR; use the HAGA statesave)"; `FLOPPY.TXT` already has the save-disk section; `package.sh` and `pop2patch.py build --floppy` already ship/build `Populous2_save.st`). `README.md` / `PLAN.md` / `patches/README.md` still say save is unsupported / list `pop2_save_a/b`.
+5. Hatari quirk for tests: the ST floppy image is only written to the host file on eject (`--disk-a other.st`).
