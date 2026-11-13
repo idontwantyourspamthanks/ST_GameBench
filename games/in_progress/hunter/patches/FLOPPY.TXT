@@ -22,6 +22,9 @@ What changed
   * One-key items and weapon keys: in the 3D view 1-9 (top row or keypad) select the nine weapons of the item table's weapon
     row, H = medical kit, G = fuel can, J = parachute; each does what clicking that icon does (an item you do not own does
     nothing); ignored in the item table, log book, game options and pause.  Jaguar pad: # = H, 0 = G, 8 = J.
+  * Controls guide: press P (or the pad's Pause) in the 3D view to pause and see a small panel with all the controls (the game's
+    keys, 1-9 / H / G / J and, on an STE or Falcon, the pad buttons); press P again to remove it and carry on.  Nothing in the
+    game changes, and the screen is restored exactly.
   * The title screen shows a small, dim "v@VERSION@ enhanced by dad_prg" at the bottom; nothing else on it changes.
   * The patches check every byte they replace; if the game code is not the expected one nothing is changed.
 

@@ -35,7 +35,8 @@ bank; `$8DC00-$8DFFF` is the `test_` window and is not usable for the release se
 | `$8C72C-$8CDFF` prefix `sav_` | v1.2 HD save/load | gap after `p4_poly` code |
 | `$8F100-$8F7FF` prefix `sky_` | v1.2 sky + panel | hole inside the `snd_` window (`snd_core` state `$8F000`, tables `$8F800`, `$8FC00`); the sky tables do not fit the sample-bank tail because the floppy stage only accepts payload code below `$90000` |
 | `$8ECEA-$8EFFF` prefix `sky2_` | v1.2 sky/panel state | hole between `snd_core`'s code (ends `$8ECE9`) and its state (`$8F000`) |
-| free spare | anyone | `$8CE80-$8CFFF` (384 B), `$8D360-$8D3FF` (160), `$8D585-$8D5FF` (123), `$8D9D4-$8D9DF`, `$8DA3A-$8DBEF` (438), `$8DBF4-$8DBFF` (12), `$8BCA8-$8BFEF` (840, the site table's slack) |
+| `$8CBBE-$8CFFF` prefix `help_` | `help_pause` | pause-screen controls guide: code + list A `$8CBBE-$8CDF3`, font + list B `$8CE80-$8CFF8` (around `p4_poly`'s `$8CE00` blob; site `$260a`; note `work/notes/help.md`) |
+| free spare | anyone | `$8D360-$8D3FF` (160), `$8D585-$8D5FF` (123), `$8D9D4-$8D9DF`, `$8DA3A-$8DBEF` (438), `$8DBF4-$8DBFF` (12), `$8BCA8-$8BFEF` (840, the site table's slack) |
 | `$8D400-$8DBFF` prefix `hn_` | `hn_credit` `$8D400-$8D584`, `hn_hz` `$8DA00-$8DA39` + state `$8DBF0` | Hunter specific |
 | `$8D600-$8D9FF` prefix `jag_` | `jag_pad` code `$8D600-$8D815`, `jag_stick` code `$8D9C0-$8D9D3`, `jag_pad` state `$8D9E0-$8D9FF` | Jaguar pad (inside the `hn_` window, between `hn_credit` and `hn_hz`; `$8D816-$8D9BF` is free) |
 | `$8DC00-$8DFFF` prefix `test_` | loader self-tests | not in the release set |
@@ -63,6 +64,8 @@ can pick a free gap without guessing:
 | `$8C100` | `$8C1B0` | 177 | `p4_edge` |
 | `$8C400` | `$8C72B` | 812 | `p4_poly` code |
 | `$8CE00` | `$8CE7F` | 128 | `p4_poly` second blob |
+| `$8CBBE` | `$8CDF3` | 566 | `help_pause` code + list A |
+| `$8CE80` | `$8CFF8` | 377 | `help_pause` font + list B |
 | `$8D000` | `$8D35F` | 864 | `p4_poly` tables |
 | `$8D400` | `$8D584` | 389 | `hn_credit` |
 | `$8D600` | `$8D81B` | 540 | `jag_pad` code |

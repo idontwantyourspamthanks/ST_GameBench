@@ -26,6 +26,11 @@ What changed against the original release:
   J = use the parachute. Each key does exactly what clicking that icon in the item table does (same counts, same effect);
   an item you do not own does nothing. The keys are ignored in the item table, the log book, the game options and while
   paused, so typing a name or a log entry is not affected. With a Jaguar pad (STE and Falcon): # = H, 0 = G, 8 = J.
+- Controls guide on pause (new in v1.2, patch help_pause): press P (or the Jaguar pad's Pause) in the 3D view to pause and see a small
+  panel listing the controls: the stick and fire, the game's own keys (Return, Space, Esc, R, ?, L, A, F, C, P, cursor up/down), the new
+  one-key items and weapons (1-9, H, G, J) and, on machines with the pad ports, the Jaguar pad buttons. Press P again: the panel is
+  removed and the screen is restored exactly; the game world is not touched (pausing already stops it) and the mouse pointer is hidden
+  while the panel is up. It is only drawn into the 3D view's picture, so it works at 50 and 60 Hz, with the sky, and on the TT and Falcon.
 - TT (new in v1.1): a TT booting from hard disk was taken for a Falcon by the sound code, which then used the Falcon's
   rate. It now plays at the STE rate, as on the floppy.
 - Save and Load work on the hard disk (new in v1.2). PP's build had them switched off: its file hook ignored the
