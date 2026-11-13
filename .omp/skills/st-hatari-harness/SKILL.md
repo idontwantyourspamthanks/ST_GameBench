@@ -78,6 +78,7 @@ finally: h.close()        # ALWAYS: frees Xvfb, display claim, scratch game copy
 - **Writes and loads:** `w $addr $xx $yy`, `loadbin file $addr`, `savebin file $addr $len`.
 - **Long command lines are silently truncated**: a 300-char `loadbin` path just printed the usage text. Keep paths short.
 - **A debugger write to the operand of the instruction at PC is ignored** (68000 prefetch). Redirect a `jsr` from a breakpoint on an EARLIER instruction.
+- **A breakpoint armed while the CPU sits on its own address fires at once.** Arming a capture at the flip from the apply breakpoint (which stopped AT the flip) captured the apply instant, so "flips 1" compared nothing (huntab, mw1ab, abtest; fixed with a skip count of N+1, `reports/gate_audit.md`). Every gate needs a first-frame negative control.
 - `--trace gemdos` logs every file a loader opens, seeks and reads.
 - **Remote-control shortcuts:** `hatari-shortcut screenshot|savemem`, `hatari-event keypress N`, `hatari-option --cpuclock 16`. There is no `debug` shortcut; enter the debugger only via `:trace` breakpoints.
 
