@@ -42,7 +42,8 @@
 ; note:   1  R $13 radar        2  Help $62 overlay map ("?")      3  L $26 log book
 ; note:   4  A $1e drone        5  F $21 flare                     6  C $2e clock
 ; note:   7  cursor Up $48 zoom (held)                              9  cursor Down $50 zoom (held)
-; note:   `#`, 0, 8: unassigned.  The mouse-driven screens (drone map, game options, menus) still need the mouse.
+; note:   #  H $23 medical kit      0  G $22 fuel can      8  J $24 parachute    (keys of key_item; nothing happens without it)
+; note:   The mouse-driven screens (drone map, game options, menus) still need the mouse.
 JAG      equ    $8d9e0                  ; state block, a3 points here
 J_ST     equ    0                       ; b: 0 = not probed, 1 = pad ports present, $ff = no
 J_DIR    equ    4                       ; b: stick bits for $d0 (jag_stick), 0 = nothing
@@ -167,7 +168,7 @@ jag_chg:
         move.l  J_OLD1(a3),d6
         move.l  d3,J_OLD1(a3)
         eor.l   d3,d6
-        andi.l  #$000f0c0e,d6           ; only the bits that have a key
+        andi.l  #$000f0f0f,d6           ; only the bits that have a key
         move.w  J_OLD2(a3),d4
         move.w  d5,J_OLD2(a3)
         eor.w   d5,d4
@@ -217,4 +218,7 @@ jag_map:                                ; S1 bit (0-31) or 32 + S2 bit, ST scanc
         dc.b    2,$2e                   ; 6      -> C
         dc.b    17,$48                  ; 7      -> cursor Up
         dc.b    1,$50                   ; 9      -> cursor Down
+        dc.b    0,$23                   ; #      -> H  medical kit (key_item)
+        dc.b    8,$22                   ; 0      -> G  fuel can (key_item)
+        dc.b    9,$24                   ; 8      -> J  parachute (key_item)
         dc.b    $ff,0

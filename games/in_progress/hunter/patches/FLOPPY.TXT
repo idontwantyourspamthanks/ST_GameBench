@@ -19,6 +19,9 @@ What changed
   * Atari Jaguar pad (STE and Falcon enhanced joystick ports): the d-pad steers like the joystick, A or B is fire;
     C = Return, Option = Space, Pause = P, * = Esc, 1 = R, 2 = Help, 3 = L, 4 = A, 5 = F, 6 = C, 7/9 = cursor up/down.
     Other machines run exactly as before.
+  * One-key items and weapon keys: in the 3D view 1-9 (top row or keypad) select the nine weapons of the item table's weapon
+    row, H = medical kit, G = fuel can, J = parachute; each does what clicking that icon does (an item you do not own does
+    nothing); ignored in the item table, log book, game options and pause.  Jaguar pad: # = H, 0 = G, 8 = J.
   * The title screen shows a small, dim "v@VERSION@ enhanced by dad_prg" at the bottom; nothing else on it changes.
   * The patches check every byte they replace; if the game code is not the expected one nothing is changed.
 

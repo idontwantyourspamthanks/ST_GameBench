@@ -21,8 +21,23 @@ What changed against the original release:
   like the joystick and A or B is fire. Keys: C = Return, Option = Space, Pause = P, * = Esc, 1 = R, 2 = Help, 3 = L,
   4 = A, 5 = F, 6 = C, 7/9 = cursor up/down. Menus stay mouse-driven. Each button is read every 80 ms, so a very
   short tap can be missed. Machines without the ports (ST, Mega ST, Mega STE, TT) run exactly as before, with no cost.
+- One-key items and weapon keys (new in v1.2, patch key_item): in the 3D view, 1-9 (top row or keypad) select the nine weapons
+  in the order of the weapon row of the item table (1 = the first, 9 = the last); H = use a medical kit, G = use a fuel can,
+  J = use the parachute. Each key does exactly what clicking that icon in the item table does (same counts, same effect);
+  an item you do not own does nothing. The keys are ignored in the item table, the log book, the game options and while
+  paused, so typing a name or a log entry is not affected. With a Jaguar pad (STE and Falcon): # = H, 0 = G, 8 = J.
 - TT (new in v1.1): a TT booting from hard disk was taken for a Falcon by the sound code, which then used the Falcon's
   rate. It now plays at the STE rate, as on the floppy.
+- Save and Load work on the hard disk (new in v1.2). PP's build had them switched off: its file hook ignored the
+  write and always read, so "Save Game" wrote nothing and then read the file back over the game's memory, and the slot
+  list showed PP's placeholder names ("Do not use / this / for / game / state / saving").
+  Now the six slots and the save directory are ordinary files in the game's FILES folder: SAVES.DIR (224 bytes) and
+  SLOT1.SAV ... SLOT6.SAV (51,328 bytes each). They are created on the first save when missing; names are typed in the
+  game as before. A save that fails (disk full, write protected, no FILES folder) says so and leaves the old save and
+  the slot list untouched; a slot file that is damaged or missing is refused with a message instead of being loaded.
+  Loading restores the game exactly to the saved state. Each save is written through to the disk before the game
+  continues, so switching off straight after a save keeps it. (Init Disk was not tested.)
+  Only the hard-disk build: the floppy release keeps its own loader and saving, which is unchanged.
 - Version line: the title screen shows a small, dim "v@VERSION@ enhanced by dad_prg" at the bottom, so this release can not be
   mistaken for the original. Nothing else on the screen changes.
 - Every patch checks the original bytes it replaces first. If anything is not as
@@ -35,7 +50,8 @@ How it is delivered:
   If FILES\P is missing the game starts unpatched.
 
 Requirements and usage are as in README.TXT (1 MB RAM minimum).
-Run START.TOS from a hard disk as before (PP's HDDRIVER / AHDI setup).
+Run START.TOS from a hard disk as before (PP's HDDRIVER / AHDI setup).  Saves go to FILES\SAVES.DIR and FILES\SLOT1..6.SAV
+in the game's folder; give the disk a few seconds after saving before switching off (HDDRIVER writes lazily).
 Tested on Hatari: STE (TOS 1.62) at 1 MB and 4 MB, Mega STE (TOS 2.06) at 4 MB, ST (TOS 1.04) at 1 MB, TT (TOS 3.06) at 4 MB;
 the Jaguar pad on the STE (HD and floppy) and the Falcon (TOS 4.04, floppy).
 Not tested on real hardware.

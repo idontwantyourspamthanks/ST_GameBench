@@ -139,3 +139,10 @@ every other file call is byte-for-byte PP's.
 a machine switched off after a save could lose it: measured 0 of 3 durable when Hatari was killed 1 s after the save, and 0 of 2 after
 20 s. `sav_sync` calls GEMDOS `Dfree` right after the loader's `Fclose` (still inside the loader's TOS world) on writes only - it reads
 the whole FAT, which evicts the dirty buffers. After it: 10 of 10 durable at 1 s, 5 s and 20 s (`work/notes/save.md` section 3).
+
+## key_item: one-key items and weapon keys (`default: no`; HD and floppy; gates passed, see `work/notes/keys.md`)
+
+Source `patches/key_item.s` (site `$a534`, 6 B; blob `$8D820`, prefix `key_` = `$8D816-$8D9BF`). The game's key dispatch (`$b0b6`, only while `$93` bit 7 = the 3D loop) looks a key's ASCII up in an 8-entry table (`$a516`: c r l m f a ~); a miss
+goes `jmp $2686` at `$a534`. That jump now goes to a second table: `1`-`9` (top row and keypad) = weapons 0-8, `h` = medical kit (item 14), `g` = fuel can (15), `j` = parachute (18). A hit loads d0 = item and enters the game's own
+ownership test and icon click path at `$a540`, so the effect is that of clicking the icon in the item table (RAM compared key vs click for every key, owned and not owned). Keys do nothing in the item table, log book, game options
+or while paused. `jag_pad.s` maps the Jaguar pad's spare buttons `#`, `0`, `8` to h, g, j (mask `$000f0f0f`; the table above that says "unassigned" predates this). Tool: `tools/hunkeys.py`.
