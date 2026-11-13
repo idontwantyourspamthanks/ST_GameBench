@@ -1,5 +1,5 @@
 ; name: sav_sync
-; default: no
+; default: yes
 ; hdonly: yes
 ; requires: sav_hook
 ; site: $c02d4

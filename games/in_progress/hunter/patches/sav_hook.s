@@ -1,7 +1,7 @@
 ; name: sav_hook
-; default: no
+; default: yes
 ; hdonly: yes
-; requires: sav_open
+; requires: sav_open sav_sync
 ; site: $d542
 ; orig: 4ef900000150
 ; note: Working in-game Save and Load on the HD build (idea 10 of reports/hunter_ideas.md; work/notes/save.md).  The game's disk layer is called through

@@ -187,9 +187,11 @@ A read of a missing file is still an error (the game shows the file-missing dial
 | valid slot loads | STE 1.62 1 MB | **PASS** |
 | all-games image (`AtariST_enhanced_games_2026-11-12.img`, HUNTER\\ folder, ACSI + HDDRIVER) | -- | **PASS**: save into `HUNTER\\FILES`, cold boot the image again, load, all ranges equal |
 | floppy build (Paper Bag disk, crack's own loader) | STE 1.62 1 MB | save + load: all restored ranges equal after the load, `13` = 51,328 B and `0F` = 224 B on the disk |
-| TT 3.06 (`--mmu true --monitor vga --cpuclock 32`) | -- | **not reached**: the TT never passed the HW-screen crop gate in 400 s (harness gate, not the patch: the TT screen has no border); needs the `hunt_ttf.py` blind route |
+| round trip | TT 3.06 4 MB (`--mmu true --monitor vga --cpuclock 32`) | **PASS** (TT boot path of `hunt_ttf.py`: key at the HW screen, title crop gate, then the menu clicks) |
+| durability: save, SIGKILL at +1 s, 5 runs | TT 3.06 4 MB | **5/5** (2 + 3) |
+| full disk (image filled to 20 KB free, a valid slot 1 already saved) | STE 1.62 1 MB | **PASS**: message shown, `SAVES.DIR` byte-identical, `SLOT1.SAV` unchanged |
 | `huntab --only sav_hook sav_open sav_sync --points 3 --flips 2 6 --lock` (post-fit tool) | snapshots `1mb_foot_stand`, `1mb_car_drive` | **IDENTICAL** |
-| Init Disk, full disk, cold-boot persist | -- | see the notes at the end of this section |
+| Init Disk, cold-boot persist | -- | see the notes at the end of this section |
 
 
 ### Round trip (STE 1.62, 1 MB, ACSI image + HDDRIVER, build with sav_hook + sav_open)
@@ -272,10 +274,13 @@ loads - mission page with the saved name, then the 3D view, position (40526, 993
   ("Fat problem while decoding" from mtools) in two of three runs, even after 50 s of idle. HDDRIVER flushes lazily and partially; the
   data is the driver's, not the game's (the floppy writes sector by sector with no cache). Needs a longer settle or a second write
   before the image is read; the gate tool now snapshots the image only when fsck finds it consistent.
-- **Not run**: full-disk save, and the cold-boot `persist` cell (its first run matched the saved position; the image read after shutdown
+- **Not run**: the cold-boot `persist` cell (its first run matched the saved position; the image read after shutdown
   was the flaky part, now that `sav_sync` flushes it is worth one clean re-run).
-- **TT 3.06**: not reached - the harness's HW-screen crop gate does not match a TT screenshot (no border), and it timed out at 400 s. The
-  three patches are plain 68000 code and the D15R code is identical on F5 (`verify`), so [INFERENCE] it applies, but that is unproven.
+- **TT 3.06**: round trip and the +1 s kill test pass (table above). The TT needs `boot_tt()` in `tools/huntsave.py` (the STE path's
+  HW-screen crop gate cannot match a borderless TT screenshot); everything after the title uses the same gates.
+- **A refused save on a full disk leaves a partial SLOTn.SAV** (18,432 B in the test): Fcreate made the file, the write then failed.
+  It is unreferenced (the directory is not updated, so the slot stays "free"), and a later save to that slot rewrites it from offset 0
+  to the full 51,328 bytes. Nothing reads it until the directory says the slot is used.
 - **Floppy cell**: `huntsave.py floppy` reports PASS - the saved game loads back with every restored range equal, and the disk holds `13`
   = 51,328 B and `0F` = 224 B. The `fsck` line it prints is run on a copy taken while Hatari still had the `.st` open ("Both FATs appear to
   be corrupt" is that torn copy); the authoritative check is the one in `floppy.md`, run after eject.

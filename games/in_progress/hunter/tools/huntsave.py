@@ -249,12 +249,45 @@ def rig(a, **kw) -> Rig:
                memsize_kb=a.mem, extra=extra, **kw)
 
 
+def boot_tt(h: Rig) -> None:
+    """TT/Falcon boot path of tools/hunt_ttf.py: no HW-screen crop gate (the TT screenshot has no border), a key at the HW screen,
+    then the same title/menu gates the STE path uses (stharness shifts the boxes for 640-wide TT shots)."""
+    time.sleep(10)
+    h.keypress(57)                                   # skip the HW-screen countdown
+    if not h.wait_stage("title2", 150, 2):
+        raise RuntimeError("TT: the animated title was not reached")
+    time.sleep(1.5)
+    h.key("space", 0.3)
+    for stage, t in (("main", 40), ("games", 30), ("name", 30), ("mission", 40), ("game", 60)):
+        if stage == "games":
+            h.goto(*h.START_XY, home_xy=h.HOME_XY)
+            h.click()
+        elif stage == "name":
+            h.goto(*h.ACTION_XY, home_xy=h.HOME_XY)
+            h.click()
+        elif stage == "mission":
+            for c in "bench":
+                h.key(c, 0.15)
+                time.sleep(0.3)
+            h.click()
+        elif stage == "game":
+            h.click()
+        if not h.wait_stage(stage, t, 2):
+            raise RuntimeError(f"TT: screen '{stage}' not reached")
+    time.sleep(1.0)
+    if not h.in_game():
+        raise RuntimeError("TT: the 3D loop is not running")
+
+
 def boot(a, **kw) -> Rig:
     h = rig(a, **kw)
     h.STAGES = dict(h.STAGES)
     stage = h._stage
     h._stage = lambda s, record, wait, timeout=120: stage(s, record, wait, max(timeout, 400))
-    h.boot_to_game()
+    if a.machine == "tt":
+        boot_tt(h)
+    else:
+        h.boot_to_game()
     return h
 
 
@@ -487,7 +520,8 @@ def cmd_errors(a) -> int:
         print("read-only slot: message shown; SAVES.DIR after the attempt:", None if dr is None else parse_dir(dr))
         ok &= dr is None or not parse_dir(dr)[3][0]
     if a.case == "full":
-        img = make_image(a, d, "saverr_full", free_left=20000)
+        dr0 = dir_bytes([0], ["saved", "free", "free", "free", "free", "free"])
+        img = make_image(a, d, "saverr_full", {"SAVES.DIR": dr0, "SLOT1.SAV": good}, free_left=20000)
         h = boot(a, image=str(img))
         try:
             h.open_list("save")
@@ -499,10 +533,11 @@ def cmd_errors(a) -> int:
             h.item(1, 3)
         finally:
             img = settle_and_close(h)
-        dr, f2 = read_file(img, "SAVES.DIR"), read_file(img, "SLOT2.SAV")
-        print("full disk: message shown; SAVES.DIR:", None if dr is None else parse_dir(dr),
-              "| SLOT2.SAV:", None if f2 is None else len(f2), "B")
-        ok &= dr is None or not parse_dir(dr)[1][0]
+        dr, f1, f2 = read_file(img, "SAVES.DIR"), read_file(img, "SLOT1.SAV"), read_file(img, "SLOT2.SAV")
+        print("full disk: message shown; SAVES.DIR unchanged:", dr == dr0, None if dr is None else parse_dir(dr),
+              "| SLOT1.SAV unchanged:", f1 == good, None if f1 is None else len(f1),
+              "| SLOT2.SAV (the refused new one):", None if f2 is None else len(f2), "B")
+        ok &= dr == dr0 and f1 == good and (f2 is None or not any(parse_dir(dr0)[1][0] for _ in [0]))
     if a.case == "init":
         img = make_image(a, d, "initdisk", {"SAVES.DIR": dir_bytes([0, 1, 2, 3, 4, 5], ["a", "b", "c", "d", "e", "f"]),
                                             "SLOT1.SAV": good})

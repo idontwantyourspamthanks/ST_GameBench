@@ -1,5 +1,5 @@
 ; name: sav_open
-; default: no
+; default: yes
 ; hdonly: yes
 ; site: $c0268
 ; orig: 3f3c003d4e41508f
