@@ -31,6 +31,8 @@ What changed against the original release:
   one-key items and weapons (1-9, H, G, J) and, on machines with the pad ports, the Jaguar pad buttons. Press P again: the panel is
   removed and the screen is restored exactly; the game world is not touched (pausing already stops it) and the mouse pointer is hidden
   while the panel is up. It is only drawn into the 3D view's picture, so it works at 50 and 60 Hz, with the sky, and on the TT and Falcon.
+- Amiga dashboard (new in v1.2, patch sky2_pnl; ST, Mega ST, STE and Mega STE with 2 MB or more): the dashboard uses the Amiga version's
+  colours and art. With less than 2 MB, and on the TT and Falcon, the dashboard is unchanged.
 - TT (new in v1.1): a TT booting from hard disk was taken for a Falcon by the sound code, which then used the Falcon's
   rate. It now plays at the STE rate, as on the floppy.
 - Save and Load work on the hard disk (new in v1.2). PP's build had them switched off: its file hook ignored the

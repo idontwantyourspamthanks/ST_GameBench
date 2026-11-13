@@ -1,5 +1,5 @@
 ; name: sky_vbl
-; default: no
+; default: yes
 ; site: $c5f0
 ; orig: 007c070048e7fff8
 ; requires: sky_fill sky_clr sky_fdst sky_ldst sky2_aciax sky_vblx
@@ -15,10 +15,13 @@
 ; note: SKY_CFG (byte at SKY+28): bit0 sky bands + solid sea, bit1 dawn/dusk tint, bit2 lit panel.  SKY_ST (SKYV+1): 0 = not probed,
 ; note: 1..120 = counting lines, $7f = on, $ff = off.  SKY_SMASK (SKY+29): bit i = band i (0 = top .. 5 = the horizon/sea line) is
 ; note: written by a line-synchronous handler (exact, one line of CPU each) instead of a direct one (see visuals.md, jitter).
+; note: SKY_CFG bit 3 (Amiga panel, work/notes/panel.md): set here at the first VBL when memcntlr ($424) says 2 MB or more (PP's START lowers phystop $42e to $80000).  sky2_pnl then puts the Amiga
+; note: bitmap into the HUD master and sets V_PAN; from then on every 3D-view frame arms the terminal interrupt (also a frame without a sky:
+; note: horizon 0, no bands) and the panel palette is the Amiga's 16 colours at the panel level (sky2_pnl `pnl_pal`).
 SKY     equ     $8f100                  ; code: window $8F100-$8F7FF
 SKYV    equ     $8ecea                  ; state: window sky2_ $8ECEA-$8EFFF (reserved and zeroed by sky2_aciax's `data:` line)
-CFGDEF  equ     5                       ; default options: sky + lit panel (tint off)
-SMDEF   equ     $20                     ; default: only the horizon line is line-synchronous
+CFGDEF  equ     7                       ; default options: sky + dawn/dusk tint + lit panel
+SMDEF   equ     $3f                     ; default: all six bands line-synchronous (exact)
 MODE    equ     $13e                    ; (a5) screen mode set by $5eae: 3 = the 3D view (140-row window + 60-row panel)
 LEVEL   equ     $18c                    ; (a5) current palette brightness 0..15 (fade $66ec)
 AMBIENT equ     $18a                    ; (a5) brightness of the hour (table $c42a: 7 night .. 15 day)
@@ -41,6 +44,7 @@ V_PNEED equ     11                      ; non-zero: the panel needs its own pale
 V_DIRTY equ     12
 V_C1    equ     13                      ; Timer B count to the first interrupt
 V_C2    equ     14                      ; count from the first to the second
+V_PAN   equ     15                      ; non-zero: the HUD master holds the Amiga panel (sky2_pnl): every 3D-view frame gets the panel palette
 V_RR    equ     16                      ; round-robin slot offset (0, 8, 16, 24)
 V_BASE  equ     18                      ; video base seen at the last VBL
 V_VEC   equ     22                      ; first Timer B handler of the frame
@@ -107,6 +111,11 @@ sky_vbl:
         move.b  #ST_ON,V_ST(a4)
         move.w  #-1,V_KEY(a4)
         st      V_PALD(a4)
+        moveq   #$a,d0                  ; memcntlr $424 (TOS's copy of the memory controller byte; PP's START lowers phystop $42e to $80000):
+        and.b   $424.w,d0               ; bits 3-2 and 1-0 = the two bank sizes (1 = 512K, 2 = 2M): bit 3 or bit 1 = 2 MB or more
+        beq     .out
+        lea     sky_cfg(pc),a0
+        ori.b   #8,(a0)
         bra     .out
 
 .on:    tst.b   V_PALD(a4)              ; the game wrote the palette, or the panel palette was loaded last frame
@@ -141,8 +150,12 @@ sky_vbl:
         clr.w   V_SLOT+14(a4)
         clr.w   V_SLOT+22(a4)
         clr.w   V_SLOT+30(a4)
+        bra     .out                    ; (the sky's own test below, `V_H = 0`, was enough for the sky; the Amiga panel must not arm here)
 .m3:    move.w  V_H(a4),d6
+        bne.s   .hv
+        tst.b   V_PAN(a4)               ; no sky on this frame: the Amiga panel still needs its palette split
         beq     .out
+.hv:
         move.w  LEVEL(a5),d7
         moveq   #15,d5                  ; ambient level: 15 under a flare ($661c), else the hour's
         btst    #0,$9c(a5)
@@ -188,6 +201,8 @@ sky_vbl:
         lea     V_CNT+1(a4),a3
         btst    #0,sky_cfg(pc)
         beq.s   .term
+        tst.w   d6
+        beq.s   .term                   ; no horizon: no bands (panel only)
         moveq   #5,d1
 .bl:    lsr.w   V_SW(a4)                ; C = this band is line-synchronous
         scs     V_SF(a4)
@@ -312,7 +327,13 @@ sky_colours:
         bcc.s   .p
         move.b  sky_ptab(pc,d7.w),d3
 .p:     clr.b   V_PNEED(a4)
-        btst    #2,sky_cfg(pc)
+        tst.b   V_PAN(a4)
+        beq.s   .lit
+        btst    #3,sky_cfg(pc)
+        beq.s   .lit
+        jsr     $8ed84.l                ; sky2_pnl pnl_pal: V_PNEED and V_PPAL = the Amiga panel colours at level d3
+        bra.s   .x
+.lit:   btst    #2,sky_cfg(pc)
         beq.s   .x
         cmp.w   d7,d3
         beq.s   .x

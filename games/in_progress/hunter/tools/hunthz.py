@@ -207,7 +207,7 @@ def cmd_rate(a):
     names = a.set if a.set is not None else BASE_SET + ["hn_hz"]
     for hz in a.hz:
         for mhz in a.mhz:
-            t = trace(a.snapshot, names, hz, mhz, int(a.secs * hz) if a.secs else a.vbls, a.hold, "rate_" + "_".join(names))
+            t = trace(a.snapshot, names, hz, mhz, int(a.secs * hz) if a.secs else a.vbls, a.hold, "rate_" + "_".join(names), pokes=a.pokes)
             rows = t["rows"]
             if len(rows) < 3:
                 print(f"{a.snapshot} {hz} Hz {mhz} MHz: only {len(rows)} loop tops")
@@ -411,6 +411,7 @@ def main():
         p.add_argument("--ta", type=float, default=2.0)
         p.add_argument("--tb", type=float, default=9.0)
         p.add_argument("--set", nargs="*", default=None)
+        p.add_argument("--pokes", nargs="*", default=None, help="debugger lines applied with the patch set (e.g. the Amiga panel install of tools/pnl_gate.py)")
     dp = sub.add_parser("drv")
     dp.add_argument("--hz", nargs="*", type=int, default=[50, 60])
     dp.add_argument("--vbls", type=int, default=600)

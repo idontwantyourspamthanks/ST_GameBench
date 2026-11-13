@@ -38,6 +38,7 @@ HERE = Path(__file__).resolve().parent
 GAME = HERE.parent
 sys.path.insert(0, str(HERE))
 from amiga_extract import DEFAULT_ADF, PAL_CLOCK, load_sound  # noqa: E402
+import pnl_data  # noqa: E402
 
 BANK = 0x90000
 VERSION = 2
@@ -154,6 +155,15 @@ def build(adf_path: Path) -> tuple[bytes, dict]:
             bank[OFF_VTAB + k * 256 + u] = vtab_entry(k, u)
     info = dict(total=len(bank), samples={i: a for i, a in addr.items()}, effects=len(effects), k4=K4,
                 env2=lv, tab=tab)
+    # the Amiga dashboard (patches/sky2_pnl.s, work/notes/panel.md): the packed panel bitmap + its 16 colours at PANDATA
+    blk = pnl_data.panel_block(adf_path)
+    off = pnl_data.PANDATA - BANK
+    if len(bank) > off:
+        raise SystemExit(f"the sample bank ({len(bank)} B) overlaps the panel block at ${pnl_data.PANDATA:x}")
+    if off + len(blk) > 0xAF000 - BANK:
+        raise SystemExit(f"the panel block ({len(blk)} B at ${pnl_data.PANDATA:x}) exceeds $AEFFF")
+    bank += bytes(off - len(bank)) + blk
+    info["panel"] = (pnl_data.PANDATA, len(blk))
     return bytes(bank), info
 
 
@@ -166,6 +176,7 @@ def main() -> None:
     bank, info = build(a.adf)
     if len(bank) > 126976:
         raise SystemExit(f"bank {len(bank)} B exceeds $90000..$AEFFF (126976 B)")
+    print(f"panel block {info['panel'][1]} B at ${info['panel'][0]:x}")
     a.out.parent.mkdir(parents=True, exist_ok=True)
     a.out.write_bytes(bank)
     print(f"wrote {a.out}: {len(bank)} bytes (${BANK:x}..${BANK + len(bank) - 1:x}), K4={K4}")

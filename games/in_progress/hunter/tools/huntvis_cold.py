@@ -115,7 +115,7 @@ def cmd_hd(a):
     orig = hmod.build_hd
     hmod.build_hd = lambda img, **k: orig(img, game=GAME / a.game, **k)
     h = hmod.Hunter(machine=a.machine, tos=TOS[a.tos] if a.tos else MACHINE_TOS[a.machine], memsize_kb=a.mem,
-                    extra=["--mmu", "true"] if a.machine == "tt" else [])
+                    extra=["--mmu", "true", "--monitor", "vga", "--cpuclock", "32"] if a.machine == "tt" else [])
     try:
         harden(h)
         if a.machine in ("st", "megast"):
@@ -159,7 +159,7 @@ def cmd_floppy(a):
     from huntfloppy import HunterFloppy
     default_tos = {"ste": "1.62", "st": "1.04", "falcon": "4.04", "tt": "3.06", "megaste": "2.06"}
     h = HunterFloppy(GAME / a.disk1, None, drives=1, machine=a.machine, tos=TOS[a.tos or default_tos[a.machine]], memsize_kb=a.mem,
-                     extra=["--mmu", "true"] if a.machine == "tt" else [], fastfdc=a.fastfdc)
+                     extra=["--mmu", "true", "--monitor", "vga", "--cpuclock", "32"] if a.machine == "tt" else [], fastfdc=a.fastfdc)
     harden(h)
     try:
         ok = h.boot_floppy("none", blind=a.blind, pb_key_at=a.pb_at)

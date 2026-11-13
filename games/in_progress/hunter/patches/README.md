@@ -34,7 +34,8 @@ bank; `$8DC00-$8DFFF` is the `test_` window and is not usable for the release se
 | `$8C1B1-$8C3FF` prefix `tb_` | `tb_flip`, `tb_frame`, `tb_vbl` | triple buffering (note `work/notes/triple.md`) |
 | `$8C72C-$8CDFF` prefix `sav_` | v1.2 HD save/load | gap after `p4_poly` code |
 | `$8F100-$8F7FF` prefix `sky_` | v1.2 sky + panel | hole inside the `snd_` window (`snd_core` state `$8F000`, tables `$8F800`, `$8FC00`); the sky tables do not fit the sample-bank tail because the floppy stage only accepts payload code below `$90000` |
-| `$8ECEA-$8EFFF` prefix `sky2_` | v1.2 sky/panel state | hole between `snd_core`'s code (ends `$8ECE9`) and its state (`$8F000`) |
+| `$8ECEA-$8EFFF` prefix `sky2_` | v1.2 sky/panel state | hole between `snd_core`'s code (ends `$8ECE9`) and its state (`$8F000`); state `$8ECEA-$8ED7F`, `sky2_pnl` code `$8ED80-$8EE9D` (Amiga dashboard, `default: no`; free `$8EE9E-$8EFFF`) |
+| `$AE4E0-$AEF11` (in the sample bank) | `pnl_data.py` via `snd_build.py` | the packed Amiga panel block `'HPAN'` (2,610 B), read with the bank (HD `FILES\P`, floppy `HNSOUND.BIN`); work/notes/panel.md |
 | `$8CBBE-$8CFFF` prefix `help_` | `help_pause` | pause-screen controls guide: code + list A `$8CBBE-$8CDF3`, font + list B `$8CE80-$8CFF8` (around `p4_poly`'s `$8CE00` blob; site `$260a`; note `work/notes/help.md`) |
 | free spare | anyone | `$8D360-$8D3FF` (160), `$8D585-$8D5FF` (123), `$8D9D4-$8D9DF`, `$8DA3A-$8DBEF` (438), `$8DBF4-$8DBFF` (12), `$8BCA8-$8BFEF` (840, the site table's slack) |
 | `$8D400-$8DBFF` prefix `hn_` | `hn_credit` `$8D400-$8D584`, `hn_hz` `$8DA00-$8DA39` + state `$8DBF0` | Hunter specific |

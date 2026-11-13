@@ -37,6 +37,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import re
 import subprocess
 import sys
@@ -81,13 +82,13 @@ def tag_for(names: list[str]) -> str:
     return f"{names[0][:14]}+{len(names)}-{hashlib.md5('+'.join(sorted(names)).encode()).hexdigest()[:6]}"
 
 
-def make_live(names: list[str]) -> str | None:
+def make_live(names: list[str], patchdir: str | None = None) -> str | None:
     if not names:
         return None
-    live = WORK / tag_for(names) / "live"
+    live = WORK / (tag_for(names) + ("_" + Path(patchdir).parent.name if patchdir else "")) / "live"
     live.parent.mkdir(parents=True, exist_ok=True)
     subprocess.run([sys.executable, str(HERE / "huntpatch.py"), "live", "--only", *names, "--out", str(live)], check=True,
-                   cwd=GAME, stdout=subprocess.DEVNULL)
+                   cwd=GAME, stdout=subprocess.DEVNULL, env={**os.environ, **({"HUNT_PATCHDIR": patchdir} if patchdir else {})})
     # one `w` line per <= 40 bytes: Hatari truncates debugger lines of ~240 characters silently
     jp = Path(str(live) + ".json")
     spec = json.loads(jp.read_text())
@@ -246,6 +247,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--only", nargs="*", default=[], help="patch set under test ([] = null patch: a self-test)")
     ap.add_argument("--base", nargs="*", default=[], help="patch set the comparison base uses (default: none)")
+    ap.add_argument("--base-patches", default=None, help="patch directory the --base set is built from (default: this tree's patches/)")
     ap.add_argument("--snapshot", nargs="*", default=DEFAULT_SNAPS)
     ap.add_argument("--points", type=int, default=3)
     ap.add_argument("--flips", nargs="*", type=int, default=[1, 6])
@@ -256,8 +258,8 @@ def main():
     a = ap.parse_args()
     WORK.mkdir(exist_ok=True)
     flips = sorted(set(a.flips) | {1})
-    btag, ptag = tag_for(a.base), tag_for(a.only)
-    blive, plive = make_live(a.base), make_live(a.only)
+    btag, ptag = tag_for(a.base) + ("_" + Path(a.base_patches).parent.name if a.base_patches else ""), tag_for(a.only)
+    blive, plive = make_live(a.base, a.base_patches), make_live(a.only)
     ok = True
     rows = []
     for sn in a.snapshot:

@@ -44,7 +44,7 @@ sys.path.insert(0, str(BENCH / "tools"))
 from pp_depack import depack as pp_depack_program  # noqa: E402
 from fire_depack import depack_fire  # noqa: E402
 
-PATCHDIR = ROOT / "patches"
+PATCHDIR = Path(os.environ["HUNT_PATCHDIR"]) if os.environ.get("HUNT_PATCHDIR") else ROOT / "patches"   # the env var: gates that compare against an older patch tree
 BUILD = ROOT / "build"
 VASM = "vasmm68k_mot"
 TAILDUMP = ROOT / "work" / "dumps" / "boot" / "ram_tail_1mb.bin"    # 1 MB STE, TOS 1.62, at START's final `jmp $800.w`
@@ -86,7 +86,6 @@ PREFIX_RANGES = {                        # blob orgs allowed per patch-name pref
     "hn_": (0x8D400, 0x8DBFF),           # Hunter-specific patches (release credit); free between p4_poly's tables and test_
     "jag_": (0x8D600, 0x8D9FF),          # Jaguar pad (jag_pad poll + state, jag_stick merge); inside the hn_ window, between hn_credit and hn_hz
     "key_": (0x8D816, 0x8D9BF),          # one-key items / weapon keys (key_item): the free gap between jag_pad's code and jag_stick's blob
-    "help_": (0x8CBBE, 0x8CFFF),          # pause-screen controls guide (help_*): free gaps $8CBBE-$8CDFF and $8CE80-$8CFFF (p4_poly's $8CE00 blob between)
     "pal_": (0x8C014, 0x8C0FF),          # v1.2 STE 4096-colour palette: the gap between p4_ikbd and p4_edge code
     "tb_": (0x8C1B2, 0x8C3FF),           # v1.2 triple buffering: the gap after p4_edge code (work/notes/triple.md)
     "sav_": (0x8C72C, 0x8CDFF),          # v1.2 HD save/load: the gap after p4_poly code
@@ -1215,14 +1214,22 @@ def cmd_build_floppy(patches, fps, out: Path, samples: bytes | None, zip_out: Pa
         ch = fat.chain(fat.first_cluster("HNSOUND.BIN"))
         if ch != list(range(ch[0], ch[0] + len(ch))):
             raise SystemExit("HNSOUND.BIN is not contiguous on disk 1")
-        equ.update(SND_LSN=(fat.data + (ch[0] - 2) * fat.cl) // 512, SND_SECS=(len(samples) + 511) // 512, SND_SPT=spt)
-        stage2 = floppy_stage(equ)
-        assert len(stage2) == len(stage)
-        stage, tos = stage2, build_hunter_tos(stage2, IMG_END)
-        free = build_disk1(d1p, tos, extra, tracks, spt)
-        fat = Fat12(d1p.read_bytes())
-        ch2 = fat.chain(fat.first_cluster("HNSOUND.BIN"))
-        assert (fat.data + (ch2[0] - 2) * fat.cl) // 512 == equ["SND_LSN"], "bank moved between passes"
+        equ.update(SND_SECS=(len(samples) + 511) // 512, SND_SPT=spt)
+        # the stage's size depends on the two numbers (vasm picks short immediates), and the stage's size can move the bank on the disk:
+        # iterate to a fixed point
+        for _ in range(5):
+            equ["SND_LSN"] = (fat.data + (ch[0] - 2) * fat.cl) // 512
+            stage = floppy_stage(equ)
+            tos = build_hunter_tos(stage, IMG_END)
+            free = build_disk1(d1p, tos, extra, tracks, spt)
+            fat = Fat12(d1p.read_bytes())
+            ch = fat.chain(fat.first_cluster("HNSOUND.BIN"))
+            if ch != list(range(ch[0], ch[0] + len(ch))):
+                raise SystemExit("HNSOUND.BIN is not contiguous on disk 1")
+            if (fat.data + (ch[0] - 2) * fat.cl) // 512 == equ["SND_LSN"]:
+                break
+        else:
+            raise SystemExit("the stage and the bank position did not settle")
     man = {"payload_base": IMG_BASE, "payload_len": len(img), "payload_file": len(payload), "marker": MARKER, "flags": FLAGS,
            "stage_len": len(stage), "geometry": geometry, "free_bytes": free, "cache_base": IMG_END, "used": _used,
            "bank": [SAMPLE_BASE, len(samples)] if samples is not None else None,
