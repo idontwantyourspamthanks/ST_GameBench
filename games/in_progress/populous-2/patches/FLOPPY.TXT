@@ -1,6 +1,19 @@
 Populous 2 (Atari ST) - patched FLOPPY build, {DATE}
 Release v@VERSION@ enhanced by dad_prg
 
+WHICH VERSION TO USE (three builds of this release)
+  Hard disk (folder POPS2)   ST, STE, Mega STE, TT, Falcon; 2 MB RAM or more.
+                             In-game SAVE/LOAD to NAME.GAM files in FILES\
+                             (not on the Falcon: use HAGA's statesave there).
+  Floppy (Populous2_boot.st) ST, STE, Mega STE; 2 MB RAM or more.
+                             Saves go to a separate save disk (included).
+                             Does not start on a TT or Falcon.
+  Low-RAM floppy             ST, STE, Mega STE, Falcon; TT at 8 MHz only.
+  (Populous2_lowram.st)      512 KB RAM or more (the plain-ST sprite speed-up
+                             needs 1 MB). Saves on the game disk, 3 slots.
+  All three have the same enhancements (fixed 6.25 turns/s speed, 60 Hz,
+  faster sprites and pointer, tooltips, no manual question).
+
 One bootable 720K disk with the whole game: the patched RUNME in AUTO\ (TOS
 runs it at boot), HAGA, the STE cover picture and FILES\ (the game data).
 
