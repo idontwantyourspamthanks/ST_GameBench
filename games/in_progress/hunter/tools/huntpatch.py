@@ -92,6 +92,7 @@ PREFIX_RANGES = {                        # blob orgs allowed per patch-name pref
     "sav_": (0x8C72C, 0x8CDFF),          # v1.2 HD save/load: the gap after p4_poly code
     "sky_": (0x8F100, 0x8F7FF),        # v1.2 sky and panel: the hole inside snd_'s window (snd state $8f000.., tables $8f800..)
     "sky2_": (0x8ECEA, 0x8EFFF),      # v1.2 sky/panel state: the hole between snd_core's code (ends $8ece9) and its state ($8f000)
+    "fdc_": (0x8D360, 0x8D3FF),       # v1.2 floppy loader hook (fdc_dma): the spare gap between p4_poly's tables and hn_credit
 }
 
 
@@ -431,6 +432,7 @@ class Patch:
         self.phase = None
         self.requires = []        # names of patches that must be selected with this one (one feature over several splice sites)
         self.hdonly = False       # `; hdonly: yes`: the site only exists in the HD build; build/verify --floppy skip the patch
+        self.floppyonly = False   # `; floppyonly: yes`: the site only exists in the Paper Bag floppy's loader; the HD build skips the patch
         self.load = None          # deferred: (game file, RAM destination of that file)
         self.data = []            # (addr, len) zero-init reservations
         self.segments = []        # (org, lines)
@@ -459,6 +461,7 @@ class Patch:
                 elif k == "phase": self.phase = v.lower()
                 elif k == "requires": self.requires = v.split()
                 elif k == "hdonly": self.hdonly = v.lower() not in ("no", "false", "0")
+                elif k == "floppyonly": self.floppyonly = v.lower() not in ("no", "false", "0")
                 elif k == "load":
                     f, d = v.split()
                     self.load = (f, hx(d))
@@ -787,7 +790,7 @@ def cmd_list(patches, fps):
         data = ",".join(f"${a:x}+{ln}" for a, ln in p.data) or "-"
         ln = len(site_bytes(p))
         print(f"{p.name:20s} {'yes' if p.default else 'no':8s} ${p.site:06x} {p.phase_of():9s} {ln:4d} {blobs} / {data}"
-              f"{'  [HD only: skipped by --floppy]' if p.hdonly else ''}")
+              f"{'  [HD only: skipped by --floppy]' if p.hdonly else ''}{'  [floppy only: skipped by the HD build]' if p.floppyonly else ''}")
     for p in fps:
         print(f"{p.name:20s} {'yes' if p.default else 'no':8s} {p.image:8s} {'file':9s} "
               f"{sum(len(b) for _, b in p.edits):4d} (file patch)")
@@ -1331,6 +1334,8 @@ def main():
         sys.stdout.write(render_doc(Path(a.file).read_text()))
         return
     patches, fps = load_all()
+    if not MODE["floppy"]:
+        patches = [p for p in patches if not p.floppyonly]     # `; floppyonly: yes` patches: their sites are the Paper Bag loader, not PP's HD loader
     if a.cmd == "list":
         cmd_list(patches, fps)
     elif a.cmd == "verify":

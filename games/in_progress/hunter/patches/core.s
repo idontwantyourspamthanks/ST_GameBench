@@ -22,6 +22,8 @@
 ;                    bit1 = the probe ran (so bit0 == 0 means a plain ST), bit2 = probe took a bus error,
 ;                    bit3 = Falcon (bit0 set, the _MCH cookie in the jar at $5a0 is $0003xxxx AND a read of the SCU $ff8e01 bus-errors: the
 ;                    jar alone said Falcon on a TT HD boot, where D15R_F5's own jar is already installed)
+;                    bit4 = floppy build only: 68020/030 with the data cache ON; set by core_floppy.s stage 2 once every site was applied;
+;                           fdc_dma (the loader's DMA wait hook) then clears the data cache after each FDC command (the probe never touches bit 4)
 ;   $8BFF8.l MARKER  'HNPO' every boot site applied, 'HNPF' refused (a verified original differed; nothing
 ;                    from the boot phase was written), all zero = the payload never ran
 TABLE   equ $8bc00

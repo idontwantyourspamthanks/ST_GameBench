@@ -42,6 +42,15 @@ stage2: cmpi.l  #'HNPA',PAYLOAD.l
 .setto: move.l  d0,2(a0)
         moveq   #0,d2
         bsr.s   ccache                  ; the loader and the sites wrote code with data writes: clear the caches
+        cmpi.w  #1,d1
+        bne.s   .st2                    ; 68040/060: nothing more (stage 1 never touched their data cache)
+        cmpi.l  #'HNPO',FLAGS+8.l
+        bne.s   .st2                    ; a site was refused: the fdc_dma hook is not there, keep the data cache off
+        cmpi.w  #$4eb9,$d50e.l          ; the hook itself (`jsr fdc_dma.l` over the loader's `bsr.b $d51c / add.b d3,d6 / tst.b d3`):
+        bne.s   .st2                    ; the patch not selected in this build: keep the data cache off
+        ori.b   #$10,FLAGS+3.l          ; FLAGS bit 4: fdc_dma clears the data cache after every FDC command
+        moveq   #2,d2
+        bsr.s   ccache                  ; 68020/030: data cache back ON (stage 1 switched it off for the loader's own FDC code)
 .st2:   movem.l (a7)+,d0-d2/a0-a3
         rts
 
@@ -58,7 +67,7 @@ stage2: cmpi.l  #'HNPA',PAYLOAD.l
 ; The CPU is found by executing instructions under temporary illegal/line-F handlers:
 ;   movec cacr,d0   68020/030/040/060 execute it, 68000/68010 raise illegal instruction
 ;   cpusha bc       68040/060 push + invalidate both caches; 68020/030 raise line F ($2c)
-;   d2.b = 1: also disable the 68030 data cache (CACR bit 8); d2.b = 0: only clear.   Out: d1 = class.  d0-d1/a0-a3 scratch.
+;   d2.b = 1: also disable the 68030 data cache (CACR bit 8); d2.b = 2: enable it; d2.b = 0: only clear.   Out: d1 = class.  d0-d1/a0-a3 scratch.
 ccache: movea.l a7,a2                   ; the exception handler resets the stack here
         movea.l $10.w,a1                ; illegal instruction vector
         movea.l $2c.w,a3                ; line-F vector
@@ -77,6 +86,9 @@ ccache: movea.l a7,a2                   ; the exception handler resets the stack
         tst.b   d2
         beq.s   .clr
         andi.w  #$feff,d0               ; ED = 0: data cache off
+        cmpi.b  #2,d2
+        bne.s   .clr
+        ori.w   #$0100,d0               ; d2.b = 2: ED = 1, data cache on
 .clr:   ori.w   #$0808,d0               ; CI + CD: clear both caches
         dc.w    $4e7b,$0002             ; movec d0,cacr
 .out:   move.l  a1,$10.w
