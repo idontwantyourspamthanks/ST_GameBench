@@ -134,7 +134,9 @@ class Hunter(Hatari):
     HOME_XY = (100, 66)                      # where home() leaves the game pointer (menus)
     START_XY, ACTION_XY = (415, 217), (415, 249)
 
-    TOL = {"game": 4.0}                      # mean abs RGB difference allowed; default 1.5 (screens are static)
+    # Mean abs RGB difference allowed per stage crop. The crops are v1.1 STE pictures; v1.2's STE palette (pal_*) makes the same
+    # screens half a palette step brighter, so 1.5 no longer matches. 14 still separates every pair of stages (huntvis_cold's value).
+    TOL = {k: 14.0 for k in STAGES}
 
     def at(self, stage: str) -> bool:
         return self.screen_matches(REF / f"{stage}.png", self.STAGES[stage], tol=self.TOL.get(stage, 1.5))
