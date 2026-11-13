@@ -7,6 +7,23 @@ partner (one feature over two sites).
 
 ## Blob map (payload `$8BA00..$AEFFF`, free RAM proved in `REPORT.md` section 2)
 
+Re-derive the map in one step from the ASSEMBLED payload (the authority, not the table below):
+
+```sh
+python3 tools/huntpatch.py build --out build/map --fill >/dev/null && python3 - <<'EOF'
+import json
+m = json.load(open('build/map.json')); u = sorted(m['used']); p = m['img_base']
+for a, b in u:
+    if a > p: print(f"  gap  ${p:06x}-${a-1:06x} {a-p:6d} B")
+    print(f"  used ${a:06x}-${b-1:06x} {b-a:6d} B")
+    p = max(p, b)
+if p < 0xaf000: print(f"  gap  ${p:06x}-$aefff {0xaf000-p:6d} B")
+EOF
+```
+
+`python3 tools/huntpatch.py list` adds each blob's patch name, prefix window and phase. Gaps above `$90000` are the sample
+bank; `$8DC00-$8DFFF` is the `test_` window and is not usable for the release set.
+
 | Range | Owner | Content |
 |---|---|---|
 | `$8BA00-$8BB5A`, `$8BB60-$8BBEA` | `core.s` | payload entry (probe, site applier, cache flush), load hook |
@@ -100,3 +117,25 @@ original bytes back to both splice sites: those machines run the unpatched code 
 is no wait loop; nothing is decoded unless the group's data changed. Every group is read every fourth VBL: a press must last 80 ms. Measured (`tools/huntjag.py prof`):
 180 cycles per VBL in the blob + 52 in the merge, 212 net of the code the splices replace = 0.13 % of the CPU (pad or no pad); 0 where the probe says no.
 Evidence, gates and limits: `work/notes/jagpad.md`.
+
+## sav_hook + sav_open + sav_sync: in-game Save and Load on the HD build (`default: no`, HD only)
+
+Sources: `patches/sav_hook.s` (site `$d542`), `patches/sav_open.s` (site `$c0268`, D15R), `patches/sav_sync.s` (site `$c02d4`, D15R).
+All three carry `; hdonly: yes`, so `build --floppy` / `verify --floppy` skip them (the floppy has the cracker's loader at `$d30e` and
+keeps its own, working, saving); `sav_hook` requires the other two. Blobs: `$8C72C` (hook), `$8CB2C` (open), `$8CB80` (sync) in the
+`sav_` window. Study: `reports/hunter_ideas.md` idea 10; evidence, measurements and gates: `work/notes/save.md`; gate tool:
+`tools/huntsave.py` (`roundtrip`, `slots`, `errors --case missing|zeros|short|valid|ro|full|init`, `kill --delay D --runs N`,
+`persist`, `allgames`, `floppy`).
+
+**What it does.** PP's HD build had saving switched off: his file hook (`$150`) ignores the write flag and always reads, so Save Game
+wrote nothing and then read the file back over the game's memory, and the slot list showed his placeholder names (which live in
+`FILES/0`). Now the six slots and the save directory are ordinary files in the game's folder - `FILES\SAVES.DIR` (224 bytes) and
+`FILES\SLOT1.SAV` ... `FILES\SLOT6.SAV` (51,328 bytes, the game's own checksum) - created on the first save when missing, with names
+typed in the game as before. A save that fails says why and leaves the old save and the slot list untouched; a damaged or missing slot
+file is refused with a message instead of being loaded. Init Disk works (it clears the list). Only the disk menu's files are handled;
+every other file call is byte-for-byte PP's.
+
+**Durability.** `Fclose` alone leaves the new directory entry in GEMDOS's buffer (it is written back only when a buffer is reused), so
+a machine switched off after a save could lose it: measured 0 of 3 durable when Hatari was killed 1 s after the save, and 0 of 2 after
+20 s. `sav_sync` calls GEMDOS `Dfree` right after the loader's `Fclose` (still inside the loader's TOS world) on writes only - it reads
+the whole FAT, which evicts the dirty buffers. After it: 10 of 10 durable at 1 s, 5 s and 20 s (`work/notes/save.md` section 3).

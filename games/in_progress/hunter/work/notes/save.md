@@ -87,7 +87,43 @@ The game's own format, from the two routines that fill/consume the slot buffer (
 The checksum (`$10442`) is `d1 = $1b0 + sum of all 25,664 words` over the 51,328 bytes, with the word at `+$3e` replaced by `$b241`
 before summing (that word holds the checksum itself). `tools/huntsave.py sum_ok()` recomputes it.
 
-## 3. The patch
+## 3. Durability: the write must reach the disk (and `sav_sync`)
+
+A save is three GEMDOS operations: Fcreate/Fopen, Fwrite, Fclose. PP's loader does all three, `Fclose` included
+(`$c02ca move.w d7,-(a7) / move.w #$3e,-(a7) / trap #1 / addq.l #4,a7` [disasm]), so no handle is left open. The file *data* is
+written immediately, but the FAT chain and the directory entry live in GEMDOS's disk buffers, which GEMDOS writes back only when a
+buffer has to be reused (EmuTOS `bdos/fsbuf.c`: `flush()` is called from `getbuf()` on eviction; nothing flushes on a timer). Measured
+before the fix, killing Hatari (a power-off) after a save:
+
+```
+kill +1.0s run 1/3: fsck=ERRORS  dir=BAD/MISSING slot=51328B checksum=ok -> LOST
+kill +1.0s run 2/3: ... -> LOST      kill +1.0s run 3/3: ... -> LOST
+kill +20.0s run 1/3: fsck=ERRORS dir=BAD/MISSING slot=51328B checksum=ok -> LOST
+kill +20.0s run 2/3: ... -> LOST
+```
+
+i.e. the slot's data and its own directory entry were on the disk, but `SAVES.DIR`'s was not - exactly the dirty-buffer case, and it
+does not go away with time.
+
+**`sav_sync`** (site `$c02d4`, 8 B, inside PP's loader right after the `Fclose`, still in the loader's TOS world - the vector table is
+swapped back only at `$c02f8`): after a **write** (`$c0742` still holds `$5772` there) it calls GEMDOS `Dfree`, function `$36`, with both arguments on the stack in the documented order - `move.w drive,-(a7) / pea buf / move.w #$36,-(a7) / trap #1 / addq.l #8,a7`, drive 0 = the current one, `buf` a 16-byte result area (Populous 2's `pop2_save` uses the same call; EmuTOS `bdos/bdosmain.c` lists it as a 3-word call). `Dfree` reads the whole FAT
+(`fsfat.c: xgetfree -> countfree16 -> getrec` per FAT record), which evicts every dirty buffer, so the directory and FAT sectors reach
+the disk before the call returns. Reads skip it (nothing is dirty). One FAT scan per save.
+
+After the fix, same test (cold boot, save, SIGKILL, then `fsck.fat` on the partition, mtools read of `SAVES.DIR` and of the slot,
+and the game's checksum):
+
+```
+kill +1.0s  run 1..10/10: fsck=clean dir=ok slot=51328B checksum=ok -> OK      KILL +1.0s: 10/10 durable
+kill +5.0s  run 1..10/10: fsck=clean dir=ok slot=51328B checksum=ok -> OK      KILL +5.0s: 10/10 durable
+kill +20.0s run 1..10/10: fsck=clean dir=ok slot=51328B checksum=ok -> OK      KILL +20.0s: 10/10 durable
+```
+
+The 1 s and 20 s batches above were re-run with the final two-argument `Dfree` form (the run with the 5 s batch used the earlier
+form, which passed the drive word in `d1`); the 5 s batch was not repeated after that change - all three delays are inside the same
+mechanism, and 1 s is the hardest of them.
+
+## 4. The patch
 
 Both patches are `default: no`, `hdonly: yes` (`--floppy` skips them: the floppy has the cracker's loader at `$d30e` and keeps its own,
 working, saving), and live in the `sav_` window `$8C72C-$8CDFF` (HunterTriple's v1.2 map). Position independent.
@@ -138,7 +174,23 @@ A read of a missing file is still an error (the game shows the file-missing dial
 - **Dialogs** use the game's own menu box (`jsr $1f6e`, record format `{header $00280000}{title 16}{0,0,0,0,9 words}{name 16}{4 zero}
   {handler.l}{$ffff}`), title + one button whose handler is `$8cda` (`moveq #0,d0 / rts`). No new strings are added to the game.
 
-## 4. Gates (`tools/huntsave.py`)
+## 5. Gates (`tools/huntsave.py`)
+
+| gate | machine | result |
+|---|---|---|
+| durability: save, SIGKILL at +1 s / +5 s / +20 s, 10 runs each | STE 1.62 1 MB | **10/10, 10/10, 10/10** |
+| round trip (RAM diff + slot bytes on the disk) | STE 1.62 1 MB | **PASS** |
+| round trip | Mega STE 2.06 4 MB | **PASS** |
+| several slots + overwrite | STE 1.62 1 MB | **PASS** |
+| missing / all-zero / short slot | STE 1.62 1 MB | **PASS** (message, state untouched) |
+| read-only slot save | STE 1.62 1 MB | **PASS** (message, slot stays free) |
+| valid slot loads | STE 1.62 1 MB | **PASS** |
+| all-games image (`AtariST_enhanced_games_2026-11-12.img`, HUNTER\\ folder, ACSI + HDDRIVER) | -- | **PASS**: save into `HUNTER\\FILES`, cold boot the image again, load, all ranges equal |
+| floppy build (Paper Bag disk, crack's own loader) | STE 1.62 1 MB | save + load: all restored ranges equal after the load, `13` = 51,328 B and `0F` = 224 B on the disk |
+| TT 3.06 (`--mmu true --monitor vga --cpuclock 32`) | -- | **not reached**: the TT never passed the HW-screen crop gate in 400 s (harness gate, not the patch: the TT screen has no border); needs the `hunt_ttf.py` blind route |
+| `huntab --only sav_hook sav_open sav_sync --points 3 --flips 2 6 --lock` (post-fit tool) | snapshots `1mb_foot_stand`, `1mb_car_drive` | **IDENTICAL** |
+| Init Disk, full disk, cold-boot persist | -- | see the notes at the end of this section |
+
 
 ### Round trip (STE 1.62, 1 MB, ACSI image + HDDRIVER, build with sav_hook + sav_open)
 
@@ -220,10 +272,15 @@ loads - mission page with the saved name, then the 3D view, position (40526, 993
   ("Fat problem while decoding" from mtools) in two of three runs, even after 50 s of idle. HDDRIVER flushes lazily and partially; the
   data is the driver's, not the game's (the floppy writes sector by sector with no cache). Needs a longer settle or a second write
   before the image is read; the gate tool now snapshots the image only when fsck finds it consistent.
-- **Not run**: full-disk save, the all-games image, Mega STE 4 MB, TT 3.06 (`--mmu true --monitor vga --cpuclock 32`), the floppy
-  regression cell (`huntsave.py floppy`), and the final `huntab` A/B run (the lead's fix: use `--flips 2 6 --lock`).
+- **Not run**: full-disk save, and the cold-boot `persist` cell (its first run matched the saved position; the image read after shutdown
+  was the flaky part, now that `sav_sync` flushes it is worth one clean re-run).
+- **TT 3.06**: not reached - the harness's HW-screen crop gate does not match a TT screenshot (no border), and it timed out at 400 s. The
+  three patches are plain 68000 code and the D15R code is identical on F5 (`verify`), so [INFERENCE] it applies, but that is unproven.
+- **Floppy cell**: `huntsave.py floppy` reports PASS - the saved game loads back with every restored range equal, and the disk holds `13`
+  = 51,328 B and `0F` = 224 B. The `fsck` line it prints is run on a copy taken while Hatari still had the `.st` open ("Both FATs appear to
+  be corrupt" is that torn copy); the authoritative check is the one in `floppy.md`, run after eject.
 
-## 5. Limits
+## 6. Limits
 
 - The HD build only (`hdonly`); the floppy build keeps the cracker's loader and its own saving.
 - **HDDRIVER caches writes.** The files appear in the directory only after its flush (~10 s in Hatari). A player who switches the

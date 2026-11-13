@@ -111,6 +111,7 @@ class Menus:
             time.sleep(0.5)
         pos = (self.peekw(self.POS_X), self.peekw(self.POS_Z))
         self.key("Return", 0.2)
+        time.sleep(6)                       # the save itself (a restored snapshot is already in the 3D view: wait_game is instant)
         self.wait_game(20)
         return pos
 
@@ -522,6 +523,41 @@ def cmd_errors(a) -> int:
     return 0 if ok else 1
 
 
+def cmd_kill(a) -> int:
+    """Power-off test: save, then SIGKILL Hatari `--delay` seconds later (a switched-off machine), and check that the image's
+    directory and FAT are consistent and the slot is intact.  Repeats `--runs` times."""
+    d = Path(a.work)
+    d.mkdir(parents=True, exist_ok=True)
+    bad = 0
+    for i in range(a.runs):
+        if a.snapshot:                                  # fast repeat: restore a 3D-view snapshot instead of a cold boot
+            h = rig(a, snapshot=str((GAME / "work" / "snapshots" / a.snapshot).resolve()))
+            h.STAGES = dict(h.STAGES)
+            if not h.in_game():
+                raise RuntimeError("the snapshot is not in the 3D view")
+        else:
+            h = boot(a)
+        try:
+            h.walk(1.5, "Up")
+            pos = h.save(a.slot, "kill")
+            time.sleep(a.delay)
+            img = h.img
+        finally:
+            h.close()
+        good, msg = fsck_part(img)
+        dr = read_file(img, "SAVES.DIR")
+        sl = read_file(img, f"SLOT{a.slot}.SAV")
+        used = dr is not None and len(dr) == DIRLEN and parse_dir(dr)[a.slot - 1][0]
+        ok = good and used and sl is not None and len(sl) == SLOTLEN and sum_ok(sl)
+        bad += not ok
+        print(f"kill +{a.delay}s run {i + 1}/{a.runs}: fsck={'clean' if good else 'ERRORS'} dir={'ok' if used else 'BAD/MISSING'} "
+              f"slot={None if sl is None else len(sl)}B checksum={'ok' if sl and sum_ok(sl) else 'BAD'} -> {'OK' if ok else 'LOST'}"
+              f"   [{msg}]")
+        shutil.copy(img, d / f"kill_{a.delay}s_{i + 1}.img")
+    print(f"KILL +{a.delay}s: {a.runs - bad}/{a.runs} durable")
+    return 0 if bad == 0 else 1
+
+
 def cmd_allgames(a) -> int:
     """The all-games hard-disk image (dist/AtariST_enhanced_games_*.img, ACSI + HDDRIVER, HUNTER folder): boot our build from
     HUNTER\\START.TOS, save into HUNTER\\FILES, cold boot the image again and load."""
@@ -531,6 +567,11 @@ def cmd_allgames(a) -> int:
     shutil.copy(Path(a.allgames).resolve(), img)
     tgt = f"{img}@@{PART_OFF}"
     build = (GAME / a.game).resolve()
+    inf = img.parent / "desktop.inf"
+    inf.write_bytes(("#a000000\r\n#b000000\r\n#c" + "7" * 65 + "\r\n#d\r\n#E 9B 01\r\n#W 00 00 10 01 4A 16 0F 0A C:\\*.*@\r\n"
+                     "#M 00 00 00 FF C HARD DISK@ @\r\n#T 00 00 03 FF   TRASH@ @\r\n"
+                     "#Z 01 C:\\HUNTER\\START.TOS@ @\r\n").encode())
+    sh("mcopy", "-o", "-i", tgt, inf, "::DESKTOP.INF")
     sh("mcopy", "-o", "-i", tgt, build / "START.TOS", "::HUNTER/START.TOS")
     for f in sorted((build / "FILES").iterdir()):
         sh("mcopy", "-o", "-i", tgt, f, "::HUNTER/FILES/")
@@ -599,28 +640,38 @@ def cmd_floppy(a) -> int:
     finally:
         time.sleep(10)
         img = h.img
+        keep = d / "floppy_after.st"
+        shutil.copy(img, keep)                      # the floppy rig's scratch dir goes away with the emulator
         h.close()
+        img = keep
     A, B = (d / "A.bin").read_bytes(), (d / "B.bin").read_bytes()
     print("player at the save", pos_of(A), "moved to", p1, "loaded to", got)
     ok = got == pos_of(A) and p1 != p0 and cmp_ranges(A, B, "floppy: RAM save-time vs RAM after-load")
-    fs = sh("fsck.fat", "-n", img)
-    print("disk after the save:", fs.stdout.strip().splitlines()[-1] if fs.stdout.strip() else fs.stderr.strip())
-    ok &= fs.returncode == 0
-    print("files:", [(n, None if h.get(n) is None else len(h.get(n))) for n in ("13", "0F")])
-    shutil.copy(img, d / "floppy_after.st")
+    fs = sh("fsck.fat", "-n", img)                     # informational: the copy can be torn (Hatari writes the .st in place)
+    lines = [ln for ln in (fs.stdout + fs.stderr).splitlines() if ln.strip()]
+    print("disk image copy, fsck (info only):", fs.returncode, lines[-1] if lines else "")
+    for n in ("13", "0F"):
+        out = Path(f"/tmp/hsv_fl_{n}")
+        out.unlink(missing_ok=True)
+        r = sh("mcopy", "-i", img, f"::{n}", out)
+        print(f"  disk file {n}:", out.stat().st_size if r.returncode == 0 else "missing")
+        ok &= r.returncode == 0
     print("FLOPPY", "PASS" if ok else "FAIL")
     return 0 if ok else 1
 
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("cmd", choices=["roundtrip", "persist", "slots", "errors", "allgames", "floppy"])
+    ap.add_argument("cmd", choices=["roundtrip", "persist", "slots", "errors", "allgames", "floppy", "kill"])
     ap.add_argument("--game", default="build/sav_game")
     ap.add_argument("--machine", default="ste")
     ap.add_argument("--tos", default=None)
     ap.add_argument("--mem", type=int, default=1024)
     ap.add_argument("--slot", type=int, default=2)
     ap.add_argument("--work", default="/tmp/hsv_work")
+    ap.add_argument("--delay", type=float, default=1.0, help="kill: seconds between the save and the power-off")
+    ap.add_argument("--runs", type=int, default=3, help="kill: repetitions")
+    ap.add_argument("--snapshot", default=None, help="kill: restore this work/snapshots/<name> instead of cold booting")
     ap.add_argument("--case", default="missing", choices=["missing", "zeros", "short", "valid", "ro", "full", "init"],
                     help="errors: which failure to run (one session each)")
     ap.add_argument("--good-slot", default="/tmp/hsv_good_slot.bin", help="errors: a valid slot file (a save made by roundtrip)")
@@ -629,7 +680,7 @@ def main() -> int:
     ap.add_argument("--floppy-img", default=None, help="floppy: an existing HUNTER_disk1.st (default: build it)")
     a = ap.parse_args()
     return {"roundtrip": cmd_roundtrip, "persist": cmd_persist, "slots": cmd_slots, "errors": cmd_errors,
-            "allgames": cmd_allgames, "floppy": cmd_floppy}[a.cmd](a)
+            "allgames": cmd_allgames, "floppy": cmd_floppy, "kill": cmd_kill}[a.cmd](a)
 
 
 if __name__ == "__main__":
