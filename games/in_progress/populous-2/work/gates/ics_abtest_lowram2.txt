@@ -1,0 +1,32 @@
+$ P2_LAYOUT=ics-lowram p2abtest.py --only pop2_spr pop2_spr16 pop2_ptr_a pop2_ptr_b pop2_clamp --snapshot game_start --mhz 8
+game_start @8 MHz (base @8): IDENTICAL | turns compared: back 128, world 128, shown@S1+pointer 127, shown@flip+pointer 120 (shape-change passes not compared: 8) (skipped 2); flips captured 130/130; patched min VBL/pass 4 | work/pass 636987 -> 621548 (-2.42 %) | fps 11.007 -> 11.727 (+6.5 %), turns/s 11.007 -> 11.727
+   sprite entry coverage (base run): front end $2122e: 0, 16px front end $211be: 279, 16px 2-col $212b4: 279, neg-x shift $21322: 0, 1-col $21368: 0, 3-col (main) $213b0: 0, neg-x 3-col $2147e: 0, 2-col right edge $21530: 0
+ALL IDENTICAL
+$ P2_LAYOUT=ics-lowram p2abtest.py --only pop2_spr pop2_spr16 pop2_ptr_a pop2_ptr_b pop2_clamp --mhz 16
+busy1 @16 MHz (base @16): IDENTICAL | turns compared: back 128, world 128, shown@S1+pointer 127, shown@flip+pointer 120 (shape-change passes not compared: 8) (skipped 2); flips captured 130/130; patched min VBL/pass 4 | work/pass 1172560 -> 1114067 (-4.99 %) | fps 11.727 -> 12.333 (+5.2 %), turns/s 11.727 -> 12.333
+   sprite entry coverage (base run): front end $2122e: 768, 16px front end $211be: 562, 16px 2-col $212b4: 562, neg-x shift $21322: 0, 1-col $21368: 0, 3-col (main) $213b0: 762, neg-x 3-col $2147e: 0, 2-col right edge $21530: 6
+game_start @16 MHz (base @16): IDENTICAL | turns compared: back 128, world 128, shown@S1+pointer 127, shown@flip+pointer 120 (shape-change passes not compared: 8) (skipped 2); flips captured 130/130; patched min VBL/pass 2 | work/pass 609373 -> 607186 (-0.36 %) | fps 24.067 -> 24.157 (+0.4 %), turns/s 24.067 -> 24.157
+   sprite entry coverage (base run): front end $2122e: 0, 16px front end $211be: 279, 16px 2-col $212b4: 279, neg-x shift $21322: 0, 1-col $21368: 0, 3-col (main) $213b0: 0, neg-x 3-col $2147e: 0, 2-col right edge $21530: 0
+ALL IDENTICAL
+$ P2_LAYOUT=ics-lowram p2abtest.py --only pop2_tooltip --no-walk --mhz 8
+busy1 @8 MHz (base @8): IDENTICAL | turns compared: back 128, world 128, shown@S1+pointer 127, shown@flip+pointer 128 (shape-change passes not compared: 0) (skipped 2); flips captured 130/130; patched min VBL/pass 8 | work/pass 1255126 -> 1255687 (+0.04 %) | fps 6.056 -> 6.056 (+0.0 %), turns/s 6.056 -> 6.056
+   sprite entry coverage (base run): front end $2122e: 780, 16px front end $211be: 780, 16px 2-col $212b4: 780, neg-x shift $21322: 0, 1-col $21368: 0, 3-col (main) $213b0: 780, neg-x 3-col $2147e: 0, 2-col right edge $21530: 0
+game_start @8 MHz (base @8): IDENTICAL | turns compared: back 128, world 128, shown@S1+pointer 127, shown@flip+pointer 128 (shape-change passes not compared: 0) (skipped 2); flips captured 130/130; patched min VBL/pass 5 | work/pass 764060 -> 764621 (+0.07 %) | fps 9.954 -> 9.954 (+0.0 %), turns/s 9.954 -> 9.954
+   sprite entry coverage (base run): front end $2122e: 650, 16px front end $211be: 1256, 16px 2-col $212b4: 1256, neg-x shift $21322: 0, 1-col $21368: 0, 3-col (main) $213b0: 650, neg-x 3-col $2147e: 0, 2-col right edge $21530: 0
+ALL IDENTICAL
+$ P2_LAYOUT=ics-lowram p2abtest.py --only pop2_tooltip --no-walk --mhz 16
+busy1 @16 MHz (base @16): IDENTICAL | turns compared: back 128, world 128, shown@S1+pointer 127, shown@flip+pointer 128 (shape-change passes not compared: 0) (skipped 2); flips captured 130/130; patched min VBL/pass 4 | work/pass 1199676 -> 1200235 (+0.05 %) | fps 12.500 -> 12.500 (+0.0 %), turns/s 12.500 -> 12.500
+   sprite entry coverage (base run): front end $2122e: 780, 16px front end $211be: 780, 16px 2-col $212b4: 780, neg-x shift $21322: 0, 1-col $21368: 0, 3-col (main) $213b0: 780, neg-x 3-col $2147e: 0, 2-col right edge $21530: 0
+game_start @16 MHz (base @16): IDENTICAL | turns compared: back 128, world 128, shown@S1+pointer 127, shown@flip+pointer 128 (shape-change passes not compared: 0) (skipped 2); flips captured 130/130; patched min VBL/pass 3 | work/pass 735999 -> 736580 (+0.08 %) | fps 16.667 -> 16.667 (+0.0 %), turns/s 16.667 -> 16.667
+   sprite entry coverage (base run): front end $2122e: 650, 16px front end $211be: 1256, 16px 2-col $212b4: 1256, neg-x shift $21322: 0, 1-col $21368: 0, 3-col (main) $213b0: 650, neg-x 3-col $2147e: 0, 2-col right edge $21530: 0
+ALL IDENTICAL
+$ P2_LAYOUT=ics-lowram p2abtest.py --only pop2_tooltip --no-walk --mhz 8 --neg
+busy1 @8 MHz (base @8): IDENTICAL | turns compared: back 128, world 128, shown@S1+pointer 127, shown@flip+pointer 128 (shape-change passes not compared: 0) (skipped 2); flips captured 130/130; patched min VBL/pass 8 | work/pass 1255126 -> 1255687 (+0.04 %) | fps 6.056 -> 6.056 (+0.0 %), turns/s 6.056 -> 6.056
+   sprite entry coverage (base run): front end $2122e: 780, 16px front end $211be: 780, 16px 2-col $212b4: 780, neg-x shift $21322: 0, 1-col $21368: 0, 3-col (main) $213b0: 780, neg-x 3-col $2147e: 0, 2-col right edge $21530: 0
+game_start @8 MHz (base @8): IDENTICAL | turns compared: back 128, world 128, shown@S1+pointer 127, shown@flip+pointer 128 (shape-change passes not compared: 0) (skipped 2); flips captured 130/130; patched min VBL/pass 5 | work/pass 764060 -> 764621 (+0.07 %) | fps 9.954 -> 9.954 (+0.0 %), turns/s 9.954 -> 9.954
+   sprite entry coverage (base run): front end $2122e: 650, 16px front end $211be: 1256, 16px 2-col $212b4: 1256, neg-x shift $21322: 0, 1-col $21368: 0, 3-col (main) $213b0: 650, neg-x 3-col $2147e: 0, 2-col right edge $21530: 0
+ALL IDENTICAL
+$ P2_LAYOUT=ics-lowram p2abtest.py --only pop2_tooltip --no-walk --mhz 8 --poke 12740:4e714e714e71   (negative control: the pointer-shape call after the render stage nopped in the patched run)
+busy1 @8 MHz (base @8): IDENTICAL | turns compared: back 128, world 128, shown@S1+pointer 127, shown@flip+pointer 128 (shape-change passes not compared: 0) (skipped 2); flips captured 130/130; patched min VBL/pass 8 | work/pass 1255126 -> 1254613 (-0.04 %) | f
+game_start @8 MHz (base @8): IDENTICAL | turns compared: back 128, world 128, shown@S1+pointer 127, shown@flip+pointer 128 (shape-change passes not compared: 0) (skipped 2); flips captured 130/130; patched min VBL/pass 5 | work/pass 764060 -> 763553 (-0.07 %) 
+ALL IDENTICAL

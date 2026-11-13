@@ -36,6 +36,8 @@ MEMORY AND MACHINES
   second copy of the same patches with a pre-shifted sprite cache for the plain ST.
   Tested in Hatari 2.6.1 (not on real hardware): ST TOS 1.04 512 KB, STE TOS 1.62
   512 KB and 1 MB, Mega STE TOS 2.06 4 MB at 60 Hz, Falcon TOS 4.04 4 MB.
-  Play, saving and loading all work on those. The TT (TOS 3.06) runs the game only
-  with its CPU set to 8 MHz: at 32 MHz the game's own floppy routine fails and the
-  game shows INSERT POPULOUS-II DISK; use the hard-disk version on a TT.
+  Play, saving and loading all work on those. TT (TOS 3.06): set the CPU to
+  8 MHz. At the default 32 MHz the game's own floppy routine fails and it shows
+  INSERT POPULOUS-II DISK; the original ICS disk does exactly the same there
+  (it is the game's FDC timing on a fast CPU), so this build cannot fix it. The
+  hard-disk version runs on a TT at full speed.

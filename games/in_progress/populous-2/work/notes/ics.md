@@ -141,23 +141,49 @@ The three-saves / disk-full / pattern-with-patches / `p2tick.py ab` / `p2abtest.
   failing (the code is in `work/scratch/ics/rejected/`; not shipped). The cause at 32 MHz is unresolved. No crash, no bus error in the log; the README says: TT at 8 MHz only, else use the HD version.
 * real hardware: nothing here was run on real machines.
 
-## 8. Snapshot gates on the relocated (lowram) layout, and what was not run
+## 8. Snapshot gates on the relocated (lowram) layout, and the gap-closing pass
 `P2_LAYOUT=ics-lowram` makes `p2abtest.py` / `p2tick.py` build the non-test patches with `pop2patch.py live --base ics --layout lowram` (the test_* walk patches stay at `$80000`; p2tick finds the tick block D from the json).
-The PP snapshots (2 MB STE, busy1 / game_start) carry the same game bytes, so they apply unchanged. First attempt: D was computed from `pop2_tick` alone, which places differently from the whole tick family
-(R frames 0, 3 T frames differ): a harness bug, fixed (`p2tick.py` line 45), not a patch bug; raw: `work/gates/ics_ab_lowram_busy1_8.txt`. Final (`work/gates/ics_ab_lowram.txt`, `ics_abtest_lowram.txt`):
+The PP snapshots (2 MB STE) carry the same game bytes, so they apply unchanged. First attempt of `ab busy1 8 130` had D computed from `pop2_tick` alone (R frames 0, 3 T frames differ): a harness bug (fixed, `p2tick.py` line 45).
+Final, raw in `work/gates/ics_ab_lowram.txt`, `ics_abtest_lowram.txt`, `ics_abtest_lowram2.txt`:
 ```
-$ P2_LAYOUT=ics-lowram p2tick.py ab busy1 8 130     busy1 @8 MHz 50 Hz: IDENTICAL | world at pass tops: 134 compared (0 differ) | T frames 111 compared (0 differ; 9 excluded) | R frames: 5 (4 minimap compares, 0 differ)
-  ... ab busy1 16 130 / game_start 8 130 / game_start 16 130 / busy1 16 130 --hz 60 / game_start 8 130 --hz 60: all IDENTICAL (same counts as the PP-layout runs in ab_matrix.txt)
-  ... ab busy1 16 60 --neg: T-FRAME DIFFER (8,028 B differ per turn)                      <- negative control fails as it must
-$ P2_LAYOUT=ics-lowram p2abtest.py --only pop2_spr pop2_spr16 pop2_ptr_a pop2_ptr_b pop2_clamp --snapshot busy1 --mhz 8
-  busy1 @8 MHz: IDENTICAL | back 128, world 128, shown 127/120 | work/pass 1216199 -> 1138351 (-6.40 %) | ALL IDENTICAL
-  ... --neg: BACK DIFFER / WORLD DIFFER / SHOWN DIFFER, MISMATCH                           <- negative control
+p2tick.py ab: busy1 8/16 MHz, game_start 8/16 MHz, busy1 16 --hz 60, game_start 8 --hz 60: all IDENTICAL (same counts as the PP-layout runs); busy1 16 60 --neg: T-FRAME DIFFER (8,028 B/turn)
+p2abtest.py --only pop2_spr pop2_spr16 pop2_ptr_a pop2_ptr_b pop2_clamp: busy1 @8 IDENTICAL (-6.40 % work/pass), game_start @8 IDENTICAL (-2.42 %), busy1 @16 IDENTICAL (-4.99 %), game_start @16 IDENTICAL (-0.36 %); --neg: BACK/WORLD/SHOWN DIFFER, MISMATCH
+p2abtest.py --only pop2_tooltip --no-walk: busy1 + game_start @8 and @16 MHz: IDENTICAL (back 128, world 128, shown 127/128 turns)
 ```
-Control on the unchanged PP layout in this session: `p2tick.py ab busy1 8 130` IDENTICAL, same counts.
-Run otherwise: cold boots/play/rate/save/load/fsck (section 6), stock pattern fill 1 MB and 512 KB, PP regression (HD `RUNME.TOS` md5, `live` image identical), `verify` and `build --base ics`, the static file-table proof.
-**Not run** (budget): `p2abtest` on game_start / at 16 MHz and `pop2_tooltip` identical-frame gate for the lowram layout; `memmap2.py` (pattern fill with our patches active; the cold-boot cells check the payload bytes in RAM and `$22f14`
-but not that nothing else in `$7ec70-$7fff7` / `$90000-$f7fff` is written); `saves3.py` (three saves filling the disk, and the 4th: written, never run); a STE 512 KB cell on the very last build (STE 512 KB was cold-booted on the build
-before `pop2_fdc_delay` was removed, ST 512 KB on the final one; the layout and prefix are identical); real hardware.
+Tooltip caveat: with `--no-walk` the pointer never rests on an icon, so the gate proves "no pixel changes outside a hover" on the relocated blob; its negative control (`--poke 12740:4e714e714e71`, `--neg`) did NOT differ,
+i.e. it is not sensitive. Positive evidence that the relocated blob draws: the cold-boot hover shots (`work/shots/ics_ste512_cat2.png`: "EARTH EFFECTS / KEY: F3" on a 512 KB STE).
+
+### Pattern fill with our patches active (`work/scratch/ics/memmap2.py`; menu, play, busy, effects, save+load, restart, conquest2, custom game as in section 2)
+```
+[mp512] 512 KB STE: free tail $7ec70-$7fff8: 0 longs changed at every step; lowram payload $7b400+14448: 0 non-zero image bytes differ at every step; RESULT ALL INTACT (custom game last)
+[mp1m]  1 MB STE: $7b380-$7fff8 and $90000-$f8000: 0 longs changed; full payload $80000+32768: 0 non-zero image bytes differ; busy turn 5970, save+load 6641 -> 6654; RESULT ALL INTACT
+```
+So with every patch active nothing writes outside its own image (the data blocks inside the image are expected to change and are not compared).
+
+### Three saves and a full disk (`saves3.py`, STE 1 MB, game disk, saves A1-A3 by typing the name in the game's requester)
+```
+A1 turn 90 / A2 turn 224 / A3 turn 362 saved, game back in play each time
+A4: the game shows DISK FILE ERROR (work/scratch/disks/shots/sv3_a4_after.png); after OK + CANCEL the game is in play
+GAM files: A1 A2 A3 GAM 56690 each; 5 120 bytes free (= the 5 spare clusters, nothing leaked by the failed 4th)
+fsck.fat -n: 37 files, 706/711 clusters   (no error)
+```
+LOAD of A3 after that: game in play, turn 430 (saved at 362+; not conclusive by itself because the play ran 12 s after the click); load restoring the saved state is proven in the cells of section 6 (e.g. 619 -> 739 -> 632).
+(First attempt: the FILE field kept the previous name and appended the new one: a test-script bug, fixed with BackSpaces.)
+
+### STE 512 KB cold boot on the FINAL build (`c_ste512.log`)
+```
+CELL ste512: ... 512 KB (lowram layout); boot 114s in_play=True marker='P2PO' $22f14=4ef90007c780 ... payload $7b400+14448: 4100 non-zero image bytes, 0 differ in RAM
+RESULT ste512 default MHz 50 Hz: 1501 VBL = 30.02 s, 160157 cycles/VBL, world turns 187 = 6.229/s
+SAVELOAD {'turn_at_req': 619, 'turn_before_load': 739, 'turn_after_load': 632, 'load_play': True}; fsck.fat -n: 35 files, 594/711 clusters; LOG: 0 bus/address-error lines
+```
+
+### TT at 32 MHz: does the STOCK ICS crack fail too? YES
+`work/scratch/ics/ttstock.py`: the UNMODIFIED ICS floppy (cracktro runs normally, space held), TT TOS 3.06 `--mmu true`, default 32 MHz, shifter sync forced to 50 Hz by a debugger write at `pc = $140` only so the game's
+PAL check passes (the stock game otherwise stops at "SORRY PAL MACHINES ONLY" on a 60 Hz TT):
+```
+ttst32 cpuclock default game vbl installed True sync 0x2 turn 0     -> screenshot ttst32_stock_tt.png: "INSERT POPULOUS-II DISK / OK"
+```
+Same screen as our build, so it is the crack/game's own FDC routine on a fast CPU, not our patches. FLOPPY_LOWRAM.TXT says: TT at 8 MHz.
 
 ## 9. Reproduce
 ```

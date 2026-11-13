@@ -1,11 +1,11 @@
-CELL ste512: ICS floppy ste TOS default 512 KB (lowram layout); boot 114s in_play=True marker='P2PO' $22f14=4ef90007c780 (expect 4ef90007c780) sync=$fe (50 Hz) turn=105
-payload $7b400+14448: 4185 non-zero image bytes, 0 differ in RAM
-RESULT ste512 default MHz 50 Hz: 1501 VBL = 30.02 s, 160234 cycles/VBL, world turns 188 = 6.262/s | ticks(D) 188 = 6.262/s; passes T 188 R 140 S 0 P 0 | refresh seen 49.93 Hz
+CELL ste512: ICS floppy ste TOS default 512 KB (lowram layout); boot 114s in_play=True marker='P2PO' $22f14=4ef90007c780 (expect 4ef90007c780) sync=$fe (50 Hz) turn=101
+payload $7b400+14448: 4100 non-zero image bytes, 0 differ in RAM
+RESULT ste512 default MHz 50 Hz: 1501 VBL = 30.02 s, 160157 cycles/VBL, world turns 187 = 6.229/s | ticks(D) 187 = 6.229/s; passes T 187 R 141 S 0 P 0 | refresh seen 49.95 Hz
 tooltip cat2: diff vs none bbox (184, 58, 762, 585); shot ics_ste512_cat2.png
-tooltip strip4: diff vs none bbox (202, 58, 730, 442); shot ics_ste512_strip4.png
-pointer 250,180 turn 533
-SAVELOAD {'turn_at_req': 621, 'after_save_play': True, 'turn_before_load': 735, 'turn_after_load': 635, 'load_play': True}
-disk after save: ['       34 files             586 948 bytes', '                            119 808 bytes free'] ; GAM files ['T1       GAM     56690 1991-12-04  16:23 ']
+tooltip strip4: diff vs none bbox (184, 58, 762, 585); shot ics_ste512_strip4.png
+pointer 250,180 turn 531
+SAVELOAD {'turn_at_req': 619, 'after_save_play': True, 'turn_before_load': 739, 'turn_after_load': 632, 'load_play': True}
+disk after save: ['       34 files             586 836 bytes', '                            119 808 bytes free'] ; GAM files ['T1       GAM     56690 1991-12-04  16:23 ']
 fsck.fat -n: /tmp/ics_ste512_a.st: 35 files, 594/711 clusters
 known hardware-probe lines (the game's $ffff8e21/$ffff8924 reads at PC $13968/$139xx; pop2_spr's blitter probe $ffff8a28 on an ST): 0
 LOG: 168 lines; bus/address-error/halt lines: 0
