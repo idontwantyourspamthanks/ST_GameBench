@@ -1,0 +1,10 @@
+JITTER 1mb_foot_walk keys=Up 50 Hz smask=default: direct handlers  26434, late writes   348 = 1.32 % (worst: 112 pixels into the row)
+JITTER 1mb_foot_walk keys=Up 50 Hz smask=default: sync   handlers   6572, late writes     0 = 0.00 % (worst: 0 pixels into the row)
+    interrupted instruction ends at: $8c16c x127, $52ac x108, $52aa x101, $c506 x3, $c514 x3, $c4f8 x2
+JITTER 1mb_car_drive keys=Up 50 Hz smask=default: direct handlers  28426, late writes   361 = 1.27 % (worst: 112 pixels into the row)
+JITTER 1mb_car_drive keys=Up 50 Hz smask=default: sync   handlers   7071, late writes     0 = 0.00 % (worst: 0 pixels into the row)
+    interrupted instruction ends at: $8c16c x205, $52ac x82, $52aa x74
+JITTER 1mb_foot_walk keys=Up 50 Hz smask=0x3f: sync   handlers  33977, late writes     0 = 0.00 % (worst: 0 pixels into the row)
+JITTER 1mb_foot_walk keys=Up 50 Hz smask=default NO-ACIA-FIX (control): direct handlers  26992, late writes  3240 = 12.00 % (worst: 600 pixels into the row)
+JITTER 1mb_foot_walk keys=Up 50 Hz smask=default NO-ACIA-FIX (control): sync   handlers   6712, late writes     0 = 0.00 % (worst: 0 pixels into the row)
+    interrupted instruction ends at: $8c16c x139, $52ac x138, $c8e6 x114, $c8de x111, $52aa x108, $c8f2 x107

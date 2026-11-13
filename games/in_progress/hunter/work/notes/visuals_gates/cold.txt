@@ -1,0 +1,79 @@
+BOOT OK hd machine=ste in_game=True MARKER=b'HNPO' FLAGS=00000003 SKY_ST=$7f cfg=5 H=50 fps={'vbls': 250, 'flips': 24, 'fps': 4.8, 'vbls_per_frame': 10.416666666666666}
+  sites: $c5f0=4ef90008f1004e71 $c84a=4ef90008f1044e71 $c8c2=4eb90008f108 $6790=4eb90008f10c4e71 $61fa=4eb90008f110 $b004=4ef90008f114 $c61c=4ef90008f118 $67fc=4ef90008c0144e714e71 $6200=4eb90008c0404e71
+  MFP: IERA=01 IMRA=01 TBCR=08 vec$118=0008f6a6 vec$120=0008f644
+  mouse alive: pointer 009b0033 -> 00870029
+  day: palette 000 0a8 8b9 adb d7d c00 b00 dc8 ddd a80 b90 ca0 890 9a0 9b0 01a level=000f SKY H=50 panel-split=0 -> visuals_cold_hd_ste_day.png
+  RASTER day paused frame H=50: bands 00b 88c 11c 99d 227 01a top 00c; colour-15 changes after rows [19, 35, 43, 47, 49, 59]: PASS
+  RASTER day with mouse traffic: 10 of 10 frames clean: PASS
+  night: palette 000 010 8b9 1a9 a3a c00 900 a20 aaa a80 980 210 890 810 890 081 level=0007 SKY H=50 panel-split=255 -> visuals_cold_hd_ste_night.png
+  RASTER night paused frame H=50: bands 009 002 882 88a 113 081 top 002; colour-15 changes after rows [19, 35, 43, 47, 49, 59]: PASS
+  RASTER night with mouse traffic: 10 of 10 frames clean: PASS
+  after 10 s of walking: in_game=True SKY_ST=$7f H=51 pos=9e4e00312ab3 expected sky on: OK
+COLD hd ste: PASS
+BOOT OK hd machine=st in_game=True MARKER=b'HNPO' FLAGS=00000006 SKY_ST=$7f cfg=5 H=50 fps={'vbls': 250, 'flips': 24, 'fps': 4.8, 'vbls_per_frame': 10.416666666666666}
+  sites: $c5f0=4ef90008f1004e71 $c84a=4ef90008f1044e71 $c8c2=4eb90008f108 $6790=4eb90008f10c4e71 $61fa=4eb90008f110 $b004=4ef90008f114 $c61c=4ef90008f118 $67fc=4ef90008c0144e714e71 $6200=4eb90008c0404e71
+  MFP: IERA=01 IMRA=01 TBCR=08 vec$118=0008f6a6 vec$120=0008f644
+  mouse alive: pointer 009b0033 -> 00870029
+  day: palette 000 020 031 253 575 400 300 540 555 200 310 420 010 120 130 004 level=000f SKY H=50 panel-split=0 -> visuals_cold_hd_st_day.png
+  RASTER day paused frame H=50: bands 003 004 114 115 227 012 top 004; colour-15 changes after rows [19, 35, 43, 47, 49, 59]: PASS
+  RASTER day with mouse traffic: 10 of 10 frames clean: PASS
+  night: palette 000 010 031 121 232 400 100 220 222 200 100 210 010 010 010 001 level=0007 SKY H=50 panel-split=255 -> visuals_cold_hd_st_night.png
+  RASTER night paused frame H=50: bands 001 002 002 002 113 001 top 002; colour-15 changes after rows [19, 47, 49, 59]: PASS
+  RASTER night with mouse traffic: 10 of 10 frames clean: PASS
+  after 10 s of walking: in_game=True SKY_ST=$7f H=51 pos=9e4e00312abb expected sky on: OK
+COLD hd st: PASS
+BOOT OK hd machine=megaste in_game=True MARKER=b'HNPO' FLAGS=00000003 SKY_ST=$7f cfg=5 H=50 fps={'vbls': 250, 'flips': 42, 'fps': 8.4, 'vbls_per_frame': 5.9523809523809526}
+  sites: $c5f0=4ef90008f1004e71 $c84a=4ef90008f1044e71 $c8c2=4eb90008f108 $6790=4eb90008f10c4e71 $61fa=4eb90008f110 $b004=4ef90008f114 $c61c=4ef90008f118 $67fc=4ef90008c0144e714e71 $6200=4eb90008c0404e71
+  MFP: IERA=01 IMRA=01 TBCR=00 vec$118=0008f6a6 vec$120=0008f644
+  mouse alive: pointer 009b0033 -> 00870029
+  day: palette 000 0a8 8b9 adb d7d c00 b00 dc8 ddd a80 b90 ca0 890 9a0 9b0 00b level=000f SKY H=50 panel-split=0 -> visuals_cold_hd_megaste_day.png
+  RASTER day paused frame H=50: bands 00b 88c 11c 99d 227 01a top 00c; colour-15 changes after rows [19, 35, 43, 47, 49, 59]: PASS
+  RASTER day with mouse traffic: 10 of 10 frames clean: PASS
+  night: palette 000 010 098 adb a3a 200 b00 a20 aaa 100 b90 210 080 9a0 890 081 level=0007 SKY H=50 panel-split=255 -> visuals_cold_hd_megaste_night.png
+  RASTER night paused frame H=50: bands 009 002 882 88a 113 081 top 002; colour-15 changes after rows [19, 35, 43, 47, 49, 59]: PASS
+  RASTER night with mouse traffic: 10 of 10 frames clean: PASS
+  after 10 s of walking: in_game=True SKY_ST=$7f H=51 pos=9e4e00322aaf expected sky on: OK
+COLD hd megaste: PASS
+BOOT OK hd machine=tt in_game=True MARKER=b'HNPO' FLAGS=00000003 SKY_ST=$ff cfg=5 H=0 fps={'vbls': 250, 'flips': 250, 'fps': 50.0, 'vbls_per_frame': 1.0}
+  sites: $c5f0=4ef90008f1004e71 $c84a=4ef90008f1044e71 $c8c2=4eb90008f108 $6790=4eb90008f10c4e71 $61fa=4eb90008f110 $b004=4ef90008f114 $c61c=4ef90008f118 $67fc=4ef90008c0144e714e71 $6200=4eb90008c0404e71
+  MFP: IERA=00 IMRA=00 TBCR=00 vec$118=0000afde vec$120=0000aa6e
+  mouse alive: pointer 009b0033 -> 00870029
+  day: palette 000 0a8 8b9 adb d7d c00 b00 dc8 ddd a80 b90 ca0 890 9a0 9b0 00c level=000f SKY H=0 panel-split=0 -> visuals_cold_hd_tt_day.png
+  night: palette 000 010 098 1a9 a3a 200 900 a20 aaa 100 980 210 080 810 890 002 level=0007 SKY H=0 panel-split=0 -> visuals_cold_hd_tt_night.png
+  after 10 s of walking: in_game=True SKY_ST=$ff H=0 pos=9e4e00312ab7 expected sky off: OK
+COLD hd tt: PASS
+in 3D view: True after 90 s
+BOOT OK floppy machine=ste in_game=True MARKER=b'HNPO' FLAGS=00000003 SKY_ST=$7f cfg=5 H=50 fps={'vbls': 250, 'flips': 24, 'fps': 4.8, 'vbls_per_frame': 10.416666666666666}
+  sites: $c5f0=4ef90008f1004e71 $c84a=4ef90008f1044e71 $c8c2=4eb90008f108 $6790=4eb90008f10c4e71 $61fa=4eb90008f110 $b004=4ef90008f114 $c61c=4ef90008f118 $67fc=4ef90008c0144e714e71 $6200=4eb90008c0404e71
+  MFP: IERA=01 IMRA=01 TBCR=08 vec$118=0008f6a6 vec$120=0008f644
+  mouse alive: pointer 009b0033 -> 00870029
+  day: palette 000 0a8 8b9 adb d7d c00 b00 dc8 ddd a80 b90 ca0 890 9a0 9b0 01a level=000f SKY H=50 panel-split=0 -> visuals_cold_floppy_ste_day.png
+  RASTER day paused frame H=50: bands 00b 88c 11c 99d 227 01a top 00c; colour-15 changes after rows [19, 35, 43, 47, 49, 59]: PASS
+  RASTER day with mouse traffic: 10 of 10 frames clean: PASS
+  night: palette 000 010 8b9 1a9 a3a c00 900 a20 aaa a80 980 210 890 810 890 081 level=0007 SKY H=50 panel-split=255 -> visuals_cold_floppy_ste_night.png
+  RASTER night paused frame H=50: bands 009 002 882 88a 113 081 top 002; colour-15 changes after rows [19, 35, 43, 47, 49, 59]: PASS
+  RASTER night with mouse traffic: 10 of 10 frames clean: PASS
+  after 10 s of walking: in_game=True SKY_ST=$7f H=51 pos=9e4e00312ab1 expected sky on: OK
+COLD floppy ste: PASS
+in 3D view: True after 70 s
+BOOT OK floppy machine=st in_game=True MARKER=b'HNPO' FLAGS=00000006 SKY_ST=$7f cfg=5 H=50 fps={'vbls': 250, 'flips': 25, 'fps': 5.0, 'vbls_per_frame': 10.0}
+  sites: $c5f0=4ef90008f1004e71 $c84a=4ef90008f1044e71 $c8c2=4eb90008f108 $6790=4eb90008f10c4e71 $61fa=4eb90008f110 $b004=4ef90008f114 $c61c=4ef90008f118 $67fc=4ef90008c0144e714e71 $6200=4eb90008c0404e71
+  MFP: IERA=01 IMRA=01 TBCR=08 vec$118=0008f6a6 vec$120=0008f644
+  mouse alive: pointer 009b0033 -> 00870029
+  day: palette 000 020 031 253 575 400 300 540 555 200 310 420 010 120 130 004 level=000f SKY H=50 panel-split=0 -> visuals_cold_floppy_st_day.png
+  RASTER day paused frame H=50: bands 003 004 114 115 227 012 top 004; colour-15 changes after rows [19, 35, 43, 47, 49, 59]: PASS
+  RASTER day with mouse traffic: 10 of 10 frames clean: PASS
+  night: palette 000 020 010 121 575 200 100 220 555 100 100 420 000 010 010 004 level=0007 SKY H=50 panel-split=255 -> visuals_cold_floppy_st_night.png
+  RASTER night paused frame H=50: bands 001 002 002 002 113 001 top 002; colour-15 changes after rows [19, 47, 49, 59]: PASS
+  RASTER night with mouse traffic: 10 of 10 frames clean: PASS
+  after 10 s of walking: in_game=True SKY_ST=$7f H=51 pos=9e4e00322aab expected sky on: OK
+COLD floppy st: PASS
+in 3D view: True after 203 s
+BOOT OK floppy machine=falcon in_game=True MARKER=b'HNPO' FLAGS=0000000b SKY_ST=$ff cfg=5 H=0 fps={'vbls': 250, 'flips': 28, 'fps': 5.6, 'vbls_per_frame': 8.928571428571429}
+  sites: $c5f0=4ef90008f1004e71 $c84a=4ef90008f1044e71 $c8c2=4eb90008f108 $6790=4eb90008f10c4e71 $61fa=4eb90008f110 $b004=4ef90008f114 $c61c=4ef90008f118 $67fc=4ef90008c0144e714e71 $6200=4eb90008c0404e71
+  MFP: IERA=00 IMRA=00 TBCR=10 vec$118=0000afde vec$120=0000aa6e
+  mouse alive: pointer 00000004 -> 00000004
+  day: palette 000 0a8 8b9 adb d7d c00 b00 dc8 ddd a80 b90 ca0 890 9a0 9b0 00c level=000f SKY H=0 panel-split=0 -> visuals_cold_floppy_falcon_day.png
+  night: palette 000 010 098 1a9 a3a 200 900 a20 aaa 100 980 210 080 810 890 002 level=0007 SKY H=0 panel-split=0 -> visuals_cold_floppy_falcon_night.png
+  after 10 s of walking: in_game=True SKY_ST=$ff H=0 pos=5b9606f756e4 expected sky off: OK
+COLD floppy falcon: PASS

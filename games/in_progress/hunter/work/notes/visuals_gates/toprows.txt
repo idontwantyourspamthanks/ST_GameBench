@@ -1,0 +1,36 @@
+JITTER 1mb_hills_stand keys=- 50 Hz smask=default +DMA mixer, 2 voices: direct handlers  14992, late writes   521 = 3.48 % (worst: 120 pixels into the row)
+JITTER 1mb_hills_stand keys=- 50 Hz smask=default +DMA mixer, 2 voices: sync   handlers   2957, late writes     0 = 0.00 % (worst: 0 pixels into the row)
+    slot 0 direct:  3022 entries on raster lines {64: 2656, 65: 365, 72: 1}: more than one line from line 64: 1
+    slot 1 direct:  3010 entries on raster lines {96: 2824, 97: 186}: more than one line from line 96: 0
+    slot 2 direct:  2999 entries on raster lines {112: 2788, 113: 211}: more than one line from line 112: 0
+    slot 3 direct:  2987 entries on raster lines {120: 2753, 121: 234}: more than one line from line 120: 0
+    slot 4 direct:  2974 entries on raster lines {124: 2705, 125: 269}: more than one line from line 124: 0
+    slot 5 sync  :  2957 entries on raster lines {126: 2957}: more than one line from line 126: 0
+    interrupted instruction ends at: $8c16c x114, $52aa x95, $52ac x77, $3b84 x51, $3b86 x41, $3722 x39
+JITTER 1mb_hills_stand keys=- 50 Hz smask=default VBL-AT-IPL7 (control) +DMA mixer, 2 voices: direct handlers  14857, late writes   545 = 3.67 % (worst: 632 pixels into the row)
+JITTER 1mb_hills_stand keys=- 50 Hz smask=default VBL-AT-IPL7 (control) +DMA mixer, 2 voices: sync   handlers   2930, late writes     0 = 0.00 % (worst: 0 pixels into the row)
+    slot 0 direct:  2995 entries on raster lines {64: 2583, 65: 381, 70: 1, 72: 1, 73: 2, 75: 6, 76: 2, 77: 1, 78: 2, 79: 2, 81: 3, 82: 6, 85: 5}: more than one line from line 64: 31
+    slot 1 direct:  2984 entries on raster lines {96: 2792, 97: 192}: more than one line from line 96: 0
+    slot 2 direct:  2972 entries on raster lines {112: 2737, 113: 235}: more than one line from line 112: 0
+    slot 3 direct:  2959 entries on raster lines {120: 2719, 121: 240}: more than one line from line 120: 0
+    slot 4 direct:  2947 entries on raster lines {124: 2666, 125: 281}: more than one line from line 124: 0
+    slot 5 sync  :  2930 entries on raster lines {126: 2930}: more than one line from line 126: 0
+    interrupted instruction ends at: $8c16c x129, $52aa x94, $52ac x78, $3b86 x50, $3b84 x43, $3722 x34
+JITTER 1mb_hills_stand keys=- 60 Hz smask=default +DMA mixer, 2 voices: direct handlers  19816, late writes   471 = 2.38 % (worst: 232 pixels into the row)
+JITTER 1mb_hills_stand keys=- 60 Hz smask=default +DMA mixer, 2 voices: sync   handlers   3912, late writes     0 = 0.00 % (worst: 0 pixels into the row)
+    slot 0 direct:  3993 entries on raster lines {35: 3825, 36: 168}: more than one line from line 35: 0
+    slot 1 direct:  3977 entries on raster lines {67: 3749, 68: 227, 73: 1}: more than one line from line 67: 1
+    slot 2 direct:  3964 entries on raster lines {83: 3718, 84: 246}: more than one line from line 83: 0
+    slot 3 direct:  3948 entries on raster lines {91: 3693, 92: 255}: more than one line from line 91: 0
+    slot 4 direct:  3934 entries on raster lines {95: 3684, 96: 250}: more than one line from line 95: 0
+    slot 5 sync  :  3912 entries on raster lines {97: 3912}: more than one line from line 97: 0
+    interrupted instruction ends at: $8c16c x116, $52aa x113, $52ac x85, $36f8 x25, $3722 x21, $600c x15
+JITTER 1mb_hills_stand keys=- 60 Hz smask=default VBL-AT-IPL7 (control) +DMA mixer, 2 voices: direct handlers  18683, late writes  1858 = 9.94 % (worst: 632 pixels into the row)
+JITTER 1mb_hills_stand keys=- 60 Hz smask=default VBL-AT-IPL7 (control) +DMA mixer, 2 voices: sync   handlers   3686, late writes     0 = 0.00 % (worst: 0 pixels into the row)
+    slot 0 direct:  3765 entries on raster lines {35: 1318, 36: 279, 37: 47, 38: 51, 39: 13, 40: 4, 41: 1, 42: 3, 43: 4, 44: 3, 45: 110, 46: 161, 47: 53, 48: 81, 49: 867, 50: 216, 51: 120, 52: 162, 53: 143, 54: 70, 55: 15, 56: 3, 57: 11, 58: 3, 59: 3, 63: 1, 64: 1, 66: 1, 68: 1, 71: 2, 73: 2, 74: 1, 75: 3, 76: 1, 77: 1, 78: 2, 79: 2, 80: 1, 81: 3, 82: 1, 85: 1}: more than one line from line 35: 2168
+    slot 1 direct:  3751 entries on raster lines {67: 3534, 68: 195, 73: 1, 99: 21}: more than one line from line 67: 22
+    slot 2 direct:  3736 entries on raster lines {83: 3516, 84: 199, 115: 19, 116: 2}: more than one line from line 83: 21
+    slot 3 direct:  3723 entries on raster lines {91: 3476, 92: 226, 123: 16, 124: 5}: more than one line from line 91: 21
+    slot 4 direct:  3708 entries on raster lines {95: 3468, 96: 219, 127: 19, 128: 2}: more than one line from line 95: 21
+    slot 5 sync  :  3686 entries on raster lines {97: 3665, 129: 21}: more than one line from line 97: 21
+    interrupted instruction ends at: $52aa x143, $aaba x123, $8c16c x123, $52ac x104, $aab4 x66, $3722 x33
