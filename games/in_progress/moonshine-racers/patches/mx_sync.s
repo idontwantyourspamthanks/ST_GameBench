@@ -2,7 +2,7 @@
 ; default: yes
 ; site: $7b74
 ; orig: 4eb90000d1e4
-; requires: mt_clock mt_pre mx_pre                ; clock/PEND, latch guard, slot copy of the object draw
+; requires: mt_clock mt_pre mx_pre hd_stage       ; clock/PEND, latch guard, slot copy of the object draw; the extra frames draw the new HUD strip (hd_stage's TOPBAR $BB000)
 ; conflicts: mt_sync                              ; replaces it (same site $7b74, same blob $B8100, same data $B8F04)
 ; data: $B8F04 4
 ; data: $B8F20 224
@@ -14,6 +14,7 @@
 ; note: extras: while time remains before the next tick (deadline rule, CLK in 1/300 s), draw another frame of the SAME logic step with the camera advanced by k = f*speed world
 ; note: units (f = display time since the main frame / TICK): the rings fe50/ff76/1003c, the road geometry (stripe phase), the scroll, object distances, AI-car distances and the lateral
 ; note: position are advanced; all game logic is NOT run; every word the advance changed is restored before the tick (group-end state == stock, display scratch excluded).
+; note: HUD (work/notes/hud_build.md): the extra frames draw the new HUD strip through hd_stage's TOPBAR ($BB000; per-buffer shadows: no undo/flag bookkeeping), the ticker with saved state and the face; no cloud update, no old HUD items.
 ; note: Kill switch: byte $B8F20 (X_OFF) != 0 -> plain mt_sync behaviour.  Test: byte $B8F21 (X_TEST) = n -> exactly n extras per tick at f = j/(n+1), no timing, no latch guard; n+$80 -> n extras with zero advance (they must reproduce the main frame).
 TICK    equ     30
 MAXLAG  equ     2*TICK
@@ -220,7 +221,6 @@ extras:
         tst.w   NEXTRA.l
         bne.s   .sv0
         bsr     saveundo                ; lazily: only when a first extra frame is really drawn
-        clr.b   $11ce.w                 ; the HUD item $f620 plays its alarm sound once for this flag: the main frame does that (flag restored below)
 .sv0:   move.w  KNEW.l,d2
         sub.w   KCUM.l,d2               ; world units to advance now
         move.w  d2,$130c.w
@@ -244,11 +244,9 @@ extras:
         bsr     carstep
         move.w  V.l,$130c.w             ; the HUD reads the real speed
         jsr     $e316.l                 ; object projection
-        jsr     $dd50.l                 ; clouds  [HUD BUILD: REMOVE THIS CALL (cloud update dd50) when the clouds are removed]
         jsr     $18318.l                ; horizon strip
         jsr     $e406.l                 ; objects
-        move.w  UNDO+8.l,$11ca.w        ; bottom-left puff animation ($f134 advances its frame per call): the extra frames show the frame
-        bsr     hud                     ; [HUD BUILD: the private HUD call list is the routine `hud:` below; de1c/de6c (cloud erase/draw) are in it] the next main frame will show, not a faster animation
+        bsr     hud
         jsr     $d1ca.l                 ; flip
         move.b  #1,PEND.l
         move.w  $1302.w,$12fe.w
@@ -367,16 +365,10 @@ carstep:
         dbra    d7,.c
         rts
 
-; the HUD part of the pass ($ef7a) without the message ticker ($11ef0: it counts frames)
+; the HUD part of the pass ($ef7a) without the message ticker's real step: hd_stage's TOPBAR ($BB000: per-buffer shadows, so it needs no undo), the ticker $11ef0 with its state
+; saved and restored, the face.  The hit/sound part ($f620's $11ce/$11cf, hd_stage HIT) runs in the main frame only.
 hud:    movea.l $1008.w,a5
-        jsr     $de1c.l
-        jsr     $f1c0.l
-        jsr     $efc6.l
-        jsr     $f214.l
-        movea.l $1008.w,a5
-        jsr     $f3b6.l
-        jsr     $f430.l
-        jsr     $f53c.l
+        jsr     $BB000.l
         lea     TSAVE.l,a0              ; the message ticker ($11ef0) counts frames and draws a typed character / the end-of-message erase into the
         lea     $1198.w,a1              ; buffer of its call and again into the other buffer at the next call: run it here with its state saved
         moveq   #(TKLEN/2)-1,d0         ; and restored (the extra frame's buffer gets the next step early, the main frame then does the real one)
@@ -391,19 +383,11 @@ hud:    movea.l $1008.w,a5
         dbra    d0,.tr
         move.w  TSAVE+TKLEN.l,$10f8.w
         jsr     $f90c.l
-        jsr     $f620.l
-        jsr     $f76a.l
-        jsr     $f7f0.l
-        jsr     $de6c.l
-        jsr     $f22c.l
-        jsr     $f134.l
         rts
 
 ; ---- undo of the advance ---------------------------------------------------------------------------------------------------------
 ; static ranges (word address, length in bytes), terminated by 0
-UTAB:   dc.w    $10bc,2                 ; HUD 'last drawn' / 'redraw once more for the other buffer' flags: the pass that follows must
-        dc.w    $11c4,12                ; take the draw decisions the unmodified game takes (every flagged part is a complete redraw)
-        dc.w    $10ec,14                ; face animation state of the HUD (random lip movement counts frames)
+UTAB:   dc.w    $10ec,14                ; face animation state of the HUD (random lip movement counts frames)
         dc.w    $12f8,6
         dc.w    $1308,4
         dc.w    $1316,16
@@ -411,18 +395,6 @@ UTAB:   dc.w    $10bc,2                 ; HUD 'last drawn' / 'redraw once more f
         dc.w    $1bb0,12
         dc.w    $23bc,12
         dc.w    $27c8,38
-        dc.w    $29c8+0*$38,4
-        dc.w    $29c8+1*$38,4
-        dc.w    $29c8+2*$38,4
-        dc.w    $29c8+3*$38,4
-        dc.w    $29c8+4*$38,4
-        dc.w    $29c8+5*$38,4
-        dc.w    $29c8+6*$38,4
-        dc.w    $29c8+7*$38,4
-        dc.w    $29c8+8*$38,4
-        dc.w    $29c8+9*$38,4
-        dc.w    $29c8+10*$38,4
-        dc.w    $29c8+11*$38,4
         dc.w    0
 ; ring windows: base, index address, index mask, window bytes
 RTAB:   dc.w    $13b0,$13ae,$3ff,32

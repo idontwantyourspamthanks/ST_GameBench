@@ -803,3 +803,7 @@ At 16 MHz a main frame and one extra alternate every 2-3 VBL (positions 458, 468
 * Falcon: TOS 4.04 boots and runs (native 16 MHz, 10.0 passes/s, extras 184/226/644 frames at 16/16/32 MHz); EmuTOS does not autostart PP's loader.
 * The pre-restart message-colour difference of the poked-track runs (8.3) is an artifact of the poke timing, not shipped behaviour; the unpoked gates are identical.
 * `[INFERENCE]` that a forced-60 Hz STE equals a 60 Hz machine for the pacer.
+
+## 9. New HUD and no clouds (MSRHudBuild): default set changed
+`hd_stage hd_init hd_clouds hd_nomap hd_nomap2` are now default (visible change, user-approved layout A); `mr_map mr_digit` are `default: no` (dead code with the new HUD); `mx_sync` requires `hd_stage` (its extra frames call the new TOPBAR, the private HUD call list, the `dd50` call and the HUD flag undo ranges are gone). Default payload 47,360 B (`$B2700-$BDFFF`).
+The earlier statements in this note about cloud-edge residue (<= 2 bytes on some tracks), `mx_sync`'s HUD call list and the pixel-identical default set apply to the previous default set only. Evidence, gates and numbers: `work/notes/hud_build.md`.

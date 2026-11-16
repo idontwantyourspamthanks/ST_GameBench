@@ -1,8 +1,9 @@
 # Moonshine Racers: performance release plan
 
-Status (integration wave, `work/notes/integration.md`): **the default patch set is integrated and gated.** HD and floppy builds default to `pp_bigram_cache` (HD), `mr_edge mr_map mr_digit` (pixel-identical render),
+Status (integration wave, `work/notes/integration.md`): **the default patch set is integrated and gated.** HD and floppy builds default to `pp_bigram_cache` (HD), `mr_edge` (pixel-identical render; `mr_map mr_digit` are now `default: no`, dead with the new HUD),
 `rd_geom rd_draw rd_init` (pixel-identical road, tables generated at race load), `mt_clock mt_pre mx_pre mx_sync` (fixed tick, `TICK equ 30` = 10 passes/s, exact at 50 and 60 Hz, plus extra in-between frames where the CPU has spare time; `mt_sync` = the same pacer without extras, `play.sh --noextrap`); floppy additionally `fl_hook fl_deprot`.
-Not default: `mt_sync`, `mr_negctl`, `test_*`. Evidence: `work/notes/{rendering,render_patches,road,tick,timing,extrap,integration}.md`.
+**New HUD (user-approved layout A, `work/notes/hud_build.md`): `hd_stage hd_init hd_clouds hd_nomap hd_nomap2` are default** - one black 16-row top strip (score, stopwatch, position, speed MPH, gear, temperature, turbo cup + gauge, white text) drawn once per change, minimap/speedometer/gear lever/thermometer/cup/big dial and the clouds are gone; message ticker and face unchanged; driving pass 683 k -> 491 k cycles at 8 MHz (4.26 -> 3.06 VBL), standing 577 k -> 415 k (`hud_build.md` 4b). `mx_sync` requires `hd_stage`.
+Not default: `mt_sync`, `mr_negctl`, `mr_map`, `mr_digit`, `test_*`. Evidence: `work/notes/{rendering,render_patches,road,tick,timing,extrap,integration}.md`.
 Version/credit line (mandatory, user picks the screen): `v1.0 enhanced by dad_prg`, kept in one place in the patch source (`patches/VERSION`; the credit patch itself is not written yet).
 
 ## Decisions taken
@@ -14,7 +15,7 @@ Version/credit line (mandatory, user picks the screen): `v1.0 enhanced by dad_pr
 ## Remaining
 - Credit patch (`v1.0 enhanced by dad_prg` on a screen the user picks) and release version.
 - User docs: README.TXT / PATCHES.TXT wording for the final set (the build already fills `{PATCHES}`), packaging (`build --zip`, `build --floppy --zip`, `dist/`).
-- User decisions: the extra frames `mx_*` are default (approved); known tolerance: main frames differ from stock by <= 2 bytes of cloud-edge residue on some tracks (`integration.md` section 8; disappears with the clouds); blitter (rejected with numbers, unless the user wants a Mega STE/TT specific experiment); the clouds (12 cloud sprites ~9 % of a frame: removing them is a visible change).
+- User decisions: the extra frames `mx_*` are default (approved); the cloud-edge residue of the old main frames is gone with the clouds (`hud_build.md` 3.5: 0 residue pixels on 7 tracks); blitter (rejected with numbers, unless the user wants a Mega STE/TT specific experiment); (the clouds and the old HUD are removed by the new HUD: done, user-approved).
 - Not tested anywhere: real hardware (everything is Hatari 2.6.1), Falcon, a native 60 Hz boot, the tracks after the first (see `integration.md` for what was reached).
 
 ## Goals and preferences (carried over from `st-game-speedup`)

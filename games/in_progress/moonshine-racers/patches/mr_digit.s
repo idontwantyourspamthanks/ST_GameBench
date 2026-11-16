@@ -1,5 +1,5 @@
 ; name: mr_digit
-; default: yes
+; default: no
 ; site: $14d98
 ; orig: 5347284b1219
 ; doc: Faster HUD score-digit glyph kernel $14d98 (pixel-identical): the two colours the game uses ($cd, $c7) get straight-line row code instead of 8 btst/sne/or per row.

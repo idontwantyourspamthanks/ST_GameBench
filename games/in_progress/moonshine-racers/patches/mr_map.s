@@ -1,5 +1,5 @@
 ; name: mr_map
-; default: yes
+; default: no
 ; site: $126d4
 ; orig: 044000065347
 ; doc: Faster minimap bitmap draw $12690 (pixel-identical): the per-plane btst/branch of the inner loop is resolved once per call by a jump into one of 16 unrolled row loops.
