@@ -13,7 +13,8 @@ What is on the image (see LAYOUT below; the .layout.txt written next to the imag
     partition, flag $81 = exists + bootable) + checksum $1234;
   * the partition boot sector = HDDRIVER's partition loader (gamebench/hd/hddriver_pboot.bin) with our BPB; it finds
     HDDRIVER.SYS in the root directory and runs it, which installs the driver and mounts the partition(s) as C:;
-  * C:\ = HDDRIVER.SYS, README.TXT, no DESKTOP.INF (TOS uses its own default desktop, no autorun), AUTO\PMBOOT.PRG (the boot
+  * C:\ = HDDRIVER.SYS, README.TXT, DESKTOP.INF + NEWDESK.INF (the ROM's default desktop with windows that fit a 320-pixel screen,
+    see desktop_inf_files; no autorun), AUTO\PMBOOT.PRG (the boot
     prompt that starts Powermonger, see tools/hd_pmboot.s) and one folder per game, each the
     output of that game's own build tool (`<game>/tools/*patch.py build`, plus what its package.sh adds), nothing else.
 The partition is kept under 32 MB (65535 sectors) so that TOS 1.04 / 1.06 / 1.62 (16-bit sector numbers in the BPB) accept it.
@@ -250,6 +251,33 @@ def fix_sum(sec: bytearray, want: int = 0x1234) -> None:
     struct.pack_into(">H", sec, 510, (want - s) & 0xFFFF)
 
 
+# ---- the desktop: DESKTOP.INF (TOS 1.x) and NEWDESK.INF (TOS 2.x/3.x) --------------------------------------------------------------
+# Without an INF file the desktop uses the INF text built into the TOS ROM, whose windows are 76 columns wide (`#W .. 4C ..`). TOS 1.04/
+# 1.06/1.62 (ST, STE) do not clip that to a 320-pixel low-resolution screen: the C: window runs off the right edge, its scroll bars
+# cannot be reached. TOS 2.06+ clips it (Mega STE, TT: no problem). The files below are those ROM default texts byte for byte
+# (strings of TOS_1_62.img / TOS_2_06.img, which equals 3.06), except for the `#W` lines: windows at most 38 columns (304 pixels) wide
+# and ending at x = 304, which fits every screen (the desktop aligns windows to 16 pixels). TOS 2.06+ reads NEWDESK.INF before
+# DESKTOP.INF and TOS 1.x only reads DESKTOP.INF, so each gets its own ROM default: the `#E` line differs (TOS 1.x boots with
+# the blitter on, 2.06 with it off), one shared file would switch the blitter at boot on one of them. work/hdimage/NOTES.md has the evidence.
+_INF_1X = ("#a000000", "#b000000", "#c???000?000<00<?00;;400;0;;;4440??0;;?0?;0;;;0??03111103", "#d" + " " * 45, "#E 18 13 ",
+           "#W 00 00 00 07 26 0C 00 @", "#W 00 00 02 0B 24 09 00 @", "#W 00 00 04 0F 22 09 00 @", "#W 00 00 06 01 20 09 00 @",
+           "#C 01 01 00 FF c CARTRIDGE@ @ ", "#M 01 00 00 FF C HARD DISK@ @ ", "#M 00 00 00 FF A FLOPPY DISK@ @ ",
+           "#M 00 01 00 FF B FLOPPY DISK@ @ ", "#T 00 07 02 FF   TRASH@ @ ", "#F FF 04   @ *.*@ ", "#D FF 01   @ *.*@ ",
+           "#G 03 FF   *.APP@ @ ", "#G 03 FF   *.PRG@ @ ", "#P 03 FF   *.TTP@ @ ", "#F 03 04   *.TOS@ @ ")
+_INF_2X = ("#a000000", "#b000000", "#c7770007000600070055200505552220770557075055507703111103", "#d" + " " * 45, "#E 18 03 00 06 43",
+           "#W 00 00 00 07 26 0C 00 @", "#W 00 00 02 0B 24 09 00 @", "#W 00 00 04 0F 22 09 00 @", "#W 00 00 06 01 20 09 00 @",
+           "#W 00 00 04 07 22 0C 00 @", "#W 00 00 0C 0B 1A 09 00 @", "#W 00 00 08 0F 1E 09 00 @", "#W 00 00 06 01 20 09 00 @",
+           "#C 01 01 00 FF c CARTRIDGE@ @ ", "#M 00 01 00 FF C HARD DISK@ @ ", "#M 00 00 00 FF A FLOPPY DISK@ @ ",
+           "#M 01 00 00 FF B FLOPPY DISK@ @ ", "#T 00 07 02 FF   TRASH@ @ ", "#F FF 04   @ *.*@ ", "#D FF 01   @ *.*@ ",
+           "#G 03 FF   *.APP@ @ ", "#G 03 FF   *.PRG@ @ ", "#Y 03 FF   *.GTP@ @ ", "#P 03 FF   *.TTP@ @ ", "#F 03 04   *.TOS@ @ ")
+
+
+def desktop_inf_files() -> dict[str, bytes]:
+    """Root files DESKTOP.INF (TOS 1.x: ends with ^Z like the ROM text) and NEWDESK.INF (TOS 2.x/3.x). No `#Z` autorun line."""
+    crlf = lambda lines: "".join(l + "\r\n" for l in lines).encode("latin-1")
+    return {"DESKTOP.INF": crlf(_INF_1X) + b"\x1a", "NEWDESK.INF": crlf(_INF_2X)}
+
+
 def readme_text(vers: dict[str, str], date: str) -> str:
     t = rf"""ATARI ST ENHANCED GAMES - HARD DISK  ({date})
 ==========================================================================
@@ -277,6 +305,9 @@ a 3-second question about Powermonger at boot.
 Boot: HDDRIVER banner, then "Powermonger? P = start, else desktop". Press
 P within 3 seconds to start Powermonger; any other key (or waiting) goes
 to the desktop. Open drive C: and double-click the game's start file.
+
+DESKTOP.INF / NEWDESK.INF only size the desktop windows to fit a 320x200
+screen (TOS 1.x does not shrink wider ones); they start nothing.
 
 Why Powermonger is different: its hard-disk version copies TOS's memory
 aside while it runs and only works when started from the AUTO folder
@@ -375,6 +406,8 @@ def build_image(img: Path, folders: dict[str, Path], size_kb: int, date: str, fi
     allfiles = {"README.TXT": readme_text(VERSIONS, date).encode("ascii"), **(files or {})}
     for name, data in allfiles.items():
         (tmp / name).write_bytes(data)
+    check_83(tmp)
+    for name in allfiles:
         run(["mcopy", "-i", tgt, "-m", tmp / name, f"::{name}"], env=env)
     for name, src in folders.items():
         run(["mmd", "-i", tgt, f"::{name}"], env=env)
@@ -422,7 +455,8 @@ def layout_text(img: Path, tgt: str, total: int, psz: int, folders: dict[str, Pa
          "Drive C: (root)",
          "  HDDRIVER.SYS   HDDRIVER 10.15, started by the partition boot sector (must stay in the root)",
          "  README.TXT     the games, how to start them, versions, requirements",
-         "  (no DESKTOP.INF: TOS uses its built-in default desktop; nothing starts by itself)"]
+         "  DESKTOP.INF    the TOS 1.x default desktop (TOS_1_62 ROM text) with windows <= 38 columns, so the C: window fits a 320x200 screen",
+         "  NEWDESK.INF    the same for TOS 2.x/3.x (read before DESKTOP.INF; TOS_2_06 ROM text); neither has an autorun entry, nothing starts by itself"]
     why = {"MIDWINTR": "Midwinter (HAGA by PP, patched)", "MW1ORIG": "Midwinter (HAGA by PP, unpatched, for comparison)",
            "MIDWINT2": "Midwinter 2 (HAGA by PP, patched)", "MW2ORIG": "Midwinter 2 (HAGA by PP, unpatched, for comparison)",
            "HUNTER": "Hunter (Gamex by PP, patched; FILES\\P = patch code + STE sample bank)",
@@ -477,7 +511,7 @@ def main():
         raise SystemExit(f"refusing to overwrite {', '.join(map(str, busy))}: a running program (e.g. Hatari) has it open. "
                          "Quit it first, or pass --out with a new file name.")
     img.parent.mkdir(parents=True, exist_ok=True)
-    tgt, total, psz = build_image(img, folders, a.size_kb, a.date)
+    tgt, total, psz = build_image(img, folders, a.size_kb, a.date, files=desktop_inf_files())
     md5 = hashlib.md5(img.read_bytes()).hexdigest()
     Path(str(img) + ".md5").write_text(f"{md5}  {img.name}\n")
     Path(str(img.with_suffix("")) + ".layout.txt").write_text(layout_text(img, tgt, total, psz, folders, md5, a.date))
