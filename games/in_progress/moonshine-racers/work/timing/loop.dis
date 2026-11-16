@@ -1,0 +1,139 @@
+sub_00796a:
+00796a:  4eb90000838a         jsr      $838a.l  ; sub_00838a
+007970:  4a386042             tst.b    $6042.w
+007974:  6712                 beq.b    $7988
+007976:  50f81024             st.b     $1024.w
+00797a:  4a38102b             tst.b    $102b.w
+00797e:  6606                 bne.b    $7986
+007980:  08f80007102c         bset.b   #$7, $102c.w
+007986:  4e75                 rts      
+007988:  0c38003b60ff         cmpi.b   #$3b, $60ff.w
+00798e:  6674                 bne.b    $7a04
+007990:  423860ff             clr.b    $60ff.w
+007994:  0c3800021021         cmpi.b   #$2, $1021.w
+00799a:  6608                 bne.b    $79a4
+00799c:  7000                 moveq    #$0, d0
+00799e:  4eb900007bcc         jsr      $7bcc.l  ; sub_007bcc
+0079a4:  4eb90000d770         jsr      $d770.l  ; sub_00d770
+0079aa:  4eb90000d206         jsr      $d206.l  ; sub_00d206
+0079b0:  42381020             clr.b    $1020.w
+0079b4:  0c38003b60ff         cmpi.b   #$3b, $60ff.w
+0079ba:  66f8                 bne.b    $79b4
+0079bc:  423860ff             clr.b    $60ff.w
+0079c0:  50f81020             st.b     $1020.w
+0079c4:  0c3800011021         cmpi.b   #$1, $1021.w
+0079ca:  661e                 bne.b    $79ea
+0079cc:  7001                 moveq    #$1, d0
+0079ce:  7200                 moveq    #$0, d1
+0079d0:  4eb900007bba         jsr      $7bba.l  ; sub_007bba
+0079d6:  7003                 moveq    #$3, d0
+0079d8:  7201                 moveq    #$1, d1
+0079da:  4eb900007bba         jsr      $7bba.l  ; sub_007bba
+0079e0:  7005                 moveq    #$5, d0
+0079e2:  7202                 moveq    #$2, d1
+0079e4:  4eb900007bba         jsr      $7bba.l  ; sub_007bba
+0079ea:  702e                 moveq    #$2e, d0
+0079ec:  7200                 moveq    #$0, d1
+0079ee:  4eb900007bb2         jsr      $7bb2.l  ; sub_007bb2
+0079f4:  4a3829c7             tst.b    $29c7.w
+0079f8:  670a                 beq.b    $7a04
+0079fa:  703c                 moveq    #$3c, d0
+0079fc:  7201                 moveq    #$1, d1
+0079fe:  4eb900007bb2         jsr      $7bb2.l  ; sub_007bb2
+007a04:  4a781030             tst.w    $1030.w
+007a08:  6658                 bne.b    $7a62
+007a0a:  0c78000a100e         cmpi.w   #$a, $100e.w
+007a10:  6576                 bcs.b    $7a88
+007a12:  661c                 bne.b    $7a30
+007a14:  7047                 moveq    #$47, d0
+007a16:  7200                 moveq    #$0, d1
+007a18:  4eb900007bb2         jsr      $7bb2.l  ; sub_007bb2
+007a1e:  4eb90000dae4         jsr      $dae4.l  ; sub_00dae4
+007a24:  0240000f             andi.w   #$f, d0
+007a28:  0640001e             addi.w   #$1e, d0
+007a2c:  31c0102e             move.w   d0, $102e.w
+007a30:  3038102e             move.w   $102e.w, d0
+007a34:  b078100e             cmp.w    $100e.w, d0
+007a38:  660a                 bne.b    $7a44
+007a3a:  7048                 moveq    #$48, d0
+007a3c:  7200                 moveq    #$0, d1
+007a3e:  4eb900007bb2         jsr      $7bb2.l  ; sub_007bb2
+007a44:  3038102e             move.w   $102e.w, d0
+007a48:  06400016             addi.w   #$16, d0
+007a4c:  b078100e             cmp.w    $100e.w, d0
+007a50:  6636                 bne.b    $7a88
+007a52:  31fc00011030         move.w   #$1, $1030.w
+007a58:  702e                 moveq    #$2e, d0
+007a5a:  7200                 moveq    #$0, d1
+007a5c:  4eb900007bb2         jsr      $7bb2.l  ; sub_007bb2
+007a62:  7000                 moveq    #$0, d0
+007a64:  303810d8             move.w   $10d8.w, d0
+007a68:  0c3800021021         cmpi.b   #$2, $1021.w
+007a6e:  6618                 bne.b    $7a88
+007a70:  e748                 lsl.w    #$3, d0
+007a72:  4a3811d9             tst.b    $11d9.w
+007a76:  6708                 beq.b    $7a80
+007a78:  04400050             subi.w   #$50, d0
+007a7c:  6a02                 bpl.b    $7a80
+007a7e:  7000                 moveq    #$0, d0
+007a80:  4440                 neg.w    d0
+007a82:  33c0000091f0         move.w   d0, $91f0.l
+007a88:  2a781008             movea.l  $1008.w, a5
+007a8c:  4eb90000f9fa         jsr      $f9fa.l  ; sub_00f9fa
+007a92:  4eb90000fb96         jsr      $fb96.l  ; sub_00fb96
+007a98:  4eb90000fc2a         jsr      $fc2a.l  ; sub_00fc2a
+007a9e:  4eb90000fc80         jsr      $fc80.l  ; sub_00fc80
+007aa4:  4eb90000fce4         jsr      $fce4.l  ; sub_00fce4
+007aaa:  4eb90000fd64         jsr      $fd64.l  ; sub_00fd64
+007ab0:  4eb90000fa2c         jsr      $fa2c.l  ; sub_00fa2c
+007ab6:  4eb900010ca6         jsr      $10ca6.l  ; sub_010ca6
+007abc:  4eb90001125c         jsr      $1125c.l  ; sub_01125c
+007ac2:  4eb9000113d4         jsr      $113d4.l  ; sub_0113d4
+007ac8:  4eb90001147a         jsr      $1147a.l  ; sub_01147a
+007ace:  4eb900011792         jsr      $11792.l  ; sub_011792
+007ad4:  4eb9000112c4         jsr      $112c4.l  ; sub_0112c4
+007ada:  4eb900011342         jsr      $11342.l  ; sub_011342
+007ae0:  4eb900011230         jsr      $11230.l  ; sub_011230
+007ae6:  4eb900011396         jsr      $11396.l  ; sub_011396
+007aec:  4eb90000fe50         jsr      $fe50.l  ; sub_00fe50
+007af2:  4eb90000ff76         jsr      $ff76.l  ; sub_00ff76
+007af8:  4eb90001003c         jsr      $1003c.l  ; sub_01003c
+007afe:  4eb900017c24         jsr      $17c24.l  ; sub_017c24
+007b04:  4eb9000100b4         jsr      $100b4.l  ; sub_0100b4
+007b0a:  4eb900017c42         jsr      $17c42.l  ; sub_017c42
+007b10:  4eb900010a5e         jsr      $10a5e.l  ; sub_010a5e
+007b16:  4eb900010a98         jsr      $10a98.l  ; sub_010a98
+007b1c:  4eb90000e218         jsr      $e218.l  ; sub_00e218
+007b22:  4eb90000e2e8         jsr      $e2e8.l  ; sub_00e2e8
+007b28:  4eb90001182e         jsr      $1182e.l  ; sub_01182e
+007b2e:  4eb900011a3c         jsr      $11a3c.l  ; sub_011a3c
+007b34:  4eb90000e316         jsr      $e316.l  ; sub_00e316
+007b3a:  4eb90000dd50         jsr      $dd50.l  ; sub_00dd50
+007b40:  4eb900018318         jsr      $18318.l  ; sub_018318
+007b46:  4eb90000e406         jsr      $e406.l  ; sub_00e406
+007b4c:  4eb90000ef7a         jsr      $ef7a.l  ; sub_00ef7a
+007b52:  4a381024             tst.b    $1024.w
+007b56:  6606                 bne.b    $7b5e
+007b58:  4eb900018888         jsr      $18888.l  ; sub_018888
+007b5e:  4eb900018c86         jsr      $18c86.l  ; sub_018c86
+007b64:  4eb900018f0e         jsr      $18f0e.l  ; sub_018f0e
+007b6a:  4a381024             tst.b    $1024.w
+007b6e:  6a04                 bpl.b    $7b74
+007b70:  4e75                 rts      
+007b72:  00004eb9             ori.b    #$b9, d0
+007b76:  0000d1e4             ori.b    #$e4, d0
+007b7a:  31f813041300         move.w   $1304.w, $1300.w
+007b80:  31f8130212fe         move.w   $1302.w, $12fe.w
+007b86:  5278100e             addq.w   #$1, $100e.w
+007b8a:  7000                 moveq    #$0, d0
+007b8c:  3038130c             move.w   $130c.w, d0
+007b90:  d1785ff8             add.w    d0, $5ff8.w
+007b94:  32381338             move.w   $1338.w, d1
+007b98:  d240                 add.w    d0, d1
+007b9a:  0c41000b             cmpi.w   #$b, d1
+007b9e:  6502                 bcs.b    $7ba2
+007ba0:  7200                 moveq    #$0, d1
+007ba2:  31c11338             move.w   d1, $1338.w
+007ba6:  e648                 lsr.w    #$3, d0
+007ba8:  d17811c2             add.w    d0, $11c2.w
+007bac:  6000fdbc             bra.w    $796a

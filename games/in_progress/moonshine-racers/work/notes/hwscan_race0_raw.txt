@@ -1,0 +1,48 @@
+hwscan ram_race0.bin  range $200-$70000  code: 10344 instrs reached (H) + 8729 unreached-run (L), 56392 of 458240 bytes (12%)
+
+   addr c rw  lvl   instruction                        register(s)                    via            risk
+006f72  H W   warn  clr.b $fa07.w                      MFP_IERA                                      MFP interrupt enable/pending/mask: leave TOS's bits alone and restore them on exit
+006f76  H W   warn  clr.b $fa09.w                      MFP_IERB                                      MFP interrupt enable/pending/mask: leave TOS's bits alone and restore them on exit
+006f7a  H W   warn  clr.b $fa0b.w                      MFP_IPRA                                      MFP interrupt enable/pending/mask: leave TOS's bits alone and restore them on exit
+006f7e  H W   warn  clr.b $fa0d.w                      MFP_IPRB                                      MFP interrupt enable/pending/mask: leave TOS's bits alone and restore them on exit
+006f82  H W   warn  clr.b $fa0f.w                      MFP_ISRA                                      MFP interrupt enable/pending/mask: leave TOS's bits alone and restore them on exit
+006f86  H W   warn  clr.b $fa11.w                      MFP_ISRB                                      MFP interrupt enable/pending/mask: leave TOS's bits alone and restore them on exit
+006f8a  H W   warn  clr.b $fa13.w                      MFP_IMRA                                      MFP interrupt enable/pending/mask: leave TOS's bits alone and restore them on exit
+006f8e  H W   warn  clr.b $fa15.w                      MFP_IMRB                                      MFP interrupt enable/pending/mask: leave TOS's bits alone and restore them on exit
+006f96  H W   warn  move.b d0, $fa07.w                 MFP_IERA                                      MFP interrupt enable/pending/mask: leave TOS's bits alone and restore them on exit
+006f9a  H W   warn  move.b d0, $fa13.w                 MFP_IMRA                                      MFP interrupt enable/pending/mask: leave TOS's bits alone and restore them on exit
+006fa8  H W   warn  move.b d0, $fa09.w                 MFP_IERB                                      MFP interrupt enable/pending/mask: leave TOS's bits alone and restore them on exit
+006fac  H W   warn  move.b d0, $fa15.w                 MFP_IMRB                                      MFP interrupt enable/pending/mask: leave TOS's bits alone and restore them on exit
+006fb6  H W   warn  move.b #$40, $fa17.w               MFP_VR                                        MFP interrupt enable/pending/mask: leave TOS's bits alone and restore them on exit
+006fcc  H W   warn  move.l #$d11e, $70.w               VECTOR $70                                    writes the VBL (autovector 4) vector: replaces TOS's handler; restore it on exit
+006fd4  H W   warn  move.l #$d616, $120.w              VECTOR $120                                   writes the MFP timer B (HBL counter) vector: replaces TOS's handler; restore it on exit
+006fdc  H W   warn  move.l #$cfb4, $118.w              VECTOR $118                                   writes the MFP ACIA (IKBD/MIDI) vector: replaces TOS's handler; restore it on exit
+00d586  H W   warn  move.b d0, $fa21.w                 MFP_TBDR                                      MFP timers: C = TOS 200 Hz tick, D = RS-232, B = HBL; changing them skews TOS timing
+00d5e6  H RW  warn  bset.b #$0, $fa07.w                MFP_IERA                                      MFP interrupt enable/pending/mask: leave TOS's bits alone and restore them on exit
+00d5ec  H RW  warn  bset.b #$0, $fa13.w                MFP_IMRA                                      MFP interrupt enable/pending/mask: leave TOS's bits alone and restore them on exit
+00d5f2  H W   warn  clr.b $fa1b.w                      MFP_TBCR                                      MFP timers: C = TOS 200 Hz tick, D = RS-232, B = HBL; changing them skews TOS timing
+00d5f6  H W   warn  move.b #$8, $fa1b.w                MFP_TBCR                                      MFP timers: C = TOS 200 Hz tick, D = RS-232, B = HBL; changing them skews TOS timing
+00d5fe  H W   warn  clr.b $fa1b.w                      MFP_TBCR                                      MFP timers: C = TOS 200 Hz tick, D = RS-232, B = HBL; changing them skews TOS timing
+00d602  H RW  warn  bclr.b #$0, $fa07.w                MFP_IERA                                      MFP interrupt enable/pending/mask: leave TOS's bits alone and restore them on exit
+00d608  H RW  warn  bclr.b #$0, $fa13.w                MFP_IMRA                                      MFP interrupt enable/pending/mask: leave TOS's bits alone and restore them on exit
+00d60e  H W   warn  move.b #$1, $fa21.w                MFP_TBDR                                      MFP timers: C = TOS 200 Hz tick, D = RS-232, B = HBL; changing them skews TOS timing
+00d65a  H W   warn  clr.b $fa1b.w                      MFP_TBCR                                      MFP timers: C = TOS 200 Hz tick, D = RS-232, B = HBL; changing them skews TOS timing
+00d65e  H W   warn  move.b d0, $fa21.w                 MFP_TBDR                                      MFP timers: C = TOS 200 Hz tick, D = RS-232, B = HBL; changing them skews TOS timing
+00d662  H W   warn  move.b #$8, $fa1b.w                MFP_TBCR                                      MFP timers: C = TOS 200 Hz tick, D = RS-232, B = HBL; changing them skews TOS timing
+00d674  H W   warn  clr.b $fa1b.w                      MFP_TBCR                                      MFP timers: C = TOS 200 Hz tick, D = RS-232, B = HBL; changing them skews TOS timing
+00d678  H RW  warn  bclr.b #$0, $fa07.w                MFP_IERA                                      MFP interrupt enable/pending/mask: leave TOS's bits alone and restore them on exit
+00d67e  H RW  warn  bclr.b #$0, $fa13.w                MFP_IMRA                                      MFP interrupt enable/pending/mask: leave TOS's bits alone and restore them on exit
+00d684  H W   warn  move.b #$1, $fa21.w                MFP_TBDR                                      MFP timers: C = TOS 200 Hz tick, D = RS-232, B = HBL; changing them skews TOS timing
+00d6a2  H W   warn  clr.b $fa1b.w                      MFP_TBCR                                      MFP timers: C = TOS 200 Hz tick, D = RS-232, B = HBL; changing them skews TOS timing
+00d6a6  H W   warn  move.b d0, $fa21.w                 MFP_TBDR                                      MFP timers: C = TOS 200 Hz tick, D = RS-232, B = HBL; changing them skews TOS timing
+00d6aa  H W   warn  move.b #$8, $fa1b.w                MFP_TBCR                                      MFP timers: C = TOS 200 Hz tick, D = RS-232, B = HBL; changing them skews TOS timing
+00d6e0  H W   warn  clr.b $fa1b.w                      MFP_TBCR                                      MFP timers: C = TOS 200 Hz tick, D = RS-232, B = HBL; changing them skews TOS timing
+00d6e4  H W   warn  move.b d0, $fa21.w                 MFP_TBDR                                      MFP timers: C = TOS 200 Hz tick, D = RS-232, B = HBL; changing them skews TOS timing
+00d6e8  H W   warn  move.b #$8, $fa1b.w                MFP_TBCR                                      MFP timers: C = TOS 200 Hz tick, D = RS-232, B = HBL; changing them skews TOS timing
+
+summary (level, group, machines: findings, first address):
+  warn  MFP_IRQ            all                                    19                  first $6f72
+  warn  MFP_TIMER          all                                    16                  first $d586
+  warn  VECTOR             all                                     3                  first $6fcc
+
+total 38 lines: 38 accesses/vector writes (0 low-confidence), 0 pointer loads; 0 crit

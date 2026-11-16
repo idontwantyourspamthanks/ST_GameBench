@@ -1,0 +1,7 @@
+hwscan ram_race_up.bin  range $f3000-$fb000  code: 0 instrs reached (H) + 2971 unreached-run (L), 9280 of 32768 bytes (28%)
+
+   addr c rw  lvl   instruction                        register(s)                    via            risk
+
+summary (level, group, machines: findings, first address):
+
+total 0 lines: 0 accesses/vector writes (0 low-confidence), 0 pointer loads; 0 crit

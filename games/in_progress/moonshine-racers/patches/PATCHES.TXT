@@ -1,0 +1,13 @@
+Moonshine Racers (Millennium, 1991) - PP's HAGA hard-disk conversion, enhanced release v@VERSION@ (dad_prg)
+==========================================================================================================
+
+This folder is PP's Atari ST hard-disk conversion of Moonshine Racers (README.TXT / LOG.TXT are his) with the changes below applied
+to RUNME.TOS (patch loader: the changed game code is applied in RAM at start-up, the game files in FILES\ are PP's, unchanged) and to
+HAGA (PP's loader service).  Start RUNME.TOS from the desktop or a hard-disk AUTO folder exactly as PP's version.
+
+Changes in this release:
+{PATCHES}
+
+Machines: 1 MB or more.  Booted to the first race with this patch set plus a test marker patch: STE (TOS 1.62, 1 MB and 4 MB), Mega STE
+(TOS 2.06, 1 MB and 4 MB), ST (TOS 1.04, 1 MB) and TT (TOS 3.06, 4 MB).  The Falcon runs the same code path (not tested here).
+Hard-disk set only: PP's conversion has no floppy version.  The patch mechanism and its address map: patches/README.md

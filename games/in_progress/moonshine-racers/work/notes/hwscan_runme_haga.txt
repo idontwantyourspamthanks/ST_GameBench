@@ -1,0 +1,63 @@
+=== work/dumps/RUNME_unpacked.tos
+010b1c  H R   crit  move.b $8e21.w, $14066.l           MSTE_CPU_CACHE                                Mega STE CPU speed/cache ($ff8e21): bus error on every other machine
+010b24  H W   crit  move.b #$fc, $8e21.w               MSTE_CPU_CACHE                                Mega STE CPU speed/cache ($ff8e21): bus error on every other machine
+010b50  H W   warn  move.l #$10bd0, $114.w             VECTOR $114                                   writes the MFP timer C vector: replaces TOS's handler; restore it on exit
+010b86  ? W   info  clr.w $8260.w                      SHIFT                                         resolution: TT/Falcon map the ST modes; a monochrome ST can only run mode 2
+010b8a  ? W   warn  move.b #$fe, $820a.w               SYNC                                          $ff820a bit 1 = 50/60 Hz: a game that tests it may refuse 60 Hz or misrun (Populous 2 PAL check)
+010b90  ? W   warn  clr.b $fa07.w                      MFP_IERA                                      MFP interrupt enable/pending/mask: leave TOS's bits alone and restore them on exit
+010b94  ? W   warn  clr.b $fa09.w                      MFP_IERB                                      MFP interrupt enable/pending/mask: leave TOS's bits alone and restore them on exit
+010b98  ? W   warn  clr.b $fa1d.w                      MFP_TCDCR                                     MFP timers: C = TOS 200 Hz tick, D = RS-232, B = HBL; changing them skews TOS timing
+010b9c  ? RW  warn  bset.b #$5, $fa09.w                MFP_IERB                                      MFP interrupt enable/pending/mask: leave TOS's bits alone and restore them on exit
+010ba2  ? RW  warn  bset.b #$5, $fa15.w                MFP_IMRB                                      MFP interrupt enable/pending/mask: leave TOS's bits alone and restore them on exit
+010ba8  ? W   warn  move.l #$10c00, $70.w              VECTOR $70                                    writes the VBL (autovector 4) vector: replaces TOS's handler; restore it on exit
+010bb0  ? W   warn  move.l #$10c3a, $68.w              VECTOR $68                                    writes the HBL (autovector 2) vector: replaces TOS's handler; restore it on exit
+010bb8  ? W   warn  move.b #$0, $fa1d.w                MFP_TCDCR                                     MFP timers: C = TOS 200 Hz tick, D = RS-232, B = HBL; changing them skews TOS timing
+010bbe  ? W   warn  move.l #$10c46, $114.w             VECTOR $114                                   writes the MFP timer C vector: replaces TOS's handler; restore it on exit
+010bd0  H W   warn  move.l #$10bdc, $114.w             VECTOR $114                                   writes the MFP timer C vector: replaces TOS's handler; restore it on exit
+010be8  H RW  warn  bclr.b #$5, $fa11.w                MFP_ISRB                                      MFP interrupt enable/pending/mask: leave TOS's bits alone and restore them on exit
+010c08  ? W   warn  move.l #$10c12, $70.w              VECTOR $70                                    writes the VBL (autovector 4) vector: replaces TOS's handler; restore it on exit
+010c1a  ? W   warn  clr.b $fa1d.w                      MFP_TCDCR                                     MFP timers: C = TOS 200 Hz tick, D = RS-232, B = HBL; changing them skews TOS timing
+010c1e  ? W   warn  move.b #$64, $fa23.w               MFP_TCDR                                      MFP timers: C = TOS 200 Hz tick, D = RS-232, B = HBL; changing them skews TOS timing
+010c24  ? W   warn  move.b #$40, $fa1d.w               MFP_TCDCR                                     MFP timers: C = TOS 200 Hz tick, D = RS-232, B = HBL; changing them skews TOS timing
+010c2a  ? RW  warn  bset.b #$5, $fa09.w                MFP_IERB                                      MFP interrupt enable/pending/mask: leave TOS's bits alone and restore them on exit
+010c30  ? R   info  cmpi.b #$39, $fc02.w               IKBD_DATA                                     keyboard/mouse ACIA: shared with TOS's handler; blitter HOG bursts and long IRQ-off sections lose b
+014016  ? W   warn  move.l #$10c3c, $70.w              VECTOR $70                                    writes the VBL (autovector 4) vector: replaces TOS's handler; restore it on exit
+01401e  ? W   warn  clr.b $fa1d.w                      MFP_TCDCR                                     MFP timers: C = TOS 200 Hz tick, D = RS-232, B = HBL; changing them skews TOS timing
+014022  ? W   warn  move.b #$5b, $fa23.w               MFP_TCDR                                      MFP timers: C = TOS 200 Hz tick, D = RS-232, B = HBL; changing them skews TOS timing
+014028  ? W   warn  move.b #$50, $fa1d.w               MFP_TCDCR                                     MFP timers: C = TOS 200 Hz tick, D = RS-232, B = HBL; changing them skews TOS timing
+014038  ? R   info  cmpi.b #$39, $fc02.w               IKBD_DATA                                     keyboard/mouse ACIA: shared with TOS's handler; blitter HOG bursts and long IRQ-off sections lose b
+01406c  ? W   info  move.b #$8, $fc02.w                IKBD_DATA                                     keyboard/mouse ACIA: shared with TOS's handler; blitter HOG bursts and long IRQ-off sections lose b
+014072  ? W   warn  clr.b $fa1b.w                      MFP_TBCR                                      MFP timers: C = TOS 200 Hz tick, D = RS-232, B = HBL; changing them skews TOS timing
+014076  ? RW  warn  bclr.b #$0, $fa13.w                MFP_IMRA                                      MFP interrupt enable/pending/mask: leave TOS's bits alone and restore them on exit
+01407c  ? RW  warn  bclr.b #$0, $fa07.w                MFP_IERA                                      MFP interrupt enable/pending/mask: leave TOS's bits alone and restore them on exit
+014082  ? W   warn  move.l $14056(pc), $70.w           VECTOR $70                                    writes the VBL (autovector 4) vector: replaces TOS's handler; restore it on exit
+014088  ? W   warn  move.l $1405e(pc), $68.w           VECTOR $68                                    writes the HBL (autovector 2) vector: replaces TOS's handler; restore it on exit
+01408e  ? W   warn  move.b #$1, $fa1d.w                MFP_TCDCR                                     MFP timers: C = TOS 200 Hz tick, D = RS-232, B = HBL; changing them skews TOS timing
+014094  ? W   warn  move.b #$c0, $fa23.w               MFP_TCDR                                      MFP timers: C = TOS 200 Hz tick, D = RS-232, B = HBL; changing them skews TOS timing
+01409a  ? W   warn  move.b #$51, $fa1d.w               MFP_TCDCR                                     MFP timers: C = TOS 200 Hz tick, D = RS-232, B = HBL; changing them skews TOS timing
+0140a0  ? W   warn  move.l $1405a(pc), $114.w          VECTOR $114                                   writes the MFP timer C vector: replaces TOS's handler; restore it on exit
+0140a6  ? W   warn  move.b $14062(pc), $fa07.w         MFP_IERA                                      MFP interrupt enable/pending/mask: leave TOS's bits alone and restore them on exit
+0140ac  ? W   warn  move.b $14063(pc), $fa09.w         MFP_IERB                                      MFP interrupt enable/pending/mask: leave TOS's bits alone and restore them on exit
+0140b2  ? W   info  move.b $14054(pc), $8260.w         SHIFT                                         resolution: TT/Falcon map the ST modes; a monochrome ST can only run mode 2
+0140b8  ? W   warn  move.b $14055(pc), $820a.w         SYNC                                          $ff820a bit 1 = 50/60 Hz: a game that tests it may refuse 60 Hz or misrun (Populous 2 PAL check)
+0140d8  ? W   crit  move.b $14066(pc), $8e21.w         MSTE_CPU_CACHE                                Mega STE CPU speed/cache ($ff8e21): bus error on every other machine
+0140f6  H P   info  lea.l $8240.w, a1                  PAL0                                          pointer to PAL0 loaded: ST palette (STE: 4 bits, LSB extra): all machines; a movem past $ff825e run
+014108  H P   info  lea.l $8240.w, a2                  PAL0                                          pointer to PAL0 loaded: ST palette (STE: 4 bits, LSB extra): all machines; a movem past $ff825e run
+014346  H P   crit  lea.l $9800.w, a4                  FALCON_PALETTE+$0                             pointer to FALCON_PALETTE+$0 loaded: Falcon-only 24-bit palette
+
+summary (level, group, machines: findings, first address):
+  crit  FALCON_PALETTE     Falcon                                  1 (pointer loads)  first $14346
+  crit  MSTE_CACHE         MSTE                                    3                  first $10b1c
+  warn  MFP_IRQ            all                                    20                  first $1032a
+  warn  MFP_IRQ            all                                     1 (pointer loads)  first $10326
+  warn  MFP_TIMER          all                                    12                  first $10b98
+  warn  SYNC_MODE          all                                     3                  first $10ab4
+  warn  VECTOR             all                                    13                  first $103d2
+  info  ACIA_IKBD          all                                     9                  first $102d8
+  info  PALETTE            all                                     2 (pointer loads)  first $140f6
+  info  SHIFT_MODE         all                                     3                  first $10aac
+  info  VIDEO_BASE         all                                     3                  first $102ea
+
+total 70 lines: 66 accesses/vector writes (40 low-confidence), 4 pointer loads; 4 crit
+=== originals/MOONSHR/HAGA
+originals/MOONSHR/HAGA: not a GEMDOS program (no $601a header); pass --range for a RAM dump

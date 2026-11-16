@@ -1,0 +1,36 @@
+=== grid
+finished buffer at each flip: ['78', '70', '78', '70', '78', '70', '78', '70', '78', '70', '78', '70']
+
+finished frame k vs k+1: mean changed bytes per band (of {} bytes)
+  rows 0-64 (sky/clouds/HUD top)           77 of 10400
+  rows 65-119 (mountain strip)              7 of 8800
+  rows 120-199 (road)                       5 of 12800
+
+finished frame k vs k+2: mean changed bytes per band (of {} bytes)
+  rows 0-64 (sky/clouds/HUD top)           85 of 10400
+  rows 65-119 (mountain strip)             14 of 8800
+  rows 120-199 (road)                       9 of 12800
+
+rows 8-row bands, gap 1, mean changed bytes:
+  0:0  8:0  16:0  24:0  32:0  40:35  48:35  56:8  64:0  72:0  80:0  88:0  96:0  104:0  112:7  120:5  128:0  136:0  144:0  152:0  160:0  168:0  176:0  184:0  192:0
+
+rows 8-row bands, gap 2, mean changed bytes:
+  0:0  8:0  16:0  24:0  32:0  40:52  48:28  56:6  64:0  72:0  80:0  88:0  96:0  104:0  112:14  120:9  128:0  136:0  144:0  152:0  160:0  168:0  176:0  184:0  192:0
+=== drive
+finished buffer at each flip: ['78', '70', '78', '70', '78', '70', '78', '70', '78', '70', '78', '70']
+
+finished frame k vs k+1: mean changed bytes per band (of {} bytes)
+  rows 0-64 (sky/clouds/HUD top)          176 of 10400
+  rows 65-119 (mountain strip)            318 of 8800
+  rows 120-199 (road)                    1699 of 12800
+
+finished frame k vs k+2: mean changed bytes per band (of {} bytes)
+  rows 0-64 (sky/clouds/HUD top)          195 of 10400
+  rows 65-119 (mountain strip)            511 of 8800
+  rows 120-199 (road)                    2708 of 12800
+
+rows 8-row bands, gap 1, mean changed bytes:
+  0:10  8:12  16:9  24:41  32:37  40:42  48:11  56:12  64:1  72:0  80:0  88:0  96:2  104:71  112:246  120:313  128:275  136:248  144:201  152:150  160:119  168:92  176:99  184:94  192:108
+
+rows 8-row bands, gap 2, mean changed bytes:
+  0:12  8:12  16:10  24:45  32:40  40:46  48:13  56:15  64:1  72:0  80:0  88:0  96:2  104:110  112:399  120:488  128:392  136:355  144:299  152:245  160:204  168:171  176:193  184:180  192:182

@@ -1,0 +1,146 @@
+INFO : Hatari v2.6.1, compiled on:  Feb  8 2026, 19:50:12
+INFO : GEMDOS HDD emulation, C: <-> /tmp/strun-knkha5fz/C.
+GEMDOS didn't find filename /tmp/strun-knkha5fz/C/DESKTOP.INF
+Gemdos_Boot(GEMDOS_EMU_ON=1) at PC 0x8FA005A
+> b all
+CPU breakpoints: 0
+> b pc = $6f64 :trace :once :file /tmp/strun-knkha5fz/entry.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $6f64
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-knkha5fz/entry.txt' file on hit.
+GEMDOS 0x4B Pexec(5, 0xe0063b, 0xe0063b, 0xe0063b) at PC 0xE00DCA
+GEMDOS 0x4B Pexec(4, 0xe0385c, 0xa896, 0xe0385c) at PC 0xE00DE8
+GEMDOS 0x20 Super(0x0) at PC 0xE00DFC
+GEMDOS 0x4A Mshrink(0xA896, 0x100) at PC 0xE00E18
+GEMDOS 0x1A Fsetdta(0x9CC) at PC 0xE00E3A
+GEMDOS 0x4E Fsfirst("\AUTO\*.PRG", 0x7) at PC 0xE00E3E
+WARN : No GEMDOS dir '/tmp/strun-knkha5fz/C/AUTO'
+GEMDOS 0x4B Pexec(5, 0xe0063b, 0xe0063b, 0x840) at PC 0xE005EE
+GEMDOS 0x4B Pexec(4, 0xe0063b, 0xa9a4, 0x840) at PC 0xE00612
+GEMDOS 0x4A Mshrink(0xA9A4, 0x100) at PC 0xE13E2C
+GEMDOS 0x20 Super(0x61E6) at PC 0xE13E3A
+GEMDOS 0x48 Malloc(0x400) at PC 0xE1E786
+GEMDOS 0x48 Malloc(0x41C4) at PC 0xE1E786
+GEMDOS 0x19 Dgetdrv() at PC 0xE1E7FE
+GEMDOS 0x0E Dsetdrv(0x2) at PC=0xE1E7FE
+GEMDOS 0x19 Dgetdrv() at PC 0xE1E7FE
+GEMDOS 0x1A Fsetdta(0x7B84) at PC 0xE1E7FE
+GEMDOS 0x19 Dgetdrv() at PC 0xE1E7FE
+GEMDOS 0x0E Dsetdrv(0x2) at PC=0xE1E7FE
+GEMDOS 0x0E Dsetdrv(0x2) at PC=0xE1E7FE
+GEMDOS 0x3B Dsetpath("\") at PC 0xE1E7FE
+GEMDOS: \ -> host: /tmp/strun-knkha5fz/C
+GEMDOS 0x4E Fsfirst("\*.ACC", 0x0) at PC 0xE1E7FE
+GEMDOS: \*.ACC -> host: /tmp/strun-knkha5fz/C/*.ACC
+GEMDOS 0x0E Dsetdrv(0x2) at PC=0xE1E7FE
+GEMDOS 0x3B Dsetpath("\") at PC 0xE1E7FE
+GEMDOS: \ -> host: /tmp/strun-knkha5fz/C
+GEMDOS 0x4E Fsfirst("\*.ACC", 0x0) at PC 0xE1E7FE
+GEMDOS: \*.ACC -> host: /tmp/strun-knkha5fz/C/*.ACC
+GEMDOS 0x48 Malloc(0x1060) at PC 0xE1E786
+GEMDOS 0x19 Dgetdrv() at PC 0xE1E7FE
+GEMDOS 0x0E Dsetdrv(0x2) at PC=0xE1E7FE
+GEMDOS 0x19 Dgetdrv() at PC 0xE1E7FE
+GEMDOS 0x3B Dsetpath("\") at PC 0xE1E7FE
+GEMDOS: \ -> host: /tmp/strun-knkha5fz/C
+GEMDOS 0x3D Fopen("DESKTOP.INF", read-only) at PC=0xE1E7FE
+-> FD 64 (read-only -> read-only)
+GEMDOS 0x3F Fread(64, 4192, 0xf068) at PC 0xE1E7FE
+GEMDOS 0x3E Fclose(64) at PC 0xE1E7FE
+GEMDOS 0x0E Dsetdrv(0x2) at PC=0xE1E7FE
+GEMDOS 0x49 Mfree(0xF068) at PC 0xE1E7FE
+GEMDOS 0x19 Dgetdrv() at PC 0xE1E7FE
+GEMDOS 0x0E Dsetdrv(0x2) at PC=0xE1E7FE
+GEMDOS 0x0E Dsetdrv(0x2) at PC=0xE1E7FE
+GEMDOS 0x48 Malloc(0x3400) at PC 0xE1E786
+GEMDOS 0x0E Dsetdrv(0x2) at PC=0xE1E7FE
+GEMDOS 0x3B Dsetpath("C:\") at PC 0xE1E7FE
+GEMDOS: C:\ -> host: /tmp/strun-knkha5fz/C
+GEMDOS 0x49 Mfree(0xF068) at PC 0xE1E7FE
+GEMDOS 0x4B Pexec(0, "C:\RUNME.TOS", [0]"", 0x0) at PC 0xE1E962
+GEMDOS: C:\RUNME.TOS -> host: /tmp/strun-knkha5fz/C/RUNME.TOS
+GEMDOS 0x4B Pexec(5, 0x0, 0xa586, 0x0) at PC 0xFA003A
+Basepage has been created - now loading 'C:\RUNME.TOS'
+GEMDOS: C:\RUNME.TOS -> host: /tmp/strun-knkha5fz/C/RUNME.TOS
+GEMDOS 0x3D Fopen("HAGA", read-only) at PC=0xF182
+GEMDOS: HAGA -> host: /tmp/strun-knkha5fz/C/HAGA
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x3F Fread(64, 14000, 0x137dc) at PC 0xF1B0
+GEMDOS 0x3E Fclose(64) at PC 0xF1BC
+GEMDOS 0x20 Super(0x0) at PC 0xF1CA
+WARN : Bus Error reading at address $ffff8e21, PC=$1398a addr_e3=1398a op_e3=1238
+GEMDOS 0x19 Dgetdrv() at PC 0x13A84
+GEMDOS 0x3D Fopen("GSAU.TOS", read-only) at PC=0x13B32
+GEMDOS didn't find filename /tmp/strun-knkha5fz/C/GSAU.TOS
+-> ERROR -33 (errno = 2)
+GEMDOS 0x3D Fopen("FILES\D15H5.FIC", read-only) at PC=0x13B54
+GEMDOS didn't find filename /tmp/strun-knkha5fz/C/FILES/D15H5.FIC
+-> ERROR -33 (errno = 2)
+GEMDOS 0x3D Fopen("C:\GAMEX\D15H5.FIC", read-only) at PC=0x13B66
+WARN : No GEMDOS dir '/tmp/strun-knkha5fz/C/GAMEX'
+-> ERROR -34 (errno = 2)
+GEMDOS 0x3E Fclose(65502) at PC 0x13B7C
+GEMDOS 0x0B Cconis() at PC 0xF818
+GEMDOS 0x9 Cconws(0xF85E1) at PC 0xF855C
+GEMDOS 0x9 Cconws(0xF85EB) at PC 0xF855C
+GEMDOS 0x9 Cconws(0xF8586) at PC 0xF855C
+GEMDOS 0x9 Cconws(0xF860A) at PC 0xF855C
+GEMDOS 0x9 Cconws(0xF85CC) at PC 0xF855C
+GEMDOS 0x9 Cconws(0xF8600) at PC 0xF855C
+GEMDOS 0x9 Cconws(0xF85DA) at PC 0xF855C
+GEMDOS 0x9 Cconws(0xFA68) at PC 0xF80E
+GEMDOS 0x06 Crawio(0xFF) at PC 0xF326
+8 repeats of: GEMDOS 0x06 Crawio(0xFF) at PC 0xF326
+16 repeats of: GEMDOS 0x06 Crawio(0xFF) at PC 0xF326
+32 repeats of: GEMDOS 0x06 Crawio(0xFF) at PC 0xF326
+64 repeats of: GEMDOS 0x06 Crawio(0xFF) at PC 0xF326
+128 repeats of: GEMDOS 0x06 Crawio(0xFF) at PC 0xF326
+256 repeats of: GEMDOS 0x06 Crawio(0xFF) at PC 0xF326
+512 repeats of: GEMDOS 0x06 Crawio(0xFF) at PC 0xF326
+161 repeats of: GEMDOS 0x06 Crawio(0xFF) at PC 0xF326
+GEMDOS 0x3D Fopen("FMR273.HST", read-only) at PC=0xFB56
+GEMDOS: FMR273.HST -> host: /tmp/strun-knkha5fz/C/FMR273.HST
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x3F Fread(64, 69888, 0x137dc) at PC 0xFB72
+GEMDOS 0x3E Fclose(64) at PC 0xFB7E
+GEMDOS 0x0B Cconis() at PC 0xF818
+GEMDOS 0x9 Cconws(0xFB2B) at PC 0xF80E
+GEMDOS 0x3B Dsetpath("FILES") at PC 0xF3C0
+GEMDOS: FILES -> host: /tmp/strun-knkha5fz/C/FILES
+GEMDOS 0x3D Fopen("MSR_S1.FIC", read-only) at PC=0xF418
+GEMDOS: MSR_S1.FIC -> host: /tmp/strun-knkha5fz/C/FILES/MSR_S1.FIC
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x3F Fread(64, 17103, 0x81000) at PC 0xF432
+GEMDOS 0x3E Fclose(64) at PC 0xF43E
+GEMDOS 0x3D Fopen("MS1", read-only) at PC=0xF9022
+GEMDOS: MS1 -> host: /tmp/strun-knkha5fz/C/FILES/MS1
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0xF910E
+GEMDOS 0x3E Fclose(64) at PC 0xF9120
+GEMDOS 0x3D Fopen("MS1", read-only) at PC=0xF9022
+GEMDOS: MS1 -> host: /tmp/strun-knkha5fz/C/FILES/MS1
+-> FD 64 (read-only -> read+write)
+GEMDOS 0x42 Fseek(86507, 64, 0) at PC 0xF9046
+GEMDOS 0x3F Fread(64, 200000, 0x81000) at PC 0xF910E
+GEMDOS 0x3E Fclose(64) at PC 0xF9120
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $6f64 :once :trace :file /tmp/strun-knkha5fz/entry.txt
+Reading debugger commands from '/tmp/strun-knkha5fz/entry.txt'...
+Changed to input file dir '/tmp/strun-knkha5fz'.
+> r
+  D0 000000C8   D1 00000000   D2 0007026C   D3 00008000 
+  D4 00000007   D5 0000003F   D6 00000006   D7 FFFFFFFF 
+  A0 00070000   A1 0000CFFA   A2 0000164A   A3 00001546 
+  A4 00000000   A5 00078000   A6 000507AC   A7 0007FFEA 
+USP  000B1F40 ISP  0007FFEA 
+SR=2700 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=7 STP=0
+Prefetch 6100 (BSR) 6242 (Bcc) Chip latch 00000000
+00006f64 6100 6242                bsr.w #$6242 == $0000d1a8
+Next PC: 00006f68
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/dumps/ram_entry_1024.bin 0 $100000
+  Wrote 0x100000 bytes.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers' dir.
+Removed CPU breakpoint 1:
+	pc = $6f64 :once :trace :file /tmp/strun-knkha5fz/entry.txt
