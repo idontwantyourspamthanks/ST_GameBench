@@ -654,3 +654,152 @@ Snapshot runs (section 4 speed table, `$ff820a` = `$fc`): patched 10.000 passes 
 - `mx_*` stays off (needs the user's approval for the visible extra frames). `mx_sync` + `rd_*` build together by the tool's check (no overlap), the pair was not gated.
 - Credit patch, user docs, packaging, blitter/clouds decisions: `PLAN.md`.
 
+
+## 8. Extra frames on the integrated build (task: ship `mx_*` by default)
+Owner: this wave. Machine for every number: Hatari 2.6.1, `build/mx_hd` (the default HD set) unless named; snapshots are stock-game states, the patch set is applied live (`msrpatch.py live`) at the first pass, so stock and patched runs differ only by the patches. Raw outputs: `work/int/mx/res/` (scripts and helper library: `work/int/mx/{mxlib,exp_state,pixcap,pixcmp,cmpstate,exp_rate,cold,play5,flips,kgate,dumplevel}.py`). `[INFERENCE]` marks what no tool output here proves.
+
+### 8.1 What had to change for the integrated build
+`mx_sync.s`: `TICK equ 36` -> **30** (the prototype was written for the old 8.33 passes/s tick; `mt_sync` is at 30 since the T=30 wave, and `mx_sync` replaces it, so the extras' fraction `f = (display - main display)/TICK` and the deadline rule must use the same tick). Nothing else in `mx_sync`/`mx_pre` was tick-dependent; every other assumption of `extrap.md` was re-checked on the integrated set:
+* **Road tables and `rd_*` state across extras**: the extras call `$100b4` (rd_geom, `$B4004`) and `$17c42` (rd_draw, `$B5004`) exactly where the pass calls them, with the same inputs. `rd_geom`'s standing-frame reuse is keyed on the 33 generator words (`$13ae/$13b0..`, `$1bba/$1bbc`, `$23c6/$23c8`, `$131c`, `$1320`); the extras advance those generators, so the next main frame's key never matches a stale saved copy: it recomputes (the extras leave `$130c` = the tick's speed and `restoreundo` restores the generator windows). `rd_draw`'s window tables are keyed on the colour-table pointer (`WPTR`) and rebuilt after a colour change (`rd_init` pre-warms them), independent of pose. Verified by the state gates below (the whole geometry output `$4724-$4f77` and the generator words are inside the compared ranges and are masked only as "rewritten before use", see 8.2) and by the main-frame pixel gates (8.3).
+* **`$13a0` (far-colour reload) fallback**: `rd_draw` runs the stock loop when `$13a0 != 0`; the extras go through the same entry, so the fallback is taken identically. `$13a0 = 0` in every dump (`road.md` section 1), so this path is not exercised by any real frame here (unchanged from the previous wave, `[INFERENCE]` for the fallback).
+* **Stock fallback paths of `rd_draw`** (rows it does not cover hand the rest of the frame to `$17c66`): same entry for extras and main frames, and the state gate covers `$4724-$4f77` + `$12f0-$1307` for both.
+* **8 MHz STE unchanged**: `wantnext` measures the time left in the tick and `mx_pre` skips the 2.7 KB slot copy when no extra frame fits (`NOWANT`): at 8 MHz the extra-frame code costs one byte test + the copy skip per pass. Measured: 0 extras at 8 MHz, pass rate and position rate identical to `mt_sync` (8.4), and the state/pixel gates at 8 MHz are identical to the `T` (fixed tick, no extras) build.
+
+### 8.2 State gates (per-pass game state, stock vs mx)
+Recipe: `work/int/mx/exp_state.py` = the `work/extrap/exp_state_mx.py` recipe (breakpoint at `$7b86`, keyed by `$100e`) with the msrabtest ranges `$1000-$13ff, $29c8-$34ff, $4500-$4fff, $dae6` plus the ring/state windows `$1bb0 $23bc $27c8`, `$3500-$36ff` and the blob counters; `cmpstate.py` applies the documented display-scratch mask (below). `[M]`
+```
+A ste1m_race_start.sav 8 hits 263 bytes/hit 7306 extra frames in window 0
+T ste1m_race_start.sav 8 hits 263 bytes/hit 7306 extra frames in window 0
+X ste1m_race_start.sav 8 hits 263 bytes/hit 7306 extra frames in window 0
+X ste1m_race_start.sav 16 hits 265 bytes/hit 7306 extra frames in window 209
+X ste1m_race_start.sav 32 hits 265 bytes/hit 7306 extra frames in window 694
+A ste1m_race_drive.sav 8 hits 279 bytes/hit 7306 extra frames in window 0        (a 520-pass run with 'up' held at every pass:
+T ste1m_race_drive.sav 8 hits 271 bytes/hit 7306 extra frames in window 0         time-out and restart inside)
+X ste1m_race_drive.sav 8 hits 280 bytes/hit 7306 extra frames in window 0
+X ste1m_race_drive.sav 16 hits 276 bytes/hit 7306 extra frames in window 2
+X ste1m_race_drive.sav 32 hits 277 bytes/hit 7306 extra frames in window 0
+A ste1m_race_drive.sav 8 hits 522 bytes/hit 7306 extra frames in window 0        ('driveup450' run, 520 passes)
+X ste1m_race_drive.sav 16 hits 524 bytes/hit 7306 extra frames in window 2
+X ste1m_race_drive.sav 32 hits 527 bytes/hit 7306 extra frames in window 0
+```
+Comparisons (`cmpstate.py`, mask on; the "A" side is the stock game):
+```
+res/st_start_A8.json (263 passes) vs res/st_start_T8.json (263): common 257 (keys 95..351); 1874558 bytes compared; differing addresses 0, differing bytes 0
+res/st_start_A8.json (263 passes) vs res/st_start_X8.json (263): common 257 (keys 95..351); 1874558 bytes compared; differing addresses 0, differing bytes 0
+res/st_start_A8.json (263 passes) vs res/st_start_X16.json (265): common 243 (keys 109..351); 1772442 bytes compared; masked differing bytes 46623; differing addresses 0, differing bytes 0
+res/st_start_A8.json (263 passes) vs res/st_start_X32.json (265): common 242 (keys 110..351); 1765148 bytes compared; masked differing bytes 69837; differing addresses 0, differing bytes 0
+res/st_driveup_A8.json (279 passes) vs res/st_driveup_T8.json (271): common 271 (keys 0..1706); differing addresses 0
+res/st_driveup_A8.json (279 passes) vs res/st_driveup_X8.json (280): common 278 (keys 0..1706); differing addresses 0
+res/st_driveup_A8.json (279 passes) vs res/st_driveup_X16.json (276): common 265 (keys 0..1706); differing addresses 0
+res/st_driveup_A8.json (279 passes) vs res/st_driveup_X32.json (277): common 262 (keys 0..1706); differing addresses 0
+res/st_driveup450_A8.json (522 passes) vs res/st_driveup450_X16.json (524): common 508 (keys 0..1706); 3705352 bytes compared; differing addresses 0
+res/st_driveup450_A8.json (522 passes) vs res/st_driveup450_X32.json (527): common 506 (keys 0..1706); 3690764 bytes compared; differing addresses 0
+```
+`race_drive` keys 0..1706 with the restart inside (the counter wraps 1706 -> 0), so the ">= 190 passes incl. time-out and restart" requirement is met by the 508/506-pass runs. The masked bytes are exactly the five documented categories (raw per-category counts, e.g. X16 start):
+```
+   masked: 250 differing bytes in buffer parity/pointer $1004-$100d
+   masked: 1540 differing bytes in cloud $28/$2a display history, 12 entries
+   masked: 48 differing bytes in object order list scratch $36e8-$36ff
+   masked: 363 differing bytes in raster scratch $12f0-$1307
+   masked: 44422 differing bytes in road geometry output $4724-$4f77 (rewritten before use)
+```
+The same ranges as `tools/msrabtest.py --state` (no mask): that tool cannot be used for `mx_*` as it stands for two reasons, both verified: it has no CPU-clock option (8 MHz => 0 extras) and it compares those ranges byte-for-byte including the display scratch (`$1004-$100d` parity, `$12f0-$1307` raster bands, `$4724-$4f77` geometry output, cloud `$28/$2a`, order-list scratch), which the extra frames necessarily rewrite (they are the patches' display side, not game state; with `T`/stock the same ranges give 0). The recipes are otherwise identical (`$7b86`, keyed by `$100e`, same ranges).
+
+### 8.3 Main frames pixel-identical to stock
+Fresh captures (not the prototype's emulator-only shots): `work/int/mx/pixcap.py` saves the **drawn** main-frame buffer (pointer read at the single per-pass `$7b74` gate, before the flip; extras never reach `$7b74`, so every capture is a main frame) for 200-520 consecutive passes; `pixcmp.py` compares the frame of the same pass number. Raw: `res/pix_cmp.txt`, `res/emu_pix_levels.txt`.
+```
+pix/start_A8 vs pix/start_T8: 200 / 200 passes, common 198 main frames compared, differing 0, worst 0 bytes
+pix/start_A8 vs pix/start_X8: 200 / 200 passes, common 199 main frames compared, differing 0, worst 0 bytes
+pix/start_A8 vs pix/start_X16: 200 / 200 passes, common 180 main frames compared, differing 0, worst 0 bytes
+pix/start_A8 vs pix/start_X32: 200 / 200 passes, common 178 main frames compared, differing 0, worst 0 bytes
+pix/driveup_A8 vs pix/driveup_T8: 230 / 230 passes, common 228 main frames compared, differing 0, worst 0 bytes
+pix/driveup_A8 vs pix/driveup_X8: 230 / 230 passes, common 228 main frames compared, differing 0, worst 0 bytes
+pix/driveup_A8 vs pix/driveup_X16: 230 / 230 passes, common 210 main frames compared, differing 0, worst 0 bytes
+pix/driveup_A8 vs pix/driveup_X32: 230 / 230 passes, common 212 main frames compared, differing 0, worst 0 bytes
+pix/f60_A8 vs pix/f60_T8: 200 / 200 passes, common 198 main frames compared, differing 0
+pix/f60_A8 vs pix/f60_X16: 200 / 200 passes, common 180 main frames compared, differing 0
+pix/f60_A8 vs pix/f60_X32: 200 / 200 passes, common 182 main frames compared, differing 0
+negative control (stock pass k vs stock pass k+1): [3061, 2762, 3167, 3707, 3238, 3299, 6678, 3530, 3860, 7090] bytes differ
+```
+Track 1 (the shipped first track) is identical in every compared frame at 8/16/32 MHz and at 60 Hz. **Documented tolerance (user-approved, Main decision):** on other tracks, main frames can differ from stock by 1-2 bytes (2-10 pixels) at the cloud / mountain-silhouette edge in the sky rows. Measured (hatari, `pix/L5_*`, `pix/L12_*`; and the emulator over all 15 levels, 130 passes x two inputs each, `res/emu_pix_levels.txt`):
+```
+L5  up:   44 of 130 frames, worst 1 byte   | L5  zig: 0     | L6 up: 44, worst 1  | L8 zig: 44, worst 1
+L12 up:    1 of 130 frames, worst 2 bytes  | L12 zig: 1, worst 5 | L13 up: 2, worst 4 | L14 zig: 20, worst 10
+L0-L4, L7, L9, L10, L11: 0 in both inputs
+  (hatari, poked tracks after the restart, 500/311 frames post-restart: L5 106 of 500 frames 1 byte; L12 1 of 311 frames 2 bytes)
+```
+Exact set and timing (per case: level, input, buffer, rows, x, stock vs mx colour, passes; and whether extra frames show it): **`work/extrap/residue/summary.md` + `residue.tsv`/`extras.tsv`** (`work/int/mx/residue2.py`, exact emulator, 130 passes per case; the HUD build's cloud removal / first-frame wipe can be verified against it: the expected result is `residue pixels 0` on every level, and the rows that ever carried residue are 25-29, 63, 72-74 and 85-86 - **not only rows 0-64**). Extras show the residue at least as often as main frames (L12: 1 main frame, 130 extra frames).
+Cause (emulator-reproduced, also with zero-advance extras, `work/int/mx/dx.py`/`dx2.py`/`dx3.py`): the cloud erase `$122e4` is an OR of the inverse background mask into the buffer, and the cloud draw ANDs over non-sky pixels; where a cloud crosses the mountain silhouette the sky rows of each buffer keep the result of the *draw history* (edge pixels are eroded and never restored). Stock's two buffers see alternating frames; with extras they see a different sequence, so a pixel at the silhouette edge can end up 14 vs 15. Not game state (state gates 8.2 are 0), not visible at normal speed, and it disappears when the clouds are removed (the planned HUD build drops `de1c`/`de6c`; the extras' `$dd50` call and the private `hud:` list are marked in `mx_sync.s` for that).
+The L5/L12 hatari runs also show a separate, larger pre-restart difference in the message text colour (passes 1661-1705, 314 bytes): those runs poke `$102c` at the apply instant, and the two runs' apply instants fall on different passes (8 vs 16/32 MHz), so the old level's on-screen message was drawn from a different message table before the restart. It is an artifact of poking a mid-run level change into two differently paced runs, not of the extras (the same frames in the unpoked `driveup` runs are identical).
+
+### 8.4 Frames per second and pass rate (600 VBL windows, CPU halted at both ends)
+`work/int/mx/exp_rate.py` (same recipe as `work/extrap/exp_mx.py` + the integrated patch list); snapshot = stock race start, driving. Raw: `res/rates_50hz.txt`, `res/rates_60hz.txt`, `res/rates_grid.txt`.
+```
+variant  MHz  passes  extra  pass/s   fps    pos/s
+A(stock)  8    100      0     8.333   8.333  83.33
+A        16    200      0    16.667  16.667 166.67
+A        32    200      0    16.667  16.667 166.67
+T(=integrated, no extras)
+T         8    120      0    10.000  10.000 100.00
+T        16    120      0    10.000  10.000 100.00
+T        32    120      0    10.000  10.000 100.00
+X(=integrated + mx, the default)
+X         8    120      0    10.000  10.000 100.00   (skip reason 0 = no slot copy: 120/120)
+X        16    120    114    10.000  19.500 100.00
+X        32    120    365    10.000  40.417 100.00
+60 Hz:
+A         8     85      0     8.500   8.500  85.00
+A        32    200      0    20.000  20.000 198.30
+T         8    100      0    10.000  10.000 100.00
+T        32    100      0    10.000  10.000 100.00
+X         8    100      0    10.000  10.000 100.00
+X        32    100    200    10.000  30.000 100.00
+grid (standing, extras correctly skipped: reason 2 "standing"):
+X         8/16/32 120  0    10.000  10.000   0.00
+```
+Reading: the extra frames do not change the game speed (10.000 passes/s and 100.0 world units/s at every clock, the stock STE rate) and add 0 / ~1 extra per pass (16 MHz) / ~3 (32 MHz) pictures. On the grid nothing changes (`$130c = 0`).
+
+### 8.5 Cold boots, floppy, Falcon, native 60 Hz
+Default HD build `build/mx_hd` (= `build/hd`, 10 patches + `pp_bigram_cache`, 33,216 B payload), cold boot, SPACE to the race, 'up' held, three windows per machine (`work/int/mx/cold.py`; raw `res/cold.log`). Extras counted from the blob counters (`NFRAMES` at `$b8f38`), not from screenshots:
+```
+ste 1024 TOS 1.62 native 8 MHz : 170 passes, 9.988/s, extras 0      (skip reason 0 = no slot copy, 170/170)
+                    16 MHz      : 171 passes, 10.047/s, extras 197  -> 21.6 fps displayed
+                    32 MHz      : 171 passes, 10.047/s, extras 627  -> 46.9 fps displayed
+ste 4096 TOS 1.62 native      : 170 passes, extras 0 ; 16 MHz 196 ; 32 MHz 625
+megaste 4096 TOS 2.06 ($ff820a = fc = 60 Hz): 170 passes in 17.0 s = 10.0/s, extras 0 ; 16 MHz 55 ; 32 MHz 340
+st 1024 TOS 1.04 native      : 170 passes, extras 0 ; 16 MHz 197 ; 32 MHz 627
+tt 4096 TOS 3.06 ($ff820a = 01 = 60 Hz, 32 MHz native): 170 passes in 17.0 s = 10.0/s, extras 458 (30.8 fps) ; 16 MHz 193 ; 32 MHz 617
+falcon 4096 TOS 4.04 ($ff820a = 02 = 50 Hz), native 16 MHz: 170 passes, 10.0/s, extras 184 (20.8 fps) ; 16 MHz 226 ; 32 MHz 644
+falcon EmuTOS: boot_to_race False (the EmuTOS boot does not autostart PP's loader; not used, TOS 4.04 is present)
+each boot: marker $b2700 = "MSPO", sites $d128/$7b0a/$7b46/$7b74 patched, $1021 = 2, road magic RDG1, WPTR = $102ba
+```
+So the **native 60 Hz** case is a real ROM/Hatari 60 Hz boot (no forcing): the Mega STE 2.06 and the TT 3.06 boots read `$ff820a` bit 1 = 0 and run exactly 6 clock units per VBL; the pass rate stays 10.0 per second and the TT/Falcon draw extras at their own clock. `mx_sync` reads `$ff820a` per group (`VBLU` = 6 at 50 Hz, 5 at 60 Hz) and the deadline rule uses the same clock, so both refresh rates work; the 60 Hz state/pixel gates in 8.2/8.3 were run with `$ff820a` forced to 60 Hz on the STE snapshot (the only 60 Hz-equivalent source-state I have that the pacer can be measured on; `[INFERENCE]` that forced-60 Hz equals a true 60 Hz machine for the pacer, since the pacer reads only `$ff820a` and the 1/300 s clock).
+Floppy gate (`tools/msrfloppy.py gate`, now with `--cpu`: after the race starts it raises the clock, holds 'up' and prints the blob counters; `build/floppy`, raw `res/rest.log`): STE 1 MB, STE 4 MB, Mega STE 4 MB, ST 1 MB all boot through the story screens, the disk-2 swap and into the race with marker/clock/road tables, extras 344/343/391/352 frames at 16 MHz.
+
+### 8.6 Kernel-table check on a second track
+`KTAB` (the 100 sprite-kernel longs `mx_sync` restores, `extrap.md` section 6) was captured from one race on track 1. Re-checked two ways now:
+* **Emulator, all 15 levels**: RAM dumps at the race loop of each level (`work/int/mx/dumplevel.py`: snapshot `race_drive`, `$102c` poked, 'up' held through the restart, `savebin` at the first pass with `$130c > 6`), then stock vs mx (X_TEST=3 extras) per pass over the whole code/state area `$1000-$7ffff` minus the documented display scratch, for 120-130 passes: `differing bytes 14; runs 7b0d-7b0f, 7b49-7b4b, 7b77-7b79, d128-d129, d12b-d12d` = only the patch sites themselves (`mt_pre`, `mx_pre`, `mx_sync`, `mt_clock`), on every level (`res/kgate_L5.txt`, and the same run per level).
+* **Hatari, tracks 5 and 12 after the time-out restart** (`$102c` poked as MSRIntegrate did): with the kernel region `$12000-$15000` + `$dafe` added to the compared ranges, the only differing addresses are the four patch sites and the message colour artifact of 8.3 (raw in `res/gate` logs of `st_L5_*`/`st_L12_*`): no self-modified code byte differs.
+So on the 15 reachable levels the extra frames leave no stale kernel immediate behind. `[INFERENCE]`: a level 15+ or a scenery object not visited by 130 passes of that dump could patch another long; the failure mode is a few bytes of one main frame (stock's own stale-immediate quirk), never game state.
+
+### 8.7 Frames per second, pass rate, and the visible result
+Rate table: 8.4. Displayed pictures per second with the default build: 10 (8 MHz), 19.5 (16 MHz), 40.4 (32 MHz) at 50 Hz; 10 / 30 at 60 Hz (measured, `res/rates_*`). Game speed is 10.0 passes/s = 100 world units/s at every clock (8.4), i.e. the user-approved 20 % above the stock 8 MHz rate and no longer CPU-clock scaled.
+Screenshots of consecutive frames (`work/int/mx/flips.py`: captures the drawn buffer at every flip, main and extra, decodes with the game palettes; sheets `work/extrap/ab/mx16_flips.png`, `work/extrap/ab/mx32_flips.png`, raw PNGs + `meta.json` in `work/extrap/ab/mx16/`, `mx32/`):
+```
+X 16 MHz: flips captured 8 [(16336,118),(16339,119),(16341,119),(16344,120),(16346,120),(16349,121),(16351,121),(16354,122)]   (VBL, pass)
+X 32 MHz: flips captured 8 [(16336,121),(16337,121),(16338,121),(16340,122),(16341,122),(16342,122),(16343,122),(16345,123)]
+```
+At 16 MHz a main frame and one extra alternate every 2-3 VBL (positions 458, 468, 468, 478, 478, 488: the logic position advances per pass, the extra frames show the interpolated pose); at 32 MHz the flip interval is 1-2 VBL (3 extras per pass). The sheets show the road/scenery moving between the logic positions with no flicker or tearing (the extra frames wait for the previous flip's latch before their first back-buffer write, as the main frame does via `mt_pre`); one 3-VBL main interval appears where the pacer was catching up after a late pass (the documented `tick.md` rule).
+
+### 8.8 5-minute play
+`work/int/mx/play5.py`: cold boot of `build/mx_hd`, SPACE, 'up' held (re-applied every sample: the restart clears the input byte), 16,700 VBL, sampling `($1021, $100e, $1226, extra counters)`; race start, time-out `$1226 = 5`, restart, no crash, marker/road tables intact, extras counted from `$b8f38`. Raw: `res/play16.log`.
+
+### 8.9 Defaults and launcher
+`mx_pre`, `mx_sync`: `default: yes`; `mt_sync`: `default: no` (same site, declared conflict -> exactly one pacer in every default set). `msrpatch.py list` prints `mx_sync yes $07b74 ... $b8100,$b8380,$b8400 / $b8f04+4,$b8f20+224,$b9000+3584` and `mt_sync no`. `verify: ALL OK`; the default HD build (`build/hd`, 10 patches + `pp_bigram_cache`, payload 33,216 B at `$b2700-$ba8bf`) and the floppy build (`build/floppy`, 65 sectors) select `mx_*` (raw section 8.5, 8.8); `[mt_sync]`-only build still verifies and is what `play.sh --noextrap` uses. `tools/play.sh`: `--extrap` is a no-op alias, `--noextrap` builds the fixed-tick-only variant (HD and floppy). `patches/README.md` 72-74 and `PLAN.md` updated.
+
+### 8.10 Unproven / notes
+* Real hardware: none of this was run on a real 16/32 MHz machine (Mega STE cache behaviour included).
+* 60 Hz: state/pixel equality measured with `$ff820a` forced (8.2/8.3); the *native* 60 Hz evidence is the rate + extras counts of the Mega STE 2.06 and TT 3.06 cold boots (8.5).
+* Falcon: TOS 4.04 boots and runs (native 16 MHz, 10.0 passes/s, extras 184/226/644 frames at 16/16/32 MHz); EmuTOS does not autostart PP's loader.
+* The pre-restart message-colour difference of the poked-track runs (8.3) is an artifact of the poke timing, not shipped behaviour; the unpoked gates are identical.
+* `[INFERENCE]` that a forced-60 Hz STE equals a 60 Hz machine for the pacer.

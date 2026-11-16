@@ -152,6 +152,10 @@ def gate(h, a):
     print("marker $b2700:", h.debug("m $b2700 8", 0.8).strip().splitlines()[-1])
     print("tick clock $b8f00:", h.debug("m $b8f00 8", 0.8).strip().splitlines()[-1])
     print("road magic $d0000:", h.debug("m $d0000 8", 0.8).strip().splitlines()[-1], " WPTR $e7040:", h.debug("m $e7040 4", 0.8).strip().splitlines()[-1])
+    if a.cpu:                                   # extra frames need spare time: raise the CPU clock, hold 'up', count the extra frames of the blob (mx_sync)
+        h.set_cpuclock(a.cpu); time.sleep(2); h.debug("w $6105 $01"); time.sleep(40)
+        print(f"extra-frame counters at {a.cpu} MHz, up held, $100e {h.peekw(0x100E)}: frames/groups/ticks $b8f38:", h.debug("m $b8f38 12", 0.8).strip().splitlines()[-1],
+              " skip reasons $b8f54:", h.debug("m $b8f54 18", 0.8).strip().splitlines()[-1])
 
 
 def main():
@@ -164,6 +168,7 @@ def main():
     ap.add_argument("--snap"); ap.add_argument("--shots"); ap.add_argument("--gemdos", action="store_true")
     ap.add_argument("--secs", type=int, default=10, help="wait this long before the command acts (state/prof/shot)")
     ap.add_argument("--trace", help="Hatari trace flags (e.g. fdc)")
+    ap.add_argument("--cpu", type=int, default=0, help="gate: after the race starts set this CPU clock (MHz), hold up and print the extra-frame counters")
     ap.add_argument("--name", default="gate", help="gate: prefix of the screenshots build/shots/floppy_<name>_*.png")
     a = ap.parse_args()
     h = mk(a.disk, None if a.cmd == "gate" else a.disk_b, a.machine, a.mem, a.tos, trace=a.trace)

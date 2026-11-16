@@ -1,5 +1,5 @@
 ; name: mx_sync
-; default: no
+; default: yes
 ; site: $7b74
 ; orig: 4eb90000d1e4
 ; requires: mt_clock mt_pre mx_pre                ; clock/PEND, latch guard, slot copy of the object draw
@@ -7,15 +7,15 @@
 ; data: $B8F04 4
 ; data: $B8F20 224
 ; data: $B9000 3584
-; note: Needs mx_pre (site $7b46) for the slot state the object draw saw: without it no extra frame is drawn.
-; doc: EXPERIMENTAL (visible: adds new pictures).  Replaces mt_sync (use with mt_clock + mt_pre, NOT mt_sync): the fixed-tick pacer, and in the idle time of each tick extra frames drawn at a pose extrapolated from the last logic step.
+; note: Needs mx_pre (site $7b46) for the slot state the object draw saw: without it no extra frame is drawn.  Extra frames cost nothing where there is no spare time: an 8 MHz STE draws none (NOWANT: not even the slot copy).
+; doc: Fixed-tick pacer plus extra in-between pictures where the CPU has spare time (16 MHz about 2 per step, 32 MHz 3-4); same game speed, 8 MHz STE unchanged.
 ; note: Extra frames between logic ticks (work/notes/extrap.md).  Site $7b74 `jsr $d1e4.l` (end of the race pass) -> `jsr $B8100.l` (same site as mt_sync, so the two exclude each other).
 ; note: newsync = mt_sync's flip + latch flag + sleep until the tick, plus: publish the raster-band words right after the flip, and `extras` ($B8400) in the idle time.
 ; note: extras: while time remains before the next tick (deadline rule, CLK in 1/300 s), draw another frame of the SAME logic step with the camera advanced by k = f*speed world
 ; note: units (f = display time since the main frame / TICK): the rings fe50/ff76/1003c, the road geometry (stripe phase), the scroll, object distances, AI-car distances and the lateral
 ; note: position are advanced; all game logic is NOT run; every word the advance changed is restored before the tick (group-end state == stock, display scratch excluded).
 ; note: Kill switch: byte $B8F20 (X_OFF) != 0 -> plain mt_sync behaviour.  Test: byte $B8F21 (X_TEST) = n -> exactly n extras per tick at f = j/(n+1), no timing, no latch guard; n+$80 -> n extras with zero advance (they must reproduce the main frame).
-TICK    equ     36
+TICK    equ     30
 MAXLAG  equ     2*TICK
 SAFE    equ     0
 MAXV    equ     31
@@ -244,11 +244,11 @@ extras:
         bsr     carstep
         move.w  V.l,$130c.w             ; the HUD reads the real speed
         jsr     $e316.l                 ; object projection
-        jsr     $dd50.l                 ; clouds
+        jsr     $dd50.l                 ; clouds  [HUD BUILD: REMOVE THIS CALL (cloud update dd50) when the clouds are removed]
         jsr     $18318.l                ; horizon strip
         jsr     $e406.l                 ; objects
         move.w  UNDO+8.l,$11ca.w        ; bottom-left puff animation ($f134 advances its frame per call): the extra frames show the frame
-        bsr     hud                     ; the next main frame will show, not a faster animation
+        bsr     hud                     ; [HUD BUILD: the private HUD call list is the routine `hud:` below; de1c/de6c (cloud erase/draw) are in it] the next main frame will show, not a faster animation
         jsr     $d1ca.l                 ; flip
         move.b  #1,PEND.l
         move.w  $1302.w,$12fe.w

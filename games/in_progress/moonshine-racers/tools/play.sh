@@ -8,7 +8,8 @@
 #   tools/play.sh --machine megaste  # st, megast, ste, megaste, tt, falcon
 #   tools/play.sh --ram 4096         # RAM in KiB (1024 minimum)
 #   tools/play.sh --cpu 16           # CPU clock in MHz (8 stock; 16/32 show the fixed game speed)
-#   tools/play.sh --extrap           # EXPERIMENT (HD only): extra in-between frames on fast machines (mx_sync instead of mt_sync)
+#   tools/play.sh --extrap           # no-op (kept for old command lines): the extra in-between frames on fast machines are part of the default set now
+#   tools/play.sh --noextrap         # the fixed-tick-only variant for comparison (mt_sync instead of mx_pre + mx_sync; same game speed, no extra frames)
 #   tools/play.sh --road             # no-op (kept for old command lines): the faster road is part of the default set now
 #   tools/play.sh --print            # only print the Hatari command line
 #
@@ -28,7 +29,7 @@ VARIANT=patched
 MEDIA=hd
 TOS=""
 PRINT=0
-EXTRAP=0
+NOEXTRA=0
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -39,9 +40,10 @@ while [[ $# -gt 0 ]]; do
         --cpu)      CPU="$2"; shift ;;
         --tos)      TOS="$2"; shift ;;
         --print)    PRINT=1 ;;
-        --extrap)   EXTRAP=1 ;;
+        --extrap)   ;;                      # no-op alias
+        --noextrap) NOEXTRA=1 ;;
         --road)     ;;                      # no-op alias
-        -h|--help)  sed -n '2,17p' "$0"; exit 0 ;;
+        -h|--help)  sed -n '2,19p' "$0"; exit 0 ;;
         *) echo "unknown option: $1" >&2; exit 2 ;;
     esac
     shift
@@ -68,11 +70,10 @@ bld() { [[ $PRINT == 1 ]] || "$@"; }      # --print only prints the command line
 if [[ $MEDIA == hd ]]; then
     PLAY="$ROOT/build/play-hd-$VARIANT"
     bld rm -rf "$PLAY"; bld mkdir -p "$PLAY"
-    if [[ $VARIANT == patched && $EXTRAP == 1 ]]; then
-        # default HD set (without the floppy-only fl_* patches) with mt_sync swapped for the extra-frame pacer (mt_sync and mx_sync declare a conflict: the tool refuses both)
-        SET=$(python3 "$ROOT/tools/msrpatch.py" list | awk '$2=="yes" && $1 !~ /^fl_/ {print $1}')
-        SET=$(echo "$SET" | grep -v '^mt_sync$'); SET="$SET mx_pre mx_sync"
-        bld python3 "$ROOT/tools/msrpatch.py" build --out "$PLAY" --only $SET >/dev/null
+    if [[ $VARIANT == patched && $NOEXTRA == 1 ]]; then
+        # default HD set (without the floppy-only fl_* patches) with the extra-frame pacer (mx_pre + mx_sync) swapped for mt_sync (the tool declares the conflict and refuses both)
+        SET=$(python3 "$ROOT/tools/msrpatch.py" list | awk '$2=="yes" && $1 !~ /^fl_/ {print $1}' | grep -v -e '^mx_pre$' -e '^mx_sync$' | tr '\n' ' ')
+        bld python3 "$ROOT/tools/msrpatch.py" build --out "$PLAY" --only $SET mt_sync >/dev/null
     elif [[ $VARIANT == patched ]]; then
         bld python3 "$ROOT/tools/msrpatch.py" build --out "$PLAY" >/dev/null
     else
@@ -83,7 +84,11 @@ if [[ $MEDIA == hd ]]; then
 else
     PLAY="$ROOT/build/play-floppy-$VARIANT"
     bld rm -rf "$PLAY"; bld mkdir -p "$PLAY"
-    if [[ $VARIANT == patched ]]; then
+    if [[ $VARIANT == patched && $NOEXTRA == 1 ]]; then
+        SET=$(python3 "$ROOT/tools/msrpatch.py" list | awk '$2=="yes" && $1 !~ /^pp_/ {print $1}' | grep -v -e '^mx_pre$' -e '^mx_sync$' | tr '\n' ' ')
+        bld python3 "$ROOT/tools/msrpatch.py" build --floppy --out "$PLAY" --only $SET mt_sync >/dev/null
+        A="$PLAY/disk_a.st"; B="$PLAY/disk_b.st"
+    elif [[ $VARIANT == patched ]]; then
         bld python3 "$ROOT/tools/msrpatch.py" build --floppy --out "$PLAY" >/dev/null
         A="$PLAY/disk_a.st"; B="$PLAY/disk_b.st"
     else

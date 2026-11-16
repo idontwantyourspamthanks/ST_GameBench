@@ -11,6 +11,10 @@ Changes in this release:
 Game speed: the game now runs at a fixed speed of 10 logic steps per second on every machine and CPU clock (at 50 and at 60 Hz). On an 8 MHz machine that is 20 % faster
 than the original release, which ran at 8.3 steps per second at 8 MHz and about twice that on a 16 MHz machine.
 
+Extra frames: on a machine with spare time (16 MHz Mega STE or accelerated STE, 32 MHz TT/Falcon-class) the game now draws additional in-between pictures of each logic step,
+so the picture is smoother (about 2 pictures per step at 16 MHz, 3-4 at 32 MHz) at the SAME game speed. An 8 MHz STE/ST draws none and looks and runs as without this feature.
+The normal pictures are the same as the original game's, except for a few pixels (at most 2 bytes) at the cloud/mountain edge on some tracks.
+
 Machines: 1 MB or more. Cold-booted into the first race with this patch set (Hatari): STE (TOS 1.62, 1 MB and 4 MB), Mega STE (TOS 2.06, 4 MB), ST (TOS 1.04, 1 MB) and
-TT (TOS 3.06, 4 MB). Not tested: 2 MB, a real machine, the Falcon (same code path). The road code uses the free RAM $D0000-$E7FFF.
+TT (TOS 3.06, 4 MB) and Falcon (TOS 4.04, 4 MB); also at 60 Hz (Mega STE 2.06 and TT 3.06 boot at 60 Hz: 10 steps per second, the same speed as at 50 Hz). Not tested: 2 MB, a real machine. The road code uses the free RAM $D0000-$E7FFF.
 Hard-disk set only: PP's conversion has no floppy version.  The patch mechanism and its address map: patches/README.md

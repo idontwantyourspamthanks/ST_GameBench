@@ -1,10 +1,10 @@
 ; name: mx_pre
-; default: no
+; default: yes
 ; site: $7b46
 ; orig: 4eb90000e406
 ; requires: mx_sync mt_clock mt_pre
 ; data: $B9E00 2752
-; doc: EXPERIMENTAL, part 2 of 2 of mx_sync (extra frames): saves the object slots just before the main frame's object draw (only while the extra-frame code wants them).
+; doc: Part 2 of 2 of the extra frames (mx_sync): saves the object slots before the main frame's object draw (not at all while no extra frame fits).
 ; note: Needs mx_sync (and mt_clock, mt_pre).  Site $7b46 `jsr $e406.l` (object draw of the race pass) -> `jsr $B8300.l`: unless mx_sync reported that no extra frame fitted into the last
 ; note: tick (NOWANT, $B8F50: an 8 MHz machine pays nothing), the blob copies the 48 object slots $2c68..$36e7 (2688 bytes) to PREBUF ($B9E00) and tail-jumps to $e406.
 ; note: The stages that follow the draw ($18888, $18c86, $18f0e: collision response, debris) change the slots, so the state the draw saw exists only here.  The extra frames start from this copy.
