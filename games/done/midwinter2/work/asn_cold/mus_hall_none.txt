@@ -1,0 +1,29 @@
+the game started tune 1 (its tick pointer $5138 = 00000d0e) about 62.3 s after the capture start (wall 62 s)
+[logo       ] t=  64.03s mode 0 session 0 dma   0 tune  0 rate 0 tick     0 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=00000d0e $ff8901=00 $ff8921=00
+MWPO: 000B2FF8: 4d 57 50 4f                                      MWPO
+vector table $806: 00000d0e00000c6c00000c4c (asn_mus: 000bf81e 000bf824 00000c4c)
+[intro1     ] t=  73.24s mode 0 session 0 dma   0 tune  0 rate 0 tick     0 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0000 $5138=00000d0e $ff8901=00 $ff8921=00
+[intro      ] profile 250 VBL: blob 0 cycles/VBL = 0.0 % of a 50 Hz frame; YM driver 2046/VBL; everything profiled 141193/VBL
+[intro      ] bank $bb000-$e61b2 in RAM vs build/asn_bank.bin: 158896 bytes differ outside state/records/ring (first ['0xbb000', '0xbb001', '0xbb002', '0xbb003', '0xbb005', '0xbb007'])
+[mjk        ] t=  97.38s mode 0 session 0 dma   0 tune  0 rate 0 tick     0 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=00000d0e $ff8901=00 $ff8921=00
+[mjk        ] profile 250 VBL: blob 0 cycles/VBL = 0.0 % of a 50 Hz frame; YM driver 2048/VBL; everything profiled 141251/VBL
+[mjk        ] bank $bb000-$e61b2 in RAM vs build/asn_bank.bin: 158896 bytes differ outside state/records/ring (first ['0xbb000', '0xbb001', '0xbb002', '0xbb003', '0xbb005', '0xbb007'])
+[M-key      ] t= 115.06s mode 0 session 0 dma   0 tune  0 rate 0 tick     0 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=00000d0e $ff8901=00 $ff8921=00
+[fade0      ] t= 124.07s mode 0 session 0 dma   0 tune  0 rate 0 tick     0 $b96=00000001 $b9a=15 $ba2=0000 $7626=0000 $5138=00000d0e $ff8901=00 $ff8921=00
+[fade1      ] t= 129.48s mode 0 session 0 dma   0 tune  0 rate 0 tick     0 $b96=00000001 $b9a=15 $ba2=0000 $7626=0000 $5138=00000d0e $ff8901=00 $ff8921=00
+[fade2      ] t= 134.90s mode 0 session 0 dma   0 tune  0 rate 0 tick     0 $b96=00000001 $b9a=15 $ba2=0000 $7626=0000 $5138=00000d0e $ff8901=00 $ff8921=00
+[hall       ] t= 143.81s mode 0 session 0 dma   0 tune  0 rate 0 tick     0 $b96=00000001 $b9a=15 $ba2=0000 $7626=0000 $5138=00000d0e $ff8901=00 $ff8921=00
+[hall       ] profile 250 VBL: blob 0 cycles/VBL = 0.0 % of a 50 Hz frame; YM driver 2033/VBL; everything profiled 141081/VBL
+[hall       ] bank $bb000-$e61b2 in RAM vs build/asn_bank.bin: 158896 bytes differ outside state/records/ring (first ['0xbb000', '0xbb001', '0xbb002', '0xbb003', '0xbb005', '0xbb007'])
+[personnel  ] t= 174.34s mode 0 session 0 dma   0 tune  0 rate 0 tick     0 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=00000d0e $ff8901=00 $ff8921=00
+[hall2      ] t= 191.60s mode 0 session 0 dma   0 tune  0 rate 0 tick     0 $b96=00000001 $b9a=15 $ba2=0000 $7626=0000 $5138=00000d0e $ff8901=00 $ff8921=00
+[map        ] t= 221.84s mode 0 session 0 dma   0 tune  0 rate 0 tick     0 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=00000d0e $ff8901=00 $ff8921=00
+[map        ] profile 250 VBL: blob 0 cycles/VBL = 0.0 % of a 50 Hz frame; YM driver 2060/VBL; everything profiled 141596/VBL
+[map        ] bank $bb000-$e61b2 in RAM vs build/asn_bank.bin: 158896 bytes differ outside state/records/ring (first ['0xbb000', '0xbb001', '0xbb002', '0xbb003', '0xbb005', '0xbb007'])
+[island     ] t= 255.31s mode 0 session 0 dma   0 tune  0 rate 0 tick     0 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=00000d0e $ff8901=00 $ff8921=00
+[objectives ] t= 275.57s mode 0 session 0 dma   0 tune  0 rate 0 tick     0 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=00000d0e $ff8901=00 $ff8921=00
+[boss       ] t= 288.93s mode 0 session 0 dma   0 tune  0 rate 0 tick     0 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=00000d0e $ff8901=00 $ff8921=00
+[boss       ] bank $bb000-$e61b2 in RAM vs build/asn_bank.bin: 158896 bytes differ outside state/records/ring (first ['0xbb000', '0xbb001', '0xbb002', '0xbb003', '0xbb005', '0xbb007'])
+wav /home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/asn_cold/mus_hall_none.wav: 295.0 s; rms before the game's tune (boot stub) 4987, first 30 s of the tune 3546
+DMA machine: mode 2 at every stage False; music stages with a DMA tune 0/10, session 2 0/10, $5138 = music tick 0/10
+bank checks: {'intro': 158896, 'mjk': 158896, 'hall': 158896, 'map': 158896, 'boss': 158896}

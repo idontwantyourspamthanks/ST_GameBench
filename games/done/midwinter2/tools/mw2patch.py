@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 """Midwinter 2 patch delivery tool.
 
+MW2_BANK=<file> (build/asn_bank.bin, tools/asn_build.py) adds the Amiga sample bank + sound/music blob for the asn_* group; without it the tool builds every other group exactly as before:
+  HD   : FILES/ASNBANK.BIN in the build, and a splice in RUNME (text $46, after the HAGA Fclose, before the stack takeover) that Freads it to $BB000.
+         The bank cannot ride in RUNME's data segment: PP's loader refuses to start ("Too much low RAM occupied") on a 1 MB machine when RUNME's
+         bss start + $23c + $8000 >= $38270 (RUNME text $b4-$e4), which leaves ~61 KB of growth on TOS 2.06 (84 KB on TOS 1.62).
+  floppy: the bank is appended to the payload (FFA file 10 = payload + bank, on the blank track-sides 81-159 instead of 72-79).
+
 Patches are vasm sources in patches/ (see patches/README.md for the format and
 the boot mechanism).  The tool assembles them, verifies every site's expected
 ORIGINAL bytes against the disk images (FILES/FFA file 8/9, FILES/FFB file 1)
@@ -19,6 +25,7 @@ edit PP's resident loader service in the build copy's HAGA file; see the
 from __future__ import annotations
 
 import argparse
+import os
 import json
 import re
 import shutil
@@ -47,9 +54,46 @@ OLD_BSS = 0x4536           # text-relative start of the original bss (= end of t
 # $B3000, then jumps to the boot stub.  Layout of the appended block:
 #   [COPY_ROUTINE 26 B][BSS_PTRS 8 B][payload image PAYLOAD_LEN B]
 COPY_LEN, PTRS_LEN = 26, 8
-N = COPY_LEN + PTRS_LEN + PAYLOAD_LEN       # bytes appended to the data segment
+# ---- ASN: the bank loader spliced into RUNME (HD) ------------------------------------------------------------------------------------------
+_BANK = Path(os.environ["MW2_BANK"]).read_bytes() if os.environ.get("MW2_BANK") else b""
+BANK_RAM = 0xBB000
+BANK_SPLICE_TXT = 0x46                      # text offset of `lea $9a0.l,a7` (4ff9 000009a0), right after RUNME's Fclose of HAGA (file offset $62 in m68dis listings)
+BANK_SPLICE_ORIG = bytes.fromhex("4ff9000009a0")
+BANK_NAME = b"FILES\\ASNBANK.BIN\0"
+def _bankload_assemble(blen: int) -> tuple[bytes, list[int]]:
+    parts = [
+        ("48e7fffe", None), ("4267", None), ("487a", "name"), ("3f3c003d", None), ("4e41", None), ("508f", None), ("4a40", None), ("6b00", "skip"),
+        ("3c00", None), ("4879%08x" % BANK_RAM, None), ("4879%08x" % blen, None), ("3f06", None), ("3f3c003f", None), ("4e41", None), ("4fef000c", None),
+        ("3f06", None), ("3f3c003e", None), ("4e41", None), ("588f", None), ("skip:", None), ("4cdf7fff", None), ("4ff9%08x" % 0x9A0, "R"), ("4ef9%08x" % 0x4C, "R")]
+    out = bytearray()
+    fix = {}
+    rel = []
+    for hexs, tag in parts:
+        if hexs == "skip:":
+            fix["skip"] = len(out)
+            continue
+        b = bytes.fromhex(hexs)
+        if tag == "name":
+            fix["name_ext"] = len(out) + 2
+            b += b"\0\0"
+        elif tag == "skip":
+            fix["skip_ext"] = len(out) + 2
+            b += b"\0\0"
+        elif tag == "R":
+            rel.append(len(out) + 2)
+        out += b
+    name_at = len(out)
+    out += BANK_NAME
+    if len(out) & 1:
+        out += b"\0"
+    struct.pack_into(">h", out, fix["name_ext"], name_at - fix["name_ext"])
+    struct.pack_into(">h", out, fix["skip_ext"], fix["skip"] - fix["skip_ext"])
+    return bytes(out), rel
+BANKLOAD, BANKLOAD_REL = _bankload_assemble(len(_BANK)) if _BANK else (b"", [])
+BL_LEN = len(BANKLOAD)
+N = COPY_LEN + PTRS_LEN + BL_LEN + PAYLOAD_LEN       # bytes appended to the data segment
 COPY_ROUTINE = bytes.fromhex(
-    "41fa%04x" % (COPY_LEN + PTRS_LEN - 2)   # lea  (routine+34)(pc),a0 -> image
+    "41fa%04x" % (COPY_LEN + PTRS_LEN + BL_LEN - 2)   # lea  (routine+34+BL_LEN)(pc),a0 -> image
     + "43f9000b3000"                         # lea  $b3000.l,a1
     + "303c%04x" % (PAYLOAD_LEN // 4 - 1) +  # move.w #longs-1,d0
     "22d8"                                   # move.l (a0)+,(a1)+
@@ -599,8 +643,13 @@ def build_runme(img: bytes) -> bytes:
     assert len(ptrs) == PTRS_LEN
     offs.append(STAGE_TXT + 2)      # the staging jmp operand (value = data start)
     offs.extend(slot.values())      # the bss pointers are absolute: the loader relocates them
+    if _BANK:                       # bank loader: splice at text $46, its two absolute operands are relocated
+        assert bytes(text[BANK_SPLICE_TXT:BANK_SPLICE_TXT + 6]) == BANK_SPLICE_ORIG, "RUNME text $46 is not lea $9a0.l,a7"
+        assert (BANK_SPLICE_TXT + 2) in offs, "the $9a0 operand is not a relocated long"
+        struct.pack_into(">HI", text, BANK_SPLICE_TXT, 0x4EF9, TEXT_LEN + 22 + COPY_LEN + PTRS_LEN)     # jmp bankload.l (value = data offset; relocated)
+        offs.extend(TEXT_LEN + 22 + COPY_LEN + PTRS_LEN + r for r in BANKLOAD_REL)
     offs.sort()
-    newdata = data + COPY_ROUTINE + ptrs + img
+    newdata = data + COPY_ROUTINE + ptrs + BANKLOAD + img
     assert len(newdata) == 22 + N
     hdr = bytearray(src[:28])
     struct.pack_into(">I", hdr, 6, len(newdata))
@@ -635,6 +684,8 @@ def cmd_build(patches, out: Path, fpatches=()):
     shutil.copytree(ROOT / "work" / "disk_overlay", out / "work" / "disk_overlay",
                     dirs_exist_ok=True)
     (out / "RUNME.TOS").write_bytes(bytes(runme))
+    if _BANK:
+        (out / "FILES" / "ASNBANK.BIN").write_bytes(_BANK)
     apply_file_patches(fpatches, out)
     print(f"built {out} with {len(patches)} patch(es) + {len(fpatches)} file patch(es); "
           f"payload {len(img)} B at $B3000")
@@ -652,7 +703,7 @@ def cmd_live(patches, out: Path):
         raise SystemExit("live aborted: a site's orig does not match the game")
     img, sites = build_image(patches)
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.with_suffix(".img").write_bytes(bytes(img))
+    out.with_suffix(".img").write_bytes(bytes(img) + _BANK)      # ASN: the bank follows the payload ($B3000 + $8000 = $BB000)
     js = [{"addr": s["addr"], "orig": s["orig"].hex(), "new": s["new"].hex(), "name": s["name"]}
           for s in sites if s["name"] != "<load-hook>"]
     out.with_suffix(".json").write_text(json.dumps({"img_base": IMG_BASE, "sites": js}, indent=1))
@@ -683,8 +734,8 @@ STAGE1_SRC = ["\tlea\t$4e9d8.l,a6",                 # the stub's parameter block
               "\tmove.w\t#10,$16(a6)",              # file number
               "\tbsr.w\t$4db52",                    # stub loader (checks the dir checksum)
               "\tjmp\t$b3000.l"]
-PAYLOAD_FILE, PAYLOAD_TS = 10, 72
-FFA_BLANK_END = 80             # FFA track-sides 72-79 are blank ($F6); track-side 80 (side 1, track 0) holds data
+PAYLOAD_FILE, PAYLOAD_TS = 10, (81 if _BANK else 72)   # with a bank the payload lives on the blank track-sides 81-159 (side 1, tracks 1-79)
+FFA_BLANK_END = 160 if _BANK else 80             # FFA track-sides 72-79 are blank ($F6); track-side 80 (side 1, track 0) holds data
 FLOPPY_DISKS = [("FFA", "FFA_boot.st"), ("FFB", "FFB_graphics.st"),
                 ("FFC", "FFC_missions.st"), ("FFD", "FFD_campaign_blank.st")]
 
@@ -801,7 +852,7 @@ def cmd_build_floppy(patches, out: Path, zip_path: Path | None = None, fpatches=
     out.mkdir(parents=True, exist_ok=True)
     files = {}
     for src, name in FLOPPY_DISKS:
-        data = floppy_ffa(img) if src == "FFA" else (ROOT / "FILES" / src).read_bytes()
+        data = floppy_ffa(img + _BANK) if src == "FFA" else (ROOT / "FILES" / src).read_bytes()
         (out / name).write_bytes(data)
         files[name] = data
     import datetime
@@ -878,6 +929,15 @@ def main():
                 raise SystemExit(f"floppy-only patch(es) {wrong}: use `build --floppy`")
             sel = [p for p in patches if p.name in names]
             fsel = [p for p in fpatches if p.name in names]
+        asn = {p.name for p in sel if p.name.startswith("asn_")}
+        if asn and not _BANK:
+            raise SystemExit("the asn_* sound group needs the sample bank: set MW2_BANK=build/asn_bank.bin "
+                             "(python3 tools/asn_build.py)")
+        if asn and _BANK[:4] != b"ASN2":
+            raise SystemExit("MW2_BANK is not a version-2 bank (the asn_* sites jump to its code at $BF800): rebuild it with "
+                             "python3 tools/asn_build.py")
+        if asn and "asn_wd" not in asn:
+            raise SystemExit("the asn_* sound group needs asn_wd (it stops the DMA ring when the game parks the blob's tick)")
         if a.cmd == "build" and a.floppy:
             if fsel and a.only is not None:
                 raise SystemExit("file patches (HAGA) are not applicable to --floppy: "

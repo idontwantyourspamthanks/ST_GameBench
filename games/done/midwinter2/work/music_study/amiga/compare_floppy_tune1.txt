@@ -1,0 +1,9 @@
+real rows 22755
+first frame 2670 last 6291 nframes 3622
+LC delta (operand-runtime) 461032 0x18b90
+reset sim [('DMACON', 15), ('LC0', 0), ('LC1', 0), ('LC2', 0), ('LC3', 0), ('LEN0', 16)] real [('LC0', 0), ('LC1', 0), ('LC2', 0), ('LC3', 0), ('LEN0', 16), ('LEN1', 16)]
+reset match False
+ticks compared 3621 mismatching ticks 1
+first mismatch tick 3621 frame 6291
+ sim  [('VOL0', 25), ('VOL1', 45), ('VOL2', 64), ('VOL3', 20)]
+ real [('VOL0', 25), ('VOL1', 45), ('VOL2', 64), ('VOL3', 20), ('LC0', 0), ('LC1', 0), ('LC2', 0), ('LC3', 0), ('LEN0', 16), ('LEN1', 16), ('LEN2', 16), ('LEN3', 16), ('VOL0', 0), ('VOL1', 0), ('VOL2', 0), ('VOL3', 0), ('PER0', 1), ('PER1', 1), ('PER2', 1), ('PER3', 1)]

@@ -1,0 +1,38 @@
+the game started tune 1 (its tick pointer $5138 = 000bf81e) about 62.4 s after the capture start (wall 62 s)
+[logo       ] t=  64.07s mode 2 session 2 dma 255 tune  1 rate 1 tick    89 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=000bf81e $ff8901=03 $ff8921=81
+insert-graphics prompt at 89.3 s
+[fl-prompt  ] t=  91.02s mode 2 session 2 dma 255 tune  1 rate 1 tick  1438 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=000bf81e $ff8901=03 $ff8921=81
+MWPO: 000B2FF8: 4d 57 50 4f                                      MWPO
+vector table $806: 000bf81e000bf82400000c4c (asn_mus: 000bf81e 000bf824 00000c4c)
+[mjk        ] t= 122.91s mode 2 session 2 dma 255 tune  1 rate 1 tick  3034 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=000bf81e $ff8901=03 $ff8921=81
+[mjk        ] profile 250 VBL: blob 46582 cycles/VBL = 29.1 % of a 50 Hz frame; YM driver 0/VBL; everything profiled 140884/VBL
+[mjk        ] bank $bb000-$e61b2 in RAM vs build/asn_bank.bin: 0 bytes differ outside state/records/ring
+[M-key      ] t= 141.35s mode 2 session 2 dma 255 tune  1 rate 1 tick  3957 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=000bf81e $ff8901=03 $ff8921=81
+[fade0      ] t= 150.38s mode 2 session 2 dma   0 tune  1 rate 1 tick  4408 $b96=00000001 $b9a=15 $ba2=0000 $7626=0000 $5138=000bf81e $ff8901=00 $ff8921=81
+[fade1      ] t= 155.77s mode 2 session 2 dma   0 tune  1 rate 1 tick  4679 $b96=00000001 $b9a=15 $ba2=0000 $7626=0000 $5138=000bf81e $ff8901=00 $ff8921=81
+[fade2      ] t= 161.19s mode 2 session 2 dma   0 tune  1 rate 1 tick  4950 $b96=00000001 $b9a=15 $ba2=0000 $7626=0000 $5138=000bf81e $ff8901=00 $ff8921=81
+[hall       ] t= 164.21s mode 2 session 2 dma   0 tune  1 rate 1 tick  5101 $b96=00000001 $b9a=15 $ba2=0000 $7626=0000 $5138=000bf81e $ff8901=00 $ff8921=81
+[hall       ] profile 250 VBL: blob 4677 cycles/VBL = 2.9 % of a 50 Hz frame; YM driver 0/VBL; everything profiled 141441/VBL
+[personnel  ] t= 224.88s mode 2 session 2 dma 255 tune  1 rate 1 tick  2482 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=000bf81e $ff8901=03 $ff8921=81
+[hall2      ] t= 242.74s mode 2 session 2 dma 255 tune  1 rate 1 tick  3376 $b96=00000001 $b9a=14 $ba2=0000 $7626=0000 $5138=000bf81e $ff8901=00 $ff8921=81
+[map        ] t= 310.57s mode 2 session 2 dma 255 tune  1 rate 1 tick  3147 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=000bf81e $ff8901=03 $ff8921=81
+[map        ] profile 250 VBL: blob 46233 cycles/VBL = 28.8 % of a 50 Hz frame; YM driver 0/VBL; everything profiled 141076/VBL
+[map        ] bank $bb000-$e61b2 in RAM vs build/asn_bank.bin: 0 bytes differ outside state/records/ring
+[island     ] t= 343.88s mode 2 session 2 dma 255 tune  1 rate 1 tick  4814 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=000bf81e $ff8901=03 $ff8921=81
+[objectives ] t= 364.13s mode 2 session 2 dma 255 tune  1 rate 1 tick  5828 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=000bf81e $ff8901=03 $ff8921=81
+[boss       ] t= 387.99s mode 2 session 2 dma 255 tune  1 rate 1 tick  7022 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=000bf81e $ff8901=03 $ff8921=81
+[boss       ] bank $bb000-$e61b2 in RAM vs build/asn_bank.bin: 0 bytes differ outside state/records/ring
+[3d         ] t= 464.89s mode 2 session 2 dma 255 tune  1 rate 1 tick 10871 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=000bf81e $ff8901=03 $ff8921=81
+[3d-sfx2    ] t= 468.40s mode 2 session 2 dma 255 tune  1 rate 1 tick 11046 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=000bf81e $ff8901=03 $ff8921=81
+   voices after the request of effect 2: [(25, 320, 12), (45, 320, 12), (64, 227, 11), (20, 320, 11)]
+[3d-sfx4    ] t= 474.16s mode 2 session 2 dma 255 tune  1 rate 1 tick 11335 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=000bf81e $ff8901=03 $ff8921=81
+   voices after the request of effect 4: [(25, 285, 12), (45, 285, 12), (64, 227, 12), (20, 285, 12)]
+[3d         ] profile 250 VBL: blob 38530 cycles/VBL = 24.0 % of a 50 Hz frame; YM driver 0/VBL; everything profiled 141326/VBL
+[3d         ] bank $bb000-$e61b2 in RAM vs build/asn_bank.bin: 0 bytes differ outside state/records/ring
+[f5         ] t= 497.73s mode 2 session 2 dma 255 tune  1 rate 1 tick 12515 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=000bf81e $ff8901=03 $ff8921=81
+[f5+6s      ] t= 506.76s mode 2 session 1 dma 255 tune  1 rate 0 tick 12691 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=00018f92 $ff8901=03 $ff8921=80
+[f5         ] profile 250 VBL: blob 8150 cycles/VBL = 5.1 % of a 50 Hz frame; YM driver 0/VBL; everything profiled 141571/VBL
+[f5         ] bank $bb000-$e61b2 in RAM vs build/asn_bank.bin: 0 bytes differ outside state/records/ring
+wav /home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/asn_cold/mus_fl_ste162_1mb.wav: 518.9 s; rms before the game's tune (boot stub) 6647, first 30 s of the tune 2443
+DMA machine: mode 2 at every stage True; music stages with a DMA tune 11/11, session 2 10/11, $5138 = music tick 10/11
+bank checks: {'mjk': 0, 'map': 0, 'boss': 0, '3d': 0, 'f5': 0}

@@ -6,6 +6,8 @@
 #   tools/play.sh --machine ste    # any Hatari machine: st, megast, ste, megaste, tt, falcon
 #   tools/play.sh --ram 2048       # RAM in KiB (the game needs at least 1024)
 #   tools/play.sh --fresh          # discard the play dir (saves, campaign) and start clean
+#   tools/play.sh --asn            # the Amiga sound effects AND music through the STE's DMA sound (asn_* group; needs an
+#                                  # STE/Mega STE; the bank is built from alt/amiga/disk1.adf by tools/asn_build.py)
 #
 # The game is copied to build/play-<variant>/ so its saves and campaign disk persist
 # between runs, while the originals and build/ stay untouched. The campaign disk
@@ -31,6 +33,7 @@ TOS=""
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --original) VARIANT=original ;;
+        --asn)      VARIANT=asn ;;
         --machine)  MACHINE="$2"; shift ;;
         --ram)      RAM="$2"; shift ;;
         --tos)      TOS="$2"; shift ;;
@@ -61,7 +64,13 @@ PLAY="$ROOT/build/play-$VARIANT"
 [[ $FRESH == 1 ]] && rm -rf "$PLAY"
 
 # (Re)build the selected variant. --only with no names = zero patches (original game).
-if [[ $VARIANT == patched ]]; then
+if [[ $VARIANT == asn ]]; then
+    # The bank holds the group's code: rebuild it whenever the Amiga disk is there (2 s), so it always matches the patches.
+    if [[ -f $ROOT/alt/amiga/disk1.adf ]]; then python3 "$ROOT/tools/asn_build.py" >/dev/null; fi
+    DEFAULTS=$(python3 "$ROOT/tools/mw2patch.py" list | awk '$2=="yes" && $3!="(floppy)"{printf "%s ",$1}')   # HD defaults incl. the HAGA file patches (pp_nofade, pp_bigram_cache)
+    MW2_BANK="$ROOT/build/asn_bank.bin" python3 "$ROOT/tools/mw2patch.py" build --out "build/stage-$VARIANT" \
+        --only $DEFAULTS asn_core asn_wd asn_lvc asn_lv1 asn_lv2 asn_mus >/dev/null
+elif [[ $VARIANT == patched ]]; then
     python3 "$ROOT/tools/mw2patch.py" build --out "build/stage-$VARIANT" >/dev/null
 else
     python3 "$ROOT/tools/mw2patch.py" build --only --out "build/stage-$VARIANT" >/dev/null
@@ -75,6 +84,8 @@ if [[ ! -d "$PLAY/FILES" ]]; then
     cp -r "$STAGE/FILES" "$PLAY/FILES"
     cp "$ROOT/work/disk_overlay/FILES/FFD" "$PLAY/FILES/FFD"
 fi
+# The sound bank is program data (code + samples, read by RUNME with a fixed length): refreshed like the program files.
+if [[ $VARIANT == asn ]]; then cp "$STAGE/FILES/ASNBANK.BIN" "$PLAY/FILES/ASNBANK.BIN"; fi
 
 echo "Midwinter 2 ($VARIANT) on $MACHINE, ${RAM} KiB, TOS: $(basename "$TOS")"
 echo "Game dir: $PLAY"

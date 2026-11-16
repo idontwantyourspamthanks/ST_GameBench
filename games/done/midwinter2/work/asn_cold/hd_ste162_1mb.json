@@ -1,0 +1,19 @@
+{
+ "cell": "hd_ste162_1mb",
+ "log": [
+  "M/J/K reached; MWPO 000B2FF8: 4d 57 50 4f                                      MWPO",
+  "3D view: $6220=d $700a=2",
+  "MWPO: 000B2FF8: 4d 57 50 4f                                      MWPO",
+  "bank $BB000-$d5488: 0 bytes differ from asn_bank.bin outside the state/ring",
+  "blob $D5600: head 49f9000bbe004a14 ",
+  "SV mode byte = 2 (2 = DMA sound, 1 = YM)  act=1 dma=255",
+  "voices after 3 s of natural engine: [{'vol': 0, 'per': 0, 'cnt': 0, 'rec': 0, 'grp': -1, 'smp': 0, 'ln': 0, 'idx': 0, 'inc': 0.0}, {'vol': 0, 'per': 0, 'cnt': 0, 'rec': 0, 'grp': -1, 'smp': 0, 'ln': 0, 'idx': 0, 'inc': 0.0}, {'vol': 0, 'per': 0, 'cnt': 0, 'rec': 0, 'grp': -1, 'smp': 0, 'ln': 0, 'idx': 0, 'inc': 0.0}, {'vol': 16128, 'per': 540, 'cnt': 16, 'rec': 786, 'grp': 1, 'smp': 813640, 'ln': 3072, 'idx': 4592, 'inc': 1.04949951171875}]",
+  "fire pulse: (voice, record, sound id) seen: [(3, 786, 21)]",
+  "SV after the test: mode 2 act 1 dma 255",
+  "requested: [(5.15, 2), (8.16, 4), (11.16, 12), (14.16, 40)]",
+  "DMA control reg: ['03'] (mode 2: 03 while a sound is playing, 00 when silent)",
+  "wav /home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/asn_cold/hd_ste162_1mb.wav"
+ ],
+ "mode": 2,
+ "workdir": "/tmp/mw2run-i18f1pas"
+}
