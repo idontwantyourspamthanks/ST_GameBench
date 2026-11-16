@@ -25,6 +25,8 @@ Changes vs the original HAGA release:
 - Atari Jaguar pad (new in v1.4; STE enhanced joystick ports, either port), in joystick mode: d-pad = stick,
   B = fire, A / C = < / > (nose down / up, dive / climb), Option = Esc (leave vehicle), Pause = P,
   keypad 1-9 / 0 = F1-F10, * / # = keypad - / +. Each button is read every 80 ms. Other machines run as before.
+- fixed (v1.5): on foot and in ground / surface vehicles (Crawler, Jeep, ...) the view height in the smooth
+  in-between frames now follows the terrain; before, going downhill the view sank in steps at every world step.
 - fixed (v1.4): on a TT the mouse pointer was missing on the map screens (also in the original release); it is
   now drawn on every frame there. ST/STE/Mega STE are unchanged.
 - fixed (v1.4): after an explosion, parts of its circles could stay in the sky once the view turned (a bug in the
@@ -36,6 +38,17 @@ Changes vs the original HAGA release:
 - Version line: the orange MIDWINTER II logo screen (shown while the game loads, before the intro) carries a small, dim
   "v@VERSION@ enhanced by dad_prg" at the bottom, so this release can not be mistaken for the original. Nothing else on the
   screen changes.
+
+- Optional (new in v1.5), not enabled in this build: the Amiga release's sound effects AND music through the
+  STE's DMA sound (mono; effects 6258 Hz, music 12517 Hz, mixed in software) instead of the YM
+  chip, on an STE / Mega STE only (ST, Mega ST, TT, Falcon keep the YM). The title, hall and map
+  screens play the Amiga tunes (the boot stub's first title tune stays YM), the 3D view the
+  Amiga effects. Needs FILES\ASNBANK.BIN (176 KB), built from your own Amiga disk 1 by
+  tools/asn_build.py. Costs about 5-9% of the frame rate while effects play and about 30% of the
+  CPU while a tune plays; the music stutters where the game loads. Patches: asn_core asn_wd
+  asn_lvc asn_lv1 asn_lv2 asn_mus. Build it with: MW2_BANK=build/asn_bank.bin python3
+  tools/mw2patch.py build --only <the default set> asn_core asn_wd asn_lvc asn_lv1 asn_lv2
+  asn_mus   (or tools/play.sh --asn).
 
 
 Requirements and usage are as in README.TXT (1 MB RAM minimum).

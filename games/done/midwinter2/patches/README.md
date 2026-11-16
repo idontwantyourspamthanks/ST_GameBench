@@ -102,7 +102,7 @@ fixed 5 Hz (the original speed on a 1 MB 8 MHz STE, about one tick per 10 VBL) a
   live pose, view words, NPC table and sea-wave phase/pointer are put back to the end of the tick before the next PH 1, so every group end equals
   the 5 Hz game's. An extra pass renders only when it ends no more than SLACK (1 VBL, tuning word SLKX) after the next PH 1 is due, so the tick starts (the only place keys and the mouse are
   read: Esc, J/K/mouse steering) stay on the original's 5 Hz schedule. Overshoot limits: no prediction after a type change, a jump (map re-centre,
-  landing, eject), a collision/arrival result; altitude is never extrapolated downwards; the lean never. TAB[type] = 0 puts a type on the plain 5 Hz pass.
+  landing, eject), a collision/arrival result; air / submarine altitude is never extrapolated downwards; the lean never. Ground and surface types (flags bit2 / bit4, not the types with own tails $f $10 $11) take their altitude in PH 2-5 from the game's own level function at the predicted X/Y (`level` at $B8012: `$5068` / `$5062` + `$66e2`, as the tick's tail does), not from the linear guess (v1.5, `work/notes/crawler_smooth.md`). TAB[type] = 0 puts a type on the plain 5 Hz pass.
   Data: block D = $B42E0 (+0 LAST.l, +4 ACC.w, +6 PH, +8 SUB (1 = PH 1 of a group), +12 SKIP), own data $B8F00, NPC snapshot $B8700, code from $B8000 (below $B8700).
 - `p3c_sim` ($31570): the second site of p3cp_head; the sim call becomes `jsr $b8000.l`, the hook that records the pose before the tick.
 - `p3cp_keys` ($315d0, blob $B7E00; `default: yes`, fire-rate fix, `work/notes/fire_rate.md`): the key fetch `$4f66`, the key/fire consumer `$50ce` and the F-key dispatcher `$30f72` at the end of the frame loop run only in PH 1 / plain passes. p3cp_head's extra passes (PH 2-5) share that tail and ran the consumer up to five times per 5 Hz tick, so a J-mode fire (`$6872` is a level re-armed every VBL while held) threw up to five grenades per tick. Flag: `EXTRA` = D+10 (`$B42EA`), set by p3cp_head's `.cont` path.
@@ -267,3 +267,41 @@ and read at the start of the next (a whole VBL of settle time, no wait loop), de
 - **Detection:** the first call classifies the CPU with the index-register scale trick of `cpulib.s` (no exception, no cookie jar: HAGA remaps low RAM on a TT). A 68000/68010 (ST, STE, Mega STE) writes the 6 original bytes back to `$26ea2`:
   those machines run the unpatched flip afterwards, 0 cycles. Data `TT_F` `$B4F80` (0 unprobed, 1 68000, 2 68020+); blob `$B4F00-$B4F7F` (128 B).
 - Cost on a TT: one pointer restore + draw (~12 k cycles at 8 MHz, 0.4 ms at 32 MHz) per 2D flip.
+
+## Amiga sound effects and music on STE DMA sound (`asn_*`, all `default: no`; notes: work/notes/amiga_sound.md, amiga_music.md, amiga_music_port.md)
+- **What:** the Amiga release's sound effects AND its music, played through the STE's DMA sound instead of the YM chip. Effects: the Amiga's sound ids, sequences and 16 looped
+  samples via a 4-voice port of the Amiga driver (`MWII`'s `$2f3b2` logic; the ST code is a 3-voice port of the same driver, request word `$6862` = id x 6 on the ST, id x 8 on the Amiga).
+  Music: a 68000 port of the Amiga player (`MWII` `$5760c`/`$57720`: 4 channels of pattern lists, instruments with one-shot or looped samples, envelopes, slide, vibrato, the LED low-pass
+  applied to the samples at build time). One shared software mixer feeds a **2048-byte ring** (was 1024): effects at 6258 Hz, music at 12517 Hz, mono. Music and effects are exclusive:
+  the music owns the DMA on the title, hall, map and F5 screens, the effects own it in the 3D view, each tick takes the DMA over from the other (`v_act` 0 / 1 sfx / 2 music).
+- **Patches:** `asn_core` (`$18f92`, the effect tick's request consume, deferred in overlay FFB f1), `asn_wd` (`$262c2`, VBL watchdog that stops a stuck DMA loop), `asn_lvc`/`asn_lv1`/`asn_lv2`
+  (the Amiga's engine level range 2..9 instead of 1..7), and **`asn_mus`**: two longs of the YM music driver's vector table (FFA file 8), `$806` (tick, orig `$d0e`) -> `$BF81E` and `$80a`
+  (start, orig `$c6c`) -> `$BF824`, applied at boot. Every music call of the game goes through that table, so every screen's tune is redirected; `$80e` (silence) stays. The game's fades
+  (`$b9a`, 3 dB per step) and the once flag `$ba2` are honoured. The code is not in a patch blob: it rides in the bank at `$BF800`.
+- **Bank** (`tools/asn_build.py`, its docstring is authoritative; `patches/asn/blob.s` equates must match), reads Disk 1 of 3 (`program`, SPL release; `alt/amiga/disk1.adf`, git-ignored)
+  and writes `build/asn_bank.bin` (**176 562 B, `$BB000`-`$E61B2`**):
+  `$BB000` header `ASN2` (+ B_SIL zeros), `$BB100` effect rows / `$BB300` sequences / `$BB700` records, `$BBE00` state, `$BBF00` four music channel records, `$BC000` DMA ring (2048 B),
+  `$BC800` volume tables (3 gain sets x 16 levels x 256 B), **`$BF800` the blob** (3 614 B: 7 fixed 6-byte `jmp abs.l` entries `+$00` asn_tick, `+$06` asn_wd, `+$0c` asn_lvc, `+$12` asn_lv1,
+  `+$18` asn_lv2, `+$1e` asn_mtick, `+$24` asn_mstart; the patch sites jump to these, not to labels), `$C1000` the music section (tune table, flags, score, 13 instruments 55 KB), then the 16
+  effect samples (82 KB). Every sample region carries 48 pad bytes. Build with `MW2_BANK=build/asn_bank.bin python3 tools/mw2patch.py build ... asn_core asn_wd asn_lvc asn_lv1 asn_lv2 asn_mus`
+  (or `tools/play.sh --asn`). `mw2patch.py` REFUSES an `asn_*` build without `MW2_BANK`, with a bank whose magic is not `ASN2` (the sites jump to `$BF800`), or without `asn_wd`.
+- **Tunes per delivery:** one bank for HD and floppy: tunes 1, 5, 2, 4, 6, 7, 10, 15, 16, 17, 8, 9, 12 = every tune the ST game has a call site for (the logo / hall / map screens play tune 1,
+  accelerated time asks for tune 5). Tunes 3, 11, 13, 14 have no ST call site and are not in the bank; a tune that is not in the bank falls back to the YM driver. `--tunes N ...` builds a smaller bank.
+- **Delivery:** HD ships `FILES\ASNBANK.BIN`, read by a 94-byte splice at RUNME text `$46` (the bank cannot ride in RUNME's data segment: PP's loader refuses a 1 MB machine whose bss start +
+  `$23c` + `$8000` >= `$38270`). Floppy appends the bank to the payload and moves it to FFA track-sides 81-126 (payload + bank = 209 330 B = 46 track-sides).
+- **Machines:** the first tick gates: bank header `ASN2` at `$BB000`, a 68000 (68020+ = TT/Falcon keeps the YM: `$5a0` cannot be trusted on a TT HD boot and the Falcon's DMA does not play
+  6258 Hz in Hatari), and `tst.b $ff8901` answering under a bus-error guard (ST / Mega ST have no DMA sound). Failing any test both music entries `jmp` to the original `$c6c`/`$d0e` (the YM plays the
+  music, untouched) and the effect tick runs the original.
+- **Cost (8 MHz STE, 160256 cycles/VBL):** effects: idle 0.84 % (the YM tick is 0.73 %), one voice 5.0 %, three voices 8.4 %. Music (4 voices, 12517 Hz): 47-49 k cycles per VBL = 29-30 % of a 50 Hz frame;
+  muted by the game's fade 2.9 %. Title / hall / map screens therefore run slower while a tune plays.
+- **RAM taken:** `$BB000-$E61B2` (176 KB; builder limit `$E8000`; the 1 MB HD game uses RAM from `$E83E6` up from the M/J/K screen on; measured free `$BB000-$E83E5` on every screen walked). Nothing else
+  in the `$B3xxx-$BAxxx` map moves.
+- **Gates:** `verify` ALL OK; `tools/asn_test.py unit` and `tools/asn_mus_test.py unit` (the real entry points play all 13 tunes for 1700 VBL bit-identical to the study's `sim.py` + the integer mixer model,
+  negative control fails); cold boot STE TOS 1.62, 1 MB HD: tune 1 on the DMA from the logo screen to the 3D view and again on F5, effects at the 3D view, bank byte-identical in RAM at 7 checkpoints;
+  the pixel gate (`asn_abtest.py`) was run for the effects-only group, not re-run with the music.
+- **Known issues:** the game's loader masks interrupts for a while (PP's HAGA service), the tune stalls and the 164 ms ring repeats during loads (the YM tune stalls there too); a hook to mute the ring
+  at the load (the former `asn_mus_ld`) was removed because it did not achieve that, the loader-stall problem is open (options: a HAGA file patch at the service's mask/unmask points, or a hold flag
+  cleared by the load hook; see amiga_music_port.md 6.1). The hall stayed silent in one cold boot (cause open, 6.2). The boot stub's own title tune (HD ~4 s, floppy ~28 s) stays the YM.
+  Accelerated time (tune 5), floppy / Mega STE / ST / TT cold boots with the music, 60 Hz and the plain-ST/TT YM passthrough with the music build are not run.
+- **Unproven:** real STE hardware (Microwire reset state, loudness, the music mix levels: nothing has been listened to); the game's own weapon-fire triggers were injected at `$6862`, not fired live;
+  per-vehicle engine ids come from the ST table. Not shipping until the user has listened to it on a real machine.

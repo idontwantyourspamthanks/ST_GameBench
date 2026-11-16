@@ -6,6 +6,8 @@ the same speed, display and control patches as the patched hard-disk build:
 - Game speed is fixed to real time: the world no longer speeds up on faster
   machines (16 MHz Mega STE, accelerators).
 - On foot, movement is smooth at whatever frame rate the machine manages.
+- fixed (v1.5): on foot and in ground / surface vehicles (Crawler, Jeep, ...) the view height in the smooth
+  in-between frames now follows the terrain; before, going downhill the view sank in steps at every world step.
 - About 15% faster 3D display on a stock 8 MHz ST/STE, pixel-identical.
 - Direct controls: the mouse turns only while it moves; joystick/keyboard turn at
   a constant rate while held and stop on release.
@@ -63,3 +65,14 @@ MD5 OF THE IMAGES
 
 Technical notes: patches/README.md ("Floppy build") and work/notes/floppy.md of the
 patch project.
+
+- Optional (new in v1.5), not enabled in this build: the Amiga release's sound effects AND music through the
+  STE's DMA sound (mono; effects 6258 Hz, music 12517 Hz, mixed in software) instead of the YM
+  chip, on an STE / Mega STE only (ST, Mega ST, TT, Falcon keep the YM). Needs the sound bank
+  (176 KB), built from your own Amiga disk 1 by tools/asn_build.py; on floppy it rides after the
+  payload on FFA (payload + bank = 46 track-sides, 81-126). The boot stub's title tune (about
+  28 s on floppy) stays YM; the Amiga tunes start at the logo screen. It costs about 5-9% of the
+  frame rate while effects play and about 30% of the CPU while a tune plays; the music
+  stutters where the game loads. Patches: asn_core asn_wd asn_lvc asn_lv1 asn_lv2 asn_mus. Build with:
+  MW2_BANK=build/asn_bank.bin python3 tools/mw2patch.py build --floppy --only <the default
+  set> floppy_copybuf asn_core asn_wd asn_lvc asn_lv1 asn_lv2 asn_mus

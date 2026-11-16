@@ -87,6 +87,39 @@ hook:   tst.w   D+8.l                   ; SUB: PH 1 of a predicted group?
         beq.s   .plain
         bsr     cap0                    ; pose before the tick, wave phase of the tick
 .plain: jmp     $33bca.l                ; the original call (tail call): the post-calls and the render follow as in option A
+; ---- level types (ground / surface followers): altitude at the predicted position, by the dispatch of the tick's tail ($33d4c-$33e2c) ----
+; flags = 2(type block): bit0 air -> keep the linear value; bit4 -> $5062 (max(terrain, wave-aware sea)) + $66e2; bit2 or not bit6 -> $5068 (terrain) + $66e2;
+; bit6 only (submarine types) and types $f/$10/$11 (own tails) -> keep.  $5068/$5062 only read the height grid ($40040) and the wave table; they clobber d0-d7/a0.
+; Called from subpass after the linear $764c: d0-d6/a0 are dead there (d7 is reloaded, a2/a3 survive the calls).
+level:  move.w  $6220.w,d0
+        cmpi.w  #$f,d0
+        beq.s   .x
+        cmpi.w  #$10,d0
+        beq.s   .x
+        cmpi.w  #$11,d0
+        beq.s   .x
+        mulu.w  #$3e,d0
+        lea     $54dc0.l,a0
+        move.w  2(a0,d0.l),d2
+        btst    #0,d2
+        bne.s   .x
+        move.l  $66e6.w,d0
+        subi.l  #$6400,d0
+        move.l  $66ea.w,d1
+        subi.l  #$6400,d1
+        neg.l   d1
+        btst    #4,d2
+        bne.s   .surf
+        btst    #2,d2
+        bne.s   .gnd
+        btst    #6,d2
+        bne.s   .x
+.gnd:   jsr     $5068.w
+        bra.s   .set
+.surf:  jsr     $5062.w
+.set:   add.w   $66e2.w,d5
+        move.w  d5,$764c.w
+.x:     rts
 
         cnop    0,256                   ; head at $b8100
 ; ---- head of the in-game frame loop ($31486) --------------------------------------------------------------------------------------------
@@ -404,6 +437,7 @@ subpass:
 .up:    bsr     lin
         move.w  d6,d7
         move.w  d0,$764c.w
+        jsr     level                   ; ground / surface types: the game's own level at the predicted position
         move.w  20(a2),d0
         ext.l   d0
         move.w  20(a3),d1
