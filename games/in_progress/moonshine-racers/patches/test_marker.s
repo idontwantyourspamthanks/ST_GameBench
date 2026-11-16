@@ -2,6 +2,7 @@
 ; default: no
 ; site: $6f5e
 ; orig: 41f900070000
+; conflicts: test_blob36k                         ; same site $6f5e
 ; data: $B2FF0 4
 ; note: Proof of the delivery mechanism (README.md "Test patches"): sets the long 'MSTM' at $B2FF0 and nothing else.
 ; note: Site: the game's first run-time code after PP's hand-over, the trap #2 handler $6f5a (`move.w #$2700,sr`) at its `lea.l $70000.l,a0`

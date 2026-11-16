@@ -1,0 +1,341 @@
+Removed CPU breakpoint 1:
+pc = $7a88 :once :trace :file /tmp/strun-8m_9tecd/apply.txt
+CPU breakpoints: 0
+CPU condition breakpoint 1 with 1 condition(s) added:
+pc = $b6000
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-8m_9tecd/vbl.txt' file on hit.
+CPU condition breakpoint 2 with 1 condition(s) added:
+pc = $b43cc
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-8m_9tecd/vbl.txt' file on hit.
+CPU condition breakpoint 3 with 1 condition(s) added:
+pc = $b4424
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-8m_9tecd/vbl.txt' file on hit.
+CPU condition breakpoint 4 with 1 condition(s) added:
+pc = $b567e
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-8m_9tecd/vbl.txt' file on hit.
+CPU condition breakpoint 5 with 1 condition(s) added:
+pc = $78fc
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-8m_9tecd/vbl.txt' file on hit.
+CPU condition breakpoint 6 with 1 condition(s) added:
+( $1316 ) . w ! ( $1316 ) . w
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-8m_9tecd/vbl.txt' file on hit.
+-> Track value changes, show value(s) when matched.
+CPU condition breakpoint 7 with 1 condition(s) added:
+( $135a ) . l ! ( $135a ) . l
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-8m_9tecd/vbl.txt' file on hit.
+-> Track value changes, show value(s) when matched.
+$1316 = $0
+6. CPU breakpoint condition(s) matched 1 times.
+( $1316 ) . w ! ( $1316 ) . w :trace :file /tmp/strun-8m_9tecd/vbl.txt
+Reading debugger commands from '/tmp/strun-8m_9tecd/vbl.txt'...
+Changed to input file dir '/tmp/strun-8m_9tecd'.
+> e VBL
+= %11110000110101 (bin), #15413 (dec), $3c35 (hex)
+> m $102c 2
+0000102C: 00 00                                            ..
+> m $135a 4
+0000135A: 00 01 02 ba                                      ...´
+> m $1316 2
+00001316: 00 00                                            ..
+$135a = $2ba
+7. CPU breakpoint condition(s) matched 1 times.
+( $135a ) . l ! ( $135a ) . l :trace :file /tmp/strun-8m_9tecd/vbl.txt
+Reading debugger commands from '/tmp/strun-8m_9tecd/vbl.txt'...
+Changed to input file dir '/tmp/strun-8m_9tecd'.
+> e VBL
+= %11110000110101 (bin), #15413 (dec), $3c35 (hex)
+> m $102c 2
+0000102C: 00 00                                            ..
+> m $135a 4
+0000135A: 00 00 02 ba                                      ...´
+> m $1316 2
+00001316: 00 00                                            ..
+$135a = $0
+7. CPU breakpoint condition(s) matched 2 times.
+( $135a ) . l ! ( $135a ) . l :trace :file /tmp/strun-8m_9tecd/vbl.txt
+Reading debugger commands from '/tmp/strun-8m_9tecd/vbl.txt'...
+Changed to input file dir '/tmp/strun-8m_9tecd'.
+> e VBL
+= %11110000110101 (bin), #15413 (dec), $3c35 (hex)
+> m $102c 2
+0000102C: 00 00                                            ..
+> m $135a 4
+0000135A: 00 00 00 00                                      ....
+> m $1316 2
+00001316: 00 00                                            ..
+$1316 = $9
+6. CPU breakpoint condition(s) matched 2 times.
+( $1316 ) . w ! ( $1316 ) . w :trace :file /tmp/strun-8m_9tecd/vbl.txt
+Reading debugger commands from '/tmp/strun-8m_9tecd/vbl.txt'...
+Changed to input file dir '/tmp/strun-8m_9tecd'.
+> e VBL
+= %11110000111001 (bin), #15417 (dec), $3c39 (hex)
+> m $102c 2
+0000102C: 00 05                                            ..
+> m $135a 4
+0000135A: 00 00 00 00                                      ....
+> m $1316 2
+00001316: 00 09                                            ..
+$135a = $10000
+7. CPU breakpoint condition(s) matched 3 times.
+( $135a ) . l ! ( $135a ) . l :trace :file /tmp/strun-8m_9tecd/vbl.txt
+Reading debugger commands from '/tmp/strun-8m_9tecd/vbl.txt'...
+Changed to input file dir '/tmp/strun-8m_9tecd'.
+> e VBL
+= %11110000111001 (bin), #15417 (dec), $3c39 (hex)
+> m $102c 2
+0000102C: 00 05                                            ..
+> m $135a 4
+0000135A: 00 01 00 00                                      ....
+> m $1316 2
+00001316: 00 09                                            ..
+$135a = $102ba
+7. CPU breakpoint condition(s) matched 4 times.
+( $135a ) . l ! ( $135a ) . l :trace :file /tmp/strun-8m_9tecd/vbl.txt
+Reading debugger commands from '/tmp/strun-8m_9tecd/vbl.txt'...
+Changed to input file dir '/tmp/strun-8m_9tecd'.
+> e VBL
+= %11110000111001 (bin), #15417 (dec), $3c39 (hex)
+> m $102c 2
+0000102C: 00 05                                            ..
+> m $135a 4
+0000135A: 00 01 02 ba                                      ...´
+> m $1316 2
+00001316: 00 09                                            ..
+$135a = $103aa
+7. CPU breakpoint condition(s) matched 5 times.
+( $135a ) . l ! ( $135a ) . l :trace :file /tmp/strun-8m_9tecd/vbl.txt
+Reading debugger commands from '/tmp/strun-8m_9tecd/vbl.txt'...
+Changed to input file dir '/tmp/strun-8m_9tecd'.
+> e VBL
+= %11110010111111 (bin), #15551 (dec), $3cbf (hex)
+> m $102c 2
+0000102C: 00 05                                            ..
+> m $135a 4
+0000135A: 00 01 03 aa                                      ...¬
+> m $1316 2
+00001316: 00 09                                            ..
+1. CPU breakpoint condition(s) matched 1 times.
+pc = $b6000 :trace :file /tmp/strun-8m_9tecd/vbl.txt
+Reading debugger commands from '/tmp/strun-8m_9tecd/vbl.txt'...
+Changed to input file dir '/tmp/strun-8m_9tecd'.
+> e VBL
+= %11110100011010 (bin), #15642 (dec), $3d1a (hex)
+> m $102c 2
+0000102C: 00 05                                            ..
+> m $135a 4
+0000135A: 00 01 03 aa                                      ...¬
+> m $1316 2
+00001316: 00 09                                            ..
+4. CPU breakpoint condition(s) matched 1 times.
+pc = $b567e :trace :file /tmp/strun-8m_9tecd/vbl.txt
+Reading debugger commands from '/tmp/strun-8m_9tecd/vbl.txt'...
+Changed to input file dir '/tmp/strun-8m_9tecd'.
+> e VBL
+= %11110100011011 (bin), #15643 (dec), $3d1b (hex)
+> m $102c 2
+0000102C: 00 05                                            ..
+> m $135a 4
+0000135A: 00 01 03 aa                                      ...¬
+> m $1316 2
+00001316: 00 09                                            ..
+5. CPU breakpoint condition(s) matched 1 times.
+pc = $78fc :trace :file /tmp/strun-8m_9tecd/vbl.txt
+Reading debugger commands from '/tmp/strun-8m_9tecd/vbl.txt'...
+Changed to input file dir '/tmp/strun-8m_9tecd'.
+> e VBL
+= %11110100101000 (bin), #15656 (dec), $3d28 (hex)
+> m $102c 2
+0000102C: 00 05                                            ..
+> m $135a 4
+0000135A: 00 01 03 aa                                      ...¬
+> m $1316 2
+00001316: 00 09                                            ..
+$1316 = $0
+6. CPU breakpoint condition(s) matched 3 times.
+( $1316 ) . w ! ( $1316 ) . w :trace :file /tmp/strun-8m_9tecd/vbl.txt
+Reading debugger commands from '/tmp/strun-8m_9tecd/vbl.txt'...
+Changed to input file dir '/tmp/strun-8m_9tecd'.
+> e VBL
+= %101011111010100 (bin), #22484 (dec), $57d4 (hex)
+> m $102c 2
+0000102C: 00 00                                            ..
+> m $135a 4
+0000135A: 00 01 03 aa                                      ...¬
+> m $1316 2
+00001316: 00 00                                            ..
+$135a = $3aa
+7. CPU breakpoint condition(s) matched 6 times.
+( $135a ) . l ! ( $135a ) . l :trace :file /tmp/strun-8m_9tecd/vbl.txt
+Reading debugger commands from '/tmp/strun-8m_9tecd/vbl.txt'...
+Changed to input file dir '/tmp/strun-8m_9tecd'.
+> e VBL
+= %101011111010100 (bin), #22484 (dec), $57d4 (hex)
+> m $102c 2
+0000102C: 00 00                                            ..
+> m $135a 4
+0000135A: 00 00 03 aa                                      ...¬
+> m $1316 2
+00001316: 00 00                                            ..
+$135a = $0
+7. CPU breakpoint condition(s) matched 7 times.
+( $135a ) . l ! ( $135a ) . l :trace :file /tmp/strun-8m_9tecd/vbl.txt
+Reading debugger commands from '/tmp/strun-8m_9tecd/vbl.txt'...
+Changed to input file dir '/tmp/strun-8m_9tecd'.
+> e VBL
+= %101011111010100 (bin), #22484 (dec), $57d4 (hex)
+> m $102c 2
+0000102C: 00 00                                            ..
+> m $135a 4
+0000135A: 00 00 00 00                                      ....
+> m $1316 2
+00001316: 00 00                                            ..
+$1316 = $9
+6. CPU breakpoint condition(s) matched 4 times.
+( $1316 ) . w ! ( $1316 ) . w :trace :file /tmp/strun-8m_9tecd/vbl.txt
+Reading debugger commands from '/tmp/strun-8m_9tecd/vbl.txt'...
+Changed to input file dir '/tmp/strun-8m_9tecd'.
+> e VBL
+= %101011111011000 (bin), #22488 (dec), $57d8 (hex)
+> m $102c 2
+0000102C: 00 05                                            ..
+> m $135a 4
+0000135A: 00 00 00 00                                      ....
+> m $1316 2
+00001316: 00 09                                            ..
+$135a = $10000
+7. CPU breakpoint condition(s) matched 8 times.
+( $135a ) . l ! ( $135a ) . l :trace :file /tmp/strun-8m_9tecd/vbl.txt
+Reading debugger commands from '/tmp/strun-8m_9tecd/vbl.txt'...
+Changed to input file dir '/tmp/strun-8m_9tecd'.
+> e VBL
+= %101011111011000 (bin), #22488 (dec), $57d8 (hex)
+> m $102c 2
+0000102C: 00 05                                            ..
+> m $135a 4
+0000135A: 00 01 00 00                                      ....
+> m $1316 2
+00001316: 00 09                                            ..
+$135a = $103aa
+7. CPU breakpoint condition(s) matched 9 times.
+( $135a ) . l ! ( $135a ) . l :trace :file /tmp/strun-8m_9tecd/vbl.txt
+Reading debugger commands from '/tmp/strun-8m_9tecd/vbl.txt'...
+Changed to input file dir '/tmp/strun-8m_9tecd'.
+> e VBL
+= %101011111011000 (bin), #22488 (dec), $57d8 (hex)
+> m $102c 2
+0000102C: 00 05                                            ..
+> m $135a 4
+0000135A: 00 01 03 aa                                      ...¬
+> m $1316 2
+00001316: 00 09                                            ..
+$1316 = $0
+6. CPU breakpoint condition(s) matched 5 times.
+( $1316 ) . w ! ( $1316 ) . w :trace :file /tmp/strun-8m_9tecd/vbl.txt
+Reading debugger commands from '/tmp/strun-8m_9tecd/vbl.txt'...
+Changed to input file dir '/tmp/strun-8m_9tecd'.
+> e VBL
+= %101011111100001 (bin), #22497 (dec), $57e1 (hex)
+> m $102c 2
+0000102C: 00 00                                            ..
+> m $135a 4
+0000135A: 00 01 03 aa                                      ...¬
+> m $1316 2
+00001316: 00 00                                            ..
+$135a = $3aa
+7. CPU breakpoint condition(s) matched 10 times.
+( $135a ) . l ! ( $135a ) . l :trace :file /tmp/strun-8m_9tecd/vbl.txt
+Reading debugger commands from '/tmp/strun-8m_9tecd/vbl.txt'...
+Changed to input file dir '/tmp/strun-8m_9tecd'.
+> e VBL
+= %101011111100001 (bin), #22497 (dec), $57e1 (hex)
+> m $102c 2
+0000102C: 00 00                                            ..
+> m $135a 4
+0000135A: 00 00 03 aa                                      ...¬
+> m $1316 2
+00001316: 00 00                                            ..
+$135a = $0
+7. CPU breakpoint condition(s) matched 11 times.
+( $135a ) . l ! ( $135a ) . l :trace :file /tmp/strun-8m_9tecd/vbl.txt
+Reading debugger commands from '/tmp/strun-8m_9tecd/vbl.txt'...
+Changed to input file dir '/tmp/strun-8m_9tecd'.
+> e VBL
+= %101011111100001 (bin), #22497 (dec), $57e1 (hex)
+> m $102c 2
+0000102C: 00 00                                            ..
+> m $135a 4
+0000135A: 00 00 00 00                                      ....
+> m $1316 2
+00001316: 00 00                                            ..
+$1316 = $9
+6. CPU breakpoint condition(s) matched 6 times.
+( $1316 ) . w ! ( $1316 ) . w :trace :file /tmp/strun-8m_9tecd/vbl.txt
+Reading debugger commands from '/tmp/strun-8m_9tecd/vbl.txt'...
+Changed to input file dir '/tmp/strun-8m_9tecd'.
+> e VBL
+= %101011111100101 (bin), #22501 (dec), $57e5 (hex)
+> m $102c 2
+0000102C: 00 05                                            ..
+> m $135a 4
+0000135A: 00 00 00 00                                      ....
+> m $1316 2
+00001316: 00 09                                            ..
+$135a = $10000
+7. CPU breakpoint condition(s) matched 12 times.
+( $135a ) . l ! ( $135a ) . l :trace :file /tmp/strun-8m_9tecd/vbl.txt
+Reading debugger commands from '/tmp/strun-8m_9tecd/vbl.txt'...
+Changed to input file dir '/tmp/strun-8m_9tecd'.
+> e VBL
+= %101011111100101 (bin), #22501 (dec), $57e5 (hex)
+> m $102c 2
+0000102C: 00 05                                            ..
+> m $135a 4
+0000135A: 00 01 00 00                                      ....
+> m $1316 2
+00001316: 00 09                                            ..
+$135a = $103aa
+7. CPU breakpoint condition(s) matched 13 times.
+( $135a ) . l ! ( $135a ) . l :trace :file /tmp/strun-8m_9tecd/vbl.txt
+Reading debugger commands from '/tmp/strun-8m_9tecd/vbl.txt'...
+Changed to input file dir '/tmp/strun-8m_9tecd'.
+> e VBL
+= %101011111100101 (bin), #22501 (dec), $57e5 (hex)
+> m $102c 2
+0000102C: 00 05                                            ..
+> m $135a 4
+0000135A: 00 01 03 aa                                      ...¬
+> m $1316 2
+00001316: 00 09                                            ..
+1. CPU breakpoint condition(s) matched 2 times.
+pc = $b6000 :trace :file /tmp/strun-8m_9tecd/vbl.txt
+Reading debugger commands from '/tmp/strun-8m_9tecd/vbl.txt'...
+Changed to input file dir '/tmp/strun-8m_9tecd'.
+> e VBL
+= %101100011000110 (bin), #22726 (dec), $58c6 (hex)
+> m $102c 2
+0000102C: 00 05                                            ..
+> m $135a 4
+0000135A: 00 01 03 aa                                      ...¬
+> m $1316 2
+00001316: 00 09                                            ..
+5. CPU breakpoint condition(s) matched 2 times.
+pc = $78fc :trace :file /tmp/strun-8m_9tecd/vbl.txt
+Reading debugger commands from '/tmp/strun-8m_9tecd/vbl.txt'...
+Changed to input file dir '/tmp/strun-8m_9tecd'.
+> e VBL
+= %101100011000111 (bin), #22727 (dec), $58c7 (hex)
+> m $102c 2
+0000102C: 00 05                                            ..
+> m $135a 4
+0000135A: 00 01 03 aa                                      ...¬
+> m $1316 2
+00001316: 00 09                                            ..
+AFTER: 0000102C: 00 05                                            .. | 0000135A: 00 01 03 aa                                      ...¬ | 00001316: 00 09                                            .. | 000D0000: 52 44 47 31 00 0a 00 00                          RDG1.... | 000E7040: 00 01 03 aa                                      ...¬ | $100e 0000100E: 04 d3                                            .צ

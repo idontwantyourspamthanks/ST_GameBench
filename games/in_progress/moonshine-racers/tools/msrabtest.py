@@ -138,7 +138,7 @@ def state_run(snap: str, live: Path | None, npass: int) -> dict:
         if live:
             apply_live(h, live, 0x7A88)
         f = h.R / "state.txt"
-        f.write_text("e VBL\n" + "".join(f"m ${a:x} {n:x}\n" for a, n in STATE_RANGES))
+        f.write_text("e VBL\n" + "".join(f"m ${a:x} {n}\n" for a, n in STATE_RANGES))   # Hatari's `m` count is DECIMAL (hex counts were rejected/misread)
         h.debug("b all", 0.3)
         n0 = len(h._logtext())
         h.cmd(f"hatari-debug b pc = $7b86 :trace :file {f}")
@@ -168,8 +168,11 @@ def state_run(snap: str, live: Path | None, npass: int) -> dict:
 def state_compare(a: dict, b: dict) -> tuple[int, int, dict]:
     common = sorted(set(a) & set(b))
     where = {}
+    state_compare.compared = 0       # bytes compared (passes x addresses present in both captures)
     for k in common:
         for ad, x in a[k].items():
+            if ad in b[k]:
+                state_compare.compared += 1
             if ad in b[k] and b[k][ad] != x:
                 where.setdefault(ad, []).append((k, x, b[k][ad]))
     return len(common), sum(len(v) for v in where.values()), where
@@ -230,7 +233,7 @@ def main():
             sb = state_run(snap, live, a.state)
             n, nd, where = state_compare(sa, sb)
             ok &= (nd == 0 and n > 0)
-            print(f"STATE  {name:11s}: stock {len(sa)} passes, patched {len(sb)}, common {n}; differing bytes {nd} at {len(where)} addresses"
+            print(f"STATE  {name:11s}: stock {len(sa)} passes, patched {len(sb)}, common {n}; {state_compare.compared} bytes compared ({state_compare.compared // max(n, 1)} per pass); differing bytes {nd} at {len(where)} addresses"
                   + (" -> " + ", ".join(f"${x:04x}" for x in sorted(where)[:12]) if where else ""), flush=True)
         if a.rate:
             r0, r1 = rate(snap, stock_live), rate(snap, live)

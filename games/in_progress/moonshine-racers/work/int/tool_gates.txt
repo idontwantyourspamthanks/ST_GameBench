@@ -1,0 +1,217 @@
+== (b) dependencies/conflicts
+
+$ python3 tools/msrpatch.py build --only mt_sync --out build/int_neg
+invalid patch selection:
+  mt_sync requires mt_clock, which is not in this build (add it to --only)
+  mt_sync requires mt_pre, which is not in this build (add it to --only)
+[exit 1]
+
+$ python3 tools/msrpatch.py build --only pp_bigram_cache mt_clock mt_pre mt_sync mx_pre mx_sync --out build/int_neg
+invalid patch selection:
+  mt_sync conflicts with mx_sync: they must not be built together
+  mx_sync conflicts with mt_sync: they must not be built together
+[exit 1]
+
+$ python3 tools/msrpatch.py build --only mx_sync mt_clock mt_pre --out build/int_neg
+invalid patch selection:
+  mt_pre requires mt_sync, which is not in this build (add it to --only)
+  mx_sync requires mx_pre, which is not in this build (add it to --only)
+[exit 1]
+
+$ python3 tools/msrpatch.py live --only mt_sync mt_pre --out build/live/int_neg
+invalid patch selection:
+  mt_pre requires mt_clock, which is not in this build (add it to --only)
+  mt_sync requires mt_clock, which is not in this build (add it to --only)
+[exit 1]
+
+$ python3 tools/msrpatch.py build --only test_marker test_blob36k --out build/int_neg
+invalid patch selection:
+  test_blob36k conflicts with test_marker: they must not be built together
+  test_marker conflicts with test_blob36k: they must not be built together
+[exit 1]
+
+$ python3 tools/msrpatch.py build --only rd_init rd_geom --out build/int_neg
+invalid patch selection:
+  rd_init requires rd_draw, which is not in this build (add it to --only)
+[exit 1]
+-- positive
+
+$ python3 tools/msrpatch.py build --only pp_bigram_cache mt_clock mt_pre mx_pre mx_sync --out build/int_pos_mx
+invalid patch selection:
+  mt_pre requires mt_sync, which is not in this build (add it to --only)
+[exit 1]
+
+$ python3 tools/msrpatch.py build --only pp_bigram_cache mt_clock mt_pre mt_sync --out build/int_pos_mt
+$0d128     6 52390000611b -> 4eb9000b8000   [mt_clock]
+$07b0a     6 4eb900017c42 -> 4eb9000b8200   [mt_pre]
+$07b74     6 4eb90000d1e4 -> 4eb9000b8100   [mt_sync]
+[exit 0]
+
+$ python3 tools/msrpatch.py build --only pp_bigram_cache rd_geom rd_draw rd_init --out build/int_pos_rd
+$17c42     8 22784b8445f84ff8 -> 4ef9000b50044e71   [rd_draw]
+$100b4     8 41f8456443f81bbc -> 4ef9000b40044e71   [rd_geom]
+$078f6     6 4eb90000fde0 -> 4eb9000b6000   [rd_init]
+[exit 0]
+-- positive (after mt_pre fix)
+
+$ python3 tools/msrpatch.py build --only pp_bigram_cache mt_clock mt_pre mx_pre mx_sync --out build/int_pos_mx
+$07b0a     6 4eb900017c42 -> 4eb9000b8200   [mt_pre]
+$07b46     6 4eb90000e406 -> 4eb9000b8300   [mx_pre]
+$07b74     6 4eb90000d1e4 -> 4eb9000b8100   [mx_sync]
+[exit 0]
+
+== (a) reserved RAM (temporary patch patches/zz_ramtest.s: site $78ba, identity bytes, one `; ram:` line; deleted afterwards)
+-- ram $E0000-$E0FFF inside rd_draw's reservation
+
+$ python3 tools/msrpatch.py build --only pp_bigram_cache rd_draw zz_ramtest --out build/int_neg
+    ram of the orig floppy: 22784b8445f84ff8  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 4eb90000d140  (match)   [work/floppy/ram_answered.bin]
+    rd_draw ram rd_draw window tables (2 x 24 KB), colour table copy, table pointer WPTR $db000-$e7fff overlaps zz_ramtest ram test $e0000-$e0fff (no `; conflicts:` declared)
+verify: 1 FAILED
+build aborted: a site's orig does not match the game
+[exit 1]
+
+$ python3 tools/msrpatch.py verify
+    ram of the orig floppy: 5347284b1219  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 49f90001058a  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 044000065347  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 2204  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 52390000611b  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 4eb900017c42  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 4eb90000d1e4  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 4eb90000e406  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 4eb90000d1e4  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 22784b8445f84ff8  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 41f8456443f81bbc  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 4eb90000fde0  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 41f900070000  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 2038100822381004  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 41f900070000  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 4eb90000d140  (match)   [work/floppy/ram_answered.bin]
+    rd_draw ram rd_draw window tables (2 x 24 KB), colour table copy, table pointer WPTR $db000-$e7fff overlaps zz_ramtest ram test $e0000-$e0fff (no `; conflicts:` declared)
+    dependencies/conflicts/reserved RAM: FAILED
+verify: 1 FAILED
+[exit 1]
+-- ram $B8F00-$B8F0F inside mt_clock's data
+
+$ python3 tools/msrpatch.py build --only pp_bigram_cache mt_clock zz_ramtest --out build/int_neg
+    ram of the orig floppy: 52390000611b  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 4eb90000d140  (match)   [work/floppy/ram_answered.bin]
+    mt_clock data $b8f00-$b8f03 overlaps zz_ramtest ram test $b8f00-$b8f0f (no `; conflicts:` declared)
+    mt_clock data $b8f08-$b8f0b overlaps zz_ramtest ram test $b8f00-$b8f0f (no `; conflicts:` declared)
+verify: 2 FAILED
+build aborted: a site's orig does not match the game
+[exit 1]
+-- ram $E8000-$E9FFF beyond the free run (ends $E83FF)
+
+$ python3 tools/msrpatch.py build --only pp_bigram_cache zz_ramtest --out build/int_neg
+    ram of the orig floppy: 4eb90000d140  (match)   [work/floppy/ram_answered.bin]
+    zz_ramtest ram test $e8000-$e9fff is not free in the 1MB layout
+    zz_ramtest ram test $e8000-$e9fff is not free in the 4MB layout
+    zz_ramtest ram test $e8000-$e9fff is not zero in the stock game's RAM dump ram_hook_1024.bin
+    zz_ramtest ram test $e8000-$e9fff is not zero in the stock game's RAM dump ram_entry_1024.bin
+    zz_ramtest ram test $e8000-$e9fff is not zero in the stock game's RAM dump ram_race0.bin
+    zz_ramtest ram test $e8000-$e9fff is not zero in the stock game's RAM dump ram_race_start.bin
+    zz_ramtest ram test $e8000-$e9fff is not zero in the stock game's RAM dump ram_race_grid.bin
+    zz_ramtest ram test $e8000-$e9fff is not zero in the stock game's RAM dump ram_race_up.bin
+verify: 8 FAILED
+build aborted: a site's orig does not match the game
+[exit 1]
+
+$ python3 tools/msrpatch.py verify
+    ram of the orig floppy: 5347284b1219  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 49f90001058a  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 044000065347  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 2204  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 52390000611b  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 4eb900017c42  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 4eb90000d1e4  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 4eb90000e406  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 4eb90000d1e4  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 22784b8445f84ff8  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 41f8456443f81bbc  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 4eb90000fde0  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 41f900070000  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 2038100822381004  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 41f900070000  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 4eb90000d140  (match)   [work/floppy/ram_answered.bin]
+    zz_ramtest ram test $e8000-$e9fff is not free in the 1MB layout
+    zz_ramtest ram test $e8000-$e9fff is not free in the 4MB layout
+    zz_ramtest ram test $e8000-$e9fff is not zero in the stock game's RAM dump ram_hook_1024.bin
+    zz_ramtest ram test $e8000-$e9fff is not zero in the stock game's RAM dump ram_entry_1024.bin
+    zz_ramtest ram test $e8000-$e9fff is not zero in the stock game's RAM dump ram_race0.bin
+    zz_ramtest ram test $e8000-$e9fff is not zero in the stock game's RAM dump ram_race_start.bin
+    zz_ramtest ram test $e8000-$e9fff is not zero in the stock game's RAM dump ram_race_grid.bin
+    zz_ramtest ram test $e8000-$e9fff is not zero in the stock game's RAM dump ram_race_up.bin
+    dependencies/conflicts/reserved RAM: FAILED
+verify: 8 FAILED
+[exit 1]
+-- ram $B7000-$B70FF on the site table
+
+$ python3 tools/msrpatch.py build --only pp_bigram_cache zz_ramtest --out build/int_neg
+    ram of the orig floppy: 4eb90000d140  (match)   [work/floppy/ram_answered.bin]
+verify: ALL OK
+image overlap: site table $b7000-$b701f vs zz_ramtest ram (test) $b7000-$b70ff
+[exit 1]
+-- ram $C0000-$C0FFF free and unowned: HD+pp_bigram_cache accepted, HD without it refused (4 MB layout), live accepted (1 MB snapshot), floppy accepted
+
+$ python3 tools/msrpatch.py build --only pp_bigram_cache zz_ramtest --out build/int_neg
+    ram of the orig floppy: 4eb90000d140  (match)   [work/floppy/ram_answered.bin]
+verify: ALL OK
+built /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/build/int_neg with 1 patch(es) + 1 file patch(es); payload 22784 B at $b2700-$b7fff
+[exit 0]
+
+$ python3 tools/msrpatch.py build --only zz_ramtest --out build/int_neg
+    ram of the orig floppy: 4eb90000d140  (match)   [work/floppy/ram_answered.bin]
+verify: ALL OK
+reserved RAM (`; ram:`) of zz_ramtest is free at 1 MB only: a HD build needs the file patch pp_bigram_cache for the 4 MB layout (whole-image disk cache over $B2700.., delivery.md section 5)
+[exit 1]
+
+$ python3 tools/msrpatch.py live --only zz_ramtest --out build/live/int_neg
+    ram of the orig floppy: 4eb90000d140  (match)   [work/floppy/ram_answered.bin]
+verify: ALL OK
+wrote /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/build/live/int_neg.img and /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/build/live/int_neg.json (1 sites)
+[exit 0]
+
+$ python3 tools/msrpatch.py build --floppy --only zz_ramtest --out build/int_neg_floppy
+    ram of the orig floppy: 4eb90000d140  (match)   [work/floppy/ram_answered.bin]
+verify: ALL OK
+floppy: disk A 819200 B, disk B 819200 B; payload 544 B (2 sectors) at t0.0s2x2
+[exit 0]
+-- list line:
+zz_ramtest         no       $078ba     6 - / - / ram $c0000-$c0fff (test)
+-- ram in a non-zero part of the stock game RAM ($7000-$7FFF) is refused by verify:
+
+$ python3 tools/msrpatch.py verify
+    ram of the orig floppy: 5347284b1219  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 49f90001058a  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 044000065347  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 2204  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 52390000611b  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 4eb900017c42  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 4eb90000d1e4  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 4eb90000e406  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 4eb90000d1e4  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 22784b8445f84ff8  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 41f8456443f81bbc  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 4eb90000fde0  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 41f900070000  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 2038100822381004  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 41f900070000  (match)   [work/floppy/ram_answered.bin]
+    ram of the orig floppy: 4eb90000d140  (match)   [work/floppy/ram_answered.bin]
+    mt_pre site $7b0a-$7b0f overlaps zz_ramtest ram test $7000-$7fff (no `; conflicts:` declared)
+    mt_sync site $7b74-$7b79 overlaps zz_ramtest ram test $7000-$7fff (no `; conflicts:` declared)
+    mx_pre site $7b46-$7b4b overlaps zz_ramtest ram test $7000-$7fff (no `; conflicts:` declared)
+    mx_sync site $7b74-$7b79 overlaps zz_ramtest ram test $7000-$7fff (no `; conflicts:` declared)
+    rd_init site $78f6-$78fb overlaps zz_ramtest ram test $7000-$7fff (no `; conflicts:` declared)
+    zz_ramtest ram test $7000-$7fff is not free in the 1MB layout
+    zz_ramtest ram test $7000-$7fff is not free in the 4MB layout
+    zz_ramtest ram test $7000-$7fff is not zero in the stock game's RAM dump ram_hook_1024.bin
+    zz_ramtest ram test $7000-$7fff is not zero in the stock game's RAM dump ram_entry_1024.bin
+    zz_ramtest ram test $7000-$7fff is not zero in the stock game's RAM dump ram_race0.bin
+    zz_ramtest ram test $7000-$7fff is not zero in the stock game's RAM dump ram_race_start.bin
+    zz_ramtest ram test $7000-$7fff is not zero in the stock game's RAM dump ram_race_grid.bin
+    zz_ramtest ram test $7000-$7fff is not zero in the stock game's RAM dump ram_race_up.bin
+    dependencies/conflicts/reserved RAM: FAILED
+verify: 13 FAILED
+[exit 1]

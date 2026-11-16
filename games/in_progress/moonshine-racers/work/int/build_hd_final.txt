@@ -1,0 +1,77 @@
+mr_digit           site $14d98 len 6
+    declared/derived orig : 5347284b1219
+    ram at hook instant   : 5347284b1219  (match)   [work/dumps/ram_hook_1024.bin]
+    ram at game entry     : 5347284b1219  (match)   [work/dumps/ram_entry_1024.bin]
+    new                   : 4ef9000b3c00
+    ram of the orig floppy: 5347284b1219  (match)   [work/floppy/ram_answered.bin]
+mr_edge            site $17c4a len 6
+    declared/derived orig : 49f90001058a
+    ram at hook instant   : 49f90001058a  (match)   [work/dumps/ram_hook_1024.bin]
+    ram at game entry     : 49f90001058a  (match)   [work/dumps/ram_entry_1024.bin]
+    new                   : 4eb9000b3040
+    ram of the orig floppy: 49f90001058a  (match)   [work/floppy/ram_answered.bin]
+mr_map             site $126d4 len 6
+    declared/derived orig : 044000065347
+    ram at hook instant   : 044000065347  (match)   [work/dumps/ram_hook_1024.bin]
+    ram at game entry     : 044000065347  (match)   [work/dumps/ram_entry_1024.bin]
+    new                   : 4ef9000b3400
+    ram of the orig floppy: 044000065347  (match)   [work/floppy/ram_answered.bin]
+mt_clock           site $0d128 len 6
+    declared/derived orig : 52390000611b
+    ram at hook instant   : 52390000611b  (match)   [work/dumps/ram_hook_1024.bin]
+    ram at game entry     : 52390000611b  (match)   [work/dumps/ram_entry_1024.bin]
+    new                   : 4eb9000b8000
+    ram of the orig floppy: 52390000611b  (match)   [work/floppy/ram_answered.bin]
+mt_pre             site $07b0a len 6
+    declared/derived orig : 4eb900017c42
+    ram at hook instant   : 4eb900017c42  (match)   [work/dumps/ram_hook_1024.bin]
+    ram at game entry     : 4eb900017c42  (match)   [work/dumps/ram_entry_1024.bin]
+    new                   : 4eb9000b8200
+    ram of the orig floppy: 4eb900017c42  (match)   [work/floppy/ram_answered.bin]
+mt_sync            site $07b74 len 6
+    declared/derived orig : 4eb90000d1e4
+    ram at hook instant   : 4eb90000d1e4  (match)   [work/dumps/ram_hook_1024.bin]
+    ram at game entry     : 4eb90000d1e4  (match)   [work/dumps/ram_entry_1024.bin]
+    new                   : 4eb9000b8100
+    ram of the orig floppy: 4eb90000d1e4  (match)   [work/floppy/ram_answered.bin]
+rd_draw            site $17c42 len 8
+    declared/derived orig : 22784b8445f84ff8
+    ram at hook instant   : 22784b8445f84ff8  (match)   [work/dumps/ram_hook_1024.bin]
+    ram at game entry     : 22784b8445f84ff8  (match)   [work/dumps/ram_entry_1024.bin]
+    new                   : 4ef9000b5004
+    ram of the orig floppy: 22784b8445f84ff8  (match)   [work/floppy/ram_answered.bin]
+rd_geom            site $100b4 len 8
+    declared/derived orig : 41f8456443f81bbc
+    ram at hook instant   : 41f8456443f81bbc  (match)   [work/dumps/ram_hook_1024.bin]
+    ram at game entry     : 41f8456443f81bbc  (match)   [work/dumps/ram_entry_1024.bin]
+    new                   : 4ef9000b4004
+    ram of the orig floppy: 41f8456443f81bbc  (match)   [work/floppy/ram_answered.bin]
+rd_init            site $078f6 len 6
+    declared/derived orig : 4eb90000fde0
+    ram at hook instant   : 4eb90000fde0  (match)   [work/dumps/ram_hook_1024.bin]
+    ram at game entry     : 4eb90000fde0  (match)   [work/dumps/ram_entry_1024.bin]
+    new                   : 4eb9000b6000
+    ram of the orig floppy: 4eb90000fde0  (match)   [work/floppy/ram_answered.bin]
+RUNME unpack          : pp_depack(RUNME.TOS) 17634 B == work/dumps/RUNME_unpacked.tos
+RUNME stage hook  text $03b4: file 4ef900078000  ram $b1fa6 4ef900078000  (match)
+RUNME PP tail     text $045c: file 4ef81000  ram $b204e 4ef81000  (match)
+RUNME tail padding    text $0460: 0000  (zero, free)
+RUNME bss pc-relative references: 4 `lea d(pc),aN` ($98, $b34, $40fa, $410c), no others
+pp_bigram_cache    image HAGA  1 edit(s)
+    HB+$3228 len  2  orig 2412
+        file  2412  (match)
+        dump  2412  (match)   [HAGA at $F8000 in ram_hook_1024.bin]
+        new   602a  (same length; identical at HB = $f8000, $1f8000, $3f8000)
+verify: ALL OK
+HAGA+$3228    2 2412 -> 602a   [pp_bigram_cache]
+built /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/build/hd with 9 patch(es) + 1 file patch(es); payload 26636 B at $b2700-$b8f0b
+site     len  orig -> new
+$14d98     6 5347284b1219 -> 4ef9000b3c00   [mr_digit]
+$17c4a     6 49f90001058a -> 4eb9000b3040   [mr_edge]
+$126d4     6 044000065347 -> 4ef9000b3400   [mr_map]
+$0d128     6 52390000611b -> 4eb9000b8000   [mt_clock]
+$07b0a     6 4eb900017c42 -> 4eb9000b8200   [mt_pre]
+$07b74     6 4eb90000d1e4 -> 4eb9000b8100   [mt_sync]
+$17c42     8 22784b8445f84ff8 -> 4ef9000b50044e71   [rd_draw]
+$100b4     8 41f8456443f81bbc -> 4ef9000b40044e71   [rd_geom]
+$078f6     6 4eb90000fde0 -> 4eb9000b6000   [rd_init]

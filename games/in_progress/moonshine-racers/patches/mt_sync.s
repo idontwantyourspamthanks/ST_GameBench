@@ -2,13 +2,15 @@
 ; default: yes
 ; site: $7b74
 ; orig: 4eb90000d1e4
+; requires: mt_clock mt_pre                       ; without mt_clock the clock never advances and PEND never clears: the pacer would sleep forever
+; conflicts: mx_sync                              ; same site ($7b74); mx_sync is the extra-frame replacement of this pacer
 ; data: $B8F04 4
 ; doc: Fixed real-time game tick, part 2 of 3: the race pass's pacer replaces the 2-VBL floor and the post-flip wait with a fixed schedule of TICK/300 s per pass.
 ; note: Fixed tick, part 2 of 3.  Site: $7b74 `jsr $d1e4.l` (the race loop's last call; $d1e4 itself is NOT touched: it also serves $7496) -> `jsr $B8100.l`.
 ; note: The blob flips with the unchanged $d1ca, marks PEND, clears $611a, then sleeps until CLK reaches the scheduled start NEXT ($B8F04) and adds TICK to it.
 ; note: More than MAXLAG (2*TICK) behind (pause, disk, stall): the schedule is reset to now (no burst of passes).  A machine too slow for TICK simply does not sleep.
-; note: TICK (1/300 s units; 36 = 6 VBL at 50 Hz = 8.333 pass/s = stock 8 MHz driving speed) is the ONE equate to change (30 = 10 pass/s).
-TICK    equ     36
+; note: TICK (1/300 s units; 30 = 5 VBL at 50 Hz, 6 VBL at 60 Hz = 10 pass/s, exact at both; 36 = 8.333 pass/s was the stock 8 MHz driving speed) is the ONE equate to change.  30 makes the game 20 % faster than stock at 8 MHz by design (user-approved).
+TICK    equ     30
 MAXLAG  equ     2*TICK
 PEND    equ     $B8F08
 NEXT    equ     $B8F04

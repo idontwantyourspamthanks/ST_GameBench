@@ -111,8 +111,10 @@ def credit_line() -> str:
 
 def render_doc(text: str) -> str:
     """`{PATCHES}` = the default patches of the HD build (no floppy-only patch); `{PATCHES_FLOPPY}` = the default patches of the floppy build
-    (HD file patches excluded: HAGA does not exist there)."""
+    (HD file patches excluded: HAGA does not exist there); `{RAM}` = the payload/reserved-RAM map of the default HD set."""
     text = text.replace(VERSION_TAG, release_version())
+    if "{RAM}" in text:
+        text = text.replace("{RAM}", "\n".join(ram_map(*default_selection(load_patches(), load_file_patches(), False))))
     for token, floppy in (("{PATCHES}", False), ("{PATCHES_FLOPPY}", True)):
         if token not in text:
             continue
@@ -145,6 +147,9 @@ class Patch:
         self.fsegments = []       # file patch: (file offset, source lines)
         self.notes = []
         self.doc = None
+        self.ram = []             # (lo, hi_exclusive, label): reserved run-time work RAM, NOT in the payload image, but part of every collision/layout check
+        self.requires = []        # patch names that must be in the same build
+        self.conflicts = []       # patch names that must not be in the same build
         cur = None
         text = path.read_text()
         text = text.replace(VERSION_TAG, release_version())
@@ -180,6 +185,20 @@ class Patch:
                     self.edits.append((int(a.lstrip("$"), 16), bytes.fromhex(b.split(";")[0].replace(" ", ""))))
                 elif k == "note": self.notes.append(v)
                 elif k == "doc": self.doc = v
+                elif k == "ram":
+                    parts = v.split(";")[0].split()
+                    m = re.fullmatch(r"(\S+?)\s*-\s*(\S+)", parts[0]) if parts else None
+                    if not m and len(parts) >= 3 and parts[1] == "-":
+                        m = re.fullmatch(r"(\S+)\s*-\s*(\S+)", " ".join(parts[:3]))
+                        parts = parts[2:]
+                    if not m:
+                        raise SystemExit(f"{path}: `ram:` needs `$lo-$hi [label]` (inclusive end)")
+                    lo, hi = addr_expr(m.group(1)), addr_expr(m.group(2))
+                    if hi < lo:
+                        raise SystemExit(f"{path}: ram range ${lo:x}-${hi:x} is reversed")
+                    self.ram.append((lo, hi + 1, " ".join(parts[1:]) or None))
+                elif k == "requires": self.requires += v.split(";")[0].split()
+                elif k == "conflicts": self.conflicts += v.split(";")[0].split()
                 continue
             m = HB_ORG_RE.match(line)
             if m:
@@ -351,8 +370,29 @@ def site_list(patches: list[Patch]):
 def in_area(a: int, ln: int) -> bool:
     return any(lo <= a and a + ln <= hi for lo, hi in BLOB_AREAS)
 
+# ---- target layouts and reserved work RAM (`; ram:`) --------------------------------------------------------------------------------------
+# Free run(s) for blobs, data and `; ram:` reservations per target layout.  1 MB: $B2700-$E83FF is zero at game start (rendering.md section 3; the
+# tool's blob areas start at $B2800, above the trampoline).  4 MB with PP's whole-image disk cache (68000, no pp_bigram_cache): MS1 lands on
+# $81000-$C6F2B over the payload and MS2 on $C7900-$13D7FF (delivery.md section 5): nothing in the payload area is free.  With pp_bigram_cache (or the floppy
+# build, which has no HAGA cache) the 1 MB map holds at 4 MB (cold boots, delivery.md section 4 and the road patches' RDG1 magic at $D0000, road.md 7.2).
+FREE_1MB = [(BLOB_AREAS[0][0], FREE_END)]
+LAYOUT_NAMES = ("1MB", "4MB")
 
-def build_image(patches: list[Patch], table: int = TABLE, min_end: int = IMG_MIN_END, floppy: bool = False):
+
+def build_layouts(floppy: bool = False, fnames=()) -> dict:
+    """-> {layout name: free runs} for the layouts a build supports (`live` = a 1 MB snapshot: pass floppy=False, fnames=())."""
+    out = {"1MB": FREE_1MB}
+    if floppy or "pp_bigram_cache" in fnames:
+        out["4MB"] = FREE_1MB
+    return out
+
+
+def ram_in_runs(lo: int, hi: int, runs) -> bool:
+    return any(a <= lo and hi <= b for a, b in runs)
+
+
+
+def build_image(patches: list[Patch], table: int = TABLE, min_end: int = IMG_MIN_END, floppy: bool = False, fnames=(), live: bool = False):
     """-> (image bytes at IB, sites).  `table` = where the site table goes (the core is assembled with the same equ);
     `min_end` = the lowest image end (the HD layout pads to $B8000 so that blob area B is inside the image)."""
     sites = site_list(patches)
@@ -369,6 +409,7 @@ def build_image(patches: list[Patch], table: int = TABLE, min_end: int = IMG_MIN
     core = core_segment(table, floppy=floppy)
     placed = [(CORE, CORE + len(core), "core"), (table, table + tbl_len + len(pool), "site table")]
     blobs = []
+    rams = []
     for p in patches:
         for org, lines in p.segments:
             if org == p.site:
@@ -387,8 +428,16 @@ def build_image(patches: list[Patch], table: int = TABLE, min_end: int = IMG_MIN
             if not in_area(a, l):
                 raise SystemExit(f"{p.name}: data ${a:x}+{l} is outside the blob areas")
             placed.append((a, a + l, p.name + " data"))
-    placed.sort()
-    for (a0, a1, n0), (b0, b1, n1) in zip(placed, placed[1:]):
+        for lo, hi, label in p.ram:
+            for lname, runs in build_layouts(floppy, fnames).items():
+                if not ram_in_runs(lo, hi, runs):
+                    raise SystemExit(f"{p.name}: reserved RAM ${lo:x}-${hi - 1:x} is not free in the {lname} layout (free: " +
+                                     ", ".join(f"${a:x}-${b - 1:x}" for a, b in runs) + ")")
+            rams.append((lo, hi, f"{p.name} ram" + (f" ({label})" if label else "")))
+    if not live and any(p.ram for p in patches) and "4MB" not in build_layouts(floppy, fnames):
+        raise SystemExit("reserved RAM (`; ram:`) of " + ", ".join(p.name for p in patches if p.ram) + " is free at 1 MB only: a HD build needs the file patch "
+                         "pp_bigram_cache for the 4 MB layout (whole-image disk cache over $B2700.., delivery.md section 5)")
+    for (a0, a1, n0), (b0, b1, n1) in zip(sorted(placed + rams), sorted(placed + rams)[1:]):
         if a1 > b0:
             raise SystemExit(f"image overlap: {n0} ${a0:x}-${a1 - 1:x} vs {n1} ${b0:x}-${b1 - 1:x}")
     # the image spans IB .. the highest byte of anything placed (at least IMG_MIN_END); `free` data inside the span is simply not copied
@@ -404,6 +453,81 @@ def build_image(patches: list[Patch], table: int = TABLE, min_end: int = IMG_MIN
     for org, b in blobs:
         img[org - IB:org - IB + len(b)] = b
     return bytes(img), sites
+
+
+# ---- footprints, dependencies, conflicts -------------------------------------------------------------------------------------------------------
+RAM_WITNESS = ("ram_hook_1024.bin", "ram_entry_1024.bin", "ram_race0.bin", "ram_race_start.bin", "ram_race_grid.bin", "ram_race_up.bin")   # the stock game, never patched
+
+
+def footprint(p: Patch) -> list[tuple[int, int, str]]:
+    """Every RAM range a RAM patch owns: its site bytes, blobs, `; data:`, `; ram:` -> (lo, hi_exclusive, what)."""
+    out = []
+    if p.site is None:
+        return out
+    orig, _ = site_bytes(p)
+    out.append((p.site, p.site + len(orig), "site"))
+    for org, lines in p.segments:
+        if org != p.site:
+            b = assemble(org, lines, "\n".join(p.preamble))
+            if b:
+                out.append((org, org + len(b), "blob"))
+    out += [(a, a + l, "data") for a, l, _ in p.data]
+    out += [(lo, hi, "ram" + (f" {label}" if label else "")) for lo, hi, label in p.ram]
+    return out
+
+
+def conflicting(p: Patch, q: Patch) -> bool:
+    return q.name in p.conflicts or p.name in q.conflicts
+
+
+def check_pairs(patches: list[Patch]) -> list[str]:
+    """Footprints of two patches must not overlap unless they declare `; conflicts:` (then they can never be built together)."""
+    ps = [p for p in patches if p.site is not None]
+    fps = {p.name: footprint(p) for p in ps}
+    bad = []
+    for i, p in enumerate(ps):
+        for q in ps[i + 1:]:
+            if conflicting(p, q):
+                continue
+            for a0, a1, w0 in fps[p.name]:
+                for b0, b1, w1 in fps[q.name]:
+                    if a0 < b1 and b0 < a1:
+                        bad.append(f"{p.name} {w0} ${a0:x}-${a1 - 1:x} overlaps {q.name} {w1} ${b0:x}-${b1 - 1:x} (no `; conflicts:` declared)")
+    for p in ps:
+        for lo, hi, w in fps[p.name]:
+            if w.startswith("ram"):
+                for lname, runs in build_layouts(True, ()).items():
+                    if not ram_in_runs(lo, hi, runs):
+                        bad.append(f"{p.name} {w} ${lo:x}-${hi - 1:x} is not free in the {lname} layout")
+                for n in RAM_WITNESS:
+                    f = ROOT / "work" / "dumps" / n
+                    if f.exists() and any(dump_bytes(f, lo, hi - lo)):
+                        bad.append(f"{p.name} {w} ${lo:x}-${hi - 1:x} is not zero in the stock game's RAM dump {n}")
+    return bad
+
+
+def check_selection(sel, known_names) -> list[str]:
+    """`; requires:` / `; conflicts:` of a selection (patches + file patches); unknown names are an error too."""
+    names = {p.name for p in sel}
+    bad = []
+    for p in sel:
+        for r in p.requires:
+            if r not in known_names:
+                bad.append(f"{p.name} requires unknown patch {r!r}")
+            elif r not in names:
+                bad.append(f"{p.name} requires {r}, which is not in this build (add it to --only)")
+        for c in p.conflicts:
+            if c not in known_names:
+                bad.append(f"{p.name} conflicts with unknown patch {c!r}")
+            elif c in names:
+                bad.append(f"{p.name} conflicts with {c}: they must not be built together")
+    return bad
+
+
+def default_selection(patches, fpatches, floppy: bool):
+    sel = [p for p in patches if p.default and (p.media is None or floppy) and (p.site is not None or p.media)]
+    fsel = [p for p in fpatches if p.default]
+    return sel, fsel
 
 
 # ---- verification ----------------------------------------------------------------------------------------------------------------------------
@@ -433,6 +557,18 @@ def cmd_verify(patches, fpatches=()):
         except SystemExit as e:
             print(f"    {e}")
             bad += 1
+    known = {p.name for p in load_patches()} | {p.name for p in load_file_patches()}
+    for msg in check_pairs(patches):
+        print(f"    {msg}")
+        bad += 1
+    if {p.name for p in patches} >= {p.name for p in load_patches() if p.site is not None}:   # `verify` proper (the whole set, not a build's selection): the default sets must satisfy the rules
+        allp, allf = load_patches(), load_file_patches()
+        for floppy in (False, True):
+            sel, fsel = default_selection(allp, allf, floppy)
+            for msg in check_selection(sel + fsel, known):
+                print(f"    default {'floppy' if floppy else 'HD'} set: {msg}")
+                bad += 1
+        print("    dependencies/conflicts/reserved RAM: " + ("checked: all pairs, both default sets, RAM free in every supported layout" if not bad else "FAILED"))
     bad += cmd_verify_runme()
     bad += cmd_verify_files(fpatches)
     bad += cmd_verify_disk(dpatches)
@@ -509,8 +645,23 @@ def cmd_verify_runme() -> int:
     return bad
 
 
+def ram_map(sel, fsel=()) -> list[str]:
+    """The RAM a selection owns above the trampoline: payload blobs/data (in the image) and `; ram:` reservations (not in the image), sorted by address."""
+    rows = []
+    for p in sel:
+        if p.site is None:
+            continue
+        for lo, hi, what in footprint(p):
+            if what != "site":
+                rows.append((lo, hi, p.name, what))
+    layouts = build_layouts(False, [p.name for p in fsel])
+    out = [f"${lo:05x}-${hi - 1:05x} {hi - lo:6d} B  {name:12s} {what}" + ("  [not in the image]" if what.startswith("ram") else "") for lo, hi, name, what in sorted(rows)]
+    out.append("valid layouts for this set: " + ", ".join(layouts) + "; free run(s) " + ", ".join(f"${a:x}-${b - 1:x}" for a, b in FREE_1MB))
+    return out
+
+
 def cmd_list(patches, fpatches=()):
-    print(f"{'name':18s} {'default':8s} {'site':8s} {'len':4s} blobs / data")
+    print(f"{'name':18s} {'default':8s} {'site':8s} {'len':4s} blobs / data / ram")
     for p in patches:
         if p.site is None:
             offs = ",".join(f"{l}+${o:x}" for l, o, _ in p.disk)
@@ -522,10 +673,19 @@ def cmd_list(patches, fpatches=()):
         seg = [s for s in p.segments if s[0] == p.site]
         ln = len(assemble(p.site, seg[0][1], "\n".join(p.preamble))) if seg else 0
         dflt = ("yes" if p.default else "no") + (" (floppy)" if p.media else "")
-        print(f"{p.name:18s} {dflt:8s} ${p.site:05x}  {ln:4d} {blobs} / {data}")
+        rams = ",".join(f"${lo:x}-${hi - 1:x}" + (f" ({lb})" if lb else "") for lo, hi, lb in p.ram) or "-"
+        print(f"{p.name:18s} {dflt:8s} ${p.site:05x}  {ln:4d} {blobs} / {data} / ram {rams}")
     for p in fpatches:
         offs = ",".join(f"${o:x}" for o, _ in p.edits)
         print(f"{p.name:18s} {'yes' if p.default else 'no':8s} {p.image}+{offs}  (file patch, {sum(len(b) for _, b in p.edits)} B)")
+    deps = [p for p in patches if p.requires or p.conflicts]
+    if deps:
+        print("dependencies (enforced by build/live, default selection and verify):")
+        for p in deps:
+            print(f"  {p.name:18s}" + (f" requires {' '.join(p.requires)}" if p.requires else "") + (f"  conflicts {' '.join(p.conflicts)}" if p.conflicts else ""))
+    print("reserved RAM and payload map (HD default set):")
+    for line in ram_map(*default_selection(patches, fpatches, False)):
+        print("  " + line)
 
 
 # ---- RUNME -----------------------------------------------------------------------------------------------------------------------------------
@@ -852,7 +1012,7 @@ FILES_DIR = ["MS1", "MS2", "MSR_S1.FIC"]
 def cmd_build(patches, out: Path, fpatches=(), zip_path: Path | None = None):
     if cmd_verify(patches, fpatches):
         raise SystemExit("build aborted: a site's orig does not match the game")
-    img, sites = build_image(patches)
+    img, sites = build_image(patches, fnames=[p.name for p in fpatches])
     runme = build_runme(img)
     shutil.rmtree(out, ignore_errors=True)
     (out / "FILES").mkdir(parents=True)
@@ -881,7 +1041,7 @@ def cmd_build(patches, out: Path, fpatches=(), zip_path: Path | None = None):
 def cmd_live(patches, out: Path):
     if cmd_verify(patches):
         raise SystemExit("live aborted: a site's orig does not match the game")
-    img, sites = build_image(patches)
+    img, sites = build_image(patches, live=True)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.with_suffix(".img").write_bytes(img)
     js = [{"addr": s["addr"], "orig": s["orig"].hex(), "new": s["new"].hex(), "name": s["name"]} for s in sites]
@@ -934,6 +1094,9 @@ def main():
             raise SystemExit(f"floppy-only patch(es) {fl}: use `build --floppy` (work/notes/floppy.md)")
         sel = [p for p in patches if p.name in names or (floppy and p.name in FLOPPY_REQUIRED)]
         fsel = [p for p in fpatches if p.name in names]
+    msgs = check_selection(sel + fsel, {p.name for p in patches} | {p.name for p in fpatches})
+    if msgs:
+        raise SystemExit("invalid patch selection:\n  " + "\n  ".join(msgs))
     if a.cmd == "build":
         zp = None
         if a.zip is not None:

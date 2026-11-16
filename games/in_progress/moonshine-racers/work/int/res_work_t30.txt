@@ -1,0 +1,11 @@
+race_grid mr_edge+mr_map+mr_digit+rd_geom+rd_draw+rd_init+mt_clock+mt_sync+mt_pre: 160 passes, wrap violations 0; work/pass mean 585,797 cycles = 3.655 VBL, min 558,508 max 635,196; period mean 5.000 VBL
+race_start mr_edge+mr_map+mr_digit+rd_geom+rd_draw+rd_init+mt_clock+mt_sync+mt_pre: 169 passes, wrap violations 0; work/pass mean 696,689 cycles = 4.347 VBL, min 632,060 max 794,336; period mean 5.000 VBL
+race_up mr_edge+mr_map+mr_digit+rd_geom+rd_draw+rd_init+mt_clock+mt_sync+mt_pre: 169 passes, wrap violations 0; work/pass mean 626,205 cycles = 3.908 VBL, min 603,028 max 691,796; period mean 5.000 VBL
+race_drive mr_edge+mr_map+mr_digit+rd_geom+rd_draw+rd_init+mt_clock+mt_sync+mt_pre: 163 passes, wrap violations 0; work/pass mean 926,878 cycles = 5.784 VBL, min 587,668 max 46,117,204; period mean 6.730 VBL
+race_grid: work VBL mean 3.655 p95 3.839 max 3.964 (tick 5.000); passes with work > 5 VBL: 0 of 160; period (loop top to loop top, VBL, rounded) histogram {5: 160}
+race_start: work VBL mean 4.347 p95 4.675 max 4.957 (tick 5.000); passes with work > 5 VBL: 0 of 169; period (loop top to loop top, VBL, rounded) histogram {5: 169}
+race_up: work VBL mean 3.908 p95 4.128 max 4.317 (tick 5.000); passes with work > 5 VBL: 0 of 169; period (loop top to loop top, VBL, rounded) histogram {5: 169}
+race_drive: work VBL mean 5.784 p95 4.358 max 287.772 (tick 5.000); passes with work > 5 VBL: 2 of 163; period (loop top to loop top, VBL, rounded) histogram {4: 1, 5: 161, 288: 1}
+race_drive passes with work > 4.9 VBL (key: VBL): [('2', 4.962), ('3', 5.136), ('1707', 287.772)]
+keys range 1 1707 ; work VBL of the 3 passes before/after the long one: [('1704', 3.88), ('1705', 3.85), ('1706', 3.99), ('1707', 287.77)]
+period outliers: [('1707', 287.78), ('1', 4.27)]

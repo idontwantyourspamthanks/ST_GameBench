@@ -95,3 +95,6 @@ games/**/originals/
 **/*.MSA
 **/*.stx
 **/*.STX
+# third-party binaries the user supplies (e.g. tools/pasti.dll, a Windows-only Pasti library: not usable by the Linux Hatari)
+**/*.dll
+**/*.DLL

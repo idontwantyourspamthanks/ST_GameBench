@@ -1,0 +1,14 @@
+patch set: mr_edge mr_map mr_digit rd_geom rd_draw rd_init  (live image edge+map+digit+rd_geom+rd_draw+rd_init.img, 22784 B)
+PIXELS race_grid   at VBL 25100 flip  10: IDENTICAL  md5 81dfec87 d5a188cf (stock 81dfec87 d5a188cf)
+PIXELS race_grid   at VBL 25100 flip  40: IDENTICAL  md5 7481e0c7 7481e0c7 (stock 7481e0c7 7481e0c7)
+STATE  race_grid  : stock 120 passes, patched 126, common 117; 785772 bytes compared (6716 per pass); differing bytes 0 at 0 addresses
+PIXELS race_start  at VBL 16400 flip  10: IDENTICAL  md5 3da506a7 c54efba9 (stock 3da506a7 c54efba9)
+PIXELS race_start  at VBL 16400 flip  40: IDENTICAL  md5 90858e13 4858b4b8 (stock 90858e13 4858b4b8)
+STATE  race_start : stock 126 passes, patched 121, common 121; 812636 bytes compared (6716 per pass); differing bytes 0 at 0 addresses
+PIXELS race_up     at VBL 18100 flip  10: IDENTICAL  md5 64f19a1d d9cdbe0a (stock 64f19a1d d9cdbe0a)
+PIXELS race_up     at VBL 18100 flip  40: IDENTICAL  md5 58491371 19ced56f (stock 58491371 19ced56f)
+STATE  race_up    : stock 126 passes, patched 120, common 120; 805920 bytes compared (6716 per pass); differing bytes 0 at 0 addresses
+PIXELS race_drive  at VBL 15300 flip  10: IDENTICAL  md5 d67d147e ed8944f1 (stock d67d147e ed8944f1)
+PIXELS race_drive  at VBL 15300 flip  40: IDENTICAL  md5 3d3df84c 3d3df84c (stock 3d3df84c 3d3df84c)
+STATE  race_drive : stock 126 passes, patched 121, common 121; 812636 bytes compared (6716 per pass); differing bytes 0 at 0 addresses
+RESULT: ALL IDENTICAL

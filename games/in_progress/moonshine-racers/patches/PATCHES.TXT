@@ -8,6 +8,9 @@ HAGA (PP's loader service).  Start RUNME.TOS from the desktop or a hard-disk AUT
 Changes in this release:
 {PATCHES}
 
-Machines: 1 MB or more.  Booted to the first race with this patch set plus a test marker patch: STE (TOS 1.62, 1 MB and 4 MB), Mega STE
-(TOS 2.06, 1 MB and 4 MB), ST (TOS 1.04, 1 MB) and TT (TOS 3.06, 4 MB).  The Falcon runs the same code path (not tested here).
+Game speed: the game now runs at a fixed speed of 10 logic steps per second on every machine and CPU clock (at 50 and at 60 Hz). On an 8 MHz machine that is 20 % faster
+than the original release, which ran at 8.3 steps per second at 8 MHz and about twice that on a 16 MHz machine.
+
+Machines: 1 MB or more. Cold-booted into the first race with this patch set (Hatari): STE (TOS 1.62, 1 MB and 4 MB), Mega STE (TOS 2.06, 4 MB), ST (TOS 1.04, 1 MB) and
+TT (TOS 3.06, 4 MB). Not tested: 2 MB, a real machine, the Falcon (same code path). The road code uses the free RAM $D0000-$E7FFF.
 Hard-disk set only: PP's conversion has no floppy version.  The patch mechanism and its address map: patches/README.md

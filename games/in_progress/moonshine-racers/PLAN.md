@@ -1,7 +1,21 @@
-# Moonshine Racers: performance release plan (skeleton)
+# Moonshine Racers: performance release plan
 
-Status: **study done, nothing patched yet.** Evidence: `work/notes/rendering.md` (all addresses, tables and raw outputs).
-Version/credit line (mandatory, user picks the screen): `v1.0 enhanced by dad_prg`, kept in one place in the patch source.
+Status (integration wave, `work/notes/integration.md`): **the default patch set is integrated and gated.** HD and floppy builds default to `pp_bigram_cache` (HD), `mr_edge mr_map mr_digit` (pixel-identical render),
+`rd_geom rd_draw rd_init` (pixel-identical road, tables generated at race load), `mt_clock mt_sync mt_pre` (fixed tick, `TICK equ 30` = 10 passes/s, exact at 50 and 60 Hz); floppy additionally `fl_hook fl_deprot`.
+Not default: `mx_pre mx_sync` (extra frames: visible, needs the user's approval), `mr_negctl`, `test_*`. Evidence: `work/notes/{rendering,render_patches,road,tick,timing,extrap,integration}.md`.
+Version/credit line (mandatory, user picks the screen): `v1.0 enhanced by dad_prg`, kept in one place in the patch source (`patches/VERSION`; the credit patch itself is not written yet).
+
+## Decisions taken
+- Fixed tick T=30 (user-approved): the game runs 20 % faster than the stock 8 MHz driving speed (8.33 -> 10 passes/s) and at that speed on every CPU clock and at 50/60 Hz; a pass slower than the tick runs late once and the pacer resyncs (`tick.md`, `integration.md`).
+- The road patches ship by default; their one-off table generation (about 18 VBL) runs in `rd_init` at the race setup (`$78f6`), before the race loop, never in the first road frame.
+- Patch tool: `; ram:` reserved work RAM (collision/layout-checked, not in the image), `; requires:` / `; conflicts:` enforced (build, live, `--only`, defaults, verify); `mx_sync` replaces `mt_sync` by declared conflict.
+- No sprite patch (`work/notes/sprites.md`), no blitter road (`road.md` section 4), no repaint skipping (`road.md` section 5).
+
+## Remaining
+- Credit patch (`v1.0 enhanced by dad_prg` on a screen the user picks) and release version.
+- User docs: README.TXT / PATCHES.TXT wording for the final set (the build already fills `{PATCHES}`), packaging (`build --zip`, `build --floppy --zip`, `dist/`).
+- User decisions: approve (or drop) the extra-frame prototype `mx_*` (visible new pictures on 16/32 MHz machines; kernel table caveat in `extrap.md` section 5); blitter (rejected with numbers, unless the user wants a Mega STE/TT specific experiment); the clouds (12 cloud sprites ~9 % of a frame: removing them is a visible change).
+- Not tested anywhere: real hardware (everything is Hatari 2.6.1), Falcon, a native 60 Hz boot, the tracks after the first (see `integration.md` for what was reached).
 
 ## Goals and preferences (carried over from `st-game-speedup`)
 - Target: 1 MB 8 MHz STE (TOS 1.62). Must not break: ST, Mega ST, Mega STE (HAGA already runs it at 16 MHz + cache), TT, Falcon; 1 MB and 4 MB.

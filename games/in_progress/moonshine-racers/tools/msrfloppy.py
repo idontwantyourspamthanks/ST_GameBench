@@ -151,6 +151,7 @@ def gate(h, a):
     print("race shot", h.shot(str(shots / f"floppy_{a.name}_race.png")))
     print("marker $b2700:", h.debug("m $b2700 8", 0.8).strip().splitlines()[-1])
     print("tick clock $b8f00:", h.debug("m $b8f00 8", 0.8).strip().splitlines()[-1])
+    print("road magic $d0000:", h.debug("m $d0000 8", 0.8).strip().splitlines()[-1], " WPTR $e7040:", h.debug("m $e7040 4", 0.8).strip().splitlines()[-1])
 
 
 def main():
