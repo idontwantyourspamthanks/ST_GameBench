@@ -66,13 +66,11 @@ MD5 OF THE IMAGES
 Technical notes: patches/README.md ("Floppy build") and work/notes/floppy.md of the
 patch project.
 
-- Optional (new in v1.5), not enabled in this build: the Amiga release's sound effects AND music through the
-  STE's DMA sound (mono; effects 6258 Hz, music 12517 Hz, mixed in software) instead of the YM
-  chip, on an STE / Mega STE only (ST, Mega ST, TT, Falcon keep the YM). Needs the sound bank
-  (176 KB), built from your own Amiga disk 1 by tools/asn_build.py; on floppy it rides after the
-  payload on FFA (payload + bank = 46 track-sides, 81-126). The boot stub's title tune (about
-  28 s on floppy) stays YM; the Amiga tunes start at the logo screen. It costs about 5-9% of the
-  frame rate while effects play and about 30% of the CPU while a tune plays; the music
-  stutters where the game loads. Patches: asn_core asn_wd asn_lvc asn_lv1 asn_lv2 asn_mus. Build with:
-  MW2_BANK=build/asn_bank.bin python3 tools/mw2patch.py build --floppy --only <the default
-  set> floppy_copybuf asn_core asn_wd asn_lvc asn_lv1 asn_lv2 asn_mus
+- Amiga sound effects and music (new in v1.5; patches asn_core asn_wd asn_lvc asn_lv1 asn_lv2 asn_mus; STE and Mega STE
+  only): the Amiga release's sound effects AND music replace the YM chip's, played through the STE's DMA sound (mono;
+  effects 6258 Hz, music 12517 Hz, mixed in software). ST, Mega ST, TT and Falcon keep the YM sound. The title, hall and
+  map screens play the Amiga tunes, the 3D view the Amiga effects. Costs about 5-9% of the frame rate while effects play
+  and about 30% of the CPU while a tune plays on the title, hall and map screens. Known: the music stutters where the
+  game loads. The boot stub's title tune (about 28 s on floppy) stays YM; the Amiga tunes start at the logo screen. The
+  sample bank (176 KB; samples plus the sound code) is included, on the spare tracks of the first disk (FFA track-sides
+  81-126, after the patch code); it was converted from disk 1 of the Amiga release.

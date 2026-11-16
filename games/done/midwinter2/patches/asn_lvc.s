@@ -1,5 +1,5 @@
 ; name: asn_lvc
-; default: no
+; default: yes
 ; site: $18ed8
 ; orig: 3c3c00013e3c00074eb84f8a
 ; phase: deferred

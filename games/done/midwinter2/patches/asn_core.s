@@ -1,5 +1,5 @@
 ; name: asn_core
-; default: no
+; default: yes
 ; site: $18f92
 ; orig: 303868626b0a
 ; phase: deferred

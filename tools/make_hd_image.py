@@ -78,8 +78,9 @@ def copy_names(src: Path, dst: Path, names):
 
 
 def build_midwinter2() -> Path:
-    """The default build; when the user's Amiga disk 1 is at midwinter2/alt/amiga/disk1.adf (private image, like Hunter's sample
-    bank) the Amiga sound effects and music through the STE DMA sound (asn_* patches, FILES\\ASNBANK.BIN) are added on top."""
+    """The default build; it includes the Amiga sound effects and music through the STE DMA sound (asn_* patches,
+    FILES\\ASNBANK.BIN) when the user's Amiga disk 1 is at midwinter2/alt/amiga/disk1.adf (private image, like Hunter's sample
+    bank); without it the build silently falls back to the non-asn set (YM)."""
     g = GAMES / "midwinter2"
     out, dst = STAGE / "mw2_build", STAGE / "MIDWINT2"
     py("midwinter2", "mw2patch", "verify")
@@ -87,20 +88,14 @@ def build_midwinter2() -> Path:
     amiga = (g / "alt" / "amiga" / "disk1.adf").is_file()
     if amiga:
         py("midwinter2", "asn_build")                          # -> build/asn_bank.bin (md5-checked against the ADF)
-        rows = [r.split() for r in py("midwinter2", "mw2patch", "list").splitlines()[1:] if r.strip()]
-        defaults = [r[0] for r in rows if r[1] == "yes" and r[2] != "(floppy)"]
-        run([sys.executable, "tools/mw2patch.py", "build", "--out", out, "--only", *defaults,
-             "asn_core", "asn_wd", "asn_lvc", "asn_lv1", "asn_lv2", "asn_mus"], cwd=g,
-            env={**os.environ, "MW2_BANK": str(g / "build" / "asn_bank.bin")})
-    else:
-        py("midwinter2", "mw2patch", "build", "--out", out)
+    run([sys.executable, "tools/mw2patch.py", "build", "--out", out], cwd=g)   # default set: asn_* included when the bank exists
     shutil.rmtree(dst, ignore_errors=True)
     dst.mkdir(parents=True)
     # = what midwinter2/tools/package.sh puts into MW2PATCH/
     copy_names(out, dst, ["RUNME.TOS", "HAGA", "FF240R.BMP", "FFF273.HST", "LFF273.HST"])
     copy_names(g, dst, ["README.TXT", "LOG.TXT", "SOLUTION.TXT"])
     shutil.copytree(g / "FILES", dst / "FILES")               # originals: FFD stays the blank campaign disk
-    if amiga:
+    if (out / "FILES" / "ASNBANK.BIN").is_file():
         shutil.copy2(out / "FILES" / "ASNBANK.BIN", dst / "FILES" / "ASNBANK.BIN")
     (dst / "PATCHES.TXT").write_text(py("midwinter2", "mw2patch", "doc", "patches/PATCHES.TXT"), encoding="latin-1", errors="replace")
     return dst

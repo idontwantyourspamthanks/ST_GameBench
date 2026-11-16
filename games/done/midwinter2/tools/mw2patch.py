@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Midwinter 2 patch delivery tool.
 
-MW2_BANK=<file> (build/asn_bank.bin, tools/asn_build.py) adds the Amiga sample bank + sound/music blob for the asn_* group; without it the tool builds every other group exactly as before:
+MW2_BANK=<file> (default build/asn_bank.bin when it exists; tools/asn_build.py makes it; the asn_* group is in the default set, dropped with a warning when no bank exists) adds the Amiga sample bank + sound/music blob for the asn_* group; without it the tool builds every other group exactly as before:
   HD   : FILES/ASNBANK.BIN in the build, and a splice in RUNME (text $46, after the HAGA Fclose, before the stack takeover) that Freads it to $BB000.
          The bank cannot ride in RUNME's data segment: PP's loader refuses to start ("Too much low RAM occupied") on a 1 MB machine when RUNME's
          bss start + $23c + $8000 >= $38270 (RUNME text $b4-$e4), which leaves ~61 KB of growth on TOS 2.06 (84 KB on TOS 1.62).
@@ -55,7 +55,8 @@ OLD_BSS = 0x4536           # text-relative start of the original bss (= end of t
 #   [COPY_ROUTINE 26 B][BSS_PTRS 8 B][payload image PAYLOAD_LEN B]
 COPY_LEN, PTRS_LEN = 26, 8
 # ---- ASN: the bank loader spliced into RUNME (HD) ------------------------------------------------------------------------------------------
-_BANK = Path(os.environ["MW2_BANK"]).read_bytes() if os.environ.get("MW2_BANK") else b""
+_BANK_PATH = Path(os.environ["MW2_BANK"]) if os.environ.get("MW2_BANK") else Path(__file__).resolve().parent.parent / "build" / "asn_bank.bin"
+_BANK = _BANK_PATH.read_bytes() if _BANK_PATH.is_file() else b""   # MW2_BANK unset: build/asn_bank.bin when it exists
 BANK_RAM = 0xBB000
 BANK_SPLICE_TXT = 0x46                      # text offset of `lea $9a0.l,a7` (4ff9 000009a0), right after RUNME's Fclose of HAGA (file offset $62 in m68dis listings)
 BANK_SPLICE_ORIG = bytes.fromhex("4ff9000009a0")
@@ -89,16 +90,23 @@ def _bankload_assemble(blen: int) -> tuple[bytes, list[int]]:
     struct.pack_into(">h", out, fix["name_ext"], name_at - fix["name_ext"])
     struct.pack_into(">h", out, fix["skip_ext"], fix["skip"] - fix["skip_ext"])
     return bytes(out), rel
-BANKLOAD, BANKLOAD_REL = _bankload_assemble(len(_BANK)) if _BANK else (b"", [])
-BL_LEN = len(BANKLOAD)
-N = COPY_LEN + PTRS_LEN + BL_LEN + PAYLOAD_LEN       # bytes appended to the data segment
-COPY_ROUTINE = bytes.fromhex(
-    "41fa%04x" % (COPY_LEN + PTRS_LEN + BL_LEN - 2)   # lea  (routine+34+BL_LEN)(pc),a0 -> image
-    + "43f9000b3000"                         # lea  $b3000.l,a1
-    + "303c%04x" % (PAYLOAD_LEN // 4 - 1) +  # move.w #longs-1,d0
-    "22d8"                                   # move.l (a0)+,(a1)+
-    "51c8fffc"                               # dbra d0,-4
-    "4ef90004d9a6")                          # jmp  $4d9a6.l     (boot stub)
+def _set_bank(bank: bytes):
+    """(Re)derive everything that depends on the bank: the RUNME loader splice, the appended-data size N, the copy routine, the floppy payload track-side."""
+    global _BANK, BANKLOAD, BANKLOAD_REL, BL_LEN, N, COPY_ROUTINE, PAYLOAD_TS, FFA_BLANK_END
+    _BANK = bank
+    BANKLOAD, BANKLOAD_REL = _bankload_assemble(len(bank)) if bank else (b"", [])
+    BL_LEN = len(BANKLOAD)
+    N = COPY_LEN + PTRS_LEN + BL_LEN + PAYLOAD_LEN       # bytes appended to the data segment
+    COPY_ROUTINE = bytes.fromhex(
+        "41fa%04x" % (COPY_LEN + PTRS_LEN + BL_LEN - 2)   # lea  (routine+34+BL_LEN)(pc),a0 -> image
+        + "43f9000b3000"                         # lea  $b3000.l,a1
+        + "303c%04x" % (PAYLOAD_LEN // 4 - 1) +  # move.w #longs-1,d0
+        "22d8"                                   # move.l (a0)+,(a1)+
+        "51c8fffc"                               # dbra d0,-4
+        "4ef90004d9a6")                          # jmp  $4d9a6.l     (boot stub)
+    PAYLOAD_TS = 81 if bank else 72              # with a bank the payload lives on the blank track-sides 81-159 (side 1, tracks 1-79)
+    FFA_BLANK_END = 160 if bank else 80          # FFA track-sides 72-79 are blank ($F6); track-side 80 (side 1, track 0) holds data
+_set_bank(_BANK)
 assert len(COPY_ROUTINE) == COPY_LEN
 assert PAYLOAD_LEN % 4 == 0 and PAYLOAD_LEN // 4 - 1 <= 0xFFFF
 # The four pc-relative `lea d(pc),aN` in RUNME that address bss: text offset ->
@@ -734,8 +742,7 @@ STAGE1_SRC = ["\tlea\t$4e9d8.l,a6",                 # the stub's parameter block
               "\tmove.w\t#10,$16(a6)",              # file number
               "\tbsr.w\t$4db52",                    # stub loader (checks the dir checksum)
               "\tjmp\t$b3000.l"]
-PAYLOAD_FILE, PAYLOAD_TS = 10, (81 if _BANK else 72)   # with a bank the payload lives on the blank track-sides 81-159 (side 1, tracks 1-79)
-FFA_BLANK_END = 160 if _BANK else 80             # FFA track-sides 72-79 are blank ($F6); track-side 80 (side 1, track 0) holds data
+PAYLOAD_FILE = 10
 FLOPPY_DISKS = [("FFA", "FFA_boot.st"), ("FFB", "FFB_graphics.st"),
                 ("FFC", "FFC_missions.st"), ("FFD", "FFD_campaign_blank.st")]
 
@@ -930,6 +937,13 @@ def main():
             sel = [p for p in patches if p.name in names]
             fsel = [p for p in fpatches if p.name in names]
         asn = {p.name for p in sel if p.name.startswith("asn_")}
+        if asn and not _BANK and a.only is None:
+            print("warning: no sample bank (build/asn_bank.bin; python3 tools/asn_build.py needs alt/amiga/disk1.adf): "
+                  "the asn_* Amiga sound patches are DROPPED, the build keeps the YM sound", file=sys.stderr)
+            sel = [p for p in sel if not p.name.startswith("asn_")]
+            asn = set()
+        if not asn:                 # no asn_* patch selected: nothing may splice the bank loader or enlarge the floppy payload
+            _set_bank(b"")
         if asn and not _BANK:
             raise SystemExit("the asn_* sound group needs the sample bank: set MW2_BANK=build/asn_bank.bin "
                              "(python3 tools/asn_build.py)")

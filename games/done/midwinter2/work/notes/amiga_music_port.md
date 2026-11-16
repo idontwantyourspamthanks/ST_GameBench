@@ -396,3 +396,27 @@ Screenshots at start / mid / end (`work/asn_mus/accel/port2/port2_start_mid_end.
 - Tune 5 on the DMA is 4-6 dB (rms 1300-2000 vs 4600-5100) quieter than the YM's tune 5 (gain set 1 = 0.25, low-pass); not judged by ear.
 - `tools/mw2harness.py` `Hatari.rel/goto` in the F5 map: the pointer only follows after the map has finished scrolling in (wait >= 25 s after F5 with the music mixer running) and the icon row needs ~2.5 s of hover before a click lands on it (a click earlier = "return to world" loading screen without a route).
 - Scratch left in the tree: `work/asn_mus/accel_route.py`, `accel_an.py`, `work/asn_mus/accel/{port2,port3,orig1,orig2}/` (samples, screenshots, the two 40 s WAVs `port3.wav` / `orig2.wav`; the long-run WAVs were deleted after analysis).
+
+## Default release
+The asn_* group (`asn_core asn_wd asn_lvc asn_lv1 asn_lv2 asn_mus`) is now `default: yes`; the bank ships in both release zips. Changes: `mw2patch.py` reads `MW2_BANK`, else `build/asn_bank.bin` if it exists; a default (no `--only`) build without a bank drops the asn_* patches with one warning; explicit `--only ... asn_*` without a bank still refuses; a build with no asn_* patch selected never splices the loader (`_set_bank(b"")`: N, copy routine, floppy payload track-side are re-derived). `package.sh` runs `asn_build.py` first and fails without `alt/amiga/disk1.adf`. `play.sh --asn` = alias of the default. `make_hd_image.py`, `work/asn_mus/build.sh` simplified. [obs]
+Raw results:
+```
+verify: ALL OK
+asn_test unit --ticks 300: driver mismatches 0, mixer 0, amiga (41 sounds x 3 levels x 300 ticks) 0   (flat-dump check skipped as before)
+asn_mus_test unit --ticks 1700: ... iface : vector-table behaviour, 20 checks, failed: none   RESULT: ALL OK
+no bank (MW2_BANK=/nonexistent, and with build/asn_bank.bin moved aside, then restored):
+  warning: no sample bank (build/asn_bank.bin; python3 tools/asn_build.py needs alt/amiga/disk1.adf): the asn_* Amiga sound patches are DROPPED, the build keeps the YM sound
+  built .../build/nobank with 39 patch(es) + 2 file patch(es)   RUNME.TOS 50678 B ; floppy default: same warning, 40 patches
+  --only asn_core asn_wd (no bank): "the asn_* sound group needs the sample bank: set MW2_BANK=..." (refusal kept)
+with bank: built build/withbank with 45 patch(es) + 2 file patch(es); RUNME.TOS 50774 B; list shows the 6 asn_* "yes"
+--only (zero patches) with the bank present: RUNME.TOS builds (the loader is not spliced)
+```
+Release: `dist/Midwinter2_v1.5_patched_2026-11-16.zip` md5 fe112fe2dcfd4ece2980e5a202346222; `..._patched_floppies_2026-11-16.zip` md5 8a3a03e4033f4e718cec5ea10925f279; unpacked in build/relcheck/{hd,fl}: HD `MW2PATCH/FILES/ASNBANK.BIN` md5 ea2094df4d17623ea4b70a0512763f3a == build/asn_bank.bin; RUNME.TOS 50 774 B md5 219f954db6a70811b6f9aa31670f4ffa == build/game/RUNME.TOS; PATCHES.TXT / floppy README.TXT carry the new paragraph; floppy FFA: payload+bank (32768+176562 B) at track-sides 81-126 read back equal to the bank, track-sides 127-159 still $F6 [obs].
+Cold boots of the PACKAGED builds (`asn_mus_cold.py run ... --no-profile`, logs build/relcheck/*.log, work/asn_cold/mus_rel_*): the HD directory needed the test-only `work/disk_overlay` campaign copy next to it (copied from build/mus/hd; the first run without it stopped at "never reached the boss screen" = harness, campaign disk missing).
+- HD STE TOS 1.62 1 MB: PASS (tune 1 at logo `$5138=000bf81e`, DMA on, 17/17 session 2, 16/17 music tick (the 3D stage has the sfx tick); 3D session 1 effects 2 and 4 requested; bank diffs 0)
+- floppy STE TOS 1.62 1 MB: PASS (11/11, bank 0 diffs, 3D sfx stage)
+- HD Mega STE TOS 2.06 4 MB: PASS (16/16, bank 0)
+- HD ST TOS 1.04 1 MB: PASS (mode 1 every stage, DMA never touched, YM audible 306/349 windows rms>100)
+- HD TT TOS 3.06 4 MB: first run died early (Hatari fifo vanished, harness OSError at the intro; cause unknown [INFERENCE: external], rerun PASS: mode 1, YM audible 280/328 windows)
+Pixel gate (`tools/abtest.py --only <HD defaults without the pp_ file patches, i.e. incl. asn_*>`, live set, bank read by default): foot IDENTICAL (501 flips); 1mb_ingame_walking DIFFER 442 bytes. The identical run WITHOUT the asn_* patches gives the same DIFFER 442 bytes on walking, so it is not caused by the asn group [obs]; the 3D foot gate is IDENTICAL. Meaning: abtest's base is the unpatched snapshot, the "patched" side is now the full default set incl. asn (a build with the bank); the snapshots run in ST mode where asn stays inactive (mode 1) [INFERENCE: snapshot machine not checked].
+Image: `python3 tools/make_hd_image.py` -> dist/AtariST_enhanced_games_2026-11-16.img md5 061413a7fb8f580d61b0cfc882627f85; MIDWINT2 on it has FILES/ASNBANK.BIN (md5 ea2094df...) and RUNME.TOS 50 774 B (md5 219f954d...), identical to the packaged HD files, so no separate cold boot of the image [obs for md5s]. Unproven: real hardware, by-ear audio, floppy run on ST/TT/Mega STE, the image's own boot.

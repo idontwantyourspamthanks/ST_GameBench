@@ -268,7 +268,7 @@ and read at the start of the next (a whole VBL of settle time, no wait loop), de
   those machines run the unpatched flip afterwards, 0 cycles. Data `TT_F` `$B4F80` (0 unprobed, 1 68000, 2 68020+); blob `$B4F00-$B4F7F` (128 B).
 - Cost on a TT: one pointer restore + draw (~12 k cycles at 8 MHz, 0.4 ms at 32 MHz) per 2D flip.
 
-## Amiga sound effects and music on STE DMA sound (`asn_*`, all `default: no`; notes: work/notes/amiga_sound.md, amiga_music.md, amiga_music_port.md)
+## Amiga sound effects and music on STE DMA sound (`asn_*`, all `default: yes`, part of the v1.5 release; notes: work/notes/amiga_sound.md, amiga_music.md, amiga_music_port.md)
 - **What:** the Amiga release's sound effects AND its music, played through the STE's DMA sound instead of the YM chip. Effects: the Amiga's sound ids, sequences and 16 looped
   samples via a 4-voice port of the Amiga driver (`MWII`'s `$2f3b2` logic; the ST code is a 3-voice port of the same driver, request word `$6862` = id x 6 on the ST, id x 8 on the Amiga).
   Music: a 68000 port of the Amiga player (`MWII` `$5760c`/`$57720`: 4 channels of pattern lists, instruments with one-shot or looped samples, envelopes, slide, vibrato, the LED low-pass
@@ -283,8 +283,7 @@ and read at the start of the next (a whole VBL of settle time, no wait loop), de
   `$BB000` header `ASN2` (+ B_SIL zeros), `$BB100` effect rows / `$BB300` sequences / `$BB700` records, `$BBE00` state, `$BBF00` four music channel records, `$BC000` DMA ring (2048 B),
   `$BC800` volume tables (3 gain sets x 16 levels x 256 B), **`$BF800` the blob** (3 614 B: 7 fixed 6-byte `jmp abs.l` entries `+$00` asn_tick, `+$06` asn_wd, `+$0c` asn_lvc, `+$12` asn_lv1,
   `+$18` asn_lv2, `+$1e` asn_mtick, `+$24` asn_mstart; the patch sites jump to these, not to labels), `$C1000` the music section (tune table, flags, score, 13 instruments 55 KB), then the 16
-  effect samples (82 KB). Every sample region carries 48 pad bytes. Build with `MW2_BANK=build/asn_bank.bin python3 tools/mw2patch.py build ... asn_core asn_wd asn_lvc asn_lv1 asn_lv2 asn_mus`
-  (or `tools/play.sh --asn`). `mw2patch.py` REFUSES an `asn_*` build without `MW2_BANK`, with a bank whose magic is not `ASN2` (the sites jump to `$BF800`), or without `asn_wd`.
+  effect samples (82 KB). Every sample region carries 48 pad bytes. The default build includes the group: `mw2patch.py` reads the bank from `MW2_BANK`, else `build/asn_bank.bin` when it exists (`python3 tools/asn_build.py`; `tools/package.sh` and `tools/play.sh` run it, `package.sh` fails without `alt/amiga/disk1.adf`). A default (no `--only`) build with no bank DROPS the `asn_*` patches with one warning line and keeps the YM sound; `tools/play.sh --asn` is an alias of the default. An explicit `--only ... asn_*` REFUSES without a bank, with a bank whose magic is not `ASN2` (the sites jump to `$BF800`), or without `asn_wd`.
 - **Tunes per delivery:** one bank for HD and floppy: tunes 1, 5, 2, 4, 6, 7, 10, 15, 16, 17, 8, 9, 12 = every tune the ST game has a call site for (the logo / hall / map screens play tune 1,
   accelerated time asks for tune 5). Tunes 3, 11, 13, 14 have no ST call site and are not in the bank; a tune that is not in the bank falls back to the YM driver. `--tunes N ...` builds a smaller bank.
 - **Delivery:** HD ships `FILES\ASNBANK.BIN`, read by a 94-byte splice at RUNME text `$46` (the bank cannot ride in RUNME's data segment: PP's loader refuses a 1 MB machine whose bss start +

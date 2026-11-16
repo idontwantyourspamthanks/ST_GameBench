@@ -1,5 +1,5 @@
 ; name: asn_lv2
-; default: no
+; default: yes
 ; site: $18ea0
 ; orig: 33fc000700019218
 ; phase: deferred

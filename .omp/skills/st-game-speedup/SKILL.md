@@ -19,6 +19,12 @@ Reference project: `games/done/midwinter2`. Its `PLAN.md` holds phases P0–P7 a
   - zips: HD folder plus a floppy set. **Ship both by default:** a floppy version is mandatory (most ST owners have no hard disk) and an HD version is expected too (essential on Mega STE/TT). Drop one only for a very good, stated reason. If the base release is HD-only, build the floppy set from a floppy release of the same game; if it is floppy-only, build an HD version (file loads) as well;
   - `play.sh`-style launcher scripts.
   - **Release credit (mandatory):** every release shows a version and credit line, e.g. `v1.2 enhanced by dad_prg`, on a startup screen, so archivists can't mistake it for the original release. The user picks the screen and placement per game. Keep the version in one place per game (patch source or build config); it must appear in the README/PATCHES.TXT and zip names too.
+  - **Amiga-derived assets (sound banks, samples) are part of the release, not an add-on** (user decision, Hunter and Midwinter 2):
+    - **Where they live:** built at package time from the user's own Amiga disk image in `games/<g>/alt/amiga/` (md5-checked), and shipped inside the release zips (HD: a file in `FILES\`; floppy: spare track-sides). They are NEVER stored in git; `build/`, `alt/` and `*.wav` stay git-ignored.
+    - **Packaging must fail loudly** when the Amiga disk is missing (`package.sh` aborts with a message), so a release can never silently ship without its audio under the same name.
+    - **Plain builds for others:** a developer without the Amiga disk gets the original sound (YM) from `<tool> build` with one warning line; an explicit `--only` of the audio patches without the bank is refused.
+    - **Machines:** STE-class only (68000 with the DMA sound chip); ST, Mega ST, TT and Falcon keep the YM unless the game's own notes prove DMA there.
+    - **Docs:** PATCHES.TXT/FLOPPY.TXT say the samples come from the Amiga release; the copyright exposure of public zips is the user's call and was accepted for Hunter and Midwinter 2.
 
 ## Phases
 1. **Harness and benchmarks.**

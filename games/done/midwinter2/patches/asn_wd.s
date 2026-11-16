@@ -1,5 +1,5 @@
 ; name: asn_wd
-; default: no
+; default: yes
 ; site: $262c2
 ; orig: 4eb900027228
 ; phase: boot

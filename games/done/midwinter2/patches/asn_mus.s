@@ -1,5 +1,5 @@
 ; name: asn_mus
-; default: no
+; default: yes
 ; site: $806
 ; orig: 00000d0e00000c6c
 ; phase: boot
