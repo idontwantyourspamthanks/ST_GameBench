@@ -32,7 +32,6 @@ Stages: `games/queue/` (not started) -> `games/in_progress/` (being worked on) -
 | Mean Streets | mean-streets | PP's HAGA conversion | MEANSTRT |  |
 | Mega Lo Mania | mega-lo-mania | PP's HAGA conversion | MEGALOMA |  |
 | Mercenary 3 | mercenary-3 | Gamex | MERCEN3 |  |
-| Moonshine Racers | moonshine-racers | PP's HAGA conversion | MOONSHR |  |
 | Nebulus | nebulus | Gamex | NEBULGX |  |
 | Operation Stealth (English) | operation-stealth | Gamex | OPSTEALE | alts: OPSTEALF |
 | Pacmania | pacmania | Gamex | PACMANIA | alts: PACMANOE |

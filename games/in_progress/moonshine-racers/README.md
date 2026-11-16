@@ -1,7 +1,7 @@
 # Moonshine Racers
 
 - Slug: `moonshine-racers`
-- Status: **queued, not started**
+- Status: **in progress** (performance release: rendering study first)
 - VHD source: `Atari3gb.vhd`, partition at offset 1840700928 (letters G-R), folder ::/M/MOONSHR
 - Local copy: `originals/MOONSHR` (git-ignored)
 - Loader: PP's HAGA conversion (RUNME.TOS + HAGA)
