@@ -805,6 +805,25 @@ alive, $100e: 20 marker $b2700: 000B2700: 4d 53 50 4f 00 00 00 00               
 ```
 
 
+
+## 5b. Disposition of the `shadow==model(RAM) False` seen on the cold boots (cold_ste1m_b, cold_ste4m_b, cold_st1m_b)
+Statement: it is the OTHER buffer lagging by one pass (its shadow holds the previous pass's values), not a renderer/model divergence. Proof in the exact 68000 model (`work/hud/build/shadowproof_emu.py`, 150 passes on each of four dumps; no raster/VBL: buffers and RAM only). Raw output (`res_shadowproof.txt`):
+```
+h_grid_7a88.bin up 150 passes: drawn-buffer shadow != model(RAM at the HUD stage): 0 field-checks; other-buffer shadow != model of the previous pass: 0;
+   other-buffer fields differing from the current model: 3, of which RAM value changed since the previous pass: 3 (all must be equal)
+   STATIC passes (no field changed for 3 passes, no message): 13; both shadows == model(RAM) and both buffers' strip pixels == model strip: failures 0
+h_start_7a88.bin up 150 passes: drawn-buffer shadow != model(RAM at the HUD stage): 0 field-checks; other-buffer shadow != model of the previous pass: 0;
+   other-buffer fields differing from the current model: 160, of which RAM value changed since the previous pass: 160 (all must be equal)
+   STATIC passes (no field changed for 3 passes, no message): 0; both shadows == model(RAM) and both buffers' strip pixels == model strip: failures 0
+h_up_7a88.bin zig 150 passes: drawn-buffer shadow != model(RAM at the HUD stage): 0 field-checks; other-buffer shadow != model of the previous pass: 0;
+   other-buffer fields differing from the current model: 187, of which RAM value changed since the previous pass: 187 (all must be equal)
+   STATIC passes (no field changed for 3 passes, no message): 0; both shadows == model(RAM) and both buffers' strip pixels == model strip: failures 0
+L5.bin up 150 passes: drawn-buffer shadow != model(RAM at the HUD stage): 0 field-checks; other-buffer shadow != model of the previous pass: 0;
+   other-buffer fields differing from the current model: 200, of which RAM value changed since the previous pass: 200 (all must be equal)
+   STATIC passes (no field changed for 3 passes, no message): 0; both shadows == model(RAM) and both buffers' strip pixels == model strip: failures 0
+```
+Reading: (1) the drawn buffer's shadow equals the game variables at the HUD stage for every field of every pass (0 mismatches); (2) the other buffer's shadow equals the previous pass's variables (0 mismatches); every field of it that differs from the CURRENT values (3 / 160 / 187 / 200) is a field whose RAM value changed since the previous pass; (3) in the 13 STATIC passes (grid dump only; the three driving dumps have none) both shadows equal the game variables and both buffers' strip pixels equal the strip rendered from them: 0 failures. Limits: the static case is only exercised on the standing scene; no raster/VBL in the model; the cold-boot False lines stay in the raw output of section 5 because they sample the older buffer while the score changes.
+
 ## 6. The occupancy map `$6f000-$6ffff` and the HUD/cloud writer sites
 **Proof that nothing but the two cloud passes ever reads it** (static, `map_scan.py`, raw `res_map_scan.txt`): every 32-bit value in `$6f000-$6ffff` in code or data of the six stock RAM dumps (`work/dumps/*.bin`: hook instant, game entry, race0/start/grid/up) and of the unpacked RUNME (stage-1 code lives in RUNME/`MSR_S1.FIC`/PP's resident HAGA at `$f3000+`: only data words `$6ffff`/`$6fa11` appear there, not addresses) is the long operand of exactly these 13 `lea $6f000.l,aN` instructions, none in our patch sources or in the built payload:
 | site (instruction) | routine | role | now |
@@ -848,4 +867,5 @@ Hatari: the pixel/state gates above run with `hd_nomap hd_nomap2` in the default
 | floppy gate STE 1 MB, STE 4 MB, Mega STE 4 MB, ST 1 MB | PASS: disk-2 prompt reached, marker MSPO, race reached after the swap, extra-frame counters running at 16 MHz |
 | 5-minute play STE 1 MB 8 MHz | PASS: 17,201 VBL, time-out seen, 1 restart, alive ($100e 1700), screenshots `play5_ste1m_8_*.png`; after the restart (`restart1a/b`) the sky is clean, no stale old HUD/clouds/minimap |
 | 5-minute play STE 1 MB 16 MHz with extras | PASS: 17,200 VBL, 4,857 extra frames, time-out + 1 restart, alive (`play5_ste1m_16_*.png`) |
+| shadow vs RAM `False` on the cold boots (older buffer) | PROVEN lag, section 5b: drawn-buffer shadow == variables, other-buffer shadow == previous pass's variables, every difference is a field changed since the previous pass; 13 static passes (standing scene only) 0 failures; [emu], no raster/VBL |
 All gates 1-6 pass; the defaults stay `yes`.
