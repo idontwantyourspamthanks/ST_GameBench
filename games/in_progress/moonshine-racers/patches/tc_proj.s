@@ -1,5 +1,5 @@
 ; name: tc_proj
-; default: no
+; default: yes
 ; site: $e316
 ; orig: 43f8100047f84804
 ; doc: Object projection $e316/$e338 (36 slots): the scale-term chain is skipped when the slot's $1e is 0 (always, in the first level), `moveq #9 / asr.l` becomes `asl.l #7 / swap` (state identical).

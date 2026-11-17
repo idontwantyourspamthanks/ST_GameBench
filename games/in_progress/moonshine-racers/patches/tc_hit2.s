@@ -1,5 +1,5 @@
 ; name: tc_hit2
-; default: no
+; default: yes
 ; site: $18c86
 ; orig: 41f82d807e1f
 ; doc: Hit-effect scan $18c86 (32 rolling slots, act on slots flagged active + bit 4 of $5): a 4x unrolled one-test filter in front of the stock loop (state identical).

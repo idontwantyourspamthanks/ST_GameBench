@@ -3,7 +3,7 @@
 ; default: no
 ; site: $17c24
 ; orig: 41f900004ff8
-; doc: FAST, NOT STATE-EXACT alternative to tc_clr: the span-buffer clear $17c24 trimmed to the terminator (1136 bytes -> 16). Leaves stale road records below the stream start where stock has zeros (unreadable, but the gate needs the named mask TCX_STALE).
+; doc: FAST, NOT STATE-EXACT alternative to tc_clr: the span-buffer clear $17c24 trimmed to the terminator (1136 bytes -> 16). Leaves stale road records below the stream start where stock has zeros (unreadable, but a per-pass state gate needs the named mask TC_GEOM = the road geometry region $4724-$4f77; the exact tc_clr is the default).
 ; note: Moonshine Racers tighten-C (work/notes/tighten_c.md).  Stock $17c24 zeroes $4b88-$4ff7 (1136 bytes: 71 x movem.l d0-d3,-(a0) from $4ff8) every pass.  The only consumer of the zeros is the end test of the road draw
 ; note: (rd_draw `$B5004` rd_end and the stock loop `$18052`: `move.l 2(a1),d0 / dbeq`, the long after the last record).  The record stream is written downwards from $4f78 by $100b4,
 ; note: so the first record after the stream sits at $4f78 and its A:B long at $4f7a-$4f7d; $4f78-$4ff7 is never written by anything else (checked by a write trace over 200 passes).

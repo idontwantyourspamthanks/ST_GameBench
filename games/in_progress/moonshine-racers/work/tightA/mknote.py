@@ -11,7 +11,11 @@ joy = rd('res/joy.log'); cold = rd('res/cold.log')
 pix = rd("res/pix_hatari.txt"); pixn = rd("res/pix_hatari_neg.txt") if __import__("os").path.exists("res/pix_hatari_neg.txt") else "(negative-control run still pending when this note was written: res/pix_hatari_neg.txt)"
 bis = rd('res/bisect.log')
 T = open('note_template.md').read()
-for k, v in dict(CYC=cyc, HZ=hz, STATE=state, PROFREF=prof_ref, PROFISR=prof_isr, UNIT=unit, GLYPH=glyph, NEG=neg, EMU=emu, RBC=rbc, RBC0=rbc0, JOY=joy, COLD=cold, PIX=pix, PIXN=pixn, BIS=bis).items():
+import os
+ctl1 = rd('res/ctl_run1.txt'); ctl2 = rd('res/ctl_run2.txt') if os.path.exists('res/ctl_run2.txt') else '(pending)'
+ctlym = rd('res/ctl_ym.txt')
+ctlrb = (rd('res/rb_cmp_ctl.txt') if os.path.exists('res/rb_cmp_ctl.txt') else '(pending)')
+for k, v in dict(CYC=cyc, HZ=hz, STATE=state, PROFREF=prof_ref, PROFISR=prof_isr, UNIT=unit, GLYPH=glyph, NEG=neg, EMU=emu, RBC=rbc, RBC0=rbc0, JOY=joy, COLD=cold, PIX=pix, PIXN=pixn, BIS=bis, CTL1=ctl1, CTL2=ctl2, CTLYM=ctlym, CTLRB=ctlrb).items():
     T = T.replace('{{%s}}' % k, v)
 open('../notes/tighten_a.md', 'w').write(T)
 print(len(T))

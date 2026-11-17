@@ -1,5 +1,5 @@
 ; name: ta_face
-; default: no
+; default: yes
 ; site: $f994
 ; orig: 41f90001b076
 ; requires: hd_stage ta_erase ta_init

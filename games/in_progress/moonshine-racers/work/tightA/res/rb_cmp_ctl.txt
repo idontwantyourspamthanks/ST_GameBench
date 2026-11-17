@@ -1,0 +1,18 @@
+rb control (kept-colour branch removed) vs reference:
+res/rb_ref.txt frames 145 distinct colour15-change signatures 4
+res/rb_rbneg.txt frames 146 distinct 4
+signature sets equal: False
+  ref (((8, 598), (109, 854), (117, 855), (121, 1111)), (135,)) x 32 | cand x None
+  ref (((12, 598), (109, 854), (117, 855), (121, 1111)), (135,)) x 15 | cand x None
+  ref (((12, 598), (109, 854), (117, 855), (121, 1111)), (134,)) x 32 | cand x None
+  ref (((8, 598), (109, 854), (117, 855), (121, 1111)), (134,)) x 64 | cand x None
+  change line 8 col 256 line-cycle/16 ref [6, 7, 8, 9] cand [6, 7, 8, 9]
+  change line 12 col 256 line-cycle/16 ref [4, 5, 6] cand [1, 4, 5, 6]
+  change line 109 col 356 line-cycle/16 ref [2, 3, 4, 5, 6, 7, 8] cand []
+  change line 117 col 357 line-cycle/16 ref [2, 3, 4, 5, 6, 7, 8] cand []
+  change line 121 col 457 line-cycle/16 ref [2, 3, 4, 5, 6, 7] cand []
+
+real ta_rb vs reference (from section 4.3):
+res/rb_ref.txt frames 145 distinct colour15-change signatures 4
+res/rb_rb.txt frames 146 distinct 5
+signature sets equal: False

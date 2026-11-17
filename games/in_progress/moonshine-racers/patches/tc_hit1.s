@@ -1,5 +1,5 @@
 ; name: tc_hit1
-; default: no
+; default: yes
 ; site: $18bf4
 ; orig: 43f82d807e1f
 ; doc: Collision scan $18bf4-$18c80 (32 rolling slots, only slots with distance $12-$29 can react): a 4x unrolled one-test filter in front of the stock loop (state identical).

@@ -1,5 +1,5 @@
 ; name: ta_glyph
-; default: no
+; default: yes
 ; site: $14fd4
 ; orig: 5347284b1219
 ; requires: hd_stage

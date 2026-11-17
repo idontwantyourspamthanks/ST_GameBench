@@ -1,5 +1,5 @@
 ; name: ta_erase
-; default: no
+; default: yes
 ; site: $1209c
 ; orig: 4eb90001242c
 ; data: $BEF00 16

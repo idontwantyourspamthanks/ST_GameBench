@@ -1,5 +1,5 @@
 ; name: tc_ord
-; default: no
+; default: yes
 ; site: $e406
 ; orig: 2a78100841f829c8
 ; doc: Object stage $e406 (depth sort + dispatch loop): inactive slots no longer pay a subroutine call, the type-0 front end is entered directly, the per-slot stack frame is halved (state identical).

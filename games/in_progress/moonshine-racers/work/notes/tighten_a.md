@@ -20,7 +20,7 @@ New patches (all `patches/ta_*.s`, `default: no`, blob/data inside `$BE000-$BEFF
 
 Cumulative (matched passes), pixel-identical set = erase+init+face+glyph+rb+rb0+ymw+nomouse: **driving -15.6 k no speech (3.065 -> 2.968 VBL/pass), -19.5 k with speech (3.228 -> 3.105); standing -13.5 k / -16.4 k (2.589 -> 2.505, 2.608 -> 2.506)**. With `ta_facestat` instead of `ta_face` another -1 .. -2 k with speech. Without the risky `ta_nomouse` the set gives -7.3 k / -11.2 k driving. So these three items do NOT reach the 2.7 VBL target by themselves (2.97 / 3.10 VBL); they are worth about 0.10 / 0.12 VBL.
 
-Item (1), the horizon strip skip, is **analysed but not built**: the exact upper bound is 6.8 k per pass on average (0.04 VBL, section 2) and an exact build needs a hook in every sprite kernel (or the cooperation of tb_/tc_, which patch the sprite path). The user's idea "speech in the top bar" was NOT built; its estimate is in section 3.5.
+Item (1), the horizon strip skip: **NOT WORTH BUILDING: 6.8 k per pass upper bound (0.04 VBL), CLOSED** (section 2). The user's idea "speech in the top bar" was NOT built; its estimate is in section 3.5.
 
 ## 1. Gates run (all raw outputs below)
 
@@ -28,7 +28,7 @@ Item (1), the horizon strip skip, is **analysed but not built**: the exact upper
 2. Exact 68000 model (Unicorn, `work/extrap/emu.py` via `work/hud/build/emuhud.py`), `work/tightA/gate_emu.py`: reference live image vs candidate live image, per pass the whole RAM below `$70000` and both complete 32,000-byte screen buffers (not a masked rectangle: stricter than `tools/msrmask.py`), 15 levels were available, 4 used x 2 inputs x 160 passes, with 3 extra frames per tick (`X_TEST`): all frames, main and extra. Negative controls on the three pixel routines.
 3. Unit tests in the model: YM writer (chip register file + RAM, random sound triggers), glyph kernel (all 256 colour bytes x 4 byte parities), raster list (random inputs, decoded to colour-per-line and palette-switch line).
 4. Hatari per-pass game state at `$7b86` (`work/tightA/exp_state_ta.py`, `cmpstate_ta.py`; the `work/hud/build/exp_state_hd.py` recipe: `$1000-$13ff $29c8-$34ff $4500-$4fff $dae6 $1bb0 $23bc $27c8 $3500 $dafe $6100-$6117`, 7,3xx bytes per pass), tick ON and OFF, race_start (driving, `$6105` held) and race_drive (time-out + restart inside), plus extras at 16 and 32 MHz.
-5. Hatari A/B pixels: full buffers, flips 10/40/90/150 after the live apply, 4 scenes, plus a negative control.
+5. Hatari A/B pixels: full buffers, flips 10/40/90/150 after the live apply, 4 scenes; section 5.3 (first run, whose face control did not fire) and **5.3b (sensitive controls on the SAME captures, the gate of record)**.
 6. Hatari raster trace (`--trace video_color`): the colour-15 and palette-B writes per scanline.
 7. Cycles per pass (tick OFF) per item and cumulative, both scenes; interrupt costs per VBL by the Hatari CPU profile.
 8. Real IKBD joystick through host keys (for `ta_nomouse`); cold boots STE 1 MB and 4 MB; 5-minute play with time-out and restart.
@@ -80,7 +80,7 @@ Output key per buffer = (`$12f0`, `$12f6`, `$12f8 & $fc`, `$1304`). The output o
 | 13 | 260 | 66 (25 %) | 7368 |
 | 14 | 260 | 145 (56 %) | 11711 |
 
-Not built, because an exact version needs the footprint of the previous pass, and there is no cheap exact source for it: all sprite kernels store the row offset to `$100c` at ~60 distinct instructions (`move.w d2,$100c.l` = `33c2 0000100c` at `$e9ea $eb98 $ec8c $11d6c $12af8 ... $161f2` and more, `grep 100c` in `all_7000_19000.txt`), the type 0/1/2/3 and the two player slots go through 15 different dispatch sites (`sprites.md` section 1), and tb_/tc_ patch parts of exactly that path, so a hook of mine would be silently bypassed. The data above is the upper bound; jitter would be 0 on the key-identical passes and +full strip on the others (a 6.8 k mean over a 40 k stage). A fixed row threshold (restore rows >= 73) saves only 8 rows on 30 % of the passes (about 1.7 k). Uniform sky rows in the source (rows 0-8 of 48 on levels 3/6/12, none on 2/4/8/13) would save about 370 cycles per row by filling instead of copying: under 3 k, not built.
+**Not worth building (6.8 k upper bound; CLOSED).** An exact version needs the footprint of the previous pass, and there is no cheap exact source for it: all sprite kernels store the row offset to `$100c` at ~60 distinct instructions (`move.w d2,$100c.l` = `33c2 0000100c` at `$e9ea $eb98 $ec8c $11d6c $12af8 ... $161f2` and more, `grep 100c` in `all_7000_19000.txt`), the type 0/1/2/3 and the two player slots go through 15 different dispatch sites (`sprites.md` section 1), and tb_/tc_ patch parts of exactly that path, so a hook of mine would be silently bypassed. The data above is the upper bound; jitter would be 0 on the key-identical passes and +full strip on the others (a 6.8 k mean over a 40 k stage). A fixed row threshold (restore rows >= 73) saves only 8 rows on 30 % of the passes (about 1.7 k). Uniform sky rows in the source (rows 0-8 of 48 on levels 3/6/12, none on 2/4/8/13) would save about 370 cycles per row by filling instead of copying: under 3 k, not built.
 
 ## 3. Item 2: speech
 
@@ -338,6 +338,181 @@ race_start flip  90 R hash a41b4a3b/c5849665 C hash a41b4a3b/c5849665  differing
 TOTAL differing bytes 0 (negative control)
 ```
 
+### 5.3b Hatari A/B with sensitive controls on the SAME capture (gate of record; `work/tightA/pix_ctl.py`)
+Why the first control printed 0 differing bytes (diagnosis, section 5.3 above): the control (`ta_face` forced to "same") only differs from the real patch where the face has to be drawn; the capture was race_start flip 90 and the ticker was idle there (`$11ab = 0`, see the first lines of the raw output below: face absent in both builds), so there was nothing to draw wrongly. The poke WAS applied (the same control fires at every capture with a message, below), the buffer and rectangle were right. Fix: every capture now prints what the game was doing (`$100e`, ticker state `$11ab`, erase pending `$11b0`) and runs R (the default set), C (all ta_*), `facestat` (the VISIBLE variant) and four controls = C with ONE poke each, all from the same snapshot and the same apply instant: `face_same` (ta_face always "same"), `face_wrong` (ta_face draws sprite + 1), `erase_short` (the box restore writes its second half at +64 instead of +48), `glyph_bad` (MOVEP write displaced by 2). Rule: C must be IDENTICAL to R; each control must DIFFER on at least one capture where its element is active, in the right rectangle (face box x 272-303 y 17-64, text box x 112-271 y 16-64). The pixels counted are all pixels of BOTH buffers.
+```
+== race_grid flip 40: $100e=3677 $11ab=2 (ticker state: 0 none, 1 typing, >=2 held) $11b0=0 (erase pending) $10f8=0
+   C            vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_same    vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   face_wrong   vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   erase_short  vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   glyph_bad    vs R: differing pixels total   2460  (face box     0, text box  2460)  -> DIFFER
+== race_grid flip 90: $100e=3727 $11ab=2 (ticker state: 0 none, 1 typing, >=2 held) $11b0=0 (erase pending) $10f8=0
+   C            vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_same    vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   face_wrong   vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   erase_short  vs R: differing pixels total    342  (face box     0, text box   342)  -> DIFFER
+   glyph_bad    vs R: differing pixels total   1314  (face box     0, text box  1314)  -> DIFFER
+== race_start flip 40: $100e=155 $11ab=1 (ticker state: 0 none, 1 typing, >=2 held) $11b0=0 (erase pending) $10f8=0
+   C            vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_same    vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   face_wrong   vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   erase_short  vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   glyph_bad    vs R: differing pixels total   1994  (face box     0, text box  1994)  -> DIFFER
+== race_start flip 70: $100e=185 $11ab=2 (ticker state: 0 none, 1 typing, >=2 held) $11b0=0 (erase pending) $10f8=0
+   C            vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_same    vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   face_wrong   vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   erase_short  vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   glyph_bad    vs R: differing pixels total   3954  (face box     0, text box  3954)  -> DIFFER
+```
+```
+== race_start flip 10: $100e=125 $11ab=0 (ticker state: 0 none, 1 typing, >=2 held) $11b0=0 (erase pending) $10f8=0
+   C            vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   facestat     vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_same    vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_wrong   vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   erase_short  vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   glyph_bad    vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+== race_start flip 55: $100e=170 $11ab=1 (ticker state: 0 none, 1 typing, >=2 held) $11b0=0 (erase pending) $10f8=0
+   C            vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   facestat     vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_same    vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   face_wrong   vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   erase_short  vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   glyph_bad    vs R: differing pixels total   3032  (face box     0, text box  3032)  -> DIFFER
+== race_start flip 90: $100e=205 $11ab=0 (ticker state: 0 none, 1 typing, >=2 held) $11b0=0 (erase pending) $10f8=0
+   C            vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   facestat     vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_same    vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_wrong   vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   erase_short  vs R: differing pixels total    642  (face box     0, text box   642)  -> DIFFER
+   glyph_bad    vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+== race_start flip 100: $100e=215 $11ab=0 (ticker state: 0 none, 1 typing, >=2 held) $11b0=0 (erase pending) $10f8=0
+   C            vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   facestat     vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_same    vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_wrong   vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   erase_short  vs R: differing pixels total    642  (face box     0, text box   642)  -> DIFFER
+   glyph_bad    vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+== race_start flip 150: $100e=265 $11ab=1 (ticker state: 0 none, 1 typing, >=2 held) $11b0=0 (erase pending) $10f8=0
+   C            vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   facestat     vs R: differing pixels total    139  (face box   139, text box     0)  -> DIFFER
+   face_same    vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   face_wrong   vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   erase_short  vs R: differing pixels total    484  (face box     0, text box   484)  -> DIFFER
+   glyph_bad    vs R: differing pixels total   1322  (face box     0, text box  1322)  -> DIFFER
+== race_grid flip 10: $100e=3647 $11ab=1 (ticker state: 0 none, 1 typing, >=2 held) $11b0=0 (erase pending) $10f8=0
+   C            vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   facestat     vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_same    vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   face_wrong   vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   erase_short  vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   glyph_bad    vs R: differing pixels total    581  (face box     0, text box   581)  -> DIFFER
+== race_grid flip 120: $100e=3757 $11ab=0 (ticker state: 0 none, 1 typing, >=2 held) $11b0=0 (erase pending) $10f8=0
+   C            vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   facestat     vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_same    vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_wrong   vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   erase_short  vs R: differing pixels total    566  (face box     0, text box   566)  -> DIFFER
+   glyph_bad    vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+== race_grid flip 150: $100e=3787 $11ab=0 (ticker state: 0 none, 1 typing, >=2 held) $11b0=0 (erase pending) $10f8=0
+   C            vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   facestat     vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_same    vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_wrong   vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   erase_short  vs R: differing pixels total    566  (face box     0, text box   566)  -> DIFFER
+   glyph_bad    vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+== race_up flip 10: $100e=432 $11ab=0 (ticker state: 0 none, 1 typing, >=2 held) $11b0=0 (erase pending) $10f8=0
+   C            vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   facestat     vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_same    vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_wrong   vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   erase_short  vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   glyph_bad    vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+== race_up flip 40: $100e=462 $11ab=0 (ticker state: 0 none, 1 typing, >=2 held) $11b0=0 (erase pending) $10f8=0
+   C            vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   facestat     vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_same    vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_wrong   vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   erase_short  vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   glyph_bad    vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+== race_up flip 90: $100e=512 $11ab=1 (ticker state: 0 none, 1 typing, >=2 held) $11b0=0 (erase pending) $10f8=0
+   C            vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   facestat     vs R: differing pixels total    111  (face box   111, text box     0)  -> DIFFER
+   face_same    vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   face_wrong   vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   erase_short  vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   glyph_bad    vs R: differing pixels total   1184  (face box     0, text box  1184)  -> DIFFER
+== race_up flip 150: $100e=572 $11ab=1 (ticker state: 0 none, 1 typing, >=2 held) $11b0=0 (erase pending) $10f8=0
+   C            vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   facestat     vs R: differing pixels total    139  (face box   139, text box     0)  -> DIFFER
+   face_same    vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   face_wrong   vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   erase_short  vs R: differing pixels total    604  (face box     0, text box   604)  -> DIFFER
+   glyph_bad    vs R: differing pixels total    119  (face box     0, text box   119)  -> DIFFER
+== race_drive flip 10: $100e=1696 $11ab=2 (ticker state: 0 none, 1 typing, >=2 held) $11b0=0 (erase pending) $10f8=0
+   C            vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   facestat     vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_same    vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   face_wrong   vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   erase_short  vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   glyph_bad    vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+== race_drive flip 40: $100e=19 $11ab=0 (ticker state: 0 none, 1 typing, >=2 held) $11b0=0 (erase pending) $10f8=0
+   C            vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   facestat     vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_same    vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_wrong   vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   erase_short  vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   glyph_bad    vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+== race_drive flip 90: $100e=69 $11ab=2 (ticker state: 0 none, 1 typing, >=2 held) $11b0=0 (erase pending) $10f8=0
+   C            vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   facestat     vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_same    vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   face_wrong   vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   erase_short  vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   glyph_bad    vs R: differing pixels total   2826  (face box    64, text box  2762)  -> DIFFER
+== race_drive flip 150: $100e=129 $11ab=0 (ticker state: 0 none, 1 typing, >=2 held) $11b0=0 (erase pending) $10f8=0
+   C            vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   facestat     vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_same    vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_wrong   vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   erase_short  vs R: differing pixels total    370  (face box     0, text box   370)  -> DIFFER
+   glyph_bad    vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+```
+Summary over the 20 captures (R vs C and every control from the same snapshot and apply instant; the 16 requested A/B captures race_start/race_grid/race_up/race_drive at flips 10/40/90/150 are all inside, plus race_start 55/70/100 and race_grid 120): **C 20/20 identical to R. With a message active (`$11ab != 0`, 11 captures): face_same 11/11 DIFFER, face_wrong 11/11, glyph_bad 10/11, erase_short 3/11 (it differs where a message was erased shortly before: 8/20 captures overall); `ta_facestat` (the visible variant) 3/7.** Every control fires in its own rectangle (face box for the face controls, text box for glyph/erase).
+
+`ta_ymw` (chip state, no pixels): control = the R0/R1 writes always skipped, same random sound triggers, real patch for comparison:
+```
+YM control (R0/R1 writes always skipped): expect bad>0
+CHIP DIFF level 14 call 298 [66, 255, 170, 1, 194, 1, 26, 184, 10, 11, 8, 0, 170, 170, 170, 170] [170, 170, 170, 1, 194, 1, 26, 184, 10, 11, 8, 0, 170, 170, 170, 170]
+CHIP DIFF level 14 call 299 [66, 255, 86, 1, 28, 1, 26, 184, 9, 10, 10, 0, 170, 170, 170, 170] [170, 170, 86, 1, 28, 1, 26, 184, 9, 10, 10, 0, 170, 170, 170, 170]
+calls 1200 bad 1200 chip writes stock 14400 patched 5836
+YM real patch:
+calls 1200 bad 0 chip writes stock 14400 patched 7628
+```
+`ta_rb`/`ta_rb0` (raster, no buffer pixels): the trace comparator of section 4.3 must see a change when a colour-15 change is lost: control = `ta_rb` with the "colour differs" branch removed (`be7aa = nop`, every flag-0 entry dropped), same trace procedure (for the real `ta_rb` the "False" printed below is the single frame 0 of the trace, the VBL the live apply interrupted; all other 144 frames equal the reference; for the control NO reference signature is reproduced and the three colour changes at lines 109/117/121 are gone):
+```
+rb control (kept-colour branch removed) vs reference:
+res/rb_ref.txt frames 145 distinct colour15-change signatures 4
+res/rb_rbneg.txt frames 146 distinct 4
+signature sets equal: False
+  ref (((8, 598), (109, 854), (117, 855), (121, 1111)), (135,)) x 32 | cand x None
+  ref (((12, 598), (109, 854), (117, 855), (121, 1111)), (135,)) x 15 | cand x None
+  ref (((12, 598), (109, 854), (117, 855), (121, 1111)), (134,)) x 32 | cand x None
+  ref (((8, 598), (109, 854), (117, 855), (121, 1111)), (134,)) x 64 | cand x None
+  change line 8 col 256 line-cycle/16 ref [6, 7, 8, 9] cand [6, 7, 8, 9]
+  change line 12 col 256 line-cycle/16 ref [4, 5, 6] cand [1, 4, 5, 6]
+  change line 109 col 356 line-cycle/16 ref [2, 3, 4, 5, 6, 7, 8] cand []
+  change line 117 col 357 line-cycle/16 ref [2, 3, 4, 5, 6, 7, 8] cand []
+  change line 121 col 457 line-cycle/16 ref [2, 3, 4, 5, 6, 7] cand []
+
+real ta_rb vs reference (from section 4.3):
+res/rb_ref.txt frames 145 distinct colour15-change signatures 4
+res/rb_rb.txt frames 146 distinct 5
+signature sets equal: False
+```
+
 ### 5.4 Cold boots, play
 ```
 RESULT in_race = True vbl 5809
@@ -393,10 +568,35 @@ DONE4
 STE TOS 1.62 1 MB and 4 MB boot to the race; the 5-minute play (8 MHz, up held, with time-out `$1226=5` and one restart) of `build/tighta` (= default set with `ta_init ta_erase ta_face ta_glyph ta_ymw ta_rb ta_nomouse`, built with the private tool; `ta_rb0` was added after that play and is covered by the state/pixel/trace gates only).
 
 ## 6. Integration for the lead
-* No default flipped. To use: replace `hd_init` by `ta_init` (same site, `conflicts hd_init`); `ta_erase` owns the data `$BEF00-$BEF0F`; `ta_face` or `ta_facestat` (conflict: same site) require `ta_erase ta_init`; `ta_rb0` requires `ta_rb`. `ta_glyph`, `ta_ymw`, `ta_rb`, `ta_nomouse` are independent. Floppy: the sites are plain RAM sites, `verify` checks them against the floppy RAM dump.
-* Blob areas: code `$BE000-$BE0xx` erase, `$BE100` face, `$BE180` facestat, `$BE200` init, `$BE400` ymw, `$BE500` nomouse, `$BE600` glyph (+ plane-select table `$BEC00`, replicate table `$BE800-$BEBFF`), `$BE700` rb, `$BED00` rb0; data `$BEE00-$BEE7F` (rb cache), `$BEF00-$BEF0F` (face shadows), `$BEF40-$BEF4F` (ymw shadow). Everything inside `$BE000-$BEFFF`; the image ends at `$BEF4F`; no `; ram:` needed (all inside the payload).
-* Order against others: `ta_init` against `hd_init`; no other patch touches `$1209c $f994 $14fd4 $8e2c $d486 $d57c $d5e6 $edea` (checked in `list` of the current tool, which also shows tb_/tc_ sites).
-* Machines: CPU-only; no blitter, no STE register. `ta_glyph` uses `MOVEP` (68000-68030 native; a 68060 would trap it). Mega STE: not measured (the gains are cycle counts; on a 16 MHz Mega STE with cache they scale differently). TT/Falcon: pixels unchanged (the raster palette per line is a Hatari-ST/STE effect), not booted with the ta set. 50 and 60 Hz: nothing depends on the frame rate.
+
+### 6.1 Which patches are safe to default
+| patch | class | why |
+|---|---|---|
+| `ta_erase` + `ta_init` | **safe** | identical pixels and state in the model, Hatari state gate (incl. restart) and pixel gate; the only behaviour change is where the restore's occupancy-map writes (dead) go |
+| `ta_face` | **safe** | identical pixels/state; sensitive controls fire |
+| `ta_glyph` | **safe** (68000-68030) | identical; exhaustive unit test; uses MOVEP (a 68060 would trap) |
+| `ta_ymw` | **safe, low risk** | identical chip register file in 2,400 randomised calls; relies on the player being the only YM writer in the game (hwscan) |
+| `ta_rb`, `ta_rb0` | **safe in the emulator, hardware timing unproven** | identical colour/palette-switch scanlines in the Hatari write trace; the ISR is untouched; the gain depends on the track's sky table (none lost if all 8 colours differ) |
+| `ta_facestat` | **VISIBLE**, needs user approval | freezes the mouth (section 3.3) |
+| `ta_nomouse` | **RISK: do not default without the user's approval** | see 6.2 |
+
+### 6.2 `ta_nomouse`: exactly what it removes and what could break
+It removes, once per VBL while the mode byte `$1021 == 2` (race), the IKBD command `$0D` (`jsr $d138` at `$d486`: "interrogate absolute mouse position") and with it the reply: 6 bytes through the ACIA receive interrupt (`$cfb4`) per VBL, whose handler stores the absolute x/y into `$6106/$6108` and the button/direction flags into `$610f-$6114`. Measured: -8.3 k cycles per driving pass, -7.1 k standing. What stays: the joystick and keyboard packets (independent of the query: checked with real host-key joystick input in Hatari, identical `$6105/$130c/$1318`), the IKBD mode (absolute mouse, never switched off). What could break: (a) any race-time code that reads the mouse variables (none found: readers are menu routines; 0 reads in 2,400 emulated passes on 3 levels; unproven for every possible path, e.g. end-of-race or pause screens inside mode 2); (b) a real mouse used as a fire/steer input in race (never read by the race code as far as traced); (c) on a real IKBD/ACIA the unusual condition "absolute mode but never interrogated" is untested; (d) code outside the race that expects the VBL to keep the position fresh right after leaving mode 2 (the query resumes at the first VBL with `$1021 != 2`, the report arrives one VBL later). Recommendation: keep `default: no`; ask the user ("-8 k per pass, 0.05 VBL, for dropping the mouse position while racing").
+
+### 6.3 Sites, order, conflicts (from `msrpatch_priv.py list`, resynced with the current tool; `verify` ALL OK with every `ta_*`, `tb_*`, `tc_*` file present; the tool refuses any byte overlap)
+| ta_ patch | site(s) | requires / conflicts | neighbours at nearby addresses (no byte overlap) |
+|---|---|---|---|
+| `ta_erase` | `$1209c` (6 B) | requires hd_stage; owns data `$BEF00-$BEF0F` | none |
+| `ta_init` | `$edea` (6 B, the same bytes hd_init patches) | requires hd_stage ta_erase; **conflicts hd_init** (select ta_init INSTEAD) | tb_carph `$ed90`, tb_blit `$ed6c` (different bytes, same routine area) |
+| `ta_face` | `$f994` (6 B) | requires hd_stage ta_erase ta_init; conflicts ta_facestat | hd_nomap `$f9dc` (4 B, same routine) |
+| `ta_facestat` | `$f994` | same; conflicts ta_face | same |
+| `ta_glyph` | `$14fd4` (6 B) | requires hd_stage | none |
+| `ta_ymw` | `$8e2c` (10 B) | none; data `$BEF40-$BEF4F` | none |
+| `ta_rb` | `$d5e6` (6 B) | none; data `$BEE00-$BEE7F` | mt_clock `$d128` (VBL ISR, different routine) |
+| `ta_rb0` | `$d57c` (14 B) | requires ta_rb | none |
+| `ta_nomouse` | `$d486` (6 B) | none | mt_clock `$d128` |
+Order: nothing is order-dependent except `ta_init` replacing `hd_init`, `ta_rb0` after `ta_rb`, and `ta_face`/`facestat` after `ta_erase`+`ta_init`. Against `mx_*`: mx_sync calls `$f90c` (the face) and `$11ef0` (the ticker, with its erase) in the extra frames, so ta_face/ta_erase/ta_glyph run inside the extras (gated: 4,616 frames in the model, Hatari state at 16/32 MHz); mx_sync requires hd_stage only, not hd_init. Against `mt_*`: `mt_clock` replays the `addq` at `$d128`; `ta_nomouse` (`$d486`) and `ta_rb*` (`$d57c-$d5ec`) are in the VBL body, a different instruction range. Against `tb_*`/`tc_*`: their sites (`$ed6c $ed90 $39ac $17c24 $e2e8 $18bf4 $18c86 $e406 $e316`) are in the sprite/object/road path; none shares a byte with a `ta_*` site, and none of my patches reads or writes the sprite-slot memory. Blob areas: mine `$BE000-$BEF4F` only (tb `$BF000+`, tc `$B6800+`), no `; ram:`.
+* No default flipped. Machines: CPU-only; no blitter, no STE register. Mega STE: not measured. TT/Falcon: not booted with the ta set. 50/60 Hz: nothing depends on the frame rate.
 
 ## 7. Unproven
 * Horizon skip (item 1): upper bound only.
@@ -405,4 +605,3 @@ STE TOS 1.62 1 MB and 4 MB boot to the race; the 5-minute play (8 MHz, up held, 
 * Cycle numbers are Hatari-only; the per-item gains are measured on the first track (race_start/race_grid snapshots): `ta_rb`/`rb0` depend on the track's sky table (fewer repeated colours = fewer dropped interrupts).
 * The extras were gated in the pass model (4,616 frames) and at 16/32 MHz in Hatari state, not with a Hatari pixel gate on extra frames.
 * The cycle deltas have a phase effect of about +-1 k (a different cost of the interrupts that land in the stage).
-* The Hatari pixel negative control (`pix_hatari.py ... neg`, ta_face poked to "always same", race_start flip 90) printed 0 differing bytes, i.e. it did NOT fire there (poke not applied or no face change at that flip: not diagnosed). The Hatari A/B gate (0 differing bytes in 16 captures, 4 scenes) is therefore not shown to be sensitive by itself; the sensitivity evidence is the exact-model negative controls (section 5.1: 72 / 22 / 86 frames differ) and the state gate.

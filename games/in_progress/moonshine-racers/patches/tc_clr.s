@@ -1,5 +1,5 @@
 ; name: tc_clr
-; default: no
+; default: yes
 ; conflicts: tc_clrx
 ; site: $17c24
 ; orig: 41f900004ff8

@@ -7,8 +7,8 @@
 ; data: $B8F04 4
 ; data: $B8F20 224
 ; data: $B9000 3584
-; note: Needs mx_pre (site $7b46) for the slot state the object draw saw: without it no extra frame is drawn.  Extra frames cost nothing where there is no spare time: an 8 MHz STE draws none (NOWANT: not even the slot copy).
-; doc: Fixed-tick pacer plus extra in-between pictures where the CPU has spare time (16 MHz about 2 per step, 32 MHz 3-4); same game speed, 8 MHz STE unchanged.
+; note: Needs mx_pre (site $7b46) for the slot state the object draw saw: without it no extra frame is drawn.  Extra frames cost nothing where there is no spare time: where a tick has no room (NOWANT) not even the slot copy is made.  Measured after the tightening (work/notes/integration.md 11.6): an 8 MHz STE gets one extra picture in about 29 % of the driving ticks (steered), 16 MHz 1.76 extras per tick on average, 32 MHz 3.9.
+; doc: Fixed-tick pacer plus extra in-between pictures where the CPU has spare time (16 MHz about 2 per step, 32 MHz 3-4); same game speed; an 8 MHz STE gets one in about a quarter of the steps while driving.
 ; note: Extra frames between logic ticks (work/notes/extrap.md).  Site $7b74 `jsr $d1e4.l` (end of the race pass) -> `jsr $B8100.l` (same site as mt_sync, so the two exclude each other).
 ; note: newsync = mt_sync's flip + latch flag + sleep until the tick, plus: publish the raster-band words right after the flip, and `extras` ($B8400) in the idle time.
 ; note: extras: while time remains before the next tick (deadline rule, CLK in 1/300 s), draw another frame of the SAME logic step with the camera advanced by k = f*speed world

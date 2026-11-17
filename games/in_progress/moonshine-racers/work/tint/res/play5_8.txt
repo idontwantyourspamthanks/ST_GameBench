@@ -1,0 +1,44 @@
+in_race True vbl 5809
+marker $b2700: 000B2700: 4d 53 50 4f 00 00 00 00                          MSPO....
+CLK/NEXT/PEND $b8f00: 000B8F00: 00 00 0a 68 00 00 00 00 00 00 00 00              ...h........
+after SPACE: $100e 0
+(261, 2, 79, 0, (3, 3, 11), 4) (vbl, mode, pass, $1226, extras (frames, groups, ticks), NENT)
+(761, 2, 180, 0, (27, 27, 68), 6) (vbl, mode, pass, $1226, extras (frames, groups, ticks), NENT)
+(1262, 2, 280, 0, (52, 52, 126), 17) (vbl, mode, pass, $1226, extras (frames, groups, ticks), NENT)
+(1763, 2, 380, 0, (59, 59, 149), 17) (vbl, mode, pass, $1226, extras (frames, groups, ticks), NENT)
+(2264, 2, 480, 0, (82, 82, 196), 18) (vbl, mode, pass, $1226, extras (frames, groups, ticks), NENT)
+(2765, 2, 580, 0, (134, 134, 272), 18) (vbl, mode, pass, $1226, extras (frames, groups, ticks), NENT)
+(3265, 2, 680, 0, (185, 185, 348), 21) (vbl, mode, pass, $1226, extras (frames, groups, ticks), NENT)
+(3766, 2, 780, 0, (203, 203, 392), 21) (vbl, mode, pass, $1226, extras (frames, groups, ticks), NENT)
+(4267, 2, 880, 0, (278, 278, 479), 22) (vbl, mode, pass, $1226, extras (frames, groups, ticks), NENT)
+(4768, 2, 981, 0, (284, 284, 493), 22) (vbl, mode, pass, $1226, extras (frames, groups, ticks), NENT)
+(5268, 2, 1081, 0, (295, 295, 510), 24) (vbl, mode, pass, $1226, extras (frames, groups, ticks), NENT)
+(5769, 2, 1181, 0, (349, 349, 587), 24) (vbl, mode, pass, $1226, extras (frames, groups, ticks), NENT)
+(6270, 2, 1281, 0, (383, 383, 654), 25) (vbl, mode, pass, $1226, extras (frames, groups, ticks), NENT)
+(6771, 2, 1381, 0, (412, 412, 719), 25) (vbl, mode, pass, $1226, extras (frames, groups, ticks), NENT)
+(7271, 2, 1482, 0, (445, 445, 785), 27) (vbl, mode, pass, $1226, extras (frames, groups, ticks), NENT)
+(7777, 2, 1583, 0, (502, 502, 864), 27) (vbl, mode, pass, $1226, extras (frames, groups, ticks), NENT)
+(8278, 2, 1683, 5, (524, 524, 904), 31) (vbl, mode, pass, $1226, extras (frames, groups, ticks), NENT)
+RESTART seen: pass 1707 -> 0 at VBL 8779
+(8819, 2, 28, 0, (524, 524, 904), 2) (vbl, mode, pass, $1226, extras (frames, groups, ticks), NENT)
+shot after restart taken
+(9325, 2, 129, 0, (540, 540, 948), 9) (vbl, mode, pass, $1226, extras (frames, groups, ticks), NENT)
+(9826, 2, 229, 0, (569, 569, 1014), 13) (vbl, mode, pass, $1226, extras (frames, groups, ticks), NENT)
+(10326, 2, 330, 0, (595, 595, 1077), 18) (vbl, mode, pass, $1226, extras (frames, groups, ticks), NENT)
+(10827, 2, 430, 0, (604, 604, 1106), 18) (vbl, mode, pass, $1226, extras (frames, groups, ticks), NENT)
+(11328, 2, 530, 0, (627, 627, 1156), 22) (vbl, mode, pass, $1226, extras (frames, groups, ticks), NENT)
+(11829, 2, 630, 0, (658, 658, 1220), 22) (vbl, mode, pass, $1226, extras (frames, groups, ticks), NENT)
+(12330, 2, 730, 0, (720, 720, 1301), 22) (vbl, mode, pass, $1226, extras (frames, groups, ticks), NENT)
+(12830, 2, 830, 0, (743, 743, 1359), 22) (vbl, mode, pass, $1226, extras (frames, groups, ticks), NENT)
+(13331, 2, 931, 0, (812, 812, 1443), 23) (vbl, mode, pass, $1226, extras (frames, groups, ticks), NENT)
+(13832, 2, 1031, 0, (837, 837, 1481), 23) (vbl, mode, pass, $1226, extras (frames, groups, ticks), NENT)
+(14333, 2, 1131, 0, (841, 841, 1488), 24) (vbl, mode, pass, $1226, extras (frames, groups, ticks), NENT)
+(14834, 2, 1231, 0, (916, 916, 1576), 24) (vbl, mode, pass, $1226, extras (frames, groups, ticks), NENT)
+(15334, 2, 1331, 0, (949, 949, 1643), 26) (vbl, mode, pass, $1226, extras (frames, groups, ticks), NENT)
+(15835, 2, 1431, 0, (981, 981, 1710), 26) (vbl, mode, pass, $1226, extras (frames, groups, ticks), NENT)
+(16336, 2, 1532, 0, (1010, 1010, 1775), 27) (vbl, mode, pass, $1226, extras (frames, groups, ticks), NENT)
+(16837, 2, 1632, 0, (1073, 1073, 1856), 28) (vbl, mode, pass, $1226, extras (frames, groups, ticks), NENT)
+extras (frames, groups, ticks) at start (0, 0, 0) at end (1078, 1078, 1868) -> extra frames 1078 in 17117 VBL
+marker $b2700: 000B2700: 4d 53 50 4f 00 00 00 00                          MSPO....  CLK/NEXT/PEND: 000B8F00: 00 01 a6 c4 00 01 a6 dc 00 00 00 00              ..ªג..ªץ....
+alive, fc advancing: 1698
+road $c0000: 000C0000: 52 44 47 31 00 0a 00 00                          RDG1.... WPTR: 000D7040: 00 01 02 ba                                      ...´ restarts 1 tb_car INIT/NENT/POOLP 000BF000: 01 00 06 ab 00 0e 19 80 00 1d 02 a0              ...½...Ç...á

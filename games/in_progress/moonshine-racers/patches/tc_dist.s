@@ -1,5 +1,5 @@
 ; name: tc_dist
-; default: no
+; default: yes
 ; site: $e2e8
 ; orig: 41f82d807e1f
 ; doc: Object distance update $e2e8 (32 rolling slots, `$20 -= $130c`) unrolled 4x with the subtract done in memory (state identical).

@@ -1,11 +1,11 @@
 ; name: tb_car
-; default: no
+; default: yes
 ; site: $39ac
 ; orig: 00013f6e
 ; requires: tb_carph
 ; data: $BF000 1280
-; ram: $D8000-$DDFFF generated player-car code cache (24 KB, written at run time)
-; doc: Player car and its second layer drawn by run-time generated straight-line code (pixel-identical, plain 68000 only; stock kernel everywhere else).
+; ram: $D8000-$E2BFF generated player-car code cache (44,032 B, written at run time)
+; doc: Player car and its second layer drawn by run-time generated straight-line code (pixel-identical; only on a plain 68000 without the Mega STE register, i.e. ST/STE: Mega STE, TT, Falcon and 68010+ keep the stock kernel because generated code is never run where a CPU cache exists).
 ; note: Site $39ac = the long in the kernel pointer table $399c (nibble 7 = 3 data planes): entry 4 columns -> `$13f6e`.  The object draw `$ed38` fetches it with `movea.l (a4,d3.w),a4` and `jsr (a4)`s it (`$ed6e`): every
 ; note: 4-column nibble-7 sprite now enters the stub at $BF500.  Slot $2c68 (the player car, bank $2156a/$25244/$28f0c) and slot $3480 (its second layer, bank $2ca48) are drawn by code generated from the bitmap for
 ; note: the call's (bitmap, rows, x&15): per row and destination column nothing / two `move.l #imm,d(a3)` (full mask) / `andi.l #~M,d(a3)` x2 + `ori.l`/`ori.w` (partial); one `rts`.  Everything else, and every
@@ -13,7 +13,7 @@
 ; note: Validity: the game XORs wheel-animation lists into the player bank (`$ed90`, from `$11342`/`$11300`): the bitmap alternates between states.  tb_carph (site $ed90) keeps a byte per bitmap index (PH $BF440, one bit per list kind); the entry key is
 ; note: (bitmap, rows, shift, PH label).  The cache is also flushed when the pass counter $100e goes down (race restart) and when any of 3 probe longs of the source bitmap differs from the value seen at generation (checked every draw).
 ; note: Enabled by a run-time probe at the first call (supervisor mode, plain 68000 = `move.w ccr,d0` is illegal, and no Mega STE `$ff8e21` register: it bus-errors on an ST/STE): INIT $BF000 = 1 on, 2 off.
-; note: Cache entries $BF080 (24 B: key a1.l, label<<16|rows<<4|shift .l, code.l, 3 probe longs), code pool $D8000-$DDFFF (24 KB; a variant that does not fit keeps the stock kernel).  Generation (58-104 k cycles per variant, measured) runs inside the draw that first needs a variant; fill-once: a full table or pool keeps the stock kernel.
+; note: Cache entries $BF080 (24 B: key a1.l, label<<16|rows<<4|shift .l, code.l, 3 probe longs), code pool $D8000-$E2BFF (44,032 B; a variant that does not fit keeps the stock kernel).  Generation (58-104 k cycles per variant, measured) runs inside the draw that first needs a variant; fill-once: a full table or pool keeps the stock kernel.
 INIT    equ     $BF000                  ; b: 0 = not probed, 1 = generated path on, 2 = off
 LASTP   equ     $BF002                  ; w: pass counter $100e of the previous draw
 POOLP   equ     $BF004                  ; l: next free byte of the pool
@@ -29,7 +29,7 @@ TMPL    equ     $BF060                  ; l: start of the variant's jsr list
 ENT     equ     $BF080                  ; 40 entries of 24 bytes (entry 0 never matches): key.l, kw.l, code.l, 3 probe longs
 PH      equ     $BF440                  ; 64 bytes: wheel-animation state of the player bitmaps (tb_carph)
 POOL    equ     $D8000
-POOLEND equ     $DE000
+POOLEND equ     $E2C00
 PO1     equ     148
 PO2     equ     388
 PO3     equ     652

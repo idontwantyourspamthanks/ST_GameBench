@@ -1,5 +1,5 @@
 ; name: tb_carph
-; default: no
+; default: yes
 ; site: $ed90
 ; orig: 302a0006d06a0008
 ; requires: tb_car

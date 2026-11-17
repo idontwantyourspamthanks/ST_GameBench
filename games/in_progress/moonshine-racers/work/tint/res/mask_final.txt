@@ -1,0 +1,30 @@
+race_start  flip  10 b70000 (drawn=no ) speech=n differing pixels A:0, B:0, C:0, D:0
+race_start  flip  10 b78000 (drawn=yes) speech=n differing pixels A:0, B:0, C:0, D:0
+race_start  flip  40 b70000 (drawn=no ) speech=Y differing pixels A:0, B:0, C:0, D:0
+race_start  flip  40 b78000 (drawn=yes) speech=Y differing pixels A:0, B:0, C:0, D:0
+race_start  flip  90 b70000 (drawn=no ) speech=n differing pixels A:0, B:0, C:0, D:0
+race_start  flip  90 b78000 (drawn=yes) speech=n differing pixels A:0, B:0, C:0, D:0
+race_grid   flip  10 b70000 (drawn=yes) speech=Y differing pixels A:0, B:0, C:0, D:0
+race_grid   flip  10 b78000 (drawn=no ) speech=Y differing pixels A:0, B:0, C:0, D:0
+race_grid   flip  40 b70000 (drawn=yes) speech=Y differing pixels A:0, B:0, C:0, D:0
+race_grid   flip  40 b78000 (drawn=no ) speech=Y differing pixels A:0, B:0, C:0, D:0
+race_grid   flip  90 b70000 (drawn=yes) speech=Y differing pixels A:0, B:0, C:0, D:0
+race_grid   flip  90 b78000 (drawn=no ) speech=Y differing pixels A:0, B:0, C:0, D:0
+race_up     flip  10 b70000 (drawn=yes) speech=n differing pixels A:0, B:0, C:0, D:0
+race_up     flip  10 b78000 (drawn=no ) speech=n differing pixels A:0, B:0, C:0, D:0
+race_up     flip  40 b70000 (drawn=yes) speech=n differing pixels A:0, B:0, C:0, D:0
+race_up     flip  40 b78000 (drawn=no ) speech=n differing pixels A:0, B:0, C:0, D:0
+race_up     flip  90 b70000 (drawn=yes) speech=Y differing pixels A:0, B:0, C:0, D:0
+race_up     flip  90 b78000 (drawn=no ) speech=Y differing pixels A:0, B:0, C:0, D:0
+race_drive  flip  10 b70000 (drawn=no ) speech=Y differing pixels A:0, B:0, C:0, D:0
+race_drive  flip  10 b78000 (drawn=yes) speech=Y differing pixels A:0, B:0, C:0, D:0
+race_drive  flip  40 b70000 (drawn=no ) speech=n differing pixels A:0, B:0, C:0, D:0
+race_drive  flip  40 b78000 (drawn=yes) speech=n differing pixels A:0, B:0, C:0, D:0
+race_drive  flip  90 b70000 (drawn=no ) speech=Y differing pixels A:0, B:0, C:0, D:0
+race_drive  flip  90 b78000 (drawn=yes) speech=Y differing pixels A:0, B:0, C:0, D:0
+candidate: hd_stage ta_init ta_erase ta_face ta_glyph ta_ymw hd_clouds hd_nomap hd_nomap2 mr_edge rd_geom rd_draw rd_init tb_car tb_carph tc_clr tc_dist tc_hit1 tc_hit2 tc_ord tc_proj   reference: test_hdref hd_clouds mr_edge rd_geom rd_draw rd_init   negative control: none
+  A rows65-199 vs ref        frames   24  pixels compared    1036800  excluded         0  differing      0  -> IDENTICAL
+  B sky rows16-64            frames   24  pixels compared     244608  excluded    131712  differing      0  -> IDENTICAL
+  C strip rows0-15           frames   24  pixels compared     122880  excluded         0  differing      0  -> IDENTICAL
+  D rows85-199 vs stock      frames   24  pixels compared     798336  excluded     84864  differing      0  -> IDENTICAL
+RESULT: IDENTICAL

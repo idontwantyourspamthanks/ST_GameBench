@@ -1,0 +1,38 @@
+N race_start zig 8MHz no speech  n 198 mean 488498 = 3.048 VBL min 385616 max 784808
+N race_start zig 8MHz speech     n 343 mean 509464 = 3.179 VBL min 344644 max 705432
+   all passes n 541 mean 501791 = 3.131 VBL; last 100 mean 409783
+   VBL per pass (end-to-end, incl. wait):  3.667
+F race_start zig 8MHz no speech  n 186 mean 479711 = 2.993 VBL min 374780 max 756232
+F race_start zig 8MHz speech     n 343 mean 494421 = 3.085 VBL min 328548 max 688040
+   all passes n 529 mean 489249 = 3.053 VBL; last 100 mean 393294
+   VBL per pass (end-to-end, incl. wait):  3.593
+== pool 8 KB (limit 000da000)
+F race_start zig 8MHz no speech  n 207 mean 470140 = 2.934 VBL min 361324 max 760100
+F race_start zig 8MHz speech     n 343 mean 489371 = 3.054 VBL min 326052 max 690824
+   all passes n 550 mean 482133 = 3.009 VBL; last 100 mean 394377
+   VBL per pass (end-to-end, incl. wait):  3.525
+car stub entries 1367 compiled-draw hits 328 = 24.0 %   tail {'0xbf000': '01 00 02 ba 00 0d 95 b2 00 1d 00 60 00 18 00 00', '0xb8f20': '00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00', '0xb8f38': '00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00'}
+== pool 16 KB (limit 000dc000)
+F race_start zig 8MHz no speech  n 185 mean 468208 = 2.922 VBL min 361308 max 760100
+F race_start zig 8MHz speech     n 343 mean 482812 = 3.013 VBL min 326056 max 690824
+   all passes n 528 mean 477695 = 2.981 VBL; last 100 mean 384264
+   VBL per pass (end-to-end, incl. wait):  3.522
+car stub entries 1316 compiled-draw hits 557 = 42.3 %   tail {'0xbf000': '01 00 02 a4 00 0d b8 06 00 1d 02 40 01 98 00 00', '0xb8f20': '00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00', '0xb8f38': '00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00'}
+== pool 24 KB (limit 000de000)
+F race_start zig 8MHz no speech  n 192 mean 458461 = 2.861 VBL min 334020 max 746628
+F race_start zig 8MHz speech     n 343 mean 475732 = 2.969 VBL min 318276 max 688524
+   all passes n 535 mean 469534 = 2.930 VBL; last 100 mean 378509
+   VBL per pass (end-to-end, incl. wait):  3.479
+car stub entries 1330 compiled-draw hits 733 = 55.1 %   tail {'0xbf000': '01 00 02 ab 00 0d d7 74 00 1d 02 40 01 98 00 00', '0xb8f20': '00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00', '0xb8f38': '00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00'}
+== pool 32 KB (limit 000e0000)
+F race_start zig 8MHz no speech  n 201 mean 448073 = 2.796 VBL min 334020 max 723080
+F race_start zig 8MHz speech     n 343 mean 468597 = 2.924 VBL min 315880 max 671544
+   all passes n 544 mean 461014 = 2.877 VBL; last 100 mean 373259
+   VBL per pass (end-to-end, incl. wait):  3.422
+car stub entries 1348 compiled-draw hits 967 = 71.7 %   tail {'0xbf000': '01 00 02 b4 00 0d f5 40 00 1d 01 c8 00 18 00 00', '0xb8f20': '00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00', '0xb8f38': '00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00'}
+== pool 44 KB (limit 000e2c00)
+F race_start zig 8MHz no speech  n 202 mean 447130 = 2.790 VBL min 336020 max 721036
+F race_start zig 8MHz speech     n 343 mean 465174 = 2.903 VBL min 319868 max 673556
+   all passes n 545 mean 458486 = 2.861 VBL; last 100 mean 369034
+   VBL per pass (end-to-end, incl. wait):  3.412
+car stub entries 1352 compiled-draw hits 1057 = 78.2 %   tail {'0xbf000': '01 00 02 b5 00 0e 1d 9c 00 1d 01 c8 00 18 00 00', '0xb8f20': '00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00', '0xb8f38': '00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00'}

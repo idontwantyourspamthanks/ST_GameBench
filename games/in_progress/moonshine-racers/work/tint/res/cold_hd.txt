@@ -1,0 +1,158 @@
+=== HD cold ste 1024 1.62 0,16
+ste 1024 KB TOS 1.62 build build/tight_hd: boot_to_race True vbl 5811
+marker $b2700: b'MSPO' stage site $ef7a: 4ef9000bb004 $edea: 4eb9000be200 palette A col 14 $3cf0: 0000
+race loop: $1021 2 $100e 39
+STRIP CHECK cold_tint_ste_1024_a pass>=86: $100e=86 $11ab=2 $70000: strip pixels != shadow render 0, non-sky pixels rows 16-64 2743 (message/face excluded? no: raw), shadow==model(RAM) True | $78000: strip pixels != shadow render 0, non-sky pixels rows 16-64 2743 (message/face excluded? no: raw), shadow==model(RAM) True
+STRIP CHECK cold_tint_ste_1024_b pass>=397: $100e=397 $11ab=1 $70000: strip pixels != shadow render 0, non-sky pixels rows 16-64 1750 (message/face excluded? no: raw), shadow==model(RAM) False | $78000: strip pixels != shadow render 0, non-sky pixels rows 16-64 1793 (message/face excluded? no: raw), shadow==model(RAM) True
+palette A col 14 $3cf0: 0777
+ROAD TABLES: RDG1 magic $c0000 = b'RDG1' PM $c0004 = 000a WPTR $d7040 = 000102ba vs $135a = 000102ba -> OK; old addresses $d0000 = ffe0ffff $e7040 = 00000000 (must be 0)
+TB_CAR INIT $bf000 = 1 (1 generated path on, 2 off) NENT $bf008 = 8 POOLP $bf004 = 000db052  TC_CLR flag $b6ff0 = 0100  sites: $17c24 4ef9000b6d40 $e406 4ef9000b68204e71 $39ac 000bf500
+RESULT ste 1024 TOS 1.62 clock native: window 526 VBL, passes 105 (9.981/s @50Hz), extra frames 0, displayed fps 9.981, $ff820a=fe00, pos 3677->4474
+RESULT ste 1024 TOS 1.62 clock 16: window 525 VBL, passes 105 (10.000/s @50Hz), extra frames 174, displayed fps 26.571, $ff820a=fe00, pos 4967->5690
+PLAY 18s: $100e=974 pos=7006 $1021=2 VBL 11246
+PLAY 35s: $100e=1150 pos=8230 $1021=2 VBL 12127
+PLAY 53s: $100e=1326 pos=9454 $1021=2 VBL 13008
+PLAY 70s: $100e=1502 pos=10682 $1021=2 VBL 13889
+PLAY 88s: $100e=1679 pos=11725 $1021=2 VBL 14770
+PLAY 106s: $100e=118 pos=0 $1021=2 VBL 15651
+PLAY 123s: $100e=294 pos=0 $1021=2 VBL 16532
+PLAY DONE: 124 s at 16 MHz, $1021=2, magic b'RDG1', Bus/Address Error lines in the log: 2, hatari alive: True
+TB_CAR at end: INIT 1 NENT 2 POOLP 000d904a
+=== HD cold ste 4096 1.62 0,16
+ste 4096 KB TOS 1.62 build build/tight_hd: boot_to_race True vbl 5810
+marker $b2700: b'MSPO' stage site $ef7a: 4ef9000bb004 $edea: 4eb9000be200 palette A col 14 $3cf0: 0000
+race loop: $1021 2 $100e 41
+STRIP CHECK cold_tint_ste_4096_a pass>=88: $100e=88 $11ab=2 $70000: strip pixels != shadow render 0, non-sky pixels rows 16-64 2743 (message/face excluded? no: raw), shadow==model(RAM) True | $78000: strip pixels != shadow render 0, non-sky pixels rows 16-64 2743 (message/face excluded? no: raw), shadow==model(RAM) True
+STRIP CHECK cold_tint_ste_4096_b pass>=399: $100e=399 $11ab=1 $70000: strip pixels != shadow render 0, non-sky pixels rows 16-64 1868 (message/face excluded? no: raw), shadow==model(RAM) False | $78000: strip pixels != shadow render 0, non-sky pixels rows 16-64 1901 (message/face excluded? no: raw), shadow==model(RAM) True
+palette A col 14 $3cf0: 0777
+ROAD TABLES: RDG1 magic $c0000 = b'RDG1' PM $c0004 = 000a WPTR $d7040 = 000102ba vs $135a = 000102ba -> OK; old addresses $d0000 = ffe0ffff $e7040 = 00000000 (must be 0)
+TB_CAR INIT $bf000 = 1 (1 generated path on, 2 off) NENT $bf008 = 8 POOLP $bf004 = 000db052  TC_CLR flag $b6ff0 = 0100  sites: $17c24 4ef9000b6d40 $e406 4ef9000b68204e71 $39ac 000bf500
+RESULT ste 4096 TOS 1.62 clock native: window 526 VBL, passes 105 (9.981/s @50Hz), extra frames 0, displayed fps 9.981, $ff820a=fe00, pos 3677->4474
+RESULT ste 4096 TOS 1.62 clock 16: window 525 VBL, passes 105 (10.000/s @50Hz), extra frames 173, displayed fps 26.476, $ff820a=fe00, pos 4974->5697
+PLAY 18s: $100e=975 pos=7006 $1021=2 VBL 11243
+PLAY 35s: $100e=1151 pos=8230 $1021=2 VBL 12124
+PLAY 53s: $100e=1327 pos=9454 $1021=2 VBL 13005
+PLAY 70s: $100e=1503 pos=10682 $1021=2 VBL 13886
+PLAY 88s: $100e=1680 pos=11718 $1021=2 VBL 14767
+PLAY 106s: $100e=121 pos=0 $1021=2 VBL 15648
+PLAY 123s: $100e=297 pos=0 $1021=2 VBL 16529
+PLAY DONE: 124 s at 16 MHz, $1021=2, magic b'RDG1', Bus/Address Error lines in the log: 2, hatari alive: True
+TB_CAR at end: INIT 1 NENT 2 POOLP 000d9046
+=== HD cold megaste 1024 2.06 0,16
+megaste 1024 KB TOS 2.06 build build/tight_hd: boot_to_race True vbl 6047
+marker $b2700: b'MSPO' stage site $ef7a: 4ef9000bb004 $edea: 4eb9000be200 palette A col 14 $3cf0: 0000
+race loop: $1021 2 $100e 63
+STRIP CHECK cold_tint_megaste_1024_a pass>=110: $100e=110 $11ab=0 $70000: strip pixels != shadow render 0, non-sky pixels rows 16-64 0 (message/face excluded? no: raw), shadow==model(RAM) True | $78000: strip pixels != shadow render 0, non-sky pixels rows 16-64 0 (message/face excluded? no: raw), shadow==model(RAM) True
+STRIP CHECK cold_tint_megaste_1024_b pass>=421: $100e=421 $11ab=1 $70000: strip pixels != shadow render 0, non-sky pixels rows 16-64 1626 (message/face excluded? no: raw), shadow==model(RAM) True | $78000: strip pixels != shadow render 0, non-sky pixels rows 16-64 1675 (message/face excluded? no: raw), shadow==model(RAM) True
+palette A col 14 $3cf0: 0777
+ROAD TABLES: RDG1 magic $c0000 = b'RDG1' PM $c0004 = 000a WPTR $d7040 = 000102ba vs $135a = 000102ba -> OK; old addresses $d0000 = ffe0ffff $e7040 = 43dc0001 (must be 0)
+TB_CAR INIT $bf000 = 2 (1 generated path on, 2 off) NENT $bf008 = 0 POOLP $bf004 = 00000000  TC_CLR flag $b6ff0 = 0100  sites: $17c24 4ef9000b6d40 $e406 4ef9000b68204e71 $39ac 000bf500
+RESULT megaste 1024 TOS 2.06 clock native: window 630 VBL, passes 105 (10.000/s @60Hz), extra frames 116, displayed fps 21.048, $ff820a=fc00, pos 3677->4474
+RESULT megaste 1024 TOS 2.06 clock 16: window 630 VBL, passes 105 (10.000/s @60Hz), extra frames 112, displayed fps 20.667, $ff820a=fc00, pos 4967->5690
+PLAY 18s: $100e=997 pos=6999 $1021=2 VBL 12562
+PLAY 35s: $100e=1173 pos=8223 $1021=2 VBL 13619
+PLAY 53s: $100e=1349 pos=9447 $1021=2 VBL 14676
+PLAY 70s: $100e=1526 pos=10682 $1021=2 VBL 15734
+PLAY 88s: $100e=1702 pos=11557 $1021=2 VBL 16789
+PLAY 106s: $100e=140 pos=0 $1021=2 VBL 17846
+PLAY 123s: $100e=316 pos=0 $1021=2 VBL 18903
+PLAY DONE: 124 s at 16 MHz, $1021=2, magic b'RDG1', Bus/Address Error lines in the log: 0, hatari alive: True
+TB_CAR at end: INIT 2 NENT 0 POOLP 00000000
+=== HD cold megaste 2048 2.06 0,16
+megaste 2048 KB TOS 2.06 build build/tight_hd: boot_to_race True vbl 6046
+marker $b2700: b'MSPO' stage site $ef7a: 4ef9000bb004 $edea: 4eb9000be200 palette A col 14 $3cf0: 0000
+race loop: $1021 2 $100e 64
+STRIP CHECK cold_tint_megaste_2048_a pass>=111: $100e=111 $11ab=0 $70000: strip pixels != shadow render 0, non-sky pixels rows 16-64 0 (message/face excluded? no: raw), shadow==model(RAM) True | $78000: strip pixels != shadow render 0, non-sky pixels rows 16-64 0 (message/face excluded? no: raw), shadow==model(RAM) True
+STRIP CHECK cold_tint_megaste_2048_b pass>=422: $100e=422 $11ab=1 $70000: strip pixels != shadow render 0, non-sky pixels rows 16-64 1841 (message/face excluded? no: raw), shadow==model(RAM) True | $78000: strip pixels != shadow render 0, non-sky pixels rows 16-64 1817 (message/face excluded? no: raw), shadow==model(RAM) True
+palette A col 14 $3cf0: 0777
+ROAD TABLES: RDG1 magic $c0000 = b'RDG1' PM $c0004 = 000a WPTR $d7040 = 000102ba vs $135a = 000102ba -> OK; old addresses $d0000 = ffe0ffff $e7040 = 00000000 (must be 0)
+TB_CAR INIT $bf000 = 2 (1 generated path on, 2 off) NENT $bf008 = 0 POOLP $bf004 = 00000000  TC_CLR flag $b6ff0 = 0100  sites: $17c24 4ef9000b6d40 $e406 4ef9000b68204e71 $39ac 000bf500
+RESULT megaste 2048 TOS 2.06 clock native: window 630 VBL, passes 105 (10.000/s @60Hz), extra frames 115, displayed fps 20.952, $ff820a=fc00, pos 3670->4467
+RESULT megaste 2048 TOS 2.06 clock 16: window 630 VBL, passes 106 (10.095/s @60Hz), extra frames 112, displayed fps 20.762, $ff820a=fc00, pos 4960->5690
+PLAY 18s: $100e=998 pos=6999 $1021=2 VBL 12562
+PLAY 35s: $100e=1174 pos=8223 $1021=2 VBL 13618
+PLAY 53s: $100e=1350 pos=9447 $1021=2 VBL 14675
+PLAY 70s: $100e=1526 pos=10675 $1021=2 VBL 15732
+PLAY 88s: $100e=1702 pos=11550 $1021=2 VBL 16789
+PLAY 106s: $100e=141 pos=0 $1021=2 VBL 17845
+PLAY 123s: $100e=317 pos=0 $1021=2 VBL 18902
+PLAY DONE: 124 s at 16 MHz, $1021=2, magic b'RDG1', Bus/Address Error lines in the log: 0, hatari alive: True
+TB_CAR at end: INIT 2 NENT 0 POOLP 00000000
+=== HD cold megaste 4096 2.06 0,16
+megaste 4096 KB TOS 2.06 build build/tight_hd: boot_to_race True vbl 6047
+marker $b2700: b'MSPO' stage site $ef7a: 4ef9000bb004 $edea: 4eb9000be200 palette A col 14 $3cf0: 0000
+race loop: $1021 2 $100e 64
+STRIP CHECK cold_tint_megaste_4096_a pass>=111: $100e=111 $11ab=0 $70000: strip pixels != shadow render 0, non-sky pixels rows 16-64 0 (message/face excluded? no: raw), shadow==model(RAM) True | $78000: strip pixels != shadow render 0, non-sky pixels rows 16-64 0 (message/face excluded? no: raw), shadow==model(RAM) True
+STRIP CHECK cold_tint_megaste_4096_b pass>=422: $100e=422 $11ab=1 $70000: strip pixels != shadow render 0, non-sky pixels rows 16-64 1675 (message/face excluded? no: raw), shadow==model(RAM) True | $78000: strip pixels != shadow render 0, non-sky pixels rows 16-64 1699 (message/face excluded? no: raw), shadow==model(RAM) True
+palette A col 14 $3cf0: 0777
+ROAD TABLES: RDG1 magic $c0000 = b'RDG1' PM $c0004 = 000a WPTR $d7040 = 000102ba vs $135a = 000102ba -> OK; old addresses $d0000 = ffe0ffff $e7040 = 00000000 (must be 0)
+TB_CAR INIT $bf000 = 2 (1 generated path on, 2 off) NENT $bf008 = 0 POOLP $bf004 = 00000000  TC_CLR flag $b6ff0 = 0100  sites: $17c24 4ef9000b6d40 $e406 4ef9000b68204e71 $39ac 000bf500
+RESULT megaste 4096 TOS 2.06 clock native: window 630 VBL, passes 105 (10.000/s @60Hz), extra frames 115, displayed fps 20.952, $ff820a=fc00, pos 3677->4474
+RESULT megaste 4096 TOS 2.06 clock 16: window 630 VBL, passes 105 (10.000/s @60Hz), extra frames 111, displayed fps 20.571, $ff820a=fc00, pos 4967->5697
+PLAY 18s: $100e=998 pos=7006 $1021=2 VBL 12563
+PLAY 35s: $100e=1174 pos=8230 $1021=2 VBL 13619
+PLAY 53s: $100e=1350 pos=9454 $1021=2 VBL 14676
+PLAY 70s: $100e=1526 pos=10682 $1021=2 VBL 15732
+PLAY 88s: $100e=1702 pos=11557 $1021=2 VBL 16789
+PLAY 106s: $100e=140 pos=0 $1021=2 VBL 17846
+PLAY 123s: $100e=317 pos=0 $1021=2 VBL 18903
+PLAY DONE: 124 s at 16 MHz, $1021=2, magic b'RDG1', Bus/Address Error lines in the log: 0, hatari alive: True
+TB_CAR at end: INIT 2 NENT 0 POOLP 00000000
+=== HD cold st 1024 1.04 0,16
+st 1024 KB TOS 1.04 build build/tight_hd: boot_to_race True vbl 5808
+marker $b2700: b'MSPO' stage site $ef7a: 4ef9000bb004 $edea: 4eb9000be200 palette A col 14 $3cf0: 0000
+race loop: $1021 2 $100e 39
+STRIP CHECK cold_tint_st_1024_a pass>=86: $100e=86 $11ab=2 $70000: strip pixels != shadow render 0, non-sky pixels rows 16-64 2743 (message/face excluded? no: raw), shadow==model(RAM) True | $78000: strip pixels != shadow render 0, non-sky pixels rows 16-64 2743 (message/face excluded? no: raw), shadow==model(RAM) True
+STRIP CHECK cold_tint_st_1024_b pass>=397: $100e=397 $11ab=1 $70000: strip pixels != shadow render 0, non-sky pixels rows 16-64 1750 (message/face excluded? no: raw), shadow==model(RAM) False | $78000: strip pixels != shadow render 0, non-sky pixels rows 16-64 1793 (message/face excluded? no: raw), shadow==model(RAM) True
+palette A col 14 $3cf0: 0777
+ROAD TABLES: RDG1 magic $c0000 = b'RDG1' PM $c0004 = 000a WPTR $d7040 = 000102ba vs $135a = 000102ba -> OK; old addresses $d0000 = ffe0ffff $e7040 = 00000000 (must be 0)
+TB_CAR INIT $bf000 = 1 (1 generated path on, 2 off) NENT $bf008 = 8 POOLP $bf004 = 000db052  TC_CLR flag $b6ff0 = 0100  sites: $17c24 4ef9000b6d40 $e406 4ef9000b68204e71 $39ac 000bf500
+RESULT st 1024 TOS 1.04 clock native: window 526 VBL, passes 105 (9.981/s @50Hz), extra frames 0, displayed fps 9.981, $ff820a=fe00, pos 3677->4474
+RESULT st 1024 TOS 1.04 clock 16: window 526 VBL, passes 105 (9.981/s @50Hz), extra frames 174, displayed fps 26.521, $ff820a=fe00, pos 4967->5690
+PLAY 18s: $100e=973 pos=6999 $1021=2 VBL 11241
+PLAY 35s: $100e=1149 pos=8230 $1021=2 VBL 12122
+PLAY 53s: $100e=1326 pos=9454 $1021=2 VBL 13003
+PLAY 70s: $100e=1502 pos=10682 $1021=2 VBL 13884
+PLAY 88s: $100e=1678 pos=11725 $1021=2 VBL 14765
+PLAY 106s: $100e=118 pos=0 $1021=2 VBL 15646
+PLAY 123s: $100e=294 pos=0 $1021=2 VBL 16527
+PLAY DONE: 124 s at 16 MHz, $1021=2, magic b'RDG1', Bus/Address Error lines in the log: 3, hatari alive: True
+TB_CAR at end: INIT 1 NENT 2 POOLP 000d904a
+=== HD cold tt 4096 3.06 0
+tt 4096 KB TOS 3.06 build build/tight_hd: boot_to_race True vbl 5879
+marker $b2700: b'MSPO' stage site $ef7a: 4ef9000bb004 $edea: 4eb9000be200 palette A col 14 $3cf0: 0000
+race loop: $1021 2 $100e 82
+STRIP CHECK cold_tint_tt_4096_a pass>=129: $100e=129 $11ab=0 $70000: strip pixels != shadow render 0, non-sky pixels rows 16-64 0 (message/face excluded? no: raw), shadow==model(RAM) True | $78000: strip pixels != shadow render 0, non-sky pixels rows 16-64 0 (message/face excluded? no: raw), shadow==model(RAM) True
+STRIP CHECK cold_tint_tt_4096_b pass>=439: $100e=439 $11ab=1 $70000: strip pixels != shadow render 0, non-sky pixels rows 16-64 1974 (message/face excluded? no: raw), shadow==model(RAM) True | $78000: strip pixels != shadow render 0, non-sky pixels rows 16-64 1974 (message/face excluded? no: raw), shadow==model(RAM) True
+palette A col 14 $3cf0: 0777
+ROAD TABLES: RDG1 magic $c0000 = b'RDG1' PM $c0004 = 000a WPTR $d7040 = 000102ba vs $135a = 000102ba -> OK; old addresses $d0000 = ffe0ffff $e7040 = 00000000 (must be 0)
+TB_CAR INIT $bf000 = 2 (1 generated path on, 2 off) NENT $bf008 = 0 POOLP $bf004 = 00000000  TC_CLR flag $b6ff0 = 0100  sites: $17c24 4ef9000b6d40 $e406 4ef9000b68204e71 $39ac 000bf500
+RESULT tt 4096 TOS 3.06 clock native: window 630 VBL, passes 105 (10.000/s @60Hz), extra frames 526, displayed fps 60.095, $ff820a=0100, pos 3677->4474
+PLAY 18s: $100e=839 pos=5781 $1021=2 VBL 11334
+PLAY 35s: $100e=1015 pos=6999 $1021=2 VBL 12390
+PLAY 53s: $100e=1191 pos=8223 $1021=2 VBL 13447
+PLAY 70s: $100e=1367 pos=9447 $1021=2 VBL 14502
+PLAY 88s: $100e=1543 pos=10675 $1021=2 VBL 15558
+PLAY 106s: $100e=1707 pos=0 $1021=2 VBL 16615
+PLAY 123s: $100e=173 pos=1138 $1021=2 VBL 17670
+PLAY DONE: 124 s at native MHz, $1021=2, magic b'RDG1', Bus/Address Error lines in the log: 0, hatari alive: True
+TB_CAR at end: INIT 2 NENT 0 POOLP 00000000
+=== HD cold falcon 4096 4.04 0
+falcon 4096 KB TOS 4.04 build build/tight_hd: boot_to_race True vbl 5806
+marker $b2700: b'MSPO' stage site $ef7a: 4ef9000bb004 $edea: 4eb9000be200 palette A col 14 $3cf0: 0000
+race loop: $1021 2 $100e 69
+STRIP CHECK cold_tint_falcon_4096_a pass>=116: $100e=116 $11ab=0 $70000: strip pixels != shadow render 0, non-sky pixels rows 16-64 0 (message/face excluded? no: raw), shadow==model(RAM) True | $78000: strip pixels != shadow render 0, non-sky pixels rows 16-64 0 (message/face excluded? no: raw), shadow==model(RAM) True
+STRIP CHECK cold_tint_falcon_4096_b pass>=426: $100e=426 $11ab=1 $70000: strip pixels != shadow render 0, non-sky pixels rows 16-64 1964 (message/face excluded? no: raw), shadow==model(RAM) True | $78000: strip pixels != shadow render 0, non-sky pixels rows 16-64 1964 (message/face excluded? no: raw), shadow==model(RAM) True
+palette A col 14 $3cf0: 0777
+ROAD TABLES: RDG1 magic $c0000 = b'RDG1' PM $c0004 = 000a WPTR $d7040 = 000102ba vs $135a = 000102ba -> OK; old addresses $d0000 = ffe0ffff $e7040 = 00000000 (must be 0)
+TB_CAR INIT $bf000 = 2 (1 generated path on, 2 off) NENT $bf008 = 0 POOLP $bf004 = 00000000  TC_CLR flag $b6ff0 = 0100  sites: $17c24 4ef9000b6d40 $e406 4ef9000b68204e71 $39ac 000bf500
+RESULT falcon 4096 TOS 4.04 clock native: window 526 VBL, passes 105 (9.981/s @50Hz), extra frames 181, displayed fps 27.186, $ff820a=0200, pos 3677->4467
+PLAY 18s: $100e=826 pos=5781 $1021=2 VBL 10351
+PLAY 35s: $100e=1001 pos=6992 $1021=2 VBL 11231
+PLAY 53s: $100e=1178 pos=8223 $1021=2 VBL 12111
+PLAY 70s: $100e=1353 pos=9447 $1021=2 VBL 12991
+PLAY 88s: $100e=1530 pos=10675 $1021=2 VBL 13871
+PLAY 106s: $100e=1706 pos=11522 $1021=2 VBL 14751
+PLAY 123s: $100e=147 pos=868 $1021=2 VBL 15631
+PLAY DONE: 124 s at native MHz, $1021=2, magic b'RDG1', Bus/Address Error lines in the log: 0, hatari alive: True
+TB_CAR at end: INIT 2 NENT 0 POOLP 00000000

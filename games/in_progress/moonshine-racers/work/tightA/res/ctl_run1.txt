@@ -1,0 +1,24 @@
+== race_grid flip 40: $100e=3677 $11ab=2 (ticker state: 0 none, 1 typing, >=2 held) $11b0=0 (erase pending) $10f8=0
+   C            vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_same    vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   face_wrong   vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   erase_short  vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   glyph_bad    vs R: differing pixels total   2460  (face box     0, text box  2460)  -> DIFFER
+== race_grid flip 90: $100e=3727 $11ab=2 (ticker state: 0 none, 1 typing, >=2 held) $11b0=0 (erase pending) $10f8=0
+   C            vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_same    vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   face_wrong   vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   erase_short  vs R: differing pixels total    342  (face box     0, text box   342)  -> DIFFER
+   glyph_bad    vs R: differing pixels total   1314  (face box     0, text box  1314)  -> DIFFER
+== race_start flip 40: $100e=155 $11ab=1 (ticker state: 0 none, 1 typing, >=2 held) $11b0=0 (erase pending) $10f8=0
+   C            vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_same    vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   face_wrong   vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   erase_short  vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   glyph_bad    vs R: differing pixels total   1994  (face box     0, text box  1994)  -> DIFFER
+== race_start flip 70: $100e=185 $11ab=2 (ticker state: 0 none, 1 typing, >=2 held) $11b0=0 (erase pending) $10f8=0
+   C            vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_same    vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   face_wrong   vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   erase_short  vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   glyph_bad    vs R: differing pixels total   3954  (face box     0, text box  3954)  -> DIFFER

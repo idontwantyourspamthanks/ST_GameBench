@@ -1,0 +1,112 @@
+== race_start flip 10: $100e=125 $11ab=0 (ticker state: 0 none, 1 typing, >=2 held) $11b0=0 (erase pending) $10f8=0
+   C            vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_same    vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_wrong   vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   erase_short  vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   glyph_bad    vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   car_nophase  vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+== race_start flip 55: $100e=170 $11ab=1 (ticker state: 0 none, 1 typing, >=2 held) $11b0=0 (erase pending) $10f8=0
+   C            vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_same    vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   face_wrong   vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   erase_short  vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   glyph_bad    vs R: differing pixels total   3032  (face box     0, text box  3032)  -> DIFFER
+   car_nophase  vs R: differing pixels total     20  (face box     0, text box     0)  -> DIFFER
+== race_start flip 90: $100e=205 $11ab=0 (ticker state: 0 none, 1 typing, >=2 held) $11b0=0 (erase pending) $10f8=0
+   C            vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_same    vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_wrong   vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   erase_short  vs R: differing pixels total    642  (face box     0, text box   642)  -> DIFFER
+   glyph_bad    vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   car_nophase  vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+== race_start flip 100: $100e=215 $11ab=0 (ticker state: 0 none, 1 typing, >=2 held) $11b0=0 (erase pending) $10f8=0
+   C            vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_same    vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_wrong   vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   erase_short  vs R: differing pixels total    642  (face box     0, text box   642)  -> DIFFER
+   glyph_bad    vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   car_nophase  vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+== race_start flip 150: $100e=265 $11ab=1 (ticker state: 0 none, 1 typing, >=2 held) $11b0=0 (erase pending) $10f8=0
+   C            vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_same    vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   face_wrong   vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   erase_short  vs R: differing pixels total    484  (face box     0, text box   484)  -> DIFFER
+   glyph_bad    vs R: differing pixels total   1322  (face box     0, text box  1322)  -> DIFFER
+   car_nophase  vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+== race_grid flip 10: $100e=3647 $11ab=1 (ticker state: 0 none, 1 typing, >=2 held) $11b0=0 (erase pending) $10f8=0
+   C            vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_same    vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   face_wrong   vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   erase_short  vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   glyph_bad    vs R: differing pixels total    581  (face box     0, text box   581)  -> DIFFER
+   car_nophase  vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+== race_grid flip 120: $100e=3757 $11ab=0 (ticker state: 0 none, 1 typing, >=2 held) $11b0=0 (erase pending) $10f8=0
+   C            vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_same    vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_wrong   vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   erase_short  vs R: differing pixels total    566  (face box     0, text box   566)  -> DIFFER
+   glyph_bad    vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   car_nophase  vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+== race_grid flip 150: $100e=3787 $11ab=0 (ticker state: 0 none, 1 typing, >=2 held) $11b0=0 (erase pending) $10f8=0
+   C            vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_same    vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_wrong   vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   erase_short  vs R: differing pixels total    566  (face box     0, text box   566)  -> DIFFER
+   glyph_bad    vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   car_nophase  vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+== race_up flip 10: $100e=432 $11ab=0 (ticker state: 0 none, 1 typing, >=2 held) $11b0=0 (erase pending) $10f8=0
+   C            vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_same    vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_wrong   vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   erase_short  vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   glyph_bad    vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   car_nophase  vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+== race_up flip 40: $100e=462 $11ab=0 (ticker state: 0 none, 1 typing, >=2 held) $11b0=0 (erase pending) $10f8=0
+   C            vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_same    vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_wrong   vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   erase_short  vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   glyph_bad    vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   car_nophase  vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+== race_up flip 90: $100e=512 $11ab=1 (ticker state: 0 none, 1 typing, >=2 held) $11b0=0 (erase pending) $10f8=0
+   C            vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_same    vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   face_wrong   vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   erase_short  vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   glyph_bad    vs R: differing pixels total   1184  (face box     0, text box  1184)  -> DIFFER
+   car_nophase  vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+== race_up flip 150: $100e=572 $11ab=1 (ticker state: 0 none, 1 typing, >=2 held) $11b0=0 (erase pending) $10f8=0
+   C            vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_same    vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   face_wrong   vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   erase_short  vs R: differing pixels total    604  (face box     0, text box   604)  -> DIFFER
+   glyph_bad    vs R: differing pixels total    119  (face box     0, text box   119)  -> DIFFER
+   car_nophase  vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+== race_drive flip 10: $100e=1696 $11ab=2 (ticker state: 0 none, 1 typing, >=2 held) $11b0=0 (erase pending) $10f8=0
+   C            vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_same    vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   face_wrong   vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   erase_short  vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   glyph_bad    vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   car_nophase  vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+== race_drive flip 40: $100e=19 $11ab=0 (ticker state: 0 none, 1 typing, >=2 held) $11b0=0 (erase pending) $10f8=0
+   C            vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_same    vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_wrong   vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   erase_short  vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   glyph_bad    vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   car_nophase  vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+== race_drive flip 90: $100e=69 $11ab=2 (ticker state: 0 none, 1 typing, >=2 held) $11b0=0 (erase pending) $10f8=0
+   C            vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_same    vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   face_wrong   vs R: differing pixels total   2840  (face box  2840, text box     0)  -> DIFFER
+   erase_short  vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   glyph_bad    vs R: differing pixels total   2826  (face box    64, text box  2762)  -> DIFFER
+   car_nophase  vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+== race_drive flip 150: $100e=129 $11ab=0 (ticker state: 0 none, 1 typing, >=2 held) $11b0=0 (erase pending) $10f8=0
+   C            vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_same    vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   face_wrong   vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   erase_short  vs R: differing pixels total    370  (face box     0, text box   370)  -> DIFFER
+   glyph_bad    vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL
+   car_nophase  vs R: differing pixels total      0  (face box     0, text box     0)  -> IDENTICAL

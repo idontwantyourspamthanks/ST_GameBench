@@ -1,0 +1,12 @@
+race_start  flip  10 b70000 (drawn=no ) speech=n differing pixels A:0, B:2942, C:3335, D:0
+      first B sky rows16-64 [(16, 31, 4, 15), (16, 80, 4, 15), (16, 94, 1, 15), (16, 95, 10, 15)]
+      first C strip rows0-15 [(0, 0, 15, 2), (0, 1, 14, 2), (0, 2, 15, 2), (0, 3, 14, 2)]
+race_start  flip  10 b78000 (drawn=yes) speech=n differing pixels A:0, B:2960, C:3333, D:0
+      first B sky rows16-64 [(16, 31, 4, 15), (16, 80, 4, 15), (16, 94, 1, 15), (16, 95, 10, 15)]
+      first C strip rows0-15 [(0, 0, 14, 2), (0, 1, 15, 2), (0, 2, 15, 2), (0, 3, 15, 2)]
+candidate: hd_stage ta_init ta_erase ta_face ta_glyph ta_ymw hd_clouds hd_nomap hd_nomap2 mr_edge rd_geom rd_draw rd_init tb_car tb_carph tc_clr tc_dist tc_hit1 tc_hit2 tc_ord tc_proj   reference: test_hdref hd_clouds mr_edge rd_geom rd_draw rd_init   negative control: nopaint
+  A rows65-199 vs ref        frames    2  pixels compared      86400  excluded         0  differing      0  -> IDENTICAL
+  B sky rows16-64            frames    2  pixels compared      31360  excluded         0  differing   5902  -> DIFFER
+  C strip rows0-15           frames    2  pixels compared      10240  excluded         0  differing   6668  -> DIFFER
+  D rows85-199 vs stock      frames    2  pixels compared      66528  excluded      7072  differing      0  -> IDENTICAL
+RESULT: DIFFER
