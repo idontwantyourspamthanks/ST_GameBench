@@ -8,7 +8,7 @@ Populous 2 (`pop2patch.py`), re-derived for PP's Moonshine Racers HAGA conversio
 Header comment lines before the first `org`; then one code segment per `org`:
 `; name: X` · `; default: no|yes` (default yes) · `; site: $addr` (RAM site, required for a RAM patch) ·
 `; orig: <hex>` (expected original bytes; optional, the tool derives them from the RAM dump and cross-checks both dumps) ·
-`; phase: boot` (optional and the only phase: every patch site is loaded when the trampoline runs) ·
+`; phase: boot|stage1` (default `boot`: every patch site is loaded when the trampoline runs; `stage1` = the site lies in the stage-1 LOADER (`MSR_S1.FIC` unpacked at `$78000`, which runs BEFORE the trampoline: it draws the "Moonshine Racers" title picture and loads the game): needs `; site:` in `$78000-$7E3FF` and `; orig:` (checked against the unpacked `MSR_S1.FIC` and, with the STX images, disk A); HD: RUNME's copy routine verifies/applies the site right after the payload copy (all or nothing), floppy: the same bytes as a disk A edit of the stage-1 sectors (tracks 1.. side 0, in RAM order, a site must not cross a track); never part of `live`; blobs of such a patch live in the payload as usual (already in RAM, the font and the game are NOT) ·
 `; data: $addr len [free]` (zero-initialised blob-owned data, repeatable; `free` = outside the payload image, not zeroed) ·
 `; media: floppy` (built only by `build --floppy`, `work/notes/floppy.md`; a `--only` list for the HD build refuses it) · `; disk: A|B $offset <orig hex>` (floppy disk patch: an edit of the .ST image at that file offset, no `; site:`; the segment whose `org` equals the offset gives the new bytes, same length; `build --floppy` and `verify` check the original bytes in the STX conversion; repeatable) · `; note: ...` (repeatable) · `; doc: ...` (one line for PATCHES.TXT).
 `; ram: $lo-$hi [label]` (RESERVED run-time work RAM, inclusive end, repeatable: NOT part of the payload image and not zeroed by it, so it does not count against `IMG_MAX_LEN`; the tool still checks it like a blob: it must lie inside the free run of every layout the build supports (1 MB; 4 MB only with `pp_bigram_cache` or in the floppy build; a HD build without that file patch is refused), must not overlap any other patch's site/blob/data/ram or the site table (`verify` pairs every patch with every other; `build` the selection), and `verify` demands that it is zero in the stock game's RAM dumps (hook instant, entry, three race dumps)) ·
@@ -93,8 +93,9 @@ game start on 1 MB, but not at 4 MB without `pp_bigram_cache`).
 - `test_marker` (`default: no`): hooks the game's first run-time code (`$6f5e`, `lea.l $70000.l,a0` in the trap #2 handler `$6f5a`) with a blob at `$B2800` that
   writes the long `MSTM` to `$B2FF0`, replays the `lea` and returns to `$6f64`. It proves staging, trampoline, patch application and the blob area.
   Check in the emulator: `m $b2700 8` -> `MSPO`, `m $b2ff0 4` -> `MSTM`.
-- The release credit (`v@VERSION@ enhanced by dad_prg`) is a later task; the mechanism is reserved: `patches/VERSION` is the one place of the version number
-  (`msrpatch.py version [--credit]`, the `@VERSION@` token in sources and docs, zip names).
+- `mr_credit` (`default: yes`, `phase: stage1`, site `$78524`): the release credit `v@VERSION@ enhanced by dad_prg` (`patches/VERSION` is the one place of the version number:
+  `msrpatch.py version [--credit]`, the `@VERSION@` token in sources and docs, zip names) at the bottom of the "Moonshine Racers" / hotrod title picture, in the game's own
+  message font; blob `$BFD00`. Details, screenshots and gates: `work/notes/credit.md`.
 
 ## Floppy (original STX disks, `build --floppy`)
 `python3 tools/msrpatch.py build --floppy [--only N ...] [--out build/floppy] [--zip]` builds the two-disk release from the original STX disks
@@ -108,7 +109,10 @@ game start on 1 MB, but not at 4 MB without `pp_bigram_cache`).
 - `fl_hook` (`; media: floppy`, always included): disk A `$C350` (RAM `$6f50`) `move.l #$6f5a,$88.w / trap #2` -> `jmp $B2708.l`: the trampoline runs when the loader starts the game.
 - `fl_deprot` (`; media: floppy`, default yes): disk A `$E3D0` (RAM `$7bd0`, the manual-lookup routine's first two instructions `7e02 3f07`) -> `bra.w $7d1a` (`6000 0148`),
   the routine's own "accepted" exit: the question is never asked. Instruction-level evidence: `floppy.md` section 6.
-- Disk 2: the game asks for it itself ("Insert Disk 2 and press a key.") and reads all disks through drive A; swap the disk in drive A and press a key. Hatari: `hatari-option --disk-a <copy of disk_b.st>` (floppy.md section 7).
+- `fl_driveb` (`; media: floppy`, default yes after the gates in `work/notes/floppy_driveb.md`): RAM site `$d6fa` (the game's only entry into its own FDC driver, which always asked for unit 0 = drive A) -> blob `$B8E00`: disk 2 may be in
+  drive B. The disk checks (boot sector of the disk in the drive: `MOON` at offset 2 = disk 1, `$66055505` at `$e` = disk 2) try the preferred drive (A at power-on) and then the other one, bounded by the driver's own timeouts; the drive that held the
+  wanted disk is used for all reads until the next check. The one-drive swap route (disk 2 into A at the prompt) is unchanged.
+- Disk 2 (one drive): the game asks for it itself ("Insert Disk 2 and press a key."); swap the disk in drive A and press a key. Hatari: `hatari-option --disk-a <copy of disk_b.st>` (floppy.md section 7). Two drives: disk 2 in drive B (`fl_driveb`; Hatari `--disk-b`, or `hatari-option --disk-b` at the prompt).
 - The HD-only `pp_bigram_cache` (HAGA) and RUNME edits are not part of the floppy build.
 
 ## Tool
