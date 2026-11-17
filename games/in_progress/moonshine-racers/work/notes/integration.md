@@ -1557,3 +1557,32 @@ Explanation (`[INFERENCE]`, consistent with all counts): the message ticker type
 15.48 (mxfast) vs 16.00 (here): different **builds** — mxfast measured mg+mg_pace on the earlier default set (ta_face, no rb/nomouse/blit/facestat); the pass was 2.80 VBL vs 2.66 VBL now, so more ticks fit an extra. 17.11 (cold) vs 16.00: different scene and definition (C: fresh race start, unsteered, 10.5 s window, no racing-tick filter); internally consistent: (105 + 75) / 10.52 s = 17.11.
 
 **Release number: 16.0 displayed pictures per second at 8 MHz (definition A, `ext_X_8.json`), 63 % of the racing steps with an extra picture; whole-drive average 15.2; cold unsteered 8 MHz window 17.1.**
+
+### 12.15 The "bus/address error lines" of the cold boots: identified, bisected, expected
+
+The STE cold boots log 2 (floppy) / 3 (HD, 124 s) `Bus Error` lines; the Mega STE logs 0. Re-run with the full Hatari log kept (`work/tint2/bus.py`, `hdbus.py`; logs `work/tint2/res/bus_*.log`, `hdbus_*.log`) — every line, verbatim:
+
+```
+v1 = shipped default set, floppy STE 1 MB, 2 lines, both at the disk-2 swap/first race pass:
+  WARN : Bus Error reading at address $ff8e21, PC=$b4928 addr_e3=b4928 op_e3=1039
+  WARN : Bus Error reading at address $ff8e21, PC=$bf6b2 addr_e3=bf6b2 op_e3=1039
+v2 = default minus tb_blit* (1 line):  ... PC=$bf6b2 addr_e3=bf6b2 op_e3=1039
+v3 = default minus ta_nomouse ta_rb ta_rb0 (2 lines): $b4928, $bf6b2  (unchanged)
+v4 = default minus mg_sync mg_pace plus mt_sync (2 lines): $b4928, $bf6b2  (unchanged, meter only: $b8f38 = 0 extras)
+v5 = default minus tb_car tb_carph (1 line): ... PC=$b4928
+v0 = zero patches (fl_hook + fl_deprot only), same flow: 0 lines
+HD default, STE 1 MB cold boot + 20 s drive: 1 line  WARN : Bus Error reading at address $ffff8e21, PC=$20ee0 addr_e3=20ee0 op_e3=1238
+HD stock (originals/MOONSHR, unpatched PP release), same flow: 1 line  WARN : Bus Error reading at address $ffff8e21, PC=$1398a addr_e3=1398a op_e3=1238
+HD default, Mega STE 4 MB: 0 lines
+```
+
+Attribution, from the built payload (byte search of the image + the source):
+* `$b4928` = 6 bytes after `$b4922` = the `move.b $ff8e21.l,d0` of **`tb_blit`**'s probe (blob `$B4500-$B4991`, `patches/tb_blit.s:277`, `op_e3=1039` = the 68000 opcode of that instruction; the 68000 pushes the address *after* the faulting read, hence +6);
+* `$bf6b2` = 6 bytes after `$bf6ac` = the same instruction of **`tb_car`**'s probe (`$BF500-$BF93B`, `patches/tb_car.s:161`);
+* `$20ee0` / `$1398a` are **game code** (< `$70000`, outside every blob and patch site): the game's own Mega STE probe, present in the STOCK run as well (`$1398a`), so it predates this work.
+
+Why the probes read `$ff8e21`: it is the Mega STE cache/speed register. On a plain ST/STE the read is a bus error, which is exactly the test ("no Mega STE register -> use the generated/compiled paths"). Both probes install a bus-error vector (`$8.w`), read the register, continue in the handler (`.be1` / `.be`), restore the vector and the saved stack pointer (`SAVSP`) and the SR, and then use the stock kernels: `tb_blit` sets `BST $B5800 = 2`, `tb_car` sets `INIT $BF000 = 2`. The runs prove the recovery works: the race is reached (`MSPO`, `RDG1`, `$1021 = 2`), the 20 s drive runs, and the floppy counters advance (v1 `$b8f38` = 0x8b extras / 0x8b groups / 0xef ticks; v4 with `mt_sync` = 0). On a Mega STE (register present) there is no bus error and no line, which is the same rule that keeps the generated code off those machines.
+
+So: 2 lines (floppy STE) and 3 (HD STE, the extra one being the game's own probe in the longer 124 s run) are **expected, by design, and ours only in the sense that two deliberate guarded probes emit them**; the Mega STE's 0 lines are equally expected. Nothing in the log is an unhandled exception: no `Address Error` line occurred in any run, and none appears in the stock-floppy or zero-patch builds either (0 lines).
+
+Cosmetic follow-up (not done): the probes could test `$ff8e21` only once (a single shared probe) or suppress the WARN by reading from a copy, but the WARN is Hatari's, not the game's, and does not reach the user.

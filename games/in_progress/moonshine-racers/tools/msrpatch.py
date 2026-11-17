@@ -41,6 +41,37 @@ SET_HELP = "override a patch's `NAME equ value` line (before its first org) for 
 DUMP_HOOK = ROOT / "work" / "dumps" / "ram_hook_1024.bin"     # 1 MB STE TOS 1.62, unpatched, at `pc = $b204e` (the hook instant)
 DUMP_FLOPPY = ROOT / "work" / "floppy" / "ram_answered.bin"  # the original floppy after a correct answer (game loaded, about to start): floppy witness
 DUMP_ENTRY = ROOT / "work" / "dumps" / "ram_entry_1024.bin"   # same game at `pc = $6f64` (first game instructions run; second witness)
+# Stage 1 = the game's own loader (MSR_S1.FIC unpacked, RAM $78000-$7E3FF; on the floppy the tracks 1-5 side 0).  It draws the title picture
+# ("Moonshine Racers" + hotrod) and loads the game while that picture is on screen, so it runs BEFORE the trampoline.  A patch with `; phase: stage1`
+# has its site in that code: HD = applied by RUNME's copy routine right after the payload copy (before `jmp $78000`), floppy = a disk A edit of the
+# stage-1 sectors (the payload is already in RAM: stage-0 loader of the boot sector).  Never `live` (a snapshot is long past stage 1).
+STAGE1_BASE, STAGE1_LEN = 0x78000, 25600
+STAGE1_TRACK_BYTES = 5120                  # floppy: stage 1 = tracks 1.. side 0, 10 sectors each, copied to $78000 (the boot sector's 6 x Floprd)
+
+
+def stage1_image() -> bytes:
+    """MSR_S1.FIC unpacked (PP's LZ, the stack-phase block's routine at RAM $B2220: header $20 B, then 0 = end, 1..$7f literal run, $80|n = n+3 bytes
+    from a 1-byte offset, $c0|n = n+4 bytes from a 2-byte offset): the stage-1 loader as it stands at $78000 when RUNME's copy routine runs."""
+    src = (ORIG / "FILES" / "MSR_S1.FIC").read_bytes()[0x20:]
+    out = bytearray()
+    i = 0
+    while True:
+        c = src[i]; i += 1
+        if c == 0:
+            break
+        if c < 0x80:
+            out += src[i:i + c]; i += c
+            continue
+        n = c & 0x3F
+        if c & 0x40:
+            n += 4; off = (src[i] << 8) | src[i + 1]; i += 2
+        else:
+            n += 3; off = src[i]; i += 1
+        for _ in range(n):
+            out.append(out[-off])
+    if len(out) != STAGE1_LEN:
+        raise SystemExit(f"MSR_S1.FIC unpacks to {len(out)} B, expected {STAGE1_LEN}")
+    return bytes(out)
 # the same stock game on a 1 MB Mega STE, TOS 2.06 (work/dumps, taken with tools/msrhook.py / work/mste/racedump.py): TOS 2.06 puts live GEM/AES data at $E2C50-$F7FFF
 DUMPS_MSTE = ("ram_hook_1024_mste206.bin", "ram_entry_1024_mste206.bin", "ram_race0_1024_mste206.bin")
 VASM = "vasmm68k_mot"
@@ -164,6 +195,7 @@ class Patch:
         self.notes = []
         self.doc = None
         self.ram = []             # (lo, hi_exclusive, label): reserved run-time work RAM, NOT in the payload image, but part of every collision/layout check
+        self.stage1 = False       # `; phase: stage1`: site in the stage-1 loader (see STAGE1_BASE)
         self.requires = []        # patch names that must be in the same build
         self.conflicts = []       # patch names that must not be in the same build
         cur = None
@@ -181,8 +213,10 @@ class Patch:
                 elif k == "site": self.site = addr_expr(v.split(";")[0])
                 elif k == "orig": self.orig = bytes.fromhex(v.split(";")[0].replace(" ", ""))
                 elif k == "phase":
-                    if v.split(";")[0].strip() != "boot":
-                        raise SystemExit(f"{path}: phase must be `boot` (every patch site is loaded when the trampoline runs)")
+                    ph = v.split(";")[0].strip()
+                    if ph not in ("boot", "stage1"):
+                        raise SystemExit(f"{path}: phase must be `boot` (site loaded when the trampoline runs) or `stage1` (site in the stage-1 loader, applied before it runs)")
+                    self.stage1 = ph == "stage1"
                 elif k == "data":
                     parts = v.split(";")[0].split()
                     self.data.append((addr_expr(parts[0]), int(parts[1], 0), parts[2] if len(parts) > 2 else None))
@@ -411,7 +445,9 @@ def ram_in_runs(lo: int, hi: int, runs) -> bool:
 def build_image(patches: list[Patch], table: int = TABLE, min_end: int = IMG_MIN_END, floppy: bool = False, fnames=(), live: bool = False):
     """-> (image bytes at IB, sites).  `table` = where the site table goes (the core is assembled with the same equ);
     `min_end` = the lowest image end (the HD layout pads to $B8000 so that blob area B is inside the image)."""
-    sites = site_list(patches)
+    if live:
+        patches = [p for p in patches if not p.stage1]      # a snapshot is long past stage 1: nothing to apply
+    sites = site_list([p for p in patches if not p.stage1])
     n = len(sites)
     tbl_len = n * 16 + 4
     pool = bytearray()
@@ -560,11 +596,62 @@ def default_selection(patches, fpatches, floppy: bool):
 
 
 # ---- verification ----------------------------------------------------------------------------------------------------------------------------
+def stage1_sites(patches) -> list[dict]:
+    """The `; phase: stage1` sites of a selection (addr, orig, new), checked: orig declared and equal to the unpacked MSR_S1.FIC, inside the image."""
+    sites = []
+    for p in patches:
+        if not p.stage1:
+            continue
+        if p.site is None or p.orig is None:
+            raise SystemExit(f"{p.name}: a `; phase: stage1` patch needs `; site:` and `; orig:`")
+        orig, new = site_bytes(p)
+        x = p.site - STAGE1_BASE
+        if x < 0 or x + len(orig) > STAGE1_LEN or len(orig) % 2:
+            raise SystemExit(f"{p.name}: stage-1 site ${p.site:x}+{len(orig)} is outside $78000-${STAGE1_BASE + STAGE1_LEN - 1:x} or odd-sized")
+        if stage1_image()[x:x + len(orig)] != orig:
+            raise SystemExit(f"{p.name}: orig {orig.hex()} is not what MSR_S1.FIC holds at ${p.site:x}")
+        sites.append(dict(name=p.name, addr=p.site, orig=orig, new=new))
+    site_list([p for p in patches if p.stage1])              # overlaps, PP's RAM patches
+    return sites
+
+
+def stage1_disk_off(addr: int, ln: int) -> int:
+    """Floppy: byte offset in disk A of stage-1 RAM byte `addr` (stage 1 = tracks 1.. side 0, 5,120 B each, in RAM order; a site must stay inside a track)."""
+    x = addr - STAGE1_BASE
+    if x % STAGE1_TRACK_BYTES + ln > STAGE1_TRACK_BYTES:
+        raise SystemExit(f"stage-1 site ${addr:x}+{ln} crosses a floppy track boundary")
+    return sec_off(1 + x // STAGE1_TRACK_BYTES, 0, 1) + x % STAGE1_TRACK_BYTES
+
+
+def verify_stage1(p: Patch) -> int:
+    """Report and check one stage-1 patch against MSR_S1.FIC (HD) and the original floppy disk A (when the STX images exist)."""
+    bad = 0
+    try:
+        (s,) = stage1_sites([p])
+    except SystemExit as e:
+        print(f"{p.name:18s} stage-1 site ${p.site:05x}: {e}")
+        return 1
+    x = s["addr"] - STAGE1_BASE
+    print(f"{p.name:18s} stage-1 site ${s['addr']:05x} len {len(s['orig'])}  (phase stage1: applied by RUNME's copy routine / disk A edit, before the trampoline)")
+    print(f"    declared orig         : {s['orig'].hex()}")
+    print(f"    MSR_S1.FIC unpacked   : {stage1_image()[x:x + len(s['orig'])].hex()}  (match)   [originals/MOONSHR/FILES/MSR_S1.FIC, +${x:04x}]")
+    if all((FLOPPY_DIR / n).exists() for n in FLOPPY_STX.values()):
+        off = stage1_disk_off(s["addr"], len(s["orig"]))
+        have = bytes(stx_disk("A")[off:off + len(s["orig"])])
+        print(f"    original floppy disk A: {have.hex()}  ({'match' if have == s['orig'] else 'MISMATCH'})   [disk A +${off:05x}]")
+        bad += have != s["orig"]
+    print(f"    new                   : {s['new'].hex()}")
+    return bad
+
+
 def cmd_verify(patches, fpatches=()):
     bad = 0
     dpatches = [p for p in patches if p.site is None and p.disk]
     patches = [p for p in patches if p.site is not None]
     for p in patches:
+        if p.stage1:
+            bad += verify_stage1(p)
+            continue
         seg = [s for s in p.segments if s[0] == p.site]
         new = assemble(p.site, seg[0][1], "\n".join(p.preamble)) if seg else b""
         orig = p.orig if p.orig is not None else dump_bytes(DUMP_HOOK, p.site, len(new))
@@ -611,7 +698,7 @@ def floppy_site_mismatches(patches) -> list[str]:
     if not DUMP_FLOPPY.exists():
         return ["work/floppy/ram_answered.bin missing: cannot check the sites against the floppy game"]
     for p in patches:
-        if p.site is None:
+        if p.site is None or p.stage1:
             continue
         seg = [x for x in p.segments if x[0] == p.site]
         orig = p.orig if p.orig is not None else dump_bytes(DUMP_HOOK, p.site, len(assemble(p.site, seg[0][1], "\n".join(p.preamble))) if seg else 0)
@@ -701,7 +788,7 @@ def cmd_list(patches, fpatches=()):
         data = ",".join(f"${a:x}+{l}" + (f" ({t})" if t else "") for a, l, t in p.data) or "-"
         seg = [s for s in p.segments if s[0] == p.site]
         ln = len(assemble(p.site, seg[0][1], "\n".join(p.preamble))) if seg else 0
-        dflt = ("yes" if p.default else "no") + (" (floppy)" if p.media else "")
+        dflt = ("yes" if p.default else "no") + (" (floppy)" if p.media else "") + (" (stage1)" if p.stage1 else "")
         rams = ",".join(f"${lo:x}-${hi - 1:x}" + (f" ({lb})" if lb else "") for lo, hi, lb in p.ram) or "-"
         print(f"{p.name:18s} {dflt:8s} ${p.site:05x}  {ln:4d} {blobs} / {data} / ram {rams}")
     for p in fpatches:
@@ -768,25 +855,60 @@ def check_bss_pcrel_complete(text: bytes):
             raise SystemExit(f"text ${t:x}: unlisted pc-relative reference to ${t + 2 + d:x} (op {op:04x})")
 
 
-def copy_routine(img_len: int) -> bytes:
-    """Appended to RUNME's data (text OLD_BSS): copies the payload (which follows PTRS_LEN bytes of bss pointers) to IB, then continues with the
-    `jmp $78000.l` it displaced from text $3b4.  Entered by `jmp copy.l` from the stack-phase block, in supervisor mode, registers and SR preserved."""
-    lines = ["copy:\tmovem.l\td0/a0-a1,-(a7)",
+def copy_routine(img_len: int, s1=()) -> bytes:
+    """Appended to RUNME's data (text OLD_BSS): copies the payload (which follows PTRS_LEN bytes of bss pointers) to IB, then (stage-1 patches only)
+    verifies and applies their sites in the unpacked stage-1 loader at $78000 (all or nothing, like the trampoline), then continues with the
+    `jmp $78000.l` it displaced from text $3b4.  Entered by `jmp copy.l` from the stack-phase block, in supervisor mode, registers and SR preserved.
+    s1 = [dict(addr, orig, new)]; without any the routine is byte-identical to the one before stage-1 patches existed."""
+    regs = "d0-d2/a0-a2" if s1 else "d0/a0-a1"
+    lines = [f"copy:\tmovem.l\t{regs},-(a7)",
              "\tmove.w\tsr,-(a7)",
              "\tlea\tpayload(pc),a0",
              f"\tlea\t${IB:x}.l,a1",
              f"\tmove.w\t#{img_len // 4 - 1},d0",
              ".cp:\tmove.l\t(a0)+,(a1)+",
-             "\tdbra\td0,.cp",
-             "\tmove.w\t(a7)+,sr",
-             "\tmovem.l\t(a7)+,d0/a0-a1",
-             "\tjmp\t$78000.l",
-             f"\tds.b\t{PTRS_LEN}",
-             "payload:"]
+             "\tdbra\td0,.cp"]
+    if s1:
+        lines += ["\tlea\ts1tab(pc),a0",
+                  ".v:\tmove.l\t(a0)+,d0\t\t\t; pass 1: verify (addr 0 ends the table)",
+                  "\tbeq.s\t.apply",
+                  "\tmovea.l\td0,a1",
+                  "\tmove.w\t(a0)+,d2",
+                  "\tmove.w\td2,d1",
+                  "\tsubq.w\t#1,d1",
+                  ".vc:\tcmpm.b\t(a0)+,(a1)+",
+                  "\tbne.s\t.done\t\t\t; mismatch: apply nothing",
+                  "\tdbra\td1,.vc",
+                  "\tadda.w\td2,a0\t\t\t; skip the new bytes",
+                  "\tbra.s\t.v",
+                  ".apply:\tlea\ts1tab(pc),a0",
+                  ".a:\tmove.l\t(a0)+,d0\t\t\t; pass 2: apply",
+                  "\tbeq.s\t.done",
+                  "\tmovea.l\td0,a1",
+                  "\tmove.w\t(a0)+,d2",
+                  "\tadda.w\td2,a0\t\t\t; skip the orig bytes",
+                  "\tmove.w\td2,d1",
+                  "\tsubq.w\t#1,d1",
+                  ".aw:\tmove.b\t(a0)+,(a1)+",
+                  "\tdbra\td1,.aw",
+                  "\tbra.s\t.a",
+                  ".done:"]
+    lines += ["\tmove.w\t(a7)+,sr",
+              f"\tmovem.l\t(a7)+,{regs}",
+              "\tjmp\t$78000.l"]
+    if s1:
+        lines.append("s1tab:")
+        for s in s1:
+            lines.append(f"\tdc.l\t${s['addr']:x}")
+            lines.append(f"\tdc.w\t{len(s['orig'])}")
+            lines.append("\tdc.b\t" + ",".join(f"${b:02x}" for b in s["orig"]))
+            lines.append("\tdc.b\t" + ",".join(f"${b:02x}" for b in s["new"]))
+        lines += ["\tdc.l\t0", "\teven"]
+    lines += [f"\tds.b\t{PTRS_LEN}", "payload:"]
     return assemble(OLD_BSS, lines)
 
 
-def build_runme(img: bytes) -> bytes:
+def build_runme(img: bytes, s1=()) -> bytes:
     src = runme_source()
     text = bytearray(src[28:28 + TEXT_LEN])
     data = src[28 + TEXT_LEN:28 + TEXT_LEN + 22]
@@ -794,7 +916,7 @@ def build_runme(img: bytes) -> bytes:
     offs, rel_end = decode_reloc(src[rel_off:])
     assert rel_end == len(src) - rel_off
     assert len(img) % 4 == 0 and len(img) // 4 - 1 <= 0xFFFF
-    cr = copy_routine(len(img))
+    cr = copy_routine(len(img), s1)
     copy_len = len(cr) - PTRS_LEN            # code only; the pointer slots follow it
     n = copy_len + PTRS_LEN + len(img)
     assert bytes(text[STAGE_TXT:STAGE_TXT + 6]) == STAGE_ORIG and bytes(text[TAIL_TXT:TAIL_TXT + 4]) == TAIL_ORIG
@@ -1000,6 +1122,12 @@ def cmd_build_floppy(patches, fpatches, out: Path, zip_path: Path | None):
                 raise SystemExit(f"{p.name}: disk {letter} ${off:x}: new {len(new)} B vs orig {len(orig)} B")
             dim[off:off + len(new)] = new
             print(f"disk {letter}+${off:04x} {len(orig):3d} {orig.hex()} -> {new.hex()}   [{p.name}]")
+    for s in stage1_sites(patches):
+        off = stage1_disk_off(s["addr"], len(s["orig"]))
+        if bytes(a[off:off + len(s["orig"])]) != s["orig"]:
+            raise SystemExit(f"{s['name']}: disk A ${off:x} is not the expected original bytes ({bytes(a[off:off + len(s['orig'])]).hex()})")
+        a[off:off + len(s["new"])] = s["new"]
+        print(f"disk A+${off:04x} {len(s['orig']):3d} {s['orig'].hex()} -> {s['new'].hex()}   [{s['name']}, stage-1 site ${s['addr']:05x}]")
     boot = bytearray(a[:SECT])
     boot += bytes(SECT - len(boot)) if len(boot) < SECT else b""
     if bytes(boot[:6]) != b"\x60\x04MOON":
@@ -1042,7 +1170,8 @@ def cmd_build(patches, out: Path, fpatches=(), zip_path: Path | None = None):
     if cmd_verify(patches, fpatches):
         raise SystemExit("build aborted: a site's orig does not match the game")
     img, sites = build_image(patches, fnames=[p.name for p in fpatches])
-    runme = build_runme(img)
+    s1 = stage1_sites(patches)
+    runme = build_runme(img, s1)
     shutil.rmtree(out, ignore_errors=True)
     (out / "FILES").mkdir(parents=True)
     for f in GAME_FILES:
@@ -1058,6 +1187,8 @@ def cmd_build(patches, out: Path, fpatches=(), zip_path: Path | None = None):
     print(f"{'site':8s} {'len':4s} orig -> new")
     for s in sites:
         print(f"${s['addr']:05x}  {len(s['orig']):4d} {s['orig'].hex()} -> {s['new'].hex()}   [{s['name']}]")
+    for s in s1:
+        print(f"${s['addr']:05x}  {len(s['orig']):4d} {s['orig'].hex()} -> {s['new'].hex()}   [{s['name']}, stage-1: applied by RUNME's copy routine before $78000 runs]")
     if zip_path is not None:
         zip_path.parent.mkdir(parents=True, exist_ok=True)
         with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as z:
