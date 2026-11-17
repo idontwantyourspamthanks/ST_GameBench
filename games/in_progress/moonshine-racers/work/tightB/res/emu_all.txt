@@ -1,0 +1,70 @@
+== tb_car+tb_carph, full RAM < $80000 per pass (screens included), INIT poked to 1
+L0.bin zig 100 passes: differing unmasked addresses 0 INIT 1 NENT 19 POOLP 0xdca9a 
+L0.bin up 100 passes: differing unmasked addresses 0 INIT 1 NENT 5 POOLP 0xd9e42 
+L1.bin zig 100 passes: differing unmasked addresses 0 INIT 1 NENT 20 POOLP 0xdd75e 
+L1.bin up 100 passes: differing unmasked addresses 0 INIT 1 NENT 7 POOLP 0xdab34 
+L2.bin zig 100 passes: differing unmasked addresses 0 INIT 1 NENT 13 POOLP 0xdca9a 
+L2.bin up 100 passes: differing unmasked addresses 0 INIT 1 NENT 3 POOLP 0xd917e 
+L3.bin zig 100 passes: differing unmasked addresses 0 INIT 1 NENT 13 POOLP 0xdca9a 
+L3.bin up 100 passes: differing unmasked addresses 0 INIT 1 NENT 5 POOLP 0xd9e42 
+L4.bin zig 100 passes: differing unmasked addresses 0 INIT 1 NENT 20 POOLP 0xdd57c 
+L4.bin up 100 passes: differing unmasked addresses 0 INIT 1 NENT 7 POOLP 0xdab34 
+L5.bin zig 100 passes: differing unmasked addresses 0 INIT 1 NENT 12 POOLP 0xdcd16 
+L5.bin up 100 passes: differing unmasked addresses 0 INIT 1 NENT 5 POOLP 0xda210 
+L6.bin zig 100 passes: differing unmasked addresses 0 INIT 1 NENT 17 POOLP 0xdd7e4 
+L6.bin up 100 passes: differing unmasked addresses 0 INIT 1 NENT 7 POOLP 0xdae42 
+L7.bin zig 100 passes: differing unmasked addresses 0 INIT 1 NENT 15 POOLP 0xdd7e0 
+L7.bin up 100 passes: differing unmasked addresses 0 INIT 1 NENT 7 POOLP 0xdae42 
+L8.bin zig 100 passes: differing unmasked addresses 0 INIT 1 NENT 11 POOLP 0xdc46a 
+L8.bin up 100 passes: differing unmasked addresses 0 INIT 1 NENT 7 POOLP 0xdae42 
+L9.bin zig 100 passes: differing unmasked addresses 0 INIT 1 NENT 12 POOLP 0xdcf74 
+L9.bin up 100 passes: differing unmasked addresses 0 INIT 1 NENT 5 POOLP 0xda210 
+L10.bin zig 100 passes: differing unmasked addresses 0 INIT 1 NENT 21 POOLP 0xdd31e 
+L10.bin up 100 passes: differing unmasked addresses 0 INIT 1 NENT 7 POOLP 0xdb056 
+L11.bin zig 100 passes: differing unmasked addresses 0 INIT 1 NENT 26 POOLP 0xdd682 
+L11.bin up 100 passes: differing unmasked addresses 0 INIT 1 NENT 7 POOLP 0xdb056 
+L12.bin zig 100 passes: differing unmasked addresses 0 INIT 1 NENT 23 POOLP 0xdd65c 
+L12.bin up 100 passes: differing unmasked addresses 0 INIT 1 NENT 7 POOLP 0xdb056 
+L13.bin zig 100 passes: differing unmasked addresses 0 INIT 1 NENT 23 POOLP 0xdd11c 
+L13.bin up 100 passes: differing unmasked addresses 0 INIT 1 NENT 7 POOLP 0xdb056 
+L14.bin zig 100 passes: differing unmasked addresses 0 INIT 1 NENT 28 POOLP 0xdd00c 
+L14.bin up 100 passes: differing unmasked addresses 0 INIT 1 NENT 9 POOLP 0xdb9b0 
+== same, h_*_7a88 dumps
+h_start_7a88.bin zig 100 passes: differing unmasked addresses 0 INIT 1 NENT 18 POOLP 0xdcbb6 
+h_up_7a88.bin zig 100 passes: differing unmasked addresses 0 INIT 1 NENT 25 POOLP 0xdd5dc 
+h_grid_7a88.bin zig 100 passes: differing unmasked addresses 0 INIT 1 NENT 2 POOLP 0xd904a 
+Traceback (most recent call last):
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/tightB/emucmp.py", line 21, in <module>
+    ea,SA=run(A,[]); eb,SB=run(B,pokes)
+          ^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/tightB/emucmp.py", line 18, in run
+    e.run(0x7a88,0x7b74); flip(e)
+    ^^^^^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/extrap/emu.py", line 63, in run
+    raise RuntimeError(f"stopped at {pc:#x}, wanted {until:#x} (a7={self.uc.reg_read(UC_M68K_REG_A7):#x})")
+RuntimeError: stopped at 0x72da, wanted 0x7b74 (a7=0x78000)
+
+== tb_blit (blits are no-ops in Unicorn: logic state only, BST=1, TBCR=8/TBDR=1 so the guard spin runs)
+L0.bin zig 100 passes: differing unmasked addresses 0
+L3.bin zig 100 passes: differing unmasked addresses 0
+L5.bin zig 100 passes: differing unmasked addresses 0
+L8.bin zig 100 passes: differing unmasked addresses 0
+L12.bin zig 100 passes: differing unmasked addresses 0
+L14.bin zig 100 passes: differing unmasked addresses 0
+h_start_7a88.bin zig 100 passes: differing unmasked addresses 0
+h_up_7a88.bin zig 100 passes: differing unmasked addresses 0
+h_grid_7a88.bin zig 100 passes: differing unmasked addresses 0
+Traceback (most recent call last):
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/tightB/emucmp.py", line 21, in <module>
+    ea,SA=run(A,[]); eb,SB=run(B,pokes)
+          ^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/tightB/emucmp.py", line 18, in run
+    e.run(0x7a88,0x7b74); flip(e)
+    ^^^^^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/extrap/emu.py", line 63, in run
+    raise RuntimeError(f"stopped at {pc:#x}, wanted {until:#x} (a7={self.uc.reg_read(UC_M68K_REG_A7):#x})")
+RuntimeError: stopped at 0x72da, wanted 0x7b74 (a7=0x78000)
+== both, logic state
+L0.bin zig 100 passes: differing unmasked addresses 0
+L5.bin zig 100 passes: differing unmasked addresses 0
+L12.bin zig 100 passes: differing unmasked addresses 0
