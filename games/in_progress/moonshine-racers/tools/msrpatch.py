@@ -39,6 +39,8 @@ PATCHDIR = ROOT / "patches"
 DUMP_HOOK = ROOT / "work" / "dumps" / "ram_hook_1024.bin"     # 1 MB STE TOS 1.62, unpatched, at `pc = $b204e` (the hook instant)
 DUMP_FLOPPY = ROOT / "work" / "floppy" / "ram_answered.bin"  # the original floppy after a correct answer (game loaded, about to start): floppy witness
 DUMP_ENTRY = ROOT / "work" / "dumps" / "ram_entry_1024.bin"   # same game at `pc = $6f64` (first game instructions run; second witness)
+# the same stock game on a 1 MB Mega STE, TOS 2.06 (work/dumps, taken with tools/msrhook.py / work/mste/racedump.py): TOS 2.06 puts live GEM/AES data at $E2C50-$F7FFF
+DUMPS_MSTE = ("ram_hook_1024_mste206.bin", "ram_entry_1024_mste206.bin", "ram_race0_1024_mste206.bin")
 VASM = "vasmm68k_mot"
 
 # ---- the payload image ---------------------------------------------------------------------------------------------------------------
@@ -46,7 +48,7 @@ IB = 0xB2700                      # payload image base: marker long at IB, tramp
 CORE = IB + 8
 CORE_END = IB + 0x100
 TABLE, TABLE_END = 0xB7000, 0xB8000    # site table + orig/new byte pool: 4 KB
-FREE_END = 0xE8400                # last free byte + 1 at 1 MB (PP's resident HAGA from $F3000; rendering.md section 3)
+FREE_END = 0xE2C00                # last free byte + 1 at 1 MB = the LOWER of the two 1 MB layouts: STE TOS 1.62 is zero to $E83FF, Mega STE TOS 2.06 only to $E2BFF (GEM/AES data from $E2C50, integration.md section 10.3)
 BLOB_AREAS = ((0xB2800, TABLE), (TABLE_END, FREE_END))   # blob / data orgs allowed
 IMG_MIN_END = TABLE_END           # the image always spans IB .. here (zero-padded); blobs above TABLE_END extend it
 IMG_MAX_LEN = 0xF000              # RUNME's own limit on a 1 MB machine ("Too much low RAM occupied"); delivery.md section 6
@@ -374,7 +376,7 @@ def in_area(a: int, ln: int) -> bool:
 # Free run(s) for blobs, data and `; ram:` reservations per target layout.  1 MB: $B2700-$E83FF is zero at game start (rendering.md section 3; the
 # tool's blob areas start at $B2800, above the trampoline).  4 MB with PP's whole-image disk cache (68000, no pp_bigram_cache): MS1 lands on
 # $81000-$C6F2B over the payload and MS2 on $C7900-$13D7FF (delivery.md section 5): nothing in the payload area is free.  With pp_bigram_cache (or the floppy
-# build, which has no HAGA cache) the 1 MB map holds at 4 MB (cold boots, delivery.md section 4 and the road patches' RDG1 magic at $D0000, road.md 7.2).
+# build, which has no HAGA cache) the 1 MB map holds at 4 MB (cold boots, delivery.md section 4 and the road patches' RDG1 magic at $C0000, road.md 7.2).
 FREE_1MB = [(BLOB_AREAS[0][0], FREE_END)]
 LAYOUT_NAMES = ("1MB", "4MB")
 
@@ -456,7 +458,7 @@ def build_image(patches: list[Patch], table: int = TABLE, min_end: int = IMG_MIN
 
 
 # ---- footprints, dependencies, conflicts -------------------------------------------------------------------------------------------------------
-RAM_WITNESS = ("ram_hook_1024.bin", "ram_entry_1024.bin", "ram_race0.bin", "ram_race_start.bin", "ram_race_grid.bin", "ram_race_up.bin")   # the stock game, never patched
+RAM_WITNESS = ("ram_hook_1024.bin", "ram_entry_1024.bin", "ram_race0.bin", "ram_race_start.bin", "ram_race_grid.bin", "ram_race_up.bin") + DUMPS_MSTE   # the stock game, never patched: STE 1.62 and Mega STE 2.06, all 1 MB
 
 
 def footprint(p: Patch) -> list[tuple[int, int, str]]:
@@ -503,6 +505,19 @@ def check_pairs(patches: list[Patch]) -> list[str]:
                     f = ROOT / "work" / "dumps" / n
                     if f.exists() and any(dump_bytes(f, lo, hi - lo)):
                         bad.append(f"{p.name} {w} ${lo:x}-${hi - 1:x} is not zero in the stock game's RAM dump {n}")
+    return bad
+
+
+def check_free_run() -> list[str]:
+    """The claimed free run [blob area start, FREE_END) must be zero in every witness dump (STE 1.62 and Mega STE 2.06 at 1 MB): FREE_END cannot silently drift into TOS data."""
+    bad = []
+    lo = BLOB_AREAS[0][0]
+    for n in RAM_WITNESS:
+        f = ROOT / "work" / "dumps" / n
+        if not f.exists():
+            bad.append(f"witness dump work/dumps/{n} is missing")
+        elif any(dump_bytes(f, lo, FREE_END - lo)):
+            bad.append(f"free run ${lo:x}-${FREE_END - 1:x} is not zero in the stock game's RAM dump {n}")
     return bad
 
 
@@ -558,7 +573,7 @@ def cmd_verify(patches, fpatches=()):
             print(f"    {e}")
             bad += 1
     known = {p.name for p in load_patches()} | {p.name for p in load_file_patches()}
-    for msg in check_pairs(patches):
+    for msg in check_free_run() + check_pairs(patches):
         print(f"    {msg}")
         bad += 1
     if {p.name for p in patches} >= {p.name for p in load_patches() if p.site is not None}:   # `verify` proper (the whole set, not a build's selection): the default sets must satisfy the rules

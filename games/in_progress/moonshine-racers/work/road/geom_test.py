@@ -16,10 +16,10 @@ for sc in ['grid', 'start', 'up', 'drive']:
         ram = ram_for(f, 'a')
         e1 = Emu(ram); e1.call(0x17c24); c1 = e1.call(0x100b4); m1 = masked(e1.rd(0, 0xB2700))
         e2 = Emu(ram); apply_live(e2, prefix)
-        if tabs is not None and p > 0: e2.wr(0xD0000, tabs)
+        if tabs is not None and p > 0: e2.wr(0xC0000, tabs)
         e2.call(0x17c24); c2 = e2.call(0x100b4)
         m2 = masked(e2.rd(0, 0xB2700))
-        if tabs is None: tabs = e2.rd(0xD0000, 0xB000)
+        if tabs is None: tabs = e2.rd(0xC0000, 0xB000)
         if p == 0: first.append(c2)
         tot += 1
         if m1 != m2:

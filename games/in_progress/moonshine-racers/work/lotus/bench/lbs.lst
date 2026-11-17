@@ -1,0 +1,398 @@
+Sections:
+00: "org0001:20000" (20000-202A4)
+
+
+Source: "/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/lotus/bench/lbs.s"
+                            	     1: ; Lotus-style blitter sprite microbenchmark (own code; models what $c6f2c..$c7402 of the exemplar does, parameters take
+                            	     2: ; the exemplar's own `info blitter` trace): mask word + P plane words interleaved per source word (stride 2*(P+1)), 4 A
+                            	     3: ; (HOP=2 LOP=1, src = mask) + P OR passes (LOP=7, src = plane), HOG ($c0), fixed ~8-word blits ("rows per blit" k = max
+                            	     4: ; from an unrolled pair chain `move.w d1,(a2) / move.b d6,(a6)` (a2 = ycount, a6 = control); registers persist between 
+                            	     5: ; Case table at $30000: n.w, then n * (cols.w rows.w x.w np.w reps.w pad.w).  Markers m_case / m_end (cycle counter tim
+                            	     6: BL      equ     $ffff8a00
+                            	     7: SCR     equ     $50000
+                            	     8: DAT     equ     $40000
+                            	     9: CASES   equ     $30000
+                            	    10:         org     $20000
+00:00020000 46FC2700        	    11: start:  move.w  #$2700,sr
+00:00020004 41F900030000    	    12:         lea     CASES.l,a0
+00:0002000A 3E18            	    13:         move.w  (a0)+,d7                ; number of cases
+00:0002000C 5347            	    14:         subq.w  #1,d7
+00:0002000E 23C800020298    	    15:         move.l  a0,casep
+                            	    16: nextcase:
+00:00020014 207900020298    	    17:         movea.l casep,a0
+00:0002001A 33D80002029C    	    18:         move.w  (a0)+,vcols
+00:00020020 33D80002029E    	    19:         move.w  (a0)+,vrows
+00:00020026 33D8000202A0    	    20:         move.w  (a0)+,vx
+00:0002002C 33D8000202A2    	    21:         move.w  (a0)+,vnp
+00:00020032 3C18            	    22:         move.w  (a0)+,d6                ; reps
+00:00020034 5488            	    23:         addq.l  #2,a0
+00:00020036 23C800020298    	    24:         move.l  a0,casep
+00:0002003C 5346            	    25:         subq.w  #1,d6
+00:0002003E 3F07            	    26:         move.w  d7,-(a7)
+00:00020040 4E71            	    27: m_case: nop
+00:00020042 3039000202A0    	    28: .rep:   move.w  vx,d0
+00:00020048 323C003C        	    29:         move.w  #60,d1
+00:0002004C 6100001A        	    30:         bsr.w   draw
+00:00020050 51CEFFF0        	    31:         dbra    d6,.rep
+00:00020054 4E71            	    32: m_end:  nop
+00:00020056 3E1F            	    33:         move.w  (a7)+,d7
+00:00020058 51CFFFBA        	    34:         dbra    d7,nextcase
+00:0002005C 23FC444F4E450002	    35:         move.l  #$444f4e45,$20ff0.l     ; 'DONE'
+00:00020064 0FF0
+00:00020066 60FE            	    36: .spin:  bra.s   .spin
+                            	    37: 
+                            	    38: ; d0 = x, d1 = y ; vcols, vrows, vnp
+00:00020068 48E7FFFE        	    39: draw:   movem.l d0-d7/a0-a6,-(a7)
+00:0002006C 3400            	    40:         move.w  d0,d2
+00:0002006E C47C000F        	    41:         and.w   #15,d2                  ; s
+00:00020072 E848            	    42:         lsr.w   #4,d0
+00:00020074 E748            	    43:         lsl.w   #3,d0                   ; word column * 8
+00:00020076 3601            	    44:         move.w  d1,d3
+00:00020078 EB4B            	    45:         lsl.w   #5,d3
+00:0002007A 3803            	    46:         move.w  d3,d4
+00:0002007C D643            	    47:         add.w   d3,d3
+00:0002007E D643            	    48:         add.w   d3,d3                   ; y * 128
+00:00020080 D644            	    49:         add.w   d4,d3                   ; y * 160
+00:00020082 D640            	    50:         add.w   d0,d3
+00:00020084 43F900050000    	    51:         lea     SCR.l,a1
+00:0002008A D2C3            	    52:         adda.w  d3,a1                   ; dst
+00:0002008C 36390002029C    	    53:         move.w  vcols,d3                ; c
+00:00020092 3803            	    54:         move.w  d3,d4                   ; n = c (+1 if shifted)
+00:00020094 4A42            	    55:         tst.w   d2
+00:00020096 6702            	    56:         beq.s   .al
+00:00020098 5244            	    57:         addq.w  #1,d4
+00:0002009A 3A39000202A2    	    58: .al:    move.w  vnp,d5
+00:000200A0 DA45            	    59:         add.w   d5,d5
+00:000200A2 5445            	    60:         addq.w  #2,d5                   ; stride = 2 * (np + 1)
+00:000200A4 47F9FFFF8A00    	    61:         lea     BL.l,a3
+00:000200AA 37450020        	    62:         move.w  d5,$20(a3)              ; src xinc
+00:000200AE 3005            	    63:         move.w  d5,d0
+00:000200B0 C0C3            	    64:         mulu.w  d3,d0                   ; stride * c
+00:000200B2 3204            	    65:         move.w  d4,d1
+00:000200B4 5341            	    66:         subq.w  #1,d1
+00:000200B6 C2C5            	    67:         mulu.w  d5,d1                   ; stride * (n - 1)
+00:000200B8 9041            	    68:         sub.w   d1,d0
+00:000200BA 37400022        	    69:         move.w  d0,$22(a3)              ; src yinc
+00:000200BE 70FF            	    70:         moveq   #-1,d0
+00:000200C0 E468            	    71:         lsr.w   d2,d0                   ; em1 = $ffff >> s
+00:000200C2 37400028        	    72:         move.w  d0,$28(a3)
+00:000200C6 377CFFFF002A    	    73:         move.w  #$ffff,$2a(a3)
+00:000200CC 70FF            	    74:         moveq   #-1,d0
+00:000200CE 4A42            	    75:         tst.w   d2
+00:000200D0 6706            	    76:         beq.s   .em3
+00:000200D2 7210            	    77:         moveq   #16,d1
+00:000200D4 9242            	    78:         sub.w   d2,d1
+00:000200D6 E368            	    79:         lsl.w   d1,d0                   ; em3 = $ffff << (16 - s)
+00:000200D8 3740002C        	    80: .em3:   move.w  d0,$2c(a3)
+00:000200DC 377C0008002E    	    81:         move.w  #8,$2e(a3)              ; dst xinc
+00:000200E2 3004            	    82:         move.w  d4,d0
+00:000200E4 5340            	    83:         subq.w  #1,d0
+00:000200E6 E748            	    84:         lsl.w   #3,d0
+00:000200E8 323C00A0        	    85:         move.w  #160,d1
+00:000200EC 9240            	    86:         sub.w   d0,d1
+00:000200EE 37410030        	    87:         move.w  d1,$30(a3)              ; dst yinc = 160 - 8 (n - 1)
+00:000200F2 37440036        	    88:         move.w  d4,$36(a3)              ; xcount
+00:000200F6 3002            	    89:         move.w  d2,d0
+00:000200F8 6704            	    90:         beq.s   .sk
+00:000200FA 807C0040        	    91:         or.w    #$40,d0                 ; FXSR
+00:000200FE 1740003D        	    92: .sk:    move.b  d0,$3d(a3)              ; skew
+                            	    93:         ; rows per blit k = max(1, 8 / n), chunks, remainder
+00:00020102 7008            	    94:         moveq   #8,d0
+00:00020104 80C4            	    95:         divu.w  d4,d0
+00:00020106 C0BC0000FFFF    	    96:         and.l   #$ffff,d0
+00:0002010C 6602            	    97:         bne.s   .k1
+00:0002010E 7001            	    98:         moveq   #1,d0
+00:00020110 3200            	    99: .k1:    move.w  d0,d1                   ; k
+00:00020112 30390002029E    	   100:         move.w  vrows,d0
+00:00020118 48C0            	   101:         ext.l   d0
+00:0002011A 80C1            	   102:         divu.w  d1,d0                   ; d0.w = chunks, d0 high = remainder
+00:0002011C 3600            	   103:         move.w  d0,d3                   ; chunks
+00:0002011E 4840            	   104:         swap    d0
+00:00020120 3E00            	   105:         move.w  d0,d7                   ; remainder rows
+00:00020122 41FA0172        	   106:         lea     chain_end(pc),a0
+00:00020126 D643            	   107:         add.w   d3,d3
+00:00020128 D643            	   108:         add.w   d3,d3                   ; 4 bytes per pair
+00:0002012A 90C3            	   109:         suba.w  d3,a0
+00:0002012C 2848            	   110:         movea.l a0,a4                   ; a4 = chain entry
+00:0002012E 45EB0038        	   111:         lea     $38(a3),a2              ; a2 = ycount
+00:00020132 4DEB003C        	   112:         lea     $3c(a3),a6              ; a6 = control
+00:00020136 41EB0024        	   113:         lea     $24(a3),a0              ; a0 = src addr reg  (a3 base kept)
+00:0002013A 4BEB0032        	   114:         lea     $32(a3),a5              ; a5 = dst addr reg
+00:0002013E 7C00            	   115:         moveq   #0,d6
+00:00020140 1C3C00C0        	   116:         move.b  #$c0,d6
+00:00020144 47F900040000    	   117:         lea     DAT.l,a3                ; source: mask word of the first word
+00:0002014A 260B            	   118:         move.l  a3,d3                   ; d3 = src base (mask)
+00:0002014C 31FC02018A3A    	   119:         move.w  #$0201,$ffff8a3a.w      ; HOP 2 / LOP 1 (AND)
+00:00020152 7A03            	   120:         moveq   #3,d5                   ; 4 mask passes
+00:00020154 2649            	   121:         movea.l a1,a3                   ; a3 = dst plane 0 (moved by 2 each pass)
+00:00020156 2083            	   122: .mp:    move.l  d3,(a0)
+00:00020158 2A8B            	   123:         move.l  a3,(a5)
+00:0002015A 612E            	   124:         bsr.s   pass
+00:0002015C 548B            	   125:         addq.l  #2,a3
+00:0002015E 51CDFFF6        	   126:         dbra    d5,.mp
+00:00020162 31FC02078A3A    	   127:         move.w  #$0207,$ffff8a3a.w      ; LOP 7 (OR)
+00:00020168 2649            	   128:         movea.l a1,a3
+00:0002016A 2A03            	   129:         move.l  d3,d5
+00:0002016C 5485            	   130:         addq.l  #2,d5                   ; first plane word
+00:0002016E 3639000202A2    	   131:         move.w  vnp,d3
+00:00020174 5343            	   132:         subq.w  #1,d3
+00:00020176 2085            	   133: .dp:    move.l  d5,(a0)
+00:00020178 2A8B            	   134:         move.l  a3,(a5)
+00:0002017A 610E            	   135:         bsr.s   pass
+00:0002017C 5485            	   136:         addq.l  #2,d5
+00:0002017E 548B            	   137:         addq.l  #2,a3
+00:00020180 51CBFFF4        	   138:         dbra    d3,.dp
+00:00020184 4CDF7FFF        	   139:         movem.l (a7)+,d0-d7/a0-a6
+00:00020188 4E75            	   140:         rts
+                            	   141: 
+00:0002018A 4E94            	   142: pass:   jsr     (a4)                    ; chain of full-size blits (d1 = rows per blit)
+00:0002018C 4A47            	   143:         tst.w   d7
+00:0002018E 6704            	   144:         beq.s   .nr
+00:00020190 3487            	   145:         move.w  d7,(a2)
+00:00020192 1C86            	   146:         move.b  d6,(a6)
+00:00020194 4E75            	   147: .nr:    rts
+                            	   148: 
+                            	   149: chain:  rept    64
+                            	   150:         move.w  d1,(a2)
+                            	   151:         move.b  d6,(a6)
+                            	   152:         endr
+00:00020196 3481            	     1R         move.w  d1,(a2)
+00:00020198 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:0002019A 3481            	     1R         move.w  d1,(a2)
+00:0002019C 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:0002019E 3481            	     1R         move.w  d1,(a2)
+00:000201A0 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:000201A2 3481            	     1R         move.w  d1,(a2)
+00:000201A4 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:000201A6 3481            	     1R         move.w  d1,(a2)
+00:000201A8 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:000201AA 3481            	     1R         move.w  d1,(a2)
+00:000201AC 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:000201AE 3481            	     1R         move.w  d1,(a2)
+00:000201B0 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:000201B2 3481            	     1R         move.w  d1,(a2)
+00:000201B4 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:000201B6 3481            	     1R         move.w  d1,(a2)
+00:000201B8 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:000201BA 3481            	     1R         move.w  d1,(a2)
+00:000201BC 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:000201BE 3481            	     1R         move.w  d1,(a2)
+00:000201C0 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:000201C2 3481            	     1R         move.w  d1,(a2)
+00:000201C4 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:000201C6 3481            	     1R         move.w  d1,(a2)
+00:000201C8 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:000201CA 3481            	     1R         move.w  d1,(a2)
+00:000201CC 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:000201CE 3481            	     1R         move.w  d1,(a2)
+00:000201D0 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:000201D2 3481            	     1R         move.w  d1,(a2)
+00:000201D4 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:000201D6 3481            	     1R         move.w  d1,(a2)
+00:000201D8 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:000201DA 3481            	     1R         move.w  d1,(a2)
+00:000201DC 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:000201DE 3481            	     1R         move.w  d1,(a2)
+00:000201E0 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:000201E2 3481            	     1R         move.w  d1,(a2)
+00:000201E4 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:000201E6 3481            	     1R         move.w  d1,(a2)
+00:000201E8 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:000201EA 3481            	     1R         move.w  d1,(a2)
+00:000201EC 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:000201EE 3481            	     1R         move.w  d1,(a2)
+00:000201F0 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:000201F2 3481            	     1R         move.w  d1,(a2)
+00:000201F4 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:000201F6 3481            	     1R         move.w  d1,(a2)
+00:000201F8 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:000201FA 3481            	     1R         move.w  d1,(a2)
+00:000201FC 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:000201FE 3481            	     1R         move.w  d1,(a2)
+00:00020200 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:00020202 3481            	     1R         move.w  d1,(a2)
+00:00020204 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:00020206 3481            	     1R         move.w  d1,(a2)
+00:00020208 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:0002020A 3481            	     1R         move.w  d1,(a2)
+00:0002020C 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:0002020E 3481            	     1R         move.w  d1,(a2)
+00:00020210 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:00020212 3481            	     1R         move.w  d1,(a2)
+00:00020214 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:00020216 3481            	     1R         move.w  d1,(a2)
+00:00020218 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:0002021A 3481            	     1R         move.w  d1,(a2)
+00:0002021C 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:0002021E 3481            	     1R         move.w  d1,(a2)
+00:00020220 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:00020222 3481            	     1R         move.w  d1,(a2)
+00:00020224 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:00020226 3481            	     1R         move.w  d1,(a2)
+00:00020228 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:0002022A 3481            	     1R         move.w  d1,(a2)
+00:0002022C 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:0002022E 3481            	     1R         move.w  d1,(a2)
+00:00020230 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:00020232 3481            	     1R         move.w  d1,(a2)
+00:00020234 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:00020236 3481            	     1R         move.w  d1,(a2)
+00:00020238 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:0002023A 3481            	     1R         move.w  d1,(a2)
+00:0002023C 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:0002023E 3481            	     1R         move.w  d1,(a2)
+00:00020240 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:00020242 3481            	     1R         move.w  d1,(a2)
+00:00020244 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:00020246 3481            	     1R         move.w  d1,(a2)
+00:00020248 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:0002024A 3481            	     1R         move.w  d1,(a2)
+00:0002024C 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:0002024E 3481            	     1R         move.w  d1,(a2)
+00:00020250 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:00020252 3481            	     1R         move.w  d1,(a2)
+00:00020254 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:00020256 3481            	     1R         move.w  d1,(a2)
+00:00020258 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:0002025A 3481            	     1R         move.w  d1,(a2)
+00:0002025C 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:0002025E 3481            	     1R         move.w  d1,(a2)
+00:00020260 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:00020262 3481            	     1R         move.w  d1,(a2)
+00:00020264 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:00020266 3481            	     1R         move.w  d1,(a2)
+00:00020268 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:0002026A 3481            	     1R         move.w  d1,(a2)
+00:0002026C 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:0002026E 3481            	     1R         move.w  d1,(a2)
+00:00020270 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:00020272 3481            	     1R         move.w  d1,(a2)
+00:00020274 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:00020276 3481            	     1R         move.w  d1,(a2)
+00:00020278 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:0002027A 3481            	     1R         move.w  d1,(a2)
+00:0002027C 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:0002027E 3481            	     1R         move.w  d1,(a2)
+00:00020280 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:00020282 3481            	     1R         move.w  d1,(a2)
+00:00020284 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:00020286 3481            	     1R         move.w  d1,(a2)
+00:00020288 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:0002028A 3481            	     1R         move.w  d1,(a2)
+00:0002028C 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:0002028E 3481            	     1R         move.w  d1,(a2)
+00:00020290 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+00:00020292 3481            	     1R         move.w  d1,(a2)
+00:00020294 1C86            	     2R         move.b  d6,(a6)
+                            	     3R         
+                            	   153: chain_end:
+00:00020296 4E75            	   154:         rts
+                            	   155: 
+00:00020298 00000000        	   156: casep:  dc.l    0
+00:0002029C 0000            	   157: vcols:  dc.w    0
+00:0002029E 0000            	   158: vrows:  dc.w    0
+00:000202A0 0000            	   159: vx:     dc.w    0
+00:000202A2 0000            	   160: vnp:    dc.w    0
+                            	   161: 
+
+
+Symbols by name:
+BL                               E:FFFF8A00
+CASES                            E:00030000
+DAT                              E:00040000
+SCR                              E:00050000
+casep                            A:00020298
+chain                            A:00020196
+chain_end                        A:00020296
+draw                             A:00020068
+m_case                           A:00020040
+m_end                            A:00020054
+nextcase                         A:00020014
+pass                             A:0002018A
+start                            A:00020000
+vcols                            A:0002029C
+vnp                              A:000202A2
+vrows                            A:0002029E
+vx                               A:000202A0
+
+Symbols by value:
+00020000 start
+00020014 nextcase
+00020040 m_case
+00020054 m_end
+00020068 draw
+0002018A pass
+00020196 chain
+00020296 chain_end
+00020298 casep
+0002029C vcols
+0002029E vrows
+000202A0 vx
+000202A2 vnp
+00030000 CASES
+00040000 DAT
+00050000 SCR
+FFFF8A00 BL

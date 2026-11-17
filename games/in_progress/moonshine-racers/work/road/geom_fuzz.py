@@ -32,10 +32,10 @@ for it in range(N):
     ram = bytes(ram)
     e1 = Emu(ram); e1.call(0x17c24); e1.call(0x100b4); m1 = masked(e1.rd(0, 0xB2700))
     e2 = Emu(ram); apply_live(e2, prefix)
-    if tabs is not None: e2.wr(0xD0000, tabs)
-    if NEG and tabs is not None: e2.wr(0xD1000, bytes([1]) * 0xA000)
+    if tabs is not None: e2.wr(0xC0000, tabs)
+    if NEG and tabs is not None: e2.wr(0xC1000, bytes([1]) * 0xA000)
     e2.call(0x17c24); e2.call(0x100b4); m2 = masked(e2.rd(0, 0xB2700))
-    if tabs is None or int.from_bytes(e2.rd(0xD0004, 2), 'big') != int.from_bytes(tabs[4:6], 'big'): tabs = e2.rd(0xD0000, 0xB000)
+    if tabs is None or int.from_bytes(e2.rd(0xC0004, 2), 'big') != int.from_bytes(tabs[4:6], 'big'): tabs = e2.rd(0xC0000, 0xB000)
     m0 = int.from_bytes(ram[0x1316:0x1318], 'big'); stats['guard' if m0 > 178 else 'fast'] += 1
     nrec = (0x4f78 - int.from_bytes(m1[0x4b84:0x4b88], 'big')) // 8; stats['rec<60' if nrec < 60 else 'rec60+'] += 1
     stats['cut' if int.from_bytes(m1[0x4aa4:0x4aa6],'big') == 0 else 'x'] += 0

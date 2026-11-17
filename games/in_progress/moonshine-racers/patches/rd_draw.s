@@ -2,14 +2,14 @@
 ; default: yes
 ; site: $17c42
 ; orig: 22784b8445f84ff8
-; ram: $DB000-$E7FFF  rd_draw window tables (2 x 24 KB), colour table copy, table pointer WPTR; zero at game start, built lazily behind WPTR
+; ram: $CB000-$D7FFF  rd_draw window tables (2 x 24 KB), colour table copy, table pointer WPTR; zero at game start, built lazily behind WPTR
 ; doc: Faster road span draw $17c42 (pixel-identical): per-row control logic rewritten, the two edge windows of a row come from generated per-(width, shift, stripe colour) tables instead of the edge routine.
 ; note: Moonshine Racers road study (work/notes/road.md).  Site $17c42 (`movea.l $4b84.w,a1 / lea.l $4ff8.w,a2`) -> `jmp $B5004.l` ($B5000 = the pre-warm entry used by rd_init).
 ; note: A row is [grass][edge window A: 2 groups][road][edge window B: 2 groups][grass].  The windows depend only on (w0 class, A&15 or B&15, stripe colour bits 15-13 of the flags) and on the level colour table ($135a):
-; note: they are generated once per colour table by calling the stock edge routine $1058a (3072 calls, about 1.7 M cycles, on the first draw after a colour-table change) into 2 x 24 KB at $DB000.
+; note: they are generated once per colour table by calling the stock edge routine $1058a (3072 calls, about 1.7 M cycles, on the first draw after a colour-table change) into 2 x 24 KB at $CB000.
 ; note: Rows the fast path does not cover (edges closer than 32 px, w0 > $b00) hand the rest of the frame to the stock loop at $17c66; the whole frame runs stock when $13a0 != 0 (far-colour reload).
-; note: Run-time tables are declared with `; ram:` (not `; data:`: payload image limit): $DB000-$E7FFF of the free RAM run $B2700-$E83FF.
-WT      equ     $DB000          ; window tables: A at WT, B at WT+$6000 (each k*2048 + combo*256 + shift*16, 16 bytes), colour table copy at WT+$C000 (48 bytes), WPTR at WT+$C040
+; note: Run-time tables are declared with `; ram:` (not `; data:`: payload image limit): $CB000-$D7FFF of the free RAM run $B2700-$E2BFF (top = $E2BFF: TOS 2.06 1 MB Mega STE GEM data from $E2C50, integration.md section 10.3).
+WT      equ     $CB000          ; window tables: A at WT, B at WT+$6000 (each k*2048 + combo*256 + shift*16, 16 bytes), colour table copy at WT+$C000 (48 bytes), WPTR at WT+$C040
 CT      equ     WT+$C000
 WPTR    equ     WT+$C040        ; the $135a value the tables were built for (0 = none)
         org     $17c42

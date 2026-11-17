@@ -869,3 +869,5 @@ Hatari: the pixel/state gates above run with `hd_nomap hd_nomap2` in the default
 | 5-minute play STE 1 MB 16 MHz with extras | PASS: 17,200 VBL, 4,857 extra frames, time-out + 1 restart, alive (`play5_ste1m_16_*.png`) |
 | shadow vs RAM `False` on the cold boots (older buffer) | PROVEN lag, section 5b: drawn-buffer shadow == variables, other-buffer shadow == previous pass's variables, every difference is a field changed since the previous pass; 13 static passes (standing scene only) 0 failures; [emu], no raster/VBL |
 All gates 1-6 pass; the defaults stay `yes`.
+
+**Relabel (MSRMegaSTE):** every "Mega STE 2.06" result in this note (cold boots, strip/rate windows, floppy gate) was run at **4 MB only**; none exercised a 1 MB Mega STE or the TOS 2.06 1 MB layout (live GEM data from `$E2C50`). 1 MB results: `integration.md` section 10.

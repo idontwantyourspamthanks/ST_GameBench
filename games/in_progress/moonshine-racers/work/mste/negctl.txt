@@ -1,0 +1,29 @@
+### ram $e2000-$e3fff
+zz_ramtest         site $078ba len 6
+    zz_ramtest ram ceiling test: straddles $E2BFF $e2000-$e3fff is not free in the 1MB layout
+    zz_ramtest ram ceiling test: straddles $E2BFF $e2000-$e3fff is not free in the 4MB layout
+    zz_ramtest ram ceiling test: straddles $E2BFF $e2000-$e3fff is not zero in the stock game's RAM dump ram_hook_1024_mste206.bin
+    zz_ramtest ram ceiling test: straddles $E2BFF $e2000-$e3fff is not zero in the stock game's RAM dump ram_entry_1024_mste206.bin
+    zz_ramtest ram ceiling test: straddles $E2BFF $e2000-$e3fff is not zero in the stock game's RAM dump ram_race0_1024_mste206.bin
+verify: 5 FAILED
+### ram $e8000-$e8fff
+zz_ramtest         site $078ba len 6
+    zz_ramtest ram ceiling test: straddles $E2BFF $e8000-$e8fff is not free in the 1MB layout
+    zz_ramtest ram ceiling test: straddles $E2BFF $e8000-$e8fff is not free in the 4MB layout
+    zz_ramtest ram ceiling test: straddles $E2BFF $e8000-$e8fff is not zero in the stock game's RAM dump ram_hook_1024.bin
+    zz_ramtest ram ceiling test: straddles $E2BFF $e8000-$e8fff is not zero in the stock game's RAM dump ram_entry_1024.bin
+    zz_ramtest ram ceiling test: straddles $E2BFF $e8000-$e8fff is not zero in the stock game's RAM dump ram_race0.bin
+    zz_ramtest ram ceiling test: straddles $E2BFF $e8000-$e8fff is not zero in the stock game's RAM dump ram_race_start.bin
+    zz_ramtest ram ceiling test: straddles $E2BFF $e8000-$e8fff is not zero in the stock game's RAM dump ram_race_grid.bin
+    zz_ramtest ram ceiling test: straddles $E2BFF $e8000-$e8fff is not zero in the stock game's RAM dump ram_race_up.bin
+    zz_ramtest ram ceiling test: straddles $E2BFF $e8000-$e8fff is not zero in the stock game's RAM dump ram_hook_1024_mste206.bin
+    zz_ramtest ram ceiling test: straddles $E2BFF $e8000-$e8fff is not zero in the stock game's RAM dump ram_entry_1024_mste206.bin
+    zz_ramtest ram ceiling test: straddles $E2BFF $e8000-$e8fff is not zero in the stock game's RAM dump ram_race0_1024_mste206.bin
+verify: 11 FAILED
+### ram $db000-$e7fff (the OLD rd_draw reservation)
+    zz_ramtest ram ceiling test: straddles $E2BFF $db000-$e7fff is not free in the 1MB layout
+    zz_ramtest ram ceiling test: straddles $E2BFF $db000-$e7fff is not free in the 4MB layout
+    zz_ramtest ram ceiling test: straddles $E2BFF $db000-$e7fff is not zero in the stock game's RAM dump ram_hook_1024_mste206.bin
+    zz_ramtest ram ceiling test: straddles $E2BFF $db000-$e7fff is not zero in the stock game's RAM dump ram_entry_1024_mste206.bin
+    zz_ramtest ram ceiling test: straddles $E2BFF $db000-$e7fff is not zero in the stock game's RAM dump ram_race0_1024_mste206.bin
+verify: 5 FAILED

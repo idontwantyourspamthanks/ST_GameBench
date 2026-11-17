@@ -1,0 +1,142 @@
+=== HD cold megaste 1024 2.06 0,16
+megaste 1024 KB TOS 2.06 build build/mste_hd: boot_to_race True vbl 6046
+marker $b2700: b'MSPO' stage site $ef7a: 4ef9000bb004 $edea: 4eb9000bb700 palette A col 14 $3cf0: 0000
+race loop: $1021 2 $100e 63
+STRIP CHECK cold_hd_megaste_1024_a pass>=110: $100e=110 $11ab=0 $70000: strip pixels != shadow render 0, non-sky pixels rows 16-64 0 (message/face excluded? no: raw), shadow==model(RAM) True | $78000: strip pixels != shadow render 0, non-sky pixels rows 16-64 0 (message/face excluded? no: raw), shadow==model(RAM) True
+STRIP CHECK cold_hd_megaste_1024_b pass>=421: $100e=421 $11ab=1 $70000: strip pixels != shadow render 0, non-sky pixels rows 16-64 1675 (message/face excluded? no: raw), shadow==model(RAM) True | $78000: strip pixels != shadow render 0, non-sky pixels rows 16-64 1626 (message/face excluded? no: raw), shadow==model(RAM) True
+palette A col 14 $3cf0: 0777
+ROAD TABLES: RDG1 magic $c0000 = b'RDG1' PM $c0004 = 000a WPTR $d7040 = 000102ba vs $135a = 000102ba -> OK; old addresses $d0000 = ffe0ffff $e7040 = 43dc0001 (must be 0)
+RESULT megaste 1024 TOS 2.06 clock native: window 631 VBL, passes 105 (8.320/s @50Hz), extra frames 110, displayed fps 17.036, pos 3432->4179
+RESULT megaste 1024 TOS 2.06 clock 16: window 630 VBL, passes 105 (8.333/s @50Hz), extra frames 119, displayed fps 17.778, pos 4628->5355
+PLAY 18s: $100e=934 pos=6563 $1021=2 VBL 12184
+PLAY 35s: $100e=1110 pos=7786 $1021=2 VBL 13241
+PLAY 53s: $100e=1287 pos=9013 $1021=2 VBL 14298
+PLAY 70s: $100e=1463 pos=10241 $1021=2 VBL 15355
+PLAY 88s: $100e=1639 pos=11473 $1021=2 VBL 16411
+PLAY 106s: $100e=77 pos=0 $1021=2 VBL 17468
+PLAY 123s: $100e=253 pos=0 $1021=2 VBL 18525
+PLAY DONE: 124 s at 16 MHz, $1021=2, magic b'RDG1', Bus/Address Error lines in the log: 0, hatari alive: True
+=== HD cold ste 1024 1.62 0,16
+ste 1024 KB TOS 1.62 build build/mste_hd: boot_to_race True vbl 5809
+marker $b2700: b'MSPO' stage site $ef7a: 4ef9000bb004 $edea: 4eb9000bb700 palette A col 14 $3cf0: 0000
+race loop: $1021 2 $100e 39
+STRIP CHECK cold_hd_ste_1024_a pass>=86: $100e=86 $11ab=2 $70000: strip pixels != shadow render 0, non-sky pixels rows 16-64 2743 (message/face excluded? no: raw), shadow==model(RAM) True | $78000: strip pixels != shadow render 0, non-sky pixels rows 16-64 2743 (message/face excluded? no: raw), shadow==model(RAM) True
+STRIP CHECK cold_hd_ste_1024_b pass>=397: $100e=397 $11ab=1 $70000: strip pixels != shadow render 0, non-sky pixels rows 16-64 1750 (message/face excluded? no: raw), shadow==model(RAM) False | $78000: strip pixels != shadow render 0, non-sky pixels rows 16-64 1793 (message/face excluded? no: raw), shadow==model(RAM) True
+palette A col 14 $3cf0: 0777
+ROAD TABLES: RDG1 magic $c0000 = b'RDG1' PM $c0004 = 000a WPTR $d7040 = 000102ba vs $135a = 000102ba -> OK; old addresses $d0000 = ffe0ffff $e7040 = 00000000 (must be 0)
+RESULT ste 1024 TOS 1.62 clock native: window 526 VBL, passes 106 (10.076/s @50Hz), extra frames 0, displayed fps 10.076, pos 3425->4179
+RESULT ste 1024 TOS 1.62 clock 16: window 526 VBL, passes 105 (9.981/s @50Hz), extra frames 184, displayed fps 27.471, pos 4628->5355
+PLAY 18s: $100e=910 pos=6563 $1021=2 VBL 10925
+PLAY 35s: $100e=1086 pos=7786 $1021=2 VBL 11806
+PLAY 53s: $100e=1262 pos=9006 $1021=2 VBL 12687
+PLAY 70s: $100e=1439 pos=10241 $1021=2 VBL 13568
+PLAY 88s: $100e=1615 pos=11473 $1021=2 VBL 14449
+PLAY 106s: $100e=54 pos=0 $1021=2 VBL 15330
+PLAY 123s: $100e=230 pos=0 $1021=2 VBL 16211
+PLAY DONE: 124 s at 16 MHz, $1021=2, magic b'RDG1', Bus/Address Error lines in the log: 1, hatari alive: True
+=== HD cold megaste 4096 2.06 0,16
+megaste 4096 KB TOS 2.06 build build/mste_hd: boot_to_race True vbl 6047
+marker $b2700: b'MSPO' stage site $ef7a: 4ef9000bb004 $edea: 4eb9000bb700 palette A col 14 $3cf0: 0000
+race loop: $1021 2 $100e 64
+STRIP CHECK cold_hd_megaste_4096_a pass>=111: $100e=111 $11ab=0 $70000: strip pixels != shadow render 0, non-sky pixels rows 16-64 0 (message/face excluded? no: raw), shadow==model(RAM) True | $78000: strip pixels != shadow render 0, non-sky pixels rows 16-64 0 (message/face excluded? no: raw), shadow==model(RAM) True
+STRIP CHECK cold_hd_megaste_4096_b pass>=422: $100e=422 $11ab=1 $70000: strip pixels != shadow render 0, non-sky pixels rows 16-64 1675 (message/face excluded? no: raw), shadow==model(RAM) False | $78000: strip pixels != shadow render 0, non-sky pixels rows 16-64 1675 (message/face excluded? no: raw), shadow==model(RAM) True
+palette A col 14 $3cf0: 0777
+ROAD TABLES: RDG1 magic $c0000 = b'RDG1' PM $c0004 = 000a WPTR $d7040 = 000102ba vs $135a = 000102ba -> OK; old addresses $d0000 = ffe0ffff $e7040 = 00000000 (must be 0)
+RESULT megaste 4096 TOS 2.06 clock native: window 630 VBL, passes 105 (8.333/s @50Hz), extra frames 110, displayed fps 17.063, pos 3432->4179
+RESULT megaste 4096 TOS 2.06 clock 16: window 631 VBL, passes 105 (8.320/s @50Hz), extra frames 119, displayed fps 17.750, pos 4628->5355
+PLAY 18s: $100e=935 pos=6570 $1021=2 VBL 12184
+PLAY 35s: $100e=1111 pos=7793 $1021=2 VBL 13241
+PLAY 53s: $100e=1287 pos=9013 $1021=2 VBL 14297
+PLAY 70s: $100e=1463 pos=10241 $1021=2 VBL 15354
+PLAY 88s: $100e=1639 pos=11473 $1021=2 VBL 16411
+PLAY 106s: $100e=77 pos=0 $1021=2 VBL 17468
+PLAY 123s: $100e=254 pos=0 $1021=2 VBL 18525
+PLAY DONE: 124 s at 16 MHz, $1021=2, magic b'RDG1', Bus/Address Error lines in the log: 0, hatari alive: True
+=== HD cold ste 4096 1.62 0,16
+ste 4096 KB TOS 1.62 build build/mste_hd: boot_to_race True vbl 5809
+marker $b2700: b'MSPO' stage site $ef7a: 4ef9000bb004 $edea: 4eb9000bb700 palette A col 14 $3cf0: 0000
+race loop: $1021 2 $100e 39
+STRIP CHECK cold_hd_ste_4096_a pass>=86: $100e=86 $11ab=2 $70000: strip pixels != shadow render 0, non-sky pixels rows 16-64 2743 (message/face excluded? no: raw), shadow==model(RAM) True | $78000: strip pixels != shadow render 0, non-sky pixels rows 16-64 2743 (message/face excluded? no: raw), shadow==model(RAM) True
+STRIP CHECK cold_hd_ste_4096_b pass>=397: $100e=397 $11ab=1 $70000: strip pixels != shadow render 0, non-sky pixels rows 16-64 1750 (message/face excluded? no: raw), shadow==model(RAM) False | $78000: strip pixels != shadow render 0, non-sky pixels rows 16-64 1793 (message/face excluded? no: raw), shadow==model(RAM) True
+palette A col 14 $3cf0: 0777
+ROAD TABLES: RDG1 magic $c0000 = b'RDG1' PM $c0004 = 000a WPTR $d7040 = 000102ba vs $135a = 000102ba -> OK; old addresses $d0000 = ffe0ffff $e7040 = 00000000 (must be 0)
+RESULT ste 4096 TOS 1.62 clock native: window 526 VBL, passes 105 (9.981/s @50Hz), extra frames 0, displayed fps 9.981, pos 3432->4179
+RESULT ste 4096 TOS 1.62 clock 16: window 526 VBL, passes 105 (9.981/s @50Hz), extra frames 185, displayed fps 27.567, pos 4628->5355
+PLAY 18s: $100e=911 pos=6570 $1021=2 VBL 10926
+PLAY 35s: $100e=1087 pos=7793 $1021=2 VBL 11807
+PLAY 53s: $100e=1263 pos=9013 $1021=2 VBL 12688
+PLAY 70s: $100e=1439 pos=10241 $1021=2 VBL 13569
+PLAY 88s: $100e=1615 pos=11473 $1021=2 VBL 14450
+PLAY 106s: $100e=55 pos=0 $1021=2 VBL 15331
+PLAY 123s: $100e=231 pos=0 $1021=2 VBL 16212
+PLAY DONE: 124 s at 16 MHz, $1021=2, magic b'RDG1', Bus/Address Error lines in the log: 1, hatari alive: True
+=== HD cold megaste 2048 2.06 0,16
+megaste 2048 KB TOS 2.06 build build/mste_hd: boot_to_race True vbl 6047
+marker $b2700: b'MSPO' stage site $ef7a: 4ef9000bb004 $edea: 4eb9000bb700 palette A col 14 $3cf0: 0000
+race loop: $1021 2 $100e 64
+STRIP CHECK cold_hd_megaste_2048_a pass>=111: $100e=111 $11ab=0 $70000: strip pixels != shadow render 0, non-sky pixels rows 16-64 0 (message/face excluded? no: raw), shadow==model(RAM) True | $78000: strip pixels != shadow render 0, non-sky pixels rows 16-64 0 (message/face excluded? no: raw), shadow==model(RAM) True
+STRIP CHECK cold_hd_megaste_2048_b pass>=422: $100e=422 $11ab=1 $70000: strip pixels != shadow render 0, non-sky pixels rows 16-64 1817 (message/face excluded? no: raw), shadow==model(RAM) True | $78000: strip pixels != shadow render 0, non-sky pixels rows 16-64 1841 (message/face excluded? no: raw), shadow==model(RAM) True
+palette A col 14 $3cf0: 0777
+ROAD TABLES: RDG1 magic $c0000 = b'RDG1' PM $c0004 = 000a WPTR $d7040 = 000102ba vs $135a = 000102ba -> OK; old addresses $d0000 = ffe0ffff $e7040 = 00000000 (must be 0)
+RESULT megaste 2048 TOS 2.06 clock native: window 629 VBL, passes 105 (8.347/s @50Hz), extra frames 111, displayed fps 17.170, pos 3432->4179
+RESULT megaste 2048 TOS 2.06 clock 16: window 630 VBL, passes 105 (8.333/s @50Hz), extra frames 123, displayed fps 18.095, pos 4628->5355
+PLAY 18s: $100e=935 pos=6563 $1021=2 VBL 12185
+PLAY 35s: $100e=1111 pos=7786 $1021=2 VBL 13242
+PLAY 53s: $100e=1287 pos=9006 $1021=2 VBL 14299
+PLAY 70s: $100e=1463 pos=10234 $1021=2 VBL 15355
+PLAY 88s: $100e=1639 pos=11466 $1021=2 VBL 16412
+PLAY 106s: $100e=78 pos=0 $1021=2 VBL 17469
+PLAY 123s: $100e=254 pos=0 $1021=2 VBL 18526
+PLAY DONE: 124 s at 16 MHz, $1021=2, magic b'RDG1', Bus/Address Error lines in the log: 0, hatari alive: True
+=== HD cold st 1024 1.04 0,16
+st 1024 KB TOS 1.04 build build/mste_hd: boot_to_race True vbl 5809
+marker $b2700: b'MSPO' stage site $ef7a: 4ef9000bb004 $edea: 4eb9000bb700 palette A col 14 $3cf0: 0000
+race loop: $1021 2 $100e 39
+STRIP CHECK cold_hd_st_1024_a pass>=86: $100e=86 $11ab=2 $70000: strip pixels != shadow render 0, non-sky pixels rows 16-64 2743 (message/face excluded? no: raw), shadow==model(RAM) True | $78000: strip pixels != shadow render 0, non-sky pixels rows 16-64 2743 (message/face excluded? no: raw), shadow==model(RAM) True
+STRIP CHECK cold_hd_st_1024_b pass>=397: $100e=397 $11ab=1 $70000: strip pixels != shadow render 0, non-sky pixels rows 16-64 1750 (message/face excluded? no: raw), shadow==model(RAM) False | $78000: strip pixels != shadow render 0, non-sky pixels rows 16-64 1793 (message/face excluded? no: raw), shadow==model(RAM) True
+palette A col 14 $3cf0: 0777
+ROAD TABLES: RDG1 magic $c0000 = b'RDG1' PM $c0004 = 000a WPTR $d7040 = 000102ba vs $135a = 000102ba -> OK; old addresses $d0000 = ffe0ffff $e7040 = 00000000 (must be 0)
+RESULT st 1024 TOS 1.04 clock native: window 525 VBL, passes 105 (10.000/s @50Hz), extra frames 0, displayed fps 10.000, pos 3432->4179
+RESULT st 1024 TOS 1.04 clock 16: window 525 VBL, passes 105 (10.000/s @50Hz), extra frames 184, displayed fps 27.524, pos 4628->5355
+PLAY 18s: $100e=910 pos=6563 $1021=2 VBL 10927
+PLAY 35s: $100e=1087 pos=7793 $1021=2 VBL 11808
+PLAY 53s: $100e=1263 pos=9013 $1021=2 VBL 12689
+PLAY 70s: $100e=1439 pos=10241 $1021=2 VBL 13570
+PLAY 88s: $100e=1615 pos=11473 $1021=2 VBL 14451
+PLAY 106s: $100e=55 pos=0 $1021=2 VBL 15332
+PLAY 123s: $100e=231 pos=0 $1021=2 VBL 16213
+PLAY DONE: 124 s at 16 MHz, $1021=2, magic b'RDG1', Bus/Address Error lines in the log: 2, hatari alive: True
+=== HD cold tt 4096 3.06 0
+tt 4096 KB TOS 3.06 build build/mste_hd: boot_to_race True vbl 5880
+marker $b2700: b'MSPO' stage site $ef7a: 4ef9000bb004 $edea: 4eb9000bb700 palette A col 14 $3cf0: 0000
+race loop: $1021 2 $100e 82
+STRIP CHECK cold_hd_tt_4096_a pass>=129: $100e=129 $11ab=0 $70000: strip pixels != shadow render 0, non-sky pixels rows 16-64 0 (message/face excluded? no: raw), shadow==model(RAM) True | $78000: strip pixels != shadow render 0, non-sky pixels rows 16-64 0 (message/face excluded? no: raw), shadow==model(RAM) True
+STRIP CHECK cold_hd_tt_4096_b pass>=439: $100e=439 $11ab=1 $70000: strip pixels != shadow render 0, non-sky pixels rows 16-64 1974 (message/face excluded? no: raw), shadow==model(RAM) True | $78000: strip pixels != shadow render 0, non-sky pixels rows 16-64 1974 (message/face excluded? no: raw), shadow==model(RAM) True
+palette A col 14 $3cf0: 0777
+ROAD TABLES: RDG1 magic $c0000 = b'RDG1' PM $c0004 = 000a WPTR $d7040 = 000102ba vs $135a = 000102ba -> OK; old addresses $d0000 = ffe0ffff $e7040 = 00000000 (must be 0)
+RESULT tt 4096 TOS 3.06 clock native: window 630 VBL, passes 105 (8.333/s @50Hz), extra frames 525, displayed fps 50.000, pos 3432->4179
+PLAY 18s: $100e=790 pos=5442 $1021=2 VBL 11041
+PLAY 35s: $100e=966 pos=6661 $1021=2 VBL 12096
+PLAY 53s: $100e=1142 pos=7884 $1021=2 VBL 13152
+PLAY 70s: $100e=1318 pos=9104 $1021=2 VBL 14208
+PLAY 88s: $100e=1494 pos=10332 $1021=2 VBL 15264
+PLAY 106s: $100e=1670 pos=11431 $1021=2 VBL 16321
+PLAY 123s: $100e=124 pos=648 $1021=2 VBL 17377
+PLAY DONE: 124 s at native MHz, $1021=2, magic b'RDG1', Bus/Address Error lines in the log: 0, hatari alive: True
+=== HD cold falcon 4096 4.04 0
+falcon 4096 KB TOS 4.04 build build/mste_hd: boot_to_race True vbl 5802
+marker $b2700: b'MSPO' stage site $ef7a: 4ef9000bb004 $edea: 4eb9000bb700 palette A col 14 $3cf0: 0000
+race loop: $1021 2 $100e 69
+STRIP CHECK cold_hd_falcon_4096_a pass>=115: $100e=115 $11ab=0 $70000: strip pixels != shadow render 0, non-sky pixels rows 16-64 0 (message/face excluded? no: raw), shadow==model(RAM) True | $78000: strip pixels != shadow render 0, non-sky pixels rows 16-64 0 (message/face excluded? no: raw), shadow==model(RAM) True
+STRIP CHECK cold_hd_falcon_4096_b pass>=426: $100e=426 $11ab=1 $70000: strip pixels != shadow render 0, non-sky pixels rows 16-64 1964 (message/face excluded? no: raw), shadow==model(RAM) True | $78000: strip pixels != shadow render 0, non-sky pixels rows 16-64 1964 (message/face excluded? no: raw), shadow==model(RAM) True
+palette A col 14 $3cf0: 0777
+ROAD TABLES: RDG1 magic $c0000 = b'RDG1' PM $c0004 = 000a WPTR $d7040 = 000102ba vs $135a = 000102ba -> OK; old addresses $d0000 = ffe0ffff $e7040 = 00000000 (must be 0)
+RESULT falcon 4096 TOS 4.04 clock native: window 525 VBL, passes 105 (10.000/s @50Hz), extra frames 174, displayed fps 26.571, pos 3425->4170
+PLAY 18s: $100e=776 pos=5435 $1021=2 VBL 10103
+PLAY 35s: $100e=953 pos=6661 $1021=2 VBL 10983
+PLAY 53s: $100e=1129 pos=7884 $1021=2 VBL 11862
+PLAY 70s: $100e=1305 pos=9104 $1021=2 VBL 12742
+PLAY 88s: $100e=1481 pos=10332 $1021=2 VBL 13623
+PLAY 106s: $100e=1657 pos=11522 $1021=2 VBL 14503
+PLAY 123s: $100e=98 pos=378 $1021=2 VBL 15383
+PLAY DONE: 124 s at native MHz, $1021=2, magic b'RDG1', Bus/Address Error lines in the log: 0, hatari alive: True

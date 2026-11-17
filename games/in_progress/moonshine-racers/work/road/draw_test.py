@@ -13,9 +13,9 @@ for sc in ['grid', 'start', 'up', 'drive']:
         ram = bytearray(ram); ram[0x1008:0x100c] = bb.to_bytes(4, 'big'); ram = bytes(ram)
         e1 = Emu(ram); c1 = e1.call(0x17c42); m1 = masked(e1.rd(0, 0xE8400))
         e2 = Emu(ram); apply_live(e2, prefix)
-        if tabs is not None: e2.wr(0xDB000, tabs)
-        c2 = e2.call(0x17c42); m2 = masked(e2.rd(0, 0xDB000)) + e2.rd(0xDB000, 0xE8400 - 0xDB000)
-        if tabs is None: tabs = e2.rd(0xDB000, 0xD000)
+        if tabs is not None: e2.wr(0xCB000, tabs)
+        c2 = e2.call(0x17c42); m2 = masked(e2.rd(0, 0xCB000)) + e2.rd(0xCB000, 0xE8400 - 0xCB000)
+        if tabs is None: tabs = e2.rd(0xCB000, 0xD000)
         tot += 1
         a = m1[:0xB2700]; b = m2[:0xB2700]
         if a != b:

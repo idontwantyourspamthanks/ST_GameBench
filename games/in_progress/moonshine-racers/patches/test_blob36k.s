@@ -2,7 +2,7 @@
 ; default: no
 ; site: $6f5e
 ; orig: 41f900070000
-; conflicts: test_marker mr_edge                  ; same site $6f5e; its ramp $B3100-$B311F lies inside mr_edge's blob $B3040-$B3289
+; conflicts: test_marker mr_edge rd_geom         ; same site $6f5e; its ramp $B3100-$B311F lies inside mr_edge's blob $B3040-$B3289; its last image byte $C16FF lies inside rd_geom's reserved RAM $C0000-$CAFFF
 ; data: $C16FF 1 free
 ; data: $B3100 32
 ; note: Payload-capacity test, same site as test_marker: the image is padded to the `IMG_MAX_LEN` limit ($B2700-$C16FF, 61,440 B) by a blob at $B3000

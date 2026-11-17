@@ -773,7 +773,7 @@ falcon 4096 TOS 4.04 ($ff820a = 02 = 50 Hz), native 16 MHz: 170 passes, 10.0/s, 
 falcon EmuTOS: boot_to_race False (the EmuTOS boot does not autostart PP's loader; not used, TOS 4.04 is present)
 each boot: marker $b2700 = "MSPO", sites $d128/$7b0a/$7b46/$7b74 patched, $1021 = 2, road magic RDG1, WPTR = $102ba
 ```
-So the **native 60 Hz** case is a real ROM/Hatari 60 Hz boot (no forcing): the Mega STE 2.06 and the TT 3.06 boots read `$ff820a` bit 1 = 0 and run exactly 6 clock units per VBL; the pass rate stays 10.0 per second and the TT/Falcon draw extras at their own clock. `mx_sync` reads `$ff820a` per group (`VBLU` = 6 at 50 Hz, 5 at 60 Hz) and the deadline rule uses the same clock, so both refresh rates work; the 60 Hz state/pixel gates in 8.2/8.3 were run with `$ff820a` forced to 60 Hz on the STE snapshot (the only 60 Hz-equivalent source-state I have that the pacer can be measured on; `[INFERENCE]` that forced-60 Hz equals a true 60 Hz machine for the pacer, since the pacer reads only `$ff820a` and the 1/300 s clock).
+So the **native 60 Hz** case is a real ROM/Hatari 60 Hz boot (no forcing): the Mega STE 2.06 (**4 MB only**, relabel MSRMegaSTE) and the TT 3.06 boots read `$ff820a` bit 1 = 0 and run exactly 6 clock units per VBL; the pass rate stays 10.0 per second and the TT/Falcon draw extras at their own clock. `mx_sync` reads `$ff820a` per group (`VBLU` = 6 at 50 Hz, 5 at 60 Hz) and the deadline rule uses the same clock, so both refresh rates work; the 60 Hz state/pixel gates in 8.2/8.3 were run with `$ff820a` forced to 60 Hz on the STE snapshot (the only 60 Hz-equivalent source-state I have that the pacer can be measured on; `[INFERENCE]` that forced-60 Hz equals a true 60 Hz machine for the pacer, since the pacer reads only `$ff820a` and the 1/300 s clock).
 Floppy gate (`tools/msrfloppy.py gate`, now with `--cpu`: after the race starts it raises the clock, holds 'up' and prints the blob counters; `build/floppy`, raw `res/rest.log`): STE 1 MB, STE 4 MB, Mega STE 4 MB, ST 1 MB all boot through the story screens, the disk-2 swap and into the race with marker/clock/road tables, extras 344/343/391/352 frames at 16 MHz.
 
 ### 8.6 Kernel-table check on a second track
@@ -799,7 +799,7 @@ At 16 MHz a main frame and one extra alternate every 2-3 VBL (positions 458, 468
 
 ### 8.10 Unproven / notes
 * Real hardware: none of this was run on a real 16/32 MHz machine (Mega STE cache behaviour included).
-* 60 Hz: state/pixel equality measured with `$ff820a` forced (8.2/8.3); the *native* 60 Hz evidence is the rate + extras counts of the Mega STE 2.06 and TT 3.06 cold boots (8.5).
+* 60 Hz: state/pixel equality measured with `$ff820a` forced (8.2/8.3); the *native* 60 Hz evidence is the rate + extras counts of the Mega STE 2.06 (4 MB only) and TT 3.06 cold boots (8.5).
 * Falcon: TOS 4.04 boots and runs (native 16 MHz, 10.0 passes/s, extras 184/226/644 frames at 16/16/32 MHz); EmuTOS does not autostart PP's loader.
 * The pre-restart message-colour difference of the poked-track runs (8.3) is an artifact of the poke timing, not shipped behaviour; the unpoked gates are identical.
 * `[INFERENCE]` that a forced-60 Hz STE equals a 60 Hz machine for the pacer.
@@ -807,3 +807,117 @@ At 16 MHz a main frame and one extra alternate every 2-3 VBL (positions 458, 468
 ## 9. New HUD and no clouds (MSRHudBuild): default set changed
 `hd_stage hd_init hd_clouds hd_nomap hd_nomap2` are now default (visible change, user-approved layout A); `mr_map mr_digit` are `default: no` (dead code with the new HUD); `mx_sync` requires `hd_stage` (its extra frames call the new TOPBAR, the private HUD call list, the `dd50` call and the HUD flag undo ranges are gone). Default payload 47,360 B (`$B2700-$BDFFF`).
 The earlier statements in this note about cloud-edge residue (<= 2 bytes on some tracks), `mx_sync`'s HUD call list and the pixel-identical default set apply to the previous default set only. Evidence, gates and numbers: `work/notes/hud_build.md`.
+
+## 10. Mega STE 1 MB (MSRMegaSTE): the 2 bombs, the TOS 2.06 1 MB layout, `rd_*` relocated
+Machine: Hatari 2.6.1, headless harness, `--fast-boot yes`, cycle-exact (the user's `~/.config/hatari/hatari.cfg`). Scripts: `work/mste/boot.py` (cold boot of a build to the race), `work/mste/tosonly.py` (TOS only, empty C:), `work/mste/racedump.py`; raw outputs `work/mste/*.txt`. `[INFERENCE]` marks what no output here proves.
+**Earlier "Mega STE 2.06" gates in these notes were all 4 MB (and the floppy one 4 MB): none exercised the 1 MB TOS 2.06 layout or a 1 MB Mega STE boot at all.**
+
+### 10.1 The 2 bombs: TOS 2.06 at power-on at 16 MHz with 1 MB, before any game code (`--cpuclock 16`)
+`tools/play.sh --machine megaste` boots at 8 MHz (default `--cpu 8`) and does NOT bomb (below); `--cpu 16` passes `--cpuclock 16` to Hatari, i.e. TOS 2.06 starts at 16 MHz, and TOS bombs in its own init.
+```
+# full default HD build (build/mste_hd), cold boot to the race, `python3 work/mste/boot.py megaste RAM 2.06 build/mste_hd CLOCK`
+megaste 1024 KB  8 MHz: in_race=True vbl=6046   $b2700 = 4d 53 50 4f (MSPO)      (also with --sound 44100 --joy1 keys, the exact play.sh options: vbl=6046, MSPO)
+megaste 2048 KB 16 MHz: in_race=True vbl=6047   MSPO
+megaste 4096 KB  8 MHz: in_race=True vbl=6047   MSPO
+megaste 1024 KB 16 MHz: in_race=False vbl=24261 $b2700 = 00 00 ... (payload never copied)
+    WARN : Bus Error reading at address $f00000, PC=$e21696 addr_e3=e21696 op_e3=3019      (125 times in the log)
+# bisect at 1 MB / 16 MHz, same command (raw work/mste/b16_*.txt)
+originals/MOONSHR (no patch at all) : in_race=False vbl=9129  $b2700 = 0   Bus Error reading at address $f00000, PC=$e21696 (48 lines)
+build/mste_zero (zero patches)      : in_race=False vbl=9129  $b2700 = 0   Bus Error reading at address $f00000, PC=$e21696 (48 lines)
+STE TOS 1.62 1 MB 16 MHz, default HD: in_race=True vbl=5809  MSPO
+# TOS only: empty C:, no autorun (work/mste/tosonly.py MACHINE MEM TOS CLOCK SECS)
+megaste 1024 TOS 2.06 clk  8: bus errors 0, $68d0 = 00 01
+megaste 1024 TOS 2.06 clk 16: bus errors 1, $68d0 = 3f ee
+megaste 2048 TOS 2.06 clk 16: bus errors 0, $68d0 = 00 01
+megaste 4096 TOS 2.06 clk 16: bus errors 0, $68d0 = 00 01
+megaste 1024 TOS 2.06 clk 16 --fast-boot no: bus errors 0 ; --cpu-exact false: bus errors 0
+megaste 1024 TOS 2.06 clk  8 --video-timing ws1 / ws3 / ws4: bus errors 0, $68d0 = 00 01 (all three)
+```
+Screenshot `work/mste/tos_only_1m_16mhz.png` of the TOS-only 16 MHz boot: the Atari logo and **two bombs** (bomb count = exception number 2 = bus error), no game involved.
+Mechanism (watch on `$68d0` with `--parse`, `work/mste/parse1.txt`, `regs.txt`): TOS 2.06 sets its video-mode variable `$68d0 = 1` at `$e15d4a` (A7 = `$6954`); at 16 MHz the next FDC-access call chain (`$e00d06 -> $e03d12 -> $e03fec`, read of `$ff8604`) runs with its stack 0x38 bytes lower (`ISP $68d2`, at 8 MHz `$690a`), and its return address `$00e03fee` is pushed over `$68d0-$68d1` (`$68d0 = 3fee`). Later `$e21672` scans a table until `cmp.w $68d0,d0` matches; `$68d0 = $3fee` never matches, the loop runs a0/a1 off the end of the ROM table to `$f00000` and bus errors (the instruction at `$e21694`, `move.w (a1)+,d0`). TOS 2.06's early-init stack shares its last 0x84 bytes with that variable, and the 16 MHz power-on phase (MFP interrupt storm during init, 1675 level-6 exceptions with `--trace cpu_exception`) nests deeper. `[INFERENCE]` for why the phase differs at 1 MB only (RAM size changes the memory-test time); the passes with `--cpu-exact false`, `--fast-boot no`, 2 MB, 4 MB, 8 MHz show it is a timing race. A real Mega STE powers up at 8 MHz and software raises it via `$ff8e21`; Hatari's `--cpuclock 16` at power-on is not that. **It is a Hatari/TOS issue independent of the game (the stock game bombs identically).**
+Fix: `tools/play.sh` (and any launcher) boots at 8 MHz and raises the clock after TOS init (section 10.2).
+
+### 10.2 `play.sh --cpu N`: boot at 8 MHz, then N MHz (Hatari `--parse`)
+Mechanism tested (raw `work/mste/r_switch16.txt`): `hatari ... --cpuclock 8 --parse parse.txt`, `parse.txt` = `b VBL > 200 :trace :once :file clk.txt`, `clk.txt` = `setopt --cpuclock 16` (TOS init finishes at VBL 120 on this machine). Cold boot of build/mste_hd, Mega STE 1 MB: race reached (vbl 6048, MSPO); log line 18 `> setopt --cpuclock 16`; the extras counter of `mx_sync` (`$b8f38`, only counts above 8 MHz) `00 00 00 c8 -> 00 00 01 20` = 88 extra frames in 696 VBL in the race (`$1021 = 2`, `$100e = 407`).
+```
+RACE $1021 2 $100e 407 pos 3247 extras counter 000B8F38: 00 00 00 c8 -> 000B8F38: 00 00 01 20 over 696 VBL
+```
+
+### 10.3 TOS 2.06 1 MB layout: free RAM ends at `$E2BFF`, not `$E83FF`
+Stock game (`originals/MOONSHR`), Mega STE TOS 2.06 1 MB 8 MHz, RAM dumps `work/dumps/ram_hook_1024_mste206.bin` (`pc = $b204e`), `ram_entry_1024_mste206.bin` (`pc = $6f64`), `ram_race0_1024_mste206.bin` (race, `msr.boot_to_race`), taken with `tools/msrhook.py --machine megaste --mem 1024 --tos 2.06` / `work/mste/racedump.py`. Registers at the hook instant equal the STE's (`A5=78000 A6=507AC A7=7FFF0 USP=B1F40`), so the hook, RUNME copy and `$B2700` are the same; the difference is at the top of RAM:
+```
+zero runs >= 8 KB at the hook instant:
+STE 1.62  : $054000-$056000  $05fe00-$062000  $0b2700-$0e8400  $0fb700-$100000
+Mega STE 2.06: $054000-$056000  $05fe00-$062000  $0b2700-$0e2c00  $0fb700-$100000
+non-zero runs from $E2C50 (MSTE) / $E84D0 (STE): 'ATC_FPU', '8x8 system font', '8x16 system font', 'SCRENMGR', 'C:\RUNME.TOS', '#Z 00 C:\RUNME.TOS@' (desktop INF) ...
+```
+= live GEM/AES/desktop memory (fonts, resources, DESKTOP.INF) that TOS 2.06 allocates at `$E2C50-$F7FFF`; TOS 1.62 starts it at `$E84D0`. It is not inert: hook dump vs race dump differ in 7 bytes of it (`$e38f2-$e38f4`, `$e38ff-$e3901`: 1 1 7 -> 5 3 3, `$e6a3f`: 50 -> 186), so TOS writes there while the game runs. The old tool model (`FREE_END = $E8400`, `; ram:` checked only against the six STE 1.62 dumps) therefore let `rd_draw` (`$DB000-$E7FFF`) overlap the AES data on a 1 MB Mega STE (`$E2C50-$E7FFF`, about 21 KB). The old default build booted anyway at 8 MHz (above; the tables are written by `rd_init` and the AES data is not read by the game) but it was a real overlap, not a safe one. `[INFERENCE]`: whether a TOS-side write into the tables or a table write into AES data can crash a 1 MB Mega STE later (return to the desktop) was not exercised.
+
+### 10.4 `rd_*` relocated, the tool model fixed, the final 1 MB map
+**Size accounting (the lead asked where "14 KB" went): nothing went anywhere.** Before: `rd_geom` `$D0000-$DAFFF` = 45,056 B + `rd_draw` `$DB000-$E7FFF` = 53,248 B = 98,304 B = 96 KiB. After: `$C0000-$CAFFF` = 45,056 B + `$CB000-$D7FFF` = 53,248 B = 98,304 B. Both blocks moved down by exactly `$10000` (low 16 bits of every table address unchanged); only the `equ`s and the `; ram:` lines of `patches/rd_geom.s` / `rd_draw.s` changed (16 + 5 lines of constants/comments), no table content, size, layout or generation code. The unused tail of `rd_draw`'s block (`$E7044-$E7FFF` before, about 4 KB) and of `rd_geom`'s header (`$C0C60-$C0FFF`) were not reclaimed (they stay inside the declared ranges); the 96 KiB do not fit above `$BE000` together with A/B/C unless B's car cache is capped (below). In section 10.3 the statements "the AES data is not read by the game" and "the old build booted anyway" are `[INFERENCE]`/observation only: the boot passed, nothing proves the game never reads that region.
+Tool (`tools/msrpatch.py`): `FREE_END = $E2C00` (was `$E8400`; the lower of the STE 1.62 and Mega STE 2.06 1 MB runs); `DUMPS_MSTE` = the three Mega STE 2.06 1 MB dumps added to `RAM_WITNESS` (every `; ram:` must be zero in them, in the six STE ones, and inside the free run of every layout); `check_free_run()` (called by `verify`): the whole free run `$B2800-$E2BFF` must be zero in every witness dump, so FREE_END cannot drift into TOS data; blob/`; data:` orgs above `$E2BFF` are refused through `BLOB_AREAS`. `test_blob36k` now declares `; conflicts: rd_geom` (its last image byte `$C16FF` lies in rd_geom's range). Negative controls (temporary patch dir, real `patches/` untouched; `work/mste/negctl.py`, raw `work/mste/negctl.txt`): `; ram:` `$E2000-$E3FFF` (straddles the ceiling), `$E8000-$E8FFF`, and the OLD rd_draw range `$DB000-$E7FFF` are each refused (`not free in the 1MB layout`, `not free in the 4MB layout`, `not zero in the stock game's RAM dump ram_hook_1024_mste206.bin` ...; `verify: 5 FAILED` / `11 FAILED`); `$E2000-$E2BFF` is accepted.
+Final map (1 MB, all layouts; `list` shows `valid layouts for this set: 1MB, 4MB; free run(s) $b2800-$e2bff`):
+```
+$B2700-$BDFFF   payload image, default set 47,360 B (hd_*, mr_edge, rd blobs, mt/mx ...), site table $B7000
+$BE000-$BEFFF   A (ta_*)                         4 KB   (free in the default set)
+$BF000-$BFFFF   B (tb_*) data                    4 KB   ; $B3D00-$B67FF gaps of the payload: B ; $B6800-$B6FFF: C
+$C0000-$CAFFF   rd_geom ram                      45,056 B
+$CB000-$D7FFF   rd_draw ram                      53,248 B
+$D8000-$E2BFF   free, 43,008 B: B's generated player-car cache $D8000-$DDFFF (24 KB cap set by the lead), $DE000-$E2BFF spare (19 KB)
+$E2C00-         TOS 2.06 GEM/AES data (not ours)
+```
+
+### 10.5 `rd_*` gates re-run on the relocated build (offline, `work/mste/rd_offline.txt`; live images regenerated: `msrpatch.py live --only rd_geom --out work/road/live_geom`, `... rd_draw ... live_draw`; the `work/road/*.py` scripts retargeted to the new addresses)
+```
+geom_test.py live_geom 60       : frames 240 mismatching 0 | stock cycles mean 87429 | patched steady mean 47158 | first call (table generation) [903634, 891318, 891490, 891268]
+geom_fuzz.py live_geom 2100 1   : fuzz 2100 cases, mismatches 0
+geom_fuzz.py live_geom 200 1 neg: fuzz 200 cases, mismatches 31      (negative control: product table poisoned at $C1000: must differ)
+geom_reuse_test.py live_geom    : standing frames 14 mismatches 0 cycles (full+save, reuse): [(903634, 12064), ...]
+geom_sigtest.py live_geom       : sig tests 66 mismatches 0 wrongly taken reuse path (cycles<30k): 0
+draw_test.py live_draw 60       : frames 240 mismatching 0 | stock mean 169085 | patched steady mean 95106 | first call [2037386]
+draw_fuzz.py live_draw 900 1    : draw fuzz 900 streams, mismatches 0
+draw_fuzz.py live_draw 100 1 neg: draw fuzz 100 streams, mismatches 31   (negative control: window table poisoned at $CB800: must differ)
+```
+Hatari A/B gates on the relocated tables (`work/mste/gates_ab.sh`, raw `work/mste/gates_ab.txt`; STE 1.62 1 MB snapshots, patches applied live; per-pass state `$1000-$13ff $29c8-$34ff $4500-$4fff $dae6` = 6,716 B per pass):
+```
+A: msrabtest --only rd_geom rd_draw rd_init --flips 10 40 --state 120
+PIXELS race_grid/start/up/drive flips 10 and 40: IDENTICAL, md5 81dfec87 d5a188cf / 7481e0c7 7481e0c7 ; 3da506a7 c54efba9 / 90858e13 4858b4b8 ; 64f19a1d d9cdbe0a / 58491371 19ced56f ; d67d147e ed8944f1 / 3d3df84c 3d3df84c  (all equal to stock and to the pre-relocation md5s)
+STATE race_grid  : common 117 passes, 785772 bytes compared, differing bytes 0
+STATE race_start : common 124 passes, 832784 bytes compared, differing bytes 0
+STATE race_up    : common 121 passes, 812636 bytes compared, differing bytes 0
+STATE race_drive : common 122 passes, 819352 bytes compared, differing bytes 0
+RESULT: ALL IDENTICAL
+B (tick ON): msrabtest --only mr_edge mr_map mr_digit rd_geom rd_draw rd_init mt_clock mt_sync mt_pre --snapshots race_start race_drive --flips 10 --state 230
+STATE race_start : common 233 passes, 1564828 bytes compared (6716 per pass), differing bytes 0
+STATE race_drive : common 236 passes, 1584976 bytes compared (6716 per pass), differing bytes 0
+RESULT: ALL IDENTICAL
+C (negative control): --only rd_geom rd_draw mr_negctl --snapshots race_start --flips 10 : PIXELS DIFFER (1334 bytes of 64000)  RESULT: DIFFERENCES FOUND
+```
+
+### 10.6 Regression matrix on the final map (default HD build `build/mste_hd`, default floppy build `build/mste_floppy`, both rebuilt after the relocation: `verify: ALL OK`)
+Every 68000 machine powers on at 8 MHz (`--cpuclock 8`), then the clock is raised after the boot (`h.set_cpuclock(16)`, the same switch `play.sh --cpu 16` does through `--parse`). HD: `work/mste/cold.py` (cold boot to the race, `$b2700` marker `MSPO`, hook sites, strip pixels == shadow render in both buffers (`work/hud/build/coldhd.py` checks), road tables, rate windows at 8 MHz and 16 MHz, then 124 s of driving: `$100e` advancing, `$1021 = 2`, RDG1 intact, log scan); raw `work/mste/m_hd.txt`. Floppy: `tools/msrfloppy.py gate ... --cpu 16`; raw `work/mste/m_floppy.txt`.
+```
+HD machine / TOS / RAM        boot_to_race  road tables (RDG1, WPTR == $135a)  8 MHz: passes/s, extras  16 MHz: passes/s, extras  124 s play        Bus Error lines
+Mega STE 2.06 1 MB (the case) True vbl 6046  OK $c0000 / $d7040 = 000102ba     8.320, 110              8.333, 119                 alive, $1021=2     0
+Mega STE 2.06 2 MB            True vbl 6047  OK                                8.347, 111              8.333, 123                 alive              0
+Mega STE 2.06 4 MB            True vbl 6047  OK                                8.333, 110              8.320, 119                 alive              0
+STE 1.62 1 MB                 True vbl 5809  OK                                10.076, 0               9.981, 184                 alive              1 (PP's $ff8e21 probe)
+STE 1.62 4 MB                 True vbl 5809  OK                                9.981, 0                9.981, 185                 alive              1 (same)
+ST 1.04 1 MB                  True vbl 5809  OK                                10.000, 0               10.000, 184                alive              2 (PP's $ff8e21 and $ff8924 probes; the stock game logs the same two: boot.py st 1024 1.04 originals/MOONSHR: Bus Error reading at address $ffff8924 / $ffff8e21, in_race=True vbl=5809)
+TT 3.06 4 MB (native clock)   True vbl 5880  OK                                8.333, 525 (50 Hz window at 60 Hz VBLs)  -                       alive              0
+Falcon 4.04 4 MB              True vbl 5802  OK                                10.000, 174             -                          alive              0
+marker $b2700 = 4d 53 50 4f (MSPO) and `$ef7a = 4ef9000bb004`, `$edea = 4eb9000bb700` in every row; Mega STE 1 MB strip check: pixels != shadow render 0 in both buffers (a, b), shadow == model True; `$3cf0 = 0777`.
+Mega STE 1 MB at 8 MHz "extras 110": the Mega STE 2.06 boots at native 60 Hz (VBL window 631 = 105 passes in 12.6 s), so the 10 passes/s pacer has slack even at 8 MHz; identical to the 2 MB/4 MB rows and to the earlier 4 MB-only result (hud_build.md: 8.333/s, extras 106).
+Note on the `cold.py` line "old addresses $d0000 = ... $e7040 = ... (must be 0)": only `$e7040` means anything: STE and Mega STE 2/4 MB read 0 there; the 1 MB Mega STE reads `43dc0001` = TOS 2.06's own data (AES region, left untouched now; before the relocation `rd_draw` wrote WPTR there). `$d0000` now lies inside `rd_draw`'s window table A (nonzero by design).
+
+FLOPPY gate (disk A alone, SPACE through the story screens, disk-2 swap, race; raised to 16 MHz after the race starts, 'up' held 40 s):
+```
+machine           disk-2 prompt  after swap (VBL, $1021/$100e)  marker  road magic / WPTR           extra frames/groups/ticks $b8f38 at 16 MHz
+Mega STE 1 MB     True vbl 2900  4923, (2, 215)                  MSPO    RDG1 / 000102ba            0x2cf / 0x19b / 0x19d
+Mega STE 4 MB     True vbl 2900  4922, (2, 216)                  MSPO    RDG1 / 000102ba            0x2b4 / 0x196 / 0x19b
+STE 1.62 1 MB     True vbl 2408  4095, (2, 214)                  MSPO    RDG1 / 000102ba            0x25f / 0x199 / 0x19d
+STE 1.62 4 MB     True vbl 2406  4093, (2, 215)                  MSPO    RDG1 / 000102ba            0x265 / 0x19b / 0x19d
+ST 1.04 1 MB      True vbl 2408  4094, (2, 216)                  MSPO    RDG1 / 000102ba            0x264 / 0x19a / 0x19d
+```
+`play.sh --machine megaste --cpu 16` itself (the exact user command; Xvfb, 70 s): log line `> setopt --cpuclock 16`, 0 `Bus Error` lines (`work/mste/play_16.log`). `play.sh --machine megaste --print` and `--cpu 16 --print` print the command (with `--cpuclock 8 --parse build/play-clock/parse.txt` for 16) and build/copy nothing.
+**Unproven:** (1) the Mega STE's external 16 KB cache is not emulated by Hatari 2.6.1 (`[INFERENCE]`, no run shows otherwise), so nothing here shows whether the generated/self-modified code (`rd_*` window tables are data; `mr_edge` slot code, payload written then executed after the trampoline) needs a flush on real Mega STE hardware; the trampoline's `cflush` is a no-op on a 68000 (delivery.md section 3); (2) real hardware; (3) whether the TOS 2.06 1 MB GEM data region could be read by the game after the race (return to desktop); the layout now avoids it. (4) Why exactly the 16 MHz power-on phase nests deeper at 1 MB only is `[INFERENCE]` (10.1). (5) TT/Falcon rows are native-clock, no 16 MHz switch.

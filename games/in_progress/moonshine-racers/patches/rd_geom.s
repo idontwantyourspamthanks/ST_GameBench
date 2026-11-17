@@ -2,7 +2,7 @@
 ; default: yes
 ; site: $100b4
 ; orig: 41f8456443f81bbc
-; ram: $D0000-$DAFFF  rd_geom tables (magic, cached $1316, standing-frame result, product table); zero at game start, built lazily behind the magic
+; ram: $C0000-$CAFFF  rd_geom tables (magic, cached $1316, standing-frame result, product table); zero at game start, built lazily behind the magic
 ; doc: Faster road geometry $100b4 (pixel-identical): per-slice loop split into tight passes, the two mulu.w per slice become one table lookup each, unused near slices are skipped.
 ; note: Moonshine Racers road study (work/notes/road.md).  Site $100b4 (the first two `lea`s of the road geometry routine) -> `jmp $B4004.l` ($B4000 = the pre-warm entry used by rd_init); the blob is the WHOLE routine (same memory results, same rts).
 ; note: Loop 1 (curve offsets $4724.., 112 slices) is unrolled 4x with a doubled static copy of $4564.  Loop 2 (hill list $49c4/$4aa4) indexes the $68000 map with a base pointer that advances 256 per slice.
@@ -12,18 +12,18 @@
 ; note: Guard: $1316 + 79 <= 257 (product < 65536), else the stock code runs from $100bc.  The static tables ($4564, $4644: generated from constants at level start) are derived on the first call (magic RDG1).
 ; note: Standing frames ($130c = 0): the three track-table writers ($fe50, $ff76, $1003c: `move.w $130c.w,d0 / subq.w #1,d0 / bmi` at their entry) do nothing, so when the generator state (33 words: position, curve, hill and ring pointers) equals the
 ; note: state of the previous call, the whole output region ($4724-$4f77, $23c4, $131c, $1320) is copied back from a saved copy instead of being recomputed.
-; note: Run-time tables are declared with `; ram:` (not `; data:`, which would stretch the payload image past IMG_MAX_LEN): $D0000-$DAFFF of the free RAM run $B2700-$E83FF (rendering.md section 3).
-MAGIC   equ     $D0000          ; 'RDG1' once the static tables are built
-PM      equ     $D0004          ; cached $1316 + 1 (0 = product table not built)
-SIGOK   equ     $D0008          ; byte: SIGBUF/SAVE hold a valid standing-frame result
-SAVEPEND equ    $D0009          ; byte: this call must save its result
-SIGBUF  equ     $D0340          ; 33 words: generator state of the saved result
-SIGNEW  equ     $D0390          ; 33 words: generator state at entry of the call being saved
-SAVE    equ     $D0400          ; $4724-$4f77 (2132 B), $23c4 (word), $131c, $1320
-CBASE   equ     $D0010          ; 112 words: $a0 - hw(W0[min(k,80)])
-T2      equ     $D0100          ; 112 words: 2 * T1[j]
-SCR     equ     $D0200          ; 80 x (A,B) words
-PT      equ     $D1000          ; 80 rows x 256 words
+; note: Run-time tables are declared with `; ram:` (not `; data:`, which would stretch the payload image past IMG_MAX_LEN): $C0000-$CAFFF of the free RAM run $B2700-$E2BFF (rendering.md section 3; the top is $E2BFF, not $E83FF: live GEM/AES data of TOS 2.06 on a 1 MB Mega STE starts at $E2C50, integration.md section 10.3).
+MAGIC   equ     $C0000          ; 'RDG1' once the static tables are built
+PM      equ     $C0004          ; cached $1316 + 1 (0 = product table not built)
+SIGOK   equ     $C0008          ; byte: SIGBUF/SAVE hold a valid standing-frame result
+SAVEPEND equ    $C0009          ; byte: this call must save its result
+SIGBUF  equ     $C0340          ; 33 words: generator state of the saved result
+SIGNEW  equ     $C0390          ; 33 words: generator state at entry of the call being saved
+SAVE    equ     $C0400          ; $4724-$4f77 (2132 B), $23c4 (word), $131c, $1320
+CBASE   equ     $C0010          ; 112 words: $a0 - hw(W0[min(k,80)])
+T2      equ     $C0100          ; 112 words: 2 * T1[j]
+SCR     equ     $C0200          ; 80 x (A,B) words
+PT      equ     $C1000          ; 80 rows x 256 words
         org     $100b4
         jmp     $B4004.l
 

@@ -14,9 +14,9 @@ for sc, plist in [('grid', range(0, 60, 7)), ('drive', range(55, 60))]:
         if int.from_bytes(f['a_lo'][0x30c:0x30e], 'big') != 0: continue
         e1 = Emu(ram); e1.call(0x17c24); e1.call(0x100b4); m1 = masked(e1.rd(0, 0xB2700))
         e2 = Emu(ram); apply_live(e2, prefix); e2.call(0x17c24); c_full = e2.call(0x100b4); m2 = masked(e2.rd(0, 0xB2700))
-        keep = e2.rd(0xD0000, 0xB000)
+        keep = e2.rd(0xC0000, 0xB000)
         # second call: same stage-a state, patched tables + saved result present
-        e3 = Emu(ram); apply_live(e3, prefix); e3.wr(0xD0000, keep); e3.call(0x17c24); c_re = e3.call(0x100b4); m3 = masked(e3.rd(0, 0xB2700))
+        e3 = Emu(ram); apply_live(e3, prefix); e3.wr(0xC0000, keep); e3.call(0x17c24); c_re = e3.call(0x100b4); m3 = masked(e3.rd(0, 0xB2700))
         n += 1
         for tag, m in (('full', m2), ('reuse', m3)):
             if m != m1:

@@ -7,7 +7,7 @@
 #   tools/play.sh --floppy --original   # the original floppy release converted to plain .ST (the manual question appears)
 #   tools/play.sh --machine megaste  # st, megast, ste, megaste, tt, falcon
 #   tools/play.sh --ram 4096         # RAM in KiB (1024 minimum)
-#   tools/play.sh --cpu 16           # CPU clock in MHz (8 stock; 16/32 show the fixed game speed)
+#   tools/play.sh --cpu 16           # run at N MHz (8 stock; 16/32 show the fixed game speed): the machine BOOTS at 8 MHz and is raised to N after TOS init (Hatari --parse, below)
 #   tools/play.sh --extrap           # no-op (kept for old command lines): the extra in-between frames on fast machines are part of the default set now
 #   tools/play.sh --noextrap         # the fixed-tick-only variant for comparison (mt_sync instead of mx_pre + mx_sync; same game speed, no extra frames)
 #   tools/play.sh --road             # no-op (kept for old command lines): the faster road is part of the default set now
@@ -64,7 +64,20 @@ if [[ -z "$TOS" ]]; then
 fi
 [[ -f "$TOS" ]] || { echo "TOS image not found: $TOS" >&2; exit 1; }
 
-OPTS=(--machine "$MACHINE" --tos "$TOS" --memsize "$RAM" --cpuclock "$CPU" --monitor rgb --fast-boot yes --joy1 keys --confirm-quit no)
+# TOS 2.06 (Mega STE) with 1 MB bombs in its own init (2 bombs, bus error at $f00000) when Hatari starts it at 16 MHz (--cpuclock 16 at power-on); a real
+# Mega STE powers up at 8 MHz and software raises the clock.  So Hatari always boots at 8 MHz here and --cpu N switches after TOS init (VBL 200; TOS
+# is done at VBL ~120) through a debugger command file: work/notes/integration.md section 10.1/10.2.
+OPTS=(--machine "$MACHINE" --tos "$TOS" --memsize "$RAM" --cpuclock 8 --monitor rgb --fast-boot yes --joy1 keys --confirm-quit no)
+if [[ "$CPU" != 8 ]]; then
+    CLK="$ROOT/build/play-clock"
+    if [[ $PRINT != 1 ]]; then
+        mkdir -p "$CLK"
+        printf 'setopt --cpuclock %s\n' "$CPU" > "$CLK/clk.txt"
+        printf 'b VBL > 200 :trace :once :file %s\n' "$CLK/clk.txt" > "$CLK/parse.txt"
+    fi
+    OPTS+=(--parse "$CLK/parse.txt")
+    echo "note: boots at 8 MHz, switches to $CPU MHz at VBL 200 ($CLK/parse.txt: b VBL > 200 :trace :once :file $CLK/clk.txt; clk.txt: setopt --cpuclock $CPU)"
+fi
 
 bld() { [[ $PRINT == 1 ]] || "$@"; }      # --print only prints the command line: no build, no copying
 if [[ $MEDIA == hd ]]; then

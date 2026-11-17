@@ -20,6 +20,6 @@ try:
         log.append(s); print(s, flush=True)
     print("marker $b2700:", mm(0xb2700, 8))
     print("alive, fc advancing:", h.peekw(0x100e))
-    print("RDG magic $d0000:", mm(0xd0000, 8), "PM $d0004:", mm(0xd0004, 4), "WPTR $e7040:", mm(0xe7040, 4), "T2 $d0100:", mm(0xd0100, 8))
+    print("RDG magic $c0000:", mm(0xc0000, 8), "PM $c0004:", mm(0xc0004, 4), "WPTR $d7040:", mm(0xd7040, 4), "T2 $c0100:", mm(0xc0100, 8))
 finally:
     h.close()

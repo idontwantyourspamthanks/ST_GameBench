@@ -1,0 +1,27 @@
+=== geom_test.py live_geom 60
+frames 240 mismatching 0 | stock cycles mean 87429 | patched steady mean 47158 | first call (table generation) [903634, 891318, 891490, 891268]
+=== geom_fuzz.py live_geom 2100 1
+{'guard': 806, 'rec60+': 1183, 'cut': 0, 'rec<60': 917, 'fast': 1294}
+fuzz 2100 cases, mismatches 0
+=== geom_fuzz.py live_geom 200 1 neg
+MISMATCH it 18 rand 82 ['0x4eba', '0x4ebb', '0x4ebc', '0x4ebd', '0x4ec2', '0x4ec3', '0x4ec4', '0x4ec5', '0x4eca', '0x4ecb']
+MISMATCH it 20 smooth 337 ['0x4c02', '0x4c03', '0x4c04', '0x4c05', '0x4c0a', '0x4c0b', '0x4c0c', '0x4c0d', '0x4c12', '0x4c13']
+MISMATCH it 26 smooth 294 ['0x4c02', '0x4c03', '0x4c04', '0x4c05', '0x4c0a', '0x4c0b', '0x4c0c', '0x4c0d', '0x4c12', '0x4c13']
+MISMATCH it 48 smooth 343 ['0x4c0b', '0x4c0c', '0x4c0d', '0x4c13', '0x4c14', '0x4c15', '0x4c1b', '0x4c1c', '0x4c1d', '0x4c23']
+{'guard': 82, 'rec60+': 117, 'cut': 0, 'rec<60': 83, 'fast': 118}
+fuzz 200 cases, mismatches 31
+=== geom_reuse_test.py live_geom
+standing frames 14 mismatches 0 cycles (full+save, reuse): [(903634, 12064), (903634, 12064), (903634, 12064)]
+=== geom_sigtest.py live_geom
+sig tests 66 mismatches 0 wrongly taken reuse path (cycles<30k): 0
+=== draw_test.py live_draw 60
+frames 240 mismatching 0 | stock mean 169085 | patched steady mean 95106 | first call [2037386]
+=== draw_fuzz.py live_draw 900 1
+draw fuzz 900 streams, mismatches 0
+=== draw_fuzz.py live_draw 100 1 neg
+  recs [(256, 100, 18, 35723), (512, 383, 320, 1939), (256, 250, 150, 18954), (256, 358, 319, 196), (1536, 518, 318, 35325), (2816, 303, 289, 45335)]
+  records 80 bad rows [0, 2] [(256, 100, 18, 35723), (256, 250, 150, 18954)] $12f0/4 stock 001049b0001e new 001049b0001e
+MISMATCH it 33 ptr 0x1034a 16 ['0xba3d8', '0xba3d9', '0xba3da', '0xba3db', '0xba3dc', '0xba3dd', '0xba3de', '0xba3df']
+  recs [(256, 241, 150, 40727), (768, 584, -16, 32461), (768, 121, 107, 2741), (768, 369, 17, 7899), (1536, -49, 102, 29161), (2304, 37, 32, 7517)]
+  records 30 bad rows [0] [(256, 241, 150, 40727)] $12f0/4 stock 001069b80050 new 001069b80050
+draw fuzz 100 streams, mismatches 31

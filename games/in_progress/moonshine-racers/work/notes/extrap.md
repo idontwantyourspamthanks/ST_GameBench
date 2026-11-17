@@ -84,3 +84,5 @@ Status: `mx_pre` + `mx_sync` are `default: yes` (user-approved visible change), 
 * **Kernel table**: re-checked on all 15 levels in the emulator (only the patch sites differ) and on tracks 5/12 in Hatari (`$12000-$15000` + `$dafe` compared): no stale kernel byte.
 * **Cold boots with extras actually happening**: STE 1 MB/4 MB, Mega STE 4 MB (native 60 Hz), ST 1 MB, TT 4 MB (native 60 Hz, 32 MHz), Falcon TOS 4.04; floppy gate STE 1/4 MB, Mega STE, ST. Extras counted from the blob counters (`integration.md` 8.5).
 * Not done: real hardware, Mega STE cache timing (Hatari only), a native-60 Hz *state/pixel* gate (forced `$ff820a` used).
+
+**Relabel (MSRMegaSTE):** "Mega STE" cold boots and the Mega STE floppy gate in this note were **4 MB only** (see `integration.md` section 10 for 1 MB).

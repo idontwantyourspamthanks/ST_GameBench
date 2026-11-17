@@ -271,3 +271,5 @@ Unproven / not done:
 - The state the (now skipped) question screen leaves behind: no difference found through the first race, but nothing beyond the first race was played.
 - Read errors during the stage-0 payload load hang the machine (as the original loader does).
 - `--zip` ships the two `.ST` images only (no README).
+
+**Relabel (MSRMegaSTE):** the "Mega STE TOS 2.06 4 MB" floppy gate above is the only Mega STE floppy result here (4 MB only); 1 MB Mega STE: `integration.md` section 10.
