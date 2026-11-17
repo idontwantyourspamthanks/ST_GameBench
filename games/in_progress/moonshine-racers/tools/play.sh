@@ -9,7 +9,12 @@
 #   tools/play.sh --ram 4096         # RAM in KiB (1024 minimum)
 #   tools/play.sh --cpu 16           # run at N MHz (8 stock; 16/32 show the fixed game speed): the machine BOOTS at 8 MHz and is raised to N after TOS init (Hatari --parse, below)
 #   tools/play.sh --extrap           # no-op (kept for old command lines): the extra in-between frames on fast machines are part of the default set now
-#   tools/play.sh --noextrap         # the fixed-tick-only variant for comparison (mt_sync instead of mx_pre + mx_sync; same game speed, no extra frames)
+#   tools/play.sh --noextrap         # the fixed-tick-only variant for comparison (mt_sync instead of mg_sync + mg_pace; same game speed, no extra frames)
+#   tools/play.sh --safex N          # extra-frame deadline margin, 1/300 s units (build time: msrpatch.py build --set SAFE=N): 0 = default (most extras, more uneven frame spacing), 3 = smoother (fewer late ticks, fewer extras), negative = looser
+#   tools/play.sh --no-nomouse       # real-hardware A/B switches, each takes ONE default patch out: --no-nomouse = ta_nomouse (the IKBD mouse query keeps running in the race)
+#   tools/play.sh --no-blit          #   --no-blit = tb_blit* (no STE blitter sprites, no Timer-B guard)
+#   tools/play.sh --no-rb            #   --no-rb = ta_rb + ta_rb0 (the stock Timer B raster list)
+#   tools/play.sh --no-facestat      #   --no-facestat = ta_facestat (the talking face moves its mouth again: ta_face instead)
 #   tools/play.sh --road             # no-op (kept for old command lines): the faster road is part of the default set now
 #   tools/play.sh --print            # only print the Hatari command line
 #
@@ -29,7 +34,7 @@ VARIANT=patched
 MEDIA=hd
 TOS=""
 PRINT=0
-NOEXTRA=0
+DROP=(); ADD=(); BUILDARGS=()
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -41,9 +46,14 @@ while [[ $# -gt 0 ]]; do
         --tos)      TOS="$2"; shift ;;
         --print)    PRINT=1 ;;
         --extrap)   ;;                      # no-op alias
-        --noextrap) NOEXTRA=1 ;;
+        --noextrap) DROP+=(mg_sync mg_pace); ADD+=(mt_sync) ;;
+        --safex)    BUILDARGS+=(--set "SAFE=$2"); shift ;;
+        --no-nomouse)  DROP+=(ta_nomouse) ;;
+        --no-blit)     DROP+=(tb_blit tb_blit11 tb_blit13 tb_blit15) ;;
+        --no-rb)       DROP+=(ta_rb ta_rb0) ;;
+        --no-facestat) DROP+=(ta_facestat); ADD+=(ta_face) ;;
         --road)     ;;                      # no-op alias
-        -h|--help)  sed -n '2,19p' "$0"; exit 0 ;;
+        -h|--help)  sed -n '2,24p' "$0"; exit 0 ;;
         *) echo "unknown option: $1" >&2; exit 2 ;;
     esac
     shift
@@ -80,15 +90,24 @@ if [[ "$CPU" != 8 ]]; then
 fi
 
 bld() { [[ $PRINT == 1 ]] || "$@"; }      # --print only prints the command line: no build, no copying
+# The patched build: the tool's default set, or (any switch above) the default set minus DROP plus ADD, with the build-time equates BUILDARGS (--set SAFE=N).
+# The tool declares every conflict/requirement and refuses an invalid selection.
+patched_build() {                          # $1 = hd | floppy
+    local flt='$1 !~ /^fl_/' fl=() sel
+    [[ $1 == floppy ]] && { flt='$1 !~ /^pp_/'; fl=(--floppy); }
+    if (( ${#DROP[@]} + ${#ADD[@]} )); then
+        sel=$(python3 "$ROOT/tools/msrpatch.py" list | awk "\$2==\"yes\" && $flt {print \$1}" | grep -v -x -F -f <(printf '%s\n' "${DROP[@]}" '-') | tr '\n' ' ')
+        bld python3 "$ROOT/tools/msrpatch.py" build "${fl[@]}" --out "$PLAY" "${BUILDARGS[@]}" --only $sel "${ADD[@]}" >/dev/null
+    else
+        bld python3 "$ROOT/tools/msrpatch.py" build "${fl[@]}" --out "$PLAY" "${BUILDARGS[@]}" >/dev/null
+    fi
+    echo "patched set: default${DROP[*]:+ minus ${DROP[*]}}${ADD[*]:+ plus ${ADD[*]}}${BUILDARGS[*]:+ ; ${BUILDARGS[*]}}"
+}
 if [[ $MEDIA == hd ]]; then
     PLAY="$ROOT/build/play-hd-$VARIANT"
     bld rm -rf "$PLAY"; bld mkdir -p "$PLAY"
-    if [[ $VARIANT == patched && $NOEXTRA == 1 ]]; then
-        # default HD set (without the floppy-only fl_* patches) with the extra-frame pacer (mx_pre + mx_sync) swapped for mt_sync (the tool declares the conflict and refuses both)
-        SET=$(python3 "$ROOT/tools/msrpatch.py" list | awk '$2=="yes" && $1 !~ /^fl_/ {print $1}' | grep -v -e '^mx_pre$' -e '^mx_sync$' | tr '\n' ' ')
-        bld python3 "$ROOT/tools/msrpatch.py" build --out "$PLAY" --only $SET mt_sync >/dev/null
-    elif [[ $VARIANT == patched ]]; then
-        bld python3 "$ROOT/tools/msrpatch.py" build --out "$PLAY" >/dev/null
+    if [[ $VARIANT == patched ]]; then
+        patched_build hd
     else
         bld cp -r "$ROOT/originals/MOONSHR/." "$PLAY/"
     fi
@@ -97,12 +116,8 @@ if [[ $MEDIA == hd ]]; then
 else
     PLAY="$ROOT/build/play-floppy-$VARIANT"
     bld rm -rf "$PLAY"; bld mkdir -p "$PLAY"
-    if [[ $VARIANT == patched && $NOEXTRA == 1 ]]; then
-        SET=$(python3 "$ROOT/tools/msrpatch.py" list | awk '$2=="yes" && $1 !~ /^pp_/ {print $1}' | grep -v -e '^mx_pre$' -e '^mx_sync$' | tr '\n' ' ')
-        bld python3 "$ROOT/tools/msrpatch.py" build --floppy --out "$PLAY" --only $SET mt_sync >/dev/null
-        A="$PLAY/disk_a.st"; B="$PLAY/disk_b.st"
-    elif [[ $VARIANT == patched ]]; then
-        bld python3 "$ROOT/tools/msrpatch.py" build --floppy --out "$PLAY" >/dev/null
+    if [[ $VARIANT == patched ]]; then
+        patched_build floppy
         A="$PLAY/disk_a.st"; B="$PLAY/disk_b.st"
     else
         bld cp "$ROOT/work/floppy/disk_a.st" "$PLAY/disk_a.st"; bld cp "$ROOT/work/floppy/disk_b.st" "$PLAY/disk_b.st"

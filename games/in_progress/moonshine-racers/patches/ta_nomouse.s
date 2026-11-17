@@ -1,5 +1,5 @@
 ; name: ta_nomouse
-; default: no
+; default: yes
 ; site: $d486
 ; orig: 4eb90000d138
 ; doc: VBL handler: no IKBD mouse-position query (command $0D, six reply bytes through the ACIA interrupt) while the race runs ($1021 == 2); the race never reads the mouse variables.

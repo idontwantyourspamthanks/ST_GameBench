@@ -1,9 +1,9 @@
 ; name: tb_blit
-; default: no
+; default: yes
 ; site: $39a0
 ; requires: tb_blit11 tb_blit13 tb_blit15
 ; data: $B5800 512
-; doc: STE blitter for the shifted 1-3 column sprites that win (enough rows); stock kernels for everything else, no blitter, TT/Falcon, Mega STE and 68010+ (generated from work/tightB/blit_template.s; select tb_blit tb_blit11 tb_blit13 tb_blit15 together).
+; doc: STE blitter for the big shifted 1-3 column sprites, only between two raster interrupts (Timer-B guard); stock kernels for everything else, and on ST, Mega STE, TT, Falcon, 68010+ (generated from work/tightB/blit_template.s; the four tb_blit* files belong together).
 ; note: Generated file (work/tightB/gen_blit.py, BUDGET=900 GUARD=1 GTH=3).  Sites: the kernel pointer tables `$399c` (nibble 7), `$39b0` (11), `$39c4` (13), `$3a14` (15): the 1-, 2- and 3-column entries point at 16-byte stubs
 ; note: at $B4510... (one patch file per table: tb_blit = nibble 7 + the blob, tb_blit11/13/15).  Hooking the tables (not `$ed6e`) keeps it working with the tc_* object-stage patches, which call the same entries without `$ecc8`.  4 columns stay stock (nibble 7: tb_car).
 ; note: A stub sets d4 = columns, a2 = descriptor, d3 = the stock entry and jumps to `common`, which jumps to the stock entry (registers untouched, d7 clamped to the screen bottom like the stock kernel does) unless: blitter present (probe at the first call:

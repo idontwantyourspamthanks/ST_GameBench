@@ -3,9 +3,9 @@
 ; site: $7b74
 ; orig: 4eb90000d1e4
 ; requires: mt_clock mt_pre                       ; without mt_clock the clock never advances and PEND never clears: the pacer would sleep forever
-; conflicts: mx_sync                              ; same site ($7b74); mx_sync is the extra-frame replacement of this pacer
+; conflicts: mx_sync mg_pace                      ; same site ($7b74) as mx_sync and mg_pace; mg_sync + mg_pace is the extra-frame pacer (default), mx_sync the older one
 ; data: $B8F04 4
-; doc: Fixed-tick pacer WITHOUT extra frames (alternative to mx_sync, which is the default): fixed schedule of TICK/300 s per pass; `play.sh --noextrap`.
+; doc: Fixed-tick pacer WITHOUT extra frames (alternative to the default pacer mg_sync + mg_pace): fixed schedule of TICK/300 s per pass; `play.sh --noextrap`.
 ; note: Fixed tick, part 2 of 3.  Site: $7b74 `jsr $d1e4.l` (the race loop's last call; $d1e4 itself is NOT touched: it also serves $7496) -> `jsr $B8100.l`.
 ; note: The blob flips with the unchanged $d1ca, marks PEND, clears $611a, then sleeps until CLK reaches the scheduled start NEXT ($B8F04) and adds TICK to it.
 ; note: More than MAXLAG (2*TICK) behind (pause, disk, stall): the schedule is reset to now (no burst of passes).  A machine too slow for TICK simply does not sleep.

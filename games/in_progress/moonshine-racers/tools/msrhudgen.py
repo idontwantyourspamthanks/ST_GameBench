@@ -271,7 +271,7 @@ HEADER = """; name: hd_stage
 ; note: the face $f90c and the hit/sound part of the old cup routine $f620 ($11ce flag, $11cf slosh counter, sound $36).  Nothing else of the old stage is called.
 ; note: TOPBAR draws into the back buffer ($1008) and keeps, per buffer ($70000 / $78000), a shadow of what that buffer shows: a field is redrawn only when its value differs from the shadow of the buffer being drawn.
 ; note: First pass per buffer after the race init (hd_init clears the `painted` bytes; a freshly loaded patch starts with them clear): the strip bitmap (rows 0-15), then the sky colour (all planes set) over rows 16-64 of the whole width.
-; note: Entries: $BB000 TOPBAR (a5 = buffer; used by mx_sync's extra frames), $BB004 NEWHUD (the stage), $BB008 HIT (the $f620 sound/flag part).  Palette A colour 14 is set to $777 every pass (white: the clouds, its only other user in rows 0-73, are gone).
+; note: Entries: $BB000 TOPBAR (a5 = buffer; used by the extra frames of mg_sync, and of mx_sync/mf_sync), $BB004 NEWHUD (the stage), $BB008 HIT (the $f620 sound/flag part).  Palette A colour 14 is set to $777 every pass (white: the clouds, its only other user in rows 0-73, are gone).
 ; note: Blob $BB000-$BB7FF code, $BB800 strip bitmap, $BC200 glyph strips (3 sets x 11 x 64 B), $BCA40 gauge rows, $BCD00 cell offsets, $BCD20 decimal pairs, $BCF00/$BCF40 shadows, $BCF80 scratch, $BD000 dial images.
 """
 

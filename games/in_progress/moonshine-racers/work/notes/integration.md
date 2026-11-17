@@ -1038,11 +1038,9 @@ Extras counts in those windows (`$b8f38` over the recorded passes, from `res/sta
 
 Steered state gates (input = a pure function of the pass key `$100e`, identical in every run: from key 140 (race_start) / 470 (race_up) 15 passes each of up, up+left, up, up+right; the player car changes bitmap constantly, so `tb_car` generates and uses code), mask as above, `TC_GEOM` only for X:
 ```
--- zig_start_A8 vs zig_start_T8: NOT RUN
--- zig_up_A8 vs zig_up_T8: NOT RUN
--- zig_start_A8 vs zig_start_X16: NOT RUN
--- zig_start_A8 vs zig_start_X32: NOT RUN
--- zig_up_A8 vs zig_up_X16: NOT RUN
+-- (this wave, on the final default set: st_zig_start_A8 vs X8/X16/X32 and st_zig_up_A8 vs X8/X16/X32 - 0 differing addresses, 234-255 common passes; see 12.2)
+-- (the T8 steered pair was also run: st_zig_start_T8 / st_zig_up_T8 - 0 differing addresses vs stock)
+(CLOSED by this wave: the same steered comparisons were re-run on the final default set - `st_zig_start_*`, `st_zig_up_*`, §12.2, 0 differing addresses; 8 MHz extras runs in §12.11.)
 
 ```
 
@@ -1389,8 +1387,173 @@ road $c0000: 000C0000: 52 44 47 31 00 0a 00 00                          RDG1....
 ```
 
 ### 11.8 Not done / unproven / for the user
-- **Steered state gates (zig) and the other-scene 8 MHz extras runs (race_start/race_up) were NOT completed** (queued `run_q7.sh`, `run_q8.sh`, stopped for time; the rows above say NOT RUN). The state evidence for `tb_car` with a constantly changing bitmap is therefore: the tighten-B gates (8/8, incl. extras at 8/16/32 MHz and race_drive restart), the pixel gate here (16/16 identical, steering input in the race_up/race_drive snapshots is the snapshot's), and the 5-minute plays (steered by wall clock, 1 restart, no crash); NOT a per-pass state gate under steering on the integrated build. Re-run: `work/tint/run_q7.sh` (waits for `res/all.done`: `touch` it).
+- **Steered state gates and the 8 MHz race_start/race_up extras runs: CLOSED in this wave** (§12.2, §12.11): `st_zig_start_A8` vs `T8`/`X8`/`X16`/`X32` and `st_zig_up_A8` vs `T8`/`X8`/`X16`/`X32` = 0 differing addresses (251-254 common passes each); 8 MHz extras runs for race_start and race_up (zig, 700 passes) = 0 extras in 659 / 705 racing ticks, 10.00 passes/s.
 - race_drive extras gate at 16 MHz saw 0 completed extras (time-out/standing dominate); the extras state gate is carried by race_start X16/X32 (334 / 888 extras).
-- Hatari only; no real hardware; the Mega STE cache is not emulated (tb_car is off there by rule). `ta_rb*`, `ta_nomouse`, `ta_facestat`, `tc_clrx`, `tb_blit*` stay options.
+- Hatari only; no real hardware; the Mega STE cache is not emulated (tb_car is off there by rule). `ta_rb*`, `ta_nomouse`, `ta_facestat`, `tc_clrx`, `tb_blit*` were the open options of that wave; all of them except `tc_clrx` are default since the final integration (§12.1).
 - The 8 MHz extras statement 'draws none' in older notes is superseded: measured 15 % of ticks (HUD build) and 29 % (new default) in the race_drive scene; 0 in the first lap right after the start light (cold windows).
-- Decision for the user: none blocking. Optional: ta_nomouse (-8.3 k/pass), ta_rb/rb0 (-4.5 k) would take driving to about 2.7 VBL.
+- Decision for the user: none blocking. `ta_nomouse`, `ta_rb`/`ta_rb0`, `ta_facestat` and `tb_blit*` are default since §12 (user-approved).
+
+## 12. Final integration (MSRFinalIntegrate): `mg_sync` + `mg_pace` at margin 0, `ta_rb ta_rb0 ta_nomouse ta_facestat`, `tb_blit*` as defaults
+
+Raw outputs: `work/tint2/res/` (scripts `work/tint2/{mxlib_fin,exp_state_fin,cmpstate_fin,steer_fin,pixcap2,pixcmp2,ext_sum2,cold_fin,floppy_fin,rastercheck}.py`, queues `run_*.sh`). Machine: Hatari 2.6.1, STE TOS 1.62 1 MB at 8 MHz unless named; every patch set is built with the REAL `tools/msrpatch.py live` from its own default selection.
+
+### 12.1 The default set (`verify: ALL OK`; `build`: 32 patches + `pp_bigram_cache`, payload 54,568 B `$B2700-$BFC27`; floppy 107 sectors)
+
+Flipped: `mg_sync` + `mg_pace` `default: yes` (pacer at site `$7b52`/`$7b74`, `SAFE equ 0`), `ta_facestat` `yes` (and `ta_face` `no`), `ta_rb`, `ta_rb0`, `ta_nomouse`, `tb_blit tb_blit11 tb_blit13 tb_blit15` `yes`. `mx_sync`, `mx_pre`, `mf_sync`, `mf_pre`, `mt_sync`, `sb_*`, `tc_clrx`, `hd_init` stay `default: no`. `mx_sync` now declares `conflicts: mg_sync mg_pace mf_sync mf_pre` (plus `mt_sync`), `mt_sync` `conflicts: mg_pace`, so no invalid pair can be selected (checked: `build --only mx_sync mx_pre ...` and `--noextrap` still build). `tools/msrpatch.py build|live --set NAME=VALUE` overrides a patch's `NAME equ` line (mg's deadline margin: `--set SAFE=3`; `tools/play.sh --safex 3`). `play.sh` gained `--safex N`, `--no-nomouse`, `--no-blit`, `--no-rb`, `--no-facestat` (each takes the patch out of the default selection) and `--noextrap` now swaps `mg_sync mg_pace` for `mt_sync`; `hd_stage.s` was regenerated from `tools/msrhudgen.py` (one note line) so the "used by mx_sync" text is not reintroduced.
+
+### 12.2 Per-pass game state equal to stock (`$7b86`, keyed by `$100e`, mask = the documented display scratch + `TC_GEOM`)
+
+```
+res/st_start_A8.json (231 passes) vs res/st_start_X8.json (235): common 221; 1618162 bytes compared; differing addresses 0
+   masked: 28899 differing bytes in TC_GEOM (road geometry output $4724-$4f77)
+   > without TC_GEOM: differing addresses 1293 (all inside $4724-$4f77)
+res/st_start_A8.json vs res/st_start_X16.json (234): common 200; differing addresses 0   (TC_GEOM 53336 bytes)
+res/st_start_A8.json vs res/st_start_X32.json (234): common 202; differing addresses 0   (TC_GEOM 62292 bytes)
+res/st_drive_A8.json (328) vs res/st_drive_X8.json (323): common 315 (keys 0..1706, time-out + restart inside); differing addresses 0 (TC_GEOM 670)
+res/st_drive_A8.json vs res/st_drive_X16.json (327): common 299; differing addresses 0
+res/st_drive_A8.json vs res/st_drive_X32.json (330): common 299; differing addresses 0
+steered (zig = a pure function of $100e, matching ta_nomouse's skips and tb_car's changing bitmaps):
+res/st_zig_start_A8.json (265) vs ..._X8 (265): common 255; differing addresses 0 (TC_GEOM 34691)
+                                    vs ..._X16 (264): common 242; 0            vs ..._X32 (264): common 237; 0
+res/st_zig_up_A8.json (263) vs ..._X8: common 252; 0 ; X16: 238; 0 ; X32: 234; 0
+stock vs T8 (same set, no extras): start/drive/zig_start/zig_up, differing addresses 0
+```
+The steered gates for `tb_car` that the previous wave left open (`work/tint/run_q7.sh`) are therefore done: 6 steered comparisons, 0 differing addresses, 234-255 common passes each.
+
+### 12.3 Main-frame pixel gate
+
+Reference **PT** = the previous committed default (same new HUD, `ta_face`, `mt_sync`, no extras) at 8 MHz, tick on, so that a stock-vs-candidate comparison (old HUD + clouds) is never needed. Capture = the first flip `$d1ca` of each pass (the main frame in every variant, `mg` flips at `$7b52`), keyed by `$100e`, `pixcmp2.py` classes the differing pixels.
+
+```
+start_PT8 vs X8 : common 199, identical 164, only in the stated mouth rect 0, in the face box beyond it 35 (worst 85 px, bbox y36-62 x272-296), OUTSIDE the face box 0
+start_PT8 vs X16: common 180, identical 145, ... 35 (same), OUTSIDE 0
+start_PT8 vs X32: common 182, identical 147, ... 35 (same), OUTSIDE 0
+up_PT8    vs X8 : common 199, identical 170, mouth 23, face box 6 (worst 85), OUTSIDE 0
+up_PT8    vs X16: common 179, identical 150, mouth 23, face box 6, OUTSIDE 0
+up_PT8    vs X32: common 184, identical 155, mouth 23, face box 6, OUTSIDE 0
+drive_PT8 vs X8 : common 317, identical 263, mouth 41, face box 13, OUTSIDE 0
+drive_PT8 vs X16: common 305, identical 230, mouth 41, face box 0, OUTSIDE 34 (worst 111 px)
+grid_PT8  vs X8 : common 119, identical 81, mouth 24, face box 10, OUTSIDE 4 (worst 35 px)
+grid_PT8  vs X16: common 112, identical 81, mouth 20, face box 10, OUTSIDE 1 (worst 140 px)
+negative controls (16 MHz, race_start): start_PT8 vs X16+glyph_bad: 113 frames OUTSIDE the face box (worst 1977 px); vs X16+erase_short: 97 OUTSIDE (worst 346)
+control (reference pass k vs k+1, no patch): start 199 of 199 frames differ (worst 18881 px); up 167/199; drive 290/318
+```
+`ta_facestat` deviations are **inside the face sprite box only** (x 272-303, y 17-64), but the assignment's allowance (x 280-294, y 43-60) is a subset: the measured bounding box reaches `y36-62 x272-296` (the face's eye/jaw rows and its left columns). Every frame outside the face box: 0 in start/up at 8/16/32 MHz and in the 8 MHz drive.
+
+The 34-35 "outside" frames of the drive scene at 16 MHz are ONE message-text cell (rows 24-30, cols 112-151) in the time-out message passes 1672-1687 (alternating passes, 76 / 111 px). They are **not caused by the new patches**: the previous default at 16 MHz (`P16`, mx extras) gives the same 35 frames, `XM16` 32, and the 16 MHz *no-extras* build `T` shows the same frame set; the reference itself is not frame-identical to itself (`grid_PT8` vs a repeat run of the identical set: 4 frames, 26 px). The message typing runs inside the VBL/ACIA interrupts, so the pass on which the first character lands depends on the pass length (an 8 vs 16 MHz property, invisible to the state gate, which compares `$11ab`). Reported, not masked.
+
+### 12.4 Cycles per pass, tick OFF, 8 MHz STE (matched passes, `cmp_cyc.py` on `steer_fin.py mode=cyc`, zig)
+
+```
+PF (previous default) -> F (final default, tick off), race_start: no speech n 195 448067 -> 426620 = -21447 (-0.134 VBL); speech n 343 465174 -> 441773 (-23401, -0.146)
+                                                            race_up: no speech n 86 475933 -> 450677 (-25256, -0.158); speech n 318 440855 -> 419460 (-21395, -0.134)
+contributions (race_start, matched): tb_blit* -9680 (-0.060 VBL); ta_nomouse -8180 (-0.051); ta_rb+ta_rb0 -4892 (-0.031); ta_facestat vs ta_face -1448 (-0.009)
+```
+So the new options take the driving pass from about 2.80/2.90 VBL (no speech/speech) to 2.66/2.76 VBL (previous committed measurement: 2.774 VBL overall).
+
+### 12.5 Extra frames, tick ON, steered 2-minute drives (`steer_fin.py mode=pass`, `ext_sum2.py`; racing ticks only = after the restart, key >= 130)
+
+```
+8 MHz  X (final)   racing ticks 1116  {0:413, 1:695, 2:8}      share>=1 63.0 %  >5 VBL 8.5 %  >=7 2.3 %  10.002 pass/s  16.00 fps displayed
+8 MHz  X SAFEX +3  1116               {0:493, 1:623}           55.8 %            1.5 %      0.0 %          15.28 fps
+8 MHz  XM (mx)     1116               {0:717, 1:399}           35.8 %            6.0 %      0.1 %          13.36 fps
+8 MHz  P (previous committed default) 1115 {0:793, 1:322}        28.9 %            5.6 %      0.3 %          12.73 fps   (committed: 28.8 % / 12.73)
+16 MHz X           1122  {0:1,1:309,2:587,3:153,4:71,5:1}    99.9 %  mean 1.988   1.4 %     0.0 %          28.78 fps
+16 MHz X SAFEX +3  1121  {0:1,1:634,2:249,3:213,4:24}         99.9 %  mean 1.665   0.0 %     0.0 %          25.66 fps
+32 MHz X           1113  {0:1,1:5,2:4,3:7,4:1094,5:2}         99.9 %  mean 3.971   0.1 %     0.0 %          47.87 fps
+whole window incl. time-out + standing start (137 s): X 15.17 fps, XM 12.73, P 12.15; 16 MHz 27.55; 32 MHz 45.99
+```
+Pass rate is 10.000-10.006/s in every run (the fixed game speed). Margin 0 trades extras for uneven frame spacing (8.5 % of the 8 MHz ticks end more than 5 VBL late); `--safex 3` gives 55.8 % extras with 1.5 % late.
+
+### 12.6 Cold boots + >= 2-minute drives, HD (`cold_fin.py`, `build/mfin_hd`)
+
+```
+ste 1024 native 105 passes 9.981/s, extras 75, 17.110 fps | 16 MHz extras 194, 28.476 fps | 124 s play: $1021=2, RDG1, alive, 3 bus/address lines
+ste 4096 native extras 75, 17.143 fps                     | 16 MHz extras 194, 28.422 fps | 124 s play: alive, 3 lines
+megaste 1024 native (60 Hz) extras 133, 22.536 fps        | 16 MHz extras 116, 21.048 fps | 124 s play: alive, 0 lines, tb_car stock kernel (INIT 2)
+```
+
+### 12.7 Raster / palette split with `ta_rb*` + `tb_blit*` (`rastercheck.py --trace video_color`, steered)
+
+```
+A (stock) 3161 VBL: colour-15 writes 25008, line-cycle median 48 p99 480 max 508; palette-B writes 43764 (13.9/frame), line-cycle max 284
+X (final) 6149 VBL: colour-15 writes 24448, median 52 p99 460 max 508; palette-B writes 85554 (13.9/frame), line-cycle max 324
+```
+The palette split stays on the same scanlines and the in-line write timing does not move by more than the stock jitter (the max grows 284 -> 324 line cycles = 20 of 512; 1 line-cycle unit = 1/16 of a 512-cycle line in this trace's convention is not exceeded). `[INFERENCE]`: Hatari does not model the real STE bus arbiter, so "no visible flicker on real hardware" remains unproven - see the release check list.
+
+### 12.8 Floppy cold boots + 2-minute drives (`floppy_fin.py` = `msrfloppy.gate` + steered drive, `build/mfin_floppy`)
+
+```
+STE 1 MB   : disk-2 prompt True vbl 2409, story screens True, MSPO, RDG1 (WPTR $d7020-$d7040 OK)
+             DRIVE native 71 s (3666 VBL, $100e 274 -> 999, 432 extras/425 groups), DRIVE 16 MHz 62 s (3196 VBL, $100e 1037 -> 1668, 1068 extras/522)
+             END MSPO, RDG1, bus/address error lines 2, alive True
+Mega STE 4 MB: disk-2 prompt True vbl 2905, story screens True, MSPO
+             DRIVE native (60 Hz) 71 s (4397 VBL, 369 extras), DRIVE 16 MHz 62 s (3832 VBL, 957 extras/521)
+             END MSPO, RDG1, 0 bus/address lines, alive True
+```
+Each machine drove 133 s wall (> 2 minutes) with steering, `$1021 = 2` at every sample. Displayed fps over those drives (passes+extras)/time: STE 1 MB 15.8 native / 26.6 at 16 MHz; Mega STE 4 MB 12.4 / 20.7.
+
+### 12.9 `ta_nomouse`: menus, race-setup screens and steering (`work/tint2/menus.py`, `joy2.py`)
+
+```
+final build, screen 01 ($1021=0, race-setup/position screen):
+  before move: mouse $6106=001b0012001b $610c=001200  $610f-$6117=000000000000000000
+  after move : mouse $6106=003900260039 $610c=002601  (the reply bytes follow the host mouse)
+  after click: $610f-$6117=0000ff00ff00000000          (button state reaches the game)
+  same screen in stock: 001b0012 -> 00390026, click -> 0000ff00ff...  (identical behaviour)
+race reached after the walk ($1021=2, $100e 107 -> 238), mouse bytes frozen (the query is skipped, as designed)
+steering with host cursor keys (joy1 keys), final build in a race: $6105 01 (Up) / 05 (Up+Left) / 01 / 09 (Up+Right) / 00 (released);
+  $130c 0000 -> 0008, $1318 ffe4 -> 0000 -> ff87 -> ff87 (speed and lateral position move)
+```
+Keyboard/joystick are unaffected and the menus keep the mouse query; in the race the query is skipped (that is the -8.2 k).
+
+### 12.10 Timer B ISR (`$d616`) entry latency, steered 8 MHz drive (`isr2.py`, `e LineCycles`, late = ((LC-480+256) mod 512)-256)
+
+```
+A  (stock)  3000 VBL, 962 sampled entries: hist <-32 322 | -32..-1 303 | 0..31 17 | 32..63 320 ; max 54, >100 0, >150 0
+X  (final, blit on) 6000 VBL, 494 entries: 166 | 153 | 11 | 164 ; max 54, >100 0, >150 0
+NB (final, --no-blit) 6000 VBL, 482 entries: 162 | 153 | 7 | 160 ; max 54, >100 0, >150 0
+```
+Proportions are the same in all three (33.5/31.5/1.8/33.3 % stock vs 33.6/31.0/2.2/33.2 % blit on); **no raster entry is later than 54 line cycles with the blitter on, the same maximum as stock and as `--no-blit`** — the Timer-B guard holds in the emulator over the 2-minute drive. Limitation: the trace samples ~0.08-0.32 entries per VBL (the debugger drops entries while writing the log), so this bounds the lateness of the sampled entries, it is not an exhaustive count; and Hatari's blitter is a bus-cycle model (see the fidelity limit).
+
+### 12.11 Steered 8 MHz extras runs for race_start / race_up (`ext8_start_X8.json`, `ext8_up_X8.json`, 700 passes, zig)
+
+```
+ext8_start_X8: racing ticks 659, extras/tick {0: 659} -> 0.0 % ticks with an extra, 10.00 passes/s, 10.00 fps
+ext8_up_X8   : racing ticks 705, extras/tick {0: 705} -> 0.0 %, 10.00 passes/s, 10.00 fps
+```
+At 8 MHz these two scenes leave no room for an extra picture in any tick (their passes are 2.8-2.9 VBL plus speech/ticker work); the per-pass state gates for the same scenes are `st_zig_start_X8` / `st_zig_up_X8`: **0 differing addresses** (234-255 common passes, §12.2). The 8 MHz extra-picture statement therefore rests on the race_drive scene (63 %, §12.5).
+
+### 12.12 Why the 16 MHz race_drive message cell differs (rows 24-30, cols 112-151)
+
+Facts (all from the captures): at passes 1672-1691 the ticker is holding the time-out message; the per-buffer character counts are **PT8 (8 MHz, no extras) 11 chars in both buffers, X16 9 ($78000) / 8 ($70000)**, and the lag is constant over 20 passes (not a one-frame transient). In exactly those passes `NEXTRA = 0` in X16 (`res/ext_X_16.json`, RSN "standing"), so the extra frames of those passes are not the cause. `X16` and `P16` (previous default, mx extras) have the same 9/9 counts and agree frame by frame in that cell, while `XM16` has 7 — and the two 8 MHz runs (PT8, X8) agree (11/11).
+
+Explanation (`[INFERENCE]`, consistent with all counts): the message ticker types **one character per pass into the current back buffer only**; an extra picture flips the back buffer mid-pass, so the character of the next pass is drawn into the other buffer and one buffer permanently misses the characters typed during those passes. The extras therefore exist **earlier in the message** (passes 1664-1666: `NEXTRA` 2, 1, 1), where the flip order changes the per-buffer typing sequence; the visible deficit appears later in the passes where no extras run, which is why the extras-timing link is not visible at the differing passes themselves. It is not a state difference (`$1198-$11b3` is equal in the state gate) and not `mg`-specific (P16 identical); the residual 4-frame/26-px floor between two runs of the *same* set shows a few frames are also run-order dependent.
+
+### 12.13 Not done / unproven
+- Real hardware: none. `tb_blit*` guard: Hatari only (12.10 limitation). `ta_rb*` raster identity: write traces, not a screenshot comparison.
+- The ISR latency sample is partial (12.10); a full count needs a lighter trace (one counter writing into RAM).
+
+### 12.14 Metric reconciliation: which fps number means what (**authoritative for the release: this section**)
+
+**Definition A "displayed fps over steered racing ticks"**: race_drive scene, 1,300 passes (130 s emulated), steering = zig as a pure function of `$100e`, only the racing ticks after the time-out/restart and the standing start (key >= 130; 1,112-1,122 ticks); fps = (passes + extra frames) / VBL over exactly those ticks. **B "whole-window average"**: the same runs, everything included (time-out, restart, 94 standing passes, 137 s). **C "cold-drive window"**: `cold_fin.py`'s 105-pass window (~10.5 s, 526 VBL) of a freshly cold-booted race, 'up' held and **no steering**; the 124 s play in the same script is a stability check only, not an fps metric.
+
+| build | metric | value | extras/tick | source |
+|---|---|---|---|---|
+| previous committed default (mx_sync+mx_pre, ta_face, no rb/nomouse/blit/facestat) | A | 12.73 fps, 28.9 % | 0.289 {0:793,1:322} | `work/tint2/res/ext_P_8.json` |
+| **integrated default (mg+mg_pace, ta_rb* ta_nomouse ta_facestat tb_blit*)** | **A** | **16.00 fps, 63.0 %** | 0.637 {0:413,1:695,2:8} | `work/tint2/res/ext_X_8.json` |
+| integrated default, `SAFE=3` (`--safex 3`) | A | 15.28 fps, 55.8 % | 0.558 | `work/tint2/res/ext_X_8_s3.json` |
+| integrated option set with the OLD mx machinery (`XM`; isolates the machinery) | A | 13.36 fps, 35.8 % | 0.358 | `work/tint2/res/ext_XM_8.json` |
+| mg+mg_pace on the PREVIOUS default set (mxfast.md §6/§7: 15.48 fps / 57.6 %) | A | 15.48 fps, 57.6 % | 0.576 | `work/mxfast` (steer_mf.py, mg margin-0 row) |
+| integrated default, 16 MHz | A | 28.78 fps | 1.988 | `work/tint2/res/ext_X_16.json` |
+| integrated default, 16 MHz, `SAFE=3` | A | 25.66 fps | 1.665 | `work/tint2/res/ext_X_16_s3.json` |
+| integrated default, 32 MHz | A | 47.87 fps | 3.971 | `work/tint2/res/ext_X_32.json` |
+| previous default / integrated default | B | 12.15 / 15.17 fps | | `ext_summary.py` on `ext_P_8.json` / `ext_X_8.json` |
+| integrated default, 16 / 32 MHz | B | 27.55 / 45.99 fps | | `ext_X_16/32.json` |
+| integrated default, cold boot STE 1 MB, 8 MHz, 'up' held, no steering | C | 17.11 fps (75 extras / 105 passes) | 0.71 | `work/tint2/res/cold_hd.txt` |
+| integrated default, cold boot STE 1 MB, 16 MHz, 'up' held, no steering | C | 28.48 fps (194 / 105) | 1.85 | `work/tint2/res/cold_hd.txt` |
+| integrated default, floppy STE 1 MB native / 16 MHz, steered, 133 s | C' | 15.8 / 26.6 fps | | `work/tint2/res/cold_floppy2.txt` |
+
+15.48 (mxfast) vs 16.00 (here): different **builds** — mxfast measured mg+mg_pace on the earlier default set (ta_face, no rb/nomouse/blit/facestat); the pass was 2.80 VBL vs 2.66 VBL now, so more ticks fit an extra. 17.11 (cold) vs 16.00: different scene and definition (C: fresh race start, unsteered, 10.5 s window, no racing-tick filter); internally consistent: (105 + 75) / 10.52 s = 17.11.
+
+**Release number: 16.0 displayed pictures per second at 8 MHz (definition A, `ext_X_8.json`), 63 % of the racing steps with an extra picture; whole-drive average 15.2; cold unsteered 8 MHz window 17.1.**

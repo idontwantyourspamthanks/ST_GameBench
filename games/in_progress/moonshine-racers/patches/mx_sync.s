@@ -1,9 +1,9 @@
 ; name: mx_sync
-; default: yes
+; default: no
 ; site: $7b74
 ; orig: 4eb90000d1e4
 ; requires: mt_clock mt_pre mx_pre hd_stage       ; clock/PEND, latch guard, slot copy of the object draw; the extra frames draw the new HUD strip (hd_stage's TOPBAR $BB000)
-; conflicts: mt_sync                              ; replaces it (same site $7b74, same blob $B8100, same data $B8F04)
+; conflicts: mt_sync mg_sync mg_pace mf_sync mf_pre   ; replaces mt_sync (same site $7b74, same blob $B8100, same data $B8F04); option since mg_sync + mg_pace became the default (work/notes/integration.md section 12)
 ; data: $B8F04 4
 ; data: $B8F20 224
 ; data: $B9000 3584

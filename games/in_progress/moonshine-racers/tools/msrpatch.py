@@ -36,6 +36,8 @@ from pp_depack import depack as pp_depack  # noqa: E402
 
 ORIG = ROOT / "originals" / "MOONSHR"
 PATCHDIR = ROOT / "patches"
+SET_OVERRIDES: dict[str, str] = {}   # `--set NAME=VALUE` (build/live): replaces the value of the `NAME equ ...` line a patch declares before its first `org` (e.g. mg_sync's `SAFE`, the extra-frame deadline margin)
+SET_HELP = "override a patch's `NAME equ value` line (before its first org) for this build, e.g. --set SAFE=3 (mg_sync's deadline margin: + = stricter, fewer late ticks; play.sh --safex 3); an unknown NAME is an error"
 DUMP_HOOK = ROOT / "work" / "dumps" / "ram_hook_1024.bin"     # 1 MB STE TOS 1.62, unpatched, at `pc = $b204e` (the hook instant)
 DUMP_FLOPPY = ROOT / "work" / "floppy" / "ram_answered.bin"  # the original floppy after a correct answer (game loaded, about to start): floppy witness
 DUMP_ENTRY = ROOT / "work" / "dumps" / "ram_entry_1024.bin"   # same game at `pc = $6f64` (first game instructions run; second witness)
@@ -132,6 +134,18 @@ def render_doc(text: str) -> str:
     return text
 
 
+_SET_USED: set[str] = set()
+
+
+def _override_equ(line: str) -> str:
+    """A preamble `NAME equ value ; comment` line with `--set NAME=VALUE` applied (the comment is kept)."""
+    m = re.match(r"^(\s*)(\w+)(\s+equ\s+)([^;]*?)(\s*(?:;.*)?)$", line)
+    if m and m.group(2) in SET_OVERRIDES:
+        _SET_USED.add(m.group(2))
+        return f"{m.group(1)}{m.group(2)}{m.group(3)}{SET_OVERRIDES[m.group(2)]}{m.group(5)}"
+    return line
+
+
 class Patch:
     def __init__(self, path: Path):
         self.path = path
@@ -157,7 +171,7 @@ class Patch:
         text = text.replace(VERSION_TAG, release_version())
         for line in text.splitlines():
             if cur is None and re.match(r"^\s*\w+\s+equ\s+", line):
-                self.preamble.append(line)
+                self.preamble.append(_override_equ(line))
                 continue
             m = HDR_RE.match(line)
             if m and cur is None:
@@ -1072,9 +1086,11 @@ def main():
     b.add_argument("--out", default="build/hd")
     b.add_argument("--zip", nargs="?", const="", default=None, help="also write a zip (default dist/MoonshineRacers_hd_v<VERSION>.zip)")
     b.add_argument("--floppy", action="store_true", help="build the two-disk floppy release (original disk A + our payload) instead of the HD folder")
+    b.add_argument("--set", action="append", metavar="NAME=VALUE", help=SET_HELP)
     lv = sub.add_parser("live")
     lv.add_argument("--only", nargs="*", default=None)
     lv.add_argument("--out", default="build/live/patches")
+    lv.add_argument("--set", action="append", metavar="NAME=VALUE", help=SET_HELP)
     sub.add_parser("list")
     sub.add_parser("verify")
     v = sub.add_parser("version", help="print the release version (patches/VERSION)")
@@ -1082,6 +1098,11 @@ def main():
     rd = sub.add_parser("doc", help="print a doc file with @VERSION@ / {PATCHES} replaced")
     rd.add_argument("file")
     a = ap.parse_args()
+    for kv in getattr(a, "set", None) or []:
+        name, sep, val = kv.partition("=")
+        if not sep or not re.fullmatch(r"[A-Za-z_]\w*", name) or not val.strip():
+            raise SystemExit(f"--set needs NAME=VALUE (a patch equate, e.g. SAFE=3), got {kv!r}")
+        SET_OVERRIDES[name] = val.strip()
     if a.cmd == "version":
         print(credit_line() if a.credit else release_version())
         return
@@ -1090,6 +1111,9 @@ def main():
         return
     patches = load_patches()
     fpatches = load_file_patches()
+    unused = sorted(set(SET_OVERRIDES) - _SET_USED)
+    if unused:
+        raise SystemExit(f"--set: no patch declares the equate(s) {unused}")
     if a.cmd == "list":
         cmd_list(patches, fpatches)
         return
