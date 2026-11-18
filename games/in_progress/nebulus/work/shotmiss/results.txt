@@ -1,0 +1,82 @@
+Raw outputs of the scripts in this directory (copied from the runs of 2026-11-18; each script prints these lines).
+
+== sweep3.py   (sim, uniform grid: frog x=105 shooting left, ball x 70..105, hop phase 0..10, fire phase 0..10, ball speed 0/+1/-1 = 13068 attempts per variant)
+stock attempts 13068 in-range 6390 {'HIT': 5092, 'MISS_MASK': 1298} miss 20.3% all classes {'MISS_RANGE': 3668, 'HIT': 5092, 'MISS_MASK': 1298, 'NOSHOT': 3010}
+   spd 0 2618 {'HIT': 2142, 'MISS_MASK': 476} miss 18.2%
+   spd 1 2299 {'HIT': 1820, 'MISS_MASK': 479} miss 20.8%
+   spd -1 1473 {'HIT': 1130, 'MISS_MASK': 343} miss 23.3%
+shoot attempts 13068 in-range 6657 {'HIT': 5325, 'MISS_MASK': 1332} miss 20.0% all classes {'MISS_RANGE': 3601, 'HIT': 5325, 'MISS_MASK': 1332, 'NOSHOT': 2810}
+   spd 0 2689 {'HIT': 2208, 'MISS_MASK': 481} miss 17.9%
+   spd 1 2420 {'HIT': 1904, 'MISS_MASK': 516} miss 21.3%
+   spd -1 1548 {'HIT': 1213, 'MISS_MASK': 335} miss 21.6%
+fix attempts 13068 in-range 6390 {'HIT': 6390} miss 0.0% all classes {'MISS_RANGE': 3668, 'HIT': 6390, 'NOSHOT': 3010}
+   spd 0 2618 {'HIT': 2618} miss 0.0%
+   spd 1 2299 {'HIT': 2299} miss 0.0%
+   spd -1 1473 {'HIT': 1473} miss 0.0%
+shootfix attempts 13068 in-range 6657 {'HIT': 6657} miss 0.0% all classes {'MISS_RANGE': 3601, 'HIT': 6657, 'NOSHOT': 2810}
+   spd 0 2689 {'HIT': 2689} miss 0.0%
+   spd 1 2420 {'HIT': 2420} miss 0.0%
+   spd -1 1548 {'HIT': 1548} miss 0.0%
+
+== phase.py    (sim, 43560 attempts; first loop with an intended overlap per attempt: misses/overlaps)
+by dy (shot.y-ball.y) -6:190/375 -5:275/1055 -4:0/2150 -3:2296/2296 -2:2688/2688 -1:0/2066 0:0/1622 1:0/1708 2:0/1541 3:0/971 4:0/603
+by ball hop counter at the test 0:120/120 1:674/674 2:718/718 3:804/804 4:786/786 5:822/822 6:831/831 7:659/659 8:35/35 10:0/11626
+by loop parity 0:2686/8518 1:2763/8557
+by frog x 100:939/2902 103:1033/3288 105:1122/3484 108:1162/3661 110:1193/3740
+by dx -1:0/144 0:1621/4380 1:1592/5757 2:2236/6794
+
+== tunnel.py   (sim, fixed mask, 14520 attempts)
+attempts 14520 x crossings between consecutive tests 40 crossings with |dy|<=5 and no hit (tunnelling, with the mask fixed) 0 max |relative x step| per loop 3
+
+== seam.py     (sim; rotation-symmetric world = full ring ledge at row 14, same attempts shifted by 0/24/40/56/88/104 angle units)
+stock shift 0 {'NOSHOT': 54, 'HIT': 444, 'MISS_MASK': 57, 'MISS_RANGE': 147}   (identical dict for shift 24, 40, 56, 88, 104)
+stock attempts whose class differs from shift 0: 0
+fix shift 0 {'NOSHOT': 54, 'HIT': 501, 'MISS_RANGE': 147}                       (identical for every shift; fix: differs 0)
+
+== sweep1/2 first runs (play_enemy base, 1287 attempts): stock {'MISS_RANGE': 439, 'HIT': 614, 'MISS_MASK': 91, 'NOSHOT': 143}; fix {'MISS_RANGE': 439, 'HIT': 705, 'NOSHOT': 143}
+
+== hat_main.py run <variant>   (REAL Hatari 2.6.1 from work/shotmiss/ledge.sav: 90 attempts x 26 loops = 2339 loops; the same attempts in every variant; sim==Hatari = per-loop compare of ball x,y,state,counter,speed, shot x,y,state,counter, player state)
+stock loops matched sim==Hatari 2339 differ 0 None
+stock random 60 {'HIT': 53, 'MISS': 7} sim==hatari in 60 / 60
+stock targeted-miss 30 {'MISS': 30} sim==hatari in 30 / 30
+shoot loops matched sim==Hatari 2339 differ 0 None
+shoot random 60 {'HIT': 49, 'MISS': 11} sim==hatari in 60 / 60
+shoot targeted-miss 30 {'HIT': 19, 'MISS': 11} sim==hatari in 30 / 30
+fix loops matched sim==Hatari 2339 differ 0 None
+fix random 60 {'HIT': 60} sim==hatari in 60 / 60
+fix targeted-miss 30 {'HIT': 30} sim==hatari in 30 / 30
+shootfix loops matched sim==Hatari 2339 differ 0 None
+shootfix random 60 {'HIT': 59, 'MISS': 1} sim==hatari in 60 / 60
+shootfix targeted-miss 30 {'HIT': 30} sim==hatari in 30 / 30
+stock_p3 loops matched sim==Hatari 2339 differ 0 None
+stock_p3 VBL per game loop (stamps 2 loops apart, per attempt): min 3.00 mean 3.00 max 3.00
+stock_p3 random 60 {'HIT': 53, 'MISS': 7} sim==hatari in 60 / 60
+stock_p3 targeted-miss 30 {'MISS': 30} sim==hatari in 30 / 30
+fix_p3 loops matched sim==Hatari 2339 differ 0 None
+fix_p3 VBL per game loop (stamps 2 loops apart, per attempt): min 3.00 mean 3.00 max 3.00
+fix_p3 random 60 {'HIT': 60} sim==hatari in 60 / 60
+fix_p3 targeted-miss 30 {'HIT': 30} sim==hatari in 30 / 30
+(VBL per loop in the four 2-VBL runs, from the `e VBL` stamps in the logs: stock/shoot/fix/shootfix min 2.00 mean 2.000 max 2.00)
+
+== mash.py     (sim; tap fire every 6 loops, 2-block stack, ball waiting at its marker, 11 hop phases x 6 tap phases = 66 runs)
+stock {'ball killed': 46, 'frog hit first': 20} shots fired until the ball died (killed runs): mean 3.20 max 4
+np_shot {'ball killed': 66} shots fired until the ball died (killed runs): mean 3.15 max 4
+
+== eq_run.py / eq_cmp.py (REAL Hatari, loop-keyed scripted input of work/input/s3,s5,s6; stock vs +np_shot and the default set's gameplay patches (ni_jump+ni_shoot+ni_turn live) vs the same +np_shot)
+j1_stock vs j1_fix: 127 loops compared (matched by timer), 0 differ; frame captures compared 14, differing 0 (0 bytes)
+k1_stock vs k1_fix: 210 loops compared (matched by timer), 0 differ; frame captures compared 0, differing 0 (0 bytes)
+k1n_stock vs k1n_fix: 207 loops compared (matched by timer), 0 differ; frame captures compared 62, differing 0 (0 bytes)
+k2n_stock vs k2n_fix: 151 loops compared (matched by timer), 0 differ; frame captures compared 42, differing 0 (0 bytes)
+k3_stock vs k3_fix: 191 loops compared (matched by timer), 0 differ; frame captures compared 0, differing 0 (0 bytes)
+k5_stock vs k5_fix: 216 loops compared (matched by timer), 0 differ; frame captures compared 0, differing 0 (0 bytes)
+k4b_stock vs k4b_fix: 160 loops compared (matched by timer), 20 differ; frame captures compared 0, differing 0 (0 bytes)  differing addrs: 0x3394dx19, 0x33965x19, 0x33971x20, 0x3397dx20, 0x33988x1, 0x33989x1, 0x33995x1, 0x339dbx1, 0x339dcx1, 0x339ddx1, 0x339edx1 first at timer (24, 72, 36)
+j1_all vs j1_allfix: 126 loops compared (matched by timer), 0 differ; frame captures compared 14, differing 0 (0 bytes)
+k1_all vs k1_allfix: 205 loops compared (matched by timer), 0 differ; frame captures compared 0, differing 0 (0 bytes)
+k1n_all vs k1n_allfix: 205 loops compared (matched by timer), 0 differ; frame captures compared 62, differing 0 (0 bytes)
+k2n_all vs k2n_allfix: 152 loops compared (matched by timer), 0 differ; frame captures compared 42, differing 0 (0 bytes)
+k3_all vs k3_allfix: 193 loops compared (matched by timer), 0 differ; frame captures compared 0, differing 0 (0 bytes)
+k5_all vs k5_allfix: 216 loops compared (matched by timer), 0 differ; frame captures compared 0, differing 0 (0 bytes)
+k4b_all vs k4b_allfix: 162 loops compared (matched by timer), 20 differ; frame captures compared 0, differing 0 (0 bytes)  differing addrs: 0x3394dx19, 0x33965x19, 0x33971x20, 0x3397dx20, 0x33988x1, 0x33989x1, 0x33995x1, 0x339dbx1, 0x339dcx1, 0x339ddx1, 0x339edx1 first at timer (24, 72, 36)
+(K4b: the shot flies right and meets the vertical eye (kind 8, absorbs shots; eye at X=16, Y=12 above the shot's Y=10, dy=-2).  Stock removes the shot at X=13 (dx=-3: the garbage mask for dy=-2 is 'XX....', a false early hit); with np_shot it is removed one loop later at X=15 (intended box dx -2..+2).  The eye itself, score and everything else are identical.)
+
+== gates.log (31 sites, first-hour nepatch) and gates2.log (27 sites, current nepatch): cold boot STE + Mega STE NEPO, $3b87a 66 08 48 80, edgate FAILS [] on both

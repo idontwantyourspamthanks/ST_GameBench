@@ -186,6 +186,12 @@ def build_nebulus() -> Path:
     py("nebulus", "nebrelease", "build", "--out", str(out))
     shutil.rmtree(dst, ignore_errors=True)
     shutil.copytree(out, dst)
+    # the image holds only plain 8.3 upper-case names: the zip's blank campaign disk becomes NEBCAMP.ST
+    cd = dst / "Nebulus_campaign_disk.st"
+    if cd.exists():
+        cd.rename(dst / "NEBCAMP.ST")
+        with open(dst / "README.TXT", "a", newline="") as f:
+            f.write("\r\n(On this drive image the blank campaign disk 'Nebulus_campaign_disk.st' is named NEBCAMP.ST.)\r\n")
     return dst
 
 

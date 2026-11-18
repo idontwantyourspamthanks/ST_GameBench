@@ -13,8 +13,16 @@ def chk(name,got,exp):
     ok=(got==exp); line=f"{'PASS' if ok else 'FAIL'} {name}: {got!r}" + ('' if ok else f"  (expected {exp!r})"); print(line,flush=True); log.append(line)
     if not ok: fails.append(name)
 def op(save=False,name=''):
-    t.K('Down',4 if save else 3,hold=0.2,gap=0.4); t.F(1.0); t.F(3.5); time.sleep(1.0)
-    m=t.msg(); return m
+    """fire at the menu item, fire at the prompt, then wait for the disk excursion to finish (vDisk back to 0, message set):
+    two media-change re-reads make it 2 to 10 s (an empty drive is the slow case)."""
+    t.K('Down',4 if save else 3,hold=0.2,gap=0.4); t.F(1.0); t0=time.time(); t.F(1.0)
+    m=None
+    for _ in range(60):
+        time.sleep(0.5)
+        if W(h,0x77cc0+174)==0 and t.msg() is not None:
+            m=t.msg(); break
+    print('   (%.1f s)'%(time.time()-t0),flush=True)
+    return m
 try:
     print('title',h.boot_to_title(timeout=170),flush=True); time.sleep(3)
     h.key('F10',hold=0.5); time.sleep(2)

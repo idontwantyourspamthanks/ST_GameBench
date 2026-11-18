@@ -39,23 +39,21 @@ Verified: HW-detect screen, then the loader pictures, then the game's title ("Mi
   game logic runs once per flip, so a faster pacer alone doubles game speed. A real 50 fps needs logic updated every
   second flip and drawing every flip; at 8 MHz the draw alone must also fit 160,256 cycles (needs a ~26% cut).
   Only worthwhile on 16 MHz+ machines. User: queue it, do not build yet.
-- **Floppy release**: waiting for the user's real Nebulus floppy image; HD release first.
-- **Next editor round (one owner, after NebF10Debug lands; do not start earlier: it edits `ed_editor.s`/`gen_ed.py`):**
-  1. **FIRST: fix the 'Pale block' menu entry**: it places cell `$85`, which is the LIFT START slab, so every pale
-     block is a lift start with no end (lift analysis: `work/notes/lifts.md`; `editor.md` wrongly calls `$85/$89/$8d`
-     'solid'). Replace with a real 'Lift >' entry (from here / stop here / delete, then pick the other end; add the
-     `$81` ledge under the slab; warn when a pillar blocks the lift): code in `work/lifts/ed_lift.s`
-     (`build_lift_editor.py`; ~566 B: needs a 4th block in `gen_ed.py`, free ranges in `lifts.md` section 4) and
-     `work/lifts/ovl_lifts.patch` for the PC tool.
-  2. **Keyboard shortcuts** to set the tile type at the selected cell (one key per type, repeat-last key, shown in the
-     legend); acceptance: the trainer hooks (T/E read the same `$38498` cell) are SUPPRESSED while the editor is
-     active so an editor key can never toggle a trainer.
-  3. **Campaign disk**: 'Load from campaign disk' / 'Save to campaign disk' (drive A:, B: optional), our own
-     'Insert campaign disk, press fire' prompt (check the disk is present BEFORE opening; a failed open on an empty
-     drive can raise TOS's reset/retry dialog that cannot be dismissed in-game), the game disk is never written; a tool to
-     build blank campaign disks (.st/.msa) holding a fixed-size `NEBLEVEL.OVL`.
-  4. The Options-page hint for F10 (if NebF10Debug does not finish it).
-  F9 (PP's Gamex exit key): not worried; the README says to avoid it.
+- **Floppy release**: built (Option A: the user's own disk, patched in `TOPPLER.JMP`; `tools/nefloppy.py`). Rebuild
+  after editor round 3 and the floppy campaign-disk path (TOS-state capture, `patches/ed_floppy_capture.s`, untested)
+  are in `NebRelease3`'s scope; if the capture cannot work, the floppy manager says saving needs the HD build.
+- **Editor round 3: DONE** (commit `b5ba3aa`, `work/notes/editor.md` §9, §11-§13): Pale block fixed, `Lift >` flow,
+  tile shortcut keys (T/E suppressed in the edit view, gated), campaign disk Load/Save with its own prompt and no TOS
+  dialog (STE 51/51, Mega STE pass, 22 fuzz disks), `tools/nebcampaign.py`, F10 latch + D trigger + Options hint
+  (`ef1cede`). Open: floppy disk path untested, TOS 1.04 not re-run, drive B not built, real hardware untested, code
+  budget ~236 B free. F9 (PP's Gamex exit key): not worried; the README says to avoid it.
+- **v1.1 additions after the editor round** (user-tested or user-approved): `ni_turn` (default yes), `ni_ikbd` (input dead
+  after any key/joystick byte in START's ~1.3 s masked window: stock bug, `work/notes/inputstall.md`), `np_lift`
+  (lift-ride frame drops in enemy-heavy towers, `liftperf.md`), `np_shot` (stock hit-box bug: missing AND $3ff in
+  `sub_03b7d6`, balls missed 20 % of shots, `shotmiss.md`; default yes, changes original behaviour), the patch layer
+  zeroes its own state (`clear` directive, `ZONE_STRICT=False`, idempotent relaunch: `junkram.md`).
+- **Release v1.1** (HD zip, floppy zip, all-games image): in progress (`NebRelease3`), needs the clean commit first;
+  required gates: e170, e150, e97, e91, e161, build-vs-build RAM compare, junk matrix incl. Mega STE 4 MB.
 
 ## Future (user's plan, not today): nebulus.kswapps.com
 A community site for Nebulus levels and campaigns, and an Amiga version of the game ("yes this means we're also

@@ -179,7 +179,7 @@ Sampling (joystick packet -> poll) is 0..2 frames, mean 18-23 ms; the 43 ms poll
 stock             poll -> first pose change 83 ms (4.15 frames, 8/8)   poll -> first x change 363 ms (18.15 frames)
 live nop @ $39e2c poll -> first pose change 43 ms (2.15 frames, 8/8)   poll -> first x change 323 ms (16.15 frames)
 ```
-The one-byte-pair fix (`$39e2c 4e75 -> 4e71`, falls into the turn handler `$39e2e`) removes the same one-loop dead time (-40 ms) from the start of a turn. Not shipped (no equivalence gate run for it); `w $39e2c $4e $71` is the live form.
+The one-byte-pair fix (`$39e2c 4e75 -> 4e71`, falls into the turn handler `$39e2e`) removes the same one-loop dead time (-40 ms) from the start of a turn. It was first held back; the equivalence gate is in 11.2 and the user kept it: shipped (default yes) since v1.1. `w $39e2c $4e $71` is the live form.
 
 ## 10. Summary of what the user feels (jump while moving, stock): ~129 ms median key -> motion (enemies on, STE): 43 ms render pipeline + ~23 ms sampling + Hatari IKBD stagger ~20 ms + 40 ms dead loop (now removed).
 Shoot: 167 ms median key -> shot (123 ms after the poll: pose changes at 43 ms, the shot spawns at animation step 1 = two loops after the state is set; ni_shoot makes it 83 ms after the poll).
@@ -238,6 +238,6 @@ All three live patches together (jump+shoot+turn) in scripted runs: `j1b_all vs 
 | ni_jump | **yes** | state 12/12 (j1b, enemies on+off), pixels 0 in rows 20..129 for 12 frames, K3 34/34, J2 176/176, press->motion 129 -> 81 ms median | state 1 lasts 11 loops instead of 12: flight unchanged, jump starts 1 loop earlier, re-jump possible 1 loop (40 ms) earlier; the dropped frame was a duplicate |
 | ni_latch | **yes** | 20/20 real taps latched+consumed, 12/12 real 1-frame pulses registered vs 4/12 stock, held fire unchanged | none while polling; a tap while the game is not polling is applied at the next poll (untested effect on loader/animations) |
 | ni_shoot | **yes** (set; lead requested) | K1/K1n/K2n/K4b/K5 above: player, shot, grid cells, `$33918` shifted exactly, creatures identical, rows 20..129 0 bytes in the shot windows; press->shot 167 -> 122 ms | the 2-frame entry pose is not shown, state 5 = 3 loops instead of 4: shot animation 40 ms shorter, re-shot interval 4 -> 3 loops (up to +33% fire rate when tapping at the limit) |
-| ni_turn | no (recommended yes if you accept it; user did not report turn lag) | K1/K1n 16/16, pixels 0 in all turn frames, no dropped visible frame | turn 7 -> 6 loops (-40 ms), direction reversals feel 40 ms quicker; nothing else |
+| ni_turn | **yes** (since v1.1: the user tried it and kept it) | K1/K1n 16/16, pixels 0 in all turn frames, no dropped visible frame | turn 7 -> 6 loops (-40 ms), direction reversals feel 40 ms quicker; nothing else |
 | ni_hop | no | J2: stock hops at loops 55/65/75/85/95, patched 55/64/73/82/91 | blocked-walk hop cycle 10 -> 9 loops = +11% ledge-climbing speed |
 Remaining lag after the set: 0..2 frames sampling, 43 ms poll -> picture, Hatari's 1-frame key -> packet stagger; the shot still appears 83 ms after the poll because it spawns at animation step 1.

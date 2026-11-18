@@ -115,29 +115,39 @@ not tried, and a restore would switch your stored levels off until the next
 start (the original game is not affected).
 
 CAMPAIGN DISKS: your levels and campaigns live on a separate 720 KB floppy
-(a disk image in an emulator), never on the game disk.  The disk carries one
-file, NEBLEVEL.OVL (exactly 8192 bytes, big endian, starts with NCMP + version
-1).  This release ships a blank one (Nebulus_campaign_disk.st: an all-zero
-file = nothing in it yet); tools/nebcampaign.py (in the source tree) makes
-more, shows what is on a disk ("info") and extracts the file.  "Load from
-campaign disk" / "Save to campaign disk" ask "Insert campaign disk in drive
-A:, then press fire (F10 cancels)": put the disk in drive A: (in Hatari:
-floppy A, or --disk-a), press FIRE.  Messages: "Loaded N levels / M
-campaigns", "Saved", "No disk", "Not a campaign disk" (no NEBLEVEL.OVL on it,
-a file of another size, or damaged content: your levels in memory are kept),
-"Disk is write protected".  A save overwrites the file in place (it never
-creates a file, never grows it); the game disk is never written.  Loading
-REPLACES the levels and campaigns in memory, so Save first.  Your levels also
-disappear when you reset the machine: they exist on the campaign disk only.
-Share levels by giving someone the disk (or the file); back it up now and
-then.  A NEBLEVEL.OVL left next to START.TOS is still read at start (an
-optional starting set), but nothing ever writes to it.
+(a disk image in an emulator), never on the game disk and never on the hard
+disk.  THIS ZIP CONTAINS ONE: Nebulus_campaign_disk.st, a blank 720 KB disk.
+Put it in a floppy image slot of your emulator (Hatari: floppy A, or
+--disk-a Nebulus_campaign_disk.st; MiSTer / other emulators: mount it as
+disk A) or write it to a real 720 KB disk, and work with that; copy the file
+before you use it if you want to keep a blank one.  NEVER save to the game
+disk: the editor only ever reads and writes the one file NEBLEVEL.OVL on the
+disk that is in drive A: when you press FIRE at its prompt.
+The disk carries that one file, NEBLEVEL.OVL (exactly 8192 bytes, big endian,
+starts with NCMP + version 1; the shipped one is all zero = nothing in it
+yet); tools/nebcampaign.py (in the source tree) makes more disks, shows what
+is on one ("info") and extracts the file.
+How to use it: manager > "Load from campaign disk" or "Save to campaign
+disk" (also in the editor's menu).  The editor asks "Insert campaign disk in
+drive A:, then press fire (F10 cancels)": put the disk in drive A:, press
+FIRE.  The screen is frozen while the drive is read: 4 to 8 seconds, or
+about 10 seconds if drive A is empty (TOS retries the drive).
+Messages: "Loaded N levels / M campaigns", "Saved", "No disk" (drive empty),
+"Not a campaign disk" (no NEBLEVEL.OVL on it, a file of another size, or
+damaged content: your levels in memory are kept), "Disk is write protected".
+A save overwrites the file in place (it never creates a file, never grows
+it).  Loading REPLACES the levels and campaigns in memory, so Save first.
+Your levels also disappear when you reset the machine: they exist on the
+campaign disk only.  Share levels by giving someone the disk (or the file);
+back it up now and then.  A NEBLEVEL.OVL left next to START.TOS is still read
+at start (an optional starting set), but nothing ever writes to it.
 @@END
 
 How to run
   Copy the NEBULUS folder to a hard disk (or any GEMDOS drive) and start
   START.TOS from the desktop, as PP's version. All files must stay together,
-  and a campaign disk in drive A: is needed to load or save your levels (see above).
+  and a campaign disk in drive A: (Nebulus_campaign_disk.st, in this zip) is
+  needed to load or save your levels (see above).
   The loader reads its files with ordinary GEMDOS calls from the current
   drive: no special hard-disk driver is needed, and any drive TOS can read is
   fine. (In Hatari the folder works as a plain GEMDOS drive and as a HDDRIVER
@@ -157,30 +167,35 @@ How to run
 
 F9 and the editor / campaigns (Gamex)
 -------------------------------------
-  F9 (press it again if it does not answer) leaves the game to the desktop;
-  tried from a tower and from the editor manager. F9 copies the game's RAM
-  aside, and in doing so it overwrites the memory where the game keeps the
-  levels and campaigns it read from NEBLEVEL.OVL. So after F9 your custom
-  levels and campaigns are switched off for as long as that game stays in
-  memory: the Levels list is empty, the original game plays normally, F10 on
-  the title does not crash (tried with the memory of a saved store overwritten
-  the way F9 does it). Nothing is lost on disk: after a reboot the file is
-  read again. Save to disk BEFORE you press F9, and do not press F9 while
-  editing (an unsaved level is gone).
-  NOT tried: starting START.TOS again from the desktop after F9 (it should
-  read the file again), and PP's GXUT270.PRG ("PLAY GAME IN RAM", saved game
-  states). Whatever GXUT270 restores, the levels are not part of it, so expect
-  custom levels to stay off until the game is started afresh.
+  F9 is PP's Gamex key, not an editor key.  It leaves the game to the desktop
+  (press it again if it does not answer); tried from a tower and from the
+  editor manager.  F9 copies the game's RAM aside, and in doing so it
+  overwrites the memory where the game keeps your levels and campaigns.  So
+  after F9 your levels and campaigns in memory are switched off for as long as
+  that game stays in memory: the Levels list is empty, the original game plays
+  normally, F10 on the title does not crash (tried with the memory of a saved
+  store overwritten the way F9 does it).  Nothing is lost on the campaign
+  disk.  Save to the campaign disk BEFORE you press F9 (an unsaved level is
+  gone), and avoid F9 while editing: after F9 restart the game fresh (from the
+  desktop, or reset the machine) and Load from the campaign disk again.
+  NOT tried: starting START.TOS again from the desktop after F9 (it may behave
+  as a second start of the loader), and PP's GXUT270.PRG ("PLAY GAME IN RAM",
+  saved game states).  Whatever GXUT270 restores, the levels are not part of
+  it, so expect custom levels to stay off until the game is started afresh.
 
 Tested
   Hatari 2.6.1 only: STE with TOS 1.62 and 1 MB, Mega STE with TOS 2.06 and 4
   MB, ST with TOS 1.04 and 1 MB (all cold-booted from the unzipped release
   into a tower).
-  NOT tested: real hardware, TT, Falcon, a 512 KB machine, a floppy.
+  The level editor, lifts, shortcut keys and campaign disk Load/Save were
+  tried in Hatari on the STE and Mega STE (the ST: F10/D and playtest).
+  NOT tested: real hardware, TT, Falcon, a 512 KB machine, a real floppy
+  drive, a second drive (the editor uses A: only), the desktop after F9,
+  GXUT270's "PLAY GAME IN RAM".
 
 Floppy
-  This is the hard-disk set only. PP's Gamex says it also works from floppy,
-  but there is no floppy version of this release yet.
+  This is the hard-disk set only.  A separate floppy release of the game
+  (Nebulus_floppy_v@VERSION@.zip) exists; its campaign disk works the same way.
 
 Version
   The title screen shows "v@VERSION@ enhanced by dad_prg", so the release

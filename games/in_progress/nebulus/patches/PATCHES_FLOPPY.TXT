@@ -16,9 +16,13 @@ changed and one moved:
                (2,495 bytes) is gone.  The changes below are written into it.
                The new code and data take the place of the dropped table and
                of the empty RAM behind it, $75720..$77F00 (10,208 bytes,
-               stored in the file; the file grows by 7,713 bytes), and the
-               game's final jump goes to a short stub there that jumps on to
-               the game's start ($38624).
+               stored in the file; the file grows by 7,713 bytes).  The game's
+               final jump goes to a short stub there: on a 512 KB machine it
+               puts the original title code back (the editor needs RAM above
+               512 KB), otherwise it takes a copy of TOS's own low RAM and MFP
+               state to $C0108 (what the editor's "Load/Save campaign disk"
+               needs for its excursion into TOS: there is no Gamex here to
+               keep that copy), and jumps on to the game's start ($38624).
   TOPPLER.NEO  the title picture: moved to other sectors (the file before it
                grew); contents unchanged.
   Everything else is byte for byte the original: boot sector (checksum
@@ -38,10 +42,13 @@ before anything was written.
 Changes in this release:
 {PATCHES}
 
-Nebulus_campaign_disk.st: a blank 720 KB disk (FAT12, 9 sectors, 2 sides) that
-carries one file, NEBLEVEL.OVL (8192 bytes, all zero) = an empty campaign and
-level file in the format of the hard-disk release.  Nothing on the game disk
-reads or writes it: this build does not talk to the drive after the game has
-started (the editor keeps its levels in RAM).
+Nebulus_campaign_disk.st: a blank 720 KB disk (FAT12, 9 sectors, 2 sides)
+that carries one file, NEBLEVEL.OVL (8192 bytes, all zero) = an empty campaign
+and level file.  The editor's "Load/Save campaign disk" read and write that
+file in drive A: (never on the game disk): a save overwrites the existing file
+in place and never creates or grows it, so the disk must come from this zip or
+be a copy of it.  With the game disk in drive A: at start, Load/Save ask for
+the campaign disk by name and wait for FIRE; the game does not touch the drive
+after its start-up, so the game disk can go back in afterwards.
 
 Nothing else of the game is changed.  Tested in Hatari only; see README.TXT.

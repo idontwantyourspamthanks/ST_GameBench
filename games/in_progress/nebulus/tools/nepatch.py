@@ -10,11 +10,17 @@ NEPATCH.BIN in the image root. Details and evidence: work/notes/boot.md.
   stage 1  core1 ($B0008, runs where START's `jmp $33b00` was, from START's $7fd00 copy, SR $2700, game unpacked, not relocated):
            stores (core2 - $33b1c) in the long the game's own relocator turns into its final `jmp $38624`
            (`$33b6c`: `4ef9 00004b08`), then `jmp $33b00`.
-  stage 2  core2 (runs after the game relocated itself; every address is its final RAM address): pass 1 compares the original
-           bytes of EVERY site, pass 2 (only if all matched) writes them, marker 'NEPO' (or 'NEPF' on a mismatch), `jmp $38624`.
-Commands: verify | list | build | live | boot | taildump | fillcheck   (see --help)
-Patch files: patches/*.nep, lines `patch NAME` / `site HEXADDR NEWHEX` / `default yes|no` (original bytes are derived from the
-predicted stage-2 RAM image, so they cannot be mistyped, and are checked against a real dump by `verify`).
+  stage 2  core2 (runs after the game relocated itself; every address is its final RAM address): pass 1 compares the bytes of EVERY site with
+           the ORIGINAL bytes (or, for a relaunch on RAM that kept a previous patched run, with the NEW bytes: idempotent), pass 2 (only if all
+           matched) writes them, then zeroes every `clear` range, marker 'NEPO' (or 'NEPF' on a mismatch), the editor blocks, `jmp $38624`.
+           The loader never relies on RAM being zero: STATE cells are `clear`ed unconditionally (MiSTer/real machines do not clear RAM).
+Patch files: patches/*.nep, lines `patch NAME` / `site HEXADDR NEWHEX` / `block HEXADDR HEX` / `clear HEXADDR HEXLEN` / `default yes|no` (original bytes
+are derived from the predicted stage-2 RAM image, so they cannot be mistyped, and are checked against a real dump by `verify`).
+  site   verified (original or new bytes must be there), then written.  A site in the dead gap is a code blob (zero before).
+  block  unverified copy into the dead zone.
+  clear  zero this range unconditionally (runtime STATE: flags, latches, editor RS/V).  Parts of a site that lie in a clear range are not verified
+         (the site is split around it; the new bytes there must be zero).  Even address and length, inside the dead gap.
+ZONE_STRICT (below): True = a code blob in the gap must be zero before (junk there = NEPF, stock game); False = blobs are written like blocks.
 """
 from __future__ import annotations
 
@@ -39,6 +45,9 @@ PB = 0xB0000                  # payload RAM address
 PB_MAX = 0xC000               # the payload may use $B0000..$BBFFF; the campaign store (NEBLEVEL.OVL) is loaded at OB = $BC000
 MARKER = PB + 0x20
 NSITES = PB + 0x24
+NREUSE = PB + 0x26               # word: sites that were already in their NEW state (relaunch on RAM that kept a previous patched run)
+ZONE_STRICT = False             # True: a code blob in the dead gap must be zero before (or already the new bytes); junk there = NEPF (stock game).
+                                 # False: such blobs are written unconditionally like blocks (junk RAM can never switch the patch layer off).
 TABLE = PB + 0x100
 TABLE_END = PB + 0x6000           # sites (verified, orig+new)
 BLKTAB = PB + 0x6000              # blocks (unverified copies into the dead zone / zero gap): {addr.l len.w data} ..., 0.l
@@ -116,7 +125,7 @@ def predicted_stage2(hook: bool = True) -> bytearray:
 # ---------------------------------------------------------------- patch files
 class Patch:
     def __init__(self, name):
-        self.name = name; self.sites: list[tuple[int, bytes]] = []; self.blocks: list[tuple[int, bytes]] = []; self.default = False
+        self.name = name; self.sites: list[tuple[int, bytes]] = []; self.blocks: list[tuple[int, bytes]] = []; self.clears: list[tuple[int, int]] = []; self.default = False
 
 
 def load_patches() -> list[Patch]:
@@ -135,6 +144,8 @@ def load_patches() -> list[Patch]:
                 cur.sites.append((int(w[1], 16), bytes.fromhex("".join(w[2:]))))
             elif w[0] == "block":
                 cur.blocks.append((int(w[1], 16), bytes.fromhex("".join(w[2:]))))
+            elif w[0] == "clear":
+                cur.clears.append((int(w[1], 16), int(w[2], 16)))
             else:
                 raise SystemExit(f"{f}: bad line {ln!r}")
     return out
@@ -158,6 +169,49 @@ def derive_sites(patches: list[Patch], ram: bytes) -> list[tuple[int, bytes, byt
     return sites
 
 
+def in_gap(a: int, n: int) -> bool:
+    return DEAD_LO <= a and a + n <= DEAD_HI
+
+
+def plan_install(patches: list[Patch], ram: bytes):
+    """-> (sites [(addr, orig, new)] verified by pass 1, clears [(addr, len)] zeroed by pass 2, blocks [(addr, data)] copied unverified).
+    Checks: clears even/inside the gap/disjoint, no site or block overlaps a clear except that a site (a blob in the gap) is split around the clears it
+    contains (its new bytes there must be zero: the state cell starts at zero), blocks and gap sites disjoint, blocks inside BLK_LO..BLK_HI.
+    ZONE_STRICT False: the (split) gap sites become blocks."""
+    sites = derive_sites(patches, ram)
+    clears = sorted((a, n) for p in patches for a, n in p.clears)
+    for a, n in clears:
+        if n <= 0 or (a & 1) or (n & 1) or not in_gap(a, n):
+            raise SystemExit(f"clear ${a:x}+{n}: needs an even address and length inside the dead gap ${DEAD_LO:x}..${DEAD_HI:x}")
+    for (a, n), (b, _) in zip(clears, clears[1:]):
+        if a + n > b:
+            raise SystemExit(f"clears overlap at ${a:x}/${b:x}")
+    split = []
+    for a, o, nw in sites:
+        parts = [(a, a + len(nw))]
+        for ca, cn in clears:
+            if ca + cn <= a or ca >= a + len(nw):
+                continue
+            if not in_gap(a, len(nw)):
+                raise SystemExit(f"site ${a:x} (game image) overlaps clear ${ca:x}+{cn}")
+            lo, hi = max(ca, a), min(ca + cn, a + len(nw))
+            if any(nw[lo - a:hi - a]):
+                raise SystemExit(f"site ${a:x}: new bytes inside clear ${ca:x}+{cn} are not zero (a state cell must start at zero)")
+            parts = [q for lo_, hi_ in parts for q in ([(lo_, min(hi_, ca)), (max(lo_, ca + cn), hi_)] if lo_ < ca + cn and hi_ > ca else [(lo_, hi_)]) if q[0] < q[1]]
+        for lo, hi in parts:
+            split.append((lo, bytes(ram[lo:hi]), nw[lo - a:hi - a]))
+    blocks = sorted((ba, bd) for p in patches for ba, bd in p.blocks)
+    spans = [(ba, ba + len(bd), "block") for ba, bd in blocks] + [(lo, lo + len(n), "site") for lo, o, n in split if in_gap(lo, len(n))] + [(ca, ca + cn, "clear") for ca, cn in clears]
+    spans.sort()
+    for (a, e, k), (b, _, k2) in zip(spans, spans[1:]):
+        if e > b:
+            raise SystemExit(f"{k} ${a:x}..${e:x} overlaps {k2} ${b:x}")
+    if not ZONE_STRICT:
+        blocks = sorted(blocks + [(a, n) for a, o, n in split if in_gap(a, len(n))])
+        split = [s for s in split if not in_gap(s[0], len(s[2]))]
+    return split, clears, blocks
+
+
 # ---------------------------------------------------------------- assembly
 def asm(org: int, src: str) -> bytes:
     with tempfile.TemporaryDirectory() as d:
@@ -168,7 +222,8 @@ def asm(org: int, src: str) -> bytes:
         return o.read_bytes()
 
 
-# Core: table entries {addr.l, len.w (even), orig[len], new[len]}, end addr.l = 0.
+# Core: site table entries {addr.l, len.w (even), orig[len], new[len]}, end addr.l = 0, then the clear table {addr.l, len.w (even)}, end addr.l = 0
+# (follows the site table directly).  Pass 1: every site must hold its orig bytes OR already its new bytes (idempotent relaunch).
 CORE = f"""
 MARKER  equ ${MARKER:x}
 NSITES  equ ${NSITES:x}
@@ -186,6 +241,7 @@ core1:
 core2:
 \tmovem.l d0-d7/a0-a6,-(a7)
 \tmove.l #'NEPF',MARKER.l
+\tmoveq #0,d4                ; sites found already in their NEW state
 \tlea TABLE.l,a0
 \tmove.l a0,a3
 p1:
@@ -199,8 +255,20 @@ p1:
 \tsubq.w #1,d2
 p1c:
 \tcmpm.b (a2)+,(a1)+
-\tbne.s fin
+\tbne.s p1n
 \tdbra d2,p1c
+\tbra.s p1x
+p1n:                         ; not the original: refuse unless it is already the new bytes (relaunch on RAM that kept an earlier patched run)
+\tmove.l d0,a1
+\tlea 0(a0,d1.l),a2
+\tmove.w d1,d2
+\tsubq.w #1,d2
+p1d:
+\tcmpm.b (a2)+,(a1)+
+\tbne.w fin
+\tdbra d2,p1d
+\taddq.w #1,d4
+p1x:
 \tadda.l d1,a0
 \tadda.l d1,a0
 \tbra.s p1
@@ -225,6 +293,20 @@ p2c:
 \tbra.s p2
 p2ok:
 \tmove.w d3,NSITES.l
+\tmove.w d4,NSITES+2.l
+clr:                         ; a0 = clear table (state cells are zeroed, never assumed zero)
+\tmove.l (a0)+,d0
+\tbeq.s clrd
+\tmove.l d0,a1
+\tmoveq #0,d1
+\tmove.w (a0)+,d1
+\tlsr.w #1,d1
+\tsubq.w #1,d1
+clrc:
+\tclr.w (a1)+
+\tdbra d1,clrc
+\tbra.s clr
+clrd:
 \tmove.l #'NEPO',MARKER.l
 \tlea ${BLKTAB:x}.l,a0
 blk:
@@ -325,10 +407,12 @@ def build_carrier() -> bytes:
     return bytes(f)
 
 
-def build_payload(sites, corrupt=False, fill=False, blocks=()) -> bytes:
+def build_payload(sites, corrupt=False, fill=False, blocks=(), clears=()) -> bytes:
     code = asm(PB, CORE)
     assert code[8:10] == bytes.fromhex('23fc') and code[MARKER - PB:MARKER - PB + 4] == b'NEPF', 'core layout moved'
-    img = bytearray(max(len(code), 0x100))
+    if len(code) > TABLE - PB:
+        raise SystemExit(f"core {len(code)} B > {TABLE - PB} B")
+    img = bytearray(TABLE - PB)
     img[:len(code)] = code
     tab = bytearray()
     for a, o, n in sites:
@@ -339,6 +423,9 @@ def build_payload(sites, corrupt=False, fill=False, blocks=()) -> bytes:
         # padding byte of an odd-length site: orig and new both 0 -> would clobber the byte after the site; forbid odd sites
         if len(o) & 1:
             raise SystemExit(f"site ${a:x} has odd length {len(o)}: use an even number of bytes")
+    tab += b"\0\0\0\0"
+    for a, n in clears:
+        tab += struct.pack(">LH", a, n)
     tab += b"\0\0\0\0"
     if len(tab) > TABLE_END - TABLE:
         raise SystemExit(f"site table {len(tab)} B > {TABLE_END - TABLE} B")
@@ -390,9 +477,13 @@ def cmd_verify(a):
     print(f"predicted stage-2 image vs {dump.name}: {hi - lo} game bytes compared, {len(bad)} differ")
     if bad:
         print("first differences:", ", ".join(f"${i:x}" for i in bad[:20]))
-    sites = derive_sites(chosen(a.only, load_patches()), ram)
+    patches = chosen(a.only, load_patches())
+    sites, clears, blocks = plan_install(patches, ram)
     for ad, o, n in sites:
         print(f"site ${ad:06x} orig {o.hex()} new {n.hex()}  dump-orig {'OK' if bytes(real[ad:ad+len(o)]) == o else 'MISMATCH'}")
+    for ad, n in clears:
+        print(f"clear ${ad:06x} +{n}  (state, zeroed unconditionally; stage-2 dump there {'zero' if not any(real[ad:ad+n]) else 'NOT zero'})")
+    print(f"{len(sites)} verified sites, {len(clears)} clear ranges ({sum(n for _, n in clears)} B), {len(blocks)} blocks; ZONE_STRICT={ZONE_STRICT}")
     return 1 if bad else 0
 
 
@@ -402,32 +493,30 @@ def cmd_list(a):
         print(f"{p.name} default={'yes' if p.default else 'no'}")
         for ad, new in p.sites:
             print(f"   ${ad:06x} orig {bytes(ram[ad:ad+len(new)]).hex()} new {new.hex()}")
+        for ad, n in p.clears:
+            print(f"   ${ad:06x} clear +{n}")
 
 
 def cmd_build(a):
     ram = predicted_stage2()
-    sites = derive_sites(chosen(a.only, load_patches()), ram)
+    sites, clears, blocks = plan_install(chosen(a.only, load_patches()), ram)
     out = Path(a.out)
     if out.exists():
         shutil.rmtree(out)
     shutil.copytree(ORIG, out)
     (out / "START.TOS").write_bytes(build_carrier())
-    blocks = sorted((ba, bd) for p in chosen(a.only, load_patches()) for ba, bd in p.blocks)
-    for (ba, bd), (bb, be) in zip(blocks, blocks[1:]):
-        if ba + len(bd) > bb:
-            raise SystemExit(f"blocks overlap at ${ba:x}/${bb:x}")
-    (out / FILEN).write_bytes(build_payload(sites, a.corrupt, a.fill, blocks))
+    (out / FILEN).write_bytes(build_payload(sites, a.corrupt, a.fill, blocks, clears))
     ovl = Path(a.ovl) if a.ovl else None
     (out / OVLN).write_bytes(ovl.read_bytes() if ovl else bytes(OVSZ))
     man = {"payload": hex(PB), "sites": [{"addr": ad, "orig": o.hex(), "new": n.hex()} for ad, o, n in sites],
-           "marker": hex(MARKER)}
+           "clears": [{"addr": ad, "len": n} for ad, n in clears], "marker": hex(MARKER)}
     (out.parent / (out.name + ".json")).write_text(json.dumps(man, indent=1))
-    print(f"built {out}: START.TOS {(out/'START.TOS').stat().st_size} B, {FILEN} {(out/FILEN).stat().st_size} B, {len(sites)} sites")
+    print(f"built {out}: START.TOS {(out/'START.TOS').stat().st_size} B, {FILEN} {(out/FILEN).stat().st_size} B, {len(sites)} sites, {len(clears)} clears, {len(blocks)} blocks")
 
 
 def cmd_live(a):
     ram = predicted_stage2()
-    sites = derive_sites(chosen(a.only, load_patches()), ram)
+    sites, _, _ = plan_install(chosen(a.only, load_patches()), ram)
     for ad, o, n in sites:
         print("w $%x " % ad + " ".join(f"${b:02x}" for b in n))
 

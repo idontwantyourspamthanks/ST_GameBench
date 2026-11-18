@@ -35,9 +35,11 @@ PATCHES = GAME / "patches"
 BASE = 0x33B00            # the loader reads TOPPLER.JMP here and jumps here
 RB = 0x33B1C              # = BASE + 28: the image's own relocation base (text start)
 ZONE_LO = 0x75720         # end of text+data = where the relocation table was (same value as 0x75728 - 8 of PP's build)
-ZONE_HI = 0x77EC0         # patch RAM ends here (same limit as the HD build)
-STUB = 0x77EC0            # entry stub + marker
-FILE_END = 0x77F00        # = 546 sectors = 273 clusters of the file
+ZONE_HI = 0x78000         # patch RAM ends here: $78000 is the game's screen buffer
+STUB = 0x77EC0            # entry stub + marker (40 B)
+IK_ADDR = 0x77F00         # ni_ikbd's 90-byte blob (the HD build keeps it at $7726c; on the floppy that gap holds the TOS-state capture)
+FILE_END = 0x78100        # = 548 sectors = 274 clusters of the file (cluster 316 added for IK_ADDR; its last 256 bytes land on the screen buffer
+                          #   at $78000 and are only written once, at load)
 ENTRY = 0x38624           # game entry (`lea $800,a7 / jmp $3db62`); the original relocator's jmp operand is $4b08 + RB
 PP_TEXT, PP_DATA = 0xA866, 0x373A6
 FL_TEXT, FL_DATA = 0xA85E, 0x373A6
@@ -237,36 +239,53 @@ def _asm_editor(txt: str):
         else:
             segs.append((ad, bytearray([mem[ad]])))
     segs = [(ad, bytes(v)) for ad, v in segs]
-    assert [ad for ad, _ in segs] == [eq["CODE1"], eq["DATA"], eq["CODE2"]], [(hex(ad), len(v)) for ad, v in segs]
+    order = ["CODE1", "DATA", "CODE2", "CODE3", "CODE4", "CODE5"]          # gen_ed.py's six blocks
+    assert sorted(ad for ad, _ in segs) == sorted(eq[n] for n in order), [(hex(ad), len(v)) for ad, v in segs]
+    segs.sort()
     sym = {m.group(1): int(m.group(2), 16) for m in re.finditer(r"^(\w+)\s+A:([0-9A-Fa-f]+)", lst, re.M)}
     return segs, sym
 
 
 def gen_editor(remap: bool):
-    """gen_ed.py's assembly of patches/ed_editor.s; the floppy variant maps the game addresses and replaces the disk save (a TOS excursion through
-    the Gamex TOS image, which only exists in PP's START.TOS flow) by a message.  The replacement changes the code size, so entry points that
-    the .nep sites jump to directly (ed_key, ed_opt) move: `symmap` translates the HD build's addresses to the floppy build's (by symbol)."""
+    """gen_ed.py's assembly of patches/ed_editor.s; the floppy variant maps the game addresses and adds the boot-time TOS-state capture
+    (patches/ed_floppy_capture.s) in the zero gap behind the DATA block, so the editor's campaign-disk Load/Save (a TOS excursion) works without
+    PP's Gamex TOS image.  Entry points that the .nep sites jump to directly (ed_key, ed_opt) are translated by symbol if they moved (`symmap`)."""
     txt = (PATCHES / "ed_editor.s").read_text()
     segs, sym = _asm_editor(txt)
     if not remap:
         return segs, {}
-    ftxt = remap_source(txt)
-    a = re.search(r"^save_file:\n", ftxt, re.M)
-    b = re.search(r"^swap_tos:\n", ftxt, re.M)
-    assert a and b and a.start() < b.start(), "ed_editor.s: save_file/swap_tos anchors changed; update tools/nefloppy.py"
-    ftxt = (ftxt[:a.start()] + "save_file:\n        lea     sNoFl(pc),a0\n        move.l  a0,vMsg(a5)\n        rts\n"
-            f"sNoFl:  dc.b    '{MSG_NODISK}',0\n        even\n\n" + ftxt[b.start():])
-    fsegs, fsym = _asm_editor(ftxt)
+    fsegs, fsym = _asm_editor(remap_source(txt))
     symmap = {}
     for name, ad in sym.items():
         if name in fsym and fsym[name] != ad and ad >= ZONE_LO:
             if symmap.get(ad, fsym[name]) != fsym[name]:
                 raise SystemExit(f"ed_editor.s: symbols at ${ad:x} map to different floppy addresses")
             symmap[ad] = fsym[name]
-    return fsegs, symmap
+    eq = {m.group(1): int(m.group(2), 16) for m in re.finditer(r"^(\w+)\s+equ\s+\$([0-9a-f]+)", txt, re.M)}
+    c2_ad = eq["CODE2"]
+    d_ad, d_b = next((ad, b) for ad, b in fsegs if ad == eq["DATA"])
+    cap_ad = (d_ad + len(d_b) + 1) & ~1
+    cap = nepatch.asm(cap_ad, f"mfp_save equ ${fsym['mfp_save']:x}\n" + (PATCHES / "ed_floppy_capture.s").read_text())
+    assert cap_ad + len(cap) <= c2_ad, f"ed_floppy_capture ${cap_ad:x}+{len(cap)} does not fit before CODE2 ${c2_ad:x}"
+    return fsegs + [(cap_ad, cap)], symmap
 
 
-GENS = {"cr_credit": gen_credit, "ni_latch": gen_latch, "nt_trainers": gen_trainers, "ed_overlay": gen_editor}
+def gen_ikbd(remap: bool):
+    """patches/ni_ikbd.s (a raw blob, all of its internal references are game addresses that do not move on the floppy): HD keeps it at $7726c, the floppy
+    build's 90-byte blob goes to $77f00 because $7726c..$772d6 holds the TOS-state capture.  `symmap` moves the two site targets with it."""
+    src = (PATCHES / "ni_ikbd.s").read_text()
+    if remap:
+        src = remap_source(src)
+    blob = vasm_bin(src)
+    assert len(blob) % 2 == 0
+    if not remap:
+        return [(0x7726C, blob)], {}
+    drain = 0
+    wd = len(vasm_bin(src[:src.index("\nwd:") + 1]))
+    return [(IK_ADDR, blob)], {0x7726C: IK_ADDR, 0x7726C + wd: IK_ADDR + wd}
+
+
+GENS = {"cr_credit": gen_credit, "ni_latch": gen_latch, "nt_trainers": gen_trainers, "ed_overlay": gen_editor, "ni_ikbd": gen_ikbd}
 SITE_ONLY = {"ni_jump", "ni_shoot", "ni_hop", "ni_turn", "nt_freeze_static", "nt_noenemy_static"}
 
 
@@ -312,6 +331,8 @@ class Plan:
             if n in GENS:
                 gen, sm = GENS[n](remap)
                 self.blocks += [(n, ad, d) for ad, d in gen]
+                if n == "ed_overlay" and remap:
+                    self.cap_ad = gen[-1][0]            # gen_editor appends ed_floppy_capture last
                 self.symmap.update(sm)
 
 
@@ -349,13 +370,11 @@ def check_new_bytes(name, a, new):
             raise SystemExit(f"{name}: site ${a:x} new bytes {new.hex()} are not a form tools/nefloppy.py can translate")
 
 
-def stub_bytes(editor: bool, title_orig: bytes) -> bytes:
+def stub_bytes(editor: bool, title_orig: bytes, cap_ad: int) -> bytes:
     if not editor:
         return b""
     src = f"""        org ${STUB:x}
         dc.b    'NEPO'
-        dc.w    0
-        dc.w    0
         cmpi.l  #$c0000,$42e.w          ; phystop: below 768 KB = 512 KB machine (the editor needs RAM up to $c0000)
         bhs.s   .go
         lea     orig(pc),a0
@@ -364,7 +383,9 @@ def stub_bytes(editor: bool, title_orig: bytes) -> bytes:
 .c:     move.w  (a0)+,(a1)+
         dbra    d0,.c
         move.l  #'NEPS',${STUB:x}.l
-.go:    jmp     ${ENTRY:x}.l
+        bra.s   .j
+.go:    bsr.w   ${cap_ad:x}                 ; TOS-state snapshot for the editor's campaign-disk code (ed_floppy_capture.s), BEFORE the game's init clears TOS's RAM
+.j:     jmp     ${ENTRY:x}.l
 orig:   dc.b    {",".join("$%02x" % x for x in title_orig)}
 """
     return nepatch.asm(STUB, src)
@@ -416,10 +437,11 @@ def build_game(names, corrupt=False, remap=True, quiet=False):
         fa = map_addr(TITLE_SITE)
         # the title site's ORIGINAL bytes are what the stub puts back on a 512 KB machine (read before patching: re-derive from the source game)
         orig = bytes(relocated(jmp0)[fa - RB:fa - RB + 10])
-        st = stub_bytes(True, orig)
-        assert STUB + len(st) <= FILE_END and not any(img[STUB - BASE:FILE_END - BASE])
+        cap_ad = plan.cap_ad
+        st = stub_bytes(True, orig, cap_ad)
+        assert STUB + len(st) <= FILE_END and not any(img[STUB - BASE:STUB - BASE + len(st)])
         img[STUB - BASE:STUB - BASE + len(st)] = st
-        struct.pack_into(">L", img, 28 + 0x50, STUB + 8)   # the relocator's final `jmp` (4ef9 at text offset $4e, operand at $50)
+        struct.pack_into(">L", img, 28 + 0x50, STUB + 4)   # the relocator's final `jmp` (4ef9 at text offset $4e, operand at $50)
     else:
         struct.pack_into(">L", img, 28 + 0x50, ENTRY)
     assert img[28 + 0x4E:28 + 0x50] == b"\x4e\xf9", "jmp operand not where expected"

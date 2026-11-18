@@ -92,10 +92,34 @@ DOCS = {
     "ni_shoot": (
         "Stand-and-fire shot appears one game loop sooner.",
         "Shoot.  Fire while standing used to show the shot two loops after the poll; the shot handler now runs in the same loop (about 40 ms sooner, shot sequence unchanged)."),
+    "ni_ikbd": (
+        "Input no longer dies at start-up: if a key, joystick or mouse byte arrives while the game is still loading (the stock bug), the game used to ignore every\n"
+        "  key and the joystick for the rest of the run; it now recovers within one frame.",
+        "Input stall (stock bug, present in PP's original too).  The loader runs with interrupts masked for the first ~1.3 seconds while it unpacks the game, and the\n"
+        "  keyboard processor (IKBD) can send a byte - a key press, a joystick position, a mouse packet - in that window.  The byte stays in the ACIA, the ACIA's\n"
+        "  interrupt line stays low, and the game's init clears the MFP's interrupt sources before it lets interrupts in; the MFP only reacts to an edge, so the line\n"
+        "  never goes high again: no key and no joystick byte reaches the game for the rest of the run (F9/F10/D too).  The fix empties the ACIA once at the end of\n"
+        "  the load, and its poll entry now looks at the ACIA status once per poll: a byte that should have caused an interrupt is handled on the spot through a fake\n"
+        "  exception frame (the real handler runs, then the poll as before), so even a stuck in-service bit or a lost edge heals within one poll (<= 40 ms).  In normal\n"
+        "  play the status reads clear and the cost is one register read per poll.  Two hooks, both in the game's own keyboard code."),
     "ni_turn": (
-        "Turning on the spot shows the first turn pose one game loop sooner.",
-        "Turn.  A direction change from standing set the turn state and showed the first turn pose two loops later; the turn handler now runs in the same loop (about 40 ms sooner,\n"
-        "  pose sequence unchanged)."),
+        "Turning from standing is one game loop (~40 ms) quicker.",
+        "Turn.  A direction change from standing set the turn state and let the loop end; the turn handler (which shows the first turn pose) first ran in the NEXT loop, so a turn\n"
+        "  began 2 loops after the poll.  The entry now falls into the turn handler: turning from standing is one game loop (~40 ms) quicker and the first turn pose is one loop\n"
+        "  earlier (the loop it skipped drew the previous picture again, so nothing visible is lost; the pose sequence itself is unchanged)."),
+    "np_lift": (
+        "Riding a lift no longer drops frames in the busiest towers (tower 6 with the enemies on kept missing the 2-frame budget on 17 % of ride loops).",
+        "Lift speed.  While the frog rides a lift the camera climbs into the fullest part of the tower and the game redraws more per loop; in enemy-heavy towers\n"
+        "  (tower 6 in particular) a loop then missed its two-frame budget and the game slowed from 25 to about 23 frames per second.  The two cell-scan loops of the\n"
+        "  tower renderer now skip empty cells straight after reading them instead of looking them up in a class table (about 9,000 cycles saved per frame, 2.8 %).\n"
+        "  Six same-size edits, no new code; game state and pictures are identical to the original frame by frame (compared over rides and walks in six towers).  The\n"
+        "  margin in tower 6 is thin: it removes the overrun on a stock-speed STE rather than adding headroom."),
+    "np_shot": (
+        "Shot hit box: the player's shot now also hits an enemy that is above the shot's height (a hopping ball). The original lets about one shot in five fly through such a ball. Changes the original's behaviour.",
+        "Shot hit box.  The game decides whether the player's shot has hit an enemy with a small shape table (a rounded box, 16 rows).  For an enemy that is HIGHER than the shot the row index was wrong by 1,024 bytes, so the\n"
+        "  table lookup read the game's own code instead and the box had holes (one row empty, others a few pixels wide): a hopping ball is above the shot's height for most of its hop, and about one shot in five that\n"
+        "  visibly runs into it did nothing.  The patch fixes the index for the shot only (one 4-byte edit, no new code), so the intended box is used.  Enemies at the shot's own height, enemy/enemy collisions, the eyes\n"
+        "  (which absorb shots) and the stunned walkers are as in the original; balls simply die when a shot touches them.  It is a gameplay change (the original keeps its misses); to get the original behaviour back, build without np_shot."),
     "cr_credit": (
         "Title screen: a small line \"v@VERSION@ enhanced by dad_prg\" in the game's own title font between the copyright and \"Mission #\", so this release cannot be mistaken for the original.",
         "Release credit.  On the title page with the frog on a plinth the game's own title printer writes \"v@VERSION@ enhanced by dad_prg\" on the empty line between\n"
@@ -200,14 +224,15 @@ def build(out: Path, only, make_zip: bool) -> Path:
 FLOPPY_FOLDER = "NEBULUS_floppy"
 FLOPPY_GAME = "Nebulus_game_disk.st"
 FLOPPY_CAMP = "Nebulus_campaign_disk.st"
-FLOPPY_TESTED = ("STE with TOS 1.62 and 1 MB, ST with TOS 1.04 and 1 MB, Mega STE with TOS 2.06 and 4 MB (each: title page with the credit line, F10 manager, editor with a playtest, a tower with the T / E trainers, a 20-second drive; the game disk was read from drive 0 only and never written) and an ST with TOS 1.04 and 512 KB (editor switched off by the stub, the rest as before).")
+FLOPPY_TESTED = ("STE with TOS 1.62 and 1 MB, ST with TOS 1.04 and 1 MB, Mega STE with TOS 2.06 and 4 MB (each: title page with the credit line, F10/D manager, editor with a playtest and a lift, the tile shortcut keys, campaign disk Load and Save with the campaign disk swapped into drive A: mid-game and the saved file checked, a tower with the T / E trainers, a 20-second drive; the game disk was only read (in drive 0) and never written) and an ST with TOS 1.04 and 512 KB (editor switched off by the stub, the rest as before).")
 FLOPPY_DOCS = dict(DOCS)
+FLOPPY_DOCS["ni_ikbd"] = (DOCS["ni_ikbd"][0],
+    DOCS["ni_ikbd"][1].replace("Two hooks, both in the game's own keyboard code.", "Two hooks, both in the game's own keyboard code (the blob sits above the game's patch area on this build, $77f00)."))
 FLOPPY_DOCS["nt_trainers"] = (DOCS["nt_trainers"][0], DOCS["nt_trainers"][1].replace(
     "  (The game's own cheat code, HELLOIAMJMP on the title, is described in NEBCHEAT.TXT.)  Three hooks", "  Three hooks"))
 FLOPPY_DOCS["ed_overlay"] = (
-    "Level editor: F10 on the title page opens a menu to build your own towers and campaigns (original and own towers mixed) and to try them in a playtest. On this floppy build the levels live in RAM only (no disk save yet, see LEVEL EDITOR below).",
-    "Level editor and campaign manager.  F10 on the title page opens the manager (original game, campaigns, levels); the editor draws its own screen, takes the joystick and plays your tower in the real game (Playtest).  Seven hooks (tower decoder, initial time, tower name, tower-complete step, title poll, frame flip, enemy start direction), the keyboard interrupt hook for F10 / D, and the Options-page hint line.  "
-    "The disk save of the hard-disk build (a TOS excursion that needs PP's Gamex memory image) does not exist on the floppy: 'Save to disk' keeps the level in RAM and says so; levels are lost at reset.  Hooks only react to the editor's own state, so with nothing created the game plays as the original.  On a 512 KB machine the stub takes the title hook out again (the editor needs RAM above 512 KB).")
+    "Level editor and campaign manager: F10 (or D) on the title page opens a menu to build your own towers and campaigns (original and own towers mixed), try them in a playtest, add lifts and load/save them on a separate campaign disk in drive A: (see LEVEL EDITOR below).  The Options page shows the key (\"F10/D  Level editor\").",
+    "Level editor and campaign manager.  F10 (or D) on the title page opens the manager (original game, campaigns, levels, load/save campaign disk); the editor draws its own screen, takes the joystick and tile keys, plays your tower in the real game (Playtest) and loads/saves campaigns and levels as NEBLEVEL.OVL on a campaign disk in drive A: (never on the game disk).  Nine hooks: the tower decoder, the initial time, the tower name, the tower-complete step (campaign progress), the title poll, the frame flip (F10 in a playtest), the enemy start direction, the keyboard interrupt path (F10/D and the tile keys) and the Options-page hint line.  The game's entry stub also copies TOS's own low RAM and MFP state to $C0108 at start-up: the floppy has no Gamex, and the editor's campaign-disk Load/Save needs that copy for its excursion into TOS.  Hooks only react to the editor's own state, so with nothing created the game plays as the original.  On a 512 KB machine the stub takes the title hook out again (the editor needs RAM above 512 KB).")
 
 
 def floppy_render(text, sel, rep, blocks, stamp):

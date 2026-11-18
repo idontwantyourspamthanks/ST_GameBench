@@ -1,0 +1,9 @@
+# Nebulus gameplay patch np_shot (NebShotMiss), DEFAULT YES since v1.1 (the user tried it and kept it): the player's shot now also hits creatures that are above the shot's height (changes original behaviour).
+# Stock bug (PP's build and the floppy build alike): sub_03b7d6 looks the shot's hit-box row up in a 16-byte shape table with index dy+7, but for dy < 0 the index is $400+
+# (the AND $3ff is missing after the addi), so the mask is read from code bytes ($3bbc6..) and most of the box disappears when the creature is above the shot:
+# a hopping ball is missed by about 1 shot in 5 ("it hits and nothing happens").  Evidence and A/B: work/notes/shotmiss.md.
+#   $3b87a  66000008 (bne.w $3b884)  ->  66084880 (bne.b $3b884 / ext.w d0)   : sign-extend the row index on the SHOT path only; creature-vs-creature unchanged
+# Source and explanation: patches/np_shot.s
+patch np_shot
+default yes
+site 3b87a 66084880

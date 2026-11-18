@@ -344,3 +344,15 @@ editing session + Save + reload: e161.py (above, STE and Mega STE); lifts: e140.
 equivalence of normal play (e97.py = scripted2/cmp_sc, 10 live commands now 6 blocks + 9 sites + keys): 1117/1120 loops after timer start; player-variable differences 0; creature/timer/energy 0 of 1115; framebuffer event 1: 0 differing bytes; the ONLY non-player word that differs is `$33a38` (the game printer's text cursor, from loop 247, the benign Options-hint effect of 11)
 fuzz, boot-time store path (e91.py, 6 of the 22 files restored over $BC000 in a title snapshot: random0, magic+random, flip1, version2, badentries, valid): rejected ones lose the magic, accepted ones edit and play, 0 errors in every Hatari log, VBL keeps running; fuzz, disk path: 22 of 22 (13.3)
 ```
+
+### 13.7 "No disk" on the floppy build (this session) and the media-change counter
+The floppy build's campaign-disk gate found one wrong message: with drive A empty the editor said "Not a campaign disk".  Cause: `tos_file` called `Getbpb(0)` BEFORE
+installing the `hdv_mediach` override, so TOS answered from its cached BPB (it had read the game disk at boot) and the Fopen's failure (-33) was all the editor saw.
+Fix in `ed_editor.s`: the override is installed first and answers "changed" for **two** drive-A queries (`V+vMcnt` = 2, decremented in `mchg`): the first one makes
+`Getbpb` re-read the boot sector (an empty drive -> null BPB -> "No disk"), the second makes the Fopen's own media check re-read the directory (a swapped disk).  TOS's own
+routine answers again afterwards (a permanent 2 makes BDOS loop).  Cost: one extra boot-sector read per Load/Save, measured 2 to 5 s with a disk, ~9 s on an empty drive.
+`rw` moved from CODE1 to the tail of CODE3 (CODE1 had 4 free bytes; CODE1 is 5306 B now, CODE3 570 B, both 6 free).  Gates: HD `e161.py` all PASS (empty drive "No disk",
+swapped disk, save, write-protect, image checks) and the floppy `work/floppy/f161.py` cells (below).
+
+### 13.8 Junk RAM (MiSTer): RS/V are zeroed by the loader
+RS `$77c80..$77cbf` and V `$77cc0..` were assumed zero at boot (a junk `rsTest`/`rsKey` opened the editor by itself; junk `rsOk` skips the store validation; junk `rsTosP` breaks the first Load/Save).  `ed_overlay.nep` now carries `clear 77c80 140`, executed by `nepatch`'s core2 at every start; `ed_editor.s` is unchanged.  Inventory, fix and gates: `work/notes/junkram.md`.

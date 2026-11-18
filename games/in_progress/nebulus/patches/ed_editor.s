@@ -86,6 +86,7 @@ vMBP    equ     164
 vMCol   equ     168
 vShow   equ     170
 vDisk   equ     174                     ; campaign-disk prompt: 1 load, 2 save (0 = none)
+vMcnt   equ     176                     ; how many more hdv_mediach queries of drive A answer "changed" (2: Getbpb and the Fopen's own check)
 vMed    equ     244                     ; saved hdv_mediach
 vTxt    equ     208                     ; message text buffer (32 B)
 vLift   equ     172
@@ -1759,23 +1760,26 @@ c_blank:
 ; the TOS-world part (SR $2500, TOS state swapped in); GEMDOS keeps d3-d7: d4 = op, d6 = handle, d5 = first failure.  Fopen, Fread the whole file into BUF
 ; (short = not a campaign disk; for a save this is the "exists, full size" check), save: rewind + Fwrite OVS; Fclose.
 tos_file:
+        move.l  $47e.w,V+vMed.l         ; hdv_mediach: the first two queries for drive A say "changed" (TOS only notices a swapped disk by
+        move.l  #mchg,$47e.w            ; its write-protect / serial heuristics, so without this it keeps the old disk's BPB and directory)
+        move.w  #2,V+vMcnt.l            ; 1 = the Getbpb below, 2 = the Fopen's own media check; then TOS's routine answers again
         clr.w   -(a7)                   ; Getbpb(A): a null BPB = no readable disk (Fopen on an empty drive reports "file not found")
         move.w  #7,-(a7)
         trap    #13
         addq.l  #4,a7
         tst.l   d0
-        bne.s   .bpb
+        bne.s   .io
         moveq   #1,d0
-        rts
-.bpb:   move.l  $47e.w,V+vMed.l         ; hdv_mediach: drive A always "changed" (TOS only notices a swapped disk by write-protect / serial heuristics)
-        move.l  #mchg,$47e.w
-        bsr.s   tos_io
-        move.l  V+vMed.l,$47e.w
+        bra.s   .r
+.io:    bsr.s   tos_io
+.r:     move.l  V+vMed.l,$47e.w
         rts
 
 mchg:   tst.w   4(a7)
         bne.s   .o
-        move.l  V+vMed.l,$47e.w         ; only the first query says "changed" (BDOS would loop on a permanent 2)
+        tst.w   V+vMcnt.l
+        beq.s   .o
+        subq.w  #1,V+vMcnt.l            ; a permanent "changed" would make BDOS loop; TOS's own answer follows the two above
         moveq   #2,d0
         rts
 .o:     move.l  V+vMed.l,a0
@@ -1840,15 +1844,7 @@ tos_io: move.w  V+vDisk.l,d4
         moveq   #2,d0
 .z:     rts
 
-; d0 = GEMDOS function ($3f read / $40 write), a0 = buffer: OVSZ bytes on handle d6
-rw:     move.l  a0,-(a7)
-        pea     OVSZ.l
-        move.w  d6,-(a7)
-        move.w  d0,-(a7)
-        trap    #1
-        lea     12(a7),a7
-        rts
-
+; rw (GEMDOS read/write of OVSZ bytes on handle d6) sits at the end of the lift block: CODE1 is full.
 
         org     CODE2
 c_look: move.w  RSV+rsTow(a5),d0
@@ -2534,6 +2530,14 @@ m_tower: dc.b   8
 
 ; ------------------------------------------------------------------ lift command (block 4 at CODE3; design and proof: work/notes/lifts.md)
         org     CODE3
+; d0 = GEMDOS function ($3f read / $40 write), a0 = buffer: OVSZ bytes on handle d6  (moved here: CODE1 has no room)
+rw:     move.l  a0,-(a7)
+        pea     OVSZ.l
+        move.w  d6,-(a7)
+        move.w  d0,-(a7)
+        trap    #1
+        lea     12(a7),a7
+        rts
 
 ; a0 = column base in the grid, d2 = cursor row
 colbase:

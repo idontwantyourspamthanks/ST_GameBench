@@ -71,3 +71,7 @@ Hunter's design with the carrier changed because this START has a different tail
 | Mega STE 4 MB | corrupt | `NEPF` | 0 | untouched | yes |
 (`work/dumps/boot/np_{1mb_ok,1mb_bad,4mb_ok,4mb_bad}`; 4 MB reaches the entry in ~52 s, 1 MB in 14 s.)
 Not done: free-RAM poison test of $76b10..$77ec0 across a played tower (`build --fill` fills the $B0000 area only); trainers' sites file (lead); `live` snapshot image (only the `w` list).
+
+## 6. Junk RAM (MiSTer does not clear RAM; NebJunkRam, details and evidence: `junkram.md`)
+core2 no longer relies on zero RAM for STATE: nep directive `clear ADDR LEN` (RS+V `$77c80..$77dbf`, trainer flags `$76c00..07`, latch `$76d00..03`) is zeroed unconditionally in pass 2; the blob sites around them are split (`plan_install`).
+Pass 1 now accepts a site holding its ORIGINAL or already its NEW bytes (relaunch on RAM that kept an earlier patched run); `$B0026` = how many were already new.  A blob zone with random junk is still `NEPF` (stock game) while `ZONE_STRICT = True`; see `junkram.md` section 5.

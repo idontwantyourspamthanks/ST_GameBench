@@ -13,38 +13,71 @@ Changes in this release
 {WHATSNEW}
 
 @@EDITOR
-LEVEL EDITOR AND CAMPAIGNS (floppy build: levels are kept in RAM only)
-=====================================================================
-Start: on the title page press F10 (or D).  You get the manager (joystick: up/down moves, FIRE selects, LEFT = "< back", F10 =
-leave):
+LEVEL EDITOR AND CAMPAIGNS (floppy build)
+=========================================
+HOW TO OPEN IT: wait for the game's own title page (after the Atari Legend
+intro and the loading picture, about a minute after boot; the keys do nothing
+before that).  On the title page press F10 (a normal tap is enough), or D.
+The Options page lists it: "F10/D  Level editor".  You get the manager
+(joystick: up/down moves, FIRE selects, LEFT = "< back", F10 = leave):
 
    Original game   leave the manager and play normally (nothing is changed)
-   Campaigns >     list of campaigns; pick one: Play / Edit entries / Rename / Delete; "<new campaign>" makes a new one
-   Levels >        list of your levels; pick one: Play / Edit / Copy / Delete; "<new level>" opens the editor on an empty tower
-   Save to disk    on this floppy build: keeps everything in RAM and says "Kept in RAM (no disk)"
+   Campaigns >     list of campaigns; pick one: Play / Edit entries / Rename /
+                   Delete; "<new campaign>" makes a new one
+   Levels >        list of your levels; pick one: Play / Edit / Copy / Delete;
+                   "<new level>" opens the editor on an empty tower
+   Load from campaign disk    read a campaign disk in drive A: (see below)
+   Save to campaign disk      write everything (levels and campaigns) to the
+                              campaign disk in drive A:
 
-CAMPAIGNS: a campaign is a named list of up to 16 entries, played in order.  An entry is an ORIGINAL tower (mission + tower) or one
-of YOUR levels, so you can mix them.  "Edit entries": pick an entry for Change source / Insert after / Remove / Move up / Move
-down; "<add entry>" appends one.  When the last entry is finished the normal victory screen follows.
+CAMPAIGNS: a campaign is a named list of up to 16 entries, played in order.
+An entry is an ORIGINAL tower (mission + tower) or one of YOUR levels, so you
+can mix them.  "Edit entries": pick an entry for Change source / Insert after
+/ Remove / Move up / Move down; "<add entry>" appends one.  When the last
+entry is finished the normal victory screen follows.
 
-THE EDITOR (a new level starts as an empty tower with a safe ledge ring on row 1 and a ledge + exit door at the top):
-   joystick   move the box (the tower is a ring: left of the left column is the right column)
-   FIRE       open the menu:
-     Empty / Ledge / Pillar / Blue block (shoot it once per cell to remove it) / Pale block (solid) / Door opening (3 cells) /
-       Exit door (3 cells)
-     Enemy >   Stone ball, Red ball, Red ball (waits for you), Eye up/down (slow/fast), Eye left/right (slow/fast)
-     Tower >   Look (palette, backdrop, default time), Copy original grid, Blank grid, Time +50 / -50 seconds, Name...
-     Playtest  run the real game on what you are editing; F10, finishing the level or losing brings you back to the editor
-     Save to disk, Leave editor (keeps the level in the level list)
+THE EDITOR (a new level starts as an empty tower with a safe ledge ring on
+row 1 and a ledge + exit door at the top):
+   joystick   move the box (the tower is a ring: left of the left column is
+              the right column)
+   FIRE       open the menu (the letter after a name is its keyboard key):
+     Empty C / Ledge L / Pillar P / Blue block B (shoot it once per cell to
+       remove it) / Lift > / Door opening D (3 cells) / Exit door X (3 cells)
+     Enemy >   Stone ball S, Red ball R, Red ball W (waits for you), Eye
+               up/down U slow, I fast, Eye left/right J slow, K fast; then
+               choose the start direction
+     Lift >    Lift: from here A, Lift: stop here Z, Lift: delete
+     Tower >   Look, Copy original grid, Blank grid, Time +50 / -50 seconds,
+               Name...
+     Playtest  run the real game on what you are editing; F10, finishing the
+               level or losing brings you back to the editor
+     Save to campaign disk, Leave editor (keeps the level in the level list)
    F10        leave the editor (the level is kept)
-THE FROG STARTS IN THE SAME PLACE IN EVERY TOWER (column 0, row 2), so every level needs a ledge on row 1 near column 0-1; the new
-level and "Blank grid" have it, keep it.
+KEYBOARD SHORTCUTS (in the map, no menu needed): C or Del clear, L ledge,
+P pillar, B blue block, D door, X exit, A lift, Z lift stop, S/R/W/U/I/J/K
+the enemies; the same enemy key again turns that enemy round; RETURN or SPACE
+repeats the last tile (paint).  T and E (trainers) do nothing while you edit;
+they work in a playtest.
+THE FROG STARTS IN THE SAME PLACE IN EVERY TOWER (column 0, row 2), so every
+level needs a ledge on row 1 near column 0-1; the new level and "Blank grid"
+have it, keep it.
 
-WHAT THE FLOPPY BUILD CANNOT DO (yet): keep your levels.  The hard-disk release writes them into NEBLEVEL.OVL with a call into TOS
-that the game's own start-up has switched off; on this disk the game does not talk to the drive after it has started.  Levels and
-campaigns live in RAM until you reset or switch off.  Nebulus_campaign_disk.st (one all-zero NEBLEVEL.OVL, the file format of the
-hard-disk release) is shipped for the day a build can load and save on it; this one does not read or write it, and the game disk
-is never written.  On a 512 KB machine the editor is switched off (it needs RAM above 512 KB).
+CAMPAIGN DISKS (this is how the floppy build keeps your levels): a separate
+720 KB disk, the Nebulus_campaign_disk.st in this zip (write it to a real
+720 KB disk, or mount it as disk A: in an emulator).  One drive is enough:
+the game disk goes in drive A: to boot and play; when you Load or Save, the
+editor asks you to put the campaign disk in drive A: and press FIRE (the
+screen is frozen while the drive is read: 4 to 8 seconds), and you
+may put the game disk back afterwards (the game never touches the drive once
+it is running: it is all in RAM).  The disk carries one file, NEBLEVEL.OVL
+(8192 bytes, all zero when new); a save overwrites it in place and never
+creates or grows it, so it must already be there - use the shipped disk or a
+copy of it.  Messages: "Loaded N levels / M campaigns", "Saved", "No disk",
+"Not a campaign disk", "Disk is write protected".  Loading replaces what is
+in memory, so Save first.  tools/nebcampaign.py (source tree) makes more
+disks and shows what is on one.
+On a 512 KB machine the editor is switched off (it needs RAM above 512 KB);
+the game itself plays as the original there.
 @@END
 
 How to run

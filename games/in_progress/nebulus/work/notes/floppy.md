@@ -110,3 +110,21 @@ Build line in the docs currently says `git 613b9f6 + uncommitted changes`: **the
 3. Real hardware, a second drive, 2-player, TT/Falcon: untested. Real boot takes ~45 s after the key; the loader is the original.
 4. The floppy game runs at 60 Hz (own build) and has no PP 50/60 Hz switch code (`$4c46`); the input-latency numbers of `input.md` were measured at 50 Hz in PP's build [INFERENCE: same loop structure, not re-measured on the floppy].
 5. The Options-page hint of the editor (`ed_opt`, site `$3d65a`) is applied; its page was not screenshotted in the final gates (the options page itself is the same as in the unpatched control, only the HD build's "empty line 1" assumption was checked by looking at the floppy page: line 1 is empty).
+
+## 9. Round-3 floppy editor: six blocks, and a TOS-state capture in the stub (this session) [obs]
+`tools/nefloppy.py` now assembles the SAME six-block editor as the HD build (`gen_ed.py` LIM table): CODE1 `$75740` 5308 B, DATA `$76d40` 1324 B, CODE2 `$77300` 1768 B,
+CODE3 `$77a40` 550 B, CODE4 `$77dc0` 252 B and CODE5 `$76c76` 136 B; `_asm_editor` asserts the six segment starts instead of three.  Nothing moved, so `symmap` is empty:
+`ed_key`/`ed_opt` are at the same addresses as on HD (`$778e6`/`$77904` in the listing) and the site translation stays as a safety net.
+The editor's campaign-disk code (`disk_op`, CODE4) needs a copy of TOS's own low RAM, its length and TOS's 24-byte MFP block; on HD these come from Gamex (`$ffd80`/`$ffd86`/`$fffaa`)
+and on the floppy the editor reads them from `RS+rsTosP`/`rsTosN`/`rsMfpP`.  `patches/ed_floppy_capture.s` (the routine NebEditor3 wrote as a reference) is now part of the floppy
+build, assembled with the editor's symbols (`mfp_save` resolved from the floppy listing):
+* code at **`$7726c..$772d6` (106 B)**, the free gap between the DATA block (ends `$7726c`) and CODE2 (`$77300`); nothing else was free (`CODE5` has 2 free bytes, `CODE4` 4);
+* **called from the entry stub** (`$77ec0`): `bsr.w $7726c` before `jmp $38624`, on the >= 768 KB path only (the 512 KB path restores the title hook and jumps on, so it never
+  runs - the editor is off there anyway).  The stub no longer carries two zero words after `NEPO`, so the marker is 6 bytes (`NEPO` + `cmpi`/`bra`) and the final jump goes to
+  `$77ec4`; `cmpi.l #$c0000,$42e.w` still distinguishes 512 KB (zeros before the jump, marker `NEPS`).
+* it copies `$8..membot($432)` (in 48-byte units, exactly the unit `swap_tos` exchanges) to **`$C0108`**, appends the 24-byte MFP block right behind the copy and sets
+  `rsTosP`/`rsTosN`/`rsMfpP`.  Measured at the title on STE 1 MB: `rsTosP $c0108`, `rsTosN 897` (898*48 = 43,104 B from `$8` to `$a868`), `rsMfpP $ca968`.
+  `$C0108..$CA980` is above the game and outside the editor's `BUF $AA000..$AC000` / stack `$AC000..$AD000`; it needs >= 1 MB (the stub's 768 KB gate is therefore a little
+  optimistic for this copy: a 768 KB..1 MB machine is not a thing on the ST line, so the gate was left alone).
+Gates (`work/floppy/f161.py`, the HD `work/editor/e161.py` cell adapted to the lone `--disk-a` boot): STE 1 MB TOS 1.62, campaign disks swapped in and out with
+`hatari-option --disk-a`; see section 10.
