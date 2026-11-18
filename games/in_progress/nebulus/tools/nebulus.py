@@ -96,22 +96,44 @@ class Nebulus(Hatari):
         super().__init__(game_dir=game, snapshot=snapshot, workdir=str(R), machine=machine, tos=tos,
                          memsize_kb=memsize_kb, autorun="", extra=ex, **kw)
 
-    def boot_to_game(self, shots: Path | None = None, start_wait: float = 14.0,
-                     key_wait: float = 2.0, keys: int = 6, final_wait: float = 8.0):
-        """HW-detect -> title picture(s) -> game. Screenshots every step when shots is given."""
+    TITLE_MARK = (0x3D00F, b"Higl")   # "High Scorers" text: the game's own title data is resident in RAM
+    TIMER = 0x3AD98                  # hundreds digit * 8; non-zero once a tower runs (400 -> 0x20)
+    TOWER = 0x3390C                  # tower index (0 = first)
+
+    def _marker_present(self) -> bool:
+        out = self.debug("m $3d00f 4", 0.4)
+        return "48 69 67 68" in out.upper()
+
+    def boot_to_title(self, timeout: float = 90.0, shots: Path | None = None):
+        """Loader screens -> the game's title. The verified route is a single space at ~16 s (ending the
+        HW-detect screen) and then waiting ~24 s; it does NOT need a key per screen. Extra spaces matter:
+        six of them leave the title unable to start a game by fire (measured), so poll the RAM marker
+        instead and press space once, early."""
         if shots:
             shots = Path(shots); shots.mkdir(parents=True, exist_ok=True)
-        time.sleep(start_wait)
-        if shots:
-            self.shot(str(shots / "00_start.png"))
-        for i in range(keys):
-            self.keypress(57)
-            time.sleep(key_wait)
+        time.sleep(16)
+        self.keypress(57)                      # once: end the HW-detect screen
+        t0 = time.time()
+        while time.time() - t0 < timeout:
+            time.sleep(2)
+            if self._marker_present():
+                return True
+        return False
+
+    def boot_to_game(self, shots: Path | None = None, timeout: float = 90.0, settle: float = 2.0):
+        """Cold boot straight into a running tower (verified 3x on STE 1.62 1 MB):
+        one space at 16 s, wait for the RAM marker, 2 s, Right 0.5 s (not required), fire (Right Ctrl) 1 s.
+        Returns True when the timer word becomes non-zero."""
+        if not self.boot_to_title(timeout=timeout, shots=shots):
+            return False
+        time.sleep(settle)
+        self.key("Right", hold=0.5); time.sleep(0.5)
+        self.key("Control_R", hold=1.0); time.sleep(4.0)
+        if self.peekw(self.TIMER):
             if shots:
-                self.shot(str(shots / f"{i + 1:02d}_after_space.png"))
-        time.sleep(final_wait)
-        if shots:
-            self.shot(str(shots / "99_final.png"))
+                self.shot(str(Path(shots) / "99_tower.png"))
+            return True
+        return False
 
 
 if __name__ == "__main__":
