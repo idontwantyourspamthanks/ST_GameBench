@@ -31,6 +31,12 @@ the game's title is up.
   time table `$3ad9e`; enemy struct-of-arrays `$33944` (6 words/field, stride `$c`, state `+$48`).
 
 ## 4. Measurements
+- **Flip counting: use the flip routine, not a register.** In the tower, over the same 400 VBL, `($ff8201).b`
+  changed 189 times, `($ff8203).b` 141 times, but the flip routine `sub_03868a` ran **148 times = 18.5 fps**
+  (lead measurement). So a register-change count over-counts (something else rewrites `$ff8201`) and the two
+  registers disagree (some updates change only the mid byte). All earlier "22.05 fps" figures came from
+  `($ff8201).b` over 1000 VBL and are register counts, not frame counts; quote the routine-entry count (NebBoot2
+  makes it authoritative, across scenes).
 - `fps()` with `($ff8201).b`: 22.05 fps in the tower at 8 MHz over 1000 VBL (441 flips, 2.27 VBL/frame);
   ~17-18 fps on the title/high-score screens; 50.25 fps on a loader picture. The flip routine is
   `sub_03868a` (game code `$3868a`): it draws through `$3822c` and then writes BOTH `$ff8201` (hi) and
@@ -43,3 +49,11 @@ the game's title is up.
 - A restored memstate does not keep `--joy1 keys`; `Nebulus(snapshot=...)` adds it explicitly (verified).
 - The `h.key()` path needs long holds (~0.5-1 s) at the title; 0.15 s does nothing visible.
 - `fps()` on a menu is not a gameplay number.
+
+## 6. Frame budget (lead, 600 VBL profile, 8 MHz, tower)
+- 91,488,252 cycles over 696 VBL = 131,448 cycles/VBL (~82% of the 160,000-cycle VBL).
+- Region split: `$34xxx-$38xxx` 91.1%, `$39xxx-$3fxxx` 8.1%, `$33xxx` 0.8%.
+- Top: `$38260` 17.7% and `$3825e` 11.8% = a two-instruction spin `cmp.w (a0),d0 / beq $3825e` polling
+  `$38214` until it reaches `$38216` (target from `$3821c`/`$38220` selected by `$38218`, index `$3821a`),
+  entered from `sub_03822c`; the flip `sub_03868a` calls it first. 29.5% of all cycles.
+- Tower flip rate: 22.05 fps (441 flips / 1000 VBL, 2.27 VBL/frame).
