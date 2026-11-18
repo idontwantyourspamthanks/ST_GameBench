@@ -154,7 +154,7 @@ def render(text, sel, ram, stamp):
         for ad, new in p.sites:
             o = bytes(ram[ad:ad + len(new)])
             if len(new) > 16:
-                parts.append(f"    ${ad:06x}  {len(new)} bytes of new code in free RAM (zero before)")
+                parts.append(f"    ${ad:06x}  {len(new)} bytes of new code in spare game RAM (written unconditionally; the patch tables are only for the README now)")
             else:
                 parts.append(f"    ${ad:06x}  {o.hex()} -> {new.hex()}")
         for ad, data in p.blocks:
@@ -246,7 +246,7 @@ def floppy_render(text, sel, rep, blocks, stamp):
                 parts.append(f"    ${fa:06x}  {orig.hex()} -> {new.hex()}   (the HD build's address ${pa:06x})" if pa != fa else f"    ${fa:06x}  {orig.hex()} -> {new.hex()}")
         for nn, ad, ln in blocks:
             if nn == n:
-                parts.append(f"    ${ad:06x}  {ln} bytes of code/data (zero before; part of TOPPLER.JMP now)")
+                parts.append(f"    ${ad:06x}  {ln} bytes of code/data in spare game RAM (part of TOPPLER.JMP now)")
         parts.append("")
     ed = "ed_overlay" in names
     text = re.sub(r"@@EDITOR\n(.*?)@@END\n\n?", (lambda m: m.group(1) + "\n") if ed else "", text, flags=re.S)

@@ -286,7 +286,10 @@ def gen_ikbd(remap: bool):
 
 
 GENS = {"cr_credit": gen_credit, "ni_latch": gen_latch, "nt_trainers": gen_trainers, "ed_overlay": gen_editor, "ni_ikbd": gen_ikbd}
-SITE_ONLY = {"ni_jump", "ni_shoot", "ni_hop", "ni_turn", "nt_freeze_static", "nt_noenemy_static"}
+SITE_ONLY = {"ni_jump", "ni_shoot", "ni_hop", "ni_turn", "np_lift", "np_shot", "nt_freeze_static", "nt_noenemy_static"}
+# sites that rewrite game code IN PLACE (same length, no jump into the patch zone): their new bytes are the same on both builds and only the ORIGINAL
+# instructions need checking (site_equivalent does that instruction by instruction, with the branch targets mapped)
+VERBATIM = {"np_lift", "np_shot"}
 
 
 # ------------------------------------------------------------------ comparison of sites with PP's game
@@ -415,7 +418,8 @@ def build_game(names, corrupt=False, remap=True, quiet=False):
         fa = map_addr(a)
         if corrupt and not rep:
             img[fa - BASE] ^= 0x01                         # negative control: a wrong byte in the source game
-        check_new_bytes(n, a, new)
+        if n not in VERBATIM:
+            check_new_bytes(n, a, new)
         orig_pp = bytes(pp[a:a + len(new)])
         if not site_equivalent(pp, img, a, len(new)):
             raise SystemExit(f"{n}: site ${a:x} -> floppy ${fa:x}: original instructions differ from PP's ({orig_pp.hex()} vs {bytes(img[fa - BASE:fa - BASE + len(new)]).hex()}); nothing written")

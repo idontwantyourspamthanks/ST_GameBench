@@ -56,6 +56,14 @@ try:
     if editor and mgr:
         K('Down'); K('Down'); F(1.5); shot('levels_empty'); F(2.0); shot('editor')
         K('Right'); K('Right'); K('Up'); K('Up'); F(1.5); K('Down'); K('Down'); F(1.5); shot('cell_placed')
+        # round 3: tile shortcut keys and a lift placed with A + FIRE (GRID cell = $327f0 + cx*256 + cy)
+        def cell(cx, cy): return words(0x327F0 + cx * 256 + cy, 1)[0]
+        K('p'); K('Right'); K('l'); K('Right'); K('d'); shot('shortcuts')
+        print('shortcut keys: pillar p at (2,1)', hex(cell(2, 1)), 'ledge l at (3,1)', hex(cell(3, 1)), 'door d at (4,1..3)',
+              [hex(cell(4, i)) for i in (1, 2, 3)], flush=True)
+        K('Left'); K('Left'); K('Left'); K('Up')
+        K('a'); time.sleep(1); shot('lift_from'); K('Down', 8); K('Down', 8); F(1.5); shot('lift_set')
+        print('lift: column 2 rows', [hex(cell(2, i)) for i in range(0, 14)], flush=True)
         F(1.0); K('Down', 0.2, 0.4)
         # Playtest = menu item (fire, Down x9, fire), as work/editor/e40.py
         for i in range(8): K('Down', 0.2, 0.4)
@@ -66,8 +74,19 @@ try:
         print('after F10 in playtest: RS', words(0x77c80, 12).hex(), flush=True)
         F(1.0)
         for i in range(10): K('Down', 0.2, 0.4)
-        F(2.5); shot('saved')
-        print('after Save: store RAM', words(0xBC000, 8).hex(), '(NCMP v1 expected: the level is kept in RAM)', flush=True)
+        F(2.5); shot('save_prompt')
+        F(1.0)
+        for _ in range(40):                      # the game disk is in A: and has no NEBLEVEL.OVL -> read-only refusal, ~9 s
+            time.sleep(0.5)
+            if W(0x77cc0 + 174) == 0 and L(0x77cc0 + 20) != 0: break
+        time.sleep(0.5); shot('saved')
+        print('Save with the game disk in A: msg', repr(words(0x77cc0 + 20, 4)), 'store RAM', words(0xBC000, 8).hex(), flush=True)
+        # real message text
+        a = L(0x77cc0 + 20)
+        import re as _re
+        o = h.debug(f"m ${a:x} 32", 0.6)
+        tb = bytes(int(x, 16) for l in o.splitlines() if _re.match(r'^[0-9a-f]{8}:', l, _re.I) for x in _re.findall(r'(?<= )([0-9a-f]{2})(?= )', l.split(':', 1)[1]))
+        print('  message:', tb.split(b"\0")[0].decode('latin1'), flush=True)
         K('Down', 0.2, 0.5); F(1.5); shot('after_leave')
         K('Left', 0.2, 1.2); shot('after_back')
         for i in range(4): K('Up', 0.2, 0.4)

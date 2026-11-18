@@ -19,8 +19,9 @@ def op(save=False,name=''):
     m=None
     for _ in range(60):
         time.sleep(0.5)
-        if W(h,0x77cc0+174)==0 and t.msg() is not None:
-            m=t.msg(); break
+        if W(h,0x77cc0+174)==0:
+            m=t.msg()
+            if m is not None: break
     print('   (%.1f s)'%(time.time()-t0),flush=True)
     return m
 try:
