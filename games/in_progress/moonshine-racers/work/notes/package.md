@@ -1,22 +1,16 @@
 # Moonshine Racers v1.0 packaging (MSRPackage)
 
-## Shipped files (written after the shipped-zip verification below passed)
-Built by `python3 tools/msrpatch.py build --out work/pkg/zhd --zip` and `build --floppy --out work/pkg/zfl --zip`, tree state: **git bafead9** (HEAD `bafead90ef9de47cb01d97cc79e9ca4465f568ec`) + uncommitted changes in patches/ and tools/ (the doc templates, `{GIT}` token and README writing in `msrpatch.py`; the README.TXT build line says so). `dist/` is git-ignored (`.gitignore:44 games/**/dist/`); `work/pkg/` has its own `*` .gitignore.
+## Shipped files (CURRENT; clean build line `build: git a6f87f7`, HEAD a6f87f7525cb2fcfd02b08689ee5d2b2ea37c3e2)
+Rebuilt after the packaging commit with `python3 tools/msrpatch.py build --out work/pkg/zhd --zip` and `build --floppy --out work/pkg/zfl --zip`; the superseded zips were deleted (one set in `dist/`, git-ignored).
 
 | zip | bytes | mtime | md5 | sha256 |
 |---|---|---|---|---|
-| `dist/MoonshineRacers_hd_v1.0.zip` | 1,083,096 | 2026-11-18 01:29:18 | 7defac73cced50eeaace887cdac546c9 | 71ad32d15344b95d39ff6734bc89d106336ad1d9378f76328ea9c4232aaeab48 |
-| `dist/MoonshineRacers_floppy_v1.0.zip` | 915,950 | 2026-11-18 01:29:20 | a9df20336894220d7dc5f7c6c2592507 | 85a083383e7314c94ba72a8844bddbb0f240ff23ede9a8de462e836f836de93a |
+| `dist/MoonshineRacers_hd_v1.0.zip` | 1,083,079 | 2026-11-18 01:30:45 | 1afefab5ef6ef752e20f6d0d618e23b2 | 0382275f51c21f22c9fb46ede02d938ca063ddce9d9ded74bf3499eae007c201 |
+| `dist/MoonshineRacers_floppy_v1.0.zip` | 915,921 | 2026-11-18 01:30:46 | 9c07c7c9095d1a0324ff75c8b21454d6 | 36fce30cfc21fdec1180212cda3a15898ad6228c107700ba002185d6c435f580 |
 
-Contents (md5 of every member, `work/pkg/final_all.md5`):
-```
-HD  MOONSHR/: FILES/MS1 1966ed9d8e39d39ed1ba2b92d586cea4 | FILES/MS2 cc3ff52922aed94663c5e03949921688 | FILES/MSR_S1.FIC ab06c5b482289112a6131644cce44d79
-    FMR273.HST c666656048825b79fd6854f5ed2b360f | LMR273.HST ee11982c469b33d311ce878c8c13fcd1 | HAGA 59083376431b5bab8d2321613b7ddefc | LOG.TXT 43a55230c0eeee6283bb72e878b8398a
-    MR240R.BMP d0862c9d424ab189e10147567deb5afa | RUNME.TOS 22aa2d76c7d642252e800a090e26cff2 | PATCHES.TXT efc94f06613b9a794903654851223bf7 | README.TXT 7f398821b32a38ec3d945637b7e28e60
-    (folder tree md5-of-md5s of the build dir, 2 builds: dc2bb496c5eddf7f5fcbe520d43cfb63 both; that run predates the README wording fix)
-FL  MOONSHR_floppy/: disk_a.st 31e29c6ad340dfac6957b8f6c8bc3be5 | disk_b.st 0d0be455e4d0389ed98401c0e02d21d9 (= the original conversion) | README.TXT cb4e13c4b55b84279fb8fcb3c0e91a1a | PATCHES.TXT 87bc87db342bd8764b90d6dd74c1bca9
-```
-No stray files (11 HD members, 4 floppy). PATCHES.TXT names == `msrpatch.py list` default=yes names (HD: 34 = 33 patches + pp_bigram_cache, no fl_*; floppy: 36 = 33 + fl_deprot fl_driveb fl_hook, no pp_*). Payload 55,348 B `$B2700-$BFF33`, floppy 109 sectors (= integration.md 12.1).
+Versus the previous zips (the set the Hatari cells' payload equals, differing from the cell set only in README wording): every member md5 is equal except `MOONSHR/README.TXT`, `MOONSHR_floppy/README.TXT`, `MOONSHR_floppy/PATCHES.TXT`, and `diff` shows the ONLY text difference is the build line (`build: git bafead9 + uncommitted ...` -> `build: git a6f87f7`). Payload members (RUNME.TOS, HAGA, FILES/*, disk_a.st `31e29c6ad340dfac6957b8f6c8bc3be5`, disk_b.st `0d0be455e4d0389ed98401c0e02d21d9`) equal those the cells ran on (`work/pkg/final3_all.md5` vs `final_all.md5`, `verified_all.md5`).
+
+Previous (superseded, deleted) set, for the record: hd md5 7defac73..., floppy a9df2033... (build bafead9 + uncommitted).
 
 ## Docs
 `patches/README_HD.TXT`, `README_FLOPPY.TXT`, `PATCHES.TXT`, `PATCHES_FLOPPY.TXT` are templates (`@VERSION@`, `{GIT}`, `{PATCHES}`, `{PATCHES_FLOPPY}`); `msrpatch.py build` renders them (HD README.TXT = ours + PP's original README.TXT appended verbatim; the floppy zip had no README before). Numbers quoted: integration.md 12.14 definition A (16.0 / 28.8 / 47.9; SAFE=3 15.3 / 1.5 % late steps from release_notes_draft), the floppy 15.8 / 26.6 (12.8). Nothing about real hardware is claimed.
