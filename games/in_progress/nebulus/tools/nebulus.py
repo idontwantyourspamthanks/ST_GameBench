@@ -104,20 +104,20 @@ class Nebulus(Hatari):
         out = self.debug("m $3d00f 4", 0.4)
         return "48 69 67 68" in out.upper()
 
-    def boot_to_title(self, timeout: float = 90.0, shots: Path | None = None):
-        """Loader screens -> the game's title. The verified route is a single space at ~16 s (ending the
-        HW-detect screen) and then waiting ~24 s; it does NOT need a key per screen. Extra spaces matter:
-        six of them leave the title unable to start a game by fire (measured), so poll the RAM marker
-        instead and press space once, early."""
+    def boot_to_title(self, timeout: float = 90.0, shots: Path | None = None, space_until: float = 20.0):
+        """Loader screens -> the game's title. Space is pressed while the loader screens are up (only until
+        `space_until` s, and only while the RAM marker is absent): spaces during the game's own title leave it
+        unable to start a game by fire (measured). The verified run pressed space at 2 s intervals, saw the
+        marker at 15 s, then started the tower."""
         if shots:
             shots = Path(shots); shots.mkdir(parents=True, exist_ok=True)
-        time.sleep(16)
-        self.keypress(57)                      # once: end the HW-detect screen
         t0 = time.time()
         while time.time() - t0 < timeout:
             time.sleep(2)
             if self._marker_present():
                 return True
+            if time.time() - t0 < space_until:
+                self.keypress(57)
         return False
 
     def boot_to_game(self, shots: Path | None = None, timeout: float = 90.0, settle: float = 2.0):
