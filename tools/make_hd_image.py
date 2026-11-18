@@ -57,8 +57,8 @@ DEFAULT_SIZE_KB = 32000                                 # one partition, 64000 s
 VOLUME = "GAMES"
 
 # folder on C: -> game; versions/requirements for README.TXT are taken from the builds where possible (see readme_text)
-FOLDERS = ("MIDWINTR", "MW1ORIG", "MIDWINT2", "MW2ORIG", "HUNTER", "HUNTORIG", "POWERMON", "POPULOUS", "POPORIG", "POPS2",
-           "POP2ORIG", "AUTO")
+FOLDERS = ("MIDWINTR", "MW1ORIG", "MIDWINT2", "MW2ORIG", "MOONSHR", "HUNTER", "HUNTORIG", "POWERMON", "POPULOUS",
+           "POPORIG", "POPS2", "POP2ORIG", "AUTO")
 
 
 def run(cmd, cwd=None, quiet=True, env=None):
@@ -99,6 +99,19 @@ def build_midwinter2() -> Path:
     if (out / "FILES" / "ASNBANK.BIN").is_file():
         shutil.copy2(out / "FILES" / "ASNBANK.BIN", dst / "FILES" / "ASNBANK.BIN")
     (dst / "PATCHES.TXT").write_text(py("midwinter2", "mw2patch", "doc", "patches/PATCHES.TXT"), encoding="latin-1", errors="replace")
+    return dst
+
+
+def build_moonshine() -> Path:
+    r"""Moonshine Racers HD: `msrpatch.py build --out` output (patched RUNME.TOS + HAGA, original FILES\, its own README.TXT and
+    PATCHES.TXT written by the tool). The tool needs the game's `originals/` and its verify dumps in the game folder."""
+    g = GAMES / "moonshine-racers"
+    out, dst = STAGE / "msr_build", STAGE / "MOONSHR"
+    py("moonshine-racers", "msrpatch", "verify")
+    shutil.rmtree(out, ignore_errors=True)
+    py("moonshine-racers", "msrpatch", "build", "--out", str(out))
+    shutil.rmtree(dst, ignore_errors=True)
+    shutil.copytree(out, dst)
     return dst
 
 
@@ -235,7 +248,7 @@ def build_populous2() -> Path:
     return dst
 
 
-BUILDERS = {"MIDWINTR": build_midwinter, "MW1ORIG": build_midwinter_orig, "MIDWINT2": build_midwinter2, "MW2ORIG": build_midwinter2_orig,
+BUILDERS = {"MIDWINTR": build_midwinter, "MOONSHR": build_moonshine, "MW1ORIG": build_midwinter_orig, "MIDWINT2": build_midwinter2, "MW2ORIG": build_midwinter2_orig,
             "HUNTER": build_hunter, "HUNTORIG": lambda: build_orig(GAMES / "hunter", "HUNTORIG"),
             "POWERMON": build_powermonger, "POPULOUS": build_populous,
             "POPORIG": lambda: build_orig(GAMES / "populous" / "originals" / "POPULOUS", "POPORIG"),
@@ -282,7 +295,7 @@ def readme_text(vers: dict[str, str], date: str) -> str:
     t = rf"""ATARI ST ENHANCED GAMES - HARD DISK  ({date})
 ==========================================================================
 
-Six games with dad_prg's patches (speed, sound, fixes) on one bootable
+Seven games with dad_prg's patches (speed, sound, fixes) on one bootable
 hard disk image, plus PP's unpatched releases of five of them (the *ORIG
 folders) for side-by-side comparison:
 HDDRIVER, one 31 MB partition = drive C:.  Nothing starts by itself except
@@ -294,6 +307,7 @@ a 3-second question about Powermonger at boot.
   C:\MW1ORIG   Midwinter (original)   double-click RUNME.TOS     PP's release, unpatched
   C:\MIDWINT2  Midwinter 2            double-click RUNME.TOS     {vers['MIDWINT2']}
   C:\MW2ORIG   Midwinter 2 (original) double-click RUNME.TOS     PP's release, unpatched
+  C:\MOONSHR   Moonshine Racers       double-click RUNME.TOS     {vers['MOONSHR']}
   C:\HUNTER    Hunter                 double-click START.TOS     {vers['HUNTER']}
   C:\HUNTORIG  Hunter (original)      double-click START.TOS     PP's release, unpatched
   C:\POWERMON  Powermonger            press P at boot (below)    {vers['POWERMON']}
@@ -320,6 +334,9 @@ Requirements
    image. Boots through HDDRIVER (HDDRIVER.SYS in the root, do not delete).
  - Hunter: STE, Mega STE or TT for the sampled sound (DMA sound); a plain ST
    plays the original sound.
+ - Moonshine Racers: STE or Mega STE for the extra in-between frames (the game
+   runs at a fixed 10 steps per second on every machine; faster machines show
+   more frames). A plain ST runs it at its own speed.
  - Populous needs 1 MB; on a TT start it from the desktop (it runs from
    this disk there). Populous 2 needs 2 MB (Mega STE / TT, or an STE with
    2 MB or more).
@@ -424,7 +441,7 @@ def versions() -> dict[str, str]:
     """Release versions as the games' own tools report them (each reads its credit patch)."""
     v = {}
     for key, game, tool in (("MIDWINTR", "midwinter", "mw1patch"), ("MIDWINT2", "midwinter2", "mw2patch"),
-                            ("HUNTER", "hunter", "huntpatch"), ("POPULOUS", "populous", "poppatch"), ("POPS2", "populous-2", "pop2patch")):
+                            ("HUNTER", "hunter", "huntpatch"), ("MOONSHR", "moonshine-racers", "msrpatch"), ("POPULOUS", "populous", "poppatch"), ("POPS2", "populous-2", "pop2patch")):
         try:
             v[key] = "v" + py(game, tool, "version").strip()
         except SystemExit:
@@ -459,6 +476,7 @@ def layout_text(img: Path, tgt: str, total: int, psz: int, folders: dict[str, Pa
          "  NEWDESK.INF    the same for TOS 2.x/3.x (read before DESKTOP.INF; TOS_2_06 ROM text); neither has an autorun entry, nothing starts by itself"]
     why = {"MIDWINTR": "Midwinter (HAGA by PP, patched)", "MW1ORIG": "Midwinter (HAGA by PP, unpatched, for comparison)",
            "MIDWINT2": "Midwinter 2 (HAGA by PP, patched)", "MW2ORIG": "Midwinter 2 (HAGA by PP, unpatched, for comparison)",
+           "MOONSHR": "Moonshine Racers (HAGA by PP, patched)",
            "HUNTER": "Hunter (Gamex by PP, patched; FILES\\P = patch code + STE sample bank)",
            "POWERMON": "Powermonger (HD build, patched; start it from the boot prompt, see README.TXT)",
            "POPULOUS": "Populous (HAGA by PP, patched; PATCHED.TXT)", "POPS2": "Populous 2 (HAGA by PP, patched)",
@@ -469,7 +487,7 @@ def layout_text(img: Path, tgt: str, total: int, psz: int, folders: dict[str, Pa
         n = sum(1 for p in src.rglob("*") if p.is_file())
         t.append(f"  {name + chr(92):<14} {why[name]}: {n} files, {tree_kb(src)} KB" + (f", {VERSIONS[name]}" if name in VERSIONS else ""))
     t += ["", "Start of the games: see README.TXT in the root (Powermonger: press P at the boot prompt; the others: double-click",
-          "  MIDWINTR\\RUNME.TOS, MIDWINT2\\RUNME.TOS, POPULOUS\\RUNME.TOS, POPS2\\RUNME.TOS, HUNTER\\START.TOS on the desktop).", "",
+          "  MIDWINTR\\RUNME.TOS, MIDWINT2\\RUNME.TOS, MOONSHR\\RUNME.TOS, POPULOUS\\RUNME.TOS, POPS2\\RUNME.TOS, HUNTER\\START.TOS on the desktop).", "",
           "Use",
           f"  real disk / SD card (ACSI2STM, UltraSatan, SCSI2SD + ACSI/SCSI bridge, ...): dd if={img.name} of=/dev/sdX bs=1M conv=fsync",
           "    (check the target device first; a bigger card works, the rest stays unpartitioned)",
