@@ -2,11 +2,13 @@
 ; media: hd
 ; default: no
 ; site: $377a2 $37a90 $3d6c4 $3adb4 $3d110 $3e352 $3dfd6
-; ram: code $75740.. (dead zone, unverified block) + tables $76d40.. (zero gap), runtime state RS $77c80, vars V $77cc0, stack $77eb8; store at $BC000 (file NEBLEVEL.OVL)
+; ram: six blocks (work/editor/gen_ed.py checks every limit): CODE1 $75740.. (dead zone), CODE5 $76c76.. and DATA $76d40.. and CODE2 $77300.. and CODE3 $77a40.. and CODE4 $77dc0.. (zero gap),
+; ram: runtime state RS $77c80, vars V $77cc0; non-game RAM: screen $A0000, menu buffer $A8000, tiles $A8800, disk buffer BUF $AA000, excursion stack $AD000, store OVS $BC000 (file NEBLEVEL.OVL on a campaign disk)
 ; doc: work/notes/editor.md
 ; note: Nebulus campaign + level editor (NebEditor).  Hooks (jump table at CODE1): +0 ed_dec ($377a2 decode), +6 ed_dir ($37a90 spawn direction),
 ; note: +12 ed_title ($3d6c4 title poll, F10 = manager), +18 ed_time ($3adb4 initial time), +24 ed_name ($3d110 tower name), +30 ed_next ($3e352 tower complete),
-; note: +36 ed_game ($3dfd6 frame flip, F10 in playtest).  Store (NEBLEVEL.OVL, OVSZ bytes, loaded at boot to OVS by the loader stub):
+; note: +36 ed_game ($3dfd6 frame flip, F10 in playtest).  Round 3: Lift > menu + lift_* code (CODE3), keyboard shortcuts (kb_key, kbtab), campaign disk Load/Save in drive A:
+; note: (disk_op/tos_file/load_fin; work/notes/editor.md sections 12, 13).  Store (NEBLEVEL.OVL, OVSZ bytes, a copy next to START.TOS is loaded at boot to OVS by the loader stub; Load/Save use A:):
 ; note:   'NCMP' ver.w nlev.w ncamp.w (16 B header) | 8 campaigns x 32 B {name[12] cnt.b pad.b entry[16] pad[2]} | level records (variable):
 ; note:   {mission.b tower.b rows.b flags.b len.w time.w name[12], mask[rows*2], stream} in the game's own tower encoding.
 ; note: entry byte: bit7 set = original tower ($80 | (mission-1)<<3 | tower), else custom level index.
@@ -14,11 +16,15 @@
 CODE1   equ     $75740
 DATA    equ     $76d40
 CODE2   equ     $77300
+CODE3   equ     $77a40
 RS      equ     $77c80
 V       equ     $77cc0
-STK     equ     $77eb8
+STK     equ     $AD000                  ; private stack of the TOS excursion (non-game RAM, 4 KB below)
+CODE4   equ     $77dc0
+CODE5   equ     $76c76
 OVS     equ     $BC000
 OVSZ    equ     $2000
+BUF     equ     $AA000                  ; campaign disk read buffer (8 KB), validated before it replaces OVS
 TREC    equ     $BE000
 ES      equ     $A0000
 MB      equ     $A8000
@@ -79,9 +85,20 @@ vDirty  equ     162
 vMBP    equ     164
 vMCol   equ     168
 vShow   equ     170
+vDisk   equ     174                     ; campaign-disk prompt: 1 load, 2 save (0 = none)
+vMed    equ     244                     ; saved hdv_mediach
+vTxt    equ     208                     ; message text buffer (32 B)
+vLift   equ     172
 ETILE   equ     $A8800
 rsOk    equ     40
+RSV     equ     RS-V                    ; RS-relative access from the editor code (a5 = V there; hooks that run in the game use absolute RS+..)
 rsKey   equ     42                      ; key latch: the F10 make byte ($44) seen by the ACIA hook ed_key, 0 = none
+rsKb    equ     44                      ; key latch 2: the last other make scancode (shortcut keys), 0 = none (word, scancode in the low byte)
+rsPv    equ     46                      ; byte: the IKBD byte ed_key saw last (a header byte the game drops leaves the cell unchanged: no second latch)
+rsTosP  equ     52                      ; long: address of the TOS-state copy (Gamex: long at $ffd80; the floppy build's boot stub sets it), 0 = not yet known
+rsTosN  equ     56                      ; word: (bytes of the copy / 48) - 1
+rsMfpP  equ     58                      ; long: the TOS-world MFP block (24 B, same layout as V+vMfp): START's at $fffaa; the floppy stub's
+rsLast  equ     48                      ; word: last tile placed ($100 | cell value or enemy marker), 0 = none yet (repeat key)
 
         org     CODE1
         dc.w    $4ef9
@@ -389,16 +406,17 @@ ed_run:
         clr.b   $ffff8203.w
         move.w  #$2300,sr
         clr.b   $38498.l
-        clr.w   RS+rsKey.l
-        clr.w   RS+rsTest.l
-        tst.w   RS+rsEd.l
+        clr.w   RSV+rsKey(a5)
+        clr.w   RSV+rsKb(a5)
+        clr.w   RSV+rsTest(a5)
+        tst.w   RSV+rsEd(a5)
         beq.s   .fresh
         ; resume the playtested session: working copy back into the grid
-        move.w  #$7fff,RS+rsLvl.l
-        move.w  RS+rsTow.l,$3390c.l
-        move.w  RS+rsMis.l,$33910.l
+        move.w  #$7fff,RSV+rsLvl(a5)
+        move.w  RSV+rsTow(a5),$3390c.l
+        move.w  RSV+rsMis(a5),$33910.l
         jsr     $377a2.l
-        clr.w   RS+rsLvl.l
+        clr.w   RSV+rsLvl(a5)
         move.w  #1,vScr(a5)
         move.w  #1,vDirty(a5)
         bra.s   .go
@@ -409,12 +427,16 @@ ed_run:
 .w:     cmp.w   vFrame(a5),d0
         beq.s   .w
         jsr     $3853a.l
-        move.w  RS+rsKey.l,d0
-        clr.w   RS+rsKey.l
+        move.w  RSV+rsKey(a5),d0
+        clr.w   RSV+rsKey(a5)
         cmp.w   #$44,d0
         bne.s   .nk
         bsr.w   f10
-.nk:    bsr.w   input
+.nk:    move.w  RSV+rsKb(a5),d0
+        beq.s   .nk2
+        clr.w   RSV+rsKb(a5)
+        bsr.w   kb_key
+.nk2:   bsr.w   input
         tst.w   vRes(a5)
         beq.s   .loop
         move.w  #$2700,sr
@@ -429,7 +451,8 @@ ed_run:
 .rp:    move.l  (a0)+,(a1)+
         dbra    d0,.rp
         clr.b   $38498.l
-        clr.w   RS+rsKey.l
+        clr.w   RSV+rsKey(a5)
+        clr.w   RSV+rsKb(a5)
         move.w  #$ffff,$3849a.l
         move.w  vRes(a5),d0
         cmp.w   #1,d0
@@ -439,16 +462,20 @@ ed_run:
         ; 3: quit to the title (original game): restore the title's mission/tower
         move.w  vMis0(a5),$33910.l
         move.w  vTow0(a5),$3390c.l
-.rest:  clr.w   RS+rsEd.l
+.rest:  clr.w   RSV+rsEd(a5)
 .keep:  move.w  vSr(a5),sr
         movem.l (a7)+,d1-d7/a0-a6
         rts
 
 ; F10: editor -> list screen, list -> quit
-f10:    tst.w   vScr(a5)
+f10:    tst.w   vDisk(a5)
+        bne.w   c_dno
+        tst.w   vScr(a5)
         beq.s   .q
         tst.w   vMode(a5)
         bne.s   .r
+        tst.w   vLift(a5)
+        bne.w   lift_cancel
         bra.w   c_leaveed
 .q:     move.w  #3,vRes(a5)
 .r:     rts
@@ -493,10 +520,10 @@ clr_screen:
 ; the tower map: 22 lines x 16 columns of 16x8 pixel cells, top row rsTop; the frog start (column 0, row 2) is marked when empty
 draw_map:
         moveq   #0,d5
-.ln:    move.w  RS+rsTop.l,d4
+.ln:    move.w  RSV+rsTop(a5),d4
         sub.w   d5,d4
         bmi.s   .skip
-        cmp.w   RS+rsRows.l,d4
+        cmp.w   RSV+rsRows(a5),d4
         bge.s   .skip
         moveq   #0,d6
 .cl:    move.w  d6,d0
@@ -620,7 +647,7 @@ classify:
         and.b   #7,d1
         moveq   #1,d3
         tst.b   d1
-        beq.s   .r
+        beq.w   lift_tile
         moveq   #8,d3
         add.b   d1,d3
 .r:     rts
@@ -653,15 +680,15 @@ classify:
 ; cursor: XOR a 16x8 box over the cell (call again to erase)
 draw_cursor:
         movem.l d0-d2/a0,-(a7)
-        move.w  RS+rsTop.l,d0
-        sub.w   RS+rsCy.l,d0
+        move.w  RSV+rsTop(a5),d0
+        sub.w   RSV+rsCy(a5),d0
         bmi.s   .x
         cmp.w   #22,d0
         bge.s   .x
         mulu.w  #1280,d0
         lea     ES.l,a0
         adda.l  d0,a0
-        move.w  RS+rsCx.l,d1
+        move.w  RSV+rsCx(a5),d1
         lsl.w   #3,d1
         adda.w  d1,a0
         moveq   #7,d1
@@ -698,33 +725,33 @@ draw_panel:
         dbra    d0,.s
         lea     vNum(a5),a2
         move.b  #'T',(a2)+
-        move.w  RS+rsTow.l,d0
+        move.w  RSV+rsTow(a5),d0
         addq.w  #1,d0
         bsr.w   dec1
         move.b  #' ',(a2)+
         move.b  #'M',(a2)+
-        move.w  RS+rsMis.l,d0
+        move.w  RSV+rsMis(a5),d0
         bsr.w   dec1
         clr.b   (a2)
         moveq   #0,d2
         bsr.w   pline
         lea     vNum(a5),a2
         move.b  #'H',(a2)+
-        move.w  RS+rsRows.l,d0
+        move.w  RSV+rsRows(a5),d0
         bsr.w   dec3
         clr.b   (a2)
         moveq   #1,d2
         bsr.w   pline
         lea     vNum(a5),a2
         move.b  #'C',(a2)+
-        move.w  RS+rsCx.l,d0
+        move.w  RSV+rsCx(a5),d0
         bsr.w   dec3
         clr.b   (a2)
         moveq   #2,d2
         bsr.w   pline
         lea     vNum(a5),a2
         move.b  #'R',(a2)+
-        move.w  RS+rsCy.l,d0
+        move.w  RSV+rsCy(a5),d0
         bsr.w   dec3
         clr.b   (a2)
         moveq   #3,d2
@@ -751,7 +778,7 @@ draw_panel:
         lea     sHelp(pc),a0
         bra.s   .h
 .m:     move.l  d0,a0
-.h:     moveq   #19,d1
+.h:     moveq   #16,d1
         moveq   #11,d2
         bra.w   txt
 
@@ -798,7 +825,7 @@ draw_menu:
         tst.w   vScr(a5)
         bne.s   .nm
         move.l  d0,a0
-        moveq   #22,d1
+        moveq   #8,d1
         moveq   #11,d2
         bsr.w   txt
 .nm:    rts
@@ -840,11 +867,11 @@ draw_name:
 
 ; current cell value -> d0.b
 cur_cell:
-        move.w  RS+rsCx.l,d0
+        move.w  RSV+rsCx(a5),d0
         lsl.w   #8,d0
         lea     GRID.l,a0
         adda.w  d0,a0
-        move.w  RS+rsCy.l,d0
+        move.w  RSV+rsCy(a5),d0
         move.b  0(a0,d0.w),d0
         rts
 
@@ -934,35 +961,39 @@ input:
 
 move_map:
         bsr.w   draw_cursor
-        move.w  RS+rsCx.l,d0
+        tst.w   vLift(a5)
+        beq.s   .lh
+        moveq   #0,d1
+.lh:
+        move.w  RSV+rsCx(a5),d0
         add.w   d1,d0
         and.w   #15,d0
-        move.w  d0,RS+rsCx.l
-        move.w  RS+rsCy.l,d0
+        move.w  d0,RSV+rsCx(a5)
+        move.w  RSV+rsCy(a5),d0
         add.w   d2,d0
         bpl.s   .p
         moveq   #0,d0
-.p:     move.w  RS+rsRows.l,d3
+.p:     move.w  RSV+rsRows(a5),d3
         subq.w  #1,d3
         cmp.w   d0,d3
         bge.s   .ok
         move.w  d3,d0
-.ok:    move.w  d0,RS+rsCy.l
-        move.w  RS+rsTop.l,d1
+.ok:    move.w  d0,RSV+rsCy(a5)
+        move.w  RSV+rsTop(a5),d1
         cmp.w   d1,d0
         ble.s   .t2
-        move.w  d0,RS+rsTop.l
+        move.w  d0,RSV+rsTop(a5)
         bra.s   .rd
 .t2:    sub.w   #21,d1
         cmp.w   d1,d0
         bge.s   .nr
         add.w   #21,d0
-        move.w  d0,RS+rsTop.l
+        move.w  d0,RSV+rsTop(a5)
 .rd:    move.w  #3,vRedraw(a5)
         rts
 .nr:    bsr.w   draw_cursor
         move.w  #2,vRedraw(a5)
-        clr.l   vMsg(a5)
+        bsr.w   lift_msg
         rts
 
 move_menu:
@@ -1001,6 +1032,8 @@ fire_edge:
         tst.w   d0
         bne.w   menu_exec
         ; map: open the cell menu
+        tst.w   vLift(a5)
+        bne.w   lift_set
         move.w  #8,vMCol(a5)
         lea     m_root(pc),a0
         bsr.w   menu_open
@@ -1031,7 +1064,7 @@ menu_item:
 ; actions: 0 cell, 1 cell x3, 2 submenu, 3 enemy kind, 4 command, 5 enemy direction, 6 level, 7 campaign, 8 level op, 9 campaign op, 10 entry, 11 entry op
 menu_exec:
         bsr.s   menu_item
-        move.b  (a0)+,d0
+act_go: move.b  (a0)+,d0
         moveq   #0,d1
         move.b  (a0),d1
         and.w   #$ff,d0
@@ -1040,23 +1073,25 @@ menu_exec:
         move.w  0(a0,d0.w),d0
         jmp     0(a0,d0.w)
 
-acts:   dc.w    a_set-acts,a_tri-acts,a_sub-acts,a_enemy-acts,a_cmd-acts,a_edir-acts,a_lvl-acts,a_camp-acts,a_lop-acts,a_cop-acts,a_ent-acts,a_eop-acts
+acts:   dc.w    a_set-acts,a_tri-acts,a_sub-acts,a_enemy-acts,a_cmd-acts,a_edir-acts,a_lvl-acts,a_camp-acts,a_lop-acts,a_cop-acts,a_ent-acts,a_eop-acts,a_lift-acts,a_ekey-acts
 
-a_set:  move.w  d1,d0
+a_set:  bsr.w   rec
+        move.w  d1,d0
         bsr.w   place
         bra.w   a_done
-a_tri:  move.w  d1,d3
-        move.w  RS+rsCy.l,-(a7)
+a_tri:  bsr.w   rec
+        move.w  d1,d3
+        move.w  RSV+rsCy(a5),-(a7)
         moveq   #2,d4
 .t1:    move.w  d3,d0
         bsr.w   place
-        move.w  RS+rsCy.l,d0
+        move.w  RSV+rsCy(a5),d0
         addq.w  #1,d0
-        cmp.w   RS+rsRows.l,d0
+        cmp.w   RSV+rsRows(a5),d0
         bge.s   .t2
-        move.w  d0,RS+rsCy.l
+        move.w  d0,RSV+rsCy(a5)
         dbra    d4,.t1
-.t2:    move.w  (a7)+,RS+rsCy.l
+.t2:    move.w  (a7)+,RSV+rsCy(a5)
         bra.w   a_done
 a_sub:  lea     menus(pc),a0
         add.w   d1,d1
@@ -1076,10 +1111,14 @@ a_enemy:
         lea     m_dirv(pc),a0
 .sm:    bra.w   menu_open
 .nodir: move.w  vKind(a5),d0
+        move.w  d0,d1
+        bsr.w   rec
         bsr.w   place_enemy
         bra.w   a_done
 a_edir: move.w  vKind(a5),d0
         or.w    d1,d0
+        move.w  d0,d1
+        bsr.w   rec
         bsr.w   place_enemy
 a_done: tst.w   vScr(a5)
         beq.w   m_main
@@ -1089,11 +1128,11 @@ a_done: tst.w   vScr(a5)
 
 ; d0 = cell value -> grid at cursor
 place:  movem.l d0-d1/a0,-(a7)
-        move.w  RS+rsCx.l,d1
+        move.w  RSV+rsCx(a5),d1
         lsl.w   #8,d1
         lea     GRID.l,a0
         adda.w  d1,a0
-        move.w  RS+rsCy.l,d1
+        move.w  RSV+rsCy(a5),d1
         move.b  d0,0(a0,d1.w)
         move.w  #1,vDirty(a5)
         movem.l (a7)+,d0-d1/a0
@@ -1111,14 +1150,14 @@ place_enemy:
         blt.s   .ground
         cmp.w   #$60,d1
         bge.s   .ok
-        move.w  RS+rsCx.l,d1
+        move.w  RSV+rsCx(a5),d1
         lsl.w   #8,d1
         lea     GRID.l,a0
         adda.w  d1,a0
-        move.w  RS+rsCy.l,d2
+        move.w  RSV+rsCy(a5),d2
         move.w  d2,d3
 .up:    addq.w  #1,d3
-        cmp.w   RS+rsRows.l,d3
+        cmp.w   RSV+rsRows(a5),d3
         bge.s   .bad
         tst.b   0(a0,d3.w)
         bpl.s   .up
@@ -1131,11 +1170,11 @@ place_enemy:
         move.l  a0,vMsg(a5)
 .ok:    rts
 .ground:
-        move.w  RS+rsCx.l,d1
+        move.w  RSV+rsCx(a5),d1
         lsl.w   #8,d1
         lea     GRID.l,a0
         adda.w  d1,a0
-        move.w  RS+rsCy.l,d2
+        move.w  RSV+rsCy(a5),d2
         subq.w  #1,d2
         bmi.s   .nl
         tst.b   0(a0,d2.w)
@@ -1152,7 +1191,7 @@ a_cmd:  lea     cmds(pc),a0
 
 cmds:   dc.w    m_main-cmds,m_levels-cmds,m_camps-cmds,c_newlvl-cmds,c_newcamp-cmds,c_quit-cmds,c_save-cmds,c_edroot-cmds
         dc.w    c_leaveed-cmds,c_look-cmds,c_mis-cmds,c_copyorig-cmds,c_blank-cmds,c_tup-cmds,c_tdn-cmds,c_rename-cmds
-        dc.w    c_play-cmds,c_addent-cmds,cp_edit-cmds
+        dc.w    c_play-cmds,c_addent-cmds,cp_edit-cmds,c_dload-cmds,c_dgo-cmds,c_dno-cmds
 
 ; --- main menu / list screens
 m_main: clr.w   vScr(a5)
@@ -1292,9 +1331,9 @@ lv_play:
         bsr.w   lvl_ptr
         move.l  a0,d0
         beq.w   a_done
-        clr.w   RS+rsCamp.l
+        clr.w   RSV+rsCamp(a5)
         addq.w  #1,d2
-        move.w  d2,RS+rsLvl.l
+        move.w  d2,RSV+rsLvl(a5)
         moveq   #0,d1
         move.b  1(a0),d1
         moveq   #0,d2
@@ -1311,49 +1350,49 @@ lv_edit:
         bsr.w   lvl_ptr
         move.l  a0,d0
         beq.w   a_done
-        lea     RS+rsName.l,a1
+        lea     RSV+rsName(a5),a1
         moveq   #11,d0
 .n:     move.b  8(a0,d0.w),0(a1,d0.w)
         dbra    d0,.n
         moveq   #0,d0
         move.b  (a0),d0
-        move.w  d0,RS+rsMis.l
+        move.w  d0,RSV+rsMis(a5)
         move.b  1(a0),d0
-        move.w  d0,RS+rsTow.l
+        move.w  d0,RSV+rsTow(a5)
         move.b  2(a0),d0
-        move.w  d0,RS+rsRows.l
-        move.w  6(a0),RS+rsTime.l
+        move.w  d0,RSV+rsRows(a5)
+        move.w  6(a0),RSV+rsTime(a5)
         addq.w  #1,d2
-        move.w  d2,RS+rsSlot.l
-        move.w  d2,RS+rsLvl.l
-        move.w  RS+rsTow.l,$3390c.l
-        move.w  RS+rsMis.l,$33910.l
+        move.w  d2,RSV+rsSlot(a5)
+        move.w  d2,RSV+rsLvl(a5)
+        move.w  RSV+rsTow(a5),$3390c.l
+        move.w  RSV+rsMis(a5),$33910.l
         jsr     $377a2.l
-        clr.w   RS+rsLvl.l
+        clr.w   RSV+rsLvl(a5)
         clr.w   vDirty(a5)
         bra.w   ed_begin
 
 c_newlvl:
-        clr.w   RS+rsSlot.l
+        clr.w   RSV+rsSlot(a5)
         bsr.w   c_blank
         lea     sNewName(pc),a0
-        lea     RS+rsName.l,a1
+        lea     RSV+rsName(a5),a1
         moveq   #11,d0
 .n:     move.b  (a0)+,(a1)+
         dbra    d0,.n
-        move.w  #1,RS+rsMis.l
-        clr.w   RS+rsTow.l
-        move.w  #$0450,RS+rsTime.l
+        move.w  #1,RSV+rsMis(a5)
+        clr.w   RSV+rsTow(a5)
+        move.w  #$0450,RSV+rsTime(a5)
         bra.w   ed_begin
 
 ; editor opened on the working grid
 ed_begin:
         move.w  #8,vMCol(a5)
-        move.w  #1,RS+rsEd.l
+        move.w  #1,RSV+rsEd(a5)
         move.w  #1,vScr(a5)
-        clr.w   RS+rsCx.l
-        move.w  #1,RS+rsCy.l
-        move.w  #21,RS+rsTop.l
+        clr.w   RSV+rsCx(a5)
+        move.w  #1,RSV+rsCy(a5)
+        move.w  #21,RSV+rsTop(a5)
         clr.w   vMode(a5)
         clr.l   vMsg(a5)
         move.w  #3,vRedraw(a5)
@@ -1440,8 +1479,8 @@ cp_play:
         tst.b   12(a0)
         beq.w   a_done
         addq.w  #1,d2
-        move.w  d2,RS+rsCamp.l
-        clr.w   RS+rsPos.l
+        move.w  d2,RSV+rsCamp(a5)
+        clr.w   RSV+rsPos(a5)
         move.b  14(a0),d0
         bsr.w   apply_entry
         move.w  #2,vRes(a5)
@@ -1573,7 +1612,7 @@ cp_edit:
         moveq   #4,d0
         moveq   #17,d1
         bsr.w   mb_add
-        lea     sBackC(pc),a0
+        lea     sBack(pc),a0
         moveq   #4,d0
         moveq   #2,d1
         bsr.w   mb_add
@@ -1694,7 +1733,7 @@ c_blank:
         move.w  #$3ff,d0
 .c:     clr.l   (a0)+
         dbra    d0,.c
-        move.w  #48,RS+rsRows.l
+        move.w  #48,RSV+rsRows(a5)
         moveq   #15,d0
         lea     GRID+1.l,a0
 .r:     move.b  #$81,(a0)
@@ -1709,35 +1748,130 @@ c_blank:
         move.b  #$c3,45(a0)
         move.b  #$c3,46(a0)
         move.w  #1,vDirty(a5)
-        clr.w   RS+rsCx.l
-        move.w  #1,RS+rsCy.l
-        move.w  #21,RS+rsTop.l
+        clr.w   RSV+rsCx(a5)
+        move.w  #1,RSV+rsCy(a5)
+        move.w  #21,RSV+rsTop(a5)
         clr.w   vMode(a5)
         move.w  #3,vRedraw(a5)
         rts
 
+; ---- TOS-world file transfer (code1 tail; called by disk_op)
+; the TOS-world part (SR $2500, TOS state swapped in); GEMDOS keeps d3-d7: d4 = op, d6 = handle, d5 = first failure.  Fopen, Fread the whole file into BUF
+; (short = not a campaign disk; for a save this is the "exists, full size" check), save: rewind + Fwrite OVS; Fclose.
+tos_file:
+        clr.w   -(a7)                   ; Getbpb(A): a null BPB = no readable disk (Fopen on an empty drive reports "file not found")
+        move.w  #7,-(a7)
+        trap    #13
+        addq.l  #4,a7
+        tst.l   d0
+        bne.s   .bpb
+        moveq   #1,d0
+        rts
+.bpb:   move.l  $47e.w,V+vMed.l         ; hdv_mediach: drive A always "changed" (TOS only notices a swapped disk by write-protect / serial heuristics)
+        move.l  #mchg,$47e.w
+        bsr.s   tos_io
+        move.l  V+vMed.l,$47e.w
+        rts
+
+mchg:   tst.w   4(a7)
+        bne.s   .o
+        move.l  V+vMed.l,$47e.w         ; only the first query says "changed" (BDOS would loop on a permanent 2)
+        moveq   #2,d0
+        rts
+.o:     move.l  V+vMed.l,a0
+        jmp     (a0)
+
+tos_io: move.w  V+vDisk.l,d4
+        move.w  d4,d0
+        subq.w  #1,d0
+        beq.s   .o
+        moveq   #2,d0
+.o:     move.w  d0,-(a7)
+        pea     fname(pc)
+        move.w  #$3d,-(a7)
+        trap    #1
+        addq.l  #8,a7
+        tst.l   d0
+        bmi.s   .cls
+        move.w  d0,d6
+        lea     BUF.l,a0
+        moveq   #$3f,d0
+        bsr.s   rw
+        moveq   #2,d5
+        cmp.l   #OVSZ,d0
+        bne.s   .cl
+        moveq   #0,d5
+        cmp.w   #1,d4
+        beq.s   .cl
+        clr.w   -(a7)
+        move.w  d6,-(a7)
+        clr.l   -(a7)
+        move.w  #$42,-(a7)
+        trap    #1
+        lea     10(a7),a7
+        lea     OVS.l,a0
+        moveq   #$40,d0
+        bsr.s   rw
+        cmp.l   #OVSZ,d0
+        beq.s   .cl
+        move.l  d0,d5
+.cl:    move.w  d6,-(a7)
+        move.w  #$3e,-(a7)
+        trap    #1
+        addq.l  #4,a7
+        tst.l   d5
+        bne.s   .f
+        move.l  d0,d5
+.f:     move.l  d5,d0
+.cls:   bpl.s   .r
+        cmp.l   #-33,d0
+        beq.s   .nc
+        cmp.l   #-34,d0
+        beq.s   .nc
+        cmp.l   #-13,d0
+        beq.s   .wp
+        moveq   #1,d0
+        rts
+.wp:    moveq   #3,d0
+        rts
+.nc:    moveq   #2,d0
+.r:     tst.l   d0
+        beq.s   .z
+        moveq   #2,d0
+.z:     rts
+
+; d0 = GEMDOS function ($3f read / $40 write), a0 = buffer: OVSZ bytes on handle d6
+rw:     move.l  a0,-(a7)
+        pea     OVSZ.l
+        move.w  d6,-(a7)
+        move.w  d0,-(a7)
+        trap    #1
+        lea     12(a7),a7
+        rts
+
+
         org     CODE2
-c_look: move.w  RS+rsTow.l,d0
+c_look: move.w  RSV+rsTow(a5),d0
         addq.w  #1,d0
         and.w   #7,d0
-        move.w  d0,RS+rsTow.l
+        move.w  d0,RSV+rsTow(a5)
         bra.s   c_ldone
-c_mis:  eori.w  #3,RS+rsMis.l
+c_mis:  eori.w  #3,RSV+rsMis(a5)
 c_ldone: move.w #1,vDirty(a5)
         clr.w   vMode(a5)
         move.w  #2,vRedraw(a5)
         rts
 
 c_copyorig:
-        clr.w   RS+rsLvl.l
-        move.w  RS+rsTow.l,$3390c.l
-        move.w  RS+rsMis.l,$33910.l
+        clr.w   RSV+rsLvl(a5)
+        move.w  RSV+rsTow(a5),$3390c.l
+        move.w  RSV+rsMis(a5),$33910.l
         jsr     $377a2.l
-        move.w  $33912.l,RS+rsRows.l
+        move.w  $33912.l,RSV+rsRows(a5)
         move.w  #1,vDirty(a5)
-        clr.w   RS+rsCx.l
-        move.w  #1,RS+rsCy.l
-        move.w  #21,RS+rsTop.l
+        clr.w   RSV+rsCx(a5)
+        move.w  #1,RSV+rsCy(a5)
+        move.w  #21,RSV+rsTop(a5)
         clr.w   vMode(a5)
         move.w  #3,vRedraw(a5)
         rts
@@ -1745,7 +1879,7 @@ c_copyorig:
 c_tup:  moveq   #5,d0
         bra.s   c_time
 c_tdn:  moveq   #-5,d0
-c_time: move.w  RS+rsTime.l,d1
+c_time: move.w  RSV+rsTime(a5),d1
         ; BCD step of 50 s: hundreds in bits 8-11, tens in bits 4-7
         move.w  d1,d2
         lsr.w   #4,d2
@@ -1768,14 +1902,14 @@ c_time: move.w  RS+rsTime.l,d1
         lsl.w   #8,d3
         lsl.w   #4,d2
         or.w    d2,d3
-        move.w  d3,RS+rsTime.l
+        move.w  d3,RSV+rsTime(a5)
 .done:  move.w  #1,vDirty(a5)
         clr.w   vMode(a5)
         move.w  #2,vRedraw(a5)
         rts
 
 c_rename:
-        lea     RS+rsName.l,a0
+        lea     RSV+rsName(a5),a0
         move.l  a0,vNDst(a5)
         bra.w   name_begin
 
@@ -1834,25 +1968,60 @@ name_done:
 ; commit the working grid into its slot (store in RAM) and into TREC
 c_leaveed:
         bsr.w   commit
-        clr.w   RS+rsEd.l
+        clr.w   RSV+rsEd(a5)
         bra.w   m_levels
 
 c_save: bsr.w   chk_init
         tst.w   vScr(a5)
         beq.s   .w
         bsr.w   commit
-.w:     bsr.w   save_file
-        move.w  #3,vRedraw(a5)
-        rts
+.w:     moveq   #2,d0
+        bra.s   dsk_prompt
+c_dload: moveq  #1,d0
+dsk_prompt:
+        move.w  d0,vDisk(a5)
+        clr.l   vMsg(a5)
+        move.w  #4,vMCol(a5)
+        lea     m_dprompt(pc),a0
+        bra.w   menu_open
+
+; prompt answered (fire): the disk excursion, then the result message (string number = status)
+c_dgo:  bsr.w   disk_op
+        move.w  d0,d1
+        lea     sMsgs(pc),a0
+        bra.s   .t
+.n:     tst.b   (a0)+
+        bne.s   .n
+.t:     dbra    d1,.n
+        tst.w   d0
+        bne.s   .s
+        cmp.w   #1,vDisk(a5)
+        bne.s   .s
+        lea     vTxt(a5),a2
+        lea     sLoaded(pc),a0
+        bsr.w   cpstr
+        move.w  OVS+6.l,d0
+        bsr.s   dnum
+        lea     sLv(pc),a0
+        bsr.w   cpstr
+        move.w  OVS+8.l,d0
+        bsr.s   dnum
+        lea     sCm(pc),a0
+        bsr.w   cpstr
+        lea     vTxt(a5),a0
+.s:     move.l  a0,vMsg(a5)
+c_dno:  clr.w   vDisk(a5)
+        bra.w   a_done
+
 
 c_play: bsr.w   commit
-        move.w  #1,RS+rsTest.l
-        move.w  #$7fff,RS+rsLvl.l
-        move.w  RS+rsTow.l,d1
+        move.w  #1,RSV+rsTest(a5)
+        move.w  #$7fff,RSV+rsLvl(a5)
+        move.w  RSV+rsTow(a5),d1
         move.w  d1,$3390c.l
         move.w  d1,$33a44.l
-        move.w  RS+rsMis.l,$33910.l
-        clr.w   RS+rsCamp.l
+        move.w  RSV+rsMis(a5),$33910.l
+        clr.w   RSV+rsCamp(a5)
         move.w  #1,vRes(a5)
         rts
 
@@ -1860,23 +2029,23 @@ c_play: bsr.w   commit
 commit: tst.w   vDirty(a5)
         beq.s   .enc
 .enc:   lea     TREC.l,a2
-        move.w  RS+rsMis.l,d0
+        move.w  RSV+rsMis(a5),d0
         move.b  d0,(a2)
-        move.w  RS+rsTow.l,d0
+        move.w  RSV+rsTow(a5),d0
         move.b  d0,1(a2)
-        move.w  RS+rsRows.l,d0
+        move.w  RSV+rsRows(a5),d0
         move.b  d0,2(a2)
         clr.b   3(a2)
-        move.w  RS+rsTime.l,6(a2)
+        move.w  RSV+rsTime(a5),6(a2)
         lea     8(a2),a0
-        lea     RS+rsName.l,a1
+        lea     RSV+rsName(a5),a1
         moveq   #11,d0
 .nm:    move.b  (a1)+,(a0)+
         dbra    d0,.nm
         clr.b   19(a2)
         lea     REC(a2),a0              ; mask
         move.l  a0,a1
-        move.w  RS+rsRows.l,d0
+        move.w  RSV+rsRows(a5),d0
         adda.w  d0,a1
         adda.w  d0,a1                   ; stream
         move.l  a1,d6
@@ -1908,7 +2077,7 @@ commit: tst.w   vDirty(a5)
         moveq   #0,d3
         move.w  4(a2),d3
         add.w   #REC,d3                 ; new size
-        move.w  RS+rsSlot.l,d0
+        move.w  RSV+rsSlot(a5),d0
         beq.s   .app
         subq.w  #1,d0
         bsr.w   lvl_ptr
@@ -1967,76 +2136,14 @@ commit: tst.w   vDirty(a5)
         move.w  OVS+6.l,d0
         addq.w  #1,OVS+6.l
         addq.w  #1,d0
-        move.w  d0,RS+rsSlot.l
+        move.w  d0,RSV+rsSlot(a5)
         clr.l   vMsg(a5)
-        rts
-
-; ------------------------------------------------------------------ save OVS to NEBLEVEL.OVL through a TOS excursion
-save_file:
-        movem.l d0-d7/a0-a6,-(a7)
-        clr.l   vErr(a5)
-        move.l  a5,-(a7)
-        move.w  sr,d0
-        move.w  d0,-(a7)
-        ori.w   #$700,sr
-        move.l  a7,vGsp(a5)
-        lea     STK.l,a7
-        move.l  a5,-(a7)
-        bsr.w   mfp_save
-        bsr.w   swap_tos
-        lea     $fffaa.l,a2
-        bsr.w   mfp_set
-        move.w  #$2500,sr
-        move.w  #1,-(a7)
-        pea     fname(pc)
-        move.w  #$3d,-(a7)
-        trap    #1
-        addq.l  #8,a7
-        move.l  d0,d7
-        tst.l   d0
-        bmi.s   .res
-        move.w  d0,d6
-        pea     OVS.l
-        pea     OVSZ.l
-        move.w  d6,-(a7)
-        move.w  #$40,-(a7)
-        trap    #1
-        lea     12(a7),a7
-        move.l  d0,d7
-        sub.l   #OVSZ,d7
-        move.w  d6,-(a7)
-        move.w  #$3e,-(a7)
-        trap    #1
-        addq.l  #4,a7
-.res:   move.w  #$2700,sr
-        move.l  d7,-(a7)
-        bsr.w   swap_tos
-        move.l  (a7)+,d7
-        move.l  (a7)+,a5
-        lea     V+vMfp.l,a2
-        bsr.w   mfp_set
-.dr:    btst    #0,$fffffc00.w
-        beq.s   .dd
-        move.b  $fffffc02.w,d0
-        bra.s   .dr
-.dd:
-        move.l  d7,vErr(a5)
-        move.l  vGsp(a5),a7
-        move.w  (a7)+,d0
-        move.l  (a7)+,a5
-        move.w  d0,sr
-        lea     sSaved(pc),a0
-        tst.l   vErr(a5)
-        beq.s   .ok
-        lea     sFail(pc),a0
-.ok:    move.l  a0,vMsg(a5)
-        movem.l (a7)+,d0-d7/a0-a6
         rts
 
 swap_tos:
         lea     8.w,a0
-        move.l  $ffd80.l,a1
-        move.w  $ffd86.l,d0
+        move.l  RS+rsTosP.l,a1
+        move.w  RS+rsTosN.l,d0
         addq.w  #1,d0
         mulu.w  #48,d0
         lea     8(a0,d0.l),a6
@@ -2093,14 +2200,14 @@ mfp_set:
         dbra    d2,.l
         rts
 
-fname:  dc.b    'NEBLEVEL.OVL',0
+fname:  dc.b    'A:\NEBLEVEL.OVL',0
         even
 
-; expand the 8-pixel tile patterns to 16-pixel words (ETILE, 17 tiles x 8 words)
+; expand the 8-pixel tile patterns to 16-pixel words (ETILE, 19 tiles x 8 words)
 tiles_init:
         lea     tiles(pc),a0
         lea     ETILE.l,a1
-        moveq   #16,d6
+        moveq   #18,d6
 .t:     moveq   #7,d5
 .r:     move.b  (a0)+,d4
         moveq   #0,d0
@@ -2121,14 +2228,15 @@ tiles_init:
 ; the campaign store is validated once (RS+rsOk): bad version, counts, ranges, lengths or mask/stream mismatch => magic cleared (= absent)
 ov_ok:  tst.w   RS+rsOk.l
         bne.s   .r
-        movem.l d0-d7/a0-a4,-(a7)
+        movem.l d0-d7/a0-a4/a6,-(a7)
+        lea     OVS.l,a6
         bsr.w   ov_check
         move.w  #1,RS+rsOk.l
-        movem.l (a7)+,d0-d7/a0-a4
+        movem.l (a7)+,d0-d7/a0-a4/a6
 .r:     rts
 
 ov_check:
-        lea     OVS.l,a0
+        move.l  a6,a0
         cmpi.l  #'NCMP',(a0)
         bne.w   .out
         cmpi.w  #1,4(a0)
@@ -2146,7 +2254,7 @@ ov_check:
         lea     32(a1),a1
 .ct:    dbra    d2,.cl
         lea     LV0(a0),a1
-        lea     OVS+OVSZ.l,a3
+        lea     OVSZ(a6),a3
         bra.w   .lt
 .ll:    lea     REC(a1),a2
         cmpa.l  a3,a2
@@ -2192,7 +2300,7 @@ ov_check:
         move.l  a4,a1
 .lt:    dbra    d3,.ll
 .out:   rts
-.bad:   clr.l   OVS.l
+.bad:   clr.l   (a6)
         rts
 
 ; ACIA path hook ($3851a, replaces `move.w (a7)+,d0 / bclr.b #6,$fa11.w` and then does both itself).  The game keeps ONE last-byte cell ($38498) and
@@ -2203,9 +2311,16 @@ ov_check:
 ; latch is set again while F10 is still held).  d0 is free (restored from the stack below); nothing else is touched.
 ed_key:
         move.b  $38498.l,d0
+        cmp.b   RS+rsPv.l,d0            ; same byte as last time: a dropped header byte left the cell unchanged
+        beq.s   .n
+        move.b  d0,RS+rsPv.l
         cmp.b   #$44,d0
-        bne.s   .n
+        bne.s   .k
         move.w  #$44,RS+rsKey.l
+        bra.s   .n
+.k:     tst.b   d0
+        bmi.s   .n
+        move.b  d0,RS+rsKb+1.l          ; make scancode for the editor shortcuts (joystick bytes < $10 never match the key table)
 .n:     move.w  (a7)+,d0
         bclr.b  #6,$fffffa11.w
         rte
@@ -2220,10 +2335,78 @@ ed_opt:
 opthint: dc.b   'F10/D  Level editor ',0
         even
 
+; remember the tile for the "repeat last" key (d1.w = cell value or enemy marker)
+rec:    move.w  d1,RSV+rsLast(a5)
+        bset    #0,RSV+rsLast(a5)
+        rts
+
+; d0.w = latched make scancode: editor shortcuts, map view only (not in menus, lists or name entry).  kbtab maps a key to one of the menu's own
+; actions (action.b param.b); Return/Space = repeat the last tile (or, while a lift end is pending, = fire).  The legend is the cell menu itself (letters after the names).
+kb_key: tst.w   vScr(a5)
+        beq.s   kb_r
+        tst.w   vMode(a5)
+        bne.s   kb_r
+        tst.w   vLift(a5)
+        bne.s   .pick
+        cmp.b   #$1c,d0
+        beq.s   .rep
+        cmp.b   #$39,d0
+        beq.s   .rep
+        lea     kbtab(pc),a1
+.f:     move.b  (a1)+,d1
+        beq.s   kb_r
+        cmp.b   d1,d0
+        beq.s   .hit
+        addq.l  #2,a1
+        bra.s   .f
+.hit:   move.l  a1,a0
+        bra.w   act_go
+.pick:  cmp.b   #$1c,d0
+        beq.w   lift_set
+        cmp.b   #$39,d0
+        beq.w   lift_set
+        rts
+.rep:   move.w  RSV+rsLast(a5),d1
+        btst    #8,d1
+        beq.s   kb_r
+        cmp.b   #$83,d1
+        beq.w   a_tri
+        cmp.b   #$c3,d1
+        beq.w   a_tri
+        bra.w   a_set
+kb_r:   rts
+
+; menu action 13: enemy shortcut, d1 = kind; the same key on the same enemy turns it round (start direction bit)
+a_ekey: move.w  d1,d2
+        bsr.w   cur_cell
+        move.b  d0,d3
+        and.b   #$fe,d0
+        cmp.b   d2,d0
+        bne.s   .p
+        eori.b  #1,d3
+        move.b  d3,d2
+.p:     move.w  d2,d0
+        move.w  d2,d1
+        bsr.s   rec
+        bsr.w   place_enemy
+        bra.w   a_done
+
+
+m_enemy: dc.b   8
+        dc.b    3,$10,'Stone ball  S',0
+        dc.b    3,$20,'Red ball  R',0
+        dc.b    3,$30,'Red ball waits  W',0
+        dc.b    3,$40,'Eye up/down slow  U',0
+        dc.b    3,$50,'Eye up/down fast  I',0
+        dc.b    3,$60,'Eye left/right  J',0
+        dc.b    3,$70,'Eye l/r fast  K',0
+        dc.b    4,7,'< back',0
+
 ; ------------------------------------------------------------------ data (second block)
         org     DATA
-; tiles: 8 pattern bytes, colour (plane mask), pad.  ids: 0 empty, 1 inert marker, 2 ledge, 3 wide ledge, 4 pillar, 5 blue block, 6 pale block,
-; 7 door, 8 exit, 9 stone ball, 10 red ball, 11 red ball (waits), 12/13 eye vertical slow/fast, 14/15 eye horizontal slow/fast
+; tiles: 8 pattern bytes, colour (plane mask), pad.  ids: 0 empty, 1 inert marker, 2 ledge, 3 wide ledge, 4 pillar, 5 blue block, 6 lift slab,
+; 7 door, 8 exit, 9 stone ball, 10 red ball, 11 red ball (waits), 12/13 eye vertical slow/fast, 14/15 eye horizontal slow/fast, 16 frog marker,
+; 17 lift end ($08), 18 lift stop ($0c); tile 6 = the lift slab $85 (a lone $85 is a lift start, never a plain block)
 tiles:
         dc.b    $00,$00,$00,$10,$00,$00,$00,$00,1,0
         dc.b    $00,$00,$00,$00,$18,$00,$00,$00,1,0
@@ -2242,18 +2425,20 @@ tiles:
         dc.b    $00,$3c,$7e,$db,$db,$7e,$3c,$00,5,0
         dc.b    $00,$7e,$ff,$db,$db,$ff,$7e,$00,5,0
         dc.b    $00,$24,$3c,$7e,$5a,$7e,$24,$00,6,0
-sHelp:  dc.b    'Fire=menu F10=back',0
+        dc.b    $18,$3c,$7e,$18,$18,$18,$18,$00,7,0
+        dc.b    $18,$3c,$7e,$00,$7e,$00,$7e,$00,7,0
+sHelp:  dc.b    'Fire=menu Ret=again',0
         even
 
 names:  dc.w    n0-names,n1-names,n2-names,n3-names,n4-names,n5-names,n6-names,n7-names,n8-names
-        dc.w    n9-names,n10-names,n11-names,n12-names,n13-names,n14-names,n15-names
+        dc.w    n9-names,n10-names,n11-names,n12-names,n13-names,n14-names,n15-names,n16-names,n17-names,n18-names
 n0:     dc.b    'Empty',0
 n1:     dc.b    'Marker (inert)',0
 n2:     dc.b    'Ledge',0
 n3:     dc.b    'Ledge (wide)',0
 n4:     dc.b    'Pillar',0
 n5:     dc.b    'Blue block',0
-n6:     dc.b    'Pale block',0
+n6:     dc.b    'Lift start',0
 n7:     dc.b    'Door opening',0
 n8:     dc.b    'Exit door',0
 n9:     dc.b    'Stone ball',0
@@ -2263,18 +2448,11 @@ n12:    dc.b    'Eye up/down slow',0
 n13:    dc.b    'Eye up/down fast',0
 n14:    dc.b    'Eye left/right',0
 n15:    dc.b    'Eye l/r fast',0
+n16:    dc.b    0
+n17:    dc.b    'Lift end',0
+n18:    dc.b    'Lift stop',0
 
-sTower: dc.b    'Tower ',0
-sMission: dc.b  '  Mission ',0
-sRows:  dc.b    'Rows ',0
-sCol:   dc.b    'Col ',0
-sRow:   dc.b    ' Row ',0
-sCell:  dc.b    'Cell ',0
-sHelp1: dc.b    'Fire = menu',0
-sHelp2: dc.b    'F10 = back',0
 sFull:  dc.b    'Overlay full!',0
-sSaved: dc.b    'Saved to disk',0
-sFail:  dc.b    'SAVE FAILED',0
 sWarnEye: dc.b  'Eye needs terrain',0
 sWarnLedge: dc.b 'No ledge below!',0
 sName:  dc.b    'Name ',0
@@ -2283,7 +2461,6 @@ sNameH2: dc.b   'Fire = done',0
 sNewLvl: dc.b   '<new level>',0
 sNewCamp: dc.b  '<new campaign>',0
 sBack:  dc.b    '< back',0
-sBackC: dc.b    '< back',0
 sAddEnt: dc.b   '<add entry>',0
 sNewName: dc.b  'NEW LEVEL  ',0
 sNewCampN: dc.b 'NEW CAMP',0,0,0,0
@@ -2291,12 +2468,13 @@ chars:  dc.b    ' ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-',0
         even
 
 ; menus: count, then per item: action.b param.b text,0
-menus:  dc.w    m_root-menus,m_enemy-menus,m_tower-menus
-m_mainm: dc.b   4
+menus:  dc.w    m_root-menus,m_enemy-menus,m_tower-menus,m_lift-menus
+m_mainm: dc.b   5
         dc.b    4,5,'Original game',0
         dc.b    4,2,'Campaigns >',0
         dc.b    4,1,'Levels >',0
-        dc.b    4,6,'Save to disk',0
+        dc.b    4,19,'Load from campaign disk',0
+        dc.b    4,6,'Save to campaign disk',0
 m_lvl:  dc.b    5
         dc.b    8,0,'Play',0
         dc.b    8,1,'Edit',0
@@ -2316,28 +2494,25 @@ m_ent:  dc.b    6
         dc.b    11,3,'Move up',0
         dc.b    11,4,'Move down',0
         dc.b    4,18,'< back',0
+; menu (tables block): count, then action.b param.b text,0
+; shortcut keys (ST key positions, US legends): IKBD make scancode, menu action, parameter; 0 ends.  C/Del clear, L ledge, P pillar, B blue block, D door,
+; X exit, A lift, Z lift stop, S stone ball, R red ball, W red ball (waits), U/I eye up-down, J/K eye left-right (the cell menu shows the letters)
+kbtab:  dc.b    $2e,0,$00,$53,0,$00,$26,0,$81,$19,0,$80,$30,0,$82,$20,1,$83,$2d,1,$c3,$1e,12,0,$2c,12,1
+        dc.b    $1f,13,$10,$13,13,$20,$11,13,$30,$16,13,$40,$17,13,$50,$24,13,$60,$25,13,$70,0
+        even
 m_root: dc.b    12
-        dc.b    0,$00,'Empty',0
-        dc.b    0,$81,'Ledge',0
-        dc.b    0,$80,'Pillar',0
-        dc.b    0,$82,'Blue block (shoot)',0
-        dc.b    0,$85,'Pale block',0
-        dc.b    1,$83,'Door opening',0
-        dc.b    1,$c3,'Exit door',0
+        dc.b    0,$00,'Empty  C',0
+        dc.b    0,$81,'Ledge  L',0
+        dc.b    0,$80,'Pillar  P',0
+        dc.b    0,$82,'Blue block (shoot) B',0
+        dc.b    2,3,'Lift >',0
+        dc.b    1,$83,'Door opening  D',0
+        dc.b    1,$c3,'Exit door  X',0
         dc.b    2,1,'Enemy >',0
         dc.b    2,2,'Tower >',0
         dc.b    4,16,'Playtest',0
-        dc.b    4,6,'Save to disk',0
+        dc.b    4,6,'Save to campaign disk',0
         dc.b    4,8,'Leave editor',0
-m_enemy: dc.b   8
-        dc.b    3,$10,'Stone ball',0
-        dc.b    3,$20,'Red ball',0
-        dc.b    3,$30,'Red ball (waits)',0
-        dc.b    3,$40,'Eye up/down slow',0
-        dc.b    3,$50,'Eye up/down fast',0
-        dc.b    3,$60,'Eye left/right',0
-        dc.b    3,$70,'Eye l/r fast',0
-        dc.b    4,7,'< back',0
 m_dirh: dc.b    3
         dc.b    5,0,'Start right',0
         dc.b    5,1,'Start left',0
@@ -2355,4 +2530,268 @@ m_tower: dc.b   8
         dc.b    4,14,'Time -50',0
         dc.b    4,15,'Name...',0
         dc.b    4,7,'< back',0
+        even
+
+; ------------------------------------------------------------------ lift command (block 4 at CODE3; design and proof: work/notes/lifts.md)
+        org     CODE3
+
+; a0 = column base in the grid, d2 = cursor row
+colbase:
+        move.w  RSV+rsCx(a5),d0
+        lsl.w   #8,d0
+        lea     GRID.l,a0
+        adda.w  d0,a0
+        move.w  RSV+rsCy(a5),d2
+        rts
+
+; status line while the second end is being picked (called from move_map's .nr and after the command)
+lift_msg:
+        moveq   #0,d0
+        tst.w   vLift(a5)
+        beq.s   .z
+        lea     sLiftEnd(pc),a0
+        move.l  a0,d0
+.z:     move.l  d0,vMsg(a5)
+        rts
+
+; menu action 12, d1 = 0 lift from here / 1 stop here / 2 delete lift
+a_lift: bsr.s   colbase
+        tst.w   d1
+        beq.s   .new
+        subq.w  #1,d1
+        beq.s   .stop
+        bsr.s   lift_slab                ; delete: d3 = slab row (or -1)
+        bmi.s   .out
+        clr.b   0(a0,d3.w)
+        bsr.s   lift_clr
+.out:   bra.s   .done
+.stop:  moveq   #$0c,d0
+        bsr.w   place
+        bra.s   .done
+.new:   cmp.b   #$85,0(a0,d2.w)         ; cursor on an existing slab: forget its old end first
+        bne.s   .slab
+        move.w  d2,d3
+        bsr.s   lift_clr
+.slab:  move.b  #$85,0(a0,d2.w)
+.arm:   addq.w  #1,d2
+        move.w  d2,vLift(a5)
+        move.w  #1,vDirty(a5)
+        bsr.s   lift_msg
+.done:  bra.w   a_done
+
+; d2 = row, a0 = column: d3 = row of the $85 of the lift the cursor belongs to (the cursor on its end $08, or in its shaft above the slab), N set when none
+lift_slab:
+        move.w  d2,d3
+        cmp.b   #$08,0(a0,d3.w)
+        bne.s   .l
+        subq.w  #1,d3
+        bmi.s   .y
+.l:     move.b  0(a0,d3.w),d0
+        cmp.b   #$85,d0
+        beq.s   .y
+        cmp.b   #$08,d0
+        beq.s   .n
+        subq.w  #1,d3
+        bpl.s   .l
+.n:     moveq   #-1,d3
+.y:     tst.w   d3
+        rts
+
+; d3 = slab row: clear the $0c stops and the $08 end above it
+lift_clr:
+        move.w  d3,d4
+.l:     addq.w  #1,d4
+        cmp.w   RSV+rsRows(a5),d4
+        bge.s   .r
+        move.b  0(a0,d4.w),d0
+        cmp.b   #$0c,d0
+        beq.s   .c
+        cmp.b   #$08,d0
+        bne.s   .l
+        clr.b   0(a0,d4.w)
+.r:     rts
+.c:     clr.b   0(a0,d4.w)
+        bra.s   .l
+
+; Fire while vLift is set: the cursor row is the other end
+lift_set:
+        bsr.w   colbase
+        move.w  vLift(a5),d3
+        subq.w  #1,d3                    ; d3 = first row (the slab so far)
+        cmp.w   d3,d2
+        beq.s   .bad
+        blt.s   .below
+        move.b  #$08,0(a0,d2.w)          ; second row above: end marker there, the slab is the first row
+        move.w  d3,d2
+        bra.s   .floor
+.below: move.b  #$08,0(a0,d3.w)          ; second row below: the first cell becomes the end, the slab moves down
+        move.b  #$85,0(a0,d2.w)
+.floor: tst.w   d2                       ; ledge under the slab when that cell is empty (all shipped lifts have one)
+        beq.s   .ok
+        tst.b   -1(a0,d2.w)
+        bne.s   .ok
+        move.b  #$81,-1(a0,d2.w)
+.ok:    clr.w   vLift(a5)
+        bsr.w   lift_msg
+        bsr.s   lift_warn
+        move.w  #1,vDirty(a5)
+        move.w  #3,vRedraw(a5)
+        rts
+.bad:   lea     sLiftBad(pc),a0
+        move.l  a0,vMsg(a5)
+        move.w  #2,vRedraw(a5)
+        rts
+
+; warning after a lift is complete: a $80 pillar between slab and end blocks the ride (blue blocks are a puzzle, the frog can shoot them)
+lift_warn:
+        bsr.w   colbase
+        bsr.w   lift_slab
+        bmi.s   .r
+.l:     addq.w  #1,d3
+        move.b  0(a0,d3.w),d0
+        cmp.b   #$08,d0
+        beq.s   .r
+        cmp.b   #$80,d0
+        bne.s   .nx
+        lea     sLiftBlk(pc),a0
+        move.l  a0,vMsg(a5)
+        rts
+.nx:    cmp.w   RSV+rsRows(a5),d3
+        blt.s   .l
+.r:     rts
+
+; F10 while vLift is set: forget the pending lift (the slab stays, it is an ordinary start without an end: "Lift: delete" removes it)
+lift_cancel:
+        clr.w   vLift(a5)
+        bsr.w   lift_msg
+        move.w  #2,vRedraw(a5)
+        rts
+
+; classify, bit7 clear and k == 0 (inert marker): d0.b = value -> d3 = 17 ($08 end) / 18 ($0c stop), else leave d3 = 1
+lift_tile:
+        move.b  d0,d1
+        and.b   #$0c,d1
+        cmp.b   #$08,d1
+        bne.s   .a
+        moveq   #17,d3
+        rts
+.a:     cmp.b   #$0c,d1
+        bne.s   .r
+        moveq   #18,d3
+.r:     rts
+
+sLiftEnd: dc.b  'Lift: U/D = other end',0
+sLiftBad: dc.b  'Pick another row',0
+sLiftBlk: dc.b  'Pillar blocks lift',0
+        even
+
+; menu (action.b param.b text,0)
+m_lift: dc.b    4
+        dc.b    12,0,'Lift: from here  A',0
+        dc.b    12,1,'Lift: stop here  Z',0
+        dc.b    12,2,'Lift: delete',0
+        dc.b    4,7,'< back',0
+        even
+
+; result messages (status number = string number)
+sMsgs:  dc.b    'Saved',0,'No disk',0,'Not a campaign disk',0,'Disk is write protected',0
+        even
+
+; ------------------------------------------------------------------ campaign disk (drive A:) through a TOS excursion (block 5 at CODE4)
+        org     CODE4
+; vDisk 1 = load NEBLEVEL.OVL into BUF, validate, copy to OVS; 2 = overwrite the EXISTING file with OVS (never created, never grown: it must already be
+; OVSZ bytes).  d0 = status: 0 ok, 1 no disk, 2 not a campaign disk (file absent / shorter than OVSZ / bad content), 3 write protected.
+; TOS never raises its retry/abort dialog: etv_critic ($404) is replaced by `crit` (abort, returns the BIOS error code) for the duration.
+disk_op:
+        movem.l d1-d7/a0-a6,-(a7)
+        tst.l   RS+rsTosP.l
+        bne.s   .have
+        move.l  $ffd80.l,RS+rsTosP.l
+        move.w  $ffd86.l,RS+rsTosN.l
+        move.l  #$fffaa,RS+rsMfpP.l
+.have:  move.l  a5,-(a7)
+        move.w  sr,-(a7)
+        ori.w   #$700,sr
+        move.l  a7,vGsp(a5)
+        lea     STK.l,a7
+        move.l  a5,-(a7)
+        bsr.w   mfp_save
+        bsr.w   swap_tos
+        move.l  RS+rsMfpP.l,a2
+        bsr.w   mfp_set
+        move.w  #$2500,sr
+        move.l  $404.w,-(a7)
+        move.l  #crit,$404.w
+        bsr.s   tos_file
+        move.l  (a7)+,$404.w
+        move.w  #$2700,sr
+        move.l  d0,-(a7)
+        bsr.w   swap_tos
+        move.l  (a7)+,d7
+        move.l  (a7)+,a5
+        lea     V+vMfp.l,a2
+        bsr.w   mfp_set
+.dr:    btst    #0,$fffffc00.w
+        beq.s   .dd
+        move.b  $fffffc02.w,d0
+        bra.s   .dr
+.dd:    move.l  vGsp(a5),a7
+        move.w  (a7)+,d1
+        move.l  (a7)+,a5
+        move.w  d1,sr
+        move.l  d7,d0
+        bne.s   .out
+        cmp.w   #1,vDisk(a5)
+        bne.s   .out
+        bsr.w   load_fin
+.out:   movem.l (a7)+,d1-d7/a0-a6
+        rts
+
+m_dprompt: dc.b 3
+        dc.b    4,20,'Insert campaign disk in drive A:',0
+        dc.b    4,20,'then press fire (F10 cancels)',0
+        dc.b    4,21,'< back',0
+        even
+
+; ------------------------------------------------------------------ loaded-file validation and the "Loaded N levels" number helper (block 6 at CODE5)
+        org     CODE5
+; etv_critic handler: the BIOS error number (word on the stack, always negative) is returned as the result = abort, the call fails with its own error code
+crit:   move.w  4(a7),d0
+        ext.l   d0
+        rts
+
+; BUF must be a valid campaign file, or all zero (an empty one); then it replaces OVS
+load_fin:
+        lea     BUF.l,a6
+        cmpi.l  #'NCMP',(a6)
+        bne.s   .z
+        bsr.w   ov_check
+        cmpi.l  #'NCMP',(a6)
+        beq.s   .ok
+.bad:   moveq   #2,d0
+        rts
+.z:     move.l  a6,a0
+        move.w  #(OVSZ/4)-1,d1
+        moveq   #0,d2
+.zl:    or.l    (a0)+,d2
+        dbra    d1,.zl
+        tst.l   d2
+        bne.s   .bad
+.ok:    move.l  a6,a0
+        lea     OVS.l,a1
+        move.w  #(OVSZ/4)-1,d1
+.cp:    move.l  (a0)+,(a1)+
+        dbra    d1,.cp
+        move.w  #1,RS+rsOk.l
+        moveq   #0,d0
+        rts
+
+dnum:   cmp.w   #10,d0
+        blo.w   dec1
+        cmp.w   #100,d0
+        blo.w   dec2
+        bra.w   dec3
+sLoaded: dc.b   'Loaded ',0
+sLv:    dc.b    ' levels / ',0
+sCm:    dc.b    ' campaigns',0
         even

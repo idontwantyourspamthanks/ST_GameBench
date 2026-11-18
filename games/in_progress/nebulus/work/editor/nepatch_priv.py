@@ -26,7 +26,8 @@ GAME = HERE.parent.parent
 BENCH = GAME.parent.parent.parent
 sys.path.insert(0, str(BENCH / "tools")); sys.path.insert(0, str(HERE))
 ORIG = GAME / "originals/NEBULGX"
-PATCHES = GAME / "patches"
+import os
+PATCHES = Path(os.environ["NEP_PATCHES"]) if os.environ.get("NEP_PATCHES") else GAME / "patches"
 BUILD = HERE / "build"
 DUMP = GAME / "work/dumps/boot/ram_stage2_1mb.bin"
 VASM = "vasmm68k_mot"

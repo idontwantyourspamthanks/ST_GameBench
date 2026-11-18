@@ -102,8 +102,8 @@ DOCS = {
         "  \"(c)1987,8 Hewson\" and \"Mission #n\" (same font and colour scheme as the other lines).  The High Scorers and Options pages are not touched; the rest of the\n"
         "  title page is pixel-identical to the original (compared in Hatari)."),
     "ed_overlay": (
-        "Level editor and campaign manager: F10 (or D) on the title page opens a menu to build your own towers and campaigns (original and own towers mixed), try them in a playtest and save them to NEBLEVEL.OVL (see LEVEL EDITOR below).  The Options page shows the key (\"F10/D  Level editor\").",
-        "Level editor and campaign manager.  F10 (or D) on the title page opens the manager (original game, campaigns, levels, save); the editor draws its own screen, takes the joystick, plays your tower in the real game (Playtest) and writes campaigns and levels into NEBLEVEL.OVL next to START.TOS.  Nine hooks: the tower decoder, the initial time, the tower name, the tower-complete step (campaign progress), the title poll, the frame flip (F10 in a playtest), the enemy start direction, the keyboard interrupt path (latches the F10 key-down byte so a short tap cannot be overwritten by its key-up byte before the game's next key poll; every other byte is passed on unchanged) and the Options page (draws the line \"F10/D  Level editor\" on its empty second line, in the game's font).  With no or an empty NEBLEVEL.OVL the game plays as the original."),
+        "Level editor and campaign manager: F10 (or D) on the title page opens a menu to build your own towers and campaigns (original and own towers mixed), try them in a playtest, add lifts, use keyboard shortcuts for the tiles and load/save them on a separate campaign disk in drive A: (see LEVEL EDITOR below).  The Options page shows the key (\"F10/D  Level editor\").",
+        "Level editor and campaign manager.  F10 (or D) on the title page opens the manager (original game, campaigns, levels, load/save campaign disk); the editor draws its own screen, takes the joystick and tile keys, plays your tower in the real game (Playtest) and loads/saves campaigns and levels as NEBLEVEL.OVL on a campaign disk in drive A: (never on the game disk).  Nine hooks: the tower decoder, the initial time, the tower name, the tower-complete step (campaign progress), the title poll, the frame flip (F10 in a playtest), the enemy start direction, the keyboard interrupt path (latches the F10 key-down byte so a short tap cannot be overwritten by its key-up byte before the game's next key poll; every other byte is passed on unchanged) and the Options page (draws the line \"F10/D  Level editor\" on its empty second line, in the game's font).  With no or an empty NEBLEVEL.OVL the game plays as the original."),
     "nt_freeze_static": ("Timer frozen from boot (static variant).", "Timer frozen from boot, no key (alternative to nt_trainers)."),
     "nt_noenemy_static": ("No enemies from boot (static variant).", "No enemies from boot, no key (alternative to nt_trainers)."),
 }
@@ -174,6 +174,9 @@ def build(out: Path, only, make_zip: bool) -> Path:
     stamp = git_stamp()
     if "ed_overlay" not in names:
         (out / nepatch.OVLN).unlink(missing_ok=True)
+    else:
+        import nebcampaign                  # blank campaign disk (720 KB, all-zero NEBLEVEL.OVL): the editor's load/save medium in drive A:
+        (out / "Nebulus_campaign_disk.st").write_bytes(nebcampaign.build())
     readme = render((PATCHES / "README_HD.TXT").read_text(), sel, ram, stamp)
     readme += "\n\n" + "-" * 78 + "\nPP's README.TXT of the original Gamex conversion (unchanged):\n" + "-" * 78 + "\n" + pp_readme()
     (out / "README.TXT").write_bytes(crlf(wrap(readme)))

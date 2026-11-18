@@ -21,10 +21,14 @@ differences:
                key saves and restores.
 @@EDITOR
   NEBLEVEL.OVL The campaign and level store (8192 bytes, all zero when new).
-               START.TOS reads it to RAM $BC000, outside the game's RAM (F9
-               overwrites it there, see README.TXT); the editor's "Save to
-               disk" overwrites the file in place.  The game never creates or
-               grows it.
+               START.TOS reads a copy next to it to RAM $BC000 (outside the
+               game's RAM; F9 overwrites it there, see README.TXT) as the
+               optional starting set; nothing writes to it.  The editor loads
+               and saves the same file on a separate campaign disk in drive A:
+               ("Load/Save campaign disk": a TOS excursion with TOS's
+               critical-error vector replaced, so no retry/abort dialog can
+               appear); it overwrites the existing file in place and never
+               creates or grows it.  The game disk is never written.
 @@END
 
 Changes in this release (address = RAM address in the running game;
