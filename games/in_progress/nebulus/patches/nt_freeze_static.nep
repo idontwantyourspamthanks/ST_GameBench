@@ -1,0 +1,5 @@
+# Static variant (default NO, conflicts with nt_trainers: same site area): level timer frozen from boot, no key, no blob.
+# sub_03b0a4 (timer tick) starts `tst.w $33938.l / beq.w $3b0fa`; the opcode byte 67 (beq) becomes 60 (bra): the tick head is always skipped.
+patch nt_freeze_static
+default no
+site 3b0aa 6000

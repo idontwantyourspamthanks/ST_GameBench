@@ -1,0 +1,7 @@
+# Static variant (default NO, conflicts with nt_trainers: overlaps the spawn site $3792c): no enemies from boot, no key, no blob.
+# sub_03792c (enemy spawn, one call per game-loop iteration) starts with `move.w $33a20.l,d0`; its first word becomes `rts`.
+# "Clear the creature states at start": no site needed, the four state words $3398c..$33993 are zero at boot (game workspace is cleared at init) and
+# nothing can set them once the spawn is skipped; this variant is not retroactive (use the toggle build for a mid-level E).
+patch nt_noenemy_static
+default no
+site 3792c 4e75
