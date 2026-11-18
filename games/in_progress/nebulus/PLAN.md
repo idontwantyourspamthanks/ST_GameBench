@@ -14,6 +14,18 @@ own HD driver, then `Pterm0`). `tools/nebulus.py` builds a 16 MB FAT16 ACSI imag
 and partition loader (same user-supplied files as Hunter, `gamebench/hd/`) and autoruns `C:\START.TOS`.
 Verified: HW-detect screen, then the loader pictures, then the game's title ("Mission #1", "Sound On"), then a tower.
 
+## Status (2026-11-18)
+- Boot: solved and frozen (`tools/nebulus.py`); in-tower snapshot/dump in `work/`.
+- Input lag: path mapped (`$38498` last IKBD byte, handler `$384fc`); poll frequency and the end-to-end delay
+  measurement in progress (NebInput2). Trainer agent found a tap shorter than ~40 ms can be missed.
+- Frame rate: the flip routine `sub_03868a` runs 18.5 fps in the tower (148/400 VBL); 29.5% of cycles are a
+  spin loop at `$3825e` waiting on a counter before drawing. Whether that caps the frame rate: NebBoot2.
+- Trainers: timer freeze (`$3b0aa` 67->60) and enemies off (`$3792c` -> rts + clear `$3398c-$33993`) are
+  live-verified by the lead; T/E toggle design in `patches/nt_*.s`, blob address pending the payload map.
+  Not proven: a real climb to the exit door with enemies off; real hardware.
+- Level data: format decoded (see `work/notes/level.md`), two edits proven, `work/level/tools/nebedit.py`.
+- Delivery: `msrpatch`-style tool (`nepatch`) and the payload mechanism are NebBoot2's remaining work.
+
 ## Workstreams (user's asks, in order)
 1. **Input lag.** Worst with the fire button (jump while left/right, shooting). Find where input is sampled
    relative to the frame, and why a press can be missed or delayed. Fix, measure (frames from key to action).

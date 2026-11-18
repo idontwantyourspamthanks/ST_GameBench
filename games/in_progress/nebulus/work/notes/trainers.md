@@ -55,3 +55,14 @@ Interaction: any other patch around the key poll (`$3dcf4`, input-lag work on `$
 
 ## 5. Evidence index (work/train/)
 `tools/nt.py` (boot recipe, grab/words helpers), `exp1.py` (A control / B freeze / C enemies off on a restored snapshot, shots `{A,B,C}_*.png`, `ABC_m.png`), `exp3.py` (position teleport: hangs), `exp4.py` (both pokes + forced door entry, `end_*.png`, `end_m.png`), `exp5.py` (blob + keys, `hook_*.png`, `hook_m.png`), `exp6.py` (poke encoding, byte vs word), `recipe*.py`, `mk_snap*.py`, snapshots `snap/{tower1mb,play1mb}.sav`, dumps `dumps/tower_{a,b,c}.bin`, disassembly `dis_33000_40000.txt`.
+
+
+## Lead verification and delivery address (2026-11-18)
+- Lead re-ran both pokes on `work/snapshots/1mb_tower.sav` with Hatari's byte-form writes
+  (`w $3b0aa $60`, `w $3792c $4e $75`, `w $3398c 0 0 0 0 0 0 0 0`): memory read back
+  `$3B0A4: ... 60 00` and `$3792C: 4e 75`; timer held `00 20 00 00 00 00` for 28 s; state words stayed
+  `00 00 00 00`; screenshot `work/shots/trainer_lead_verify.png` shows no creatures and the frog alive.
+- Blob address confirmed by NebBoot2: **`$76c00`** is valid (`$76b0e-$77ec5` was zero in the stage-2 dumps,
+  inside game RAM so Gamex F9 preserves it). Sites are applied at stage 2 (after the game relocates), so the
+  site addresses are final RAM addresses. A larger resident zone `$75728-$77ec5` (10,141 B) is available if
+  the trainer code grows.
