@@ -1,0 +1,20 @@
+from nl2 import *
+h=Nebulus(workdir='/tmp/strun-nl2')
+def rd(a,n): return grab(h,a,n,'rb').hex()
+try:
+    ok=h.boot_to_title(); print('title',ok,flush=True)
+    time.sleep(2); cheat(h); time.sleep(1)
+    h.key('Right',hold=0.5); time.sleep(0.5); h.key('Control_R',hold=1.0); time.sleep(4)
+    print('timer',hex(h.peekw(0x3ad98)),flush=True)
+    print('before',rd(0x43c17,6),flush=True)
+    poke(h,0x43c17,'83 83 83 83')
+    print('after poke',rd(0x43c17,6),flush=True)
+    h.key('F1',hold=0.6); time.sleep(5)
+    print('state tower',hex(h.peekw(0x3390c)),flush=True)
+    h.shot(L+'shots/e_a.png')
+    d=grab(h,0x327f0,0x1000,'ga'); open(L+'dumps/e_a_grid.bin','wb').write(d)
+    poke(h,0x43c17,'80 80 80 80')
+    h.key('F1',hold=0.6); time.sleep(5)
+    h.shot(L+'shots/e_b.png')
+finally:
+    h.close()

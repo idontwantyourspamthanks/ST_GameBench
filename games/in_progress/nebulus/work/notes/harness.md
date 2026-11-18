@@ -32,8 +32,11 @@ the game's title is up.
 
 ## 4. Measurements
 - `fps()` with `($ff8201).b`: 22.05 fps in the tower at 8 MHz over 1000 VBL (441 flips, 2.27 VBL/frame);
-  ~17-18 fps on the title/high-score screens; 50.25 fps on a loader picture. The flip register and the
-  meaning of these rates in gameplay still need validating (NebBoot2 owns that).
+  ~17-18 fps on the title/high-score screens; 50.25 fps on a loader picture. The flip routine is
+  `sub_03868a` (game code `$3868a`): it draws through `$3822c` and then writes BOTH `$ff8201` (hi) and
+  `$ff8203` (mid) from `$38759`/`$3875a`, so the harness default `($ff8201).b` does see every flip
+  (from `work/train/dis_33000_40000.txt`). What the ~22 fps means for gameplay (frame skip vs 2.27 VBL
+  work per frame) is NebBoot2's task C.
 - Baseline: `work/snapshots/1mb_tower.sav`, `work/dumps/tower_1mb.bin` (2 MB), `work/shots/tower_baseline.png`.
 
 ## 5. Gotchas
