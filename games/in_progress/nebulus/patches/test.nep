@@ -1,0 +1,6 @@
+# Proof patches for the delivery chain (default: no).
+# test_poke: 4 bytes in the dead relocation table of the game ($75728.., unused once the game relocated itself)
+patch test_poke
+default no
+site 75728 4e45504b
+site 75730 4e455051
