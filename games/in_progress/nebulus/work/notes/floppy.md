@@ -122,9 +122,53 @@ build, assembled with the editor's symbols (`mfp_save` resolved from the floppy 
 * **called from the entry stub** (`$77ec0`): `bsr.w $7726c` before `jmp $38624`, on the >= 768 KB path only (the 512 KB path restores the title hook and jumps on, so it never
   runs - the editor is off there anyway).  The stub no longer carries two zero words after `NEPO`, so the marker is 6 bytes (`NEPO` + `cmpi`/`bra`) and the final jump goes to
   `$77ec4`; `cmpi.l #$c0000,$42e.w` still distinguishes 512 KB (zeros before the jump, marker `NEPS`).
-* it copies `$8..membot($432)` (in 48-byte units, exactly the unit `swap_tos` exchanges) to **`$C0108`**, appends the 24-byte MFP block right behind the copy and sets
-  `rsTosP`/`rsTosN`/`rsMfpP`.  Measured at the title on STE 1 MB: `rsTosP $c0108`, `rsTosN 897` (898*48 = 43,104 B from `$8` to `$a868`), `rsMfpP $ca968`.
+* it copies `$8..membot($432)` (in 48-byte units, exactly the unit `swap_tos` exchanges) to **`$C0108`**, appends the 24-byte MFP block behind the copy (**first build: directly behind it, `rsMfpP $ca968`: WRONG, `swap_tos` exchanges 24 B too many and swapped the block away; the block now sits behind a 24-byte gap at `$ca980`: section 10**) and sets
+  `rsTosP`/`rsTosN`/`rsMfpP`.  Measured at the title on STE 1 MB: `rsTosP $c0108`, `rsTosN 897` (898*48 = 43,104 B from `$8` to `$a868`), `rsMfpP $ca968` (now `$ca980`).
   `$C0108..$CA980` is above the game and outside the editor's `BUF $AA000..$AC000` / stack `$AC000..$AD000`; it needs >= 1 MB (the stub's 768 KB gate is therefore a little
   optimistic for this copy: a 768 KB..1 MB machine is not a thing on the ST line, so the gate was left alone).
 Gates (`work/floppy/f161.py`, the HD `work/editor/e161.py` cell adapted to the lone `--disk-a` boot): STE 1 MB TOS 1.62, campaign disks swapped in and out with
 `hatari-option --disk-a`; see section 10.
+
+## 10. Eject / swap on one drive: root cause (the MFP block was swapped away) and fix (NebFloppyEject, this session) [obs]
+Raw files: `work/gate_NebFloppyEject/res/before_fix.txt` (shipped v1.1 zip), scripts `work/gate_NebFloppyEject/` (`lib.py` = own `grab` file names, `x1.py`..`x3.py` probes,
+`fge.py` = the new gate, `f161_nfe.py` = `work/floppy/f161.py` unchanged apart from paths), outputs in `res/`.
+**Symptom** (NebRelease3, shipped zip, `f161.py`: eject with `--disk-a /dev/null`): empty drive -> message `None` after the 30 s poll, later cells "Not a campaign disk" with a stale
+directory, store != file.  It is NOT a Hatari artefact of the `/dev/null` eject and NOT a stale-media (BPB/FAT/dir cache) problem: **the first excursion on an empty drive never ended.**
+(`/dev/null` is a legal eject here: Hatari removes the disk, then logs `Image '/dev/null' filename extension, or content unrecognized` and leaves the drive empty; `--disk-a none`
+ejects cleanly; `--disk-a ''`/`""` through the command fifo is NOT an eject (`Image '""' not found`, the old disk stays in): do not use it.)
+Evidence before the fix (`res/before_fix.txt`):
+* FDC trace of the stuck excursion: after `fdc eject drive=0` the only FDC activity for 154 s (4281 -> 11985 VBL) is `fdc type I seek ... spinup=on verify=on ... pc=e017e2` + `fdc start motor with spinup`;
+  it completes only at `fdc insert` (`fdc complete command VBL=12059`).  An empty drive gives no index pulses (the WD1772 waits for them, real hardware too); TOS gets out of this with its own
+  timeout counted on `_hz_200` (`$4ba`, Timer C).  The later cells ran while that first excursion was still hung, so every keystroke and every result was one operation out of phase (the "stale" results).
+* In the hung excursion `$4ba` read `0x21bb` in all 12 samples (3 s apart), CPU in TOS's FDC wait loop (`$e01740 bcs.b`), SR `$2500`, and **every MFP register was 0** (IER/IMR/VR/TCDCR..; GPIP only).
+* The block `rsMfpP` points to (TOS's MFP state, 24 B taken by the stub at boot) was `b1 04 00 1e 64 ...  57 00 50 c0 64 ...` at the title and **all zeros inside the excursion**.
+**Cause**: `swap_tos` (shared, `ed_editor.s`) is `lea 8(a0,d0.l),a6` with `a0 = 8`: it exchanges (n+1)*48 **+ 24** bytes (one `movem` chunk too many; `rsTosN 897` -> 43,128 B, not 43,104).  The
+capture put the MFP block **directly behind the copy** (`$ca968`), so the extra chunk exchanged the block with game RAM `$a868..$a87f` (zeros) BEFORE `mfp_set` read it ->
+the excursion ran with the whole MFP off: no Timer C, no `_hz_200`, no FDC timeout.  With a disk in the drive nothing needs a timer, which is why every disk cell passed and the HD build
+(MFP block from Gamex at `$fffaa`, not adjacent to its copy) never showed it.  Everything else on the stale-media list is already done by the excursion and was not the problem: `mchg`
+answers "changed" for the first two drive-A queries (Getbpb re-reads the boot sector, the Fopen re-reads FAT/dir; TOS's BPB/FAT/dir caches live in the TOS low RAM that the copy keeps between
+excursions, so they DO persist and `mchg` is what invalidates them), `crit` aborts every TOS error, `Getbpb(0)` always re-reads sector 0.
+**Fix** (floppy only; shared code NOT touched): `patches/ed_floppy_capture.s` leaves a 24-byte gap (`lea 24(a1),a1`) between the copy and the MFP block: `rsMfpP` is `$ca980` on STE/MSTE (`$ca950` on
+TOS 1.04), block `$ca980..$ca997`; routine 106 -> 110 B (gap `$7726c..$77300`, 148 B, now 38 B free); `swap_tos`'s 24-byte overrun now exchanges game RAM with the gap and back (harmless, symmetric).
+Binary delta against the shipped v1.1 game disk: 29 contiguous bytes at file offset `$4ffbc..$4ffd9` (the capture routine); nothing else differs.  New game disk md5 `193f658f5864b7d8f168e4e2628f30ba`
+(`nefloppy.py build` == `nebrelease.py floppy` output); campaign disk unchanged `a45b2711500796b393be931c2adf1d99`; HD build unaffected (`ed_editor.s`/`gen_ed.py` unchanged: CODE4 still `$77dc0..$77ebc`, 252 B).
+[INFERENCE] The same 24-byte overrun exists on HD: it swaps the 24 bytes behind Gamex's copy with game RAM and back; harmless there as long as nothing lives behind the copy (the HD gates `e161.py` pass).
+**Real-hardware note** [INFERENCE]: on a real STE/MiSTer the empty-drive cell now ends the way it does in Hatari: TOS's own FDC timeout (`_hz_200`) fires after about 3-6 s and `Getbpb` returns the null BPB -> "No disk".
+The user sequence "remove the game disk, insert the campaign disk, fire" never reads the empty drive: the first `Getbpb` already sees the new disk (forced re-read of boot sector, FAT, directory).
+**Gates after the fix** (game disk md5 `193f658f...`, lone `--disk-a`, `--fastfdc no`; eject = `--disk-a none` or `/dev/null`, insert = `--disk-a IMG`; raw: `work/gate_NebFloppyEject/res/`):
+```
+                                            STE 1MB TOS1.62         ST 1MB TOS1.04        Mega STE 4MB TOS2.06
+fge.py (res/fge_<m>.txt): S1 swap w/o eject, S2 game disk back, E1 eject 5 s 'No disk' (7.2 s), E2 empty again 'No disk',
+  E3 no disk->insert->fire, E4 eject+insert nofile/short/big/blank/t3, E5/E6, W1-W3 write protect, V1/V2 save + reload,
+  6 fuzz disks (random0, magic_random, flip1, version2, badentries, valid), tower + frog, FDC type II during 15 s of play = 0
+                                            ALL PASS (FAILS [])     ALL PASS              ALL PASS
+MFP block at the title (rsMfpP)             $ca980 intact           $ca950 intact         $ccdb0 intact
+fge2.py (res/fge2_ste.txt): disk A (1 level/1 camp) and B (3 levels/2 camps): game disk out, A in, Load = A; A out, B in, Load = B (store == B, not A); Save onto B: image == store;
+  A loaded, B2 inserted, Save: B2's file == A content; empty drive 'No disk' -> insert B -> 'Loaded 3 levels / 2 campaigns'; empty -> A -> A; game disk back 'Not a campaign disk'; B over game disk (no eject)
+                                            ALL PASS (U1-U12)       not run                not run
+f161_nfe.py (the original f161 cells incl. the /dev/null eject), STE FULL with all 22 fuzz disks (res/f161_ste_full_fuzz.txt): ALL PASS, FAILS []. Earlier skipfuzz run 1: all PASS except 'Save from the editor root menu' = None (the cell reads the message after a fixed 5 s, the
+  save needs 7.2 s after an eject+insert; the image/store checks that follow PASS); the copy now polls for the end of the operation.
+```
+Hatari gotcha found on the way: inserting `A.st` into drive A makes Hatari auto-insert `B.st` into drive B (`bAutoInsertDiskB`), a later `--disk-a B.st` then fails with "Cannot insert same floppy to multiple drives" (the gate looked hung): test disks must not be named `...a.st`/`...b.st` pairs.
+Operation times (empty drive 5.2-7.2 s; with a disk 4.3-5.3 s; save after eject+insert 7.1-7.2 s) are Hatari FDC timing.  Not run: real hardware, two-disk gate on ST/Mega STE, the full f161 matrix on ST and Mega STE (fge.py with the 6-disk subset passed on all three machines; full f161 with 22 fuzz disks only on STE), TOS 2.06 on a MiSTer.
+**Rebuild needed**: the shipped `dist/Nebulus_floppy_v1.1.zip` carries the old capture routine; `python3 tools/nebrelease.py floppy --zip` after committing `patches/ed_floppy_capture.s` gives the fixed game disk (md5 `193f658f5864b7d8f168e4e2628f30ba`).

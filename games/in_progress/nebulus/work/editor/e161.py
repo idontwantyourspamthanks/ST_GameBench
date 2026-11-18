@@ -6,7 +6,8 @@ sys.path.insert(0,G+'tools')
 import nebcampaign as nc
 GAMEDIR=sys.argv[1]; WD=sys.argv[2]; MACH=sys.argv[3] if len(sys.argv)>3 else 'ste'
 FUZZ=not (len(sys.argv)>4 and sys.argv[4]=='skipfuzz')
-D='/tmp/ne/d/'
+D='/tmp/ne/d_ed_'+MACH+'/'
+shutil.rmtree(D,ignore_errors=True); shutil.copytree('/tmp/ne/d',D)
 h=mk(GAMEDIR,WD,MACH); t=T(h)
 fails=[]; log=[]
 def chk(name,got,exp):
@@ -57,20 +58,27 @@ try:
         chk('alive after the fuzz set',t.alive(),True)
     # ---- save: edit a level in the editor, save from the editor menu and from the manager, compare the image
     import shutil
-    shutil.copy(D+'t3.st','/tmp/ne/d/save1.st'); t.insert('/tmp/ne/d/save1.st'); op()          # load t3 (store = t3)
+    shutil.copy(D+'t3.st',D+'save1.st'); t.insert(D+'save1.st'); op()          # load t3 (store = t3)
     t.K('Down',2,hold=0.2,gap=0.4); t.F(1.0)       # Levels >
     t.K('Down',1)                                   # list: level 0 'MY LEVEL', <new level>, < back  -> select <new level>
     t.F(1.5)                                        # new level -> editor
     t.K('Up',3); t.K('p'); t.K('Right',2); t.K('l')   # a pillar and a ledge
     t.F(); t.K('Down',10); h.shot(E+f'e161_{MACH}_editor_save_item.png'); t.F(1.0); h.shot(E+f'e161_{MACH}_prompt_in_editor.png')
-    t.F(3.5); time.sleep(1.5); chk('Save from the editor root menu',t.msg(),'Saved'); h.shot(E+f'e161_{MACH}_saved.png')
+    t.F(1.0); t0=time.time(); m=None
+    for _ in range(60):
+        time.sleep(0.5)
+        if W(h,0x77cc0+174)==0:
+            m=t.msg()
+            if m is not None: break
+    print('   (editor save %.1f s, vDisk %d)'%(time.time()-t0,W(h,0x77cc0+174)),flush=True)
+    chk('Save from the editor root menu',m,'Saved'); h.shot(E+f'e161_{MACH}_saved.png')
     ram=t.store(); lv=ovl.parse(ram)
     chk('  RAM store has 2 levels now',len(lv[0]),2)
     h.key('F10',hold=0.5); time.sleep(2)             # leave editor -> level list
     t.insert(D+'blank.st'); time.sleep(2)           # inserting another image makes Hatari write the saved one back
-    img=open('/tmp/ne/d/save1.st','rb').read() if False else None
+    img=open(D+'save1.st','rb').read() if False else None
     # Hatari writes the image back on eject: read it now
-    img=open('/tmp/ne/d/save1.st','rb').read()
+    img=open(D+'save1.st','rb').read()
     ok,text,data=nc.status(img)
     chk('image after save: usable campaign disk',ok,True); print('  ',text)
     chk('image NEBLEVEL.OVL == RAM store',data==ram,True)
@@ -87,13 +95,13 @@ try:
     t.insert(D+'nofile.st'); nf0=open(D+'nofile.st','rb').read()
     chk('Save to a disk without NEBLEVEL.OVL',op(save=True),'Not a campaign disk')
     t.insert(D+'blank.st'); time.sleep(2); chk('  that image is unchanged',open(D+'nofile.st','rb').read()==nf0,True)
-    shutil.copy(D+'t3.st','/tmp/ne/d/save2.st'); s2=open('/tmp/ne/d/save2.st','rb').read()
+    shutil.copy(D+'t3.st',D+'save2.st'); s2=open(D+'save2.st','rb').read()
     h.cmd('hatari-option --protect-floppy on'); time.sleep(1)
-    t.insert('/tmp/ne/d/save2.st'); chk('Save to a write-protected campaign disk',op(save=True),'Disk is write protected')
-    t.insert(D+'blank.st'); time.sleep(2); chk('  that image is unchanged',open('/tmp/ne/d/save2.st','rb').read()==s2,True)
+    t.insert(D+'save2.st'); chk('Save to a write-protected campaign disk',op(save=True),'Disk is write protected')
+    t.insert(D+'blank.st'); time.sleep(2); chk('  that image is unchanged',open(D+'save2.st','rb').read()==s2,True)
     h.cmd('hatari-option --protect-floppy off'); time.sleep(1)
     # reload what was saved, from the saved disk image (a fresh Load replaces the store)
-    t.insert('/tmp/ne/d/save1.st'); chk('Load the disk saved above',op(),'Loaded 2 levels / 1 campaigns'); chk('  store == saved file',t.store()==data,True)
+    t.insert(D+'save1.st'); chk('Load the disk saved above',op(),'Loaded 2 levels / 1 campaigns'); chk('  store == saved file',t.store()==data,True)
     # the game must still run and take keys after all of that: Original game
     t.K('Up',1,gap=0.5); t.K('Up',1,gap=0.5)
     # F10 in the manager = quit to the title, then a normal game from the title: fire starts, the frog must answer

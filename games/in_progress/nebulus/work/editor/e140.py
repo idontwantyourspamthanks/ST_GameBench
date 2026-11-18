@@ -6,7 +6,10 @@ gd=__import__('pathlib').Path
 RS=0x77c80
 GAMEDIR=sys.argv[1] if len(sys.argv)>1 else '/tmp/ne/g1'
 WD=sys.argv[2] if len(sys.argv)>2 else '/tmp/ned140'
-h=Nebulus(workdir=WD,game=gd(GAMEDIR))
+MACH=sys.argv[3] if len(sys.argv)>3 else 'ste'
+import stharness
+kw=dict(machine='megaste',tos=stharness.TOS['2.06'],memsize_kb=4096) if MACH=='megaste' else (dict(machine='st',tos=stharness.TOS['1.04']) if MACH=='st' else {})
+h=Nebulus(workdir=WD,game=gd(GAMEDIR),**kw)
 def K(k,n=1,hold=0.2,gap=0.4):
     for _ in range(n): h.key(k,hold=hold); time.sleep(gap)
 def F(gap=0.8): K('Control_R',hold=0.35,gap=gap)
@@ -45,10 +48,10 @@ try:
     h.key('F10',hold=0.5); time.sleep(3); S('back_in_editor')
     h.key('F10',hold=0.5); time.sleep(2); S('level_list')
     # save to a blank campaign disk in drive A:, flush the image by inserting another one, validate the file
-    import shutil; shutil.copy('/tmp/ne/d/blank.st','/tmp/ne/d/lift_save.st')
-    h.cmd('hatari-option --disk-a /tmp/ne/d/lift_save.st'); time.sleep(2)
+    import shutil; shutil.copy('/tmp/ne/d/blank.st','/tmp/ne/d/lift_save_'+MACH+'.st')
+    h.cmd('hatari-option --disk-a /tmp/ne/d/lift_save_'+MACH+'.st'); time.sleep(2)
     K('Left',1,gap=1.0)                                  # level list -> main menu (left = < back)
     K('Down',4); F(1.0); F(4.0); time.sleep(1); S('saved_to_disk')
     h.cmd('hatari-option --disk-a /tmp/ne/d/blank.st'); time.sleep(3)
 finally: h.close()
-os.system(f"cd {E} && python3 ../../tools/nebcampaign.py extract /tmp/ne/d/lift_save.st /tmp/e140.ovl && python3 ovl.py validate /tmp/e140.ovl && python3 ovl.py dump /tmp/e140.ovl | head -20")
+os.system(f"cd {E} && python3 ../../tools/nebcampaign.py extract /tmp/ne/d/lift_save_{MACH}.st /tmp/e140_{MACH}.ovl && python3 ovl.py validate /tmp/e140_{MACH}.ovl && python3 ovl.py dump /tmp/e140_{MACH}.ovl | head -20")

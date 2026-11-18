@@ -356,3 +356,8 @@ swapped disk, save, write-protect, image checks) and the floppy `work/floppy/f16
 
 ### 13.8 Junk RAM (MiSTer): RS/V are zeroed by the loader
 RS `$77c80..$77cbf` and V `$77cc0..` were assumed zero at boot (a junk `rsTest`/`rsKey` opened the editor by itself; junk `rsOk` skips the store validation; junk `rsTosP` breaks the first Load/Save).  `ed_overlay.nep` now carries `clear 77c80 140`, executed by `nepatch`'s core2 at every start; `ed_editor.s` is unchanged.  Inventory, fix and gates: `work/notes/junkram.md`.
+
+### 13.9 `swap_tos` exchanges 24 bytes more than the copy (found on the floppy build; shared code NOT changed)
+`swap_tos` uses `lea 8(a0,d0.l),a6` with `a0 = 8`, so its loop runs one 24-byte chunk past `(rsTosN+1)*48`.  Anything placed directly behind the TOS-state copy is swapped with game RAM before `mfp_set` reads it.
+The floppy capture did exactly that with TOS's MFP block (-> excursion with the MFP off, no Timer C, empty drive never times out); fixed there by a 24-byte gap (`patches/ed_floppy_capture.s`), see `floppy.md` section 10.
+HD: Gamex's MFP block is at `$fffaa`, not behind its copy, so the HD gates are unaffected; the loop was deliberately left alone (CODE4 stays `$77dc0..$77ebc`, 252 B).

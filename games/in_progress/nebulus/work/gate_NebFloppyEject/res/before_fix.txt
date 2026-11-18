@@ -1,0 +1,17 @@
+# SHIPPED v1.1 floppy zip (game disk md5 faae5c73fd55db2b4936aa02791d5c0e), STE 1 MB TOS 1.62, lone --disk-a, --fastfdc no
+# x1.py devnull: eject with `hatari-option --disk-a /dev/null`, then op() = F10 F10 Down*3 FIRE FIRE, poll vDisk==0 && vMsg!=0 for 30 s (the f161.py cell)
+title 62.615580797195435
+   (59.7 s) None
+None
+   (59.6 s) None
+None
+   (3.3 s) 'Loaded 1 levels / 1 campaigns'      <- after inserting t3.st: the FIRST (hung) excursion finishes, the keys of the later cells were out of phase
+# FDC trace (--trace fdc) in that run, between "fdc eject drive=0" (VBL 4281) and "fdc insert drive=0" (VBL 11985 = 154 s later): 29 lines in total, the last one
+fdc type I seek dest_track=0x0 spinup=on verify=on steprate_ms=3 drive=0 tr=0x40 head_track=0x40 VBL=4281 ... pc=e017e2
+fdc start motor with spinup VBL=4281 video_cyc=68394 322@134 pc=e01742
+# (nothing more until the insert: "fdc complete command VBL=12059")
+# x3.py (--disk-a none = proper eject, 6 s into the hung excursion):
+blk before b1 04 00 1e 64 00 20 00 00 1e 64 48 00 00 57 00 50 c0 64 00 88 01 81 00      <- 24 B at rsMfpP ($ca968) at the title
+blk during 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00      <- the same 24 B in the excursion: zeros
+live a1 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00             <- live MFP registers (odd bytes fa01..fa2f): IER/IMR/VR/timers all 0
+  D0 FFFF0060 ... A2 000CA980 ... SR=2500 IM=5 ... 00e01740 6512 bcs.b #$12 == $00e01754   <- a2 = end of the block, TOS FDC wait loop; $4ba (_hz_200) = 0x21bb in every one of 12 samples 3 s apart

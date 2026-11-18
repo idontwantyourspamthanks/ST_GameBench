@@ -38,8 +38,9 @@ capture:
         move.l  a1,-(a7)
         bsr.w   mfp_save                ; V+vMfp = the MFP registers as they are now (TOS-owned at this moment: nothing of the game has run yet)
         move.l  (a7)+,a1
-        lea     V+vMfp.l,a0
-        move.l  a1,RS+rsMfpP.l          ; the 24-byte block follows the copy
+        lea     24(a1),a1               ; 24-byte gap: ed_editor's swap_tos exchanges (n+1)*48+24 bytes, a block directly behind the copy is swapped away
+        lea     V+vMfp.l,a0             ; (it then reads as zeros: TOS ran with the whole MFP off = no timer C = no FDC timeout on an empty drive)
+        move.l  a1,RS+rsMfpP.l          ; the 24-byte block follows the copy + gap
         moveq   #23,d0
 .m:     move.b  (a0)+,(a1)+
         dbra    d0,.m

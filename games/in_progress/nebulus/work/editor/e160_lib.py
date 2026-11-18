@@ -6,6 +6,7 @@ RS=0x77c80
 def mk(game,wd,machine='ste',extra=None):
     kw={}
     if machine=='megaste': kw=dict(machine='megaste',tos=__import__('stharness').TOS['2.06'],memsize_kb=4096)
+    if machine=='st': kw=dict(machine='st',tos=__import__('stharness').TOS['1.04'])
     return Nebulus(workdir=wd,game=gd(game),extra=extra or [],**kw)
 class T:
     def __init__(s,h): s.h=h

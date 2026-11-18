@@ -7,7 +7,7 @@ RS=0x77c80
 GAMEDIR=sys.argv[1] if len(sys.argv)>1 else '/tmp/ne/g2'
 WD=sys.argv[2] if len(sys.argv)>2 else '/tmp/ned150'
 MACH=sys.argv[3] if len(sys.argv)>3 else 'ste'
-kw=dict(machine='megaste',tos=__import__('stharness').TOS['2.06'],memsize_kb=4096) if MACH=='megaste' else {}
+kw=dict(machine='megaste',tos=__import__('stharness').TOS['2.06'],memsize_kb=4096) if MACH=='megaste' else (dict(machine='st',tos=__import__('stharness').TOS['1.04']) if MACH=='st' else {})
 h=Nebulus(workdir=WD,game=gd(GAMEDIR),**kw)
 def K(k,n=1,hold=0.1,gap=0.25):
     for _ in range(n): h.key(k,hold=hold); time.sleep(gap)
