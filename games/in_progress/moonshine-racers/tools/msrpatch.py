@@ -144,10 +144,22 @@ def credit_line() -> str:
     return f"v{release_version()} {CREDIT}"
 
 
+def build_stamp() -> str:
+    """`git <short hash>` of HEAD, plus a note when patches/ or tools/ differ from it (so a zip can never be mistaken for a committed state)."""
+    def g(*a):
+        return subprocess.run(["git", "-C", str(ROOT), *a], capture_output=True, text=True, check=True).stdout.strip()
+    try:
+        dirty = g("status", "--porcelain", "--", "patches", "tools") != ""
+        return "git " + g("rev-parse", "--short", "HEAD") + (" + uncommitted changes in patches/ or tools/" if dirty else "")
+    except (OSError, subprocess.CalledProcessError):
+        return "git (unknown)"
+
+
 def render_doc(text: str) -> str:
     """`{PATCHES}` = the default patches of the HD build (no floppy-only patch); `{PATCHES_FLOPPY}` = the default patches of the floppy build
     (HD file patches excluded: HAGA does not exist there); `{RAM}` = the payload/reserved-RAM map of the default HD set."""
     text = text.replace(VERSION_TAG, release_version())
+    text = text.replace("{GIT}", build_stamp())
     if "{RAM}" in text:
         text = text.replace("{RAM}", "\n".join(ram_map(*default_selection(load_patches(), load_file_patches(), False))))
     for token, floppy in (("{PATCHES}", False), ("{PATCHES_FLOPPY}", True)):
@@ -1152,6 +1164,9 @@ def cmd_build_floppy(patches, fpatches, out: Path, zip_path: Path | None):
           + ", ".join(f"t{t}.{sd}s{s}x{n}" for t, sd, s, n in jobs[:4]) + ("..." if len(jobs) > 4 else ""))
     for s in sites:
         print(f"${s['addr']:05x}  {len(s['orig']):4d} {s['orig'].hex()} -> {s['new'].hex()}   [{s['name']}]")
+    for tpl_name, dst in (("README_FLOPPY.TXT", "README.TXT"), ("PATCHES_FLOPPY.TXT", "PATCHES.TXT")):
+        if (PATCHDIR / tpl_name).exists():
+            (out / dst).write_text(render_doc((PATCHDIR / tpl_name).read_text()))
     if zip_path is not None:
         zip_path.parent.mkdir(parents=True, exist_ok=True)
         with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as z:
@@ -1182,6 +1197,10 @@ def cmd_build(patches, out: Path, fpatches=(), zip_path: Path | None = None):
     tpl = PATCHDIR / "PATCHES.TXT"
     if tpl.exists():
         (out / "PATCHES.TXT").write_text(render_doc(tpl.read_text()))
+    ut = PATCHDIR / "README_HD.TXT"      # user docs; PP's own README.TXT follows verbatim
+    if ut.exists():
+        (out / "README.TXT").write_text(render_doc(ut.read_text()) + "\n\n" + "-" * 78 + "\nPP's README.TXT of the original hard-disk conversion (unchanged):\n" + "-" * 78 + "\n"
+                                        + (ORIG / "README.TXT").read_text(errors="replace"))
     apply_file_patches(fpatches, out)
     print(f"built {out} with {len(patches)} patch(es) + {len(fpatches)} file patch(es); payload {len(img)} B at ${IB:x}-${IB + len(img) - 1:x}")
     print(f"{'site':8s} {'len':4s} orig -> new")

@@ -17,6 +17,7 @@ Equates (`NAME equ value`) may precede the first `org`. The tool predefines `IB`
 The segment whose `org` equals the site gives the NEW bytes (at most the orig length, nop-padded). Every other segment is a BLOB at a fixed
 absolute org inside a blob area (below). `org` takes `$B2800` or `IB+$100`.
 `@VERSION@` in any source (and in docs, via `msrpatch.py doc FILE`) is replaced by the release version; the token `{PATCHES}` in a doc expands to
+User docs shipped in the zips (rendered by `build`): HD `README.TXT` = `patches/README_HD.TXT` + PP's README.TXT, `PATCHES.TXT` = `patches/PATCHES.TXT`; floppy `README.TXT` = `patches/README_FLOPPY.TXT`, `PATCHES.TXT` = `patches/PATCHES_FLOPPY.TXT` (`{PATCHES_FLOPPY}`); `{GIT}` = `git <short hash>` of HEAD (+ a note when patches/ or tools/ are uncommitted).
 the default patch list, `{RAM}` to the payload/reserved-RAM map of the default set (the same map is the tail of `msrpatch.py list`).
 
 File patch (PP's resident loader HAGA, `; image: HAGA`): `; edit: <HAGA file offset> <expected original hex>` (repeatable) and one segment

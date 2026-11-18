@@ -14,8 +14,8 @@ Version/credit line (mandatory, user picks the screen): `v1.0 enhanced by dad_pr
 - No sprite patch (`work/notes/sprites.md`), no blitter road (`road.md` section 4), no repaint skipping (`road.md` section 5).
 
 ## Remaining
-- Credit patch (`v1.0 enhanced by dad_prg` on a screen the user picks) and release version.
-- User docs: README.TXT / PATCHES.TXT wording for the final set (the build already fills `{PATCHES}`), packaging (`build --zip`, `build --floppy --zip`, `dist/`).
+- Done: credit patch (`mr_credit`, `patches/VERSION` 1.0), user docs (`patches/README_HD.TXT`, `README_FLOPPY.TXT`, `PATCHES.TXT`, `PATCHES_FLOPPY.TXT` rendered into the zips by `msrpatch.py build`), packaging (`dist/MoonshineRacers_{hd,floppy}_v1.0.zip`, verified: `work/notes/package.md`).
+- Open: the user's real-hardware pass (checklist in the shipped README.TXT); TT/Falcon/MiSTer are unproven for this set.
 - User decisions: the extra frames `mg_sync` + `mg_pace` at margin 0 are default (approved), as are `ta_rb ta_rb0 ta_nomouse ta_facestat` and `tb_blit*` (approved; `--safex 3` for smoother frame spacing, per-patch off switches in `play.sh`); the cloud-edge residue of the old main frames is gone with the clouds (`hud_build.md` 3.5: 0 residue pixels on 7 tracks); blitter (rejected with numbers, unless the user wants a Mega STE/TT specific experiment); (the clouds and the old HUD are removed by the new HUD: done, user-approved).
 - Not tested anywhere: real hardware (everything is Hatari 2.6.1), Falcon, a native 60 Hz boot, the tracks after the first (see `integration.md` for what was reached).
 
