@@ -34,6 +34,32 @@ Verified: HW-detect screen, then the loader pictures, then the game's title ("Mi
 4. **Level editor.** Ambitious: needs the tower/level data format (tiles, enemy/object list, level table).
 5. Later housekeeping: floppy build, credit/version line, docs, packaging (house rules from Midwinter 2).
 
+## Queue (decided, not built yet)
+- **Logic/draw split** (frame rate): the tower loop is paced by `$38214` >= `$38216` (2 VBL, 25 fps cap) and the
+  game logic runs once per flip, so a faster pacer alone doubles game speed. A real 50 fps needs logic updated every
+  second flip and drawing every flip; at 8 MHz the draw alone must also fit 160,256 cycles (needs a ~26% cut).
+  Only worthwhile on 16 MHz+ machines. User: queue it, do not build yet.
+- **Floppy release**: waiting for the user's real Nebulus floppy image; HD release first.
+
+## Future (user's plan, not today): nebulus.kswapps.com
+A community site for Nebulus levels and campaigns, and an Amiga version of the game ("yes this means we're also
+doing an Amiga version").
+- Users upload campaign disks as **Amiga ADF, Atari ST or MSA** images; the site extracts the levels and renders them
+  so people can see them (a picture/preview per level), into a big library of levels and campaigns.
+- Browse the library, add campaigns and levels to a **cart**, download a generated **disk image** (ST/MSA/ADF).
+- Consequences for what we build now (keep these true):
+  - The campaign file format (`NEBLEVEL.OVL`, `work/notes/editor.md` section 3) must be a **documented, versioned,
+    platform-neutral** format (magic `NCMP`, version field, big-endian 68k data; no Atari-only fields such as RAM
+    addresses), so the same file works on the Amiga build and a server can parse it without the game.
+  - The PC tool (`work/level/tools/nebedit.py`) must be able to read/write/validate campaign files, render a level to
+    an image (ASCII and PNG), and import/export levels; it is the seed of the site's extractor.
+  - Level records carry everything needed to show and play them (base tower graphics set, rows, grid, time, name,
+    enemy direction nibbles); nothing that depends on the Atari decode state.
+  - Disk packaging: campaign file placement inside ST/MSA/ADF images (a game-independent campaign disk layout) needs
+    its own spec later; the Atari build already loads `NEBLEVEL.OVL` from the game folder/disk.
+  - Amiga version: a separate project (original Amiga Nebulus code/data, a port of the loader hooks, trainers, input
+    fixes and the editor); not started, no source yet.
+
 ## Reference material
 - `games/done/hunter/`: same Gamex loader; `tools/hunter.py` (`build_hd`), `work/notes/boot.md`,
   `work/notes/loading.md` (START.TOS unpack, RAM patches, patch-delivery design, `$150` file hook).

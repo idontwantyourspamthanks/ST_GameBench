@@ -1,0 +1,9 @@
+# Nebulus input fix A (NebInput2), DEFAULT ON: remove the one-loop dead time of the fire jump.
+# The walking-jump entry $39fc8 (fire pressed while walking) only sets player state $33a20=1, starts the jump sound/anim and `rts`; the first jump step
+# (state-1 handler $3a026: y/pose/x) ran in the NEXT game loop, so the flip after the press showed an unchanged picture (+1 loop = 2 frames = 40 ms at the 2-VBL loop).
+# The entry now branches into $3a026 so step 0 runs in the same loop. Per-flip player state is identical, one loop earlier (gate: work/notes/input.md). No blob.
+#   $39ffa  4e75 (rts after jsr $33be8 of $39fc8)  -> 602a   bra.s $3a026
+# NOT included: the blocked-walk auto-hop entry $39ffc (end $3a024), see ni_hop.nep.
+patch ni_jump
+default yes
+site 39ffa 602a

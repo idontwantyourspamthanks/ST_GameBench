@@ -1,0 +1,10 @@
+# Nebulus input: dead-loop removal for the stand-fire / shoot entry (NebInput2), DEFAULT YES (gate: work/notes/input.md section 11).
+# $3a2f8 (fire while standing) sets player state 5, the first pose (the plain facing sprite) and `rts`; the state-5 handler $3a334 (anim step 0, step 1 = sub_03a376 spawns
+# the shot) first ran in the NEXT loop, so the shot appeared 2 loops (6.15 frames = 123 ms after the poll) after the press. The entry now falls into $3a334.
+# Measured (enemies on, 10 trials each): press -> shot visible median 167 ms -> 122 ms (poll -> shot 123 -> 83 ms); shot slot, grid cells shot away, creatures identical, one loop earlier.
+# Side effects (state durations measured): state 5 lasts 3 loops instead of 4 (the 2-frame entry pose is no longer shown; the player is free 1 loop = 40 ms earlier, i.e. the
+# fastest possible re-shot interval drops from 4 to 3 loops).
+#   $3a332  4e75 (rts at the end of $3a2f8)  -> 4e71  nop (falls into $3a334)
+patch ni_shoot
+default yes
+site 3a332 4e71

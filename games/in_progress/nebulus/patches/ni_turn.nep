@@ -1,0 +1,7 @@
+# Nebulus input: dead-loop removal for the TURN entry (NebInput2), DEFAULT NO (the user did not report turn lag; see work/notes/input.md for the gate).
+# $39e1e (direction change from standing) sets player state 3, clears the step and `rts`; the turn handler $39e2e (pose table $3a0d6) first ran in the NEXT loop,
+# so the first turn pose appeared 2 loops later (poll -> pose 83 ms). The entry now falls into $39e2e (43 ms).
+#   $39e2c  4e75 (rts at the end of $39e1e)  -> 4e71  nop (falls into $39e2e)
+patch ni_turn
+default no
+site 39e2c 4e71

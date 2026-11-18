@@ -1,0 +1,36 @@
+Nebulus (Hewson, 1987-8) - PP's Gamex conversion, enhanced release v@VERSION@
+build: {GIT}
+==============================================================================
+
+This folder is PP's Gamex conversion of Nebulus (NEBEXE.FIC, NEBULTIT.FIC,
+NEBULUS.PCH, GXUT270.PRG, NEBCHEAT.TXT are his, unchanged) with these
+differences:
+
+  START.TOS    PP's loader with 4 bytes changed at the point where it waits
+               for the hard disk to settle, and a short routine added in an
+               unused part of the program.  The routine opens NEPATCH.BIN
+               (GEMDOS), reads it to RAM $B0000 and, only if the file starts
+               with 'NEPA', arranges for the game's start to run the patch
+               code first.  Without the file the original game runs.
+  NEPATCH.BIN  The patch code and the table of changes.  After the game has
+               unpacked and relocated itself, the code compares the ORIGINAL
+               bytes of every site with what the table expects; only if every
+               site matches does it write the new bytes (otherwise it changes
+               nothing and the game runs as the original).  The new code
+               lives in unused game RAM ($75728-$77EC0), which Gamex's F9
+               key saves and restores.
+@@EDITOR
+  NEBLEVEL.OVL The campaign and level store (8192 bytes, all zero when new).
+               START.TOS reads it to RAM $BC000, outside the game's RAM (F9
+               overwrites it there, see README.TXT); the editor's "Save to
+               disk" overwrites the file in place.  The game never creates or
+               grows it.
+@@END
+
+Changes in this release (address = RAM address in the running game;
+"orig -> new" are the bytes replaced):
+
+{PATCHES}
+
+Nothing else of the game is changed.  Tested in Hatari only (STE TOS 1.62
+1 MB, Mega STE TOS 2.06 4 MB, ST TOS 1.04 1 MB); see README.TXT.

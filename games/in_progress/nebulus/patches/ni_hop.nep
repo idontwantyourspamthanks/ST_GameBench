@@ -1,0 +1,7 @@
+# Nebulus input: dead-loop removal for the AUTO-HOP (walking into an obstacle, entry $39ffc, no fire needed), DEFAULT NO.
+# Measured (work/notes/input.md, scenario j2): with this site the repeated hops of a blocked walk cycle every 9 loops instead of 10, i.e. stair/ledge climbing by
+# holding the direction gets 11% faster. That is a gameplay-speed change, not only a latency change, so it is off by default.
+#   $3a024  4e75 (rts at the end of $39ffc)  -> 4e71  nop (falls into $3a026)
+patch ni_hop
+default no
+site 3a024 4e71

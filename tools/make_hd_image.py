@@ -57,7 +57,7 @@ DEFAULT_SIZE_KB = 32000                                 # one partition, 64000 s
 VOLUME = "GAMES"
 
 # folder on C: -> game; versions/requirements for README.TXT are taken from the builds where possible (see readme_text)
-FOLDERS = ("MIDWINTR", "MW1ORIG", "MIDWINT2", "MW2ORIG", "MOONSHR", "HUNTER", "HUNTORIG", "POWERMON", "POPULOUS",
+FOLDERS = ("MIDWINTR", "MW1ORIG", "MIDWINT2", "MW2ORIG", "MOONSHR", "HUNTER", "HUNTORIG", "NEBULUS", "NEBORIG", "POWERMON", "POPULOUS",
            "POPORIG", "POPS2", "POP2ORIG", "AUTO")
 
 
@@ -178,6 +178,22 @@ def build_hunter() -> Path:
     return dst
 
 
+def build_nebulus() -> Path:
+    r"""Nebulus HD: `nebrelease.py build --out` output (patched START.TOS + NEPATCH.BIN [+ NEBLEVEL.OVL], PP's game files, README.TXT, PATCHES.TXT)."""
+    out, dst = STAGE / "nebulus_build", STAGE / "NEBULUS"
+    py("nebulus", "nepatch", "verify")
+    shutil.rmtree(out, ignore_errors=True)
+    py("nebulus", "nebrelease", "build", "--out", str(out))
+    shutil.rmtree(dst, ignore_errors=True)
+    shutil.copytree(out, dst)
+    return dst
+
+
+def build_nebulus_orig() -> Path:
+    """PP's Nebulus Gamex files, unpatched, for comparison (the game folder's originals/NEBULGX)."""
+    return build_orig(GAMES / "nebulus" / "originals" / "NEBULGX", "NEBORIG")
+
+
 def build_powermonger() -> Path:
     g = GAMES / "powermonger"
     out, dst = STAGE / "pm_build", STAGE / "POWERMON"
@@ -250,6 +266,7 @@ def build_populous2() -> Path:
 
 BUILDERS = {"MIDWINTR": build_midwinter, "MOONSHR": build_moonshine, "MW1ORIG": build_midwinter_orig, "MIDWINT2": build_midwinter2, "MW2ORIG": build_midwinter2_orig,
             "HUNTER": build_hunter, "HUNTORIG": lambda: build_orig(GAMES / "hunter", "HUNTORIG"),
+            "NEBULUS": build_nebulus, "NEBORIG": build_nebulus_orig,
             "POWERMON": build_powermonger, "POPULOUS": build_populous,
             "POPORIG": lambda: build_orig(GAMES / "populous" / "originals" / "POPULOUS", "POPORIG"),
             "POPS2": build_populous2, "POP2ORIG": lambda: build_orig(GAMES / "populous-2" / "originals" / "POPUL2", "POP2ORIG"),
@@ -295,8 +312,8 @@ def readme_text(vers: dict[str, str], date: str) -> str:
     t = rf"""ATARI ST ENHANCED GAMES - HARD DISK  ({date})
 ==========================================================================
 
-Seven games with dad_prg's patches (speed, sound, fixes) on one bootable
-hard disk image, plus PP's unpatched releases of five of them (the *ORIG
+Eight games with dad_prg's patches (speed, sound, fixes) on one bootable
+hard disk image, plus PP's unpatched releases of six of them (the *ORIG
 folders) for side-by-side comparison:
 HDDRIVER, one 31 MB partition = drive C:.  Nothing starts by itself except
 a 3-second question about Powermonger at boot.
@@ -310,6 +327,8 @@ a 3-second question about Powermonger at boot.
   C:\MOONSHR   Moonshine Racers       double-click RUNME.TOS     {vers['MOONSHR']}
   C:\HUNTER    Hunter                 double-click START.TOS     {vers['HUNTER']}
   C:\HUNTORIG  Hunter (original)      double-click START.TOS     PP's release, unpatched
+  C:\NEBULUS   Nebulus                double-click START.TOS     {vers['NEBULUS']}
+  C:\NEBORIG   Nebulus (original)     double-click START.TOS     PP's release, unpatched
   C:\POWERMON  Powermonger            press P at boot (below)    {vers['POWERMON']}
   C:\POPULOUS  Populous               double-click RUNME.TOS     {vers['POPULOUS']}
   C:\POPORIG   Populous (original)    double-click RUNME.TOS     PP's release, unpatched
@@ -354,6 +373,9 @@ Saving
    it is written to FILES\FFD. Back that file up. The original in MW2ORIG
    has its own blank campaign disk.
  - Hunter: as in PP's release.
+ - Nebulus: 1 MB or more. T / E in a tower freeze the timer / remove the enemies;
+   the original's cheat code is in NEBULUS\NEBCHEAT.TXT; F9 leaves to the desktop
+   (PP's Gamex). Tested in Hatari on the STE and Mega STE; NEBORIG is PP's original.
  - Powermonger: Option -> File -> Save/Load, in POWERMON\SAVEDISK.DAT.
  - Populous: the game's own Save/Load, into FILES\POP in its folder.
  - Populous 2: the game's own SAVE/LOAD GAME does not work in PP's
@@ -441,7 +463,7 @@ def versions() -> dict[str, str]:
     """Release versions as the games' own tools report them (each reads its credit patch)."""
     v = {}
     for key, game, tool in (("MIDWINTR", "midwinter", "mw1patch"), ("MIDWINT2", "midwinter2", "mw2patch"),
-                            ("HUNTER", "hunter", "huntpatch"), ("MOONSHR", "moonshine-racers", "msrpatch"), ("POPULOUS", "populous", "poppatch"), ("POPS2", "populous-2", "pop2patch")):
+                            ("HUNTER", "hunter", "huntpatch"), ("NEBULUS", "nebulus", "nebrelease"), ("MOONSHR", "moonshine-racers", "msrpatch"), ("POPULOUS", "populous", "poppatch"), ("POPS2", "populous-2", "pop2patch")):
         try:
             v[key] = "v" + py(game, tool, "version").strip()
         except SystemExit:
@@ -480,6 +502,7 @@ def layout_text(img: Path, tgt: str, total: int, psz: int, folders: dict[str, Pa
            "HUNTER": "Hunter (Gamex by PP, patched; FILES\\P = patch code + STE sample bank)",
            "POWERMON": "Powermonger (HD build, patched; start it from the boot prompt, see README.TXT)",
            "POPULOUS": "Populous (HAGA by PP, patched; PATCHED.TXT)", "POPS2": "Populous 2 (HAGA by PP, patched)",
+           "NEBULUS": "Nebulus (Gamex by PP, patched; NEPATCH.BIN = patch code)", "NEBORIG": "Nebulus (Gamex by PP, unpatched, for comparison)",
            "HUNTORIG": "Hunter (Gamex by PP, unpatched, for comparison)", "POPORIG": "Populous (HAGA by PP, unpatched, for comparison)",
            "POP2ORIG": "Populous 2 (HAGA by PP, unpatched, for comparison)",
            "AUTO": "boot prompt PMBOOT.PRG (tools/hd_pmboot.s): P = start Powermonger, any other key / 3 s = desktop"}
@@ -487,7 +510,7 @@ def layout_text(img: Path, tgt: str, total: int, psz: int, folders: dict[str, Pa
         n = sum(1 for p in src.rglob("*") if p.is_file())
         t.append(f"  {name + chr(92):<14} {why[name]}: {n} files, {tree_kb(src)} KB" + (f", {VERSIONS[name]}" if name in VERSIONS else ""))
     t += ["", "Start of the games: see README.TXT in the root (Powermonger: press P at the boot prompt; the others: double-click",
-          "  MIDWINTR\\RUNME.TOS, MIDWINT2\\RUNME.TOS, MOONSHR\\RUNME.TOS, POPULOUS\\RUNME.TOS, POPS2\\RUNME.TOS, HUNTER\\START.TOS on the desktop).", "",
+          "  MIDWINTR\\RUNME.TOS, MIDWINT2\\RUNME.TOS, MOONSHR\\RUNME.TOS, POPULOUS\\RUNME.TOS, POPS2\\RUNME.TOS, HUNTER\\START.TOS, NEBULUS\\START.TOS on the desktop).", "",
           "Use",
           f"  real disk / SD card (ACSI2STM, UltraSatan, SCSI2SD + ACSI/SCSI bridge, ...): dd if={img.name} of=/dev/sdX bs=1M conv=fsync",
           "    (check the target device first; a bigger card works, the rest stays unpartitioned)",

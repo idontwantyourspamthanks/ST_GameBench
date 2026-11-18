@@ -1,0 +1,49 @@
+t=    6s vbl=301 $1021/$100e=(0, 0)
+t=   12s vbl=602 $1021/$100e=(0, 0)
+t=   18s vbl=902 $1021/$100e=(0, 0)
+t=   24s vbl=1202 $1021/$100e=(0, 0)
+t=   30s vbl=1503 $1021/$100e=(0, 0)
+t=   36s vbl=1803 $1021/$100e=(0, 0)
+t=   42s vbl=2104 $1021/$100e=(0, 0)
+t=   48s vbl=2404 $1021/$100e=(0, 0)
+t=   54s vbl=2704 $1021/$100e=(0, 207)
+t=   60s vbl=3005 $1021/$100e=(0, 131)
+t=   66s vbl=3305 $1021/$100e=(0, 61)
+t=   72s vbl=3606 $1021/$100e=(0, 1)
+t=   78s vbl=3906 $1021/$100e=(0, 84)
+t=   84s vbl=4206 $1021/$100e=(0, 24)
+t=   90s vbl=4507 $1021/$100e=(0, 169)
+t=   96s vbl=4807 $1021/$100e=(0, 680)
+t=  102s vbl=5107 $1021/$100e=(0, 379)
+t=  108s vbl=5408 $1021/$100e=(0, 0)
+t=  114s vbl=5708 $1021/$100e=(0, 0)
+t=  120s vbl=6009 $1021/$100e=(0, 0)
+t=  126s vbl=6309 $1021/$100e=(0, 0)
+t=  132s vbl=6609 $1021/$100e=(0, 0)
+t=  138s vbl=6910 $1021/$100e=(0, 0)
+t=  144s vbl=7210 $1021/$100e=(0, 0)
+t=  150s vbl=7511 $1021/$100e=(0, 0)
+t=  156s vbl=7811 $1021/$100e=(0, 0)
+t=  162s vbl=8111 $1021/$100e=(0, 0)
+t=  168s vbl=8412 $1021/$100e=(0, 0)
+t=  174s vbl=8712 $1021/$100e=(0, 0)
+t=  180s vbl=9013 $1021/$100e=(0, 0)
+t=  186s vbl=9313 $1021/$100e=(0, 0)
+t=  192s vbl=9613 $1021/$100e=(0, 0)
+t=  198s vbl=9914 $1021/$100e=(0, 0)
+t=  204s vbl=10214 $1021/$100e=(0, 0)
+t=  210s vbl=10515 $1021/$100e=(0, 0)
+t=  216s vbl=10815 $1021/$100e=(0, 0)
+Traceback (most recent call last):
+  File "/home/ryan/Code/AtariST/gamebench/games/done/moonshine-racers/tools/msr_boot_test.py", line 15, in <module>
+    ok = h.boot_to_race(shots=a.shots)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/games/done/moonshine-racers/tools/msr.py", line 48, in boot_to_race
+    st = (self.peekb(0x1021), self.peekw(0x100E))
+          ^^^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/games/done/moonshine-racers/tools/msr.py", line 34, in peekb
+    out = self.debug(f"m ${addr:x} 1", 0.6)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/tools/stharness.py", line 209, in debug
+    time.sleep(wait)
+KeyboardInterrupt

@@ -4,7 +4,7 @@ import sys, json, random, statistics, time, re
 from lib import Nebulus, SNAP
 EV = {'VBL': 'pc = $382d8', 'TICK': 'pc = $382c0', 'WAIT': 'pc = $3868a', 'FLIP': 'pc = $3868e',
       'POLL': 'pc = $3853a', 'CONS': 'pc = $3e188', 'ACIA': 'pc = $384fc', 'STORE': 'pc = $38514'}
-EXTRA_CMD = {'STORE': 'r\n', 'FLIP': 'm $33a16 14\n'}
+EXTRA_CMD = {'STORE': 'r\n', 'FLIP': 'm $33a16 14\nm $33994 2\n'}
 NAMES = ['VBL', 'TICK', 'WAIT', 'POLL', 'CONS', 'ACIA', 'STORE', 'FLIP']
 FPC8 = 160256
 
@@ -52,6 +52,8 @@ def parse(txt, order, fpc):
         if ctx == 'r' and line.lstrip().startswith('D0 ') and cur is not None:
             cur['d0'] = int(line.split()[1], 16) & 0xff
         if ctx == 'm' and cur is not None:
+            m2 = re.match(r'00033994:\s+([0-9a-f]{2}) ([0-9a-f]{2})', line, re.I)
+            if m2 and 'st' in cur: cur['st']['shot'] = int(m2.group(1) + m2.group(2), 16)
             mm = re.match(r'00033A16:\s+((?:[0-9a-f]{2} )+)', line, re.I)
             if mm:
                 b = bytes.fromhex(mm.group(1).replace(' ', ''))
