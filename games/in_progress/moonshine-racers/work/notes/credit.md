@@ -39,47 +39,51 @@ Stage 1 runs before the trampoline, so the existing `boot` phase cannot patch it
   floppy `disk_a.st` `ef14ba13255eadd39535c402457a338a`, `disk_b.st` `0d0be455e4d0389ed98401c0e02d21d9` for both (`base_fl.txt`, `new0_fl.txt`).
   With `mr_credit`: only `RUNME.TOS` differs on HD (`HAGA`, `FILES/*` unchanged); floppy: payload sectors + disk A `+$2d24`.
 
-## 3. The patch (`patches/mr_credit.s`, default yes, blob `$BFD00-$BFEFF`, 512 B, no `; ram:`: it needs no run-time RAM)
+## 3. The patch (`patches/mr_credit.s`, default yes, blob `$BFD00-$BFF31`, 562 B, no `; ram:`: it needs no run-time RAM)
 * Site `$78524`: `lea.l $782ba.l,a0` (`41f9 000782ba`) -> `jsr $bfd00.l` (`4eb9 000bfd00`); the blob replays the `lea` (a0 = `$782ba`) and returns.
-* Draws `v1.0 enhanced by dad_prg` (24 characters) into `($78004)` = `$70000`, 8-pixel cells centred on 40 columns (x 64-255), glyph rows at screen rows 194-199; registers
-  saved except a0; no hardware access, no game state (stack only, the stage-1 stack at `$78000` grows down), 68000 code, no timing effect beyond ~60 k cycles once (**[INFERENCE]** estimate).
+* Draws `v1.0 enhanced by dad_prg` (24 characters) into `($78004)` = `$70000`, 8-pixel cells centred on 40 columns (x 64-255), glyph rows at screen rows 193-199; registers
+  saved except a0; no hardware access, no game state (stack only, the stage-1 stack at `$78000` grows down), 68000 code, one run of about 70 k cycles (**[INFERENCE]** estimate).
 * **Font**: the game's OWN 8x8 message font (the ticker/title text font: `$14fd4` draws it from `$190be`, 16 B per glyph = 8 x (edge byte, body byte), index = char - $20).
   It is not in RAM yet at this point (the game loads after the picture), so the 25 glyphs the line can need (all digits, for the version) are embedded, copied from disk A `$310be` by
   `work/credit/gen_glyphs.py` (cross-checks disk A against the RAM of three dumps for all 95 glyphs). Same drawing rule as the game's (glyph clears covered pixels; edge pixels one colour, body pixels one colour).
-  Two layout adaptations (the picture leaves only rows 194-199 under the frame, row 193 stays black as a gap): each glyph is stored as the cell rows 0,2,3,4,5,6 (row 1 repeats row 0 for all stems; row 7 only holds the
-  tails of `p` and `y`, which lose their last row), and the game's `_` (a bar in cell row 0 = an overline in this font) is drawn in the last row as an underscore.
+  Layout (option C, user-approved after the investigation in `evidence/old_optionA/` and `descender_options_3x.png`): the picture leaves rows 193-199 (7 rows) under its frame (bottom line = row 192), so each glyph is
+  stored as the font cell's rows 0,2,3,4,5,6,7 (14 B per glyph, stride x14; row 1 repeats row 0 for every stem; row 7 holds the descenders of `p` and `y`, which the game's font has: the first version dropped them);
+  the game's `_` (a bar in cell row 0 = an overline in this font) is drawn on the last row; the game's `g` has no descender, so its tail is HAND-COMPOSED from the font's own rows (stem row repeated, curl row moved down one row;
+  `gen_glyphs.py`). The text now has no black gap row to the frame: tall letters (`h b d 0 1`) touch the frame line with their top row 193.
 * **Pixel verification of the font data against what the game itself draws** (`work/credit/font_cap.py`, `font_verify.py`, screen dumps `work/credit/fontcap/`): the game's title text
   "Hi, I'm Ike. Watching out for / Fat Sam the Sheriff ..." (HD build, displayed buffer `$78000`): 22 of 22 and 13 of 13 non-blank cells equal the coverage of the font glyphs from disk A
   and the two-colour rule (one edge colour, one body colour per cell) holds in all of them. Glyphs seen there: `H i , I ' m k e . W a t c h n g o u f F S r s`; of the credit's glyph set `a c e g h n r .` are covered by that text;
-  `0-9 b d p v y _` are not drawn by any screen I reached (identical to the same table in RAM, but not seen drawn).
+  `0-9 b d p v y _` are not drawn by any screen I reached (identical to the same table in RAM, but not seen drawn); the floppy's "Insert Disk 2 and press a key." prompt shows the same font with real `p`/`y` descenders. The built screen was also compared with the table pixel by pixel for all 24 characters (all match).
 * Colours: body 7 ($765 cream, the lettering colour of the title), edge 5 ($654, the picture frame colour): visible on the black rows, no clash with the brown art. Palette fades act on the whole
   picture (the text fades in/out with it; screenshots at the fade-in, full and fade-out instants below).
 
-## 4. Screenshots (`work/credit/evidence/`, 640x400 crops of the picture, not committed)
+## 4. Screenshots (`work/credit/evidence/`, 640x400 crops or exact 320x200 pictures, not committed)
 | file | what |
 |---|---|
-| `overview.png` | 8 frames: credit HD STE 1 MB (left) / BEFORE (right); credit HD STE 4 MB / HD Mega STE 1 MB 8->16 MHz; credit floppy STE 1 MB / BEFORE floppy; credit floppy STE 4 MB / Mega STE 1 MB |
-| `credit_hd_ste1m.png`, `before_hd_ste1m.png` | HD STE 1 MB, VBL 2600 (palette 5/6 faded in) credit vs stock |
-| `credit_hd_ste4m.png` | HD STE 4 MB, full palette |
-| `credit_hd_mste1m_16mhz.png` | HD Mega STE 1 MB TOS 2.06 (boots at 8 MHz, 16 MHz from VBL 200 like `tools/play.sh --cpu 16`) |
-| `credit_floppy_ste1m.png`, `before_floppy_ste1m.png`, `credit_floppy_ste4m.png`, `credit_floppy_mste1m_8mhz.png` | floppy build, VBL ~686-689 |
-| `hd_ste1m_fade_sequence_2560_2600_2640_2680_2720.png` | HD STE 1 MB: fade-in, near full, fade-out (black), sunrise screen, sunrise: the text is gone with the picture, later screens untouched |
-| `zoom_credit_*.png` | bottom rows, 3x |
-Text exactly: `v1.0 enhanced by dad_prg`.
-Trade-offs (visible): the game's `1` is a plain 3-pixel bar (reads `v1.0` like the game's own digits), its `g` has no descender (`dad_prg` reads like `pr9` at 1:1), `p`/`y` lose the last row; the text sits directly under the frame's bottom line (row 194 vs frame row 192), in the black band between the logos.
+| `credit_final_overview_1to1.png` | 1:1 (320x200): HD STE 1 MB (left) and floppy STE 1 MB (right), final build |
+| `credit_final_hd_ste1m_1to1.png`, `_3x.png`, `credit_final_hd_strip_3x.png` | HD STE 1 MB at VBL 2596 (full palette), picture / 3x picture / 3x text strip (rows 184-199) |
+| `credit_final_floppy_ste1m_1to1.png`, `_2x.png`, `credit_final_floppy_strip_3x.png` | floppy STE 1 MB, VBL 689 |
+| `credit_final_fade_1to1.png` | 10 frames (1:1) at VBL 2568, 2572, 2576, 2580, 2584 (fade-in), 2596 (full), 2612, 2616, 2620, 2624 (fade-out), captured with one armed breakpoint per VBL (`vblmulti.py`) |
+| `credit_final_fade_strips_3x.png` | the same frames, text strip at 3x with the palette values of entries 7 and 5: the cream text and the tan frame line keep their contrast at every level (both scale together; at the darkest levels text and frame are equally dim) |
+| `variants_all_3x.png`, `descender_options_3x.png`, `glyph_table_v10bd_.png` | the options for the record: FINAL (C), OLD (A, 6 rows with a gap), D = stock 6-row glyphs shifted up one row (rows 193-198, mockup, not built), and the font table's own rendering of `v 1 . 0 b d _` |
+| `old_optionA/` | the screenshots of the first version (6-row glyphs), all machines |
+Text exactly: `v1.0 enhanced by dad_prg`. Remaining look trade-offs: the font's `1` is a plain 3-pixel bar, its `g` is hand-extended, the text touches the frame line.
 
-## 5. Gates (all raw files in `work/credit/`)
-* `python3 tools/msrpatch.py verify`: `verify: ALL OK` (stage-1 site matches `MSR_S1.FIC` and disk A).
-* Pixels of the picture screen, credit vs stock build at the same VBLs (`vblshots.py`, `v_hd_ste1` vs `v_hd_ste1_base`, buffers `$70000`/`$78000`): VBL 2400-2520 identical (0 bytes); VBL 2560/2600 `$70000` differs in
-  rows 194-199 only (315/316 bytes = the text) plus bytes behind the screen (rows 200-204 of the 32,768-byte dump = the stage-1 stack just below `$78000`), `$78000` +5..8 bytes at `$78000-$78010` (stage-1 variables); at 2680 the sunrise is drawn 1-2 frames apart (timing); from 2720 identical (0 bytes).
-* Per-pass game state, cold boot HD STE 1 MB, SPACE to the race, 151 passes (counter 95-245, 6,716 B per pass = `$1000-$13ff $29c8-$34ff $4500-$4fff $dae6`, the msrabtest STATE ranges; `state_cold.py`, `state_cmp.py`):
-  stock vs credit build **0 differing addresses**; control stock vs stock (second boot) 0 differing addresses (`st_base1.json`, `st_base2.json`, `st_credit.json`).
-  (The snapshot recipe `msrabtest.py` cannot apply a stage-1 patch live: a snapshot is past stage 1; hence the cold-boot variant.)
-* Race frame pixels, cold boot, both buffers `$70000`/`$78000` (32,000 B each) at the first `$7b86` with `$100e = 200` (`pix_cold.py`): stock vs credit **0 differing bytes** in both buffers.
-* Cold boot HD to the race, `$1021` = 2, `$100e` advancing, marker `MSPO` (`race_cold.py`, `hd_cold_gates.txt`): STE 1 MB TOS 1.62; STE 4 MB; Mega STE 1 MB TOS 2.06 at 16 MHz (8 MHz boot, switch at VBL 200); Mega STE 4 MB. All reached the race.
-* Cold boot FLOPPY (`tools/msrfloppy.py gate`: disk A alone, SPACE through the screens, disk-2 swap, race, `fl_gates.txt`): STE 1 MB, STE 4 MB, Mega STE 1 MB at 16 MHz: story screens, disk-2 prompt, race (`$100e` 215-219), marker `MSPO`, `RDG1` road tables ok.
-* Not run: TT/Falcon (68030 caches: the patched stage-1 bytes and the blob are written as data before they execute for the first time, **[INFERENCE]** no stale line possible), real hardware, a negative control for the cold-boot state/pixel gate
-  (the picture-screen compare above does show the text rows as differences, i.e. the compare can fail).
+## 5. Gates (raw files in `work/credit/`; first round with the 6-row version: kept in the git history of this note's earlier text, the round below is the final option-C build)
+* `python3 tools/msrpatch.py verify`: `verify: ALL OK`.
+* Picture screen, final build vs stock build (HD STE 1 MB, `vblshots.py`, `v_hd_ste1c` vs `v_hd_ste1_base`, buffer `$70000`, all 200 rows compared pixel by pixel): VBL 2400, 2520, 2640 identical (0 pixels); at 2560 and 2600 exactly **637 pixels** differ,
+  all in rows 193-199 and x 64-255; **row 192 (frame line) 0 changed pixels, logo columns (x < 48 and x > 288) 0 changed pixels** (row 193 was black: the 637 are the glyph pixels).
+* Cold boot HD to the race (`$1021` = 2, `$100e` advancing), marker `MSPO`: STE 1 MB (the state captures), Mega STE 1 MB TOS 2.06 at 16 MHz (`race_cold.py`, `c_gates.txt`).
+* Cold boot FLOPPY STE 1 MB, disk A alone, SPACE, disk-2 prompt, swap, race (`msrfloppy gate`, build without `fl_driveb`: `build/credit_fl_nodb`): prompt at VBL 2409, race `$100e` 214, marker `MSPO`, `RDG1` road tables ok.
+  **With the default floppy set of the current tree (new `patches/fl_driveb.s`, another agent's, created after my first gates) the gate does NOT reach the prompt: with that patch the game looks at drive B when A holds no disk 2
+  (FDC trace `fdc_C.log`: reads with `drive=1` at VBL 3321) and starts the race without asking, in this one-disk harness. This is independent of `mr_credit`: the same happens with the first (6-row) credit version and with delay variants of
+  the blob; a build with `mr_credit` and without `fl_driveb` passes. The harness (`tools/msrfloppy.py gate`) needs the disk-2 prompt: for `fl_driveb` it needs an adaptation (owner of that patch).**
+* Per-pass game state, cold boot HD STE 1 MB, 151 passes (6,716 B per pass, counter 95-245), stock build of the same tree (`credit_curbase_hd` = `--only` the default set minus `mr_credit`) vs final build:
+  **3 differing addresses, `$1006`, `$100a`, `$12f2`** (all passes): the buffer roles are swapped (`$1004/$1008` hold `$70000/$78000` vs `$78000/$70000`; `$12f2` is the per-buffer byte 203 vs 75), i.e. the flip parity at the race start differs; all other 6,713 bytes of every pass are identical.
+  Evidence that this is boot timing and not game logic: the same build run twice can differ in this parity (the variant of the final build with an added 3,000-iteration delay showed the stock parity in a 12-pass run and the swapped parity in a 150-pass run), the delay variants 500/3000/12000
+  give swapped/stock/stock in 12-pass runs (`st_d*.json`), and an earlier credit build matched the stock parity in its 151-pass run (0 differing addresses, `st_credit.json` vs `st_base1.json`). Stock vs stock (3 boots) differ only at `$1221` (a timing byte, `st_base1/3.json`).
+  The cold boot's SPACE presses are wall-clock driven; the snapshot-based recipe (`msrabtest.py`) cannot apply a stage-1 patch live.
+* Not run for the final build: Mega STE floppy, STE 4 MB (the code path is the same as the first round, all passed then), TT/Falcon, real hardware.
 
 ## 6. Reproduce
 `python3 tools/msrpatch.py build --out build/credit_hd` / `build --floppy --out build/credit_fl`; captures `work/credit/*.py` (headers say how). Hook summary: stage 1 `$78524` (HD: RUNME copy routine edit; floppy: disk A `+$2d24`), blob `$BFD00`.

@@ -19,14 +19,15 @@
 ; note: (the font is not in RAM yet at this point of the boot).  Same drawing rule as the game's: a glyph clears the covered pixels, edge pixels get
 ; note: colour EDGE, body pixels BODY (palette of the picture: 7 = $765 cream = the title lettering, 5 = $654 tan = the picture frame).
 ; note: Where on the screen: the picture's frame ends at row 192, rows 193-199 are black between the two logos (MILLENNIUM x 8-47, PEAK STAR
-; note: x 289-311).  Only 6 rows (194-199, row 193 stays black as a gap to the frame) are available for a cell, so each glyph is stored as the
-; note: font cell's rows 0,2,3,4,5,6 (row 1 repeats row 0 for every stem, row 7 only holds the tails of p and y: they lose their last row), and the
-; note: game's `_` (a bar in cell row 0 = an overline) is drawn in the last row.  Centred on 8-pixel cells (40 columns minus the length; the 24
-; note: characters span x 64-255): no logo or art is covered.
+; note: x 289-311).  Seven rows (193-199) are available for a cell, so each glyph is stored as the font cell's rows 0,2,3,4,5,6,7 (row 1 repeats row 0 for
+; note: every stem; row 7 holds the descenders of p and y, which the game's font has).  The game's `_` (a bar in cell row 0 = an overline) is drawn on the
+; note: last row.  The game's `g` has no descender: its tail is hand-composed from the font's own rows (stem row repeated, curl row moved down one row).
+; note: Tall letters touch the frame line (row 192) with their top row.  Centred on 8-pixel cells (40 columns minus the length; the 24 characters span
+; note: x 64-255): no logo is covered.
 ; note: Registers: all saved but a0, which is the displaced instruction's result.  No hardware access, no game state, 68000 only.
 BODY    equ     7
 EDGE    equ     5
-CREDITY equ     194
+CREDITY equ     193
 
         org     $78524
         jsr     $bfd00.l
@@ -56,9 +57,9 @@ credit: movem.l d0-d7/a1-a4,-(sp)
         addq.w  #1,d1
         bra.s   .f
 .found: move.w  d1,d2
-        lsl.w   #2,d2
-        lsl.w   #3,d1
-        add.w   d2,d1                   ; index * 12 (6 rows x 2 bytes)
+        add.w   d2,d2
+        lsl.w   #4,d1
+        sub.w   d2,d1                   ; index * 14 (7 rows x 2 bytes)
         lea     glyphs(pc),a3
         adda.w  d1,a3                   ; a3 = the glyph
         move.w  d7,d3
@@ -68,7 +69,7 @@ credit: movem.l d0-d7/a1-a4,-(sp)
         andi.w  #1,d4
         add.w   d4,d3                   ; + 1 for the right half of the 16-pixel block
         lea     (a1,d3.w),a0
-        moveq   #5,d5
+        moveq   #6,d5
 .row:   move.b  (a3)+,d0                ; edge pixels
         move.b  (a3)+,d1                ; body pixels
         move.b  d0,d2
@@ -98,28 +99,28 @@ text:   dc.b    "v@VERSION@ enhanced by dad_prg",0
 chars:  dc.b    " .0123456789abcdeghnprvy_",0
         even
 glyphs:
-        dc.b    $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00   ; ' '
-        dc.b    $00,$00,$00,$00,$00,$00,$00,$00,$20,$c0,$20,$c0   ; '.'
-        dc.b    $02,$7c,$11,$e6,$11,$e6,$11,$e6,$11,$e6,$02,$7c   ; '0'
-        dc.b    $04,$38,$04,$38,$04,$38,$04,$38,$04,$38,$04,$38   ; '1'
-        dc.b    $02,$7c,$01,$06,$02,$7c,$10,$e0,$10,$e6,$02,$fc   ; '2'
-        dc.b    $02,$3c,$01,$06,$02,$3c,$01,$06,$11,$e6,$02,$7c   ; '3'
-        dc.b    $12,$ec,$12,$ec,$01,$7e,$02,$0c,$02,$0c,$02,$0c   ; '4'
-        dc.b    $02,$fc,$10,$e0,$02,$fc,$01,$06,$11,$e6,$02,$7c   ; '5'
-        dc.b    $02,$7c,$10,$e0,$02,$fc,$11,$e6,$11,$e6,$02,$7c   ; '6'
-        dc.b    $01,$fe,$01,$0e,$02,$1c,$04,$38,$08,$70,$10,$e0   ; '7'
-        dc.b    $02,$7c,$11,$e6,$02,$7c,$11,$e6,$11,$e6,$02,$7c   ; '8'
-        dc.b    $02,$7c,$11,$e6,$01,$7e,$01,$06,$11,$e6,$02,$7c   ; '9'
-        dc.b    $00,$00,$02,$3c,$01,$06,$01,$7e,$11,$e6,$01,$7e   ; 'a'
-        dc.b    $10,$e0,$02,$fc,$11,$e6,$11,$e6,$11,$e6,$02,$fc   ; 'b'
-        dc.b    $00,$00,$04,$78,$10,$e0,$10,$e0,$10,$e0,$02,$7c   ; 'c'
-        dc.b    $01,$06,$01,$7e,$11,$e6,$11,$e6,$11,$e6,$01,$7e   ; 'd'
-        dc.b    $00,$00,$02,$7c,$11,$e6,$02,$fc,$10,$e0,$02,$7c   ; 'e'
-        dc.b    $00,$00,$02,$3c,$09,$76,$01,$3e,$01,$0e,$02,$7c   ; 'g'
-        dc.b    $10,$e0,$02,$fc,$11,$e6,$11,$e6,$11,$e6,$11,$e6   ; 'h'
-        dc.b    $00,$00,$22,$dc,$01,$fe,$11,$e6,$11,$e6,$11,$e6   ; 'n'
-        dc.b    $00,$00,$02,$fc,$11,$e6,$02,$fc,$10,$e0,$10,$e0   ; 'p'
-        dc.b    $00,$00,$02,$fc,$11,$e6,$10,$e0,$10,$e0,$10,$e0   ; 'r'
-        dc.b    $00,$00,$11,$e6,$11,$e6,$12,$6c,$04,$38,$08,$10   ; 'v'
-        dc.b    $00,$00,$11,$e6,$11,$e6,$01,$7e,$01,$06,$11,$e6   ; 'y'
-        dc.b    $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$ff   ; '_'
+        dc.b    $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00   ; ' '
+        dc.b    $00,$00,$00,$00,$00,$00,$00,$00,$20,$c0,$20,$c0,$00,$00   ; '.'
+        dc.b    $02,$7c,$11,$e6,$11,$e6,$11,$e6,$11,$e6,$02,$7c,$00,$00   ; '0'
+        dc.b    $04,$38,$04,$38,$04,$38,$04,$38,$04,$38,$04,$38,$00,$00   ; '1'
+        dc.b    $02,$7c,$01,$06,$02,$7c,$10,$e0,$10,$e6,$02,$fc,$00,$00   ; '2'
+        dc.b    $02,$3c,$01,$06,$02,$3c,$01,$06,$11,$e6,$02,$7c,$00,$00   ; '3'
+        dc.b    $12,$ec,$12,$ec,$01,$7e,$02,$0c,$02,$0c,$02,$0c,$00,$00   ; '4'
+        dc.b    $02,$fc,$10,$e0,$02,$fc,$01,$06,$11,$e6,$02,$7c,$00,$00   ; '5'
+        dc.b    $02,$7c,$10,$e0,$02,$fc,$11,$e6,$11,$e6,$02,$7c,$00,$00   ; '6'
+        dc.b    $01,$fe,$01,$0e,$02,$1c,$04,$38,$08,$70,$10,$e0,$00,$00   ; '7'
+        dc.b    $02,$7c,$11,$e6,$02,$7c,$11,$e6,$11,$e6,$02,$7c,$00,$00   ; '8'
+        dc.b    $02,$7c,$11,$e6,$01,$7e,$01,$06,$11,$e6,$02,$7c,$00,$00   ; '9'
+        dc.b    $00,$00,$02,$3c,$01,$06,$01,$7e,$11,$e6,$01,$7e,$00,$00   ; 'a'
+        dc.b    $10,$e0,$02,$fc,$11,$e6,$11,$e6,$11,$e6,$02,$fc,$00,$00   ; 'b'
+        dc.b    $00,$00,$04,$78,$10,$e0,$10,$e0,$10,$e0,$02,$7c,$00,$00   ; 'c'
+        dc.b    $01,$06,$01,$7e,$11,$e6,$11,$e6,$11,$e6,$01,$7e,$00,$00   ; 'd'
+        dc.b    $00,$00,$02,$7c,$11,$e6,$02,$fc,$10,$e0,$02,$7c,$00,$00   ; 'e'
+        dc.b    $00,$00,$02,$3c,$09,$76,$01,$3e,$01,$0e,$01,$0e,$02,$7c   ; 'g'
+        dc.b    $10,$e0,$02,$fc,$11,$e6,$11,$e6,$11,$e6,$11,$e6,$00,$00   ; 'h'
+        dc.b    $00,$00,$22,$dc,$01,$fe,$11,$e6,$11,$e6,$11,$e6,$00,$00   ; 'n'
+        dc.b    $00,$00,$02,$fc,$11,$e6,$02,$fc,$10,$e0,$10,$e0,$10,$e0   ; 'p'
+        dc.b    $00,$00,$02,$fc,$11,$e6,$10,$e0,$10,$e0,$10,$e0,$00,$00   ; 'r'
+        dc.b    $00,$00,$11,$e6,$11,$e6,$12,$6c,$04,$38,$08,$10,$00,$00   ; 'v'
+        dc.b    $00,$00,$11,$e6,$11,$e6,$01,$7e,$01,$06,$11,$e6,$02,$7c   ; 'y'
+        dc.b    $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$ff   ; '_'

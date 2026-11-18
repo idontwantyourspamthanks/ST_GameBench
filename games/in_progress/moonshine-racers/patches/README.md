@@ -109,9 +109,11 @@ game start on 1 MB, but not at 4 MB without `pp_bigram_cache`).
 - `fl_hook` (`; media: floppy`, always included): disk A `$C350` (RAM `$6f50`) `move.l #$6f5a,$88.w / trap #2` -> `jmp $B2708.l`: the trampoline runs when the loader starts the game.
 - `fl_deprot` (`; media: floppy`, default yes): disk A `$E3D0` (RAM `$7bd0`, the manual-lookup routine's first two instructions `7e02 3f07`) -> `bra.w $7d1a` (`6000 0148`),
   the routine's own "accepted" exit: the question is never asked. Instruction-level evidence: `floppy.md` section 6.
-- `fl_driveb` (`; media: floppy`, default yes after the gates in `work/notes/floppy_driveb.md`): RAM site `$d6fa` (the game's only entry into its own FDC driver, which always asked for unit 0 = drive A) -> blob `$B8E00`: disk 2 may be in
-  drive B. The disk checks (boot sector of the disk in the drive: `MOON` at offset 2 = disk 1, `$66055505` at `$e` = disk 2) try the preferred drive (A at power-on) and then the other one, bounded by the driver's own timeouts; the drive that held the
-  wanted disk is used for all reads until the next check. The one-drive swap route (disk 2 into A at the prompt) is unchanged.
+- `fl_driveb` (`; media: floppy`, default yes; `work/notes/floppy_driveb.md`): RAM site `$d6fa` (the game's only entry into its own FDC driver, which always asked for unit 0 = drive A) -> blob `$BB400-$BB52F`: disk 2 may be in
+  drive B. The disk checks (boot sector of the disk in the drive: `MOON` at offset 2 = disk 1, `$66055505` at `$e` = disk 2) try the preferred drive (A at power-on) and then the other one; the drive that held the wanted disk is used for all reads
+  until the next check. Drive B is only touched after a short own probe (restore with TR00 and no seek error, then an index pulse: a drive with a disk), so a machine WITHOUT drive B (or an empty one) is not left in the driver's 4.4 s FDC waits (13 s per check in Hatari).
+  **One-drive users:** the swap route (disk 2 into A at the prompt) is unchanged; each key press at the prompt BEFORE the swap (disk 1 still in A = failed check) takes about 0.9 s longer (2.0 s if a drive B exists but is empty; Hatari 2.6.1, real FDC timing; real hardware not measured).
+  Switch off: `python3 tools/msrpatch.py build --floppy --only <the default set minus fl_driveb>` (the list `tools/play.sh` builds: `msrpatch.py list | awk '$2 ~ /^yes/ && $1 !~ /^pp_/ && $1 != "fl_driveb" {print $1}'`); a `--no-driveb) DROP+=(fl_driveb) ;;` line in play.sh does it there.
 - Disk 2 (one drive): the game asks for it itself ("Insert Disk 2 and press a key."); swap the disk in drive A and press a key. Hatari: `hatari-option --disk-a <copy of disk_b.st>` (floppy.md section 7). Two drives: disk 2 in drive B (`fl_driveb`; Hatari `--disk-b`, or `hatari-option --disk-b` at the prompt).
 - The HD-only `pp_bigram_cache` (HAGA) and RUNME edits are not part of the floppy build.
 
