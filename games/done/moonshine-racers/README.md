@@ -1,7 +1,7 @@
 # Moonshine Racers
 
 - Slug: `moonshine-racers`
-- Status: **in progress** (performance release: rendering study first)
+- Status: **done** (v1.0 released 2026-11-18: HD and floppy zips in `dist/`; HD build also on the all-games drive image as `C:\MOONSHR`; open: real-hardware pass, TT/Falcon/MiSTer untested)
 - VHD source: `Atari3gb.vhd`, partition at offset 1840700928 (letters G-R), folder ::/M/MOONSHR
 - Local copy: `originals/MOONSHR` (git-ignored)
 - Loader: PP's HAGA conversion (RUNME.TOS + HAGA)
