@@ -78,11 +78,22 @@ Text exactly: `v1.0 enhanced by dad_prg`. Remaining look trade-offs: the font's 
   **With the default floppy set of the current tree (new `patches/fl_driveb.s`, another agent's, created after my first gates) the gate does NOT reach the prompt: with that patch the game looks at drive B when A holds no disk 2
   (FDC trace `fdc_C.log`: reads with `drive=1` at VBL 3321) and starts the race without asking, in this one-disk harness. This is independent of `mr_credit`: the same happens with the first (6-row) credit version and with delay variants of
   the blob; a build with `mr_credit` and without `fl_driveb` passes. The harness (`tools/msrfloppy.py gate`) needs the disk-2 prompt: for `fl_driveb` it needs an adaptation (owner of that patch).**
-* Per-pass game state, cold boot HD STE 1 MB, 151 passes (6,716 B per pass, counter 95-245), stock build of the same tree (`credit_curbase_hd` = `--only` the default set minus `mr_credit`) vs final build:
-  **3 differing addresses, `$1006`, `$100a`, `$12f2`** (all passes): the buffer roles are swapped (`$1004/$1008` hold `$70000/$78000` vs `$78000/$70000`; `$12f2` is the per-buffer byte 203 vs 75), i.e. the flip parity at the race start differs; all other 6,713 bytes of every pass are identical.
-  Evidence that this is boot timing and not game logic: the same build run twice can differ in this parity (the variant of the final build with an added 3,000-iteration delay showed the stock parity in a 12-pass run and the swapped parity in a 150-pass run), the delay variants 500/3000/12000
-  give swapped/stock/stock in 12-pass runs (`st_d*.json`), and an earlier credit build matched the stock parity in its 151-pass run (0 differing addresses, `st_credit.json` vs `st_base1.json`). Stock vs stock (3 boots) differ only at `$1221` (a timing byte, `st_base1/3.json`).
-  The cold boot's SPACE presses are wall-clock driven; the snapshot-based recipe (`msrabtest.py`) cannot apply a stage-1 patch live.
+* Per-pass game state, cold boot HD STE 1 MB, 151 passes (6,716 B per pass = `$1000-$13ff $29c8-$34ff $4500-$4fff $dae6`), final build vs stock build of the same tree (`credit_curbase_hd`): 3 differing addresses `$1006`, `$100a`, `$12f2` in the first
+  runs. **Control experiment (`work/credit/ctl_chain.sh`, `ctl_report.py`, raw `ctl_report.txt`, `ctl_parity_at100.txt`, `st_ctl_*.json`; builds `--only <default minus mr_credit> test_delay`, `test_delay.s` = the stage-1 hook with NO drawing, only the displaced `lea`
+  plus N `dbra` iterations (10 cycles each; the real blob is about N = 6,000), copied into `patches/` only while building and removed again):**
+  `$1004/$1008` are the draw/display screen-buffer pointers (low words `$0000`/`$8000` = `$70000`/`$78000`), they swap every pass, and `$12f2` is a byte derived from the buffer address (203 vs 75 = differ by `$80`, the mid byte of `$78000`); the three addresses therefore only say
+  **which buffer the race loop is on at a given pass counter** (two classes P: `$1006`=0 `$100a`=128 `$12f2`=75 and Q: 128 / 0 / 203; the passes are compared by the counter `$100e`).
+```
+reference stock_a: class P. Value at pass counter 100:
+stock_b (stock, 2nd boot)  Q     stock_c (stock, 3rd boot)  P
+real_a  Q    real_b  P    real_c  P                                  (final credit build, 3 boots)
+delay_0 Q  delay_500 Q  delay_1500 Q  delay_3000 Q  delay_6000 Q  delay_9000 P  delay_12000 Q  delay_20000 Q  delay_30000 Q     (no drawing at all)
+```
+  Per run against stock_a (`ctl_report.txt`): **no address other than `$1006`, `$100a`, `$12f2` ever differs, in any of the 14 comparisons (151 passes each)**; those three differ exactly when the run is in the other class.
+  Conclusions: (a) the STOCK build itself falls in both classes (stock_b is class Q, stock_a/c class P: 1 of 3 boots swapped), the final credit build did 1 of 3, and the pure-delay builds without any drawing did 8 of 9 (N = 0 included, i.e. the hook alone): the class is a boot-timing
+  artefact (the cold boot's SPACE presses are wall-clock driven and the number of flips before the race start changes by one), not caused by what the credit draws or by the hook. (b) The only state that differs is the double-buffer role (which of the two screen buffers the pass uses) and
+  the byte derived from that address; nothing gameplay-relevant (`$1000-$13ff` other bytes: pass counter, speed, position, RNG `$dae6`, road/object tables `$29c8-$34ff`, `$4500-$4fff`) differs in any run. The stock `$1221` byte (timing, seen differing between two stock boots earlier) was identical in all of these runs.
+  (The snapshot-based recipe `msrabtest.py` cannot apply a stage-1 patch live.)
 * Not run for the final build: Mega STE floppy, STE 4 MB (the code path is the same as the first round, all passed then), TT/Falcon, real hardware.
 
 ## 6. Reproduce

@@ -1,0 +1,15 @@
+reference stock_a: $1006=128 $100a=0 $12f2=203 $1221=2, 151 passes
+stock_b      passes 152 common 151: $1006=0 $100a=128 $12f2=75 | parity addrs differing: ['0x1006', '0x100a', '0x12f2'] | other differing addrs: none
+stock_c      passes 152 common 151: $1006=128 $100a=0 $12f2=203 | parity addrs differing: none | other differing addrs: none
+real_a       passes 152 common 151: $1006=0 $100a=128 $12f2=75 | parity addrs differing: ['0x1006', '0x100a', '0x12f2'] | other differing addrs: none
+real_b       passes 152 common 151: $1006=128 $100a=0 $12f2=203 | parity addrs differing: none | other differing addrs: none
+real_c       passes 152 common 151: $1006=128 $100a=0 $12f2=203 | parity addrs differing: none | other differing addrs: none
+delay_0      passes 153 common 151: $1006=0 $100a=128 $12f2=75 | parity addrs differing: ['0x1006', '0x100a', '0x12f2'] | other differing addrs: none
+delay_500    passes 153 common 151: $1006=0 $100a=128 $12f2=75 | parity addrs differing: ['0x1006', '0x100a', '0x12f2'] | other differing addrs: none
+delay_1500   passes 153 common 151: $1006=0 $100a=128 $12f2=75 | parity addrs differing: ['0x1006', '0x100a', '0x12f2'] | other differing addrs: none
+delay_3000   passes 153 common 151: $1006=0 $100a=128 $12f2=75 | parity addrs differing: ['0x1006', '0x100a', '0x12f2'] | other differing addrs: none
+delay_6000   passes 152 common 150: $1006=128 $100a=0 $12f2=203 | parity addrs differing: ['0x1006', '0x100a', '0x12f2'] | other differing addrs: none
+delay_9000   passes 152 common 151: $1006=128 $100a=0 $12f2=203 | parity addrs differing: none | other differing addrs: none
+delay_12000  passes 153 common 151: $1006=0 $100a=128 $12f2=75 | parity addrs differing: ['0x1006', '0x100a', '0x12f2'] | other differing addrs: none
+delay_20000  passes 153 common 151: $1006=0 $100a=128 $12f2=75 | parity addrs differing: ['0x1006', '0x100a', '0x12f2'] | other differing addrs: none
+delay_30000  passes 153 common 151: $1006=0 $100a=128 $12f2=75 | parity addrs differing: ['0x1006', '0x100a', '0x12f2'] | other differing addrs: none
