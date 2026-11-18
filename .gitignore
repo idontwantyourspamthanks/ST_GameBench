@@ -98,3 +98,16 @@ games/**/originals/
 # third-party binaries the user supplies (e.g. tools/pasti.dll, a Windows-only Pasti library: not usable by the Linux Hatari)
 **/*.dll
 **/*.DLL
+# Scratch trees that hold copies of originals (extracted disks, unzipped release builds, intake copies): never commit
+games/*/*/work/**/scratch/
+games/*/*/work/release/*/unz*/
+games/*/*/work/release/*/NEBULUS/
+games/*/*/work/gate_*/**/NEBULUS/
+games/*/*/work/gate_*/unz*/
+games/*/*/work/gate_*/hd/
+# Game files by type, anywhere below a game folder (PP's Gamex conversions and Atari ST game assets)
+games/**/*.FIC
+games/**/*.PCH
+games/**/*.PRG
+games/**/*.PAK
+games/**/*.DIF
