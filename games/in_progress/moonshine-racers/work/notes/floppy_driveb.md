@@ -39,28 +39,33 @@ So the observation holds for the original game AND for every build of ours: the 
   loops at `$751c`, `$75e8`, `$76f4` (race load, text `$6143`, `jsr $735a` = wait for a key) and `$16718`. `d778` has no direct caller in the dump
   (the "Insert Disk 1" flow is presumably in code loaded later) [INFERENCE]; the patch treats it the same way as disk 2.
 
-## 3. The patch `patches/fl_driveb.s` (`media: floppy`, site `$d6fa`, 26 bytes -> `jmp $B8E00.l`, blob `$B8E00-$B8EA3`, 164 B, variables `unit`@`$B8E9E`, `pref[2]`@`$B8EA0`)
+## 3. The patch `patches/fl_driveb.s` (`media: floppy`, site `$d6fa`, 26 bytes -> `jmp $BB400.l`, blob `$BB400-$BB52F`, 308 B, variables `unit`@`$BB52E`, `pref[2]`@`$BB530`)
 
 ```
-d6fa (orig 0c41 0320 6408 7000 4ef9 0000cac0 0441 0320 7004 4ef9 0000cac0)  ->  4ef9 000b8e00 + 10 nops
+d6fa (orig 0c41 0320 6408 7000 4ef9 0000cac0 0441 0320 7004 4ef9 0000cac0)  ->  4ef9 000bb400 + 10 nops
 blob: cmpi.l #$d7b2,(sp) ; beq probe   ; $d7b2 = the return address inside sub_00d798: this is a disk-check boot sector read
       bsr rd ; rts                      ; every other read: unit of the last successful check
 rd:   d0 = (d3.b == 0 ? unit : 0); d1 >= $320 -> d1 -= $320, d0 += 4; jmp $cac0   ; = the original d6fa with the unit ORed into the device word; writes stay on drive A
 probe: slot = (4(sp) == $d78a) ? disk 2 : disk 1    ; 4(sp) = return address into sub_00d788 / sub_00d778
        unit = pref[slot]  (A at power-on)
-       2 tries: clear the two probe longs ($68002, $6800e), read the boot sector with the game's own driver (rd),
+       2 tries: [unit == B: bpres; no answer -> count as a mismatch, do not read]
+                clear the two probe longs ($68002, $6800e), read the boot sector with the game's own driver (rd),
                 compare the slot's long; match -> pref[slot] = unit, return; else unit ^= 1 (flips back after the 2nd failure)
+bpres: (drive B only) $43e = -1; PSG select B side 0 (cf0e); restore with h=1 (cmd $0b, no spin-up wait) via the game's cf8e;
+       wait for the FDC interrupt (GPIP bit 5) <= $38000 loops (~1.2 s), else forced interrupt (cf5a) = no drive;
+       status (cf78): seek error (bit 4) or no TR00 (bit 2) = no drive;  then <= $2d00 status reads (~130 us each, ~1.5 s) for an INDEX pulse (bit 1) = no disk spinning;
+       deselect (cf0e, 7), $43e restored.  d0 = 0: a drive with a disk answers.
 ```
 Behaviour:
-* **one drive, swap route** (disk 2 into A at the prompt): unchanged results; the first failing check (disk 1 in A) also probes B (below), then the prompt; after the swap A matches at once, `pref[1] = A`.
+* **one drive, swap route** (disk 2 into A at the prompt): unchanged results; the first failing check (disk 1 in A) also looks at B (`bpres`, 0.9 s if there is no drive, 2.0 s for a drive without a disk), then the prompt; after the swap A matches at once, `pref[1] = A`.
 * **two drives**: first check A (disk 1: mismatch, readable) -> B (disk 2: match) -> `pref[1] = B`, `unit = B`: the race load (100 sectors) is read from B, every later disk 2 check starts on B.
   Disk 1 stays in A (`pref[0] = A`). Disk 2 already in B at power-on: the prompt never appears (the first check finds it).
-* **absent / empty / wrong disk in B**: the probe of B is bounded by the driver's own waits (restore `$60000` x2 + read `$40000` loops, forced interrupts): no hang. The probe never trusts a status code: the two compared
-  longs are zeroed before each read, so only data that really arrived in the buffer can match (the role of the DMA-pointer test in MW1; Hatari and the real FD1772 leave status "ok" after a forced interrupt).
-  After both drives fail `unit` is back at the preferred drive and the caller shows its original prompt; the next key press repeats the check (cost: see 5).
-* **FDC track register**: the driver's per-unit `$cfac` table does it (first use of B: restore, since `$ffff`); the blob does no FDC access of its own.
+* **absent / empty / wrong disk in B**: `bpres` keeps the game's own long waits (restore `$60000`, seek-0 restore `$60000`, read `$40000` loops, a forced interrupt after each, 4.4 s each in Hatari) away from a drive that does not spin a disk; the probe never trusts a status code:
+  the two compared longs are zeroed before each read, so only data that really arrived in the buffer can match (the role of the DMA-pointer test in MW1; Hatari and the real FD1772 leave status "ok" after a forced interrupt).
+  After both drives fail `unit` is back at the preferred drive and the caller shows its original prompt; the next key press repeats the check (cost: section 5; there is no 'no drive B' memory: a MiSTer image mounted at the prompt must be seen).
+* **FDC track register**: the driver's per-unit `$cfac` table does it (first use of B: restore, since `$ffff`); `bpres` leaves B's head at track 0 while `$cfac[B]` still says unknown/where the last read left it: harmless, the check read that follows seeks to track 0 from whatever the register says (a step out at track 0 stays at 0) and stores 0.
 * **Writes** (`d3.b != 0`: none exist for the floppy release) are pinned to drive A.
-* The `$B2700` payload/trampoline is untouched; one site, one blob (`msrpatch.py verify` pairs it with every other patch: ALL OK, blob `$B8E00` lies in the gap between `mg_sync`'s blob and its data `$B8F00`).
+* The `$B2700` payload/trampoline is untouched; one site, one blob (`msrpatch.py verify` pairs it with every other patch: ALL OK; the first version's blob `$B8E00` (164 B) fitted the gap before `mg_sync`'s data `$B8F00`, with `bpres` the blob is 308 B and moved to `$BB400`, free between `hd_stage` and `hd_init`; payload 55,348 B = 109 sectors of the 129 free ones).
 * Merge note for MSRCredit's `tools/msrpatch.py` change: `fl_driveb.s` uses only existing headers (`name default media site orig doc note`, no `phase`), nothing in `tools/` was edited; `work/fdb/msrpatch_priv.py` = the current `tools/msrpatch.py` (with `phase: stage1`) with its `ROOT` fixed; `verify` ALL OK in both.
 
 Headers as written:
@@ -72,7 +77,7 @@ Headers as written:
 ; orig: 0c410320640870004ef90000cac00441032070044ef90000cac0
 ```
 
-## 4. Gates (build `work/fdb/build_db`: all default patches + `fl_driveb`; Hatari 2.6.1, `--fastfdc no`; each success cell = prompt gone, `$100e` advancing, marker `MSPO` at `$b2700`, FDC `drive=1` reads)
+## 4. Gates of the FIRST version (V1, no `bpres`; build `work/fdb/build_db`: all default patches + `fl_driveb`; Hatari 2.6.1, `--fastfdc no`; each success cell = prompt gone, `$100e` advancing, marker `MSPO` at `$b2700`, FDC `drive=1` reads; the final version is re-gated in 4b)
 
 ```
 cell (work/fdb/out/NAME.log)  machine, drive B           mode    disk-2 prompt            result   $100e advancing   fdc reads (whole run)     fl_driveb vars (unit; pref0,pref1)
@@ -108,22 +113,64 @@ Every success cell: marker `000B2700: 4d 53 50 4f` (MSPO) before and after, `$b8
 The "never shown" startB result is the proof of "disk 2 from B at the first check": the prompt is the game's reaction to a failed check.
 Controls in the same session: unpatched `our_none_ste` (no fl_driveb): drive B selected once at boot, no further.
 
+### 4b. Re-gate of the FINAL version (`bpres`; build `work/fdb/build_def2`, `disk_a.st` md5 `31e29c6a...`, 109 sectors; all Hatari 2.6.1, real FDC timing; raw `work/fdb/out/f_*.log|.out`)
+```
+cell                    machine                    mode     prompt             result  $100e advancing  fdc reads (whole run)  vars (unit; pref0,pref1)
+f_msrfloppy_gate_lone   STE 1.62 1 MB, lone disk A msrfloppy.py gate (swap)  shown, VBL 2407  OK   after swap+30 s $100e 218, MSPO, RDG1
+f_swapA_ste             STE 1.62 1 MB              swapA    shown              OK      283 -> 348       1338 / 0               0; 0,0
+f_swapA_nob_ste         STE 1.62 1 MB, ONE drive   swapA    shown              OK      290 -> 360       1337 / 0               0; 0,0
+f_swapA_mste4m          Mega STE 2.06 4 MB         swapA    shown              OK      278 -> 344       1338 / 0               0; 0,0
+f_swapA_st104           ST 1.04 1 MB               swapA    shown              OK      287 -> 357       1338 / 0               0; 0,0
+f_insB_ste_drive        STE 1.62 1 MB              insB     shown              OK      305 -> 371; 'up' held 30 s: $100e 742  1238 / 100   1; 0,1
+f_insB_ste4m            STE 1.62 4 MB              insB     shown              OK      294 -> 369       1239 / 100             1; 0,1
+f_insB_mste4m           Mega STE 2.06 4 MB         insB     shown              OK      302 -> 374       1238 / 100             1; 0,1
+f_insB_st104            ST 1.04 1 MB               insB     shown              OK      290 -> 361       1239 / 100             1; 0,1
+f_startB_ste_drive      STE 1.62 1 MB              startB   never              OK      495 -> 563; 'up' held 30 s: $100e 944  1237 / 100   1; 0,1
+f_startB_mste4m         Mega STE 2.06 4 MB         startB   never              OK      494 -> 562       1237 / 100             1; 0,1
+f_startB_st104          ST 1.04 1 MB               startB   never              OK      497 -> 565       1237 / 100             1; 0,1
+f_wrongB_ste            STE 1.62 1 MB, B = disk 1 copy, disk 2 swapped into A  wrongB  shown  OK  307 -> 375  1337 / 1 (B rejected)  0; 0,0
+```
+Plus the unrelated-disk / empty / absent cells of section 5 (`v2_*`, all with the race reached after the swap, `$100e` advancing, vars `0; 0,0`). MSPO intact in every cell.
+
 **Hatari gotcha for every floppy gate (also sent to MSRFinalIntegrate):** `~/.config/hatari/hatari.cfg` has `bAutoInsertDiskB = TRUE`: Hatari inserts `xxx_b.st` into drive B whenever `xxx_a.st` is given as disk A. `msrfloppy.py gate build/floppy/disk_a.st` therefore always had disk 2 in drive B;
 the original game never read it, but with `fl_driveb` the first check finds it and the prompt never appears (`gate`: "no disk-2 prompt", race running in the screenshots `build/shots/floppy_fdb_ste_1024/`, run on `build_def`, 400 s). The one-drive gate must use a lone copy of disk A
 (`cp build/floppy/disk_a.st /tmp/x/disk_a.st; msrfloppy.py gate /tmp/x/disk_a.st --disk-b build/floppy/disk_b.st`: the result above), or `work/fdb/fdb.py` (scratch names `disk1.st`/`disk2.st`).
 
-## 5. Cost of the probe, limits
+## 5. Cost of the probe (user question: one-drive users are the majority)
 
-Measured with the `none` cells (nothing inserted; a key press every 6 s; "VBL between two key presses" is the whole key -> check -> prompt cycle including ~6 s of harness sleeping):
+**Correction.** The first version's cost line here ("+0.5 s growing to +2 s per key press", from the `none` cells' VBL between key presses) was WRONG: in those cells the harness pressed a key every 6 s while a failed check took 13 s, so most key presses fell into the busy check and the measured cycle was the harness' (see `work/fdb/ana.py`).
+Per-press timing now comes from the FDC trace itself: `work/fdb/fdb.py ... swapA --presses 3` presses a key at the prompt 3 times (15 s apart, each a failed check because disk 1 is still in A), then swaps disk 2 into A and presses once more;
+`work/fdb/ana.py NAME` prints per press: key -> first FDC event (game latency), check duration (first -> last FDC event), reads per drive, type I commands on B, forced interrupts. VBL = emulated time at 50 Hz. Raw: `work/fdb/out/NAME_events.txt`, `NAME.log`.
+Variants: V0 = default set WITHOUT fl_driveb (`work/fdb/build_v0`), V1 = first version (no `bpres`, `build_v1`; it was `default: yes` in `patches/` for a few hours), V2 = final (`bpres`, `build_v2` = `build_def2`).
+
 ```
-our_none_ste (no fl_driveb)        3044 3418 3793 4168 4545 4925 5305 5683 6062 6441 6819   (about 375 VBL per cycle)
-db_none_ste_v (fl_driveb, B empty) 3783 4183 4590 5007 5431 5864 6304 6754 7208 7676 8149   (400 -> 473 VBL per cycle)
-db_none_nob_ste (--drive-b false)  4048 4463 4873 5294 5720 6153 6594 7043 7497 7985 8458   (415 -> 473)
+check duration of a FAILED check at the prompt (disk 1 in A), seconds, 3 presses each (a/b/c); STE TOS 1.62 1 MB unless noted
+B situation               V0 (no fl_driveb)      V1 (first version)       V2 (final)
+drive B disabled (--drive-b false) / no drive     -                       14.1 14.0 14.1 (v1_nob_ste)  0.86 0.90 0.92 (v2_nob_ste); ST 1.04 0.86 0.86 0.90 (v2_nob_st)
+drive B enabled, no disk  0.20 0.04 0.18 (v0_empty_ste)   13.3 13.3 13.4 (t_v1_empty_ste); ST 1.04 13.3 13.3 13.4 (v1_empty_st)   1.96 1.92 2.10 (v2_empty_ste); ST 1.04 2.10 2.04 1.98 (v2_empty_st)
+B = blank DOS-formatted disk  -                  -                        0.28 0.28 0.46 (v2_blank_ste); ST 0.16 0.44 0.42 (v2_blank_st)
+B = random-bytes disk         -                  0.16 0.36 0.12 (v1_junk_ste)  0.20 0.36 0.48 (v2_junk_ste); ST 0.22 0.22 0.28 (v2_junk_st)
+B = copy of disk 1            -                  -                        0.44 0.42 0.44 (v2_disk1_ste); ST 0.32 0.28 0.26 (v2_disk1_st)
+ST 1.04, no disk in B      0.12 0.04 0.14 (v0_empty_st)
 ```
-i.e. a failed check (wrong or no disk in the preferred drive) costs +0.5 s growing to about +2 s per key press with an empty or absent drive B (the growth with the number of probes is unexplained [INFERENCE: head position bookkeeping of the empty drive / index timing]); the successful flows (swap route, B holds disk 2) are not slower
-(first disk-2 read after the key about 350 VBL after the prompt in both `our_insB_ste` and `db_swapA_ste`, i.e. harness time). The FDC trace of a none cell shows the B probe: `fdc type I restore ... drive=1` right after the drive-0 restore, then `fdc change drive/side ... drive 1->-1`.
-Not a hang in any cell. Real hardware: an absent drive B has no index pulses, so the driver's waits run into their forced interrupts (`$60000` / `$40000` loops each, about 1-2 s apiece at 8 MHz, three of them per probe) [INFERENCE: not measured on a real ST; the emulator's empty drive B answers faster].
-Difference to MW1's probe (restore + seek + read that must move the DMA pointer by 512): the game's driver already has the bounded waits, and the compare of freshly zeroed buffer longs plays the DMA test's part (nothing can match unless the sector really arrived); the retry loop is bounded by construction: 2 reads per check, then the original prompt (no reselecting B forever).
+Key press that SUCCEEDS (disk 2 now in A) up to the end of the race load (key -> first FDC activity = game latency 3.5 s; then check + 100 sectors): V0 6.82 s, V1 6.78-6.98 s, V2 6.74-7.12 s on every B situation and both machines (e.g. v2_blank_ste 7.08, v2_junk_ste 6.74, v2_empty_st 6.92):
+**the one-time cost for a user who presses a key once at the prompt, after the swap, is zero**; before the swap each key press (a failed check) costs the V2 figures above minus V0's 0.04-0.2 s: about 0.7 s with no drive B, 1.8 s with an empty drive B, 0.1-0.4 s with an unrelated disk in B.
+
+**What the time is (V1 trace, `t_v1_empty_ste -v`)**: A: restore, boot sector read (0.04-0.2 s); then `type I restore drive=1 spinup=on` and nothing completes: three forced interrupts at +4.4 s, +8.8 s, +13.3 s (219.7 VBL each) = the three bounded waits of the game's driver in sequence:
+restore in `sub_00ce64` (`$60000` loops), restore to track 0 in `sub_00ce32/ce4e` (`$60000`), the sector read `$cc48` (`$40000`); then B is deselected. So the cost is the bounded FDC waits times the three commands, not motor spin-up, head load or the second read.
+Hatari's 4.4 s per wait: the loop `btst.b #5,$fa01.w / beq / subq.l #1,d0 / bne` is 16+8+8+10 = 42 cycles by instruction count = 2.06 s for `$60000`; the read loop with its three `move.b $860x.w,d16(a6)` and `cmpa.l` is about 112 cycles = 3.7 s for `$40000`
+(sum 7.8 s); Hatari measures 4.4 s for each of the three (MFP / DMA-chip wait states, 35 M cycles each), 13.3 s. **Real STE worst case from the loop counts: 7.8 s (instruction count) to 13 s (Hatari-like bus timing) per failed check** with no drive B - far above 2 s - IF the FDC never raises its interrupt.
+Why `bpres` is bounded below that: a restore with h=1 on a drive that is not there ends by itself after 255 steps at 3 ms = 0.77 s with seek error (bit 4) and no TR00 (Hatari with `--drive-b false` shows exactly that: 0.86 s per check); if no interrupt comes at all `bpres` waits its own `$38000` loops (42 cycles = 1.2 s at 8 MHz; Hatari-like bus timing about 2x) and forces one.
+A drive that is there but holds no disk reaches TR00 but never shows an index pulse: 1.5 s of status polling (`$2d00` iterations at ~1100 cycles with the game's register delays = 1.5 s) -> 2.0 s per check with the restore in Hatari. [INFERENCE: real ST: no drive B = TR00 never asserted (input pulled inactive) so restore ends by seek error after 255 steps; an ST drive spins while selected so an index pulse appears within spin-up + 0.2 s; neither measured on hardware.]
+A drive with a disk: restore from the last head position (22 steps at most 66 ms) + index within 0.2 s (Hatari: immediately), the rest is the game's read (0.1-0.4 s per check with an unrelated disk).
+MiSTer (read from the core, MW1 notes): a drive B without an image reports RNF (status bit 4) after 6 ms for a restore: `bpres` says "no drive" at once; with an image: TR00, index while selected.
+
+No 'no drive B' flag: it would defeat a MiSTer image mounted into B at the prompt, and the cost per failed check is now ~0.9 s (no drive) / 2 s (empty drive) instead of 13 s.
+Not a hang in any cell. Difference to MW1's probe (restore + seek + read that must move the DMA pointer by 512): the compare of freshly zeroed buffer longs plays the DMA test's part (nothing can match unless the sector really arrived); the retry loop is bounded by construction: 2 reads per check, then the original prompt (no reselecting B forever).
+
+### How a one-drive user turns it off / what to expect
+* Expect: after a wrong disk in A at the "Insert Disk 2" prompt (the key press before the swap) the prompt takes about one second longer to come back (2 s if a second drive is connected but empty). With the right disk in A nothing differs from the original. Disk 2 in drive B (if there is one) is used automatically.
+* Switch off: `python3 tools/msrpatch.py build --floppy --only $(python3 tools/msrpatch.py list | awk '$2 ~ /^yes/ && $1 !~ /^pp_/ && $1 != "fl_driveb" {print $1}')` (the same list `tools/play.sh` builds for its `--no-*` switches); a `--no-driveb) DROP+=(fl_driveb) ;;` line in `tools/play.sh` next to `--no-blit` does it there (not added: play.sh belongs to MSRFinalIntegrate).
 
 ## 6. Open points
 

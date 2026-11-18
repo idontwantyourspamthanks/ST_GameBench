@@ -46,6 +46,8 @@ def main():
     ap.add_argument("--answer", action="store_true", help="original disk A: type the manual answer (read out of RAM) when the question shows")
     ap.add_argument("--vars", default="", help="hex address of the fl_driveb variables (unit, pref[2]): printed at the end")
     ap.add_argument("--drive", action="store_true", help="after the race is up: hold 'up' ($6105 = 1, as msrfloppy.py gate --cpu) for 30 s and shoot the HUD (a short drive)")
+    ap.add_argument("--bkind", default="", choices=("", "blank", "junk", "disk1"), help="drive B holds an UNRELATED disk from power-on: blank = DOS-formatted empty 800K, junk = random bytes, disk1 = a copy of disk 1")
+    ap.add_argument("--presses", type=int, default=0, help="swapA: this many key presses at the prompt BEFORE the swap (each a failed check), 15 s apart")
     ap.add_argument("--bp", default="", help="comma list of PCs: breakpoint + register dump at each hit")
     a = ap.parse_args()
     log = open(OUT / f"{a.name}.log", "w")
@@ -61,6 +63,11 @@ def main():
     extra = ["--disk-a", str(da), "--fastfdc", "yes" if a.fast else "no", "--trace", "fdc"]
     if a.mode == "startB":
         extra += ["--disk-b", str(db)]
+    if a.bkind:
+        bsrc = {"blank": HERE / "blank_fmt.st", "junk": HERE / "junk.st", "disk1": Path(a.a)}[a.bkind]
+        bk = scratch / "unrelated_inB.st"
+        shutil.copy(bsrc, bk)
+        extra += ["--disk-b", str(bk)]
     if a.mode == "wrongB":                       # drive B holds a COPY OF DISK 1 (wrong disk for the check); disk 2 is swapped into A at the prompt
         d1b = scratch / "disk1_inB.st"
         shutil.copy(a.a, d1b)
@@ -105,14 +112,23 @@ def main():
                     time.sleep(2)
                 continue
             h.keypress(57)
-        L("disk-2 prompt", found, "t", int(time.time() - t0), "vbl", h.vbl())
+        prompt_vbl = h.vbl()
+        L("disk-2 prompt", found, "t", int(time.time() - t0), "vbl", prompt_vbl)
         L("prompt shot", h.shot(str(OUT / f"{a.name}_prompt.png")))
         L("marker $b2700:", last_mem(h.debug("m $b2700 8", 0.8)))
         if not found and not race_np:
             raise SystemExit("no disk-2 prompt")
         mark = 0 if race_np else len(h._logtext())
         n0 = h.vbl()
+        keys = []
+        for i in range(a.presses if a.mode == "swapA" else 0):
+            time.sleep(15)
+            keys.append(h.vbl()); h.keypress(57)
+            L("failed-check key press", i + 1, "at about vbl", keys[-1])
+        if a.presses:
+            time.sleep(15)
         if a.mode in ("swapA", "wrongB"):
+            keys.append(h.vbl())
             h.cmd(f"hatari-option --disk-a {db}")
         elif a.mode == "insB":
             h.cmd(f"hatari-option --disk-b {db}")
@@ -161,6 +177,34 @@ def main():
         post = [l for l in lt[mark:].splitlines() if "fdc read sector" in l or "fdc type" in l or "fdc" in l and "drive=1" in l]
         (OUT / f"{a.name}_fdc_after_insert.txt").write_text("\n".join(post) + "\n")
         (OUT / f"{a.name}_fdc_all.txt").write_text("\n".join(l[:150] for l in lt.splitlines() if "fdc change drive" in l or "fdc type" in l or "fdc read sector" in l) + "\n")
+        ev = []
+        for l in lt.splitlines():
+            if l.startswith(("fdc type", "fdc read sector", "fdc change drive")):
+                m = re.search(r"VBL=(\d+)", l)
+                if m:
+                    ev.append((int(m.group(1)), l))
+        (OUT / f"{a.name}_events.txt").write_text("keys " + " ".join(map(str, keys)) + "\nprompt %d\n" % prompt_vbl + "\n".join(re.sub(r" video_cyc=.*", "", e[1])[:120] for e in ev) + "\n")
+        pv = prompt_vbl if not race_np else 0
+        ev = [e for e in ev if e[0] >= pv]
+        bursts = []
+        for e in ev:                                            # a gap of more than 8 s (400 VBL) between FDC events = a new check
+            if bursts and e[0] - bursts[-1][-1][0] <= 400:
+                bursts[-1].append(e)
+            else:
+                bursts.append([e])
+        L("FDC bursts after the prompt (VBL at 50 Hz = emulated time; one burst = one disk check, the last one also holds the race load):")
+        for i, b in enumerate(bursts):
+            t0v, t1v = b[0][0], b[-1][0]
+            reads = [e for e in b if "fdc read sector" in e[1]]
+            r1 = sum("drive=1" in e[1] for e in reads); r0 = len(reads) - r1
+            sel1 = sum(bool(re.search(r"drive -?\d->1\b", e[1])) for e in b if "change drive" in e[1])
+            t4 = sum("type IV" in e[1] for e in b)
+            t1cmd = [e for e in b if "fdc type I " in e[1] or "fdc type I" in e[1] and "restore" in e[1] or "fdc type I seek" in e[1]]
+            L(f"  burst {i + 1}: vbl {t0v} -> {t1v}  = {(t1v - t0v) / 50:5.2f} s;  reads drive0 {r0} drive1 {r1};  B selected {sel1}x;  forced interrupts (type IV) {t4};  type I/II commands {sum('fdc type' in e[1] for e in b)}")
+            if len(reads) < 20 or i < len(bursts) - 1:
+                for e in b:
+                    if "fdc change drive" in e[1] or "fdc read sector" in e[1] and len(reads) < 20 or "fdc type" in e[1]:
+                        L("      +%5.2fs %s" % ((e[0] - t0v) / 50, re.sub(r" VBL=.*", "", e[1])[:110]))
         L("RESULT", a.name, "OK" if ok else ("n/a" if a.mode == "none" else "FAIL"))
     finally:
         h.close()

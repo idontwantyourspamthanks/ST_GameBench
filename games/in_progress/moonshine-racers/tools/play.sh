@@ -15,6 +15,7 @@
 #   tools/play.sh --no-blit          #   --no-blit = tb_blit* (no STE blitter sprites, no Timer-B guard)
 #   tools/play.sh --no-rb            #   --no-rb = ta_rb + ta_rb0 (the stock Timer B raster list)
 #   tools/play.sh --no-facestat      #   --no-facestat = ta_facestat (the talking face moves its mouth again: ta_face instead)
+#   tools/play.sh --no-driveb        #   --no-driveb = fl_driveb (floppy only: no second-drive support)
 #   tools/play.sh --road             # no-op (kept for old command lines): the faster road is part of the default set now
 #   tools/play.sh --print            # only print the Hatari command line
 #
@@ -52,6 +53,7 @@ while [[ $# -gt 0 ]]; do
         --no-blit)     DROP+=(tb_blit tb_blit11 tb_blit13 tb_blit15) ;;
         --no-rb)       DROP+=(ta_rb ta_rb0) ;;
         --no-facestat) DROP+=(ta_facestat); ADD+=(ta_face) ;;
+        --no-driveb)   DROP+=(fl_driveb) ;;
         --road)     ;;                      # no-op alias
         -h|--help)  sed -n '2,24p' "$0"; exit 0 ;;
         *) echo "unknown option: $1" >&2; exit 2 ;;

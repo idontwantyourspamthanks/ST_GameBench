@@ -1397,7 +1397,7 @@ road $c0000: 000C0000: 52 44 47 31 00 0a 00 00                          RDG1....
 
 Raw outputs: `work/tint2/res/` (scripts `work/tint2/{mxlib_fin,exp_state_fin,cmpstate_fin,steer_fin,pixcap2,pixcmp2,ext_sum2,cold_fin,floppy_fin,rastercheck}.py`, queues `run_*.sh`). Machine: Hatari 2.6.1, STE TOS 1.62 1 MB at 8 MHz unless named; every patch set is built with the REAL `tools/msrpatch.py live` from its own default selection.
 
-### 12.1 The default set (`verify: ALL OK`; `build`: 32 patches + `pp_bigram_cache`, payload 54,568 B `$B2700-$BFC27`; floppy 107 sectors)
+### 12.1 The default set (`verify: ALL OK`; `build`: **33 patches** + `pp_bigram_cache`, payload **55,348 B** `$B2700-$BFF33`; floppy **109 sectors** - the count includes MSRFloppyDriveB's `fl_driveb`, floppy-only, `default: yes`, which lets disk 2 be in drive B as well as swapped into A)
 
 Flipped: `mg_sync` + `mg_pace` `default: yes` (pacer at site `$7b52`/`$7b74`, `SAFE equ 0`), `ta_facestat` `yes` (and `ta_face` `no`), `ta_rb`, `ta_rb0`, `ta_nomouse`, `tb_blit tb_blit11 tb_blit13 tb_blit15` `yes`. `mx_sync`, `mx_pre`, `mf_sync`, `mf_pre`, `mt_sync`, `sb_*`, `tc_clrx`, `hd_init` stay `default: no`. `mx_sync` now declares `conflicts: mg_sync mg_pace mf_sync mf_pre` (plus `mt_sync`), `mt_sync` `conflicts: mg_pace`, so no invalid pair can be selected (checked: `build --only mx_sync mx_pre ...` and `--noextrap` still build). `tools/msrpatch.py build|live --set NAME=VALUE` overrides a patch's `NAME equ` line (mg's deadline margin: `--set SAFE=3`; `tools/play.sh --safex 3`). `play.sh` gained `--safex N`, `--no-nomouse`, `--no-blit`, `--no-rb`, `--no-facestat` (each takes the patch out of the default selection) and `--noextrap` now swaps `mg_sync mg_pace` for `mt_sync`; `hd_stage.s` was regenerated from `tools/msrhudgen.py` (one note line) so the "used by mx_sync" text is not reintroduced.
 
@@ -1483,6 +1483,16 @@ The palette split stays on the same scanlines and the in-line write timing does 
 
 ### 12.8 Floppy cold boots + 2-minute drives (`floppy_fin.py` = `msrfloppy.gate` + steered drive, `build/mfin_floppy`)
 
+**Gate procedure note (after `fl_driveb` became default):** Hatari's config has `bAutoInsertDiskB=TRUE`, so a disk B that sits NEXT TO disk A is auto-inserted into drive B and `fl_driveb` finds disk 2 there - the "Insert Disk 2" prompt then never appears (observed: `bus.py` on the in-directory pair printed "no disk-2 prompt"). The one-drive swap route must therefore be gated on a LONE copy of disk A. Re-run with the shipped default of this wave (33 patches, payload 55,348 B, 109 sectors):
+```
+cp build/mfin_floppy/disk_a.st /tmp/loneA/disk_a.st
+msrfloppy.py gate /tmp/loneA/disk_a.st --disk-b build/mfin_floppy/disk_b.st --machine ste --mem 1024 --tos 1.62 --cpu 16
+  disk-2 prompt True t 46 vbl 2407, story screens True, MSPO, after swap vbl 4094 $1021/$100e (2, 218), RDG1
+  extras $b8f38 = 00 00 02 cb / 00 00 01 9a / 00 00 01 9d (16 MHz, up held, $100e 696)  -> the swap route works with fl_driveb on
+megaste 4096 2.06 (first fl_driveb version, 108-sector payload): prompt True t 72 vbl 4454, after swap (2, 215), extras 00 00 03 0d / 01 9a / 01 9d
+```
+The earlier 2-minute-drive numbers below were measured with the same gate on the same disk-A image before `fl_driveb` existed (it only adds a drive-B lookup, no code on the critical path); the counters after the rebuild are unchanged in kind (0x2ca / 0x30d extras).
+
 ```
 STE 1 MB   : disk-2 prompt True vbl 2409, story screens True, MSPO, RDG1 (WPTR $d7020-$d7040 OK)
              DRIVE native 71 s (3666 VBL, $100e 274 -> 999, 432 extras/425 groups), DRIVE 16 MHz 62 s (3196 VBL, $100e 1037 -> 1668, 1068 extras/522)
@@ -1563,7 +1573,7 @@ Explanation (`[INFERENCE]`, consistent with all counts): the message ticker type
 The STE cold boots log 2 (floppy) / 3 (HD, 124 s) `Bus Error` lines; the Mega STE logs 0. Re-run with the full Hatari log kept (`work/tint2/bus.py`, `hdbus.py`; logs `work/tint2/res/bus_*.log`, `hdbus_*.log`) — every line, verbatim:
 
 ```
-v1 = shipped default set, floppy STE 1 MB, 2 lines, both at the disk-2 swap/first race pass:
+v1 = shipped default set, floppy STE 1 MB, 2 lines, both at the disk-2 swap/first race pass (re-checked on the rebuilt 33-patch sets via a lone disk A, incl. the final 109-sector one: same two PCs, same addresses):
   WARN : Bus Error reading at address $ff8e21, PC=$b4928 addr_e3=b4928 op_e3=1039
   WARN : Bus Error reading at address $ff8e21, PC=$bf6b2 addr_e3=bf6b2 op_e3=1039
 v2 = default minus tb_blit* (1 line):  ... PC=$bf6b2 addr_e3=bf6b2 op_e3=1039
