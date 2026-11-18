@@ -81,6 +81,7 @@ vMCol   equ     168
 vShow   equ     170
 ETILE   equ     $A8800
 rsOk    equ     40
+rsKey   equ     42                      ; key latch: the F10 make byte ($44) seen by the ACIA hook ed_key, 0 = none
 
         org     CODE1
         dc.w    $4ef9
@@ -282,14 +283,18 @@ apply_entry:
 .p:     move.w  d1,(a0)
         rts
 
-; frame flip in the game ($3dfd6): F10 during a playtest -> editor
+; frame flip in the game ($3dfd6): F10 during a playtest -> editor.  The key latch rsKey (set by ed_key in the ACIA path, so a tap shorter than
+; the game's once-per-loop poll is not lost) is consumed here every frame: a key pressed in a tower never reaches the title.
 ed_game:
-        cmpi.b  #$44,$38498.l
-        bne.s   .n
-        tst.w   RS+rsTest.l
+        tst.w   RS+rsKey.l
         beq.s   .n
-        clr.b   $38498.l
+        cmpi.w  #$44,RS+rsKey.l
+        bne.s   .c
+        tst.w   RS+rsTest.l
+        beq.s   .c
+        clr.w   RS+rsKey.l
         bra.w   pt_done
+.c:     clr.w   RS+rsKey.l
 .n:     jmp     $3868a.l
 
 ; playtest ended (level complete or F10) -> editor, then restart the playtest or leave
@@ -307,7 +312,7 @@ run_result:
 .title: clr.w   RS+rsTest.l
         jmp     $3db8c.l
 
-; title poll ($3d6c4): F10 = manager; a finished playtest (game over) returns to the editor
+; title poll ($3d6c4): F10 (latched make byte, tap-proof) or D (the game's own last-byte cell, as before: a letter latch would survive the high-score initials) = manager; a finished playtest (game over) returns to the editor
 ed_title:
         jsr     $3853a.l
         tst.w   RS+rsTest.l
@@ -318,9 +323,13 @@ ed_title:
 .nt:    clr.w   RS+rsCamp.l
         clr.w   RS+rsLvl.l
         clr.w   $33a44.l
-        cmpi.b  #$44,$38498.l
+        tst.w   RS+rsKey.l
+        beq.s   .d
+        clr.w   RS+rsKey.l
+        bra.s   .go
+.d:     cmpi.b  #$20,$38498.l
         bne.s   .no
-        clr.b   $38498.l
+.go:    clr.b   $38498.l
         clr.w   RS+rsFrom.l
         bsr.w   ed_run
 .res:   addq.l  #4,a7
@@ -380,6 +389,7 @@ ed_run:
         clr.b   $ffff8203.w
         move.w  #$2300,sr
         clr.b   $38498.l
+        clr.w   RS+rsKey.l
         clr.w   RS+rsTest.l
         tst.w   RS+rsEd.l
         beq.s   .fresh
@@ -399,9 +409,10 @@ ed_run:
 .w:     cmp.w   vFrame(a5),d0
         beq.s   .w
         jsr     $3853a.l
-        cmpi.b  #$44,$38498.l
+        move.w  RS+rsKey.l,d0
+        clr.w   RS+rsKey.l
+        cmp.w   #$44,d0
         bne.s   .nk
-        clr.b   $38498.l
         bsr.w   f10
 .nk:    bsr.w   input
         tst.w   vRes(a5)
@@ -418,6 +429,7 @@ ed_run:
 .rp:    move.l  (a0)+,(a1)+
         dbra    d0,.rp
         clr.b   $38498.l
+        clr.w   RS+rsKey.l
         move.w  #$ffff,$3849a.l
         move.w  vRes(a5),d0
         cmp.w   #1,d0
@@ -2182,6 +2194,31 @@ ov_check:
 .out:   rts
 .bad:   clr.l   OVS.l
         rts
+
+; ACIA path hook ($3851a, replaces `move.w (a7)+,d0 / bclr.b #6,$fa11.w` and then does both itself).  The game keeps ONE last-byte cell ($38498) and
+; samples it once per title/game loop, so a key whose break byte arrives before the next sample was lost; the F10 make byte is latched here instead
+; (rsKey), and the title poll / manager / playtest consume the latch.  Reached for every byte (keys, joystick, mouse), from the Gamex hook $200 and
+; from ni_latch's stub.  d0 is NOT the received byte here (ni_latch's stub1 has masked it), so the byte is read back from the cell, which the
+; stub / $38514 has just stored (bytes >= $f6 are dropped before the store: the cell then still holds the previous byte, harmless: at most the
+; latch is set again while F10 is still held).  d0 is free (restored from the stack below); nothing else is touched.
+ed_key:
+        move.b  $38498.l,d0
+        cmp.b   #$44,d0
+        bne.s   .n
+        move.w  #$44,RS+rsKey.l
+.n:     move.w  (a7)+,d0
+        bclr.b  #6,$fffffa11.w
+        rte
+
+; Options page ($3d662, replaces `bsr.w $3b360` of the last list line + `bra.w $3d698`): the displaced call, then a hint on the empty line 1
+ed_opt:
+        jsr     $3b360.l
+        lea     opthint(pc),a0
+        moveq   #1,d0
+        jsr     $3b360.l
+        jmp     $3d698.l
+opthint: dc.b   'F10/D  Level editor ',0
+        even
 
 ; ------------------------------------------------------------------ data (second block)
         org     DATA

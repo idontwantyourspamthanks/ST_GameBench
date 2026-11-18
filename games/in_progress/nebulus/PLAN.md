@@ -40,6 +40,22 @@ Verified: HW-detect screen, then the loader pictures, then the game's title ("Mi
   second flip and drawing every flip; at 8 MHz the draw alone must also fit 160,256 cycles (needs a ~26% cut).
   Only worthwhile on 16 MHz+ machines. User: queue it, do not build yet.
 - **Floppy release**: waiting for the user's real Nebulus floppy image; HD release first.
+- **Next editor round (one owner, after NebF10Debug lands; do not start earlier: it edits `ed_editor.s`/`gen_ed.py`):**
+  1. **FIRST: fix the 'Pale block' menu entry**: it places cell `$85`, which is the LIFT START slab, so every pale
+     block is a lift start with no end (lift analysis: `work/notes/lifts.md`; `editor.md` wrongly calls `$85/$89/$8d`
+     'solid'). Replace with a real 'Lift >' entry (from here / stop here / delete, then pick the other end; add the
+     `$81` ledge under the slab; warn when a pillar blocks the lift): code in `work/lifts/ed_lift.s`
+     (`build_lift_editor.py`; ~566 B: needs a 4th block in `gen_ed.py`, free ranges in `lifts.md` section 4) and
+     `work/lifts/ovl_lifts.patch` for the PC tool.
+  2. **Keyboard shortcuts** to set the tile type at the selected cell (one key per type, repeat-last key, shown in the
+     legend); acceptance: the trainer hooks (T/E read the same `$38498` cell) are SUPPRESSED while the editor is
+     active so an editor key can never toggle a trainer.
+  3. **Campaign disk**: 'Load from campaign disk' / 'Save to campaign disk' (drive A:, B: optional), our own
+     'Insert campaign disk, press fire' prompt (check the disk is present BEFORE opening; a failed open on an empty
+     drive can raise TOS's reset/retry dialog that cannot be dismissed in-game), the game disk is never written; a tool to
+     build blank campaign disks (.st/.msa) holding a fixed-size `NEBLEVEL.OVL`.
+  4. The Options-page hint for F10 (if NebF10Debug does not finish it).
+  F9 (PP's Gamex exit key): not worried; the README says to avoid it.
 
 ## Future (user's plan, not today): nebulus.kswapps.com
 A community site for Nebulus levels and campaigns, and an Amiga version of the game ("yes this means we're also

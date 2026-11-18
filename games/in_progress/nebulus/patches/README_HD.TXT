@@ -15,8 +15,26 @@ Changes in this release
 @@EDITOR
 LEVEL EDITOR AND CAMPAIGNS
 ==========================
-Start: on the title page press F10.  You get the manager (joystick: up/down
-moves, FIRE selects, LEFT = "< back", F10 = leave):
+HOW TO OPEN IT: wait for the game's own title.  After START.TOS the screens
+come in this order and F9/F10 do nothing before the last one: the
+hardware-detect text screen (about 25 s, or any key), the box-art picture
+(about 15 s; SPACE skips it), then the title, about 40 s after START.TOS was
+started: the NEBULUS logo with a text page that changes by itself every 5 s
+(credits with the frog on a plinth, High Scorers, Options).  On ANY of those three pages tap
+F10 (a normal key press is enough; it does not have to be held), or press D
+(for about a tenth of a second).
+The Options page lists it on its second line: "F10/D  Level editor".  F9 is not the editor
+key: it is PP's Gamex exit-to-desktop key.  Avoid it; after F9 restart the game
+fresh (from the desktop, or reset the machine): the editor and your custom
+levels are switched off until then.
+If nothing happens in an emulator, the key probably never reached the
+emulated ST: D is a plain letter key and always passes (F10 is an ordinary ST
+key in Hatari too: Hatari's own shortcuts are F11, F12, Pause and AltGr+key;
+a desktop, a remote session or a laptop's Fn row may take F9/F10 first).  On a
+real ST, or MiSTer, F10 is the ST's F10 key.
+
+You get the manager (joystick: up/down moves, FIRE selects, LEFT = "< back",
+F10 = leave):
 
    Original game   leave the manager and play normally (nothing is changed)
    Campaigns >     list of campaigns; pick one: Play / Edit entries / Rename /

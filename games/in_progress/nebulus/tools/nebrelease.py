@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-r"""Nebulus release tool (hard-disk release; the floppy release needs the user's floppy image, see `floppy`).
+r"""Nebulus release tool (hard-disk release, and the floppy release from the user's floppy image in alt/floppy/).
 
     python3 tools/nebrelease.py credit              # regenerate patches/cr_credit.nep from patches/cr_credit.s + patches/VERSION
     python3 tools/nebrelease.py build [--out DIR] [--only P ...] [--zip]   # release folder (+ dist/Nebulus_hd_v<VERSION>.zip)
     python3 tools/nebrelease.py check ZIP|DIR       # md5 list of a shipped zip/folder vs a fresh build (content-vs-gate)
-    python3 tools/nebrelease.py floppy              # not built yet: needs alt/floppy/ (the user's real floppy image)
+    python3 tools/nebrelease.py floppy [--out DIR] [--only P ...] [--zip]   # = build --floppy: dist/Nebulus_floppy_v<VERSION>.zip (game disk .st, blank campaign disk .st, README, PATCHES)
+    python3 tools/nebrelease.py check ZIP           # a floppy zip is recognised by its name (..._floppy_...) and compared with a fresh floppy build
 
 The version lives in ONE place, patches/VERSION; README.TXT, PATCHES.TXT, the zip name and the on-screen credit line
 (`v<VERSION> enhanced by dad_prg`, patch cr_credit) all take it from there.  Build = tools/nepatch.py (default patch set unless
@@ -101,8 +102,8 @@ DOCS = {
         "  \"(c)1987,8 Hewson\" and \"Mission #n\" (same font and colour scheme as the other lines).  The High Scorers and Options pages are not touched; the rest of the\n"
         "  title page is pixel-identical to the original (compared in Hatari)."),
     "ed_overlay": (
-        "Level editor and campaign manager: F10 on the title page opens a menu to build your own towers and campaigns (original and own towers mixed), try them in a playtest and save them to NEBLEVEL.OVL (see LEVEL EDITOR below).",
-        "Level editor and campaign manager.  F10 on the title page opens the manager (original game, campaigns, levels, save); the editor draws its own screen, takes the joystick, plays your tower in the real game (Playtest) and writes campaigns and levels into NEBLEVEL.OVL next to START.TOS.  Seven hooks: the tower decoder, the initial time, the tower name, the tower-complete step (campaign progress), the title poll, the frame flip (F10 in a playtest) and the enemy start direction.  With no or an empty NEBLEVEL.OVL the game plays as the original."),
+        "Level editor and campaign manager: F10 (or D) on the title page opens a menu to build your own towers and campaigns (original and own towers mixed), try them in a playtest and save them to NEBLEVEL.OVL (see LEVEL EDITOR below).  The Options page shows the key (\"F10/D  Level editor\").",
+        "Level editor and campaign manager.  F10 (or D) on the title page opens the manager (original game, campaigns, levels, save); the editor draws its own screen, takes the joystick, plays your tower in the real game (Playtest) and writes campaigns and levels into NEBLEVEL.OVL next to START.TOS.  Nine hooks: the tower decoder, the initial time, the tower name, the tower-complete step (campaign progress), the title poll, the frame flip (F10 in a playtest), the enemy start direction, the keyboard interrupt path (latches the F10 key-down byte so a short tap cannot be overwritten by its key-up byte before the game's next key poll; every other byte is passed on unchanged) and the Options page (draws the line \"F10/D  Level editor\" on its empty second line, in the game's font).  With no or an empty NEBLEVEL.OVL the game plays as the original."),
     "nt_freeze_static": ("Timer frozen from boot (static variant).", "Timer frozen from boot, no key (alternative to nt_trainers)."),
     "nt_noenemy_static": ("No enemies from boot (static variant).", "No enemies from boot, no key (alternative to nt_trainers)."),
 }
@@ -192,6 +193,71 @@ def build(out: Path, only, make_zip: bool) -> Path:
     return out
 
 
+# ---------------------------------------------------------------- floppy release (tools/nefloppy.py patches the user's .st)
+FLOPPY_FOLDER = "NEBULUS_floppy"
+FLOPPY_GAME = "Nebulus_game_disk.st"
+FLOPPY_CAMP = "Nebulus_campaign_disk.st"
+FLOPPY_TESTED = ("STE with TOS 1.62 and 1 MB, ST with TOS 1.04 and 1 MB, Mega STE with TOS 2.06 and 4 MB (each: title page with the credit line, F10 manager, editor with a playtest, a tower with the T / E trainers, a 20-second drive; the game disk was read from drive 0 only and never written) and an ST with TOS 1.04 and 512 KB (editor switched off by the stub, the rest as before).")
+FLOPPY_DOCS = dict(DOCS)
+FLOPPY_DOCS["nt_trainers"] = (DOCS["nt_trainers"][0], DOCS["nt_trainers"][1].replace(
+    "  (The game's own cheat code, HELLOIAMJMP on the title, is described in NEBCHEAT.TXT.)  Three hooks", "  Three hooks"))
+FLOPPY_DOCS["ed_overlay"] = (
+    "Level editor: F10 on the title page opens a menu to build your own towers and campaigns (original and own towers mixed) and to try them in a playtest. On this floppy build the levels live in RAM only (no disk save yet, see LEVEL EDITOR below).",
+    "Level editor and campaign manager.  F10 on the title page opens the manager (original game, campaigns, levels); the editor draws its own screen, takes the joystick and plays your tower in the real game (Playtest).  Seven hooks (tower decoder, initial time, tower name, tower-complete step, title poll, frame flip, enemy start direction), the keyboard interrupt hook for F10 / D, and the Options-page hint line.  "
+    "The disk save of the hard-disk build (a TOS excursion that needs PP's Gamex memory image) does not exist on the floppy: 'Save to disk' keeps the level in RAM and says so; levels are lost at reset.  Hooks only react to the editor's own state, so with nothing created the game plays as the original.  On a 512 KB machine the stub takes the title hook out again (the editor needs RAM above 512 KB).")
+
+
+def floppy_render(text, sel, rep, blocks, stamp):
+    names = [p.name for p in sel]
+    short = "\n".join("  * " + FLOPPY_DOCS[n][0] for n in names)
+    parts = []
+    for n in names:
+        parts.append(f"{n}\n" + textwrap.fill(" ".join(FLOPPY_DOCS[n][1].replace("@VERSION@", version()).split()), 78, initial_indent="  ", subsequent_indent="  "))
+        for nn, pa, fa, orig, new in rep:
+            if nn == n:
+                parts.append(f"    ${fa:06x}  {orig.hex()} -> {new.hex()}   (the HD build's address ${pa:06x})" if pa != fa else f"    ${fa:06x}  {orig.hex()} -> {new.hex()}")
+        for nn, ad, ln in blocks:
+            if nn == n:
+                parts.append(f"    ${ad:06x}  {ln} bytes of code/data (zero before; part of TOPPLER.JMP now)")
+        parts.append("")
+    ed = "ed_overlay" in names
+    text = re.sub(r"@@EDITOR\n(.*?)@@END\n\n?", (lambda m: m.group(1) + "\n") if ed else "", text, flags=re.S)
+    return (text.replace("{WHATSNEW}", short).replace("{PATCHES}", "\n".join(parts).rstrip())
+            .replace("@VERSION@", version()).replace("{GIT}", stamp).replace("@TESTED@", FLOPPY_TESTED))
+
+
+def build_floppy(out: Path, only, make_zip: bool, corrupt: bool = False) -> Path:
+    import nefloppy
+    gen_credit()
+    names = sorted(only) if only else nefloppy.default_names()
+    miss = [n for n in names if n not in FLOPPY_DOCS]
+    if miss:
+        raise SystemExit(f"no user text in tools/nebrelease.py DOCS for {miss}: describe them before releasing")
+    img, rep, blocks = nefloppy.build_disk(names, corrupt=corrupt)
+    sel = [p for p in nepatch.load_patches() if p.name in names]
+    stamp = git_stamp()
+    out.mkdir(parents=True, exist_ok=True)
+    for f in out.iterdir():
+        f.unlink()
+    (out / FLOPPY_GAME).write_bytes(img)
+    (out / FLOPPY_CAMP).write_bytes(nefloppy.campaign_disk())
+    (out / "README.TXT").write_bytes(crlf(wrap(floppy_render((PATCHES / "README_FLOPPY.TXT").read_text(), sel, rep, blocks, stamp))))
+    (out / "PATCHES.TXT").write_bytes(crlf(wrap(floppy_render((PATCHES / "PATCHES_FLOPPY.TXT").read_text(), sel, rep, blocks, stamp))))
+    print(f"floppy: {out}: {FLOPPY_GAME} {len(img)} B, {FLOPPY_CAMP}; patches:", ", ".join(names), "| stamp:", stamp)
+    if make_zip:
+        DIST.mkdir(exist_ok=True)
+        z = DIST / f"Nebulus_floppy_v{version()}.zip"
+        dt = commit_time()
+        with zipfile.ZipFile(z, "w", zipfile.ZIP_DEFLATED) as zf:
+            for f in sorted(out.iterdir()):
+                zi = zipfile.ZipInfo(f"{FLOPPY_FOLDER}/{f.name}", date_time=dt)
+                zi.compress_type = zipfile.ZIP_DEFLATED
+                zi.external_attr = 0o644 << 16
+                zf.writestr(zi, f.read_bytes())
+        print(f"zip {z} {z.stat().st_size} B md5 {hashlib.md5(z.read_bytes()).hexdigest()}")
+    return out
+
+
 def md5s(d: Path) -> dict:
     return {f.name: (f.stat().st_size, hashlib.md5(f.read_bytes()).hexdigest()) for f in sorted(d.iterdir()) if f.is_file()}
 
@@ -204,8 +270,9 @@ def check(target: Path, only):
         tmp = Path(tempfile.mkdtemp(prefix="nebchk-"))
         with zipfile.ZipFile(t) as zf:
             zf.extractall(tmp)
-        t = tmp / FOLDER
-    fresh = build(GAME / "build/release/check", only, False)
+        t = tmp / (FLOPPY_FOLDER if "_floppy_" in t.name else FOLDER)
+    fresh = (build_floppy(GAME / "build/release/check_floppy", only, False) if "_floppy_" in Path(target).name
+             else build(GAME / "build/release/check", only, False))
     a, b = md5s(t), md5s(fresh)
     for n in sorted(set(a) | set(b)):
         print(f"{'same' if a.get(n) == b.get(n) else 'DIFF'}  {n:14} shipped {a.get(n)}  fresh {b.get(n)}")
@@ -218,26 +285,23 @@ def main():
     sub.add_parser("credit")
     b = sub.add_parser("build"); b.add_argument("--out", default=str(GAME / "build/release" / FOLDER)); b.add_argument("--only", nargs="*"); b.add_argument("--zip", action="store_true")
     b.add_argument("--floppy", action="store_true")
+    f = sub.add_parser("floppy"); f.add_argument("--out", default=str(GAME / "build/release" / FLOPPY_FOLDER)); f.add_argument("--only", nargs="*"); f.add_argument("--zip", action="store_true"); f.add_argument("--corrupt", action="store_true")
     c = sub.add_parser("check"); c.add_argument("target"); c.add_argument("--only", nargs="*")
-    sub.add_parser("floppy")
     sub.add_parser("version")
     a = ap.parse_args()
     if a.cmd == "credit":
         print("wrote", gen_credit())
     elif a.cmd == "build":
         if a.floppy:
-            raise SystemExit(FLOPPY_MSG)
-        build(Path(a.out), a.only, a.zip)
+            build_floppy(Path(a.out) if a.out != str(GAME / "build/release" / FOLDER) else GAME / "build/release" / FLOPPY_FOLDER, a.only, a.zip)
+        else:
+            build(Path(a.out), a.only, a.zip)
     elif a.cmd == "check":
         sys.exit(check(Path(a.target), a.only))
     elif a.cmd == "version":
         print(version())
     elif a.cmd == "floppy":
-        raise SystemExit(FLOPPY_MSG)
-
-
-FLOPPY_MSG = ("floppy release: not built.  It needs the user's real Nebulus floppy image in alt/floppy/ (the build would patch its START/loader and add "
-              "NEPATCH.BIN); see work/notes/release.md for what is known about START.TOS and the floppy.")
+        build_floppy(Path(a.out), a.only, a.zip, a.corrupt)
 
 
 if __name__ == "__main__":

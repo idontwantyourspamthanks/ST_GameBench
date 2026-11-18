@@ -1,0 +1,14 @@
+title True 63s
+/home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/floppy/fgate.py:28: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  p = shot(n); im = Image.open(p).convert('RGB').crop(PIC).crop(box); return sum(1 for q in im.getdata() if q != (0, 0, 0))
+credit band lit px (frog page) 0 (patched: 3284 expected on a build that prints it; control: 0)
+marker $77ec0 b'\x00\x00\x00\x00' | sites: $39fd6 0x4e75 $38514 0x13c0 0x38498 $3dcec 0x4eb9 0x3853a $3d690 0x33fc 0xfffe0003 $3a30e 0x4e75 $377a2 0x41f9 0x327f0 $3851a 0x301f 0x8b80006
+store $BC000 0000000000000000
+/home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/floppy/fgate.py:28: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  p = shot(n); im = Image.open(p).convert('RGB').crop(PIC).crop(box); return sum(1 for q in im.getdata() if q != (0, 0, 0))
+F10: menu text px 8564 title rows px 4340 | editor expected: False
+tower: timer (30, 78, 78) tower idx 0
+20 s drive: 14 rounds, vbl +1254, tower 0, timer (24, 72, 58)
+VBL vector 0x382d8 ACIA vector 0x384fc
+FDC reads: 678 drives ['0'] | FDC sector writes: 0
+crash lines in Hatari log: 0

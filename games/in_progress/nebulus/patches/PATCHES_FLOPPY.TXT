@@ -1,0 +1,47 @@
+Nebulus / Tower Toppler (Hewson / US Gold, 1988) - enhanced floppy release
+v@VERSION@ (dad_prg)
+build: {GIT}
+==============================================================================
+
+Nebulus_game_disk.st is the user's original floppy image (the Atari Legend
+release of the US Gold "Tower Toppler": 2005 intro and crack) with ONE file
+changed and one moved:
+
+  TOPPLER.JMP  the game, 271,839 -> 279,552 bytes.  It is the game's GEMDOS
+               program image, which the disk's own loader (AUTO\TOWERTOP.PRG)
+               reads to RAM $33B00 and starts.  The file is now stored already
+               RELOCATED for that address (the loader never runs it anywhere
+               else); the absolute flag in its header is set, so the game's
+               own relocation code just jumps on, and its relocation table
+               (2,495 bytes) is gone.  The changes below are written into it.
+               The new code and data take the place of the dropped table and
+               of the empty RAM behind it, $75720..$77F00 (10,208 bytes,
+               stored in the file; the file grows by 7,713 bytes), and the
+               game's final jump goes to a short stub there that jumps on to
+               the game's start ($38624).
+  TOPPLER.NEO  the title picture: moved to other sectors (the file before it
+               grew); contents unchanged.
+  Everything else is byte for byte the original: boot sector (checksum
+  $1234), AUTO\TOWERTOP.PRG, AUTO\BOOTDISK.PRG, BOOTDISK.PRG, PLANE.NEO, the
+  hidden 448-byte program in the free area at track 69 sector 7 (the sector
+  after the old end of the files, which the loader reads), names and dates.
+
+The patch sites are the same pieces of game code as in the hard-disk release
+(the floppy's game is the same program, built a little differently: always
+60 Hz, a few routines shorter).  Addresses below are RAM addresses in the
+running game.  Code after text offset $4C46 sits 36 bytes lower than in PP's
+Gamex build, after $8406 24, after $8436 12 and after $850A 8 bytes lower
+(the HD build's address is given where it differs).  The original bytes of
+every site were compared with the HD build's, instruction by instruction,
+before anything was written.
+
+Changes in this release:
+{PATCHES}
+
+Nebulus_campaign_disk.st: a blank 720 KB disk (FAT12, 9 sectors, 2 sides) that
+carries one file, NEBLEVEL.OVL (8192 bytes, all zero) = an empty campaign and
+level file in the format of the hard-disk release.  Nothing on the game disk
+reads or writes it: this build does not talk to the drive after the game has
+started (the editor keeps its levels in RAM).
+
+Nothing else of the game is changed.  Tested in Hatari only; see README.TXT.

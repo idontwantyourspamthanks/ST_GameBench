@@ -1,0 +1,21 @@
+title True 69s
+/home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/floppy/fgate.py:28: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  p = shot(n); im = Image.open(p).convert('RGB').crop(PIC).crop(box); return sum(1 for q in im.getdata() if q != (0, 0, 0))
+credit band lit px (frog page) 3284 (patched: 3284 expected on a build that prints it; control: 0)
+marker $77ec0 b'NEPO' | sites: $39fd6 0x602a $38514 0x4ef9 0x76d04 $3dcec 0x4eb9 0x76c08 $3d690 0x4eb9 0x77a00 $3a30e 0x4e71 $377a2 0x4ef9 0x75740 $3851a 0x4ef9 0x77844
+store $BC000 0000000000000000
+/home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/floppy/fgate.py:28: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  p = shot(n); im = Image.open(p).convert('RGB').crop(PIC).crop(box); return sum(1 for q in im.getdata() if q != (0, 0, 0))
+F10: menu text px 5784 title rows px 0 | editor expected: True
+playtest: timer (32, 24, 68) RS 000000007fff000100010001 tower 0
+after F10 in playtest: RS 000000000000000100000001
+after Save: store RAM 4e434d5000010001 (NCMP v1 expected: the level is kept in RAM)
+tower: timer (30, 78, 78) tower idx 0
+E: noen 0xffff states (0, 0, 0, 0)
+E on: timer (24, 56, 70) (24, 56, 18) counting True
+T: frz 0xffff (24, 56, 5) (24, 56, 5) (24, 56, 5) frozen True
+T again: running (24, 48, 55) (24, 40, 62) True
+20 s drive: 14 rounds, vbl +1244, tower 0, timer (24, 72, 71)
+VBL vector 0x382d8 ACIA vector 0x384fc
+FDC reads: 700 drives ['0'] | FDC sector writes: 0
+crash lines in Hatari log: 0

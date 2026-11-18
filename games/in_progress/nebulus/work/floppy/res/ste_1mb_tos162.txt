@@ -1,0 +1,18 @@
+(raw output of fgate.py on the built image before the zip; image md5 5c832194c7602348d105cb21e08569d5 = the zip's Nebulus_game_disk.st)
+title True 63s
+credit band lit px (frog page) 3284
+marker $77ec0 b'NEPO' | sites: $39fd6 0x602a $38514 0x4ef9 0x76d04 $3dcec 0x4eb9 0x76c08 $3d690 0x4eb9 0x77a00 $3a30e 0x4e71 $377a2 0x4ef9 0x75740 $3851a 0x4ef9 0x77844
+store $BC000 0000000000000000
+F10: menu text px 5784 title rows px 0 | editor expected: True
+playtest: timer (32, 24, 68) RS 000000007fff000100010001 tower 0
+after F10 in playtest: RS 000000000000000100000001
+after Save: store RAM 4e434d5000010001 (NCMP v1 expected: the level is kept in RAM)
+tower: timer (30, 78, 78) tower idx 0
+E: noen 0xffff states (0, 0, 0, 0)
+E on: timer (24, 56, 69) (24, 56, 16) counting True
+T: frz 0xffff (24, 56, 3) (24, 56, 3) (24, 56, 3) frozen True
+T again: running (24, 48, 53) (24, 40, 61) True
+20 s drive: 14 rounds, vbl +1248, tower 0, timer (24, 72, 70)
+VBL vector 0x382d8 ACIA vector 0x384fc
+FDC reads: 695 drives ['0'] | FDC sector writes: 0
+crash lines in Hatari log: 0

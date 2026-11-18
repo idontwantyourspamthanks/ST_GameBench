@@ -1,0 +1,8 @@
+$ nefloppy build --corrupt (site byte of the SOURCE game flipped)
+cr_credit: site $3d698 -> floppy $3d690: original instructions differ from PP's (33fcfffe00038212 vs 32fcfffe00038212); nothing written
+ls: cannot access '/tmp/neg.st': No such file or directory
+$ nebrelease floppy --corrupt
+cr_credit: site $3d698 -> floppy $3d690: original instructions differ from PP's (33fcfffe00038212 vs 32fcfffe00038212); nothing written
+ls: cannot access '/tmp/negrel': No such file or directory
+$ wrong source image (one boot-sector byte changed)
+refused: wrong.st: md5 differs from the image this tool was written against (32469782608f012a88dfa6a50de1e10f); the address map is only valid for that game

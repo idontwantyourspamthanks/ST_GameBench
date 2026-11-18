@@ -1,0 +1,17 @@
+PP text 0xa866 relocs 1566  floppy text 0xa85e relocs 1564
+site(PP)   floppy   PP orig bytes       floppy bytes (normalised compare)
+377a2 377a2 41f9000327f0 41f9000327f0 SAME ed decode hook
+37a90 37a90 200904800003 200904800003 SAME ed spawn dir
+3792c 3792c 303900033a20 303900033a20 SAME nt spawn head
+3adb4 3ad90 d040303b00e6 d040303b00e6 SAME ed init time
+3b0a4 3b080 4a7900033938 4a7900033938 SAME nt timer tick
+38514 38514 13c000038498 13c000038498 SAME ni_latch ACIA store
+3855a 3855a 33c1000338f0 33c1000338f0 SAME ni_latch fire flag
+39ffa 39fd6 4e75 4e75 SAME ni_jump
+3a332 3a30e 4e75 4e75 SAME ni_shoot
+3d110 3d108 e549d0c12050 e549d0c12050 SAME ed tower name
+3d698 3d690 33fcfffe00038212 33fcfffe00038212 SAME cr_credit
+3d6c4 3d6bc 6100ae744a79000338f0 6100ae7c4a79000338f0 DIFF ed title poll
+3dcf4 3dcec 4eb90003853a 4eb90003853a SAME nt key poll (jsr 3853a)
+3dfd6 3dfce 4eb90003868a 4eb90003868a SAME ed frame flip
+3e352 3e34a 303900033a34 303900033a34 SAME ed tower complete

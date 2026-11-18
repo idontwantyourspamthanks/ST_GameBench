@@ -1,0 +1,139 @@
+--- a/work/editor/ovl.py
++++ b/work/editor/ovl.py
+@@ -114,13 +114,15 @@
+         body = src[src.index("\ntiles:"):src.index("\nsHelp:")]
+         _TILES = [([int(x[1:], 16) for x in m.group(1).split(",")[:8]], int(m.group(1).split(",")[8]))
+                   for m in re.finditer(r"dc\.b\s+(\$[0-9a-f]{2}(?:,\$[0-9a-f]{2}){7},\d+,0)", body)]
+-        assert len(_TILES) == 17
++        assert len(_TILES) in (17, 19)       # 19 = with the lift end / lift stop tiles (work/lifts/ed_lift.s)
+     return _TILES
+ 
+ def classify(v):
+     if v == 0: return 0
+     if not v & 0x80:
+         k = (v >> 4) & 7
++        if k == 0 and v & 0x0c in (8, 12) and len(tiles()) == 19:
++            return 17 if v & 0x0c == 8 else 18
+         return 1 if k == 0 else 8 + k
+     c = v & 3
+     if c == 3: return 8 if v & 0x40 else 7
+@@ -129,6 +131,77 @@
+     if v & 0x0c: return 6
+     return 3 if v & 0x70 else 2
+ 
++# ---- lifts (work/notes/lifts.md).  A lift lives in ONE grid column: start slab $85 (lower row) .. end marker $08 (higher row), optional stop markers $0c in
++# between.  Nothing else is stored; the game's own ride code ($3a3e6) and return queue ($339ee) do the rest.
++LIFT_START, LIFT_END, LIFT_STOP = 0x85, 0x08, 0x0c
++
++def lift_report(grid, rows):
++    """-> (lifts, orphans).  lifts = [{col, bottom, top, top_kind, stops, warn, note}] (top None = no end marker above the start);
++    orphans = [(col, row, value)] end/stop markers that no start slab reaches."""
++    out, used = [], set()
++    for c in range(16):
++        cl = grid[c]
++        for r in range(rows):
++            if cl[r] != LIFT_START:
++                continue
++            top, kind, stops, warn, note = None, None, [], [], []
++            for r2 in range(r + 1, rows):
++                v = cl[r2]
++                if v == LIFT_END:
++                    top, kind = r2, "08"; break
++                if v == LIFT_STOP:
++                    stops.append(r2); continue
++                if v == LIFT_START:
++                    warn.append(f"row {r2}: another lift start inside the shaft"); break
++            if top is None and stops:
++                top, kind = stops.pop(), "0c"      # only stop markers: the last one ends the ride unless Up is held
++                note.append("end is a $0c stop (the ride only goes on past it while Up is held)")
++            if top is None:
++                warn.append("no end marker ($08) above the start: the ride only ends by hitting terrain and then hurts the frog")
++            for r2 in range(r + 1, top if top is not None else rows):
++                v = cl[r2]
++                if v == 0 or v == LIFT_STOP:
++                    continue
++                if v & 0x80 and (v & 3) == 2:
++                    note.append(f"row {r2}: blue block ${v:02x} blocks the ride until the frog shoots it")
++                elif v & 0x80 and (v & 3) == 0:
++                    warn.append(f"row {r2}: ${v:02x} blocks the ride (the frog is hurt, the platform goes back)")
++                elif v & 0x0c:
++                    warn.append(f"row {r2}: ${v:02x} has bits 2-3 set: the ride takes it for a lift marker")
++                else:
++                    note.append(f"row {r2}: ${v:02x} is erased by the first ride")
++            if r == 0 or not cl[r - 1] & 0x80:
++                warn.append("no ledge cell under the start slab (the editor puts $81 there)")
++            if not (grid[(c - 1) % 16][r - 1] & 0x80 or grid[(c + 1) % 16][r - 1] & 0x80 or grid[(c - 1) % 16][r] & 0x80 or grid[(c + 1) % 16][r] & 0x80):
++                note.append("no terrain beside the start: the frog cannot walk onto the slab")
++            if top is not None and not (grid[(c - 1) % 16][top] & 0x80 or grid[(c + 1) % 16][top] & 0x80):
++                note.append("no ledge beside the end: nothing to step onto")
++            out.append(dict(col=c, bottom=r, top=top, top_kind=kind, stops=stops, warn=warn, note=note))
++            used.add((c, r))
++            if top is not None:
++                used.add((c, top))
++            used.update((c, s) for s in stops)
++    orphans = [(c, r, grid[c][r]) for c in range(16) for r in range(rows) if grid[c][r] in (LIFT_END, LIFT_STOP) and (c, r) not in used]
++    return out, orphans
++
++def add_lift(grid, col, r0, r1, stops=(), floor=True):
++    """what the in-game 'Lift' command does: slab $85 at the lower row, end marker $08 at the higher one, $0c at each stop; floor = ledge $81 under an empty start"""
++    lo, hi = sorted((r0, r1))
++    assert hi > lo and all(lo < s < hi for s in stops)
++    if floor and lo > 0 and grid[col][lo - 1] == 0:
++        grid[col][lo - 1] = 0x81
++    grid[col][lo], grid[col][hi] = LIFT_START, LIFT_END
++    for s in stops:
++        grid[col][s] = LIFT_STOP
++
++def print_lifts(grid, rows, indent="  "):
++    lf, orph = lift_report(grid, rows)
++    print(f"{indent}lifts {len(lf)}")
++    for L in lf:
++        print(f"{indent}lift col {L['col']} rows {L['bottom']}..{L['top']} stops {L['stops']}" + "".join(f"\n{indent}  WARN {w}" for w in L["warn"]) + "".join(f"\n{indent}  note {w}" for w in L["note"]))
++    for c, r, v in orph:
++        print(f"{indent}WARN orphan marker ${v:02x} at col {c} row {r} (no lift start $85 below it in the column)")
++
+ PAL = [(0, 0, 0), (0x33 * 5 // 3 * 0 + 68, 68, 68), (0, 170, 0), (85, 170, 34), (102, 102, 102), (51, 85, 255), (255, 238, 170), (255, 68, 0)]
+ def render(grid, rows, out, scale=3):
+     """PNG of the 16 x rows grid like the in-game editor: 16x8 px cells, row 0 at the bottom, frog start marked at column 0, row 2"""
+@@ -140,7 +213,7 @@
+             v = grid[c][r]; tid = classify(v)
+             if v == 0 and r == 2 and c == 0: tid = 16
+             pat, col = T[tid]; pat = list(pat)
+-            if tid >= 9:
++            if 9 <= tid <= 15:
+                 k = tid - 8; neg = v & 1; vert = k in (4, 5)
+                 ex = [sum(((b >> (7 - i)) & 1) * (3 << (14 - 2 * i)) for i in range(8)) for b in pat]
+                 if vert: ex[7 if neg else 0] |= 0x0ff0
+@@ -154,6 +227,16 @@
+                     if ex[y] >> (15 - x) & 1:
+                         im.putpixel((c * 16 + x, (rows - 1 - r) * 8 + y), rgb)
+                     elif tid == 0 and x == 0: pass
++    from PIL import ImageDraw
++    d = ImageDraw.Draw(im)                  # lifts: a line from the start slab to the end marker, arrow head at the end, ring per stop; magenta = has warnings
++    for L in lift_report(grid, rows)[0]:
++        x = L["col"] * 16 + 8; y0 = (rows - 1 - L["bottom"]) * 8 + 4
++        top = L["top"] if L["top"] is not None else min(rows - 1, L["bottom"] + 3)
++        y1 = (rows - 1 - top) * 8 + 4; rgb = (255, 0, 255) if L["warn"] else (255, 255, 0)
++        d.line([(x, y0), (x, y1)], fill=rgb)
++        d.polygon([(x, y1 - 3), (x - 3, y1 + 1), (x + 3, y1 + 1)], fill=rgb)
++        for s in L["stops"]:
++            ys = (rows - 1 - s) * 8 + 4; d.ellipse([x - 3, ys - 3, x + 3, ys + 3], outline=rgb)
+     im.resize((W_ * scale, H_ * scale), Image.NEAREST).save(out)
+ 
+ def import_original(mission, tower, name=None):
+@@ -175,6 +258,7 @@
+         lv, cs = parse(Path(sys.argv[2]).read_bytes())
+         for i, l in enumerate(lv):
+             print(f"level {i} {l['name']!r} mission {l['mission']} base tower {l['tower']} rows {l['rows']} time {l['time']:04x} size {l['size']} cells {sum(1 for c in l['grid'] for v in c if v)}")
++            print_lifts(l["grid"], l["rows"])
+         for i, (n, e) in enumerate(cs):
+             print(f"campaign {i} {n!r}: " + ", ".join(f"orig M{((x>>3)&1)+1} T{(x&7)+1}" if x & 0x80 else f"custom {x}" for x in e))
+     elif cmd == "validate":
+@@ -184,3 +268,7 @@
+     elif cmd == "import-original":     # import-original MISSION TOWER out.ovl   (a file with that one level + a campaign playing it)
+         lv = import_original(int(sys.argv[2]), int(sys.argv[3]) - 1)
+         Path(sys.argv[4]).write_bytes(build([lv], [camp(f"ORIG M{sys.argv[2]}T{sys.argv[3]}", [0])]))
++    elif cmd == "lifts":               # lifts FILE LEVEL
++        lv, cs = parse(Path(sys.argv[2]).read_bytes()); l = lv[int(sys.argv[3])]; print_lifts(l["grid"], l["rows"], "")
++    elif cmd == "lifts-orig":          # lifts-orig MISSION TOWER(1..8): the shipped towers
++        g, rows = original(int(sys.argv[2]), int(sys.argv[3]) - 1); print_lifts(g, rows, "")
