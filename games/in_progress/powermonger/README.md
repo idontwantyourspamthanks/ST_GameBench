@@ -1,21 +1,21 @@
 # Powermonger (1990, Bullfrog / Electronic Arts)
 
-Status: **done** (combined release build, 2026-11-10). A patched floppy and a patched hard-disk folder are built from the user's original disk. Default patch set = fixed-rate world, DMA sound, faster drawing, men interpolation, no protection question, tooltips **and keyboard shortcuts and village hover (`qol_*`)**, **triple buffering (`p7_*`)**, **TT / Falcon pointer fix (`tt_ptr`)**, **real-time intro (`pm_intro_*`)**, **rain on every frame (`tick_rain`)**, **IKBD overrun fix (`p6_cpy` 4-row chunks + `p4_clamp`)**, version credit. Proof of the combined set: [`work/notes/combined.md`](work/notes/combined.md). **Fix 2026-11-11:** the letters typed at the name prompt were replayed as icon clicks when the map appeared, so the first level started with a command selected / the troops out of their circle; only keys typed in the map view count now ([`work/notes/phantom_click.md`](work/notes/phantom_click.md)).
+Status: **done** (v1.1, 2026-11-19: Retire / win / lose no longer crashes, `pm_cachecap`; combined release build 2026-11-10). A patched floppy and a patched hard-disk folder are built from the user's original disk. Default patch set = fixed-rate world, DMA sound, faster drawing, men interpolation, no protection question, tooltips **and keyboard shortcuts and village hover (`qol_*`)**, **triple buffering (`p7_*`)**, **TT / Falcon pointer fix (`tt_ptr`)**, **real-time intro (`pm_intro_*`)**, **rain on every frame (`tick_rain`)**, **IKBD overrun fix (`p6_cpy` 4-row chunks + `p4_clamp`)**, **resource-cache cap (`pm_cachecap`, v1.1: the Retire / win / lose picture no longer overwrites the patch code; the game re-reads that picture from disk instead of caching it)**, version credit. Proof of the combined set: [`work/notes/combined.md`](work/notes/combined.md). **Fix 2026-11-11:** the letters typed at the name prompt were replayed as icon clicks when the map appeared, so the first level started with a command selected / the troops out of their circle; only keys typed in the map view count now ([`work/notes/phantom_click.md`](work/notes/phantom_click.md)).
 
 - Plain-English account of the work: [`REPORT.md`](REPORT.md). Regression matrix: [`work/notes/regression.md`](work/notes/regression.md) (release candidate) and [`work/notes/combined.md`](work/notes/combined.md) (final set, per-machine table). Plan and decisions: [`PLAN.md`](PLAN.md).
 - Build and package: `tools/package.sh` (verifies the patches, builds both versions, writes `dist/Powermonger_v<ver>_patched_floppy_<date>.zip` and `dist/Powermonger_v<ver>_patched_hd_<date>.zip`, prints md5s). Needs `disks/protected.st`.
 - Play in Hatari: `tools/play.sh` (patched floppy, STE), `--hd`, `--original`, `--machine st|megast|ste|megaste|tt|falcon`, `--ram`, `--mhz`.
 - Patch tool: `tools/pmpatch.py verify | list | build [--floppy|--hd] | live | boot`.
 
-### Release md5s (final default patch set: keys, hover, triple buffering, TT / Falcon pointer, intro timing, rain, IKBD fix)
+### Release md5s (v1.1 = final default patch set: keys, hover, triple buffering, TT / Falcon pointer, intro timing, rain, IKBD fix, resource-cache cap)
 
 | File | MD5 |
 |---|---|
 | original `disks/protected.st` | `b0f6972e81067a5822c0b21e6d00b8dc` |
-| `Powermonger_patched.st` (floppy, 819200 B; the build is deterministic; also `dist/Powermonger_patched_floppy_test.st`) | `c84f7ee46c1b28fe7a30e6d3de6736fd` |
-| HD `AUTO\WAR.PRG` (316789 B) | `cfc4be29fe8cdee660ef79bab3a79490` |
+| `Powermonger_patched.st` (floppy, 819200 B; the build is deterministic) | `ba7cae54412e84b728e48b78dac954e3` |
+| HD `AUTO\WAR.PRG` (316841 B) | `ed259a3ff25455d89221885a0563aaea` |
 | HD `DATA\SPRITE40.DAT` (101608 B, patched) | `37d28ff241b94d3f493f24e236e5a73b` |
-| HD `PMLATE.DAT` (26407 B) | `1475daf32f6157a7e68b994dc10ffaa5` |
+| HD `PMLATE.DAT` (26439 B) | `792409e029e1fb0c10c43333f29d1122` |
 | `dist/Powermonger_v1.0_patched_floppy_2026-11-11.zip` (the zip md5 changes with every packaging run: file times) | `fabc701e02e1bdc0f149f2fa2adb240f` |
 | `dist/Powermonger_v1.0_patched_hd_2026-11-11.zip` | `d1df1e73f001073fdc61f02096fc9d98` |
 

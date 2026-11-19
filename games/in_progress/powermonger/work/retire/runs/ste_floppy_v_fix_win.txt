@@ -1,0 +1,28 @@
+CELL floppy ste TOS 1.62 1024 KB WIN
+[   83s vbl 4265] name prompt
+[   90s vbl 4585] option screen
+[  117s vbl 5972] territory chart
+[  128s vbl 6494] protection removed (flag $14e4e = $2c), no question expected
+[  146s vbl 7388] 3D map view
+RESULT boot: 148 s, in_game True, MARKER b'PMPO', resource cache cursor $b74f4, RAM above the cursor's limit $b8000
+RESULT payload before: 31 blobs compared (first 16 B), 0 differ []
+/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger/tools/pmretire.py:50: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  px = list(c.getdata())
+RESULT round 1 retire: {'game_btn': (48, 66), 'retire_btn': (31, 54), 'cursor_before': 750836, 'picture_s': 8.853635787963867, 'shown': True, 'still_shown': True, 'frac': 0.38865625, 'colours': 14, 'cursor_after': 750836}
+RESULT round 1 payload after the picture: 31 blobs, 0 differ []
+RESULT round 1: picture on screen (non-black 0.39, 14 colours): yes
+RESULT round 1: option screen again: True
+RESULT round 1: confirm dialog (screen no longer the option screen): True
+RESULT round 1: territory chart: True
+RESULT round 1: map view of the next level: True (cache cursor $b74f4)
+/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger/tools/pmretire.py:50: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  px = list(c.getdata())
+RESULT round 2 retire: {'game_btn': (160, 99), 'retire_btn': (143, 87), 'cursor_before': 750836, 'picture_s': 8.875363826751709, 'shown': True, 'still_shown': True, 'frac': 0.38865625, 'colours': 14, 'cursor_after': 750836}
+RESULT round 2 payload after the picture: 31 blobs, 0 differ []
+RESULT round 2: picture on screen (non-black 0.39, 14 colours): yes
+RESULT round 2: option screen again: True
+RESULT round 2: confirm dialog (screen no longer the option screen): True
+RESULT round 2: territory chart: True
+RESULT round 2: map view of the next level: True (cache cursor $b74f4)
+CELL DONE floppy ste TOS 1.62 1024 KB WIN: OK
+exit 0

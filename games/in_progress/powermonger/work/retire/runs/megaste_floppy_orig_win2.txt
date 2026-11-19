@@ -1,0 +1,26 @@
+CELL floppy megaste TOS 2.06 4096 KB WIN
+[   78s vbl 4832] name prompt
+[   85s vbl 5216] option screen
+[  113s vbl 6881] territory chart
+[  163s vbl 9938] protection question
+[  181s vbl 11020] protection answer type 0 value 105
+[  199s vbl 12062] 3D map view
+RESULT boot: 201 s, in_game True, MARKER b'\x00\x00\x00\x00', resource cache cursor $b74f4, RAM above the cursor's limit $b8000
+/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger/tools/pmretire.py:50: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  px = list(c.getdata())
+RESULT round 1 retire: {'game_btn': (48, 26), 'retire_btn': (31, 14), 'cursor_before': 750836, 'picture_s': 11.050466299057007, 'shown': True, 'still_shown': True, 'frac': 0.38865625, 'colours': 14, 'cursor_after': 782836}
+RESULT round 1: picture on screen (non-black 0.39, 14 colours): yes
+RESULT round 1: option screen again: True
+RESULT round 1: confirm dialog (screen no longer the option screen): True
+RESULT round 1: territory chart: True
+RESULT round 1: map view of the next level: True (cache cursor $bf1f4)
+/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger/tools/pmretire.py:50: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  px = list(c.getdata())
+RESULT round 2 retire: {'game_btn': (160, 99), 'retire_btn': (143, 87), 'cursor_before': 782836, 'picture_s': 6.714738130569458, 'shown': True, 'still_shown': True, 'frac': 0.38865625, 'colours': 14, 'cursor_after': 782836}
+RESULT round 2: picture on screen (non-black 0.39, 14 colours): yes
+RESULT round 2: option screen again: True
+RESULT round 2: confirm dialog (screen no longer the option screen): True
+RESULT round 2: territory chart: True
+RESULT round 2: map view of the next level: True (cache cursor $bf1f4)
+CELL DONE floppy megaste TOS 2.06 4096 KB WIN: OK
+exit 0

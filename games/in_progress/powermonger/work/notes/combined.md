@@ -1,5 +1,7 @@
 # Powermonger: the combined default set (PMIntegrate, 2026-11-10)
 
+**v1.1 (2026-11-19) staleness note:** the default set gained `pm_cachecap` (`retire.md`). The cold-boot table (section 4) was re-measured on the final set: unchanged within one flip in 1000 VBL (TT row identical); see `release.md` section 3 for the table with the changed digits (STE map 4.85 -> 4.80, Mega STE 16 MHz map 10.20 -> 10.14, ...). Everything else in this note is unaffected.
+
 Tags: **[obs]** raw tool output (kept in `work/combined/`, commands below); **[INFERENCE]** not run.
 Goal: `p7_triple_wait/flip/tail`, `qol_keys`, `qol_keys2`, `qol_hover`, `qol_hover2` and (lead's addition, later in the run) `tick_rain` (it REPLACES `tick_wx`, `rain.md`) are now `; default: yes` (every individually approved patch is default). **All results below are for the final set including `tick_rain`**; the same gates were first run with `tick_wx` and gave the same verdicts (`work/combined/tick_wx_set/`). This note proves that the COMBINED default set works: site / blob overlaps, the pixel / state / tearing gates, the pointer on the TT with three buffers, cold boots on five machines + HD, fps, and the IKBD overrun with everything on.
 

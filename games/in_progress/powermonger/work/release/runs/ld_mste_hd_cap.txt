@@ -1,0 +1,73 @@
+CELL HD-acsi megaste TOS 2.06 4096 KB seq=lose,win,lose,lose fill
+  fill armed at the stage 2 hand-over: 38 span(s), 43365 bytes
+RESULT name prompt after 45 s wall, vbl 8015
+RESULT option screen, vbl 8305
+TIME options -> territory chart (START NEW CONQUEST): 706 VBL (8713 -> 9419)   [wall 68 s]
+TIME chart -> 3D map view (island click, level load): 608 VBL (9934 -> 10542)   [wall 87 s]
+RESULT boot 93 s wall, MARKER b'PMPO', shifter sync reg $fc (bit 1: 50 Hz)
+RESULT cache after the first level: cursor $b74f4; res 1 @$a7af4+$7d00, res 8 @$af7f4+$7d00, res 10 @$80000+$17c00, res 11 @$97c00+$fef4
+RESULT map view: payload 32 blobs, 0 differ []
+  fill[map view]: 43365 pattern bytes in the free spans of $b8800..$effff (HD: and $f0000..$f5fff beyond the swap buffer), 0 changed; $f0000..$f7fc7 non-zero bytes: 0 (swap buffer spill $dd000..$f26cf excluded)
+TIME r1 lose: RETIRE click -> picture on screen: 40 VBL (15434 -> 15474)   [wall 174 s]
+RESULT r1 lose: picture shown True, still shown after 8 s True (non-black 0.82, 16 colours)
+RESULT r1 lose: payload 32 blobs, 0 differ []
+RESULT r1 lose: cache cursor $b74f4; res 1 @$a7af4+$7d00, res 8 @$af7f4+$7d00, res 10 @$80000+$17c00, res 11 @$97c00+$fef4
+  fill[after lose picture]: 43365 pattern bytes in the free spans of $b8800..$effff (HD: and $f0000..$f5fff beyond the swap buffer), 0 changed; $f0000..$f7fc7 non-zero bytes: 0 (swap buffer spill $dd000..$f26cf excluded)
+TIME r1: picture click -> option screen: 41 VBL (19292 -> 19333)   [wall 233 s]
+TIME r1: START NEW CONQUEST -> territory chart: 184 VBL (19740 -> 19924)   [wall 243 s]
+TIME r1: chart -> 3D map view (2nd level load): 366 VBL (20370 -> 20736)   [wall 257 s]
+RESULT r1 next level: payload 32 blobs, 0 differ []
+  fill[r1 next level]: 43365 pattern bytes in the free spans of $b8800..$effff (HD: and $f0000..$f5fff beyond the swap buffer), 0 changed; $f0000..$f7fc7 non-zero bytes: 0 (swap buffer spill $dd000..$f26cf excluded)
+TIME r2 win: RETIRE click -> picture on screen: 39 VBL (24000 -> 24039)   [wall 316 s]
+RESULT r2 win: picture shown True, still shown after 8 s True (non-black 0.39, 14 colours)
+RESULT r2 win: payload 32 blobs, 0 differ []
+RESULT r2 win: cache cursor $b74f4; res 1 @$a7af4+$7d00, res 8 @$af7f4+$7d00, res 10 @$80000+$17c00, res 11 @$97c00+$fef4
+  fill[after win picture]: 43365 pattern bytes in the free spans of $b8800..$effff (HD: and $f0000..$f5fff beyond the swap buffer), 0 changed; $f0000..$f7fc7 non-zero bytes: 0 (swap buffer spill $dd000..$f26cf excluded)
+TIME r2: picture click -> option screen: 40 VBL (27820 -> 27860)   [wall 375 s]
+RESULT r2: confirm dialog (screen no longer the option screen): True
+TIME r2: START NEW CONQUEST -> territory chart: 666 VBL (28269 -> 28935)   [wall 393 s]
+TIME r2: chart -> 3D map view (2nd level load): 369 VBL (29380 -> 29749)   [wall 407 s]
+RESULT r2 next level: payload 32 blobs, 0 differ []
+  fill[r2 next level]: 43365 pattern bytes in the free spans of $b8800..$effff (HD: and $f0000..$f5fff beyond the swap buffer), 0 changed; $f0000..$f7fc7 non-zero bytes: 0 (swap buffer spill $dd000..$f26cf excluded)
+TIME r3 lose: RETIRE click -> picture on screen: 38 VBL (33010 -> 33048)   [wall 467 s]
+RESULT r3 lose: picture shown True, still shown after 8 s True (non-black 0.82, 16 colours)
+RESULT r3 lose: payload 32 blobs, 0 differ []
+RESULT r3 lose: cache cursor $b74f4; res 1 @$a7af4+$7d00, res 8 @$af7f4+$7d00, res 10 @$80000+$17c00, res 11 @$97c00+$fef4
+  fill[after lose picture]: 43365 pattern bytes in the free spans of $b8800..$effff (HD: and $f0000..$f5fff beyond the swap buffer), 0 changed; $f0000..$f7fc7 non-zero bytes: 0 (swap buffer spill $dd000..$f26cf excluded)
+TIME r3: picture click -> TERRITORY CHART (no option screen): 156 VBL (36869 -> 37025)   [wall 528 s]
+TIME r3: chart -> 3D map view (2nd level load): 367 VBL (37469 -> 37836)   [wall 542 s]
+RESULT r3 next level: payload 32 blobs, 0 differ []
+  fill[r3 next level]: 43365 pattern bytes in the free spans of $b8800..$effff (HD: and $f0000..$f5fff beyond the swap buffer), 0 changed; $f0000..$f7fc7 non-zero bytes: 0 (swap buffer spill $dd000..$f26cf excluded)
+TIME r4 lose: RETIRE click -> picture on screen: 38 VBL (41099 -> 41137)   [wall 601 s]
+RESULT r4 lose: picture shown True, still shown after 8 s True (non-black 0.82, 16 colours)
+RESULT r4 lose: payload 32 blobs, 0 differ []
+RESULT r4 lose: cache cursor $b74f4; res 1 @$a7af4+$7d00, res 8 @$af7f4+$7d00, res 10 @$80000+$17c00, res 11 @$97c00+$fef4
+  fill[after lose picture]: 43365 pattern bytes in the free spans of $b8800..$effff (HD: and $f0000..$f5fff beyond the swap buffer), 0 changed; $f0000..$f7fc7 non-zero bytes: 0 (swap buffer spill $dd000..$f26cf excluded)
+TIME r4: picture click -> option screen: 39 VBL (44957 -> 44996)   [wall 661 s]
+TIME r4: START NEW CONQUEST -> territory chart: 186 VBL (45403 -> 45589)   [wall 671 s]
+TIME r4: chart -> 3D map view (2nd level load): 367 VBL (46033 -> 46400)   [wall 684 s]
+RESULT r4 next level: payload 32 blobs, 0 differ []
+  fill[r4 next level]: 43365 pattern bytes in the free spans of $b8800..$effff (HD: and $f0000..$f5fff beyond the swap buffer), 0 changed; $f0000..$f7fc7 non-zero bytes: 0 (swap buffer spill $dd000..$f26cf excluded)
+RESULT cache at the end: cursor $b74f4; res 1 @$a7af4+$7d00, res 8 @$af7f4+$7d00, res 10 @$80000+$17c00, res 11 @$97c00+$fef4
+TRACE 75 loader events after the name prompt
+LOADER per step (res: n = from the disk, c = from the cache; skip = pm_cachecap kept it out of the cache):
+  options -> territory chart (START NEW CONQUEST): 706 VBL by poll; loader calls [0:n 2:n 3:n 4:n 5:n 10:n]; last loader return +631 VBL after the click
+  chart -> 3D map view (island click, level load): 608 VBL by poll; loader calls [11:n 1:n 8:n]; last loader return +493 VBL after the click
+  r1 lose: RETIRE click -> picture on screen: 40 VBL by poll; loader calls [-]; no loader activity
+  r1: picture click -> option screen: 41 VBL by poll; loader calls [-]; no loader activity
+  r1: START NEW CONQUEST -> territory chart: 184 VBL by poll; loader calls [10:c]; last loader return +97 VBL after the click
+  r1: chart -> 3D map view (2nd level load): 366 VBL by poll; loader calls [11:c 1:c 8:c]; last loader return +261 VBL after the click
+  r2 win: RETIRE click -> picture on screen: 39 VBL by poll; loader calls [-]; no loader activity
+  r2: picture click -> option screen: 40 VBL by poll; loader calls [-]; no loader activity
+  r2: START NEW CONQUEST -> territory chart: 666 VBL by poll; loader calls [10:c]; last loader return +596 VBL after the click
+  r2: chart -> 3D map view (2nd level load): 369 VBL by poll; loader calls [11:c 1:c 8:c]; last loader return +261 VBL after the click
+  r3 lose: RETIRE click -> picture on screen: 38 VBL by poll; loader calls [-]; no loader activity
+  r3: picture click -> TERRITORY CHART (no option screen): 156 VBL by poll; loader calls [10:c]; last loader return +96 VBL after the click
+  r3: chart -> 3D map view (2nd level load): 367 VBL by poll; loader calls [11:c 1:c 8:c]; last loader return +260 VBL after the click
+  r4 lose: RETIRE click -> picture on screen: 38 VBL by poll; loader calls [-]; no loader activity
+  r4: picture click -> option screen: 39 VBL by poll; loader calls [-]; no loader activity
+  r4: START NEW CONQUEST -> territory chart: 186 VBL by poll; loader calls [10:c]; last loader return +98 VBL after the click
+  r4: chart -> 3D map view (2nd level load): 367 VBL by poll; loader calls [11:c 1:c 8:c]; last loader return +260 VBL after the click
+TRACE raw (vbl kind d2.w): 8784/call/0 8784/miss/ 8836/ret/ 8836/call/2 8836/miss/ 8874/ret/ 8874/call/3 8874/miss/ 8930/ret/ 8930/call/4 8930/miss/ 8974/ret/ 8974/call/5 8974/miss/ 9029/ret/ 9029/call/a 9029/miss/ 9344/ret/ 10012/call/b 10012/miss/ 10123/ret/ 10244/call/1 10244/miss/ 10331/ret/ 10353/call/8 10353/miss/ 10427/ret/ 15544/call/e 15544/miss/ 15659/skip/7d00 15659/ret/ 19814/call/a 19837/ret/ 20450/call/b 20466/ret/ 20591/call/1 20599/ret/ 20623/call/8 20631/ret/ 24113/call/f 24113/miss/ 24178/skip/7d00 24178/ret/ 28842/call/a 28865/ret/ 29460/call/b 29476/ret/ 29601/call/1 29609/ret/ 29633/call/8 29641/ret/ 33120/call/e 33120/miss/ 33235/skip/7d00 33235/ret/ 36941/call/a 36965/ret/ 37548/call/b 37564/ret/ 37689/call/1 37697/ret/ 37721/call/8 37729/ret/ 41202/call/e 41202/miss/ 41317/skip/7d00 41317/ret/ 45478/call/a 45501/ret/ 46112/call/b 46128/ret/ 46253/call/1 46261/ret/ 46285/call/8 46293/ret/
+CELL DONE HD-acsi megaste TOS 2.06 4096 KB seq=lose,win,lose,lose fill: OK
+exit 0

@@ -1,0 +1,16 @@
+CELL floppy tt TOS 3.06 4096 KB LOSE
+[   54s vbl 3361] name prompt
+[   58s vbl 3615] option screen
+[   79s vbl 4888] territory chart
+[   90s vbl 5507] protection removed (flag $14e4e = $2c), no question expected
+[  101s vbl 6193] 3D map view
+RESULT boot: 103 s, in_game True, MARKER b'PMPO', resource cache cursor $b74f4, RAM above the cursor's limit $b8000
+RESULT payload before: 30 blobs compared (first 16 B), 0 differ []
+/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger/tools/pmretire.py:50: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  px = list(c.getdata())
+RESULT round 1 retire: {'game_btn': (48, 66), 'retire_btn': (31, 54), 'cursor_before': 750836, 'picture_s': 79.15591239929199, 'shown': False, 'frac': 0.78671875, 'colours': 16, 'cursor_after': None}
+RESULT round 1 payload after the picture: 30 blobs, 30 differ [('fal_ym', '0xdc000'), ('p3b_delta', '0xb8bc0'), ('p3b_interp', '0xb8aa0'), ('p4_clamp', '0xbd400'), ('p4_ptr_a', '0xbd000'), ('p4_ptr_b', '0xbd100'), ('p4_spr', '0xbd500'), ('p4_spr', '0xbd700'), ('p6_cpy', '0xda000'), ('p6_slope', '0xd5000'), ('p6_tri', '0xd9000'), ('p7_triple_flip', '0xdb100'), ('p7_triple_tail', '0xdb300'), ('p7_triple_wait', '0xdb200'), ('pm_credit', '0xcdb00'), ('pm_intro_a', '0xcd780'), ('pm_intro_pal', '0xcd800'), ('pm_tooltip', '0xcd000'), ('pm_tooltip', '0xcf000'), ('qol_hover', '0xcfa80'), ('qol_hover2', '0xcd560'), ('qol_keys', '0xcf830'), ('qol_keys2', '0xcd610'), ('snd_core', '0xd0000'), ('tick_head', '0xb8800'), ('tick_men', '0xb8960'), ('tick_pass', '0xb8900'), ('tick_rain', '0xb8980'), ('tt_ptr', '0xba900'), ('tt_ptr', '0xba940')]
+RESULT round 1: picture on screen (non-black 0.79, 16 colours): NO
+  cpu: 
+CELL DONE floppy tt TOS 3.06 4096 KB LOSE: FAIL
+exit 2

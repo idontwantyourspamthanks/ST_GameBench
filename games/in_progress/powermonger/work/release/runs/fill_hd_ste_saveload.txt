@@ -1,0 +1,17 @@
+  fill armed at the stage 2 hand-over: 38 span(s), 52485 bytes
+[   44s vbl 2749] name prompt
+[   51s vbl 3068] option screen
+[   68s vbl 3926] territory chart
+[   78s vbl 4446] protection removed (flag $14e4e = $2c), no question expected
+[   93s vbl 5182] 3D map view
+BOOT OK machine=ste tos=1.62 mem=1024K  in_game=True  MARKER=b'PMPO'  FLAGS=0x3
+  find_btn: pm_btn_file.png not found (best match 31.7)
+  saveload: state 101376 B; saved vs loaded: 0 differ; saved vs the state just before the load: 562 differ; SAVEDISK.DAT slot A == saved: True (409600 B); game iterates: True
+  HD swap buffer: R = [$8, $13338) = 78640 B at $dd000..$f032f, READY=b'HDSW'
+  fill[map view]: 52485 pattern bytes in the free spans of $b8800..$effff (HD: and $f0000..$f5fff beyond the swap buffer), 0 changed; $f0000..$f7fc7 non-zero bytes: 73 at ['0xf7f21', '0xf7f22', '0xf7f23', '0xf7f25', '0xf7f27', '0xf7f28', '0xf7f29', '0xf7f2b'] (swap buffer spill $dd000..$f032f excluded)
+moving people: 42
+  get_men: 42 people moving
+  fill[get_men]: 52485 pattern bytes in the free spans of $b8800..$effff (HD: and $f0000..$f5fff beyond the swap buffer), 0 changed; $f0000..$f7fc7 non-zero bytes: 73 at ['0xf7f21', '0xf7f22', '0xf7f23', '0xf7f25', '0xf7f27', '0xf7f28', '0xf7f29', '0xf7f2b'] (swap buffer spill $dd000..$f032f excluded)
+  battle: iteration 519, MARKER=b'PMPO'
+  fill[battle]: 52485 pattern bytes in the free spans of $b8800..$effff (HD: and $f0000..$f5fff beyond the swap buffer), 0 changed; $f0000..$f7fc7 non-zero bytes: 73 at ['0xf7f21', '0xf7f22', '0xf7f23', '0xf7f25', '0xf7f27', '0xf7f28', '0xf7f29', '0xf7f2b'] (swap buffer spill $dd000..$f032f excluded)
+exit 0

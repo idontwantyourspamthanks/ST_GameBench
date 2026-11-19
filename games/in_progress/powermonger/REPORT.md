@@ -198,9 +198,15 @@ Gates, all on the combined default set (`work/notes/combined.md`): the frames (b
 - **Saved games** of the original and of this version have the same format (the game state, 198 sectors); loading an old save into a patched game and the reverse was not tested.
 - **Not examined:** the intro/title program (stage 1) has its own sound code and is not touched; the 71 Hz mono mode is not handled (the game has none).
 
-## 16. Delivered
+## 16. v1.1: Retire / win / lose no longer crashes (`pm_cachecap`)
 
-- `dist/Powermonger_v1.0_patched_floppy_<date>.zip`: `Powermonger_patched.st` and `README.TXT`.
-- `dist/Powermonger_v1.0_patched_hd_<date>.zip`: `POWERMONGER\` with `AUTO\WAR.PRG`, `DATA\*.DAT`, `PMLATE.DAT`, `SAVEDISK.DAT` and `README.TXT` (hard-disk drivers and the TOS swap).
+Options -> Game -> Retire (and winning an island, and the ending) showed a black screen and hung the machine in v1.0 on every machine. Cause: the game's resource loader keeps every picture and data file it loads in a RAM cache that starts at 512 KB and has no upper limit; the "you have been defeated" / victory picture is the first resource that is cached after the map view and landed on top of the patch code at `$B8000`. The patch `pm_cachecap` (default, one 6-byte site in the loader, 24 bytes of code at `$DC100`) now refuses to cache a resource that would end above `$B8000`. The picture is already on screen at that point; the game simply reads it from the disk again the next time it is needed, as it does on a 512 KB machine. The Retire / win / lose picture no longer overwrites the patch code. Nothing else changes: the four resources of a normal game (map, map data, QAZ, CAPGRAPH) end at `$B74F4` and are cached as before.
+
+What it costs: nothing in normal play (the loader calls of a level start, the map view and the options screens are identical with and without the patch, the same resources come from the cache and from the disk, load times equal within the floppy's rotation noise).A Retire after the first one reads its picture from the disk again instead of copying it from the cache: about 4-5 s longer on a floppy (picture read again, 6.3-6.9 s instead of 2 s) and an estimated 1.5 s on a hard disk; see `work/notes/release.md` for the measured table. Evidence, commands and raw lines: `work/notes/retire.md` (cause), `work/notes/release.md` (gates of the release: all machines, win, the ending, load times, free-RAM pattern proof).
+
+## 17. Delivered
+
+- `dist/Powermonger_v<ver>_patched_floppy_<date>.zip` (current: v1.1): `Powermonger_patched.st` and `README.TXT`.
+- `dist/Powermonger_v<ver>_patched_hd_<date>.zip`: `POWERMONGER\` with `AUTO\WAR.PRG`, `DATA\*.DAT`, `PMLATE.DAT`, `SAVEDISK.DAT` and `README.TXT` (hard-disk drivers and the TOS swap).
 - `tools/package.sh` (verify, build, zip, md5s) and `tools/play.sh` (launcher: machine and TOS choice, `--floppy` / `--hd`, `--original`).
-- The patch tool, 37 default patch files, the study notes, the test tools, `work/notes/regression.md` and `work/notes/combined.md`.
+- The patch tool, 38 default patch files, the study notes, the test tools, `work/notes/regression.md` and `work/notes/combined.md`.

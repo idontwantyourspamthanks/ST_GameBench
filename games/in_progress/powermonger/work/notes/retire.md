@@ -56,3 +56,6 @@ Cold-boot gates of `combined.md` (pointer / keys / hover / fps / pixel / state) 
 * Queued but not finished when this was written (see `work/retire/runs/*.txt`, `CELL DONE` lines): all-games image run (`--img`; needs `--fast-boot no` and no GEMDOS dir, else HDDRIVER halts the Mega STE: a harness trap), WIN re-runs with the new script (Mega STE, STE, HD), TT / Falcon cells, `--final` (ending pictures, never executed; same loader, so the cap applies [INFERENCE]).
 * The user's drive image must be rebuilt for the fix (lead). `work/ref/pm_btn_game.png`, `pm_btn_retire.png` are git-ignored (regenerate from a screenshot of the Option panel).
 * Real hardware / MiSTer: not run. A win on the MiSTer is the same path (section 3).
+
+## 7. Release gates (PMRelease, 2026-11-19): all of section 6's open items closed
+TT / Falcon cells OK (v_fix), win and the last island's ending pictures run through (`pmload.py --seq lose,win,lose,lose`, `--seq final`), the all-games image cell is part of the final gate, full cold-boot gates / fps, load times, free-RAM pattern: `work/notes/release.md`. `pmretire.py`'s win round 2 failure on Mega STE / HD was a harness effect (the click on the picture pressed START NEW CONQUEST of the next screen), `release.md` section 7. Released as v1.1.

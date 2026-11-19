@@ -1,0 +1,34 @@
+CELL HD-acsi megaste TOS 2.06 4096 KB seq=win,final
+RESULT name prompt after 64 s wall, vbl 3988
+RESULT option screen, vbl 4279
+TIME options -> territory chart (START NEW CONQUEST): 710 VBL (4687 -> 5397)   [wall 88 s]
+TIME chart -> 3D map view (island click, level load): 613 VBL (5911 -> 6524)   [wall 107 s]
+RESULT boot 113 s wall, MARKER b'PMPO', shifter sync reg $fc (bit 1: 50 Hz)
+RESULT cache after the first level: cursor $b74f4; res 1 @$a7af4+$7d00, res 8 @$af7f4+$7d00, res 10 @$80000+$17c00, res 11 @$97c00+$fef4
+RESULT map view: payload 32 blobs, 0 differ []
+TIME r1 win: RETIRE click -> first picture-like frame (poll only; the load itself: see the loader return): 39 VBL (11378 -> 11417)   [wall 192 s]
+RESULT r1 win: picture shown True, still shown after 8 s True (non-black 0.39, 14 colours)
+RESULT r1 win: payload 32 blobs, 0 differ []
+RESULT r1 win: cache cursor $b74f4; res 1 @$a7af4+$7d00, res 8 @$af7f4+$7d00, res 10 @$80000+$17c00, res 11 @$97c00+$fef4
+TIME r1: picture click -> option screen: 39 VBL (15154 -> 15193)   [wall 251 s]
+RESULT r1: confirm dialog (screen no longer the option screen): True
+TIME r1: START NEW CONQUEST -> territory chart: 664 VBL (15603 -> 16267)   [wall 269 s]
+TIME r1: chart -> 3D map view (2nd level load): 368 VBL (16713 -> 17081)   [wall 283 s]
+RESULT r1 next level: payload 32 blobs, 0 differ []
+TIME r2 final: RETIRE click -> first picture-like frame (poll only; the load itself: see the loader return): 40 VBL (20307 -> 20347)   [wall 342 s]
+RESULT r2 final: picture shown True, still shown after 8 s True (non-black 0.57, 16 colours)
+RESULT r2 final: payload 32 blobs, 0 differ []
+RESULT r2 final: cache cursor $b74f4; res 1 @$a7af4+$7d00, res 8 @$af7f4+$7d00, res 10 @$80000+$17c00, res 11 @$97c00+$fef4
+RESULT cache at the end: cursor $b74f4; res 1 @$a7af4+$7d00, res 8 @$af7f4+$7d00, res 10 @$80000+$17c00, res 11 @$97c00+$fef4
+TRACE 47 loader events after the name prompt
+LOADER per step (res: n = from the disk, c = from the cache; skip = pm_cachecap kept it out of the cache):
+  options -> territory chart (START NEW CONQUEST): 710 VBL by poll; loader calls [0:n 2:n 3:n 4:n 5:n 10:n]; last loader return +634 VBL after the click
+  chart -> 3D map view (island click, level load): 613 VBL by poll; loader calls [11:n 1:n 8:n]; last loader return +495 VBL after the click
+  r1 win: RETIRE click -> first picture-like frame (poll only; the load itself: see the loader return): 39 VBL by poll; loader calls [-]; no loader activity
+  r1: picture click -> option screen: 39 VBL by poll; loader calls [-]; no loader activity
+  r1: START NEW CONQUEST -> territory chart: 664 VBL by poll; loader calls [10:c]; last loader return +597 VBL after the click
+  r1: chart -> 3D map view (2nd level load): 368 VBL by poll; loader calls [11:c 1:c 8:c]; last loader return +260 VBL after the click
+  r2 final: RETIRE click -> first picture-like frame (poll only; the load itself: see the loader return): 40 VBL by poll; loader calls [-]; no loader activity
+TRACE raw (vbl kind d2.w): 4761/call/0 4761/miss/ 4813/ret/ 4813/call/2 4813/miss/ 4851/ret/ 4851/call/3 4851/miss/ 4907/ret/ 4907/call/4 4907/miss/ 4951/ret/ 4951/call/5 4951/miss/ 5006/ret/ 5006/call/a 5006/miss/ 5321/ret/ 5991/call/b 5991/miss/ 6102/ret/ 6223/call/1 6223/miss/ 6310/ret/ 6332/call/8 6332/miss/ 6406/ret/ 11494/call/f 11494/miss/ 11559/skip/7d00 11559/ret/ 16177/call/a 16200/ret/ 16792/call/b 16808/ret/ 16933/call/1 16941/ret/ 16965/call/8 16973/ret/ 20443/call/c 20443/miss/ 20528/skip/7d00 20528/ret/ 20580/call/d 20580/miss/ 20807/skip/1e5e 20807/ret/
+CELL DONE HD-acsi megaste TOS 2.06 4096 KB seq=win,final: OK
+exit 0

@@ -1,0 +1,9 @@
+cb_st_fl tools/pmcombined.py --disk build/rel/cap/floppy/powermonger.st --machine st --tos 1.04 --mem 1024 --shots work/release/runs/cb_shots
+cb_ste_fl tools/pmcombined.py --disk build/rel/cap/floppy/powermonger.st --machine ste --tos 1.62 --mem 1024 --shots work/release/runs/cb_shots
+cb_mste_fl tools/pmcombined.py --disk build/rel/cap/floppy/powermonger.st --machine megaste --tos 2.06 --mem 4096 --mhz 8 16 --shots work/release/runs/cb_shots
+cb_tt_fl tools/pmcombined.py --disk build/rel/cap/floppy/powermonger.st --machine tt --tos 3.06 --mem 4096 --hopts "--cpuclock 32 --monitor vga" --shots work/release/runs/cb_shots
+cb_fal_fl tools/pmcombined.py --disk build/rel/cap/floppy/powermonger.st --machine falcon --tos 4.04 --mem 4096 --hopts "--borders false" --shots work/release/runs/cb_shots
+cb_ste_hd tools/pmcombined.py --hd build/rel/cap/hd --acsi --saveload --machine ste --tos 1.62 --mem 1024 --shots work/release/runs/cb_shots
+nc_st_fl tools/pmcombined.py --disk build/rel/nocap/floppy/powermonger.st --machine st --tos 1.04 --mem 1024
+nc_ste_fl tools/pmcombined.py --disk build/rel/nocap/floppy/powermonger.st --machine ste --tos 1.62 --mem 1024
+nc_mste_fl tools/pmcombined.py --disk build/rel/nocap/floppy/powermonger.st --machine megaste --tos 2.06 --mem 4096 --mhz 8 16

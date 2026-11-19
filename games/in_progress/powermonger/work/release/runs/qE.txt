@@ -1,0 +1,2 @@
+ld_mste_fl_orig tools/pmload.py --disk disks/protected.st --machine megaste --tos 2.06 --mem 4096 --seq lose,win,lose,lose --shots work/release/runs/shots_mste_fl_orig
+ld_mste_hd_nocap tools/pmload.py --hd build/rel/nocap/hd --acsi --manifest build/rel/nocap/hd.json --machine megaste --tos 2.06 --mem 4096 --seq none

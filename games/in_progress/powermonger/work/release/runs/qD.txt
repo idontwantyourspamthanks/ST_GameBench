@@ -1,0 +1,7 @@
+ld_ste_fl_cap tools/pmload.py --disk build/rel/cap/floppy/powermonger.st --manifest build/rel/cap/floppy.json --machine ste --tos 1.62 --mem 1024 --seq lose,win,lose,lose --fill --shots work/release/runs/shots_ste_fl_cap
+ld_ste_fl_orig4 tools/pmload.py --disk disks/protected.st --machine ste --tos 1.62 --mem 1024 --seq lose,win,lose,lose --shots work/release/runs/shots_ste_fl_orig4
+ld_ste_hd_cap tools/pmload.py --hd build/rel/cap/hd --acsi --manifest build/rel/cap/hd.json --machine ste --tos 1.62 --mem 1024 --seq lose,win,lose,lose --fill --shots work/release/runs/shots_ste_hd_cap
+ld_mste_fl_cap tools/pmload.py --disk build/rel/cap/floppy/powermonger.st --manifest build/rel/cap/floppy.json --machine megaste --tos 2.06 --mem 4096 --seq lose,win,lose,lose --fill --shots work/release/runs/shots_mste_fl_cap
+ld_mste_hd_cap tools/pmload.py --hd build/rel/cap/hd --acsi --manifest build/rel/cap/hd.json --machine megaste --tos 2.06 --mem 4096 --seq lose,win,lose,lose --fill --shots work/release/runs/shots_mste_hd_cap
+fin_ste_fl_cap tools/pmload.py --disk build/rel/cap/floppy/powermonger.st --manifest build/rel/cap/floppy.json --machine ste --tos 1.62 --mem 1024 --seq final --fill --shots work/release/runs/shots_ste_fl_final
+fin_mste_hd_cap tools/pmload.py --hd build/rel/cap/hd --acsi --manifest build/rel/cap/hd.json --machine megaste --tos 2.06 --mem 4096 --seq win,final --shots work/release/runs/shots_mste_hd_final

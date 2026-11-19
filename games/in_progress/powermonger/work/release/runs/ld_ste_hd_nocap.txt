@@ -1,0 +1,16 @@
+CELL HD-acsi ste TOS 1.62 1024 KB seq=none
+RESULT name prompt after 50 s wall, vbl 2595
+RESULT option screen, vbl 2836
+TIME options -> territory chart (START NEW CONQUEST): 549 VBL (3176 -> 3725)   [wall 73 s]
+TIME chart -> 3D map view (island click, level load): 509 VBL (4157 -> 4666)   [wall 91 s]
+RESULT boot 97 s wall, MARKER b'PMPO', shifter sync reg $fe (bit 1: 50 Hz)
+RESULT cache after the first level: cursor $b74f4; res 1 @$a7af4+$7d00, res 8 @$af7f4+$7d00, res 10 @$80000+$17c00, res 11 @$97c00+$fef4
+RESULT map view: payload 31 blobs, 0 differ []
+RESULT cache at the end: cursor $b74f4; res 1 @$a7af4+$7d00, res 8 @$af7f4+$7d00, res 10 @$80000+$17c00, res 11 @$97c00+$fef4
+TRACE 27 loader events after the name prompt
+LOADER per step (res: n = from the disk, c = from the cache; skip = pm_cachecap kept it out of the cache):
+  options -> territory chart (START NEW CONQUEST): 549 VBL by poll; loader calls [0:n 2:n 3:n 4:n 5:n 10:n]; last loader return +511 VBL after the click
+  chart -> 3D map view (island click, level load): 509 VBL by poll; loader calls [11:n 1:n 8:n]; last loader return +402 VBL after the click
+TRACE raw (vbl kind d2.w): 3234/call/0 3234/miss/ 3276/ret/ 3276/call/2 3276/miss/ 3305/ret/ 3305/call/3 3305/miss/ 3350/ret/ 3350/call/4 3350/miss/ 3385/ret/ 3385/call/5 3385/miss/ 3429/ret/ 3429/call/a 3429/miss/ 3687/ret/ 4222/call/b 4222/miss/ 4312/ret/ 4411/call/1 4411/miss/ 4482/ret/ 4500/call/8 4500/miss/ 4559/ret/
+CELL DONE HD-acsi ste TOS 1.62 1024 KB seq=none: OK
+exit 0

@@ -7,6 +7,11 @@ game with the same patches as the patched floppy (see the README of that
 zip), but loading and saving go through GEMDOS, so it runs from a hard
 disk.
 
+What is new in v1.1: the Retire / win / lose picture (Options -> Game ->
+Retire) no longer overwrites the patch code and hangs on a black screen.
+The game re-reads that picture from the disk instead of caching it in RAM
+(see the floppy README, "Retire").
+
 Contents
 --------
 AUTO\WAR.PRG     the game (patched). TOS starts it at boot.
@@ -61,3 +66,5 @@ Saving
 ------
 Option -> File -> Save / Load as on the floppy (slots A, B, ...).
 The game asks "already exists, overwrite?" for a slot in use.
+
+Build: v@VER@, git @GIT@ (tools/package.sh)

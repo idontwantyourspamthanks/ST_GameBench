@@ -1,0 +1,54 @@
+CELL floppy megaste TOS 2.06 4096 KB seq=lose,win,lose,lose
+RESULT name prompt after 84 s wall, vbl 5134
+RESULT option screen, vbl 5424
+TIME options -> territory chart (START NEW CONQUEST): 1241 VBL (5830 -> 7071)   [wall 116 s]
+TIME protection OK -> 3D map view (level load): 272 VBL (10391 -> 10663)   [wall 176 s]
+RESULT boot 182 s wall, MARKER b'\x00\x00\x00\x00', shifter sync reg $0 (bit 1: 50 Hz)
+RESULT cache after the first level: cursor $b74f4; res 1 @$a7af4+$7d00, res 8 @$af7f4+$7d00, res 10 @$80000+$17c00, res 11 @$97c00+$fef4
+TIME r1 lose: RETIRE click -> picture on screen: 38 VBL (14170 -> 14208)   [wall 236 s]
+RESULT r1 lose: picture shown True, still shown after 8 s True (non-black 0.82, 16 colours)
+RESULT r1 lose: cache cursor $bf1f4; res 1 @$a7af4+$7d00, res 8 @$af7f4+$7d00, res 10 @$80000+$17c00, res 11 @$97c00+$fef4, res 14 @$b74f4+$7d00
+TIME r1: picture click -> option screen: 151 VBL (16509 -> 16660)   [wall 276 s]
+TIME r1: START NEW CONQUEST -> territory chart: 185 VBL (17071 -> 17256)   [wall 286 s]
+TIME r1: chart -> 3D map view (2nd level load): 417 VBL (17704 -> 18121)   [wall 300 s]
+TIME r2 win: RETIRE click -> picture on screen: 39 VBL (20001 -> 20040)   [wall 333 s]
+RESULT r2 win: picture shown True, still shown after 8 s True (non-black 0.39, 14 colours)
+RESULT r2 win: cache cursor $c6ef4; res 1 @$a7af4+$7d00, res 8 @$af7f4+$7d00, res 10 @$80000+$17c00, res 11 @$97c00+$fef4, res 14 @$b74f4+$7d00, res 15 @$bf1f4+$7d00
+TIME r2: picture click -> option screen: 151 VBL (22414 -> 22565)   [wall 374 s]
+RESULT r2: confirm dialog (screen no longer the option screen): True
+TIME r2: START NEW CONQUEST -> territory chart: 667 VBL (22976 -> 23643)   [wall 392 s]
+TIME r2: chart -> 3D map view (2nd level load): 417 VBL (24090 -> 24507)   [wall 406 s]
+TIME r3 lose: RETIRE click -> picture on screen: 40 VBL (26383 -> 26423)   [wall 442 s]
+RESULT r3 lose: picture shown True, still shown after 8 s True (non-black 0.82, 16 colours)
+RESULT r3 lose: cache cursor $c6ef4; res 1 @$a7af4+$7d00, res 8 @$af7f4+$7d00, res 10 @$80000+$17c00, res 11 @$97c00+$fef4, res 14 @$b74f4+$7d00, res 15 @$bf1f4+$7d00
+TIME r3: picture click -> TERRITORY CHART (no option screen): 159 VBL (28919 -> 29078)   [wall 483 s]
+TIME r3: chart -> 3D map view (2nd level load): 416 VBL (29524 -> 29940)   [wall 497 s]
+TIME r4 lose: RETIRE click -> picture on screen: 38 VBL (31814 -> 31852)   [wall 532 s]
+RESULT r4 lose: picture shown True, still shown after 8 s True (non-black 0.82, 16 colours)
+RESULT r4 lose: cache cursor $c6ef4; res 1 @$a7af4+$7d00, res 8 @$af7f4+$7d00, res 10 @$80000+$17c00, res 11 @$97c00+$fef4, res 14 @$b74f4+$7d00, res 15 @$bf1f4+$7d00
+TIME r4: picture click -> option screen: 40 VBL (34349 -> 34389)   [wall 571 s]
+TIME r4: START NEW CONQUEST -> territory chart: 185 VBL (34798 -> 34983)   [wall 581 s]
+TIME r4: chart -> 3D map view (2nd level load): 420 VBL (35430 -> 35850)   [wall 595 s]
+RESULT cache at the end: cursor $c6ef4; res 1 @$a7af4+$7d00, res 8 @$af7f4+$7d00, res 10 @$80000+$17c00, res 11 @$97c00+$fef4, res 14 @$b74f4+$7d00, res 15 @$bf1f4+$7d00
+TRACE 77 loader events after the name prompt
+LOADER per step (res: n = from the disk, c = from the cache; skip = pm_cachecap kept it out of the cache):
+  options -> territory chart (START NEW CONQUEST): 1241 VBL by poll; loader calls [0:n 2:n 3:n 4:n 5:n 10:n]; last loader return +1159 VBL after the click
+  protection OK -> 3D map view (level load): 272 VBL by poll; loader calls [1:c 8:c]; last loader return +187 VBL after the click
+  r1 lose: RETIRE click -> picture on screen: 38 VBL by poll; loader calls [-]; no loader activity
+  r1: picture click -> option screen: 151 VBL by poll; loader calls [-]; no loader activity
+  r1: START NEW CONQUEST -> territory chart: 185 VBL by poll; loader calls [10:c]; last loader return +107 VBL after the click
+  r1: chart -> 3D map view (2nd level load): 417 VBL by poll; loader calls [11:c 1:c 8:c]; last loader return +304 VBL after the click
+  r2 win: RETIRE click -> picture on screen: 39 VBL by poll; loader calls [-]; no loader activity
+  r2: picture click -> option screen: 151 VBL by poll; loader calls [-]; no loader activity
+  r2: START NEW CONQUEST -> territory chart: 667 VBL by poll; loader calls [10:c]; last loader return +611 VBL after the click
+  r2: chart -> 3D map view (2nd level load): 417 VBL by poll; loader calls [11:c 1:c 8:c]; last loader return +303 VBL after the click
+  r3 lose: RETIRE click -> picture on screen: 40 VBL by poll; loader calls [-]; no loader activity
+  r3: picture click -> TERRITORY CHART (no option screen): 159 VBL by poll; loader calls [10:c]; last loader return +109 VBL after the click
+  r3: chart -> 3D map view (2nd level load): 416 VBL by poll; loader calls [11:c 1:c 8:c]; last loader return +303 VBL after the click
+  r4 lose: RETIRE click -> picture on screen: 38 VBL by poll; loader calls [-]; no loader activity
+  r4: picture click -> option screen: 40 VBL by poll; loader calls [-]; no loader activity
+  r4: START NEW CONQUEST -> territory chart: 185 VBL by poll; loader calls [10:c]; last loader return +104 VBL after the click
+  r4: chart -> 3D map view (2nd level load): 420 VBL by poll; loader calls [11:c 1:c 8:c]; last loader return +304 VBL after the click
+TRACE raw (vbl kind d2.w): 5911/call/0 5911/miss/ 6020/ret/ 6020/call/2 6020/miss/ 6114/ret/ 6114/call/3 6114/miss/ 6225/ret/ 6225/call/4 6225/miss/ 6307/ret/ 6307/call/5 6307/miss/ 6427/ret/ 6427/call/a 6427/miss/ 6989/ret/ 7650/call/b 7650/miss/ 7863/ret/ 7983/call/1 7983/miss/ 8143/ret/ 8166/call/8 8166/miss/ 8302/ret/ 9057/call/1 9067/ret/ 9097/call/8 9107/ret/ 10539/call/1 10547/ret/ 10570/call/8 10578/ret/ 14359/call/e 14359/miss/ 14608/ret/ 17155/call/a 17178/ret/ 17784/call/b 17799/ret/ 17960/call/1 17969/ret/ 17999/call/8 18008/ret/ 20193/call/f 20193/miss/ 20344/ret/ 23564/call/a 23587/ret/ 24169/call/b 24184/ret/ 24345/call/1 24354/ret/ 24384/call/8 24393/ret/ 26488/call/e 26497/ret/ 29005/call/a 29028/ret/ 29603/call/b 29618/ret/ 29779/call/1 29788/ret/ 29818/call/8 29827/ret/ 31929/call/e 31938/ret/ 34879/call/a 34902/ret/ 35510/call/b 35525/ret/ 35686/call/1 35695/ret/ 35725/call/8 35734/ret/
+CELL DONE floppy megaste TOS 2.06 4096 KB seq=lose,win,lose,lose: OK
+exit 0

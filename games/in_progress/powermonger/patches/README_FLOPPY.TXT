@@ -61,12 +61,13 @@ What is different
   the bus too long for the keyboard chip) could send the pointer to a
   garbage address and crash the game; the blitter copy is now done in
   short pieces and a position outside the screen is ignored.
-- Retire, and the win / lose pictures: the game keeps every picture it
-  loads in a RAM cache that starts at 512 KB and grows without a limit;
-  the "you have been defeated" / victory picture landed on the patch
-  code (black screen and a hang after Options -> Game -> Retire). The
-  cache now stops below the patch; a picture that does not fit is read
-  from the disk again the next time it is needed, as on a 512 KB machine.
+- Retire, and the win / lose pictures (new in v1.1): the game keeps
+  every picture it loads in a RAM cache that starts at 512 KB and grows
+  without a limit; the "you have been defeated" / victory picture landed
+  on the patch code (black screen and a hang after Options -> Game ->
+  Retire). The cache now stops below the patch; a picture that does not
+  fit is read from the disk again the next time it is needed, as on a
+  512 KB machine.
 - The main menu shows the version and credit line (v@VER@ enhanced by
   dad_prg) at the bottom of the screen.
 - Every change checks the original bytes first. If anything is not as
@@ -95,3 +96,5 @@ second disk, exactly as in the original.
 
 Not tested on real hardware: the DMA sound set-up (taken from the Hunter
 patch), and the patches that probe the STE hardware.
+
+Build: v@VER@, git @GIT@ (tools/package.sh)
