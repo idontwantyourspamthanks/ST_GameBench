@@ -83,5 +83,5 @@ hook:   jsr     $7a56.l
 
 ; THE VERSION: the number in this one line (tools/package.sh reads it with `sed -n 's/^TXT:.*"v\([^ ]*\) enhanced by dad_prg".*/\1/p'`).
 ; The text is space padded to whole 16-px words (NW).
-TXT:    dc.b    "v1.1 enhanced by dad_prg"
+TXT:    dc.b    "v1.2 enhanced by dad_prg"
 TXTE:   dcb.b   (4-((TXTE-TXT)&3))&3," "

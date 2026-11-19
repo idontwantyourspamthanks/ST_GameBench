@@ -68,6 +68,31 @@ What is different
   Retire). The cache now stops below the patch; a picture that does not
   fit is read from the disk again the next time it is needed, as on a
   512 KB machine.
+- Mega STE: 16 MHz with the cache on (new in v1.2). A Mega STE starts
+  at 8 MHz and neither TOS 2.06 nor the game ever switches it to 16 MHz,
+  so the patched game ran at about 4.5 frames per second there. The
+  loader now writes 3 (16 MHz, CPU cache on) to the Mega STE speed
+  register ($FF8E21) at start, before the game runs; in Hatari the map
+  view then runs at about 8 frames per second (16 MHz without the
+  cache gains only about 12%, the RAM is still on the 8 MHz bus). Only
+  a Mega STE is touched (the machine type must be an STE-family one and
+  a read of that register must answer without a bus error); ST, STE, TT
+  and Falcon are left alone. If the register is already non-zero when
+  the game starts, your value is kept: set 16 MHz WITHOUT cache (or any
+  other value) in the control panel / a utility before you start the
+  game and the loader leaves it as it is. A value of 0 is the power-on
+  state and cannot be told from an explicit 8 MHz without cache, so it
+  is raised as well.
+  What does NOT work: going back to 8 MHz while the game runs (the game
+  takes the machine over, there is no desktop or control panel), and
+  keeping 8 MHz by leaving the register at 0. If you want a Mega STE to
+  stay at 8 MHz, use the v1.1 zips.
+  The cache is not proven on real hardware (or on a MiSTer): the game
+  loads and unpacks code with its own DMA and rewrites its own
+  instructions, which a cache can get wrong. It ran without a
+  difference in Hatari (see the notes of the release), nothing more is
+  known. If the game misbehaves on your Mega STE, set the speed
+  without cache before starting it, or use v1.1.
 - The main menu shows the version and credit line (v@VER@ enhanced by
   dad_prg) at the bottom of the screen.
 - Every change checks the original bytes first. If anything is not as
@@ -76,8 +101,9 @@ What is different
 Machines
 --------
 Tested in the Hatari emulator (not on real hardware): ST (TOS 1.04) 1 MB,
-STE (TOS 1.62) 1 MB, Mega STE (TOS 2.06) 4 MB at 8 and 16 MHz,
-TT (TOS 3.06) and Falcon (TOS 4.04) 4 MB. Needs 1 MB of RAM.
+STE (TOS 1.62) 1 MB, Mega STE (TOS 2.06) 4 MB (it starts at 8 MHz, the
+loader sets 16 MHz), TT (TOS 3.06) and Falcon (TOS 4.04) 4 MB. Needs
+1 MB of RAM.
 
 TT and Falcon: the original game does not start on a 68030 (it runs
 code it has just unpacked over the unpacker, and the instruction cache

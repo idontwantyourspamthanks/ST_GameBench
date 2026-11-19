@@ -204,9 +204,13 @@ Options -> Game -> Retire (and winning an island, and the ending) showed a black
 
 What it costs: nothing in normal play (the loader calls of a level start, the map view and the options screens are identical with and without the patch, the same resources come from the cache and from the disk, load times equal within the floppy's rotation noise).A Retire after the first one reads its picture from the disk again instead of copying it from the cache: about 4-5 s longer on a floppy (picture read again, 6.3-6.9 s instead of 2 s) and an estimated 1.5 s on a hard disk; see `work/notes/release.md` for the measured table. Evidence, commands and raw lines: `work/notes/retire.md` (cause), `work/notes/release.md` (gates of the release: all machines, win, the ending, load times, free-RAM pattern proof).
 
+## 16b. v1.2: Mega STE at 16 MHz with the cache on (`pm_mste`)
+
+A Mega STE starts at 8 MHz and its speed / cache register `$FF8E21` resets to 0 (bit 1 = 16 MHz, bit 0 = the 16 KB cache); neither TOS 2.06, HDDRIVER nor the game writes it, and Hatari's `--cpuclock 16` on the command line is ignored at boot. So the patched game ran at 4.5 fps on a Mega STE. `pm_mste` (an `init` routine of the loader, so it runs in the floppy and the HD build before the game has run an instruction) writes `$03` (16 MHz + cache) when the `_MCH` cookie is an STE-family one, a bus-error-guarded read of `$FF8E21` answers, and the register still reads 0; a non-zero register (the user set the speed or cache before the game) is kept; ST, STE, TT, Falcon are not touched. A 0 cannot be told from an explicit 8 MHz without cache, so that is raised too, and there is no way back to 8 MHz while the game runs: the v1.1 zips are the 8 MHz version. In Hatari the map view goes from 4.50 to 8.1 fps (`$02`, 16 MHz without the cache, would give only 5.04: the RAM stays on the 8 MHz bus). The cache is unproven on real hardware / MiSTer (DMA-loaded code, the game's self-modifying code); the Hatari gates are in `work/notes/mste16.md`.
+
 ## 17. Delivered
 
-- `dist/Powermonger_v<ver>_patched_floppy_<date>.zip` (current: v1.1): `Powermonger_patched.st` and `README.TXT`.
+- `dist/Powermonger_v<ver>_patched_floppy_<date>.zip` (current: v1.2): `Powermonger_patched.st` and `README.TXT`.
 - `dist/Powermonger_v<ver>_patched_hd_<date>.zip`: `POWERMONGER\` with `AUTO\WAR.PRG`, `DATA\*.DAT`, `PMLATE.DAT`, `SAVEDISK.DAT` and `README.TXT` (hard-disk drivers and the TOS swap).
 - `tools/package.sh` (verify, build, zip, md5s) and `tools/play.sh` (launcher: machine and TOS choice, `--floppy` / `--hd`, `--original`).
-- The patch tool, 38 default patch files, the study notes, the test tools, `work/notes/regression.md` and `work/notes/combined.md`.
+- The patch tool, 39 default patch files, the study notes, the test tools, `work/notes/regression.md` and `work/notes/combined.md`.

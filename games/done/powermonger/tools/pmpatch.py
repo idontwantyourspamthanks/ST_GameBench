@@ -93,6 +93,7 @@ PREFIX_RANGES = {                         # blob orgs allowed per patch-name pre
 EXTRA_RANGES = {                          # a patch NAME (not prefix) that may also place blobs / data here (the image-overlap check still applies)
     "pm_tooltip": [(0xCF000, 0xCF7FF)],
     "qol_keys": [(0xCD460, 0xCD6FF)], "qol_keys2": [(0xCD460, 0xCD6FF)], "qol_hover": [(0xCD460, 0xCD6FF)], "qol_hover2": [(0xCD460, 0xCD6FF)],   # data blocks + the two small hooks: pm_tooltip's code ends at $CD444, pm_credit starts at $CDB00, so $CD460-$CD6FF is free  # its wording table (patches/pm_tooltip.s `TXT`), $CD000-$CDFFF is full of code + state + pm_credit
+    "pm_mste": [(0xDC200, 0xDC2FF)],          # Mega STE 16 MHz (mste16.md): `init` routine, the page after the cache cap's
     "pm_cachecap": [(0xDC100, 0xDC1FF)],      # the resource-cache cap (retire.md): the free page after fal_ym's, inside p6_'s range, in the HD overlay window
 }
 

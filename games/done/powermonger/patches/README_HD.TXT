@@ -7,7 +7,16 @@ game with the same patches as the patched floppy (see the README of that
 zip), but loading and saving go through GEMDOS, so it runs from a hard
 disk.
 
-What is new in v1.1: the Retire / win / lose picture (Options -> Game ->
+What is new in v1.2: on a Mega STE the loader sets the CPU to 16 MHz with
+the cache on (speed register $FF8E21 = 3) at start, before the game runs,
+unless that register already holds a non-zero value; about 1.8 times the
+frame rate in Hatari. See the floppy README, "Mega STE: 16 MHz", for what
+that does and does not allow and for the cache caveat (unproven on real
+hardware). The hard-disk build does it at the same place as the floppy
+one, in the loader's start-up before the game has run. ST, STE, TT and Falcon are
+not touched.
+
+What was new in v1.1: the Retire / win / lose picture (Options -> Game ->
 Retire) no longer overwrites the patch code and hangs on a black screen.
 The game re-reads that picture from the disk instead of caching it in RAM
 (see the floppy README, "Retire").
