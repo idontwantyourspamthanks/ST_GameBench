@@ -1,0 +1,29 @@
+CELL floppy megaste TOS 2.06 4096 KB LOSE
+[   83s vbl 5118] name prompt
+[   90s vbl 5501] option screen
+[  117s vbl 7162] territory chart
+[  128s vbl 7779] protection removed (flag $14e4e = $2c), no question expected
+[  145s vbl 8851] 3D map view
+RESULT boot: 147 s, in_game True, MARKER b'PMPO', resource cache cursor $b74f4, RAM above the cursor's limit $b8000
+RESULT payload before: 27 blobs compared (first 16 B), 0 differ []
+/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger/tools/pmretire.py:42: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  px = list(c.getdata())
+Traceback (most recent call last):
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger/tools/pmretire.py", line 175, in main
+    r = run_menu_retire(h, a.win, shots, tag, True)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger/tools/pmretire.py", line 113, in run_menu_retire
+    r["cursor_after"] = h.peekl(CURSOR)
+                        ^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/tools/stharness.py", line 242, in peekl
+    return (self.peekw(addr) << 16) | self.peekw(addr + 2)
+            ^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger/tools/pmpatch.py", line 852, in peekw
+    return orig_peekw(addr)
+           ^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/tools/stharness.py", line 238, in peekw
+    hi, lo = re.findall(rf"{addr:08x}:\s+([0-9a-f]{{2}}) ([0-9a-f]{{2}})", out, re.I)[-1]
+             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^
+IndexError: list index out of range
+CELL FAILED floppy megaste TOS 2.06 4096 KB LOSE: IndexError('list index out of range')
+exit 1

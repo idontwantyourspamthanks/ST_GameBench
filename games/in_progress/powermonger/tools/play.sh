@@ -107,7 +107,7 @@ python3 - "$ROOT" "$SRC" "$PLAY/hd.img" <<'PY'
 import sys
 from pathlib import Path
 root = sys.argv[1]
-sys.path.insert(0, root + "/../hunter/tools")
+sys.path.insert(0, root + "/../../done/hunter/tools")
 from hunter import build_hd
 build_hd(Path(sys.argv[3]), game=Path(sys.argv[2]), autorun="C:\\NONE.TOS")
 PY

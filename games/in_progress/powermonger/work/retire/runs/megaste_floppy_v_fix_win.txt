@@ -1,0 +1,17 @@
+CELL floppy megaste TOS 2.06 4096 KB WIN
+[   83s vbl 5122] name prompt
+[   90s vbl 5504] option screen
+[  117s vbl 7167] territory chart
+[  128s vbl 7792] protection removed (flag $14e4e = $2c), no question expected
+[  146s vbl 8866] 3D map view
+RESULT boot: 148 s, in_game True, MARKER b'PMPO', resource cache cursor $b74f4, RAM above the cursor's limit $b8000
+RESULT payload before: 31 blobs compared (first 16 B), 0 differ []
+/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger/tools/pmretire.py:50: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  px = list(c.getdata())
+RESULT round 1 retire: {'game_btn': (48, 66), 'retire_btn': (31, 54), 'cursor_before': 750836, 'picture_s': 8.941573858261108, 'shown': True, 'still_shown': True, 'frac': 0.38865625, 'colours': 14, 'cursor_after': 750836}
+RESULT round 1 payload after the picture: 31 blobs, 0 differ []
+RESULT round 1: picture on screen (non-black 0.39, 14 colours): yes
+RESULT round 1: option screen again: True
+RESULT round 1: territory chart: False
+CELL DONE floppy megaste TOS 2.06 4096 KB WIN: FAIL
+exit 2

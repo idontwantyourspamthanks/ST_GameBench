@@ -1,0 +1,16 @@
+CELL floppy ste TOS 1.62 1024 KB LOSE
+[   83s vbl 4258] name prompt
+[   89s vbl 4578] option screen
+[  117s vbl 5963] territory chart
+[  128s vbl 6482] protection removed (flag $14e4e = $2c), no question expected
+[  145s vbl 7378] 3D map view
+RESULT boot: 147 s, in_game True, MARKER b'PMPO', resource cache cursor $b74f4, RAM above the cursor's limit $b8000
+RESULT payload before: 30 blobs compared (first 16 B), 0 differ []
+/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger/tools/pmretire.py:50: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  px = list(c.getdata())
+RESULT round 1 retire: {'game_btn': (48, 66), 'retire_btn': (31, 54), 'cursor_before': 750836, 'picture_s': 76.28715372085571, 'shown': False, 'frac': 0.833140625, 'colours': 16, 'cursor_after': 750836}
+RESULT round 1 payload after the picture: 30 blobs, 13 differ [('p3b_delta', '0xb8bc0'), ('p3b_interp', '0xb8aa0'), ('p4_clamp', '0xbd400'), ('p4_ptr_a', '0xbd000'), ('p4_ptr_b', '0xbd100'), ('p4_spr', '0xbd500'), ('p4_spr', '0xbd700'), ('tick_head', '0xb8800'), ('tick_men', '0xb8960'), ('tick_pass', '0xb8900'), ('tick_rain', '0xb8980'), ('tt_ptr', '0xba900'), ('tt_ptr', '0xba940')]
+RESULT round 1: picture on screen (non-black 0.83, 16 colours): NO
+  cpu: FFF0F1C   D2 0000FFFF   D3 0000000C  |   D4 0000101C   D5 0031FFFF   D6 0000FFFF   D7 00000000  |   A0 230400CF   A1 FFFFFC00   A2 000017EA   A3 00E03380  |   A4 00E03380   A5 00000000   A6 000017FE   A7 000017EE  | USP  00041FDE ISP  000017EE  | SR=2600 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=6 STP=0 | Prefetch 650a (Bcc) 4a2d (TST) Chip latch 00000000 | 00e0339c 650a                     bcs.b #$0a == $00e033a8 (F) | Next PC: 00e0339e | 
+CELL DONE floppy ste TOS 1.62 1024 KB LOSE: FAIL
+exit 2

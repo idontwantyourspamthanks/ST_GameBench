@@ -1,0 +1,7 @@
+megaste_floppy_orig_win2 --disk disks/protected.st --win --shots work/retire/runs/shots_megaste_orig_win2
+megaste_floppy_v_fix_win2 --disk build/retire/v_fix/floppy/powermonger.st --win --manifest build/retire/v_fix/floppy.json --shots work/retire/runs/shots_megaste_v_fix_win2
+ste_floppy_v_fix_win --disk build/retire/v_fix/floppy/powermonger.st --win --machine ste --tos 1.62 --mem 1024 --manifest build/retire/v_fix/floppy.json --shots work/retire/runs/shots_ste_v_fix_win
+hd_acsi_megaste_v_fix_win --hd build/retire/v_fix/hd --acsi --win --manifest build/retire/v_fix/hd.json --shots work/retire/runs/shots_hd_megaste_v_fix_win
+hd_acsi_megaste_v_def --hd build/retire/v_def/hd --acsi --manifest build/retire/v_def/hd.json --shots work/retire/runs/shots_hd_megaste_v_def
+st_floppy_v_def2 --disk build/retire/v_def/floppy/powermonger.st --machine st --tos 1.04 --mem 1024 --manifest build/retire/v_def/floppy.json --shots work/retire/runs/shots_st_v_def2
+tt_floppy_v_def2 --disk build/retire/v_def/floppy/powermonger.st --machine tt --tos 3.06 --mem 4096 --hopts "--cpuclock 32 --monitor vga" --manifest build/retire/v_def/floppy.json --shots work/retire/runs/shots_tt_v_def2

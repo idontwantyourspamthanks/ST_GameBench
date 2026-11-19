@@ -1,0 +1,10 @@
+CELL floppy falcon TOS 4.04 4096 KB LOSE
+[   73s vbl 3772] name prompt
+[   78s vbl 3984] option screen
+[  101s vbl 5151] territory chart
+[  111s vbl 5665] protection removed (flag $14e4e = $2c), no question expected
+[  126s vbl 6397] 3D map view
+RESULT boot: 128 s, in_game True, MARKER b'PMPO', resource cache cursor $b74f4, RAM above the cursor's limit $b8000
+RESULT payload before: 30 blobs compared (first 16 B), 0 differ []
+/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger/tools/pmretire.py:50: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  px = list(c.getdata())

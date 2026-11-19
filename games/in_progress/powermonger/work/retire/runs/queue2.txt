@@ -1,0 +1,13 @@
+img_megaste_dist --img /home/ryan/Code/AtariST/gamebench/dist/AtariST_enhanced_games_2026-11-18.img --hopts "--cpuclock 16" --shots work/retire/runs/shots_img_megaste
+hd_acsi_megaste_v_fix --hd build/retire/v_fix/hd --acsi --manifest build/retire/v_fix/hd.json --shots work/retire/runs/shots_hd_megaste_v_fix
+ste_floppy_v_def --disk build/retire/v_def/floppy/powermonger.st --machine ste --tos 1.62 --mem 1024 --manifest build/retire/v_def/floppy.json --shots work/retire/runs/shots_ste_v_def
+ste_floppy_v_fix --disk build/retire/v_fix/floppy/powermonger.st --machine ste --tos 1.62 --mem 1024 --manifest build/retire/v_fix/floppy.json --shots work/retire/runs/shots_ste_v_fix
+ste_floppy_orig --disk disks/protected.st --machine ste --tos 1.62 --mem 1024 --shots work/retire/runs/shots_ste_orig
+megaste_floppy_v_notick2 --disk build/retire/v_notick/floppy/powermonger.st --manifest build/retire/v_notick/floppy.json --shots work/retire/runs/shots_megaste_v_notick2
+megaste_floppy_v_nop72 --disk build/retire/v_nop7/floppy/powermonger.st --manifest build/retire/v_nop7/floppy.json --shots work/retire/runs/shots_megaste_v_nop72
+st_floppy_v_def --disk build/retire/v_def/floppy/powermonger.st --machine st --tos 1.04 --mem 1024 --manifest build/retire/v_def/floppy.json --shots work/retire/runs/shots_st_v_def
+st_floppy_v_fix --disk build/retire/v_fix/floppy/powermonger.st --machine st --tos 1.04 --mem 1024 --manifest build/retire/v_fix/floppy.json --shots work/retire/runs/shots_st_v_fix
+tt_floppy_v_def --disk build/retire/v_def/floppy/powermonger.st --machine tt --tos 3.06 --mem 4096 --hopts "--cpuclock 32 --monitor vga" --manifest build/retire/v_def/floppy.json --shots work/retire/runs/shots_tt_v_def
+tt_floppy_v_fix --disk build/retire/v_fix/floppy/powermonger.st --machine tt --tos 3.06 --mem 4096 --hopts "--cpuclock 32 --monitor vga" --manifest build/retire/v_fix/floppy.json --shots work/retire/runs/shots_tt_v_fix
+fal_floppy_v_def --disk build/retire/v_def/floppy/powermonger.st --machine falcon --tos 4.04 --mem 4096 --hopts "--borders false" --manifest build/retire/v_def/floppy.json --shots work/retire/runs/shots_fal_v_def
+fal_floppy_v_fix --disk build/retire/v_fix/floppy/powermonger.st --machine falcon --tos 4.04 --mem 4096 --hopts "--borders false" --manifest build/retire/v_fix/floppy.json --shots work/retire/runs/shots_fal_v_fix

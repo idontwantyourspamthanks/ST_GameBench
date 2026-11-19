@@ -1,0 +1,24 @@
+CELL img megaste TOS 2.06 4096 KB LOSE
+Traceback (most recent call last):
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger/tools/pmretire.py", line 162, in main
+    h.boot_to_game()
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger/tools/pmretire.py", line 284, in boot_to_game
+    return super().boot_to_game(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger/tools/pm.py", line 152, in boot_to_game
+    if not self.wait_gate("name", t_name, 4.0, act=lambda: self.key(skip_key)):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger/tools/pm.py", line 119, in wait_gate
+    if self.at(gate):
+       ^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger/tools/pm.py", line 93, in at
+    return self.screen_matches(REF / ref, box, tol)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/tools/stharness.py", line 401, in screen_matches
+    img = Image.open(self.shot()).convert("RGB")
+                     ^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/tools/stharness.py", line 337, in shot
+    raise RuntimeError("no screenshot (Hatari busy, e.g. a dialog, or dead)")
+RuntimeError: no screenshot (Hatari busy, e.g. a dialog, or dead)
+CELL FAILED img megaste TOS 2.06 4096 KB LOSE: RuntimeError('no screenshot (Hatari busy, e.g. a dialog, or dead)')
+exit 1

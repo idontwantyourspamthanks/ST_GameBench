@@ -1,0 +1,21 @@
+CELL floppy megaste TOS 2.06 4096 KB WIN
+[   83s vbl 5119] name prompt
+[   90s vbl 5502] option screen
+[  117s vbl 7166] territory chart
+[  128s vbl 7790] protection removed (flag $14e4e = $2c), no question expected
+[  146s vbl 8867] 3D map view
+RESULT boot: 148 s, in_game True, MARKER b'PMPO', resource cache cursor $b74f4, RAM above the cursor's limit $b8000
+RESULT payload before: 30 blobs compared (first 16 B), 0 differ []
+/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger/tools/pmretire.py:50: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  px = list(c.getdata())
+Traceback (most recent call last):
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger/tools/pmretire.py", line 187, in main
+    r = run_menu_retire(h, a.win, shots, tag, True)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger/tools/pmretire.py", line 127, in run_menu_retire
+    h.shot(str(shots / f"{tag}_picture.png"))
+  File "/home/ryan/Code/AtariST/gamebench/tools/stharness.py", line 337, in shot
+    raise RuntimeError("no screenshot (Hatari busy, e.g. a dialog, or dead)")
+RuntimeError: no screenshot (Hatari busy, e.g. a dialog, or dead)
+CELL FAILED floppy megaste TOS 2.06 4096 KB WIN: RuntimeError('no screenshot (Hatari busy, e.g. a dialog, or dead)')
+exit 1
