@@ -4,7 +4,7 @@
 
 This repository holds the tools, the patches and the full working notes. It does **not** contain any game, any TOS ROM, or anything extracted from them. You need your own copies (see [Getting the game files](#getting-the-game-files)).
 
-Done: **Midwinter** and **Hunter**. In final testing: **Midwinter 2: Flames of Freedom** and **Powermonger**. Upcoming games are listed in [`games/queue/README.md`](games/queue/README.md).
+Done: **Midwinter**, **Hunter** and **Powermonger**. In final testing: **Midwinter 2: Flames of Freedom**. Upcoming games are listed in [`games/queue/README.md`](games/queue/README.md).
 
 ## What the patches do
 
@@ -52,7 +52,7 @@ The agent "skills" in [`.omp/skills/`](.omp/skills/) capture the method, the emu
 | `tools/pp_depack.py` | Unpacks the self-extracting `RUNME.TOS` of PP's HAGA hard-disk conversions. |
 | `.omp/skills/` | Method, harness, PP-conversion internals and delegation rules. |
 | `games/done/midwinter2/` | **Midwinter 2 (v1.5, Jaguar pad; Amiga sound and music on STE/Mega STE): done.** `REPORT.md` (overview), `PLAN.md`, `patches/` (patch sources, 68000 assembly), `tools/` (patch builder, harness, launchers, packaging), `work/notes/` (reverse-engineering notes with evidence), `work/*/` (test scripts and raw logs). |
-| `games/in_progress/powermonger/` | **Powermonger (v1.0 released; back in progress: Retire from the options menu ends in a black screen, found on a MiSTer Mega STE and in Hatari): in progress.** Same layout; [`REPORT.md`](games/in_progress/powermonger/REPORT.md). |
+| `games/done/powermonger/` | **Powermonger (v1.1: fixes the black screen after Retire; gated on the zips and on the HD image, Mega STE): done.** Same layout; [`REPORT.md`](games/done/powermonger/REPORT.md). |
 | `games/in_progress/nebulus/` | **Nebulus (v1.1 released: input-lag fixes, an input-death fix, lift and shot hit-box fixes, trainers, an in-game level editor with campaign disks, HD and floppy releases; back in progress: per-level enemy set / look choice in the editor, and the community site (cart and disk-image download in the dadprg hub)): in progress.** `PLAN.md`, `patches/`, `tools/`, `work/notes/`. |
 | `games/done/populous/`, `games/done/populous-2/` | **Populous (v1.0) and Populous 2 (v1.0, incl. a 512 KB floppy build): done.** Same layout; `PLAN.md` and `work/notes/` (the shared Bullfrog-family study is `populous/work/notes/bullfrog_family.md`). |
 | `games/done/hunter/` | **Hunter (v1.2: STE palette, Amiga sky and dashboard, triple buffering, item/weapon keys, pause controls guide, HD save, even mouse pointer, Jaguar pad): done.** Same layout; [`REPORT.md`](games/done/hunter/REPORT.md). |
