@@ -31,7 +31,7 @@ try:
     select(h,'< back',1.2); select(h,'Levels',1.2)
     select_i(h,0); select(h,'Copy',1.2); lv,cs=show(h,'copied'); chk(len(lv)==2 and lv[0]['grid']==lv[1]['grid'],'copy level')
     select_i(h,1); select(h,'Edit',1.5)
-    fire(h); select(h,'Tower >'); select(h,'Name',1.0)
+    fire(h); select(h,'Level >'); select(h,'Name',1.0)
     K(h,'Up',1); fire(h,1.0)                    # name entry in the editor
     fire(h); select(h,'Leave editor',1.5)       # commit
     lv,cs=show(h,'renamed level'); chk(lv[1]['name'].startswith('OY') or lv[1]['name']!=lv[0]['name'],'level rename + commit')

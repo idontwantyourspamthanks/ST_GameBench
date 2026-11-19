@@ -128,22 +128,22 @@ def odd_starts(data):
 
 _TILES = None
 def tiles():
-    """the in-game editor's 17 tile patterns (8 bytes + colour + pad) read from patches/ed_editor.s"""
+    """the in-game editor's 21 tile patterns (8 bytes + colour) read from patches/ed_editor.s"""
     global _TILES
     if _TILES is None:
         import re
         src = (Path(__file__).resolve().parents[2] / "patches/ed_editor.s").read_text()
         body = src[src.index("\ntiles:"):src.index("\nsHelp:")]
         _TILES = [([int(x[1:], 16) for x in m.group(1).split(",")[:8]], int(m.group(1).split(",")[8]))
-                  for m in re.finditer(r"dc\.b\s+(\$[0-9a-f]{2}(?:,\$[0-9a-f]{2}){7},\d+,0)", body)]
-        assert len(_TILES) in (17, 19)       # 19 = with the lift end / lift stop tiles (work/lifts/ed_lift.s)
+                  for m in re.finditer(r"dc\.b\s+(\$[0-9a-f]{2}(?:,\$[0-9a-f]{2}){7},\d+)", body)]
+        assert len(_TILES) == 21       # 17 shapes + lift end / lift stop (ids 17, 18) + conveyor left / right (19, 20); tile 3 = crumble ledge ($91)
     return _TILES
 
 def classify(v):
     if v == 0: return 0
     if not v & 0x80:
         k = (v >> 4) & 7
-        if k == 0 and v & 0x0c in (8, 12) and len(tiles()) == 19:
+        if k == 0 and v & 0x0c in (8, 12):
             return 17 if v & 0x0c == 8 else 18
         return 1 if k == 0 else 8 + k
     c = v & 3
@@ -151,7 +151,7 @@ def classify(v):
     if c == 0: return 4
     if c == 2: return 5
     if v & 0x0c: return 6
-    return 3 if v & 0x70 else 2
+    return {0x10: 3, 0x20: 19, 0x30: 20}.get(v & 0x70, 2)   # $91 crumbling ledge, $a1 / $b1 conveyor left / right (ledge + arrow in the editor); the game draws all of them exactly like a ledge
 
 # ---- lifts (work/notes/lifts.md).  A lift lives in ONE grid column: start slab $85 (lower row) .. end marker $08 (higher row), optional stop markers $0c in
 # between.  Nothing else is stored; the game's own ride code ($3a3e6) and return queue ($339ee) do the rest.

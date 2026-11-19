@@ -10,15 +10,20 @@ What it is
   original's, byte for byte.  PATCHES.TXT lists every change.  Nebulus_campaign_disk.st is a blank 720 KB data disk, see below.
 
 What is new in v@VERSION@ (compared with v1.1.1)
-  Level editor (Tower > menu): each custom level can now choose its colour
-  scheme (the palette, raster bars, skyline and tower texture of any of the
-  8 original towers) and its enemy set (the 4 enemy eye designs),
-  independent of the tower and its geometry. The panel shows the choice as
-  "S<colours> E<enemies>". The original towers are unchanged. Also included
-  is the v1.1.1 crash fix (Address Error with campaign files whose level
-  records have an odd size). Level files stay compatible both ways: old
-  files play "as base tower"; new files keep working on older versions,
-  where the look choice is ignored.
+  Level editor: each custom level now chooses its colours from a list (the
+  game's 8 tower looks: palette, sky colours, skyline and tower texture;
+  the whole editor screen takes the highlighted look while you move the
+  cursor) and its enemies from a list (the 4 enemy eye designs). The
+  Level > menu no longer has "Look: next tower" / "other mission": the
+  colour choice sets the level's tower byte by itself. New cells: Crumble
+  ledge (it looks like a normal ledge; the frog falls when it steps on it)
+  and Conveyor left / Conveyor right (they look like a normal ledge in
+  play; a frog standing on one without moving is carried to its end).
+  The panel shows the choice as "S<colours> E<enemies>". The original
+  towers are unchanged. Also included is the v1.1.1 crash fix (Address
+  Error with campaign files whose level records have an odd size). Level
+  files stay compatible both ways: old files keep their look; a v1.1.1
+  game plays a new file with the colours (tower byte) you picked.
 
 Changes in this release
 {WHATSNEW}
@@ -52,24 +57,29 @@ row 1 and a ledge + exit door at the top):
    joystick   move the box (the tower is a ring: left of the left column is
               the right column)
    FIRE       open the menu (the letter after a name is its keyboard key):
-     Empty C / Ledge L / Pillar P / Blue block B (shoot it once per cell to
-       remove it) / Lift > / Door opening D (3 cells) / Exit door X (3 cells)
+     Empty C / Ledge L / Crumble ledge (looks like a ledge, the frog falls
+       when it steps on it) / Conveyor left N / Conveyor right M (look like
+       a ledge, carry a standing frog left / right; the editor shows an
+       arrow) / Pillar P / Blue block B (shoot it once per cell to remove
+       it) / Lift > / Door opening D (3 cells; the door on the
+       opposite side of the tower, 8 columns away, is placed too: the frog
+       comes out there) / Exit door X (3 cells, the goal; no partner)
      Enemy >   Stone ball S, Red ball R, Red ball W (waits for you), Eye
                up/down U slow, I fast, Eye left/right J slow, K fast; then
                choose the start direction
      Lift >    Lift: from here A, Lift: stop here Z, Lift: delete
-     Tower >   Look, Colours, Enemies (colour scheme and eye-disc design of
-               the level; 0 = as the base tower), Copy original grid, Blank
+     Level >   Colours > / Enemies > (lists, the screen shows the highlighted
+               look at once), Copy tower > (the 16 shipped towers), Blank
                grid, Time +50 / -50 seconds, Name...
      Playtest  run the real game on what you are editing; F10, finishing the
                level or losing brings you back to the editor
      Save to campaign disk, Leave editor (keeps the level in the level list)
    F10        leave the editor (the level is kept)
 KEYBOARD SHORTCUTS (in the map, no menu needed): C or Del clear, L ledge,
-P pillar, B blue block, D door, X exit, A lift, Z lift stop, S/R/W/U/I/J/K
-the enemies; the same enemy key again turns that enemy round; RETURN or SPACE
-repeats the last tile (paint).  T and E (trainers) do nothing while you edit;
-they work in a playtest.
+P pillar, B blue block, D door, X exit, A lift, Z lift stop, N / M conveyor
+left / right, S/R/W/U/I/J/K the enemies; the same enemy key again turns
+that enemy round; RETURN or SPACE repeats the last tile (paint).  T and E
+(trainers) do nothing while you edit; they work in a playtest.
 THE FROG STARTS IN THE SAME PLACE IN EVERY TOWER (column 0, row 2), so every
 level needs a ledge on row 1 near column 0-1; the new level and "Blank grid"
 have it, keep it.

@@ -10,15 +10,20 @@ What it is
   changed byte.
 
 What is new in v@VERSION@ (compared with v1.1.1)
-  Level editor (Tower > menu): each custom level can now choose its colour
-  scheme (the palette, raster bars, skyline and tower texture of any of the
-  8 original towers) and its enemy set (the 4 enemy eye designs),
-  independent of the tower and its geometry. The panel shows the choice as
-  "S<colours> E<enemies>". The original towers are unchanged. Also included
-  is the v1.1.1 crash fix (Address Error with campaign files whose level
-  records have an odd size). Level files stay compatible both ways: old
-  files play "as base tower"; new files keep working on older versions,
-  where the look choice is ignored.
+  Level editor: each custom level now chooses its colours from a list (the
+  game's 8 tower looks: palette, sky colours, skyline and tower texture;
+  the whole editor screen takes the highlighted look while you move the
+  cursor) and its enemies from a list (the 4 enemy eye designs). The
+  Level > menu no longer has "Look: next tower" / "other mission": the
+  colour choice sets the level's tower byte by itself. New cells: Crumble
+  ledge (it looks like a normal ledge; the frog falls when it steps on it)
+  and Conveyor left / Conveyor right (they look like a normal ledge in
+  play; a frog standing on one without moving is carried to its end).
+  The panel shows the choice as "S<colours> E<enemies>". The original
+  towers are unchanged. Also included is the v1.1.1 crash fix (Address
+  Error with campaign files whose level records have an odd size). Level
+  files stay compatible both ways: old files keep their look; a v1.1.1
+  game plays a new file with the colours (tower byte) you picked.
 
 Changes in this release
 {WHATSNEW}
@@ -69,21 +74,23 @@ row 1 and a ledge + exit door at the top):
    joystick   move the box (the tower is a ring: left of the left column is
               the right column)
    FIRE       open the menu (the letter after a name is its keyboard key):
-     Empty C / Ledge L / Pillar P / Blue block B (shoot it once per cell to
-       remove it) / Lift > / Door opening D (3 cells) / Exit door X (3 cells)
+     Empty C / Ledge L / Crumble ledge (looks like a ledge, disappears under
+       the frog when it steps on it) / Conveyor left N / Conveyor right M
+       (look like a ledge; carry a standing frog to the left / right end of
+       the row of conveyor cells) / Pillar P / Blue block B (shoot it once
+       per cell to remove it) / Lift > / Door opening D (3 cells; the door on
+       the opposite side of the tower, 8 columns away, is placed too: the frog
+       comes out there) / Exit door X (3 cells, the goal; no partner)
      Enemy >   Stone ball S (rolls along a ledge), Red ball R (bounces), Red
                ball W (waits for you), Eye up/down U slow, I fast, Eye
                left/right J slow, K fast; then choose the start direction.
                Enemies only turn round at walls, ledge ends and other enemies.
      Lift >    Lift: from here A, Lift: stop here Z, Lift: delete (see LIFTS)
-     Tower >   Look: next tower / other mission (the base tower: its
-               colours and enemies unless set below, default time, the grid
-               Copy original grid starts from), Colours: next (the
-               colour scheme: palette, sky colours, skyline and tower
-               texture of one of the 8 towers; 0 = as the base tower),
-               Enemies: next (which of the 4 eye-disc designs the eye
-               enemies use; 0 = as the base tower), Copy original grid
-               (start from a shipped tower), Blank grid, Time +50 / -50
+     Level >   Colours > (a list: the 1..8 looks of the game's towers; the
+               screen shows the highlighted look at once, FIRE picks it,
+               "< back" keeps the old one), Enemies > (list of the 4 eye-disc
+               designs), Copy tower > (list of the 16 shipped towers: starts
+               from that tower's grid and look), Blank grid, Time +50 / -50
                seconds, Name... (up/down = letter, left/right = move, FIRE
                = done)
      Playtest  run the real game on what you are editing; F10, finishing the
@@ -92,10 +99,11 @@ row 1 and a ledge + exit door at the top):
    F10        leave the editor (the level is kept)
 KEYBOARD SHORTCUTS (in the map, no menu needed; the key sets the tile at the
 box; keys are named by their US legend, ST key position):
-   C or Del clear   L ledge   P pillar   B blue block   D door opening (3)
+   C or Del clear   L ledge   P pillar   B blue block   D door (3 + opposite)
    X exit door (3)  A lift (see LIFTS)    Z lift stop
    S stone ball   R red ball   W red ball that waits   U / I eye up-down
    slow / fast   J / K eye left-right slow / fast
+   N / M conveyor left / right
    The same enemy key again on the same enemy turns it round (start direction).
    RETURN or SPACE = repeat the last tile at the box (paint: move, RETURN).
    The trainer keys T and E never do anything while you edit (they work in a
@@ -115,14 +123,16 @@ end is not a block: it is a lift start and hurts the frog.
 Screen: 16 columns x rows of 16x8 pixel tiles (top = higher).  A frog marks
 where Pogo starts (column 0, row 2): THE FROG STARTS IN THE SAME PLACE IN
 EVERY TOWER, so every level needs a ledge on row 1 near column 0-1; the new
-level and "Blank grid" have it, keep it.  Right panel = tower/mission, colours
-and enemies (S5 E2 = colour scheme 5, enemy set 2; 0 = as the base tower),
+level and "Blank grid" have it, keep it.  Right panel = colours and enemies
+(S5 E2 = colour look 5, enemy design 2: the numbers of the lists),
 rows, column, row, cell value; bottom line = cell name and hints/warnings ("No
 ledge below!" for a ground enemy, "Eye needs terrain" for a vertical eye with
-nothing above and below, "Pillar blocks lift").  Tile colours: green ledge,
-grey pillar, blue shootable block, cream lift platform, arrows = lift end /
-stop, red outline door, red filled exit, round enemies with an arrow showing
-the start direction.
+nothing above and below, "Pillar blocks lift").  The whole screen (map,
+text, background) is drawn in the colours of the level's look.  A crumble
+ledge is drawn dotted below its top line, a conveyor ledge with an arrow
+above it (pointing the way it carries the frog); the game draws all three
+exactly like a ledge.  Arrows = lift end / stop, round enemies with an arrow
+showing the start direction.
 
 LIMITS: levels have 16..120 rows (the blank tower has 48; the shipped ones
 47..96); at most 127 levels and 8 campaigns of 16 entries; all of it must fit

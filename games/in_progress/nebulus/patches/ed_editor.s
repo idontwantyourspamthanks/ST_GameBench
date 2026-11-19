@@ -14,6 +14,8 @@
 ; note:   Records are packed back to back (odd sizes: a record may start at an odd address: every reader is bytewise, rdlen/rdtime); flags.b is reserved:
 ; note:   readers ignore it, the editor preserves all 8 bits (rsFlg: Edit loads it, commit writes it back, a new level = 0).
 ; note: entry byte: bit7 set = original tower ($80 | (mission-1)<<3 | tower), else custom level index.
+; note: Round 6 (work/notes/editor.md section 17): conveyor ledges $a1 (left) / $b1 (right) in the cell menu, keys N / M, tiles 19 / 20; the tile names are a plain
+; note: string list in tile order (nth); V+162 (the old vDirty, never read) is unused.
 
 CODE1   equ     $75740
 DATA    equ     $76d40
@@ -84,7 +86,6 @@ vTile   equ     192
 vNum    equ     124
 vNPos   equ     156
 vNDst   equ     158
-vDirty  equ     162
 vMBP    equ     164
 vMCol   equ     168
 vShow   equ     170
@@ -94,6 +95,7 @@ vMed    equ     244                     ; saved hdv_mediach
 vTxt    equ     208                     ; message text buffer (32 B)
 vLift   equ     172
 ETILE   equ     $A8800
+EPAL    equ     $A8980                  ; the editor's 16-word palette (non-game RAM, 32 B): built from the game's own palette table by set_theme, copied to the hardware by ed_vbl
 rsOk    equ     40
 RSV     equ     RS-V                    ; RS-relative access from the editor code (a5 = V there; hooks that run in the game use absolute RS+..)
 rsKey   equ     42                      ; key latch: the F10 make byte ($44) seen by the ACIA hook ed_key, 0 = none
@@ -108,26 +110,12 @@ rsCol   equ     62                      ; word: colour set index (0..7, 8 = vict
 rsEye   equ     51                      ; byte: eye design index (0..3) cached by ed_lvl; the eye site reads the WORD at RS+50 (rsFlg is its high byte) and masks with 3
 
         org     CODE1
-        dc.w    $4ef9
-        dc.l    ed_dec
-        dc.w    $4ef9
-        dc.l    ed_dir
-        dc.w    $4ef9
-        dc.l    ed_title
-        dc.w    $4ef9
-        dc.l    ed_time
-        dc.w    $4ef9
-        dc.l    ed_name
-        dc.w    $4ef9
-        dc.l    ed_next
-        dc.w    $4ef9
-        dc.l    ed_game
 
 ; ------------------------------------------------------------------ store helpers
 ; d0.w = level index -> a0 = record (0 if the store or the index is invalid).  Records are packed back to back (odd sizes allowed), so a record can
 ; start at an odd address: len/time words are read as bytes (rdlen/rdtime); a 68000 word read at an odd address is an address error
 lvl_ptr:
-        bsr.w   ov_ok
+        bsr   ov_ok
         lea     OVS.l,a0
         cmpi.l  #'NCMP',(a0)
         bne.s   lbad
@@ -159,7 +147,7 @@ store_end:
 
 ; d0.w = campaign index -> a0 (0 if invalid)
 camp_ptr:
-        bsr.w   ov_ok
+        bsr   ov_ok
         lea     OVS.l,a0
         cmpi.l  #'NCMP',(a0)
         bne.s   .bad
@@ -252,7 +240,7 @@ ed_time:
         move.w  (a7)+,d0
         move.l  a0,d1
         beq.s   .r
-        bsr.w   rdtime
+        bsr   rdtime
         beq.s   .r
         move.w  d1,d0
 .r:     rts
@@ -278,7 +266,7 @@ ed_name:
 ; tower complete ($3e352)
 ed_next:
         tst.w   RS+rsTest.l
-        bne.w   pt_done
+        bne   pt_done
         move.w  RS+rsCamp.l,d0
         bne.s   .camp
         tst.w   RS+rsLvl.l
@@ -286,7 +274,7 @@ ed_next:
         move.w  $33a34.l,d0
         jmp     $3e358.l
 .camp:  subq.w  #1,d0
-        bsr.w   camp_ptr
+        bsr   camp_ptr
         move.l  a0,d0
         beq.s   end_run
         move.w  RS+rsPos.l,d0
@@ -297,7 +285,7 @@ ed_next:
         cmp.w   d1,d0
         bhs.s   end_run
         move.b  14(a0,d0.w),d0
-        bra.w   apply_entry
+        bra   apply_entry
 end_run:
         move.w  #8,$3390c.l
         clr.w   RS+rsCamp.l
@@ -320,7 +308,7 @@ apply_entry:
 .cust:  move.w  d1,d0
         addq.w  #1,d1
         move.w  d1,RS+rsLvl.l
-        bsr.w   lvl_ptr
+        bsr   lvl_ptr
         moveq   #1,d2
         moveq   #0,d1
         move.l  a0,d0
@@ -347,15 +335,15 @@ ed_game:
         tst.w   RS+rsTest.l
         beq.s   .c
         clr.w   RS+rsKey.l
-        bra.w   pt_done
+        bra   pt_done
 .c:     clr.w   RS+rsKey.l
 .n:     jmp     $3868a.l
 
 ; playtest ended (level complete or F10) -> editor, then restart the playtest or leave
 pt_done:
         move.w  #1,RS+rsFrom.l
-        bsr.w   ed_run
-        bra.w   run_result
+        bsr   ed_run
+        bra   run_result
 
 ; d0 = vRes after the editor returns inside the game
 run_result:
@@ -372,7 +360,7 @@ ed_title:
         tst.w   RS+rsTest.l
         beq.s   .nt
         clr.w   RS+rsFrom.l
-        bsr.w   ed_run
+        bsr   ed_run
         bra.s   .res
 .nt:    clr.w   RS+rsCamp.l
         clr.w   RS+rsLvl.l
@@ -385,7 +373,7 @@ ed_title:
         bne.s   .no
 .go:    clr.b   $38498.l
         clr.w   RS+rsFrom.l
-        bsr.w   ed_run
+        bsr   ed_run
 .res:   addq.l  #4,a7
         tst.w   d0
         beq.s   .back
@@ -400,7 +388,7 @@ ed_title:
 ed_vbl:
         move.b  #0,$ffff8260.w
         movem.l d0-d7/a0-a6,-(a7)
-        lea     pal(pc),a0
+        lea     EPAL.l,a0
         lea     $ffff8240.w,a1
         moveq   #7,d0
 .p:     move.l  (a0)+,(a1)+
@@ -410,9 +398,6 @@ ed_vbl:
         movem.l (a7)+,d0-d7/a0-a6
         rte
 
-pal:    dc.w    $000,$333,$0a0,$5a2,$666,$35f,$fea,$f40
-        dc.w    $520,$630,$740,$750,$760,$770,$771,$777
-
 ; ------------------------------------------------------------------ editor main: returns d0 = vRes
 ed_run:
         movem.l d1-d7/a0-a6,-(a7)
@@ -421,8 +406,8 @@ ed_run:
         moveq   #63,d0
 .zv:    clr.l   (a0)+
         dbra    d0,.zv
-        bsr.w   tiles_init
-        bsr.w   ov_ok
+        bsr   tiles_init
+        bsr   ov_ok
         move.w  sr,vSr(a5)
         ori.w   #$700,sr
         move.l  $70.w,vOld70(a5)
@@ -450,16 +435,13 @@ ed_run:
         beq.s   .fresh
         ; resume the playtested session: working copy back into the grid
         move.w  #$7fff,RSV+rsLvl(a5)
-        move.w  RSV+rsTow(a5),$3390c.l
-        move.w  RSV+rsMis(a5),$33910.l
-        jsr     $377a2.l
+        bsr     ld_dec
         clr.w   RSV+rsLvl(a5)
         move.w  #1,vScr(a5)
-        move.w  #1,vDirty(a5)
         bra.s   .go
-.fresh: bsr.w   m_main
+.fresh: bsr   m_main
 .go:    move.w  #3,vRedraw(a5)
-.loop:  bsr.w   redraw
+.loop:  bsr   redraw
         move.w  vFrame(a5),d0
 .w:     cmp.w   vFrame(a5),d0
         beq.s   .w
@@ -468,12 +450,12 @@ ed_run:
         clr.w   RSV+rsKey(a5)
         cmp.w   #$44,d0
         bne.s   .nk
-        bsr.w   f10
+        bsr   f10
 .nk:    move.w  RSV+rsKb(a5),d0
         beq.s   .nk2
         clr.w   RSV+rsKb(a5)
-        bsr.w   kb_key
-.nk2:   bsr.w   input
+        bsr   kb_key
+.nk2:   bsr   input
         tst.w   vRes(a5)
         beq.s   .loop
         move.w  #$2700,sr
@@ -506,14 +488,14 @@ ed_run:
 
 ; F10: editor -> list screen, list -> quit
 f10:    tst.w   vDisk(a5)
-        bne.w   c_dno
+        bne   c_dno
         tst.w   vScr(a5)
         beq.s   .q
         tst.w   vMode(a5)
         bne.s   .r
         tst.w   vLift(a5)
-        bne.w   lift_cancel
-        bra.w   c_leaveed
+        bne   lift_cancel
+        bra   c_leaveed
 .q:     move.w  #3,vRes(a5)
 .r:     rts
 
@@ -534,16 +516,17 @@ redraw:
 .same:  move.w  d1,vShow(a5)
         tst.w   d1
         beq.s   .map
-        bsr.w   clr_screen
+        bsr   clr_screen
         cmp.w   #3,vMode(a5)
-        beq.w   draw_name
-        bra.w   draw_menu
+        beq   draw_name
+        bra   draw_menu
 .map:   btst    #0,d0
         beq.s   .pan
-        bsr.w   clr_screen
-        bsr.w   draw_map
-        bsr.w   draw_cursor
-.pan:   bra.w   draw_panel
+        bsr   clr_screen
+        bsr   theme_cur
+        bsr   draw_map
+        bsr   draw_cursor
+.pan:   bra   draw_panel
 .none:  rts
 
 clr_screen:
@@ -568,17 +551,15 @@ draw_map:
         lea     GRID.l,a0
         adda.w  d0,a0
         move.b  0(a0,d4.w),d0
-        move.w  d6,d1
-        move.w  d5,d2
         tst.b   d0
         bne.s   .n
         cmp.w   #2,d4
         bne.s   .n
         tst.w   d6
         bne.s   .n
-        bsr.w   draw_cellf
+        bsr   draw_cellf
         bra.s   .nx
-.n:     bsr.w   draw_cell
+.n:     bsr   draw_cell
 .nx:    addq.w  #1,d6
         cmp.w   #16,d6
         blt.s   .cl
@@ -587,19 +568,17 @@ draw_map:
         blt.s   .ln
         rts
 
-; d0.b = cell value, d1 = column 0..15, d2 = 8-pixel line index
+; d0.b = cell value, d6 = column 0..15, d5 = 8-pixel line index (draw_map's own counters; all registers kept)
 draw_cellf:
         movem.l d0-d7/a0-a2,-(a7)
-        move.w  d1,d7
-        move.w  d2,d6
         moveq   #16,d3
         bra.s   draw_id
 draw_cell:
         movem.l d0-d7/a0-a2,-(a7)
-        move.w  d1,d7
-        move.w  d2,d6
-        bsr.w   classify
+        bsr   classify
 draw_id:
+        move.w  d6,d7
+        move.w  d5,d6
         lea     ETILE.l,a1
         move.w  d3,d2
         lsl.w   #4,d2
@@ -644,17 +623,14 @@ draw_id:
         adda.l  d6,a0
         lsl.w   #3,d7
         adda.w  d7,a0
-        moveq   #0,d1
-        btst    #0,d5
-        sne     d1
+        lsr.b   #1,d5                   ; plane mask bits 0..2 -> d1..d3 = $ffff / 0
+        scs     d1
         ext.w   d1
-        moveq   #0,d2
-        btst    #1,d5
-        sne     d2
+        lsr.b   #1,d5
+        scs     d2
         ext.w   d2
-        moveq   #0,d3
-        btst    #2,d5
-        sne     d3
+        lsr.b   #1,d5
+        scs     d3
         ext.w   d3
         moveq   #7,d7
 .row:   move.w  (a2)+,d4
@@ -684,7 +660,7 @@ classify:
         and.b   #7,d1
         moveq   #1,d3
         tst.b   d1
-        beq.w   lift_tile
+        beq   lift_tile
         moveq   #8,d3
         add.b   d1,d3
 .r:     rts
@@ -707,12 +683,12 @@ classify:
         move.b  d0,d1
         and.b   #$0c,d1
         bne.s   .r
-        moveq   #2,d3
-        move.b  d0,d1
-        and.b   #$70,d1
-        beq.s   .r
-        moveq   #3,d3
+        moveq   #$70,d1                 ; ledge family ($x1, bits 2-3 clear): bits 4-6 = plain / crumble $91 / conveyor left $a1 / conveyor right $b1
+        and.b   d0,d1
+        lsr.b   #4,d1
+        move.b  ltile(pc,d1.w),d3
         rts
+ltile:  dc.b    2,3,19,20,2,2,2,2
 
 ; cursor: XOR a 16x8 box over the cell (call again to erase)
 draw_cursor:
@@ -729,18 +705,16 @@ draw_cursor:
         lsl.w   #3,d1
         adda.w  d1,a0
         moveq   #7,d1
-.l:     tst.w   d1
-        beq.s   .full
+.l:     moveq   #-1,d2                  ; top and bottom line: the whole width, between: the two edge pixels
+        tst.w   d1
+        beq.s   .f
         cmp.w   #7,d1
-        beq.s   .full
-        eori.w  #$8001,(a0)
-        eori.w  #$8001,2(a0)
-        eori.w  #$8001,4(a0)
-        bra.s   .nx
-.full:  eori.w  #$ffff,(a0)
-        eori.w  #$ffff,2(a0)
-        eori.w  #$ffff,4(a0)
-.nx:    lea     160(a0),a0
+        beq.s   .f
+        move.w  #$8001,d2
+.f:     eor.w   d2,(a0)
+        eor.w   d2,2(a0)
+        eor.w   d2,4(a0)
+        lea     160(a0),a0
         dbra    d1,.l
 .x:     movem.l (a7)+,d0-d2/a0
         rts
@@ -761,28 +735,17 @@ draw_panel:
 .s:     move.l  d1,(a0)+
         dbra    d0,.s
         lea     vNum(a5),a2
-        move.b  #'T',(a2)+
-        move.w  RSV+rsTow(a5),d0
+        move.b  #'S',(a2)+
+        bsr   eff_col
         addq.w  #1,d0
-        bsr.w   dec1
-        move.b  #' ',(a2)+
-        move.b  #'M',(a2)+
-        move.w  RSV+rsMis(a5),d0
-        bsr.w   dec1
+        bsr   dec1
+        move.w  #' E',(a2)+
+        bsr   eff_eye
+        addq.w  #1,d0
+        bsr   dec1
         clr.b   (a2)
         moveq   #0,d2
-        bsr.w   pline
-        lea     vNum(a5),a2
-        move.b  #'S',(a2)+
-        move.b  RSV+rsFlg(a5),d0
-        lsr.b   #4,d0
-        bsr.w   dec1
-        move.w  #' E',(a2)+
-        move.b  RSV+rsFlg(a5),d0
-        bsr.w   dec1
-        clr.b   (a2)
-        moveq   #5,d2
-        bsr.w   pline
+        bsr   pline
         lea     ptab(pc),a3
         moveq   #1,d2
 .pl:    lea     vNum(a5),a2
@@ -790,29 +753,27 @@ draw_panel:
         moveq   #0,d0
         move.b  (a3)+,d0
         move.w  RSV(a5,d0.w),d0
-        bsr.w   dec3
+        bsr   dec3
         clr.b   (a2)
-        bsr.w   pline
+        bsr   pline
         addq.w  #1,d2
         cmp.w   #4,d2
         bne.s   .pl
-        bsr.w   cur_cell
+        bsr   cur_cell
         lea     vNum(a5),a2
         move.b  #'$',(a2)+
-        bsr.w   hex2
+        bsr   hex2
         clr.b   (a2)
         moveq   #4,d2
-        bsr.w   pline
-        bsr.w   cur_cell
-        bsr.w   classify
+        bsr   pline
+        bsr   cur_cell
+        bsr   classify
         lea     names(pc),a0
-        add.w   d3,d3
-        move.w  0(a0,d3.w),d3
-        lea     names(pc),a0
-        adda.w  d3,a0
+        move.w  d3,d0
+        bsr   nth
         moveq   #0,d1
         moveq   #11,d2
-        bsr.w   txt
+        bsr   txt
         move.l  vMsg(a5),d0
         bne.s   .m
         lea     sHelp(pc),a0
@@ -820,13 +781,13 @@ draw_panel:
 .m:     move.l  d0,a0
 .h:     moveq   #16,d1
         moveq   #11,d2
-        bra.w   txt
+        bra   txt
 ptab:   dc.b    'H',rsRows,'C',rsCx,'R',rsCy
 
 ; text line from vNum in the right panel (column 32), line d2
 pline:  lea     vNum(a5),a0
         moveq   #32,d1
-        bra.w   txt
+        bra   txt
 
 draw_menu:
         move.l  vMenu(a5),a0
@@ -850,12 +811,12 @@ draw_menu:
         cmp.w   vSel(a5),d5
         bne.s   .ns
         move.b  #'>',-1(a2)
-.ns:    bsr.w   cpstr
+.ns:    bsr   cpstr
         clr.b   (a2)
         lea     vNum(a5),a0
         move.w  vMCol(a5),d1
         move.w  d0,d2
-        bsr.w   txt
+        bsr   txt
 .skip:  move.l  (a7)+,a0
         addq.l  #4,a7
         addq.w  #1,d5
@@ -868,13 +829,13 @@ draw_menu:
         move.l  d0,a0
         moveq   #8,d1
         moveq   #11,d2
-        bsr.w   txt
+        bsr   txt
 .nm:    rts
 
 draw_name:
         lea     vNum(a5),a2
         lea     sName(pc),a0
-        bsr.w   cpstr
+        bsr   cpstr
         move.l  vNDst(a5),a0
         moveq   #11,d0
 .c:     move.b  (a0)+,(a2)+
@@ -883,15 +844,15 @@ draw_name:
         lea     vNum(a5),a0
         moveq   #8,d1
         moveq   #0,d2
-        bsr.w   txt
+        bsr   txt
         lea     sNameH(pc),a0
         moveq   #8,d1
         moveq   #3,d2
-        bsr.w   txt
+        bsr   txt
         lea     sNameH2(pc),a0
         moveq   #8,d1
         moveq   #4,d2
-        bsr.w   txt
+        bsr   txt
         lea     vNum(a5),a2
         moveq   #15,d0
 .b:     move.b  #' ',(a2)+
@@ -904,16 +865,12 @@ draw_name:
         lea     vNum(a5),a0
         moveq   #8,d1
         moveq   #1,d2
-        bra.w   txt
+        bra   txt
 
 ; current cell value -> d0.b
 cur_cell:
-        move.w  RSV+rsCx(a5),d0
-        lsl.w   #8,d0
-        lea     GRID.l,a0
-        adda.w  d0,a0
-        move.w  RSV+rsCy(a5),d0
-        move.b  0(a0,d0.w),d0
+        bsr   colbase
+        move.b  0(a0,d2.w),d0
         rts
 
 ; text: a0 string, d1 = x8 column, d2 = 16-pixel line
@@ -945,7 +902,7 @@ dec3:   ext.l   d0
         add.b   #'0',d0
         move.b  d0,(a2)+
         swap    d0
-        ext.l   d0
+dec2:   ext.l   d0
         divu.w  #10,d0
         add.b   #'0',d0
         move.b  d0,(a2)+
@@ -953,6 +910,15 @@ dec3:   ext.l   d0
         add.b   #'0',d0
         move.b  d0,(a2)+
         rts
+mb_lst: clr.w   vScr(a5)
+        move.w  #8,vMCol(a5)
+mb_new: lea     MB.l,a2
+        clr.b   (a2)+
+        move.l  a2,vMBP(a5)
+        rts
+ld_dec: move.w  RSV+rsTow(a5),$3390c.l
+        move.w  RSV+rsMis(a5),$33910.l
+        jmp     $377a2.l
 hex2:   move.w  d0,-(a7)
         lsr.b   #4,d0
         bsr.s   hexd
@@ -975,8 +941,7 @@ input:
         tst.w   d3
         beq.s   .nofire
         tst.w   d4
-        bne.s   .nofire
-        bra.w   fire_edge
+        beq   fire_edge
 .nofire:
         move.w  d1,d0
         or.w    d2,d0
@@ -995,13 +960,13 @@ input:
         move.w  #1,vHeld(a5)
         move.w  #14,vRep(a5)
 .rp:    move.w  vMode(a5),d0
-        beq.w   move_map
+        beq   move_map
         cmp.w   #3,d0
-        beq.w   move_name
-        bra.w   move_menu
+        beq   move_name
+        bra   move_menu
 
 move_map:
-        bsr.w   draw_cursor
+        bsr   draw_cursor
         tst.w   vLift(a5)
         beq.s   .lh
         moveq   #0,d1
@@ -1032,10 +997,9 @@ move_map:
         move.w  d0,RSV+rsTop(a5)
 .rd:    move.w  #3,vRedraw(a5)
         rts
-.nr:    bsr.w   draw_cursor
+.nr:    bsr   draw_cursor
         move.w  #2,vRedraw(a5)
-        bsr.w   lift_msg
-        rts
+        bra   lift_msg
 
 move_menu:
         move.w  vSel(a5),d0
@@ -1053,7 +1017,7 @@ move_menu:
         tst.w   d1
         bpl.s   .win
         move.w  d3,vSel(a5)
-        bra.w   menu_exec               ; left = the last item ("< back")
+        bra   menu_exec               ; left = the last item ("< back")
 .win:   move.w  vMTop(a5),d1
         cmp.w   d1,d0
         bge.s   .w2
@@ -1064,21 +1028,19 @@ move_menu:
         ble.s   .w3
         move.w  d0,vMTop(a5)
 .w3:    move.w  #2,vRedraw(a5)
-        rts
+        bra   preview
 
 fire_edge:
         move.w  vMode(a5),d0
         cmp.w   #3,d0
-        beq.w   name_done
+        beq   name_done
         tst.w   d0
-        bne.w   menu_exec
+        bne   menu_exec
         ; map: open the cell menu
         tst.w   vLift(a5)
-        bne.w   lift_set
+        bne   lift_set
         move.w  #8,vMCol(a5)
         lea     m_root(pc),a0
-        bsr.w   menu_open
-        rts
 
 ; a0 = menu -> shown
 menu_open:
@@ -1086,7 +1048,22 @@ menu_open:
         clr.w   vSel(a5)
         clr.w   vMTop(a5)
         move.w  #1,vMode(a5)
-        move.w  #2,vRedraw(a5)
+rd2:    move.w  #2,vRedraw(a5)
+        rts
+
+; a list built in MB is closed with "< back" (command d1) and shown
+mb_back:
+        lea     sBack(pc),a0
+        moveq   #4,d0
+        bsr   mb_add
+        lea     MB.l,a0
+        bra.s   menu_open
+
+; a0 = list of NUL-terminated strings, d0.w = index -> a0 = that string (d0 = -1)
+nth:    bra.s   .t
+.n:     tst.b   (a0)+
+        bne.s   .n
+.t:     dbra    d0,.n
         rts
 
 ; item vSel of the current menu -> a0 at its action byte
@@ -1114,18 +1091,18 @@ act_go: move.b  (a0)+,d0
         move.w  0(a0,d0.w),d0
         jmp     0(a0,d0.w)
 
-acts:   dc.w    a_set-acts,a_tri-acts,a_sub-acts,a_enemy-acts,a_cmd-acts,a_edir-acts,a_lvl-acts,a_camp-acts,a_lop-acts,a_cop-acts,a_ent-acts,a_eop-acts,a_lift-acts,a_ekey-acts
+acts:   dc.w    a_set-acts,a_tri-acts,a_sub-acts,a_enemy-acts,a_cmd-acts,a_edir-acts,a_lvl-acts,a_camp-acts,a_lop-acts,a_cop-acts,a_ent-acts,a_eop-acts,a_lift-acts,a_ekey-acts,a_pick-acts
 
-a_set:  bsr.w   rec
+a_set:  bsr   rec
         move.w  d1,d0
-        bsr.w   place
-        bra.w   a_done
-a_tri:  bsr.w   rec
+        bsr   place
+        bra   a_done
+a_tri:  bsr   rec
         move.w  d1,d3
         move.w  RSV+rsCy(a5),-(a7)
         moveq   #2,d4
 .t1:    move.w  d3,d0
-        bsr.w   place
+        bsr   place
         move.w  RSV+rsCy(a5),d0
         addq.w  #1,d0
         cmp.w   RSV+rsRows(a5),d0
@@ -1133,13 +1110,16 @@ a_tri:  bsr.w   rec
         move.w  d0,RSV+rsCy(a5)
         dbra    d4,.t1
 .t2:    move.w  (a7)+,RSV+rsCy(a5)
-        bra.w   a_done
+        lea     sDoor(pc),a0            ; status: a door is paired with one 8 columns away, the exit door is the goal
+        cmp.b   #$83,d3
+        beq.s   .m
+        lea     sExit(pc),a0
+.m:     move.l  a0,vMsg(a5)
+        bra   a_done
 a_sub:  lea     menus(pc),a0
         add.w   d1,d1
-        move.w  0(a0,d1.w),d1
-        lea     menus(pc),a0
-        adda.w  d1,a0
-        bra.w   menu_open
+        adda.w  0(a0,d1.w),a0
+        bra   menu_open
 a_enemy:
         move.w  d1,vKind(a5)
         cmp.b   #$30,d1
@@ -1150,33 +1130,37 @@ a_enemy:
         cmp.b   #$60,d1
         bge.s   .sm
         lea     m_dirv(pc),a0
-.sm:    bra.w   menu_open
-.nodir: move.w  vKind(a5),d0
-        move.w  d0,d1
-        bsr.w   rec
-        bsr.w   place_enemy
-        bra.w   a_done
+.sm:    bra   menu_open
+.nodir: moveq   #0,d1                   ; the waiting red ball has no start direction
 a_edir: move.w  vKind(a5),d0
         or.w    d1,d0
-        move.w  d0,d1
-        bsr.w   rec
-        bsr.w   place_enemy
+pe:     move.w  d0,d1                   ; d0 = enemy marker: remember, place, back to the map
+        bsr   rec
+        bsr   place_enemy
 a_done: tst.w   vScr(a5)
-        beq.w   m_main
-        clr.w   vMode(a5)
-        move.w  #3,vRedraw(a5)
-        rts
+        beq   m_main
+        bra   ed_map
 
-; d0 = cell value -> grid at cursor
-place:  movem.l d0-d1/a0,-(a7)
+; d0 = cell value -> grid at cursor.  A door ($83) always has a door at the same row 8 columns away (column ^ 8): placing one sets the partner, replacing one clears the partner if it is a door
+place:  movem.l d0-d2/a0,-(a7)
         move.w  RSV+rsCx(a5),d1
         lsl.w   #8,d1
+        add.w   RSV+rsCy(a5),d1
         lea     GRID.l,a0
-        adda.w  d1,a0
-        move.w  RSV+rsCy(a5),d1
+        move.b  0(a0,d1.w),d2
         move.b  d0,0(a0,d1.w)
-        move.w  #1,vDirty(a5)
-        movem.l (a7)+,d0-d1/a0
+        cmp.b   #$83,d0
+        beq.s   .p
+        cmp.b   #$83,d2
+        bne.s   .x
+        moveq   #0,d0
+.p:     eori.w  #$800,d1
+        cmp.b   #$83,0(a0,d1.w)
+        beq.s   .w
+        tst.b   d0
+        beq.s   .x
+.w:     move.b  d0,0(a0,d1.w)
+.x:     movem.l (a7)+,d0-d2/a0
         rts
 
 ; enemy marker with warnings (d0 = marker)
@@ -1191,11 +1175,7 @@ place_enemy:
         blt.s   .ground
         cmp.w   #$60,d1
         bge.s   .ok
-        move.w  RSV+rsCx(a5),d1
-        lsl.w   #8,d1
-        lea     GRID.l,a0
-        adda.w  d1,a0
-        move.w  RSV+rsCy(a5),d2
+        bsr   colbase
         move.w  d2,d3
 .up:    addq.w  #1,d3
         cmp.w   RSV+rsRows(a5),d3
@@ -1211,11 +1191,7 @@ place_enemy:
         move.l  a0,vMsg(a5)
 .ok:    rts
 .ground:
-        move.w  RSV+rsCx(a5),d1
-        lsl.w   #8,d1
-        lea     GRID.l,a0
-        adda.w  d1,a0
-        move.w  RSV+rsCy(a5),d2
+        bsr   colbase
         subq.w  #1,d2
         bmi.s   .nl
         tst.b   0(a0,d2.w)
@@ -1231,23 +1207,16 @@ a_cmd:  lea     cmds(pc),a0
         jmp     0(a0,d1.w)
 
 cmds:   dc.w    m_main-cmds,m_levels-cmds,m_camps-cmds,c_newlvl-cmds,c_newcamp-cmds,c_quit-cmds,c_save-cmds,c_edroot-cmds
-        dc.w    c_leaveed-cmds,c_look-cmds,c_mis-cmds,c_copyorig-cmds,c_blank-cmds,c_tup-cmds,c_tdn-cmds,c_rename-cmds
-        dc.w    c_play-cmds,c_addent-cmds,cp_edit-cmds,c_dload-cmds,c_dgo-cmds,c_dno-cmds,c_col-cmds,c_eye-cmds
+        dc.w    c_leaveed-cmds,c_col-cmds,c_eye-cmds,c_cpy-cmds,c_blank-cmds,c_tup-cmds,c_tdn-cmds,c_rename-cmds
+        dc.w    c_play-cmds,c_addent-cmds,cp_edit-cmds,c_dload-cmds,c_dgo-cmds,c_dno-cmds
 
 ; --- main menu / list screens
 m_main: clr.w   vScr(a5)
         move.w  #8,vMCol(a5)
         lea     m_mainm(pc),a0
-        bsr.w   menu_open
-        move.w  #3,vRedraw(a5)
-        rts
+        bra   menu_open
 
 c_quit: move.w  #3,vRes(a5)
-        rts
-
-c_edroot:
-        clr.w   vMode(a5)
-        move.w  #2,vRedraw(a5)
         rts
 
 ; level / campaign list (dynamic): "name" (6|7,i), "<new level>" | "<new campaign>", "< back".  d4 = header offset of the count (6 levels, 8 campaigns);
@@ -1263,11 +1232,7 @@ m_camps:
         lea     sNewCamp(pc),a3
         moveq   #0,d5
         moveq   #8,d4
-ml:     clr.w   vScr(a5)
-        move.w  #8,vMCol(a5)
-        lea     MB.l,a2
-        clr.b   (a2)+
-        move.l  a2,vMBP(a5)
+ml:     bsr     mb_lst
         lea     OVS.l,a0
         moveq   #0,d3
         cmpi.l  #'NCMP',(a0)
@@ -1282,7 +1247,7 @@ ml:     clr.w   vScr(a5)
         lsr.w   #1,d0
         addq.w  #3,d0
         move.w  d2,d1
-        bsr.w   mb_add
+        bsr   mb_add
         addq.w  #1,d2
 .t:     cmp.w   d3,d2
         blt.s   .l
@@ -1290,21 +1255,15 @@ ml:     clr.w   vScr(a5)
         moveq   #4,d0
         move.w  d4,d1
         lsr.w   #1,d1
-        bsr.w   mb_add
-        lea     sBack(pc),a0
-        moveq   #4,d0
+        bsr   mb_add
         moveq   #0,d1
-        bsr.w   mb_add
-        lea     MB.l,a0
-        bsr.w   menu_open
-        move.w  #3,vRedraw(a5)
-        rts
+        bra   mb_back
 
 ; append an item: a0 = text (12 chars max, NUL or padded), d0.b = action, d1.b = param
 mb_add: move.l  vMBP(a5),a2
         move.b  d0,(a2)+
         move.b  d1,(a2)+
-        moveq   #14,d0
+        moveq   #27,d0
 .c:     move.b  (a0)+,d1
         beq.s   .e
         move.b  d1,(a2)+
@@ -1318,39 +1277,39 @@ mb_add: move.l  vMBP(a5),a2
 ; level selected: submenu
 a_lvl:  move.w  d1,vCur(a5)
         lea     m_lvl(pc),a0
-        bra.w   menu_open
+        bra   menu_open
 
 a_camp: move.w  d1,vCur(a5)
         lea     m_camp(pc),a0
-        bra.w   menu_open
+        bra   menu_open
 
 ; level operations: 0 play, 1 edit, 2 copy, 3 delete
 a_lop:  move.w  vCur(a5),d2
         tst.w   d1
-        beq.w   lv_play
+        beq   lv_play
         subq.w  #1,d1
-        beq.w   lv_edit
+        beq   lv_edit
         subq.w  #1,d1
-        beq.w   lv_copy
-        bra.w   lv_delete
+        beq   lv_copy
+        bra   lv_delete
 
 ; campaign operations: 0 play, 1 edit entries, 2 rename, 3 delete
 a_cop:  move.w  vCur(a5),d2
         move.w  d2,vCamp(a5)
         tst.w   d1
-        beq.w   cp_play
+        beq   cp_play
         subq.w  #1,d1
-        beq.w   cp_edit
+        beq   cp_edit
         subq.w  #1,d1
-        beq.w   cp_rename
-        bra.w   cp_delete
+        beq   cp_rename
+        bra   cp_delete
 
 ; --- levels
 lv_play:
         move.w  d2,d0
-        bsr.w   lvl_ptr
+        bsr   lvl_ptr
         move.l  a0,d0
-        beq.w   a_done
+        beq   a_done
         clr.w   RSV+rsCamp(a5)
         addq.w  #1,d2
         move.w  d2,RSV+rsLvl(a5)
@@ -1367,9 +1326,9 @@ lv_play:
 ; edit level d2: load it into the grid
 lv_edit:
         move.w  d2,d0
-        bsr.w   lvl_ptr
+        bsr   lvl_ptr
         move.l  a0,d0
-        beq.w   a_done
+        beq   a_done
         lea     RSV+rsName(a5),a1
         moveq   #11,d0
 .n:     move.b  8(a0,d0.w),0(a1,d0.w)
@@ -1381,23 +1340,20 @@ lv_edit:
         move.w  d0,RSV+rsTow(a5)
         move.b  2(a0),d0
         move.w  d0,RSV+rsRows(a5)
-        bsr.w   rdtime
+        bsr   rdtime
         move.w  d1,RSV+rsTime(a5)
         move.b  3(a0),RSV+rsFlg(a5)
         addq.w  #1,d2
         move.w  d2,RSV+rsSlot(a5)
         move.w  d2,RSV+rsLvl(a5)
-        move.w  RSV+rsTow(a5),$3390c.l
-        move.w  RSV+rsMis(a5),$33910.l
-        jsr     $377a2.l
+        bsr     ld_dec
         clr.w   RSV+rsLvl(a5)
-        clr.w   vDirty(a5)
-        bra.w   ed_begin
+        bra   ed_begin
 
 c_newlvl:
         clr.w   RSV+rsSlot(a5)
         clr.b   RSV+rsFlg(a5)
-        bsr.w   c_blank
+        bsr   c_blank
         lea     sNewName(pc),a0
         lea     RSV+rsName(a5),a1
         moveq   #11,d0
@@ -1406,61 +1362,55 @@ c_newlvl:
         move.w  #1,RSV+rsMis(a5)
         clr.w   RSV+rsTow(a5)
         move.w  #$0450,RSV+rsTime(a5)
-        bra.w   ed_begin
+        bra   ed_begin
 
 ; editor opened on the working grid
 ed_begin:
         move.w  #8,vMCol(a5)
         move.w  #1,RSV+rsEd(a5)
         move.w  #1,vScr(a5)
-        clr.w   RSV+rsCx(a5)
-        move.w  #1,RSV+rsCy(a5)
-        move.w  #21,RSV+rsTop(a5)
-        clr.w   vMode(a5)
         clr.l   vMsg(a5)
-        move.w  #3,vRedraw(a5)
-        rts
+        bra     c_nav
 
 lv_copy:
         move.w  d2,d0
-        bsr.w   lvl_ptr
+        bsr   lvl_ptr
         move.l  a0,d0
-        beq.w   a_done
+        beq   a_done
         move.l  a0,a3
-        bsr.w   rdlen
+        bsr   rdlen
         move.l  d1,d3
         add.w   #REC,d3
-        bsr.w   store_end
+        bsr   store_end
         lea     OVS+OVSZ.l,a1
         suba.l  a0,a1
         cmpa.l  d3,a1
-        blt.w   no_room
+        blt   no_room
         move.l  a0,a1
 .c:     move.b  (a3)+,(a1)+
         subq.w  #1,d3
         bne.s   .c
         addq.w  #1,OVS+6.l
-        bra.w   m_levels
+        bra   m_levels
 
 no_room:
         lea     sFull(pc),a0
-        move.l  a0,vMsg(a5)
-        move.w  #2,vRedraw(a5)
-        rts
+msg2:   move.l  a0,vMsg(a5)             ; a0 = status-line message, shown
+        bra   rd2
 
 ; delete level d2: close the gap, fix the campaigns
 lv_delete:
         move.w  d2,d0
-        bsr.w   lvl_ptr
+        bsr   lvl_ptr
         move.l  a0,d0
-        beq.w   a_done
-        bsr.w   rdlen
+        beq   a_done
+        bsr   rdlen
         move.l  d1,d3
         add.w   #REC,d3
         move.l  a0,a3
         lea     0(a0,d3.l),a1
         move.l  a0,-(a7)
-        bsr.w   store_end
+        bsr   store_end
         move.l  a0,a2
         move.l  (a7)+,a0
 .m:     cmp.l   a2,a1
@@ -1491,35 +1441,35 @@ lv_delete:
         move.b  d6,12(a1)
         lea     32(a1),a1
 .ct:    dbra    d5,.cl
-        bra.w   m_levels
+        bra   m_levels
 
 ; --- campaigns
 cp_play:
         move.w  d2,d0
-        bsr.w   camp_ptr
+        bsr   camp_ptr
         move.l  a0,d0
-        beq.w   a_done
+        beq   a_done
         tst.b   12(a0)
-        beq.w   a_done
+        beq   a_done
         addq.w  #1,d2
         move.w  d2,RSV+rsCamp(a5)
         clr.w   RSV+rsPos(a5)
         move.b  14(a0),d0
-        bsr.w   apply_entry
+        bsr   apply_entry
         move.w  #2,vRes(a5)
         rts
 
 cp_rename:
         move.w  d2,d0
-        bsr.w   camp_ptr
+        bsr   camp_ptr
         move.l  a0,vNDst(a5)
-        bra.w   name_begin
+        bra   name_begin
 
 cp_delete:
         move.w  d2,d0
-        bsr.w   camp_ptr
+        bsr   camp_ptr
         move.l  a0,d0
-        beq.w   a_done
+        beq   a_done
         lea     32(a0),a1
         lea     OVS+16.l,a2
         move.w  OVS+8.l,d0
@@ -1533,17 +1483,17 @@ cp_delete:
 .z:     clr.b   (a0)+
         dbra    d0,.z
         subq.w  #1,OVS+8.l
-        bra.w   m_camps
+        bra   m_camps
 
 c_newcamp:
-        bsr.w   chk_init
+        bsr   chk_init
         move.w  OVS+8.l,d0
         cmp.w   #8,d0
-        bhs.w   a_done
+        bhs   a_done
         addq.w  #1,OVS+8.l
         move.w  d0,d2
         move.w  d0,vCamp(a5)
-        bsr.w   camp_ptr
+        bsr   camp_ptr
         move.l  a0,a1
         moveq   #31,d0
 .z:     clr.b   (a1)+
@@ -1552,7 +1502,7 @@ c_newcamp:
         moveq   #11,d0
 .n:     move.b  (a1)+,(a0)+
         dbra    d0,.n
-        bra.w   cp_edit
+        bra   cp_edit
 
 ; make sure the store has a valid header
 chk_init:
@@ -1569,34 +1519,22 @@ chk_init:
 ; entry editor for campaign vCamp: "n O m t" / "n L name" (10,i), "<add entry>", "< back"
 cp_edit:
         move.w  vCamp(a5),d0
-        bsr.w   camp_ptr
+        bsr   camp_ptr
         move.l  a0,a3
-        clr.w   vScr(a5)
-        move.w  #8,vMCol(a5)
-        lea     MB.l,a2
-        clr.b   (a2)+
-        move.l  a2,vMBP(a5)
+        bsr     mb_lst
         moveq   #0,d3
         move.b  12(a3),d3
         moveq   #0,d2
         bra.s   .t
-.l:     move.b  14(a3,d2.w),d0
-        lea     vNum(a5),a2
-        move.w  d2,d1
-        addq.w  #1,d1
-        move.w  d1,d0
-        exg     d0,d1
-        move.w  d1,-(a7)
+.l:     lea     vNum(a5),a2
         move.w  d2,d0
         addq.w  #1,d0
-        bsr.w   dec2
-        move.w  (a7)+,d1
+        bsr   dec2
         move.b  #' ',(a2)+
         move.b  14(a3,d2.w),d0
         bpl.s   .cust
         move.b  #'O',(a2)+
         move.b  #' ',(a2)+
-        move.b  14(a3,d2.w),d0
         move.b  d0,d1
         lsr.b   #3,d1
         and.b   #1,d1
@@ -1611,7 +1549,7 @@ cp_edit:
 .cust:  move.b  #'L',(a2)+
         move.b  #' ',(a2)+
         and.w   #$7f,d0
-        bsr.w   lvl_ptr
+        bsr   lvl_ptr
         move.l  a0,d0
         beq.s   .nm
         lea     8(a0),a0
@@ -1627,56 +1565,41 @@ cp_edit:
 .add:   lea     vNum(a5),a0
         moveq   #10,d0
         move.w  d2,d1
-        bsr.w   mb_add
+        bsr   mb_add
         addq.w  #1,d2
 .t:     cmp.w   d3,d2
         blt.s   .l
         lea     sAddEnt(pc),a0
         moveq   #4,d0
         moveq   #17,d1
-        bsr.w   mb_add
-        lea     sBack(pc),a0
-        moveq   #4,d0
+        bsr   mb_add
         moveq   #2,d1
-        bsr.w   mb_add
-        lea     MB.l,a0
-        bsr.w   menu_open
-        move.w  #3,vRedraw(a5)
-        rts
-
-dec2:   ext.l   d0
-        divu.w  #10,d0
-        add.b   #'0',d0
-        move.b  d0,(a2)+
-        swap    d0
-        add.b   #'0',d0
-        move.b  d0,(a2)+
-        rts
+        bra   mb_back
 
 c_addent:
         move.w  vCamp(a5),d0
-        bsr.w   camp_ptr
+        bsr   camp_ptr
         move.l  a0,d0
-        beq.w   a_done
+        beq   a_done
         moveq   #0,d0
         move.b  12(a0),d0
         cmp.w   #16,d0
-        bhs.w   cp_edit
+        bhs   cp_edit
         move.b  #$80,14(a0,d0.w)
         addq.b  #1,12(a0)
-        bra.w   cp_edit
+        bra   cp_edit
 
 
 ; entry selected -> submenu
 a_ent:  move.w  d1,vCur(a5)
         lea     m_ent(pc),a0
-        bra.w   menu_open
+        bra   menu_open
 
 ; entry operations: 0 change source, 1 insert after, 2 remove, 3 up, 4 down
 a_eop:  move.w  vCamp(a5),d0
-        bsr.w   camp_ptr
+        bsr   camp_ptr
         move.l  a0,d0
-        beq.w   a_done
+        beq   a_done
         moveq   #0,d2
         move.w  vCur(a5),d2
         moveq   #0,d3
@@ -1694,19 +1617,19 @@ a_eop:  move.w  vCamp(a5),d0
         move.w  d2,d0
         addq.w  #1,d0
         cmp.w   d3,d0
-        bhs.w   cp_edit
+        bhs   cp_edit
         move.b  0(a1,d2.w),d4
         move.b  0(a1,d0.w),0(a1,d2.w)
         move.b  d4,0(a1,d0.w)
-        bra.w   cp_edit
+        bra   cp_edit
 .up:    tst.w   d2
-        beq.w   cp_edit
+        beq   cp_edit
         move.w  d2,d0
         subq.w  #1,d0
         move.b  0(a1,d2.w),d4
         move.b  0(a1,d0.w),0(a1,d2.w)
         move.b  d4,0(a1,d0.w)
-        bra.w   cp_edit
+        bra   cp_edit
 .cyc:   move.b  0(a1,d2.w),d4
         and.w   #$ff,d4
         addq.w  #1,d4
@@ -1729,9 +1652,9 @@ a_eop:  move.w  vCamp(a5),d0
         bne.s   .st
         move.w  #$80,d4
 .st:    move.b  d4,0(a1,d2.w)
-        bra.w   cp_edit
+        bra   cp_edit
 .ins:   cmp.w   #16,d3
-        bhs.w   cp_edit
+        bhs   cp_edit
         move.w  d3,d4
 .is:    cmp.w   d2,d4
         ble.s   .id
@@ -1739,7 +1662,7 @@ a_eop:  move.w  vCamp(a5),d0
         subq.w  #1,d4
         bra.s   .is
 .id:    addq.b  #1,12(a0)
-        bra.w   cp_edit
+        bra   cp_edit
 .rem:   move.w  d2,d4
         addq.w  #1,d4
 .rs:    cmp.w   d3,d4
@@ -1748,7 +1671,7 @@ a_eop:  move.w  vCamp(a5),d0
         addq.w  #1,d4
         bra.s   .rs
 .rd:    subq.b  #1,12(a0)
-        bra.w   cp_edit
+        bra   cp_edit
 
 ; --- editor commands
 c_blank:
@@ -1758,24 +1681,24 @@ c_blank:
         dbra    d0,.c
         move.w  #48,RSV+rsRows(a5)
         moveq   #15,d0
+        moveq   #$81-256,d1
         lea     GRID+1.l,a0
-.r:     move.b  #$81,(a0)
+.r:     move.b  d1,(a0)
         lea     $100(a0),a0
         dbra    d0,.r
-        lea     GRID+$300.l,a0
-        move.b  #$81,43(a0)
-        move.b  #$81,$100+43(a0)
-        move.b  #$81,$200+43(a0)
-        lea     GRID+$400.l,a0
-        move.b  #$c3,44(a0)
-        move.b  #$c3,45(a0)
-        move.b  #$c3,46(a0)
-        move.w  #1,vDirty(a5)
-        clr.w   RSV+rsCx(a5)
+        lea     GRID+$300+43.l,a0       ; the top: a ledge at columns 3-5, row 43, the exit door on it (column 4, rows 44-46)
+        move.b  d1,(a0)
+        move.b  d1,$100(a0)
+        move.b  d1,$200(a0)
+        moveq   #$c3-256,d1
+        move.b  d1,$101(a0)
+        move.b  d1,$102(a0)
+        move.b  d1,$103(a0)
+c_nav:  clr.w   RSV+rsCx(a5)
         move.w  #1,RSV+rsCy(a5)
         move.w  #21,RSV+rsTop(a5)
-        clr.w   vMode(a5)
-        move.w  #3,vRedraw(a5)
+ed_map: clr.w   vMode(a5)               ; back to the map view, full redraw
+rd3:    move.w  #3,vRedraw(a5)
         rts
 
 ; ---- TOS-world file transfer (code1 tail; called by disk_op)
@@ -1868,38 +1791,135 @@ tos_io: move.w  V+vDisk.l,d4
 
 ; rw (GEMDOS read/write of OVSZ bytes on handle d6) sits at the end of the lift block: CODE1 is full.
 
-        org     CODE2
-c_look: move.w  RSV+rsTow(a5),d0
-        addq.w  #1,d0
+; Level > Colours / Enemies / Copy tower: a list of the choices built into the menu buffer (kind d3: 0 colour sets = the game's 8 tower names, 1 eye designs, 2 the 16 shipped
+; towers).  Item action 14, param = kind<<4 | index.  The cursor starts on the CURRENT choice (eff_col / eff_eye: what the game will really show, also for old files that
+; follow the base tower), and every cursor move re-themes the whole screen (preview) before FIRE confirms.
+c_col:  moveq   #0,d3
+        bra.s   pk
+c_eye:  moveq   #1,d3
+        bra.s   pk
+c_cpy:  moveq   #2,d3
+pk:     bsr     mb_new
+        moveq   #0,d2
+.l:     lea     vNum(a5),a2
+.nm:    move.w  d2,d0
         and.w   #7,d0
-        move.w  d0,RSV+rsTow(a5)
+        addq.w  #1,d0
+        bsr   dec1
+        move.b  #' ',(a2)+
+        move.w  d2,d0
+        cmp.w   #1,d3
+        beq.s   .en
+        lea     $3d14e.l,a0
+        lsl.w   #2,d0
+        move.l  0(a0,d0.w),a0
+        bra.s   .cp
+.en:    lea     enames(pc),a0
+        bsr   nth
+.cp:    bsr   cpstr
+        lea     vNum(a5),a0
+        moveq   #14,d0
+        move.w  d3,d1
+        lsl.w   #4,d1
+        or.w    d2,d1
+        bsr   mb_add
+        addq.w  #1,d2
+        lea     pkn(pc),a0
+        cmp.b   0(a0,d3.w),d2
+        bne.s   .l
+        moveq   #7,d1
+        bsr   mb_back
+        cmp.w   #1,d3
+        blt.s   .c
+        beq.s   .e
+        move.w  RSV+rsMis(a5),d0
+        subq.w  #1,d0
+        lsl.w   #3,d0
+        add.w   RSV+rsTow(a5),d0
+        bra.s   .s
+.c:     bsr   eff_col
+        bra.s   .s
+.e:     bsr   eff_eye
+.s:     move.w  d0,vSel(a5)
+        sub.w   #11,d0
+        bpl.s   .t
+        moveq   #0,d0
+.t:     move.w  d0,vMTop(a5)
+
+; the screen takes the look of the highlighted colour set / tower (called after every cursor move in a menu and when a list opens)
+preview:
+        bsr   menu_item
+        cmp.b   #14,(a0)+
+        bne.s   .r
+        moveq   #0,d0
+        move.b  (a0),d0
+        move.w  d0,d1
+        lsr.b   #4,d1
+        subq.b  #1,d1
+        beq.s   .r
+        and.w   #7,d0
+        bra   set_theme
+.r:     rts
+
+enames: dc.b    'Eyelid',0,'Studded',0,'Four orbs',0,'Split plate',0
+pkn:    dc.b    8,4,16
+; the list-screen menus (count, then per item: action.b param.b text,0); here because the tables block (DATA) is full
+m_lvl:  dc.b    5
+        dc.b    8,0,'Play',0
+        dc.b    8,1,'Edit',0
+        dc.b    8,2,'Copy',0
+        dc.b    8,3,'Delete',0
+        dc.b    4,1,'< back',0
+m_camp: dc.b    5
+        dc.b    9,0,'Play',0
+        dc.b    9,1,'Edit entries',0
+        dc.b    9,2,'Rename',0
+        dc.b    9,3,'Delete',0
+        dc.b    4,2,'< back',0
+m_ent:  dc.b    6
+        dc.b    11,0,'Change source',0
+        dc.b    11,1,'Insert after',0
+        dc.b    11,2,'Remove',0
+        dc.b    11,3,'Move up',0
+        dc.b    11,4,'Move down',0
+        dc.b    4,18,'< back',0
+        even
+        org     CODE2
+; menu action 14 (a pick from one of those lists): colours -> the TOWER byte (what v1.1.1 recolours from) and the colour nibble of flags.b cleared;
+; enemies -> the eye-design nibble; tower copy -> mission, tower and the original grid (flags cleared: the look of that tower)
+a_pick: move.w  d1,d0
+        lsr.w   #4,d0
+        and.w   #15,d1
+        subq.w  #1,d0
+        beq.s   .eye
+        bgt.s   .cpy
+        move.w  d1,RSV+rsTow(a5)
+        andi.b  #$0f,RSV+rsFlg(a5)
         bra.s   c_ldone
-c_col:  move.b  RSV+rsFlg(a5),d0        ; colour set = high nibble of flags.b: 0 = as the base tower, 1..8
-        add.b   #$10,d0
-        cmp.b   #$90,d0
-        blo.s   c_fst
-        and.b   #$0f,d0
-        bra.s   c_fst
-; (c_eye and c_fst: block 7 at CODE6, behind the floppy build's TOS-state capture)
-c_mis:  eori.w  #3,RSV+rsMis(a5)
-c_ldone: move.w #1,vDirty(a5)
+.eye:   addq.b  #1,d1
+        move.b  RSV+rsFlg(a5),d0
+        and.b   #$f0,d0
+        or.b    d1,d0
+        move.b  d0,RSV+rsFlg(a5)
+        bra.s   c_ldone
+.cpy:   move.w  d1,d0
+        lsr.w   #3,d0
+        addq.w  #1,d0
+        move.w  d0,RSV+rsMis(a5)
+        and.w   #7,d1
+        move.w  d1,RSV+rsTow(a5)
+        clr.b   RSV+rsFlg(a5)
+        bra   c_copyorig
+c_ldone:
+c_edroot:
         clr.w   vMode(a5)
-        move.w  #2,vRedraw(a5)
-        rts
+        bra   rd2b
 
 c_copyorig:
         clr.w   RSV+rsLvl(a5)
-        move.w  RSV+rsTow(a5),$3390c.l
-        move.w  RSV+rsMis(a5),$33910.l
-        jsr     $377a2.l
+        bsr     ld_dec
         move.w  $33912.l,RSV+rsRows(a5)
-        move.w  #1,vDirty(a5)
-        clr.w   RSV+rsCx(a5)
-        move.w  #1,RSV+rsCy(a5)
-        move.w  #21,RSV+rsTop(a5)
-        clr.w   vMode(a5)
-        move.w  #3,vRedraw(a5)
-        rts
+        bra     c_nav
 
 c_tup:  moveq   #5,d0
         bra.s   c_time
@@ -1933,13 +1953,12 @@ c_time: move.w  RSV+rsTime(a5),d1
 c_rename:
         lea     RSV+rsName(a5),a0
         move.l  a0,vNDst(a5)
-        bra.w   name_begin
 
 ; level name entry: up/down change the character, left/right move, fire = done
 name_begin:
         clr.w   vNPos(a5)
         move.w  #3,vMode(a5)
-        move.w  #2,vRedraw(a5)
+rd2b:   move.w  #2,vRedraw(a5)
         rts
 
 move_name:
@@ -1972,31 +1991,25 @@ move_name:
         bne.s   .w
         moveq   #0,d4
 .w:     move.b  0(a1,d4.w),(a0)
-.r:     move.w  #2,vRedraw(a5)
-        rts
+.r:     bra   rd2b
 
 name_done:
         clr.w   vMode(a5)
-        move.w  #1,vDirty(a5)
         tst.w   vScr(a5)
-        bne.s   .ed
-        move.w  vCur(a5),d0
-        tst.l   vNDst(a5)
-        bra.w   m_camps
-.ed:    move.w  #2,vRedraw(a5)
-        rts
+        bne   rd2b
+        bra   m_camps
 
 ; --- leaving / saving
 ; commit the working grid into its slot (store in RAM) and into TREC
 c_leaveed:
-        bsr.w   commit
+        bsr   commit
         clr.w   RSV+rsEd(a5)
-        bra.w   m_levels
+        bra   m_levels
 
-c_save: bsr.w   chk_init
+c_save: bsr   chk_init
         tst.w   vScr(a5)
         beq.s   .w
-        bsr.w   commit
+        bsr   commit
 .w:     moveq   #2,d0
         bra.s   dsk_prompt
 c_dload: moveq  #1,d0
@@ -2005,38 +2018,35 @@ dsk_prompt:
         clr.l   vMsg(a5)
         move.w  #4,vMCol(a5)
         lea     m_dprompt(pc),a0
-        bra.w   menu_open
+        bra   menu_open
 
 ; prompt answered (fire): the disk excursion, then the result message (string number = status)
-c_dgo:  bsr.w   disk_op
+c_dgo:  bsr   disk_op
         move.w  d0,d1
         lea     sMsgs(pc),a0
-        bra.s   .t
-.n:     tst.b   (a0)+
-        bne.s   .n
-.t:     dbra    d1,.n
-        tst.w   d0
+        bsr   nth
+        tst.w   d1
         bne.s   .s
         cmp.w   #1,vDisk(a5)
         bne.s   .s
         lea     vTxt(a5),a2
         lea     sLoaded(pc),a0
-        bsr.w   cpstr
+        bsr   cpstr
         move.w  OVS+6.l,d0
         bsr.s   dnum
         lea     sLv(pc),a0
-        bsr.w   cpstr
+        bsr   cpstr
         move.w  OVS+8.l,d0
         bsr.s   dnum
         lea     sCm(pc),a0
-        bsr.w   cpstr
+        bsr   cpstr
         lea     vTxt(a5),a0
 .s:     move.l  a0,vMsg(a5)
 c_dno:  clr.w   vDisk(a5)
-        bra.w   a_done
+        bra   a_done
 
 
-c_play: bsr.w   commit
+c_play: bsr   commit
         move.w  #1,RSV+rsTest(a5)
         move.w  #$7fff,RSV+rsLvl(a5)
         move.w  RSV+rsTow(a5),d1
@@ -2094,23 +2104,23 @@ commit:
         sub.w   #REC,d0
         move.w  d0,4(a2)                ; len
         ; into the store
-        bsr.w   chk_init
+        bsr   chk_init
         moveq   #0,d3
         move.w  4(a2),d3
         add.w   #REC,d3                 ; new size
         move.w  RSV+rsSlot(a5),d0
         beq.s   .app
         subq.w  #1,d0
-        bsr.w   lvl_ptr
+        bsr   lvl_ptr
         move.l  a0,d0
         beq.s   .app
         ; replace in place: shift the tail by (new - old)
         move.l  a0,a3
-        bsr.w   rdlen
+        bsr   rdlen
         move.l  d1,d4
         add.w   #REC,d4                 ; old size
         move.l  a3,-(a7)
-        bsr.w   store_end
+        bsr   store_end
         move.l  a0,a4                   ; end
         move.l  (a7)+,a3
         move.l  d3,d0
@@ -2118,7 +2128,7 @@ commit:
         move.l  a4,d1
         add.l   d0,d1
         cmp.l   #OVS+OVSZ,d1
-        bhi.w   no_room
+        bhi   no_room
         lea     0(a3,d4.l),a0           ; old tail start
         lea     0(a3,d3.l),a1           ; new tail start
         tst.l   d0
@@ -2144,11 +2154,11 @@ commit:
         bne.s   .cl
         clr.l   vMsg(a5)
         rts
-.app:   bsr.w   store_end
+.app:   bsr   store_end
         lea     OVS+OVSZ.l,a1
         suba.l  a0,a1
         cmpa.l  d3,a1
-        blt.w   no_room
+        blt   no_room
         lea     TREC.l,a1
         move.l  d3,d0
 .ac:    move.b  (a1)+,(a0)+
@@ -2228,7 +2238,7 @@ fname:  dc.b    'A:\NEBLEVEL.OVL',0
 tiles_init:
         lea     tiles(pc),a0
         lea     ETILE.l,a1
-        moveq   #18,d6
+        moveq   #20,d6
 .t:     moveq   #7,d5
 .r:     move.b  (a0)+,d4
         moveq   #0,d0
@@ -2244,14 +2254,30 @@ tiles_init:
         dbra    d5,.r
         addq.l  #1,a0
         dbra    d6,.t
+        moveq   #0,d0                   ; default look (colour set 1) for the list screens; the map screen re-themes itself on every full redraw
+; d0.w = colour set 0..7 -> EPAL: editor colour i = word tmap[i] of that set's 16-word game palette ($35250 + 32 per set; the same table the game recolours from)
+set_theme:
+        lsl.w   #5,d0
+        lea     $35250.l,a0
+        adda.w  d0,a0
+        lea     tmap(pc),a1
+        lea     EPAL.l,a2
+        moveq   #15,d1
+.l:     moveq   #0,d2
+        move.b  (a1)+,d2
+        move.w  0(a0,d2.w),(a2)+
+        dbra    d1,.l
         rts
+theme_cur:
+        bsr   eff_col
+        bra.s   set_theme
 
 ; the campaign store is validated once (RS+rsOk): bad version, counts, ranges, lengths or mask/stream mismatch => magic cleared (= absent)
 ov_ok:  tst.w   RS+rsOk.l
         bne.s   .r
         movem.l d0-d7/a0-a4/a6,-(a7)
         lea     OVS.l,a6
-        bsr.w   ov_check
+        bsr   ov_check
         move.w  #1,RS+rsOk.l
         movem.l (a7)+,d0-d7/a0-a4/a6
 .r:     rts
@@ -2259,50 +2285,52 @@ ov_ok:  tst.w   RS+rsOk.l
 ov_check:
         move.l  a6,a0
         cmpi.l  #'NCMP',(a0)
-        bne.w   .out
+        bne   .out
         cmpi.w  #1,4(a0)
-        bne.w   .bad
+        bne   .bad
         move.w  6(a0),d3
         cmp.w   #127,d3
-        bhi.w   .bad
+        bhi   .bad
         move.w  8(a0),d2
         cmp.w   #8,d2
-        bhi.w   .bad
+        bhi   .bad
         lea     16(a0),a1
         bra.s   .ct
 .cl:    cmpi.b  #16,12(a1)
-        bhi.w   .bad
+        bhi   .bad
         lea     32(a1),a1
 .ct:    dbra    d2,.cl
         lea     LV0(a0),a1
         lea     OVSZ(a6),a3
-        bra.w   .lt
+        bra   .lt
+.bad:   clr.l   (a6)                    ; (in the middle of the routine: every `.bad` branch is short)
+.out:   rts
 .ll:    lea     REC(a1),a2
         cmpa.l  a3,a2
-        bhi.w   .bad
+        bhi   .bad
         move.b  (a1),d0
         cmp.b   #1,d0
-        blo.w   .bad
+        blo   .bad
         cmp.b   #2,d0
-        bhi.w   .bad
+        bhi   .bad
         cmpi.b  #7,1(a1)
-        bhi.w   .bad
+        bhi   .bad
         moveq   #0,d4
         move.b  2(a1),d4
         cmp.w   #16,d4
-        blo.w   .bad
+        blo   .bad
         cmp.w   #120,d4
-        bhi.w   .bad
+        bhi   .bad
         move.l  a1,a0
-        bsr.w   rdlen
+        bsr   rdlen
         move.l  d1,d5
         move.w  d4,d0
         add.w   d0,d0
         cmp.w   d0,d5
-        blo.w   .bad
+        blo   .bad
         lea     0(a2,d5.l),a4
         cmpa.l  a3,a4
-        bhi.w   .bad
+        bhi   .bad
         move.w  d0,d1
         subq.w  #1,d1
         moveq   #0,d6
@@ -2318,16 +2346,14 @@ ov_check:
         sub.w   d4,d0
         sub.w   d4,d0
         cmp.w   d0,d6
-        bne.w   .bad
+        bne   .bad
         move.l  a4,a1
 .lt:    dbra    d3,.ll
-.out:   rts
-.bad:   clr.l   (a6)
         rts
 
 ; a0 = record (kept) -> d1.l = time.w (an odd record start: bytewise)
 rdtime: addq.l  #2,a0
-        bsr.w   rdlen
+        bsr   rdlen
         subq.l  #2,a0
         tst.w   d1
         rts
@@ -2354,7 +2380,7 @@ ed_key:
         bclr.b  #6,$fffffa11.w
         rte
 
-; Options page ($3d662, replaces `bsr.w $3b360` of the last list line + `bra.w $3d698`): the displaced call, then a hint on the empty line 1
+; Options page ($3d662, replaces `bsr $3b360` of the last list line + `bra $3d698`): the displaced call, then a hint on the empty line 1
 ed_opt:
         jsr     $3b360.l
         lea     opthint(pc),a0
@@ -2375,50 +2401,42 @@ kb_key: tst.w   vScr(a5)
         beq.s   kb_r
         tst.w   vMode(a5)
         bne.s   kb_r
-        tst.w   vLift(a5)
-        bne.s   .pick
         cmp.b   #$1c,d0
         beq.s   .rep
         cmp.b   #$39,d0
         beq.s   .rep
-        lea     kbtab(pc),a1
-.f:     move.b  (a1)+,d1
+        tst.w   vLift(a5)               ; a lift end is being picked: only Return/Space act
+        bne.s   kb_r
+        lea     kbtab(pc),a0
+.f:     move.b  (a0)+,d1
         beq.s   kb_r
         cmp.b   d1,d0
-        beq.s   .hit
-        addq.l  #2,a1
+        beq   act_go
+        addq.l  #2,a0
         bra.s   .f
-.hit:   move.l  a1,a0
-        bra.w   act_go
-.pick:  cmp.b   #$1c,d0
-        beq.w   lift_set
-        cmp.b   #$39,d0
-        beq.w   lift_set
-        rts
-.rep:   move.w  RSV+rsLast(a5),d1
+.rep:   tst.w   vLift(a5)
+        bne   lift_set
+        move.w  RSV+rsLast(a5),d1
         btst    #8,d1
         beq.s   kb_r
         cmp.b   #$83,d1
-        beq.w   a_tri
+        beq   a_tri
         cmp.b   #$c3,d1
-        beq.w   a_tri
-        bra.w   a_set
+        beq   a_tri
+        bra   a_set
 kb_r:   rts
 
 ; menu action 13: enemy shortcut, d1 = kind; the same key on the same enemy turns it round (start direction bit)
-a_ekey: move.w  d1,d2
-        bsr.w   cur_cell
+a_ekey: move.w  d1,d4
+        bsr   cur_cell
         move.b  d0,d3
         and.b   #$fe,d0
-        cmp.b   d2,d0
+        cmp.b   d4,d0
         bne.s   .p
         eori.b  #1,d3
-        move.b  d3,d2
-.p:     move.w  d2,d0
-        move.w  d2,d1
-        bsr.s   rec
-        bsr.w   place_enemy
-        bra.w   a_done
+        move.b  d3,d4
+.p:     move.w  d4,d0
+        bra   pe
 
 
 m_enemy: dc.b   8
@@ -2435,12 +2453,13 @@ m_enemy: dc.b   8
         org     DATA
 ; tiles: 8 pattern bytes, colour (plane mask).  ids: 0 empty, 1 inert marker, 2 ledge, 3 wide ledge, 4 pillar, 5 blue block, 6 lift slab,
 ; 7 door, 8 exit, 9 stone ball, 10 red ball, 11 red ball (waits), 12/13 eye vertical slow/fast, 14/15 eye horizontal slow/fast, 16 frog marker,
-; 17 lift end ($08), 18 lift stop ($0c); tile 6 = the lift slab $85 (a lone $85 is a lift start, never a plain block)
+; 17 lift end ($08), 18 lift stop ($0c), 19/20 conveyor ledge left ($a1) / right ($b1): a ledge with an arrow (the game draws them as plain ledges);
+; tile 6 = the lift slab $85 (a lone $85 is a lift start, never a plain block)
 tiles:
         dc.b    $00,$00,$00,$10,$00,$00,$00,$00,1
         dc.b    $00,$00,$00,$00,$18,$00,$00,$00,1
         dc.b    $00,$00,$00,$00,$00,$ff,$ff,$00,2
-        dc.b    $00,$00,$00,$00,$ff,$ff,$ff,$00,3
+        dc.b    $00,$00,$00,$00,$ff,$aa,$55,$00,3
         dc.b    $18,$3c,$7e,$7e,$7e,$7e,$3c,$18,4
         dc.b    $ff,$81,$bd,$bd,$bd,$bd,$81,$ff,5
         dc.b    $7e,$ff,$ff,$ff,$ff,$ff,$ff,$7e,6
@@ -2456,15 +2475,16 @@ tiles:
         dc.b    $00,$24,$3c,$7e,$5a,$7e,$24,$00,6
         dc.b    $18,$3c,$7e,$18,$18,$18,$18,$00,7
         dc.b    $18,$3c,$7e,$00,$7e,$00,$7e,$00,7
+        dc.b    $10,$30,$7e,$30,$10,$ff,$ff,$00,2
+        dc.b    $08,$0c,$7e,$0c,$08,$ff,$ff,$00,2
 sHelp:  dc.b    'Fire=menu Ret=again',0
         even
 
-names:  dc.w    n0-names,n1-names,n2-names,n3-names,n4-names,n5-names,n6-names,n7-names,n8-names
-        dc.w    n9-names,n10-names,n11-names,n12-names,n13-names,n14-names,n15-names,n16-names,n17-names,n18-names
-n0:     dc.b    'Empty',0
+; tile names, in tile order (string number = tile id; `nth` walks the list)
+names:  dc.b    'Empty',0
 n1:     dc.b    'Marker',0
 n2:     dc.b    'Ledge',0
-n3:     dc.b    'Wide ledge',0
+n3:     dc.b    'Crumble ledge',0
 n4:     dc.b    'Pillar',0
 n5:     dc.b    'Blue block',0
 n6:     dc.b    'Lift start',0
@@ -2480,10 +2500,15 @@ n15:    dc.b    'Eye L/R fast',0
 n16:    dc.b    0
 n17:    dc.b    'Lift end',0
 n18:    dc.b    'Lift stop',0
+        dc.b    'Conveyor left',0
+        dc.b    'Conveyor right',0
+tmap:   dc.b    4,8,26,20,12,18,30,14,16,18,20,22,24,26,28,30
 
 sFull:  dc.b    'Overlay full!',0
 sWarnEye: dc.b  'Eye needs terrain',0
 sWarnLedge: dc.b 'No ledge below!',0
+sDoor:  dc.b    'Door + opposite',0
+sExit:  dc.b    'Exit (finish)',0
 sName:  dc.b    'Name ',0
 sNameH: dc.b    'U/D letter L/R move',0
 sNameH2: dc.b   'Fire = done',0
@@ -2504,41 +2529,25 @@ m_mainm: dc.b   5
         dc.b    4,1,'Levels >',0
         dc.b    4,19,'Load from campaign disk',0
         dc.b    4,6,'Save to campaign disk',0
-m_lvl:  dc.b    5
-        dc.b    8,0,'Play',0
-        dc.b    8,1,'Edit',0
-        dc.b    8,2,'Copy',0
-        dc.b    8,3,'Delete',0
-        dc.b    4,1,'< back',0
-m_camp: dc.b    5
-        dc.b    9,0,'Play',0
-        dc.b    9,1,'Edit entries',0
-        dc.b    9,2,'Rename',0
-        dc.b    9,3,'Delete',0
-        dc.b    4,2,'< back',0
-m_ent:  dc.b    6
-        dc.b    11,0,'Change source',0
-        dc.b    11,1,'Insert after',0
-        dc.b    11,2,'Remove',0
-        dc.b    11,3,'Move up',0
-        dc.b    11,4,'Move down',0
-        dc.b    4,18,'< back',0
 ; menu (tables block): count, then action.b param.b text,0
 ; shortcut keys (ST key positions, US legends): IKBD make scancode, menu action, parameter; 0 ends.  C/Del clear, L ledge, P pillar, B blue block, D door,
-; X exit, A lift, Z lift stop, S stone ball, R red ball, W red ball (waits), U/I eye up-down, J/K eye left-right (the cell menu shows the letters)
+; X exit, A lift, Z lift stop, S stone ball, R red ball, W red ball (waits), U/I eye up-down, J/K eye left-right, N/M conveyor left/right (the cell menu shows the letters)
 kbtab:  dc.b    $2e,0,$00,$53,0,$00,$26,0,$81,$19,0,$80,$30,0,$82,$20,1,$83,$2d,1,$c3,$1e,12,0,$2c,12,1
-        dc.b    $1f,13,$10,$13,13,$20,$11,13,$30,$16,13,$40,$17,13,$50,$24,13,$60,$25,13,$70,0
+        dc.b    $1f,13,$10,$13,13,$20,$11,13,$30,$16,13,$40,$17,13,$50,$24,13,$60,$25,13,$70,$31,0,$a1,$32,0,$b1,0
         even
-m_root: dc.b    12
+m_root: dc.b    15
         dc.b    0,$00,'Empty  C',0
         dc.b    0,$81,'Ledge  L',0
+        dc.b    0,$91,'Crumble ledge',0
+        dc.b    0,$a1,'Conveyor left  N',0
+        dc.b    0,$b1,'Conveyor right  M',0
         dc.b    0,$80,'Pillar  P',0
         dc.b    0,$82,'Blue block (shoot) B',0
         dc.b    2,3,'Lift >',0
         dc.b    1,$83,'Door opening  D',0
         dc.b    1,$c3,'Exit door  X',0
         dc.b    2,1,'Enemy >',0
-        dc.b    2,2,'Tower >',0
+        dc.b    2,2,'Level >',0
         dc.b    4,16,'Playtest',0
         dc.b    4,6,'Save to campaign disk',0
         dc.b    4,8,'Leave editor',0
@@ -2550,12 +2559,10 @@ m_dirv: dc.b    3
         dc.b    5,0,'Start up',0
         dc.b    5,1,'Start down',0
         dc.b    4,7,'< back',0
-m_tower: dc.b   10
-        dc.b    4,9,'Look: next tower',0
-        dc.b    4,10,'Look: other mission',0
-        dc.b    4,22,'Colours: next',0
-        dc.b    4,23,'Enemies: next',0
-        dc.b    4,11,'Copy original grid',0
+m_tower: dc.b   8
+        dc.b    4,9,'Colours >',0
+        dc.b    4,10,'Enemies >',0
+        dc.b    4,11,'Copy tower >',0
         dc.b    4,12,'Blank grid',0
         dc.b    4,13,'Time +50',0
         dc.b    4,14,'Time -50',0
@@ -2605,7 +2612,7 @@ a_lift: bsr.s   colbase
         bsr.s   lift_clr
 .out:   bra.s   .done
 .stop:  moveq   #$0c,d0
-        bsr.w   place
+        bsr   place
         bra.s   .done
 .new:   cmp.b   #$85,0(a0,d2.w)         ; cursor on an existing slab: forget its old end first
         bne.s   .slab
@@ -2614,9 +2621,8 @@ a_lift: bsr.s   colbase
 .slab:  move.b  #$85,0(a0,d2.w)
 .arm:   addq.w  #1,d2
         move.w  d2,vLift(a5)
-        move.w  #1,vDirty(a5)
         bsr.s   lift_msg
-.done:  bra.w   a_done
+.done:  bra   a_done
 
 ; d2 = row, a0 = column: d3 = row of the $85 of the lift the cursor belongs to (the cursor on its end $08, or in its shaft above the slab), N set when none
 lift_slab:
@@ -2654,7 +2660,7 @@ lift_clr:
 
 ; Fire while vLift is set: the cursor row is the other end
 lift_set:
-        bsr.w   colbase
+        bsr   colbase
         move.w  vLift(a5),d3
         subq.w  #1,d3                    ; d3 = first row (the slab so far)
         cmp.w   d3,d2
@@ -2671,20 +2677,16 @@ lift_set:
         bne.s   .ok
         move.b  #$81,-1(a0,d2.w)
 .ok:    clr.w   vLift(a5)
-        bsr.w   lift_msg
+        bsr   lift_msg
         bsr.s   lift_warn
-        move.w  #1,vDirty(a5)
-        move.w  #3,vRedraw(a5)
-        rts
+        bra   rd3
 .bad:   lea     sLiftBad(pc),a0
-        move.l  a0,vMsg(a5)
-        move.w  #2,vRedraw(a5)
-        rts
+        bra   msg2
 
 ; warning after a lift is complete: a $80 pillar between slab and end blocks the ride (blue blocks are a puzzle, the frog can shoot them)
 lift_warn:
-        bsr.w   colbase
-        bsr.w   lift_slab
+        bsr   colbase
+        bsr   lift_slab
         bmi.s   .r
 .l:     addq.w  #1,d3
         move.b  0(a0,d3.w),d0
@@ -2702,9 +2704,8 @@ lift_warn:
 ; F10 while vLift is set: forget the pending lift (the slab stays, it is an ordinary start without an end: "Lift: delete" removes it)
 lift_cancel:
         clr.w   vLift(a5)
-        bsr.w   lift_msg
-        move.w  #2,vRedraw(a5)
-        rts
+        bsr   lift_msg
+        bra   rd2
 
 ; classify, bit7 clear and k == 0 (inert marker): d0.b = value -> d3 = 17 ($08 end) / 18 ($0c stop), else leave d3 = 1
 lift_tile:
@@ -2754,10 +2755,10 @@ disk_op:
         move.l  a7,vGsp(a5)
         lea     STK.l,a7
         move.l  a5,-(a7)
-        bsr.w   mfp_save
-        bsr.w   swap_tos
+        bsr   mfp_save
+        bsr   swap_tos
         move.l  RS+rsMfpP.l,a2
-        bsr.w   mfp_set
+        bsr   mfp_set
         move.w  #$2500,sr
         move.l  $404.w,-(a7)
         move.l  #crit,$404.w
@@ -2765,11 +2766,11 @@ disk_op:
         move.l  (a7)+,$404.w
         move.w  #$2700,sr
         move.l  d0,-(a7)
-        bsr.w   swap_tos
+        bsr   swap_tos
         move.l  (a7)+,d7
         move.l  (a7)+,a5
         lea     V+vMfp.l,a2
-        bsr.w   mfp_set
+        bsr   mfp_set
 .dr:    btst    #0,$fffffc00.w
         beq.s   .dd
         move.b  $fffffc02.w,d0
@@ -2782,7 +2783,7 @@ disk_op:
         bne.s   .out
         cmp.w   #1,vDisk(a5)
         bne.s   .out
-        bsr.w   load_fin
+        bsr   load_fin
 .out:   movem.l (a7)+,d1-d7/a0-a6
         rts
 
@@ -2804,7 +2805,7 @@ load_fin:
         lea     BUF.l,a6
         cmpi.l  #'NCMP',(a6)
         bne.s   .z
-        bsr.w   ov_check
+        bsr   ov_check
         cmpi.l  #'NCMP',(a6)
         beq.s   .ok
 .bad:   moveq   #2,d0
@@ -2826,10 +2827,10 @@ load_fin:
         rts
 
 dnum:   cmp.w   #10,d0
-        blo.w   dec1
+        blo   dec1
         cmp.w   #100,d0
-        blo.w   dec2
-        bra.w   dec3
+        blo   dec2
+        bra   dec3
 sLoaded: dc.b   'Loaded ',0
 sLv:    dc.b    ' levels / ',0
 sCm:    dc.b    ' campaigns',0
@@ -2837,12 +2838,18 @@ sCm:    dc.b    ' campaigns',0
 
 ; ------------------------------------------------------------------ enemy-set cycle (block 7 at CODE6: the 38 B between the floppy build's TOS-state capture and CODE2)
         org     CODE6
-c_eye:  move.b  RSV+rsFlg(a5),d0        ; enemy set = low nibble of flags.b: 0 = as the base tower, 1..4
-        addq.b  #1,d0
-        move.b  d0,d1
-        and.b   #15,d1
-        cmp.b   #5,d1
-        blo.s   c_fst
-        and.b   #$f0,d0
-c_fst:  move.b  d0,RSV+rsFlg(a5)
-        bra.s   c_ldone
+; colour / eye design in force for the level being edited (d0 = 0-based index): the nibble of flags.b when set, else the base tower byte (the game's own rule; the eye
+; sites follow the tower byte, the colour sites the colour nibble)
+eff_col: moveq  #7,d1
+        move.b  RSV+rsFlg(a5),d0
+        lsr.b   #4,d0
+        bra.s   eff
+eff_eye: moveq  #3,d1
+        move.b  RSV+rsFlg(a5),d0
+        and.b   #15,d0
+eff:    bne.s   .h
+        move.w  RSV+rsTow(a5),d0
+        addq.w  #1,d0
+.h:     subq.w  #1,d0
+        and.w   d1,d0
+        rts

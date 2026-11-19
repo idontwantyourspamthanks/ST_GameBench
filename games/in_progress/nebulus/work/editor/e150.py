@@ -33,9 +33,9 @@ try:
     chk('blob after T,E,T,E in edit view',blob(),b0)
     keys=['l','p','b','d','x','s','r','w','u','i','j','k','c']
     for k in keys: K(k); K('Right')
-    exp={'l':0x81,'p':0x80,'b':0x82,'d':0x83,'x':0xc3,'s':0x10,'r':0x20,'w':0x30,'u':0x40,'i':0x50,'j':0x60,'k':0x70,'c':0}
+    exp={'l':0x81,'p':0x80,'b':0x82,'d':0,'x':0xc3,'s':0x10,'r':0x20,'w':0x30,'u':0x40,'i':0x50,'j':0x60,'k':0x70,'c':0}
     for i,k in enumerate(keys): chk(f'key {k} -> (col {i},row 10)',cell(i,10),exp[k])
-    chk('door x3 col 3 rows 10..12',colv(3,10,3),'83 83 83'); chk('exit x3 col 4 rows 10..12',colv(4,10,3),'c3 c3 c3')
+    chk('door x3 col 3 rows 10..12: the first cell was overwritten by the eye k at (11,10) = its OPPOSITE cell (NebDoors: clearing/overwriting one door cell clears the partner)',colv(3,10,3),'00 83 83'); chk('opposite door col 11 rows 11..12 (row 10 holds the eye)',colv(11,10,3),'70 83 83'); chk('exit x3 col 4 rows 10..12',colv(4,10,3),'c3 c3 c3')
     # direction flip: s again at col 5
     K('Left',8); K('s'); chk('s again flips (col 5)',cell(5,10),0x11); K('s'); chk('s again flips back',cell(5,10),0x10)
         # repeat last: l at col 13, Return at 14, Space at 15
@@ -61,11 +61,11 @@ try:
     chk('pillar-blocks-lift warning set (vMsg != 0)',msg()!=0,True); h.shot(E+'e150_pillar_warning.png')
     chk('col 6 rows 1..9',colv(6,1,9),'81 85 00 00 00 80 00 00 08')
     h.shot(E+'e150_lifts.png')
-    # keys that are not shortcuts + every shortcut once more, then straight into the playtest
-    for k in ['q','y','f','g','h','m','n','o','v','t','e']: K(k)
+    # keys that are not shortcuts + every shortcut once more, then straight into the playtest  (N / M became the conveyor shortcuts in the conveyor build: e208.py gates them)
+    for k in ['q','y','f','g','h','o','v','t','e']: K(k)
     for k in keys: K(k)
     chk('blob after unmapped + shortcut keys',blob(),b0)
-    F(); K('Down',9); h.shot(E+'e150_menu_playtest.png'); F(1.0)             # Playtest
+    F(); import ui; ui.select(h,'Playtest',1.0); h.shot(E+'e150_menu_playtest.png')             # Playtest (by label: the root menu has grown since HEAD)
     t0=time.time()
     while time.time()-t0<60:
         time.sleep(1.5)
