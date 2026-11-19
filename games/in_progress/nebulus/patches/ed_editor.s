@@ -11,6 +11,8 @@
 ; note: (disk_op/tos_file/load_fin; work/notes/editor.md sections 12, 13).  Store (NEBLEVEL.OVL, OVSZ bytes, a copy next to START.TOS is loaded at boot to OVS by the loader stub; Load/Save use A:):
 ; note:   'NCMP' ver.w nlev.w ncamp.w (16 B header) | 8 campaigns x 32 B {name[12] cnt.b pad.b entry[16] pad[2]} | level records (variable):
 ; note:   {mission.b tower.b rows.b flags.b len.w time.w name[12], mask[rows*2], stream} in the game's own tower encoding.
+; note:   Records are packed back to back (odd sizes: a record may start at an odd address: every reader is bytewise, rdlen/rdtime); flags.b is reserved:
+; note:   readers ignore it, the editor preserves all 8 bits (rsFlg: Edit loads it, commit writes it back, a new level = 0).
 ; note: entry byte: bit7 set = original tower ($80 | (mission-1)<<3 | tower), else custom level index.
 
 CODE1   equ     $75740
@@ -99,6 +101,7 @@ rsPv    equ     46                      ; byte: the IKBD byte ed_key saw last (a
 rsTosP  equ     52                      ; long: address of the TOS-state copy (Gamex: long at $ffd80; the floppy build's boot stub sets it), 0 = not yet known
 rsTosN  equ     56                      ; word: (bytes of the copy / 48) - 1
 rsMfpP  equ     58                      ; long: the TOS-world MFP block (24 B, same layout as V+vMfp): START's at $fffaa; the floppy stub's
+rsFlg   equ     50                      ; byte: flags.b of the level being edited (reserved field: readers ignore it, the editor preserves all 8 bits; new level = 0)
 rsLast  equ     48                      ; word: last tile placed ($100 | cell value or enemy marker), 0 = none yet (repeat key)
 
         org     CODE1
@@ -118,35 +121,38 @@ rsLast  equ     48                      ; word: last tile placed ($100 | cell va
         dc.l    ed_game
 
 ; ------------------------------------------------------------------ store helpers
-; d0.w = level index -> a0 = record (0 if the store or the index is invalid)
+; d0.w = level index -> a0 = record (0 if the store or the index is invalid).  Records are packed back to back (odd sizes allowed), so a record can
+; start at an odd address: len/time words are read as bytes (rdlen/rdtime); a 68000 word read at an odd address is an address error
 lvl_ptr:
         bsr.w   ov_ok
         lea     OVS.l,a0
         cmpi.l  #'NCMP',(a0)
-        bne.s   .bad
+        bne.s   lbad
         cmp.w   6(a0),d0
-        bhs.s   .bad
-        lea     LV0(a0),a0
+        bhs.s   lbad
+walk:   lea     LV0(a0),a0              ; a0 = OVS, d0 = number of records to skip
 .l:     tst.w   d0
         beq.s   .r
-        move.w  4(a0),d1
+        bsr.s   rdlen
         lea     REC(a0,d1.w),a0
         subq.w  #1,d0
         bra.s   .l
 .r:     rts
-.bad:   suba.l  a0,a0
+lbad:   suba.l  a0,a0
+        rts
+
+; a0 = record (kept) -> d1.l = len.w, read as bytes
+rdlen:  moveq   #0,d1
+        move.b  4(a0),d1
+        lsl.w   #8,d1
+        move.b  5(a0),d1
         rts
 
 ; a0 = end of the last level record (valid store assumed)
 store_end:
         lea     OVS.l,a0
         move.w  6(a0),d0
-        lea     LV0(a0),a0
-        bra.s   .t
-.l:     move.w  4(a0),d1
-        lea     REC(a0,d1.w),a0
-.t:     dbra    d0,.l
-        rts
+        bra.s   walk
 
 ; d0.w = campaign index -> a0 (0 if invalid)
 camp_ptr:
@@ -216,7 +222,7 @@ ed_time:
         move.w  (a7)+,d0
         move.l  a0,d1
         beq.s   .r
-        move.w  6(a0),d1
+        bsr.w   rdtime
         beq.s   .r
         move.w  d1,d0
 .r:     rts
@@ -1362,7 +1368,9 @@ lv_edit:
         move.w  d0,RSV+rsTow(a5)
         move.b  2(a0),d0
         move.w  d0,RSV+rsRows(a5)
-        move.w  6(a0),RSV+rsTime(a5)
+        bsr.w   rdtime
+        move.w  d1,RSV+rsTime(a5)
+        move.b  3(a0),RSV+rsFlg(a5)
         addq.w  #1,d2
         move.w  d2,RSV+rsSlot(a5)
         move.w  d2,RSV+rsLvl(a5)
@@ -1375,6 +1383,7 @@ lv_edit:
 
 c_newlvl:
         clr.w   RSV+rsSlot(a5)
+        clr.b   RSV+rsFlg(a5)
         bsr.w   c_blank
         lea     sNewName(pc),a0
         lea     RSV+rsName(a5),a1
@@ -1405,8 +1414,8 @@ lv_copy:
         move.l  a0,d0
         beq.w   a_done
         move.l  a0,a3
-        moveq   #0,d3
-        move.w  4(a3),d3
+        bsr.w   rdlen
+        move.l  d1,d3
         add.w   #REC,d3
         bsr.w   store_end
         lea     OVS+OVSZ.l,a1
@@ -1432,8 +1441,8 @@ lv_delete:
         bsr.w   lvl_ptr
         move.l  a0,d0
         beq.w   a_done
-        moveq   #0,d3
-        move.w  4(a0),d3
+        bsr.w   rdlen
+        move.l  d1,d3
         add.w   #REC,d3
         move.l  a0,a3
         lea     0(a0,d3.l),a1
@@ -2031,7 +2040,7 @@ commit: tst.w   vDirty(a5)
         move.b  d0,1(a2)
         move.w  RSV+rsRows(a5),d0
         move.b  d0,2(a2)
-        clr.b   3(a2)
+        move.b  RSV+rsFlg(a5),3(a2)
         move.w  RSV+rsTime(a5),6(a2)
         lea     8(a2),a0
         lea     RSV+rsName(a5),a1
@@ -2081,8 +2090,8 @@ commit: tst.w   vDirty(a5)
         beq.s   .app
         ; replace in place: shift the tail by (new - old)
         move.l  a0,a3
-        moveq   #0,d4
-        move.w  4(a3),d4
+        bsr.w   rdlen
+        move.l  d1,d4
         add.w   #REC,d4                 ; old size
         move.l  a3,-(a7)
         bsr.w   store_end
@@ -2268,8 +2277,9 @@ ov_check:
         blo.w   .bad
         cmp.w   #120,d4
         bhi.w   .bad
-        moveq   #0,d5
-        move.w  4(a1),d5
+        move.l  a1,a0
+        bsr.w   rdlen
+        move.l  d1,d5
         move.w  d4,d0
         add.w   d0,d0
         cmp.w   d0,d5
@@ -2297,6 +2307,13 @@ ov_check:
 .lt:    dbra    d3,.ll
 .out:   rts
 .bad:   clr.l   (a6)
+        rts
+
+; a0 = record (kept) -> d1.l = time.w (an odd record start: bytewise)
+rdtime: addq.l  #2,a0
+        bsr.w   rdlen
+        subq.l  #2,a0
+        tst.w   d1
         rts
 
 ; ACIA path hook ($3851a, replaces `move.w (a7)+,d0 / bclr.b #6,$fa11.w` and then does both itself).  The game keeps ONE last-byte cell ($38498) and

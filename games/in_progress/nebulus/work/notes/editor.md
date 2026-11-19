@@ -361,3 +361,54 @@ RS `$77c80..$77cbf` and V `$77cc0..` were assumed zero at boot (a junk `rsTest`/
 `swap_tos` uses `lea 8(a0,d0.l),a6` with `a0 = 8`, so its loop runs one 24-byte chunk past `(rsTosN+1)*48`.  Anything placed directly behind the TOS-state copy is swapped with game RAM before `mfp_set` reads it.
 The floppy capture did exactly that with TOS's MFP block (-> excursion with the MFP off, no Timer C, empty drive never times out); fixed there by a 24-byte gap (`patches/ed_floppy_capture.s`), see `floppy.md` section 10.
 HD: Gamex's MFP block is at `$fffaa`, not behind its copy, so the HD gates are unaffected; the loop was deliberately left alone (CODE4 stays `$77dc0..$77ebc`, 252 B).
+
+### 13.10 Odd-aligned records (NebOddFix, critical fix after NebLooks' report)
+**Written invariants of the record layout (section 3; the format is unchanged, `version` stays 1, old files keep working):**
+(1) level records are packed **back to back, unpadded**: `record size = 20 + len`, so any level with an odd number of non-zero cells makes the next record start at an **odd** offset, hence at an odd RAM address in the game (the store `OVS` is at the even `$BC000`, the first record at `+272`).  **Every reader must be alignment-safe** (read `len`/`time`, and anything else wider than a byte, as bytes): a 68000 word/long access at an odd address is an address error (bombs/lockup on real hardware, a spinning TOS in Hatari).
+(2) `flags.b` (record offset 3) is **reserved**: readers ignore it (`ov_check`, the decode hook and the game side never read it), **writers preserve all 8 bits** (editor Edit/commit, Copy, Delete, Save/Load and every campaign operation); a new level starts with 0.  Its meaning is not defined here (the NebLooks design uses the low nibble for the enemy eye design and the high nibble for the colours: not yet defined, not interpreted by this code; the editor round owns the semantics and the site parser change).
+
+**Bug** [obs, build before the fix, `NebLooks`' `looks.ovl` = ten 159-byte levels, STE 1 MB / TOS 1.62, title, F10]:
+```
+WARN : Address Error reading at address $bc1b3, PC=$77814 addr_e3=77814 op_e3=3a29      (op 3a29 = move.w 4(a1),d5 in ov_check)
+WARN : Address Error reading at address $bc1af, PC=$70 ...                                (the VBL vector $70 is already $e03380 = TOS: the machine spins, the manager never opens)
+```
+The same file padded by one cell (even record size) works.  The released v1.1 editor can write such a file itself (two levels with odd cell counts, then Save), the site's cart builder and `ovl.py` can too.
+
+**Every 16/32-bit access to record data at a possibly odd address** (pre-fix `patches/ed_editor.s`, HEAD line numbers; all were `move.w` on a pointer that walked the packed records):
+| line | routine | instruction | why it can see an odd address |
+|---|---|---|---|
+| 132 | `lvl_ptr` (every level lookup: level list, Play, Edit, ed_dec/cur_rec, apply_entry, campaign entry names) | `move.w 4(a0),d1` | walks `len` of the preceding records |
+| 146 | `store_end` (Copy, Delete, commit: append/replace) | `move.w 4(a0),d1` | same walk |
+| 219 | `ed_time` (game hook `$3adb4`, initial time of EVERY custom level start, playtest included) | `move.w 6(a0),d1` | time word of the current record (offset 6) |
+| 1365 | `lv_edit` (Levels > n > Edit) | `move.w 6(a0),RSV+rsTime(a5)` | time word of the record |
+| 1409 | `lv_copy` | `move.w 4(a3),d3` | len of the record to copy |
+| 1436 | `lv_delete` | `move.w 4(a0),d3` | len of the record to delete |
+| 2085 | `commit` (replace in place) | `move.w 4(a3),d4` | len of the old record in its slot |
+| 2272 | `ov_check` (boot-time/first-use validation `ov_ok`, Load from campaign disk `load_fin` at `BUF $AA000`) | `move.w 4(a1),d5` | len of record k+1 after an odd record k: the crash above |
+Checked and **already safe** (byte accesses or even addresses): the game's decoder `$377a2`/`$37812`/`$37822` (`move.b (a0)+,d0` on the mask, `move.b (a1)+,(a2)` on the stream: no word read of record data; mask/stream start at record+20, odd after an odd record start, and work), the name printers `$3b344`/`$3b360` (byte reads, `ed_name` hands them `record+8`), `ed_dec` (`move.b 2(a0),d7`), `apply_entry`, `lv_play`, the level-list/campaign-entry name copies, `mb_add`, the three record move loops (`lv_copy`, `lv_delete`, commit `.cp`/`.ac` are byte loops), `commit`'s own writes (`move.w d0,4(a2)`, `move.w rsTime,6(a2)`: `a2 = TREC $BE000`, even, and the playtest copy `rsLvl = $7fff` is read from TREC, so it was never odd), the header words (`OVS+6/8`: even), `load_fin`'s long copies (`BUF`/`OVS` even).  `$3adb4` initial time and the title name are the only game-side consumers; both go through hooks (`ed_time`, `ed_name`).
+
+**Fix** (no format change; copy/normalise was not needed): two bytewise helpers instead of the eight word reads.
+`rdlen` (CODE1, 14 B: `moveq #0,d1 / move.b 4(a0),d1 / lsl.w #8,d1 / move.b 5(a0),d1 / rts`, a0 kept, d1.l = len) and `rdtime` (CODE2, 12 B: `rdlen` at `a0+2`, `tst.w d1` so callers can branch on a zero time).  `store_end` was folded into `lvl_ptr`'s walk (`walk:`; `store_end` = `d0 = nlevels`, `bra walk`: -18 B), which paid for the helpers.  Per-site cost: 0 B for the `len` sites (`bsr.w rdlen` = the 4 B of the word read; `moveq/move.w` pairs became `bsr.w / move.l d1,dN`), +2 B in `ov_check` (`move.l a1,a0` first), +2 B in `lv_edit` (`bsr.w rdtime` + `move.w d1,..`).
+Flags (Main's review point): `rsFlg` (`RS+50`, byte): `lv_edit` loads `flags` (`move.b 3(a0),RSV+rsFlg(a5)`, +6 B), `c_newlvl` clears it (+4 B), `commit` writes it back (`move.b RSV+rsFlg(a5),3(a2)` instead of `clr.b 3(a2)`, +2 B); Copy/Delete/the campaign operations move bytes and never touched it; `ov_check` does not read it.
+**Bytes**: `gen_ed.py` before: `CODE1 5306 (free 6) | CODE2 1768 (free 24) | CODE3 570 | CODE4 252 | CODE5 136 | DATA 1324`, total 9356 B; after: `CODE1 $75740..$76c00 5312 B (free 0); DATA 1324 (free 0); CODE2 1784 (free 8); CODE3 570 (free 6); CODE4 252 (free 4); CODE5 136 (free 2)`, total **9378 B (+22)**.  **Correction to 13.5**: DATA's real limit is `$7726c` (the ni_ikbd blob `$7726c..$772c5` starts there), not `CODE2`; the old `gen_ed.py` limit let DATA report "free 148" while it was full (the helpers first placed there were caught by `nepatch build`: "block $76d40..$7728a overlaps site $7726c").  `gen_ed.py` now checks DATA against `$7726c` and all blocks against the ni_ikbd blob.  Same six segments at the same addresses: `tools/nefloppy.py` needs **no mapping change** (the floppy capture still sits behind DATA, `$7726c..`, unchanged size).  Trimming candidates left: merge `m_levels`/`m_camps` (~70 B), cursor-column share (~50 B).
+**Tools**: `ovl.py validate` unchanged (same rule as the loader; prints a `note:` on stderr when a record starts at an odd offset: valid, but a pre-fix v1.1 game crashes on it), `ovl.py dump` shows `@offset (odd offset)`, `ovl.odd_starts()`.  Fixtures/gates: `work/editor/mk_odd.py` (`work/editor/fixtures/odd2.ovl`, `flags35.ovl`, and `/tmp/ne/odd/`: looks, odd2, flags35, stress01..12), `work/editor/e180.py` (files; `--flow` editor flow; `--flags`; `--disk`).
+
+**Evidence** (STE 1 MB / TOS 1.62, title snapshot of the fixed build, `e180.py`; raw logs `work/editor/logs_oddfix/`, the rest in `/tmp/oddfix/logs/` while it lasts):
+```
+pre-fix build, looks.ovl, F10 at the title:   Address Error reading at address $bc1b3, PC=$77814 ... $70 = $e03380 (TOS)
+fixed build, odd2.ovl (levels 115 B and 165 B: record 1 starts at the odd offset 387 -> $BC183):
+PASS odd2.ovl: level list shows all levels: ['ODD ONE', 'ODD TWO']
+PASS odd2.ovl level 1 (record size 165) Play: grid == decoded record (ODD TWO): []
+PASS odd2.ovl level 1 (record size 165) Play: rows/mission/tower: (40, 2, 5)
+PASS odd2.ovl level 1 (record size 165) Play: initial time 480 s (remaining 466): True
+PASS odd2.ovl level 1 (record size 165) Play: tower name hook A0=$bc18b text: b'ODD TWO\x00'      (A0 = odd address)
+PASS odd2.ovl campaign 0 ODD2 entry 1..3 (custom, original M1 T3, custom): grid/rows/time/name all PASS; victory flow after the last entry: True
+PASS odd2.ovl: no Address/Bus Error/exception in the Hatari log: []
+looks.ovl (NebLooks, ten odd 159 B levels): list shows M1T1..M2T4; levels 0-5 started with Play: grid == decoded record, name hook A0=$bc118 / $bc1b7 / $bc256 / $bc2f5 / $bc394 ... PASS
+flags35.ovl (flags $ca/$35/$ff, three odd records): Edit loads $35, after Edit+commit [202, 53, 255], after Copy [202, 53, 255, 53], after Delete [53, 255, 53], new level clears rsFlg, after a new level [53, 255, 53, 0],
+   Save to campaign disk 'Saved', Load 'Loaded 4 levels / 1 campaigns', reloaded flags [53, 255, 53, 0]: PASS (the 2 image read-back checks in that log FAILED because the harness ejected instead of inserting another image; fixed in e180.py)
+stress set (12 seeded files, --quick = every level listed/validated, the last and the first odd-start level started, campaign 0 entry 0 started): stress01..04 all PASS, 0 FAIL, no exception in the logs
+python3 tools/nepatch.py verify: 27 verified sites, 3 clear ranges (332 B), 10 blocks; python3 tools/nefloppy.py selftest: ed_overlay unmapped generator == patches/ed_overlay.nep blocks: yes (all 5 generators yes)
+```
+**Open items** (not finished in this session; scripts exist, nothing in the fix depends on them being run other than as confirmation): the forced-door campaign walk over the REAL original towers of `looks.ovl` flakes in the harness (the frog meets enemies; odd2's walk passes: it is the harness, not the loader; the 10 levels themselves start); stress05..12 STE and Mega STE (`e180.py ... megaste`, snapshot boot 130 s), ST TOS 1.04, `--disk` (Load from a `nebcampaign.py new --ovl` disk, 3 machines), `--flow` (create two odd levels in the editor, Save, Load, play), the `--flags` rerun after the image read-back fix, e161 (22 fuzz disks), `work/junkram/gates/e91_jr.py`, e150, e140, e170, e97/e98 equivalence, floppy `fge.py` cells.  [INFERENCE] equivalence of normal play is unaffected: the changes only touch the custom-record readers (no hook on an original tower reads a record: `cur_rec` returns 0), but this is not measured.
+**For the PC tool / site**: nothing to change in the format or in `ovl.py validate`; `ovl.py` now warns (stderr note, `dump` shows `(odd offset)`) when a record starts at an odd offset because a pre-fix v1.1 game crashes on such a file (a site that must keep working with v1.1 builds can only pad by adding/removing one non-zero cell per odd level so that every record size is even); the site's cart builder should ship the fixed game build, preserve `flags.b` when it rewrites levels, and read records bytewise if it parses them in a language with alignment rules.

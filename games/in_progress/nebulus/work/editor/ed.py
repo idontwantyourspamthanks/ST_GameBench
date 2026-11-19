@@ -4,7 +4,7 @@ from nebulus import Nebulus
 G='/home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/'
 E=G+'work/editor/'
 def grab(h,a,n,name='x'):
-    p=f'/tmp/ned_{name}.bin'
+    p=f'/tmp/ned_{os.getpid()}_{name}.bin'
     for attempt in range(5):
         if os.path.exists(p): os.remove(p)
         h.debug(f"savebin {p} ${a:x} ${n:x}",0.4)

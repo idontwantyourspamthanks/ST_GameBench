@@ -104,6 +104,16 @@ def validate(data):
         p += REC + ln
     return pr
 
+def odd_starts(data):
+    """Level indices whose record starts at an odd file offset (= an odd RAM address in the game: the store is at an even address).  Legal and common
+    (records are packed back to back, any level with an odd number of non-zero cells makes the next record start odd); loaders must read len/time/mask
+    bytewise.  The released v1.1 game (before NebOddFix) crashes on such a file at F10 (68000 address error); later builds accept it.  Informational."""
+    out = []; p = LV0
+    for i in range(struct.unpack(">H", data[6:8])[0]):
+        if p & 1: out.append(i)
+        p += REC + struct.unpack(">H", data[p + 4:p + 6])[0]
+    return out
+
 _TILES = None
 def tiles():
     """the in-game editor's 17 tile patterns (8 bytes + colour + pad) read from patches/ed_editor.s"""
@@ -256,13 +266,16 @@ if __name__ == "__main__":
         Path(sys.argv[2]).write_bytes(bytes(OVSZ))
     elif cmd == "dump":
         lv, cs = parse(Path(sys.argv[2]).read_bytes())
+        off = [LV0 + sum(x["size"] for x in lv[:i]) for i in range(len(lv))]
         for i, l in enumerate(lv):
-            print(f"level {i} {l['name']!r} mission {l['mission']} base tower {l['tower']} rows {l['rows']} time {l['time']:04x} size {l['size']} cells {sum(1 for c in l['grid'] for v in c if v)}")
+            print(f"level {i} {l['name']!r} @{off[i]}{' (odd offset)' if off[i] & 1 else ''} mission {l['mission']} base tower {l['tower']} rows {l['rows']} time {l['time']:04x} size {l['size']} cells {sum(1 for c in l['grid'] for v in c if v)}")
             print_lifts(l["grid"], l["rows"])
         for i, (n, e) in enumerate(cs):
             print(f"campaign {i} {n!r}: " + ", ".join(f"orig M{((x>>3)&1)+1} T{(x&7)+1}" if x & 0x80 else f"custom {x}" for x in e))
     elif cmd == "validate":
-        pr = validate(Path(sys.argv[2]).read_bytes()); print("OK" if not pr else "\n".join(pr)); sys.exit(1 if pr else 0)
+        raw = Path(sys.argv[2]).read_bytes(); pr = validate(raw); print("OK" if not pr else "\n".join(pr))
+        if not pr and odd_starts(raw): print(f"note: levels {odd_starts(raw)} start at an odd offset (valid; the v1.1 game before the odd-alignment fix crashes on such a file)", file=sys.stderr)
+        sys.exit(1 if pr else 0)
     elif cmd == "render":              # render FILE LEVEL out.png
         lv, cs = parse(Path(sys.argv[2]).read_bytes()); l = lv[int(sys.argv[3])]; render(l["grid"], l["rows"], sys.argv[4])
     elif cmd == "import-original":     # import-original MISSION TOWER out.ovl   (a file with that one level + a campaign playing it)

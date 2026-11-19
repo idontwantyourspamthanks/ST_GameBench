@@ -34,8 +34,8 @@ for a in addrs:
         segs.append((a, bytearray([mem[a]])))
 segs = [(a, bytes(b)) for a, b in segs]
 sym = {m.group(1): int(m.group(2), 16) for m in re.finditer(r"^(\w+)\s+A:([0-9A-Fa-f]+)", lst, re.M)}
-# segment table: name -> (start equ, limit).  CODE1 ends before the trainer blob; CODE5 sits in the gap behind it; DATA/CODE2 end before the credit blob; CODE3 before RS; CODE4 before $77ec0
-LIM = {"CODE1": 0x76C00, "CODE5": 0x76D00, "DATA": eq["CODE2"], "CODE2": 0x77A00, "CODE3": eq["RS"], "CODE4": 0x77EC0}
+# segment table: name -> (start equ, limit).  CODE1 ends before the trainer blob; CODE5 sits in the gap behind it; DATA ends before the ni_ikbd blob $7726c..$772c5, CODE2 before the credit blob; CODE3 before RS; CODE4 before $77ec0
+LIM = {"CODE1": 0x76C00, "CODE5": 0x76D00, "DATA": 0x7726C, "CODE2": 0x77A00, "CODE3": eq["RS"], "CODE4": 0x77EC0}
 order = ["CODE1", "DATA", "CODE2", "CODE3", "CODE4", "CODE5"]
 assert sorted(a for a, _ in segs) == sorted(eq[n] for n in order), [(hex(a), len(b)) for a, b in segs]
 seg = {n: next(b for a, b in segs if a == eq[n]) for n in order}
@@ -44,7 +44,7 @@ for n in order:
 # non-overlap with the other default blobs: trainers $76c00-$76c75, latch $76d00-$76d3b, credit $77a00-$77a3f, state RS/V $77c80-$77dbf (private stack: $AD000, non-game)
 for n in order:
     lo, hi = eq[n], eq[n] + len(seg[n])
-    for blo, bhi, bw in ((0x76C00, 0x76C76, "trainers"), (0x76D00, 0x76D3C, "latch"), (0x77A00, 0x77A40, "credit"), (eq["RS"], 0x77DC0, "state RS/V")):
+    for blo, bhi, bw in ((0x76C00, 0x76C76, "trainers"), (0x76D00, 0x76D3C, "latch"), (0x77A00, 0x77A40, "credit"), (0x7726C, 0x772C6, "ni_ikbd blob"), (eq["RS"], 0x77DC0, "state RS/V")):
         assert hi <= blo or lo >= bhi, f"{n} ${lo:x}..${hi:x} overlaps {bw}"
 free = {n: LIM[n] - eq[n] - len(seg[n]) for n in order}
 (c1, d1), (c2, d2), (c3, d3), (c4, d4), (c5, d5), (c6, d6) = [(eq[n], seg[n]) for n in ("CODE1", "DATA", "CODE2", "CODE3", "CODE4", "CODE5")]
