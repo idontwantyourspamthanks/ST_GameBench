@@ -9,12 +9,16 @@ What it is
   is replaced by a copy that also reads NEPATCH.BIN. PATCHES.TXT lists every
   changed byte.
 
-What is new in v@VERSION@ (compared with v1.1)
-  Fixed a crash (Address Error, bombs on screen) when the level manager or
-  the editor opened a campaign whose level records have an odd size in bytes
-  (the editor's own saves could produce such files). The level flags byte is
-  now also kept when you edit and save. Nothing else is changed. Campaign
-  and level files are the same format and work with both v1.1 and v@VERSION@.
+What is new in v@VERSION@ (compared with v1.1.1)
+  Level editor (Tower > menu): each custom level can now choose its colour
+  scheme (the palette, raster bars, skyline and tower texture of any of the
+  8 original towers) and its enemy set (the 4 enemy eye designs),
+  independent of the tower and its geometry. The panel shows the choice as
+  "S<colours> E<enemies>". The original towers are unchanged. Also included
+  is the v1.1.1 crash fix (Address Error with campaign files whose level
+  records have an odd size). Level files stay compatible both ways: old
+  files play "as base tower"; new files keep working on older versions,
+  where the look choice is ignored.
 
 Changes in this release
 {WHATSNEW}
@@ -72,10 +76,16 @@ row 1 and a ledge + exit door at the top):
                left/right J slow, K fast; then choose the start direction.
                Enemies only turn round at walls, ledge ends and other enemies.
      Lift >    Lift: from here A, Lift: stop here Z, Lift: delete (see LIFTS)
-     Tower >   Look: next tower / other mission (palette, backdrop, default
-               time), Copy original grid (start from a shipped tower), Blank
-               grid, Time +50 / -50 seconds, Name... (up/down = letter,
-               left/right = move, FIRE = done)
+     Tower >   Look: next tower / other mission (the base tower: its
+               colours and enemies unless set below, default time, the grid
+               Copy original grid starts from), Colours: next (the
+               colour scheme: palette, sky colours, skyline and tower
+               texture of one of the 8 towers; 0 = as the base tower),
+               Enemies: next (which of the 4 eye-disc designs the eye
+               enemies use; 0 = as the base tower), Copy original grid
+               (start from a shipped tower), Blank grid, Time +50 / -50
+               seconds, Name... (up/down = letter, left/right = move, FIRE
+               = done)
      Playtest  run the real game on what you are editing; F10, finishing the
                level or losing brings you back to the editor, level intact
      Save to campaign disk, Leave editor (keeps the level in the level list)
@@ -105,8 +115,9 @@ end is not a block: it is a lift start and hurts the frog.
 Screen: 16 columns x rows of 16x8 pixel tiles (top = higher).  A frog marks
 where Pogo starts (column 0, row 2): THE FROG STARTS IN THE SAME PLACE IN
 EVERY TOWER, so every level needs a ledge on row 1 near column 0-1; the new
-level and "Blank grid" have it, keep it.  Right panel = tower/mission, rows,
-column, row, cell value; bottom line = cell name and hints/warnings ("No
+level and "Blank grid" have it, keep it.  Right panel = tower/mission, colours
+and enemies (S5 E2 = colour scheme 5, enemy set 2; 0 = as the base tower),
+rows, column, row, cell value; bottom line = cell name and hints/warnings ("No
 ledge below!" for a ground enemy, "Eye needs terrain" for a vertical eye with
 nothing above and below, "Pillar blocks lift").  Tile colours: green ledge,
 grey pillar, blue shootable block, cream lift platform, arrows = lift end /

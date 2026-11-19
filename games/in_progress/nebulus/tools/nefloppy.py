@@ -239,7 +239,7 @@ def _asm_editor(txt: str):
         else:
             segs.append((ad, bytearray([mem[ad]])))
     segs = [(ad, bytes(v)) for ad, v in segs]
-    order = ["CODE1", "DATA", "CODE2", "CODE3", "CODE4", "CODE5"]          # gen_ed.py's six blocks
+    order = ["CODE1", "DATA", "CODE2", "CODE3", "CODE4", "CODE5", "CODE6"]          # gen_ed.py's seven blocks
     assert sorted(ad for ad, _ in segs) == sorted(eq[n] for n in order), [(hex(ad), len(v)) for ad, v in segs]
     segs.sort()
     sym = {m.group(1): int(m.group(2), 16) for m in re.finditer(r"^(\w+)\s+A:([0-9A-Fa-f]+)", lst, re.M)}
@@ -262,11 +262,11 @@ def gen_editor(remap: bool):
                 raise SystemExit(f"ed_editor.s: symbols at ${ad:x} map to different floppy addresses")
             symmap[ad] = fsym[name]
     eq = {m.group(1): int(m.group(2), 16) for m in re.finditer(r"^(\w+)\s+equ\s+\$([0-9a-f]+)", txt, re.M)}
-    c2_ad = eq["CODE2"]
+    c2_ad = eq["CODE6"]                       # the capture must end before the next block ($772da: the 38 B gap before CODE2 is CODE6)
     d_ad, d_b = next((ad, b) for ad, b in fsegs if ad == eq["DATA"])
     cap_ad = (d_ad + len(d_b) + 1) & ~1
     cap = nepatch.asm(cap_ad, f"mfp_save equ ${fsym['mfp_save']:x}\n" + (PATCHES / "ed_floppy_capture.s").read_text())
-    assert cap_ad + len(cap) <= c2_ad, f"ed_floppy_capture ${cap_ad:x}+{len(cap)} does not fit before CODE2 ${c2_ad:x}"
+    assert cap_ad + len(cap) <= c2_ad, f"ed_floppy_capture ${cap_ad:x}+{len(cap)} does not fit before CODE6 ${c2_ad:x}"
     return fsegs + [(cap_ad, cap)], symmap
 
 
@@ -353,7 +353,7 @@ def translate_new(new: bytes, symmap: dict) -> bytes:
 
 
 def check_new_bytes(name, a, new):
-    """New bytes of a site may only be: jmp/jsr abs.l into the patch zone, nop(s), or a short bra whose source and target shift equally."""
+    """New bytes of a site may only be: jmp/jsr abs.l into the patch zone, `move.w <patch zone address>.l,d0` (the look-cache reads), nop(s), or a short bra whose source and target shift equally."""
     i = 0
     while i < len(new):
         w = new[i:i + 2]
@@ -364,6 +364,8 @@ def check_new_bytes(name, a, new):
             i += 6
         elif w == b"\x4e\x71":
             i += 2
+        elif w == b"\x30\x39" and i + 6 <= len(new) and ZONE_LO <= struct.unpack(">L", new[i + 2:i + 6])[0] < ZONE_HI:
+            i += 6                              # `move.w abs.l,d0` with the operand in the patch zone (the look cache words RS+..: same address on both builds)
         elif w[0] == 0x60 and w[1] not in (0, 0xFF):
             tgt = a + i + 2 + (w[1] - 256 if w[1] > 127 else w[1])
             if map_addr(tgt) - map_addr(a + i) != tgt - (a + i):

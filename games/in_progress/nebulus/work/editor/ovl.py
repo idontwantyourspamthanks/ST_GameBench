@@ -4,7 +4,7 @@
   8 campaign records x 32 B at offset 16: name[12] (NUL terminated, <= 11 chars) | count.b | pad.b | entry[16] | pad[2]
       entry byte: bit7 set = original tower  $80 | (mission-1)<<3 | tower(0..7);  bit7 clear = custom level index
   level records from offset 272, back to back (variable length), nlevels of them:
-      mission.b (1|2) | tower.b (0..7: base tower = palette, backdrop, default time) | rows.b (= the game's $33912, rows decoded) | flags.b (0)
+      mission.b (1|2) | tower.b (0..7: base tower = palette, backdrop, default time) | rows.b (= the game's $33912, rows decoded) | flags.b (high nibble = colour set 0..8, low nibble = enemy set 0..4; 0 = as the base tower)
       len.w | time.w (BCD, 0 = the base tower's) | name[12] (NUL terminated) | mask[rows*2] | stream[...]
   mask/stream = the game's own tower encoding (decoder $377a2/$37822): per row two mask bytes (bit n = angle n, 8+n), then the non-zero cells in
   (row, angle) order.  The game's decode loop is fed the record unchanged (hook ed_dec)."""
@@ -29,10 +29,13 @@ def encode(grid, rows):
             mask.append(m)
     return bytes(mask + stream)
 
-def level(mission, tower, rows, grid, time=0, name="LEVEL"):
+def level(mission, tower, rows, grid, time=0, name="LEVEL", colours=0, enemies=0):
+    """colours (0..8) / enemies (0..4) -> flags.b: high nibble = colour set (0 = as the base tower, n = tower n's palette, raster, skyline, texture),
+    low nibble = enemy set (0 = as the base tower, n = tower n's eye-disc design (n-1) & 3)."""
+    assert 0 <= colours <= 8 and 0 <= enemies <= 4, (colours, enemies)
     body = encode(grid, rows)
     nm = name.encode("ascii")[:11].ljust(12, b"\0")
-    return struct.pack(">BBBBHH", mission, tower, rows, 0, len(body), time) + nm + body
+    return struct.pack(">BBBBHH", mission, tower, rows, colours << 4 | enemies, len(body), time) + nm + body
 
 def camp(name, entries):
     assert len(entries) <= 16
@@ -103,6 +106,15 @@ def validate(data):
         if pop != ln - 2 * rows: pr.append(f"level {i}: stream {ln - 2 * rows} != mask popcount {pop}")
         p += REC + ln
     return pr
+
+def bad_looks(data):
+    """Levels whose flags.b is outside the defined nibbles (colours > 8 or enemies > 4).  The game accepts any value (it masks the indices); the site parser rejects them."""
+    out = []; p = LV0
+    for i in range(struct.unpack(">H", data[6:8])[0]):
+        fl = data[p + 3]
+        if fl >> 4 > 8 or fl & 15 > 4: out.append(i)
+        p += REC + struct.unpack(">H", data[p + 4:p + 6])[0]
+    return out
 
 def odd_starts(data):
     """Level indices whose record starts at an odd file offset (= an odd RAM address in the game: the store is at an even address).  Legal and common
@@ -268,7 +280,7 @@ if __name__ == "__main__":
         lv, cs = parse(Path(sys.argv[2]).read_bytes())
         off = [LV0 + sum(x["size"] for x in lv[:i]) for i in range(len(lv))]
         for i, l in enumerate(lv):
-            print(f"level {i} {l['name']!r} @{off[i]}{' (odd offset)' if off[i] & 1 else ''} mission {l['mission']} base tower {l['tower']} rows {l['rows']} time {l['time']:04x} size {l['size']} cells {sum(1 for c in l['grid'] for v in c if v)}")
+            print(f"level {i} {l['name']!r} @{off[i]}{' (odd offset)' if off[i] & 1 else ''} mission {l['mission']} base tower {l['tower']} rows {l['rows']} colours {l['flags'] >> 4} enemies {l['flags'] & 15} time {l['time']:04x} size {l['size']} cells {sum(1 for c in l['grid'] for v in c if v)}")
             print_lifts(l["grid"], l["rows"])
         for i, (n, e) in enumerate(cs):
             print(f"campaign {i} {n!r}: " + ", ".join(f"orig M{((x>>3)&1)+1} T{(x&7)+1}" if x & 0x80 else f"custom {x}" for x in e))

@@ -24,6 +24,7 @@ V       equ     $77cc0
 STK     equ     $AD000                  ; private stack of the TOS excursion (non-game RAM, 4 KB below)
 CODE4   equ     $77dc0
 CODE5   equ     $76c76
+CODE6   equ     $772da                  ; 38 B between the floppy build's TOS-state capture ($7726c..$772da) and CODE2; the HD build leaves the whole gap $772c6..$77300 free
 OVS     equ     $BC000
 OVSZ    equ     $2000
 BUF     equ     $AA000                  ; campaign disk read buffer (8 KB), validated before it replaces OVS
@@ -103,6 +104,8 @@ rsTosN  equ     56                      ; word: (bytes of the copy / 48) - 1
 rsMfpP  equ     58                      ; long: the TOS-world MFP block (24 B, same layout as V+vMfp): START's at $fffaa; the floppy stub's
 rsFlg   equ     50                      ; byte: flags.b of the level being edited (reserved field: readers ignore it, the editor preserves all 8 bits; new level = 0)
 rsLast  equ     48                      ; word: last tile placed ($100 | cell value or enemy marker), 0 = none yet (repeat key)
+rsCol   equ     62                      ; word: colour set index (0..7, 8 = victory) of the level being set up (written by ed_lvl, read by the retargeted palette/raster/skyline/texture sites)
+rsEye   equ     51                      ; byte: eye design index (0..3) cached by ed_lvl; the eye site reads the WORD at RS+50 (rsFlg is its high byte) and masks with 3
 
         org     CODE1
         dc.w    $4ef9
@@ -180,6 +183,33 @@ cur_rec:
         bra.s   lvl_ptr
 .none:  suba.l  a0,a0
         rts
+
+; level setup hook ($3dbf0: the `jsr $3636e`, the first read of the base tower at a level start).  The look of the level that is about to start comes from
+; the record's flags.b: high nibble = colour set, low nibble = eye design, 0 = the base tower ($3390c), n = n-1 (colour set = tower n's palette, raster
+; colours, skyline and texture; eye design = tower n's disc sprites).  The two indices are cached in rsCol/rsEye; the 5 sites that read the base tower
+; (palette $3522e, raster $3dc1e, skyline $366de, texture $36b68 every frame, eyes $363a4) were retargeted to read the cache (same 6-byte instruction).
+; Original towers (rsLvl = 0) and flags 0: cache = $3390c, the stock behaviour.  All registers kept; ends in the original call.
+ed_lvl: movem.l d0-d2/a0,-(a7)
+        bsr.s   cur_rec
+        moveq   #0,d1
+        move.l  a0,d0
+        beq.s   .f
+        move.b  3(a0),d1
+.f:     move.w  $3390c.l,d2
+        move.w  d1,d0
+        lsr.b   #4,d0
+        bsr.s   look_pk
+        move.w  d0,RS+rsCol.l
+        move.w  d1,d0
+        bsr.s   look_pk
+        move.b  d0,RS+rsEye.l
+        movem.l (a7)+,d0-d2/a0
+        jmp     $3636e.l
+look_pk: and.w  #15,d0                  ; nibble 0 = the base tower (d2), n = n-1
+        subq.w  #1,d0
+        bpl.s   .r
+        move.w  d2,d0
+.r:     rts
 
 ; ------------------------------------------------------------------ game hooks
 ; decode hook ($377a2): custom level -> the game's own decode loop ($37812: d7 = rows, a0 = mask, a1 = stream, a2 = grid)
@@ -580,7 +610,7 @@ draw_id:
         move.l  (a1)+,(a2)+
         move.l  (a1)+,(a2)+
         lea     tiles(pc),a1
-        mulu.w  #10,d3
+        mulu.w  #9,d3
         moveq   #0,d5
         move.b  8(a1,d3.w),d5
         lea     vTile(a5),a2
@@ -743,26 +773,29 @@ draw_panel:
         moveq   #0,d2
         bsr.w   pline
         lea     vNum(a5),a2
-        move.b  #'H',(a2)+
-        move.w  RSV+rsRows(a5),d0
-        bsr.w   dec3
+        move.b  #'S',(a2)+
+        move.b  RSV+rsFlg(a5),d0
+        lsr.b   #4,d0
+        bsr.w   dec1
+        move.w  #' E',(a2)+
+        move.b  RSV+rsFlg(a5),d0
+        bsr.w   dec1
         clr.b   (a2)
+        moveq   #5,d2
+        bsr.w   pline
+        lea     ptab(pc),a3
         moveq   #1,d2
-        bsr.w   pline
-        lea     vNum(a5),a2
-        move.b  #'C',(a2)+
-        move.w  RSV+rsCx(a5),d0
+.pl:    lea     vNum(a5),a2
+        move.b  (a3)+,(a2)+
+        moveq   #0,d0
+        move.b  (a3)+,d0
+        move.w  RSV(a5,d0.w),d0
         bsr.w   dec3
         clr.b   (a2)
-        moveq   #2,d2
         bsr.w   pline
-        lea     vNum(a5),a2
-        move.b  #'R',(a2)+
-        move.w  RSV+rsCy(a5),d0
-        bsr.w   dec3
-        clr.b   (a2)
-        moveq   #3,d2
-        bsr.w   pline
+        addq.w  #1,d2
+        cmp.w   #4,d2
+        bne.s   .pl
         bsr.w   cur_cell
         lea     vNum(a5),a2
         move.b  #'$',(a2)+
@@ -788,6 +821,7 @@ draw_panel:
 .h:     moveq   #16,d1
         moveq   #11,d2
         bra.w   txt
+ptab:   dc.b    'H',rsRows,'C',rsCx,'R',rsCy
 
 ; text line from vNum in the right panel (column 32), line d2
 pline:  lea     vNum(a5),a0
@@ -1198,7 +1232,7 @@ a_cmd:  lea     cmds(pc),a0
 
 cmds:   dc.w    m_main-cmds,m_levels-cmds,m_camps-cmds,c_newlvl-cmds,c_newcamp-cmds,c_quit-cmds,c_save-cmds,c_edroot-cmds
         dc.w    c_leaveed-cmds,c_look-cmds,c_mis-cmds,c_copyorig-cmds,c_blank-cmds,c_tup-cmds,c_tdn-cmds,c_rename-cmds
-        dc.w    c_play-cmds,c_addent-cmds,cp_edit-cmds,c_dload-cmds,c_dgo-cmds,c_dno-cmds
+        dc.w    c_play-cmds,c_addent-cmds,cp_edit-cmds,c_dload-cmds,c_dgo-cmds,c_dno-cmds,c_col-cmds,c_eye-cmds
 
 ; --- main menu / list screens
 m_main: clr.w   vScr(a5)
@@ -1216,45 +1250,20 @@ c_edroot:
         move.w  #2,vRedraw(a5)
         rts
 
-; level list (dynamic): "name" (6,i), "<new level>", "< back"
+; level / campaign list (dynamic): "name" (6|7,i), "<new level>" | "<new campaign>", "< back".  d4 = header offset of the count (6 levels, 8 campaigns);
+; d4/2 = the "new" item's parameter (3 / 4), +3 = the name items' action (6 / 7); d5 = offset of the name in the record (8 / 0); a4 = pointer routine
 m_levels:
-        clr.w   vScr(a5)
-        move.w  #8,vMCol(a5)
-        lea     MB.l,a2
-        clr.b   (a2)+
-        move.l  a2,vMBP(a5)
-        lea     OVS.l,a0
-        moveq   #0,d3
-        cmpi.l  #'NCMP',(a0)
-        bne.s   .nl
-        move.w  6(a0),d3
-.nl:    moveq   #0,d2
-        bra.s   .t
-.l:     move.w  d2,d0
-        bsr.w   lvl_ptr
-        lea     8(a0),a0
-        moveq   #6,d0
-        move.w  d2,d1
-        bsr.w   mb_add
-        addq.w  #1,d2
-.t:     cmp.w   d3,d2
-        blt.s   .l
-        lea     sNewLvl(pc),a0
-        moveq   #4,d0
-        moveq   #3,d1
-        bsr.w   mb_add
-        lea     sBack(pc),a0
-        moveq   #4,d0
-        moveq   #0,d1
-        bsr.w   mb_add
-        lea     MB.l,a0
-        bsr.w   menu_open
-        move.w  #3,vRedraw(a5)
-        rts
-
-; campaign list (dynamic): "name" (7,i), "<new campaign>", "< back"
+        lea     lvl_ptr(pc),a4
+        lea     sNewLvl(pc),a3
+        moveq   #8,d5
+        moveq   #6,d4
+        bra.s   ml
 m_camps:
-        clr.w   vScr(a5)
+        lea     camp_ptr(pc),a4
+        lea     sNewCamp(pc),a3
+        moveq   #0,d5
+        moveq   #8,d4
+ml:     clr.w   vScr(a5)
         move.w  #8,vMCol(a5)
         lea     MB.l,a2
         clr.b   (a2)+
@@ -1263,20 +1272,24 @@ m_camps:
         moveq   #0,d3
         cmpi.l  #'NCMP',(a0)
         bne.s   .nl
-        move.w  8(a0),d3
+        move.w  0(a0,d4.w),d3
 .nl:    moveq   #0,d2
         bra.s   .t
 .l:     move.w  d2,d0
-        bsr.w   camp_ptr
-        moveq   #7,d0
+        jsr     (a4)
+        lea     0(a0,d5.w),a0
+        move.w  d4,d0
+        lsr.w   #1,d0
+        addq.w  #3,d0
         move.w  d2,d1
         bsr.w   mb_add
         addq.w  #1,d2
 .t:     cmp.w   d3,d2
         blt.s   .l
-        lea     sNewCamp(pc),a0
+        move.l  a3,a0
         moveq   #4,d0
-        moveq   #4,d1
+        move.w  d4,d1
+        lsr.w   #1,d1
         bsr.w   mb_add
         lea     sBack(pc),a0
         moveq   #4,d0
@@ -1315,9 +1328,9 @@ a_camp: move.w  d1,vCur(a5)
 a_lop:  move.w  vCur(a5),d2
         tst.w   d1
         beq.w   lv_play
-        cmp.w   #1,d1
+        subq.w  #1,d1
         beq.w   lv_edit
-        cmp.w   #2,d1
+        subq.w  #1,d1
         beq.w   lv_copy
         bra.w   lv_delete
 
@@ -1326,9 +1339,9 @@ a_cop:  move.w  vCur(a5),d2
         move.w  d2,vCamp(a5)
         tst.w   d1
         beq.w   cp_play
-        cmp.w   #1,d1
+        subq.w  #1,d1
         beq.w   cp_edit
-        cmp.w   #2,d1
+        subq.w  #1,d1
         beq.w   cp_rename
         bra.w   cp_delete
 
@@ -1861,6 +1874,13 @@ c_look: move.w  RSV+rsTow(a5),d0
         and.w   #7,d0
         move.w  d0,RSV+rsTow(a5)
         bra.s   c_ldone
+c_col:  move.b  RSV+rsFlg(a5),d0        ; colour set = high nibble of flags.b: 0 = as the base tower, 1..8
+        add.b   #$10,d0
+        cmp.b   #$90,d0
+        blo.s   c_fst
+        and.b   #$0f,d0
+        bra.s   c_fst
+; (c_eye and c_fst: block 7 at CODE6, behind the floppy build's TOS-state capture)
 c_mis:  eori.w  #3,RSV+rsMis(a5)
 c_ldone: move.w #1,vDirty(a5)
         clr.w   vMode(a5)
@@ -1908,10 +1928,7 @@ c_time: move.w  RSV+rsTime(a5),d1
         lsl.w   #4,d2
         or.w    d2,d3
         move.w  d3,RSV+rsTime(a5)
-.done:  move.w  #1,vDirty(a5)
-        clr.w   vMode(a5)
-        move.w  #2,vRedraw(a5)
-        rts
+.done:  bra.s   c_ldone
 
 c_rename:
         lea     RSV+rsName(a5),a0
@@ -2031,8 +2048,7 @@ c_play: bsr.w   commit
         rts
 
 ; encode the working grid + meta into TREC, then into the slot (replacing or appending)
-commit: tst.w   vDirty(a5)
-        beq.s   .enc
+commit:
 .enc:   lea     TREC.l,a2
         move.w  RSV+rsMis(a5),d0
         move.b  d0,(a2)
@@ -2226,7 +2242,7 @@ tiles_init:
         dbra    d2,.b
         move.w  d0,(a1)+
         dbra    d5,.r
-        addq.l  #2,a0
+        addq.l  #1,a0
         dbra    d6,.t
         rts
 
@@ -2417,38 +2433,38 @@ m_enemy: dc.b   8
 
 ; ------------------------------------------------------------------ data (second block)
         org     DATA
-; tiles: 8 pattern bytes, colour (plane mask), pad.  ids: 0 empty, 1 inert marker, 2 ledge, 3 wide ledge, 4 pillar, 5 blue block, 6 lift slab,
+; tiles: 8 pattern bytes, colour (plane mask).  ids: 0 empty, 1 inert marker, 2 ledge, 3 wide ledge, 4 pillar, 5 blue block, 6 lift slab,
 ; 7 door, 8 exit, 9 stone ball, 10 red ball, 11 red ball (waits), 12/13 eye vertical slow/fast, 14/15 eye horizontal slow/fast, 16 frog marker,
 ; 17 lift end ($08), 18 lift stop ($0c); tile 6 = the lift slab $85 (a lone $85 is a lift start, never a plain block)
 tiles:
-        dc.b    $00,$00,$00,$10,$00,$00,$00,$00,1,0
-        dc.b    $00,$00,$00,$00,$18,$00,$00,$00,1,0
-        dc.b    $00,$00,$00,$00,$00,$ff,$ff,$00,2,0
-        dc.b    $00,$00,$00,$00,$ff,$ff,$ff,$00,3,0
-        dc.b    $18,$3c,$7e,$7e,$7e,$7e,$3c,$18,4,0
-        dc.b    $ff,$81,$bd,$bd,$bd,$bd,$81,$ff,5,0
-        dc.b    $7e,$ff,$ff,$ff,$ff,$ff,$ff,$7e,6,0
-        dc.b    $ff,$81,$81,$81,$81,$81,$81,$ff,7,0
-        dc.b    $ff,$c3,$a5,$99,$99,$a5,$c3,$ff,7,0
-        dc.b    $3c,$42,$81,$81,$81,$81,$42,$3c,4,0
-        dc.b    $3c,$7e,$ff,$ff,$ff,$ff,$7e,$3c,7,0
-        dc.b    $3c,$7e,$e7,$c3,$c3,$e7,$7e,$3c,7,0
-        dc.b    $18,$3c,$7e,$db,$db,$7e,$3c,$18,5,0
-        dc.b    $3c,$18,$7e,$db,$db,$7e,$18,$3c,5,0
-        dc.b    $00,$3c,$7e,$db,$db,$7e,$3c,$00,5,0
-        dc.b    $00,$7e,$ff,$db,$db,$ff,$7e,$00,5,0
-        dc.b    $00,$24,$3c,$7e,$5a,$7e,$24,$00,6,0
-        dc.b    $18,$3c,$7e,$18,$18,$18,$18,$00,7,0
-        dc.b    $18,$3c,$7e,$00,$7e,$00,$7e,$00,7,0
+        dc.b    $00,$00,$00,$10,$00,$00,$00,$00,1
+        dc.b    $00,$00,$00,$00,$18,$00,$00,$00,1
+        dc.b    $00,$00,$00,$00,$00,$ff,$ff,$00,2
+        dc.b    $00,$00,$00,$00,$ff,$ff,$ff,$00,3
+        dc.b    $18,$3c,$7e,$7e,$7e,$7e,$3c,$18,4
+        dc.b    $ff,$81,$bd,$bd,$bd,$bd,$81,$ff,5
+        dc.b    $7e,$ff,$ff,$ff,$ff,$ff,$ff,$7e,6
+        dc.b    $ff,$81,$81,$81,$81,$81,$81,$ff,7
+        dc.b    $ff,$c3,$a5,$99,$99,$a5,$c3,$ff,7
+        dc.b    $3c,$42,$81,$81,$81,$81,$42,$3c,4
+        dc.b    $3c,$7e,$ff,$ff,$ff,$ff,$7e,$3c,7
+        dc.b    $3c,$7e,$e7,$c3,$c3,$e7,$7e,$3c,7
+        dc.b    $18,$3c,$7e,$db,$db,$7e,$3c,$18,5
+        dc.b    $3c,$18,$7e,$db,$db,$7e,$18,$3c,5
+        dc.b    $00,$3c,$7e,$db,$db,$7e,$3c,$00,5
+        dc.b    $00,$7e,$ff,$db,$db,$ff,$7e,$00,5
+        dc.b    $00,$24,$3c,$7e,$5a,$7e,$24,$00,6
+        dc.b    $18,$3c,$7e,$18,$18,$18,$18,$00,7
+        dc.b    $18,$3c,$7e,$00,$7e,$00,$7e,$00,7
 sHelp:  dc.b    'Fire=menu Ret=again',0
         even
 
 names:  dc.w    n0-names,n1-names,n2-names,n3-names,n4-names,n5-names,n6-names,n7-names,n8-names
         dc.w    n9-names,n10-names,n11-names,n12-names,n13-names,n14-names,n15-names,n16-names,n17-names,n18-names
 n0:     dc.b    'Empty',0
-n1:     dc.b    'Marker (inert)',0
+n1:     dc.b    'Marker',0
 n2:     dc.b    'Ledge',0
-n3:     dc.b    'Ledge (wide)',0
+n3:     dc.b    'Wide ledge',0
 n4:     dc.b    'Pillar',0
 n5:     dc.b    'Blue block',0
 n6:     dc.b    'Lift start',0
@@ -2456,11 +2472,11 @@ n7:     dc.b    'Door opening',0
 n8:     dc.b    'Exit door',0
 n9:     dc.b    'Stone ball',0
 n10:    dc.b    'Red ball',0
-n11:    dc.b    'Red ball (waits)',0
-n12:    dc.b    'Eye up/down slow',0
-n13:    dc.b    'Eye up/down fast',0
-n14:    dc.b    'Eye left/right',0
-n15:    dc.b    'Eye l/r fast',0
+n11:    dc.b    'Red (waits)',0
+n12:    dc.b    'Eye U/D slow',0
+n13:    dc.b    'Eye U/D fast',0
+n14:    dc.b    'Eye L/R slow',0
+n15:    dc.b    'Eye L/R fast',0
 n16:    dc.b    0
 n17:    dc.b    'Lift end',0
 n18:    dc.b    'Lift stop',0
@@ -2534,9 +2550,11 @@ m_dirv: dc.b    3
         dc.b    5,0,'Start up',0
         dc.b    5,1,'Start down',0
         dc.b    4,7,'< back',0
-m_tower: dc.b   8
+m_tower: dc.b   10
         dc.b    4,9,'Look: next tower',0
         dc.b    4,10,'Look: other mission',0
+        dc.b    4,22,'Colours: next',0
+        dc.b    4,23,'Enemies: next',0
         dc.b    4,11,'Copy original grid',0
         dc.b    4,12,'Blank grid',0
         dc.b    4,13,'Time +50',0
@@ -2816,3 +2834,15 @@ sLoaded: dc.b   'Loaded ',0
 sLv:    dc.b    ' levels / ',0
 sCm:    dc.b    ' campaigns',0
         even
+
+; ------------------------------------------------------------------ enemy-set cycle (block 7 at CODE6: the 38 B between the floppy build's TOS-state capture and CODE2)
+        org     CODE6
+c_eye:  move.b  RSV+rsFlg(a5),d0        ; enemy set = low nibble of flags.b: 0 = as the base tower, 1..4
+        addq.b  #1,d0
+        move.b  d0,d1
+        and.b   #15,d1
+        cmp.b   #5,d1
+        blo.s   c_fst
+        and.b   #$f0,d0
+c_fst:  move.b  d0,RSV+rsFlg(a5)
+        bra.s   c_ldone

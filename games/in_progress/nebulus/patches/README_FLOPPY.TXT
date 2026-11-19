@@ -9,12 +9,16 @@ What it is
   one moved (TOPPLER.NEO, the title picture); boot sector, the Atari Legend intro (AUTO\TOWERTOP.PRG) and the loader are the
   original's, byte for byte.  PATCHES.TXT lists every change.  Nebulus_campaign_disk.st is a blank 720 KB data disk, see below.
 
-What is new in v@VERSION@ (compared with v1.1)
-  Fixed a crash (Address Error, bombs on screen) when the level manager or
-  the editor opened a campaign whose level records have an odd size in bytes
-  (the editor's own saves could produce such files). The level flags byte is
-  now also kept when you edit and save. Nothing else is changed. Campaign
-  and level files are the same format and work with both v1.1 and v@VERSION@.
+What is new in v@VERSION@ (compared with v1.1.1)
+  Level editor (Tower > menu): each custom level can now choose its colour
+  scheme (the palette, raster bars, skyline and tower texture of any of the
+  8 original towers) and its enemy set (the 4 enemy eye designs),
+  independent of the tower and its geometry. The panel shows the choice as
+  "S<colours> E<enemies>". The original towers are unchanged. Also included
+  is the v1.1.1 crash fix (Address Error with campaign files whose level
+  records have an odd size). Level files stay compatible both ways: old
+  files play "as base tower"; new files keep working on older versions,
+  where the look choice is ignored.
 
 Changes in this release
 {WHATSNEW}
@@ -54,8 +58,9 @@ row 1 and a ledge + exit door at the top):
                up/down U slow, I fast, Eye left/right J slow, K fast; then
                choose the start direction
      Lift >    Lift: from here A, Lift: stop here Z, Lift: delete
-     Tower >   Look, Copy original grid, Blank grid, Time +50 / -50 seconds,
-               Name...
+     Tower >   Look, Colours, Enemies (colour scheme and eye-disc design of
+               the level; 0 = as the base tower), Copy original grid, Blank
+               grid, Time +50 / -50 seconds, Name...
      Playtest  run the real game on what you are editing; F10, finishing the
                level or losing brings you back to the editor
      Save to campaign disk, Leave editor (keeps the level in the level list)
