@@ -9,17 +9,20 @@ Status: **done** (v1.1, 2026-11-19: Retire / win / lose no longer crashes, `pm_c
 - Play in Hatari: `tools/play.sh` (patched floppy, STE), `--hd`, `--original`, `--machine st|megast|ste|megaste|tt|falcon`, `--ram`, `--mhz`.
 - Patch tool: `tools/pmpatch.py verify | list | build [--floppy|--hd] | live | boot`.
 
-### Release md5s (v1.1 = final default patch set: keys, hover, triple buffering, TT / Falcon pointer, intro timing, rain, IKBD fix, resource-cache cap)
+### Release md5s (v1.2 = the v1.1 set + `pm_mste`; v1.1 kept for 8 MHz Mega STEs)
 
 | File | MD5 |
 |---|---|
 | original `disks/protected.st` | `b0f6972e81067a5822c0b21e6d00b8dc` |
-| `Powermonger_patched.st` (floppy, 819200 B; the build is deterministic) | `ba7cae54412e84b728e48b78dac954e3` |
-| HD `AUTO\WAR.PRG` (316841 B) | `ed259a3ff25455d89221885a0563aaea` |
-| HD `DATA\SPRITE40.DAT` (101608 B, patched) | `37d28ff241b94d3f493f24e236e5a73b` |
-| HD `PMLATE.DAT` (26439 B) | `792409e029e1fb0c10c43333f29d1122` |
-| `dist/Powermonger_v1.0_patched_floppy_2026-11-11.zip` (the zip md5 changes with every packaging run: file times) | `fabc701e02e1bdc0f149f2fa2adb240f` |
-| `dist/Powermonger_v1.0_patched_hd_2026-11-11.zip` | `d1df1e73f001073fdc61f02096fc9d98` |
+| v1.2 `Powermonger_patched.st` (floppy, 819200 B; the build is deterministic) | `d21ac4368b0d7a025005cc44e8f2d397` |
+| v1.2 HD `AUTO\WAR.PRG` (316933 B) | `c5448197d5c126567cc92d4bf83fb59c` |
+| v1.2 HD `DATA\SPRITE40.DAT` (101608 B, patched) | `37d28ff241b94d3f493f24e236e5a73b` |
+| v1.2 HD `PMLATE.DAT` (26527 B) | `f45e837662558bca07e2db3d113c4cb3` |
+| `dist/Powermonger_v1.2_patched_floppy_2026-11-19.zip` (built from `b229248`, two builds identical) | `2d910fdfbd1f2a04f90801219b5decf7` |
+| `dist/Powermonger_v1.2_patched_hd_2026-11-19.zip` | `c72f11a295c028e1255ee385becb2755` |
+| v1.1 `Powermonger_patched.st` / HD `WAR.PRG` / `PMLATE.DAT` | `ba7cae54412e84b728e48b78dac954e3` / `ed259a3ff25455d89221885a0563aaea` / `792409e029e1fb0c10c43333f29d1122` |
+| `dist/Powermonger_v1.1_patched_floppy_2026-11-19.zip` / `..._hd_2026-11-19.zip` (the 8 MHz Mega STE versions) | `e19c2c31a4e8a830a06ed46bec8f10de` / `17a6d374ebacfad5c61a2236531bdd26` |
+| `dist/Powermonger_v1.0_patched_floppy_2026-11-11.zip` / `..._hd_2026-11-11.zip` (zip md5s change with every packaging run: file times) | `fabc701e02e1bdc0f149f2fa2adb240f` / `d1df1e73f001073fdc61f02096fc9d98` |
 
 The previous release candidate (no triple buffering / keys / rain; `work/notes/regression.md`) was floppy `3d116a3272af50ddc9d3a5bd39dc0a58`, `WAR.PRG` `eb143fd0d92579f1fa58097de090161a`.
 
