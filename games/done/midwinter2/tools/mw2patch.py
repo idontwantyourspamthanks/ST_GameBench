@@ -726,7 +726,7 @@ def cmd_live(patches, out: Path):
 #
 # Injection: a new FFA file 10 (the $B3000 payload, directory entry + free
 # track-sides 72-79) is loaded by the stub's own loader (sub_04db52, a6 = $4e9d8)
-# from a 32-byte stage-1 placed in unreferenced stub code ($4DDAA-$4DDE9, 64 B), and
+# from a 36-byte stage-1 placed in unreferenced stub code ($4DDAA-$4DDE9, 64 B), and
 # the stub's final jmp becomes `bra.w stage1`.  Stage 1 ends in `jmp $B3000.l`, the
 # floppy variant of the trampoline (core.s FLOPPY), which ends in `jmp $3104.w`.
 FFA_DIR_OFF = 9216              # FFA directory = track-side 1 (one 512 B sector, 63 entries)
@@ -741,6 +741,8 @@ STAGE1_SRC = ["\tlea\t$4e9d8.l,a6",                 # the stub's parameter block
               "\tmove.l\t#$b3000,$4e9ac.l",         # load destination
               "\tmove.w\t#10,$16(a6)",              # file number
               "\tbsr.w\t$4db52",                    # stub loader (checks the dir checksum)
+              "\tbsr.w\t$4dcb8",                    # v1.6: PARK THE HEAD: the stub's own restore (cmd $05, steps to track 0, TR = 0), so the game's
+                                                    # first `restore` starts at TR00 on every CPU clock (v1.3-v1.4 ended on track 79: 2.15 s, cut at 2.18 s)
               "\tjmp\t$b3000.l"]
 PAYLOAD_FILE = 10
 FLOPPY_DISKS = [("FFA", "FFA_boot.st"), ("FFB", "FFB_graphics.st"),
@@ -751,7 +753,8 @@ BOOT_JMP, BOOT_JMP_ORIG = 0xB4, bytes.fromhex("4ef90004d9a6")
 BOOT_CODE = 0xCA                                  # 308 zero bytes $CA-$1FD (the word at $1FE restores the $1234 sum)
 # FDC waits of the stub's and the game's copy of the driver: (address of the instruction, orig bytes up to the loop-count constant)
 STUB_FDC_WAITS = ((0x4DDEE, "203c00050000"), (0x4DE28, "3a3c0060"), (0x4DCFC, "3e3c0100"))
-GAME_FDC_WAITS = ((0x27CAE, "203c00050000"), (0x27CF0, "3a3c0060"), (0x27ABA, "3e3c0100"), (0x27C6A, "303c0180"))
+GAME_FDC_WAITS = ((0x27CAE, "203c00050000"), (0x27CF0, "3a3c0060"), (0x27ABA, "3e3c0100"), (0x27C6A, "303c0180"),
+                  (0x28B24, "7001"), (0x28B44, "0a79000600027d34"))       # last two: the attempt count (drive A, then B) and the drive A/B toggle of the disk identity check (sub_028b20); core.s cpufix neutralizes both when _nflops = 1
 
 
 def boot_block() -> bytes:
@@ -808,7 +811,7 @@ def floppy_ffa(payload: bytes) -> bytes:
         raise SystemExit("a FFA file reaches the payload's track-sides")
     # stage 1 + the stub's final jump
     st1 = assemble(STAGE1_SITE, STAGE1_SRC)
-    assert len(st1) == 32, len(st1)
+    assert len(st1) == 36, len(st1)
     ffa[soff(STAGE1_SITE):soff(STAGE1_SITE) + len(st1)] = st1
     bra = assemble(STUB_JMP_SITE, [f"\tbra.w\t${STAGE1_SITE:x}"])
     assert len(bra) == 4
@@ -849,6 +852,42 @@ def floppy_ffa(payload: bytes) -> bytes:
     assert sum(struct.unpack(">256H", out[:512])) & 0xFFFF == 0x1234
     return out
 
+def msa_name(st_name: str) -> str:
+    return st_name[:-3] + ".msa"
+
+def st_to_msa(st: bytes) -> bytes:
+    """Magic Shadow Archiver image of a 720K raw .st (80 tracks x 2 sides x 9 sectors): header (magic $0E0F, sectors per track, sides - 1,
+    first track, last track), then per track and side a length word and the track; every track stored uncompressed (length = 4608)."""
+    if len(st) != 737280:
+        raise SystemExit("st_to_msa: not a 720K image")
+    out = bytearray(struct.pack(">HHHHH", 0x0E0F, 9, 1, 0, 79))
+    for o in range(0, len(st), 4608):         # .st order = track 0 side 0, track 0 side 1, track 1 side 0 ... = the MSA order
+        out += struct.pack(">H", 4608) + st[o:o + 4608]
+    return bytes(out)
+
+def msa_to_st(msa: bytes) -> bytes:
+    """Inverse of st_to_msa; also reads MSA's RLE tracks ($E5 byte count.w), so the shipped files are checked by an independent reader."""
+    magic, spt, sides, t0, t1 = struct.unpack(">HHHHH", msa[:10])
+    assert magic == 0x0E0F
+    tl, p, out = spt * 512, 10, bytearray()
+    for _ in range((t1 - t0 + 1) * (sides + 1)):
+        n = struct.unpack(">H", msa[p:p + 2])[0]; p += 2
+        raw = msa[p:p + n]; p += n
+        if n == tl:
+            out += raw
+            continue
+        q, trk = 0, bytearray()
+        while q < len(raw):
+            c = raw[q]; q += 1
+            if c == 0xE5:
+                trk += bytes([raw[q]]) * struct.unpack(">H", raw[q + 1:q + 3])[0]; q += 3
+            else:
+                trk.append(c)
+        assert len(trk) == tl
+        out += trk
+    assert p == len(msa)
+    return bytes(out)
+
 def cmd_build_floppy(patches, out: Path, zip_path: Path | None = None, fpatches=()):
     if cmd_verify(patches):
         raise SystemExit("build aborted: a site's orig does not match the game")
@@ -864,13 +903,18 @@ def cmd_build_floppy(patches, out: Path, zip_path: Path | None = None, fpatches=
         files[name] = data
     import datetime
     import hashlib
+    for _, n in FLOPPY_DISKS:               # .msa copies: the geometry is in the MSA header, so writers that distrust the .st's boot sector accept them
+        (out / msa_name(n)).write_bytes(st_to_msa(files[n]))
     names = ", ".join(p.name for p in patches)
     md5s = "\n".join(f"  {hashlib.md5(files[n]).hexdigest()}  {n}" for _, n in FLOPPY_DISKS)
+    md5s += "\n" + "\n".join(f"  {hashlib.md5((out / msa_name(n)).read_bytes()).hexdigest()}  {msa_name(n)}" for _, n in FLOPPY_DISKS)
+    date = datetime.date.today().isoformat()
     txt = ((PATCHDIR / "FLOPPY.TXT").read_text()
-           .replace("{DATE}", datetime.date.today().isoformat())
+           .replace("{DATE}", date)
            .replace("{PATCHES}", names).replace("{MD5}", md5s))
     (out / "README.TXT").write_text(render_doc(txt))
-    print(f"built floppy set in {out}: {', '.join(n for _, n in FLOPPY_DISKS)} + README.TXT; "
+    (out / "WRITING_DISKS.TXT").write_text(render_doc((PATCHDIR / "WRITING_DISKS.TXT").read_text().replace("{DATE}", date)))
+    print(f"built floppy set in {out}: {', '.join(n for _, n in FLOPPY_DISKS)}, the same four as .msa, README.TXT, WRITING_DISKS.TXT; "
           f"{len(patches)} patch(es); payload {len(img)} B = FFA file {PAYLOAD_FILE} -> $B3000")
     for fp in fpatches:
         print(f"skipped file patch {fp.name}: needs PP's HAGA service, which is not on floppy")
@@ -881,10 +925,13 @@ def cmd_build_floppy(patches, out: Path, zip_path: Path | None = None, fpatches=
     if zip_path:
         import zipfile
         zip_path.parent.mkdir(parents=True, exist_ok=True)
+        members = [n for _, n in FLOPPY_DISKS] + [msa_name(n) for _, n in FLOPPY_DISKS] + ["README.TXT", "WRITING_DISKS.TXT"]
         with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as z:
-            for _, n in FLOPPY_DISKS:
-                z.write(out / n, n)
-            z.write(out / "README.TXT", "README.TXT")
+            for n in members:               # fixed member order, times and attributes: the same inputs give the same zip bytes
+                zi = zipfile.ZipInfo(n, date_time=(1980, 1, 1, 0, 0, 0))
+                zi.compress_type = zipfile.ZIP_DEFLATED
+                zi.external_attr = 0o644 << 16
+                z.writestr(zi, (out / n).read_bytes())
         print(f"wrote {zip_path}")
 
 def main():

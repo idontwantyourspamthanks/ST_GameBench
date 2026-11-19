@@ -9,7 +9,8 @@
 #
 # The HD zip: MW2PATCH/ with patched RUNME.TOS + HAGA, the original disks
 # (blank campaign disk FFD), the Amiga sample bank FILES\ASNBANK.BIN, PP's text files and PATCHES.TXT (patches/PATCHES.TXT).
-# The floppy zip comes from `mw2patch.py build --floppy --zip`.
+# The floppy zip comes from `mw2patch.py build --floppy --zip` (4 x .st, the same 4 as .msa, README.TXT, WRITING_DISKS.TXT; fixed member order and times).
+# Both zips are deterministic: two builds on the same day give identical md5s (the date is in the zip names and README.TXT).
 set -euo pipefail
 ROOT="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/.." && pwd -P)"
 cd "$ROOT"
@@ -35,7 +36,8 @@ cp build/game/FILES/ASNBANK.BIN "$STAGE/FILES/ASNBANK.BIN"      # Amiga sample b
 python3 tools/mw2patch.py doc patches/PATCHES.TXT > "$STAGE/PATCHES.TXT"
 HDZIP="dist/Midwinter2_v${VER}_patched_${DATE}.zip"
 rm -f "$HDZIP"
-(cd build/dist && zip -qr -X "$ROOT/$HDZIP" MW2PATCH)
+find build/dist -exec touch -d "2026-01-01 00:00:00" {} +        # fixed file times and sorted member order: the same input gives the same zip bytes
+(cd build/dist && find MW2PATCH | LC_ALL=C sort | TZ=UTC zip -q -X -@ "$ROOT/$HDZIP")
 python3 tools/mw2patch.py build --floppy --zip "dist/Midwinter2_v${VER}_patched_floppies_${DATE}.zip" >/dev/null
 
 md5sum build/game/RUNME.TOS build/game/HAGA dist/*"_v${VER}_"*"${DATE}"*.zip

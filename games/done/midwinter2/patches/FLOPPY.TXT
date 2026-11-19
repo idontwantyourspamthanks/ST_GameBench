@@ -16,22 +16,33 @@ The orange MIDWINTER II logo screen (the one with "Insert Graphics Disk - press 
 (The "no grey fading while loading" fix of the HD build does not apply: there is no
 loader service on floppy and nothing fades.)
 
-Needs 1 MB RAM (as the original), a double-sided 80-track drive.
-Tested in Hatari 2.6.1: STE with TOS 1.62 and Mega ST with TOS 1.04, 1 MB.
-The disks are standard 720K .ST images (9 sectors, 2 sides, 80 tracks).
+Needs 1 MB RAM (as the original), a double-sided 80-track drive, 720 KB double-density disks.
+Tested in Hatari 2.6.1 ONLY: STE (TOS 1.62), Mega STE (TOS 2.06, 8 and 16 MHz), Mega ST (TOS 1.04), TT (TOS 3.06), 1 MB or more.
+NOT tested on a real drive or a real machine: reports from real floppies are welcome.
+The disks are raw 720K images (80 tracks x 2 sides x 9 sectors of 512 bytes). Each is also supplied as .msa.
+Writing real disks: read WRITING_DISKS.TXT first (tools, DD media, why FFA/FFB/FFC look "corrupt" to some writers, the black prompt).
+
+NEW IN v1.6 (the floppy set only; the hard-disk build behaves as v1.5): fixes for real floppy drives and real machines.
+  - The start-up disk parks the drive head on track 0 before the game starts (v1.3-v1.4 left it on track 79, which made the game's
+    first drive reset run into its own time-out, and v1.5 on track 46).
+  - The game's disk time-out is doubled on 68000 machines (ST, STE, Mega STE): on a 16 MHz Mega STE it was 1.08 s, shorter than
+    the drive's spin-up.
+  - On a computer with one floppy drive the game no longer tries a non-existent drive B after a failed disk check (that cost about
+    11 s with the drive light off and ended at a black "Insert Graphics Disk" screen). Two drives: behaves as the original.
+  - .msa copies of the four disks, WRITING_DISKS.TXT.
 
 DISKS
-  FFA_boot.st            START-UP disk (disk A). Boot from it. It is the original FFA plus
-                         one extra file (the patch code) on tracks 72-79 of side 0.
-  FFB_graphics.st        GRAPHICS disk (disk B), unchanged original.
-  FFC_missions.st        MISSIONS disk (disk C), unchanged original.
-  FFD_campaign_blank.st  A blank, formatted disk for your campaign, unchanged.
-                         Make a copy of it for each campaign.
+  FFA_boot.st/.msa            START-UP disk (disk A). Boot from it. It is the original FFA plus the patch code and the
+                              Amiga sound bank as one extra file on side 1, tracks 1-46.
+  FFB_graphics.st/.msa        GRAPHICS disk (disk B), unchanged original (no boot sector by design: sector 0 is the game's directory).
+  FFC_missions.st/.msa        MISSIONS disk (disk C), unchanged original (same).
+  FFD_campaign_blank.st/.msa  A blank, formatted disk for your campaign, unchanged.
+                              Make a copy of it for each campaign.
 (The game also has a PERSONNEL disk for saving/loading agents: another blank copy.)
 
 STARTING
   1. Put FFA_boot.st in drive A and reset. The title picture loads (about a minute
-     in the emulator), then "Insert Graphics Disk - press any key".
+     in the emulator), then the orange logo with "Insert Graphics Disk - press any key".
   2. Put FFB_graphics.st in drive A and press a key. Press M, J or K for mouse,
      joystick or keyboard control.
   3. The security check (identify a Secret Police member) is skipped, as in the
@@ -39,6 +50,9 @@ STARTING
   4. Whenever the game needs another disk it shows "Insert ... Disk, press any key":
      swap the disk in drive A and press a key. A campaign disk left in drive B
      was found by the game without a prompt in the tests.
+  5. A BLACK screen with only "Insert Graphics Disk - press any key" (no orange logo) means the game could not read the START-UP disk
+     in its first check: do NOT insert FFB there, press a key with FFA still in drive A and wait; the orange logo follows.
+  6. Keep drive B empty (disconnect it for the first try if you can); use drive A for every disk.
 
 CAMPAIGN DISK (needed before you can play a mission)
   War Room -> START NEW CAMPAIGN -> type a name, RETURN -> CREATE CAMPAIGN DISK.

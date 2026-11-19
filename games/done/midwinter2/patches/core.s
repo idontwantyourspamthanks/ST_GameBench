@@ -123,12 +123,23 @@ cpufix_entry:
         movem.l d0-d2/a0-a1,-(a7)
         bsr.w   cl_detect
         move.b  d0,CPUFLAG.l
-        beq.s   .x                      ; 68000/68010: nothing at all
+        bne.s   .big
         ifd     FLOPPY
+        lea     fdctab68(pc),a0         ; 68000/68010 (ST, STE, Mega STE): the game's FDC time-out x2, so a 16 MHz Mega STE cannot abort inside spin-up
+        bsr.w   cl_patch
+        bra.s   .nfl
+        endc
+.big:   ifd     FLOPPY
         bsr.w   cl_cacheoff             ; floppy: no TOS caches policy; HD: PP's HAGA owns CACR on a TT, leave it alone
         endc
         lea     fdctab(pc),a0
         bsr.w   cl_patch
+.nfl:   ifd     FLOPPY
+        cmpi.w  #1,$4a6.w               ; _nflops: ONE drive -> the game must not probe drive B (5 FDC time-outs, ~11 s dark) after a failed disk check
+        bne.s   .x
+        lea     nodrb(pc),a0
+        bsr.w   cl_patch
+        endc
 .x:     movem.l (a7)+,d0-d2/a0-a1
         rts
 ;@CPULIB
@@ -149,3 +160,18 @@ fdctab:
         dc.l    $0600                   ; was $0180
         endc
         dc.l    0
+        ifd     FLOPPY
+fdctab68:                               ; 68000/68010 only (68020+ has the x16 table above)
+        dc.l    $27cb0
+        dc.w    4
+        dc.l    $000a0000               ; was $50000: 4.4 s at 8 MHz, 2.2 s at 16 MHz (the stock 1.08 s at 16 MHz is shorter than the 1.0-1.2 s spin-up)
+        dc.l    0
+nodrb:                                  ; ONE drive (sub_028b20, the disk identity check): no probe of drive B after a failed check, no repeat on drive A
+        dc.l    $28b46                  ; `eori.w #6,$27d34.l` at $28b44 (the drive A/B toggle) becomes `eori.w #0,...`: the drive select word stays A
+        dc.w    2
+        dc.l    $0000
+        dc.l    $28b24                  ; `moveq #1,d0` (two attempts: drive A, then B) becomes `moveq #0,d0`: one attempt, then the black prompt at once
+        dc.w    2
+        dc.l    $7000
+        dc.l    0
+        endc

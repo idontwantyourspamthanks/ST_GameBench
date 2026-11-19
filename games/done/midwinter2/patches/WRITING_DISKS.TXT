@@ -1,0 +1,78 @@
+Midwinter 2 v@VERSION@ enhanced by dad_prg - writing the four disks to real floppies, {DATE}
+
+STATUS, PLAINLY: everything in this set was tested in the Hatari emulator only (STE, Mega STE at 8 and 16 MHz, Mega ST, TT).
+None of it has been run on a real drive, a real STE or a real Mega STE. v1.3-v1.5 had a problem on real machines (see
+"What v1.6 changed" below); v1.6 is the attempt to fix it. Please report what you see.
+
+THE FILES
+  FFA_boot.st / .msa            START-UP disk (boot from this one)
+  FFB_graphics.st / .msa        GRAPHICS disk
+  FFC_missions.st / .msa        MISSIONS disk
+  FFD_campaign_blank.st / .msa  blank, formatted campaign disk (make one copy per campaign)
+The .st and the .msa of a disk hold exactly the same bytes (the .msa is the same 80 x 2 x 9 sectors in an MSA wrapper, every
+track stored uncompressed). Use whichever your writer likes.
+
+HOW TO WRITE THEM
+* Media: a 720 KB double-density (DD) disk, double-sided, formatted or not. Not HD (1.44 MB) disks.
+* The disks are raw 80 tracks x 2 sides x 9 sectors of 512 bytes (737 280 bytes), written sector for sector. A writer must
+  take the geometry from the file SIZE (or from you), never from the boot sector (see the next section).
+* Writers that do this:
+    Makedisk (DOS), with the size-driven mode:   makedisk /write FFA_boot.st /auto      (check your copy's help for the exact switches)
+    Greaseweazle:                                gw write --format=atarist.720 FFA_boot.st
+    HxC floppy emulator / HxC software:          load the .st or the .msa; the image is 80 x 2 x 9
+  The downloader who reported the problem wrote the v1.4 disks with DOS and Makedisk and got FFA to boot, so Makedisk works.
+* Write all four disks, drive A only. Verify the disks if the writer can.
+
+WHY FFA, FFB AND FFC "FAIL VALIDATION"
+The game does not use the TOS disk layout. Sector 0 of FFB (graphics) and FFC (missions) is the game's own file directory
+("grafix00", "mission0"), so these two disks have NO boot sector and no BIOS parameter block at all: a tool that insists on a valid
+boot sector says "corrupt" or "bad boot sector". FFA keeps the original game's boot sector, whose parameter block is wrong on
+purpose (10 sectors, 1 side); it boots, but a writer that follows it would write the wrong geometry. Only FFD (blank campaign
+disk) has a normal boot sector. This is how the original game disks are, not damage, and it can not be changed: the game's own
+check reads those bytes of sector 0 to recognise the disk. Ignore the warning, or use the .msa files: their header carries the
+geometry, so a writer does not have to guess it.
+
+STARTING THE GAME - and the one rule about the black prompt
+1. Put FFA_boot in drive A and switch on / reset. After the title pictures and tune the screen shows the orange MIDWINTER II logo with
+   "Insert Graphics Disk - press any key" and a small "v@VERSION@ enhanced by dad_prg". In the emulator this takes about 75-90 s from the reset (8 MHz); a real
+   drive may be slower. The drive light is on and off during that time; wait.
+2. Only now put FFB_graphics in drive A, press a key. Then M, J or K for mouse, joystick or keyboard. Whenever the game
+   asks for another disk it shows "Insert ... Disk - press any key": swap the disk in drive A, press a key.
+3. THE BLACK PROMPT: if you ever get a BLACK screen with only "Insert Graphics Disk / press any key" (no orange logo), do NOT
+   insert FFB. That prompt is the game complaining that the START-UP disk could not be read in the first check, which wants FFA:
+   leave FFA in drive A and press a key, wait up to a minute, and the orange logo comes. Only then swap to FFB. (Inserting FFB at the
+   black prompt can never work; this is what produces "music plays, nothing happens, no disk activity".)
+4. Do not press a key at the orange prompt with FFA still in the drive: the game wants FFB there; with the wrong disk it
+   shows the black prompt after about 2 seconds (v1.6, one drive) - swap, then press a key again.
+
+DRIVES AND COMPUTERS
+* Use drive A only and leave drive B empty. If your machine has a second drive, leave it empty and, if you can, switch it off or
+  disconnect it for the first test. On a machine with ONE drive the v1.6 start-up disk no longer probes drive B (the old
+  versions spent about 11 seconds with the drive light off after every failed disk check). With two drives the game behaves
+  exactly as the original did (a campaign disk left in drive B is found without a prompt).
+* First test on an 8 MHz machine (a plain STE, or a Mega STE set to 8 MHz with the cache off in the control panel). A 16 MHz Mega STE should work
+  too in v1.6, but it is the case that failed before.
+* The disk loads sector by sector; with a PC-style sector gap the writer produces, every sector may cost a revolution (0.2 s), so the
+  big game file may take twice as long as the emulator's times. Slow, not broken.
+
+WHAT v1.6 CHANGED (the real-floppy fix)
+The game has no disk-change detection: it identifies a disk by reading a few sectors, and its first read after the boot is a FDC
+"restore" (head to track 0) that it gives a fixed time-out of 2.18 s (8 MHz) - 1.08 s on a 16 MHz Mega STE, which is SHORTER than
+the drive's spin-up plus a long head move. v1.3 and v1.4 left the head on track 79 after the boot: that restore needed 2.13-2.15 s,
+i.e. it ended at the time-out (in the emulator on the right side of it by a hair; on a real drive, [INFERENCE], either way); v1.5
+left it on track 46, which is fine at 8 MHz (1.6 s) but in the emulator a 16 MHz Mega STE cut that restore. A cut restore leaves the
+controller and the head out of step, the first disk check fails, the game probes drive B (five time-outs, light off for 11 s) and
+shows the black prompt of rule 3 - which matches what was reported.
+v1.6: (1) the start-up code parks the head on track 0 before the game starts, so that restore never has to step; (2) the game's FDC
+time-out is doubled on 68000 machines (ST, STE, Mega STE; the TT and Falcon already had a much longer one); (3) on a machine with one
+drive a failed disk check shows the black prompt after one read of drive A (about 1.5 s in the emulator) and no longer probes a
+non-existent drive B. Failures with an EMPTY drive therefore take longer to show on a 68000 machine: [INFERENCE, the emulator
+answers an empty drive at once] up to about 20 s at 8 MHz (five time-outs of 4.4 s) - wait for the black prompt.
+
+TEST PLAN (please report back what you see)
+  1. Write FFA_boot and FFB_graphics (the other two later). 8 MHz machine, drive B empty.
+  2. Boot FFA. Expect: title pictures, music, then the orange logo after about 70 s (+ up to ~2x on a real drive).
+  3. Swap to FFB, key. Expect the M/J/K screen within ~20-60 s with disk activity.
+  4. If you get the black prompt instead: press a key with FFA still in, and tell me how long until the logo.
+  5. Repeat on the 16 MHz Mega STE.
+  Always report: machine, TOS, clock, writer and its settings, what the screen showed, whether the drive light blinked.

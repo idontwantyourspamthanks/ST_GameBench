@@ -193,11 +193,18 @@ they needed 380 B, more than the $B4E00-$B4EFF that was left when the payload wa
 - **Injection.** The payload (`build_image(..., floppy=True)`: same site table and blobs as the HD build, core
   assembled with `FLOPPY equ 1`; the trampoline applies PP's security-check skip `move.w #$6002,$2c574` on both media) becomes FFA **file 10**: directory entry 10 (`[xor-cksum][0][track-side 72][len $8000]`)
   and data on the blank track-sides 72-79 (all 8 of the free ones; `floppy_ffa` aborts if a payload would need
-  track-side 80, which holds data). A 32-byte stage 1 in unreferenced stub code (`$4DDAA`, 64 dead
+  track-side 80, which holds data; since v1.5 the file is payload + Amiga bank on track-sides 81-126, see the asn section). A 36-byte stage 1 in unreferenced stub code (`$4DDAA`, 64 dead
   bytes) calls the stub's own loader (`$4DB52`, a6 = `$4E9D8`, dest `[$4E9AC]` = `$B3000`, file number
-  `$16(a6)` = 10) and jumps to `$B3000`; the stub's final `jmp $3104.w` becomes `bra.w $4DDAA`. The trampoline
+  `$16(a6)` = 10), **parks the head** (v1.6: `bsr.w $4DCB8`, the stub's own FDC restore: cmd `$05`, track 0, TR = 0) and jumps to `$B3000`; the stub's final `jmp $3104.w` becomes `bra.w $4DDAA`. The trampoline
   verifies and applies the boot sites exactly as in the HD build and ends in `jmp $3104.w`. The deferred hook
   at `$2789A` (`sub_2783E` exit) is the game's own loader code and unchanged on floppy.
+- **Real-floppy fixes (v1.6; work/notes/realfloppy.md sections 6-8, work/floppy16/).** (1) *Head parking* (stage 1, above): the game's first
+  `restore` (`$27C4E`) used to start where the payload read ended (track 79 in v1.3/v1.4: 2.15 s against the game's 2.18 s time-out; track 46 in v1.5; track 71 in the original) and now
+  starts at TR 0 on track 0 at any CPU clock. (2) *Longer FDC wait on 68000 machines*: `core.s` `cpufix` (floppy only) writes `$000A0000` over the game's one time-out long (`move.l #$50000,d0` at `$27CAE`,
+  operand `$27CB0`, `sub_027caa`: the single wait behind every restore / seek / step / read / write command, ended by `btst #5,$fffa01` = FDC interrupt, else the force interrupt `$D4`); 68020+ keeps the x16 value (`$800000`) of `fdctab`. 4.4 s at 8 MHz, 2.2 s at 16 MHz (the stock value is
+  1.08 s there, below the 1.0-1.2 s spin-up). The other waits of the driver are not time-outs: `sub_027cd2` (motor-off poll before a deselect, `$2710` polls) just ends early, the `dbra` settle delays (`$27CF0`, `$27ABA`, `$27C6A`) are register-access gaps. The
+  stub's own copy of the wait (`$4DDEE`) is left alone on 68000: it retries on a checksum failure. (3) *One drive*: `cpufix` reads `_nflops` (`$4A6.w`); if it is 1 it patches `sub_028b20`, the disk identity check, which tries drive A and, on a mismatch, toggles the drive select word (`eori.w #6,$27D34.l` at `$28B44`) and tries drive B (`moveq #1,d0` at `$28B24` = two attempts): the immediate of the `eori` becomes 0 and the `moveq` immediate 0, so a failed check shows the black prompt after ONE read of drive A (1.3-1.7 s with spin-up, Hatari) instead of probing a non-existent drive B (5 time-outs, dark for 11 s at 8 MHz). Two drives: unchanged bytes. `cpufix` is now exactly 256 of its 256 bytes (full). The tool checks the original bytes of all six game sites at build time (`GAME_FDC_WAITS`).
+- **Packaging (v1.6).** `build --floppy --zip` also writes `.msa` copies (`st_to_msa`: header, every track stored uncompressed; `msa_to_st` reads them back, RLE too) and `WRITING_DISKS.TXT` (`patches/WRITING_DISKS.TXT`), and the zip is deterministic (fixed member order, times, attributes); `tools/package.sh` makes the HD zip deterministic too.
 - **Floppy-only patches** carry `; media: floppy` and are built only with `--floppy`. `floppy_copybuf`
   ($e566, `0050` -> `0028`): on a >= 1 MB machine the game copies disks (Start New Campaign, Create Back-up)
   through a 80-track-side buffer at `$80000-$DA000`, which would overwrite the payload at `$B3000`; 40

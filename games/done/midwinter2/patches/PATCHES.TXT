@@ -25,6 +25,9 @@ Changes vs the original HAGA release:
 - Atari Jaguar pad (new in v1.4; STE enhanced joystick ports, either port), in joystick mode: d-pad = stick,
   B = fire, A / C = < / > (nose down / up, dive / climb), Option = Esc (leave vehicle), Pause = P,
   keypad 1-9 / 0 = F1-F10, * / # = keypad - / +. Each button is read every 80 ms. Other machines run as before.
+- v1.6: the hard-disk build behaves as v1.5 (new version number only). The FLOPPY set was fixed for real floppy
+  drives and real machines (head parked on track 0, longer disk time-out on 68000 machines, no drive-B probe on a
+  one-drive computer, .msa copies, WRITING_DISKS.TXT); see the floppy set's README.
 - fixed (v1.5): on foot and in ground / surface vehicles (Crawler, Jeep, ...) the view height in the smooth
   in-between frames now follows the terrain; before, going downhill the view sank in steps at every world step.
 - fixed (v1.4): on a TT the mouse pointer was missing on the map screens (also in the original release); it is

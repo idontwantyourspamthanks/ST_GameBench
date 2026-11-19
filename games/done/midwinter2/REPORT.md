@@ -2,6 +2,15 @@
 
 This is a plain-English account of the work on *Midwinter 2: Flames of Freedom* (Atari ST, PP's 2014 hard-disk version). It covers what was changed, why, what the original code was doing at each point we changed, and what each change achieved. The detailed evidence (disassembly, measurements, test logs) is in `work/notes/`. The patch sources are in `patches/`.
 
+## What's new in v1.6 (2026-11-19): the floppy set on real drives
+
+A downloader wrote the v1.4 floppies on real hardware (STe and Mega STe, DOS + Makedisk): "module music starts playing, but no disc activity anymore, even with the graphics disk" and most image writers call the images corrupt. `work/notes/realfloppy.md` is the investigation (Hatari only, no real drive); `work/notes/realfloppy_v16.md` the fix and its gates.
+
+- **Cause we could prove (in Hatari):** the game has no disk-change detection and gives every drive command one fixed time-out (2.18 s on an 8 MHz machine, 1.08 s on a 16 MHz Mega STE, shorter than the 1.0-1.2 s spin-up). v1.3/v1.4 left the head on track 79 after the boot, so the game's first `restore` needed 2.15 s and was cut by the time-out; the first disk check then failed, the game probed a non-existent drive B (five time-outs, dark for 11 s) and showed a black "Insert Graphics Disk" screen that only the START-UP disk satisfies. The original disk is 0.18 s inside the time-out, v1.5 0.5 s.
+- **v1.6 fixes (floppy set only):** (1) the start-up stub parks the head on track 0 before the game starts (stage 1 grew from 32 to 36 bytes: one `bsr.w` to the stub's own FDC restore); (2) the game's time-out is doubled on 68000 machines (`$27CB0`, `$50000` -> `$A0000`); (3) with one drive (`_nflops` = 1) the drive-B probe is neutralised. Two drives behave as before.
+- **Packaging:** `.msa` copies of the four disks (FFB/FFC have no boot sector by design, so BPB-checking writers call the `.st` corrupt), `WRITING_DISKS.TXT`, an expanded floppy README, deterministic zips.
+- **Not proven:** nothing ran on a real drive. The cause on the user's machine is [INFERENCE]; v1.6 removes the one regression that was ours and the Mega STE 16 MHz hazard, and gives the user a test plan.
+
 ## What's new (2026-11-11)
 
 - **v1.3.** Smooth motion in all 22 vehicle types and on foot** (`p3cp_head` + `p3c_sim`), replacing v1.2's Helicopter-only scheme: the game's own 5 steps per second are unchanged and identical to the original's at every step; the view is redrawn between the steps at an extrapolated pose, as often as the machine manages (on foot / Jeep moving: 5 fps at 8 MHz, about 11-13 at 16 MHz, about 22-25 at 32 MHz). An extra frame is only drawn if it ends at most one 50 Hz frame after the next real step is due, so Esc and the mouse are read at the original's moments.
@@ -49,7 +58,7 @@ Baseline: the unpatched game managed **about 4 frames per second** on an 8 MHz S
   - It must be a *jump*, not a subroutine call: the original exit unstacks saved registers, and an extra return address on the stack made it crash.
 - **Patches to PP's HAGA service**, made to the HAGA file itself. It moves in memory depending on RAM size, so the patches have to be position-independent code.
 
-**Floppy version.** The same patches also go onto a bootable copy of disk A. Our code is stored as an extra file on spare tracks. A 32-byte addition to the game's own boot loader loads it and starts it before the game runs. A floppy boot never runs PP's patcher, so the trampoline also applies PP's security-check bypass itself.
+**Floppy version.** The same patches also go onto a bootable copy of disk A. Our code is stored as an extra file on spare tracks. A 36-byte addition to the game's own boot loader loads it, parks the drive head on track 0 (v1.6) and starts it before the game runs. A floppy boot never runs PP's patcher, so the trampoline also applies PP's security-check bypass itself.
 
 ## 3. Fixes to PP's loader
 
