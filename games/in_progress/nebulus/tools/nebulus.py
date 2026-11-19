@@ -6,7 +6,7 @@ root sector to install a private HD driver (see games/done/hunter/work/notes/boo
 So this builds a 16 MB FAT16 ACSI image with HDDRIVER's root sector + partition loader (the same
 user-supplied files Hunter uses, gamebench/hd/) and autoruns C:\START.TOS.
 
-    import sys; sys.path.insert(0, '<gamebench>/tools'); sys.path.insert(0, 'games/done/nebulus/tools')
+    import sys; sys.path.insert(0, '<gamebench>/tools'); sys.path.insert(0, 'games/in_progress/nebulus/tools')
     from nebulus import Nebulus
     h = Nebulus(); h.boot_to_game(); h.close()
 """
