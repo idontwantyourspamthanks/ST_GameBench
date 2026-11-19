@@ -1,0 +1,22 @@
+CELL HD-acsi megaste TOS 2.06 4096 KB seq=final
+RESULT name prompt after 69 s wall, vbl 4273
+RESULT option screen, vbl 4562
+TIME options -> territory chart (START NEW CONQUEST): 709 VBL (4971 -> 5680)   [wall 93 s]
+TIME chart -> 3D map view (island click, level load): 612 VBL (6193 -> 6805)   [wall 111 s]
+RESULT boot 117 s wall, MARKER b'PMPO', shifter sync reg $fc (bit 1: 50 Hz)
+RESULT cache after the first level: cursor $b74f4; res 1 @$a7af4+$7d00, res 8 @$af7f4+$7d00, res 10 @$80000+$17c00, res 11 @$97c00+$fef4
+RESULT map view: payload 32 blobs, 0 differ []
+TIME r1 final: RETIRE click -> first picture-like frame (poll only; the load itself: see the loader return): 38 VBL (11656 -> 11694)   [wall 198 s]
+RESULT r1 final: picture shown True, still shown after 8 s True (non-black 0.57, 16 colours)
+RESULT r1 final: 68 s after the click: non-black 0.17, 10 colours, CPU parked in STOP: False
+RESULT r1 final: payload 32 blobs, 0 differ []
+RESULT r1 final: cache cursor $b74f4; res 1 @$a7af4+$7d00, res 8 @$af7f4+$7d00, res 10 @$80000+$17c00, res 11 @$97c00+$fef4
+RESULT cache at the end: cursor $b74f4; res 1 @$a7af4+$7d00, res 8 @$af7f4+$7d00, res 10 @$80000+$17c00, res 11 @$97c00+$fef4
+TRACE 35 loader events after the name prompt
+LOADER per step (res: n = from the disk, c = from the cache; skip = pm_cachecap kept it out of the cache):
+  options -> territory chart (START NEW CONQUEST): 709 VBL by poll; loader calls [0:n 2:n 3:n 4:n 5:n 10:n]; last loader return +632 VBL after the click
+  chart -> 3D map view (island click, level load): 612 VBL by poll; loader calls [11:n 1:n 8:n]; last loader return +495 VBL after the click
+  r1 final: RETIRE click -> first picture-like frame (poll only; the load itself: see the loader return): 38 VBL by poll; loader calls [-]; no loader activity
+TRACE raw (vbl kind d2.w): 5043/call/0 5043/miss/ 5095/ret/ 5095/call/2 5095/miss/ 5133/ret/ 5133/call/3 5133/miss/ 5189/ret/ 5189/call/4 5189/miss/ 5233/ret/ 5233/call/5 5233/miss/ 5288/ret/ 5288/call/a 5288/miss/ 5603/ret/ 6273/call/b 6273/miss/ 6384/ret/ 6505/call/1 6505/miss/ 6592/ret/ 6614/call/8 6614/miss/ 6688/ret/ 11782/call/c 11782/miss/ 11867/skip/7d00 11867/ret/ 11919/call/d 11919/miss/ 12146/skip/1e5e 12146/ret/
+CELL DONE HD-acsi megaste TOS 2.06 4096 KB seq=final: OK
+exit 0

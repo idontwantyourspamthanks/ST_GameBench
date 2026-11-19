@@ -91,5 +91,19 @@ plus the cold-boot cells of section 3 (map view, get_men, 20 screenshots, F, hov
 ## 9. Packaging, pre-commit build [obs]
 `tools/package.sh` x2: floppy zip `aadaa6a007e0f07d86eeaedabbb03a44`, HD zip `99600ab6a8fd6941be3cb3403dc0a25b`, identical both runs (README stamp `1f534d2+dirty`). `tools/packcheck.sh`: `PACKCHECK OK` (floppy `.st` and every HD member md5 against an independent `pmpatch.py build`, member lists equal, README version and stamp, credit text `v1.1 enhanced by dad_prg` in the image). The v1.0 zips are untouched.
 
-## 10. Final builds from the clean commit
-(filled in after `committed <hash>`)
+## 10. Final builds from the clean commit `5e4d931` [obs]
+* `tools/package.sh` x2 from the clean tree: floppy zip `dist/Powermonger_v1.1_patched_floppy_2026-11-19.zip` **`e19c2c31a4e8a830a06ed46bec8f10de`**, HD zip `dist/Powermonger_v1.1_patched_hd_2026-11-19.zip` **`17a6d374ebacfad5c61a2236531bdd26`**, identical in both runs; READMEs say `Build: v1.1, git 5e4d931`; `tools/packcheck.sh`: `PACKCHECK OK`. Members (md5): `Powermonger_patched.st` `ba7cae54412e84b728e48b78dac954e3`, HD `AUTO/WAR.PRG` `ed259a3ff25455d89221885a0563aaea`, `DATA/SPRITE40.DAT` `37d28ff241b94d3f493f24e236e5a73b`, `PMLATE.DAT` `792409e029e1fb0c10c43333f29d1122` (same as section 9: only the README text changed). The v1.0 zips are untouched.
+* Shipped-zip gates: both zips unzipped to `work/release/ship/`, the builds under test are the zips' own members (`work/release/runs/sh_*.txt`):
+| cell | sequence | result |
+|---|---|---|
+| floppy STE 1.62 1 MB, pattern | lose, win, lose + 60 s idle | OK, payload 31 intact, fill 0 changed, main loop iterating |
+| floppy ST 1.04 1 MB | lose, win | OK |
+| floppy Mega STE 2.06 4 MB, pattern | lose, win, lose, lose | OK |
+| floppy TT 3.06 / Falcon 4.04 4 MB | lose, win | OK / OK |
+| HD STE (ACSI + HDDRIVER) | lose, win, lose + 60 s idle | OK (32 blobs) |
+| HD Mega STE | lose, win, lose + 60 s idle | OK |
+| the last island's ending | floppy STE (pattern), HD Mega STE | OK; 68 s after the click the ending screen is still up (non-black 0.17, 10 colours), CPU not parked in STOP |
+| `pmretire.py` against the unzipped floppy | Mega STE lose x2 rounds; STE `--win` x2 | OK / OK |
+| `pmcombined.py` cold boot (title/intro skipped, map, pointer 20/20, F, hover, fps) | floppy STE (map 4.85 fps), HD STE ACSI + save/load (4.85 / 5.20) | OK / OK |
+The cold boots of these cells pass the title / intro and name prompt on every machine (the gates `name`, `options`, `chart`, `game` of the harness are screenshot-matched).
+* **All-games image: NOT rebuilt.** Nebulus tree has uncommitted editor changes: `nebrelease.py build` of the current tree gives `NEPATCH.BIN` `11520b153461194803cc661e68e0d202` (release v1.1: `6b122b9b...`), START.TOS `4ecf26d8...` matches, so `make_hd_image.py` would stage a different Nebulus. Left to the lead after the Nebulus v1.1.1 release; then `python3 tools/make_hd_image.py` and `tools/pmretire.py --img <img> --hopts "--cpuclock 16"` (the user's repro: `run_megaste.sh` = Mega STE TOS 2.06 4 MB 16 MHz, `--gemdos-drive skip --acsi 0=<img>`, no other options) are the two remaining steps. The pmretire `--img` path itself ran (PMRetire, `img_megaste_dist*.txt`) on the stale image only.

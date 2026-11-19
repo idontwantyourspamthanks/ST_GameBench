@@ -1,0 +1,57 @@
+CELL HD-acsi ste TOS 1.62 1024 KB seq=lose,win,lose
+RESULT name prompt after 50 s wall, vbl 2588
+RESULT option screen, vbl 2828
+TIME options -> territory chart (START NEW CONQUEST): 547 VBL (3165 -> 3712)   [wall 72 s]
+TIME chart -> 3D map view (island click, level load): 507 VBL (4139 -> 4646)   [wall 91 s]
+RESULT boot 97 s wall, MARKER b'PMPO', shifter sync reg $fe (bit 1: 50 Hz)
+RESULT cache after the first level: cursor $b74f4; res 1 @$a7af4+$7d00, res 8 @$af7f4+$7d00, res 10 @$80000+$17c00, res 11 @$97c00+$fef4
+RESULT map view: payload 32 blobs, 0 differ []
+TIME r1 lose: RETIRE click -> first picture-like frame (poll only; the load itself: see the loader return): 32 VBL (8684 -> 8716)   [wall 177 s]
+RESULT r1 lose: picture shown True, still shown after 8 s True (non-black 0.82, 16 colours)
+RESULT r1 lose: payload 32 blobs, 0 differ []
+RESULT r1 lose: cache cursor $b74f4; res 1 @$a7af4+$7d00, res 8 @$af7f4+$7d00, res 10 @$80000+$17c00, res 11 @$97c00+$fef4
+RESULT r1: pointer at the picture click: (31, 54) (the option screen's START NEW CONQUEST is at (160, 85))
+TIME r1: picture click -> option screen: 33 VBL (12201 -> 12234)   [wall 243 s]
+TIME r1: START NEW CONQUEST -> territory chart: 154 VBL (12570 -> 12724)   [wall 252 s]
+TIME r1: chart -> 3D map view (2nd level load): 305 VBL (13090 -> 13395)   [wall 266 s]
+RESULT r1 next level: payload 32 blobs, 0 differ []
+TIME r2 win: RETIRE click -> first picture-like frame (poll only; the load itself: see the loader return): 31 VBL (16068 -> 16099)   [wall 324 s]
+RESULT r2 win: picture shown True, still shown after 8 s True (non-black 0.39, 14 colours)
+RESULT r2 win: payload 32 blobs, 0 differ []
+RESULT r2 win: cache cursor $b74f4; res 1 @$a7af4+$7d00, res 8 @$af7f4+$7d00, res 10 @$80000+$17c00, res 11 @$97c00+$fef4
+RESULT r2: pointer at the picture click: (31, 54) (the option screen's START NEW CONQUEST is at (160, 85))
+TIME r2: picture click -> option screen: 33 VBL (19547 -> 19580)   [wall 389 s]
+RESULT r2: confirm dialog (screen no longer the option screen): True
+TIME r2: START NEW CONQUEST -> territory chart: 550 VBL (19917 -> 20467)   [wall 407 s]
+TIME r2: chart -> 3D map view (2nd level load): 305 VBL (20833 -> 21138)   [wall 421 s]
+RESULT r2 next level: payload 32 blobs, 0 differ []
+TIME r3 lose: RETIRE click -> first picture-like frame (poll only; the load itself: see the loader return): 32 VBL (23813 -> 23845)   [wall 479 s]
+RESULT r3 lose: picture shown True, still shown after 8 s True (non-black 0.82, 16 colours)
+RESULT r3 lose: payload 32 blobs, 0 differ []
+RESULT r3 lose: cache cursor $b74f4; res 1 @$a7af4+$7d00, res 8 @$af7f4+$7d00, res 10 @$80000+$17c00, res 11 @$97c00+$fef4
+RESULT r3: pointer at the picture click: (143, 87) (the option screen's START NEW CONQUEST is at (160, 85))
+TIME r3: picture click -> option screen: 33 VBL (27334 -> 27367)   [wall 545 s]
+TIME r3: START NEW CONQUEST -> territory chart: 154 VBL (27705 -> 27859)   [wall 555 s]
+TIME r3: chart -> 3D map view (2nd level load): 306 VBL (28230 -> 28536)   [wall 568 s]
+RESULT r3 next level: payload 32 blobs, 0 differ []
+RESULT idle 60 s in the last map view: main loop iterating True
+RESULT cache at the end: cursor $b74f4; res 1 @$a7af4+$7d00, res 8 @$af7f4+$7d00, res 10 @$80000+$17c00, res 11 @$97c00+$fef4
+TRACE 63 loader events after the name prompt
+LOADER per step (res: n = from the disk, c = from the cache; skip = pm_cachecap kept it out of the cache):
+  options -> territory chart (START NEW CONQUEST): 547 VBL by poll; loader calls [0:n 2:n 3:n 4:n 5:n 10:n]; last loader return +514 VBL after the click
+  chart -> 3D map view (island click, level load): 507 VBL by poll; loader calls [11:n 1:n 8:n]; last loader return +402 VBL after the click
+  r1 lose: RETIRE click -> first picture-like frame (poll only; the load itself: see the loader return): 32 VBL by poll; loader calls [-]; no loader activity
+  r1: picture click -> option screen: 33 VBL by poll; loader calls [-]; no loader activity
+  r1: START NEW CONQUEST -> territory chart: 154 VBL by poll; loader calls [10:c]; last loader return +79 VBL after the click
+  r1: chart -> 3D map view (2nd level load): 305 VBL by poll; loader calls [11:c 1:c 8:c]; last loader return +214 VBL after the click
+  r2 win: RETIRE click -> first picture-like frame (poll only; the load itself: see the loader return): 31 VBL by poll; loader calls [-]; no loader activity
+  r2: picture click -> option screen: 33 VBL by poll; loader calls [-]; no loader activity
+  r2: START NEW CONQUEST -> territory chart: 550 VBL by poll; loader calls [10:c]; last loader return +493 VBL after the click
+  r2: chart -> 3D map view (2nd level load): 305 VBL by poll; loader calls [11:c 1:c 8:c]; last loader return +214 VBL after the click
+  r3 lose: RETIRE click -> first picture-like frame (poll only; the load itself: see the loader return): 32 VBL by poll; loader calls [-]; no loader activity
+  r3: picture click -> option screen: 33 VBL by poll; loader calls [-]; no loader activity
+  r3: START NEW CONQUEST -> territory chart: 154 VBL by poll; loader calls [10:c]; last loader return +80 VBL after the click
+  r3: chart -> 3D map view (2nd level load): 306 VBL by poll; loader calls [11:c 1:c 8:c]; last loader return +214 VBL after the click
+TRACE raw (vbl kind d2.w): 3226/call/0 3226/miss/ 3268/ret/ 3268/call/2 3268/miss/ 3297/ret/ 3297/call/3 3297/miss/ 3342/ret/ 3342/call/4 3342/miss/ 3377/ret/ 3377/call/5 3377/miss/ 3421/ret/ 3421/call/a 3421/miss/ 3679/ret/ 4204/call/b 4204/miss/ 4294/ret/ 4393/call/1 4393/miss/ 4464/ret/ 4482/call/8 4482/miss/ 4541/ret/ 8774/call/e 8774/miss/ 8868/skip/7d00 8868/ret/ 12630/call/a 12649/ret/ 13156/call/b 13169/ret/ 13272/call/1 13278/ret/ 13298/call/8 13304/ret/ 16161/call/f 16161/miss/ 16213/skip/7d00 16213/ret/ 20391/call/a 20410/ret/ 20899/call/b 20912/ret/ 21015/call/1 21021/ret/ 21040/call/8 21047/ret/ 23905/call/e 23905/miss/ 23999/skip/7d00 23999/ret/ 27766/call/a 27785/ret/ 28296/call/b 28309/ret/ 28412/call/1 28418/ret/ 28438/call/8 28444/ret/
+CELL DONE HD-acsi ste TOS 1.62 1024 KB seq=lose,win,lose: OK
+exit 0

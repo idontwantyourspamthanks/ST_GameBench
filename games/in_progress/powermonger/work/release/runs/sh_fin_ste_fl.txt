@@ -1,0 +1,25 @@
+CELL floppy ste TOS 1.62 1024 KB seq=final fill
+  fill armed at the stage 1 hand-over: 36 span(s), 112209 bytes
+RESULT name prompt after 84 s wall, vbl 4285
+RESULT option screen, vbl 4527
+TIME options -> territory chart (START NEW CONQUEST): 996 VBL (4868 -> 5864)   [wall 115 s]
+TIME chart -> 3D map view (island click, level load): 670 VBL (6294 -> 6964)   [wall 137 s]
+RESULT boot 143 s wall, MARKER b'PMPO', shifter sync reg $fe (bit 1: 50 Hz)
+RESULT cache after the first level: cursor $b74f4; res 1 @$a7af4+$7d00, res 8 @$af7f4+$7d00, res 10 @$80000+$17c00, res 11 @$97c00+$fef4
+RESULT map view: payload 31 blobs, 0 differ []
+  fill[map view]: 112209 pattern bytes in the free spans of $b8800..$effff (HD: and $f0000..$f5fff beyond the swap buffer), 0 changed; $f0000..$f7fc7 non-zero bytes: 10 at ['0xf7fa8', '0xf7fa9', '0xf7fab', '0xf7fac', '0xf7fad', '0xf7faf', '0xf7fb0', '0xf7fb1']
+TIME r1 final: RETIRE click -> first picture-like frame (poll only; the load itself: see the loader return): 33 VBL (11010 -> 11043)   [wall 220 s]
+RESULT r1 final: picture shown True, still shown after 8 s True (non-black 0.58, 14 colours)
+RESULT r1 final: 68 s after the click: non-black 0.17, 10 colours, CPU parked in STOP: False
+RESULT r1 final: payload 31 blobs, 0 differ []
+RESULT r1 final: cache cursor $b74f4; res 1 @$a7af4+$7d00, res 8 @$af7f4+$7d00, res 10 @$80000+$17c00, res 11 @$97c00+$fef4
+  fill[after final picture]: 112209 pattern bytes in the free spans of $b8800..$effff (HD: and $f0000..$f5fff beyond the swap buffer), 0 changed; $f0000..$f7fc7 non-zero bytes: 10 at ['0xf7fa8', '0xf7fa9', '0xf7fab', '0xf7fac', '0xf7fad', '0xf7faf', '0xf7fb0', '0xf7fb1']
+RESULT cache at the end: cursor $b74f4; res 1 @$a7af4+$7d00, res 8 @$af7f4+$7d00, res 10 @$80000+$17c00, res 11 @$97c00+$fef4
+TRACE 35 loader events after the name prompt
+LOADER per step (res: n = from the disk, c = from the cache; skip = pm_cachecap kept it out of the cache):
+  options -> territory chart (START NEW CONQUEST): 996 VBL by poll; loader calls [0:n 2:n 3:n 4:n 5:n 10:n]; last loader return +931 VBL after the click
+  chart -> 3D map view (island click, level load): 670 VBL by poll; loader calls [11:n 1:n 8:n]; last loader return +592 VBL after the click
+  r1 final: RETIRE click -> first picture-like frame (poll only; the load itself: see the loader return): 33 VBL by poll; loader calls [-]; no loader activity
+TRACE raw (vbl kind d2.w): 4926/call/0 4926/miss/ 5019/ret/ 5019/call/2 5019/miss/ 5086/ret/ 5086/call/3 5086/miss/ 5181/ret/ 5181/call/4 5181/miss/ 5256/ret/ 5256/call/5 5256/miss/ 5339/ret/ 5339/call/a 5339/miss/ 5799/ret/ 6360/call/b 6360/miss/ 6516/ret/ 6614/call/1 6614/miss/ 6759/ret/ 6777/call/8 6777/miss/ 6886/ret/ 11211/call/c 11211/miss/ 11341/skip/7d00 11341/ret/ 11385/call/d 11385/miss/ 11739/skip/1e5e 11739/ret/
+CELL DONE floppy ste TOS 1.62 1024 KB seq=final fill: OK
+exit 0

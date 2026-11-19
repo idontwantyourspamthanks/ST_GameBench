@@ -1,0 +1,43 @@
+CELL floppy falcon TOS 4.04 4096 KB seq=lose,win
+RESULT name prompt after 69 s wall, vbl 3568
+RESULT option screen, vbl 3752
+TIME options -> territory chart (START NEW CONQUEST): 787 VBL (4089 -> 4876)   [wall 96 s]
+TIME chart -> 3D map view (island click, level load): 465 VBL (5303 -> 5768)   [wall 113 s]
+RESULT boot 119 s wall, MARKER b'PMPO', shifter sync reg $2 (bit 1: 50 Hz)
+RESULT cache after the first level: cursor $b74f4; res 1 @$a7af4+$7d00, res 8 @$af7f4+$7d00, res 10 @$80000+$17c00, res 11 @$97c00+$fef4
+RESULT map view: payload 31 blobs, 0 differ []
+TIME r1 lose: RETIRE click -> first picture-like frame (poll only; the load itself: see the loader return): 32 VBL (9761 -> 9793)   [wall 200 s]
+RESULT r1 lose: picture shown True, still shown after 8 s True (non-black 0.82, 16 colours)
+RESULT r1 lose: payload 31 blobs, 0 differ []
+RESULT r1 lose: cache cursor $b74f4; res 1 @$a7af4+$7d00, res 8 @$af7f4+$7d00, res 10 @$80000+$17c00, res 11 @$97c00+$fef4
+RESULT r1: pointer at the picture click: (31, 54) (the option screen's START NEW CONQUEST is at (160, 85))
+TIME r1: picture click -> option screen: 33 VBL (13303 -> 13336)   [wall 265 s]
+TIME r1: START NEW CONQUEST -> territory chart: 153 VBL (13672 -> 13825)   [wall 275 s]
+TIME r1: chart -> 3D map view (2nd level load): 143 VBL (14193 -> 14336)   [wall 285 s]
+RESULT r1 next level: payload 31 blobs, 0 differ []
+TIME r2 win: RETIRE click -> first picture-like frame (poll only; the load itself: see the loader return): 31 VBL (16971 -> 17002)   [wall 343 s]
+RESULT r2 win: picture shown True, still shown after 8 s True (non-black 0.39, 14 colours)
+RESULT r2 win: payload 31 blobs, 0 differ []
+RESULT r2 win: cache cursor $b74f4; res 1 @$a7af4+$7d00, res 8 @$af7f4+$7d00, res 10 @$80000+$17c00, res 11 @$97c00+$fef4
+RESULT r2: pointer at the picture click: (31, 54) (the option screen's START NEW CONQUEST is at (160, 85))
+TIME r2: picture click -> option screen: 33 VBL (20479 -> 20512)   [wall 408 s]
+RESULT r2: confirm dialog (screen no longer the option screen): True
+TIME r2: START NEW CONQUEST -> territory chart: 508 VBL (20849 -> 21357)   [wall 425 s]
+TIME r2: chart -> 3D map view (2nd level load): 143 VBL (21725 -> 21868)   [wall 435 s]
+RESULT r2 next level: payload 31 blobs, 0 differ []
+RESULT cache at the end: cursor $b74f4; res 1 @$a7af4+$7d00, res 8 @$af7f4+$7d00, res 10 @$80000+$17c00, res 11 @$97c00+$fef4
+TRACE 51 loader events after the name prompt
+LOADER per step (res: n = from the disk, c = from the cache; skip = pm_cachecap kept it out of the cache):
+  options -> territory chart (START NEW CONQUEST): 787 VBL by poll; loader calls [0:n 2:n 3:n 4:n 5:n 10:n]; last loader return +756 VBL after the click
+  chart -> 3D map view (island click, level load): 465 VBL by poll; loader calls [11:n 1:n 8:n]; last loader return +428 VBL after the click
+  r1 lose: RETIRE click -> first picture-like frame (poll only; the load itself: see the loader return): 32 VBL by poll; loader calls [-]; no loader activity
+  r1: picture click -> option screen: 33 VBL by poll; loader calls [-]; no loader activity
+  r1: START NEW CONQUEST -> territory chart: 153 VBL by poll; loader calls [10:c]; last loader return +51 VBL after the click
+  r1: chart -> 3D map view (2nd level load): 143 VBL by poll; loader calls [11:c 1:c 8:c]; last loader return +107 VBL after the click
+  r2 win: RETIRE click -> first picture-like frame (poll only; the load itself: see the loader return): 31 VBL by poll; loader calls [-]; no loader activity
+  r2: picture click -> option screen: 33 VBL by poll; loader calls [-]; no loader activity
+  r2: START NEW CONQUEST -> territory chart: 508 VBL by poll; loader calls [10:c]; last loader return +466 VBL after the click
+  r2: chart -> 3D map view (2nd level load): 143 VBL by poll; loader calls [11:c 1:c 8:c]; last loader return +107 VBL after the click
+TRACE raw (vbl kind d2.w): 4129/call/0 4129/miss/ 4207/ret/ 4207/call/2 4207/miss/ 4280/ret/ 4280/call/3 4280/miss/ 4359/ret/ 4359/call/4 4359/miss/ 4431/ret/ 4431/call/5 4431/miss/ 4506/ret/ 4506/call/a 4506/miss/ 4845/ret/ 5346/call/b 5346/miss/ 5464/ret/ 5506/call/1 5506/miss/ 5625/ret/ 5633/call/8 5633/miss/ 5731/ret/ 9874/call/e 9874/miss/ 10012/skip/7d00 10012/ret/ 13713/call/a 13723/ret/ 14236/call/b 14243/ret/ 14285/call/1 14288/ret/ 14297/call/8 14300/ret/ 17081/call/f 17081/miss/ 17171/skip/7d00 17171/ret/ 21305/call/a 21315/ret/ 21768/call/b 21775/ret/ 21817/call/1 21820/ret/ 21829/call/8 21832/ret/
+CELL DONE floppy falcon TOS 4.04 4096 KB seq=lose,win: OK
+exit 0
