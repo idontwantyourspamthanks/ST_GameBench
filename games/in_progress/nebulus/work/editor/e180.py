@@ -34,6 +34,8 @@ def kw():
 if not os.path.exists(SNAP):
     os.makedirs(os.path.dirname(SNAP), exist_ok=True)
     h = Nebulus(workdir=WD + '_snap', game=gd(GAMEDIR), **kw()); print('snapshot boot', h.boot_to_title(timeout=240), flush=True); time.sleep(3); h.savemem(SNAP); h.close(); time.sleep(1)
+if os.environ.get('SNAP_EXPECT'):                                  # freshness guard: hex bytes the snapshot of the build under test must contain (v1.2: 303900077cbe)
+    assert bytes.fromhex(os.environ['SNAP_EXPECT']) in __import__('gzip').open(SNAP).read(), f'stale snapshot {SNAP}: {os.environ["SNAP_EXPECT"]} not found'
 BP = '/tmp/oddfix/bp_name.txt'; os.makedirs('/tmp/oddfix', exist_ok=True); open(BP, 'w').write("m a0 16\n")
 
 def goto(h, idx, tries=40):
@@ -96,6 +98,7 @@ def wait_title(h, tmo=25):
         time.sleep(0.7)
         if W(h, 0x33938) == 9 and L(h, 0x70) == 0x382d8: time.sleep(1.5); return True
     return False
+NOEN = 0x76c04                                                         # nt_trainers: 'E' toggles this word; a walk needs it SET before the tower starts (poked, not keyed: the key is racy and the first seconds with enemies on kill the player)
 def force(h):
     poke(h, 0x33a46, bytes([0, 1])); poke(h, 0x33a20, bytes([0, 4])); poke(h, 0x33a1e, bytes([0, 0]))
 def wait_pos(h, pos, tmo=90):
@@ -157,13 +160,15 @@ def run_file(path):
             cn, ents = cs[c]; tag = f'{name} campaign {c} {cn}'
             dec = lambda e: ('o', ((e >> 3) & 1) + 1, e & 7) if e & 0x80 else ('c', e)
             if c and not full: continue                                     # stress files: campaigns other than the first are listed only
-            pick(h, 'Campaigns'); pick(h, c); n0 = len(open(h.R / 'log.txt', errors='replace').read()); pick(h, 'Play', 1.0)
+            pick(h, 'Campaigns'); pick(h, c); n0 = len(open(h.R / 'log.txt', errors='replace').read())
+            if c == 0 and WALK: poke(h, NOEN, bytes([0xff, 0xff]))        # walk: enemies off BEFORE the tower starts (nt_trainers noen cell)
+            pick(h, 'Play', 1.0)
             check_start(h, tag + ' entry 0', dec(ents[0]), lvs, n0)
             if c == 0 and WALK and len(ents) > 1:
-                h.key('e', hold=0.3); time.sleep(0.5)
+                chk(f'{tag}: enemies off (noen cell $76c04 = $ffff)', W(h, NOEN), 0xffff)
                 last = len(ents) if full else min(2, len(ents) - 1)         # stress files: the first campaign's first 2 transitions only (a transition takes ~25 s)
                 for k in range(1, last + 1):
-                    n0 = len(open(h.R / 'log.txt', errors='replace').read()); force(h)
+                    n0 = len(open(h.R / 'log.txt', errors='replace').read()); wait_running(h, 30); force(h)
                     if k < len(ents):
                         chk(f'{tag}: entry {k} reached', wait_pos(h, k))
                         check_start(h, f'{tag} entry {k}', dec(ents[k]), lvs, n0)
