@@ -9,6 +9,13 @@ What it is
   is replaced by a copy that also reads NEPATCH.BIN. PATCHES.TXT lists every
   changed byte.
 
+What is new in v@VERSION@ (compared with v1.1)
+  Fixed a crash (Address Error, bombs on screen) when the level manager or
+  the editor opened a campaign whose level records have an odd size in bytes
+  (the editor's own saves could produce such files). The level flags byte is
+  now also kept when you edit and save. Nothing else is changed. Campaign
+  and level files are the same format and work with both v1.1 and v@VERSION@.
+
 Changes in this release
 {WHATSNEW}
 

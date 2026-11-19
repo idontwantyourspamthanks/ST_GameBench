@@ -46,7 +46,7 @@ FL_TEXT, FL_DATA = 0xA85E, 0x373A6
 # floppy text offset = PP text offset - delta for PP text offsets in [lo, hi)   (hi of the last = end of text; the data segment is shifted by 8)
 SEG = [(0, 0x4C46, 0), (0x4C78, 0x8406, 36), (0x8406, 0x8436, 24), (0x8436, 0x850A, 12), (0x850A, PP_TEXT, 8)]
 TITLE_SITE = 0x3D6C4      # ed_overlay's title-poll site (PP address): restored by the stub on a 512 KB machine
-CREDIT_ADDR = 0x77A00
+CREDIT_ADDR = 0x779FA      # = tools/nebrelease.py CREDIT_ADDR
 NT_ADDR = 0x76C00
 NEO_CLUSTER = 342         # TOPPLER.NEO moves here (was 309): JMP grows to 43..315 and cluster 341 stays untouched (its first sector, log. 696 = track 69 sector 7,
                           # holds a hidden 448-byte program that the loader's GEMDOS calls read; the new NEO position must not overwrite it)

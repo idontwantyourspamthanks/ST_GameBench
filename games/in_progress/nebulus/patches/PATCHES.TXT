@@ -31,6 +31,8 @@ differences:
                creates or grows it.  The game disk is never written.
 @@END
 
+v@VERSION@ (compared with v1.1): fixes an Address Error crash when the level manager or editor opens a campaign with odd-size level records (the editor's own saves could make them); the level flags byte is kept on save. Nothing else is changed; files are compatible with v1.1 both ways.
+
 Changes in this release (address = RAM address in the running game;
 "orig -> new" are the bytes replaced):
 

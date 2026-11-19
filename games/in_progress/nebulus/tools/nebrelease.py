@@ -26,7 +26,7 @@ PATCHES = GAME / "patches"
 ORIG = GAME / "originals/NEBULGX"
 DIST = GAME / "dist"
 FOLDER = "NEBULUS"                     # folder name inside the zip (8.3)
-CREDIT_ADDR = 0x77A00                  # blob: inside the zero gap, clear of trainers $76c00, latch $76d00, editor $75740..$7779f/$77c80
+CREDIT_ADDR = 0x779FA                  # blob: the gap between editor CODE2 end $779f8 and CODE3 $77a40 (the 66-byte v1.1.1 blob no longer fits at $77a00); clear of trainers $76c00, latch $76d00, ikbd $7726c
 
 
 def version() -> str:
@@ -61,7 +61,7 @@ def gen_credit() -> Path:
         f"# Prints \"{text}\" with the game's own title printer on the frog-on-a-plinth title page only (not High Scorers, not the options page).\n"
         f"# Hook: $3d698 `move.w #$fffe,$38212.l` (8 bytes, after the title page is drawn) -> jsr ${CREDIT_ADDR:x} / nop; the blob redoes the move, then\n"
         "# prints line 3 (screen row 144, the empty line between the copyright and \"Mission #n\") when the page word $3d5b6 is 0.\n"
-        f"# Blob ({len(blob)} bytes at ${CREDIT_ADDR:x}, inside the verified-zero gap $76b10..$77ec0).\n"
+        f"# Blob ({len(blob)} bytes at ${CREDIT_ADDR:x}, in the verified-zero gap between editor CODE2 and CODE3).\n"
         "patch cr_credit\ndefault yes\n"
         f"site 3d698 {hook.hex()}\n"
         f"site {CREDIT_ADDR:x} {blob.hex()}\n")

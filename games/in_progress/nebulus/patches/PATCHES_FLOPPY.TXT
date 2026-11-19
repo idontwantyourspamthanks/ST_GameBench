@@ -39,6 +39,8 @@ Gamex build, after $8406 24, after $8436 12 and after $850A 8 bytes lower
 every site were compared with the HD build's, instruction by instruction,
 before anything was written.
 
+v@VERSION@ (compared with v1.1): fixes an Address Error crash when the level manager or editor opens a campaign with odd-size level records (the editor's own saves could make them); the level flags byte is kept on save. Nothing else is changed; files are compatible with v1.1 both ways.
+
 Changes in this release:
 {PATCHES}
 
