@@ -1,0 +1,8 @@
+boot_to_race True {'v': 6727, 'f21': 2, 'f24': 0, 'f28': 255, 'p100e': 95, 'ptr': '390800000000005000280050002800000000000000000000', 'extra': 0}
+title/story pointer samples (vbl, $1021, $1028, ptr before, ptr after +40,+20 mouse):
+  (5087, 0, 0, 'efaaa000', 'efaaa000')
+  (5529, 0, 0, '00280014', '00500028')
+marker $b2700: b'MSPO'
+PACE native: 608 VBL, passes 101 (0.1661/VBL, 9.967/s @60Hz), extra 111, fps 20.921, $1028=255 $1021=2
+PACE 16MHz: 607 VBL, passes 101 (0.1664/VBL, 9.984/s @60Hz), extra 104, fps 20.264, $1028=255 $1021=2
+bus/address error lines: 0

@@ -1,0 +1,6 @@
+boot_to_race True {'v': 6515, 'f21': 2, 'f24': 0, 'f28': 255, 'p100e': 70, 'ptr': '390800000000005000280050002800000000000000000000', 'extra': 0}
+after 40 s drive {'v': 8648, 'f21': 2, 'f24': 0, 'f28': 255, 'p100e': 497, 'ptr': '390800000001005000280050002800000000000000000000', 'extra': 227}
+  line 12: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $c0) at pc=e0008a
+PSGCHECK run_psg_hd: PASS (violations 0, warnings 0; reg-7 writes 2923, reg-14 writes 312, FDC commands 18, selects 44286, data writes 44284, frames 5, frames with reg 7 bits 6/7 not both set 0 (longest run 0), final reg 7 = $fa)
+PSGCHECK ok True violations [] warnings []
+PSGCHECK run_psg_hd: PASS (violations 0, warnings 0; reg-7 writes 2923, reg-14 writes 312, FDC commands 18, selects 44286, data writes 44284, frames 5, frames with reg 7 bits 6/7 not both set 0 (longest run 0), final reg 7 = $fa)
