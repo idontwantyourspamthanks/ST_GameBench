@@ -135,3 +135,4 @@ Notes: the first e200 runs were launched before the base8 reference dump existed
 
 ### 11c. User test (2026-11-20)
 The user tested the v1.2 release on his MiSTer (the checklist the lead sent: `Level >` pick lists with live colours, doors placing the opposite door, crumble ledge, conveyors N/M, playtest): "Nebulus testing all passed". Which zip (HD or floppy) and which MiSTer machine model were not stated.
+Later the same day the user built and played a level using all the new elements (pick-list colours and enemies, paired doors and the exit, crumble ledges, conveyors): "everything worked beautifully". Zip and machine again not stated.
