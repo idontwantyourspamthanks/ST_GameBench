@@ -1,0 +1,26 @@
+CASE nofile: loaded=False after 6.9s (expect: message NOT FOUND, stock recovery)
+[nofile_orig race 0 start] vbl=7522 act=0x0 loaded=0x0 count=0 start=0 ptr=0x58c00 $102c=0x0000 len57890=19472 $23c0=0x58c14 $1024=00 $100e=64 $5ff8=0 $1021=02
+[nofile_orig race 0 over] vbl=15985 act=0x0 loaded=0x0 count=0 start=0 ptr=0x58c00 $102c=0x0000 len57890=19472 $23c0=0x58c00 $1024=00 $100e=0 $5ff8=0 $1021=02
+CASE nofile: recovery race (len57890, $102c, $23c0, POS) = [(19472, '0x0', '0x58c14', 0)] (stock: 19472, 0, $58c1x, 0)
+CASE bad_crc: loaded=False after 8.4s (expect: message damaged/invalid)
+[bad_crc_orig race 0 start] vbl=7596 act=0x0 loaded=0x0 count=3 start=0 ptr=0x58c00 $102c=0x0000 len57890=19472 $23c0=0x58c14 $1024=00 $100e=64 $5ff8=0 $1021=02
+[bad_crc_orig race 0 over] vbl=16061 act=0x0 loaded=0x0 count=3 start=0 ptr=0x58c00 $102c=0x0000 len57890=19472 $23c0=0x58c00 $1024=00 $100e=0 $5ff8=0 $1021=02
+CASE bad_crc: recovery race (len57890, $102c, $23c0, POS) = [(19472, '0x0', '0x58c14', 0)] (stock: 19472, 0, $58c1x, 0)
+CASE bad_magic: loaded=False after 8.4s (expect: message damaged/invalid)
+[bad_magic_orig race 0 start] vbl=7595 act=0x0 loaded=0x0 count=0 start=0 ptr=0x58c00 $102c=0x0000 len57890=19472 $23c0=0x58c14 $1024=00 $100e=64 $5ff8=0 $1021=02
+[bad_magic_orig race 0 over] vbl=16057 act=0x0 loaded=0x0 count=0 start=0 ptr=0x58c00 $102c=0x0000 len57890=19472 $23c0=0x58c00 $1024=00 $100e=0 $5ff8=0 $1021=02
+CASE bad_magic: recovery race (len57890, $102c, $23c0, POS) = [(19472, '0x0', '0x58c14', 0)] (stock: 19472, 0, $58c1x, 0)
+CASE bad_table: loaded=False after 8.4s (expect: message damaged/invalid)
+[bad_table_orig race 0 start] vbl=7596 act=0x0 loaded=0x0 count=3 start=0 ptr=0x58c00 $102c=0x0000 len57890=19472 $23c0=0x58c14 $1024=00 $100e=64 $5ff8=0 $1021=02
+[bad_table_orig race 0 over] vbl=16058 act=0x0 loaded=0x0 count=3 start=0 ptr=0x58c00 $102c=0x0000 len57890=19472 $23c0=0x58c00 $1024=00 $100e=0 $5ff8=0 $1021=02
+CASE bad_table: recovery race (len57890, $102c, $23c0, POS) = [(19472, '0x0', '0x58c14', 0)] (stock: 19472, 0, $58c1x, 0)
+CASE bad_short: loaded=False after 8.4s (expect: message damaged/invalid)
+[bad_short_orig race 0 start] vbl=7595 act=0x0 loaded=0x0 count=0 start=0 ptr=0x58c00 $102c=0x0000 len57890=19472 $23c0=0x58c14 $1024=00 $100e=64 $5ff8=0 $1021=02
+[bad_short_orig race 0 over] vbl=16058 act=0x0 loaded=0x0 count=0 start=0 ptr=0x58c00 $102c=0x0000 len57890=19472 $23c0=0x58c00 $1024=00 $100e=0 $5ff8=0 $1021=02
+CASE bad_short: recovery race (len57890, $102c, $23c0, POS) = [(19472, '0x0', '0x58c14', 0)] (stock: 19472, 0, $58c1x, 0)
+CASE emptyA: loaded=False after 60.9s (expect: message NO CAMPAIGN DISK after ~17 s)
+[emptyA_orig race 0 start] vbl=10276 act=0x0 loaded=0x0 count=0 start=0 ptr=0x58c00 $102c=0x0000 len57890=19472 $23c0=0x58c14 $1024=00 $100e=64 $5ff8=0 $1021=02
+[emptyA_orig race 0 over] vbl=18738 act=0x0 loaded=0x0 count=0 start=0 ptr=0x58c00 $102c=0x0000 len57890=19472 $23c0=0x58c00 $1024=00 $100e=0 $5ff8=0 $1021=02
+CASE emptyA: recovery race (len57890, $102c, $23c0, POS) = [(19472, '0x0', '0x58c14', 0)] (stock: 19472, 0, $58c1x, 0)
+CASE baddisk: loaded=False after 41.4s (expect: message damaged (CRC))
+[baddisk_orig race 0 start] vbl=9548 act=0x0 loaded=0x0 count=3 start=0 ptr=0x58c00 $102c=0x0000 len57890=19472 $23c0=0x58c14 $1024=00 $100e=64 $5ff8=0 $1021=02

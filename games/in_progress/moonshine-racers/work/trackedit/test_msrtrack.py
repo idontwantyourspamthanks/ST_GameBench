@@ -87,6 +87,25 @@ class Rules(unittest.TestCase):
         self.check(lambda t: t["hill"].__setitem__(0, [300, 4000]), "E-HILL")       # integrator overflow
         self.check(lambda t: t["curve"].__setitem__(0, [0, 0]), "E-STREAM")        # count 0 = terminator
 
+    def test_bar_rule(self):
+        """E-BAR: exactly one object of the base level's sprite-$21 type (the race ends when the car reaches it)."""
+        bar_types = [n + 1 for n, e in enumerate(self.t["types"]) if e[2] == M.BAR_SPRITE]
+        self.assertEqual(bar_types, [26])                         # level 0's finish type
+        bars = [i for i, o in enumerate(self.t["objects"]) if o["type"] in bar_types]
+        self.assertEqual(len(bars), 1)
+        t = copy.deepcopy(self.t)                                  # no bar: the track can only end by time-out
+        t["objects"][bars[0]]["type"] = 1
+        self.assertIn("E-BAR", codes(M.validate_track(t)))
+        t = copy.deepcopy(self.t)                                  # two bars
+        t["objects"][bars[0] - 5]["type"] = 26
+        self.assertIn("E-BAR", codes(M.validate_track(t)))
+        t = copy.deepcopy(self.t)                                  # moving the bar anywhere is fine
+        t["objects"][bars[0]]["lateral"] = 7
+        self.assertNotIn("E-BAR", codes(M.validate_track(t)))
+        for lev in range(M.NLEV):                                  # all 15 stock tracks have exactly one
+            st, _ = M.decode_stock(MS2, lev)
+            self.assertNotIn("E-BAR", codes(M.validate_track(st)), lev)
+
     def test_oversize(self):
         t = copy.deepcopy(self.t)
         last = t["objects"][-1]["at"]

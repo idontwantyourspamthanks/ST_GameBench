@@ -62,6 +62,11 @@ Image limit `IMG_MAX_LEN = $F000` (61,440 B: `$B2700-$C16FF`): RUNME refuses to 
 `; data: ... free` reservations outside the image are not zeroed: initialise them lazily behind a magic long (rendering.md shows `$B2700-$E8400` zero at
 game start on 1 MB, but not at 4 MB without `pp_bigram_cache`).
 
+## Campaigns (HD build, `cp_*.s`; `work/notes/campaign_hd.md`)
+Headers: `; media: hd` (HD build only; a floppy `--only` list containing it is refused, the default floppy set excludes it) · `; gate: ram2mb` (the site goes into the SECOND site table, which the trampoline verifies and applies only when `phystop >= $200000` and HAGA+`$83` (machine type) is 1 (ST, Mega ST), 2 (STE) or 3 (Mega STE); at 1 MB, on a TT (5) or a Falcon (4) nothing of it is written, byte `IB+4` stays 0; `$ff` = applied) · `; himem: $lo-$hi [label]` (RAM above 1 MB a gated patch owns, `$100000-$1CCFFF` only; overlap-checked, not in the image).
+The tool predefines `CPV` (`$B8E00`: ACT.b LOADED.b COUNT.w POS.w START.w PTR.l, payload data, zero at the trampoline), `CPTAB` (`$100000` CRC table), `CPWORK` (`$100400` menu scratch) and `CPSTORE` (`$110000` the campaign file). Table layout (HD): [list 1][zero slot][list 2][zero slot][byte pool].
+`cp_wrap` `$72c4`, `cp_fetch` `$77da`, `cp_ptr` `$fda2`, `cp_end` `$731e`, `cp_start` `$7252`, `cp_title` `$74fe` (F10 menu, HAGA-window reader, CRC-32 validation; `conflicts: mx_pre mf_pre sb_bar`: code at `$B9F00-$BAAFF`), `cp_hiscore` `$8418`; hooks at `$B8022 $B8070 $B8220 $B8240`. Payload size is unchanged (55,348 B): the code sits in zero gaps of the image.
+
 ## Patches
 - `pp_bigram_cache` (HAGA file patch, `default: yes`): PP's loader switches to a "whole image" disk cache on 68000 machines with >= 4 MB (`$81000-$C6F2B` for MS1,
   `$81000-$13D7FF` for MS2), which overwrites the payload. The patch keeps the 1 MB chunk cache (identical to Midwinter 2's patch; same HAGA md5).

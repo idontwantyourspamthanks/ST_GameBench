@@ -85,6 +85,12 @@ FREE_END = 0xE2C00                # last free byte + 1 at 1 MB = the LOWER of th
 BLOB_AREAS = ((0xB2800, TABLE), (TABLE_END, FREE_END))   # blob / data orgs allowed
 IMG_MIN_END = TABLE_END           # the image always spans IB .. here (zero-padded); blobs above TABLE_END extend it
 IMG_MAX_LEN = 0xF000              # RUNME's own limit on a 1 MB machine ("Too much low RAM occupied"); delivery.md section 6
+# ---- the campaign feature (HD build, `; gate: ram2mb`, work/notes/campaign_hd.md): addresses shared by the cp_*.s sources (predefined for every source) ----------------
+HIMEM_LO, HIMEM_END = 0x100000, 0x1CD000      # RAM above 1 MB that is zero and unused at 2 MB on an STE (TOS copy at $1D89B4) and a Mega STE (TOS copy at $1CD8BC): trackloader.md section 2
+CP_EQUS = {"CPV": 0xB8E00,                    # campaign variables (in the payload image: zero at the trampoline), 32 bytes
+           "CPTAB": 0x100000,                 # CRC-32 table (256 longs, built on every load)
+           "CPWORK": 0x100400,                # menu scratch (item vectors, text)
+           "CPSTORE": 0x110000}               # the campaign file as read (<= 128 KB; the format's maximum is 123,496 B)
 
 # ---- RUNME edit points (text-relative offsets into the unpacked image) --------------------------------------------------------------------
 TEXT_LEN = 0x4430
@@ -167,7 +173,7 @@ def render_doc(text: str) -> str:
             continue
         lines = []
         for p in load_patches() + ([] if floppy else load_file_patches()):
-            if not p.default or (p.media and not floppy):
+            if not p.default or (p.media == "floppy" and not floppy) or (p.media == "hd" and floppy):
                 continue
             note = p.doc or next((n for n in p.notes if n.strip()), "")
             if len(note) > 150:
@@ -200,7 +206,9 @@ class Patch:
         self.segments = []        # (org, source lines)
         self.preamble = []        # equ lines before the first org
         self.image = None         # file patch: game file (HAGA) edited in place
-        self.media = None         # None = every build; `floppy` = reserved (only `build --floppy`, not implemented: delivery.md section 8)
+        self.media = None         # None = every build; `floppy` = only `build --floppy`; `hd` = only the HD build (never the floppy)
+        self.gate = None          # `; gate: ram2mb`: the site goes into the SECOND site table, applied by the trampoline only on an STE / Mega STE with >= 2 MB (HD build only)
+        self.himem = []           # (lo, hi_exclusive, label): RAM above 1 MB a gated patch owns (not in the image; checked for overlaps and the 2 MB ceiling)
         self.edits = []           # file patch: (file offset, expected original bytes)
         self.disk = []            # floppy disk patch: (disk letter, disk offset, expected original bytes)
         self.fsegments = []       # file patch: (file offset, source lines)
@@ -239,9 +247,22 @@ class Patch:
                         raise SystemExit(f"{path}: `disk:` needs `A|B <offset> <orig hex>`")
                     self.disk.append((parts[0], int(parts[1].lstrip("$"), 16), bytes.fromhex(parts[2].replace(" ", ""))))
                 elif k == "media":
-                    if v.strip().lower() != "floppy":
-                        raise SystemExit(f"{path}: media must be `floppy`")
-                    self.media = "floppy"
+                    if v.strip().lower() not in ("floppy", "hd"):
+                        raise SystemExit(f"{path}: media must be `floppy` or `hd`")
+                    self.media = v.strip().lower()
+                elif k == "gate":
+                    if v.split(";")[0].strip() != "ram2mb":
+                        raise SystemExit(f"{path}: gate must be `ram2mb`")
+                    self.gate = "ram2mb"
+                elif k == "himem":
+                    parts = v.split(";")[0].split()
+                    m = re.fullmatch(r"(\S+?)\s*-\s*(\S+)", parts[0]) if parts else None
+                    if not m:
+                        raise SystemExit(f"{path}: `himem:` needs `$lo-$hi [label]` (inclusive end, no spaces around the dash)")
+                    lo, hi = addr_expr(m.group(1)), addr_expr(m.group(2))
+                    if not HIMEM_LO <= lo <= hi < HIMEM_END:
+                        raise SystemExit(f"{path}: himem ${lo:x}-${hi:x} is outside ${HIMEM_LO:x}-${HIMEM_END - 1:x} (free at 2 MB on STE and Mega STE, trackloader.md section 2)")
+                    self.himem.append((lo, hi + 1, " ".join(parts[1:]) or None))
                 elif k == "edit":
                     a, b = v.split(None, 1)
                     self.edits.append((int(a.lstrip("$"), 16), bytes.fromhex(b.split(";")[0].replace(" ", ""))))
@@ -298,7 +319,8 @@ def load_file_patches():
 
 # ---- assembly --------------------------------------------------------------------------------------------------------------------------
 def assemble(org: int, lines: list[str], equ: str = "", table: int = TABLE) -> bytes:
-    src = f"IB\tequ\t${IB:x}\nTABLE\tequ\t${table:x}\n{equ}\n\torg\t${org:x}\n" + "\n".join(lines) + "\n"
+    common = "".join(f"{k}\tequ\t${v:x}\n" for k, v in CP_EQUS.items())
+    src = f"IB\tequ\t${IB:x}\nTABLE\tequ\t${table:x}\n{common}{equ}\n\torg\t${org:x}\n" + "\n".join(lines) + "\n"
     with tempfile.TemporaryDirectory() as td:
         s = Path(td) / "seg.s"
         s.write_text(src)
@@ -309,11 +331,11 @@ def assemble(org: int, lines: list[str], equ: str = "", table: int = TABLE) -> b
         return out.read_bytes()
 
 
-def core_segment(table: int = TABLE, floppy: bool = False) -> bytes:
+def core_segment(table: int = TABLE, floppy: bool = False, table2: int = 0) -> bytes:
     p = Patch(PATCHDIR / ("core_floppy.s" if floppy else "core.s"))
     if len(p.segments) != 1 or p.segments[0][0] != CORE:
         raise SystemExit("core.s must hold exactly one segment, org IB+8")
-    b = assemble(CORE, p.segments[0][1], "\n".join(p.preamble), table=table)
+    b = assemble(CORE, p.segments[0][1], "\n".join(p.preamble) + f"\nTABLE2\tequ\t${table2:x}", table=table)
     if CORE + len(b) > CORE_END:
         raise SystemExit(f"core overflows by {CORE + len(b) - CORE_END} B (${len(b):x} B)")
     return b
@@ -412,7 +434,7 @@ def site_list(patches: list[Patch]):
     sites = []
     for p in patches:
         orig, new = site_bytes(p)
-        sites.append(dict(name=p.name, addr=p.site, orig=orig, new=new))
+        sites.append(dict(name=p.name, addr=p.site, orig=orig, new=new, gate=p.gate))
     by_addr = sorted(sites, key=lambda s: s["addr"])
     for s, t in zip(by_addr, by_addr[1:]):
         if s["addr"] + len(s["orig"]) > t["addr"]:
@@ -456,12 +478,19 @@ def ram_in_runs(lo: int, hi: int, runs) -> bool:
 
 def build_image(patches: list[Patch], table: int = TABLE, min_end: int = IMG_MIN_END, floppy: bool = False, fnames=(), live: bool = False):
     """-> (image bytes at IB, sites).  `table` = where the site table goes (the core is assembled with the same equ);
-    `min_end` = the lowest image end (the HD layout pads to $B8000 so that blob area B is inside the image)."""
+    `min_end` = the lowest image end (the HD layout pads to $B8000 so that blob area B is inside the image).
+    HD layout of the table: [sites that always apply][addr 0][`; gate: ram2mb` sites][addr 0][orig/new byte pool]; the trampoline applies the second list
+    only on an STE / Mega STE with >= 2 MB (core.s).  The floppy table is the single list (core_floppy.s): a gated patch cannot be in a floppy build."""
     if live:
-        patches = [p for p in patches if not p.stage1]      # a snapshot is long past stage 1: nothing to apply
+        patches = [p for p in patches if not p.stage1 and not p.gate]      # a snapshot is long past stage 1: nothing to apply; the gate is closed at 1 MB
+    if floppy and any(p.gate for p in patches):
+        raise SystemExit("gated patch(es) " + ", ".join(p.name for p in patches if p.gate) + " cannot be part of a floppy build")
     sites = site_list([p for p in patches if not p.stage1])
+    sites = [s for s in sites if not s["gate"]] + [s for s in sites if s["gate"]]
     n = len(sites)
-    tbl_len = n * 16 + 4
+    nfirst = sum(1 for s in sites if not s["gate"])
+    tbl_len = n * 16 + 4 if floppy else (n + 2) * 16       # HD: both lists end with a zero 16-byte slot
+    table2 = table + (nfirst + 1) * 16
     pool = bytearray()
     ptrs = []
     for s in sites:
@@ -470,7 +499,7 @@ def build_image(patches: list[Patch], table: int = TABLE, min_end: int = IMG_MIN
         ptrs.append((table + tbl_len + o, table + tbl_len + nw))
     if tbl_len + len(pool) > TABLE_END - table:
         raise SystemExit(f"site table + byte pool overflow ${table:x}-${table + TABLE_END - TABLE - 1:x}")
-    core = core_segment(table, floppy=floppy)
+    core = core_segment(table, floppy=floppy, table2=table2)
     placed = [(CORE, CORE + len(core), "core"), (table, table + tbl_len + len(pool), "site table")]
     blobs = []
     rams = []
@@ -498,6 +527,8 @@ def build_image(patches: list[Patch], table: int = TABLE, min_end: int = IMG_MIN
                     raise SystemExit(f"{p.name}: reserved RAM ${lo:x}-${hi - 1:x} is not free in the {lname} layout (free: " +
                                      ", ".join(f"${a:x}-${b - 1:x}" for a, b in runs) + ")")
             rams.append((lo, hi, f"{p.name} ram" + (f" ({label})" if label else "")))
+        for lo, hi, label in p.himem:
+            rams.append((lo, hi, f"{p.name} himem" + (f" ({label})" if label else "")))
     if not live and any(p.ram for p in patches) and "4MB" not in build_layouts(floppy, fnames):
         raise SystemExit("reserved RAM (`; ram:`) of " + ", ".join(p.name for p in patches if p.ram) + " is free at 1 MB only: a HD build needs the file patch "
                          "pp_bigram_cache for the 4 MB layout (whole-image disk cache over $B2700.., delivery.md section 5)")
@@ -512,7 +543,8 @@ def build_image(patches: list[Patch], table: int = TABLE, min_end: int = IMG_MIN
     img = bytearray(end - IB)
     img[CORE - IB:CORE - IB + len(core)] = core
     for i, s in enumerate(sites):
-        struct.pack_into(">IHHII", img, table - IB + i * 16, s["addr"], len(s["orig"]), 0, ptrs[i][0], ptrs[i][1])
+        slot = i if i < nfirst else i + 1                       # the second list starts behind the first list's terminator
+        struct.pack_into(">IHHII", img, table - IB + slot * 16, s["addr"], len(s["orig"]), 0, ptrs[i][0], ptrs[i][1])
     img[table - IB + tbl_len:table - IB + tbl_len + len(pool)] = pool
     for org, b in blobs:
         img[org - IB:org - IB + len(b)] = b
@@ -537,6 +569,7 @@ def footprint(p: Patch) -> list[tuple[int, int, str]]:
                 out.append((org, org + len(b), "blob"))
     out += [(a, a + l, "data") for a, l, _ in p.data]
     out += [(lo, hi, "ram" + (f" {label}" if label else "")) for lo, hi, label in p.ram]
+    out += [(lo, hi, "himem" + (f" {label}" if label else "")) for lo, hi, label in p.himem]
     return out
 
 
@@ -601,8 +634,13 @@ def check_selection(sel, known_names) -> list[str]:
     return bad
 
 
+def in_build(p: Patch, floppy: bool) -> bool:
+    """A patch belongs to the HD build unless it is `; media: floppy`, and to the floppy build unless it is `; media: hd`."""
+    return p.media is None or p.media == ("floppy" if floppy else "hd")
+
+
 def default_selection(patches, fpatches, floppy: bool):
-    sel = [p for p in patches if p.default and (p.media is None or floppy) and (p.site is not None or p.media)]
+    sel = [p for p in patches if p.default and in_build(p, floppy) and (p.site is not None or p.media == "floppy")]
     fsel = [p for p in fpatches if p.default]
     return sel, fsel
 
@@ -783,7 +821,7 @@ def ram_map(sel, fsel=()) -> list[str]:
             if what != "site":
                 rows.append((lo, hi, p.name, what))
     layouts = build_layouts(False, [p.name for p in fsel])
-    out = [f"${lo:05x}-${hi - 1:05x} {hi - lo:6d} B  {name:12s} {what}" + ("  [not in the image]" if what.startswith("ram") else "") for lo, hi, name, what in sorted(rows)]
+    out = [f"${lo:05x}-${hi - 1:05x} {hi - lo:6d} B  {name:12s} {what}" + ("  [not in the image]" if what.startswith(("ram", "himem")) else "") for lo, hi, name, what in sorted(rows)]
     out.append("valid layouts for this set: " + ", ".join(layouts) + "; free run(s) " + ", ".join(f"${a:x}-${b - 1:x}" for a, b in FREE_1MB))
     return out
 
@@ -800,7 +838,7 @@ def cmd_list(patches, fpatches=()):
         data = ",".join(f"${a:x}+{l}" + (f" ({t})" if t else "") for a, l, t in p.data) or "-"
         seg = [s for s in p.segments if s[0] == p.site]
         ln = len(assemble(p.site, seg[0][1], "\n".join(p.preamble))) if seg else 0
-        dflt = ("yes" if p.default else "no") + (" (floppy)" if p.media else "") + (" (stage1)" if p.stage1 else "")
+        dflt = ("yes" if p.default else "no") + (f" ({p.media})" if p.media else "") + (" (gate)" if p.gate else "") + (" (stage1)" if p.stage1 else "")
         rams = ",".join(f"${lo:x}-${hi - 1:x}" + (f" ({lb})" if lb else "") for lo, hi, lb in p.ram) or "-"
         print(f"{p.name:18s} {dflt:8s} ${p.site:05x}  {ln:4d} {blobs} / {data} / ram {rams}")
     for p in fpatches:
@@ -1271,16 +1309,16 @@ def main():
         sys.exit(cmd_verify(patches, fpatches))
     floppy = getattr(a, "floppy", False)       # the `live` subparser has no --floppy
     if a.only is None:
-        sel = [p for p in patches if p.default and (p.media is None or floppy) and (p.site is not None or p.media)]
+        sel = [p for p in patches if p.default and in_build(p, floppy) and (p.site is not None or p.media == "floppy")]
         fsel = [p for p in fpatches if p.default]
     else:
         names = set(a.only)
         unknown = names - {p.name for p in patches} - {p.name for p in fpatches}
         if unknown:
             raise SystemExit(f"unknown patch(es): {sorted(unknown)}")
-        fl = sorted(p.name for p in patches if p.name in names and p.media == "floppy")
-        if fl and not floppy:
-            raise SystemExit(f"floppy-only patch(es) {fl}: use `build --floppy` (work/notes/floppy.md)")
+        wrong = sorted(p.name for p in patches if p.name in names and p.media is not None and p.media != ("floppy" if floppy else "hd"))
+        if wrong:
+            raise SystemExit(f"{'HD' if floppy else 'floppy'}-only patch(es) {wrong}: " + ("use `build` without --floppy" if floppy else "use `build --floppy` (work/notes/floppy.md)"))
         sel = [p for p in patches if p.name in names or (floppy and p.name in FLOPPY_REQUIRED)]
         fsel = [p for p in fpatches if p.name in names]
     msgs = check_selection(sel + fsel, {p.name for p in patches} | {p.name for p in fpatches})

@@ -46,6 +46,25 @@ Mega STE
   Tested in Hatari with TOS 2.06 and 1 MB: the emulator launcher boots it at 8 MHz and raises the clock after the TOS start.
   Whether a real machine needs anything similar was not tested; no statement is made.
 
+Campaigns (ST, Mega ST, STE and Mega STE with 2 MB or more only)
+  Track sets made with the track tool (tools/msrtrack.py, a file MSTRACKS.TRK) replace the 15 tracks: each custom track keeps the
+  scenery, colours, sky and object types of the original level it was made on.  On a machine with 1 MB, a TT or a Falcon the
+  game is exactly the original game and F10 does nothing special.
+  Put the file next to the game's data: FILES\MSTRACKS.TRK in this folder (hard-disk copy), or on a campaign disk in drive A
+  (a 720 KB disk with the one file MSTRACKS.TRK in its root, made with `msrtrack.py disk`).
+  On the title screen (the face and the typing text, or the hi-score table) press F10:
+     ORIGINAL GAME                   start the original game at once and switch the campaign off (a loaded campaign stays in memory)
+     LOAD CAMPAIGN FROM HARD DISK    read FILES\MSTRACKS.TRK (about a second)
+     LOAD CAMPAIGN FROM DRIVE A      read A:\MSTRACKS.TRK; the drive is only touched when you ask for it (a disk takes a few seconds;
+                                     an empty drive makes the game wait about 17 seconds before it reports "no campaign disk")
+     LOADED CAMPAIGN: N TRACKS       (once one is loaded) the track list: choose "play from track N" and the game starts there
+  Up / Down and Return / Space (or the joystick: up, down, fire), Esc / Backspace / Left = back.  The file is checked before it
+  is used (magic, version, sizes, CRC-32 of the table and of every track); a damaged or wrong file gives a message and the game
+  stays as it was.  A campaign is ARMED when it has been loaded or when you play from one of its tracks, and stays armed until you choose
+  ORIGINAL GAME in the F10 menu (or switch the machine off): while it is armed, ANY key at the title starts it from track 1, F10 only
+  opens the menu.  After the last track the game's own ending runs and you are back at the title, the campaign still armed (and
+  loaded: F10 -> LOADED CAMPAIGN lists it again, ORIGINAL GAME switches it off).  The game's own name entry / password screens are unchanged.
+
 REAL-HARDWARE CHECK LIST (nobody has run this on real hardware yet - please report)
   Drive 2-3 minutes each time, sky in view at the horizon and over hills:
   1. Sky colour bands: clean bands, no flicker, no band jumping a line, no colour flash at the horizon.   (tb_blit*, ta_rb, ta_rb0)

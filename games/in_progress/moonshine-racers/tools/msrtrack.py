@@ -61,6 +61,7 @@ LOOKAHEAD = 1024        # ring length: the game keeps the next 1024 units filled
 BLOCK_MAX = 8192        # campaign working-copy size per block (spec section 4)
 MAX_ENTRIES = 15
 NAME_LEN = 24
+BAR_SPRITE = 0x21       # sprite index of the finish bar (BAR): the race ends when the car reaches the one object of this sprite
 # stock-proven envelope (all 15 levels, work/notes/trackeditor.md 2.2)
 CURVE_DELTA = (-9, 10)
 WIDTH = (10, 85)
@@ -402,6 +403,15 @@ def validate_track(t: dict, lenient=False, budget: int | None = None, block: byt
             else:
                 if crc != LEVELS[base][LEV_TCRC]:
                     E("E-TABLE", f"type table differs from base level {base} (CRC32 {crc:08x}, expected {LEVELS[base][LEV_TCRC]:08x}): it must be copied unchanged from the base level")
+
+    # --- the finish bar: the race ends when the car reaches the ONE object whose type's sprite index is $21 (work/notes/trackloader.md section 3)
+    if base is not None and not any(i.code in ("E-FORM", "E-TABLE") for i in I):
+        bar_types = {n + 1 for n, e in enumerate(ty_) if e[2] == BAR_SPRITE}
+        bars = [(i, o["at"]) for i, o in enumerate(objs) if isinstance(o, dict) and o.get("type") in bar_types]
+        if len(bars) != 1:
+            E("E-BAR", f"{len(bars)} finish-bar objects (type {'/'.join(map(str, sorted(bar_types))) or '?'} of base level {base}, sprite ${BAR_SPRITE:02x}); a track needs exactly one: "
+                       f"{'it can only end by time-out' if not bars else 'the first one reached ends the race, the others are scenery that looks like a finish'}"
+                       + (f" (objects {', '.join(f'[{i}] at {a}' for i, a in bars)})" if bars else ""))
 
     # --- size
     if not any(i.level == "ERROR" for i in I):

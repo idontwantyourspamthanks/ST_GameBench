@@ -101,6 +101,7 @@ Entry order = campaign order; **a track set replaces the 15 stock tracks** (seve
 | E-TYPE | `type` 1..N where N = number of object types of the base level (131, 77, 93, 63, 37, 31, 30, 34, 28, 32, 42, 40, 53, 36, 32) |
 | E-LAT *R* | `lateral` -128..127 |
 | E-TABLE | `types` identical to the base level's (count + CRC-32 of the 12-byte entries) |
+| E-BAR | exactly one object of the base level's finish-bar type (sprite index `$21`); the race ends when the car reaches it (`trackloader.md` section 3) |
 | E-SIZE | block <= 8192 bytes (campaign) / <= the slot's sector budget (`patch-ms2`); no unused bytes after the end word; even |
 | E-TERM | (raw blocks) a stream, the object list or the end word is missing/truncated |
 | E-CAMP | campaign file structure (section 4) |
