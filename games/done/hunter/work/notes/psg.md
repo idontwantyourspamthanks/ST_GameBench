@@ -35,3 +35,27 @@ Caveat on the 4/35 vs 0/13 counts: our patches may change the game's timing enou
 ## Tools
 `tools/hunt_psg.py CELL --kind hd|floppy|floppy2 --src ZIP|DIR|ORIGINAL.st --machine st|ste|megaste|tt [--mhz] [--save] [--title SECS] [--plain]`; `tools/hunt_psg_all.sh before|after [cell-regex]`; `tools/psgcheck.py`: the NON-ATOMIC message now names the interrupting select (pc, line) and a violation dumps the last 48 trace lines into the kept file. `tools/huntfloppy.py` accepts `**kw` for the harness options.
 Limits: not run on real hardware; TT cells fail to reach the 3D view in this harness (blind boot with sound+strict, also BEFORE) so TT is boot-only (psgcheck PASS, no violation); ST/TT: the patch is inactive and the reg-7 value sequences match (A/B below).
+
+
+## Release v1.2.1 gates on the SHIPPED zips (2026-11-20)
+Zips: `dist/Hunter_v1.2.1_patched_{hd,floppy,floppy_2disk}_2026-11-20.zip` (v1.0-v1.2 zips untouched). Built from the clean commits (6a0f6a3 and before); builds repeated 3 times: member md5s identical every time (the first two attempts differed: `mcopy`/`mkfs.fat` stamped the build time into the floppy directory and label entries; fixed in `huntpatch.py` by `mcopy -m` on temporary SOURCE files whose mtime is pinned to 2026-01-01 (only files in a tempfile directory, never alt/ or the originals) and `SOURCE_DATE_EPOCH` for `mkfs.fat`). Zip-file md5s differ between builds only by zip entry mtimes.
+Member md5s: PP's files in the HD zip equal the README table; HUNTER/START.TOS 28c613b48a21c906f93a610df86ac3e3, HUNTER/FILES/P 558dd79da2fe5bb1eee3ca0a5168b01f, floppy HUNTER_disk1.st 63d17c5d20322d6a531b28b2d6cf351d, 2-disk HUNTER_disk1.st 138fdb2ca6c6b77fb77dfd3f610620ec, HUNTER_disk2_sound.st 56b20642d6d50ff772f59ad2e93ff6a8, README.TXT 956652a217554a990494ffd53c4e9a4a / 8242305f1f4abca91837a9a1ed63c926, HUNTER/PATCHES.TXT 4de14ebe609fd5878bbd7cdac417c5ba (full list: `huntpatch`-independent `unzip -p | md5sum`).
+- `huntpatch.py verify` and `verify --floppy`: ALL OK.
+- Credit gate (`huntcredit.py`) on the extracted shipped HD folder and floppy disk: 199 pixels differ from the originals, all in x 95..223, y 194..199 (original colour 0 under every one, new colour 10); the printed rows read `v1.2.1 enhanced by dad_prg` with every glyph rendered (HD and floppy bitmaps identical).
+- Version string `1.2.1` in the title line, PATCHES.TXT / README.TXT (`@VERSION@`), zip names; HD and floppy builds present; sample bank in FILES/P and the floppy sound bank present.
+- PSG cells on the shipped zips (strict build, sound ON; same cells as above):
+
+| cell | boot | psgcheck | reg-7 values |
+|---|---|---|---|
+| floppy_ste | boot OK +save/load | PASS (0 viol), FDC 1348, bad frames 0 | $c0 $fe $f8 $ff $ff |
+| floppy2_ste | boot OK +save/load | PASS (0 viol), FDC 1378, bad frames 0 | $c0 $fe $f8 $ff $ff |
+| hd_ste | boot OK | PASS (0 viol), FDC 18, bad frames 0 | $c0 $fe $f8 $ff $ff |
+| floppy_mste8 | boot OK +save/load | PASS (0 viol), FDC 1359, bad frames 0 | $c0 $fe $f8 $ff $ff |
+| floppy_mste16 | boot OK +save/load | FAIL (1 viol) NON-ATOMIC@11a9e/11ab0 (original title tune), FDC 1359, bad frames 0 | $c0 $fe $f8 $ff |
+| hd_mste8 | boot OK | PASS (0 viol), FDC 9, bad frames 0 | $c0 $fe $f8 $ff $ff |
+| hd_mste16 | boot OK | PASS (0 viol), FDC 9, bad frames 0 | $c0 $fe $f8 $ff $ff |
+| floppy_st | boot OK | PASS (0 viol), FDC 517, bad frames 0 | $c0 $fe $f8 $ff $df $ff |
+| hd_st | boot OK | PASS (0 viol), FDC 18, bad frames 0 | $c0 $fe $f8 $ff $df $ff |
+| hd_tt | boot OK | PASS (0 viol), FDC 7, bad frames 0 | $c0 $fe $f8 $ff $ff |
+
+Shipped-zip NON-ATOMIC confirmation (`ship_floppy_mste16`, psgcheck now names the interrupter): `select reg 7 at pc=11a9e (line 387977) ... overwritten ... before the data write at pc=11ab0 (interrupting select: pc=11b04, line 387989)`: `11b04` is the original Timer A digi player (`move.b #$a,$8800.w`), as pinned statically above. The TT cell (`ship_hd_tt`) reached the 3D view this time (the earlier harness failures were timing). The shipped HD/floppy zips otherwise PASS in every cell; no frame had reg 7 bits 6/7 clear.

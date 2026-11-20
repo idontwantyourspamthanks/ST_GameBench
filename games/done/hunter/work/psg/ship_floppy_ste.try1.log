@@ -1,0 +1,11 @@
+CELL ship_floppy_ste: kind=floppy machine=ste mhz=default src=/tmp/ship/Hunter_v1.2.1_patched_floppy_2026-11-20.zip
+in 3D view: True after 74 s
+BOOT in_game=True MARKER=b'HNPO' FLAGS=00000003
+saving
+saved
+SAVE+LOAD done, in_game=True
+  line 13: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $c0) at pc=e0008a
+PSGCHECK run: PASS (violations 0, warnings 0; reg-7 writes 7, reg-14 writes 1392, FDC commands 1348, selects 36038, data writes 36036, frames 353, frames with reg 7 bits 6/7 not both set 0 (longest run 0), final reg 7 = $ff)
+REG7 writes (val, pc): $c0@e0008a $fe@e044a0 $f8@119ca $ff@11ab0 $ff@8e1f6
+snd_ymsilence reg-7 writes (3D entries): 3; FDC commands after the first one: 650
+RESULT ship_floppy_ste: boot=OK psgcheck=PASS

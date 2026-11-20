@@ -1,0 +1,9 @@
+CELL ship_floppy2_ste: kind=floppy2 machine=ste mhz=default src=/tmp/ship/Hunter_v1.2.1_patched_floppy_2disk_2026-11-20.zip
+prompt 1 after 19 s
+prompt 2 (game disk) after 29 s
+DRIVE FAILED: RuntimeError('MAIN OPTIONS not reached')
+  line 13: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $c0) at pc=e0008a
+PSGCHECK run: PASS (violations 0, warnings 0; reg-7 writes 6, reg-14 writes 766, FDC commands 812, selects 8302367, data writes 8302364, frames 11617, frames with reg 7 bits 6/7 not both set 0 (longest run 0), final reg 7 = $f8)
+REG7 writes (val, pc): $c0@e0008a $fe@e044a0 $f8@119ca
+snd_ymsilence reg-7 writes (3D entries): 0; FDC commands after the first one: 0
+RESULT ship_floppy2_ste: boot=FAIL psgcheck=PASS

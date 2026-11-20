@@ -1,0 +1,7 @@
+CELL ship_hd_ste: kind=hd machine=ste mhz=default src=/tmp/ship/Hunter_v1.2.1_patched_hd_2026-11-20.zip
+DRIVE FAILED: RuntimeError("screen 'main' not reached (RAM word $5ff2 irrelevant; see shot)")
+  line 12: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $c0) at pc=e0008a
+PSGCHECK strun-pqesupjd: PASS (violations 0, warnings 0; reg-7 writes 4, reg-14 writes 72, FDC commands 18, selects 14559679, data writes 14559677, frames 20241, frames with reg 7 bits 6/7 not both set 0 (longest run 0), final reg 7 = $f8)
+REG7 writes (val, pc): $c0@e0008a $fe@e044a0 $f8@119ca
+snd_ymsilence reg-7 writes (3D entries): 0; FDC commands after the first one: 0
+RESULT ship_hd_ste: boot=FAIL psgcheck=PASS

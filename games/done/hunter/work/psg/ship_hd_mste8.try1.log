@@ -1,0 +1,7 @@
+CELL ship_hd_mste8: kind=hd machine=megaste mhz=8 src=/tmp/ship/Hunter_v1.2.1_patched_hd_2026-11-20.zip
+DRIVE FAILED: RuntimeError("screen 'main' not reached (RAM word $5ff2 irrelevant; see shot)")
+  line 12: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $c0) at pc=e00086
+PSGCHECK strun-scplwra9: PASS (violations 0, warnings 0; reg-7 writes 4, reg-14 writes 1288, FDC commands 9, selects 14589616, data writes 14589613, frames 20411, frames with reg 7 bits 6/7 not both set 0 (longest run 0), final reg 7 = $f8)
+REG7 writes (val, pc): $c0@e00086 $fe@e036f8 $f8@119ca
+snd_ymsilence reg-7 writes (3D entries): 0; FDC commands after the first one: 0
+RESULT ship_hd_mste8: boot=FAIL psgcheck=PASS

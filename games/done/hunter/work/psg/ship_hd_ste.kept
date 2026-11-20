@@ -1,0 +1,342 @@
+ym reset video_cyc=0 0@0 pc=0 instr_cycle 0
+ym reset video_cyc=16 16@0 pc=e00034 instr_cycle 132
+ym write reg=0x7 video_cyc=394 394@0 pc=e00086 instr_cycle 12
+ym write data reg=0x7 val=0xc0 video_cyc=410 410@0 pc=e0008a instr_cycle 16
+ym write reg=0xe video_cyc=430 430@0 pc=e00090 instr_cycle 12
+ym write data reg=0xe val=0x7 video_cyc=446 446@0 pc=e00094 instr_cycle 16
+ym write reg=0xe video_cyc=120880 48@236 pc=e04206 instr_cycle 8
+ym write reg=0xe video_cyc=121128 296@236 pc=e04206 instr_cycle 8
+ym write data reg=0xe val=0x7 video_cyc=121156 324@236 pc=e0420c instr_cycle 12
+ym write reg=0xe video_cyc=121392 48@237 pc=e03b82 instr_cycle 12
+ym write data reg=0xe val=0x7 video_cyc=121428 84@237 pc=e03b8c instr_cycle 12
+ym write reg=0xe video_cyc=123320 440@240 pc=e04206 instr_cycle 8
+ym write reg=0xe video_cyc=123568 176@241 pc=e04206 instr_cycle 8
+ym write data reg=0xe val=0x27 video_cyc=123596 204@241 pc=e0420c instr_cycle 12
+ym write reg=0xe video_cyc=135096 440@263 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x27 video_cyc=135156 500@263 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=155192 56@303 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=155252 116@303 pc=e017d6 instr_cycle 16
+fdc type I restore spinup=on verify=off steprate_ms=3 drive=0 tr=0x0 head_track=0x0 VBL=17 video_cyc=158736 16@310 pc=e017e2
+fdc write 8606 ctrl=0x80 VBL=118 video_cyc=17732 324@34 pc=e0175a
+fdc type IV force int 0xd0 irq=0 index=0 VBL=118 video_cyc=18204 284@35 pc=e017ec
+fdc type I seek dest_track=0xa spinup=on verify=off steprate_ms=3 drive=0 tr=0x0 head_track=0x0 VBL=118 video_cyc=22152 136@43 pc=e017e2
+fdc type I restore spinup=on verify=off steprate_ms=3 drive=0 tr=0xa head_track=0xa VBL=119 video_cyc=105412 452@205 pc=e017e2
+fdc complete command VBL=121 video_cyc=25998 398@50 pc=e01740
+fdc type I seek dest_track=0x0 spinup=on verify=off steprate_ms=3 drive=0 tr=0x0 head_track=0x0 VBL=121 video_cyc=29408 224@57 pc=e017e2
+ym write reg=0xe video_cyc=32332 76@63 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x23 video_cyc=32392 136@63 pc=e017d6 instr_cycle 16
+fdc type I restore spinup=on verify=off steprate_ms=3 drive=1 tr=0x0 head_track=0x0 VBL=121 video_cyc=35840 0@70 pc=e017e2
+fdc type I seek dest_track=0x0 spinup=on verify=off steprate_ms=3 drive=1 tr=0x0 head_track=0x0 VBL=121 video_cyc=40040 104@78 pc=e017e2
+ym write reg=0xe video_cyc=42980 484@83 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=43040 32@84 pc=e017d6 instr_cycle 16
+fdc type I seek dest_track=0x0 spinup=on verify=on steprate_ms=3 drive=0 tr=0x0 head_track=0x0 VBL=121 video_cyc=47404 300@92 pc=e017e2
+fdc type IV force int 0xd0 irq=0 index=0 VBL=171 video_cyc=68520 424@133 pc=e017ec
+ym write reg=0xe video_cyc=70284 140@137 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=70344 200@137 pc=e017d6 instr_cycle 16
+fdc type I seek dest_track=0x0 spinup=on verify=on steprate_ms=3 drive=0 tr=0x0 head_track=0x0 VBL=171 video_cyc=74708 468@145 pc=e017e2
+fdc type IV force int 0xd0 irq=0 index=0 VBL=221 video_cyc=116612 388@227 pc=e017ec
+fdc type I restore spinup=on verify=off steprate_ms=3 drive=0 tr=0x0 head_track=0x0 VBL=221 video_cyc=119708 412@233 pc=e017e2
+fdc type I seek dest_track=0x5 spinup=on verify=off steprate_ms=3 drive=0 tr=0x0 head_track=0x0 VBL=221 video_cyc=124792 376@243 pc=e017e2
+fdc complete command VBL=222 video_cyc=85458 466@166 pc=e01740
+fdc type I seek dest_track=0x0 spinup=on verify=on steprate_ms=3 drive=0 tr=0x5 head_track=0x5 VBL=222 video_cyc=88800 224@173 pc=e017e2
+fdc type IV force int 0xd0 irq=0 index=0 VBL=272 video_cyc=125680 240@245 pc=e017ec
+ym write reg=0xe video_cyc=127404 428@248 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=127464 488@248 pc=e017d6 instr_cycle 16
+fdc type I seek dest_track=0x0 spinup=on verify=on steprate_ms=3 drive=0 tr=0x5 head_track=0x0 VBL=272 video_cyc=131828 244@257 pc=e017e2
+fdc write 8606 ctrl=0x80 VBL=323 video_cyc=13884 60@27 pc=e0175a
+fdc type IV force int 0xd0 irq=0 index=0 VBL=323 video_cyc=14356 20@28 pc=e017ec
+fdc type I seek dest_track=0x5 spinup=on verify=off steprate_ms=3 drive=0 tr=0x0 head_track=0x0 VBL=323 video_cyc=18476 44@36 pc=e017e2
+fdc write dma address ff860d val=0x5c VBL=324 video_cyc=95056 336@185 pc=1950
+fdc write dma address ff860d val=0x92 VBL=325 video_cyc=54324 52@106 pc=1950
+fdc write dma address ff860d val=0x92 VBL=326 video_cyc=14384 48@28 pc=1950
+fdc write dma address ff860d val=0x92 VBL=327 video_cyc=95568 336@186 pc=1950
+fdc write dma address ff860d val=0x92 VBL=328 video_cyc=54832 48@107 pc=1950
+fdc write dma address ff860d val=0x92 VBL=329 video_cyc=14880 32@29 pc=1950
+fdc write dma address ff860d val=0x92 VBL=330 video_cyc=96068 324@187 pc=1950
+fdc write dma address ff860d val=0x92 VBL=331 video_cyc=55336 40@108 pc=1950
+fdc write dma address ff860d val=0x92 VBL=332 video_cyc=15388 28@30 pc=1950
+fdc write dma address ff860d val=0x92 VBL=333 video_cyc=96572 316@188 pc=1950
+fdc write dma address ff860d val=0x92 VBL=334 video_cyc=55844 36@109 pc=1950
+fdc write dma address ff860d val=0x92 VBL=335 video_cyc=15892 20@31 pc=1950
+fdc write dma address ff860d val=0x92 VBL=336 video_cyc=97080 312@189 pc=1950
+fdc write dma address ff860d val=0x92 VBL=337 video_cyc=56348 28@110 pc=1950
+fdc write dma address ff860d val=0x92 VBL=338 video_cyc=16400 16@32 pc=1950
+fdc write dma address ff860d val=0x92 VBL=339 video_cyc=97608 328@190 pc=1950
+fdc write dma address ff860d val=0x92 VBL=340 video_cyc=56844 12@111 pc=1950
+fdc write dma address ff860d val=0x92 VBL=341 video_cyc=16920 24@33 pc=1950
+fdc write dma address ff860d val=0x92 VBL=342 video_cyc=98100 308@191 pc=1950
+fdc write dma address ff860d val=0x92 VBL=343 video_cyc=57364 20@112 pc=1950
+fdc write dma address ff860d val=0x92 VBL=344 video_cyc=17412 4@34 pc=1950
+fdc read 8604 ctrl status=0xe0 VBL=345 video_cyc=1328 304@2 pc=e01800
+fdc read 8604 ctrl status=0xe0 VBL=347 video_cyc=1328 304@2 pc=e01800
+fdc read 8604 ctrl status=0xe0 VBL=348 video_cyc=1332 308@2 pc=e01800
+fdc read 8604 ctrl status=0xe0 VBL=349 video_cyc=1336 312@2 pc=e01800
+fdc write 8606 ctrl=0x80 VBL=352 video_cyc=828 316@1 pc=e01544
+ym write reg=0xe video_cyc=976 464@1 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1036 12@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=1188 164@2 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1248 224@2 pc=e017d6 instr_cycle 16
+fdc read 8604 ctrl status=0xe0 VBL=359 video_cyc=1324 300@2 pc=e01800
+ym write reg=0xe video_cyc=1416 392@2 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x23 video_cyc=1476 452@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=1628 92@3 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1688 152@3 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=980 468@1 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1040 16@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=1192 168@2 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1252 228@2 pc=e017d6 instr_cycle 16
+fdc read 8604 ctrl status=0xe0 VBL=373 video_cyc=1340 316@2 pc=e01800
+fdc read 8604 ctrl status=0xe0 VBL=374 video_cyc=1356 332@2 pc=e01800
+ym write reg=0xe video_cyc=1032 8@2 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x23 video_cyc=1092 68@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=1244 220@2 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1304 280@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=1024 0@2 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1084 60@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=1236 212@2 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1296 272@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=1436 412@2 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x23 video_cyc=1496 472@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=1648 112@3 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1708 172@3 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=976 464@1 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1036 12@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=1188 164@2 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1248 224@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=980 468@1 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x23 video_cyc=1040 16@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=1192 168@2 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1252 228@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=992 480@1 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1052 28@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=1204 180@2 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1264 240@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=984 472@1 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x23 video_cyc=1044 20@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=1196 172@2 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1256 232@2 pc=e017d6 instr_cycle 16
+ym write reg=0x7 video_cyc=112514 386@219 pc=e04486 instr_cycle 12
+ym write data reg=0x7 val=0xfe video_cyc=112590 462@219 pc=e044a0 instr_cycle 12
+fdc read 8604 ctrl status=0xe0 VBL=429 video_cyc=1324 300@2 pc=e01800
+fdc read 8604 ctrl status=0xe0 VBL=431 video_cyc=1332 308@2 pc=e01800
+ym write reg=0xe video_cyc=984 472@1 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1044 20@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=1196 172@2 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1256 232@2 pc=e017d6 instr_cycle 16
+fdc write 8604 data=0x7 VBL=436 video_cyc=1808 272@3 pc=d450
+fdc write 8604 data=0x1 VBL=437 video_cyc=1852 316@3 pc=d450
+fdc write 8606 ctrl=0x8a VBL=438 video_cyc=1908 372@3 pc=d4b0
+ym write reg=0xe video_cyc=980 468@1 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x23 video_cyc=1040 16@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=1192 168@2 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1252 228@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=980 468@1 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1040 16@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=1192 168@2 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1252 228@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=972 460@1 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x23 video_cyc=1032 8@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=1184 160@2 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1244 220@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=976 464@1 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1036 12@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=1188 164@2 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1248 224@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=988 476@1 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x23 video_cyc=1048 24@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=1200 176@2 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1260 236@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=1140 116@2 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1200 176@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=1352 328@2 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1412 388@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=972 460@1 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x23 video_cyc=1032 8@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=1184 160@2 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1244 220@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=972 460@1 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1032 8@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=1184 160@2 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1244 220@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=976 464@1 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x23 video_cyc=1036 12@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=1188 164@2 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1248 224@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=988 476@1 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1048 24@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=1200 176@2 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1260 236@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=988 476@1 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x23 video_cyc=1048 24@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=1200 176@2 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1260 236@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=980 468@1 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1040 16@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=1192 168@2 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1252 228@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=984 472@1 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x23 video_cyc=1044 20@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=1196 172@2 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1256 232@2 pc=e017d6 instr_cycle 16
+ym write reg=0x7 video_cyc=51226 26@100 pc=e04486 instr_cycle 12
+ym write data reg=0x7 val=0xfe video_cyc=51302 102@100 pc=e044a0 instr_cycle 12
+fdc read 8604 ctrl status=0xe0 VBL=541 video_cyc=1336 312@2 pc=e01800
+ym write reg=0xe video_cyc=984 472@1 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1044 20@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=1196 172@2 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1256 232@2 pc=e017d6 instr_cycle 16
+fdc read 8604 ctrl status=0xe0 VBL=546 video_cyc=1776 240@3 pc=e01800
+fdc read 8604 ctrl status=0xe0 VBL=547 video_cyc=1328 304@2 pc=e01800
+ym write reg=0xe video_cyc=976 464@1 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x23 video_cyc=1036 12@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=1188 164@2 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1248 224@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=980 468@1 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1040 16@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=1192 168@2 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1252 228@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=1060 36@2 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x23 video_cyc=1120 96@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=1272 248@2 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1332 308@2 pc=e017d6 instr_cycle 16
+fdc read 8604 ctrl status=0xe0 VBL=572 video_cyc=1340 316@2 pc=e01800
+fdc write dma address ff860d val=0xca VBL=573 video_cyc=16000 128@31 pc=231be
+fdc write dma address ff860d val=0x00 VBL=574 video_cyc=96392 136@188 pc=231be
+fdc write dma address ff860d val=0xb4 VBL=575 video_cyc=57856 0@113 pc=231be
+fdc write dma address ff860d val=0x00 VBL=576 video_cyc=16520 136@32 pc=231be
+fdc write dma address ff860d val=0x00 VBL=577 video_cyc=96896 128@189 pc=231be
+fdc write dma address ff860d val=0x00 VBL=578 video_cyc=58372 4@114 pc=231be
+fdc write dma address ff860d val=0x00 VBL=579 video_cyc=17020 124@33 pc=231be
+fdc write dma address ff860d val=0x00 VBL=580 video_cyc=97392 112@190 pc=231be
+fdc write dma address ff860d val=0x00 VBL=581 video_cyc=58868 500@114 pc=231be
+fdc write dma address ff860d val=0x00 VBL=582 video_cyc=17516 108@34 pc=231be
+fdc write dma address ff860d val=0x00 VBL=583 video_cyc=97920 128@191 pc=231be
+fdc write dma address ff860d val=0x00 VBL=584 video_cyc=59372 492@115 pc=231be
+fdc write dma address ff860d val=0x00 VBL=585 video_cyc=18024 104@35 pc=231be
+fdc write dma address ff860d val=0x00 VBL=586 video_cyc=98420 116@192 pc=231be
+fdc write dma address ff860d val=0x00 VBL=587 video_cyc=59868 476@116 pc=231be
+fdc write dma address ff860d val=0x00 VBL=588 video_cyc=18544 112@36 pc=231be
+fdc write dma address ff860d val=0x00 VBL=589 video_cyc=98912 96@193 pc=231be
+fdc write dma address ff860d val=0x00 VBL=590 video_cyc=60388 484@117 pc=231be
+fdc write dma address ff860d val=0x00 VBL=591 video_cyc=19036 92@37 pc=231be
+fdc write dma address ff860d val=0x00 VBL=592 video_cyc=99432 104@194 pc=231be
+fdc write dma address ff860d val=0x00 VBL=593 video_cyc=60880 464@118 pc=231be
+fdc read 8604 ctrl status=0xe0 VBL=594 video_cyc=1328 304@2 pc=e01800
+fdc write 8604 data=0x0 VBL=595 video_cyc=1812 276@3 pc=b1cbe
+fdc read 8604 ctrl status=0xe0 VBL=596 video_cyc=1336 312@2 pc=e01800
+fdc read 8604 ctrl status=0xe0 VBL=597 video_cyc=1328 304@2 pc=e01800
+ym write reg=0xe video_cyc=988 476@1 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x23 video_cyc=1048 24@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=1200 176@2 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1260 236@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=980 468@1 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1040 16@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=1192 168@2 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1252 228@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=984 472@1 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x23 video_cyc=1044 20@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=1196 172@2 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1256 232@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=976 464@1 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1036 12@2 pc=e017d6 instr_cycle 16
+ym write reg=0xe video_cyc=1188 164@2 pc=e017c0 instr_cycle 20
+ym write data reg=0xe val=0x25 video_cyc=1248 224@2 pc=e017d6 instr_cycle 16
+fdc write dma address ff860d val=0x1c VBL=646 video_cyc=65956 420@128 pc=b29f2
+fdc write dma address ff860d val=0x00 VBL=647 video_cyc=14348 12@28 pc=b29f2
+fdc write dma address ff860d val=0x00 VBL=652 video_cyc=26980 356@52 pc=b29f2
+fdc write dma address ff860d val=0x00 VBL=657 video_cyc=10536 296@20 pc=b29f2
+fdc write dma address ff860d val=0x44 VBL=664 video_cyc=31832 88@62 pc=b29f2
+fdc write dma address ff860d val=0x44 VBL=696 video_cyc=36348 508@70 pc=b29f2
+fdc write dma address ff860d val=0x58 VBL=701 video_cyc=4436 340@8 pc=b29f2
+fdc write dma address ff860d val=0x58 VBL=708 video_cyc=116312 88@227 pc=b29f2
+fdc write 8606 ctrl=0x8a VBL=709 video_cyc=768 256@1 pc=b1d1e
+fdc write dma address ff860d val=0x1c VBL=726 video_cyc=4088 504@7 pc=b29f2
+ym write ff8800=0x7 video_cyc=28344 184@55 pc=119b4 instr_cycle 20
+ym write reg=0x7 video_cyc=28344 184@55 pc=119b4 instr_cycle 20
+ym write data reg=0x7 val=0xf8 video_cyc=28404 244@55 pc=119ca instr_cycle 16
+ym write ff8800=0x8 video_cyc=400 400@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=636 124@1 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=160 160@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=360 360@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=588 76@1 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=132 132@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=316 316@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=548 36@1 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=72 72@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=288 288@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=492 492@0 pc=11af4 instr_cycle 16
+ym write ff8800=0xa video_cyc=84 84@0 pc=11b04 instr_cycle 16
+ym write ff8800=0x8 video_cyc=248 248@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=440 440@0 pc=11af4 instr_cycle 16
+ym write ff8802=0xf video_cyc=68 68@0 pc=11b0a instr_cycle 12
+ym write ff8800=0x8 video_cyc=192 192@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=404 404@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=608 96@1 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=144 144@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=368 368@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=580 68@1 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=104 104@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=308 308@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=524 12@1 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=68 68@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=272 272@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=496 496@0 pc=11af4 instr_cycle 16
+ym write ff8800=0xa video_cyc=80 80@0 pc=11b04 instr_cycle 16
+ym write ff8800=0x8 video_cyc=232 232@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=436 436@0 pc=11af4 instr_cycle 16
+ym write ff8802=0xd video_cyc=72 72@0 pc=11b0a instr_cycle 12
+ym write ff8800=0x8 video_cyc=184 184@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=388 388@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=612 100@1 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=156 156@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=352 352@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=564 52@1 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=108 108@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=304 304@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=516 4@1 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=72 72@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=264 264@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=468 468@0 pc=11af4 instr_cycle 16
+ym write ff8800=0xa video_cyc=84 84@0 pc=11b04 instr_cycle 16
+ym write ff8800=0x8 video_cyc=216 216@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=440 440@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=656 144@1 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=200 200@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=380 380@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=596 84@1 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=132 132@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=336 336@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=548 36@1 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=88 88@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=300 300@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=504 504@0 pc=11af4 instr_cycle 16
+ym write ff8802=0x3 video_cyc=76 76@0 pc=11afa instr_cycle 12
+ym write ff8800=0x8 video_cyc=256 256@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=520 8@1 pc=11af4 instr_cycle 16
+ym write ff8802=0xe video_cyc=84 84@0 pc=11b0a instr_cycle 12
+ym write ff8800=0x8 video_cyc=216 216@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=416 416@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=628 116@1 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=176 176@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=384 384@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=592 80@1 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=132 132@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=400 400@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=612 100@1 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=84 84@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=300 300@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=504 504@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x9 video_cyc=72 72@0 pc=11afe instr_cycle 16
+ym write ff8800=0x8 video_cyc=256 256@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=456 456@0 pc=11af4 instr_cycle 16
+ym write ff8802=0xc video_cyc=76 76@0 pc=11b0a instr_cycle 12
+ym write ff8800=0x8 video_cyc=212 212@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=408 408@0 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=624 112@1 pc=11af4 instr_cycle 16
+ym write ff8800=0x8 video_cyc=168 168@0 pc=11af4 instr_cycle 16
+ym write reg=0x7 video_cyc=125752 312@245 pc=11a9e instr_cycle 20
+ym write data reg=0x7 val=0xff video_cyc=125804 364@245 pc=11ab0 instr_cycle 16
+fdc write dma address ff860d val=0x00 VBL=1419 video_cyc=12440 152@24 pc=b29f2
+ym write ff8800=0x7 video_cyc=12204 428@23 pc=8e1f2 instr_cycle 12
+ym write reg=0x7 video_cyc=12204 428@23 pc=8e1f2 instr_cycle 12
+ym write data reg=0x7 val=0xff video_cyc=12220 444@23 pc=8e1f6 instr_cycle 16

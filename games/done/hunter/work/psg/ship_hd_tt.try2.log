@@ -1,0 +1,7 @@
+CELL ship_hd_tt: kind=hd machine=tt mhz=default src=/tmp/ship/Hunter_v1.2.1_patched_hd_2026-11-20.zip
+BOOT in_game=True MARKER=b'HNPO' FLAGS=00000003
+  line 16: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $c0) at pc=e000c8
+PSGCHECK strun-fm8pu_6l: PASS (violations 0, warnings 0; reg-7 writes 5, reg-14 writes 219, FDC commands 7, selects 307611, data writes 307608, frames 495, frames with reg 7 bits 6/7 not both set 0 (longest run 0), final reg 7 = $ff)
+REG7 writes (val, pc): $c0@e000c8 $fe@e03ade $f8@119d0 $ff@11ab6 $ff@8e1fc
+snd_ymsilence reg-7 writes (3D entries): 1; FDC commands after the first one: 0
+RESULT ship_hd_tt: boot=OK psgcheck=PASS

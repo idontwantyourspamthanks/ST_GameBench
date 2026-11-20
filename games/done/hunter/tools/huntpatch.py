@@ -985,7 +985,8 @@ FL_SND_SPT = 9                           # sound disk: 720 KB (80 tracks x 2 sid
 FL_ST_ENV = dict(os.environ, MTOOLS_SKIP_CHECK="1", SOURCE_DATE_EPOCH="1767225600")   # mkfs.fat stamps the label entry with it (reproducible disks)
 
 
-FL_ST_EPOCH = 1767225600                   # 2026-01-01: the directory time stamp of every file copied onto a disk (reproducible zips)
+FL_ST_EPOCH = 1767225600                   # 2026-01-01: pinned as the mtime of the mcopy SOURCE files only = the temporary files written into a tempfile.TemporaryDirectory (HNSOUND.BIN, README.TXT, HUNTER.TOS, HNPATCH.BIN, ...) and
+                                            # copied onto a floppy image; never alt/, the original game files or a build output (reproducible zips)
 
 
 def mtools(*args: str, data: bytes | None = None) -> bytes:
