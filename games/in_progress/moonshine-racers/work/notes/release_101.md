@@ -68,3 +68,7 @@ v1.0 baselines from the same pace cells (v1.0 shipped zip, boot + two windows; `
 - Floppy pace cell and floppy title samples were taken with disk 2 auto-inserted in B (pace is unaffected by the disk route; no pace cell was run on the swap route).
 - Mega STE floppy not run; 5 min of play is race 2 with auto-drive only (no input other than `$6105 = 01`).
 - Shop reached by poking the BAR object, not by finishing a race by driving.
+
+## Audit notes (lead)
+- Rebuild check: compare the MEMBER md5s of the unzipped zips, not the zip md5s: two builds of the same commit give identical members but zip files that differ by 22 bytes (entry timestamps [INFERENCE]). The md5s above are those of the delivered zips.
+- The shipped v1.0 zips carry the stamp `build: git a6f87f7`; that commit no longer exists in this repository (`git cat-file` on the full hash fails; history was rewritten after the release). `80b98f9` is the proven equivalent: its rebuild equals the v1.0 zips member for member except the stamp line.
