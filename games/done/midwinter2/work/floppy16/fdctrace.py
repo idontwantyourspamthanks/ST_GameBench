@@ -21,7 +21,7 @@ RE_CYC = re.compile(r"video_cyc=(\d+)")
 RE_HBL = re.compile(r"HBL=(\d+)")
 RE_PC = re.compile(r"pc=([0-9a-f]+)")
 RE_IDX = re.compile(r"ip_time=(\d+) VBL=(\d+) HBL=(\d+)")
-GAME_PC = "27c4e"            # `move.w d7,$ff8604` of the game's sub_027c4a: every game FDC command and force interrupt
+GAME_PCS = ("27c4e", "27c54")   # `move.w d7,$ff8604` of the game's sub_027c4a (every game FDC command and force interrupt); Hatari reports pc=27c54 on a 68030 (TT)
 
 
 def _mult_of(dt):
@@ -116,7 +116,7 @@ def field(text, name):
 
 
 def game_type1(ev):
-    return [c for c in type1_commands(ev) if c["start"]["pc"] == GAME_PC]
+    return [c for c in type1_commands(ev) if c["start"]["pc"] in GAME_PCS]
 
 
 def first_game_restore(ev):

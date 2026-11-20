@@ -1,0 +1,183 @@
+=== sg_mste16_v16.log
+prompt seen after 78 s, trace 6472367 B
+first game restore starts at tr=0x0 head_track=0x0 (PARKED); ends complete after 0.054 s = 2 % of the 2.18 s time-out in effect (v1.6 wait, CPU x2)
+game type I commands cut by the force interrupt, whole run: 0 of 15
+GATE first-restore sg_mste16_v16: PASS (parked=True completed=True margin<=75%=True cuts=0)
+VERDICT sg_mste16_v16 (expected pass): OK
+=== sg_mste8_v16.log
+prompt seen after 103 s, trace 5443548 B
+first game restore starts at tr=0x0 head_track=0x0 (PARKED); ends complete after 0.031 s = 1 % of the 4.35 s time-out in effect (v1.6 wait, CPU x1)
+game type I commands cut by the force interrupt, whole run: 0 of 15
+GATE first-restore sg_mste8_v16: PASS (parked=True completed=True margin<=75%=True cuts=0)
+VERDICT sg_mste8_v16 (expected pass): OK
+=== sg_ste8_v16.log
+prompt seen after 95 s, trace 5429189 B
+first game restore starts at tr=0x0 head_track=0x0 (PARKED); ends complete after 1.042 s = 24 % of the 4.35 s time-out in effect (v1.6 wait, CPU x1)
+game type I commands cut by the force interrupt, whole run: 0 of 15
+GATE first-restore sg_ste8_v16: PASS (parked=True completed=True margin<=75%=True cuts=0)
+VERDICT sg_ste8_v16 (expected pass): OK
+=== sc_ste_d1_v16.log
+_nflops ($4a6): 000004A6: 00 01                                            .. | drive-select toggle site $28b44: 00028B44: 0a 79 00 00 00 02 7d 34                          .y....}4
+SWAP A sc_ste_d1_v16: black prompt UP (wall 2.4 s since the key); FDC burst 1.58 s emulated (first cmd to last event), 5 cmds, 0 force-ints (VBL 5616, 50 Hz)
+SWAP B sc_ste_d1_v16: FFB inserted at the prompt, key -> M/J/K screen REACHED (wall 31 s); FDC burst 8.49 s emulated, 0 force-ints
+=== sc_ste_d1_v16c.log
+_nflops ($4a6): 000004A6: 00 01                                            .. | drive-select toggle site $28b44: 00028B44: 0a 79 00 00 00 02 7d 34                          .y....}4
+SWAP C sc_ste_d1_v16c: black prompt NOT up (wall - s since the key); FDC burst -1.00 s emulated (first cmd to last event), -1 cmds, -1 force-ints (VBL 5563, 0 Hz)
+SWAP CB sc_ste_d1_v16c: FFB inserted at the prompt, key -> M/J/K screen REACHED (wall 31 s); FDC burst 10.00 s emulated, 0 force-ints
+=== sc_ste_d1_v16cr.log
+_nflops ($4a6): 000004A6: 00 01                                            .. | drive-select toggle site $28b44: 00028B44: 0a 79 00 00 00 02 7d 34                          .y....}4
+SWAP C sc_ste_d1_v16cr: black prompt UP (wall 1.2 s since the key); FDC burst 1.65 s emulated (first cmd to last event), 5 cmds, 0 force-ints (VBL 5577, 50 Hz)
+SWAP CB sc_ste_d1_v16cr: FFB inserted at the prompt, key -> M/J/K screen REACHED (wall 31 s); FDC burst 13.94 s emulated, 0 force-ints
+=== sc_ste_d1_v16r.log
+_nflops ($4a6): 000004A6: 00 01                                            .. | drive-select toggle site $28b44: 00028B44: 0a 79 00 00 00 02 7d 34                          .y....}4
+SWAP A sc_ste_d1_v16r: black prompt UP (wall 1.2 s since the key); FDC burst 1.98 s emulated (first cmd to last event), 5 cmds, 0 force-ints (VBL 5223, 50 Hz)
+SWAP B sc_ste_d1_v16r: FFB inserted at the prompt, key -> M/J/K screen REACHED (wall 31 s); FDC burst 9.05 s emulated, 0 force-ints
+=== sc_ste_d2_v16.log
+_nflops ($4a6): 000004A6: 00 02                                            .. | drive-select toggle site $28b44: 00028B44: 0a 79 00 06 00 02 7d 34                          .y....}4
+SWAP A sc_ste_d2_v16: black prompt UP (wall 3.0 s since the key); FDC burst 2.20 s emulated (first cmd to last event), 10 cmds, 0 force-ints (VBL 5419, 50 Hz)
+SWAP B sc_ste_d2_v16: FFB inserted at the prompt, key -> M/J/K screen REACHED (wall 36 s); FDC burst 8.42 s emulated, 0 force-ints
+=== sc_ste_d2f_v16.log
+_nflops ($4a6): 000004A6: 00 02                                            .. | drive-select toggle site $28b44: 00028B44: 0a 79 00 06 00 02 7d 34                          .y....}4
+SWAP D sc_ste_d2f_v16: M/J/K screen REACHED after 36 s (wall)
+=== sb_mste206_16_d1.log
+insert-graphics prompt after 78 s wall
+M/J/K screen after 4 presses; MWPO 000B2FF8: 4d 57 50 4f                                      MWPO
+security-check site $2c574: 0002C574: 60 02                                            `.
+$6220=d $700a=2 MWPO 000B2FF8: 4d 57 50 4f                                      MWPO
+world_rate {'vbls': 500, 'flips': 78, 'fps': 7.8, 'vbls_per_frame': 6.410256410256411, 'units_per_sec': 22.30989956958393}
+heading series ['0x300', '0x2c4', '0x2c4', '0x2c4', '0x2c4', '0x2c4', '0x2c4', '0x2c4', '0x2c4']
+soak  36 s: fps 20.0 flips 100  $6220=5 $700a=2 heading 0
+soak  74 s: fps 11.8 flips 59  $6220=5 $700a=2 heading 0
+soak 112 s: fps 20.0 flips 100  $6220=5 $700a=2 heading 0
+soak 150 s: fps 10.0 flips 50  $6220=5 $700a=2 heading 0
+REACHED 3D VIEW and played 120 s
+first game restore: tr=0x0 head_track=0x0 -> complete after 0.016 s
+game type I commands: 222, cut by the game's force interrupt: 0
+longest completed game type I commands (s): 1.87 restore, 1.89 restore, 1.90 restore, 2.10 restore
+CELL sb_mste206_16_d1: PASS
+=== sb_mste206_16_d2.log
+insert-graphics prompt after 74 s wall
+M/J/K screen after 4 presses; MWPO 000B2FF8: 4d 57 50 4f                                      MWPO
+security-check site $2c574: 0002C574: 60 02                                            `.
+$6220=d $700a=2 MWPO 000B2FF8: 4d 57 50 4f                                      MWPO
+world_rate {'vbls': 500, 'flips': 77, 'fps': 7.7, 'vbls_per_frame': 6.4935064935064934, 'units_per_sec': 21.233859397417504}
+heading series ['0x300', '0x2c4', '0x2c4', '0x2c4', '0x2c4', '0x2c4', '0x2c4', '0x2c4', '0x2c4']
+REACHED 3D VIEW and played 0 s
+first game restore: tr=0x0 head_track=0x0 -> complete after 0.053 s
+game type I commands: 212, cut by the game's force interrupt: 0
+longest completed game type I commands (s): 1.78 restore, 1.89 restore, 1.95 restore, 1.98 restore
+CELL sb_mste206_16_d2: PASS
+=== sb_mste206_8_d1.log
+insert-graphics prompt after 103 s wall
+M/J/K screen after 6 presses; MWPO 000B2FF8: 4d 57 50 4f                                      MWPO
+security-check site $2c574: 0002C574: 60 02                                            `.
+EXC RuntimeError('never reached the boss screen')
+first game restore: tr=0x0 head_track=0x0 -> complete after 0.037 s
+game type I commands: 124, cut by the game's force interrupt: 0
+longest completed game type I commands (s): 1.80 restore, 1.81 restore, 1.96 restore, 2.01 restore
+CELL sb_mste206_8_d1: FAIL
+=== sb_mste206_8_d1r.log
+insert-graphics prompt after 99 s wall
+M/J/K screen after 5 presses; MWPO 000B2FF8: 4d 57 50 4f                                      MWPO
+security-check site $2c574: 0002C574: 60 02                                            `.
+$6220=d $700a=2 MWPO 000B2FF8: 4d 57 50 4f                                      MWPO
+world_rate {'vbls': 500, 'flips': 0, 'fps': 0.0, 'vbls_per_frame': None, 'units_per_sec': 0.0}
+heading series ['0x0', '0x2c8', '0x2c8', '0x2c8', '0x2c8', '0x2c8', '0x2c8', '0x2c8', '0x2c8']
+REACHED 3D VIEW and played 0 s
+first game restore: tr=0x0 head_track=0x0 -> complete after 0.023 s
+game type I commands: 218, cut by the game's force interrupt: 0
+longest completed game type I commands (s): 1.79 restore, 1.86 restore, 1.92 restore, 2.13 restore
+CELL sb_mste206_8_d1r: PASS
+=== sb_st104_8_d1.log
+insert-graphics prompt after 87 s wall
+M/J/K screen after 5 presses; MWPO 000B2FF8: 4d 57 50 4f                                      MWPO
+security-check site $2c574: 0002C574: 60 02                                            `.
+$6220=d $700a=2 MWPO 000B2FF8: 4d 57 50 4f                                      MWPO
+world_rate {'vbls': 500, 'flips': 48, 'fps': 4.8, 'vbls_per_frame': 10.416666666666666, 'units_per_sec': 27.286585365853657}
+heading series ['0x300', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6']
+REACHED 3D VIEW and played 0 s
+first game restore: tr=0x0 head_track=0x0 -> complete after 1.157 s
+game type I commands: 218, cut by the game's force interrupt: 0
+longest completed game type I commands (s): 1.84 restore, 1.85 restore, 1.88 restore, 2.14 restore
+CELL sb_st104_8_d1: PASS
+=== sb_ste162_8_d1.log
+insert-graphics prompt after 95 s wall
+M/J/K screen after 5 presses; MWPO 000B2FF8: 4d 57 50 4f                                      MWPO
+security-check site $2c574: 0002C574: 60 02                                            `.
+$6220=d $700a=2 MWPO 000B2FF8: 4d 57 50 4f                                      MWPO
+world_rate {'vbls': 500, 'flips': 45, 'fps': 4.5, 'vbls_per_frame': 11.11111111111111, 'units_per_sec': 27.36280487804878}
+heading series ['0x300', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6']
+REACHED 3D VIEW and played 0 s
+first game restore: tr=0x0 head_track=0x0 -> complete after 1.205 s
+game type I commands: 218, cut by the game's force interrupt: 0
+longest completed game type I commands (s): 1.84 restore, 1.89 restore, 1.95 restore, 2.13 restore
+CELL sb_ste162_8_d1: PASS
+=== sb_ste162_8_d1_msa.log
+insert-graphics prompt after 95 s wall
+M/J/K screen after 5 presses; MWPO 000B2FF8: 4d 57 50 4f                                      MWPO
+security-check site $2c574: 0002C574: 60 02                                            `.
+$6220=d $700a=2 MWPO 000B2FF8: 4d 57 50 4f                                      MWPO
+world_rate {'vbls': 500, 'flips': 40, 'fps': 4.0, 'vbls_per_frame': 12.5, 'units_per_sec': -77.51524390243902}
+heading series ['0x300', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6']
+REACHED 3D VIEW and played 0 s
+first game restore: tr=0x0 head_track=0x0 -> complete after 1.071 s
+game type I commands: 218, cut by the game's force interrupt: 0
+longest completed game type I commands (s): 1.83 restore, 1.84 restore, 1.84 restore, 2.06 restore
+CELL sb_ste162_8_d1_msa: PASS
+=== sb_ste162_8_d2.log
+insert-graphics prompt after 91 s wall
+M/J/K screen after 5 presses; MWPO 000B2FF8: 4d 57 50 4f                                      MWPO
+security-check site $2c574: 0002C574: 60 02                                            `.
+EXC RuntimeError('never reached the boss screen')
+first game restore: tr=0x0 head_track=0x0 -> complete after 1.074 s
+game type I commands: 122, cut by the game's force interrupt: 0
+longest completed game type I commands (s): 1.76 restore, 1.78 restore, 1.83 restore, 1.83 restore
+CELL sb_ste162_8_d2: FAIL
+=== sb_ste162_8_d2r.log
+insert-graphics prompt after 91 s wall
+M/J/K screen after 4 presses; MWPO 000B2FF8: 4d 57 50 4f                                      MWPO
+security-check site $2c574: 0002C574: 60 02                                            `.
+$6220=d $700a=2 MWPO 000B2FF8: 4d 57 50 4f                                      MWPO
+world_rate {'vbls': 500, 'flips': 0, 'fps': 0.0, 'vbls_per_frame': None, 'units_per_sec': 0.0}
+heading series ['0x300', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6']
+REACHED 3D VIEW and played 0 s
+first game restore: tr=0x0 head_track=0x0 -> complete after 1.058 s
+game type I commands: 212, cut by the game's force interrupt: 0
+longest completed game type I commands (s): 1.82 restore, 1.85 restore, 1.86 restore, 2.05 restore
+CELL sb_ste162_8_d2r: PASS
+=== sb_tt306_d1.log
+insert-graphics prompt after 247 s wall
+M/J/K screen after 6 presses; MWPO 000B2FF8: 4d 57 50 4f                                      MWPO
+security-check site $2c574: 0002C574: 60 02                                            `.
+$6220=d $700a=2 MWPO 000B2FF8: 4d 57 50 4f                                      MWPO
+world_rate {'vbls': 500, 'flips': 181, 'fps': 18.1, 'vbls_per_frame': 2.7624309392265194, 'units_per_sec': 22.270114942528735}
+heading series ['0x300', '0x2c4', '0x2c4', '0x2c4', '0x2c4', '0x2c4', '0x2c4', '0x2c4', '0x2c4']
+REACHED 3D VIEW and played 0 s
+first game restore: tr=0x0 head_track=0x0 -> complete after 0.028 s
+game type I commands: 218, cut by the game's force interrupt: 0
+longest completed game type I commands (s): 1.86 restore, 1.86 restore, 1.92 restore, 2.15 restore
+CELL sb_tt306_d1: PASS
+=== ctl_v15_ste162_8_d2a.log
+insert-graphics prompt after 87 s wall
+M/J/K screen after 5 presses; MWPO 000B2FF8: 4d 57 50 4f                                      MWPO
+security-check site $2c574: 0002C574: 60 02                                            `.
+$6220=d $700a=2 MWPO 000B2FF8: 4d 57 50 4f                                      MWPO
+world_rate {'vbls': 500, 'flips': 30, 'fps': 3.0, 'vbls_per_frame': 16.666666666666668, 'units_per_sec': -82.6219512195122}
+heading series ['0x300', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6']
+REACHED 3D VIEW and played 0 s
+first game restore: tr=0x2e head_track=0x2e -> complete after 1.733 s
+game type I commands: 212, cut by the game's force interrupt: 0
+longest completed game type I commands (s): 1.80 restore, 1.83 restore, 1.88 restore, 2.01 restore
+CELL ctl_v15_ste162_8_d2a: PASS
+=== ctl_v15_ste162_8_d2b.log
+insert-graphics prompt after 95 s wall
+M/J/K screen after 4 presses; MWPO 000B2FF8: 4d 57 50 4f                                      MWPO
+security-check site $2c574: 0002C574: 60 02                                            `.
+$6220=d $700a=2 MWPO 000B2FF8: 4d 57 50 4f                                      MWPO
+world_rate {'vbls': 500, 'flips': 0, 'fps': 0.0, 'vbls_per_frame': None, 'units_per_sec': 0.0}
+heading series ['0x300', '0x2c8', '0x2c8', '0x2c8', '0x2c8', '0x2c8', '0x2c8', '0x2c8', '0x2c8']
+REACHED 3D VIEW and played 0 s
+first game restore: tr=0x2e head_track=0x2e -> complete after 1.785 s
+game type I commands: 212, cut by the game's force interrupt: 0
+longest completed game type I commands (s): 1.86 restore, 1.88 restore, 1.94 restore, 1.99 restore
+CELL ctl_v15_ste162_8_d2b: PASS

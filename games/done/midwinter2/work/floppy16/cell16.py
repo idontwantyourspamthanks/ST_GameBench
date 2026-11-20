@@ -96,7 +96,10 @@ try:
         return True
         return True
 
+    SLOW = 3 if machine == 'tt' else 1                   # the TT's 32 MHz Hatari run is much slower in wall time
+
     def pause(secs):
+        secs *= SLOW
         t = time.time()
         while time.time() - t < secs:
             time.sleep(min(3, secs))
@@ -152,7 +155,7 @@ try:
     h.goto(150, 280); h.key('space'); pause(18)
     h.goto(230, 410); h.click(); pause(15)
     boss = ROOT / 'work/ref/boss_thumbs.png'
-    for _ in range(6):
+    for _ in range(6 * SLOW):
         h.goto(140, 415); h.click(); pause(8)
         if h.screen_matches(boss, (590, 60, 740, 125)):
             break

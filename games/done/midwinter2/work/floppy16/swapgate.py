@@ -64,6 +64,19 @@ def vbl():
         except IndexError:
             time.sleep(1.5)
     raise RuntimeError('debugger did not answer')
+def press_confirmed(tries=4):
+    """Press a key and require FDC activity within 6 s; a key lost by the harness (seen: no trace growth at all) is pressed again, and the retries are logged."""
+    for i in range(tries):
+        n0 = tracef.stat().st_size
+        key()
+        t = time.time()
+        while time.time() - t < 6:
+            time.sleep(0.5)
+            if tracef.stat().st_size > n0 + 2000:
+                if i:
+                    L('   (key retried %d time(s): the first press(es) produced no FDC activity)' % i)
+                return
+    L('   (no FDC activity after %d key presses)' % tries)
 def key():
     h.cmd('hatari-event keypress 57')
 def burst_after(vbl0, quiet_s=4.0):
@@ -106,7 +119,7 @@ try:
             h.cmd('hatari-option --disk-a ""'); time.sleep(3)
         if sc in ('A', 'C', 'D'):
             v0 = vbl()
-            key()
+            press_confirmed()
             if sc == 'D':
                 r = wait_mjk(240)
                 L('SWAP D %s: M/J/K screen %s after %s s (wall)' % (name, 'REACHED' if r is not None else 'NOT reached', '%.0f' % r if r is not None else '-'))

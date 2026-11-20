@@ -1,0 +1,30 @@
+=== s_ste_d1_nonflops.log
+_nflops ($4a6): 000004A6: 00 01                                            .. | drive-select toggle site $28b44: 00028B44: 0a 79 00 06 00 02 7d 34                          .y....}4
+SWAP A s_ste_d1_nonflops: black prompt UP (wall 32.3 s since the key); FDC burst 1.95 s emulated (first cmd to last event), 6 cmds, 0 force-ints (VBL 5417, 50 Hz)
+SWAP B s_ste_d1_nonflops: FFB inserted at the prompt, key -> M/J/K screen REACHED (wall 41 s); FDC burst 10.05 s emulated, 0 force-ints
+=== s_ste_d1_v15.log
+_nflops ($4a6): 000004A6: 00 01                                            .. | drive-select toggle site $28b44: 00028B44: 0a 79 00 06 00 02 7d 34                          .y....}4
+SWAP A s_ste_d1_v15: black prompt NOT up (wall - s since the key); FDC burst -1.00 s emulated (first cmd to last event), -1 cmds, -1 force-ints (VBL 5205, 0 Hz)
+SWAP B s_ste_d1_v15: FFB inserted at the prompt, key -> M/J/K screen REACHED (wall 26 s); FDC burst 9.78 s emulated, 0 force-ints
+=== s_ste_d1_v16.log
+_nflops ($4a6): 000004A6: 00 01                                            .. | drive-select toggle site $28b44: 00028B44: 0a 79 00 00 00 02 7d 34                          .y....}4
+SWAP A s_ste_d1_v16: black prompt UP (wall 3.0 s since the key); FDC burst 1.96 s emulated (first cmd to last event), 5 cmds, 0 force-ints (VBL 5001, 50 Hz)
+SWAP B s_ste_d1_v16: FFB inserted at the prompt, key -> M/J/K screen REACHED (wall 31 s); FDC burst 10.83 s emulated, 0 force-ints
+=== s_ste_d1_v16c.log
+_nflops ($4a6): 000004A6: 00 01                                            .. | drive-select toggle site $28b44: 00028B44: 0a 79 00 00 00 02 7d 34                          .y....}4
+SWAP C s_ste_d1_v16c: black prompt UP (wall 2.4 s since the key); FDC burst 1.49 s emulated (first cmd to last event), 5 cmds, 0 force-ints (VBL 5359, 50 Hz)
+SWAP CB s_ste_d1_v16c: FFB inserted at the prompt, key -> M/J/K screen REACHED (wall 36 s); FDC burst 11.61 s emulated, 0 force-ints
+=== s_ste_d2_v15.log
+_nflops ($4a6): 000004A6: 00 02                                            .. | drive-select toggle site $28b44: 00028B44: 0a 79 00 06 00 02 7d 34                          .y....}4
+SWAP A s_ste_d2_v15: black prompt UP (wall 3.1 s since the key); FDC burst 2.22 s emulated (first cmd to last event), 10 cmds, 0 force-ints (VBL 5002, 50 Hz)
+SWAP B s_ste_d2_v15: FFB inserted at the prompt, key -> M/J/K screen REACHED (wall 31 s); FDC burst 13.67 s emulated, 0 force-ints
+=== s_ste_d2_v16.log
+_nflops ($4a6): 000004A6: 00 02                                            .. | drive-select toggle site $28b44: 00028B44: 0a 79 00 06 00 02 7d 34                          .y....}4
+SWAP A s_ste_d2_v16: black prompt UP (wall 2.5 s since the key); FDC burst 1.73 s emulated (first cmd to last event), 10 cmds, 0 force-ints (VBL 5422, 50 Hz)
+SWAP B s_ste_d2_v16: FFB inserted at the prompt, key -> M/J/K screen REACHED (wall 31 s); FDC burst 13.13 s emulated, 0 force-ints
+=== s_ste_d2f_v15.log
+_nflops ($4a6): 000004A6: 00 02                                            .. | drive-select toggle site $28b44: 00028B44: 0a 79 00 06 00 02 7d 34                          .y....}4
+SWAP D s_ste_d2f_v15: M/J/K screen REACHED after 36 s (wall)
+=== s_ste_d2f_v16.log
+_nflops ($4a6): 000004A6: 00 02                                            .. | drive-select toggle site $28b44: 00028B44: 0a 79 00 06 00 02 7d 34                          .y....}4
+SWAP D s_ste_d2f_v16: M/J/K screen REACHED after 31 s (wall)
