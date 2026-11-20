@@ -1,0 +1,49 @@
+p2_b_mste206_16_d1: megaste TOS 206 1024 KB, 16 MHz, 1 drive(s), disks /tmp/mw2s/c17
+insert-graphics prompt after 78 s wall
+M/J/K screen after 5 presses; MWPO 000B2FF8: 4d 57 50 4f                                      MWPO
+security-check site $2c574: 0002C574: 60 02                                            `.
+hall; personnel click tries 1
+use-this-agent click tries 0
+swap served: game asks for 'camp' -> disk_camp.st
+swap served: game asks for 'graf' -> disk_gfx.st
+control-door click tries 0
+swap served: game asks for 'camp' -> disk_camp.st
+EXC OSError(6, 'No such device or address')
+Traceback (most recent call last):
+  File "/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/stesound/cell16.py", line 157, in <module>
+    h.goto(150, 280); h.key('space'); pause(18)
+                                      ^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/stesound/cell16.py", line 108, in pause
+    service()
+  File "/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/stesound/cell16.py", line 80, in service
+    if drives != '1' or mean_bright() > 8:
+                        ^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/stesound/cell16.py", line 72, in mean_bright
+    im = Image.open(h.shot()).convert('RGB')
+                    ^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/tools/mw2harness.py", line 301, in shot
+    self.cmd("hatari-shortcut screenshot")
+  File "/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/tools/mw2harness.py", line 167, in cmd
+    fd = os.open(self.fifo, os.O_WRONLY | os.O_NONBLOCK)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 6] No such device or address: '/tmp/mw2s/p2_b_mste206_16_d1/run/fifo'
+
+trace: frame 261 lines = 60.0 Hz
+first game restore: tr=0x0 head_track=0x0 -> complete after 0.051 s
+game type I commands: 126, cut by the game's force interrupt: 0
+longest completed game type I commands (s): 1.79 restore, 1.93 restore, 1.93 restore, 2.05 restore
+  line 13: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $c0) at pc=e00086
+  line 9273: reg 7 bits 6/7 $c0 -> $00 (reg 7 := $00) at pc=c54
+  line 9305: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $ff) at pc=c64
+  line 165608: reg 7 bits 6/7 $c0 -> $00 (reg 7 := $00) at pc=c54
+  line 165640: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $ff) at pc=c64
+  line 255516: reg 7 bits 6/7 $c0 -> $00 (reg 7 := $00) at pc=c54
+  line 255548: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $ff) at pc=c64
+  line 256744: reg 7 bits 6/7 $c0 -> $00 (reg 7 := $00) at pc=c54
+  line 256776: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $ff) at pc=c64
+  line 339705: reg 7 bits 6/7 $c0 -> $00 (reg 7 := $00) at pc=c54
+  line 339737: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $ff) at pc=c64
+  line 340861: reg 7 bits 6/7 $c0 -> $00 (reg 7 := $00) at pc=c54
+  ... 1 more reg-7 direction-bit changes
+PSGCHECK p2_b_mste206_16_d1: PASS (violations 0, warnings 0; reg-7 writes 21514, reg-14 writes 207, FDC commands 2196, selects 39034, data writes 39031, frames 3827, frames with reg 7 bits 6/7 not both set 0 (longest run 0), final reg 7 = $ff)
+CELL p2_b_mste206_16_d1: FAIL

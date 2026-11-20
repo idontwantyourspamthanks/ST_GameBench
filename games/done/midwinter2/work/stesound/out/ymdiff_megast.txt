@@ -1,0 +1,9 @@
+anchor (first $338ea write): A index 23830, B index 24327
+writes A 14141, B 13625; comparing the first 13625
+writes differing in (reg 0-13, value) other than reg-7 bits 6/7: 0
+reg-7 writes differing ONLY in bits 6/7: 2
+   A: ym write data reg=0x7 val=0x0 video_cyc=11148 396@21 pc=33930 instr_cycle 16 
+   B: ym write data reg=0x7 val=0xc0 video_cyc=132724 116@259 pc=33930 instr_cycle 16
+   A: ym write data reg=0x7 val=0x0 video_cyc=146672 240@286 pc=33930 instr_cycle 16 
+   B: ym write data reg=0x7 val=0xc0 video_cyc=147116 172@287 pc=33930 instr_cycle 16
+VERDICT IDENTICAL AUDIO (only reg 7 bits 6/7 differ)

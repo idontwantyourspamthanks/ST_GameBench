@@ -1,0 +1,32 @@
+p2_b_mste206_16_d2: megaste TOS 206 1024 KB, 16 MHz, 2 drive(s), disks /tmp/mw2s/c17
+insert-graphics prompt after 74 s wall
+M/J/K screen after 4 presses; MWPO 000B2FF8: 4d 57 50 4f                                      MWPO
+security-check site $2c574: 0002C574: 60 02                                            `.
+hall; personnel click tries 1
+use-this-agent click tries 0
+control-door click tries 0
+3D view shot /home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/stesound/out/p2_b_mste206_16_d2_3d.png
+$6220=d $700a=2 MWPO 000B2FF8: 4d 57 50 4f                                      MWPO
+RAMCHECK p2_b_mste206_16_d2: $3392c = 103c00c0 (expected 103c00c0): PASS
+world_rate {'vbls': 500, 'flips': 78, 'fps': 7.8, 'vbls_per_frame': 6.410256410256411, 'units_per_sec': 22.198275862068964}
+heading series ['0x300', '0x2c4', '0x2c4', '0x2c4', '0x2c4', '0x2c4', '0x2c4', '0x2c4', '0x2c4']
+REACHED 3D VIEW and played 0 s
+trace: frame 261 lines = 60.0 Hz
+first game restore: tr=0x0 head_track=0x0 -> complete after 0.015 s
+game type I commands: 212, cut by the game's force interrupt: 0
+longest completed game type I commands (s): 1.80 restore, 1.82 restore, 1.82 restore, 2.15 restore
+  line 14: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $c0) at pc=e00086
+  line 9229: reg 7 bits 6/7 $c0 -> $00 (reg 7 := $00) at pc=c54
+  line 9261: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $ff) at pc=c64
+  line 165532: reg 7 bits 6/7 $c0 -> $00 (reg 7 := $00) at pc=c54
+  line 165564: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $ff) at pc=c64
+  line 254121: reg 7 bits 6/7 $c0 -> $00 (reg 7 := $00) at pc=c54
+  line 254153: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $ff) at pc=c64
+  line 254217: reg 7 bits 6/7 $c0 -> $00 (reg 7 := $00) at pc=c54
+  line 254249: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $ff) at pc=c64
+  line 336939: reg 7 bits 6/7 $c0 -> $00 (reg 7 := $00) at pc=c54
+  line 336971: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $ff) at pc=c64
+  line 337299: reg 7 bits 6/7 $c0 -> $00 (reg 7 := $00) at pc=c54
+  ... 1 more reg-7 direction-bit changes
+PSGCHECK p2_b_mste206_16_d2: PASS (violations 0, warnings 0; reg-7 writes 28855, reg-14 writes 244, FDC commands 2943, selects 46423, data writes 46420, frames 5514, frames with reg 7 bits 6/7 not both set 0 (longest run 0), final reg 7 = $ff)
+CELL p2_b_mste206_16_d2: PASS

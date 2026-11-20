@@ -1,0 +1,41 @@
+p2_b_st104_8_d1_v16c1: st TOS 104 1024 KB, 8 MHz, 1 drive(s), disks /tmp/mw2s/ship
+insert-graphics prompt after 86 s wall
+M/J/K screen after 5 presses; MWPO 000B2FF8: 4d 57 50 4f                                      MWPO
+security-check site $2c574: 0002C574: 60 02                                            `.
+hall; personnel click tries 0
+use-this-agent click tries 0
+swap served: game asks for 'camp' -> disk_camp.st
+swap served: game asks for 'graf' -> disk_gfx.st
+control-door click tries 0
+swap served: game asks for 'camp' -> disk_camp.st
+swap served: game asks for 'camp' -> disk_camp.st
+swap served: game asks for 'graf' -> disk_gfx.st
+swap served: game asks for 'graf' -> disk_gfx.st
+swap served: game asks for 'graf' -> disk_gfx.st
+3D view shot /home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/stesound/out/p2_b_st104_8_d1_v16c1_3d.png
+$6220=d $700a=2 MWPO 000B2FF8: 4d 57 50 4f                                      MWPO
+RAMCHECK p2_b_st104_8_d1_v16c1: $3392c = 102b0014 (expected 102b0014): PASS
+world_rate {'vbls': 500, 'flips': 48, 'fps': 4.8, 'vbls_per_frame': 10.416666666666666, 'units_per_sec': 27.66768292682927}
+heading series ['0x300', '0x2c4', '0x2c4', '0x2c4', '0x2c4', '0x2c4', '0x2c4', '0x2c4', '0x2c4']
+REACHED 3D VIEW and played 0 s
+trace: frame 313 lines = 50.1 Hz
+first game restore: tr=0x0 head_track=0x0 -> complete after 1.126 s
+game type I commands: 218, cut by the game's force interrupt: 0
+longest completed game type I commands (s): 1.84 restore, 1.87 restore, 1.87 restore, 2.12 restore
+  line 13: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $c0) at pc=fc008a
+  line 8963: reg 7 bits 6/7 $c0 -> $00 (reg 7 := $00) at pc=c54
+  line 8995: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $ff) at pc=c64
+  line 165605: reg 7 bits 6/7 $c0 -> $00 (reg 7 := $00) at pc=33930
+  line 165699: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $ff) at pc=c64
+  line 165731: reg 7 bits 6/7 $c0 -> $00 (reg 7 := $00) at pc=33930
+  line 165763: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $f0) at pc=101c
+  line 329322: reg 7 bits 6/7 $c0 -> $00 (reg 7 := $00) at pc=c54
+  line 329354: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $ff) at pc=c64
+  line 329386: reg 7 bits 6/7 $c0 -> $00 (reg 7 := $00) at pc=33930
+  line 329430: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $f0) at pc=101c
+  line 477516: reg 7 bits 6/7 $c0 -> $00 (reg 7 := $00) at pc=c54
+  ... 7 more reg-7 direction-bit changes
+  VIOLATION line 329414: reg 14 := $25 while reg 7 = $00 (port A input: no effect on the drive-select/side pins) pc=27d26
+  VIOLATION line 329420: FDC command with reg 7 = $00 (port A input: NO drive selected on real hardware): fdc type I restore spinup=on verify=on steprate_ms=12 drive=0 tr=0x36 head_track=0x36 VBL=6829 video_cyc=15568
+PSGCHECK p2_b_st104_8_d1_v16c1: FAIL (violations 2, warnings 0; reg-7 writes 64904, reg-14 writes 246, FDC commands 2956, selects 235201, data writes 235199, frames 4275, frames with reg 7 bits 6/7 not both set 2 (longest run 1), final reg 7 = $dc)
+CELL p2_b_st104_8_d1_v16c1: PASS

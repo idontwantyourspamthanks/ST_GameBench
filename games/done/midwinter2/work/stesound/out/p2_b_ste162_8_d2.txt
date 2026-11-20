@@ -1,0 +1,36 @@
+p2_b_ste162_8_d2: ste TOS 162 1024 KB, 8 MHz, 2 drive(s), disks /tmp/mw2s/c17
+insert-graphics prompt after 90 s wall
+M/J/K screen after 6 presses; MWPO 000B2FF8: 4d 57 50 4f                                      MWPO
+security-check site $2c574: 0002C574: 60 02                                            `.
+hall; personnel click tries 1
+use-this-agent click tries 0
+control-door click tries 0
+3D view shot /home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/stesound/out/p2_b_ste162_8_d2_3d.png
+$6220=d $700a=2 MWPO 000B2FF8: 4d 57 50 4f                                      MWPO
+RAMCHECK p2_b_ste162_8_d2: $3392c = 103c00c0 (expected 103c00c0): PASS
+world_rate {'vbls': 500, 'flips': 42, 'fps': 4.2, 'vbls_per_frame': 11.904761904761905, 'units_per_sec': 20.121951219512194}
+heading series ['0x300', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6']
+soak  37 s: fps 25.2 flips 126  $6220=5 $700a=2 heading 6
+soak  76 s: fps 15.8 flips 79  $6220=5 $700a=2 heading 6
+soak 115 s: fps 25.0 flips 125  $6220=5 $700a=2 heading 6
+soak 154 s: fps 5.0 flips 25  $6220=5 $700a=2 heading 24
+REACHED 3D VIEW and played 120 s
+trace: frame 313 lines = 50.1 Hz
+first game restore: tr=0x0 head_track=0x0 -> complete after 1.180 s
+game type I commands: 216, cut by the game's force interrupt: 0
+longest completed game type I commands (s): 1.88 restore, 1.90 restore, 1.96 restore, 1.97 restore
+  line 14: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $c0) at pc=e0008a
+  line 8934: reg 7 bits 6/7 $c0 -> $00 (reg 7 := $00) at pc=c54
+  line 8966: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $ff) at pc=c64
+  line 160431: reg 7 bits 6/7 $c0 -> $00 (reg 7 := $00) at pc=c54
+  line 160463: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $ff) at pc=c64
+  line 197661: reg 7 bits 6/7 $c0 -> $00 (reg 7 := $00) at pc=c54
+  line 197693: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $ff) at pc=c64
+  line 197829: reg 7 bits 6/7 $c0 -> $00 (reg 7 := $00) at pc=c54
+  line 197861: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $ff) at pc=c64
+  line 251415: reg 7 bits 6/7 $c0 -> $00 (reg 7 := $00) at pc=c54
+  line 251447: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $ff) at pc=c64
+  line 251639: reg 7 bits 6/7 $c0 -> $00 (reg 7 := $00) at pc=c54
+  ... 1 more reg-7 direction-bit changes
+PSGCHECK p2_b_ste162_8_d2: PASS (violations 0, warnings 0; reg-7 writes 37044, reg-14 writes 240, FDC commands 2964, selects 53760, data writes 53758, frames 4472, frames with reg 7 bits 6/7 not both set 0 (longest run 0), final reg 7 = $ff)
+CELL p2_b_ste162_8_d2: PASS

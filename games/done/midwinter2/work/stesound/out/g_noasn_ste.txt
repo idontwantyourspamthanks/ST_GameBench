@@ -1,0 +1,12 @@
+g_noasn_ste: orange prompt after 70 s wall; machine ste 8 MHz 1 drive(s)
+_nflops ($4a6): 000004A6: 00 01                                            .. | drive-select toggle site $28b44: 00028B44: 0a 79 00 00 00 02 7d 34                          .y....}4
+--- scenario B
+SWAP B g_noasn_ste: FFB inserted at the prompt, key -> M/J/K screen REACHED (wall 26 s); FDC burst 9.60 s emulated, 0 force-ints
+reg-7 writes 14317, reg-14 (port A) writes 113, game FDC commands 215
+  line 8949: port A -> INPUT (reg 7 := $00) at pc=c54
+  line 8981: port A -> output again (reg 7 := $ff) at pc=c64
+  line 109493: port A -> INPUT (reg 7 := $00) at pc=33930
+  line 109587: port A -> output again (reg 7 := $ff) at pc=c64
+  line 109619: port A -> INPUT (reg 7 := $00) at pc=33930
+  line 109651: port A -> output again (reg 7 := $d4) at pc=101c
+PSGCHECK g_noasn_ste: PASS (reg-14 writes with port A input: 0, game FDC commands with port A input: 0, final reg 7 = $f8)

@@ -1,0 +1,14 @@
+p2_c_ste_d1c: orange prompt after 90 s wall; machine ste 8 MHz 1 drive(s)
+_nflops ($4a6): 000004A6: 00 01                                            .. | drive-select toggle site $28b44: 00028B44: 0a 79 00 00 00 02 7d 34                          .y....}4
+RAMCHECK p2_c_ste_d1c: $3392c = 103c00c0 (expected 103c00c0: `move.b #$c0,d0` of the sound init; v1.6 has 102b0014 = `move.b $14(a3),d0`): PASS
+--- scenario C
+SWAP C p2_c_ste_d1c: black prompt NOT up (wall - s since the key); FDC burst -1.00 s emulated (first cmd to last event), -1 cmds, -1 force-ints (VBL 5400, 0 Hz)
+--- scenario CB
+SWAP CB p2_c_ste_d1c: FFB inserted at the prompt, key -> M/J/K screen REACHED (wall 31 s); FDC burst 11.25 s emulated, 0 force-ints
+reg-7 writes 15977, reg-14 (port A) writes 151, game FDC commands 215, frames 1549
+  line 8947: reg 7 bits 6+7 $c0 -> $00 (reg 7 := $00) at pc=c54
+  line 8979: reg 7 bits 6+7 $00 -> $c0 (reg 7 := $ff) at pc=c64
+  line 162838: reg 7 bits 6+7 $c0 -> $00 (reg 7 := $00) at pc=c54
+  line 162870: reg 7 bits 6+7 $00 -> $c0 (reg 7 := $ff) at pc=c64
+  FRAMES with reg 7 bits 6/7 not both set at the frame start: 0 of 1549 (longest run 0)
+PSGCHECK p2_c_ste_d1c: PASS (reg-14 writes with port A/B input: 0, game FDC commands with port A/B input: 0, bad frames 0/1549, final reg 7 = $ff)

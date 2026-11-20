@@ -2,6 +2,15 @@
 
 This is a plain-English account of the work on *Midwinter 2: Flames of Freedom* (Atari ST, PP's 2014 hard-disk version). It covers what was changed, why, what the original code was doing at each point we changed, and what each change achieved. The detailed evidence (disassembly, measurements, test logs) is in `work/notes/`. The patch sources are in `patches/`.
 
+## What's new in v1.6.1 (2026-11-20): the real STE / Mega STE floppy failure
+
+A real STE and a real Mega STE, v1.6 floppies: the Amiga music starts, then disc activity stops (no light, no seek, no freeze); a real Mega ST worked; every Hatari gate passed. `work/notes/stesound.md` has the whole chain.
+
+- **Cause:** PSG register 7 bit 6 is the direction of I/O port A, and port A (reg 14) carries the floppy drive-select and side lines; with bit 6 = 0 the real chip does not drive them, so no drive is selected. The game's sound init (`$33870` -> `$338CE`) writes all PSG registers from a just-zeroed shadow, including reg 7 := 0; the original YM tick rewrote reg 7 (bits 6+7 set) every frame; the Amiga sound (STE / Mega STE only, v1.5+) replaced that tick and nothing rewrote it. The game's first disk check already ran with port A as an input. Hatari does not model the direction bit (`src/psg.c` stores reg 14 whatever reg 7 says), sound on or off, so no earlier gate could fail on it.
+- **Fix:** `asn_mixer` writes reg 7 := `$FF` (absolute, never read back) every VBL while the Amiga sound owns the tick; `asn_ymsilence` writes `$FF`; new patch `ym_porta` (4 bytes at `$3392C`) makes the init write `$C0` instead of 0. The game's own drive-select sequence runs with interrupts masked (sr = `$2700`), so the VBL write cannot split it.
+- **Gate that can see it:** `work/stesound/psgcheck.py` replays a Hatari `--trace fdc,psg_write` and fails when a game FDC command or a reg-14 write meets reg 7 bits 6/7 not both set. v1.6 fails it (215 of 215 game FDC commands), v1.6.1 passes; all gates now run with sound emulation on.
+- **Real hardware:** a tester confirmed v1.6.1 on real STEs; the Mega ST had always worked.
+
 ## What's new in v1.6 (2026-11-19): the floppy set on real drives
 
 A downloader wrote the v1.4 floppies on real hardware (STe and Mega STe, DOS + Makedisk): "module music starts playing, but no disc activity anymore, even with the graphics disk" and most image writers call the images corrupt. `work/notes/realfloppy.md` is the investigation (Hatari only, no real drive); `work/notes/realfloppy_v16.md` the fix and its gates.

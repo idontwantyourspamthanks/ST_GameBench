@@ -1,0 +1,13 @@
+g_v16_ste: orange prompt after 86 s wall; machine ste 8 MHz 1 drive(s)
+_nflops ($4a6): 000004A6: 00 01                                            .. | drive-select toggle site $28b44: 00028B44: 0a 79 00 00 00 02 7d 34                          .y....}4
+--- scenario B
+SWAP B g_v16_ste: FFB inserted at the prompt, key -> M/J/K screen REACHED (wall 31 s); FDC burst 10.89 s emulated, 0 force-ints
+reg-7 writes 7363, reg-14 (port A) writes 153, game FDC commands 215
+  line 8959: port A -> INPUT (reg 7 := $00) at pc=c54
+  line 8991: port A -> output again (reg 7 := $ff) at pc=c64
+  line 160001: port A -> INPUT (reg 7 := $00) at pc=33930
+  line 160095: port A -> output again (reg 7 := $ff) at pc=c64
+  line 160127: port A -> INPUT (reg 7 := $00) at pc=33930
+  15 x reg-14 write with port A = INPUT; first: line 160155 r7=$00 ym write data reg=0xe val=0x25 video_cyc=22536 8@44 pc=27d26 instr_cycle 16; last: line 176295
+  215 x game FDC command with port A = INPUT; first: line 160161 r7=$00 fdc type I restore spinup=on verify=on steprate_ms=12 drive=0 tr=0x0 head_track=0x0 VBL=32; last: line 176238
+PSGCHECK g_v16_ste: FAIL (reg-14 writes with port A input: 15, game FDC commands with port A input: 215, final reg 7 = $00)

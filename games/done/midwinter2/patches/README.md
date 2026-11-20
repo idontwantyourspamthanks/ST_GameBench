@@ -309,5 +309,9 @@ and read at the start of the next (a whole VBL of settle time, no wait loop), de
   at the load (the former `asn_mus_ld`) was removed because it did not achieve that, the loader-stall problem is open (options: a HAGA file patch at the service's mask/unmask points, or a hold flag
   cleared by the load hook; see amiga_music_port.md 6.1). The hall stayed silent in one cold boot (cause open, 6.2). The boot stub's own title tune (HD ~4 s, floppy ~28 s) stays the YM.
   Accelerated time (tune 5), floppy / Mega STE / ST / TT cold boots with the music, 60 Hz and the plain-ST/TT YM passthrough with the music build are not run.
+- **PSG reg 7 (port A = the floppy drive select) - the v1.5/v1.6 real-floppy failure, fixed in v1.6.1 (work/notes/stesound.md):** PSG reg 7 bits 6+7 are the I/O port A/B DIRECTION (0 = input); port A (reg 14) is the floppy
+  drive-select / side lines. The game's sound init `$33870` writes reg 7 := 0, the original YM tick rewrites it with bits 6+7 set at the next VBL, the asn_* ticks (STE / Mega STE) never did: on real hardware no drive was selected
+  (no light, no disk activity, music playing). Hatari does not model the direction bit, so every Hatari gate passed. Rule for ANY code that replaces the YM tick: keep reg 7 bits 6+7 set while it owns the tick, write an ABSOLUTE
+  value (no read-back). `asn_mixer` writes `$ff` every VBL, `asn_ymsilence` writes `$ff`, `ym_porta` (`$3392c`, 4 B, all media) makes the init write `$c0`. Gate: `work/stesound/psgcheck.py` on a `--trace fdc,psg_write` trace.
 - **Unproven:** real STE hardware (Microwire reset state, loudness, the music mix levels: nothing has been listened to); the game's own weapon-fire triggers were injected at `$6862`, not fired live;
   per-vehicle engine ids come from the ST table. Not shipping until the user has listened to it on a real machine.

@@ -119,7 +119,7 @@ class Hatari:
         from stharness import hatari_bin  # noqa: E402  (one binary policy for every harness)
         args = [hatari_bin(machine), "--confirm-quit", "no", "--machine", machine, "--tos", str(tos),
                 "--memsize", str(memsize_kb), "--monitor", "rgb", "--harddrive", str(drive),
-                "--fast-boot", "yes", "--sound", "off", "--grab",
+                "--fast-boot", "yes", "--sound", os.environ.get("MW2_SOUND", "50066" if machine in ("ste", "megaste") else "off"), "--grab",     # STE / Mega STE: emulated sound ON (the Amiga mixer + DMA run as on hardware); MW2_SOUND=off to silence
                 "--cmd-fifo", str(self.fifo), "--screenshot-dir", str(self.R / "shots"),
                 "--screenshot-format", "png"]
         # Hatari saves back to the --memstate path (default /tmp/hatari.sav) and

@@ -15,5 +15,7 @@
 ; note: STE / Mega STE: start (tune number in `$b96`) parks the YM driver on its silent tune 0 and sets up a port of the Amiga player
 ; note: (`MWII` `$5760c` / `$57720`: 4 channels of pattern lists, notes = period + duration in 50 Hz ticks, instruments with a one-shot or a looped
 ; note: sample, volume envelopes, slide, vibrato); its Paula registers feed the blob's mixer at 12517 Hz mono (ring of 2048 B, 640 samples ahead).
+; note: PSG reg 7 (v1.6.1): the music tick never runs the YM tick, so asn_mixer (every VBL of a DMA tune) writes reg 7 := $ff absolute: bits 6+7 = I/O ports A/B OUTPUT; port A carries the
+; note: floppy drive select, and the game's sound init `$33870` writes reg 7 := 0 (see asn_core, ym_porta, work/notes/stesound.md).
         org     $806
         dc.l    $bf81e,$bf824

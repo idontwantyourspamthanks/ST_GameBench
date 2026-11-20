@@ -1,0 +1,35 @@
+p2_b_st104_8_d1: st TOS 104 1024 KB, 8 MHz, 1 drive(s), disks /tmp/mw2s/c17
+insert-graphics prompt after 90 s wall
+M/J/K screen after 4 presses; MWPO 000B2FF8: 4d 57 50 4f                                      MWPO
+security-check site $2c574: 0002C574: 60 02                                            `.
+hall; personnel click tries 0
+use-this-agent click tries 0
+swap served: game asks for 'camp' -> disk_camp.st
+swap served: game asks for 'graf' -> disk_gfx.st
+swap served: game asks for 'graf' -> disk_gfx.st
+control-door click tries 0
+EXC RuntimeError('never reached the boss screen')
+Traceback (most recent call last):
+  File "/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/stesound/cell16.py", line 165, in <module>
+    raise RuntimeError('never reached the boss screen')
+RuntimeError: never reached the boss screen
+
+trace: frame 313 lines = 50.1 Hz
+first game restore: tr=0x0 head_track=0x0 -> complete after 1.125 s
+game type I commands: 124, cut by the game's force interrupt: 0
+longest completed game type I commands (s): 1.78 restore, 1.81 restore, 1.89 restore, 2.12 restore
+  line 13: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $c0) at pc=fc008a
+  line 8949: reg 7 bits 6/7 $c0 -> $00 (reg 7 := $00) at pc=c54
+  line 8981: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $ff) at pc=c64
+  line 163243: reg 7 bits 6/7 $c0 -> $00 (reg 7 := $00) at pc=c54
+  line 163275: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $ff) at pc=c64
+  line 332325: reg 7 bits 6/7 $c0 -> $00 (reg 7 := $00) at pc=c54
+  line 332357: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $ff) at pc=c64
+  line 338705: reg 7 bits 6/7 $c0 -> $00 (reg 7 := $00) at pc=c54
+  line 338737: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $ff) at pc=c64
+  line 480319: reg 7 bits 6/7 $c0 -> $00 (reg 7 := $00) at pc=c54
+  line 480351: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $ff) at pc=c64
+  line 488167: reg 7 bits 6/7 $c0 -> $00 (reg 7 := $00) at pc=c54
+  ... 1 more reg-7 direction-bit changes
+PSGCHECK p2_b_st104_8_d1: PASS (violations 0, warnings 0; reg-7 writes 56829, reg-14 writes 198, FDC commands 2181, selects 183852, data writes 183850, frames 2866, frames with reg 7 bits 6/7 not both set 0 (longest run 0), final reg 7 = $dc)
+CELL p2_b_st104_8_d1: FAIL

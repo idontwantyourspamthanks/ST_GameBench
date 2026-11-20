@@ -1,0 +1,15 @@
+p2_n_ste_v16: orange prompt after 99 s wall; machine ste 8 MHz 1 drive(s)
+_nflops ($4a6): 000004A6: 00 01                                            .. | drive-select toggle site $28b44: 00028B44: 0a 79 00 00 00 02 7d 34                          .y....}4
+RAMCHECK p2_n_ste_v16: $3392c = 102b0014 (expected 103c00c0: `move.b #$c0,d0` of the sound init; v1.6 has 102b0014 = `move.b $14(a3),d0`): FAIL
+--- scenario B
+SWAP B p2_n_ste_v16: FFB inserted at the prompt, key -> M/J/K screen REACHED (wall 31 s); FDC burst 11.48 s emulated, 0 force-ints
+reg-7 writes 7573, reg-14 (port A) writes 153, game FDC commands 215, frames 1482
+  line 8958: reg 7 bits 6+7 $c0 -> $00 (reg 7 := $00) at pc=c54
+  line 8990: reg 7 bits 6+7 $00 -> $c0 (reg 7 := $ff) at pc=c64
+  line 162787: reg 7 bits 6+7 $c0 -> $00 (reg 7 := $00) at pc=33930
+  line 162881: reg 7 bits 6+7 $00 -> $c0 (reg 7 := $ff) at pc=c64
+  line 162913: reg 7 bits 6+7 $c0 -> $00 (reg 7 := $00) at pc=33930
+  15 x reg-14 write with port A/B not both output; first: line 162941 r7=$00 ym write data reg=0xe val=0x25 video_cyc=22536 8@44 pc=27d26 instr_cycle 16; last: line 179110
+  215 x game FDC command with port A/B not both output; first: line 162947 r7=$00 fdc type I restore spinup=on verify=on steprate_ms=12 drive=0 tr=0x0 head_track=0x0 VBL=33; last: line 179053
+  FRAMES with reg 7 bits 6/7 not both set at the frame start: 279 of 1482 (longest run 279)
+PSGCHECK p2_n_ste_v16: FAIL (reg-14 writes with port A/B input: 15, game FDC commands with port A/B input: 215, bad frames 279/1482, final reg 7 = $00)

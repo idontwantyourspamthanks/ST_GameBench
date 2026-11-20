@@ -1,0 +1,21 @@
+pc2_ste_ship: orange prompt after 91 s wall; machine ste 8 MHz 1 drive(s)
+_nflops ($4a6): 000004A6: 00 01                                            .. | drive-select toggle site $28b44: 00028B44: 0a 79 00 00 00 02 7d 34                          .y....}4
+RAMCHECK pc2_ste_ship: $3392c = 102b0014 (expected 103c00c0: `move.b #$c0,d0` of the sound init; v1.6 has 102b0014 = `move.b $14(a3),d0`): FAIL
+--- scenario B
+SWAP B pc2_ste_ship: FFB inserted at the prompt, key -> M/J/K screen REACHED (wall 36 s); FDC burst 13.33 s emulated, 0 force-ints
+  line 13: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $c0) at pc=e0008a
+  line 8962: reg 7 bits 6/7 $c0 -> $00 (reg 7 := $00) at pc=c54
+  line 8994: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $ff) at pc=c64
+  line 165201: reg 7 bits 6/7 $c0 -> $00 (reg 7 := $00) at pc=33930
+  line 165295: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $ff) at pc=c64
+  line 165327: reg 7 bits 6/7 $c0 -> $00 (reg 7 := $00) at pc=33930
+  VIOLATION line 165355: reg 14 := $25 while reg 7 = $00 (port A input: no effect on the drive-select/side pins) pc=27d26
+  VIOLATION line 165361: FDC command with reg 7 = $00 (port A input: NO drive selected on real hardware): fdc type I restore spinup=on verify=on steprate_ms=12 drive=0 tr=0x0 head_track=0x0 VBL=3420 video_cyc=23936 3
+  VIOLATION line 165383: FDC command with reg 7 = $00 (port A input: NO drive selected on real hardware): fdc type I seek dest_track=0x1 spinup=on verify=on steprate_ms=12 drive=0 tr=0x0 head_track=0x0 VBL=3478 video
+  VIOLATION line 165411: FDC command with reg 7 = $00 (port A input: NO drive selected on real hardware): fdc type II read sector sector=0x1 multi=off spinup=on settle=off tr=0x1 head_track=0x1 side=0 drive=0 dmasect
+  VIOLATION line 165473: FDC command with reg 7 = $00 (port A input: NO drive selected on real hardware): fdc type II read sector sector=0x2 multi=off spinup=on settle=off tr=0x1 head_track=0x1 side=0 drive=0 dmasect
+  VIOLATION line 165534: FDC command with reg 7 = $00 (port A input: NO drive selected on real hardware): fdc type II read sector sector=0x3 multi=off spinup=on settle=off tr=0x1 head_track=0x1 side=0 drive=0 dmasect
+  VIOLATION line 165578: reg 14 := $25 while reg 7 = $00 (port A input: no effect on the drive-select/side pins) pc=27d26
+  VIOLATION line 165586: FDC command with reg 7 = $00 (port A input: NO drive selected on real hardware): fdc type I seek dest_track=0x7 spinup=on verify=on steprate_ms=12 drive=0 tr=0x1 head_track=0x1 VBL=3491 video
+  ... 222 more VIOLATION lines (last: line 181700)
+PSGCHECK pc2_ste_ship: FAIL (violations 230, warnings 0; reg-7 writes 7753, reg-14 writes 153, FDC commands 1366, selects 25126, data writes 25124, frames 1476, frames with reg 7 bits 6/7 not both set 273 (longest run 273), final reg 7 = $00)

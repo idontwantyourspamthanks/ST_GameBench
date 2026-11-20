@@ -17,10 +17,19 @@ The orange MIDWINTER II logo screen (the one with "Insert Graphics Disk - press 
 loader service on floppy and nothing fades.)
 
 Needs 1 MB RAM (as the original), a double-sided 80-track drive, 720 KB double-density disks.
-Tested in Hatari 2.6.1 ONLY: STE (TOS 1.62), Mega STE (TOS 2.06, 8 and 16 MHz), Mega ST (TOS 1.04), TT (TOS 3.06), 1 MB or more.
-NOT tested on a real drive or a real machine: reports from real floppies are welcome.
+Tested in Hatari 2.6.1: STE (TOS 1.62), Mega STE (TOS 2.06, 8 and 16 MHz), Mega ST (TOS 1.04), TT (TOS 3.06), 1 MB or more.
+Real machines: v1.6.1 was reported working on real STEs (the v1.6.1 fix below); v1.6 did not work on a real STE / Mega STE.
+Reports from other real drives and machines are welcome.
 The disks are raw 720K images (80 tracks x 2 sides x 9 sectors of 512 bytes). Each is also supplied as .msa.
 Writing real disks: read WRITING_DISKS.TXT first (tools, DD media, why FFA/FFB/FFC look "corrupt" to some writers, the black prompt).
+
+NEW IN v1.6.1 (the floppy set; the hard-disk build changes only in its version number): fixes the real STE / Mega STE failure of v1.5 and v1.6.
+  - STE / Mega STE with the Amiga music: the drive was never selected again once the music started (no light, no disk activity,
+    the music kept playing, no freeze). The sound chip's register 7 (bit 6 = direction of the port that carries the floppy
+    drive-select / side lines) was left at 0 by the game's sound init; the YM sound code used to rewrite it every frame and the
+    Amiga sound code (STE / Mega STE only) had replaced it. The Amiga sound code now keeps it at $FF, and a 4-byte patch (ym_porta)
+    makes the game's own init write $C0. An emulator cannot show this (it does not model the bit): the fix was found by reading
+    the game's sound-chip writes and confirmed on real STEs by a tester. Mega ST, ST, TT: the YM sound keeps running and was never affected.
 
 NEW IN v1.6 (the floppy set only; the hard-disk build behaves as v1.5): fixes for real floppy drives and real machines.
   - The start-up disk parks the drive head on track 0 before the game starts (v1.3-v1.4 left it on track 79, which made the game's

@@ -1,8 +1,9 @@
 Midwinter 2 v@VERSION@ enhanced by dad_prg - writing the four disks to real floppies, {DATE}
 
-STATUS, PLAINLY: everything in this set was tested in the Hatari emulator only (STE, Mega STE at 8 and 16 MHz, Mega ST, TT).
-None of it has been run on a real drive, a real STE or a real Mega STE. v1.3-v1.5 had a problem on real machines (see
-"What v1.6 changed" below); v1.6 is the attempt to fix it. Please report what you see.
+STATUS, PLAINLY: v1.6.1 was reported working on real STEs. Everything else in this set was tested in the Hatari emulator only (STE,
+Mega STE at 8 and 16 MHz, Mega ST, TT). v1.3-v1.5 had a problem on real machines (see "What v1.6 changed" below); v1.6 fixed
+the drive part of it, and v1.6.1 fixes the STE / Mega STE music problem: with the Amiga music playing the drive was never selected
+(see FLOPPY.TXT, "NEW IN v1.6.1"). Please report what you see.
 
 THE FILES
   FFA_boot.st / .msa            START-UP disk (boot from this one)

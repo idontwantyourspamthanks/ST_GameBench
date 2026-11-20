@@ -19,5 +19,8 @@
 ; note: Everything runs inside the VBL (no timer, no new interrupt).  asn_wd (boot site $262c2) stops the DMA when the tick no longer runs.
 ; note: The same blob, mixer and ring play the Amiga MUSIC (asn_mus; work/notes/amiga_music_port.md): the game's tick pointer is
 ; note: either this sound-effect tick or the music tick, never both.
+; note: PSG reg 7 (v1.6.1): while this tick (or asn_mus's) owns `$5138` the YM tick does not run, and the YM tick was what rewrote reg 7 with bits 6+7 set every VBL.  Bit 6 = port A
+; note: DIRECTION = the floppy drive-select / side lines: with it 0 the real chip never selects a drive (Hatari does not model it).  asn_mixer therefore writes reg 7 := $ff (ABSOLUTE, no
+; note: read-back: a read-back cannot be tested in Hatari) every VBL, asn_ymsilence writes $ff too, and ym_porta makes the game's init write $c0 instead of 0.  work/notes/stesound.md.
         org     $18f92
         jmp     $bf800.l

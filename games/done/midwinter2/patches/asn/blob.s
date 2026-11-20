@@ -220,14 +220,11 @@ par_m6: dc.b    0,0
         dc.w    0,320,336,32,3
         dc.l    4642826
         dc.w    113,125
-asn_ymsilence:
-        lea     $ff8800.l,a0
-        moveq   #0,d1
+asn_ymsilence:                          ; YM silent while the DMA plays: reg 7 := $ff ABSOLUTE (never read back): tone A-C + noise off (bits 0-5), ports A+B output (bits 6-7;
+        lea     $ff8800.l,a0            ; the original YM tick writes $f8/$dc/... = the same bits 6+7), amplitudes 8-10 := 0.  Port A (bit 6) must stay an OUTPUT: it carries
+        moveq   #0,d1                   ; the floppy drive-select / side lines (reg 14).
         move.b  #7,(a0)
-        move.b  (a0),d0
-        ori.b   #$3f,d0
-        move.b  #7,(a0)
-        move.b  d0,2(a0)
+        move.b  #$ff,2(a0)
         move.b  #8,(a0)
         move.b  d1,2(a0)
         move.b  #9,(a0)
@@ -827,6 +824,10 @@ asn_prep:                               ; audible voices -> v_act0 list; d5 = co
         dbra    d4,.t
 .rts:   rts
 asn_mixer:                              ; a4 = SV
+        move.b  #7,$ff8800.l            ; every VBL the asn code owns the tick: PSG reg 7 := $ff (all YM channels off, ports A+B OUTPUT).  The YM tick that
+        move.b  #$ff,$ff8802.l          ; wrote reg 7 (always with bits 6+7 set) every VBL does not run; the game's init $33870 zeroes reg 7, and with bit 6 = 0
+                                        ; (port A = input) the real YM does not drive the floppy select/side lines (reg 14), so no drive is ever selected
+                                        ; (Hatari does not model the direction bit).  Interrupt-safe: the FDC driver's select+RMW of reg 14 runs at sr=$2700.
         bsr     asn_prep
         tst.b   v_dma(a4)
         bne.s   .on

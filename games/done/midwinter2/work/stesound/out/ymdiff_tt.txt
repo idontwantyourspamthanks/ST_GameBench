@@ -1,0 +1,13 @@
+anchor (first $338ea write): A index 105200, B index 105208
+writes A 23499, B 23479; comparing the first 23479
+writes differing in (reg 0-13, value) other than reg-7 bits 6/7: 2
+   A: ym write data reg=0x7 val=0xc4 video_cyc=3712 1680@1 pc=1020 instr_cycle 0 
+   B: ym write data reg=0x7 val=0xd4 video_cyc=3746 1714@1 pc=1020 instr_cycle 0
+   A: ym write data reg=0x7 val=0xcc video_cyc=2792 760@1 pc=1020 instr_cycle 0 
+   B: ym write data reg=0x7 val=0xdc video_cyc=2804 772@1 pc=1020 instr_cycle 0
+reg-7 writes differing ONLY in bits 6/7: 2
+   A: ym write data reg=0x7 val=0x0 video_cyc=307208 376@151 pc=33930 instr_cycle 0 
+   B: ym write data reg=0x7 val=0xc0 video_cyc=124924 972@61 pc=33930 instr_cycle 0
+   A: ym write data reg=0x7 val=0x0 video_cyc=101820 220@50 pc=33930 instr_cycle 0 
+   B: ym write data reg=0x7 val=0xc0 video_cyc=101806 206@50 pc=33930 instr_cycle 0
+VERDICT DIFFERENT
