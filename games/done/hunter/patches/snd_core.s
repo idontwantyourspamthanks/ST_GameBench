@@ -190,19 +190,19 @@ snd_cflush:                             ; 68020+ (the _CPU cookie): drop the ins
         dc.w    $4e7b,$0002             ; movec d0,cacr
 .rts:   rts
 snd_ymsilence:                          ; the YM may still hold the title music: effects off, volumes 0
-        lea     $ff8800.l,a0
-        moveq   #0,d1
+        lea     $ff8800.l,a0            ; reg 7 is written ABSOLUTE, never read back: $ff = tone and noise off on A/B/C and both I/O ports
+        moveq   #0,d1                   ; as outputs (bit 6 = port A: floppy drive select/side, bit 7 = port B), what the original driver
+        move.w  sr,d2                   ; leaves ($f8/$ff).  Its own reg-7 writes go to the scratch in 3D, so this is the only reg-7 write
+        ori.w   #$0700,sr               ; and nothing restores it later.  Masked: no interrupt-side select lands between a select and its data
         move.b  #7,(a0)
-        move.b  (a0),d0
-        ori.b   #$3f,d0
-        move.b  #7,(a0)
-        move.b  d0,2(a0)
+        move.b  #$ff,2(a0)
         move.b  #8,(a0)
         move.b  d1,2(a0)
         move.b  #9,(a0)
         move.b  d1,2(a0)
         move.b  #10,(a0)
         move.b  d1,2(a0)
+        move.w  d2,sr
         rts
 snd_microwire:                          ; master 40 (0 dB), left/right 20 (0 dB), mix DMA with YM, treble/bass 6 (flat)
         movea.l sp,a2                   ; bus error safe (the Falcon has no Microwire): the handler resets the stack here

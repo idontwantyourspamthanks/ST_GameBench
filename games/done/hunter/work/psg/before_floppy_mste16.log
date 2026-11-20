@@ -1,0 +1,11 @@
+CELL before_floppy_mste16: kind=floppy machine=megaste mhz=16 src=dist/Hunter_v1.2_patched_floppy_2026-11-13.zip
+in 3D view: True after 182 s
+BOOT in_game=True MARKER=b'HNPO' FLAGS=00000003
+saving
+saved
+SAVE+LOAD done, in_game=True
+  line 13: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $c0) at pc=e00086
+PSGCHECK run: PASS (violations 0, warnings 0; reg-7 writes 7, reg-14 writes 3047, FDC commands 1359, selects 6466, data writes 6460, frames 364, frames with reg 7 bits 6/7 not both set 0 (longest run 0), final reg 7 = $ff)
+REG7 writes (val, pc): $c0@e00086 $fe@e036f8 $f8@119ca $ff@11ab0 $ff@8e1fa
+FDC commands after the sound patch's reg-7 write (snd_ymsilence): 0
+RESULT before_floppy_mste16: boot=OK psgcheck=PASS

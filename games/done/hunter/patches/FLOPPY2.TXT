@@ -21,6 +21,9 @@ WHAT YOU GET ON YOUR MACHINE (v@VERSION@; 1 MB RAM is the minimum, 2 MB or more 
   Floppy: the plain-ST floppy never reads the sound disk/bank, so it keeps the ST dashboard at any RAM. Saving is the game's
   own disk save, as before.
 
+Release v@VERSION@ (hardening): the YM I/O port direction is now set explicitly (no known failure): the STE sound patch writes
+  PSG register 7 as an absolute value ($FF) when it takes over the YM instead of reading it back.  Nothing else changes.
+
 When to use this set
   Use it only if your floppy drive or disk writer cannot handle the one-disk set (82 tracks x 11 sectors).
   Both disks here are ordinary formats: disk 1 is the original 81 x 10 layout, disk 2 is a 720 KB disk.

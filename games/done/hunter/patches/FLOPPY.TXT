@@ -54,6 +54,8 @@ What changed
     game changes, and the screen is restored exactly.
   * 2 MB or more: the dashboard uses the Amiga version's colours and art (STE-class machines, where the sound bank is read; with 1 MB it is unchanged).
   * The title screen shows a small, dim "v@VERSION@ enhanced by dad_prg" at the bottom; nothing else on it changes.
+  * Hardening (v@VERSION@): the YM I/O port direction is now set explicitly (no known failure): the STE sound patch writes PSG register 7
+    as an absolute value ($FF) when it takes over the YM instead of reading it back.  Nothing else changes.
   * The patches check every byte they replace; if the game code is not the expected one nothing is changed.
 
 How to start

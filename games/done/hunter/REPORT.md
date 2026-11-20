@@ -221,3 +221,13 @@ No text is visible in the 3D view (screenshot after the HD cold boot; file E is 
 | (d) cold boots, default build, `HNPO` | HD STE TOS 1.62 1 MB (3D view after 47 s), floppy STE (91 s, real FDC timing), HD Mega STE TOS 2.06 4 MB (129 s; TOS boots at 60 Hz, the game switches to 50 Hz while it loads): walking 100.0-100.9 units/s and 49.96-50.01 ticks/s at 60 Hz, at 8 and 16 MHz |
 
 **Limits.** Real hardware, TT and Falcon video modes were not run. The detection reads `$ff820a` bit 1, the register the game itself writes. Palette fades and menu pauses stay per VBL (20% short at 60 Hz, as before). Release text: `PATCHES.TXT` and the floppy `README.TXT` mention the change; at 50 Hz nothing changes.
+
+## 12. v1.2.1: YM I/O port direction hardening
+
+`patches/snd_core.s` (`snd_ymsilence`), note `work/notes/psg.md`, gate tools `tools/hunt_psg.py`, `tools/hunt_psg_all.sh`, `tools/psgcheck.py` (strict Hatari, `tools/hatari-strict/`). Release note: *hardening: the YM I/O port direction is now set explicitly (no known failure)*.
+
+The audit found that `snd_ymsilence` (once per 3D session) read PSG reg 7 back and ORed `$3f`; it only worked because the title tune leaves bits 6/7 set. It now writes `$ff` absolutely (both I/O ports outputs, tone and noise off) with interrupts masked (SR `$2700`) around the select/data pairs; code size unchanged. The patch's own reg-7 write is the only one in any Hunter patch, the original driver's reg-7 writes go to the scratch in 3D and the YM does not play there on STE-class machines, so nothing needs to be preserved. Version 1.1 -> 1.2.1, title line `v1.2.1 enhanced by dad_prg` (x 95..224).
+
+Gate results (shipped v1.2 against v1.2.1, strict build, sound ON, STE / Mega STE 8 and 16 MHz / ST / TT; floppy cells with Save and Load, HD cells): no cell had reg 7 bit 6 or 7 clear in any frame, FDC commands and Save/Load work under the strict model before and after; the shipped v1.2 was NOT failing, so this is hardening, not a bug fix. Table and the NON-ATOMIC finding (original title-tune shutdown RMW at `$11a9e` against the original Timer A digi player, one reg-10 volume blip, intermittent, not in a Hunter patch): `work/notes/psg.md`.
+
+Real-hardware-only risks (release checklist): YM port direction (covered by the strict build, no failure); real FDC/drive mechanics, DMA/blitter bus timing, 68000 prefetch and the Falcon bus: unchanged against v1.2, untested on hardware; the user's real floppy test remains the last word.

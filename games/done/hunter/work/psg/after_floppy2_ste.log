@@ -1,0 +1,13 @@
+CELL after_floppy2_ste: kind=floppy2 machine=ste mhz=default src=build/psg_after_fl2
+prompt 1 after 19 s
+prompt 2 (game disk) after 29 s
+in 3D view: True after 89 s
+BOOT in_game=True MARKER=b'HNPO' FLAGS=00000003
+saving
+saved
+SAVE+LOAD done, in_game=True
+  line 13: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $c0) at pc=e0008a
+PSGCHECK run: PASS (violations 0, warnings 0; reg-7 writes 10, reg-14 writes 1540, FDC commands 1378, selects 52968, data writes 52966, frames 338, frames with reg 7 bits 6/7 not both set 0 (longest run 0), final reg 7 = $ff)
+REG7 writes (val, pc): $c0@e0008a $fe@e044a0 $f8@119ca $ff@11ab0 $ff@8e1f6
+FDC commands after the sound patch's reg-7 write (snd_ymsilence): 0
+RESULT after_floppy2_ste: boot=OK psgcheck=PASS

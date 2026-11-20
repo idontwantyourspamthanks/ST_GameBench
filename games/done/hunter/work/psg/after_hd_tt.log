@@ -1,0 +1,7 @@
+CELL after_hd_tt: kind=hd machine=tt mhz=default src=build/psg_after
+DRIVE FAILED: RuntimeError('blind boot: the 3D loop is not running')
+  line 16: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $c0) at pc=e000c8
+PSGCHECK strun-pbnk91hp: PASS (violations 0, warnings 0; reg-7 writes 5, reg-14 writes 221, FDC commands 7, selects 307355, data writes 307352, frames 495, frames with reg 7 bits 6/7 not both set 0 (longest run 0), final reg 7 = $ff)
+REG7 writes (val, pc): $c0@e000c8 $fe@e03ade $f8@119d0 $ff@11ab6 $ff@8e1fc
+FDC commands after the sound patch's reg-7 write (snd_ymsilence): 1
+RESULT after_hd_tt: boot=FAIL psgcheck=PASS

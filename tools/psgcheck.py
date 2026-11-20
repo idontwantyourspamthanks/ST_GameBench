@@ -52,12 +52,14 @@ def check(path, name=None, game_pcs=None, strict_b=False, near=32, max_bad_frame
     viol, warn, hist = [], [], []
     frames = bad_frames = run = max_run = 0
     prev_cyc = None
+    raw = deque(maxlen=48)                      # the last raw ym/fdc lines: dumped into the kept file around a non-atomic pair
     ev = deque(maxlen=256)                      # recent ('s'|'d', reg, pc, line)
     src = sys.stdin if path == "-" else open(path, errors="replace")
     kf = open(keep, "w") if keep else None
     for i, ln in enumerate(src, 1):
         if not (ln.startswith("ym ") or ln.startswith("fdc ")):
             continue
+        raw.append(ln)
         mc = RE_CYC.search(ln)
         if mc:
             cyc = int(mc.group(1))
@@ -100,7 +102,10 @@ def check(path, name=None, game_pcs=None, strict_b=False, near=32, max_bad_frame
                 kf.write(ln)
         elif kind == "d":
             ndat += 1
+            nv = len(viol)
             _atomic(ev, reg, pc, i, near, viol)
+            if kf and len(viol) > nv:
+                kf.write("# non-atomic pair, the preceding trace lines:\n" + "".join(raw) + "# end\n")
             ev.append(("d", reg, pc, i))
             if reg == 7:
                 n7 += 1
@@ -156,18 +161,18 @@ def check(path, name=None, game_pcs=None, strict_b=False, near=32, max_bad_frame
 def _atomic(ev, reg, pc, line, near, viol):
     """Data write `reg` at `pc`: the newest still-pending select made by nearby code (no data write from that code since) must select `reg`."""
     owner = None
-    foreign = False
+    foreign = None
     for kind, r, p, ln in reversed(ev):
         if abs(p - pc) <= near:
             if kind == "d":
                 return                          # that code's select was already consumed by a data write
             owner = (r, p, ln)
             break
-        if kind == "s" and r == reg:
-            foreign = True                      # another code selected `reg` after the owner's select
+        if kind == "s" and r == reg and foreign is None:
+            foreign = (p, ln)                   # another code selected `reg` after the owner's select
     if owner and owner[0] != reg and foreign:
-        viol.append((line, "NON-ATOMIC select/write: select reg %d at pc=%x (line %d) was overwritten by another code's select of reg %d before the data write at pc=%x: the data went to reg %d"
-                     % (owner[0], owner[1], owner[2], reg, pc, reg)))
+        viol.append((line, "NON-ATOMIC select/write: select reg %d at pc=%x (line %d) was overwritten by another code's select of reg %d before the data write at pc=%x: the data went to reg %d (interrupting select: pc=%x, line %d)"
+                     % (owner[0], owner[1], owner[2], reg, pc, reg, foreign[0], foreign[1])))
 
 
 def main(argv=None):

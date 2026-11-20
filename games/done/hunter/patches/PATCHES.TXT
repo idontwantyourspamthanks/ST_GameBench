@@ -78,6 +78,9 @@ What changed against the original release:
   Only the hard-disk build: the floppy release keeps its own loader and saving, which is unchanged.
 - Version line: the title screen shows a small, dim "v@VERSION@ enhanced by dad_prg" at the bottom, so this release can not be
   mistaken for the original. Nothing else on the screen changes.
+- Hardening (v@VERSION@): the YM I/O port direction is now set explicitly (no known failure). The STE sound patch writes PSG register 7
+  as an absolute value ($FF, both I/O ports outputs) when it takes over the YM, instead of reading it back and OR-ing; the
+  floppy drive select lines (port A) can not be left as inputs. Nothing else changes.
 - Every patch checks the original bytes it replaces first. If anything is not as
   expected, nothing is changed and the game starts as before.
 - Nothing else in the game is changed: keyboard, mouse buttons and joystick controls and saves work as in PP's release, and at 50 Hz so does the game speed.

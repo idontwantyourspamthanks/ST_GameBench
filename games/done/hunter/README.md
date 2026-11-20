@@ -1,6 +1,6 @@
 # Hunter (PP's "Gamex" hard-disk version, 2010)
 
-Status: **done** (HD and floppy releases, see `REPORT.md`). Activision, 1991: a 3D open-world island game (vehicles, boats, aircraft).
+Status: **done** (HD and floppy releases, see `REPORT.md`); current release **v1.2.1** (hardening: the YM I/O port direction is now set explicitly, no known failure; REPORT section 12). Activision, 1991: a 3D open-world island game (vehicles, boats, aircraft).
 
 Build: `tools/package.sh` (zips into `dist/`, named `Hunter_v<VERSION>_patched_..._<date>.zip`); play: `tools/play.sh [--floppy] [--original] [--machine ste]`.
 

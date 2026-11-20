@@ -1,0 +1,12 @@
+CELL after_floppy_mste8: kind=floppy machine=megaste mhz=8 src=build/psg_after_fl
+in 3D view: True after 185 s
+BOOT in_game=True MARKER=b'HNPO' FLAGS=00000003
+saving
+saved
+SAVE+LOAD done, in_game=True
+  line 13: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $c0) at pc=e00086
+  VIOLATION line 399104: NON-ATOMIC select/write: select reg 7 at pc=11a9e (line 399088) was overwritten by another code's select of reg 10 before the data write at pc=11ab0: the data went to reg 10
+PSGCHECK run: FAIL (violations 1, warnings 0; reg-7 writes 6, reg-14 writes 3049, FDC commands 1359, selects 76353, data writes 76350, frames 384, frames with reg 7 bits 6/7 not both set 0 (longest run 0), final reg 7 = $ff)
+REG7 writes (val, pc): $c0@e00086 $fe@e036f8 $f8@119ca $ff@8e1f6
+FDC commands after the sound patch's reg-7 write (snd_ymsilence): 0
+RESULT after_floppy_mste8: boot=OK psgcheck=FAIL

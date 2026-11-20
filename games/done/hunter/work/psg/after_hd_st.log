@@ -1,0 +1,7 @@
+CELL after_hd_st: kind=hd machine=st mhz=default src=build/psg_after
+BOOT in_game=True MARKER=b'HNPO' FLAGS=00000006
+  line 12: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $c0) at pc=fc008a
+PSGCHECK strun-cbje10ww: PASS (violations 0, warnings 0; reg-7 writes 1285, reg-14 writes 228, FDC commands 18, selects 1012844, data writes 1011562, frames 1468, frames with reg 7 bits 6/7 not both set 0 (longest run 0), final reg 7 = $ff)
+REG7 writes (val, pc): $c0@fc008a $fe@fc42dc $f8@119ca $ff@11ab0 $df@112ca $ff@11124 $ef@112ca $ff@11124 $f7@112ca $ff@11124 $df@112ca $ff@11124 $ef@112ca $ff@11124
+FDC commands after the sound patch's reg-7 write (snd_ymsilence): 93
+RESULT after_hd_st: boot=OK psgcheck=PASS

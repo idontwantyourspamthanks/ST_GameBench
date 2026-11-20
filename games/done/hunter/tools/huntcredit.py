@@ -26,7 +26,7 @@ GAME = HERE.parent
 sys.path.insert(0, str(GAME.parent.parent.parent / "tools"))
 sys.path.insert(0, str(HERE))
 SHOTS = GAME / "work" / "shots"
-RECT = dict(x0=100, x1=218, y0=194, y1=199)         # the text for "v1.0 enhanced by dad_prg" (len 24: x = (321 - 120) / 2 = 100 .. 100 + 119)
+RECT = dict(x0=95, x1=224, y0=194, y1=199)          # the text for "v1.2.1 enhanced by dad_prg" (len 26: x = (321 - 130) / 2 = 95 .. 95 + 129)
 
 
 def decode(buf: bytes):

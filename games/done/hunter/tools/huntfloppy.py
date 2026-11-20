@@ -34,7 +34,7 @@ class HunterFloppy(Hunter):
 
     def __init__(self, disk1: str | Path, disk2: str | Path | None = None, in_b: bool = False, drives: int = 2,
                  machine: str = "ste", tos: Path = TOS["1.62"], memsize_kb: int = 1024, extra: list[str] | None = None,
-                 snapshot: str | None = None, workdir: str | None = None, fastfdc: str = "yes"):
+                 snapshot: str | None = None, workdir: str | None = None, fastfdc: str = "yes", **hkw):
         sc = Path(workdir or tempfile.mkdtemp(prefix="hfl-"))
         sc.mkdir(parents=True, exist_ok=True)
         self.d1 = sc / "hunter_d1.st"                    # NOT A.st / B.st (Hatari's bAutoInsertDiskB)
@@ -53,7 +53,7 @@ class HunterFloppy(Hunter):
         ex += extra or []
         Hatari.__init__(self, game_dir=empty, snapshot=snapshot, workdir=str(sc / "run"), machine=machine, tos=tos,
                         memsize_kb=memsize_kb, autorun="", files=[], overlay=Path("/nonexistent"),
-                        flip_reg="($ff8203).b", extra=ex)
+                        flip_reg="($ff8203).b", extra=ex, **hkw)
 
     def swap_a(self, path: Path):
         self.cmd(f"hatari-option --disk-a {path}")

@@ -1,0 +1,7 @@
+CELL after_hd_mste8: kind=hd machine=megaste mhz=8 src=build/psg_after
+BOOT in_game=True MARKER=b'HNPO' FLAGS=00000003
+  line 12: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $c0) at pc=e00086
+PSGCHECK strun-zf3ahcnx: PASS (violations 0, warnings 0; reg-7 writes 6, reg-14 writes 1290, FDC commands 9, selects 84032, data writes 84029, frames 325, frames with reg 7 bits 6/7 not both set 0 (longest run 0), final reg 7 = $ff)
+REG7 writes (val, pc): $c0@e00086 $fe@e036f8 $f8@119ca $ff@11ab0 $ff@8e1f6
+FDC commands after the sound patch's reg-7 write (snd_ymsilence): 0
+RESULT after_hd_mste8: boot=OK psgcheck=PASS

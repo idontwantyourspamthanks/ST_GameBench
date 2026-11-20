@@ -1,0 +1,11 @@
+attempts=2 RESULT after_floppy_ste: boot=OK psgcheck=PASS
+attempts=1 RESULT after_floppy2_ste: boot=OK psgcheck=PASS
+attempts=1 RESULT after_hd_ste: boot=OK psgcheck=PASS
+attempts=1 RESULT after_floppy_mste8: boot=OK psgcheck=FAIL
+attempts=1 RESULT after_floppy_mste16: boot=OK psgcheck=PASS
+attempts=2 RESULT after_hd_mste8: boot=OK psgcheck=PASS
+attempts=1 RESULT after_hd_mste16: boot=OK psgcheck=PASS
+attempts=2 RESULT after_floppy_st: boot=OK psgcheck=PASS
+attempts=1 RESULT after_hd_st: boot=OK psgcheck=PASS
+attempts=3 RESULT after_hd_tt: boot=FAIL psgcheck=PASS
+ALLDONE after

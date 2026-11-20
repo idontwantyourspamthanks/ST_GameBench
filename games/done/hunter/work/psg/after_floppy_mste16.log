@@ -1,0 +1,11 @@
+CELL after_floppy_mste16: kind=floppy machine=megaste mhz=16 src=build/psg_after_fl
+in 3D view: True after 185 s
+BOOT in_game=True MARKER=b'HNPO' FLAGS=00000003
+saving
+saved
+SAVE+LOAD done, in_game=True
+  line 13: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $c0) at pc=e00086
+PSGCHECK run: PASS (violations 0, warnings 0; reg-7 writes 7, reg-14 writes 3033, FDC commands 1358, selects 82805, data writes 82802, frames 446, frames with reg 7 bits 6/7 not both set 0 (longest run 0), final reg 7 = $ff)
+REG7 writes (val, pc): $c0@e00086 $fe@e036f8 $f8@119ca $ff@11ab0 $ff@8e1f6
+FDC commands after the sound patch's reg-7 write (snd_ymsilence): 0
+RESULT after_floppy_mste16: boot=OK psgcheck=PASS
