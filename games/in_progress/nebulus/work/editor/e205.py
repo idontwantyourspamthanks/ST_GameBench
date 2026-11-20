@@ -57,6 +57,10 @@ def run():
                 if snap != last: P(f'  t={time.time()-t0:4.2f}s frog(x,y,st)={f} row1[2..9]={list(snap[1])} row0[2..9]={list(snap[2])}'); last = snap; n += 1
                 if n > 60: break
             h._xdo('keyup', '--window', h.win, 'Right'); h.shot(OUT + f'p_{nm}.png'); time.sleep(2.0); f = frog(h); P(f'  2 s after releasing: frog {f}')
+            # wait until the game loop runs again: the frog is still dying/respawning after the fall and Q/F10 are not polled then
+            t1 = time.time()
+            while time.time() - t1 < 45 and not (W(h, 0x33a20) == 0 and W(h, 0x33938) == 1): time.sleep(0.7)
+            P(f'  waited {time.time()-t1:.1f}s until running: st={W(h,0x33a20):#x} run={W(h,0x33938):#x}'); time.sleep(2.0)
             h.key('q', hold=0.3); time.sleep(3.0); chk('open manager', open_manager(h))
         chk('no Address/Bus Error/exception', errors(h), [])
     except Exception as ex:

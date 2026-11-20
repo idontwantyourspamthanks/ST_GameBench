@@ -34,6 +34,18 @@ def op(save=False,name=''):
             if m is not None: break
     print('   (%.1f s) %r'%(time.time()-t0,m),flush=True)
     return m
+def sel_item(prefix):
+    """move the open menu's selection to the item whose text starts with prefix (the cell menu grows between versions: no fixed Down count)"""
+    for _ in range(40):
+        p=struct.unpack('>L',grab(h,0x77cc0+4,4,'mp'))[0]; d=grab(h,p,900,'menu'); items=[]; i=1
+        for _ in range(d[0]):
+            j=i+2
+            while d[j]: j+=1
+            items.append(d[i+2:j].decode('latin1')); i=j+1
+        sel=struct.unpack('>H',grab(h,0x77cc0+8,2,'ms'))[0]; idx=[k for k,x in enumerate(items) if x.startswith(prefix)][0]
+        if sel==idx: return
+        t.K('Down' if idx>sel else 'Up',1,hold=0.2,gap=0.45)
+    raise RuntimeError('sel_item '+prefix)
 try:
     print('title',h.boot_to_title(timeout=400,space_at=25 if MEM>1024 else 20),flush=True); time.sleep(3)
     h.key('F10',hold=0.5); time.sleep(2)
@@ -73,7 +85,7 @@ try:
     t.K('Down',1)                                   # list: level 0 'MY LEVEL', <new level>, < back  -> select <new level>
     t.F(1.5)                                        # new level -> editor
     t.K('Up',3); t.K('p'); t.K('Right',2); t.K('l')   # a pillar and a ledge
-    t.F(); t.K('Down',10); h.shot('/tmp/nfe/shots/f161_editor_save_item.png'); t.F(1.0); h.shot('/tmp/nfe/shots/f161_prompt_in_editor.png')
+    t.F(); sel_item('Save to campaign'); h.shot('/tmp/nfe/shots/f161_editor_save_item.png'); t.F(1.0); h.shot('/tmp/nfe/shots/f161_prompt_in_editor.png')
     t.F(0.5); m=None
     for _ in range(80):
         time.sleep(0.5)

@@ -16,7 +16,7 @@ What is new in v@VERSION@ (compared with v1.1.1)
   cursor) and its enemies from a list (the 4 enemy eye designs). The
   Level > menu no longer has "Look: next tower" / "other mission": the
   colour choice sets the level's tower byte by itself. New cells: Crumble
-  ledge (it looks like a normal ledge; the frog falls when it steps on it)
+  ledge (looks like a normal ledge; it disappears under the frog, which falls)
   and Conveyor left / Conveyor right (they look like a normal ledge in
   play; a frog standing on one without moving is carried to its end).
   The panel shows the choice as "S<colours> E<enemies>". The original
@@ -39,7 +39,8 @@ started: the NEBULUS logo with a text page that changes by itself every 5 s
 (credits with the frog on a plinth, High Scorers, Options).  On ANY of those three pages tap
 F10 (a normal key press is enough; it does not have to be held), or press D
 (for about a tenth of a second).
-The Options page lists it on its second line: "F10/D  Level editor".  F9 is not the editor
+The Options page lists it on its first line under "Options:": "F10/D  Level
+editor".  F9 is not the editor
 key: it is PP's Gamex exit-to-desktop key.  Avoid it; after F9 restart the game
 fresh (from the desktop, or reset the machine): the editor and your custom
 levels are switched off until then.
@@ -54,7 +55,8 @@ F10 = leave):
 
    Original game   leave the manager and play normally (nothing is changed)
    Campaigns >     list of campaigns; pick one: Play / Edit entries / Rename /
-                   Delete; "<new campaign>" makes a new one
+                   Delete; "<new campaign>" creates NEW CAMP and opens its
+                   entry list
    Levels >        list of your levels; pick one: Play / Edit / Copy / Delete;
                    "<new level>" opens the editor on an empty tower
    Load from campaign disk    read a campaign disk in drive A: (see below)
@@ -74,16 +76,17 @@ row 1 and a ledge + exit door at the top):
    joystick   move the box (the tower is a ring: left of the left column is
               the right column)
    FIRE       open the menu (the letter after a name is its keyboard key):
-     Empty C / Ledge L / Crumble ledge (looks like a ledge, disappears under
-       the frog when it steps on it) / Conveyor left N / Conveyor right M
+     Empty C / Ledge L / Crumble ledge (looks like a ledge; it disappears
+       under the frog and the frog falls) / Conveyor left N / Conveyor right M
        (look like a ledge; carry a standing frog to the left / right end of
-       the row of conveyor cells) / Pillar P / Blue block B (shoot it once
-       per cell to remove it) / Lift > / Door opening D (3 cells; the door on
+       the row of conveyor cells) / Pillar P / Blue block (shoot) B (shoot it
+       once per cell to remove it) / Lift > / Door opening D (3 cells; the door on
        the opposite side of the tower, 8 columns away, is placed too: the frog
        comes out there) / Exit door X (3 cells, the goal; no partner)
      Enemy >   Stone ball S (rolls along a ledge), Red ball R (bounces), Red
-               ball W (waits for you), Eye up/down U slow, I fast, Eye
-               left/right J slow, K fast; then choose the start direction.
+               ball W (waits for you), Eye up/down slow U, Eye up/down fast I,
+               Eye left/right J (slow), Eye l/r fast K; then choose the start
+               direction.
                Enemies only turn round at walls, ledge ends and other enemies.
      Lift >    Lift: from here A, Lift: stop here Z, Lift: delete (see LIFTS)
      Level >   Colours > (a list: the 1..8 looks of the game's towers; the

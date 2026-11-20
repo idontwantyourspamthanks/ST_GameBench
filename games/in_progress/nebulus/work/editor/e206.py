@@ -89,7 +89,7 @@ try:
     chk('walking right onto the crumble: the cell is cleared and the frog falls (no way to the door)', fell is not None)
     time.sleep(4.0); f = frog(); c = cells(); P(f'4 s later: frog {f}, crumble cells {[c[2*256+1], c[3*256+1]]}, rs {rs()[:4]}')
     h.shot(OUT + '06_after_death.png')
-    chk('no Address/Bus Error/exception', errors(h), [])
+    chk('no Address/Bus Error/exception (boot-time I/O-space probe warnings of TOS/HDDRIVER, address $ffxxxxxx, are not game errors)', [e for e in errors(h) if not re.search(r'Bus Error reading at address \$ff[0-9a-f]{6}', e)], [])
 except Exception as ex:
     import traceback; traceback.print_exc(); chk('exception', repr(ex)[:200], 'none')
 finally:
