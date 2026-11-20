@@ -19,6 +19,9 @@ What is new in v@VERSION@ (compared with v1.1.1)
   ledge (looks like a normal ledge; it disappears under the frog, which falls)
   and Conveyor left / Conveyor right (they look like a normal ledge in
   play; a frog standing on one without moving is carried to its end).
+  A door cell now places its opposite door too (3 cells, column + 8), and
+  the exit door is 3 cells with no partner. The list pickers are Colours,
+  Enemies and Copy tower (the game's 16 towers, both missions).
   The panel shows the choice as "S<colours> E<enemies>". The original
   towers are unchanged. Also included is the v1.1.1 crash fix (Address
   Error with campaign files whose level records have an odd size). Level

@@ -31,7 +31,7 @@ differences:
                creates or grows it.  The game disk is never written.
 @@END
 
-v@VERSION@ (compared with v1.1): fixes an Address Error crash when the level manager or editor opens a campaign with odd-size level records (the editor's own saves could make them); the level flags byte is kept on save. Nothing else is changed; files are compatible with v1.1 both ways.
+v@VERSION@ (compared with v1.1.1): the level editor gets list pickers for each level's colours, enemies and "Copy tower", a crumble ledge cell, paired doors (a door cell also places the opposite door; the exit door is 3 cells with no partner) and conveyor ledges (N/M). Level files stay compatible both ways.
 
 Changes in this release (address = RAM address in the running game;
 "orig -> new" are the bytes replaced):
