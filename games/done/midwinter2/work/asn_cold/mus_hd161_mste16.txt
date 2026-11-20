@@ -1,0 +1,15 @@
+the game started tune 1 (its tick pointer $5138 = 000bf81e) about 53.5 s after the capture start (wall 48 s)
+[logo       ] t=  55.52s mode 2 session 2 dma 255 tune  1 rate 1 tick   150 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=000bf81e $ff8901=03 $ff8921=81
+MWPO: 000B2FF8: 4d 57 50 4f                                      MWPO
+vector table $806: 000bf81e000bf82400000c4c (asn_mus: 000bf81e 000bf824 00000c4c)
+[intro1     ] t=  66.55s mode 2 session 2 dma 255 tune  1 rate 1 tick   565 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=000bf81e $ff8901=03 $ff8921=81
+[intro2     ] t=  75.80s mode 2 session 2 dma 255 tune  1 rate 1 tick   950 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=000bf81e $ff8901=03 $ff8921=81
+[intro3     ] t=  85.17s mode 2 session 2 dma 255 tune  1 rate 1 tick  1341 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=000bf81e $ff8901=03 $ff8921=81
+[intro4     ] t=  94.40s mode 2 session 2 dma 255 tune  1 rate 1 tick  1727 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=000bf81e $ff8901=03 $ff8921=81
+[intro5     ] t= 103.65s mode 2 session 2 dma 255 tune  1 rate 1 tick  2112 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=000bf81e $ff8901=03 $ff8921=81
+[intro6     ] t= 112.88s mode 2 session 2 dma 255 tune  1 rate 1 tick  2497 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=000bf81e $ff8901=03 $ff8921=81
+[intro      ] profile 250 VBL: blob 49737 cycles/VBL = 31.0 % of a 50 Hz frame; YM driver 0/VBL; everything profiled 223926/VBL
+[intro      ] bank $bb000-$e61b2 in RAM vs build/asn_bank.bin: 13715 bytes differ outside state/records/ring (first ['0xe2b6a', '0xe2b6b', '0xe2b6c', '0xe2b6d', '0xe2b6e', '0xe2b6f'])
+wav /home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/asn_cold/mus_hd161_mste16.wav: 110.0 s; rms before the game's tune (boot stub) 2420, first 30 s of the tune 2420
+DMA machine: mode 2 at every stage True; music stages with a DMA tune 7/7, session 2 7/7, $5138 = music tick 7/7
+bank checks: {'intro': 13715}

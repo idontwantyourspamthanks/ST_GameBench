@@ -168,6 +168,8 @@ def cmd_run(a):
     try:
         if media == "hd":
             h = Hatari(snapshot=None, memsize_kb=int(mem), machine=machine, tos=TOS[tos], game_dir=ROOT / bdir, extra=extra)
+            if os.environ.get("MW2_CPUCLOCK"):
+                h.set_cpuclock(int(os.environ["MW2_CPUCLOCK"]))        # e.g. 16 for a 16 MHz Mega STE
         else:
             d = ROOT / bdir
             scratch = Path(f"/tmp/fl/mus_{name}")
