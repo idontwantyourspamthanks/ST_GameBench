@@ -14,6 +14,9 @@ subclasses Hatari):
     h = Hatari(game_dir="games/done/midwinter", snapshot=None, memsize_kb=1024,
                machine="megaste", tos=TOS["2.06"])          # cold boot, autoruns RUNME.TOS
     print(h.fps(250)); rows = h.profile(250); h.shot("out.png"); h.close()
+    # PSG gate for any sound/floppy patch (opt-in): emulated sound ON, YM trace, strict Hatari (tools/hatari-strict/), then the check (tools/psgcheck.py)
+    h = Hatari(game_dir=..., snapshot=None, extra=["--disk-a", "/tmp/x/disk_a.st"], sound=True, trace_psg=True, strict=True)
+    ...; h.close(); res = h.psg_check(); assert res.ok      # the trace is streamed into tools/psgcheck.py (CLI: exit code 1 on violations)
 
 CLI:
     python3 tools/stharness.py fps|profile|shot|dump --game DIR --snapshot S [--vbls N]
@@ -56,9 +59,13 @@ MACHINE_TOS = {"st": TOS["1.04"], "megast": TOS["1.04"], "ste": TOS["1.62"], "me
                "tt": TOS["3.06"], "falcon": TOS["4.04"]}
 
 
-def hatari_bin(machine: str) -> str:
+def hatari_bin(machine: str, strict: bool = False) -> str:
     """The Hatari binary, as dist/run_*.sh choose it: $HATARI for every machine; for TT and Falcon $HATARI_TTF, else
-    `HATARI_TTF=...` from the git-ignored dist/hatari.local (a Hatari with per-scanline TT/Videl palettes); else `hatari`."""
+    `HATARI_TTF=...` from the git-ignored dist/hatari.local (a Hatari with per-scanline TT/Videl palettes); else `hatari`.
+    strict=True or HATARI_STRICT_PSG=1 (opt-in; overrides all of the above): the strict build with the YM port-direction model (tools/hatari-strict/),
+    $HATARI_STRICT or ../hattari-strict/build/src/hatari."""
+    if strict or os.environ.get("HATARI_STRICT_PSG") == "1":
+        return os.environ.get("HATARI_STRICT") or str(BENCH.parent / "hattari-strict" / "build" / "src" / "hatari")
     if os.environ.get("HATARI"):
         return os.environ["HATARI"]
     if machine in ("tt", "falcon"):
@@ -109,12 +116,20 @@ class Hatari:
                  workdir: str | None = None, machine: str = "ste", tos: Path | None = None,
                  memsize_kb: int = 1024, files: list[str] | None = None,
                  overlay: Path | None = None, autorun: str = "C:\\RUNME.TOS",
-                 flip_reg: str = "($ff8201).b", extra: list[str] | None = None):
+                 flip_reg: str = "($ff8201).b", extra: list[str] | None = None,
+                 sound: bool | int = False, trace_psg: bool | list[str] = False, strict: bool = False):
         """game_dir: the game folder (copied to scratch as drive C:).
         files: names inside game_dir to copy (default: everything that isn't scaffolding,
         *.md or *.zip). overlay: a dir copied over the drive afterwards (default
         game_dir/work/disk_overlay if it exists; e.g. a created campaign disk).
-        flip_reg: the shifter register expression whose change marks a presented frame."""
+        flip_reg: the shifter register expression whose change marks a presented frame.
+        sound (opt-in; default off): True = emulated sound ON at 50066 Hz (an int = that rate); run DMA-sound machines (STE/Mega STE) this way,
+        the game's sound tick behaves as on hardware only then. The harness silences the host (SDL_AUDIODRIVER=dummy).
+        trace_psg (opt-in): `--trace psg_write,fdc` STREAMED through a FIFO into `tools/psgcheck.py` (a sample-player game writes the PSG 100 000x/s: 10 MB/s
+        of trace, GBs per run, /tmp is RAM, so the trace is never stored; the relevant lines go to self.psg_kept). True or a list of extra psgcheck args
+        (e.g. ["--game-pcs", "27c4e", "--strict-b"]). After h.close(), `h.psg_check()` returns the Result (.ok, .violations, .warnings, .summary): port A/B
+        direction of reg 7 vs FDC commands and reg-14 writes, select/write atomicity. Do not also pass --trace in `extra`.
+        strict (opt-in): the strict Hatari build that models the YM port direction (see hatari_bin)."""
         self.game_dir = Path(game_dir).resolve()
         tos = tos or MACHINE_TOS[machine]
         self.flip_reg = flip_reg
@@ -151,11 +166,25 @@ class Hatari:
             if Path(f"/tmp/.X11-unix/X{display}").exists():
                 break
             time.sleep(0.1)
-        args = [hatari_bin(machine), "--confirm-quit", "no", "--machine", machine, "--tos", str(tos),
+        self.strict = strict
+        self.psg_kept = self.R / "psg_kept.trace"
+        self._psgproc = None
+        args = [hatari_bin(machine, strict), "--confirm-quit", "no", "--machine", machine, "--tos", str(tos),
                 "--memsize", str(memsize_kb), "--monitor", "rgb", "--harddrive", str(drive),
-                "--fast-boot", "yes", "--sound", "off", "--grab",
+                "--fast-boot", "yes", "--sound", "off" if not sound else str(50066 if sound is True else sound), "--grab",
                 "--cmd-fifo", str(self.fifo), "--screenshot-dir", str(self.R / "shots"),
                 "--screenshot-format", "png"]
+        if trace_psg:
+            fifo = self.R / "psg.fifo"
+            if fifo.exists():
+                fifo.unlink()
+            os.mkfifo(fifo)
+            self._psgjson = self.R / "psgcheck.json"
+            self._psgproc = subprocess.Popen(
+                [sys.executable, str(Path(__file__).resolve().parent / "psgcheck.py"), str(fifo), "--name", self.R.name, "--keep", str(self.psg_kept),
+                 "--json", str(self._psgjson)] + (trace_psg if isinstance(trace_psg, list) else []),
+                stdout=open(self.R / "psgcheck.txt", "w"), stderr=subprocess.STDOUT)
+            args += ["--trace", "psg_write,fdc", "--trace-file", str(fifo)]
         # Hatari saves back to the --memstate path and blocks on an "overwrite?" dialog
         # if it exists, so always restore from a scratch copy.
         if snapshot:
@@ -196,6 +225,20 @@ class Hatari:
 
     def _logtext(self) -> str:
         return self.logpath.read_text(errors="replace")
+
+    def psg_check(self, timeout: float = 300):
+        """The PSG check result of this run (needs trace_psg and a closed Hatari: call h.close() first; the checker finishes when Hatari's trace ends).
+        Prints the report (also in <workdir>/psgcheck.txt); returns Result(ok, violations, warnings, summary)."""
+        if self._psgproc is None:
+            raise RuntimeError("Hatari(..., trace_psg=True) was not set")
+        if self.proc.poll() is None:
+            raise RuntimeError("call h.close() before h.psg_check(): the checker reads the trace until Hatari exits")
+        self._psgproc.wait(timeout)
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        from psgcheck import Result
+        print((self.R / "psgcheck.txt").read_text(), end="")
+        d = json.loads(self._psgjson.read_text())
+        return Result(d["ok"], d["violations"], d["warnings"], d["summary"])
 
     def cmd(self, s: str):
         """Send a remote-control command (hatari-debug / hatari-shortcut / hatari-event / hatari-option)."""
@@ -453,6 +496,11 @@ class Hatari:
     def close(self):
         self.proc.kill()
         self.proc.wait()
+        if self._psgproc is not None:      # Hatari never opened the trace FIFO (failed start): a writer open + close lets the blocked checker see EOF and finish
+            try:
+                os.close(os.open(self.R / "psg.fifo", os.O_WRONLY | os.O_NONBLOCK))
+            except OSError:
+                pass
         if self.xvfb:
             self.xvfb.terminate()      # SIGTERM lets Xvfb remove its /tmp/.X<n>-lock
             try:

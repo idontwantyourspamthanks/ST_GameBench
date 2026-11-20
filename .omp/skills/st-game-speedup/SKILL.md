@@ -52,6 +52,19 @@ Reference project: `games/done/midwinter2`. Its `PLAN.md` holds phases P0–P7 a
 - Cycles per frame, before and after (`profile`).
 - A cold boot of the full default build at 1 MB and 4 MB, reaching gameplay with the marker set.
 - A world-rate equality check for timing patches.
+- **PSG gate (mandatory for any patch that replaces, skips or hooks a sound routine, or writes `$ff8800/02`):** cold-boot the release build on every machine where the patch is active, with emulated sound ON and the floppy set in `--disk-a` (not a GEMDOS folder), through boot + one disk access/swap, using `Hatari(..., sound=True, trace_psg=True, strict=True)` and `h.psg_check()` (st-hatari-harness, "Hatari leniencies"). It must PASS in the strict build AND show no `PSGCHECK` violation in the trace. When fixing a PSG bug also run the previous release as a negative control (it must FAIL).
+
+## Sound hooks: real-hardware rules (Midwinter 2 v1.5/v1.6 shipped with "music plays, no disk activity" on every real STE/Mega STE; Hatari passed every gate)
+PSG reg 7 bit 6/7 = I/O port A/B direction (1 = output). Port A (reg 14) carries the floppy drive-select (bits 1-2) and side (bit 0) lines; with bit 6 = 0 no drive is ever selected. Hatari 2.6.1 does not model this.
+- **Never lose reg 7 bits 6/7.** If a patch skips or replaces the game's YM tick or sound init, find what the original wrote to reg 7 (usually `$f8`/`$dc`.. = bits 6+7 set every tick) and keep doing it: write reg 7 as an ABSOLUTE value with bits 6+7 set (`$ff`, or `$c0 | mask`), never rely on a read-back or on TOS's power-on value. The game's own sound init may write 0 there; a skipped YM tick then leaves port A an input for good.
+- **Redirecting the YM operands to a scratch long, or a "silence" routine, is also a replacement:** a silence routine writes reg 7 absolutely, not `read | $3f`.
+- **Never break the floppy driver's reg 14 accesses:** its select/RMW/write has no lock. Any other select or write of the PSG between the driver's select and its data write (an interrupt-side `move.b` pair) sends the data to the wrong register. Make every select+write pair a patch adds ONE `movep.w`, or run it with interrupts masked (`sr` `$2700`), and keep ISR code off reg 14/15.
+- **Falcon:** no `$ff8804/06` mirror writes (`movep.l` to the YM bus-errors when `$ff8007` bit 5 is set); two `movep.w` to `$ff8800/02` do the same job (`fal_ym`, `pop_fal_ym`, `pop2_fal_ym`) and leave reg 7/14 alone.
+- **No emulator gate shows a direction fault:** the strict Hatari (`tools/hatari-strict/`) and `tools/psgcheck.py` are the gates; a real floppy test by the user is the last word on any sound-tick patch.
+
+## Release checklist (before any zip goes to the user)
+- **Real-hardware-only risks:** list, per patch, what Hatari does NOT model for the hardware it touches (YM port direction, FDC/drive mechanics, DMA/blitter bus timing, 68000 prefetch/cache, Falcon bus decoding) and how each was covered (strict build, trace check, static proof, or "untested: ask the user"). Put the list in the release notes; an uncovered risk is stated plainly.
+- The PSG gate above (when any sound/PSG patch is in), the version string in every place, floppy AND HD builds present, Amiga bank present.
 
 ## Traps from MW2
 - **A zero-patch build is not pristine.** It still contains your staging code. The 4 MB hang was misattributed because of this.

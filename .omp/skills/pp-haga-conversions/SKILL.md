@@ -59,6 +59,7 @@ Layout: `RUNME.TOS`, `HAGA`, `FILES/<disk images>`, an intro picture (`*.HST` ST
 - RUNME, PP's patcher and HAGA never run on floppy. The game uses its original FDC driver, with no fade and no PP RAM patches.
 - MW2's floppy injection: the payload goes in a new file on disk A (free track-sides). A 32-byte stage 1 sits in dead stub code and calls the stub's own loader.
 - Watch for the game's disk-copy buffers covering the payload. MW2 halved one: `floppy_copybuf`.
+- **Only the floppy build reaches PSG port A** (the game's FDC driver selects the drive with reg 14); the HD build never does, so a sound-tick patch that loses PSG reg 7 bits 6/7 shows up only on a real floppy STE/Mega STE (MW2 v1.5/v1.6: "music plays, no disk activity"). Gate every floppy build with the PSG check (st-game-speedup "Sound hooks", st-hatari-harness "PSG gate").
 
 ## PP's builds aren't always fully fixed
 - Populous: the copy-protection trap is still armed (`$edec-$ee16` compares the long at `$24` with `$54ac0842`): Armageddon is forced once 19 peep slots are used. Only long play reveals it.

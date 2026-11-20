@@ -1,0 +1,147 @@
+--- a/src/psg.c
++++ b/src/psg.c
+@@ -200,7 +200,37 @@
+ 
+ static unsigned int LastStrobe=0; /* Falling edge of Strobe used for printer */
+ 
++/*
++ * gamebench "strict" patch: model the YM2149 I/O port direction (register 7 bit 6 = port A, bit 7 = port B; 1 = output).
++ * Stock Hatari keeps PSGRegisters[14] (floppy drive-select bits 1-2, side bit 0) whatever register 7 says. On a real
++ * ST/STE an input port A does not drive the pins, so the drive-select/side lines float high (all deselected) and
++ * a reg 14 write has no effect on the floppy. HATARI_PSG_LENIENT=1 in the environment restores stock behaviour.
++ */
++static int PSG_StrictPortDir = -1;
++static unsigned int PSG_StrictWarned;
+ 
++uint8_t PSG_GetPortAPins(void)
++{
++	if ( PSG_StrictPortDir < 0 )
++	{
++		const char *e = getenv ( "HATARI_PSG_LENIENT" );
++		PSG_StrictPortDir = ( e && *e && *e != '0' ) ? 0 : 1;
++	}
++	if ( PSG_StrictPortDir && ( PSGRegisters[PSG_REG_MIXER_CONTROL] & 0x40 ) == 0 )
++		return 0xff;				/* port A is an input: pins float high, no drive selected, side 0 */
++	return PSGRegisters[PSG_REG_IO_PORTA];
++}
++
++static void PSG_PortAPinsChanged ( uint8_t pins_old )
++{
++	uint8_t pins_new = PSG_GetPortAPins();
++
++	Statusbar_SetFloppyLed ( DRIVE_LED_A , ( pins_new & (1<<1) ) == 0 ? LED_STATE_ON : LED_STATE_OFF );
++	Statusbar_SetFloppyLed ( DRIVE_LED_B , ( pins_new & (1<<2) ) == 0 ? LED_STATE_ON : LED_STATE_OFF );
++	FDC_SetDriveSide ( pins_old & 7 , pins_new & 7 );
++}
++
++
+ /*-----------------------------------------------------------------------*/
+ /**
+  * Reset variables used in PSG
+@@ -313,6 +343,10 @@
+ 	}
+ 
+ 	/* Read data last selected by register */
++	/* Port A configured as input: the CPU reads the pins, not the output latch */
++	if ( PSGRegisterSelect == PSG_REG_IO_PORTA )
++		return PSG_GetPortAPins();
++
+ 	return PSGRegisterReadData;
+ }
+ 
+@@ -323,7 +357,7 @@
+  */
+ void PSG_Set_DataRegister(uint8_t val)
+ {
+-	uint8_t	val_old;
++	uint8_t	pins_old;
+ 
+ 	if (LOG_TRACE_LEVEL(TRACE_PSG_WRITE))
+ 	{
+@@ -345,8 +379,11 @@
+ 	/* the non masked value. */
+ 	PSGRegisterReadData = val;			/* store non masked value for PSG_Get_DataRegister */
+ 
+-	/* Read previous content */
+-	val_old = PSGRegisters[PSGRegisterSelect];
++	pins_old = PSG_GetPortAPins();
++	if ( PSGRegisterSelect == PSG_REG_IO_PORTA && PSG_StrictPortDir && ( PSGRegisters[PSG_REG_MIXER_CONTROL] & 0x40 ) == 0
++	  && PSG_StrictWarned++ < 20 )
++		Log_Printf ( LOG_WARN , "PSG strict: reg 14 := $%02x written while reg 7 = $%02x (port A input), pins stay high, no effect on the floppy pc=%x\n" ,
++		             val , PSGRegisters[PSG_REG_MIXER_CONTROL] , M68000_GetPC() );
+ 
+ 	/* Copy value to PSGRegisters[] */
+ 	PSGRegisters[PSGRegisterSelect] = val;
+@@ -396,29 +433,9 @@
+ 		}
+ 		LastStrobe = PSGRegisters[PSG_REG_IO_PORTA]&(1<<5);
+ 
+-		/* Bit 0-2 : side and drive select */
+-		if ( (PSGRegisters[PSG_REG_IO_PORTA]&(1<<1)) == 0 )
+-		{
+-			/* floppy drive A is ON */
+-			Statusbar_SetFloppyLed(DRIVE_LED_A, LED_STATE_ON);
+-		}
+-		else
+-		{
+-			Statusbar_SetFloppyLed(DRIVE_LED_A, LED_STATE_OFF);
+-		}
+-		if ( (PSGRegisters[PSG_REG_IO_PORTA]&(1<<2)) == 0 )
+-		{
+-			/* floppy drive B is ON */
+-			Statusbar_SetFloppyLed(DRIVE_LED_B, LED_STATE_ON);
+-		}
+-		else
+-		{
+-			Statusbar_SetFloppyLed(DRIVE_LED_B, LED_STATE_OFF);
+-		}
++		/* Bit 0-2 : side and drive select, as seen on the pins (reg 7 bit 6 = output) */
++		PSG_PortAPinsChanged ( pins_old );
+ 
+-		/* Report a possible drive/side change */
+-		FDC_SetDriveSide ( val_old & 7 , PSGRegisters[PSG_REG_IO_PORTA] & 7 );
+-
+ 		/* Handle MegaSTE / TT specific bit 7 in PORTA of the PSG */
+ 		if (Config_IsMachineMegaSTE() || Config_IsMachineTT())
+ 		{
+@@ -461,6 +478,10 @@
+ 		}
+ 
+ 	}
++
++	/* A direction change of port A moves the drive-select/side pins too */
++	if ( PSGRegisterSelect == PSG_REG_MIXER_CONTROL )
++		PSG_PortAPinsChanged ( pins_old );
+ }
+ 
+ 
+--- a/src/fdc.c
++++ b/src/fdc.c
+@@ -1551,7 +1551,7 @@
+ 	Mode = FDC.EmulationMode;				/* Default to previous mode if no drive is selected */
+ 
+ 	/* Check drive 1 first */
+-	if ( ( PSGRegisters[PSG_REG_IO_PORTA] & 0x04 ) == 0 )
++	if ( ( PSG_GetPortAPins() & 0x04 ) == 0 )
+ 	{
+ 		if ( EmulationDrives[ 1 ].ImageType == FLOPPY_IMAGE_TYPE_IPF )
+ 			Mode = FDC_EMULATION_MODE_IPF;
+@@ -1563,7 +1563,7 @@
+ 	}
+ 
+ 	/* If both drive 0 and drive 1 are enabled, we keep only drive 0 to choose emulation's mode */
+-	if ( ( PSGRegisters[PSG_REG_IO_PORTA] & 0x02 ) == 0 )
++	if ( ( PSG_GetPortAPins() & 0x02 ) == 0 )
+ 	{
+ 		if ( EmulationDrives[ 0 ].ImageType == FLOPPY_IMAGE_TYPE_IPF )
+ 			Mode = FDC_EMULATION_MODE_IPF;
+--- a/src/includes/psg.h
++++ b/src/includes/psg.h
+@@ -32,6 +32,7 @@
+ #define NUM_PSG_SOUND_REGISTERS    14		/* Number of sound related registers, not including IO ports */
+ 
+ extern uint8_t PSGRegisters[MAX_PSG_REGISTERS];
++extern uint8_t PSG_GetPortAPins(void);	/* port A pins as the floppy sees them (gamebench strict port-direction model) */
+ 
+ extern void PSG_Reset(void);
+ extern void PSG_MemorySnapShot_Capture(bool bSave);
