@@ -101,3 +101,34 @@ Consequence for a floppy [INFERENCE, not run]: START.TOS probably needs no code 
 - Gate (cf52f4f, reports `work/looks/gate12/HD_REPORT.md`, `FLOPPY_REPORT.md`; raw PASS/FAIL counts). HD, STE / Mega STE / ST: e200 38/0 x3; e201 17/0 x3; e203 30/0 x3; e204 22/0 x3; e205 STE 2 PASS+2 FAIL, ST same, Mega 8/0 (script timing; fixed script 8/0 on STE and ST); e206 7/0 x3 (STE after boot-probe filter fix; first run 6/1); e208 46/0 x3; e150 32/0 x3; e170 12/0 x3; e180 odd2+looks 176/0 x3, all12 --quick 25/0 x3, odd2+stress --quick 65/0 x3; looks15 15/0 x3 (negative controls: swapped reference FAILS 15, v1.1.1 build FAILS 27); e202 Mega 17/0; e98 `74 of 74 not explained: []`; junk RAM 12/12 + 4/4 (STE, Mega); input stall STE all alive; lift 1 of 92 at 3 VBL; shot 59/1 HIT/MISS. e190 retired (obsolete UI).
 - Floppy (STE 8/16 MHz, Mega STE 8/16 MHz): fl_ui 29/0 x4; rt.py 26/0 x4; fge 35/1 (MFP check, identical on the v1.1.1 floppy) on STE and Mega; fge2 21/0; f161 48/0 STE, 25/0 Mega (skipfuzz; run with the old Down count, fixed afterwards to select by name); fl_look 75/0 STE, 30/0 Mega; fo180 358/0 x2. Game disk md5 `7a3b6341c59a3d53ae7506596347e35f`. HD NEPATCH.BIN `f471dd18e595932c00fdb0222eb6cc77`.
 - Known gaps: real hardware and MiSTer untested; e205 needed a script timing fix (wait for the game loop before `q`); Mega STE first two input-stall sweeps showed alive false for every spec incl. the control (re-run on a fresh snapshot 6/6 alive; root cause unproven, [INFERENCE] snapshot artifact); fge MFP check identical on the v1.1.1 floppy (environmental, [INFERENCE]); ST not run for junk RAM / stall / e98; 16 MHz floppy only fl_ui + rt round trip; enemy sets 3 and 4 shown on screen on STE only; `f161_nfe.py` name-based Save fix committed after the gate and not yet run (done in the shipped-zip gate).
+
+### 11b. Shipped v1.2 zips (clean commit `d0fdd51`; README `build: git d0fdd51`, no `-dirty`)
+Each zip built twice with `nebrelease.py build --zip` / `floppy --zip` (identical md5), `nebrelease.py check` all members `same`.
+```
+dist/Nebulus_hd_v1.2.zip      290,531 B  md5 1806aee91aa55c0ee894a89876b53c85
+dist/Nebulus_floppy_v1.2.zip  218,007 B  md5 353a2485984544e7be781d45ca92c8e6
+HD NEBULUS/: NEPATCH.BIN 34118 B f471dd18e595932c00fdb0222eb6cc77  START.TOS 4ecf26d8b38049738a4b1b7448276e10  NEBLEVEL.OVL 0829f71740aab1ab98b33eae21dee122
+             NEBEXE.FIC 0dd818c552aedc5a2501a7a9a718906e  NEBULTIT.FIC e1a2b20a5a441c0b7bf99ad7d94f375d  NEBULUS.PCH 693c1810a4142fcc64448f51afa3bc88
+             GXUT270.PRG 2bf76f6677da80e725d76db4e8da0528  NEBCHEAT.TXT e0f232cd7c3be9d1a520900f2171ebe5  Nebulus_campaign_disk.st 22686d0d6cf9c26f125c0db615d3e4b8
+             README.TXT 8e5412f623949dbbf9460b19b56da7c9  PATCHES.TXT 7ceb4526f6bb7ff1381014d123467468
+floppy NEBULUS_floppy/: Nebulus_game_disk.st 419840 B 7a3b6341c59a3d53ae7506596347e35f  Nebulus_campaign_disk.st a45b2711500796b393be931c2adf1d99
+             README.TXT aadfcdade7d5ef6aa4ad494841fe9f26  PATCHES.TXT 3d115e9867464e7d513c6405f16a133e
+```
+NEPATCH.BIN and the floppy game disk md5 equal the ones the gate12 reports tested. `nepatch.py verify`: `33 verified sites, 3 clear ranges (332 B), 11 blocks; ZONE_STRICT=False`.
+Gate on the UNZIPPED shipped artifacts (fresh snapshots made from them, `SNAP_EXPECT=0203131402020202` = conveyor tile table; v1.1.1 snapshot made from `dist/Nebulus_hd_v1.1.1.zip`: signature ABSENT, e180 with the guard died with `AssertionError: stale snapshot ... 0203131402020202 not found`; the v1.2 snapshots on all three machines contain it). Raw logs `work/gate_NebRelease12/shipped/`. PASS/FAIL = raw `PASS`/`FAIL` line counts; every log ends `FAILS []`:
+| gate | STE TOS1.62 | Mega STE TOS2.06 | ST TOS1.04 |
+|---|---|---|---|
+| e170 cold boot (marker NEPO, count word 33, hooks) | 12/0 | 12/0 | 12/0 |
+| e200 pickers/crumble/round trip | 38/0 | 38/0 | 38/0 |
+| e203 door pairs | 30/0 | 30/0 | 30/0 |
+| e205 crumble probe (committed, with the wait) | 8/0 | 8/0 | 8/0 |
+| e206 crumble+exit (committed, with the boot-probe filter) | 7/0 | 7/0 | 7/0 |
+| e208 conveyors in play | 46/0 | 46/0 | 46/0 |
+| e180 odd2 --quick | 23/0 | 23/0 | 23/0 |
+| looks15 (15 cells vs base8 run of the same shipped build) | 15 equal, FAILS 0 | 15, FAILS 0 | 15, FAILS 0 |
+| floppy (cold boot, real FDC) | STE 8 MHz / +16 MHz | Mega STE 8 MHz / +16 MHz | |
+| fl_ui | 29/0 / 29/0 | 29/0 / 29/0 | |
+| rt.py round trip | 26/0 / 26/0 | 26/0 / 26/0 | |
+| f161_nfe (committed name-based Save fix; STE with the 22 fuzz disks, Mega skipfuzz) | 48/0 | 25/0 | |
+| fge2 | 21/0 | 21/0 | |
+Notes: the first e200 runs were launched before the base8 reference dump existed (script exception `FileNotFoundError .../base8_*/lvl5.bin`, kept as `e200_first_noref.log`); re-run after base8 on all three: 38/0. The first floppy chain failed at start (scratch path: missing `alt/floppy` dir and campaign-disk path) and was rerun; the failed outputs were not counted. Scripts run were the committed ones with path rewrites only (`work/gate_NebRelease12/shipped/scripts`). Not run here: fge (MFP check), fl_look, fo180, junk/stall/e98 (gate12 covered the same game files), real hardware.

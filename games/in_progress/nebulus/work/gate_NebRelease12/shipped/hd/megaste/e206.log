@@ -1,0 +1,19 @@
+PASS title: True
+trainer E (enemies off: no time-waster flyer) poked at $76c04
+PASS campaign level 1 running (rsPos 0), grid = PATHOK: $91 at (2,1),(3,1), door $c3 at (10,2..4): (0, 145, 145, 195, 195)
+level 1 start frog (x,y,state) = (4, 8, 0)
+at the door: frog (87, 8, 0)
+6 s after Up: rsPos 1 (level completed); frog (84, 0, 9)
+frog samples (x,y,state): [(4, 8, 0), (4, 8, 0), (126, 8, 0), (120, 8, 0), (114, 8, 0), (107, 8, 0), (100, 8, 0), (98, 8, 0), (95, 8, 0), (93, 8, 0), (91, 8, 0), (89, 8, 0), (87, 8, 0)]
+PASS level 1 COMPLETED by walking left to the exit door without touching a crumble (rsPos 0 -> 1): True
+PASS no crumble cell was cleared on the way: False
+PASS campaign level 2 running (rsPos 1), grid = FALL: (1, 145, 145, 0, 195)
+level 2 start frog = (4, 8, 0)
+t=0.0s: crumble cleared [0, 145], frog (6, 8, 0)
+  t=0.3s frog (21, 0, 8) cells [145, 145]
+  t=0.6s frog (4, 8, 10) cells [145, 145]
+  t=0.9s frog (21, 0, 8) cells [0, 145]
+PASS walking right onto the crumble: the cell is cleared and the frog falls (no way to the door): True
+4 s later: frog (21, 0, 8), crumble cells [0, 145], rs (1, 1, 2, 0)
+PASS no Address/Bus Error/exception (boot-time I/O-space probe warnings of TOS/HDDRIVER, address $ffxxxxxx, are not game errors): []
+FAILS []

@@ -1,0 +1,31 @@
+PASS F10 opens the manager: True
+PASS new level: tower 0, mission 1, flags 0: (0, 1, 0)
+PASS map view palette == theme of colour set 1 (the editor recolours itself): b'\x02\x00\x04\x00\x07`\x070\x06\x00\x07 \x07r\x07\x00\x07\x10\x07 \x070\x07@\x07P\x07`\x07p\x07r'
+PASS root menu has Crumble ledge, the two Conveyor items and Level >, no Tower >: (True, True, True, True, False)
+PASS Level > items: ['Colours >', 'Enemies >', 'Copy tower >', 'Blank grid', 'Time +50', 'Time -50', 'Name...', '< back']
+PASS Colours list = the 8 tower names numbered + back; cursor on the current (1): (['1 The Tower Of Eyes', '2 Realm Of The Robots', '3 Trap Of Tricks', '4 The Slippery Slide', '5 The Broken Path', "6 Swimmer's Delight", '7 The Nasty One', '8 The Edge Of Doom', '< back'], 0)
+PASS moving the cursor re-themes the screen: EPAL == theme(k) at every one of the 8 highlights: True
+PASS back: map again, theme restored to the current choice, nothing changed: (True, 0, 0)
+PASS pick colours 5: tower byte 4, flags colour nibble 0, enemies unchanged: (4, 0)
+PASS after the pick the map shows colour set 5 (EPAL == theme(4)): b"\x00\x02\x00\x04\x00g\x007\x00\x06\x00'\x02w\x00\x07\x00\x17\x00'\x007\x00G\x00W\x00g\x00w\x02w"
+PASS Enemies list: 4 designs + back, cursor on the effective one (tower 5 -> design 1): (['1 Eyelid', '2 Studded', '3 Four orbs', '4 Split plate', '< back'], 0)
+PASS pick enemies 3: flags low nibble 3, tower byte kept: (3, 4)
+PASS colours list opens on the current scheme 5: 4
+PASS enemies list opens on the current design 3: 2
+PASS Copy tower list: 16 towers (mission 1 then 2) + back; cursor = (mission-1)*8+tower: (17, 4, '1 The Tower Of Eyes', '1 A Blink Of The Eye', '8 The Last Trump')
+PASS copy list preview = theme of tower 5: b"\x00\x02\x00\x04\x00g\x007\x00\x06\x00'\x02w\x00\x07\x00\x17\x00'\x007\x00G\x00W\x00g\x00w\x02w"
+PASS Copy tower M2 T5: mission 2, tower 4, flags cleared, rows: (2, 4, 0)
+PASS grid == the original mission 2 tower 5 decode, rows equal: ([0, 129, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 129, 133, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 129, 133, 0, 0, 0, 8, 0, 0, 0, 129, 131, 131, 131, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 129, 131, 131, 131, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 129, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 129, 133, 0, 130, 8, 0, 0, 0, 0, 0, 0, 0, 0, 129, 133, 0, 0, 0, 0, 130, 0, 0, 0, 130, 0, 0, 0, 0, 130, 0, 0, 0, 130, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 129, 133, 0, 0, 0, 12, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 129, 0, 0, 0, 0, 0, 0, 0, 129, 0, 0, 0, 0, 129, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 129, 0, 0, 0, 0, 0, 0, 0, 129, 0, 0, 0, 0, 129, 0, 0, 0, 0, 0, 0, 0, 64, 0, 129, 0, 0, 0, 0, 64, 0, 0, 0, 129, 0, 0, 0, 0, 0, 0, 0, 129, 131, 131, 131, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 129, 133, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 129, 0, 0, 0, 0, 0, 129, 0, 0, 0, 0, 0, 0, 0, 129, 0, 0, 0, 0, 0, 0, 0, 0, 0, 129, 131, 131, 131, 0, 0, 129, 0, 0, 0, 0, 0, 0, 0, 129, 131, 131, 131, 0, 129, 128, 128, 129, 0, 0, 0, 0, 129, 128, 128, 128, 129, 0, 0, 0, 0, 0, 0, 0, 0, 64, 0, 129, 0, 0, 0, 0, 0, 0, 64, 0, 129, 0, 0, 0, 0, 129, 133, 0, 0, 0, 130, 0, 0, 8, 195, 195, 195, 0, 0, 129, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 129, 0, 0, 0, 0, 0, 129, 0, 0, 0, 0, 0, 0, 0, 129, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 64, 0, 129, 0, 0, 0, 0, 0, 0, 0, 0, 0, 129, 0, 0, 0, 0, 0, 0, 0, 0, 129, 131, 131, 131, 0, 0, 0, 0, 0, 0, 129, 0, 0, 0, 0, 0, 0, 64, 0, 129, 0, 0, 0, 0, 0, 0, 0, 0, 0, 129, 0, 0, 0, 0, 129, 0, 0, 0, 0, 131, 131, 131, 0, 0, 0, 0, 0, 129, 133, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 129, 0, 0, 0, 0, 0, 0, 0, 129, 130, 130, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 129, 133, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 129, 0, 0, 0, 0, 129, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 129, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 129, 0, 0, 0, 129, 0, 0, 0, 0, 129, 131, 131, 131, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 129, 0, 0, 0, 129, 133, 8, 131, 131, 131, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 129, 131, 131, 131, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 129, 48, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 56)
+PASS Crumble ledge menu item writes $91 at the cursor (0,1): 145
+PASS flags = enemies 2 only ($02), tower 5: (2, 5)
+PASS playtest running: True
+Traceback (most recent call last):
+  File "/tmp/nr12/nb/work/editor/e200.py", line 107, in run
+    chk('playtest palette == stock tower 6', grab(h, 0x351ac, 32, 'p'), rdref(5, 0x351ac, 32))
+                                                                        ^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/nr12/nb/work/editor/e200.py", line 26, in rdref
+    def rdref(t, a, n): return open(f'{REFDIR}/lvl{t}.bin', 'rb').read()[a:a + n]
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/nr12/x/r/base8_megaste/lvl5.bin'
+FAIL exception in the script: "FileNotFoundError(2, 'No such file or directory')"  (expected 'none')
+FAILS ['exception in the script']

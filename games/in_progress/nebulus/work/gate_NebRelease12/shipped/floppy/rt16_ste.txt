@@ -1,0 +1,47 @@
+cpuclock 16 set after the title
+floppy title True
+manager items: ['Original game', 'Campaigns >', 'Levels >', 'Load from campaign disk', 'Save to campaign disk']
+levels list: ['<new level>', '< back']
+PASS editor: new level starts with flags 0: 0
+new level: row1 = [129, 129, 129, 129, 129, 129, 129, 129, 129, 129, 129, 129, 129, 129, 129, 129], rows 21
+cell menu: [(0, 0, 'Empty  C'), (0, 129, 'Ledge  L'), (0, 145, 'Crumble ledge'), (0, 161, 'Conveyor left  N'), (0, 177, 'Conveyor right  M'), (0, 128, 'Pillar  P'), (0, 130, 'Blue block (shoot) B'), (2, 3, 'Lift >'), (1, 131, 'Door opening  D'), (1, 195, 'Exit door  X'), (2, 1, 'Enemy >'), (2, 2, 'Level >'), (4, 16, 'Playtest'), (4, 6, 'Save to campaign disk'), (4, 8, 'Leave editor')]
+Enemy > : [(3, 16, 'Stone ball  S'), (3, 32, 'Red ball  R'), (3, 48, 'Red ball waits  W'), (3, 64, 'Eye up/down slow  U'), (3, 80, 'Eye up/down fast  I'), (3, 96, 'Eye left/right  J'), (3, 112, 'Eye l/r fast  K'), (4, 7, '< back')]
+Lift > : [(12, 0, 'Lift: from here  A'), (12, 1, 'Lift: stop here  Z'), (12, 2, 'Lift: delete'), (4, 7, '< back')]
+Level > : [(4, 9, 'Colours >'), (4, 10, 'Enemies >'), (4, 11, 'Copy tower >'), (4, 12, 'Blank grid'), (4, 13, 'Time +50'), (4, 14, 'Time -50'), (4, 15, 'Name...'), (4, 7, '< back')]
+Colours > : ['1 The Tower Of Eyes', '2 Realm Of The Robots', '3 Trap Of Tricks', '4 The Slippery Slide', '5 The Broken Path', "6 Swimmer's Delight", '7 The Nasty One', '8 The Edge Of Doom', '< back']
+Enemies > : ['1 Eyelid', '2 Studded', '3 Four orbs', '4 Split plate', '< back']
+Copy tower > : ['1 The Tower Of Eyes', '2 Realm Of The Robots', '3 Trap Of Tricks', '4 The Slippery Slide', '5 The Broken Path', "6 Swimmer's Delight", '7 The Nasty One', '8 The Edge Of Doom', '1 A Blink Of The Eye', "2 Robot's Heaven", '3 A Trick of Traps', "4 No Man's Land", '5 Oh, ******* !!', '6 A Riddle of Reason', '7 A Maze of Mistakes', '8 The Last Trump', '< back']
+after backing out of the lists: map view = True
+after Copy tower 1: flags 0, tower word 0
+PASS Copy tower picks a shipped grid (differs from the blank ring): True
+PASS Blank grid restores the blank ring (row 1 ledge ring): [129, 129, 129, 129, 129, 129, 129, 129, 129, 129, 129, 129, 129, 129, 129, 129]
+PASS row 1: $b1 at 1-5 (key M), $91 at 7-8 (menu + Return), $a1 at 10-14 (key N): [129, 177, 177, 177, 177, 177, 129, 145, 145, 129, 161, 161, 161, 161, 161, 129]
+PASS Door opening D at col 3 rows 12-14 also places the partner at col 11: ([131, 131, 131], [131, 131, 131])
+status line after D: 'Door + opposite'
+PASS menu Door opening at col 5 rows 20-22 -> partner col 13: ([131, 131, 131], [131, 131, 131])
+PASS Exit door X at col 2 rows 30-32, NO partner at col 10: ([195, 195, 195], [0, 0, 0])
+status line after X: 'Exit (finish)'
+PASS menu Conveyor left at (5,6) = $a1, Conveyor right at (6,6) = $b1: ([161], [177])
+PASS Colours pick 3 -> tower byte 2, flags colour nibble 0: (2, 0)
+PASS Enemies pick 2 -> flags low nibble 2: 2
+PASS store validates after Leave editor: []
+PASS stored record: 1 level, flags 2, tower 2, grid == editor grid: (1, 2, 2, True)
+PASS Save to campaign disk: 'Saved'
+PASS saved image usable: True
+PASS saved file == RAM store: True
+PASS Load from campaign disk: 'Loaded 1 levels / 0 campaigns'
+PASS reloaded store == saved file: True
+PASS Edit after reload: grid == original editor grid, flags 2, tower 2: (True, 2, 2)
+PASS Play of the reloaded level: running: True
+PASS play grid row 1 (RAM): [129, 177, 177, 177, 177, 177, 129, 145, 145, 129, 161, 161, 161, 161, 161, 129]
+PASS start: frog x 4 standing still without input: (4, [])
+   conveyor right: changes without input 26, every +1: True, x 22 -> 48, final {'x': 48, 'y': 8, 'st': 0}
+PASS $b1: carried right with no input, each change +1, to x 48, then stands: (True, True, 48, (48, 0))
+   conveyor left: changes without input 29, every -1: True, x 108 -> 79, final {'x': 79, 'y': 8, 'st': 0}
+PASS $a1: carried left with no input, each change -1, to x 79, then stands: (True, True, 79, (79, 0))
+PASS conveyor cells not consumed: [129, 177, 177, 177, 177, 177, 129, 145, 145, 129, 161, 161, 161, 161, 161, 129]
+   crumble: walking Left from column 9: (1, [145, 0], {'x': 67, 'y': 0, 'st': 8})
+PASS crumble: the $91 cell (8,1) under the frog is cleared: True
+frog after crumble: {'x': 67, 'y': 0, 'st': 8}
+PASS no crash lines in the Hatari log: []
+FAILS []

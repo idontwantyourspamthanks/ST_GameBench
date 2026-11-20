@@ -1,0 +1,7 @@
+boot ok True
+v111 ste 0203131402020202 ABSENT
+v111 ste 303900077cbe ABSENT
+v111 ste 436f6e7665796f72206c656674 ABSENT
+    assert bytes.fromhex(os.environ['SNAP_EXPECT']) in __import__('gzip').open(SNAP).read(), f'stale snapshot {SNAP}: {os.environ["SNAP_EXPECT"]} not found'
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: stale snapshot /tmp/nr12/x/snap/v111_ste.sav: 0203131402020202 not found
