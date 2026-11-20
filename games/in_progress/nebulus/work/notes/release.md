@@ -132,3 +132,6 @@ Gate on the UNZIPPED shipped artifacts (fresh snapshots made from them, `SNAP_EX
 | f161_nfe (committed name-based Save fix; STE with the 22 fuzz disks, Mega skipfuzz) | 48/0 | 25/0 | |
 | fge2 | 21/0 | 21/0 | |
 Notes: the first e200 runs were launched before the base8 reference dump existed (script exception `FileNotFoundError .../base8_*/lvl5.bin`, kept as `e200_first_noref.log`); re-run after base8 on all three: 38/0. The first floppy chain failed at start (scratch path: missing `alt/floppy` dir and campaign-disk path) and was rerun; the failed outputs were not counted. Scripts run were the committed ones with path rewrites only (`work/gate_NebRelease12/shipped/scripts`). Not run here: fge (MFP check), fl_look, fo180, junk/stall/e98 (gate12 covered the same game files), real hardware.
+
+### 11c. User test (2026-11-20)
+The user tested the v1.2 release on his MiSTer (the checklist the lead sent: `Level >` pick lists with live colours, doors placing the opposite door, crumble ledge, conveyors N/M, playtest): "Nebulus testing all passed". Which zip (HD or floppy) and which MiSTer machine model were not stated.
