@@ -4,7 +4,7 @@
 
 This repository holds the tools, the patches and the full working notes. It does **not** contain any game, any TOS ROM, or anything extracted from them. You need your own copies (see [Getting the game files](#getting-the-game-files)).
 
-Done: **Midwinter**, **Hunter** and **Powermonger**. In final testing: **Midwinter 2: Flames of Freedom**. Upcoming games are listed in [`games/queue/README.md`](games/queue/README.md).
+Done: **Midwinter**, **Midwinter 2: Flames of Freedom** (v1.6), **Hunter** and **Powermonger**. Upcoming games are listed in [`games/queue/README.md`](games/queue/README.md).
 
 ## What the patches do
 
