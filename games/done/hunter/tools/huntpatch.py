@@ -982,11 +982,20 @@ def cmd_boot(game: Path, machine: str, tos: str, mem: int, shots: Path | None, p
 FL_SCRATCH = 0xB8200                     # 512-byte boot sector buffer of the loader stage (free RAM above the payload area)
 FL_SND_SERIAL = 0x485344                 # 24-bit volume serial of the sound disk ('HSD'): how the loader recognises it
 FL_SND_SPT = 9                           # sound disk: 720 KB (80 tracks x 2 sides x 9 sectors), 2 sectors per cluster
-FL_ST_ENV = dict(os.environ, MTOOLS_SKIP_CHECK="1")
+FL_ST_ENV = dict(os.environ, MTOOLS_SKIP_CHECK="1", SOURCE_DATE_EPOCH="1767225600")   # mkfs.fat stamps the label entry with it (reproducible disks)
+
+
+FL_ST_EPOCH = 1767225600                   # 2026-01-01: the directory time stamp of every file copied onto a disk (reproducible zips)
 
 
 def mtools(*args: str, data: bytes | None = None) -> bytes:
-    r = subprocess.run(list(args), capture_output=True, env=FL_ST_ENV, input=data)
+    args = list(args)
+    if args[0] == "mcopy":                  # keep the source time (mcopy -m) and pin it: no build time in the image
+        for i, a in enumerate(args[1:], 1):
+            if os.path.isfile(a) and args[i - 1] != "-i":      # the sources, not the disk image
+                os.utime(a, (FL_ST_EPOCH, FL_ST_EPOCH))
+        args.insert(1, "-m")
+    r = subprocess.run(args, capture_output=True, env=FL_ST_ENV, input=data)
     if r.returncode != 0:
         raise SystemExit(f"{' '.join(args)} failed: {r.stderr.decode(errors='replace')}")
     return r.stdout
@@ -1096,7 +1105,7 @@ def build_sound_disk(bank: bytes, path: Path, readme: bytes) -> dict:
     path.unlink(missing_ok=True)
     subprocess.run(["mkfs.fat", "-A", "-C", "-F", "12", "-s", "2", "-r", "112", "-R", "1", "-f", "2", "-S", "512",
                     "-i", f"{int.from_bytes(FL_SND_SERIAL.to_bytes(3, 'big'), 'little'):06x}",   # Atari variant: the 3 serial bytes at $08 are little-endian
-                    "-n", "HUNTSOUND", str(path), "720"], check=True, capture_output=True)
+                    "-n", "HUNTSOUND", str(path), "720"], check=True, capture_output=True, env=FL_ST_ENV)
     with tempfile.TemporaryDirectory() as td:
         (Path(td) / "HNSOUND.BIN").write_bytes(bank)
         (Path(td) / "README.TXT").write_bytes(readme)
@@ -1135,7 +1144,7 @@ def build_disk1(path: Path, tos: bytes, extra: dict[str, bytes], tracks: int, sp
         path.unlink(missing_ok=True)
         kb = tracks * spt * 2 // 2
         subprocess.run(["mkfs.fat", "-A", "-C", "-F", "12", "-s", "2", "-r", "112", "-R", "1", "-f", "2", "-S", "512", "-M", "0xF9",
-                        "-g", f"2/{spt}", "-n", "HUNTER", str(path), str(kb)], check=True, capture_output=True)
+                        "-g", f"2/{spt}", "-n", "HUNTER", str(path), str(kb)], check=True, capture_output=True, env=FL_ST_ENV)
         with open(path, "r+b") as f:
             f.seek(8)
             f.write(old[8:11])                           # keep the original volume serial
