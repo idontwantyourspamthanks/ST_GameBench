@@ -1,0 +1,23 @@
+cell ste2m ste 2048 
+title + hook applied, VBL 1952
+F10 -> prompt; screenshot /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/campfloppy/logs/e5_ste2m_ask.png
+[0] game disk 2 in A (wrong disk): drive A key A: status d7 = 00000003  camp_read time 0.30 s  (VBL [2542, 2557])
+  screenshot /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/campfloppy/logs/e5_ste2m_0.png
+[1] blank DOS disk in A (no file): drive A key A: status d7 = 00000004  camp_read time 0.44 s  (VBL [2918, 2940])
+  screenshot /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/campfloppy/logs/e5_ste2m_1.png
+[2] random bytes in A: drive A key A: status d7 = 00000003  camp_read time 0.26 s  (VBL [3309, 3322])
+  screenshot /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/campfloppy/logs/e5_ste2m_2.png
+[3] truncated campaign disk (200 KB): drive A key A: status d7 = 00000002  camp_read time 0.82 s  (VBL [3684, 3725])
+  screenshot /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/campfloppy/logs/e5_ste2m_3.png
+  eject log: ["- '--disk-b'"]
+[4] no disk in drive B (empty drive): drive B key B: status d7 = 00000001  camp_read time 1.90 s  (VBL [4040, 4135])
+  screenshot /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/campfloppy/logs/e5_ste2m_4.png
+  eject log: ["- '--disk-a'", 'INFO : Floppy A: has been removed from drive.']
+[5] no disk in drive A (ejected): drive A key A: status d7 = 00000001  camp_read time 1.90 s  (VBL [4440, 4535])
+  screenshot /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/campfloppy/logs/e5_ste2m_5.png
+  mid-read: keypress sent; $60ff = 39
+[6] campaign disk in A, mid-read key: drive A key A: status d7 = 00000000  camp_read time 4.64 s  (VBL [4911, 5143])
+  game VBL handler $d11e executed 0 times during the whole step (VBL 4911..5143 = 232 frames)
+  screenshot /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/campfloppy/logs/e5_ste2m_6.png
+final VBL 5398 v_status 0000 v_count 000f v_act 01
+RESULT done

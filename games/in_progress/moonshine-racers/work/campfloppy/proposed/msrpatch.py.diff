@@ -1,0 +1,31 @@
+--- ../../tools/msrpatch.py	2026-11-20 12:14:58.251763683 +0000
++++ tools/msrpatch.py (proposed)	2026-11-20 13:01:54.630694452 +0000
+@@ -480,16 +480,14 @@
+     """-> (image bytes at IB, sites).  `table` = where the site table goes (the core is assembled with the same equ);
+     `min_end` = the lowest image end (the HD layout pads to $B8000 so that blob area B is inside the image).
+     HD layout of the table: [sites that always apply][addr 0][`; gate: ram2mb` sites][addr 0][orig/new byte pool]; the trampoline applies the second list
+-    only on an STE / Mega STE with >= 2 MB (core.s).  The floppy table is the single list (core_floppy.s): a gated patch cannot be in a floppy build."""
++    only on an STE / Mega STE with >= 2 MB (core.s).  The floppy table has the same two lists (core_floppy.s); its gate is phystop >= 2 MB only (no HAGA)."""
+     if live:
+         patches = [p for p in patches if not p.stage1 and not p.gate]      # a snapshot is long past stage 1: nothing to apply; the gate is closed at 1 MB
+-    if floppy and any(p.gate for p in patches):
+-        raise SystemExit("gated patch(es) " + ", ".join(p.name for p in patches if p.gate) + " cannot be part of a floppy build")
+     sites = site_list([p for p in patches if not p.stage1])
+     sites = [s for s in sites if not s["gate"]] + [s for s in sites if s["gate"]]
+     n = len(sites)
+     nfirst = sum(1 for s in sites if not s["gate"])
+-    tbl_len = n * 16 + 4 if floppy else (n + 2) * 16       # HD: both lists end with a zero 16-byte slot
++    tbl_len = (n + 2) * 16                                  # both lists end with a zero 16-byte slot (HD and floppy)
+     table2 = table + (nfirst + 1) * 16
+     pool = bytearray()
+     ptrs = []
+@@ -1104,7 +1102,8 @@
+              "\tadd.w\td3,d3\t\t\t; count * 512",
+              "\tadda.w\td3,a3",
+              "\tbra.s\t.n",
+-             ".done:\tlea.l\t$7f830.l,a6\t\t; the displaced first instruction of the original boot program",
++             f".done:\tmove.l\t$42e.w,${IB + 4:x}.l\t\t; phystop (TOS' $42e is wiped by the original stage 1 at VBL ~99): the gate of core_floppy.s reads it at IB+4",
++             "\tlea.l\t$7f830.l,a6\t\t; the displaced first instruction of the original boot program",
+              f"\tbra.w\t${BOOT_PROG:x}\t\t; position independent: TOS runs the boot sector at its disk buffer ($185C on TOS 1.62), not at $7800",
+              "desc:"]
+     for tr, side, sec, n in runs:

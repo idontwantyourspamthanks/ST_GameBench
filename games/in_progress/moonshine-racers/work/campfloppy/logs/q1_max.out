@@ -1,0 +1,14 @@
+cell max_A ste 2048 camp disk/max720.st key A  
+title reached + hook applied: True VBL 1952
+site $7252 + blob head: 4eb9001003c2 4efa000a
+screenshot title /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/campfloppy/logs/e2_max_A_1title.png
+F10 pressed; $60ff 00 VBL 2389
+screenshot prompt /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/campfloppy/logs/e2_max_A_2prompt_0.png
+VBL vector $70 = 0000d11e
+VBL at entry/exit: [2679, 3087] => read time 8.16 s (50 Hz VBL)
+status d7 at exit: 00000000 | (0 ok)
+vars after: v_status 0000 v_count 000f v_act 01 v_size 0001e268 v_spt 0009 v_data0 0000000e
+screenshot after read /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/campfloppy/logs/e2_max_A_3after_0.png
+read-back compare 123496 B at $110000: identical=True (md5 want c82838383d2bd0275d7317aeafc47934 got c82838383d2bd0275d7317aeafc47934)
+title running again? $7242 area: 4eb9001003c2
+RESULT done max_A

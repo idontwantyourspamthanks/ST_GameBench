@@ -1,0 +1,25 @@
+debugger).
+-> Execute debugger commands from '/tmp/msrcf_z259uv4t/w.txt' file on hit.
+-> Track value changes, show value(s) when matched.
+> e VBL
+= %1100011 (bin), #99 (dec), $63 (hex)
+  $42e = $0
+2. CPU breakpoint condition(s) matched 1 times.
+	( $42e ) . l ! ( $42e ) . l :trace :file /tmp/msrcf_z259uv4t/w.txt
+Reading debugger commands from '/tmp/msrcf_z259uv4t/w.txt'...
+Changed to input file dir '/tmp/msrcf_z259uv4t'.
+> r
+  D0 00001867   D1 00000025   D2 00000025   D3 00001400 
+  D4 00000050   D5 00200000   D6 00000008   D7 0000FFFF 
+  A0 00000430   A1 0000093A   A2 000019A9   A3 000C0100 
+  A4 00002B16   A5 00001A8E   A6 0007FA30   A7 00080000 
+USP  00000000 ISP  00080000 
+SR=2704 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=7 STP=0
+Prefetch 51c8 (DBcc) fff6 (ILLEGAL) Chip latch 00000000
+0007f89a 51c8 fff6                dbf.w d0,#$fff6 == $0007f892 (F)
+Next PC: 0007f89e
+> m $42e 4
+0000042E: 00 00 00 00                                      ....
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/campfloppy' dir.
+Debugger re-init.
+

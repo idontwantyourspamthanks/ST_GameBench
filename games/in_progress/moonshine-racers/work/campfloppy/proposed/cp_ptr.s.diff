@@ -1,0 +1,10 @@
+--- ../../patches/cp_ptr.s	2026-11-20 12:20:36.414100353 +0000
++++ priv/patches/cp_ptr.s	2026-11-20 13:01:40.249000080 +0000
+@@ -2,7 +2,6 @@
+ ; default: yes
+ ; site: $fda2
+ ; orig: 41f900058c00
+-; media: hd
+ ; gate: ram2mb
+ ; requires: cp_wrap cp_title cp_fetch cp_end cp_start cp_hiscore
+ ; doc: Campaigns, stream setup: the track block is parsed where cp_fetch put it.

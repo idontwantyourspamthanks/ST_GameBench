@@ -1,0 +1,10 @@
+--- ../../patches/cp_wrap.s	2026-11-20 12:20:36.412479377 +0000
++++ priv/patches/cp_wrap.s	2026-11-20 13:01:40.249380113 +0000
+@@ -2,7 +2,6 @@
+ ; default: yes
+ ; site: $72c4
+ ; orig: 4eb9000076f4
+-; media: hd
+ ; gate: ram2mb
+ ; requires: cp_title cp_fetch cp_ptr cp_end cp_start cp_hiscore
+ ; data: $B8E00 32

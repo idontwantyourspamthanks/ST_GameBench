@@ -1,0 +1,18 @@
+cell edit_t1 ste 2048 disk/camp5_720.st track 1
+title; marker/flag: ['000B2700: 4d 53 50 4f ff 00 00 00       ', '000B2704: ff 00 00 00                   '] VBL 2056
+F10 -> menu /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/campfloppy/logs/e9_edit_t1_1menu.png
+selected item 1 /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/campfloppy/logs/e9_edit_t1_2sel.png
+loading /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/campfloppy/logs/e9_edit_t1_3loading.png
+loaded (wall 60 s): V_ACT ff V_LOADED ff V_COUNT 0003 store head 4d53544b00010003
+track list /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/campfloppy/logs/e9_edit_t1_4list.png
+play from track 2 /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/campfloppy/logs/e9_edit_t1_5pick.png
+after Return: V_ACT ff V_START 0000 $102c 0000
+game's 'Insert Disk 2' prompt: True VBL 6251 $102c 0000
+RACE (standing start): True $102c 0000 POS 0001 $57890.len 19472 (expected 19472) $100e 70 $5ff8 0
+stream ptrs $23c0 $1bb0 $1bb4 $27da $133a $1342: ['00111066', '0011120c', '0011129e', '00111338', '00111776', '001120d6'] PTR 00111042 $58c00 0000000000000000
+curve ring $1bbc first 1024 words == decoded curve of 'edit1': True (first diff None)
+race screenshot /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/campfloppy/logs/e9_edit_t1_6race.png
+driving 12 s: $5ff8 1157 $130c 10 $100e 329
+after race end ($1024=$ff): $102c 0002 POS 0001 $1021 02 marker b'MSPO'
+screenshot after /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/campfloppy/logs/e9_edit_t1_7after.png
+RESULT done

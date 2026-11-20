@@ -1,0 +1,10 @@
+--- ../../patches/cp_hiscore.s	2026-11-20 12:20:36.415920781 +0000
++++ priv/patches/cp_hiscore.s	2026-11-20 13:01:40.248955284 +0000
+@@ -2,7 +2,6 @@
+ ; default: yes
+ ; site: $8418
+ ; orig: 610644fc00ff
+-; media: hd
+ ; gate: ram2mb
+ ; requires: cp_wrap cp_title cp_fetch cp_ptr cp_end cp_start
+ ; doc: Campaigns: F10 on the hi-score screen opens the campaign menu too.

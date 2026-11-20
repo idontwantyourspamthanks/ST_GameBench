@@ -1,0 +1,10 @@
+--- ../../patches/cp_start.s	2026-11-20 12:20:53.418049418 +0000
++++ priv/patches/cp_start.s	2026-11-20 13:01:40.249043817 +0000
+@@ -2,7 +2,6 @@
+ ; default: yes
+ ; site: $7252
+ ; orig: 4eb9000073b8
+-; media: hd
+ ; gate: ram2mb
+ ; requires: cp_wrap cp_title cp_fetch cp_ptr cp_end cp_hiscore
+ ; doc: Campaigns, start of a game: "Play from track N" starts the campaign at track N.

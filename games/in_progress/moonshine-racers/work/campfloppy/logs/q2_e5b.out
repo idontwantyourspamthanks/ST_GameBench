@@ -1,0 +1,15 @@
+cell retry ste 2048 
+title + hook applied, VBL 1952
+F10 -> prompt; screenshot /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/campfloppy/logs/e5b_retry_ask.png
+  eject log: ["- '--disk-a'", 'INFO : Floppy A: has been removed from drive.']
+[0] no disk in drive A (ejected): drive A key A: status d7 = 00000001  camp_read time 2.08 s  (VBL [2492, 2596])
+  screenshot /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/campfloppy/logs/e5b_retry_0.png
+[1] same drive again: forced read: drive A key A: status d7 = 00000002  camp_read time 13.18 s  (VBL [2858, 3517])
+  screenshot /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/campfloppy/logs/e5b_retry_1.png
+  eject log: ["- '--disk-b'"]
+[2] no disk in drive B (empty drive): drive B key B: status d7 = 00000001  camp_read time 1.90 s  (VBL [3830, 3925])
+  screenshot /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/campfloppy/logs/e5b_retry_2.png
+[3] campaign disk in A (after errors): drive A key A: status d7 = 00000000  camp_read time 4.40 s  (VBL [4280, 4500])
+  screenshot /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/campfloppy/logs/e5b_retry_3.png
+final VBL 4742 v_status 0000 v_count 000f v_act 01
+RESULT done

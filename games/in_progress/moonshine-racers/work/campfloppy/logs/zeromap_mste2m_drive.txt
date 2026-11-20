@@ -1,0 +1,8 @@
+dump 2048 KB; zero runs >= 16 KB (512-byte granularity):
+  $080000-$0b25ff    201 KB
+  $0d7200-$1f81ff   1156 KB
+  $1fb800-$1fffff     18 KB
+non-zero islands (between those runs):
+  $000000-$07ffff    512 KB
+  $0b2600-$0d71ff    147 KB
+  $1f8200-$1fb7ff     13 KB

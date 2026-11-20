@@ -1,0 +1,10 @@
+--- ../../patches/cp_fetch.s	2026-11-20 12:20:36.413438711 +0000
++++ priv/patches/cp_fetch.s	2026-11-20 13:01:40.248902757 +0000
+@@ -2,7 +2,6 @@
+ ; default: yes
+ ; site: $77da
+ ; orig: 41f900058c004eb90000d6fa
+-; media: hd
+ ; gate: ram2mb
+ ; requires: cp_wrap cp_title cp_ptr cp_end cp_start cp_hiscore
+ ; doc: Campaigns, track fetch: a campaign race reads its track block from the campaign file instead of the game's disk image.

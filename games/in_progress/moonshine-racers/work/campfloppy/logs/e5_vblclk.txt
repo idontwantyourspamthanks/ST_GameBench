@@ -1,0 +1,9 @@
+cell vblclk ste 2048 
+title + hook applied, VBL 1957
+F10 -> prompt; screenshot /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/campfloppy/logs/e5_vblclk_ask.png
+  mid-read: keypress sent; $60ff = 39
+[0] campaign disk in A, mid-read key: drive A key A: status d7 = 00000000  camp_read time 4.46 s  (VBL [2547, 2770])
+  game tick clock $b8f00 (advanced by the game's VBL handler via mt_clock) at entry/exit: ['00 00 0e 1c', '00 00 13 56']  and $611a: ['8f', '6e'] ; VBL delta 223
+  screenshot /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/campfloppy/logs/e5_vblclk_0.png
+final VBL 3004 v_status 0000 v_count 000f v_act 01
+RESULT done

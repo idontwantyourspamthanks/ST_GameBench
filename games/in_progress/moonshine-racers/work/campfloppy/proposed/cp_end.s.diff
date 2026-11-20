@@ -1,0 +1,10 @@
+--- ../../patches/cp_end.s	2026-11-20 12:20:53.416818385 +0000
++++ priv/patches/cp_end.s	2026-11-20 13:01:40.248814938 +0000
+@@ -2,7 +2,6 @@
+ ; default: yes
+ ; site: $731e
+ ; orig: 0c40000f6408
+-; media: hd
+ ; gate: ram2mb
+ ; requires: cp_wrap cp_title cp_fetch cp_ptr cp_start cp_hiscore
+ ; doc: Campaigns, end of the campaign: after the last track of a shorter campaign the game's own ending runs.

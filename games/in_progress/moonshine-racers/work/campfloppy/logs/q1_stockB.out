@@ -1,0 +1,14 @@
+cell stock_B ste 2048 camp disk/stock720.st key B  
+title reached + hook applied: True VBL 1956
+site $7252 + blob head: 4eb9001003c2 4efa000a
+screenshot title /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/campfloppy/logs/e2_stock_B_1title.png
+F10 pressed; $60ff 00 VBL 2393
+screenshot prompt /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/campfloppy/logs/e2_stock_B_2prompt_0.png
+VBL vector $70 = 0000d11e
+VBL at entry/exit: [2683, 2907] => read time 4.48 s (50 Hz VBL)
+status d7 at exit: 00000000 | (0 ok)
+vars after: v_status 0000 v_count 000f v_act 01 v_size 0000fca4 v_spt 0009 v_data0 0000000e
+screenshot after read /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/campfloppy/logs/e2_stock_B_3after_0.png
+read-back compare 64676 B at $110000: identical=True (md5 want 3f5462fafcea3aedb31419d202f6e634 got 3f5462fafcea3aedb31419d202f6e634)
+title running again? $7242 area: 4eb9001003c2
+RESULT done stock_B
