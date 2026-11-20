@@ -610,7 +610,11 @@ def disk_read_file(img: bytes, name11: bytes = CAMP_NAME) -> bytes:
         while 2 <= c < 0xFF8 and len(out) < size:
             o = data0 + (c - 2) * spc * bps
             out += img[o:o + spc * bps]
-            c = fat(c)
+            nxt = fat(c)
+            if len(out) < size and nxt != c + 1:
+                raise TrackError(f"E-DISK: {name11[:8].decode().strip()}.{name11[8:].decode()} is not stored in consecutive clusters (cluster {c} is followed by {nxt}): "
+                                 "the in-game floppy reader of the floppy release reads the file linearly from its first cluster; rebuild the disk with msrtrack.py disk")
+            c = nxt
         return bytes(out[:size])
     raise TrackError(f"E-DISK: no {name11[:8].decode().strip()}.{name11[8:].decode()} in the root directory (not a campaign disk)")
 

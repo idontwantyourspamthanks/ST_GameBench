@@ -1,0 +1,18 @@
+== hd_timeout_mste2m: hd Mega STE 2 MB build /tmp/msrc2/hd_a src hd
+BOOT hd_timeout_mste2m: $2dc=0x1f8000 $42e=0x200000 HAGA+$83=0x03 marker=MSPO IB+4=0xff
+BOOT sites {'0x72c4': '4eb9000b8022', '0x77da': '4ef9000b80704e714e714e71', '0xfda2': '2079000b8e08', '0x731e': '4ef9000b8220', '0x7252': '4eb9000b8240', '0x74fe': '4ef9000b9f00', '0x8418': '4ef9000b9f06'}
+CHECK campaign loaded: PASS 
+[timeout race 0 start] vbl=7544 act=0xff loaded=0xff count=3 pos=0 start=0 ptr=0x110088 $102c=0x0000 len57890=19472 $23c0=0x1100ac $1024=0x00 $1027=0x00 $100e=61 $5ff8=0 $1021=0x02
+[timeout race 0 over] vbl=8083 act=0xff loaded=0xff count=3 pos=0 start=0 ptr=0x110088 $102c=0x0000 len57890=19472 $23c0=0x1100ac $1024=0xff $1027=0x01 $100e=130 $5ff8=0 $1021=0x02
+CHECK time-out 0: the game counted it ($1027 == 1): PASS $1027=1 $1024=0x00
+[timeout race 1 start] vbl=8543 act=0xff loaded=0xff count=3 pos=0 start=0 ptr=0x110088 $102c=0x0000 len57890=19472 $23c0=0x1100ac $1024=0x00 $1027=0x01 $100e=67 $5ff8=0 $1021=0x02
+[timeout race 1 over] vbl=9082 act=0xff loaded=0xff count=3 pos=0 start=0 ptr=0x110088 $102c=0x0000 len57890=19472 $23c0=0x1100ac $1024=0xff $1027=0x02 $100e=0 $5ff8=0 $1021=0x02
+CHECK time-out 1: the game counted it ($1027 == 2): PASS $1027=2 $1024=0x00
+[timeout race 2 start] vbl=9543 act=0xff loaded=0xff count=3 pos=0 start=0 ptr=0x110088 $102c=0x0000 len57890=19472 $23c0=0x1100ac $1024=0x00 $1027=0x02 $100e=68 $5ff8=0 $1021=0x02
+[timeout race 2 over] vbl=10061 act=0xff loaded=0xff count=3 pos=0 start=0 ptr=0x110088 $102c=0x0000 len57890=19472 $23c0=0x1100ac $1024=0xff $1027=0x03 $100e=136 $5ff8=0 $1021=0x02
+CHECK time-out 2: the game counted it ($1027 == 3): PASS $1027=3 $1024=0xff
+CHECK replay = the same custom track (same race length, stream pointer, position 0): PASS [(19472, '0x0', '0x1100ac', 0), (19472, '0x0', '0x1100ac', 0), (19472, '0x0', '0x1100ac', 0)]
+after the third time-out: title hits {29244: 1, 29266: 0} $102c=0x0000
+CHECK third time-out = game over, back to the title ($723c): PASS 
+CHECK campaign still loaded after game over: PASS 
+== hd_timeout_mste2m done: ALL CHECKS PASS; bus/address error lines 0

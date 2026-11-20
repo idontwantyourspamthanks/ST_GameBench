@@ -8,9 +8,14 @@ What it is
   new top-bar HUD, and no manual copy-protection question.  disk_b.st is the original disk 2, unchanged.  PATCHES.TXT lists
   every change.
 
+v1.1
+  New: CAMPAIGNS.  Track sets made with the track tool (tools/msrtrack.py: a file MSTRACKS.TRK, put on a 720 KB campaign disk with
+  `msrtrack.py disk`) replace the 15 tracks; see "Campaigns" below.  Needs an ST, Mega ST, STE or Mega STE with 2 MB or more; on a
+  machine with 1 MB, a TT or a Falcon the game is exactly the v1.0.1 game.
+
 v1.0.1
   Fixes a frozen mouse pointer in the spare-parts shop after a race (and on the title screen) in v1.0: the shop's EXIT could not
-  be used, so the game could not get past race 1.  Nothing else changed.
+  be used, so the game could not get past race 1.
 
 How to run
   Write disk_a.st / disk_b.st to two floppies (or use them in an emulator / floppy emulator).  1 MB RAM or more.
@@ -60,13 +65,37 @@ REAL-HARDWARE CHECK LIST (nobody has run this on real hardware yet - please repo
   4. Face area: a radio message while driving: face drawn, mouth held, text and box unchanged.     (ta_facestat)
   5. Disk-2 prompt: swapping disk 2 into A works; with a second drive, disk 2 in B works.    (fl_driveb)
 
+Campaigns (ST, Mega ST, STE and Mega STE with 2 MB or more only)
+  A campaign disk is a normal 720 KB (80 tracks, 9 sectors) PC/TOS floppy with the single file MSTRACKS.TRK in its root directory,
+  made with `python3 tools/msrtrack.py disk ...` (the file must be stored in consecutive clusters; `msrtrack.py validate X.st`
+  checks that).  Nothing on disk 1 or disk 2 changes.
+  On the title screen (the face and the typing text, or the hi-score table) press F10:
+     ORIGINAL GAME                  start the original game at once and switch the campaign off (a loaded campaign stays in memory)
+     LOAD CAMPAIGN FROM DRIVE A     read A:\MSTRACKS.TRK
+     LOAD CAMPAIGN FROM DRIVE B     read B:\MSTRACKS.TRK (a second drive)
+     LOADED CAMPAIGN: N TRACKS      (once one is loaded) the track list: choose "play from track N" and the game starts there
+  INSERT THE CAMPAIGN DISK FIRST, then choose its item: nothing is read before you choose, and the game keeps running while the disk
+  is read (about 5 seconds for a 15-track campaign in Hatari; a real drive has the same one-revolution-per-track-side structure,
+  untested).  A drive with no disk answers after about 2 seconds with "NO CAMPAIGN DISK IN DRIVE A/B"; a wrong disk (a game disk, an
+  unformatted disk, a disk without MSTRACKS.TRK) gives the same message; choosing the same drive again after such a message tries
+  the game's own, slower disk routine (up to about 15 seconds) in case the quick test was wrong for your drive.
+  Up / Down and Return / Space (or the joystick: up, down, fire), Esc / Backspace / Left = back.  The file is checked before it is
+  used (magic, version, sizes, CRC-32 of the table and of every track); a damaged or wrong file gives a message and the game stays
+  as it was.  A campaign is ARMED when it has been loaded or when you play from one of its tracks, and stays armed until you choose
+  ORIGINAL GAME in the F10 menu (or switch the machine off): while it is armed, ANY key at the title starts it from track 1, F10
+  only opens the menu.  After the last track the game's own ending runs and you are back at the title, the campaign still armed.
+  Disk 2: the campaign disk replaces nothing.  Disk 1 is never read after the title, so the campaign disk can stay in drive A; the
+  game's own "Insert Disk 2" prompt appears at the first race as usual (swap disk 2 into drive A, or into drive B).  With disk 2 in
+  drive B from power-on there is no prompt and the campaign disk can go into drive A.  The ending needs disk 2 (it loads the ending
+  picture from it), as in the original game.
 Switching patches off (this zip is a fixed build)
   With the project tree: `python3 tools/msrpatch.py list` shows the patches; `python3 tools/msrpatch.py build --floppy --out DIR`
   builds this set; `tools/play.sh --floppy` takes --no-blit --no-rb --no-nomouse --no-facestat --noextrap --safex N --no-driveb
   (see the HD notes in PATCHES.TXT for what they mean); `build --floppy --only <list> [--set SAFE=3]` for a custom set.
 
 Not tested
-  Real hardware (ST, STE, Mega STE), TT, Falcon, MiSTer.  Hatari only: STE TOS 1.62 1 MB and Mega STE TOS 2.06 4 MB.
+  Real hardware (ST, STE, Mega STE), TT, Falcon, MiSTer.  Hatari only: STE TOS 1.62 (1 MB, 2 MB, 4 MB), Mega STE TOS 2.06 (1 MB, 2 MB, 4 MB), ST TOS 1.04 and Mega ST TOS 1.04 (1 MB, 2 MB, 4 MB).
+  The campaign disk read (drive-present test, FDC timing, index pulses) is untested on a real drive, a Gotek or MiSTer.
 
 Credits
   Moonshine Racers: Millennium / Peak Star, 1991.  HAGA conversion technique: PP (the floppy images are converted from the original

@@ -85,12 +85,18 @@ FREE_END = 0xE2C00                # last free byte + 1 at 1 MB = the LOWER of th
 BLOB_AREAS = ((0xB2800, TABLE), (TABLE_END, FREE_END))   # blob / data orgs allowed
 IMG_MIN_END = TABLE_END           # the image always spans IB .. here (zero-padded); blobs above TABLE_END extend it
 IMG_MAX_LEN = 0xF000              # RUNME's own limit on a 1 MB machine ("Too much low RAM occupied"); delivery.md section 6
-# ---- the campaign feature (HD build, `; gate: ram2mb`, work/notes/campaign_hd.md): addresses shared by the cp_*.s sources (predefined for every source) ----------------
+# ---- the campaign feature (HD and floppy builds, `; gate: ram2mb`, work/notes/campaign_hd.md, campaign_floppy.md): addresses shared by the cp_*.s sources (predefined for every source) ----------------
 HIMEM_LO, HIMEM_END = 0x100000, 0x1CD000      # RAM above 1 MB that is zero and unused at 2 MB on an STE (TOS copy at $1D89B4) and a Mega STE (TOS copy at $1CD8BC): trackloader.md section 2
 CP_EQUS = {"CPV": 0xB8E00,                    # campaign variables (in the payload image: zero at the trampoline), 32 bytes
            "CPTAB": 0x100000,                 # CRC-32 table (256 longs, built on every load)
            "CPWORK": 0x100400,                # menu scratch (item vectors, text)
            "CPSTORE": 0x110000}               # the campaign file as read (<= 128 KB; the format's maximum is 123,496 B)
+_FLOPPY = False                               # which release the predefined equate `FLOPPY` (0 / 1) selects: cp_title.s has one file reader per release; set_flavour() before assembling
+
+
+def set_flavour(floppy: bool) -> None:
+    global _FLOPPY
+    _FLOPPY = floppy
 
 # ---- RUNME edit points (text-relative offsets into the unpacked image) --------------------------------------------------------------------
 TEXT_LEN = 0x4430
@@ -207,7 +213,7 @@ class Patch:
         self.preamble = []        # equ lines before the first org
         self.image = None         # file patch: game file (HAGA) edited in place
         self.media = None         # None = every build; `floppy` = only `build --floppy`; `hd` = only the HD build (never the floppy)
-        self.gate = None          # `; gate: ram2mb`: the site goes into the SECOND site table, applied by the trampoline only on an STE / Mega STE with >= 2 MB (HD build only)
+        self.gate = None          # `; gate: ram2mb`: the site goes into the SECOND site table, applied by the trampoline only on a 2 MB+ ST-family machine (core.s: HAGA machine type 1..3; core_floppy.s: stage 0 filtered TT / Falcon out)
         self.himem = []           # (lo, hi_exclusive, label): RAM above 1 MB a gated patch owns (not in the image; checked for overlaps and the 2 MB ceiling)
         self.edits = []           # file patch: (file offset, expected original bytes)
         self.disk = []            # floppy disk patch: (disk letter, disk offset, expected original bytes)
@@ -319,7 +325,7 @@ def load_file_patches():
 
 # ---- assembly --------------------------------------------------------------------------------------------------------------------------
 def assemble(org: int, lines: list[str], equ: str = "", table: int = TABLE) -> bytes:
-    common = "".join(f"{k}\tequ\t${v:x}\n" for k, v in CP_EQUS.items())
+    common = "".join(f"{k}\tequ\t${v:x}\n" for k, v in CP_EQUS.items()) + f"FLOPPY\tequ\t{int(_FLOPPY)}\n"
     src = f"IB\tequ\t${IB:x}\nTABLE\tequ\t${table:x}\n{common}{equ}\n\torg\t${org:x}\n" + "\n".join(lines) + "\n"
     with tempfile.TemporaryDirectory() as td:
         s = Path(td) / "seg.s"
@@ -479,17 +485,15 @@ def ram_in_runs(lo: int, hi: int, runs) -> bool:
 def build_image(patches: list[Patch], table: int = TABLE, min_end: int = IMG_MIN_END, floppy: bool = False, fnames=(), live: bool = False):
     """-> (image bytes at IB, sites).  `table` = where the site table goes (the core is assembled with the same equ);
     `min_end` = the lowest image end (the HD layout pads to $B8000 so that blob area B is inside the image).
-    HD layout of the table: [sites that always apply][addr 0][`; gate: ram2mb` sites][addr 0][orig/new byte pool]; the trampoline applies the second list
-    only on an STE / Mega STE with >= 2 MB (core.s).  The floppy table is the single list (core_floppy.s): a gated patch cannot be in a floppy build."""
+    HD and floppy layout of the table: [sites that always apply][addr 0][`; gate: ram2mb` sites][addr 0][orig/new byte pool]; the trampoline applies the second list
+    only on an ST-family machine with >= 2 MB (core.s / core_floppy.s)."""
     if live:
         patches = [p for p in patches if not p.stage1 and not p.gate]      # a snapshot is long past stage 1: nothing to apply; the gate is closed at 1 MB
-    if floppy and any(p.gate for p in patches):
-        raise SystemExit("gated patch(es) " + ", ".join(p.name for p in patches if p.gate) + " cannot be part of a floppy build")
     sites = site_list([p for p in patches if not p.stage1])
     sites = [s for s in sites if not s["gate"]] + [s for s in sites if s["gate"]]
     n = len(sites)
     nfirst = sum(1 for s in sites if not s["gate"])
-    tbl_len = n * 16 + 4 if floppy else (n + 2) * 16       # HD: both lists end with a zero 16-byte slot
+    tbl_len = (n + 2) * 16                                  # both lists end with a zero 16-byte slot
     table2 = table + (nfirst + 1) * 16
     pool = bytearray()
     ptrs = []
@@ -694,6 +698,20 @@ def verify_stage1(p: Patch) -> int:
     return bad
 
 
+def check_flavour(sel, fsel, floppy: bool) -> list[str]:
+    """The default set of one release must assemble and fit its image, as `build` / `build --floppy` lay it out (the floppy table sits behind the core at IB+$120)."""
+    ram = [p for p in sel if p.site is not None]
+    try:
+        if floppy:
+            table = IB + 0x120
+            build_image(ram, table=table, min_end=table + 0x100, floppy=True)
+        else:
+            build_image(ram, fnames=[p.name for p in fsel])
+    except SystemExit as e:
+        return [f"{'floppy' if floppy else 'HD'} image: {e}"]
+    return []
+
+
 def cmd_verify(patches, fpatches=()):
     bad = 0
     dpatches = [p for p in patches if p.site is None and p.disk]
@@ -729,11 +747,14 @@ def cmd_verify(patches, fpatches=()):
         bad += 1
     if {p.name for p in patches} >= {p.name for p in load_patches() if p.site is not None}:   # `verify` proper (the whole set, not a build's selection): the default sets must satisfy the rules
         allp, allf = load_patches(), load_file_patches()
+        prev = _FLOPPY
         for floppy in (False, True):
+            set_flavour(floppy)
             sel, fsel = default_selection(allp, allf, floppy)
-            for msg in check_selection(sel + fsel, known):
+            for msg in check_selection(sel + fsel, known) + (check_pairs(sel) if floppy else []) + check_flavour(sel, fsel, floppy):
                 print(f"    default {'floppy' if floppy else 'HD'} set: {msg}")
                 bad += 1
+        set_flavour(prev)
         print("    dependencies/conflicts/reserved RAM: " + ("checked: all pairs, both default sets, RAM free in every supported layout" if not bad else "FAILED"))
     bad += cmd_verify_runme()
     bad += cmd_verify_files(fpatches)
@@ -1104,7 +1125,21 @@ def floppy_loader(runs) -> bytes:
              "\tadd.w\td3,d3\t\t\t; count * 512",
              "\tadda.w\td3,a3",
              "\tbra.s\t.n",
-             ".done:\tlea.l\t$7f830.l,a6\t\t; the displaced first instruction of the original boot program",
+             ".done:\tmove.l\t$42e.w,d0\t\t\t; phystop (TOS' $42e is wiped by the original stage 1 at VBL ~99): the gate of core_floppy.s reads it at IB+4",
+             "\tmove.l\t$5a0.w,d1\t\t\t; cookie jar (TOS 1.06 and later; TOS 1.04 has none: an ST / Mega ST)",
+             "\tbeq.s\t.st",
+             "\tmovea.l\td1,a0",
+             ".ck:\tmove.l\t(a0)+,d1",
+             "\tbeq.s\t.no\t\t\t\t; a jar without _MCH: unknown machine, gate closed",
+             "\tcmpi.l\t#'_MCH',d1",
+             "\tbeq.s\t.m",
+             "\taddq.l\t#4,a0",
+             "\tbra.s\t.ck",
+             ".m:\tcmpi.w\t#1,(a0)\t\t\t; _MCH high word: 0 ST, 1 STE / Mega STE, 2 TT, 3 Falcon",
+             "\tbls.s\t.st",
+             ".no:\tmoveq\t#0,d0\t\t\t\t; TT / Falcon / unknown: gate closed",
+             f".st:\tmove.l\td0,${IB + 4:x}.l\t\t; IB+4 = phystop for ST-family machines, else 0",
+             "\tlea.l\t$7f830.l,a6\t\t; the displaced first instruction of the original boot program",
              f"\tbra.w\t${BOOT_PROG:x}\t\t; position independent: TOS runs the boot sector at its disk buffer ($185C on TOS 1.62), not at $7800",
              "desc:"]
     for tr, side, sec, n in runs:
@@ -1308,6 +1343,7 @@ def main():
     if a.cmd == "verify":
         sys.exit(cmd_verify(patches, fpatches))
     floppy = getattr(a, "floppy", False)       # the `live` subparser has no --floppy
+    set_flavour(floppy)
     if a.only is None:
         sel = [p for p in patches if p.default and in_build(p, floppy) and (p.site is not None or p.media == "floppy")]
         fsel = [p for p in fpatches if p.default]

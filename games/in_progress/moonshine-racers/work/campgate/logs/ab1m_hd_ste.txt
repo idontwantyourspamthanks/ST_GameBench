@@ -1,0 +1,19 @@
+[ref] title reached True vbl 6210 $1021 0x2
+[ref] {'marker': 'MSPO', 'IB+4': 0, 'sites': {'0x72c4': '4eb9000076f4', '0x77da': '41f900058c004eb90000d6fa', '0xfda2': '41f900058c00', '0x731e': '0c40000f6408', '0x7252': '4eb9000073b8', '0x74fe': '4fef000e6106', '0x8418': '610644fc00ff'}, '$2dc': '0xf8000', '$42e': '0x100000', 'HAGA+$83': 2}
+[ref] race ready True vbl 7053 marker b'MSPO'
+[ref] driving: $5ff8 3607 $130c 3 $100e 468
+[new] title reached True vbl 6274 $1021 0x2
+[new] {'marker': 'MSPO', 'IB+4': 0, 'sites': {'0x72c4': '4eb9000076f4', '0x77da': '41f900058c004eb90000d6fa', '0xfda2': '41f900058c00', '0x731e': '0c40000f6408', '0x7252': '4eb9000073b8', '0x74fe': '4fef000e6106', '0x8418': '610644fc00ff'}, '$2dc': '0xf8000', '$42e': '0x100000', 'HAGA+$83': 2}
+[new] after F10 at the title: $1021 0x2 $100e 0
+[new] race ready True vbl 6990 marker b'MSPO'
+[new] driving: $5ff8 3635 $130c 7 $100e 472
+[new] EXEC BREAKPOINT HITS in the campaign code ranges (title incl. F10, race, 2000 VBL driving): 0
+CHECK no campaign code executed at 1 MB: PASS 
+CHECK marker MSPO in both: PASS 
+CHECK IB+4 = 0: the gate is closed (list 2 not applied): PASS IB+4=0x0
+CHECK every campaign site holds the v1.0.1 bytes: PASS {'0x72c4': '4eb9000076f4', '0x77da': '41f900058c004eb90000d6fa', '0xfda2': '41f900058c00', '0x731e': '0c40000f6408', '0x7252': '4eb9000073b8', '0x74fe': '4fef000e6106', '0x8418': '610644fc00ff'}
+STATE A/B (hd STE 1 MB): passes A 181 B 181 common 165  bytes compared 1108140  different 0
+CHECK per-pass state identical: PASS 
+RAM $400-$B1EFF at the pass boundary with $100e == 697: 728832 B vs 728832 B, 22 differing bytes; runs: [('0x611b', '0x611b'), ('0x934d', '0x9364'), ('0x9376', '0x9376'), ('0x9406', '0x940e'), ('0x77f58', '0x77f61'), ('0x77fb8', '0x77fc7'), ('0x77ff7', '0x77ff7')]
+CHECK RAM below the payload identical at pass N: FAIL 
+== ab1m_hd_ste done: FAILED: RAM below the payload identical at pass N

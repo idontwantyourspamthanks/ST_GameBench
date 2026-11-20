@@ -1,0 +1,46 @@
+== hd_errors_mst4m: hd Mega ST 4 MB build /tmp/msrc2/hd_a src hd
+BOOT hd_errors_mst4m: $2dc=0x3f8000 $42e=0x400000 HAGA+$83=0x01 marker=MSPO IB+4=0xff
+BOOT sites {'0x72c4': '4eb9000b8022', '0x77da': '4ef9000b80704e714e714e71', '0xfda2': '2079000b8e08', '0x731e': '4ef9000b8220', '0x7252': '4eb9000b8240', '0x74fe': '4ef9000b9f00', '0x8418': '4ef9000b9f06'}
+CASE nofile: loaded=False 2.0s message-row texts=['                                        ', 'LOADING CAMPAIGN FROM HARD DISK...', 'LOADING CAMPAIGN FROM HARD DISK...', '                                        ', 'MSTRACKS.TRK NOT FOUND IN FILES'] act=0x0 loaded=0x0 count=0
+CHECK nofile: rejected with a message: PASS expect 'NOT FOUND'
+CHECK nofile: campaign not armed: PASS 
+CASE empty_file: loaded=False 2.0s message-row texts=['                                        ', 'LOADING CAMPAIGN FROM HARD DISK...', '                                        ', 'CHECKING CAMPAIGN...', 'CHECKING CAMPAIGN...', '                                        ', 'NOT A VALID CAMPAIGN FILE'] act=0x0 loaded=0x0 count=0
+CHECK empty_file: rejected with a message: PASS expect 'NOT A VALID'
+CHECK empty_file: campaign not armed: PASS 
+CASE too_big: loaded=False 2.0s message-row texts=['                                        ', 'LOADING CAMPAIGN FROM HARD DISK...', 'LOADING CAMPAIGN FROM HARD DISK...', '                                        ', 'CAMPAIGN FILE IS TOO BIG'] act=0x0 loaded=0x0 count=0
+CHECK too_big: rejected with a message: PASS expect 'TOO BIG'
+CHECK too_big: campaign not armed: PASS 
+CASE bad_magic: loaded=False 2.0s message-row texts=['                                        ', 'LOADING CAMPAIGN FROM HARD DISK...', '                                        ', 'CHECKING CAMPAIGN...', 'CHECKING CAMPAIGN...', '                                        ', 'NOT A VALID CAMPAIGN FILE'] act=0x0 loaded=0x0 count=0
+CHECK bad_magic: rejected with a message: PASS expect 'NOT A VALID'
+CHECK bad_magic: campaign not armed: PASS 
+CASE bad_version: loaded=False 1.9s message-row texts=['                                        ', 'LOADING CAMPAIGN FROM HARD DISK...', '                                        ', 'CHECKING CAMPAIGN...', 'CHECKING CAMPAIGN...', '                                        ', 'NOT A VALID CAMPAIGN FILE'] act=0x0 loaded=0x0 count=0
+CHECK bad_version: rejected with a message: PASS expect 'NOT A VALID'
+CHECK bad_version: campaign not armed: PASS 
+CASE bad_table: loaded=False 1.9s message-row texts=['                                        ', 'LOADING CAMPAIGN FROM HARD DISK...', '                                        ', 'CHECKING CAMPAIGN...', 'CHECKING CAMPAIGN...', '                                        ', 'CAMPAIGN FILE IS DAMAGED (CRC)'] act=0x0 loaded=0x0 count=3
+CHECK bad_table: rejected with a message: PASS expect 'DAMAGED'
+CHECK bad_table: campaign not armed: PASS 
+CASE bad_crc: loaded=False 2.0s message-row texts=['                                        ', 'LOADING CAMPAIGN FROM HARD DISK...', '                                        ', 'CHECKING CAMPAIGN...', 'CHECKING CAMPAIGN...', '                                        ', 'CAMPAIGN FILE IS DAMAGED (CRC)'] act=0x0 loaded=0x0 count=3
+CHECK bad_crc: rejected with a message: PASS expect 'DAMAGED'
+CHECK bad_crc: campaign not armed: PASS 
+CASE bad_short: loaded=False 2.0s message-row texts=['                                        ', 'LOADING CAMPAIGN FROM HARD DISK...', '                                        ', 'CHECKING CAMPAIGN...', 'CHECKING CAMPAIGN...', '                                        ', 'NOT A VALID CAMPAIGN FILE'] act=0x0 loaded=0x0 count=3
+CHECK bad_short: rejected with a message: PASS expect 'NOT A VALID'
+CHECK bad_short: campaign not armed: PASS 
+CASE good_hd: loaded=True 2.0s message-row texts=['                                        ', 'LOADING CAMPAIGN FROM HARD DISK...', '                                        ', 'CHECKING CAMPAIGN...'] act=0xff loaded=0xff count=3
+CHECK good_hd: loads: PASS 
+CASE bad_after_good: loaded=False 2.0s message-row texts=['                                        ', 'LOADING CAMPAIGN FROM HARD DISK...', '                                        ', 'CHECKING CAMPAIGN...', 'CHECKING CAMPAIGN...', '                                        ', 'CAMPAIGN FILE IS DAMAGED (CRC)'] act=0x0 loaded=0x0 count=3
+CHECK bad_after_good: rejected with a message: PASS expect 'DAMAGED'
+CHECK bad_after_good: campaign not armed: PASS 
+CASE emptyA: loaded=False 7.4s message-row texts=['                                        ', 'LOADING CAMPAIGN FROM DRIVE A...', 'LOADING CAMPAIGN FROM DRIVE A...', '                                        ', 'NO CAMPAIGN DISK IN DRIVE A'] act=0x0 loaded=0x0 count=3
+CHECK emptyA: rejected with a message: PASS expect 'NO CAMPAIGN DISK'
+CHECK emptyA: campaign not armed: PASS 
+CASE blankdisk: loaded=False 2.4s message-row texts=['                                        ', 'LOADING CAMPAIGN FROM DRIVE A...', 'LOADING CAMPAIGN FROM DRIVE A...', '                                        ', 'NO CAMPAIGN DISK IN DRIVE A'] act=0x0 loaded=0x0 count=3
+CHECK blankdisk: rejected with a message: PASS expect 'NO CAMPAIGN DISK'
+CHECK blankdisk: campaign not armed: PASS 
+CASE corruptdisk: loaded=False 4.7s message-row texts=['                                        ', 'LOADING CAMPAIGN FROM DRIVE A...', '                                        ', 'CHECKING CAMPAIGN...', 'CHECKING CAMPAIGN...', '                                        ', 'CAMPAIGN FILE IS DAMAGED (CRC)'] act=0x0 loaded=0x0 count=3
+CHECK corruptdisk: rejected with a message: PASS expect 'DAMAGED'
+CHECK corruptdisk: campaign not armed: PASS 
+CASE good_drivea: loaded=True 4.7s message-row texts=['                                        ', 'LOADING CAMPAIGN FROM DRIVE A...', '                                        ', 'CHECKING CAMPAIGN...'] act=0xff loaded=0xff count=3
+CHECK good_drivea: loads: PASS 
+CHECK ORIGINAL GAME after the errors: stock race: PASS (19472, 0, 363540, 0)
+[stock race after errors] vbl=13264 act=0x0 loaded=0xff count=3 pos=0 start=0 ptr=0x58c00 $102c=0x0000 len57890=19472 $23c0=0x58c14 $1024=0x00 $1027=0x00 $100e=69 $5ff8=0 $1021=0x02
+== hd_errors_mst4m done: ALL CHECKS PASS; bus/address error lines 4

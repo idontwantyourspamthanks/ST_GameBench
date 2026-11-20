@@ -2,24 +2,24 @@
 ; default: yes
 ; site: $74fe
 ; orig: 4fef000e6106
-; media: hd
 ; gate: ram2mb
 ; requires: cp_wrap cp_fetch cp_ptr cp_end cp_start cp_hiscore
 ; conflicts: mx_pre mf_pre sb_bar
 ; himem: $100000-$1003FF CRC-32 table (256 longs, built on every load)
 ; himem: $100400-$1007FF campaign menu scratch (item vectors, line buffer, track texts)
 ; himem: $110000-$12FFFF campaign file as read (MSTRACKS.TRK, at most 123,496 B)
-; doc: Campaigns (ST family with 2 MB or more only): F10 on the title screen opens the campaign menu (Original game / Load campaign from the hard disk or from a disk in drive A / Play from track N); the campaign replaces the 15 tracks.
-; note: Campaign feature, HD build (work/notes/campaign_hd.md).  This patch holds the menu, the file reader and the validator; the redirect sites are cp_wrap ($72c4), cp_fetch ($77da), cp_ptr ($fda2), cp_end ($731e), cp_start ($7252), cp_hiscore ($8418).
+; doc: Campaigns (ST family with 2 MB or more only): F10 on the title screen opens the campaign menu (Original game / Load campaign from the hard disk or from a disk in drive A in the HD release, from a disk in drive A or B in the floppy release / Play from track N); the campaign replaces the 15 tracks.
+; note: Campaign feature (HD and floppy builds, one source: `FLOPPY` = 0 / 1 is predefined by msrpatch.py; work/notes/campaign_hd.md, campaign_floppy.md).  This patch holds the menu, the file reader and the validator; the redirect sites are cp_wrap ($72c4), cp_fetch ($77da), cp_ptr ($fda2), cp_end ($731e), cp_start ($7252), cp_hiscore ($8418).
 ; note: Site $74fe = the shared key exit of the title screen's face/text loop ($7446-$74fc: any key or joystick fire starts the game): `lea $e(a7),a7 / bsr.b $750a` (6 bytes) -> `jmp e1`.  e1 replays both
 ; note: instructions for every key but F10 (scancode $44 in $60ff).  F10 runs the menu: cp_menu returns 1 = start the game (the exit replayed as the game does it: fade out, carry set), 0 = back to the title
 ; note: (the title routine $73e6 is entered again with its return address on the stack).  The stack at $74fe holds d7.w and a1/a2/a6 (14 bytes) in the sprite loop but only the return address ($7246) in the
 ; note: final wait loop ($74dc-$74fc), where the original `lea $e(a7),a7` pops 14 bytes too many: the F10 path tests that and does not pop.
 ; note: The menu screens use the game's own text routine $12268 (a0 = x,y,text,0; a5 = screen; d4 = colour code $b8; font $190be), the buffer clear $d8e0, the vertical sync $d206 and the palette registers directly.  The
 ; note: selected row is shown by inverting its 8 pixel rows (palette: black background, white text; inverted: white bar, black text), the headings by clearing bitplane 0 (yellow).  Keys: up/down, Return / Enter / Space, Esc /
-; note: Backspace / Left; joystick port 1: up, down, fire.  The campaign file is read with the HAGA-window reader (a port of Populous 2's part A/B, work/trackloader/trkread.s) and validated before anything is used:
+; note: Backspace / Left; joystick port 1: up, down, fire.  The campaign file is read by `trk_read`: in the HD build with the HAGA-window reader (a port of Populous 2's part A/B, work/trackloader/trkread.s), in the floppy build with the game's own FDC driver ($cac0, FAT12 root directory, MSTRACKS.TRK stored contiguously) and a disk-present probe; both are validated before anything is used:
 ; note: magic, version 1, count 1..15, file length, table CRC-32, per entry flags/base/offset/length/name and the block CRC-32; anything else rejects the file with a message (the game stays original).
 
+FL_FAIL equ     CPWORK+$2B0     ; w  floppy reader: unit+1 of the last attempt that found no disk
 V_ACT   equ     CPV             ; b  campaign active: the races use it
 V_LOADED equ    CPV+1           ; b  a validated campaign is in the store
 V_COUNT equ     CPV+2           ; w  number of tracks (1..15)
@@ -80,6 +80,9 @@ cp_menu:
         move.b  $6105.w,M_PJOY.l
         clr.l   M_MSG.l
         clr.w   M_SEL.l
+        ifne    FLOPPY
+        clr.w   FL_FAIL.l
+        endc
         lea     pal(pc),a0
         lea     $ffff8240.l,a1
         moveq   #15,d0
@@ -168,7 +171,14 @@ main_screen:
         cmp.w   M_SEL.l,d5
         bhi.s   .sok
         clr.w   M_SEL.l
-.sok:   lea     t_origon(pc),a0         ; status line
+.sok:
+        ifne    FLOPPY
+        lea     t_ins(pc),a0            ; the campaign disk goes in before an item is chosen
+        moveq   #2,d0
+        moveq   #20,d1
+        bsr     putline
+        endc
+        lea     t_origon(pc),a0         ; status line
         tst.b   V_ACT.l
         beq.s   .st
         lea     t_campon(pc),a0
@@ -594,8 +604,13 @@ crc_upd:                                ; d0 = crc state, a1 = data, d3.w = leng
 h_main: dc.b    13,1,"CAMPAIGN MENU",0
 h_play: dc.b    5,3,"PLAY FROM TRACK:",0
 t_orig: dc.b    "ORIGINAL GAME",0
+        ifne    FLOPPY
+t_hd:   dc.b    "LOAD CAMPAIGN FROM DRIVE A",0
+t_a:    dc.b    "LOAD CAMPAIGN FROM DRIVE B",0
+        else
 t_hd:   dc.b    "LOAD CAMPAIGN FROM HARD DISK",0
 t_a:    dc.b    "LOAD CAMPAIGN FROM DRIVE A",0
+        endc
 t_back: dc.b    "BACK TO THE TITLE",0
 t_back2: dc.b   "< BACK",0
 t_loaded: dc.b  "LOADED CAMPAIGN: ",0
@@ -604,22 +619,327 @@ t_camp: dc.b    "CAMPAIGN: ",0
 t_tracks2: dc.b " TRACKS",0
 t_origon: dc.b  "NEXT GAME: THE ORIGINAL 15 TRACKS",0
 t_campon: dc.b  "NEXT GAME: THE LOADED CAMPAIGN",0
+        ifne    FLOPPY
+t_ins:  dc.b    "INSERT THE CAMPAIGN DISK, THEN CHOOSE",0
+        endc
 t_hint: dc.b    "UP/DOWN + RETURN     ESC = BACK",0
+        ifne    FLOPPY
+m_ldhd: dc.b    "LOADING CAMPAIGN FROM DRIVE A...",0
+m_lda:  dc.b    "LOADING CAMPAIGN FROM DRIVE B...",0
+        else
 m_ldhd: dc.b    "LOADING CAMPAIGN FROM HARD DISK...",0
 m_lda:  dc.b    "LOADING CAMPAIGN FROM DRIVE A...",0
+        endc
 m_chk:  dc.b    "CHECKING CAMPAIGN...",0
+        ifne    FLOPPY
+e_nf:   dc.b    "NO CAMPAIGN DISK IN DRIVE A",0
+e_nfa:  dc.b    "NO CAMPAIGN DISK IN DRIVE B",0
+        else
 e_nf:   dc.b    "MSTRACKS.TRK NOT FOUND IN FILES",0
 e_nfa:  dc.b    "NO CAMPAIGN DISK IN DRIVE A",0
+        endc
 e_io:   dc.b    "DISK READ ERROR",0
 e_big:  dc.b    "CAMPAIGN FILE IS TOO BIG",0
 e_na:   dc.b    "FILE ACCESS NOT AVAILABLE HERE",0
 e_bad:  dc.b    "NOT A VALID CAMPAIGN FILE",0
 e_crc:  dc.b    "CAMPAIGN FILE IS DAMAGED (CRC)",0
+        ifne    FLOPPY
+p_hd:   dc.b    "A:",0
+p_a:    dc.b    "B:",0
+        else
 p_hd:   dc.b    "MSTRACKS.TRK",0
 p_a:    dc.b    "A:\MSTRACKS.TRK",0
+        endc
         even
 pal:    dc.w    $000,$777,$777,$777,$333,$777,$777,$333,$444,$777,$440,$555,$777,$777,$771,$777
 
+        ifne    FLOPPY
+; ---- the floppy reader (work/campfloppy/campread2.s; notes work/notes/campaign_floppy.md): the game's own FDC driver sub_00cac0, FAT12 root directory, MSTRACKS.TRK contiguous
+;   trk_read: a0 = "A:" / "B:" (the drive letter picks the unit), a1 = destination, d1 = maximum bytes
+;   -> d0 = 0 ok | -33 no usable disk / not a FAT floppy / no MSTRACKS.TRK | 1 read error | $cd too big; d1 = bytes.  Same contract as the HAGA reader of the HD build.
+trk_read:
+        movem.l d2-d4/a2,-(a7)
+        moveq   #0,d0
+        cmpi.b  #'B',(a0)
+        bne.s   .u
+        moveq   #1,d0
+.u:     move.w  d0,d3                   ; unit
+        lea     FL_FAIL.l,a2
+        move.w  (a2),d2
+        subq.w  #1,d2
+        cmp.w   d0,d2
+        seq     d2
+        andi.w  #$ff,d2                 ; the previous attempt on THIS drive found no disk: do not probe, let the driver try
+        movea.l a1,a0
+        bsr.s   camp_read               ; d0.w status 0..5, d1.l size
+        clr.w   (a2)
+        moveq   #0,d4
+        tst.w   d0
+        beq.s   .x
+        moveq   #1,d4                   ; 2 read error
+        cmpi.w  #2,d0
+        beq.s   .x
+        move.l  #$cd,d4                 ; 5 too big
+        cmpi.w  #5,d0
+        beq.s   .x
+        moveq   #-33,d4                 ; 1 no disk (probe), 3 not a FAT floppy, 4 no MSTRACKS.TRK
+        cmpi.w  #1,d0
+        bne.s   .x
+        addq.w  #1,d3
+        move.w  d3,(a2)
+.x:     move.l  d4,d0
+        movem.l (a7)+,d2-d4/a2
+        rts
+
+vars:   dc.w    0               ; v_unit
+        dc.w    9               ; v_spt
+        dc.w    2               ; v_spc
+        dc.w    7               ; v_nroot
+        dc.l    0               ; v_dest
+        dc.l    0               ; v_max
+        dc.l    0               ; v_size
+        dc.l    0               ; v_root
+        dc.l    0               ; v_data0
+v_unit equ 0
+v_spt equ 2
+v_spc equ 4
+v_nroot equ 6
+v_dest equ 8
+v_max equ 12
+v_size equ 16
+v_root equ 20
+v_data0 equ 24
+
+camp_read:
+        movem.l d2-d7/a2-a6,-(sp)
+        lea     vars(pc),a5
+        move.w  d0,v_unit(a5)
+        move.l  a0,v_dest(a5)
+        move.l  d1,v_max(a5)
+        clr.l   v_size(a5)
+        move.w  #9,v_spt(a5)
+        moveq   #1,d7                   ; status: no disk
+        tst.w   d2
+        bne.s   .skp                    ; a retry after status 1: the probe may be wrong on this hardware, let the driver try (its own bounded waits, 13 s at worst)
+        bsr     dpres
+        tst.w   d0
+        bne     .out
+.skp:
+        moveq   #2,d7                   ; status: read error
+        moveq   #0,d0                   ; boot sector
+        moveq   #1,d1
+        movea.l v_dest(a5),a0
+        bsr     rdsec
+        bne     .out
+        moveq   #3,d7                   ; status: not a FAT floppy
+        movea.l v_dest(a5),a1
+        tst.b   11(a1)                  ; bytes per sector = $0200 (little endian)
+        bne     .out
+        cmpi.b  #2,12(a1)
+        bne     .out
+        moveq   #0,d0
+        move.b  25(a1),d0
+        lsl.w   #8,d0
+        move.b  24(a1),d0               ; sectors per track
+        cmpi.w  #9,d0
+        blt     .out
+        cmpi.w  #11,d0
+        bgt     .out
+        move.w  d0,v_spt(a5)
+        moveq   #0,d2
+        move.b  13(a1),d2               ; sectors per cluster
+        beq     .out
+        move.w  d2,v_spc(a5)
+        moveq   #0,d3
+        move.b  15(a1),d3
+        lsl.w   #8,d3
+        move.b  14(a1),d3               ; reserved sectors
+        moveq   #0,d4
+        move.b  16(a1),d4               ; FATs
+        beq     .out
+        moveq   #0,d5
+        move.b  23(a1),d5
+        lsl.w   #8,d5
+        move.b  22(a1),d5               ; sectors per FAT
+        mulu.w  d5,d4
+        add.l   d4,d3                   ; root directory LBA
+        move.l  d3,v_root(a5)
+        moveq   #0,d6
+        move.b  18(a1),d6
+        lsl.w   #8,d6
+        move.b  17(a1),d6               ; root entries
+        add.w   #15,d6
+        lsr.w   #4,d6                   ; root directory sectors
+        move.w  d6,v_nroot(a5)
+        add.l   d6,d3
+        move.l  d3,v_data0(a5)          ; first data sector (cluster 2)
+        moveq   #4,d7                   ; status: file not found
+        move.l  v_root(a5),d5
+        move.w  v_nroot(a5),d6
+        beq     .out
+        subq.w  #1,d6
+.rs:    move.l  d5,d0
+        moveq   #1,d1
+        movea.l v_dest(a5),a0
+        bsr     rdsec
+        beq.s   .rok
+        moveq   #2,d7
+        bra     .out
+.rok:   movea.l v_dest(a5),a1
+        moveq   #15,d2
+.re:    tst.b   (a1)
+        beq     .nf                     ; end of the directory
+        cmpi.b  #$e5,(a1)
+        beq.s   .nx
+        move.b  11(a1),d0
+        andi.b  #$18,d0                 ; volume label / directory
+        bne.s   .nx
+        lea     fname(pc),a2
+        movea.l a1,a3
+        moveq   #10,d1
+.cm:    cmpm.b  (a2)+,(a3)+
+        dbne    d1,.cm
+        beq.s   .found
+.nx:    lea     32(a1),a1
+        dbra    d2,.re
+        addq.l  #1,d5
+        dbra    d6,.rs
+.nf:    moveq   #4,d7
+        bra     .out
+.found: moveq   #0,d0
+        move.b  27(a1),d0
+        lsl.w   #8,d0
+        move.b  26(a1),d0               ; first cluster
+        moveq   #0,d1
+        move.b  31(a1),d1
+        lsl.l   #8,d1
+        move.b  30(a1),d1
+        lsl.l   #8,d1
+        move.b  29(a1),d1
+        lsl.l   #8,d1
+        move.b  28(a1),d1               ; size
+        moveq   #5,d7
+        cmp.l   v_max(a5),d1
+        bhi     .out
+        moveq   #4,d7
+        cmpi.l  #16,d1
+        bcs     .out
+        subq.w  #2,d0
+        bcs     .out
+        move.l  d1,v_size(a5)
+        mulu.w  v_spc(a5),d0
+        add.l   v_data0(a5),d0          ; file LBA
+        addi.l  #511,d1
+        lsr.l   #8,d1
+        lsr.l   #1,d1                   ; sectors
+        movea.l v_dest(a5),a0
+        moveq   #2,d7
+        bsr     rdsec
+        bne     .out
+        moveq   #0,d7
+.out:
+cr_exit: move.w d7,d0
+        move.l  v_size(a5),d1
+        movem.l (sp)+,d2-d7/a2-a6
+        rts
+
+; rdsec: d0.l = LBA (TOS order: track*sides*spt + side*spt + sector), d1.l = sector count, a0 = buffer -> d0 = 0 ok / nonzero error (Z set accordingly); one driver call per track side
+rdsec:  movem.l d1-d7/a0-a2,-(sp)
+        lea     vars(pc),a2
+        move.l  d0,d5
+        move.l  d1,d6
+.l:     move.l  d5,d0
+        divu.w  v_spt(a2),d0            ; low = track*2+side, high = sector in the track
+        move.l  d0,d2
+        swap    d2
+        andi.l  #$ffff,d2               ; sector (0-based)
+        andi.l  #$ffff,d0               ; track*2+side
+        move.w  v_spt(a2),d4
+        sub.w   d2,d4                   ; sectors left on this track side
+        cmp.l   d6,d4
+        bls.s   .c
+        move.l  d6,d4
+.c:     move.w  d0,d3
+        lsr.w   #1,d3                   ; track
+        mulu.w  v_spt(a2),d3
+        add.w   d2,d3                   ; the driver's linear sector on this side (track*spt + sector)
+        andi.w  #1,d0
+        lsl.w   #2,d0
+        or.w    v_unit(a2),d0           ; bit 2 = side 1, bit 0 = unit
+        moveq   #0,d1
+        move.w  v_spt(a2),d1
+        swap    d1
+        or.l    d1,d0                   ; high word = sectors per track
+        moveq   #0,d1
+        move.w  d3,d1
+        moveq   #0,d2
+        move.w  d4,d2
+        moveq   #0,d3                   ; command: read
+        movem.l d4-d6/a2,-(sp)
+        jsr     $cac0.l                 ; the game's FDC driver (the one sole entry sub_00d6fa jumps to)
+        movem.l (sp)+,d4-d6/a2
+        tst.l   d0
+        bne.s   .x
+        move.l  d4,d0
+        lsl.l   #8,d0
+        add.l   d0,d0
+        adda.l  d0,a0
+        add.l   d4,d5
+        sub.l   d4,d6
+        bne.s   .l
+        moveq   #0,d0
+.x:     movem.l (sp)+,d1-d7/a0-a2
+        tst.l   d0
+        rts
+
+; dpres: is there a disk spinning in drive `v_unit`?  (the logic of fl_driveb's bpres, for either drive)  d0.w = 0 yes, 1 no.  1: restore (no spin-up wait) reaches TR00 without seek error
+; within ~1.2 s, 2: an INDEX pulse shows within ~1.5 s.  Without it a drive with no disk would sit in the game's own waits ($60000 / $60000 / $40000 loops: 13 s in Hatari).
+dpres:  move.l  d1,-(sp)
+        move.w  $43e.w,-(sp)
+        st.b    $43e.w
+        moveq   #5,d0                   ; PSG port A: drive A, side 0 (active low)
+        lea     vars(pc),a0
+        tst.w   v_unit(a0)
+        beq.s   .a
+        moveq   #3,d0                   ; drive B, side 0
+.a:     jsr     $cf0e.l
+        move.w  #$80,$ff8606.l
+        moveq   #$0b,d0                 ; restore, h=1, V=0, 3 ms
+        jsr     $cf8e.l
+        move.l  #$38000,d1
+.w:     btst.b  #5,$fffffa01.w          ; GPIP bit 5 low = FDC interrupt
+        beq.s   .d
+        subq.l  #1,d1
+        bne.s   .w
+        jsr     $cf5a.l
+        moveq   #1,d0
+        bra.s   .o
+.d:     jsr     $cf78.l
+        btst    #4,d0                   ; seek error
+        bne.s   .no
+        btst    #2,d0                   ; TR00
+        beq.s   .no
+        move.l  #$2d00,d1
+.ix:    jsr     $cf78.l
+        btst    #1,d0                   ; index pulse
+        bne.s   .y
+        subq.l  #1,d1
+        bne.s   .ix
+        bra.s   .no
+.y:     moveq   #0,d0
+        bra.s   .o
+.no:    moveq   #1,d0
+.o:     move.l  d0,-(sp)
+        moveq   #7,d0                   ; deselect
+        jsr     $cf0e.l
+        move.l  (sp)+,d0
+        move.w  (sp)+,$43e.w
+        move.l  (sp)+,d1
+        rts
+
+fname:  dc.b    "MSTRACKSTRK"
+        even
+        else
 ; ---- the HAGA-window file reader (work/trackloader/trkread.s, a port of Populous 2 part A/B, work/notes/trackloader.md section 5.2)
 ;   trk_read: a0 = path (NUL terminated), a1 = destination, d1 = maximum bytes (supervisor mode, any game context)
 ;   -> d0 = 0 ok | GEMDOS error (negative) | $cd too long | $dd short read | -1 HAGA not recognised (nothing done), d1 = bytes read; every other register preserved
@@ -891,3 +1211,4 @@ forget: lea     $4b2.w,a0
         rts
         even
 bend:   dc.w    0
+        endc
