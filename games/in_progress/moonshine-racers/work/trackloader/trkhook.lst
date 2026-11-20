@@ -1,0 +1,87 @@
+Sections:
+00: "org0001:100000" (100000-10004A)
+01: "org0002:100100" (100100-10016A)
+02: "org0003:100f00" (100F00-100F01)
+
+
+Source: "trkhook.s"
+                            	     1: ; trkhook.s -- SCRATCH PROTOTYPE of the stage-2 hooks (MSRLoaderStudy).  Not product code: installed by hook_test.py th
+                            	     2: ;   site A  $72c4  `jsr $76f4.l` (4eb9 000076f4)  -> `jsr hookA.l`        wraps the WHOLE race (setup + loop run inside
+                            	     3: ;   site B  $77da  `lea.l $58c00.l,a0 / jsr $d6fa.l` (41f900058c00 4eb90000d6fa, 12 B) -> `jmp hookB.l` + 3 nops   trac
+                            	     4: ; A swaps the campaign position into base-level terms for the duration of the race: $102c := base[pos] (every per-level
+                            	     5: ; level), the position is kept in V_POS, and on return $102c := pos | (flags the race set: $80 time-out retry, $8000 ga
+                            	     6: ; B copies the campaign entry's block into $58c00 (<= 6144 B, the stock capacity) instead of loading the stock block; a
+                            	     7: ; Store layout (scratch format): +0 'MSTK'; +4 count.w; +6 pad; entry i at +8+8*i: base.b flag.b(1 = custom block) off.
+                            	     8: STORE   equ     $110000
+                            	     9: V_ACT   equ     $100f00         ; byte: 1 = a campaign is active (set by whoever loaded the store)
+                            	    10: V_POS   equ     $100f02         ; word: campaign position
+                            	    11: SIGOK   equ     $c0008          ; rd_geom standing-frame reuse flag (patches/rd_geom.s)
+                            	    12: 
+                            	    13:         org     $100000
+00:00100000 4A3900100F00    	    14: hookA:  tst.b   V_ACT.l
+00:00100006 6720            	    15:         beq.s   .stk
+00:00100008 3038102C        	    16:         move.w  $102c.w,d0
+00:0010000C 0240000F        	    17:         andi.w  #$f,d0
+00:00100010 33C000100F02    	    18:         move.w  d0,V_POS.l
+00:00100016 E748            	    19:         lsl.w   #3,d0
+00:00100018 41F900110008    	    20:         lea     STORE+8.l,a0
+00:0010001E 7200            	    21:         moveq   #0,d1
+00:00100020 12300000        	    22:         move.b  (a0,d0.w),d1
+00:00100024 31C1102C        	    23:         move.w  d1,$102c.w
+00:00100028 4EB9000076F4    	    24: .stk:   jsr     $76f4.l
+00:0010002E 4A3900100F00    	    25:         tst.b   V_ACT.l
+00:00100034 6712            	    26:         beq.s   .x
+00:00100036 3038102C        	    27:         move.w  $102c.w,d0
+00:0010003A 02408080        	    28:         andi.w  #$8080,d0
+00:0010003E 807900100F02    	    29:         or.w    V_POS.l,d0
+00:00100044 31C0102C        	    30:         move.w  d0,$102c.w
+00:00100048 4E75            	    31: .x:     rts
+                            	    32: 
+                            	    33:         org     $100100
+01:00100100 4A3900100F00    	    34: hookB:  tst.b   V_ACT.l
+01:00100106 6750            	    35:         beq.s   .stock
+01:00100108 48E7F0E0        	    36:         movem.l d0-d3/a0-a2,-(a7)
+01:0010010C 303900100F02    	    37:         move.w  V_POS.l,d0
+01:00100112 E748            	    38:         lsl.w   #3,d0
+01:00100114 41F900110008    	    39:         lea     STORE+8.l,a0
+01:0010011A 4A300001        	    40:         tst.b   1(a0,d0.w)
+01:0010011E 6734            	    41:         beq.s   .fall
+01:00100120 22300002        	    42:         move.l  2(a0,d0.w),d1
+01:00100124 7400            	    43:         moveq   #0,d2
+01:00100126 34300006        	    44:         move.w  6(a0,d0.w),d2
+01:0010012A 43F900110000    	    45:         lea     STORE.l,a1
+01:00100130 D3C1            	    46:         adda.l  d1,a1
+01:00100132 45F900058C00    	    47:         lea     $58c00.l,a2
+01:00100138 5642            	    48:         addq.w  #3,d2
+01:0010013A E44A            	    49:         lsr.w   #2,d2
+01:0010013C 5342            	    50:         subq.w  #1,d2
+01:0010013E 24D9            	    51: .c:     move.l  (a1)+,(a2)+
+01:00100140 51CAFFFC        	    52:         dbra    d2,.c
+01:00100144 4239000C0008    	    53:         clr.b   SIGOK.l                 ; invalidate rd_geom's standing-frame reuse (the key could match a different bl
+01:0010014A 4CDF070F        	    54:         movem.l (a7)+,d0-d3/a0-a2
+01:0010014E 4EF9000077E6    	    55:         jmp     $77e6.l
+01:00100154 4CDF070F        	    56: .fall:  movem.l (a7)+,d0-d3/a0-a2
+01:00100158 41F900058C00    	    57: .stock: lea     $58c00.l,a0
+01:0010015E 4EB90000D6FA    	    58:         jsr     $d6fa.l
+01:00100164 4EF9000077E6    	    59:         jmp     $77e6.l
+                            	    60: 
+                            	    61:         org     V_ACT
+02:00100F00 01              	    62:         dc.b    1
+                            	    63: 
+
+
+Symbols by name:
+SIGOK                            E:000C0008
+STORE                            E:00110000
+V_ACT                            E:00100F00
+V_POS                            E:00100F02
+hookA                            A:00100000
+hookB                            A:00100100
+
+Symbols by value:
+000C0008 SIGOK
+00100000 hookA
+00100100 hookB
+00100F00 V_ACT
+00100F02 V_POS
+00110000 STORE

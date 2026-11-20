@@ -1,0 +1,38 @@
+t=    6s vbl=302 $1021/$100e=(0, 0)
+t=   12s vbl=602 $1021/$100e=(0, 0)
+t=   18s vbl=903 $1021/$100e=(0, 0)
+t=   24s vbl=1203 $1021/$100e=(0, 0)
+t=   30s vbl=1503 $1021/$100e=(0, 0)
+t=   36s vbl=1804 $1021/$100e=(0, 0)
+t=   42s vbl=2104 $1021/$100e=(0, 0)
+t=   48s vbl=2405 $1021/$100e=(0, 0)
+t=   54s vbl=2705 $1021/$100e=(0, 207)
+t=   60s vbl=3005 $1021/$100e=(0, 132)
+t=   66s vbl=3306 $1021/$100e=(0, 61)
+t=   72s vbl=3606 $1021/$100e=(0, 1)
+t=   78s vbl=3907 $1021/$100e=(0, 84)
+t=   84s vbl=4207 $1021/$100e=(0, 24)
+t=   90s vbl=4507 $1021/$100e=(0, 170)
+t=   96s vbl=4808 $1021/$100e=(0, 680)
+t=  102s vbl=5108 $1021/$100e=(0, 380)
+t=  108s vbl=5408 $1021/$100e=(0, 0)
+t=  114s vbl=5709 $1021/$100e=(2, 62)
+RESULT in_race = True vbl 5809
+PEEK $2dc: > m $2dc 16
+000002DC: 00 3f 80 00 00 08 10 00 00 01 51 eb 00 03 0d 40  .?........Q....@
+PEEK $42e: > m $42e 16
+0000042E: 00 40 00 00 00 00 a8 92 00 3f 80 00 23 76 98 aa  .@.......?..#v..
+PEEK $436: > m $436 16
+00000436: 00 3f 80 00 23 76 98 aa 00 00 00 03 00 14 ff 00  .?..#v..........
+Traceback (most recent call last):
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/tools/msr_boot_test.py", line 25, in <module>
+    if a.snap: h.savemem(a.snap)
+               ^^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/tools/stharness.py", line 355, in savemem
+    shutil.copy(tmp, out)
+  File "/home/ryan/.pyenv/versions/3.12.12/lib/python3.12/shutil.py", line 435, in copy
+    copyfile(src, dst, follow_symlinks=follow_symlinks)
+  File "/home/ryan/.pyenv/versions/3.12.12/lib/python3.12/shutil.py", line 260, in copyfile
+    with open(src, 'rb') as fsrc:
+         ^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/hatari.sav'

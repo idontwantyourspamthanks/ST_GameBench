@@ -1,0 +1,5 @@
+loadbin /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/trackloader/trkread.bin $100000
+loadbin /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/trackloader/callstub.bin $100400
+loadbin /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/trackloader/param.bin $100500
+e VBL
+r pc=$100400

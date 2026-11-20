@@ -1,0 +1,8 @@
+race running before: $100e 274 -> 300  $1021=2 $102c=0 $5ff8=0 $130c=0
+ikbd before: $6102 $6103 $610e $6105 = [0, 0, 0, 0]
+call 0: VBL at start/end: [7997, 8832] => VBL cost 835 (wall 17.0 s)
+> m $100600 12
+00100600: ff ff ff df 00 00 00 00 23 04 d0 e5              ........#...
+d0=0xffffffdf (-33)  bytes=0  SR at entry=0x2304  done marker=0xd0e5
+ikbd after: $6102 $6103 $610e $6105 = [0, 0, 0, 0]
+race running after: $100e 439 -> 481  $1021=2 $5ff8 0 -> 0 $130c=0 $6105=0  vbl 9597

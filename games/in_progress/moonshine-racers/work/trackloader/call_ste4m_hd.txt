@@ -1,0 +1,10 @@
+race running before: $100e 274 -> 300  $1021=2 $102c=0 $5ff8=0 $130c=0
+copied MSTRACKS.TRK to C:\FILES
+ikbd before: $6102 $6103 $610e $6105 = [0, 0, 0, 0]
+call 0: VBL at start/end: [7992, 8029] => VBL cost 37 (wall 1.0 s)
+> m $100600 12
+00100600: 00 00 00 00 00 01 e0 0c 23 04 d0 e5              ........#...
+d0=0x00000000 (0)  bytes=122892  SR at entry=0x2304  done marker=0xd0e5
+data compare: 122892 bytes read; equal to MSTRACKS.TRK: True crc 0xdb1845da
+ikbd after: $6102 $6103 $610e $6105 = [0, 0, 0, 0]
+race running after: $100e 468 -> 510  $1021=2 $5ff8 0 -> 0 $130c=0 $6105=0  vbl 8943

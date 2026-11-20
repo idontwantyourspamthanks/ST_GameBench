@@ -1,0 +1,10 @@
+[before] $102c=0x0000 $57890.len=19472 $58c00=0190000000960002008cfffe $23c0=00058c14 $1bbc[0..8]=0000000000000000 $5ff8=0 $1021=02 $100e=292
+custom block (level 5 ) head 00b4000000280001001effff | level 0 stock head 0190000000960002008cfffe | level 7 stock head 0019000000dbfffd00740000
+[S1 position 1 (entry 1: base 7, stock block load)] $102c=0x0007 $57890.len=20000 $58c00=0019000000dbfffd00740000 $23c0=00058c28 $1bbc[0..8]=0000000000000000 $5ff8=0 $1021=02 $100e=71
+S1 ok (hooks active, $102c = base 7, $58c00 = level 7's stock block): True
+[S2 position 0 (entry 0: base 3 + level 5's block)] $102c=0x0003 $57890.len=19000 $58c00=00b4000000280001001effff $23c0=00058c00 $1bbc[0..8]=0000000000000000 $5ff8=0 $1021=02 $100e=0
+S2 ok: True
+stream pointers $1bb0 $1bb4 $27da $133a $1342: ['00058dde', '00058e64', '00058f02', '000591f8', '00059a44']
+[S3 race ended normally] $102c=0x0001 $57890.len=19000 $58c00=00b4000000280001001effff $23c0=00058c20 $1bbc[0..8]=0000000000000000 $5ff8=0 $1021=02 $100e=9
+S3 ok ($102c = 1 = position 0 restored + 1; naive would be 4): True
+breakpoint $7306 lines ($102c, POS $100f02): ['0000102C: 00 07               ', '0000102C: 00 07               ', '0000102C: 00 07               ', '0000102C: 00 07               ', '0000102C: 00 80               ', '00100F02: 00 00               ', '0000102C: 00 03               ', '0000102C: 00 03               ', '0000102C: 00 00               ', '00100F02: 00 00               ', '0000102C: 00 01               ', '0000102C: 00 01               ']

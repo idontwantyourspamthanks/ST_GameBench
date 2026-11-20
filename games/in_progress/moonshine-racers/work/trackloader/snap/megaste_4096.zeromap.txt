@@ -1,0 +1,24 @@
+dump 4096 KB; zero runs >= 4 KB (512-byte granularity):
+  $04e800-$04ffff      6 KB
+  $054000-$055fff      8 KB
+  $06f000-$06ffff      4 KB
+  $080000-$080fff      4 KB
+  $0b9000-$0bafff      8 KB
+  $0d7200-$1f51ff   1144 KB
+  $1f8600-$1ffbff     29 KB
+  $1ffe00-$3cd7ff   1846 KB
+  $3cee00-$3cffff      4 KB
+  $3ea800-$3eb7ff      4 KB
+  $3fb800-$3fffff     18 KB
+non-zero islands (between those runs):
+  $000000-$04e7ff    314 KB
+  $050000-$053fff     16 KB
+  $056000-$06efff    100 KB
+  $070000-$07ffff     64 KB
+  $081000-$0b8fff    224 KB
+  $0bb000-$0d71ff    112 KB
+  $1f5200-$1f85ff     13 KB
+  $1ffc00-$1ffdff      0 KB
+  $3cd800-$3cedff      5 KB
+  $3d0000-$3ea7ff    106 KB
+  $3eb800-$3fb7ff     64 KB

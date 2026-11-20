@@ -1,0 +1,33 @@
+Sections:
+00: "org0001:100400" (100400-10044A)
+
+
+Source: "callstub.s"
+                            	     1: ; callstub.s -- scratch: debugger-driven call of trk_read ($100000) from a Hatari breakpoint.  The driver sets PC to `s
+                            	     2: ; flip routine $d1ca (not yet executed), so the stub restores everything and jumps back to $d1ca.
+                            	     3: ; params at $100500: +0 dest.l  +4 max.l  +8 path (NUL);  results at $100600: d0.l d1.l, SR-at-entry.w at $100608, done
+                            	     4:         org     $100400
+00:00100400 48E7FFFE        	     5: stub:   movem.l d0-d7/a0-a6,-(a7)
+00:00100404 40E7            	     6:         move.w  sr,-(a7)
+00:00100406 33D700100608    	     7:         move.w  (a7),$100608.l
+00:0010040C 42790010060A    	     8:         clr.w   $10060a.l
+00:00100412 227900100500    	     9:         movea.l $100500.l,a1
+00:00100418 223900100504    	    10:         move.l  $100504.l,d1
+00:0010041E 41F900100508    	    11:         lea     $100508.l,a0
+00:00100424 4EB900100000    	    12:         jsr     $100000.l
+00:0010042A 23C000100600    	    13:         move.l  d0,$100600.l
+00:00100430 23C100100604    	    14:         move.l  d1,$100604.l
+00:00100436 33FCD0E50010060A	    15: done:   move.w  #$d0e5,$10060a.l
+00:0010043E 46DF            	    16:         move.w  (a7)+,sr
+00:00100440 4CDF7FFF        	    17:         movem.l (a7)+,d0-d7/a0-a6
+00:00100444 4EF90000D1CA    	    18:         jmp     $d1ca.l
+                            	    19: 
+
+
+Symbols by name:
+done                             A:00100436
+stub                             A:00100400
+
+Symbols by value:
+00100400 stub
+00100436 done

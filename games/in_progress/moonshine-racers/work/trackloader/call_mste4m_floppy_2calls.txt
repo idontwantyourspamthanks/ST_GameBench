@@ -1,0 +1,16 @@
+race running before: $100e 300 -> 326  $1021=2 $102c=0 $5ff8=0 $130c=0
+inserted floppy work/trackloader/disk/campaign.st
+ikbd before: $6102 $6103 $610e $6105 = [0, 0, 0, 0]
+driving: $5ff8=388 $130c=10 $6105=1
+call 0: VBL at start/end: [9182, 10130] => VBL cost 948 (wall 16.0 s)
+> m $100600 12
+00100600: 00 00 00 00 00 01 e0 0c 23 04 d0 e5              ........#...
+d0=0x00000000 (0)  bytes=122892  SR at entry=0x2304  done marker=0xd0e5
+data compare: 122892 bytes read; equal to MSTRACKS.TRK: True crc 0xdb1845da
+call 1: VBL at start/end: [10664, 11540] => VBL cost 876 (wall 15.0 s)
+> m $100600 12
+00100600: 00 00 00 00 00 01 e0 0c 23 04 d0 e5              ........#...
+d0=0x00000000 (0)  bytes=122892  SR at entry=0x2304  done marker=0xd0e5
+data compare: 122892 bytes read; equal to MSTRACKS.TRK: True crc 0xdb1845da
+ikbd after: $6102 $6103 $610e $6105 = [0, 0, 0, 1]
+race running after: $100e 671 -> 713  $1021=2 $5ff8 2676 -> 3015 $130c=8 $6105=1  vbl 12647

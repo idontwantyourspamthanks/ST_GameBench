@@ -1,0 +1,21 @@
+== snap/megaste_4096.bin
+  A $72c4 wrap the whole race (jsr $76f4): patched RAM 4eb9000076f4  stock 4eb9000076f4  SAME  -> new 4eb900100000
+  B $77da track-block fetch (lea $58c00 / jsr $d6fa): patched RAM 41f900058c004eb90000d6fa  stock 41f900058c004eb90000d6fa  SAME  -> new 4ef9001001004e714e714e71
+  C $fda2 stream base pointer (lea $58c00)  [blocks > 6144 B / zero copy]: patched RAM 41f900058c00  stock 41f900058c00  SAME  -> new 207900100f10
+  D $731e campaign end test (cmpi.w #$f,d0 / bcc.b $732c)  [count < 15]: patched RAM 0c40000f6408  stock 0c40000f6408  SAME  -> new 4ef900100200
+== snap/ste_4096.bin
+  A $72c4 wrap the whole race (jsr $76f4): patched RAM 4eb9000076f4  stock 4eb9000076f4  SAME  -> new 4eb900100000
+  B $77da track-block fetch (lea $58c00 / jsr $d6fa): patched RAM 41f900058c004eb90000d6fa  stock 41f900058c004eb90000d6fa  SAME  -> new 4ef9001001004e714e714e71
+  C $fda2 stream base pointer (lea $58c00)  [blocks > 6144 B / zero copy]: patched RAM 41f900058c00  stock 41f900058c00  SAME  -> new 207900100f10
+  D $731e campaign end test (cmpi.w #$f,d0 / bcc.b $732c)  [count < 15]: patched RAM 0c40000f6408  stock 0c40000f6408  SAME  -> new 4ef900100200
+== snap/megaste_2048.bin
+  A $72c4 wrap the whole race (jsr $76f4): patched RAM 4eb9000076f4  stock 4eb9000076f4  SAME  -> new 4eb900100000
+  B $77da track-block fetch (lea $58c00 / jsr $d6fa): patched RAM 41f900058c004eb90000d6fa  stock 41f900058c004eb90000d6fa  SAME  -> new 4ef9001001004e714e714e71
+  C $fda2 stream base pointer (lea $58c00)  [blocks > 6144 B / zero copy]: patched RAM 41f900058c00  stock 41f900058c00  SAME  -> new 207900100f10
+  D $731e campaign end test (cmpi.w #$f,d0 / bcc.b $732c)  [count < 15]: patched RAM 0c40000f6408  stock 0c40000f6408  SAME  -> new 4ef900100200
+== snap/ste_2048.bin
+  A $72c4 wrap the whole race (jsr $76f4): patched RAM 4eb9000076f4  stock 4eb9000076f4  SAME  -> new 4eb900100000
+  B $77da track-block fetch (lea $58c00 / jsr $d6fa): patched RAM 41f900058c004eb90000d6fa  stock 41f900058c004eb90000d6fa  SAME  -> new 4ef9001001004e714e714e71
+  C $fda2 stream base pointer (lea $58c00)  [blocks > 6144 B / zero copy]: patched RAM 41f900058c00  stock 41f900058c00  SAME  -> new 207900100f10
+  D $731e campaign end test (cmpi.w #$f,d0 / bcc.b $732c)  [count < 15]: patched RAM 0c40000f6408  stock 0c40000f6408  SAME  -> new 4ef900100200
+shipped patch sites within the neighbourhood of the three sites: none

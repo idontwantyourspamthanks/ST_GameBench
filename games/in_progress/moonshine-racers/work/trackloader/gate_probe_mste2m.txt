@@ -1,0 +1,49 @@
+nce :file /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/trackloader/gp.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $b2708
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/trackloader/gp.txt' file on hit.
+WARN : No GEMDOS dir '/tmp/strun-rs6rez28/C/AUTO'
+WARN : No GEMDOS dir '/tmp/strun-rs6rez28/C/GAMEX'
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $b2708 :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/trackloader/gp.txt
+Reading debugger commands from '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/trackloader/gp.txt'...
+Changed to input file dir '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/trackloader'.
+> e VBL
+= %1100001111111 (bin), #6271 (dec), $187f (hex)
+> m $2dc 4
+000002DC: 00 1f 80 00                                      ....
+> m $42e 4
+0000042E: 00 20 00 00                                      . ..
+> m $436 4
+00000436: 00 1f 80 00                                      ....
+> m $1f8083 1
+001F8083: 03                                               .
+> m $1f80af 1
+001F80AF: 00                                               .
+> m $1f97be 4
+001F97BE: 4d fa 1c 04                                      M...
+> m $1f9166 4
+001F9166: 45 fa 0e 1e                                      E...
+> m $1f9372 4
+001F9372: 12 3a ed 0f                                      .:..
+> m $1fb228 2
+001FB228: 60 2a                                            `*
+> m $b2700 8
+000B2700: 00 00 00 00 00 00 00 00                          ........
+> r
+  D0 000000B4   D1 00000000   D2 0007026C   D3 00008000 
+  D4 00000007   D5 0000003F   D6 00000006   D7 FFFFFFFF 
+  A0 00001000   A1 0000CFFA   A2 0000164A   A3 00001546 
+  A4 00000000   A5 00078000   A6 000507AC   A7 0007FFF0 
+USP  000B1F40 ISP  0007FFF0 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 48e7 (MVMLE) fffe (ILLEGAL) Chip latch 00000000
+000b2708 48e7 fffe                movem.l d0-d7/a0-a6,-(a7) == $0007ffec
+Next PC: 000b270c
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers' dir.
+Debugger re-init.
+Removed CPU breakpoint 1:
+	pc = $b2708 :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/trackloader/gp.txt
+

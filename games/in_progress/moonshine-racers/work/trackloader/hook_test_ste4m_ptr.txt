@@ -1,0 +1,11 @@
+[before] $102c=0x0000 $57890.len=19472 $58c00=0190000000960002008cfffe $23c0=00058c14 $1bbc[0..8]=0000000000000000 $5ff8=0 $1021=02 $100e=292
+custom block (level 5 ) head 00b4000000280001001effff | level 0 stock head 0190000000960002008cfffe | level 7 stock head 0019000000dbfffd00740000
+[S1 position 1 (entry 1: base 7, stock block load)] $102c=0x0007 $57890.len=20000 $58c00=0019000000dbfffd00740000 $23c0=00058c28 $1bbc[0..8]=0000000000000000 $5ff8=0 $1021=02 $100e=70
+S1 ok (hooks active, $102c = base 7, $58c00 = level 7's stock block): True
+[S2 position 0 (entry 0: base 3 + level 5's block)] $102c=0x0003 $57890.len=19000 $58c00=0019000000dbfffd00740000 $23c0=00111020 $1bbc[0..8]=0000000000000000 $5ff8=0 $1021=02 $100e=870
+S2 ok: False
+stream pointers $1bb0 $1bb4 $27da $133a $1342: ['001111e6', '00111264', '00111302', '001115f8', '00111e44']
+curve ring $1bbc: 1024 words read, first 8 ['0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0']; equal to the decoded curve of level 5 (first 1024): True  (the decoded curve of level 3 would be ['0x0', '0x0', '0x0', '0x0']...)
+[S3 race ended normally] $102c=0x0001 $57890.len=19000 $58c00=0019000000dbfffd00740000 $23c0=00111020 $1bbc[0..8]=0000000000000000 $5ff8=0 $1021=02 $100e=889
+S3 ok ($102c = 1 = position 0 restored + 1; naive would be 4): True
+every return of the race ($7306 breakpoint: $102c as the campaign loop will read it, position variable): [('0080', '0000'), ('0000', '0000')]

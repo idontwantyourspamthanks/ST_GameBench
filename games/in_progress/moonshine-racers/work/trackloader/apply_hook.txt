@@ -1,0 +1,9 @@
+loadbin /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/trackloader/trkhook2.bin $100000
+loadbin /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/trackloader/store.bin $110000
+w $72c6 $00 $10 $00 $00
+w $77da $4e $f9 $00 $10 $01 $00 $4e $71 $4e $71 $4e $71
+w $fda2 $20 $79 $00 $10 $0f $10
+
+w $102c $00 $81
+w $1024 $ff
+e VBL
