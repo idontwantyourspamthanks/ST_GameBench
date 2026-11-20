@@ -2,7 +2,7 @@
 """cold boot a game folder to the first race, shoot at the standing start, drive, shoot again.  usage: run_race.py GAMEDIR TAG"""
 import sys, time
 from pathlib import Path
-G = Path('/home/ryan/Code/AtariST/gamebench/games/done/moonshine-racers')
+G = Path('/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers')
 sys.path.insert(0, str(G/'tools')); sys.path.insert(0, str(G.parent.parent.parent/'tools'))
 from msr import Moonshine
 gd, tag = sys.argv[1], sys.argv[2]

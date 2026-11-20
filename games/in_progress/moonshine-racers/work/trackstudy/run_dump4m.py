@@ -2,7 +2,7 @@
 """cold boot the shipped-default patched HD build at STE 4 MB, SPACE to the race, dump RAM + low-RAM facts."""
 import sys, time, struct
 from pathlib import Path
-G = Path('/home/ryan/Code/AtariST/gamebench/games/done/moonshine-racers')
+G = Path('/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers')
 sys.path.insert(0, str(G/'tools')); sys.path.insert(0, str(G.parent.parent.parent/'tools'))
 from msr import Moonshine
 mem = int(sys.argv[2]); tag = sys.argv[1]

@@ -10,7 +10,7 @@ Track block (RAM $58c00, table $28a2) = six streams back to back:
   S5 types   : 12-byte entries (ff00, kind, w2, sprite, w4, w5)                                       -> $1342
 """
 import struct, sys, os, json
-G = '/home/ryan/Code/AtariST/gamebench/games/done/moonshine-racers'
+G = '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers'
 RAM = open(f'{G}/work/dumps/ram_race_start.bin', 'rb').read()
 MS2 = open(f'{G}/originals/MOONSHR/FILES/MS2', 'rb').read()
 NLEV = 15
