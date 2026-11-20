@@ -7,6 +7,10 @@ What it is
   start-up: fixed game speed, faster drawing, extra in-between pictures on machines with time to spare, a new top-bar HUD.
   The game files are PP's, unchanged.  PATCHES.TXT lists every change.
 
+v1.0.1
+  Fixes a frozen mouse pointer in the spare-parts shop after a race (and on the title screen) in v1.0: the shop's EXIT could not
+  be used, so the game could not get past race 1.  Nothing else changed.
+
 How to run
   Copy the folder to a hard disk (or any GEMDOS drive) and start RUNME.TOS from the desktop (or put it in AUTO), as PP's version.
   1 MB RAM or more.  Recommended: STE or Mega STE; a plain ST is supported by the code (no blitter sprites there) but this set was not booted on one.

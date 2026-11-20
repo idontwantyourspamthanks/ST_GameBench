@@ -8,6 +8,10 @@ What it is
   new top-bar HUD, and no manual copy-protection question.  disk_b.st is the original disk 2, unchanged.  PATCHES.TXT lists
   every change.
 
+v1.0.1
+  Fixes a frozen mouse pointer in the spare-parts shop after a race (and on the title screen) in v1.0: the shop's EXIT could not
+  be used, so the game could not get past race 1.  Nothing else changed.
+
 How to run
   Write disk_a.st / disk_b.st to two floppies (or use them in an emulator / floppy emulator).  1 MB RAM or more.
   Recommended: STE or Mega STE; a plain ST is supported by the code but this set was not booted on one.
