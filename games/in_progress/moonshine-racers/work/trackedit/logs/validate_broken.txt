@@ -1,0 +1,14 @@
+work/trackedit/fixtures/broken_short.json: ERROR E-SUM: curve stream covers 19997 units, needs at least 20496 (race length 19472 of base level 0 + 1024 look-ahead); stock tracks cover 32768
+work/trackedit/fixtures/broken_short.json: FAIL (1 errors, 0 warnings)
+exit 1
+work/trackedit/fixtures/broken_type.json: ERROR E-TYPE: objects[10] (at 611): type 200 is not in the type list of base level 0 (valid 1..131)
+work/trackedit/fixtures/broken_type.json: ERROR E-LAT: objects[11] (at 661): lateral 300 outside -128..127
+work/trackedit/fixtures/broken_type.json: FAIL (2 errors, 0 warnings)
+exit 1
+work/trackedit/fixtures/broken_gap.json: ERROR E-RANGE: right[1] (starts at unit 300): half-width target 3 outside 10..85
+work/trackedit/fixtures/broken_gap.json: ERROR E-GAP: objects[20].at = 1141 is not after objects[19].at = 1141: gaps must be 1..32767 (gap 0 would end the object list)
+work/trackedit/fixtures/broken_gap.json: FAIL (2 errors, 0 warnings)
+exit 1
+/tmp/msrtrack_t/cut.bin: ERROR E-TERM: block ends inside type table (offset 4830, block 4830 bytes): missing terminator
+/tmp/msrtrack_t/cut.bin: FAIL
+exit 1

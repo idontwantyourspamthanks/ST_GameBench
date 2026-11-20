@@ -263,3 +263,5 @@ python3 work/trackstudy/run_race.py $PWD/work/trackstudy/game_edit1 edit1   # ed
 python3 work/trackstudy/run_race.py originals/MOONSHR base                  # baseline
 python3 work/trackstudy/cmp_shots.py shots/base_grid2.png shots/edit1_grid2.png out.png
 ```
+
+See also: `work/notes/trackformat.md` (track block / JSON / campaign file spec, stage 1 PC tool `tools/msrtrack.py`). Correction to 1.3 "free in block": the sector padding after a stock block holds the start of the next asset (the `Ice!` object graphics), not zeros; the tool treats it as padding the game never reads.
