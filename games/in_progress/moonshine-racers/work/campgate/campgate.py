@@ -7,6 +7,7 @@
               timeout c3 loaded: race 1 times out (replay of the same custom track), again, the third time-out = game over to the title
               orig    c3 loaded, then ORIGINAL GAME: the stock game
               errors  one session: every error case, then a good load and ORIGINAL GAME
+              psgfl   floppy PSG gate: load from A, then from B, race 1 (disk-2 swap)
               stock   stock race, no campaign key, for --minutes (default 10)"""
 import argparse, sys
 from pathlib import Path
@@ -21,7 +22,7 @@ ap.add_argument("--d2b", action="store_true", help="floppy: disk 2 in drive B fr
 ap.add_argument("--sound", action="store_true"); ap.add_argument("--psg", action="store_true"); ap.add_argument("--noff", action="store_true")
 a = ap.parse_args()
 KIND = a.kind
-build = a.build or ("/tmp/msrc2/hd_a" if KIND == "hd" else "/tmp/msrc2/fl_a")
+build = a.build or ("/tmp/msrc3/hd_a" if KIND == "hd" else "/tmp/msrc3/fl_a")
 short = f"{ {'ste': 'ste', 'megaste': 'mste', 'st': 'st', 'megast': 'mst'}[a.machine] }{a.mem // 1024}m"
 src = a.src or ("hd" if KIND == "hd" else "a")
 tag = a.tag or f"{KIND}_{a.scenario}{'_' + src if a.scenario == 'finish' else ''}{'_d2b' if a.d2b else ''}_{short}"
@@ -115,6 +116,23 @@ def sc_finish():
     check("F10 after the ending shows the loaded campaign again", any("LOADED CAMPAIGN: " in t and "3" in t for t in txs))
     r.key(1); time.sleep(3)                                        # Esc: back to the title
     r.st("title after Esc"); r.shot("5_title")
+
+def sc_psgfl():
+    """floppy PSG gate: campaign read from drive A, then from drive B (menu Esc, second disk), race 1 started from it with the game's own disk-2 swap into A"""
+    r.menu_open(); r.insert("a", CAMP / f"{a.camp}.st")
+    ok, t, tx = do_load(ITEM["a"], "psg_1_load_a", wait=120); log(f"LOAD a: loaded={ok} {t:.1f}s texts={tx}"); check("campaign loaded from drive A", ok)
+    time.sleep(1); goto_item(3); r.key(0x1c); time.sleep(2)        # "< BACK" row of the track list: back to the main menu (Esc from the list did not return in the first version of this scenario)
+    check("back on the main menu", r.w(0x100406) in (0, 1, 2, 3, 4)); r.shot("psg_1b_main")
+    r.insert("b", CAMP / f"{a.camp}.st")
+    r.poke(V["loaded"], 0x00)                                      # the loader clears LOADED itself when a load starts; cleared here so that do_load's poll can tell this second load from the first
+    ok, t, tx = do_load(ITEM["b"], "psg_2_load_b", wait=120); log(f"LOAD b: loaded={ok} {t:.1f}s texts={tx}"); check("campaign loaded from drive B", ok)
+    cv = r.mem(V["act"], 12); check("loaded count", W(cv, 2) == 3, f"count={W(cv, 2)}")
+    time.sleep(1); r.st("list screen")
+    r.key(0x1c)
+    res = r.play_races(1, "c")
+    for i, x in enumerate(res): start_state(i, x)
+    check("race 1 reached (after the disk-2 swap)", len(res) == 1)
+    r.st("race 1 over")
 
 def sc_timeout():
     r.menu_open(); prepare_source(src); ok, t, tx = do_load(ITEM[src], "1_load"); check("campaign loaded", ok)
@@ -231,7 +249,7 @@ try:
     if not r.boot_title(): log("BOOT FAILED"); sys.exit(2)
     probe_boot(r)
     if a.scenario == "stock": pass
-    {"finish": sc_finish, "timeout": sc_timeout, "orig": sc_orig, "errors": sc_errors, "stock": sc_stock}[a.scenario]()
+    {"finish": sc_finish, "timeout": sc_timeout, "orig": sc_orig, "errors": sc_errors, "stock": sc_stock, "psgfl": sc_psgfl}[a.scenario]()
 finally:
     log(f"== {tag} done: {'ALL CHECKS PASS' if not FAILS else 'FAILED: ' + ', '.join(FAILS)}; bus/address error lines {r.errlines()}")
     r.close()

@@ -1,0 +1,19 @@
+== psg_hd_ste2m: hd STE 2 MB build /tmp/msrc3/hd_a src a
+BOOT psg_hd_ste2m: $2dc=0x1f8000 $42e=0x200000 HAGA+$83=0x02 marker=MSPO IB+4=0xff
+BOOT sites {'0x72c4': '4eb9000b8022', '0x77da': '4ef9000b80704e714e714e71', '0xfda2': '2079000b8e08', '0x731e': '4ef9000b8220', '0x7252': '4eb9000b8240', '0x74fe': '4ef9000b9f00', '0x8418': '4ef9000b9f06'}
+LOAD a: loaded=True 4.7s message-row texts=['                                        ', 'LOADING CAMPAIGN FROM DRIVE A...', '                                        ', 'CHECKING CAMPAIGN...']
+CHECK campaign loaded: PASS 
+CHECK loaded count: PASS count=3
+[list screen] vbl=6268 act=0xff loaded=0xff count=3 pos=0 start=0 ptr=0x0 $102c=0x0000 len57890=0 $23c0=0x0 $1024=0x00 $1027=0x00 $100e=82 $5ff8=0 $1021=0x02
+[c race 0 start] vbl=6957 act=0xff loaded=0xff count=3 pos=0 start=0 ptr=0x110088 $102c=0x0000 len57890=19472 $23c0=0x1100ac $1024=0x00 $1027=0x00 $100e=61 $5ff8=0 $1021=0x02
+[c race 0 over (finished=True)] vbl=8092 act=0xff loaded=0xff count=3 pos=0 start=0 ptr=0x110088 $102c=0x0001 len57890=19472 $23c0=0x1100b4 $1024=0xff $1027=0x00 $100e=265 $5ff8=666 $1021=0x02
+CHECK race0 stream inside the campaign store: PASS $23c0=0x1100ac
+CHECK race0 base level: PASS $102c=0x0000 expect 0
+CHECK race0 race length of the base level: PASS $57890=19472 expect 19472
+CHECK race0 position: PASS POS=0
+CHECK all races reached: PASS 1 of 1
+CHECK race over reached: PASS 
+HITS after the races (shop $725c, ending $732c, picture $75e8, title $723c): {29276: 1, 29484: 0, 30184: 0, 29244: 0, 29266: 1}
+== psg_hd_ste2m done: ALL CHECKS PASS; bus/address error lines 3
+PSGCHECK ok True violations [] warnings []
+PSGCHECK run_psg_hd_ste2m: PASS (violations 0, warnings 0; reg-7 writes 2209, reg-14 writes 322, FDC commands 69, selects 31912, data writes 31910, frames 41, frames with reg 7 bits 6/7 not both set 0 (longest run 0), final reg 7 = $f8)

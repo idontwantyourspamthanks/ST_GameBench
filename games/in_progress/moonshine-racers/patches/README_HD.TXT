@@ -7,9 +7,14 @@ What it is
   start-up: fixed game speed, faster drawing, extra in-between pictures on machines with time to spare, a new top-bar HUD.
   The game files are PP's, unchanged.  PATCHES.TXT lists every change.
 
+v1.1
+  New: CAMPAIGNS.  Track sets made with the track tool (tools/msrtrack.py: a file MSTRACKS.TRK, put in this folder's FILES\ or on a
+  campaign disk in drive A) replace the 15 tracks; see "Campaigns" below.  Needs an ST, Mega ST, STE or Mega STE with 2 MB or more;
+  on a machine with 1 MB, a TT or a Falcon the game is exactly the v1.0.1 game.
+
 v1.0.1
   Fixes a frozen mouse pointer in the spare-parts shop after a race (and on the title screen) in v1.0: the shop's EXIT could not
-  be used, so the game could not get past race 1.  Nothing else changed.
+  be used, so the game could not get past race 1.
 
 How to run
   Copy the folder to a hard disk (or any GEMDOS drive) and start RUNME.TOS from the desktop (or put it in AUTO), as PP's version.
@@ -56,7 +61,7 @@ Campaigns (ST, Mega ST, STE and Mega STE with 2 MB or more only)
      ORIGINAL GAME                   start the original game at once and switch the campaign off (a loaded campaign stays in memory)
      LOAD CAMPAIGN FROM HARD DISK    read FILES\MSTRACKS.TRK (about a second)
      LOAD CAMPAIGN FROM DRIVE A      read A:\MSTRACKS.TRK; the drive is only touched when you ask for it (a disk takes a few seconds;
-                                     an empty drive makes the game wait about 17 seconds before it reports "no campaign disk")
+                                     with an empty drive the game waits for TOS's own floppy timeout before it reports "no campaign disk": about 17 seconds with TOS 1.62 (STE), about 6 seconds with TOS 2.06 (Mega STE), measured in Hatari; insert the disk first)
      LOADED CAMPAIGN: N TRACKS       (once one is loaded) the track list: choose "play from track N" and the game starts there
   Up / Down and Return / Space (or the joystick: up, down, fire), Esc / Backspace / Left = back.  The file is checked before it
   is used (magic, version, sizes, CRC-32 of the table and of every track); a damaged or wrong file gives a message and the game
@@ -84,7 +89,8 @@ Switching patches off (this zip is a fixed build)
   (add `--set SAFE=3`), then copy DIR.  The default list is `python3 tools/msrpatch.py list` (column default = yes).
 
 Not tested
-  Real hardware (ST, STE, Mega STE), TT, Falcon, MiSTer.  Hatari only: STE TOS 1.62 (1 MB, 4 MB), Mega STE TOS 2.06 (1 MB).
+  Real hardware (ST, STE, Mega STE), TT, Falcon, MiSTer.  Hatari only: STE TOS 1.62 (1 MB, 2 MB, 4 MB), Mega STE TOS 2.06 (1 MB, 2 MB, 4 MB), ST TOS 1.04 and Mega ST TOS 1.04 (1 MB, 2 MB, 4 MB); TT TOS 3.06 and Falcon TOS 4.04 (4 MB: the game stays the v1.0.1 game).
+  The campaign code reads the hard disk through HAGA's own file window and drive A through GEMDOS; neither was run on real hardware, and the Mega STE cache with the code HAGA's reader copies into its top region is not modelled by Hatari.
 
 Credits
   Moonshine Racers: Millennium / Peak Star, 1991.  HAGA hard-disk conversion: PP.  Enhancements (patches, tools): dad_prg.

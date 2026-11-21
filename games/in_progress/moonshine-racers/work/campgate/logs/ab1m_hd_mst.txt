@@ -1,0 +1,26 @@
+[ref] title reached True vbl 6534 $1021 0x2
+[ref] {'marker': 'MSPO', 'IB+4': 0, 'sites': {'0x72c4': '4eb9000076f4', '0x77da': '41f900058c004eb90000d6fa', '0xfda2': '41f900058c00', '0x731e': '0c40000f6408', '0x7252': '4eb9000073b8', '0x74fe': '4fef000e6106', '0x8418': '610644fc00ff'}, '$2dc': '0xf8000', '$42e': '0x100000', 'HAGA+$83': 1}
+[ref] race ready True vbl 7376 marker b'MSPO'
+[ref] driving: $5ff8 3600 $130c 7 $100e 467
+[ref] memstate saved at pass $100e == 472
+[new] title reached True vbl 6955 $1021 0x2
+[new] {'marker': 'MSPO', 'IB+4': 0, 'sites': {'0x72c4': '4eb9000076f4', '0x77da': '41f900058c004eb90000d6fa', '0xfda2': '41f900058c00', '0x731e': '0c40000f6408', '0x7252': '4eb9000073b8', '0x74fe': '4fef000e6106', '0x8418': '610644fc00ff'}, '$2dc': '0xf8000', '$42e': '0x100000', 'HAGA+$83': 1}
+[new] after F10 at the title: $1021 0x2 $100e 0
+[new] race ready True vbl 7672 marker b'MSPO'
+[new] driving: $5ff8 3635 $130c 7 $100e 472
+[new] EXEC BREAKPOINT HITS in the campaign code ranges (title incl. F10, race, 2000 VBL driving): 0
+CHECK no campaign code executed at 1 MB: PASS 
+CHECK marker MSPO in both: PASS 
+CHECK IB+4 = 0: the gate is closed (list 2 not applied): PASS IB+4=0x0
+CHECK every campaign site holds the v1.0.1 bytes: PASS {'0x72c4': '4eb9000076f4', '0x77da': '41f900058c004eb90000d6fa', '0xfda2': '41f900058c00', '0x731e': '0c40000f6408', '0x7252': '4eb9000073b8', '0x74fe': '4fef000e6106', '0x8418': '610644fc00ff'}
+[B] loadbin at the pass boundary $100e == 512 (memstate saved at 472: the same pass for every loadbin run)
+[C] loadbin at the pass boundary $100e == 512 (memstate saved at 472: the same pass for every loadbin run)
+STATE A/B (hd Mega ST 1 MB): passes A 181 B 181 common 165  bytes compared 1108140  different 0
+CHECK per-pass state identical: PASS 
+RAM $400-$B1EFF at pass boundary $100e == 697: sizes A 728832 B 728832 A2 728832 C 728832
+  A vs A2 (v1.0.1 twice: run-to-run noise): 0 differing bytes; runs []
+  A vs C (v1.0.1 + loadbin of the v1.0.1 image: the loadbin itself): 0 differing bytes; runs []
+  C vs B (loadbin of the v1.0.1 image vs loadbin of the new image: the campaign payload): 0 differing bytes; runs []
+  A vs B (v1.0.1 vs v1.0.1 + new image): 0 differing bytes; runs []
+CHECK C == B: RAM below the payload is the same whether the v1.0.1 or the new payload image is loaded: PASS 
+== ab1m_hd_mst done: ALL CHECKS PASS

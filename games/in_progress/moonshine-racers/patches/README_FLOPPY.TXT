@@ -11,7 +11,7 @@ What it is
 v1.1
   New: CAMPAIGNS.  Track sets made with the track tool (tools/msrtrack.py: a file MSTRACKS.TRK, put on a 720 KB campaign disk with
   `msrtrack.py disk`) replace the 15 tracks; see "Campaigns" below.  Needs an ST, Mega ST, STE or Mega STE with 2 MB or more; on a
-  machine with 1 MB, a TT or a Falcon the game is exactly the v1.0.1 game.
+  machine with 1 MB the game is exactly the v1.0.1 game (this floppy release does not start on a TT or a Falcon, as v1.0.1).
 
 v1.0.1
   Fixes a frozen mouse pointer in the spare-parts shop after a race (and on the title screen) in v1.0: the shop's EXIT could not
@@ -94,8 +94,9 @@ Switching patches off (this zip is a fixed build)
   (see the HD notes in PATCHES.TXT for what they mean); `build --floppy --only <list> [--set SAFE=3]` for a custom set.
 
 Not tested
-  Real hardware (ST, STE, Mega STE), TT, Falcon, MiSTer.  Hatari only: STE TOS 1.62 (1 MB, 2 MB, 4 MB), Mega STE TOS 2.06 (1 MB, 2 MB, 4 MB), ST TOS 1.04 and Mega ST TOS 1.04 (1 MB, 2 MB, 4 MB).
-  The campaign disk read (drive-present test, FDC timing, index pulses) is untested on a real drive, a Gotek or MiSTer.
+  Real hardware (ST, STE, Mega STE), TT, Falcon, MiSTer.  Hatari only: STE TOS 1.62 (1 MB, 2 MB, 4 MB), Mega STE TOS 2.06 (1 MB, 2 MB), ST TOS 1.04 (1 MB, 2 MB) and Mega ST TOS 1.04 (1 MB).
+  The campaign disk read (drive-present test, FDC timing, index pulses) is untested on a real drive, a Gotek or MiSTer; so is the boot-sector's capture of the RAM size (TOS' $42e) on a real TOS.
+  The floppy release does not start on a TT or a Falcon in Hatari (TOS 3.06 / 4.04), with or without the campaign code (v1.0.1 neither).
 
 Credits
   Moonshine Racers: Millennium / Peak Star, 1991.  HAGA conversion technique: PP (the floppy images are converted from the original

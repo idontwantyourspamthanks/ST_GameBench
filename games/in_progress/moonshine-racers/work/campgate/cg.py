@@ -34,8 +34,8 @@ class Run:
     def __init__(self, kind, machine, mem_kb, tag, build=None, snap=None, camp_hd=None, disk_a=None, disk_b=None, sound=False, psg=False, strict=False, tos=None, d2=None, d2_drive="a", noff=False, extra_args=()):
         self.kind, self.machine, self.mem_kb, self.tag = kind, machine, mem_kb, tag
         self.shotdir = LOGDIR / "shots"; self.shotdir.mkdir(exist_ok=True)
-        wd = f"/tmp/msrc2/run_{tag}"; shutil.rmtree(wd, ignore_errors=True)
-        self.tmp = Path(tempfile.mkdtemp(prefix=f"cg_{tag}_", dir="/tmp/msrc2"))
+        wd = f"/tmp/msrc3/run_{tag}"; shutil.rmtree(wd, ignore_errors=True)
+        self.tmp = Path(tempfile.mkdtemp(prefix=f"cg_{tag}_", dir="/tmp/msrc3"))
         kw = {"tos": TOS[tos]} if tos else {}
         sk = dict(sound=sound, trace_psg=psg, strict=strict)
         extra = (["--joy1", "keys"] if sound else []) + list(extra_args)
@@ -177,7 +177,12 @@ class Run:
             time.sleep(1.0)
             try:
                 up = self.race_up()
-                if up: return (self.w(0x57890), self.w(0x102c), self.l(0x23c0), self.w(V["pos"]))
+                if up:
+                    # sampling discipline: during a REPLAY's setup (time-out: $fda2 stores the block start into $23c0, the ring fill $ff3a then advances it) $100e still holds the previous race's value
+                    # (> 30), so race_up() is already true while $23c0 is the block start.  The sample counts only when the stream pointer and the state stayed unchanged for >= 1 s (the car stands).
+                    s1 = (self.w(0x57890), self.w(0x102c), self.l(0x23c0), self.w(V["pos"])); time.sleep(1.0)
+                    if self.race_up() and s1 == (self.w(0x57890), self.w(0x102c), self.l(0x23c0), self.w(V["pos"])): return s1
+                    continue
                 if self.d2 and not self.d2_done and self.at_prompt():
                     log(f"[{self.tag}] game's 'Insert Disk 2' prompt at vbl {self.vbl()}: disk 2 into drive {self.d2_drive.upper()}")
                     self.shot("prompt_disk2"); self.insert(self.d2_drive, self.d2); self.key(57); self.d2_done = True; continue

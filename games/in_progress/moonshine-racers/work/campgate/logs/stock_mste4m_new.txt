@@ -1,0 +1,18 @@
+== stock_mste4m_new: hd Mega STE 4 MB build /tmp/msrc3/hd_a src hd
+BOOT stock_mste4m_new: $2dc=0x3f8000 $42e=0x400000 HAGA+$83=0x03 marker=MSPO IB+4=0xff
+BOOT sites {'0x72c4': '4eb9000b8022', '0x77da': '4ef9000b80704e714e714e71', '0xfda2': '2079000b8e08', '0x731e': '4ef9000b8220', '0x7252': '4eb9000b8240', '0x74fe': '4ef9000b9f00', '0x8418': '4ef9000b9f06'}
+CHECK stock race: PASS 
+[stock start] vbl=7491 act=0x0 loaded=0x0 count=0 pos=0 start=0 ptr=0x58c00 $102c=0x0000 len57890=19472 $23c0=0x58c14 $1024=0x00 $1027=0x00 $100e=60 $5ff8=0 $1021=0x02
+[+1 min] vbl=10920 act=0x0 loaded=0x0 count=0 pos=0 start=0 ptr=0x58c00 $102c=0x0000 len57890=19472 $23c0=0x58c84 $1024=0x00 $1027=0x00 $100e=632 $5ff8=4841 $1021=0x02
+[+2 min] vbl=13893 act=0x0 loaded=0x0 count=0 pos=0 start=0 ptr=0x58c00 $102c=0x0000 len57890=19472 $23c0=0x58cd4 $1024=0x00 $1027=0x00 $100e=1127 $5ff8=8279 $1021=0x02
+[+3 min] vbl=16866 act=0x0 loaded=0x0 count=0 pos=0 start=0 ptr=0x58c00 $102c=0x0000 len57890=19472 $23c0=0x58d14 $1024=0x00 $1027=0x00 $100e=1623 $5ff8=11732 $1021=0x02
+[+4 min] vbl=19839 act=0x0 loaded=0x0 count=0 pos=0 start=0 ptr=0x58c00 $102c=0x0000 len57890=19472 $23c0=0x58c58 $1024=0x00 $1027=0x01 $100e=383 $5ff8=3047 $1021=0x02
+[+5 min] vbl=22812 act=0x0 loaded=0x0 count=0 pos=0 start=0 ptr=0x58c00 $102c=0x0000 len57890=19472 $23c0=0x58ca8 $1024=0x00 $1027=0x01 $100e=879 $5ff8=6570 $1021=0x02
+[+6 min] vbl=25786 act=0x0 loaded=0x0 count=0 pos=0 start=0 ptr=0x58c00 $102c=0x0000 len57890=19472 $23c0=0x58cf0 $1024=0x00 $1027=0x01 $100e=1374 $5ff8=10017 $1021=0x02
+[race over] vbl=27974 act=0x0 loaded=0x0 count=0 pos=0 start=0 ptr=0x58c00 $102c=0x0000 len57890=19472 $23c0=0x58c00 $1024=0x00 $1027=0x02 $100e=4 $5ff8=0 $1021=0x02
+[+7 min] vbl=28730 act=0x0 loaded=0x0 count=0 pos=0 start=0 ptr=0x58c00 $102c=0x0000 len57890=19472 $23c0=0x58c18 $1024=0x00 $1027=0x02 $100e=130 $5ff8=558 $1021=0x02
+[+8 min] vbl=31702 act=0x0 loaded=0x0 count=0 pos=0 start=0 ptr=0x58c00 $102c=0x0000 len57890=19472 $23c0=0x58c84 $1024=0x00 $1027=0x02 $100e=625 $5ff8=4792 $1021=0x02
+[+9 min] vbl=35081 act=0x0 loaded=0x0 count=0 pos=0 start=0 ptr=0x58c00 $102c=0x0000 len57890=19472 $23c0=0x58cd4 $1024=0x00 $1027=0x02 $100e=1188 $5ff8=8695 $1021=0x02
+[end] vbl=37706 act=0x0 loaded=0x0 count=0 pos=0 start=0 ptr=0x58c00 $102c=0x0000 len57890=19472 $23c0=0x58d14 $1024=0x00 $1027=0x02 $100e=1626 $5ff8=11746 $1021=0x02
+bus/address error lines: 0
+== stock_mste4m_new done: ALL CHECKS PASS; bus/address error lines 0

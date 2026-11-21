@@ -48,3 +48,17 @@ Scripts: `title_snap.py`/`probe_type.py` (cold boot to the title, memstate), `ga
 * The title key-exit trick for F10 in the final-wait stack depth was reasoned from the disassembly and not exercised separately; the F10 menu was opened in the face-sprite phase only [obs]; the hi-score screen hook `$8418` is not exercised.
 * Real hardware, TT, Falcon, ST/Mega ST TOS beyond 1.04, a campaign file with more than 15 tracks (refused by the format), a disk swap between two loads: untested. Mega STE cache: the reader copies part B into HAGA's top region and executes it; Hatari does not model the Mega STE cache [INFERENCE: Pop2 does the same].
 * The F10 menu has a plain black screen (no logo); the title attract loop is restarted after `BACK TO THE TITLE` by re-entering `$73e6`.
+
+## 6. When the gate bytes are sampled (v1.1 release gating, MSRCampaign3)
+
+* **Once, at boot**, by the payload trampoline (`core.s`, the hook instant `pc = $b204e` before the game starts): `cmpi.l #$200000,$42e.w` (TOS' phystop, still intact on the HD build: logs `boot_hd_*.txt` print `$42e=0x200000/0x400000` at the title), then `$2dc.w` = HAGA base and the machine-type byte `HAGA+$83` (PP's HAGA fills it at its own start-up; `$2dc=$1F8000/$3F8000`, byte 1/1/2/3 on ST/Mega ST/STE/Mega STE, 5 on a TT, 4 on a Falcon: `work/campgate/boot_hd_*.txt`, `logs/ttf_hd_*.txt`). Nothing re-reads them later: the result is the marker byte `IB+4` (`$b2704`: 0 closed, `$ff` open) and the applied site bytes. Both bytes are therefore sampled before the game's own loader or any F10 menu code runs.
+* **Floppy**: `$42e` is wiped by the game's loader at VBL ~99, so stage 0 (the boot sector) copies it into `IB+4` right after the payload read; the trampoline reads and clears it (0 on TT/Falcon: `_MCH` says not an ST family machine). No machine-type byte exists on the floppy (no HAGA).
+* A cold boot is the only point where the gate is evaluated: soft-resetting into a different RAM size or switching to a different machine without a power cycle re-runs the whole boot, so the gate follows it.
+
+## 7. Real-hardware-only risks (nothing below was run on a real machine)
+
+1. **Floppy campaign read**: the game's own FDC driver reading a 720 KB FAT12 disk (one revolution per track side), and the disk-present probe (port of `fl_driveb` `bpres`) that turns "no disk" into ~2 s; Hatari's FDC and index-pulse timing differ from a real drive, a Gotek and MiSTer.
+2. **Stage-0 capture** (floppy): the boot sector copies TOS' `$42e` into `IB+4`; on real TOS the variable is set (TOS 1.04/1.62/2.06) [INFERENCE for other TOS versions / MiSTer cores]; `_MCH` is used to leave TT/Falcon at 0.
+3. **Mega STE cache with the HAGA reader** (HD): part B of the reader is copied into HAGA's top region and executed; Hatari does not model the Mega STE cache (Pop2 does the same [INFERENCE]).
+4. **Real GEMDOS drive-A reads** (HD): `LOAD CAMPAIGN FROM DRIVE A` uses TOS' floppy path with TOS' own empty-drive timeout (empty drive A: 16.9 s on STE TOS 1.62, 5.6 s on Mega STE TOS 2.06, `work/campgate/emptya.py`, `logs/emptya_*.txt`; the PC sits in the TOS ROM loop at $e01742-$e0174c the whole time [INFERENCE: TOS 1.62's floppy select/motor timeout], not in HAGA or the campaign code).
+5. The HAGA machine-type byte `HAGA+$83` was measured only in Hatari (1/1/2/3 on ST/Mega ST/STE/Mega STE, TOS 1.04/1.04/1.62/2.06).

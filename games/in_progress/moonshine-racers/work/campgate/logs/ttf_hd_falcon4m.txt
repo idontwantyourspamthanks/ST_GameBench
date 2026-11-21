@@ -1,0 +1,6 @@
+== ttf_hd_falcon4m: vbl 6155 marker b'MSPO' IB+4 0x00
+$2dc=0x3f8000 $42e=0x400000 HAGA+$83=0x04
+sites {'0x72c4': '4eb9000076f4', '0x77da': '41f900058c004eb90000d6fa', '0xfda2': '41f900058c00', '0x731e': '0c40000f6408', '0x7252': '4eb9000073b8', '0x74fe': '4fef000e6106', '0x8418': '610644fc00ff'}
+CHECK marker present (the payload ran): PASS b'MSPO'
+CHECK gate closed: IB+4 == 0: PASS 
+CHECK every campaign site holds the stock bytes: PASS 

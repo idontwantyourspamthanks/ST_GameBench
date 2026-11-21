@@ -14,16 +14,17 @@ ap = argparse.ArgumentParser()
 ap.add_argument("--kind", default="hd"); ap.add_argument("--machine", default="ste"); ap.add_argument("--build"); ap.add_argument("--passes", type=int, default=160)
 a = ap.parse_args()
 KIND, M = a.kind, a.machine
-V101 = Path("/tmp/msrc2/v101")
+V101 = Path("/tmp/msrc3/v101")
 ref_build = V101 / "MOONSHR" if KIND == "hd" else V101 / "MOONSHR_floppy"
-new_build = Path(a.build or ("/tmp/msrc2/hd_a" if KIND == "hd" else "/tmp/msrc2/fl_a"))
+new_build = Path(a.build or ("/tmp/msrc3/hd_a" if KIND == "hd" else "/tmp/msrc3/fl_a"))
 tag = f"ab1m_{KIND}_{ {'ste': 'ste', 'megaste': 'mste', 'st': 'st', 'megast': 'mst'}[M] }"
 logopen(tag)
 SITES = [(0x72c4, 6), (0x77da, 12), (0xfda2, 6), (0x731e, 6), (0x7252, 6), (0x74fe, 6), (0x8418, 6)]
 # campaign code of the new build: hooks A $B8022.., B $B8070.., D $B8220.., start $B8240.., menu/reader $B9F00..+3068 (HD) / +3132 (floppy), the variables CPV $B8E00
 RANGES = [(0xb8022, 0xb80c2), (0xb8220, 0xb8260), (0xb9f00, 0xb9f00 + (3132 if KIND == "fl" else 3068))]
 STATE = [(0x1000, 0x400), (0x29C8, 0xB38), (0x4500, 0xB00), (0xDAE6, 4)]
-SNAP = Path(f"/tmp/msrc2/snap/ab1m_{KIND}_{M}_ref.sav")
+SNAP_PASS = 0
+SNAP = Path(f"/tmp/msrc3/snap/ab1m_{KIND}_{M}_ref.sav")
 
 def mk(build, name, snap=None):
     if KIND == "hd":
@@ -62,6 +63,8 @@ def cold(build, name, f10=False, save=False):
             check("no campaign code executed at 1 MB", nh == 0)
         r.poke(0x6105, 0x00)
         if save:
+            global SNAP_PASS
+            SNAP_PASS = r.w(0x100e); log(f"[{name}] memstate saved at pass $100e == {SNAP_PASS}")
             r.h.cmd("hatari-debug b all"); time.sleep(1)
             sav = Path(os.environ["HOME"]) / ".config/hatari/hatari.sav"; sav.unlink(missing_ok=True); r.h.state = sav
             r.h.savemem(str(SNAP)); sav.unlink(missing_ok=True)
@@ -69,16 +72,19 @@ def cold(build, name, f10=False, save=False):
     finally:
         r.close()
 
-def state_run(image, npass, dump_at=None):
+def state_run(image, npass, dump_at=None, rep=""):
     """npass per-pass STATE dumps (pass boundary $7b86), or with dump_at: the CPU halts at the first pass boundary where $100e == dump_at (a breakpoint without :trace stops the CPU
     in the debugger, after the command file ran) and all of RAM $400-$B1F00 is saved: both runs stop at the same pass"""
-    r = mk(ref_build, "dumpB" if image and dump_at else "dumpA" if dump_at else "stateB" if image else "stateA", snap=SNAP)
-    h = r.h; ramf = f"/tmp/msrc2/ab1m_{KIND}_{M}_{'B' if image else 'A'}.bin"; lg = ""
+    r = mk(ref_build, "dumpB" + rep if image and dump_at else "dumpA" + rep if dump_at else "stateB" if image else "stateA", snap=SNAP)
+    h = r.h; ramf = f"/tmp/msrc3/ab1m_{KIND}_{M}_{('B' if image else 'A') + rep}.bin"; lg = ""
     try:
         time.sleep(1.5)
-        if image: h.debug(f"loadbin {image} $b2700", 1.5)
+        if image and not dump_at: h.debug(f"loadbin {image} $b2700", 1.5)
         h.debug("b all", 0.3); n0 = len(h._logtext())
         if dump_at:
+            if image:     # load at a fixed EMULATED instant (a pass boundary 40 passes after the memstate's), so that two loads of different images start from identical machine states
+                p0 = SNAP_PASS + 40; lf = h.R / "load.txt"; lf.write_text(f"loadbin {image} $b2700\n")
+                h.cmd(f"hatari-debug b pc = $7b86 && ($100e).w = {p0} :once :trace :file {lf}"); log(f"[{rep or 'B'}] loadbin at the pass boundary $100e == {p0} (memstate saved at {SNAP_PASS}: the same pass for every loadbin run)")
             Path(ramf).unlink(missing_ok=True)
             dump = h.R / "dump.txt"; dump.write_text(f"savebin {ramf} $400 $b1f00\n")
             h.cmd(f"hatari-debug b pc = $7b86 && ($100e).w = {dump_at} :once :file {dump}")
@@ -116,10 +122,12 @@ if KIND == "fl":
     img, _ = P.build_image(sel, table=tb, min_end=tb + 0x100, floppy=True)
 else:
     P.set_flavour(False); img, _ = P.build_image(sel, fnames=[p.name for p in fsel])
-imgf = Path(f"/tmp/msrc2/ab1m_{KIND}_image.bin"); imgf.write_bytes(img)
+imgf = Path(f"/tmp/msrc3/ab1m_{KIND}_image.bin"); imgf.write_bytes(img)
 A, _ = state_run(None, a.passes); B, _ = state_run(imgf, a.passes)
 tgt = min(set(A) & set(B)) + a.passes
-_, ramA = state_run(None, 0, dump_at=tgt); _, ramB = state_run(imgf, 0, dump_at=tgt)
+_, ramA = state_run(None, 0, dump_at=tgt); _, ramB = state_run(imgf, 0, dump_at=tgt); _, ramA2 = state_run(None, 0, dump_at=tgt, rep='2')
+img101 = Path(f"/tmp/msrc3/v101_{KIND}_image.bin")      # work/campgate/mkv101img.py: the shipped v1.0.1 payload image
+_, ramC = state_run(img101, 0, dump_at=tgt, rep='C')
 common = sorted(set(A) & set(B)); diff = 0; cmp_ = 0
 for k in common:
     for ad, x in A[k].items():
@@ -127,15 +135,23 @@ for k in common:
             cmp_ += 1; diff += B[k][ad] != x
 log(f"STATE A/B ({KIND} {MACH[M]} 1 MB): passes A {len(A)} B {len(B)} common {len(common)}  bytes compared {cmp_}  different {diff}")
 check("per-pass state identical", diff == 0 and len(common) >= a.passes * 0.9)
-try:
-    ba, bb = Path(ramA).read_bytes(), Path(ramB).read_bytes()
+def runs_of(ba, bb):
     nd = [i for i in range(min(len(ba), len(bb))) if ba[i] != bb[i]]
     runs = []
     for i in nd:
         if runs and i - runs[-1][1] <= 16: runs[-1][1] = i
         else: runs.append([i, i])
-    log(f"RAM $400-$B1EFF at the pass boundary with $100e == {tgt}: {len(ba)} B vs {len(bb)} B, {len(nd)} differing bytes; runs: {[(hex(x + 0x400), hex(y + 0x400)) for x, y in runs[:12]]}")
-    check("RAM below the payload identical at pass N", len(nd) == 0 and len(ba) == len(bb) > 0)
+    return nd, runs
+try:
+    ba, bb, ba2, bc = (Path(x).read_bytes() for x in (ramA, ramB, ramA2, ramC))
+    fmt = lambda rs: [(hex(x + 0x400), hex(y + 0x400)) for x, y in rs[:16]]
+    log(f"RAM $400-$B1EFF at pass boundary $100e == {tgt}: sizes A {len(ba)} B {len(bb)} A2 {len(ba2)} C {len(bc)}")
+    res = {}
+    for key, nm, (x, y) in (("AA", "A vs A2 (v1.0.1 twice: run-to-run noise)", (ba, ba2)), ("AC", "A vs C (v1.0.1 + loadbin of the v1.0.1 image: the loadbin itself)", (ba, bc)),
+                            ("CB", "C vs B (loadbin of the v1.0.1 image vs loadbin of the new image: the campaign payload)", (bc, bb)), ("AB", "A vs B (v1.0.1 vs v1.0.1 + new image)", (ba, bb))):
+        nd, rs = runs_of(x, y); res[key] = nd
+        log(f"  {nm}: {len(nd)} differing bytes; runs {fmt(rs)}")
+    check("C == B: RAM below the payload is the same whether the v1.0.1 or the new payload image is loaded", len(res["CB"]) == 0 and len(ba) == len(bb) == len(ba2) == len(bc) > 0)
 except Exception as e:
     log("RAM compare failed:", e); FAILS.append("ram compare")
 log(f"== {tag} done: {'ALL CHECKS PASS' if not FAILS else 'FAILED: ' + ', '.join(FAILS)}")

@@ -1,0 +1,38 @@
+== fl_finish_a_st2m: fl ST 2 MB build /tmp/msrc3/fl_a src a
+BOOT fl_finish_a_st2m: marker=MSPO IB+4=0xff
+BOOT sites {'0x72c4': '4eb9000b8022', '0x77da': '4ef9000b80704e714e714e71', '0xfda2': '2079000b8e08', '0x731e': '4ef9000b8220', '0x7252': '4eb9000b8240', '0x74fe': '4ef9000b9f00', '0x8418': '4ef9000b9f06'}
+LOAD a: loaded=True 2.4s message-row texts=['                                        ', 'LOADING CAMPAIGN FROM DRIVE A...', '                                        ', 'CHECKING CAMPAIGN...']
+CHECK campaign loaded: PASS 
+CHECK loaded count: PASS count=3
+[list screen] vbl=6827 act=0xff loaded=0xff count=3 pos=0 start=0 ptr=0x0 $102c=0x0000 len57890=0 $23c0=0x0 $1024=0x00 $1027=0x00 $100e=10 $5ff8=0 $1021=0x02
+[fl_finish_a_st2m] game's 'Insert Disk 2' prompt at vbl 7197: disk 2 into drive A
+[c race 0 start] vbl=8119 act=0xff loaded=0xff count=3 pos=0 start=0 ptr=0x110088 $102c=0x0000 len57890=19472 $23c0=0x1100ac $1024=0x00 $1027=0x00 $100e=68 $5ff8=0 $1021=0x02
+[c race 0 over (finished=True)] vbl=9492 act=0xff loaded=0xff count=3 pos=0 start=0 ptr=0x110088 $102c=0x0001 len57890=19472 $23c0=0x1100b4 $1024=0xff $1027=0x00 $100e=273 $5ff8=666 $1021=0x02
+[c race 1 start] vbl=10635 act=0xff loaded=0xff count=3 pos=1 start=0 ptr=0x111742 $102c=0x0003 len57890=19000 $23c0=0x111756 $1024=0x00 $1027=0x00 $100e=58 $5ff8=0 $1021=0x02
+[c race 1 over (finished=True)] vbl=11935 act=0xff loaded=0xff count=3 pos=1 start=0 ptr=0x111742 $102c=0x0002 len57890=19000 $23c0=0x11176a $1024=0xff $1027=0x00 $100e=263 $5ff8=766 $1021=0x02
+[c race 2 start] vbl=13078 act=0xff loaded=0xff count=3 pos=2 start=0 ptr=0x11283e $102c=0x0005 len57890=18000 $23c0=0x11285e $1024=0x00 $1027=0x00 $100e=60 $5ff8=0 $1021=0x02
+[c race 2 over (finished=True)] vbl=14430 act=0xff loaded=0xff count=3 pos=2 start=0 ptr=0x11283e $102c=0x0002 len57890=18000 $23c0=0x112866 $1024=0xff $1027=0x00 $100e=259 $5ff8=867 $1021=0x02
+CHECK race0 stream inside the campaign store: PASS $23c0=0x1100ac
+CHECK race0 base level: PASS $102c=0x0000 expect 0
+CHECK race0 race length of the base level: PASS $57890=19472 expect 19472
+CHECK race0 position: PASS POS=0
+CHECK race1 stream inside the campaign store: PASS $23c0=0x111756
+CHECK race1 base level: PASS $102c=0x0003 expect 3
+CHECK race1 race length of the base level: PASS $57890=19000 expect 19000
+CHECK race1 position: PASS POS=1
+CHECK race2 stream inside the campaign store: PASS $23c0=0x11285e
+CHECK race2 base level: PASS $102c=0x0005 expect 5
+CHECK race2 race length of the base level: PASS $57890=18000 expect 18000
+CHECK race2 position: PASS POS=2
+CHECK all races reached: PASS 3 of 3
+CHECK race over reached: PASS 
+HITS after the races (shop $725c, ending $732c, picture $75e8, title $723c): {29276: 2, 29484: 1, 30184: 1, 29244: 0, 29266: 1}
+ENDING hits (shop call $725c, ending $732c, ending picture $75e8, title $723c, new game $7252): {29276: 2, 29484: 1, 30184: 1, 29244: 1, 29266: 1}
+CHECK ending reached ($732c, $75e8): PASS 
+CHECK title reached after the ending ($723c), no new game started by a stray key ($7252 once = the campaign start): PASS {29276: 2, 29484: 1, 30184: 1, 29244: 1, 29266: 1}
+[title after the ending] vbl=16074 act=0xff loaded=0xff count=3 pos=2 start=0 ptr=0x11283e $102c=0x0002 len57890=18000 $23c0=0x112866 $1024=0xff $1027=0x00 $100e=580 $5ff8=867 $1021=0x02
+CHECK campaign stays loaded after the ending: PASS 
+MENU after the ending, texts: ['< BACK', 'INSERT THE CAMPAIGN DISK, THEN CHOOSE', 'NEXT GAME: THE LOADED CAMPAIGN', 'UP/DOWN + RETURN     ESC = BACK', 'ORIGINAL GAME', 'LOAD CAMPAIGN FROM DRIVE A', 'LOAD CAMPAIGN FROM DRIVE B', 'LOADED CAMPAIGN:  3 TRACKS', 'BACK TO THE TITLE']
+CHECK F10 after the ending shows the loaded campaign again: PASS 
+[title after Esc] vbl=16650 act=0xff loaded=0xff count=3 pos=2 start=0 ptr=0x11283e $102c=0x0002 len57890=18000 $23c0=0x112866 $1024=0xff $1027=0x00 $100e=600 $5ff8=867 $1021=0x02
+== fl_finish_a_st2m done: ALL CHECKS PASS; bus/address error lines 3

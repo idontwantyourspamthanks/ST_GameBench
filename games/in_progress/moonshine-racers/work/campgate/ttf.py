@@ -8,7 +8,7 @@ from cg import *
 ap = argparse.ArgumentParser()
 ap.add_argument("--kind", default="hd"); ap.add_argument("--machine", default="tt"); ap.add_argument("--mem", type=int, default=4096); ap.add_argument("--build"); ap.add_argument("--wait", type=int, default=240)
 a = ap.parse_args()
-build = a.build or ("/tmp/msrc2/hd_a" if a.kind == "hd" else "/tmp/msrc2/fl_a")
+build = a.build or ("/tmp/msrc3/hd_a" if a.kind == "hd" else "/tmp/msrc3/fl_a")
 tag = f"ttf_{a.kind}_{a.machine}{a.mem // 1024}m"
 logopen(tag)
 tos = {"tt": "3.06", "falcon": "4.04"}[a.machine]

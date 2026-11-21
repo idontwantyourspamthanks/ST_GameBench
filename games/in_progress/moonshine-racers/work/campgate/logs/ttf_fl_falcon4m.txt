@@ -1,0 +1,5 @@
+== ttf_fl_falcon4m: vbl 27555 marker b'\x00\x00\x00\x00' IB+4 0x00
+sites {'0x72c4': '000000000000', '0x77da': '000000000000000000000000', '0xfda2': '000000000000', '0x731e': '000000000000', '0x7252': '000000000000', '0x74fe': '000000000000', '0x8418': '000000000000'}
+CHECK marker present (the payload ran): FAIL b'\x00\x00\x00\x00'
+CHECK gate closed: IB+4 == 0: PASS 
+CHECK every campaign site holds the stock bytes: FAIL 
