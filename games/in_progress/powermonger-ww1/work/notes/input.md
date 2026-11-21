@@ -106,13 +106,50 @@ table `$2ec8c` is read by scancode:
 (43-45k changed pixels per key hold). **Every other key is free** — the qol_keys port can
 use A-Z and the map mode keys exactly as the 1990 patch did.
 
-The command strip: the input section at `$13e82` routes a pointer in **x < 64, y 7..135**
-(the left HUD strip) to `$14608` (the territory/hover helper), then to
-`$13f16`: the region id `$5a836` -> `$1a89a` (the 24-entry action list, the same list the
-options screen used) -> `jsr $1964a` (the action dispatch). A hover path (`$13eb2` when
-`$5a836` is set) exists for the strip — the WW1 has a partial hover mechanism of its own,
-relevant to the tooltip port. The click on the MAP (outside the strip) goes to the rectangle
-table at `$13fc4` (`$13f6c`), the territory selection.
+### 5.1 The screen regions and what a click does [disasm, obs]
+
+The input section `$13e82-$13f6c` splits the pointer by position:
+
+- **x < 64, y 7..135: the overview map** (the left strip).
+  - A click scrolls the close-up view there: `$50fd4 = x`, `$50fd6 = y-7` (`$13ed8`).
+    [obs] clicking (30,100) changed 38k pixels (a large scroll). The strip itself is a
+    **64x64 word grid at `$4ce5a`**: `word[(y-7)*64 + x]` = an offset into the record table
+    `$55df4` (0 = empty). `$146c2` does exactly that lookup, and the hover helper `$14608`
+    reads the record (`$5574e + territory*$154` -> a `$55df4` record; fields `$8`/`$a`
+    build the packed `d6`) and draws with `$e9d2`.
+- **x < 64, y >= 135: four jump/mode cells** (`$13f5a`: `x >> 4` = 0..3 -> `$5a906` ->
+  `jsr $10c92`). `$10c92` walks the `$4ce5a` grid and the `$55df4` records, filtering by
+  record type (`$6(a4,d2)` against 2/4/...), i.e. **"jump to the next object of a kind"**
+  controls. [obs] clicking (37,165)/(53,166)/(53,185) all caused large view changes (jumps).
+- **x >= 64: the close-up map** (`$13f6c`): the rectangle table at `$13fc4` then the
+  territory selection; a click changed 41k pixels (the view/selection reacted).
+
+### 5.2 The action layer (the command cells) [disasm]
+
+- **`$5a836`** = the *armed action/region id* (0 = none). `$5a834` (byte) = the current
+  territory.
+- The **action list `$1a89a`** = 24 word entries: action id -> **icon id**
+  (`0, $ea, $c4, $d7, $da, $b4, $e8, $e9, $db, $d5, $d9, 0, $d6, $d8, $b3, $a3, $93, 0,
+  0, $a4, $94, $84, $c3, $83`). `0` = no separate icon; `$c3`/`$c4` are the pointer icons.
+- **`$1964a`** arms/draws an action: it looks the icon up in `$1a89a`, draws it with
+  `$196b4` (the icon draw, icon positions from the table at `$19672`), and stores the
+  action in `$5a836` (`$1968e`). The final call site `$19688` is self-modified at run time
+  (the dump shows `$aaaaaaaa`; live it is `jsr $196b4`).
+- The click path in the input section (`$13f06-$13f56`): the armed `$5a836` + the hovered
+  region -> the message record at `[$5a8a2]` (action id + click x/y) -> the icon id ->
+  `jsr $1964a`.
+- The 1990 command set (Attack, Get Food, Get Men, ...) is 17 actions + 3 postures; the WW1
+  list has 24 slots, several non-command (pointer/icons). The **action-id -> command-name
+  mapping is not yet established.** The static route was tried and is exhausted: the
+  `$4ce5a` grid cells point at byte offsets into `$55df4` whose `+6` byte reads as image-like
+  noise for most cells (143 non-zero cells, ~60 distinct byte values) — i.e. the records are
+  rebuilt/live data, not a static type table (`work/dumps/ovmap_grid.bin` is the scan). The
+  two remaining ways: (a) **drive the live selection flow** (select a village/army, watch
+  `$5a836` and the drawn icon appear — the reliable route), or (b) decode `$14608`/`$148e0`
+  against a freshly poked record (place a known type in a cell and observe). The start
+  territory's army/village screen positions were not found by brightness either (the
+  bright-block clicks all scrolled the view), so (a) needs the game's own selection cues
+  (the map icons) to be studied first.
 
 ## 6. Open items (for the keys/tooltip ports)
 
