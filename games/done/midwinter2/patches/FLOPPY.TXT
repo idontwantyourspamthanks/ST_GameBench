@@ -23,6 +23,8 @@ Reports from other real drives and machines are welcome.
 The disks are raw 720K images (80 tracks x 2 sides x 9 sectors of 512 bytes). Each is also supplied as .msa.
 Writing real disks: read WRITING_DISKS.TXT first (tools, DD media, why FFA/FFB/FFC look "corrupt" to some writers, the black prompt).
 
+v1.6.2 changes only the hard-disk version (1 MB Mega STE uses the YM sound there); the floppy set changes only in its version number.
+
 NEW IN v1.6.1 (the floppy set; the hard-disk build changes only in its version number): fixes the real STE / Mega STE failure of v1.5 and v1.6.
   - STE / Mega STE with the Amiga music: the drive was never selected again once the music started (no light, no disk activity,
     the music kept playing, no freeze). The sound chip's register 7 (bit 6 = direction of the port that carries the floppy

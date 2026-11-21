@@ -27,6 +27,8 @@ tools/play.sh [--machine st|megast|ste|megaste|tt|falcon] [--ram KiB] [--origina
 tools/package.sh                     # zips into dist/
 ```
 
+**v1.6.2:** hard-disk version on a 1 MB Mega STE: some vehicle engine sounds played from overwritten data (PP's loader uses that memory); that machine now uses the original YM sound and music. All other machines unchanged (`patches/asn/blob.s` end canary `ASNE`, `work/notes/banktail.md`).
+
 ## Floppy release (v1.6.1): real drives
 
 `tools/package.sh` writes `dist/Midwinter2_v<version>_patched_floppies_<date>.zip`: `FFA_boot`, `FFB_graphics`, `FFC_missions`, `FFD_campaign_blank` as `.st` and as `.msa`, `README.TXT` (from `patches/FLOPPY.TXT`) and `WRITING_DISKS.TXT` (`patches/WRITING_DISKS.TXT`: how to write the disks raw 80 x 2 x 9 on DD media, why FFA/FFB/FFC look corrupt to BPB-checking writers, the black-prompt rule, test plan). v1.6 parks the drive head on track 0 before the game starts, doubles the game's FDC time-out on 68000 machines and skips the drive-B probe on one-drive machines (`work/notes/realfloppy.md` is the investigation, `work/notes/realfloppy_v16.md` the fix and its gates, `work/floppy16/` the gate scripts and raw output). Real hardware: v1.6 did not work on a real STE / Mega STE; v1.6.1 was confirmed on real STEs by a tester.

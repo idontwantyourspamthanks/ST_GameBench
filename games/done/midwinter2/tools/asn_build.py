@@ -27,6 +27,9 @@ Bank layout (load address BANK = $BB000, offsets must equal the equates of patch
   Every sample region is followed by PAD bytes (loops: the region repeated; one-shots: zeros): the mixer tests the end once per 8 outputs.
 The whole file is loaded to BANK ($BB000): HD by a RUNME splice from FILES\\ASNBANK.BIN, floppy as part of FFA file 10.  It must end below
 LIMIT: the 1 MB HD game uses RAM from $E83E6 up (work/notes/amiga_music_port.md, RAM map).
+A 4-byte end canary 'ASNE' follows the last sample pad: PP's HAGA keeps a TOS swap buffer at phystop-$8100-A4 that on a 1 MB Mega STE (TOS 2.06)
+overlaps the last 13 896 B of the bank (it starts at $E2B6A there), so asn_init0 refuses a bank whose canary is gone and the YM plays (work/notes/banktail.md).
+Note LIMIT is a build limit only; the real 1 MB Mega STE needs the bank to end below $E2B6A, which it does not.
 """
 from __future__ import annotations
 
@@ -274,6 +277,7 @@ def build_bank(t: Tables, tunes=None, led: bool = True, rate6=(), verbose: bool 
     b[OFF_REC:OFF_REC + REC_LEN] = rec
     info["sfx_base"] = base_of
     b += smp
+    b += b"ASNE"                                    # end canary: asn_init0 refuses a bank whose tail has been overwritten
     total = len(b)
     if BANK + total > LIMIT:
         raise SystemExit(f"the bank ends at ${BANK + total:x}, above ${LIMIT:x}: drop tunes (--tunes)")

@@ -117,7 +117,7 @@ asn_tick:
         bne.s   .m
         bsr     asn_init0
 .m:     cmpi.b  #2,v_mode(a4)
-        beq.s   asn_run
+        beq     asn_run
         move.w  $6862.w,d0              ; the displaced instructions
         bmi.s   .neg
         jmp     $18f98.l
@@ -127,6 +127,10 @@ asn_init0:                              ; once: a 68000 (not a 68020+) with DMA 
         cmpi.l  #'ASN2',BANK.l
         bne     .rts
         cmpi.l  #BANK,BANK+8.l
+        bne     .rts
+        lea     BANK-4.l,a0                     ; the end canary ('ASNE' = the last 4 bytes of the bank, written by asn_build): something (PP's HAGA low-memory swap area
+        adda.l  BANK+12.l,a0                    ; on a 1 MB machine with TOS 2.06 / resident drivers, $e2b6a-) lies over the tail of the bank = do not use it, the YM plays
+        cmpi.l  #'ASNE',(a0)
         bne     .rts
         movea.l a7,a2                   ; bus error guard: the handler puts a7 back here
         moveq   #1,d0

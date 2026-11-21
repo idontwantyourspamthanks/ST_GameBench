@@ -2,6 +2,13 @@
 
 This is a plain-English account of the work on *Midwinter 2: Flames of Freedom* (Atari ST, PP's 2014 hard-disk version). It covers what was changed, why, what the original code was doing at each point we changed, and what each change achieved. The detailed evidence (disassembly, measurements, test logs) is in `work/notes/`. The patch sources are in `patches/`.
 
+## What's new in v1.6.2 (2026-11-21): hard-disk version on a 1 MB Mega STE
+
+Hard-disk version on a 1 MB Mega STE: some vehicle engine sounds played from overwritten data (PP's loader uses that memory); that machine now uses the original YM sound and music. All other machines unchanged.
+
+- **Cause:** PP's HAGA keeps a live TOS swap buffer at phystop-$8100-A4; with TOS 2.06 on 1 MB it starts at `$E2B6A` and overlays the last 13 896 B of the Amiga sound bank (the engine-loop samples). Floppy builds (no HAGA), the STE with 1 MB and all 2/4 MB machines are unaffected. Details: `work/notes/banktail.md`.
+- **Fix:** `tools/asn_build.py` appends a 4-byte `ASNE` canary after the last sample; `asn_init0` checks it and, if overwritten, selects the YM driver (mode 1). Also `beq.s` -> `beq` at `.m:` (range).
+
 ## What's new in v1.6.1 (2026-11-20): the real STE / Mega STE floppy failure
 
 A real STE and a real Mega STE, v1.6 floppies: the Amiga music starts, then disc activity stops (no light, no seek, no freeze); a real Mega ST worked; every Hatari gate passed. `work/notes/stesound.md` has the whole chain.
