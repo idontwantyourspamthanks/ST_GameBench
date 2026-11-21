@@ -85,9 +85,16 @@ file exists) does not cover the territory loads.
 - The item hit test `$12ee0` requires `$5a84e` (mouse-enabled) — 0 at boot, toggled by the
   game's own "mouse icon" region action (region 195, dispatch entry 22 at `$14446`).
   The harness pokes it on (`w $5a84e 0 1`).
-- Clicks on the options screen: the "exit back to the crack chain" item is around
-  (140..148, 84..88) — clicking there quits the game to the Alien's doc displayer.
-  The real option-item boxes are still being mapped (pointer-hover sweep).
+- The UI is an **icon grid on a skewed panel**: the hit test `$6cac` computes cells
+  `(x/4, y/6)` and runs the clicked icon's action (the icon lookup at `$6d5a`, tables at
+  `$74c0+`). The option rows have a select spot and a separate activate spot (+18,+16 px):
+  (112,72) selects "Start New Conquest", (130,88) activates it, (130,106) = "Continue
+  Conquest" (opens the dim "DISK STATUS REQUESTER / SAVE GAME DOES NOT EXIST" — the save-disk
+  path that drives the FDC through TOS), (60,20) on the chart = the first island territory.
+- At the 3D map view: timer A (vector `$120` -> `$1d090`) is a trivial border-flicker stub —
+  no YM sample interrupt runs there (the 1990 game's map-view ambient loop did; the WW1
+  sound system is a separate study, not needed for the four ported items).
+
 
 ## Method
 
