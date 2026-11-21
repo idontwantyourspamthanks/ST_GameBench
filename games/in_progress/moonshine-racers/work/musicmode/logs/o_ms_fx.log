@@ -1,0 +1,45 @@
+boot_to_race True vbl 6416 $1021 02 marker b'\x00\x00\x00\x00'
+shop: $1024 ff $1021 02 $1023 02 $102c 0001 vbl 8548
+pointer 000000a7
+race2: True $1021 02 $1023 02 $102c 0001 $1028 ff vbl 9464
+WIN o_ms_fx_native_counts: vbl 510 (60Hz) ticks 510 notes 187 flips 116 passes 116 | per second: steps 13.65 flips 13.65 ticks 60.00
+WIN o_ms_fx_native_ym: vbl 301 (60Hz) ticks 301 notes 105 flips 75 passes 75 | per second: steps 14.95 flips 14.95 ticks 60.00
+YM o_ms_fx_native: frames 301 writes 3600 (11.96/VBL) frames_with_writes 300 regs {0: 300, 1: 300, 2: 300, 3: 300, 4: 300, 5: 300, 6: 300, 7: 300, 8: 300, 9: 300, 10: 300, 11: 300}
+YM o_ms_fx_native: tone events A 299 B 0 C 41; A times [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41]
+PROF o_ms_fx_native: flips 40 total_cycles 42473328 => 188770 cycles/VBL over ~225 VBL (profile cycles/second 16042494; busy 58.8% of a 50Hz VBL)
+  agg: other=169669/VBL, YMplayer(8bb6-9344)=3944/VBL, VBLISR(d11e-d500)=15157/VBL
+  $12c1a     32144 cyc/VBL  17.0%
+  $100b4     26838 cyc/VBL  14.2%
+  $17c42     22484 cyc/VBL  11.9%
+  $0d206     14413 cyc/VBL   7.6%
+  $18318     13051 cyc/VBL   6.9%
+  $15052     10319 cyc/VBL   5.5%
+  $122e4      9030 cyc/VBL   4.8%
+  $12b06      8063 cyc/VBL   4.3%
+  $12690      6402 cyc/VBL   3.4%
+  $127fa      4834 cyc/VBL   2.6%
+  $08c38      3708 cyc/VBL   2.0%
+  $15ccc      3223 cyc/VBL   1.7%
+  $0d486      3156 cyc/VBL   1.7%
+  $15a4e      2841 cyc/VBL   1.5%
+WIN o_ms_fx_16MHz_counts: vbl 511 (60Hz) ticks 511 notes 181 flips 127 passes 127 | per second: steps 14.91 flips 14.91 ticks 60.00
+WIN o_ms_fx_16MHz_ym: vbl 301 (60Hz) ticks 301 notes 104 flips 61 passes 61 | per second: steps 12.16 flips 12.16 ticks 60.00
+YM o_ms_fx_16MHz: frames 301 writes 3600 (11.96/VBL) frames_with_writes 300 regs {0: 300, 1: 300, 2: 300, 3: 300, 4: 300, 5: 300, 6: 300, 7: 300, 8: 300, 9: 300, 10: 300, 11: 300}
+YM o_ms_fx_16MHz: tone events A 299 B 0 C 6; A times [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41]
+PROF o_ms_fx_16MHz: flips 39 total_cycles 42588712 => 189283 cycles/VBL over ~225 VBL (profile cycles/second 16042494; busy 59.0% of a 50Hz VBL)
+  agg: other=173519/VBL, YMplayer(8bb6-9344)=3893/VBL, VBLISR(d11e-d500)=11872/VBL
+  $12c1a     41979 cyc/VBL  22.2%
+  $100b4     27827 cyc/VBL  14.7%
+  $17c42     25615 cyc/VBL  13.5%
+  $0d206     11126 cyc/VBL   5.9%
+  $18318      9718 cyc/VBL   5.1%
+  $15052      9605 cyc/VBL   5.1%
+  $122e4      8587 cyc/VBL   4.5%
+  $12690      6152 cyc/VBL   3.3%
+  $127fa      4631 cyc/VBL   2.4%
+  $12b06      4487 cyc/VBL   2.4%
+  $08c38      3529 cyc/VBL   1.9%
+  $0d486      3193 cyc/VBL   1.7%
+  $15ccc      2798 cyc/VBL   1.5%
+  $15a4e      2220 cyc/VBL   1.2%
+alive True bus/addr errors 0

@@ -1,0 +1,26 @@
+--- /tmp/msrwt_v101/games/in_progress/moonshine-racers/patches/mf_sync.s	2026-11-20 14:27:41.874246506 +0000
++++ wt/games/in_progress/moonshine-racers/patches/mf_sync.s	2026-11-20 23:28:46.303521192 +0000
+@@ -133,8 +133,8 @@
+         beq.s   .r1
+         addq.w  #1,RSN+8.l
+         rts                             ; not plain racing (finish / start sequences)
+-.r1:    cmpi.b  #2,$1021.w
+-        beq.s   .r2
++.r1:    tst.b   $1028.w                 ; race flag (set around the race call $72c0-$72d0), NOT $1021 (that is the sound mode: 2 fx / 1 music)
++        bne.s   .r2
+         addq.w  #1,RSN+10.l
+         rts
+ .r2:
+--- /tmp/msrwt_v101/games/in_progress/moonshine-racers/patches/mx_sync.s	2026-11-20 14:27:41.874246506 +0000
++++ wt/games/in_progress/moonshine-racers/patches/mx_sync.s	2026-11-20 23:28:46.607366952 +0000
+@@ -136,8 +136,8 @@
+         beq.s   .r1
+         addq.w  #1,RSN+8.l
+         rts                             ; not plain racing (finish / start sequences)
+-.r1:    cmpi.b  #2,$1021.w
+-        beq.s   .r2
++.r1:    tst.b   $1028.w                 ; race flag (set around the race call $72c0-$72d0), NOT $1021 (that is the sound mode: 2 fx / 1 music)
++        bne.s   .r2
+         addq.w  #1,RSN+10.l
+         rts
+ .r2:

@@ -1,0 +1,45 @@
+boot_to_race True vbl 6416 $1021 02 marker b'MSPO'
+shop: $1024 ff $1021 02 $1023 02 $102c 0001 vbl 8937
+pointer 000000a7
+race2: True $1021 02 $1023 02 $102c 0001 $1028 ff vbl 9853
+WIN v_ms_fx_native_counts: vbl 510 (60Hz) ticks 510 notes 176 flips 240 passes 85 | per second: steps 10.00 flips 28.24 ticks 60.00 | extra frames (NFRAMES delta, bracketed outside window) 211; ngroups 119 nticks 119 rsn_delta [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+WIN v_ms_fx_native_ym: vbl 300 (60Hz) ticks 300 notes 100 flips 102 passes 50 | per second: steps 10.00 flips 20.40 ticks 60.00 | extra frames (NFRAMES delta, bracketed outside window) 87; ngroups 84 nticks 84 rsn_delta [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+YM v_ms_fx_native: frames 300 writes 897 (2.99/VBL) frames_with_writes 299 regs {0: 299, 1: 299, 8: 299}
+YM v_ms_fx_native: tone events A 298 B 0 C 0; A times [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41]
+PROF v_ms_fx_native: flips 68 total_cycles 42746724 => 189985 cycles/VBL over ~225 VBL (profile cycles/second 16042494; busy 59.2% of a 50Hz VBL)
+  agg: other=186242/VBL, YMplayer(8bb6-9344)=3093/VBL, VBLISR(d11e-d500)=650/VBL
+  $1fc14    115677 cyc/VBL  60.9%
+  $12c1a     52335 cyc/VBL  27.5%
+  $18318      9081 cyc/VBL   4.8%
+  $08c38      2872 cyc/VBL   1.5%
+  $0d486      1815 cyc/VBL   1.0%
+  $0ed74      1106 cyc/VBL   0.6%
+  $10ca6       646 cyc/VBL   0.3%
+  $0fe50       607 cyc/VBL   0.3%
+  $0ecc8       543 cyc/VBL   0.3%
+  $12b06       412 cyc/VBL   0.2%
+  $0e598       380 cyc/VBL   0.2%
+  $0d11c       378 cyc/VBL   0.2%
+  $1182e       311 cyc/VBL   0.2%
+  $1003c       309 cyc/VBL   0.2%
+WIN v_ms_fx_16MHz_counts: vbl 511 (60Hz) ticks 511 notes 171 flips 182 passes 85 | per second: steps 9.98 flips 21.37 ticks 60.00 | extra frames (NFRAMES delta, bracketed outside window) 147; ngroups 119 nticks 120 rsn_delta [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+WIN v_ms_fx_16MHz_ym: vbl 301 (60Hz) ticks 301 notes 105 flips 108 passes 51 | per second: steps 10.17 flips 21.53 ticks 60.00 | extra frames (NFRAMES delta, bracketed outside window) 102; ngroups 85 nticks 84 rsn_delta [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+YM v_ms_fx_16MHz: frames 301 writes 1185 (3.94/VBL) frames_with_writes 300 regs {0: 300, 1: 300, 2: 53, 3: 53, 4: 53, 5: 53, 6: 2, 7: 3, 8: 300, 10: 34, 11: 34}
+YM v_ms_fx_16MHz: tone events A 299 B 0 C 52; A times [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41]
+PROF v_ms_fx_16MHz: flips 79 total_cycles 42649108 => 189552 cycles/VBL over ~225 VBL (profile cycles/second 16042494; busy 59.1% of a 50Hz VBL)
+  agg: other=185644/VBL, YMplayer(8bb6-9344)=3239/VBL, VBLISR(d11e-d500)=669/VBL
+  $1fc14    113851 cyc/VBL  60.1%
+  $12c1a     40977 cyc/VBL  21.6%
+  $18318     16069 cyc/VBL   8.5%
+  $12b06      4166 cyc/VBL   2.2%
+  $08c38      2979 cyc/VBL   1.6%
+  $0d486      1860 cyc/VBL   1.0%
+  $12a02      1422 cyc/VBL   0.8%
+  $0ed74      1106 cyc/VBL   0.6%
+  $10ca6       646 cyc/VBL   0.3%
+  $0fe50       640 cyc/VBL   0.3%
+  $0ecc8       628 cyc/VBL   0.3%
+  $0d11c       378 cyc/VBL   0.2%
+  $18888       369 cyc/VBL   0.2%
+  $1003c       331 cyc/VBL   0.2%
+alive True bus/addr errors 0

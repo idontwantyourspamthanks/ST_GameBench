@@ -1,0 +1,26 @@
+boot_to_race True vbl 6244 $1021 02 marker b'MSPO'
+shop: $1024 ff $1021 02 $1023 02 $102c 0001 vbl 8346
+after FX click: $1023 01 $1021 02
+pointer 000000a7
+race2: True $1021 01 $1023 01 $102c 0001 $1028 ff vbl 9533
+WIN v_ste_music_native_counts: vbl 501 (50Hz) ticks 501 notes 259 flips 101 passes 100 | per second: steps 9.98 flips 10.08 ticks 50.00 | extra frames (NFRAMES delta, bracketed outside window) 0; ngroups 0 nticks 0 rsn_delta [0, 0, 0, 0, 0, 134, 0, 0, 0, 0, 0]
+WIN v_ste_music_native_ym: vbl 300 (50Hz) ticks 300 notes 163 flips 60 passes 60 | per second: steps 10.00 flips 10.00 ticks 50.00 | extra frames (NFRAMES delta, bracketed outside window) 0; ngroups 0 nticks 0 rsn_delta [0, 0, 0, 0, 0, 94, 0, 0, 0, 0, 0]
+YM v_ste_music_native: frames 300 writes 1506 (5.02/VBL) frames_with_writes 299 regs {0: 59, 1: 59, 2: 119, 3: 119, 4: 119, 5: 119, 8: 299, 9: 283, 10: 165, 11: 165}
+YM v_ste_music_native: tone events A 58 B 114 C 75; A times [10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100, 105, 110, 115, 120, 125, 130, 135, 140, 145, 150, 155, 160, 165, 170, 175, 180, 185, 190, 195, 200, 205]
+PROF v_ste_music_native: flips 34 total_cycles 27383836 => 121706 cycles/VBL over ~225 VBL (profile cycles/second 8021247; busy 75.9% of a 50Hz VBL)
+  agg: other=119188/VBL, YMplayer(8bb6-9344)=2118/VBL, VBLISR(d11e-d500)=400/VBL
+  $1fc14    106796 cyc/VBL  87.7%
+  $18318      4649 cyc/VBL   3.8%
+  $12c1a      2549 cyc/VBL   2.1%
+  $08c38      1958 cyc/VBL   1.6%
+  $0d486      1382 cyc/VBL   1.1%
+  $0ed74       898 cyc/VBL   0.7%
+  $10ca6       444 cyc/VBL   0.4%
+  $0fe50       291 cyc/VBL   0.2%
+  $0d11c       257 cyc/VBL   0.2%
+  $1182e       238 cyc/VBL   0.2%
+  $18888       235 cyc/VBL   0.2%
+  $0fa2c       188 cyc/VBL   0.2%
+  $0ecc8       172 cyc/VBL   0.1%
+  $076f4       168 cyc/VBL   0.1%
+alive True bus/addr errors 3
