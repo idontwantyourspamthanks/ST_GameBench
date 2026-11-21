@@ -16,7 +16,7 @@ import m68dis
 FLIP_PC = 0xD1CA
 CYC_PER_VBL = 160256
 LO, HI = 0x800, 0x20000
-LINE = re.compile(r"^\$([0-9a-f]+)\s.*% \((\d+), (\d+), \d+, \d+\)\s*$", re.I)
+LINE = re.compile(r"^\$?([0-9a-f]{6,8})\s.*% \((\d+), (\d+), \d+, \d+\)\s*$", re.I)   # Hatari 2.6.1 dropped the leading `$`
 
 
 def load(path):
