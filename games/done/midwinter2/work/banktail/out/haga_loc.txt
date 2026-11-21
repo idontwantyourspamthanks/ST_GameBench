@@ -1,0 +1,8 @@
+loc2_ms2: RAM 2048 KB: 'HAGA rulez!' at $1fb0f8 => HAGA base $1f8000 (phystop - $8000); record: swap start $1e2b6a, count 1811 (=> 86976 B to $1f7f2a)
+loc2_ms2: bank $bb000-$e61b2: 0 differ; swap start >= bank end $e61b2
+loc2_ms4: RAM 4096 KB: 'HAGA rulez!' at $3fb0f8 => HAGA base $3f8000 (phystop - $8000); record: swap start $3e2b6a, count 1811 (=> 86976 B to $3f7f2a)
+loc2_ms4: bank $bb000-$e61b2: 0 differ; swap start >= bank end $e61b2
+loc2_ms1: RAM 1024 KB: 'HAGA rulez!' at $fb0f8 => HAGA base $f8000 (phystop - $8000); record: swap start $e2b6a, count 1811 (=> 86976 B to $f7f2a)
+loc2_ms1: bank $bb000-$e61b2: 13716 differ; first $e2b6a last $e61b1; runs $e2b6a-$e2ba4, $e2ba6-$e2be2, $e2be4-$e2c41, $e2c43-$e2cd0, $e2cd2-$e2d7a, $e2d7c-$e2e7d, $e2e7f-$e2ed5, $e2ed7-$e2f0f ...; swap start < bank end $e61b2
+loc2_ste1: RAM 1024 KB: 'HAGA rulez!' at $fb0f8 => HAGA base $f8000 (phystop - $8000); record: swap start $e83e6, count 1339 (=> 64320 B to $f7f26)
+loc2_ste1: bank $bb000-$e61b2: 0 differ; swap start >= bank end $e61b2

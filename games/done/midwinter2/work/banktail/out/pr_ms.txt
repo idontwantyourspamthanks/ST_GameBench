@@ -1,0 +1,23 @@
+tune 1 started ($5138=000bf81e) at 53.9 s emulated
+[prehaga   ] bank dumped at the HAGA copy loop (entry $fb1f0): 0 differ
+[posthaga  ] bank dumped at the HAGA copy loop (exit $fb204): 13720 differ; first $e2b6a last $e61b5; runs $e2b6a-$e2ba4, $e2ba6-$e2be2, $e2be4-$e2c41, $e2c43-$e2cd0, $e2cd2-$e2d7a, $e2d7c-$e2e7d, $e2e7f-$e2ed5, $e2ed7-$e2f0f ...
+debugger lines of the HAGA breakpoints: ['= %1110101 (bin), #117 (dec), $75 (hex)', '= %100100011011 (bin), #2331 (dec), $91b (hex)', 'A4 00015396   A5 00000008   A6 000E2B6A   A7 00015388', '= %100100011110 (bin), #2334 (dec), $91e (hex)', 'A4 00526100   A5 000153C8   A6 000F7F2A   A7 00015374', '= %101011111110 (bin), #2814 (dec), $afe (hex)']
+[logo      ] vbl 3046 bank $bb000-$e61b6 vs build/asn_bank.bin: 13720 differ; first $e2b6a last $e61b5; runs $e2b6a-$e2ba4, $e2ba6-$e2be2, $e2be4-$e2c41, $e2c43-$e2cd0, $e2cd2-$e2d7a, $e2d7c-$e2e7d, $e2e7f-$e2ed5, $e2ed7-$e2f0f ...
+[logo      ] phystop $518820fc, HAGA record $5187a190: start $0 count 0 (words $f8098) $f809c $0
+[logo      ] $fb488-$fffff (19320 B above HAGA): 12 nonzero bytes, first $fb602 last $fb613, md5 92d7e9f5
+[logo      ] SV mode/act/dma = 010000 (2 = DMA sound, 1 = YM), $5138 = 000bf81e (bf81e = music tick, d0e = YM driver), canary @bank end: b'\x00\x00\x00\x00'
+$ff8e21 (Mega STE speed/cache register): ff | status: []
+vector table $806: 000bf81e000bf82400000c4c
+[intro     ] vbl 4208 bank $bb000-$e61b6 vs build/asn_bank.bin: 13720 differ; first $e2b6a last $e61b5; runs $e2b6a-$e2ba4, $e2ba6-$e2be2, $e2be4-$e2c41, $e2c43-$e2cd0, $e2cd2-$e2d7a, $e2d7c-$e2e7d, $e2e7f-$e2ed5, $e2ed7-$e2f0f ...
+[intro     ] phystop $518820fc, HAGA record $5187a190: start $0 count 0 (words $f8098) $f809c $0
+[intro     ] $fb488-$fffff (19320 B above HAGA): 12 nonzero bytes, first $fb602 last $fb613, md5 92d7e9f5
+[intro     ] SV mode/act/dma = 010000 (2 = DMA sound, 1 = YM), $5138 = 000bf81e (bf81e = music tick, d0e = YM driver), canary @bank end: b'\x00\x00\x00\x00'
+[mjk       ] vbl 4909 bank $bb000-$e61b6 vs build/asn_bank.bin: 13720 differ; first $e2b6a last $e61b5; runs $e2b6a-$e2ba4, $e2ba6-$e2be2, $e2be4-$e2c41, $e2c43-$e2cd0, $e2cd2-$e2d7a, $e2d7c-$e2e7d, $e2e7f-$e2ed5, $e2ed7-$e2f0f ...
+[mjk       ] phystop $518820fc, HAGA record $5187a190: start $0 count 0 (words $f8098) $f809c $0
+[mjk       ] $fb488-$fffff (19320 B above HAGA): 12 nonzero bytes, first $fb602 last $fb613, md5 92d7e9f5
+[mjk       ] SV mode/act/dma = 010000 (2 = DMA sound, 1 = YM), $5138 = 000bf81e (bf81e = music tick, d0e = YM driver), canary @bank end: b'\x00\x00\x00\x00'
+[hall      ] vbl 6389 bank $bb000-$e61b6 vs build/asn_bank.bin: 13720 differ; first $e2b6a last $e61b5; runs $e2b6a-$e2ba4, $e2ba6-$e2be2, $e2be4-$e2c41, $e2c43-$e2cd0, $e2cd2-$e2d7a, $e2d7c-$e2e7d, $e2e7f-$e2ed5, $e2ed7-$e2f0f ...
+[hall      ] phystop $518820fc, HAGA record $5187a190: start $0 count 0 (words $f8098) $f809c $0
+[hall      ] $fb488-$fffff (19320 B above HAGA): 12 nonzero bytes, first $fb602 last $fb613, md5 92d7e9f5
+[hall      ] SV mode/act/dma = 010000 (2 = DMA sound, 1 = YM), $5138 = 000bf81e (bf81e = music tick, d0e = YM driver), canary @bank end: b'\x00\x00\x00\x00'
+DONE pr_ms

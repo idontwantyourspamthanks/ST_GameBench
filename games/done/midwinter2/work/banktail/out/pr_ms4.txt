@@ -1,0 +1,23 @@
+tune 1 started ($5138=000bf81e) at 53.9 s emulated
+[prehaga   ] breakpoint never fired
+[posthaga  ] breakpoint never fired
+debugger lines of the HAGA breakpoints: ['= %1111011 (bin), #123 (dec), $7b (hex)', '= %101100000011 (bin), #2819 (dec), $b03 (hex)']
+[logo      ] vbl 3048 bank $bb000-$e61b6 vs build/asn_bank.bin: 0 differ
+[logo      ] phystop $518820fc, HAGA record $5187a190: start $0 count 0 (words $f8098) $f809c $0
+[logo      ] $fb488-$fffff (19320 B above HAGA): 0 nonzero bytes, md5 d4a8e28c
+[logo      ] SV mode/act/dma = 0202ff (2 = DMA sound, 1 = YM), $5138 = 000bf81e (bf81e = music tick, d0e = YM driver), canary @bank end: b'ASNE'
+$ff8e21 (Mega STE speed/cache register): ff | status: []
+vector table $806: 000bf81e000bf82400000c4c
+[intro     ] vbl 4210 bank $bb000-$e61b6 vs build/asn_bank.bin: 0 differ
+[intro     ] phystop $518820fc, HAGA record $5187a190: start $0 count 0 (words $f8098) $f809c $0
+[intro     ] $fb488-$fffff (19320 B above HAGA): 0 nonzero bytes, md5 d4a8e28c
+[intro     ] SV mode/act/dma = 0202ff (2 = DMA sound, 1 = YM), $5138 = 000bf81e (bf81e = music tick, d0e = YM driver), canary @bank end: b'ASNE'
+[mjk       ] vbl 4911 bank $bb000-$e61b6 vs build/asn_bank.bin: 0 differ
+[mjk       ] phystop $518820fc, HAGA record $5187a190: start $0 count 0 (words $f8098) $f809c $0
+[mjk       ] $fb488-$fffff (19320 B above HAGA): 0 nonzero bytes, md5 d4a8e28c
+[mjk       ] SV mode/act/dma = 0202ff (2 = DMA sound, 1 = YM), $5138 = 000bf81e (bf81e = music tick, d0e = YM driver), canary @bank end: b'ASNE'
+[hall      ] vbl 6391 bank $bb000-$e61b6 vs build/asn_bank.bin: 0 differ
+[hall      ] phystop $518820fc, HAGA record $5187a190: start $0 count 0 (words $f8098) $f809c $0
+[hall      ] $fb488-$fffff (19320 B above HAGA): 0 nonzero bytes, md5 d4a8e28c
+[hall      ] SV mode/act/dma = 020200 (2 = DMA sound, 1 = YM), $5138 = 000bf81e (bf81e = music tick, d0e = YM driver), canary @bank end: b'ASNE'
+DONE pr_ms4

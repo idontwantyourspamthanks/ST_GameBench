@@ -1,0 +1,43 @@
+tune 1 started ($5138=000bf81e) at 60.8 s emulated
+[prehaga   ] bank dumped at the HAGA copy loop (entry $fb1f0): 0 differ
+[posthaga  ] bank dumped at the HAGA copy loop (exit $fb204): 0 differ
+debugger lines of the HAGA breakpoints: ['= %1101000 (bin), #104 (dec), $68 (hex)', '= %100111100001 (bin), #2529 (dec), $9e1 (hex)', 'A4 0000FB1A   A5 00000008   A6 000E83E6   A7 0000FB0C', '= %100111100011 (bin), #2531 (dec), $9e3 (hex)', 'A4 600441FA   A5 0000FB48   A6 000F7F26   A7 0000FAF8', '= %110001001100 (bin), #3148 (dec), $c4c (hex)']
+[logo      ] vbl 3342 bank $bb000-$e61b2 vs build/asn_bank.bin: 0 differ
+[logo      ] phystop $518820fc, HAGA record $5187a190: start $0 count 0 (words $f8098) $f809c $0
+[logo      ] $fb488-$fffff (19320 B above HAGA): 12 nonzero bytes, first $fb602 last $fb613, md5 92d7e9f5
+[logo      ] SV mode/act/dma = 0202ff (2 = DMA sound, 1 = YM), $5138 = 000bf81e (bf81e = music tick, d0e = YM driver), canary @bank end: b'\\\xf5\x89\xa7'
+$ff8e21 (Mega STE speed/cache register): ff | status: []
+vector table $806: 000bf81e000bf82400000c4c
+[intro     ] vbl 4500 bank $bb000-$e61b2 vs build/asn_bank.bin: 0 differ
+[intro     ] phystop $518820fc, HAGA record $5187a190: start $0 count 0 (words $f8098) $f809c $0
+[intro     ] $fb488-$fffff (19320 B above HAGA): 12 nonzero bytes, first $fb602 last $fb613, md5 92d7e9f5
+[intro     ] SV mode/act/dma = 0202ff (2 = DMA sound, 1 = YM), $5138 = 000bf81e (bf81e = music tick, d0e = YM driver), canary @bank end: b'\\\xf5\x89\xa7'
+[mjk       ] vbl 5085 bank $bb000-$e61b2 vs build/asn_bank.bin: 0 differ
+[mjk       ] phystop $518820fc, HAGA record $5187a190: start $0 count 0 (words $f8098) $f809c $0
+[mjk       ] $fb488-$fffff (19320 B above HAGA): 12 nonzero bytes, first $fb602 last $fb613, md5 92d7e9f5
+[mjk       ] SV mode/act/dma = 0202ff (2 = DMA sound, 1 = YM), $5138 = 000bf81e (bf81e = music tick, d0e = YM driver), canary @bank end: b'\\\xf5\x89\xa7'
+[hall      ] vbl 6318 bank $bb000-$e61b2 vs build/asn_bank.bin: 0 differ
+[hall      ] phystop $518820fc, HAGA record $5187a190: start $0 count 0 (words $f8098) $f809c $0
+[hall      ] $fb488-$fffff (19320 B above HAGA): 12 nonzero bytes, first $fb602 last $fb613, md5 92d7e9f5
+[hall      ] SV mode/act/dma = 020200 (2 = DMA sound, 1 = YM), $5138 = 000bf81e (bf81e = music tick, d0e = YM driver), canary @bank end: b'\\\xf5\x89\xa7'
+[map       ] vbl 9602 bank $bb000-$e61b2 vs build/asn_bank.bin: 0 differ
+[map       ] phystop $518820fc, HAGA record $5187a190: start $0 count 0 (words $f8098) $f809c $0
+[map       ] $fb488-$fffff (19320 B above HAGA): 12 nonzero bytes, first $fb602 last $fb613, md5 92d7e9f5
+[map       ] SV mode/act/dma = 0202ff (2 = DMA sound, 1 = YM), $5138 = 000bf81e (bf81e = music tick, d0e = YM driver), canary @bank end: b'\\\xf5\x89\xa7'
+boss screen matched: True
+[boss      ] vbl 12341 bank $bb000-$e61b2 vs build/asn_bank.bin: 0 differ
+[boss      ] phystop $518820fc, HAGA record $5187a190: start $0 count 0 (words $f8098) $f809c $0
+[boss      ] $fb488-$fffff (19320 B above HAGA): 12 nonzero bytes, first $fb602 last $fb613, md5 92d7e9f5
+[boss      ] SV mode/act/dma = 0202ff (2 = DMA sound, 1 = YM), $5138 = 000bf81e (bf81e = music tick, d0e = YM driver), canary @bank end: b'\\\xf5\x89\xa7'
+[3d        ] vbl 16160 bank $bb000-$e61b2 vs build/asn_bank.bin: 0 differ
+[3d        ] phystop $518820fc, HAGA record $5187a190: start $0 count 0 (words $f8098) $f809c $0
+[3d        ] $fb488-$fffff (19320 B above HAGA): 12 nonzero bytes, first $fb602 last $fb613, md5 92d7e9f5
+[3d        ] SV mode/act/dma = 0201ff (2 = DMA sound, 1 = YM), $5138 = 00018f92 (bf81e = music tick, d0e = YM driver), canary @bank end: b'\\\xf5\x89\xa7'
+SV mode/act/dma = 0201ff
+effect 2 requested at wall 3.1s; voices (cnt, smp, ln): [(21, '0xde762', 1792), (25, '0xd94d2', 3072)]
+effect 17 requested at wall 13.6s; voices (cnt, smp, ln): [(96, '0xd202a', 100), (96, '0xe3c02', 4800)]
+effect 19 requested at wall 24.0s; voices (cnt, smp, ln): [(56, '0xe25d2', 2816), (96, '0xe3c02', 4800)]
+effect 24 requested at wall 34.5s; voices (cnt, smp, ln): [(56, '0xe25d2', 2816)]
+requested: [(2, 3.1), (17, 13.55), (19, 24.0), (24, 34.45)]
+wav /home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/banktail/out/ste1_fx.wav 9074732
+DONE ste1

@@ -1,0 +1,32 @@
+--- a/patches/asn/blob.s	2026-11-20 12:39:09.604931963 +0000
++++ b/patches/asn/blob.s	2026-11-21 02:19:01.337058831 +0000
+@@ -117,7 +117,7 @@
+         bne.s   .m
+         bsr     asn_init0
+ .m:     cmpi.b  #2,v_mode(a4)
+-        beq.s   asn_run
++        beq     asn_run
+         move.w  $6862.w,d0              ; the displaced instructions
+         bmi.s   .neg
+         jmp     $18f98.l
+@@ -128,6 +128,10 @@
+         bne     .rts
+         cmpi.l  #BANK,BANK+8.l
+         bne     .rts
++        lea     BANK-4.l,a0                     ; the end canary ('ASNE' = the last 4 bytes of the bank, written by asn_build): something (PP's HAGA low-memory swap area
++        adda.l  BANK+12.l,a0                    ; on a 1 MB machine with TOS 2.06 / resident drivers, $e2b6a-) lies over the tail of the bank = do not use it, the YM plays
++        cmpi.l  #'ASNE',(a0)
++        bne     .rts
+         movea.l a7,a2                   ; bus error guard: the handler puts a7 back here
+         moveq   #1,d0
+         suba.l  a0,a0
+--- a/tools/asn_build.py	2026-11-15 22:28:26.709307883 +0000
++++ b/tools/asn_build.py	2026-11-21 02:18:56.554155892 +0000
+@@ -274,6 +274,7 @@
+     b[OFF_REC:OFF_REC + REC_LEN] = rec
+     info["sfx_base"] = base_of
+     b += smp
++    b += b"ASNE"                                    # end canary: asn_init0 refuses a bank whose tail has been overwritten
+     total = len(b)
+     if BANK + total > LIMIT:
+         raise SystemExit(f"the bank ends at ${BANK + total:x}, above ${LIMIT:x}: drop tunes (--tunes)")

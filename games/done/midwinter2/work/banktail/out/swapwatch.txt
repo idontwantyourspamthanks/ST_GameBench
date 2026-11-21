@@ -1,0 +1,39 @@
+INFO : Hatari v2.6.1, compiled on:  Feb  8 2026, 19:50:12
+INFO : GEMDOS HDD emulation, C: <-> /tmp/mw2tail/sw/C.
+WARN : No GEMDOS dir '/tmp/mw2tail/sw/C/AUTO'
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $f92ee
+WARN : No GEMDOS dir '/tmp/mw2tail/sw/C/GAMEX'
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $f936c
+CPU condition breakpoint 3 with 1 condition(s) added:
+	pc = $f93e4
+	pc = $f92ee :once :trace :file /tmp/mw2tail/sw/s1.txt
+Reading debugger commands from '/tmp/mw2tail/sw/s1.txt'...
+Changed to input file dir '/tmp/mw2tail/sw'.
+= %100100101010 (bin), #2346 (dec), $92a (hex)
+  D0 00040713   D1 00000000   D2 00033140   D3 00000200 
+  D4 00000000   D5 00070007   D6 00070007   D7 00080040 
+  A0 00000482   A1 FFFFFA15   A2 000FB7A4   A3 000B1F44 
+  A4 0004EA00   A5 00000008   A6 000FB3C7   A7 000FB610 
+USP  000FB7A4 ISP  000FB610 
+SR=2704 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=7 STP=0
+Prefetch 2c7a (MOVEA) eda4 (ASL) Chip latch 00000000
+000f92ee 2c7a eda4                movea.l (-$125c,pc) == $000f8094 [000e2b6a],a6
+Next PC: 000f92f2
+000E2B6A: 02 e0 10 e2 03 e0 10 e2 04 e0 10 e2 00 e0 0d 1a  .α.Γ.α.Γ.α.Γ.α..
+00000008: 00 04 de ca 00 04 de ca 00 04 de ca 00 04 de ca  ..∧ט..∧ט..∧ט..∧ט
+00000400: 48 e7 ff fe 70 37 60 34 48 e7 00 c0 20 7a ff d2  Hτ¯³p7`4Hτ.ĳ z¯פ
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+Removed CPU breakpoint 1:
+	pc = $f92ee :once :trace :file /tmp/mw2tail/sw/s1.txt
+	pc = $f936c :once :trace :file /tmp/mw2tail/sw/s2.txt
+Reading debugger commands from '/tmp/mw2tail/sw/s2.txt'...
+Changed to input file dir '/tmp/mw2tail/sw'.
+= %100100110001 (bin), #2353 (dec), $931 (hex)
+000E2B6A: 00 04 de ca 00 04 de ca 00 04 de ca 00 04 de ca  ..∧ט..∧ט..∧ט..∧ט
+00000008: 02 e0 10 e2 03 e0 10 e2 04 e0 10 e2 00 e0 0d 1a  .α.Γ.α.Γ.α.Γ.α..
+00000400: 00 e0 71 14 00 e0 0d 3a 00 e0 0b 9a 00 00 00 00  .αq..α.:.α.Ü....
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+Removed CPU breakpoint 1:
+	pc = $f936c :once :trace :file /tmp/mw2tail/sw/s2.txt

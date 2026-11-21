@@ -1,0 +1,39 @@
+tune 1 started ($5138=000bf81e) at 64.7 s emulated
+insert-graphics prompt at 90.5 s
+[prehaga   ] breakpoint never fired
+[posthaga  ] breakpoint never fired
+debugger lines of the HAGA breakpoints: ['= %1101000 (bin), #104 (dec), $68 (hex)', '= %110100001100 (bin), #3340 (dec), $d0c (hex)', '= %1001000011011 (bin), #4635 (dec), $121b (hex)']
+[logo      ] vbl 4926 bank $bb000-$e61b2 vs build/asn_bank.bin: 0 differ
+[logo      ] phystop $100000, HAGA record $f8094: start $0 count 0 (words $f8098) $f809c $0
+[logo      ] $fb488-$fffff (19320 B above HAGA): 0 nonzero bytes, md5 d4a8e28c
+[logo      ] SV mode/act/dma = 0202ff (2 = DMA sound, 1 = YM), $5138 = 000bf81e (bf81e = music tick, d0e = YM driver), canary @bank end: b'\\\xf5\x89\xa7'
+$ff8e21 (Mega STE speed/cache register): 00 | status: []
+vector table $806: 000bf81e000bf82400000c4c
+[intro     ] vbl 5324 bank $bb000-$e61b2 vs build/asn_bank.bin: 0 differ
+[intro     ] phystop $100000, HAGA record $f8094: start $0 count 0 (words $f8098) $f809c $0
+[intro     ] $fb488-$fffff (19320 B above HAGA): 0 nonzero bytes, md5 d4a8e28c
+[intro     ] SV mode/act/dma = 0202ff (2 = DMA sound, 1 = YM), $5138 = 000bf81e (bf81e = music tick, d0e = YM driver), canary @bank end: b'\\\xf5\x89\xa7'
+[mjk       ] vbl 7443 bank $bb000-$e61b2 vs build/asn_bank.bin: 0 differ
+[mjk       ] phystop $100000, HAGA record $f8094: start $0 count 0 (words $f8098) $f809c $0
+[mjk       ] $fb488-$fffff (19320 B above HAGA): 0 nonzero bytes, md5 d4a8e28c
+[mjk       ] SV mode/act/dma = 0202ff (2 = DMA sound, 1 = YM), $5138 = 000bf81e (bf81e = music tick, d0e = YM driver), canary @bank end: b'\\\xf5\x89\xa7'
+[hall      ] vbl 8422 bank $bb000-$e61b2 vs build/asn_bank.bin: 0 differ
+[hall      ] phystop $100000, HAGA record $f8094: start $0 count 0 (words $f8098) $f809c $0
+[hall      ] $fb488-$fffff (19320 B above HAGA): 0 nonzero bytes, md5 d4a8e28c
+[hall      ] SV mode/act/dma = 020200 (2 = DMA sound, 1 = YM), $5138 = 000bf81e (bf81e = music tick, d0e = YM driver), canary @bank end: b'\\\xf5\x89\xa7'
+[map       ] vbl 15644 bank $bb000-$e61b2 vs build/asn_bank.bin: 0 differ
+[map       ] phystop $100000, HAGA record $f8094: start $0 count 0 (words $f8098) $f809c $0
+[map       ] $fb488-$fffff (19320 B above HAGA): 0 nonzero bytes, md5 d4a8e28c
+[map       ] SV mode/act/dma = 0202ff (2 = DMA sound, 1 = YM), $5138 = 000bf81e (bf81e = music tick, d0e = YM driver), canary @bank end: b'\\\xf5\x89\xa7'
+boss screen matched: True
+[boss      ] vbl 18913 bank $bb000-$e61b2 vs build/asn_bank.bin: 0 differ
+[boss      ] phystop $100000, HAGA record $f8094: start $0 count 0 (words $f8098) $f809c $0
+[boss      ] $fb488-$fffff (19320 B above HAGA): 0 nonzero bytes, md5 d4a8e28c
+[boss      ] SV mode/act/dma = 0202ff (2 = DMA sound, 1 = YM), $5138 = 000bf81e (bf81e = music tick, d0e = YM driver), canary @bank end: b'\\\xf5\x89\xa7'
+EXC RuntimeError('no 3D view ($6220=0x0, $700a=0x0)')
+Traceback (most recent call last):
+  File "/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/banktail/walk.py", line 186, in <module>
+    else: raise RuntimeError(f"no 3D view ($6220={h.peekw(0x6220):#x}, $700a={h.peekw(0x700A):#x})")
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: no 3D view ($6220=0x0, $700a=0x0)
+

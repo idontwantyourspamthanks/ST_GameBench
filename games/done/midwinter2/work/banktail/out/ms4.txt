@@ -1,0 +1,36 @@
+tune 1 started ($5138=000bf81e) at 53.9 s emulated
+[prehaga   ] breakpoint never fired
+[posthaga  ] breakpoint never fired
+debugger lines of the HAGA breakpoints: ['= %1110100 (bin), #116 (dec), $74 (hex)', '= %101011111100 (bin), #2812 (dec), $afc (hex)']
+[logo      ] vbl 3042 bank $bb000-$e61b2 vs build/asn_bank.bin: 0 differ
+[logo      ] HAGA record $f8094: start $0 count 0 (words $f8098) $f809c $0
+[logo      ] $fb488-$fffff (19320 B above HAGA): 0 nonzero bytes, md5 d4a8e28c
+$ff8e21 (Mega STE speed/cache register): ff | status: []
+vector table $806: 000bf81e000bf82400000c4c
+[intro     ] vbl 4150 bank $bb000-$e61b2 vs build/asn_bank.bin: 0 differ
+[intro     ] HAGA record $f8094: start $0 count 0 (words $f8098) $f809c $0
+[intro     ] $fb488-$fffff (19320 B above HAGA): 0 nonzero bytes, md5 d4a8e28c
+[mjk       ] vbl 4797 bank $bb000-$e61b2 vs build/asn_bank.bin: 0 differ
+[mjk       ] HAGA record $f8094: start $0 count 0 (words $f8098) $f809c $0
+[mjk       ] $fb488-$fffff (19320 B above HAGA): 0 nonzero bytes, md5 d4a8e28c
+[hall      ] vbl 6223 bank $bb000-$e61b2 vs build/asn_bank.bin: 0 differ
+[hall      ] HAGA record $f8094: start $0 count 0 (words $f8098) $f809c $0
+[hall      ] $fb488-$fffff (19320 B above HAGA): 0 nonzero bytes, md5 d4a8e28c
+[map       ] vbl 10104 bank $bb000-$e61b2 vs build/asn_bank.bin: 0 differ
+[map       ] HAGA record $f8094: start $0 count 0 (words $f8098) $f809c $0
+[map       ] $fb488-$fffff (19320 B above HAGA): 0 nonzero bytes, md5 d4a8e28c
+boss screen matched: True
+[boss      ] vbl 13333 bank $bb000-$e61b2 vs build/asn_bank.bin: 0 differ
+[boss      ] HAGA record $f8094: start $0 count 0 (words $f8098) $f809c $0
+[boss      ] $fb488-$fffff (19320 B above HAGA): 0 nonzero bytes, md5 d4a8e28c
+[3d        ] vbl 17223 bank $bb000-$e61b2 vs build/asn_bank.bin: 0 differ
+[3d        ] HAGA record $f8094: start $0 count 0 (words $f8098) $f809c $0
+[3d        ] $fb488-$fffff (19320 B above HAGA): 0 nonzero bytes, md5 d4a8e28c
+SV mode/act/dma = 0201ff
+effect 17 requested at wall 3.1s; voices (cnt, smp, ln): [(95, '0xd202a', 100), (95, '0xe3c02', 4800)]
+effect 19 requested at wall 13.6s; voices (cnt, smp, ln): [(56, '0xe25d2', 2816), (96, '0xe3c02', 4800)]
+effect 24 requested at wall 24.0s; voices (cnt, smp, ln): [(56, '0xe25d2', 2816)]
+effect 2 requested at wall 34.5s; voices (cnt, smp, ln): [(21, '0xde762', 1792), (14, '0xe25d2', 2816)]
+requested: [(17, 3.1), (19, 13.55), (24, 24.0), (2, 34.46)]
+wav /home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/banktail/out/ms4_fx.wav 9074564
+DONE ms4
