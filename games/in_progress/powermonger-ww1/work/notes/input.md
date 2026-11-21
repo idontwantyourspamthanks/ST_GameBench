@@ -90,7 +90,31 @@ re-arms it until the down-seen word `$2edbc` proves the game's latch code ran, t
 (`10`, then `0`). This is the qol_keys synthesis template: **write the same words the mouse
 path writes** — click position + latch + pass stamp — and the game handles it as a click.
 
-## 5. Open items (for the keys/tooltip ports)
+## 5. The map-view keys and the command strip [disasm, obs]
+
+The pass tail (`$144d8-$145da`, from the 3D view) is the keyboard consumer; the keydown
+table `$2ec8c` is read by scancode:
+
+| scancode | key | effect |
+|---|---|---|
+| `$4d`/`$4b` | Right/Left | `$50fd4 += 1` / `-= 1` (the map scroll) |
+| `$50`/`$48` | Down/Up | `$50fd6 += 1` / `-= 1`, clamped at 0 |
+| `$34`/`$33` | `.`/`,` | `$5a860 += 1` / `-= 1` (the selection) + `jsr $10274` |
+| `$36`-gated | RShift + ... | the camera fine controls: `$47`/`$52` -> `$1040a` +/- $10; `$4a`/`$4e` -> `$10406` +/- $a; `$63`/`$64` -> `$10408` +/- $a; `$65`/`$66` -> `$1040c` +/- 1 |
+
+[obs] The arrow keys were verified live: holding Right/Left/Up/Down scrolls the map
+(43-45k changed pixels per key hold). **Every other key is free** — the qol_keys port can
+use A-Z and the map mode keys exactly as the 1990 patch did.
+
+The command strip: the input section at `$13e82` routes a pointer in **x < 64, y 7..135**
+(the left HUD strip) to `$14608` (the territory/hover helper), then to
+`$13f16`: the region id `$5a836` -> `$1a89a` (the 24-entry action list, the same list the
+options screen used) -> `jsr $1964a` (the action dispatch). A hover path (`$13eb2` when
+`$5a836` is set) exists for the strip — the WW1 has a partial hover mechanism of its own,
+relevant to the tooltip port. The click on the MAP (outside the strip) goes to the rectangle
+table at `$13fc4` (`$13f6c`), the territory selection.
+
+## 6. Open items (for the keys/tooltip ports)
 
 - [ ] The map-view keyboard consumption: which scancodes does the 3D view read (the 1990 game
       read only the four cursor keys and text windows). Search `$2ec8c`/`$1d2b0` readers in
