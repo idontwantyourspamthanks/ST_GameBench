@@ -1,0 +1,139 @@
+CELL hd_ste4: kind=hd (Hunter_v1.2.1_patched_hd_2026-11-20) machine=ste4 ('ste', '1.62', 4096) clk=default
+t+    9s [hw] low RAM $0..$4ffff kept (TOS state before the game)
+t+   17s [load      ] bank 0 differ, bank-file tail(panel) 0, patch code 0
+             MARKER=b'HNPO' FLAGS=00000003 SV mode/in3d/dma/silent=00000000 $ff8901=00 $ff8921=00
+t+   21s [title     ] bank 0 differ, bank-file tail(panel) 0, patch code 0
+             MARKER=b'HNPO' FLAGS=00000003 SV mode/in3d/dma/silent=00000000 $ff8901=00 $ff8921=00
+t+   60s BOOT in_game=True MARKER=b'HNPO' FLAGS=00000003
+t+   62s [3d        ] bank 0 differ, bank-file tail(panel) 0, patch code 0
+             MARKER=b'HNPO' FLAGS=00000003 SV mode/in3d/dma/silent=02ff000c $ff8901=00 $ff8921=80
+             $ffd80.l = $00102008  $ffd86.w = $094a  $ffd20: 46fc27004238fa074238fa094238fa0b
+             D15R $c0100: 0010003400520260000000000000000043f80008247a06d0d5fc000c0808343c  $c07e6.l = $0000fd28  $c0734.w = $0000  $c0736.l = $00000000
+             Gamex TOS copy [$102008, $11de18) = 114192 B (swapped with $8..); payload+bank [$8ba00, $aef12), bank [$90000, $e4e70000): overlap with bank 114192 B, with payload 0 B
+             RAM $aef12..$c00ff all zero
+             TOS-image copy candidate: base $102000 (RAM $0 = $102000) matched by 74 probes at offsets $400..$13f00
+             TOS-image copy candidate: base $17b76e (RAM $0 = $17b76e) matched by 41 probes at offsets $a900..$fd00
+             TOS-image copy candidate: base $1103e2 (RAM $0 = $1103e2) matched by 2 probes at offsets $9580..$9700
+             TOS-image copy candidate: base $1101c4 (RAM $0 = $1101c4) matched by 1 probes at offsets $9700..$9700
+3D view standing: fps 5.00 over 150 VBL; $ff8e21 (Mega STE speed/cache) = ff; $ff8e01 = ff
+fx: WAV 105.6 s at 50066 Hz for 107.1 s wall (emulation/real = 0.986); DMA ctl/rate after each request below
+fx: 21 bursts for 21 requests (burst-aligned windows when equal, else time windows)
+  fx e= 0 rms= 1506.0 peak=   5123 centroid=   687 Hz hi(>1.5k)= 1.4% len=1140.0 ms | ctl=03 rate=80 mode=2 dmaflag=255 vox0ch=255 inc=0.9321 after=('00', 0)
+  fx e= 1 rms= 1930.5 peak=   5617 centroid=  1845 Hz hi(>1.5k)=87.5% len=260.0 ms | ctl=00 rate=80 mode=2 dmaflag=0 vox0ch=255 inc=0.6683 after=('00', 0)
+  fx e= 2 rms= 1875.2 peak=   4260 centroid=  1567 Hz hi(>1.5k)=39.3% len=240.0 ms | ctl=00 rate=80 mode=2 dmaflag=0 vox0ch=255 inc=0.9321 after=('00', 0)
+  fx e= 3 rms= 1339.4 peak=   5107 centroid=   637 Hz hi(>1.5k)=15.5% len=2720.0 ms | ctl=03 rate=80 mode=2 dmaflag=255 vox0ch=0 inc=0.6683 after=('00', 0)
+  fx e= 4 rms= 1430.6 peak=   5045 centroid=   858 Hz hi(>1.5k)=24.2% len=1580.0 ms | ctl=03 rate=80 mode=2 dmaflag=255 vox0ch=255 inc=1.0067 after=('00', 0)
+  fx e= 5 rms= 1391.3 peak=   5031 centroid=   879 Hz hi(>1.5k)=22.5% len=1260.0 ms | ctl=03 rate=80 mode=2 dmaflag=255 vox0ch=255 inc=1.3367 after=('00', 0)
+  fx e= 6 rms= 1396.4 peak=   4931 centroid=   877 Hz hi(>1.5k)=16.1% len=560.0 ms | ctl=03 rate=80 mode=2 dmaflag=0 vox0ch=255 inc=1.3367 after=('00', 0)
+  fx e= 7 rms= 1004.4 peak=   4375 centroid=   631 Hz hi(>1.5k)=10.3% len=3040.0 ms | ctl=03 rate=80 mode=2 dmaflag=255 vox0ch=0 inc=0.6332 after=('00', 0)
+  fx e= 8 rms= 1006.1 peak=   4323 centroid=   729 Hz hi(>1.5k)=13.2% len=3020.0 ms | ctl=03 rate=80 mode=2 dmaflag=255 vox0ch=0 inc=0.7949 after=('00', 0)
+  fx e= 9 rms= 1000.8 peak=   4323 centroid=   839 Hz hi(>1.5k)=17.4% len=3020.0 ms | ctl=03 rate=80 mode=2 dmaflag=255 vox0ch=0 inc=0.9525 after=('00', 0)
+  fx e=10 rms=  998.4 peak=   4307 centroid=   936 Hz hi(>1.5k)=27.1% len=3040.0 ms | ctl=03 rate=80 mode=2 dmaflag=255 vox0ch=0 inc=1.2650 after=('00', 0)
+  fx e=11 rms= 1104.1 peak=   4974 centroid=   249 Hz hi(>1.5k)= 0.3% len=3000.0 ms | ctl=03 rate=80 mode=2 dmaflag=255 vox0ch=0 inc=1.1267 after=('00', 0)
+  fx e=12 rms= 1104.0 peak=   4957 centroid=   328 Hz hi(>1.5k)= 0.9% len=3050.0 ms | ctl=03 rate=80 mode=2 dmaflag=255 vox0ch=0 inc=1.5033 after=('00', 0)
+  fx e=13 rms=  959.0 peak=   4181 centroid=   544 Hz hi(>1.5k)= 2.9% len=3020.0 ms | ctl=03 rate=80 mode=2 dmaflag=255 vox0ch=0 inc=1.3367 after=('00', 0)
+  fx e=14 rms= 1267.3 peak=   5071 centroid=   385 Hz hi(>1.5k)= 4.7% len=3020.0 ms | ctl=03 rate=80 mode=2 dmaflag=255 vox0ch=0 inc=0.6683 after=('00', 0)
+  fx e=15 rms= 1274.2 peak=   4977 centroid=   456 Hz hi(>1.5k)= 6.2% len=3020.0 ms | ctl=03 rate=80 mode=2 dmaflag=255 vox0ch=0 inc=0.8408 after=('00', 0)
+  fx e=16 rms= 1270.9 peak=   4979 centroid=   511 Hz hi(>1.5k)= 8.1% len=3020.0 ms | ctl=03 rate=80 mode=2 dmaflag=255 vox0ch=0 inc=1.0067 after=('00', 0)
+  fx e=17 rms=  548.5 peak=   2569 centroid=   770 Hz hi(>1.5k)=12.1% len=1340.0 ms | ctl=03 rate=80 mode=2 dmaflag=255 vox0ch=0 inc=0.5535 after=('00', 0)
+  fx e=18 rms=  838.7 peak=   3863 centroid=   264 Hz hi(>1.5k)= 2.6% len=2790.0 ms | ctl=03 rate=80 mode=2 dmaflag=255 vox0ch=0 inc=0.2767 after=('00', 0)
+  fx e=19 rms=  829.6 peak=   4491 centroid=  1239 Hz hi(>1.5k)=34.3% len=690.0 ms | ctl=03 rate=80 mode=2 dmaflag=0 vox0ch=255 inc=1.3210 after=('00', 0)
+  fx e=20 rms= 1437.8 peak=   4933 centroid=  1728 Hz hi(>1.5k)=63.8% len=1960.0 ms | ctl=03 rate=80 mode=2 dmaflag=255 vox0ch=0 inc=0.7228 after=('00', 0)
+trap armed at $10f74
+t+  211s [bank      ] bank 0 differ, bank-file tail(panel) 0, patch code 0
+             MARKER=b'HNPO' FLAGS=00000003 SV mode/in3d/dma/silent=02ff000c $ff8901=00 $ff8921=80
+t+  246s [bank      ] bank 0 differ, bank-file tail(panel) 0, patch code 0
+             MARKER=b'HNPO' FLAGS=00000003 SV mode/in3d/dma/silent=02ff000c $ff8901=00 $ff8921=80
+t+  280s [bank      ] bank 0 differ, bank-file tail(panel) 0, patch code 0
+             MARKER=b'HNPO' FLAGS=00000003 SV mode/in3d/dma/silent=02ff000c $ff8901=00 $ff8921=80
+t+  301s [bank      ] bank 0 differ, bank-file tail(panel) 0, patch code 0
+             MARKER=b'HNPO' FLAGS=00000003 SV mode/in3d/dma/silent=02ff000c $ff8901=00 $ff8921=80
+t+  305s played 120 s, in_game=True
+TRAP FIRED:
+                                          .
+> m $ff8921 1
+00FF8921: 80                                               .
+INFO : WAV Sound data recording has been stopped.
+> b all
+CPU breakpoints: 0
+> b pc = $10f74 :trace :file /tmp/huntbank/hd_ste4/trap.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $10f74
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/huntbank/hd_ste4/trap.txt' file on hit.
+> savebin /tmp/huntbank/hd_ste4/bk.bin $8ba00 $23600
+  Wrote 0x23600 bytes.
+> m $8bff8 4
+0008BFF8: 48 4e 50 4f                                      HNPO
+> m $8bff0 4
+0008BFF0: 00 00 00 03                                      ....
+> m $8f000 8
+0008F000: 02 ff 00 0c 01 78 ff 00                          .....x..
+> m $ff8901 1
+00FF8901: 00                                               .
+> m $ff8921 1
+00FF8921: 80                                               .
+> m $8bff8 4
+0008BFF8: 48 4e 50 4f                                      HNPO
+> savebin /tmp/huntbank/hd_ste4/bk.bin $8ba00 $23600
+  Wrote 0x23600 bytes.
+> m $8bff8 4
+0008BFF8: 48 4e 50 4f                                      HNPO
+> m $8bff0 4
+0008BFF0: 00 00 00 03                                      ....
+> m $8f000 8
+0008F000: 02 ff 00 0c 01 78 ff 00                          .....x..
+> m $ff8901 1
+00FF8901: 00                                               .
+> m $ff8921 1
+00FF8921: 80                                               .
+> m $8bff8 4
+0008BFF8: 48 4e 50 4f                                      HNPO
+> savebin /tmp/huntbank/hd_ste4/bk.bin $8ba00 $23600
+  Wrote 0x23600 bytes.
+> m $8bff8 4
+0008BFF8: 48 4e 50 4f                                      HNPO
+> m $8bff0 4
+0008BFF0: 00 00 00 03                                      ....
+> m $8f000 8
+0008F000: 02 ff 00 0c 01 78 ff 00                          .....x..
+> m $ff8901 1
+00FF8901: 00                                               .
+> m $ff8921 1
+00FF8921: 80                                               .
+> m $8bff8 4
+0008BFF8: 48 4e 50 4f                                      HNPO
+> savebin /tmp/huntbank/hd_ste4/bk.bin $8ba00 $23600
+  Wrote 0x23600 bytes.
+> m $8bff8 4
+0008BFF8: 48 4e 50 4f                                      HNPO
+> m $8bff0 4
+0008BFF0: 00 00 00 03                                      ....
+> m $8f000 8
+0008F000: 02 ff 00 0c 01 78 ff 00                          .....x..
+> m $ff8901 1
+00FF8901: 00                                               .
+> m $ff8921 1
+00FF8921: 80                                               .
+> m $8bff8 4
+0008BFF8: 48 4e 50 4f                                      HNPO
+> m $899 1
+00000899: 80                                               .
+> 
+saving
+saved
+t+  343s [saved     ] bank 0 differ, bank-file tail(panel) 0, patch code 0
+             MARKER=b'HNPO' FLAGS=00000003 SV mode/in3d/dma/silent=02ff0000 $ff8901=00 $ff8921=80
+SAVE+LOAD done, in_game=True
+t+  380s [saveload  ] bank 0 differ, bank-file tail(panel) 0, patch code 0
+             MARKER=b'HNPO' FLAGS=00000003 SV mode/in3d/dma/silent=02ff0000 $ff8901=00 $ff8921=80
+t+  384s [final     ] bank 0 differ, bank-file tail(panel) 0, patch code 0
+             MARKER=b'HNPO' FLAGS=00000003 SV mode/in3d/dma/silent=02ff0000 $ff8901=00 $ff8921=80
+             $ffd80.l = $00102008  $ffd86.w = $094a  $ffd20: 46fc27004238fa074238fa094238fa0b
+             D15R $c0100: 0010003400520260000000000000000043f80008247a06d0d5fc000c0808343c  $c07e6.l = $0000fd28  $c0734.w = $0000  $c0736.l = $00000000
+             Gamex TOS copy [$102008, $11de18) = 114192 B (swapped with $8..); payload+bank [$8ba00, $aef12), bank [$90000, $e4e70000): overlap with bank 114192 B, with payload 0 B
+             RAM $aef12..$c00ff all zero
+             TOS-image copy candidate: base $102000 (RAM $0 = $102000) matched by 74 probes at offsets $400..$13f00
+             TOS-image copy candidate: base $17b76e (RAM $0 = $17b76e) matched by 41 probes at offsets $a900..$fd00
+             TOS-image copy candidate: base $1103e2 (RAM $0 = $1103e2) matched by 2 probes at offsets $9580..$9700
+             TOS-image copy candidate: base $1101c4 (RAM $0 = $1101c4) matched by 1 probes at offsets $9700..$9700

@@ -1,0 +1,115 @@
+CELL hd_ms4: kind=hd (Hunter_v1.2.1_patched_hd_2026-11-20) machine=ms4 ('megaste', '2.06', 4096) clk=default
+t+   86s [hw] low RAM $0..$4ffff kept (TOS state before the game)
+t+   95s [load      ] bank 0 differ, bank-file tail(panel) 0, patch code 0
+             MARKER=b'HNPO' FLAGS=00000003 SV mode/in3d/dma/silent=00000000 $ff8901=00 $ff8921=00
+t+   99s [title     ] bank 0 differ, bank-file tail(panel) 0, patch code 0
+             MARKER=b'HNPO' FLAGS=00000003 SV mode/in3d/dma/silent=00000000 $ff8901=00 $ff8921=00
+t+  134s BOOT in_game=True MARKER=b'HNPO' FLAGS=00000003
+t+  136s [3d        ] bank 0 differ, bank-file tail(panel) 0, patch code 0
+             MARKER=b'HNPO' FLAGS=00000003 SV mode/in3d/dma/silent=02ffff00 $ff8901=03 $ff8921=80
+             $ffd80.l = $00102008  $ffd86.w = $0b57  $ffd20: 46fc27004238fa074238fa094238fa0b
+             D15R $c0100: 0010003400520260000000000000000043f80008247a06d0d5fc000c0808343c  $c07e6.l = $0000fd28  $c0734.w = $0000  $c0736.l = $00000000
+             Gamex TOS copy [$102008, $124088) = 139392 B (swapped with $8..); payload+bank [$8ba00, $aef12), bank [$90000, $ae4de): overlap with bank 0 B, with payload 0 B
+             RAM $aef12..$c00ff all zero
+             TOS-image copy candidate: base $102000 (RAM $0 = $102000) matched by 69 probes at offsets $400..$13600
+             TOS-image copy candidate: base $17934e (RAM $0 = $17934e) matched by 40 probes at offsets $cd00..$12280
+             TOS-image copy candidate: base $113b0e (RAM $0 = $113b0e) matched by 2 probes at offsets $b680..$b800
+             TOS-image copy candidate: base $113f2c (RAM $0 = $113f2c) matched by 1 probes at offsets $1780..$1780
+             TOS-image copy candidate: base $18b27a (RAM $0 = $18b27a) matched by 1 probes at offsets $1780..$1780
+             TOS-image copy candidate: base $11352c (RAM $0 = $11352c) matched by 1 probes at offsets $1900..$1900
+3D view standing: fps 8.67 over 150 VBL; $ff8e21 (Mega STE speed/cache) = ff; $ff8e01 = 14
+fx: WAV 105.6 s at 50066 Hz for 107.2 s wall (emulation/real = 0.986); DMA ctl/rate after each request below
+fx: 2 bursts for 21 requests (burst-aligned windows when equal, else time windows)
+  fx e= 0 rms=  931.6 peak=   5123 centroid=   689 Hz hi(>1.5k)= 1.5% len=None ms | ctl=03 rate=80 mode=2 dmaflag=255 vox0ch=255 inc=0.9321 after=('00', 0)
+  fx e= 1 rms=  568.0 peak=   5623 centroid=  1919 Hz hi(>1.5k)=91.4% len=None ms | ctl=00 rate=80 mode=2 dmaflag=0 vox0ch=255 inc=0.6683 after=('00', 0)
+  fx e= 2 rms=    0.0 peak=      0 centroid=     0 Hz hi(>1.5k)= 0.0% len=None ms | ctl=00 rate=80 mode=0 dmaflag=0 vox0ch=0 inc=0.0000 after=('00', 0)
+  fx e= 3 rms=    0.0 peak=      0 centroid=     0 Hz hi(>1.5k)= 0.0% len=None ms | ctl=00 rate=80 mode=0 dmaflag=0 vox0ch=0 inc=0.0000 after=('00', 0)
+  fx e= 4 rms=    0.0 peak=      0 centroid=     0 Hz hi(>1.5k)= 0.0% len=None ms | ctl=00 rate=80 mode=0 dmaflag=0 vox0ch=0 inc=0.0000 after=('00', 0)
+  fx e= 5 rms=    0.0 peak=      0 centroid=     0 Hz hi(>1.5k)= 0.0% len=None ms | ctl=00 rate=80 mode=0 dmaflag=0 vox0ch=0 inc=0.0000 after=('00', 0)
+  fx e= 6 rms=    0.0 peak=      0 centroid=     0 Hz hi(>1.5k)= 0.0% len=None ms | ctl=00 rate=80 mode=0 dmaflag=0 vox0ch=0 inc=0.0000 after=('00', 0)
+  fx e= 7 rms=    0.0 peak=      0 centroid=     0 Hz hi(>1.5k)= 0.0% len=None ms | ctl=00 rate=80 mode=0 dmaflag=0 vox0ch=0 inc=0.0000 after=('00', 0)
+  fx e= 8 rms=    0.0 peak=      0 centroid=     0 Hz hi(>1.5k)= 0.0% len=None ms | ctl=00 rate=80 mode=0 dmaflag=0 vox0ch=0 inc=0.0000 after=('00', 0)
+  fx e= 9 rms=    0.0 peak=      0 centroid=     0 Hz hi(>1.5k)= 0.0% len=None ms | ctl=00 rate=80 mode=0 dmaflag=0 vox0ch=0 inc=0.0000 after=('00', 0)
+  fx e=10 rms=    0.0 peak=      0 centroid=     0 Hz hi(>1.5k)= 0.0% len=None ms | ctl=00 rate=80 mode=0 dmaflag=0 vox0ch=0 inc=0.0000 after=('00', 0)
+  fx e=11 rms=    0.0 peak=      0 centroid=     0 Hz hi(>1.5k)= 0.0% len=None ms | ctl=00 rate=80 mode=0 dmaflag=0 vox0ch=0 inc=0.0000 after=('00', 0)
+  fx e=12 rms=    0.0 peak=      0 centroid=     0 Hz hi(>1.5k)= 0.0% len=None ms | ctl=00 rate=80 mode=0 dmaflag=0 vox0ch=0 inc=0.0000 after=('00', 0)
+  fx e=13 rms=    0.0 peak=      0 centroid=     0 Hz hi(>1.5k)= 0.0% len=None ms | ctl=00 rate=80 mode=0 dmaflag=0 vox0ch=0 inc=0.0000 after=('00', 0)
+  fx e=14 rms=    0.0 peak=      0 centroid=     0 Hz hi(>1.5k)= 0.0% len=None ms | ctl=00 rate=80 mode=0 dmaflag=0 vox0ch=0 inc=0.0000 after=('00', 0)
+  fx e=15 rms=    0.0 peak=      0 centroid=     0 Hz hi(>1.5k)= 0.0% len=None ms | ctl=00 rate=80 mode=0 dmaflag=0 vox0ch=0 inc=0.0000 after=('00', 0)
+  fx e=16 rms=    0.0 peak=      0 centroid=     0 Hz hi(>1.5k)= 0.0% len=None ms | ctl=00 rate=80 mode=0 dmaflag=0 vox0ch=0 inc=0.0000 after=('00', 0)
+  fx e=17 rms=    0.0 peak=      0 centroid=     0 Hz hi(>1.5k)= 0.0% len=None ms | ctl=00 rate=80 mode=0 dmaflag=0 vox0ch=0 inc=0.0000 after=('00', 0)
+  fx e=18 rms=    0.0 peak=      0 centroid=     0 Hz hi(>1.5k)= 0.0% len=None ms | ctl=00 rate=80 mode=0 dmaflag=0 vox0ch=0 inc=0.0000 after=('00', 0)
+  fx e=19 rms=    0.0 peak=      0 centroid=     0 Hz hi(>1.5k)= 0.0% len=None ms | ctl=00 rate=80 mode=0 dmaflag=0 vox0ch=0 inc=0.0000 after=('00', 0)
+  fx e=20 rms=    0.0 peak=      0 centroid=     0 Hz hi(>1.5k)= 0.0% len=None ms | ctl=00 rate=80 mode=0 dmaflag=0 vox0ch=0 inc=0.0000 after=('00', 0)
+trap armed at $10f74
+t+  286s [bank      ] bank 0 differ, bank-file tail(panel) 0, patch code 0
+             MARKER=b'HNPO' FLAGS=00000003 SV mode/in3d/dma/silent=00000000 $ff8901=00 $ff8921=80
+t+  316s [bank      ] bank 0 differ, bank-file tail(panel) 0, patch code 0
+             MARKER=b'HNPO' FLAGS=00000003 SV mode/in3d/dma/silent=00000000 $ff8901=00 $ff8921=80
+t+  320s played 60 s, in_game=False
+TRAP FIRED:
+                                          .
+> m $ff8921 1
+00FF8921: 80                                               .
+INFO : WAV Sound data recording has been stopped.
+> b all
+CPU breakpoints: 0
+> b pc = $10f74 :trace :file /tmp/huntbank/hd_ms4/trap.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $10f74
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/huntbank/hd_ms4/trap.txt' file on hit.
+WARN : Bus Error reading at address $fff00039, PC=$188c8a addr_e3=188c8a op_e3=4a13
+WARN : Bus Error reading at address $fff00079, PC=$188c8a addr_e3=188c8a op_e3=4a13
+WARN : Bus Error reading at address $fff000b9, PC=$188c8a addr_e3=188c8a op_e3=4a13
+WARN : Bus Error reading at address $fff000f9, PC=$188c8a addr_e3=188c8a op_e3=4a13
+WARN : Bus Error reading at address $ffff8781, PC=$187330 addr_e3=187330 op_e3=1038
+> savebin /tmp/huntbank/hd_ms4/bk.bin $8ba00 $23600
+  Wrote 0x23600 bytes.
+> m $8bff8 4
+0008BFF8: 48 4e 50 4f                                      HNPO
+> m $8bff0 4
+0008BFF0: 00 00 00 03                                      ....
+> m $8f000 8
+0008F000: 00 00 00 00 00 00 00 00                          ........
+> m $ff8901 1
+00FF8901: 00                                               .
+> m $ff8921 1
+00FF8921: 80                                               .
+> m $8bff8 4
+0008BFF8: 48 4e 50 4f                                      HNPO
+> savebin /tmp/huntbank/hd_ms4/bk.bin $8ba00 $23600
+  Wrote 0x23600 bytes.
+> m $8bff8 4
+0008BFF8: 48 4e 50 4f                                      HNPO
+> m $8bff0 4
+0008BFF0: 00 00 00 03                                      ....
+> m $8f000 8
+0008F000: 00 00 00 00 00 00 00 00                          ........
+> m $ff8901 1
+00FF8901: 00                                               .
+> m $ff8921 1
+00FF8921: 80                                               .
+> m $8bff8 4
+0008BFF8: 48 4e 50 4f                                      HNPO
+> m $899 1
+00000899: 00                                               .
+> m $899 1
+00000899: 00                                               .
+> m $899 1
+00000899: 00                                               .
+
+saving
+SAVE/LOAD FAILED: RuntimeError('menu row 3: the screen did not change')
+t+  349s [final     ] bank 0 differ, bank-file tail(panel) 0, patch code 0
+             MARKER=b'HNPO' FLAGS=00000003 SV mode/in3d/dma/silent=00000000 $ff8901=00 $ff8921=80
+             $ffd80.l = $00102008  $ffd86.w = $0b57  $ffd20: 46fc27004238fa074238fa094238fa0b
+             D15R $c0100: 0010003400520260000000000000000043f80008247a06d0d5fc000c0808343c  $c07e6.l = $0000fd28  $c0734.w = $0000  $c0736.l = $00000000
+             Gamex TOS copy [$102008, $124088) = 139392 B (swapped with $8..); payload+bank [$8ba00, $aef12), bank [$90000, $ae4de): overlap with bank 0 B, with payload 0 B
+             RAM $aef12..$c00ff all zero
+             TOS-image copy candidate: base $102000 (RAM $0 = $102000) matched by 66 probes at offsets $400..$13600
+             TOS-image copy candidate: base $17934e (RAM $0 = $17934e) matched by 40 probes at offsets $cd00..$12280
+             TOS-image copy candidate: base $113b0e (RAM $0 = $113b0e) matched by 2 probes at offsets $b680..$b800
+             TOS-image copy candidate: base $113f2c (RAM $0 = $113f2c) matched by 1 probes at offsets $1780..$1780
+             TOS-image copy candidate: base $18b27a (RAM $0 = $18b27a) matched by 1 probes at offsets $1780..$1780
+             TOS-image copy candidate: base $11352c (RAM $0 = $11352c) matched by 1 probes at offsets $1900..$1900
