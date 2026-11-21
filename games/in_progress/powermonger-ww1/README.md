@@ -6,10 +6,12 @@ keyboard shortcuts, and the performance work where the engine still matches.
 
 **Progress:** P0 (harness + navigation + snapshots) done; P1 (reverse engineering) largely
 done — `work/notes/frameloop.md` holds the main loop, the flip/buffers, the VBL and the
-complete 1990-patch -> WW1-site map, the baseline (3.55 passes/s at 8 MHz, 6.97 at 16 MHz:
-**1.96x**), the profile (renderer 40%, YM sample IRQ 11-14%, 32K window copy 7.6%), and the
-delivery/free-RAM candidates. Open: the map-view command-icon cells (the tooltip/keys
-targets), the offline depacker + patch tool, then the four patches.
+complete 1990-patch -> WW1-site map; `work/notes/input.md` holds the IKBD, the click latch
+and the icon panel; `work/notes/baseline.md` holds the measurements (3.55 passes/s at 8 MHz,
+6.97 at 16 MHz: **1.96x**), the profile (renderer 40%, YM sample IRQ 11-14%, 32K window copy
+7.6%) and **the user's real-STE report (~2 fps vs 3-4 for the 1990 game)**, which makes a
+like-for-like busy-scene measurement the next baseline step. Open: the map-view command-icon
+cells (the tooltip/keys targets), the offline depacker + patch tool, then the four patches.
 
 
 Base: the cracked **Pompey Pirates #106** release (`disks/pp106.st`, converted from the

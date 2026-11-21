@@ -47,8 +47,19 @@ pointer fixes, triple buffering, rain interpolation (decide later, after the fou
 
 ## Evidence so far (README has the details)
 
-- The engine is a different build from the 1990 game: no byte match at any of the original's
-  code addresses; the whole RE re-derives per-game.
+- `work/notes/frameloop.md`: the main loop (`$13dA8`), the flip (`$e0e`, buffers
+  `$2ed98/$2ed9c`), the VBL counter `$71b7c`, the pass counter `$2ed90`, the complete
+  1990-patch → WW1-site map (tick_head/tick_pass/tick_men/tick_click/flip/p6_cpy), the
+  profile, delivery/free RAM.
+- `work/notes/input.md`: the IKBD ACIA handler, the absolute-mouse packet words, the VBL
+  button dispatch + the click latch (`$2edb6`/`$2edae`), the icon panel (`$6c16`, 4x6-px
+  cells), the `poke_click` synthesis.
+- `work/notes/baseline.md`: 3.55 passes/s at 8 MHz vs 6.97 at 16 MHz (**1.96x** — the tick
+  defect); profile (renderer 39.8%, YM sample IRQ 14.2%, window copy 7.6%); **the user's
+  real-STE report (~2 fps, vs 3-4 for the 1990 game)** — a like-for-like busy-scene
+  measurement is the next baseline step.
+- The engine is a different build from the 1990 game: no byte match; the renderer is a
+  static unrolled block-pattern combiner, not the 1990 triangle walker (`frameloop.md` 6a).
 - The single-part crack: `WWIEDITN.PRG` text = the Pompey Packer; payload read from its own
   file at 62082 → `$c1d84`; the chain: Toxic intro → doc displayer → game.
 - The game's data loads go through TOS GEMDOS from drive A: (the Alien's ramdisk covers only
