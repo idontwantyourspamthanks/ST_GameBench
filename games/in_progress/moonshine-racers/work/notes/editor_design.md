@@ -72,6 +72,7 @@ Derived data (recomputed by `expand` after a load, later after every edit): per-
 
 ### 5.1 Entry points
 * F10 on the title (or the hi-score screen) -> campaign menu -> **TRACK EDITOR** (below `LOADED CAMPAIGN`, HD build).
+* **User requirement (2026-11-21, ship with the editor release):** players can't tell that F10 exists. Accept F10 also on the `WELCOME PARTNERS / ... / PRESS A KEY` screen (the one before the face / typing-text title screen) and print a hint line `F10 = CAMPAIGNS` there (e.g. under `PRESS A KEY`), only where list 2 is applied (>= 2 MB); 1 MB machines keep the stock screen unchanged.
 * Editor track list (milestone 1 heading `TRACK EDITOR (VIEWER)`): the tracks of the campaign in memory (`01  NAME  SCENERY nn`), then `COPY OF AN ORIGINAL TRACK >` (list `TRACK 01..15`), `PLAIN STRAIGHT ROAD >` (list: the scenery = base level whose object types, colours and race length the new track uses; one straight segment with the start widths of that track and its BAR where the original has it), `< BACK TO THE CAMPAIGN MENU`. Milestone 2: picking a campaign track opens `EDIT / TEST DRIVE / RENAME / MOVE UP / MOVE DOWN / COPY / DELETE / < BACK`; a copy or a straight becomes a new entry of the campaign (`<NEW CAMPAIGN>` when none is loaded); the list gains `SAVE CAMPAIGN`.
 * All lists: a white bar marks the selection; up / down (wraps), FIRE / Return / Enter / Space choose, joystick LEFT / Esc / Backspace / F10 = back; the last item of every list is `< BACK...`; errors appear in red above the hint row.
 
