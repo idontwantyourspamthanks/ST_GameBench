@@ -136,7 +136,7 @@ was 2.4-4.0 fps there).
 
 | page | 8 MHz | 16 MHz | what |
 |---|---:|---:|---|
-| `$08300` | **39.8%** | **40.5%** | the generated terrain span-fill code (`$82D0..$84xx`) |
+| `$08300` | **39.8%** | **40.5%** | the block-pattern combine loop `$8344..$83f0` (see 6a) |
 | `$1bc00`/`$11c00` | **14.2%** | 11.6% | the timer-C YM sample player (`$1bc92+`, `movep` to `$ff8800`) |
 | `$13a00` | **7.6%** | 7.7% | the 32K window copy (`$13a94`) |
 | `$00900` | 6.3% | 3.1% | screen/UI code |
@@ -145,6 +145,44 @@ was 2.4-4.0 fps there).
 | `$07500` | 1.9% | — | the blit primitive (`$7588`) |
 | `$17400` | 1.9% | — | pathfinding (`divu` math) |
 
+### 6a. The 40% renderer: a block-pattern combiner, not a triangle walker [disasm, obs]
+
+**Correction to an earlier draft of this note:** the hot code at `$82C8-$83F0` is NOT
+runtime-generated. It is static, hand-written, fully unrolled code, and the zeros at
+`$8200-$82C1` are simply unused space before it.
+
+The render tail `$74e0` (called once per pass from the main loop `$13e42`, and by the chart
+screens from `$14b08`/`$14baa`/`$cb80`/`$d2f8`):
+- sets the span limit `[$82c4] = draw_buffer + $7d00` (the 32000-byte window end),
+- picks a pattern table `a6 = $8406`,
+- walks up to 4 block descriptors in a table at `$74be` (each: a data offset into `$74c0`,
+  a packed row/col position: row = 160-byte lines, column = 8 bytes per 4 px),
+- per block: reads (height, width) then calls `$82c8` once per 4-pixel word across/rows down.
+
+`$82c8` (the 40%): for each call it reads four plane-phase bytes, builds four pointers
+`a6 + 12*row` with per-plane 2-bit phases (the shift table at `a6-8..a6-5`), then a
+word-at-a-time loop:
+```
+move.w (a0)+,d4 ; rol.w d0,d4 ; andi.w #$f000,d4
+move.w (a1)+,d5 ; rol.w d1,d5 ; andi.w #$f00,d5 ; or.w d5,d4
+move.w (a2)+,d5 ; rol.w d2,d5 ; andi.w #$f0,d5  ; or.w d5,d4
+move.w (a3)+,d5 ; rol.w d3,d5 ; andi.w #$f,d5   ; or.w d5,d4
+move.w d4,(a5)+
+```
+(×4 unrolled, then `cmpa.l [$82c4],a5` / `bge`). About 20 instructions per 4 output pixels.
+The four nibbles `$f000/$f00/$f0/$f` combine the four sources' nibbles into one word
+[INFERENCE: a packed 4-px pattern word; the exact pixel format and whether the destination is
+the plane screen or a pattern cache is not yet proven].
+
+So the WW1's map-view terrain is drawn as **positioned blocks of a dithered pattern**, at
+4-pixel granularity through a per-plane rotate/mask/or combine — not as clipped triangles
+walked per scanline. Consequence for the perf port: the 1990 `p6_tri`/`p6_slope` wins (exact
+`divu` tables + chunked DDA) do not transpose — there is no per-triangle `divu` and no edge
+walk in this hot loop. The candidates here are: a pre-shifted pattern cache or wider
+unrolling (the 1990 game's own "pre-shifted pattern ring" idea), a table-driven combine, or
+the STE blitter if its shift/mask can express the nibble interleave (to be studied; the
+IKBD ACIA overrun rules apply to any long blitter burst).
+
 **Performance verdict ("if applicable"): yes, the 1990 wins map onto three of these:**
 1. **The YM sample player, 11-14% of all cycles** — the 1990 game's STE DMA-sound port
    (`snd_*`: 26.4% -> 4.9% there; the biggest single measurable win) applies directly: the
@@ -152,11 +190,12 @@ was 2.4-4.0 fps there).
    ST keeps the YM path.
 2. **The 32K window copy, 7.6%** — the 1990 `p6_cpy` STE-blitter port (50 chunks of 4 rows;
    the IKBD ACIA overrun trap from `buserr.md` applies to every long blit).
-3. **The terrain renderer, 40%** — the single biggest cost, but the WW1 mechanism differs:
-   the 1990 game walked a table (`p6_tri`/`p6_slope` with `divu` tables); the WW1
-   **generates and executes span-fill code** (`$82D0..$84xx`, `movem`-per-row loops). The
-   1990 patches do not transpose; this needs its own study (candidates: the generated code's
-   build cost vs its execution, the same exact-divide tables if the arithmetic matches).
+3. **The terrain renderer, 40%** — the single biggest cost, but the WW1 mechanism differs
+   (6a): the 1990 game clipped triangles and walked them per scanline (`p6_tri`/`p6_slope`
+   with exact `divu` tables); the WW1 draws positioned **pattern blocks** through a
+   per-plane rotate/mask/or combine at 4-pixel granularity. No `divu` and no edge walk in
+   the hot loop; the 1990 patches do not transpose. This needs its own study (a pre-shifted
+   pattern cache / wider unroll / table-driven combine / STE blitter feasibility).
 4. The sprite blit `$7588` (1.9%) is the `p4_spr` analogue (smaller here than in 1990).
 5. The pointer/VBL work (`$e00`, 2.5%) is the `p4_ptr` analogue (the 1990 win was 4-6%).
 
