@@ -120,7 +120,47 @@ a per-pass counter because `$2ed90` becomes per-tick once the head hook skips it
 - The game's screen buffers move per screen ($1d500/$25200 at the map view); a payload must
   stay above the engine's tables ($71bxx) — `$72000+` does.
 
-## 5. Limits / open questions
+## 6. Baseline measurements (map view, snapshot `mapview.sav`)
+
+[obs] Passes/s == fps here (speed period `$5a852 = 1`, every pass renders and flips):
+
+| | 8 MHz | 16 MHz | ratio |
+|---|---:|---:|---:|
+| passes/s (= fps, map view) | 3.55 (earlier run 4.27) | 6.97 | **1.96x** |
+
+The world is CPU-speed-coupled (the defect the tick port fixes; the 1990 game showed
+2.1-2.9x). The map view is a low-detail scene; a battle will be slower (the 1990 baseline
+was 2.4-4.0 fps there).
+
+**Profile** (1200 VBL, raw `work/notes/profile16.txt` for 16 MHz; percentages of total cycles):
+
+| page | 8 MHz | 16 MHz | what |
+|---|---:|---:|---|
+| `$08300` | **39.8%** | **40.5%** | the generated terrain span-fill code (`$82D0..$84xx`) |
+| `$1bc00`/`$11c00` | **14.2%** | 11.6% | the timer-C YM sample player (`$1bc92+`, `movep` to `$ff8800`) |
+| `$13a00` | **7.6%** | 7.7% | the 32K window copy (`$13a94`) |
+| `$00900` | 6.3% | 3.1% | screen/UI code |
+| `$0e800` | 3.2% | 3.2% | entity/HUD code |
+| `$00e00` | 2.5% | 4.5% | flip/ACIA/waits |
+| `$07500` | 1.9% | — | the blit primitive (`$7588`) |
+| `$17400` | 1.9% | — | pathfinding (`divu` math) |
+
+**Performance verdict ("if applicable"): yes, the 1990 wins map onto three of these:**
+1. **The YM sample player, 11-14% of all cycles** — the 1990 game's STE DMA-sound port
+   (`snd_*`: 26.4% -> 4.9% there; the biggest single measurable win) applies directly: the
+   same sequencer, the same `movep` register writes, the same `fal_ym` Falcon trap. Plain
+   ST keeps the YM path.
+2. **The 32K window copy, 7.6%** — the 1990 `p6_cpy` STE-blitter port (50 chunks of 4 rows;
+   the IKBD ACIA overrun trap from `buserr.md` applies to every long blit).
+3. **The terrain renderer, 40%** — the single biggest cost, but the WW1 mechanism differs:
+   the 1990 game walked a table (`p6_tri`/`p6_slope` with `divu` tables); the WW1
+   **generates and executes span-fill code** (`$82D0..$84xx`, `movem`-per-row loops). The
+   1990 patches do not transpose; this needs its own study (candidates: the generated code's
+   build cost vs its execution, the same exact-divide tables if the arithmetic matches).
+4. The sprite blit `$7588` (1.9%) is the `p4_spr` analogue (smaller here than in 1990).
+5. The pointer/VBL work (`$e00`, 2.5%) is the `p4_ptr` analogue (the 1990 win was 4-6%).
+
+## 7. Limits / open questions
 
 - The 50/60 Hz sync read (`$ff820a` bit 1) is [INFERENCE]: verify before relying on it.
 - The four "logic" calls at `$13db4..$13dc6` are partly UI/HUD-ish (`$d712`, `$3276`); the
