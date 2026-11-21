@@ -158,36 +158,52 @@ The input section `$13e82-$13f6c` splits the pointer by position:
 command icons are at the 1990 screen positions. Proof: the WW1's rotate/zoom rectangle
 table at `$13fc4` — `(24,155)-(32,161)`, `(34,161)-(40,169)`, `(45,159)-(61,174)`,
 `(45,178)-(61,193)` — is **byte-identical** to the 1990 game's `$13250` table in
-`../../done/powermonger/work/notes/tooltip.md` (section 1.1). The same file lists the 1990
-command cells; they are the WW1's cells:
+`../../done/powermonger/work/notes/tooltip.md` (section 1.1), and the WW1's command grid
+uses the 1990 algorithm exactly (below).
 
-| id | cell bbox (ST px) | command | WW1 status |
+**The command-icon hit test** (the 1990 structure, found at the map view `$1427c-$1433c`):
+two line tables — near-vertical separators at `$13bde` (15 lines), near-horizontal at
+`$13c58` (14 lines) — give the cell code `column + 16*row` exactly as the 1990
+`pmtt_grid.py` does; the code is looked up in the 24-entry table `$1a89a`, whose **entry index
+= the 1990 icon id**. Live oracle (the game stores the cell code at `$5a8ba`):
+
+| click | cell code | icon id | 1990 command |
 |---|---|---|---|
-| 1 | x 273-319, y 167-199 | Send Captain | [INFERENCE] same layout |
-| 2 | x 86-122, y 175-199 | Transfer Men | [INFERENCE] |
-| 3 | x 184-220, y 171-192 | Get Food | [INFERENCE] |
-| 4 | x 256-295, y 154-172 | Get Men | **[obs] (275,163) did nothing; (285,168) started the men** |
-| 5 | x 84-117, y 160-180 | Go Home | [INFERENCE] |
-| 6 | x 222-269, y 179-199 | Attack | **[obs] (245,189) + a village target produced a battle** |
-| 7 | x 249-303, y 173-199 | Invent | [INFERENCE] |
-| 8 | x 279-317, y 149-166 | Equip | [INFERENCE] |
-| 9 | x 123-160, y 184-199 | Drop Food | [INFERENCE] |
-| 10 | x 234-271, y 159-178 | Derank | [INFERENCE] |
-| 12 | x 154-193, y 177-199 | Drop Items | [INFERENCE] |
-| 13 | x 209-247, y 165-185 | Supply Food | [INFERENCE] |
-| 14 | x 64-85, y 166-185 | Trade | [INFERENCE] |
-| 15 | x 64-83, y 154-169 | Alliance | [INFERENCE] |
-| 16 | x 64-82, y 143-156 | Spy | [INFERENCE] |
-| 19 | x 83-112, y 149-165 | Aggressive (3 swords) | [INFERENCE] |
-| 20 | x 81-109, y 138-153 | Neutral (2 swords) | [INFERENCE] |
-| 21 | x 80-106, y 129-142 | Passive (1 sword) | [INFERENCE] |
-| 22 | x 64-88, y 182-199 | Query | [INFERENCE] |
-| 23 | x 64-80, y 133-145 | Option (speed/save/retire/pause) | **[obs] (72,139) opened a window** |
-| 28-31 | the four rects above | rotate left/right, zoom in/out | **[obs] identical rects in `$13fc4`** |
+| (285,168), (275,162) | $da | 4 | **Get Men** |
+| (250,165) | $d9 | 10 | Derank |
+| (202,181) | $d7 | 3 | Get Food |
+| (245,189) | $e8 | 6 | Attack |
+| (300,150) | $db | 8 | Equip |
+| (100,150) | $94 | 20 | Neutral posture |
 
-The commands depend on the posture (1/2/3 swords: 25/50/100 %), exactly as the 1990 manual
-and the 1990 `tooltip.md` section 2 describe (`$30fe`'s shift by posture). The WW1's
-posture word was not located; the 1990 one is `[$51538 + [$57fd2] + $3c]`.
+`tools/pwwgrid.py` transcribes the two tables and the loops (`icon_id(x, y)`,
+`icon_centres()`); its self-test passes all seven live points. The exact centre of every
+icon cell in the WW1:
+
+| id | centre | command | id | centre | command |
+|---|---|---|---|---|---|
+| 1 | (299,182) | Send Captain | 12 | (173,188) | Drop Items |
+| 2 | (103,186) | Transfer Men | 13 | (227,174) | Supply Food |
+| 3 | (201,181) | Get Food | 14 | (74,175) | Trade |
+| 4 | (275,162) | Get Men | 15 | (73,161) | Alliance |
+| 5 | (100,170) | Go Home | 16 | (72,149) | Spy |
+| 6 | (243,190) | Attack | 19 | (97,156) | Aggressive (3 swords) |
+| 7 | (274,187) | Invent | 20 | (94,145) | Neutral (2 swords) |
+| 8 | (297,156) | Equip | 21 | (92,135) | Passive (1 sword) |
+| 9 | (142,193) | Drop Food | 22 | (75,191) | Query |
+| 10 | (252,168) | Derank | 23 | (71,138) | Option |
+
+**The action gate** [obs]: after the cell lookup the action is gated by `tst.l $1c54(a0)`
+with `a0 = $13d44` = the longword at **`$15998`**; zero = the action does not run (the click
+is recognised — `$5a8ba` gets the cell code — but nothing happens). `$15998` is compared
+against `$2c` in the window code (`$a912-$a944`, `$14c2c`) and cleared when a window closes
+(`$ae26`), i.e. it is the game's own **mode/selection context**, not a window flag. The
+command actions therefore require the game's own selection/precondition (in the 1990 game
+the captain is auto-selected; the WW1's start state does not satisfy it, and selecting an
+object on the map (the object rects at `$14662`, walked at `$1412e`, `jsr $8ac6`) did not
+set `$15998` in the probes). **Consequence for the ports: a synthesized click is faithful —
+it is exactly the mouse click, preconditions and all.** The 1990 command semantics are
+given by the manual; the WW1's own activation flow is a play-driven question still open.
 
 Also from the docs/manual: "You use the Overview Map, Map Icons, Conquest Meter, Close-Up
 Map, and Map Controls just like you did in the original PowerMonger" — the left strip is the
@@ -202,6 +218,18 @@ and (41,15) in `mapview.sav`); clicking that cell scrolls the view to the villag
 reproduced: hovering the minimap grid and the close-up centre on both `mapview.sav` and
 `battle.sav` left the red colour (index 8, `#b44800`) counts unchanged. The trigger is still
 open (likely needs the army with a target and the exact hover cell/close-up unit).
+
+### 5.3a The keyboard-shortcuts prototype [obs]
+
+`work/keyproto/keys.s` (org $72400) follows the 1990 `qol_keys` design: the IKBD key path
+store $f30 (`move.b d0,$1d2b0`) is hooked to a table of {scancode, cell centre} pairs; the
+pass hook at $13e6a (before the input section) writes the same words a real click writes —
+the click position `$2edae/$2edb0`, the tracked pointer words `$2edb2/$2edb4`, the left
+latch `$2edb6`, the down-seen `$2edbc` and the pass stamp `$2ed94 = $2ed90` — then releases
+the down-seen on the next pass. [obs] Pressing M sets the game's cell code `$5a8ba` to `$da`
+(the Get Men cell) — the synthesized click reaches the game's own dispatch exactly like a
+mouse click at that cell. Keys: A D E F G H I L M N O Q R S T X Y the commands, 1/2/3 the
+postures (the table's comments name them). Every other scancode is untouched.
 
 ### 5.4 Busy-scene snapshots (for the gates) [obs]
 
