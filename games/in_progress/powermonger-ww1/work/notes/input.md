@@ -151,6 +151,66 @@ The input section `$13e82-$13f6c` splits the pointer by position:
   bright-block clicks all scrolled the view), so (a) needs the game's own selection cues
   (the map icons) to be studied first.
 
+### 5.3 The command cells: the 1990 manual layout, transposed [user, disasm, obs]
+
+**The user's manual page (the 1990 Powermonger SYMBOL SUMMARY) and the user's statement:
+"the WW1 edition has different icons in the same places doing the same job."** So the
+command icons are at the 1990 screen positions. Proof: the WW1's rotate/zoom rectangle
+table at `$13fc4` — `(24,155)-(32,161)`, `(34,161)-(40,169)`, `(45,159)-(61,174)`,
+`(45,178)-(61,193)` — is **byte-identical** to the 1990 game's `$13250` table in
+`../../done/powermonger/work/notes/tooltip.md` (section 1.1). The same file lists the 1990
+command cells; they are the WW1's cells:
+
+| id | cell bbox (ST px) | command | WW1 status |
+|---|---|---|---|
+| 1 | x 273-319, y 167-199 | Send Captain | [INFERENCE] same layout |
+| 2 | x 86-122, y 175-199 | Transfer Men | [INFERENCE] |
+| 3 | x 184-220, y 171-192 | Get Food | [INFERENCE] |
+| 4 | x 256-295, y 154-172 | Get Men | **[obs] (275,163) did nothing; (285,168) started the men** |
+| 5 | x 84-117, y 160-180 | Go Home | [INFERENCE] |
+| 6 | x 222-269, y 179-199 | Attack | **[obs] (245,189) + a village target produced a battle** |
+| 7 | x 249-303, y 173-199 | Invent | [INFERENCE] |
+| 8 | x 279-317, y 149-166 | Equip | [INFERENCE] |
+| 9 | x 123-160, y 184-199 | Drop Food | [INFERENCE] |
+| 10 | x 234-271, y 159-178 | Derank | [INFERENCE] |
+| 12 | x 154-193, y 177-199 | Drop Items | [INFERENCE] |
+| 13 | x 209-247, y 165-185 | Supply Food | [INFERENCE] |
+| 14 | x 64-85, y 166-185 | Trade | [INFERENCE] |
+| 15 | x 64-83, y 154-169 | Alliance | [INFERENCE] |
+| 16 | x 64-82, y 143-156 | Spy | [INFERENCE] |
+| 19 | x 83-112, y 149-165 | Aggressive (3 swords) | [INFERENCE] |
+| 20 | x 81-109, y 138-153 | Neutral (2 swords) | [INFERENCE] |
+| 21 | x 80-106, y 129-142 | Passive (1 sword) | [INFERENCE] |
+| 22 | x 64-88, y 182-199 | Query | [INFERENCE] |
+| 23 | x 64-80, y 133-145 | Option (speed/save/retire/pause) | **[obs] (72,139) opened a window** |
+| 28-31 | the four rects above | rotate left/right, zoom in/out | **[obs] identical rects in `$13fc4`** |
+
+The commands depend on the posture (1/2/3 swords: 25/50/100 %), exactly as the 1990 manual
+and the 1990 `tooltip.md` section 2 describe (`$30fe`'s shift by posture). The WW1's
+posture word was not located; the 1990 one is `[$51538 + [$57fd2] + $3c]`.
+
+Also from the docs/manual: "You use the Overview Map, Map Icons, Conquest Meter, Close-Up
+Map, and Map Controls just like you did in the original PowerMonger" — the left strip is the
+Overview Map (5.1), the four rectangles are the Map Controls, and the command icons are the
+perspective grid along the bottom and left, exactly as in 1990.
+
+**The enemy village on the minimap** [user]: a slightly darker grey. In the palette the
+greys are colour 1 `#484824` (background), 2 `#6c6c48`, 3 `#90906c`, 4 `#b4b490`, 5 `#d8d8b4`.
+The village markers on the Overview Map read as colour-3 clusters (e.g. around ST (32,15)
+and (41,15) in `mapview.sav`); clicking that cell scrolls the view to the village
+(`work/snapshots/village.sav`). The user's hover cue (a red line to the village) was not yet
+reproduced: hovering the minimap grid and the close-up centre on both `mapview.sav` and
+`battle.sav` left the red colour (index 8, `#b44800`) counts unchanged. The trigger is still
+open (likely needs the army with a target and the exact hover cell/close-up unit).
+
+### 5.4 Busy-scene snapshots (for the gates) [obs]
+
+- `work/snapshots/march.sav`: Get Men then Send Captain + a target; the army marches
+  (scene activity ~6.3k between frames), 3.35-3.78 ticks/s at 8 MHz.
+- `work/snapshots/battle.sav`: Get Men, scroll to the village cell (32,15), Attack (245,189),
+  target the village centre; a battle runs (activity ~12.7k), 3.56-3.67 ticks/s at 8 MHz,
+  7.13 at 16 MHz.
+
 ## 6. Open items (for the keys/tooltip ports)
 
 - [ ] The map-view keyboard consumption: which scancodes does the 3D view read (the 1990 game

@@ -43,13 +43,17 @@ tick (the 1990 `tick_click` rule). Variables: `PASS $72180`, `ACC $72184`,
 
 | run | world rate |
 |---|---:|
-| unpatched, 8 MHz | **3.67 ticks/s** (the frame-coupled rate; 3.55-4.27 over runs) |
-| patched, 8 MHz | **4.00 ticks/s** |
-| patched, 16 MHz | **4.00 ticks/s** (unpatched 6.97: the 1.9x defect gone) |
+| unpatched, 8 MHz (standing) | **3.67 ticks/s** (the frame-coupled rate; 3.55-4.27 over runs) |
+| patched, 8 MHz (standing) | **4.00 ticks/s** |
+| patched, 16 MHz (standing) | **4.00 ticks/s** (unpatched 6.97: the 1.9x defect gone) |
 | patched with TICK = 30 (10/s target), 8 MHz | 8.32 ticks/s — the S path runs the logic as fast as the machine allows, render skipped; no crash, the screen stays drawn |
+| unpatched, 8 / 16 MHz (battle) | 3.67 / 7.13 |
+| patched, 8 MHz (battle) | **3.89** (one tick short over a 9.3 s window; the battle ended during the run) |
+| patched, 16 MHz (battle) | **4.00** |
 
 The map-view screen remained live (mean 62.5, 165k bright px, no bus errors in the Hatari
-log) after patching at both clocks.
+log) after patching at both clocks; on the battle the scene kept rendering (activity 596 at
+8 MHz, 96 at 16) with the world at 4/s.
 
 ## 4. Open gates before this can be a patch
 

@@ -14,10 +14,14 @@ The world steps once per pass (the pre-tick behaviour).
 
 | | 8 MHz | 16 MHz | ratio |
 |---|---:|---:|---:|
-| passes/s (= fps) | 3.55 (an earlier run: 4.27) | 6.97 | **1.96x** |
+| passes/s (= fps), map view standing | 3.55 (an earlier run: 4.27) | 6.97 | **1.96x** |
+| march scene (army walking) | 3.35-3.78 | — | |
+| battle scene | 3.56-3.67 | 7.13 | **1.94x** |
 
 - The world is CPU-speed-coupled: the defect the tick port fixes (the 1990 game showed
-  2.1-2.9x; its original 2.38 fps standing at 8 MHz / 6.25 at 16 MHz).
+  2.1-2.9x; its original 2.38 fps standing at 8 MHz / 6.25 at 16 MHz). The busy scenes are
+  5-10% slower than the standing scene at 8 MHz; the user's real-STE "~2 fps" remains the
+  honest real-hardware reference for the busy cases (below).
 - The pass costs about 1.9-2.3 M cycles at 8 MHz (the 1990 game: 2.1-3.4 M in its scenes) —
   comparable; the scenes are not like-for-like (below).
 
