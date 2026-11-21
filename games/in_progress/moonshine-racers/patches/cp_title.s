@@ -9,7 +9,7 @@
 ; himem: $100400-$1007FF campaign menu scratch (item vectors, line buffer, track texts)
 ; himem: $110000-$12FFFF campaign file as read (MSTRACKS.TRK, at most 123,496 B)
 ; himem: $130000-$13FFFF track editor overlay (FILES\MSEDIT.OVL, HD build, read on first use)
-; himem: $140000-$177FFF track editor work RAM (variables, track model, per-unit arrays, its screen)
+; himem: $140000-$1C7FFF track editor work RAM (variables, track model, per-unit arrays, undo history, checkpoints, encode buffer, two screens)
 ; doc: Campaigns (ST family with 2 MB or more only): F10 on the title screen opens the campaign menu (Original game / Load campaign from the hard disk or from a disk in drive A in the HD release, from a disk in drive A or B in the floppy release / Play from track N); the campaign replaces the 15 tracks.
 ; note: Campaign feature (HD and floppy builds, one source: `FLOPPY` = 0 / 1 is predefined by msrpatch.py; work/notes/campaign_hd.md, campaign_floppy.md).  This patch holds the menu, the file reader and the validator; the redirect sites are cp_wrap ($72c4), cp_fetch ($77da), cp_ptr ($fda2), cp_end ($731e), cp_start ($7252), cp_hiscore ($8418).
 ; note: Site $74fe = the shared key exit of the title screen's face/text loop ($7446-$74fc: any key or joystick fire starts the game): `lea $e(a7),a7 / bsr.b $750a` (6 bytes) -> `jmp e1`.  e1 replays both
@@ -124,8 +124,14 @@ cp_menu:
         ifeq    FLOPPY
 .edit:  bsr     ed_load                 ; the overlay, read on first use
         bne     .main                   ; message set
-        jsr     EDBASE+16.l             ; the editor: own screen and palette, both given back when it returns
-        bra     .main
+        jsr     EDBASE+16.l             ; the editor: own screen and palette, both given back when it returns; d0 = 0 back, n = play track n-1 of the campaign in memory
+        tst.w   d0
+        beq     .main
+        subq.w  #1,d0
+        move.w  d0,V_START.l
+        st      V_ACT.l
+        moveq   #1,d0
+        bra     .out
         endc
 .orig:  clr.b   V_ACT.l
         clr.w   V_START.l

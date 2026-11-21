@@ -1,0 +1,19 @@
+== ed2_smoke3: HD STE 2 MB, build /tmp/msred2/hd, campaign c3.trk
+title reached: True
+CHECK title reached: PASS 
+CHECK LOAD CAMPAIGN FROM HARD DISK item: PASS 
+CHECK campaign loaded: PASS 
+CHECK editor overlay loaded (V_EDOK): PASS 
+CHECK viewer up: PASS 
+seg 5 pos 230 segs [[220, 10, -3, -1000, 29, 29], [230, 14, -3, 0, 29, 29], [244, 116, 0, 0, 29, 29]]
+CHECK curve list open: PASS 
+lsel 6 lcnt 20
+lsel 8 lval -1 bad 0 dirty 0x7fff
+CHECK list closed: PASS 
+hcur 0x179b9c mod 1 segs [[220, 10, -3, -1000, 29, 29], [230, 14, -3, 0, 29, 29], [244, 116, 0, 0, 29, 29]]
+CHECK hill list: PASS 
+nseg 339 segs [[160, 10, -3, 1000, 29, 29], [170, 50, -3, 0, 29, 29], [220, 10, -3, -1000, 29, 29], [230, 14, -3, 0, 29, 29], [244, 116, 0, 0, 29, 29]]
+undo: nseg 337 mod 1 segs [[220, 10, -3, -1000, 29, 29], [230, 14, -3, 0, 29, 29], [244, 116, 0, 0, 29, 29]]
+state 0 campaign count 4
+store len 18454
+errlines 1

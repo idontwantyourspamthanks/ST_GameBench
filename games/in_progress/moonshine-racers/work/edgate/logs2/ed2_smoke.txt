@@ -1,0 +1,15 @@
+== ed2_smoke: HD STE 2 MB, build /tmp/msred2/hd, campaign none
+title reached: True
+CHECK title reached: PASS 
+CHECK LOAD CAMPAIGN FROM HARD DISK item: PASS 
+CHECK campaign loaded: FAIL 
+CHECK editor overlay loaded (V_EDOK): PASS 
+CHECK viewer up: PASS 
+nseg 313 nobj 380 end 20024 hcur 0x178000
+seg 0 pos 281
+lopen 0 lsel 0 lcnt 0
+lsel 0 lval 0 bad 0
+CHECK list closed: PASS 
+hcur 0x178000 mod 0
+segs [[0, 300, 0, 0, 32, 32], [300, 140, 4, 0, 32, 32], [440, 140, 4, 0, 45, 32], [580, 284, 3, 0, 45, 32], [864, 56, 2, 0, 45, 32], [920, 35, 2, 20, 45, 32], [955, 46, 2, 0, 45, 32], [1001, 29, -1, 0, 45, 32]]
+errlines 1

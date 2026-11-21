@@ -1,0 +1,11 @@
+== ed2_smoke4: HD STE 2 MB, build /tmp/msred2/hd, campaign c3.trk
+title reached: True
+CHECK title reached: PASS 
+CHECK LOAD CAMPAIGN FROM HARD DISK item: PASS 
+CHECK campaign loaded: PASS 
+CHECK editor overlay loaded (V_EDOK): PASS 
+CHECK viewer up: PASS 
+before fire: lsel 15 lval 6 vFire 0 joy 0x0
+fire down: vFire 1 joy 0x80 mv 0
+fire up: vFire 0 lopen 1 joy 0x0
+lopen 0

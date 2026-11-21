@@ -1,0 +1,12 @@
+== ed2_smoke5: HD STE 2 MB, build /tmp/msred2/hd, campaign c3.trk
+title reached: True
+CHECK title reached: PASS 
+CHECK LOAD CAMPAIGN FROM HARD DISK item: PASS 
+CHECK campaign loaded: PASS 
+CHECK editor overlay loaded (V_EDOK): PASS 
+CHECK viewer up: PASS 
+seg 1 [[0, 300, 0, 0, 32, 32], [300, 140, 4, 0, 32, 32], [440, 140, 4, 0, 45, 32], [580, 284, 3, 0, 45, 32]]
+lsel 3 lval 3 segs(preview) [[0, 300, 0, 0, 32, 32], [300, 70, 4, 534, 32, 32], [370, 70, 4, -534, 32, 32], [440, 140, 4, 0, 45, 32], [580, 284, 3, 0, 45, 32]]
+after accept [[0, 300, 0, 0, 32, 32], [300, 70, 4, 534, 32, 32], [370, 70, 4, -534, 32, 32], [440, 140, 4, 0, 45, 32], [580, 284, 3, 0, 45, 32]]
+seg 3
+after Return repeat [[0, 300, 0, 0, 32, 32], [300, 70, 4, 534, 32, 32], [370, 70, 4, -534, 32, 32], [440, 70, 4, 534, 45, 32], [510, 70, 4, -534, 45, 32], [580, 284, 3, 0, 45, 32]] hist 0x17b554
