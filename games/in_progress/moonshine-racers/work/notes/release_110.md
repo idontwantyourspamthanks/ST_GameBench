@@ -39,3 +39,6 @@ The fx-mode behaviour is identical to v1.0.1 by construction (in fx races both `
 
 ## Real-hardware-only risks (nothing here was run on real hardware)
 Floppy campaign read and the disk-present probe (FDC / index timing, Gotek, MiSTer); the boot sector's capture of TOS `$42e` on a real TOS; Mega STE cache with the reader code HAGA's top region receives; real GEMDOS drive-A reads and TOS' empty-drive timeout; HAGA+$83 machine-type byte measured only in Hatari; the blitter/STE items of the v1.0 checklist.
+
+## User test on MiSTer (2026-11-21)
+The user ran the shipped v1.1 HD build (`MoonshineRacers_hd_v1.1.zip`, `RUNME.TOS` 538737dd…) with a 3-track test campaign (`work/testdisk/`, git-ignored: STOCK 12, STRAIGHT TEST = level 5 with every curve delta 0, STOCK 09) loaded through the F10 menu, and played from each of the three tracks: "all 3 items on the campaign behaved as you would expect, no signs of breakage". So 'play from track N' (N > 1) works on the release; the track-editor milestone-2 PLAY failure is on the editor/harness side. MiSTer machine model and RAM size, HD-copy vs drive-A load, and the race-to-race advance were not stated. User feedback from the same session: nothing tells the player that F10 exists; recorded as a requirement for the editor release in `editor_design.md` §5.1.
