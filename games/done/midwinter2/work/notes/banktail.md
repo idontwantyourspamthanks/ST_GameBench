@@ -187,3 +187,27 @@ at `A4 > $25ed7` (`$d2029`); the exact id list per region is `effects_in_tail.py
 * Real hardware and real driver sizes were not measured (`mkwrap.py` is a stand-in). `$ff8e21` / the Mega STE clock were not verified beyond `hatari-option --cpuclock`.
 * While chaining runs a second chain started by mistake ran a duplicate `ms16`/`ms4` cell next to `ms8` for a few minutes (two Hatari instances at once); the duplicate `ms16` was killed and its output discarded, the numbers above are
   from the clean re-runs. One `kill` also hit the parent process of that chain (an `omp` helper); nothing else of mine or anyone's was touched as far as I can see.
+
+## 11. Release v1.6.2: the canary fix (2026-11-21, commit 57f1f20)
+Fix = `ASNE` end canary appended by `tools/asn_build.py` (bank 176 566 B, ends `$e61b6`, 7 754 B under LIMIT) + check in `asn_init0` (`patches/asn/blob.s`) + `beq.s` -> `beq` at `.m:`; version 1.6.2. Gates: private HOME, sound on, workdirs `/tmp/mw2v162/`, `work/banktail/walk.py` copy (bank-in-RAM check vs the build's bank, SV mode byte, canary bytes read back); raw output was in `/tmp/mw2v162/*.out` (not kept).
+Shipped files (zips built twice by the lead from the clean commit, identical zip md5s; member md5s from the unzipped shipped zips):
+| File | md5 |
+|---|---|
+| `dist/Midwinter2_v1.6.2_patched_2026-11-21.zip` (HD) | `6830b7a4299a465ef07a8ce62fc0782e` |
+| `dist/Midwinter2_v1.6.2_patched_floppies_2026-11-21.zip` | `4b10cb41d52f9bf50050d3ea44bc7197` |
+| HD `RUNME.TOS` | `1ca2a5e3e17ba888a1542be631e027bb` |
+| HD `HAGA` | `1074342dd4a917bafdc7d2a031e9b088` |
+| HD `FILES/ASNBANK.BIN` | `6b7f58f52b677b0a2c09f514c74924b4` |
+| FFA_boot.st / .msa | `1547ab1d2e765b88262e85126df97440` / `f3f3941b03c3927dc9483d33b840c30c` |
+| FFB_graphics.st / .msa | `9d4ea2ddfcfe5fa7fdf7b54f26168ed3` / `c96a86572136cca4bdf71174a89bed4b` |
+| FFC_missions.st / .msa | `252d0ad0674db02ba5d104891db12e29` / `ec235f89ad4d7ae4d6c8a85994fce037` |
+| FFD_campaign_blank.st / .msa | `5e034299f50432eb6fe5e7048a5d2ccc` / `6c5917ae319c3906012eb6bd44bf0c83` |
+FFB/FFC/FFD equal v1.6.1.
+**Dev gates (scratch build of the commit's tree):** Mega STE 1 MB HD at 8 and 16 MHz: canary bytes `00 00 00 00` (overwritten, same 13 720 B differ as before), SV mode 1, `$5138` = `$bf81e`, `$ff8901` = 00 (DMA off), YM audible (intro WAV rms about 3 600 per second, 8 s, both clocks), mode 1 at logo, intro, M/J/K, hall, map, boss, 3D view, boss screen matched, no exception. STE 1 MB HD, Mega STE 4 MB HD, STE 4 MB HD: canary `ASNE`, mode 2, bank == file (0 differ) at logo, intro, M/J/K, hall, map, boss, 3D view; STE 1 MB DMA tune (`$ff8901` = 03 / `$ff8921` = 81 at the logo in the shipped-zip run, rms about 2 400). Floppy STE 1 MB and Mega STE 1 MB: mode 2, `ASNE`, bank == file at every checkpoint to the 3D view. PSG gate (`psgcheck.py`) on the Mega STE 1 MB HD YM-fallback run to the hall: PASS (0 of 33 frames, 0 reg-14 writes, 0 FDC commands, final reg 7 = `$f8`); FFB swap + PSG on floppy STE 1 MB (`swapgate.py ... A B`): black prompt up, FFB reaches M/J/K, 0 force-ints, PSGCHECK PASS (0 violations). Negative control, the shipped v1.6.1 HD zip on Mega STE 1 MB: mode 2, canary bytes 0 (not present: v1.6.1 has none), bank tail damaged (13 716 B differ, `$e2b6a`-`$e61b1`) at logo, M/J/K, hall.
+**Shipped-zip gates (the two zips above, unzipped; bank compared with the shipped `FILES/ASNBANK.BIN`; to the map; 16 MHz and 3D view not repeated on the shipped zips):**
+* Mega STE TOS 2.06 1 MB HD (8 MHz): mode 1 at logo, intro, M/J/K, hall, map; canary `00 00 00 00`; `$ff8901` = 00; YM rms 3 561-3 760 per second; bank tail overwritten as expected (13 720 B), no exception.
+* STE TOS 1.62 1 MB HD: mode 2, `ASNE`, 0 differ at every checkpoint to the map; DMA tune (`$ff8901` = 03, `$ff8921` = 81).
+* Mega STE 4 MB HD: mode 2, `ASNE`, 0 differ to the map.
+* Floppy Mega STE 1 MB: mode 2, `ASNE`, 0 differ to the map.
+* Floppy STE 1 MB FFB swap (`swapgate.py s_swap_ste ste 162 8 1 ... A B`, `--trace fdc,psg_write`): SWAP A black prompt up (5 cmds, 0 force-ints), SWAP B M/J/K reached (0 force-ints), PSGCHECK PASS (0 violations, 1 371 FDC commands, 0 frames with reg 7 bits 6/7 clear).
+Not tested: real hardware (the Hatari HAGA swap buffer and TOS 2.06 behaviour were reproduced in the emulator; a real 1 MB Mega STE was not available) [INFERENCE: same behaviour there]. The Mega STE HD machine now plays the YM sound and music (v1.5 behaviour on the HD build for that machine).

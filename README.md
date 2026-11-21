@@ -4,7 +4,7 @@
 
 This repository holds the tools, the patches and the full working notes. It does **not** contain any game, any TOS ROM, or anything extracted from them. You need your own copies (see [Getting the game files](#getting-the-game-files)).
 
-Done: **Midwinter**, **Midwinter 2: Flames of Freedom** (v1.6.1), **Hunter** and **Powermonger**. Upcoming games are listed in [`games/queue/README.md`](games/queue/README.md).
+Done: **Midwinter**, **Midwinter 2: Flames of Freedom** (v1.6.2), **Hunter** and **Powermonger**. Upcoming games are listed in [`games/queue/README.md`](games/queue/README.md).
 
 ## What the patches do
 
@@ -51,7 +51,7 @@ The agent "skills" in [`.omp/skills/`](.omp/skills/) capture the method, the emu
 | `tools/hwscan.py` | Machine checklist up front: scans a 68000 RAM dump (with a code range) or a TOS program for ST-machine-specific hardware access (YM mirrors, blitter, DMA sound, joypad ports, Mega STE cache, TT/Falcon registers, `$ff820a` sync, MFP, ACIA, vector writes), following `lea`/`movea`/`d(An)` bases, with a risk level and a one-line note per access. |
 | `tools/pp_depack.py` | Unpacks the self-extracting `RUNME.TOS` of PP's HAGA hard-disk conversions. |
 | `.omp/skills/` | Method, harness, PP-conversion internals and delegation rules. |
-| `games/done/midwinter2/` | **Midwinter 2 (v1.6.1, Jaguar pad; Amiga sound and music on STE/Mega STE; v1.6: real-floppy fixes (head parked on track 0, longer disk time-out, no drive-B probe on one-drive machines), `.msa` copies and `WRITING_DISKS.TXT`; v1.6.1: the floppy drive is selected again on real STE/Mega STE while the Amiga music plays): done.** `REPORT.md` (overview), `PLAN.md`, `patches/` (patch sources, 68000 assembly), `tools/` (patch builder, harness, launchers, packaging), `work/notes/` (reverse-engineering notes with evidence), `work/*/` (test scripts and raw logs). |
+| `games/done/midwinter2/` | **Midwinter 2 (v1.6.2, Jaguar pad; Amiga sound and music on STE/Mega STE; v1.6: real-floppy fixes (head parked on track 0, longer disk time-out, no drive-B probe on one-drive machines), `.msa` copies and `WRITING_DISKS.TXT`; v1.6.1: the floppy drive is selected again on real STE/Mega STE while the Amiga music plays; v1.6.2: a 1 MB Mega STE hard-disk boot uses the YM sound where PP's loader overwrites the sample bank): done.** `REPORT.md` (overview), `PLAN.md`, `patches/` (patch sources, 68000 assembly), `tools/` (patch builder, harness, launchers, packaging), `work/notes/` (reverse-engineering notes with evidence), `work/*/` (test scripts and raw logs). |
 | `games/done/powermonger/` | **Powermonger (v1.2: fixes the black screen after Retire; 16 MHz + cache on a Mega STE; gated on the zips and on the HD image, and on a MiSTer Mega STE): done.** Same layout; [`REPORT.md`](games/done/powermonger/REPORT.md). |
 | `games/in_progress/nebulus/` | **Nebulus (v1.2: input-lag fixes, an input-death fix, lift and shot hit-box fixes, trainers, an in-game level editor with campaign disks (v1.2: each custom level picks its colour scheme and enemy set from lists, copy tower, crumble ledge, paired doors, conveyor ledges), HD and floppy releases; still in progress: the community site (cart and disk-image download in the dadprg hub)): in progress.** `PLAN.md`, `patches/`, `tools/`, `work/notes/`. |
 | `games/done/populous/`, `games/done/populous-2/` | **Populous (v1.0) and Populous 2 (v1.0, incl. a 512 KB floppy build): done.** Same layout; `PLAN.md` and `work/notes/` (the shared Bullfrog-family study is `populous/work/notes/bullfrog_family.md`). |
