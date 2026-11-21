@@ -193,8 +193,8 @@ Fix = `ASNE` end canary appended by `tools/asn_build.py` (bank 176 566 B, ends `
 Shipped files (zips built twice by the lead from the clean commit, identical zip md5s; member md5s from the unzipped shipped zips):
 | File | md5 |
 |---|---|
-| `dist/Midwinter2_v1.6.2_patched_2026-11-21.zip` (HD) | `6830b7a4299a465ef07a8ce62fc0782e` |
-| `dist/Midwinter2_v1.6.2_patched_floppies_2026-11-21.zip` | `4b10cb41d52f9bf50050d3ea44bc7197` |
+| `dist/Midwinter2_v1.6.2_patched_2026-11-21.zip` (HD) | `76c0f626050bb03d7d4365cd1fda763e` (re-packaged after the doc correction, commit b252a34; only `MW2PATCH/PATCHES.TXT` differs from the first build `6830b7a4…`) |
+| `dist/Midwinter2_v1.6.2_patched_floppies_2026-11-21.zip` | `e9a6f225a528e56038e7bc3e841e7141` (re-packaged; only `README.TXT` differs from the first build `4b10cb41…`) |
 | HD `RUNME.TOS` | `1ca2a5e3e17ba888a1542be631e027bb` |
 | HD `HAGA` | `1074342dd4a917bafdc7d2a031e9b088` |
 | HD `FILES/ASNBANK.BIN` | `6b7f58f52b677b0a2c09f514c74924b4` |
@@ -211,3 +211,5 @@ FFB/FFC/FFD equal v1.6.1.
 * Floppy Mega STE 1 MB: mode 2, `ASNE`, 0 differ to the map.
 * Floppy STE 1 MB FFB swap (`swapgate.py s_swap_ste ste 162 8 1 ... A B`, `--trace fdc,psg_write`): SWAP A black prompt up (5 cmds, 0 force-ints), SWAP B M/J/K reached (0 force-ints), PSGCHECK PASS (0 violations, 1 371 FDC commands, 0 frames with reg 7 bits 6/7 clear).
 Not tested: real hardware (the Hatari HAGA swap buffer and TOS 2.06 behaviour were reproduced in the emulator; a real 1 MB Mega STE was not available) [INFERENCE: same behaviour there]. The Mega STE HD machine now plays the YM sound and music (v1.5 behaviour on the HD build for that machine).
+
+**All-games image finding (2026-11-21, `dist/AtariST_enhanced_games_2026-11-21_mw1.6.2.gate.md`):** booted through HDDRIVER, the 1 MB STE also loses the canary (`ASNE` at `$e61b2` reads `00 00 00 00`) and plays the YM; the v1.6.1 image on the same cell played the DMA tune from a damaged bank. The resident driver uses up the STE's ~8.7 KB headroom (section 8). The user accepted this: the HD build's Amiga sound needs 2 MB in practice; docs corrected in b252a34.
