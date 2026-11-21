@@ -25,7 +25,10 @@ Changes vs the original HAGA release:
 - Atari Jaguar pad (new in v1.4; STE enhanced joystick ports, either port), in joystick mode: d-pad = stick,
   B = fire, A / C = < / > (nose down / up, dive / climb), Option = Esc (leave vehicle), Pause = P,
   keypad 1-9 / 0 = F1-F10, * / # = keypad - / +. Each button is read every 80 ms. Other machines run as before.
-- v1.6.2: hard-disk version on a 1 MB Mega STE: some vehicle engine sounds played from overwritten data (PP's loader uses that memory); that machine now uses the original YM sound and music. All other machines unchanged.
+- v1.6.2: hard-disk version on a 1 MB machine: PP's loader keeps a copy of TOS's memory that can overwrite the end of the Amiga
+  sample bank (always on a 1 MB Mega STE; on a 1 MB STE once a hard-disk driver is resident), so some vehicle engine sounds played
+  from overwritten data. The game now detects that and uses the original YM sound and music. In practice the hard-disk version's
+  Amiga sound needs 2 MB; the floppy version keeps it at 1 MB.
 - v1.6.1: fixed (STE and Mega STE, real floppy drives): after the Amiga music started, the drive was never selected again (no
   light, no disk activity, the music kept playing). The sound chip's register 7 (bits 6-7 = direction of its I/O ports; port A
   carries the floppy drive-select and side lines) was left at 0 by the game's sound init, and the Amiga sound code had replaced

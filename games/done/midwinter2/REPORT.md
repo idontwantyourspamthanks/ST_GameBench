@@ -2,11 +2,11 @@
 
 This is a plain-English account of the work on *Midwinter 2: Flames of Freedom* (Atari ST, PP's 2014 hard-disk version). It covers what was changed, why, what the original code was doing at each point we changed, and what each change achieved. The detailed evidence (disassembly, measurements, test logs) is in `work/notes/`. The patch sources are in `patches/`.
 
-## What's new in v1.6.2 (2026-11-21): hard-disk version on a 1 MB Mega STE
+## What's new in v1.6.2 (2026-11-21): hard-disk version on a 1 MB machine
 
-Hard-disk version on a 1 MB Mega STE: some vehicle engine sounds played from overwritten data (PP's loader uses that memory); that machine now uses the original YM sound and music. All other machines unchanged.
+Hard-disk version on a 1 MB machine: PP's loader keeps a copy of TOS's memory that can overwrite the end of the Amiga sample bank (always on a 1 MB Mega STE; on a 1 MB STE once a hard-disk driver is resident), so some vehicle engine sounds played from overwritten data. The game now detects that and uses the original YM sound and music. In practice the hard-disk version's Amiga sound needs 2 MB; the floppy version keeps it at 1 MB.
 
-- **Cause:** PP's HAGA keeps a live TOS swap buffer at phystop-$8100-A4; with TOS 2.06 on 1 MB it starts at `$E2B6A` and overlays the last 13 896 B of the Amiga sound bank (the engine-loop samples). Floppy builds (no HAGA), the STE with 1 MB and all 2/4 MB machines are unaffected. Details: `work/notes/banktail.md`.
+- **Cause:** PP's HAGA keeps a live TOS swap buffer at phystop-$8100-A4; with TOS 2.06 on 1 MB it starts at `$E2B6A` and overlays the last 13 896 B of the Amiga sound bank (the engine-loop samples). A 1 MB STE has about 8.7 KB of headroom, which a resident hard-disk driver uses up (seen in the all-games image, HDDRIVER boot). Floppy builds (no HAGA) and all 2/4 MB machines are unaffected. Details: `work/notes/banktail.md`.
 - **Fix:** `tools/asn_build.py` appends a 4-byte `ASNE` canary after the last sample; `asn_init0` checks it and, if overwritten, selects the YM driver (mode 1). Also `beq.s` -> `beq` at `.m:` (range).
 
 ## What's new in v1.6.1 (2026-11-20): the real STE / Mega STE floppy failure

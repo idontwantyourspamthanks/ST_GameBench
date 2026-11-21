@@ -27,7 +27,7 @@ tools/play.sh [--machine st|megast|ste|megaste|tt|falcon] [--ram KiB] [--origina
 tools/package.sh                     # zips into dist/
 ```
 
-**v1.6.2:** hard-disk version on a 1 MB Mega STE: some vehicle engine sounds played from overwritten data (PP's loader uses that memory); that machine now uses the original YM sound and music. All other machines unchanged (`patches/asn/blob.s` end canary `ASNE`, `work/notes/banktail.md`).
+**v1.6.2:** hard-disk version on a 1 MB machine: PP's loader keeps a copy of TOS's memory that can overwrite the end of the Amiga sample bank (always on a 1 MB Mega STE; on a 1 MB STE once a hard-disk driver is resident), so some vehicle engine sounds played from overwritten data. The game now detects that and uses the original YM sound and music. In practice the hard-disk version's Amiga sound needs 2 MB; the floppy version keeps it at 1 MB (`patches/asn/blob.s` end canary `ASNE`, `work/notes/banktail.md`).
 
 ## Floppy release (v1.6.1): real drives
 
