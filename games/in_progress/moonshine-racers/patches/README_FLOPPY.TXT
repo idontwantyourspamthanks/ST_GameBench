@@ -11,7 +11,9 @@ What it is
 v1.1
   New: CAMPAIGNS.  Track sets made with the track tool (tools/msrtrack.py: a file MSTRACKS.TRK, put on a 720 KB campaign disk with
   `msrtrack.py disk`) replace the 15 tracks; see "Campaigns" below.  Needs an ST, Mega ST, STE or Mega STE with 2 MB or more; on a
-  machine with 1 MB the game is exactly the v1.0.1 game (this floppy release does not start on a TT or a Falcon, as v1.0.1).
+  machine with 1 MB no campaign code is installed (this floppy release does not start on a TT or a Falcon, as v1.0.1).
+  Fixed: with "music" chosen in the shop (top right, instead of "fx") the extra in-between pictures were switched off in v1.0 and
+  v1.0.1, so the race looked as slow as the original game.  Music mode now gets the same smoothness as fx mode.
 
 v1.0.1
   Fixes a frozen mouse pointer in the spare-parts shop after a race (and on the title screen) in v1.0: the shop's EXIT could not

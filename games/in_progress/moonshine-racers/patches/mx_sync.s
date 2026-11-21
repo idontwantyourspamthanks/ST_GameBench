@@ -46,7 +46,7 @@ PREV    equ     $B9E00+$A80     ; mx_pre: PREBUF is valid for this tick
 NOWANT  equ     $B8F50          ; byte: no extra frame fitted into the last tick: mx_pre does not copy the slots
 TKLEN   equ     28              ; ticker state $1198-$11b3
 TSAVE   equ     $B9DC0          ; its saved copy (+ the face word $10f8 at +TKLEN)
-RSN     equ     $B8F54          ; 11 words: ticks that skipped the extra frames, by reason (0 no slot copy, 1 off, 2 standing, 3 too fast, 4 $1024, 5 $1021, 6 ticker char, 7 erase, 8 request)
+RSN     equ     $B8F54          ; 11 words: ticks that skipped the extra frames, by reason (0 no slot copy, 1 off, 2 standing, 3 too fast, 4 $1024, 5 not racing ($1028 clear; was $1021 up to v1.0.1), 6 ticker char, 7 erase, 8 request)
 FLOG    equ     $B8F80          ; 32 words: CLK (low word) at each flip, main and extra
 KLOG    equ     $B8FC0          ; 32 words: world units advanced (0 = main frame) at that flip
 UNDO    equ     $B9000
@@ -136,8 +136,8 @@ extras:
         beq.s   .r1
         addq.w  #1,RSN+8.l
         rts                             ; not plain racing (finish / start sequences)
-.r1:    cmpi.b  #2,$1021.w
-        beq.s   .r2
+.r1:    tst.b   $1028.w                 ; race flag (set around the race call $72c0-$72d0), NOT $1021 (that is the sound mode: 2 fx / 1 music)
+        bne.s   .r2
         addq.w  #1,RSN+10.l
         rts
 .r2:

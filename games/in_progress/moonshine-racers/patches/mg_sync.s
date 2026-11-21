@@ -44,7 +44,7 @@ U_LIST  equ     $B9E00          ; word addresses of the slots saved at the group
 FLIPPED equ     $B8F6E          ; byte: this pass was flipped by the blob at $7b52 (mg_pace then does not flip)
 TKLEN   equ     28              ; ticker state $1198-$11b3 (the hud: copies below are 7 longs: they assume 28)
 TSAVE   equ     $B9DC0          ; its saved copy (+ the face word $10f8 at +TKLEN)
-RSN     equ     $B8F54          ; 11 words: ticks that skipped the extra frames, by reason (0 no slot copy, 1 off, 2 standing, 3 too fast, 4 $1024, 5 $1021, 6 ticker char, 7 erase, 8 request)
+RSN     equ     $B8F54          ; 11 words: ticks that skipped the extra frames, by reason (0 no slot copy, 1 off, 2 standing, 3 too fast, 4 $1024, 5 not racing ($1028 clear; was $1021 up to v1.0.1), 6 ticker char, 7 erase, 8 request)
 FLOG    equ     $B8F80          ; 32 words: CLK (low word) at each flip, main and extra
 KLOG    equ     $B8FC0          ; 32 words: world units advanced (0 = main frame) at that flip
 UNDO    equ     $B9000
@@ -123,8 +123,8 @@ extras:
         beq.s   .r1
         addq.w  #1,RSN+8.l
         rts                             ; not plain racing (finish / start sequences)
-.r1:    cmpi.b  #2,$1021.w
-        beq.s   .r2
+.r1:    tst.b   $1028.w                 ; race flag (set around the race call $72c0-$72d0), NOT $1021 (that is the sound mode: 2 fx / 1 music; v1.0/v1.0.1 lost every extra frame in music mode)
+        bne.s   .r2
         addq.w  #1,RSN+10.l
         rts
 .r2:
