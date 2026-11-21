@@ -8,6 +8,8 @@
 ; himem: $100000-$1003FF CRC-32 table (256 longs, built on every load)
 ; himem: $100400-$1007FF campaign menu scratch (item vectors, line buffer, track texts)
 ; himem: $110000-$12FFFF campaign file as read (MSTRACKS.TRK, at most 123,496 B)
+; himem: $130000-$13FFFF track editor overlay (FILES\MSEDIT.OVL, HD build, read on first use)
+; himem: $140000-$177FFF track editor work RAM (variables, track model, per-unit arrays, its screen)
 ; doc: Campaigns (ST family with 2 MB or more only): F10 on the title screen opens the campaign menu (Original game / Load campaign from the hard disk or from a disk in drive A in the HD release, from a disk in drive A or B in the floppy release / Play from track N); the campaign replaces the 15 tracks.
 ; note: Campaign feature (HD and floppy builds, one source: `FLOPPY` = 0 / 1 is predefined by msrpatch.py; work/notes/campaign_hd.md, campaign_floppy.md).  This patch holds the menu, the file reader and the validator; the redirect sites are cp_wrap ($72c4), cp_fetch ($77da), cp_ptr ($fda2), cp_end ($731e), cp_start ($7252), cp_hiscore ($8418).
 ; note: Site $74fe = the shared key exit of the title screen's face/text loop ($7446-$74fc: any key or joystick fire starts the game): `lea $e(a7),a7 / bsr.b $750a` (6 bytes) -> `jmp e1`.  e1 replays both
@@ -24,6 +26,7 @@ V_ACT   equ     CPV             ; b  campaign active: the races use it
 V_LOADED equ    CPV+1           ; b  a validated campaign is in the store
 V_COUNT equ     CPV+2           ; w  number of tracks (1..15)
 V_START equ     CPV+6           ; w  position (0-based) of the next new game
+V_EDOK  equ     CPV+12          ; b  the track editor overlay is loaded and checked (HD build)
 M_CNT   equ     CPWORK+$00      ; w  menu: item count
 M_ROW0  equ     CPWORK+$02      ; w  first item row
 M_STEP  equ     CPWORK+$04      ; w  rows between items
@@ -97,6 +100,10 @@ cp_menu:
         beq.s   .drva                   ; 2
         subq.w  #1,d0
         beq.s   .list                   ; 3 loaded campaign
+        ifeq    FLOPPY
+        subq.w  #1,d0
+        bne.s   .edit                   ; 5 track editor
+        endc
         bra.s   .title                  ; 4 back
 .hd:    lea     p_hd(pc),a0
         lea     m_ldhd(pc),a1
@@ -114,6 +121,12 @@ cp_menu:
         st      V_ACT.l
         moveq   #1,d0
         bra.s   .out
+        ifeq    FLOPPY
+.edit:  bsr     ed_load                 ; the overlay, read on first use
+        bne     .main                   ; message set
+        jsr     EDBASE+16.l             ; the editor: own screen and palette, both given back when it returns
+        bra     .main
+        endc
 .orig:  clr.b   V_ACT.l
         clr.w   V_START.l
         moveq   #1,d0
@@ -162,7 +175,13 @@ main_screen:
         lea     M_TXT2.l,a0
         moveq   #3,d0
         bsr     addit
-.nl:    lea     t_back(pc),a0
+.nl:
+        ifeq    FLOPPY
+        lea     t_edit(pc),a0
+        moveq   #5,d0
+        bsr     addit
+        endc
+        lea     t_back(pc),a0
         moveq   #4,d0
         bsr     addit
         move.w  d5,M_CNT.l
@@ -600,6 +619,49 @@ crc_upd:                                ; d0 = crc state, a1 = data, d3.w = leng
         dbra    d3,.l
         rts
 
+        ifeq    FLOPPY
+; ---- the track editor (HD build; work/notes/editor_design.md): FILES\MSEDIT.OVL (patches/ovl/msedit.s, built by msrpatch.py) is read to EDBASE on first use and checked
+; (magic, interface version EDVER, length, CRC-32) before it is ever called.  -> d0 = 0 ready / 1 M_MSG set (Z accordingly)
+ed_load:
+        tst.b   V_EDOK.l
+        bne.s   .ok
+        lea     m_lded(pc),a0
+        bsr     msg
+        lea     p_ed(pc),a0
+        lea     EDBASE.l,a1
+        move.l  #$10000,d1
+        bsr     trk_read                ; d0 = 0 / error, d1 = bytes
+        lea     e_ednf(pc),a0
+        tst.l   d0
+        bne.s   .err
+        lea     EDBASE.l,a2
+        cmpi.l  #'MSED',(a2)
+        bne.s   .bad
+        cmpi.w  #EDVER,4(a2)
+        bne.s   .bad
+        cmp.l   8(a2),d1
+        bne.s   .bad
+        cmpi.l  #32,d1
+        bcs.s   .bad
+        bsr     crc_tab                 ; keeps d1
+        lea     CPTAB.l,a6
+        moveq   #-1,d0
+        lea     16(a2),a1
+        move.l  d1,d3
+        subi.l  #17,d3
+        bsr     crc_upd                 ; the image is at most 64 KB
+        not.l   d0
+        cmp.l   12(a2),d0
+        bne.s   .bad
+        st      V_EDOK.l
+.ok:    moveq   #0,d0
+        rts
+.bad:   lea     e_edbad(pc),a0
+.err:   move.l  a0,M_MSG.l
+        moveq   #1,d0
+        rts
+        endc
+
 ; ---- strings
 h_main: dc.b    13,1,"CAMPAIGN MENU",0
 h_play: dc.b    5,3,"PLAY FROM TRACK:",0
@@ -649,6 +711,11 @@ p_a:    dc.b    "B:",0
         else
 p_hd:   dc.b    "MSTRACKS.TRK",0
 p_a:    dc.b    "A:\MSTRACKS.TRK",0
+p_ed:   dc.b    "MSEDIT.OVL",0
+t_edit: dc.b    "TRACK EDITOR",0
+m_lded: dc.b    "LOADING THE TRACK EDITOR...",0
+e_ednf: dc.b    "MSEDIT.OVL NOT FOUND IN FILES",0
+e_edbad: dc.b   "EDITOR FILE DAMAGED OR WRONG VERSION",0
         endc
         even
 pal:    dc.w    $000,$777,$777,$777,$333,$777,$777,$333,$444,$777,$440,$555,$777,$777,$771,$777

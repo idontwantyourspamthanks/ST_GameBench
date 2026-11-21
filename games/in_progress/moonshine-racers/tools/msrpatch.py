@@ -27,6 +27,7 @@ import subprocess
 import sys
 import tempfile
 import zipfile
+import zlib
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -90,7 +91,10 @@ HIMEM_LO, HIMEM_END = 0x100000, 0x1CD000      # RAM above 1 MB that is zero and 
 CP_EQUS = {"CPV": 0xB8E00,                    # campaign variables (in the payload image: zero at the trampoline), 32 bytes
            "CPTAB": 0x100000,                 # CRC-32 table (256 longs, built on every load)
            "CPWORK": 0x100400,                # menu scratch (item vectors, text)
-           "CPSTORE": 0x110000}               # the campaign file as read (<= 128 KB; the format's maximum is 123,496 B)
+           "CPSTORE": 0x110000,               # the campaign file as read (<= 128 KB; the format's maximum is 123,496 B)
+           "EDBASE": 0x130000,                # the track editor overlay FILES\MSEDIT.OVL as read on first use (work/notes/editor_design.md; <= 64 KB)
+           "EDWORK": 0x140000,                # the editor's work RAM (variables, track model, per-unit arrays, its screen)
+           "EDVER": 1}                        # overlay interface version: cp_title refuses an MSEDIT.OVL of another one
 _FLOPPY = False                               # which release the predefined equate `FLOPPY` (0 / 1) selects: cp_title.s has one file reader per release; set_flavour() before assembling
 
 
@@ -335,6 +339,26 @@ def assemble(org: int, lines: list[str], equ: str = "", table: int = TABLE) -> b
         if r.returncode != 0:
             raise SystemExit(f"vasm failed:\n{src}\n{r.stderr}")
         return out.read_bytes()
+
+
+# ---- the track editor overlay (HD build): patches/ovl/msedit.s -> FILES\MSEDIT.OVL --------------------------------------------------------
+OVL_SRC = PATCHDIR / "ovl" / "msedit.s"
+OVL_NAME = "MSEDIT.OVL"
+OVL_MAX = 0x10000
+
+
+def build_overlay() -> bytes:
+    """The editor image, assembled at EDBASE: header `MSED`, EDVER.w, 0.w, length.l, CRC-32.l of the bytes from +16 (zlib), entry at +16.  It is not part of the payload:
+    cp_title reads it through the HAGA window on the first use of the F10 menu's TRACK EDITOR item, on a 2 MB+ ST-family machine only."""
+    b = bytearray(assemble(CP_EQUS["EDBASE"], OVL_SRC.read_text().replace(VERSION_TAG, release_version()).splitlines()))
+    if len(b) % 2:
+        b.append(0)
+    if bytes(b[:4]) != b"MSED" or struct.unpack_from(">H", b, 4)[0] != CP_EQUS["EDVER"]:
+        raise SystemExit(f"{OVL_SRC}: the image must start with `MSED`, EDVER")
+    if len(b) > OVL_MAX:
+        raise SystemExit(f"{OVL_NAME}: {len(b)} B exceeds {OVL_MAX} (the reader's limit and the himem reservation of cp_title)")
+    struct.pack_into(">II", b, 8, len(b), zlib.crc32(bytes(b[16:])))
+    return bytes(b)
 
 
 def core_segment(table: int = TABLE, floppy: bool = False, table2: int = 0) -> bytes:
@@ -873,6 +897,7 @@ def cmd_list(patches, fpatches=()):
     print("reserved RAM and payload map (HD default set):")
     for line in ram_map(*default_selection(patches, fpatches, False)):
         print("  " + line)
+    print(f"track editor overlay (HD build, FILES\\{OVL_NAME}, loaded at ${CP_EQUS['EDBASE']:x} on first use): {len(build_overlay())} B of {OVL_MAX}")
 
 
 # ---- RUNME -----------------------------------------------------------------------------------------------------------------------------------
@@ -1275,6 +1300,10 @@ def cmd_build(patches, out: Path, fpatches=(), zip_path: Path | None = None):
         (out / "README.TXT").write_text(render_doc(ut.read_text()) + "\n\n" + "-" * 78 + "\nPP's README.TXT of the original hard-disk conversion (unchanged):\n" + "-" * 78 + "\n"
                                         + (ORIG / "README.TXT").read_text(errors="replace"))
     apply_file_patches(fpatches, out)
+    if any(p.name == "cp_title" for p in patches):
+        ovl = build_overlay()
+        (out / "FILES" / OVL_NAME).write_bytes(ovl)
+        print(f"wrote FILES/{OVL_NAME}: {len(ovl)} B (track editor overlay, loaded at ${CP_EQUS['EDBASE']:x} on first use; CRC-32 {struct.unpack_from('>I', ovl, 12)[0]:08x})")
     print(f"built {out} with {len(patches)} patch(es) + {len(fpatches)} file patch(es); payload {len(img)} B at ${IB:x}-${IB + len(img) - 1:x}")
     print(f"{'site':8s} {'len':4s} orig -> new")
     for s in sites:

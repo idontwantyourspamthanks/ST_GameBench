@@ -1,0 +1,82 @@
+== view_st2m: HD ST 2 MB, build /tmp/msred/hd, sound on, campaign c3.trk
+title reached: True vbl 6356
+CHECK title reached: PASS 
+BOOT view_st2m: $2dc=0x1f8000 $42e=0x200000 HAGA+$83=0x01 marker=MSPO IB+4=0xff
+BOOT sites {'0x72c4': '4eb9000b8022', '0x77da': '4ef9000b80704e714e714e71', '0xfda2': '2079000b8e08', '0x731e': '4ef9000b8220', '0x7252': '4eb9000b8240', '0x74fe': '4ef9000b9f00', '0x8418': '4ef9000b9f06'}
+campaign menu: video base 070000 palette 0000077707770777033307770777033304440777044005550777077707710777
+CHECK main menu: item 1 (LOAD CAMPAIGN FROM HARD DISK): PASS 
+CHECK campaign c3.trk loaded from FILES: PASS 
+CHECK play list: < BACK row: PASS 
+Bus/Address error lines before the editor is opened: 2
+CHECK TRACK EDITOR item selected, overlay not loaded yet: PASS sel 4 V_EDOK 0x0 $130000 0x0
+CHECK MSEDIT.OVL read to $130000 and accepted (V_EDOK), RAM == the file: PASS 8942 B, 188 VBL after RETURN (includes the wait)
+CHECK editor screen: video base $170000: PASS 170000
+CHECK track list: 3 campaign tracks + 3 items, selection 0: PASS 
+CHECK camp1: viewer is up: PASS 
+[camp1] editor: nseg=406 nobj=417 total=32768 end=20496 rl=19472 base=0 bartype=26 bar_at=700 nbar=1 ntypes=131 scale=4144
+[camp1] msrtrack: nseg=406 nobj=417 total=32768 end=20496 rl=19472 base=0 bartype=[26] bar_at=[700] ntypes=131
+CHECK camp1: counts, extent, base, BAR: PASS 
+CHECK camp1: segment list == union of the four streams (406 segments): PASS first diff []  
+CHECK camp1: object list (417 objects, BAR flagged): PASS 
+CHECK camp1: height / left / right arrays == msrtrack expand_* over 20496 units: PASS h 0 wl 0 wr 0 differing
+CHECK camp1: path points == the fixed-point model (2563 points): PASS 0 differing
+CHECK camp1: path vs msrtrack.py render arithmetic: PASS max deviation 16.6 units = 0.26 map pixels (scale 0.01581 px/unit)
+CHECK camp1: cursor starts at segment 1, unit 0, road row, zoom 1: PASS 
+[camp1] walk samples (seg, unit) every 20 keys: [(20, 1595), (40, 2323), (60, 3255), (80, 4078)] ... [(380, 17397), (400, 19813), (403, 20207)]
+CHECK camp1: RIGHT walked the whole track: segment 404 of 406 reached, unit = its start: PASS batches with a wrong count: 0
+CHECK camp1: RIGHT at the last segment stays: PASS 
+CHECK camp1: LEFT twice: PASS seg 401
+CHECK camp1: CLR/HOME = unit 0: PASS 
+CHECK camp1: B = the BAR: PASS pos 700 bar [700]
+CHECK camp1: + three times = zoom 4, strips centred on the cursor: PASS zoom 3 vstart 0
+CHECK camp1: DOWN = objects row, first object: PASS 1 0 71
+CHECK camp1: RIGHT x4 in the objects row = object 5: PASS obj 4 pos 251
+CHECK camp1: UP = road row, - three times = zoom 1: PASS 
+CHECK camp1: ESC = back to the track list: PASS 
+CHECK stock list: TRACK 08 selected: PASS 
+[stock7] loaded and expanded in 161 VBL (includes polling)
+CHECK stock7: viewer is up: PASS 
+[stock7] editor: nseg=337 nobj=375 total=32768 end=21024 rl=20000 base=7 bartype=30 bar_at=19526 nbar=1 ntypes=34 scale=4025
+[stock7] msrtrack: nseg=337 nobj=375 total=32768 end=21024 rl=20000 base=7 bartype=[30] bar_at=[19526] ntypes=34
+CHECK stock7: counts, extent, base, BAR: PASS 
+CHECK stock7: segment list == union of the four streams (337 segments): PASS first diff []  
+CHECK stock7: object list (375 objects, BAR flagged): PASS 
+CHECK stock7: height / left / right arrays == msrtrack expand_* over 21024 units: PASS h 0 wl 0 wr 0 differing
+CHECK stock7: path points == the fixed-point model (2629 points): PASS 0 differing
+CHECK stock7: path vs msrtrack.py render arithmetic: PASS max deviation 10.4 units = 0.16 map pixels (scale 0.01535 px/unit)
+CHECK stock7: cursor starts at segment 1, unit 0, road row, zoom 1: PASS 
+[stock7] walk samples (seg, unit) every 20 keys: [(20, 1324), (40, 3007), (60, 3929), (80, 4608)] ... [(300, 17765), (320, 19260), (336, 19865)]
+CHECK stock7: RIGHT walked the whole track: segment 337 of 337 reached, unit = its start: PASS batches with a wrong count: 0
+CHECK stock7: RIGHT at the last segment stays: PASS 
+CHECK stock7: LEFT twice: PASS seg 334
+CHECK stock7: CLR/HOME = unit 0: PASS 
+CHECK stock7: B = the BAR: PASS pos 19526 bar [19526]
+CHECK stock7: + three times = zoom 4, strips centred on the cursor: PASS zoom 3 vstart 17472
+CHECK stock7: DOWN = objects row, first object: PASS 1 0 61
+CHECK stock7: RIGHT x4 in the objects row = object 5: PASS obj 4 pos 371
+CHECK stock7: UP = road row, - three times = zoom 1: PASS 
+CHECK stock7: ESC = back to the track list: PASS 
+CHECK straight: viewer is up: PASS 
+[straight] editor: nseg=1 nobj=1 total=32768 end=20024 rl=19000 base=3 bartype=26 bar_at=19199 nbar=1 ntypes=63 scale=1256
+[straight] msrtrack: nseg=1 nobj=1 total=32768 end=20024 rl=19000 base=3 bartype=[26] bar_at=[19199] ntypes=63
+CHECK straight: counts, extent, base, BAR: PASS 
+CHECK straight: segment list == union of the four streams (1 segments): PASS first diff []  
+CHECK straight: object list (1 objects, BAR flagged): PASS 
+CHECK straight: height / left / right arrays == msrtrack expand_* over 20024 units: PASS h 0 wl 0 wr 0 differing
+CHECK straight: path points == the fixed-point model (2504 points): PASS 0 differing
+CHECK straight: path vs msrtrack.py render arithmetic: PASS max deviation 0.0 units = 0.00 map pixels (scale 0.00479 px/unit)
+CHECK HELP page: PASS 
+CHECK FIRE = viewer menu: PASS 
+CHECK menu item LEAVE THIS TRACK = back to the track list: PASS 
+CHECK ESC = campaign menu: video base and palette as before the editor: PASS base 070000 was 070000
+menu selection after the editor: 4
+CHECK no Bus/Address error line while the editor was open: PASS 2 -> 2
+[race race 0 start] vbl=17127 act=0xff loaded=0xff count=3 pos=0 start=0 ptr=0x110088 $102c=0x0000 len57890=19472 $23c0=0x1100ac $1024=0x00 $1027=0x00 $100e=82 $5ff8=0 $1021=0x02
+[race race 0 over (finished=True)] vbl=19305 act=0xff loaded=0xff count=3 pos=0 start=0 ptr=0x110088 $102c=0x0001 len57890=19472 $23c0=0x1100b4 $1024=0xff $1027=0x00 $100e=286 $5ff8=666 $1021=0x02
+CHECK race 1 = campaign track 1 from the store, driven to the BAR: PASS [(19472, 0, 1114284, 0)]
+[race 2 start] vbl=20291 act=0xff loaded=0xff count=3 pos=1 start=0 ptr=0x111742 $102c=0x0003 len57890=19000 $23c0=0x111756 $1024=0x00 $1027=0x00 $100e=79 $5ff8=0 $1021=0x02
+CHECK race 2 started after the shop (EXIT click): campaign track 2, base level 3: PASS (19000, 3, 1120086, 1)
+CHECK race 2 runs: the car moves: PASS $5ff8 650 -> 766, speed $130c 0
+CHECK marker MSPO, gate open, at the end: PASS 
+Bus/Address error lines in the Hatari log at the end: 5
+RESULT view_st2m: ALL CHECKS PASS
