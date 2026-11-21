@@ -51,14 +51,26 @@ file exists) does not cover the territory loads.
 
 `tools/pmww.py` (`PMWW`, a `stharness.Hatari` subclass):
 - `PMWW()` — the PP menu floppy. `PMWW(disk=None)` — the folder run with the single-part game
-  (C: = `extracted/pp106/` minus the AUTO folder; A: = a de-booted copy of `disks/pp106.st`).
-- `boot_to_game()`-style navigation is being built; the input findings below are already encoded.
-- Keys work normally (`h.key`). **Mouse clicks need `poke_click(x, y)`:** the game re-programs
-  the IKBD's absolute mouse position every VBL and Hatari only delivers absolute-mouse button
-  packets together with movement, so a stationary host click never reaches the game. The
-  deterministic route: move the host pointer to the target (the game's own position-forcing
-  feedback keeps its tracked words there), then write the packet parser's words:
-  `$1d2af = 4` (left down), `10` (release), `0` (idle).
+  (C: = `extracted/pp106/` minus the AUTO folder) and a de-booted copy of `disks/pp106.st` in
+  A: (needed only by the save-disk path). `no_floppy=True` — the same without any disk.
+- Cold boots: `boot_to_options()` = intro/docs (a burst of 8 spaces, then silence — the docs
+  exit on their own timer; a disk present at boot makes the displayer HANG) -> name prompt ->
+  options screen. Takes a snapshot at the options (`work/snapshots/options.sav`), then
+  `boot_to_map()` = select Start New Conquest: click (112,72), activate (130,88) -> the chart
+  (a dim live-rendered map) -> click the island (60,20) -> the 3D map view
+  (`work/snapshots/mapview.sav`). `in_game()` checks the render loop runs.
+- The **UI is an icon grid on a skewed panel** (`$6cac` the hit test, cells 4x6 px): the
+  option rows have a select spot and a separate activate spot (+18,+16 px); "Continue
+  Conquest" at (130,106) opens the dim "DISK STATUS REQUESTER / SAVE GAME DOES NOT EXIST"
+  (the save-disk path — this one does drive the FDC through TOS, needing a disk in A:).
+- **Mouse clicks need `poke_click(x, y)`**: the game re-programs the IKBD's absolute mouse
+  position every VBL and Hatari only delivers absolute-mouse button packets together with
+  movement, so a stationary host click never reaches the game. `poke_click` moves the host
+  pointer to the target (the game's own position-forcing feedback keeps its tracked words
+  there), then writes the packet parser's buttons byte: `$1d2af = 4` (left down), re-armed
+  until the game's down-seen word `$2edbc` proves its latch code ran (`$81e`: latch
+  `$2edb6`, click position `$2edae/$2edb0`), then `10` (release), `0` (idle).
+
 
 ## Input findings (options/title screen, the engine in RAM)
 

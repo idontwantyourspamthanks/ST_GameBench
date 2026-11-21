@@ -28,10 +28,16 @@ FILES = GAME / "extracted" / "pp106"       # the disk's files as a folder (GEMDO
 SNAP = GAME / "work" / "snapshots"
 REF = GAME / "work" / "ref"
 
+# gates: (reference crop in work/ref, box in 832x588 screenshot coordinates)
+GATES = {
+	"name": ("name_gate.png", (316, 276, 514, 304)),     # "Please enter your name"
+	"opt": ("opt_gate.png", (326, 178, 514, 206)),       # "Please select option."
+}
+
 
 class PMWW(Hatari):
 	def __init__(self, snapshot: str | None = None, workdir: str | None = None, disk: Path | None = DISK,
-	             cpuclock: int | None = None, **kw):
+	             cpuclock: int | None = None, no_floppy: bool = False, **kw):
 		R = Path(workdir or tempfile.mkdtemp(prefix="strun-"))
 		R.mkdir(parents=True, exist_ok=True)
 		home = R / "home"
@@ -60,13 +66,16 @@ class PMWW(Hatari):
 					shutil.copy(src, dst)
 			kw.setdefault("files", [])
 			kw["autorun"] = kw.pop("autorun_f", "C:\\WWIEDITN.PRG")
-			extra = ["--disk-a", str(R / "a.st"), "--protect-floppy", "off"] + list(kw.pop("extra", []))
-			# the game's territory load goes through TOS's own GEMDOS/FDC and reads drive A:
-			# (the PP crack only preloads the save-disk check file). Copy the real disk but
-			# kill its boot sector so TOS keeps booting from C: and our --auto runs.
-			raw = bytearray((FILES.parent.parent / "disks" / "pp106.st").read_bytes())
-			raw[0:2] = b"\x00\x00"
-			(R / "a.st").write_bytes(raw)
+			if no_floppy:
+				extra = list(kw.pop("extra", []))
+			else:
+				extra = ["--disk-a", str(R / "a.st"), "--protect-floppy", "off"] + list(kw.pop("extra", []))
+				# the game's territory load goes through TOS's own GEMDOS/FDC and reads drive A:
+				# (the PP crack only preloads the save-disk check file). Copy the real disk but
+				# kill its boot sector so TOS keeps booting from C: and our --auto runs.
+				raw = bytearray((FILES.parent.parent / "disks" / "pp106.st").read_bytes())
+				raw[0:2] = b"\x00\x00"
+				(R / "a.st").write_bytes(raw)
 		else:
 			a = R / "a.st"
 			shutil.copy(disk, a)
@@ -116,6 +125,80 @@ def _methods():
 				time.sleep(0.3)
 		raise RuntimeError("mpos: no memory dump from the debugger")
 
+	def at_gate(self, gate: str, tol: float = 10.0) -> bool:
+		"""Screenshot gates in 832x588 ST-screenshot coordinates (picture at (96,58))."""
+		ref, box = GATES[gate]
+		return self.screen_matches(REF / ref, box, tol)
+
+	def boot_to_options(self, name: str = "BENCH", log=print, t_name: float = 120):
+		"""Cold boot to the options screen (only reliable WITHOUT a floppy in A: the Alien's
+		doc displayer hangs on a disk present at boot — run with no_floppy=True).
+
+		Every stage is gated by its screenshot: the intro/docs (a burst of spaces to page past
+		the crack intro, then silence — the docs exit on their own timing, extra presses reset
+		it), then the name prompt: type `name` + Return -> the options screen -> poke the
+		game's own mouse-enable word ($5a84e, its region-195 toggle action).
+		"""
+		t0 = time.time()
+		stamp = lambda s: log(f"[{time.time() - t0:5.0f}s vbl {self.vbl()}] {s}")
+		time.sleep(10)
+		for _ in range(8):                   # page past the intro + the first docs pages
+			self.key("space")
+			time.sleep(1.4)
+		t = time.time()
+		while not self.at_gate("name"):
+			if time.time() - t > t_name:
+				raise RuntimeError("name prompt not reached")
+			time.sleep(2.5)                   # silence: the docs exit on their own timer
+		stamp("name prompt")
+		for ch in name:
+			self.key(ch)
+			time.sleep(0.4)
+		self.key("Return")
+		t = time.time()
+		while not self.at_gate("opt"):
+			if time.time() - t > 40:
+				raise RuntimeError("options screen not reached")
+			self.key("Return")
+			time.sleep(2.5)
+		stamp("options screen")
+		# the game's own mouse-toggle region action, applied directly (region 195 -> $14446)
+		self.debug("w $5a84e 0 1", wait=0.5)
+		return True
+
+	def boot_to_map(self, log=print):
+		"""From the options-screen snapshot to the 3D map view (the two-stage flow).
+
+		Select Start New Conquest: poke-click the select box (112,72), then the row's
+		activate spot (130,88); the chart comes up after ~6 s (a dim, live-rendered map
+		screen). Click the island at (60,20) (the first territory, top left); the game
+		generates the land in RAM (the Alien's ramdisk: no disk access on this path) and
+		the 3D view appears after ~10 s more.
+		"""
+		t0 = time.time()
+		stamp = lambda s: log(f"[{time.time() - t0:5.0f}s] {s}")
+		time.sleep(2)
+		self.poke_click(112, 72)                  # select "Start New Conquest"
+		time.sleep(2.0)
+		self.poke_click(130, 88)                   # activate it -> the chart
+		stamp("chart loading")
+		time.sleep(10)
+		self.poke_click(60, 20)                    # the island territory (top left)
+		stamp("island clicked; land generation")
+		time.sleep(14)
+		stamp("3D map view")
+		return True
+
+	def in_game(self) -> bool:
+		"""The 3D view's render loop is running: the picture changes between frames."""
+		a = self.shot()
+		time.sleep(1.6)
+		b = self.shot()
+		from PIL import Image, ImageChops
+		d = ImageChops.difference(Image.open(a).convert("L"), Image.open(b).convert("L"))
+		bbox = d.getbbox()
+		return bbox is not None and (bbox[2] - bbox[0]) * (bbox[3] - bbox[1]) > 2000
+
 	def goto_st(self, x: int, y: int, tol: int = 1):
 		"""Home the host pointer, then close the loop on the game's pointer words ($1d2b2/$1d2b4).
 
@@ -134,23 +217,34 @@ def _methods():
 			time.sleep(0.4)
 		return self.mpos()
 
-	def poke_click(self, x: int, y: int, hold: float = 0.4):
+	def poke_click(self, x: int, y: int, hold: float = 0.3):
 		"""Deterministic click through the game's own input path.
 
 		Hatari only delivers absolute-mouse button packets together with movement, but this
 		game re-programs the IKBD position every VBL, so a stationary host click never
 		reaches it. Move the host pointer to the target first (the game tracks it through its
-		own position-forcing feedback), then write the buttons byte the packet parser would
-		have written: $1d2af = 4 (left down). The VBL dispatch ($79a table) then runs the
-		game's own latch code ($81e: $2edb6 = 1, click pos $2edae/$2edb0 = the tracked words).
-		10 is the release event ($856: clears the down-seen flags), 0 the idle poll path.
+		position-forcing feedback: the tracked words hold the target while idle). Then write
+		the buttons byte the packet parser would have written: $1d2af = 4 (left down). The
+		VBL dispatch ($79a table) runs the game's own latch code ($81e: $2edb6 = 1, click
+		pos $2edae/$2edb0 = the tracked words, down-seen $2edbc). The forcing feedback
+		packets overwrite the poke within ~1 VBL, so re-arm it until the down-seen word
+		proves the latch ran; 10 is the release event ($856: clears the down-seen flags),
+		0 the idle poll path.
 		"""
 		self.goto_st(x, y)
-		self.debug("w $1d2af 4", wait=hold)
+		fired = False
+		for _ in range(24):
+			self.debug("w $1d2af 4", wait=hold if not fired else 0.12)
+			f = self.debug("m $2edbc 2", wait=0.25).strip().splitlines()[-1].split(':')[1].split()
+			if f[0] != "00" or f[1] != "00":      # the word $2edbc is set: the latch ran
+				fired = True
+				break
 		self.debug("w $1d2af 10", wait=0.3)
 		self.debug("w $1d2af 0", wait=0.3)
+		if not fired:
+			raise RuntimeError("poke_click: the game's latch never consumed the button event")
 
-	for f in (mpos, goto_st, poke_click):
+	for f in (mpos, at_gate, boot_to_options, boot_to_map, in_game, goto_st, poke_click):
 		setattr(PMWW, f.__name__, f)
 
 _methods()
