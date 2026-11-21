@@ -1,0 +1,15 @@
+boot_to_race True {'v': 6509, 'f21': 2, 'f24': 0, 'f28': 255, 'p100e': 70, 'ptr': '390800000000005000280050002800000000000000000000', 'extra': 0}
+title/story pointer samples (vbl, $1021, $1028, ptr before, ptr after +40,+20 mouse):
+  (5129, 0, 0, 'efaaa000', 'efaaa000')
+  (5510, 0, 0, '00280014', '00500028')
+marker $b2700: b'MSPO'
+PACE race1 FX mode native: 505 VBL, passes 101 (0.2000/VBL, 10.000/s @50Hz), extra 71, fps 17.030, $1028=255 $1021=2
+reached the shop: True {'v': 8802, 'f21': 2, 'f24': 255, 'f28': 0, 'p100e': 455, 'ptr': '390800000000000000000000000000000000000000000000', 'extra': 119}
+pointer before the FX click 00fa001e $1021 2
+after the FX click: $1021 = 2 (2 fx / 1 music) {'v': 9846, 'f21': 2, 'f24': 255, 'f28': 0, 'p100e': 455, 'ptr': '39080000000000fa001e00fa001e0000000000ff00000000', 'extra': 119}
+pointer at EXIT 000000a7
+RACE2 started: True {'v': 10786, 'f21': 1, 'f24': 0, 'f28': 255, 'p100e': 85, 'ptr': '390800000000000000a7000000a7000000ff00ff00000000', 'extra': 119}
+PACE race2 MODE $1021=1 native: 506 VBL, passes 102 (0.2016/VBL, 10.079/s @50Hz), extra 101, fps 20.059, $1028=255 $1021=1
+PACE race2 16MHz: 506 VBL, passes 102 (0.2016/VBL, 10.079/s @50Hz), extra 166, fps 26.482, $1028=255 $1021=1
+Bus/Address Error lines: 3 alive True
+bus/address error lines: 3

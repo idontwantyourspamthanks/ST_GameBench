@@ -100,3 +100,5 @@ Normal speed, VBL counter delta from Return on LOAD CAMPAIGN FROM DRIVE A to the
 
 ## fl_timeout_ste4m: mechanism and fix
 `$fda2` (cp_ptr) runs `movea.l PTR,a0` then `move.l a0,$23c0.w` ($fda8, disassembled from `work/dumps/ram_entry_1024.bin`): $23c0 = the block start ($110088). The initial ring fill `$ff3a` reads the stream from $23c0 and writes the advanced pointer back at `$ff70`, ending at $1100ac. On a time-out replay `$100e` still holds the previous race's value (136 at the time-out in the failed log, threshold in `race_up()` is > 30), so `race_up()` is already true between `$fda8` and `$ff70`; `wait_race` sampled there ($110088). The state line printed a moment later shows $1100ac. Fix (`cg.py wait_race`): a sample counts only if ($57890, $102c, $23c0, POS) is unchanged one second later and `race_up()` still holds; this applies to every cell. Reruns with the fixed check: `fl_timeout_ste4m_rerun{1,2,3}` all PASS, every replay $1100ac.
+
+## Shipped-zip gates v1.1 (commit 5fd79c0): see `work/notes/release_110.md`; raw logs `logs/rel_*.txt` (campgate), `logs/rel_pace/*.log` (gate101 / gate_music pace and music-mode cells), `logs/rel_summary.txt`.
