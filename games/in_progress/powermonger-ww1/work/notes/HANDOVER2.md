@@ -207,3 +207,39 @@ identical at every tick, and the negative control proving the gate is sensitive.
    once before the loop — the next pass overwrites a one-off write.
 3. **Runs reach the map at different tick numbers** (the patched build's intro is a few frames
    different), so the series must be long enough to overlap; 20 dumps each gives ~6 common.
+
+## The remaining matrix, and one pre-existing limitation
+
+**8 and 16 MHz at 50 Hz: PASS.** 4.00 ticks/s both, from the shipped PRG (gate output above
+and the earlier `PASS 85` / `PASS 232` runs).
+
+**Mega STE / 60 Hz: the STOCK game does not run on Hatari's Mega STE.** Confirmed on the
+completely unpatched Cobra build (`files_from=extracted/cobra26`, `machine=megaste`,
+`tos=TOS["2.06"]`): the screen stops at the cracktro (mean 23.8, never reaches the name
+prompt or the map). The same build on a 60 Hz *STE* is fine (TOS 1.62 + `--machine ste`), and
+the 1990 game ran on a Mega STE at 60 Hz (its `regression.md` has 4.62/4.02 there), so this is
+specific to the Cobra/Fuzion release rather than the engine.
+
+`tools/rate_check.py` automates the matrix; its Mega STE rows will keep failing until that
+release-level problem is investigated. Options: use an STE forced to 60 Hz for the 60 Hz tick
+test (TOS 1.62 does 50 Hz; EmuTOS or a US TOS 1.04 gives 60), or chase the cracktro/loader
+problem. **Neither is a defect in the tick patch** — it is worth saying plainly in the release
+notes, as the 1990 project did for its own machine quirks.
+
+**Pause: not yet tested.** The tick reads the game's own pause gate (`$5a856`) and passes
+through to the original path when it is set, so pausing should freeze the world; the check to
+run is that a paused game shows 0.00 ticks/s and resumes at 4.00 without a burst.
+
+## Where this leaves the release
+
+| gate | state |
+|---|---|
+| builds from source, cold boots | **PASS** |
+| 4.00 ticks/s at 8 MHz | **PASS** |
+| 4.00 ticks/s at 16 MHz | **PASS** |
+| per-tick state equality, real builds | **PASS** (6 ticks, 0 bytes, negative control) |
+| protection removed | **PASS** (flag `$2c`, no question box) |
+| play.sh | **PASS** (`--original`, `--machine`, `--only`, `--print`, `--fresh`) |
+| 60 Hz (Mega STE) | **blocked by the stock game**, not the patch |
+| pause | to test |
+| pixel-identical frames vs unpatched | to test (needs a frame gate on the patched build) |
