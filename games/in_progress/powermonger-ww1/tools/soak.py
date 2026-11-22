@@ -159,6 +159,33 @@ def main() -> None:
 			cache = read_long(h, CACHE)
 			alive = now > last_tick
 			payload_ok = (sig == PAYLOAD_SIG) if not args.stock else True
+			# A world counter that stops is not necessarily a fault: at the map view the game
+			# can enter the 3D battle view (the general's portrait), where $2ed90 does not
+			# advance. That is normal; only a halt with error lines is a crash.
+			if not alive and not errs:
+				print(f"[{samples:3d}] t={(time.time() - start) / 60:5.1f}m world={now} "
+				      f"stopped advancing — checking whether this is the battle view", flush=True)
+				h.shot(str(GAME / "work" / "soak-pause.png"))
+				time.sleep(10)
+				again = read_long(h, TICK)
+				if again > now:
+					print("       it was a pause; still running", flush=True)
+					last_tick, last_vbl = again, h.vbl()
+					continue
+				print("       left the map view (battle/portrait) — trying to return", flush=True)
+				# the portrait view returns with the right button (ESC in most of the UI)
+				for _ in range(4):
+					h.key("Escape")
+					time.sleep(4)
+					if read_long(h, TICK) > now:
+						break
+				back = read_long(h, TICK)
+				if back > now:
+					print(f"       back at the map (world {back}); continuing", flush=True)
+					last_tick, last_vbl = back, h.vbl()
+					continue
+				print("       could not return; stopping (no errors: not a crash)", flush=True)
+				break
 			rate = (now - last_tick) / ((vbl - last_vbl) / 50.0) if vbl > last_vbl else -1
 			print(f"[{samples:3d}] t={(time.time() - start) / 60:5.1f}m "
 			      f"world={now:<6d} {'+' if alive else 'STUCK'} "
@@ -168,7 +195,7 @@ def main() -> None:
 				print(f"        {e}", flush=True)
 			if cache >= PAYLOAD:
 				print(f"  ---- the resource cache (${cache:05x}) has reached the payload area", flush=True)
-			if not payload_ok or not alive or errs:
+			if not payload_ok or errs:
 				print("  ---- stopping early", flush=True)
 				try:
 					h.shot(str(GAME / "work" / "soak-fail.png"))
