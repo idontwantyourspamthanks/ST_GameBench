@@ -446,11 +446,23 @@ the fix a name like that would have raised it on the first passes.
 ### The key gate: a key must be indistinguishable from a click
 
 `tools/keygate.py` does not guess what a key should look like. For each key it first makes a
-**real mouse click on the same cell** and records the four words the dispatch reads, then
-presses the key and requires the same words (`$2edae/$2edb0`, `$2edb6`; the stamp is a counter
-so it is checked separately). Result for O, M, H, A: identical. Q differed by one pixel in
-*y*, which is the harness's own click landing a pixel off (ST pixel doubling), not the key —
-the gate tolerates 1 for that comparison and checks the table exactly.
+**real mouse click on the same cell** and records the words the dispatch reads, then presses
+the key and requires the same words (`$2edae/$2edb0`, `$2edb6`). The stamp is a pass counter,
+so it is not compared.
+
+```
+  o: key writes (71,138)  latch 0; real click writes (71,138)  latch 0  PASS
+  m: key writes (275,162) latch 0; real click writes (275,162) latch 0  PASS
+  q: key writes (75,191)  latch 0; real click writes (75,190)  latch 0  PASS
+  h: key writes (100,170) latch 0; real click writes (100,170) latch 0  PASS
+  a: key writes (299,182) latch 0; real click writes (298,182) latch 0  PASS
+  e: key writes (297,156) latch 0; real click writes (297,156) latch 0  PASS
+```
+
+Three of the six differ by exactly one pixel, which is the **harness's** click landing a pixel
+off (it drives the pointer through the IKBD and ST pixels are doubled), not the key: the key's
+cell comes from the table and matches it exactly. The comparison against the real click
+therefore tolerates 1 pixel while the table check is exact.
 
 ### Builder change
 

@@ -184,8 +184,9 @@ def main() -> None:
 
 			# compare the click position and the latch (the stamp differs: it is a counter)
 			# the harness's synthetic click can land a pixel off (ST pixel doubling), so the
-			# comparison with the real click tolerates 1; the table check is exact
-			same = synth[2:] == real[2:] and all(
+			# comparison with the real click tolerates 1; the table check is exact. The stamp
+			# (index 3) is a pass counter, so it is not compared.
+			same = synth[2] == real[2] and all(
 				abs(a - b) <= 1 for a, b in zip(synth[:2], real[:2]))
 			# and independently: the key mapped its scancode to the right cell
 			table_ok = synth[0] == want_x and synth[1] == want_y
