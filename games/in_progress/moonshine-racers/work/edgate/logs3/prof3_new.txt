@@ -1,0 +1,53 @@
+== prof3_new: HD STE 2 MB, build /tmp/msred3/hd, campaign c3.trk
+title reached: True
+CHECK title reached: PASS 
+CHECK LOAD CAMPAIGN FROM HARD DISK item: PASS 
+CHECK campaign loaded: PASS 
+CHECK editor overlay loaded (V_EDOK): PASS 
+CHECK viewer up: PASS 
+PROFILE main view bend '.': 9760300 cycles over ~90 VBL window (60.9 VBL of CPU); top buckets:
+     3669152   22.9 VBL  game/TOS (VBL, music, sync)
+     1065944    6.7 VBL  mapxy
+     1028552    6.4 VBL  xp_emit
+      943484    5.9 VBL  plot
+      781028    4.9 VBL  xp_path
+      604876    3.8 VBL  path
+      489280    3.1 VBL  vline
+      300896    1.9 VBL  ptext
+      231700    1.4 VBL  expand_from
+      133472    0.8 VBL  draw_all
+      107804    0.7 VBL  clr_hi
+      100572    0.6 VBL  cls
+       81136    0.5 VBL  kbhook
+       57776    0.4 VBL  xp_pu
+       55352    0.3 VBL  hist_push
+       54996    0.3 VBL  upx
+       17248    0.1 VBL  find_seg
+        7284    0.0 VBL  appn
+        4720    0.0 VBL  pd_poll
+        3768    0.0 VBL  input
+        2980    0.0 VBL  apps
+        2920    0.0 VBL  view
+PROFILE width list DOWN (preview): 9543424 cycles over ~90 VBL window (59.6 VBL of CPU); top buckets:
+     4662052   29.1 VBL  game/TOS (VBL, music, sync)
+     1066040    6.7 VBL  mapxy
+     1060492    6.6 VBL  ptext
+      943228    5.9 VBL  plot
+      604816    3.8 VBL  path
+      489000    3.1 VBL  vline
+      133640    0.8 VBL  draw_all
+      107908    0.7 VBL  clr_hi
+      100348    0.6 VBL  cls
+       78716    0.5 VBL  kbhook
+       69436    0.4 VBL  box_clr
+       55108    0.3 VBL  upx
+       54940    0.3 VBL  hist_load
+       23120    0.1 VBL  find_bar
+       21976    0.1 VBL  lrow
+       19936    0.1 VBL  apdn
+        8408    0.1 VBL  litem
+        7228    0.0 VBL  appn
+        6608    0.0 VBL  pd_poll
+        4752    0.0 VBL  lpick
+        3332    0.0 VBL  apps
+        3132    0.0 VBL  kq_arrow

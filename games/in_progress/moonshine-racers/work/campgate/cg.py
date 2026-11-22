@@ -34,8 +34,8 @@ class Run:
     def __init__(self, kind, machine, mem_kb, tag, build=None, snap=None, camp_hd=None, disk_a=None, disk_b=None, sound=False, psg=False, strict=False, tos=None, d2=None, d2_drive="a", noff=False, extra_args=()):
         self.kind, self.machine, self.mem_kb, self.tag = kind, machine, mem_kb, tag
         self.shotdir = LOGDIR / "shots"; self.shotdir.mkdir(exist_ok=True)
-        wd = f"/tmp/msrc3/run_{tag}"; shutil.rmtree(wd, ignore_errors=True)
-        self.tmp = Path(tempfile.mkdtemp(prefix=f"cg_{tag}_", dir="/tmp/msrc3"))
+        TD = os.environ.get("CG_TMP", "/tmp/msrc3"); os.makedirs(TD, exist_ok=True); wd = f"{TD}/run_{tag}"; shutil.rmtree(wd, ignore_errors=True)
+        self.tmp = Path(tempfile.mkdtemp(prefix=f"cg_{tag}_", dir=TD))
         kw = {"tos": TOS[tos]} if tos else {}
         sk = dict(sound=sound, trace_psg=psg, strict=strict)
         extra = (["--joy1", "keys"] if sound else []) + list(extra_args)

@@ -1,0 +1,27 @@
+== speed_base: HD STE 2 MB, build /tmp/msred3/hd, campaign c3.trk
+title reached: True
+CHECK title reached: PASS 
+CHECK LOAD CAMPAIGN FROM HARD DISK item: PASS 
+CHECK campaign loaded: PASS 
+CHECK editor overlay loaded (V_EDOK): PASS 
+CHECK viewer up: PASS 
+main view seg 0 key '.': [('apply_try', 8037), ('expand', 8037), ('full_draw', 8092), ('draw_all', 8092), ('draw_hi', 8121), ('full_draw_end', 8124)]
+  RESULT seg 0 '.': apply_try -> full_draw 55 VBL, expand -> draw_all 55 VBL
+main view seg 0 key ',': [('apply_try', 8263), ('expand', 8263), ('full_draw', 8318), ('draw_all', 8318), ('draw_hi', 8347), ('full_draw_end', 8350)]
+  RESULT seg 0 ',': apply_try -> full_draw 55 VBL, expand -> draw_all 55 VBL
+main view seg 150 key '.': [('apply_try', 10683), ('expand', 10683), ('full_draw', 10721), ('draw_all', 10721), ('draw_hi', 10750), ('full_draw_end', 10752)]
+  RESULT seg 150 '.': apply_try -> full_draw 38 VBL, expand -> draw_all 38 VBL
+main view seg 150 key ',': [('apply_try', 10909), ('expand', 10909), ('full_draw', 10947), ('draw_all', 10947), ('draw_hi', 10976), ('full_draw_end', 10978)]
+  RESULT seg 150 ',': apply_try -> full_draw 38 VBL, expand -> draw_all 38 VBL
+EXC Traceback (most recent call last):
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/edgate/speed.py", line 60, in <module>
+    e.send(0x2e); assert e.wait(lambda: e.vu("lopen") == 1, 25); time.sleep(1.5); e.settle()
+                                                                                  ^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/edgate/ed2lib.py", line 78, in settle
+    ok = ok + 1 if (self.vu("lpend") == 0 and self.vu("lbusy") == 0) else 0
+                    ^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/edgate/ed2lib.py", line 26, in vu
+    def vu(self, name): return W(self.r.mem(EV + VAR[name], 2))
+                                                 ~~~^^^^^^
+KeyError: 'lpend'
+

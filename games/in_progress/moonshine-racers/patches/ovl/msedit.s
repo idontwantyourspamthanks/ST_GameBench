@@ -130,6 +130,18 @@ vLBusy  equ     446             ; w a preview (apply, expand, draw) is running
 vMItems equ     1200            ; 24 l list picker item texts
 vLine   equ     1296            ; 64 B text line
 vTxt    equ     1360            ; 20 x 40 B item texts
+vKqH    equ     2200            ; w key queue: next code to pop
+vKqT    equ     2202            ; w key queue: next free slot (the IKBD hook writes it)
+vOldKb  equ     2204            ; l the game's IKBD handler ($118) while the editor's hook is in
+vKq     equ     2208            ; 64 B ring of make codes
+vPend   equ     2272            ; w an edit left per-unit data stale: recomputed when no key is waiting
+vPD     equ     2274            ; w pending: first stale segment ($7fff = none)
+vPM     equ     2276            ; w pending: what is stale (bit 0 heights, 1 widths, 2 path)
+vXm     equ     2278            ; w what the edit being applied makes stale (bit 3: only that segment's own parameters changed)
+vXNS    equ     2280            ; w segments at the last expand
+vXEnd   equ     2282            ; l extent at the last expand
+vXk     equ     2286            ; w expand_from: the mask in use
+vLRd    equ     2288            ; w the list rows are stale (redrawn when no key is waiting)
 
         dc.b    'MSED'          ; +0  magic
         dc.w    EDVER,0         ; +4  version (cp_title refuses another one), flags
@@ -184,6 +196,11 @@ take:   move.b  $ffff8201.w,vScr(a5)
         moveq   #15,d0
 .p:     move.w  (a0)+,(a1)+
         dbra    d0,.p
+        move.w  sr,-(a7)                ; the key queue: our IKBD hook in front of the game's handler
+        ori.w   #$700,sr
+        clr.l   vKqH(a5)
+        move.w  (a7)+,sr
+        bsr     kb_hook
         rts
 
 give:   jsr     $d206.l
@@ -194,12 +211,171 @@ give:   jsr     $d206.l
         moveq   #15,d0
 .p:     move.w  (a0)+,(a1)+
         dbra    d0,.p
+        move.w  sr,-(a7)
+        ori.w   #$700,sr
+        move.l  vOldKb(a5),$118.w
+        move.w  (a7)+,sr
         rts
 
-cls:    movea.l vDraw(a5),a0
-        move.w  #7999,d0
-.c:     clr.l   (a0)+
-        dbra    d0,.c
+; ---- key queue.  The game's IKBD handler ($cfb4) keeps one make code ($60ff) and a latch per cursor key: a second key pressed while the editor is busy (a redraw takes a few frames) would be lost.
+; kbhook runs the game's handler, then moves the make code it left in $60ff into a 64-entry ring (modifier keys are skipped); the editor pops codes one per frame (kq_pop / kq_popn / kq_arrow).
+kbhook: pea     .back(pc)
+        move.w  sr,-(a7)
+        move.l  V+vOldKb.l,-(a7)
+        rts                             ; = jmp to the game's handler, whose rte returns to .back
+.back:  movem.l d0-d2/a0-a1,-(a7)
+        move.b  $60ff.w,d0
+        beq   .x
+        clr.b   $60ff.w
+        cmpi.b  #$2a,d0
+        beq   .x
+        cmpi.b  #$36,d0
+        beq   .x
+        cmpi.b  #$1d,d0
+        beq   .x
+        cmpi.b  #$38,d0
+        beq   .x
+        lea     V.l,a0
+        moveq   #0,d1
+        move.w  vKqT(a0),d1
+        move.w  d1,d2
+        addq.w  #1,d2
+        andi.w  #63,d2
+        cmp.w   vKqH(a0),d2
+        beq   .x                        ; full: dropped
+        lea     vKq(a0),a1
+        move.b  d0,(a1,d1.w)
+        move.w  d2,vKqT(a0)
+.x:     movem.l (a7)+,d0-d2/a0-a1
+        rte
+kb_hook:                                ; the hook is the IKBD vector (again: the game's file service may have put its own back)
+        move.l  a0,-(a7)
+        lea     kbhook(pc),a0
+        cmpa.l  $118.w,a0
+        beq   .x
+        move.w  sr,-(a7)
+        ori.w   #$700,sr
+        move.l  $118.w,vOldKb(a5)
+        move.l  a0,$118.w
+        move.w  (a7)+,sr
+.x:     movea.l (a7)+,a0
+        rts
+kq_empty:                               ; Z set = no key waiting (trashes d0)
+        move.w  vKqH(a5),d0
+        cmp.w   vKqT(a5),d0
+        rts
+kq_pop:                                 ; d0.w = the next key code, 0 = none
+        movem.l d1/a0,-(a7)
+        moveq   #0,d0
+        move.w  vKqH(a5),d1
+        cmp.w   vKqT(a5),d1
+        beq   .x
+        lea     vKq(a5),a0
+        move.b  (a0,d1.w),d0
+        addq.w  #1,d1
+        andi.w  #63,d1
+        move.w  d1,vKqH(a5)
+.x:     movem.l (a7)+,d1/a0
+        rts
+kq_popn:                                ; as kq_pop, but a cursor key at the head stays in the queue (poll_dirs takes it)
+        movem.l d1/a0,-(a7)
+        moveq   #0,d0
+        move.w  vKqH(a5),d1
+        cmp.w   vKqT(a5),d1
+        beq   .x
+        lea     vKq(a5),a0
+        move.b  (a0,d1.w),d0
+        cmpi.b  #$48,d0
+        beq   .s
+        cmpi.b  #$50,d0
+        beq   .s
+        cmpi.b  #$4b,d0
+        beq   .s
+        cmpi.b  #$4d,d0
+        bne   .p
+.s:     moveq   #0,d0
+        bra   .x
+.p:     addq.w  #1,d1
+        andi.w  #63,d1
+        move.w  d1,vKqH(a5)
+.x:     movem.l (a7)+,d1/a0
+        rts
+kq_arrow:                               ; d1.w = a cursor key at the head of the queue, popped, as the poll_dirs bit (1 up 2 down 4 left 8 right); 0 = none (nothing popped)
+        movem.l d0/a0,-(a7)
+        moveq   #0,d1
+        move.w  vKqH(a5),d0
+        cmp.w   vKqT(a5),d0
+        beq   .x
+        lea     vKq(a5),a0
+        move.b  (a0,d0.w),d1
+        cmpi.b  #$48,d1
+        beq   .u
+        cmpi.b  #$50,d1
+        beq   .d
+        cmpi.b  #$4b,d1
+        beq   .l
+        cmpi.b  #$4d,d1
+        bne   .n
+        moveq   #8,d1
+        bra   .p
+.u:     moveq   #1,d1
+        bra   .p
+.d:     moveq   #2,d1
+        bra   .p
+.l:     moveq   #4,d1
+.p:     addq.w  #1,d0
+        andi.w  #63,d0
+        move.w  d0,vKqH(a5)
+        bra   .x
+.n:     moveq   #0,d1
+.x:     movem.l (a7)+,d0/a0
+        rts
+; flush_pend: the per-unit data an edit left stale (refresh remembers it while keys are waiting) is recomputed, then the view
+flush_pend:
+        tst.w   vPend(a5)
+        beq   .x
+        clr.w   vPend(a5)
+        move.w  vPD(a5),d0
+        move.w  vPM(a5),d1
+        move.w  #$7fff,vPD(a5)
+        clr.w   vPM(a5)
+        bsr     expand_from
+        bsr     find_seg
+        bsr     set_zoom
+.x:     rts
+; act_mask: d0.w = pick list act -> d1.w = what its value makes stale (see expand_from)
+act_mask:
+        moveq   #7,d1
+        cmpi.w  #1,d0
+        beq   .p
+        cmpi.w  #4,d0
+        beq   .w
+        cmpi.w  #5,d0
+        beq   .w
+        cmpi.w  #8,d0
+        bne   .r
+        moveq   #1,d1
+.r:     rts
+.p:     moveq   #4,d1
+        rts
+.w:     moveq   #10,d1
+        rts
+
+cls:    movem.l d0-d7/a0,-(a7)
+        movea.l vDraw(a5),a0
+        lea     32000(a0),a0
+        moveq   #0,d0
+        moveq   #0,d1
+        moveq   #0,d2
+        moveq   #0,d3
+        moveq   #0,d4
+        moveq   #0,d5
+        moveq   #0,d6
+        moveq   #0,d7
+.c:     movem.l d0-d7,-(a0)
+        cmpa.l  vDraw(a5),a0
+        bhi   .c
+        movem.l (a7)+,d0-d7/a0
         rts
 
 sin_init:                               ; SINT[i] = 32767 * sin(2 pi i / 4096), i = 0..5119 (cos = SINT[i + 1024])
@@ -358,12 +534,50 @@ plot:   movem.l d0-d1/d3/a2,-(a7)
         rts
 
 ; vline: d0 = x, d1 = y0, d4 = y1 (>= y0), d2 = colour
-vline:  movem.l d1/d4,-(a7)
-.l:     bsr   plot
-        addq.w  #1,d1
-        cmp.w   d4,d1
-        ble   .l
-        movem.l (a7)+,d1/d4
+vline:  movem.l d0-d5/a1-a2,-(a7)
+        move.w  d4,d5
+        sub.w   d1,d5                   ; pixels - 1
+        bpl   .p
+        moveq   #0,d5                   ; a single pixel
+.p:     mulu    #160,d1
+        move.w  d0,d3
+        lsr.w   #4,d3
+        lsl.w   #3,d3
+        add.w   d3,d1
+        movea.l vDraw(a5),a2
+        adda.w  d1,a2
+        andi.w  #15,d0
+        move.w  #$8000,d3
+        lsr.w   d0,d3
+        btst    #0,d2
+        beq   .1
+        movea.l a2,a1
+        move.w  d5,d4
+.l1:    or.w    d3,(a1)
+        lea     160(a1),a1
+        dbra    d4,.l1
+.1:     btst    #1,d2
+        beq   .2
+        lea     2(a2),a1
+        move.w  d5,d4
+.l2:    or.w    d3,(a1)
+        lea     160(a1),a1
+        dbra    d4,.l2
+.2:     btst    #2,d2
+        beq   .3
+        lea     4(a2),a1
+        move.w  d5,d4
+.l3:    or.w    d3,(a1)
+        lea     160(a1),a1
+        dbra    d4,.l3
+.3:     btst    #3,d2
+        beq   .4
+        lea     6(a2),a1
+        move.w  d5,d4
+.l4:    or.w    d3,(a1)
+        lea     160(a1),a1
+        dbra    d4,.l4
+.4:     movem.l (a7)+,d0-d5/a1-a2
         rts
 ; hline: d0 = x0, d4 = x1 (>= x0), d1 = y, d2 = colour
 hline:  movem.l d0/d4,-(a7)
@@ -444,6 +658,7 @@ rd_stock:
         lea     BLK.l,a0
         jsr     $d6fa.l
         movem.l (a7)+,d0-d7/a1-a5
+        bsr     kb_hook
         lea     BLK.l,a0
         moveq   #0,d0
         move.w  vTmp(a5),d0
@@ -630,136 +845,49 @@ find_bar:                               ; flag the BAR objects, vBarAt = the fir
 ; expand: the per-unit arrays as the game's own setup computes them ($ff3a curve ring, $fde0 widths, $ffe4 hill) and the top-down path (heading = curve value / 600 rad, as tools/msrtrack.py render).
 ; expand_from(d0 = first segment): incremental.  Every segment's start state (c, 8-unit sum, slope, height, two widths, path accumulators) is kept in CKPT; units before the segment are not touched.
 expand: moveq   #0,d0
+        moveq   #7,d1
+; expand_from: d0.w = first stale segment, d1.w = what is stale: bit 0 heights, 1 widths, 2 path (3 = only that segment's own parameters changed: the width pass may stop where its state meets the old one).
+; Three passes (xp_hill, xp_width, xp_path) resume from the checkpoints of segment d0; a pass that is not stale is not run.  A changed segment count or extent makes everything stale.
 expand_from:
         movem.l d0-d7/a0-a6,-(a7)
         move.w  d0,vK(a5)
+        move.w  d1,vXk(a5)
         bsr     calc_end
-        move.w  vK(a5),d0
+        move.w  vNSeg(a5),d0
+        cmp.w   vXNS(a5),d0
+        beq   .e1
+        move.w  d0,vXNS(a5)
+        move.w  #7,vXk(a5)
+.e1:    move.l  vEnd(a5),d0
+        cmp.l   vXEnd(a5),d0
+        beq   .e2
+        move.l  d0,vXEnd(a5)
+        move.w  #7,vXk(a5)
+.e2:    move.w  vK(a5),d0
         cmp.w   vNSeg(a5),d0
-        bcc     .x
+        bcc   .e3
         moveq   #0,d6
         move.w  d0,d6
         mulu    #SEGSZ,d6
         lea     SEGT.l,a4
         adda.l  d6,a4
-        moveq   #0,d6
         move.w  (a4),d6                 ; start of the segment
         cmp.w   vEnd+2(a5),d6
-        bcc     .x                      ; beyond the extent: nothing is shown there
-        moveq   #0,d7
-        move.w  vK(a5),d7
-        lsl.l   #5,d7
-        lea     CKPT.l,a6
-        adda.l  d7,a6
-        tst.w   vK(a5)
-        bne   .rest
-        clr.l   PTS.l                   ; point 0
-        clr.l   vAx(a5)
-        clr.l   vAy(a5)
-        moveq   #0,d0                   ; c
-        moveq   #0,d1                   ; sum of c over 8 units
-        moveq   #0,d2                   ; hill: slope
-        moveq   #0,d3                   ; hill: height (16.16)
-        moveq   #0,d4
-        moveq   #0,d5
-        move.b  8(a4),d4                ; the widths start at the first targets
-        move.b  9(a4),d5
-        bra   .have
-.rest:  movem.l (a6),d0-d5
-        move.l  24(a6),vAx(a5)
-        move.l  28(a6),vAy(a5)
-.have:  lea     HARR.l,a0
-        adda.l  d6,a0
-        lea     WLARR.l,a1
-        adda.l  d6,a1
-        lea     WRARR.l,a2
-        adda.l  d6,a2
-        lsr.w   #3,d6
-        lsl.l   #2,d6
-        lea     PTS+4.l,a3
-        adda.l  d6,a3
-        move.w  vNSeg(a5),d6
-        sub.w   vK(a5),d6
-        move.w  d6,vTmp(a5)             ; segments left
-.seg:   moveq   #0,d6                   ; this segment's start state -> CKPT
-        move.w  vK(a5),d6
-        lsl.l   #5,d6
-        lea     CKPT.l,a6
-        adda.l  d6,a6
-        movem.l d0-d5,(a6)
-        move.l  vAx(a5),24(a6)
-        move.l  vAy(a5),28(a6)
-        move.w  6(a4),d6
-        ext.l   d6
-        move.l  d6,vAcc(a5)
-        moveq   #0,d6
-        move.w  2(a4),d6
-        subq.l  #1,d6                   ; 1..32768 units
-.u:     add.w   4(a4),d0
-        movea.w d0,a6
-        add.l   a6,d1
-        add.l   d2,d3
-        add.l   vAcc(a5),d2
-        move.l  d3,d7
-        bpl   .hp
-        moveq   #0,d7
-        bra   .hs
-.hp:    swap    d7
-        cmpi.w  #127,d7
-        bls   .hs
-        moveq   #127,d7
-.hs:    move.b  d7,(a0)+
-        move.b  d4,(a1)+
-        cmp.b   8(a4),d4
-        beq   .l2
-        bhi   .l1
-        addq.b  #1,d4
-        bra   .l2
-.l1:    subq.b  #1,d4
-.l2:    move.b  d5,(a2)+
-        cmp.b   9(a4),d5
-        beq   .r2
-        bhi   .r1
-        addq.b  #1,d5
-        bra   .r2
-.r1:    subq.b  #1,d5
-.r2:    move.w  a0,d7
-        andi.w  #7,d7
-        bne   .n8
-        asr.l   #3,d1                   ; mean curve value of the 8 units
-        muls    #17801,d1               ; * 4096 / (2 pi 600) = 1.08649 (17801 / 16384)
-        moveq   #14,d7
-        asr.l   d7,d1
-        andi.w  #$fff,d1
-        add.w   d1,d1
-        lea     SINT.l,a6
-        move.w  (a6,d1.w),d7
-        ext.l   d7
-        asl.l   #3,d7
-        add.l   d7,vAx(a5)
-        lea     SINT+2048.l,a6
-        move.w  (a6,d1.w),d7
-        ext.l   d7
-        asl.l   #3,d7
-        sub.l   d7,vAy(a5)              ; heading 0 = up the screen
-        move.l  vAx(a5),d7
-        swap    d7
-        asr.w   #1,d7
-        move.w  d7,(a3)+
-        move.l  vAy(a5),d7
-        swap    d7
-        asr.w   #1,d7
-        move.w  d7,(a3)+
-        moveq   #0,d1
-.n8:    subq.l  #1,d6
-        bpl     .u
-        lea     SEGSZ(a4),a4
-        addq.w  #1,vK(a5)
-        subq.w  #1,vTmp(a5)
-        beq     .x
-        move.w  (a4),d6
-        cmp.w   vEnd+2(a5),d6
-        bcs     .seg
+        bcs   .e4
+.e3:    ori.w   #4,vXk(a5)              ; beyond the extent: nothing is shown there, the map is fitted again
+        bra   .x
+.e4:    move.w  vXk(a5),d0
+        btst    #0,d0
+        beq   .e5
+        bsr     xp_hill
+.e5:    move.w  vXk(a5),d0
+        btst    #1,d0
+        beq   .e6
+        bsr     xp_width
+.e6:    move.w  vXk(a5),d0
+        btst    #2,d0
+        beq   .xx
+        bsr     xp_path
 .x:     ; bounding box of the path -> scale and centre of the map
         move.l  vEnd(a5),d0
         lea     PTS.l,a0
@@ -802,7 +930,337 @@ expand_from:
 .w2:    move.w  d2,vBW(a5)
         move.w  d4,vBH(a5)
         bsr     map_fit
-        movem.l (a7)+,d0-d7/a0-a6
+.xx:    movem.l (a7)+,d0-d7/a0-a6
+        rts
+
+; xp_hill: heights from segment vK on: 16.16 integrator, slope += accel per unit, the byte = the integer part clamped to 0..127 (the game's ring filler $ffe4)
+xp_hill:
+        moveq   #0,d6
+        move.w  vK(a5),d6
+        move.l  d6,d7
+        mulu    #SEGSZ,d6
+        lea     SEGT.l,a4
+        adda.l  d6,a4
+        lsl.l   #5,d7
+        lea     CKPT.l,a6
+        adda.l  d7,a6
+        moveq   #0,d6
+        move.w  (a4),d6
+        lea     HARR.l,a0
+        adda.l  d6,a0
+        moveq   #0,d2
+        moveq   #0,d3
+        tst.w   vK(a5)
+        beq   .h
+        move.l  8(a6),d2
+        move.l  12(a6),d3
+.h:     move.w  vNSeg(a5),d5
+        sub.w   vK(a5),d5
+.seg:   move.l  d2,8(a6)
+        move.l  d3,12(a6)
+        move.w  6(a4),d4
+        ext.l   d4
+        moveq   #0,d6
+        move.w  2(a4),d6
+        subq.w  #1,d6
+.u:     add.l   d2,d3
+        add.l   d4,d2
+        move.l  d3,d7
+        bpl   .p
+        moveq   #0,d7
+        bra   .s
+.p:     swap    d7
+        cmpi.w  #127,d7
+        bls   .s
+        moveq   #127,d7
+.s:     move.b  d7,(a0)+
+        dbra    d6,.u
+        lea     SEGSZ(a4),a4
+        lea     32(a6),a6
+        subq.w  #1,d5
+        beq   .x
+        move.w  (a4),d6
+        cmp.w   vEnd+2(a5),d6
+        bcs   .seg
+.x:     rts
+
+; xp_width: left / right half-widths from segment vK on (1 per unit towards the segment's target: a ramp, then a run of the target).  With bit 3 of vXk the pass stops where its state equals the old checkpoint.
+xp_width:
+        moveq   #0,d6
+        move.w  vK(a5),d6
+        move.l  d6,d7
+        mulu    #SEGSZ,d6
+        lea     SEGT.l,a4
+        adda.l  d6,a4
+        lsl.l   #5,d7
+        lea     CKPT.l,a6
+        adda.l  d7,a6
+        moveq   #0,d6
+        move.w  (a4),d6
+        lea     WLARR.l,a1
+        adda.l  d6,a1
+        lea     WRARR.l,a2
+        adda.l  d6,a2
+        moveq   #0,d4
+        moveq   #0,d5
+        tst.w   vK(a5)
+        bne   .r
+        move.b  8(a4),d4                ; the widths start at the first targets
+        move.b  9(a4),d5
+        bra   .h
+.r:     move.l  16(a6),d4
+        move.l  20(a6),d5
+.h:     move.w  vNSeg(a5),d0
+        sub.w   vK(a5),d0
+        move.w  d0,vTmp(a5)
+        moveq   #0,d0                   ; 0 = the first segment (no early stop there)
+.seg:   tst.w   d0
+        beq   .nc
+        btst    #3,vXk+1(a5)
+        beq   .nc
+        cmp.l   16(a6),d4
+        bne   .nc
+        cmp.l   20(a6),d5
+        beq   .x
+.nc:    moveq   #1,d0
+        move.l  d4,16(a6)
+        move.l  d5,20(a6)
+        move.w  2(a4),d2                ; units
+        move.l  d4,d1
+        movea.l a1,a0
+        moveq   #0,d3
+        move.b  8(a4),d3
+        move.w  d2,d6
+        bsr     wfill
+        move.l  d1,d4
+        movea.l a0,a1
+        move.l  d5,d1
+        movea.l a2,a0
+        moveq   #0,d3
+        move.b  9(a4),d3
+        move.w  d2,d6
+        bsr     wfill
+        move.l  d1,d5
+        movea.l a0,a2
+        subq.w  #1,vTmp(a5)
+        beq   .x
+        lea     SEGSZ(a4),a4
+        lea     32(a6),a6
+        move.w  (a4),d6
+        cmp.w   vEnd+2(a5),d6
+        bcs   .seg
+.x:     rts
+; wfill: d1 = current width (byte), d3 = target, d6 = units (1..32768), a0 = array -> d1, a0 advanced.  Writes the current value, then steps one towards the target (as the game's ring filler); the run of the target goes by longs
+wfill:  cmp.b   d3,d1
+        beq   .f
+        bhi   .dn
+        move.w  d3,d7
+        sub.w   d1,d7
+        cmp.w   d6,d7
+        bls   .u1
+        move.w  d6,d7
+.u1:    sub.w   d7,d6
+        subq.w  #1,d7
+.ul:    move.b  d1,(a0)+
+        addq.b  #1,d1
+        dbra    d7,.ul
+        bra   .f
+.dn:    move.w  d1,d7
+        sub.w   d3,d7
+        cmp.w   d6,d7
+        bls   .d1
+        move.w  d6,d7
+.d1:    sub.w   d7,d6
+        subq.w  #1,d7
+.dl:    move.b  d1,(a0)+
+        subq.b  #1,d1
+        dbra    d7,.dl
+.f:     tst.w   d6
+        beq   .r
+        moveq   #0,d3
+        move.b  d1,d3
+        move.w  d3,d7
+        lsl.w   #8,d7
+        or.w    d7,d3
+        move.w  d3,d7
+        swap    d3
+        move.w  d7,d3                   ; the byte in all four lanes
+        move.w  a0,d7
+        btst    #0,d7
+        beq   .al
+        move.b  d1,(a0)+
+        subq.w  #1,d6
+        beq   .r
+.al:    move.w  d6,d7
+        lsr.w   #2,d7
+        beq   .tl
+        subq.w  #1,d7
+.l4:    move.l  d3,(a0)+
+        dbra    d7,.l4
+.tl:    andi.w  #3,d6
+        beq   .r
+        subq.w  #1,d6
+.l1:    move.b  d1,(a0)+
+        dbra    d6,.l1
+.r:     rts
+
+; xp_path: the top-down path from segment vK on.  c = the heading (curve value), c += the segment's delta per unit; every 8 units one point from the mean c (xp_emit).  A block of 8 units inside a segment is one closed-form step
+; (sum of c = 8 c0 + 36 delta, c = c0 + 8 delta) while c stays inside 16 bits; head, tail and the wrap case go unit by unit (xp_pu).
+xp_path:
+        moveq   #0,d6
+        move.w  vK(a5),d6
+        move.l  d6,d7
+        mulu    #SEGSZ,d6
+        lea     SEGT.l,a4
+        adda.l  d6,a4
+        lsl.l   #5,d7
+        lea     CKPT.l,a2
+        adda.l  d7,a2
+        moveq   #0,d6
+        move.w  (a4),d6
+        lsr.l   #3,d6
+        lsl.l   #2,d6
+        lea     PTS+4.l,a3
+        adda.l  d6,a3                   ; the next point to store
+        tst.w   vK(a5)
+        bne   .r
+        clr.l   PTS.l
+        suba.l  a0,a0                   ; a0 = x accumulator (world * 2^15), a1 = y accumulator, a6 = the sine table
+        suba.l  a1,a1
+        moveq   #0,d0
+        moveq   #0,d1
+        bra   .h
+.r:     movem.l (a2),d0-d1
+        movea.l 24(a2),a0
+        movea.l 28(a2),a1
+.h:     lea     SINT.l,a6
+        move.w  vNSeg(a5),d2
+        sub.w   vK(a5),d2
+        move.w  d2,vTmp(a5)
+.seg:   movem.l d0-d1,(a2)
+        move.l  a0,24(a2)
+        move.l  a1,28(a2)
+        move.w  4(a4),d4
+        ext.l   d4                      ; delta
+        moveq   #0,d3
+        move.w  2(a4),d3                ; units left
+        moveq   #0,d2
+        move.w  (a4),d2
+        andi.w  #7,d2                   ; place of the first unit in its block of 8
+.l:     tst.l   d3
+        beq   .sd
+        tst.w   d2
+        bne   .one
+        cmpi.l  #8,d3
+        bcs   .one
+        move.l  d3,d5
+        lsr.l   #3,d5                   ; full blocks of 8 from here to the end of the segment
+        move.l  d4,d7
+        asl.l   #3,d7                   ; 8 delta
+        muls    d5,d7
+        move.w  d0,d6
+        ext.l   d6                      ; c0
+        add.l   d6,d7                   ; c after the run: no 16-bit wrap in the run (+-32000: the mean stays in a word)
+        cmpi.l  #32000,d7
+        bgt   .one
+        cmpi.l  #-32000,d7
+        blt   .one
+        cmpi.l  #32000,d6
+        bgt   .one
+        cmpi.l  #-32000,d6
+        blt   .one
+        move.l  d4,d7
+        asl.l   #3,d7
+        add.l   d4,d7
+        asr.l   #1,d7                   ; floor(4.5 delta): the mean of a block is c + that (sum 8 c + 36 delta, / 8)
+        add.l   d7,d6
+        muls    #17801,d6               ; mean * 17801 for the first block; every next block adds 8 delta * 17801
+        move.w  d5,d1
+        subq.w  #1,d1
+        move.l  d4,d5
+        asl.l   #3,d5
+        muls    #17801,d5
+.blk:   move.l  d6,d7
+        asl.l   #2,d7
+        swap    d7                      ; = (product >> 14) in the low word: the heading in 1/4096 turns
+        andi.w  #$fff,d7
+        add.w   d7,d7
+        move.w  (a6,d7.w),d2            ; sine
+        ext.l   d2
+        asl.l   #3,d2
+        adda.l  d2,a0
+        addi.w  #2048,d7
+        move.w  (a6,d7.w),d2            ; cosine
+        ext.l   d2
+        asl.l   #3,d2
+        suba.l  d2,a1                   ; heading 0 = up the screen
+        move.l  a0,d2
+        swap    d2
+        asr.w   #1,d2
+        move.w  d2,(a3)+
+        move.l  a1,d2
+        swap    d2
+        asr.w   #1,d2
+        move.w  d2,(a3)+
+        add.l   d5,d6
+        dbra    d1,.blk
+        move.l  d3,d1
+        lsr.l   #3,d1
+        move.l  d4,d7
+        asl.l   #3,d7
+        muls    d1,d7
+        add.w   d7,d0                   ; c after the run
+        andi.l  #7,d3                   ; the units left (less than a block)
+        moveq   #0,d2
+        moveq   #0,d1
+        bra   .l
+.one:   bsr     xp_pu
+        subq.l  #1,d3
+        bra   .l
+.sd:    subq.w  #1,vTmp(a5)
+        beq   .x
+        lea     SEGSZ(a4),a4
+        lea     32(a2),a2
+        move.w  (a4),d6
+        cmp.w   vEnd+2(a5),d6
+        bcs   .seg
+.x:     rts
+xp_pu:  add.w   d4,d0
+        move.w  d0,d7
+        ext.l   d7
+        add.l   d7,d1
+        addq.w  #1,d2
+        cmpi.w  #8,d2
+        bne   .r
+        moveq   #0,d2
+        bra     xp_emit
+.r:     rts
+; xp_emit: d1 = sum of c over 8 units -> the next path point (a3); d1 = 0.  Mean c * 4096 / (2 pi 600) = the heading in 1/4096 turns
+xp_emit:
+        asr.l   #3,d1
+        muls    #17801,d1               ; * 4096 / (2 pi 600) = 1.08649 (17801 / 16384)
+        asl.l   #2,d1
+        swap    d1                      ; = (product >> 14) in the low word
+        andi.w  #$fff,d1
+        add.w   d1,d1
+        move.w  (a6,d1.w),d7            ; sine
+        ext.l   d7
+        asl.l   #3,d7
+        adda.l  d7,a0
+        addi.w  #2048,d1
+        move.w  (a6,d1.w),d7            ; cosine (the table is a quarter turn longer)
+        ext.l   d7
+        asl.l   #3,d7
+        suba.l  d7,a1                   ; heading 0 = up the screen
+        move.l  a0,d7
+        swap    d7
+        asr.w   #1,d7
+        move.w  d7,(a3)+
+        move.l  a1,d7
+        swap    d7
+        asr.w   #1,d7
+        move.w  d7,(a3)+
+        moveq   #0,d1
         rts
 
 ; map_fit: scale of the map so that the whole path fits the window (vMapW x 96 pixels)
@@ -899,8 +1357,9 @@ mapxy:  move.w  (a0),d0
 .out:   ori     #1,ccr
         rts
 
-; path: units d6 .. d7 of the path in colour d2; vThick = 2x2 pixels (the highlight)
-path:   movem.l d0-d7/a0,-(a7)
+; path: units d6 .. d7 of the path in colour d2; vThick = 2x2 pixels (the highlight).  A long range at a small map scale (the points lie a fraction of a pixel apart) takes every 2nd or 4th point; a point on the pixel
+; of the previous one is not drawn again.
+path:   movem.l d0-d7/a0-a1,-(a7)
         lsr.l   #3,d6
         lsr.l   #3,d7
         sub.w   d6,d7
@@ -909,6 +1368,23 @@ path:   movem.l d0-d7/a0,-(a7)
         lsl.w   #2,d6
         adda.w  d6,a0
         clr.w   vPOk(a5)
+        movea.w #4,a1                   ; bytes from point to point
+        cmpi.w  #64,d7
+        bls   .l
+        moveq   #0,d3
+        move.w  vS(a5),d3
+        lsl.l   #5,d3
+        move.w  vSh(a5),d4
+        lsr.l   d4,d3                   ; 16 x pixels per point
+        cmpi.w  #4,d3
+        bcc   .s2
+        lsr.w   #2,d7
+        movea.w #16,a1
+        bra   .l
+.s2:    cmpi.w  #8,d3
+        bcc   .l
+        lsr.w   #1,d7
+        movea.w #8,a1
 .l:     bsr   mapxy
         bcs   .no
         tst.w   vPOk(a5)
@@ -930,7 +1406,13 @@ path:   movem.l d0-d7/a0,-(a7)
         bsr     line
         move.w  d4,d0
         move.w  d5,d1
-.pl:    bsr     plot
+.pl:    tst.w   vPOk(a5)
+        beq   .p1
+        cmp.w   vPX(a5),d0
+        bne   .p1
+        cmp.w   vPY(a5),d1
+        beq   .nx
+.p1:    bsr     plot
         tst.w   vThick(a5)
         beq   .th
         addq.w  #1,d0
@@ -945,9 +1427,9 @@ path:   movem.l d0-d7/a0,-(a7)
         move.w  #1,vPOk(a5)
         bra   .nx
 .no:    clr.w   vPOk(a5)
-.nx:    addq.l  #4,a0
+.nx:    adda.w  a1,a0
         dbra    d7,.l
-.x:     movem.l (a7)+,d0-d7/a0
+.x:     movem.l (a7)+,d0-d7/a0-a1
         rts
 
 ; box: a 5x5 outline around the path point of unit d6 in colour d2
@@ -1404,10 +1886,17 @@ view:   move.w  #1,vState(a5)
         clr.w   vLastSide(a5)
         clr.w   vLOpen(a5)
         move.w  #$7fff,vDirty(a5)
+        move.w  #$7fff,vPD(a5)
+        clr.w   vPM(a5)
+        clr.w   vPend(a5)
+        move.w  #7,vXm(a5)
         bsr     set_zoom
         bsr     in_reset
         bsr     hist_init
-.loop:  move.w  vRedraw(a5),d0
+.loop:  bsr     kq_empty
+        bne   .in                       ; a key is waiting: nothing is recomputed or drawn before it is handled
+        bsr     flush_pend              ; per-unit data the edits made stale (with a pending edit this sets the redraw)
+        move.w  vRedraw(a5),d0
         beq   .in
         clr.w   vRedraw(a5)
         btst    #0,d0
@@ -1449,10 +1938,6 @@ show:   move.l  vDraw(a5),-(a7)         ; wait for the sync, point the shifter a
 
 in_reset:                               ; forget every key and wait until fire is released
         clr.b   $60ff.w
-        clr.b   $607e+$48.w
-        clr.b   $607e+$50.w
-        clr.b   $607e+$4b.w
-        clr.b   $607e+$4d.w
         move.w  #$f,vPDir(a5)
         clr.w   vFire(a5)
 .f:     jsr     $d206.l
@@ -1526,10 +2011,9 @@ moved:  bsr     find_seg
 .x:     rts
 
 ; input: one poll per frame.  Directions = joystick port 1 or the cursor keys (latched makes, so a short tap counts), auto-repeat while held
-input:  moveq   #0,d0
-        move.b  $60ff.w,d0
+input:  bsr     kq_popn
+        tst.b   d0
         beq   .dirs
-        clr.b   $60ff.w
         lea     keytab(pc),a0
 .kt:    move.b  (a0)+,d1
         beq   .dirs
@@ -1796,7 +2280,8 @@ help:   move.w  #3,vState(a5)
         bne   .l
         clr.b   $60ff.w
 .w:     jsr     $d206.l
-        tst.b   $60ff.w
+        bsr     kq_pop
+        tst.b   d0
         bne   .d
         btst    #7,$6105.w
         beq   .w
@@ -1873,16 +2358,20 @@ msg:    move.l  a0,vMsg(a5)             ; a0 = text for the hint row (shown once
         ori.w   #2,vRedraw(a5)
         rts
 
-; poll_dirs: the directions that are new this poll (joystick port 1 or the cursor keys; latched makes so a short tap counts), auto-repeat while held.
+; poll_dirs: the directions that are new this poll (joystick port 1, or a cursor key tapped: the key queue holds every tap, however short and however busy the editor was), auto-repeat while held.
 ; -> d2 = bits 0 up 1 down 2 left 3 right (0 = none), d3 = joystick byte (fire = bit 7), a0 = $5ffe (the held-key table)
 poll_dirs:
+        move.l  d4,-(a7)
+        bsr     pd_poll
+        move.l  (a7)+,d4
+        rts
+pd_poll:
         moveq   #0,d0
         move.b  $6105.w,d0
         move.w  d0,d3
         andi.w  #$f,d0
-        lea     $5ffe.w,a0              ; keys held
-        lea     $607e.w,a1              ; keys latched
-        moveq   #0,d1                   ; taps
+        move.w  d0,d4                   ; the joystick's directions
+        lea     $5ffe.w,a0              ; keys held (for the auto-repeat)
         tst.b   $48(a0)
         beq   .a1
         ori.w   #1,d0
@@ -1895,26 +2384,11 @@ poll_dirs:
 .a3:    tst.b   $4d(a0)
         beq   .a4
         ori.w   #8,d0
-.a4:    tst.b   $48(a1)
-        beq   .b1
-        ori.w   #1,d1
-        clr.b   $48(a1)
-.b1:    tst.b   $50(a1)
-        beq   .b2
-        ori.w   #2,d1
-        clr.b   $50(a1)
-.b2:    tst.b   $4b(a1)
-        beq   .b3
-        ori.w   #4,d1
-        clr.b   $4b(a1)
-.b3:    tst.b   $4d(a1)
-        beq   .b4
-        ori.w   #8,d1
-        clr.b   $4d(a1)
-.b4:    move.w  vPDir(a5),d2
-        move.w  d0,vPDir(a5)
+.a4:    bsr     kq_arrow                ; d1 = a cursor key tapped
+        move.w  vPDir(a5),d2
+        move.w  d4,vPDir(a5)
         not.w   d2
-        and.w   d0,d2
+        and.w   d4,d2
         or.w    d1,d2                   ; new this poll
         bne   .new
         tst.w   d0
@@ -2257,6 +2731,7 @@ c_redo: movea.l vHCur(a5),a0
         bra     msg
 hist_done:                              ; a state came back: all per-unit data is stale
         clr.w   vDirty(a5)
+        move.w  #7,vXm(a5)
         moveq   #1,d0
         cmpi.l  #ARENA,vHCur(a5)
         bne   .m
@@ -2266,12 +2741,27 @@ hist_done:                              ; a state came back: all per-unit data i
 .m:     move.w  d0,vMod(a5)
         clr.w   vLeaveW(a5)
         bra     refresh
-refresh:                                ; per-unit data from vDirty on, then the view
+refresh:                                ; per-unit data stale from vDirty on: remembered (vPD, vPM) and recomputed by flush_pend when no key is waiting
         move.w  vDirty(a5),d0
-        bsr     expand_from
+        cmpi.w  #$7fff,d0
+        beq   .nd
+        cmp.w   vPD(a5),d0
+        bcc   .k
+        move.w  d0,vPD(a5)
+.k:     move.w  vXm(a5),d0
+        tst.w   vPend(a5)
+        beq   .f
+        andi.w  #7,d0                   ; two edits waiting: no early stop in the width pass
+        andi.w  #7,vPM(a5)
+.f:     or.w    d0,vPM(a5)
+        move.w  #1,vPend(a5)
+.nd:    move.w  #7,vXm(a5)
         move.w  #$7fff,vDirty(a5)
         bsr     find_seg
+        tst.w   vPend(a5)
+        bne   .r
         bra     set_zoom
+.r:     rts
 ed_commit:                              ; an edit was made: history, modified, per-unit data, view
         bsr     hist_push
         move.w  #1,vMod(a5)
@@ -2294,6 +2784,7 @@ rs_fail:                                ; d0 = road_shift result
 ; acts: 1 curve 2 hill shape 3 length 4 width L 5 width R 6 object type 7 object side 8 raw hill accel
 apply:  movem.l d2-d7/a1-a3,-(a7)
         move.w  vSeg(a5),vDirty(a5)
+        move.w  #7,vXm(a5)
         move.w  d0,d2
         bsr     seg_ptr
         subq.w  #1,d2
@@ -2310,18 +2801,21 @@ ap_bad: move.l  a0,vMsg(a5)             ; a0 = message
         moveq   #1,d0
         bra   ap_x
 ap_curve:
+        move.w  #4,vXm(a5)
         move.w  d1,4(a0)
         bra   ap_ok
 ap_wl:  cmpi.w  #10,d1
         blt   ap_range
         cmpi.w  #85,d1
         bgt   ap_range
+        move.w  #10,vXm(a5)
         move.b  d1,8(a0)
         bra   ap_ok
 ap_wr:  cmpi.w  #10,d1
         blt   ap_range
         cmpi.w  #85,d1
         bgt   ap_range
+        move.w  #10,vXm(a5)
         move.b  d1,9(a0)
         bra   ap_ok
 ap_range:
@@ -2331,6 +2825,7 @@ ap_raw: cmpi.w  #-6000,d1
         blt   ap_range
         cmpi.w  #4000,d1
         bgt   ap_range
+        move.w  #1,vXm(a5)
         move.w  d1,6(a0)
 ap_hov: bsr     hill_ovf
         tst.w   d0
@@ -2565,6 +3060,7 @@ apply_try:                              ; d0 = act, d1 = value: apply to the wor
         bra     ed_commit
 .f:     bsr     hist_cur
         move.w  #$7fff,vDirty(a5)
+        move.w  #7,vXm(a5)
         ori.w   #2,vRedraw(a5)
         rts
 record: move.w  vLAct(a5),vLastAct(a5)
@@ -2664,6 +3160,7 @@ c_cp:   moveq   #1,d2
 
 edit_list:                              ; d0 = act
         movem.l d1-d7/a0-a4,-(a7)
+        bsr     flush_pend
         move.w  d0,vLAct(a5)
         cmpi.w  #3,d0
         bne   .nl
@@ -2729,7 +3226,9 @@ edit_list:                              ; d0 = act
         bne   .rec
         bsr     hist_cur                ; RAW ACCEL...: the exact list, from the unchanged segment
         move.w  vSeg(a5),d0
+        moveq   #7,d1
         bsr     expand_from
+        move.w  #7,vXm(a5)
         moveq   #8,d0
         bsr     edit_list
         bra   .x
@@ -2745,8 +3244,11 @@ edit_list:                              ; d0 = act
         bsr     apply_try
         bra   .x
 .cancel: bsr    hist_cur
+        move.w  vLAct(a5),d0
+        bsr     act_mask
         move.w  vSeg(a5),d0
         bsr     expand_from
+        move.w  #7,vXm(a5)
         move.w  #$7fff,vDirty(a5)
         bsr     set_zoom
         bra   .x
@@ -3028,8 +3530,10 @@ lpreview:                               ; the working copy with the shown value 
         move.w  #1,vLBad(a5)
         bsr     hist_cur                ; refused: the old state, the message stays on the hint row
 .ok:    move.w  vDirty(a5),d0
+        move.w  vXm(a5),d1
         bsr     expand_from
         move.w  #$7fff,vDirty(a5)
+        move.w  #7,vXm(a5)
         bsr     full_draw
         clr.w   vLBusy(a5)
         rts
@@ -3039,10 +3543,9 @@ lpick:  movem.l d1-d7/a0-a4,-(a7)
         bsr     lb_open
         bsr     in_reset
 .loop:  jsr     $d206.l
-        moveq   #0,d0
-        move.b  $60ff.w,d0
+        bsr     kq_popn
+        tst.b   d0
         beq   .nk
-        clr.b   $60ff.w
         cmpi.b  #$1c,d0
         beq   .ok
         cmpi.b  #$72,d0
@@ -3129,9 +3632,15 @@ lpick:  movem.l d1-d7/a0-a4,-(a7)
         bne   .rows
         move.w  #1,vLPend(a5)
 .rows:  bsr     lscroll
-        bsr     lrows
+        move.w  #1,vLRd(a5)
         bra   .loop
-.idle:  tst.w   vLPend(a5)
+.idle:  bsr     kq_empty
+        bne   .loop                     ; keys waiting: move the selection first (the rows and the preview follow when they are all in)
+        tst.w   vLRd(a5)
+        beq   .id1
+        clr.w   vLRd(a5)
+        bsr     lrows
+.id1:   tst.w   vLPend(a5)
         beq   .loop
         bsr     lpreview
         bra   .loop
@@ -3729,7 +4238,8 @@ c_check:                                ; K: the check page
         bsr     ptext
         clr.b   $60ff.w
 .w:     jsr     $d206.l
-        tst.b   $60ff.w
+        bsr     kq_pop
+        tst.b   d0
         bne   .d
         btst    #7,$6105.w
         beq   .w
@@ -3989,10 +4499,9 @@ pick:   movem.l d1-d7/a0-a4,-(a7)
         move.b  $6105.w,d7              ; previous joystick byte
         clr.b   $60ff.w
 .k:     jsr     $d206.l
-        moveq   #0,d0
-        move.b  $60ff.w,d0
+        bsr     kq_pop
+        tst.b   d0
         beq   .joy
-        clr.b   $60ff.w
         bra   .key
 .joy:   move.b  $6105.w,d1
         move.b  d7,d2

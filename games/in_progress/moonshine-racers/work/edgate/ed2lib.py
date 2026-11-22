@@ -10,10 +10,11 @@ import msrtrack as mt
 EV = 0x140000
 CPS = 0x110000
 VAR = dict(lbusy=446, nseg=34, nobj=36, total=38, end=42, rl=46, base=48, bart=50, barat=52, ntypes=56, nbar=58, seg=60, pos=62, obj=66, focus=68, zoom=70, redraw=88, state=96, src=98, srcix=100,
-           lsel=246, lopen=254, lbad=258, mode=268, mod=200, hcur=202, htop=206, dirty=198, leavew=272, lval=250, vmsg=102, lcnt=226, play=278, chkn=302, chke=304)
+           lsel=246, lopen=254, lbad=258, mode=268, mod=200, hcur=202, htop=206, dirty=198, leavew=272, lval=250, vmsg=102, lcnt=226, play=278, chkn=302, chke=304,
+           lpend=256, lmsg=442, msel=112, lact=220, pend=2272, pd=2274, pm=2276, xm=2278, kqh=2200, kqt=2202)
 
 class Ed:
-    def __init__(self, tag, machine="ste", mem=2048, build="/tmp/msred2/hd", camp=None):
+    def __init__(self, tag, machine="ste", mem=2048, build=os.environ.get("ED_BUILD", "/tmp/msred2/hd"), camp=None):
         self.tag = tag; self.build = build
         logopen(tag)
         self.r = Run("hd", machine, mem, tag, build=build, camp_hd=camp, sound=True)
@@ -26,7 +27,7 @@ class Ed:
     def vu(self, name): return W(self.r.mem(EV + VAR[name], 2))
     def vl(self, name): return L(self.r.mem(EV + VAR[name], 4))
     def grab(self, addr, n, name):
-        p = Path("/tmp/msred2") / f"{self.tag[:12]}_{name}.bin"
+        p = Path(os.environ.get("ED_TMP", "/tmp/msred2")) / f"{self.tag[:12]}_{name}.bin"
         if p.exists(): p.unlink()
         self.r.h.debug(f"savebin {p} ${addr:x} {n}", 0.6)
         for _ in range(60):
@@ -60,7 +61,7 @@ class Ed:
         """no redraw pending, nothing stale, no list open, for two polls"""
         ok = 0; t0 = time.time()
         while time.time() - t0 < tmo:
-            if self.vu("redraw") == 0 and self.vu("dirty") == 0x7fff and self.vu("lopen") == 0 and self.vu("state") == 1: ok += 1
+            if self.vu("redraw") == 0 and self.vu("pend") == 0 and self.vu("dirty") == 0x7fff and self.vu("lopen") == 0 and self.vu("state") == 1: ok += 1
             else: ok = 0
             if ok >= 2: return True
             time.sleep(0.3)

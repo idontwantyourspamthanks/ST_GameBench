@@ -27,6 +27,7 @@ V_LOADED equ    CPV+1           ; b  a validated campaign is in the store
 V_COUNT equ     CPV+2           ; w  number of tracks (1..15)
 V_START equ     CPV+6           ; w  position (0-based) of the next new game
 V_EDOK  equ     CPV+12          ; b  the track editor overlay is loaded and checked (HD build)
+V_WELC  equ     CPV+13          ; b  the welcome screen's hint line is drawn (cleared when the screen is left)
 M_CNT   equ     CPWORK+$00      ; w  menu: item count
 M_ROW0  equ     CPWORK+$02      ; w  first item row
 M_STEP  equ     CPWORK+$04      ; w  rows between items
@@ -45,6 +46,7 @@ M_TXT2  equ     CPWORK+$280     ; 40 bytes
         org     $B9F00
         jmp     e1.l            ; $B9F00: title exit (site $74fe)
         jmp     e2.l            ; $B9F06: hi-score screen exit (cp_hiscore, site $8418)
+        jmp     e3.l            ; $B9F0C: "WELCOME PARTNERS ... PRESS A KEY" screen key wait (cp_welcome, site $7c04)
 
 ; ---- title exit
 e1:     cmpi.b  #$44,$60ff.w            ; F10
@@ -76,6 +78,40 @@ e2:     cmpi.b  #$44,$60ff.w
 .k:     jsr     $8420.l
         move.w  #$ff,ccr
         rts
+
+; ---- welcome screen key wait (cp_welcome, site $7c04 = `tst.b $60ff.w / beq.b $7c02` of the manual-question routine $7bd0, whose first screen is WELCOME PARTNERS ... PRESS A KEY; any key continues, d0 counts up
+; meanwhile as the question's random seed).  First pass of a showing: the hint line F10 = CAMPAIGNS under PRESS A KEY.  F10 opens the campaign menu (not while the screen is still fading in: it stays in $60ff until the fade is
+; over); a game start continues as a key does ($7c0a), back shows the screen again (the routine starts over: its pushed d7 is dropped).
+e3:     tst.b   V_WELC.l
+        bne.s   .h
+        st      V_WELC.l
+        movem.l d0-d7/a0-a6,-(a7)
+        lea     t_whint(pc),a0
+        movea.l $1004.w,a5
+        move.w  #$78,d4
+        jsr     $12268.l
+        movem.l (a7)+,d0-d7/a0-a6
+.h:     tst.b   $60ff.w
+        beq.s   .none
+        cmpi.b  #$44,$60ff.w
+        bne.s   .key
+        tst.w   $3a88.w
+        bne.s   .none
+        clr.b   $60ff.w
+        move.w  d0,-(a7)
+        bsr     cp_menu
+        tst.w   d0
+        beq.s   .back
+        move.w  (a7)+,d0
+        clr.b   V_WELC.l
+        jmp     $7c0a.l
+.back:  addq.l  #2,a7
+        addq.l  #2,a7
+        clr.b   V_WELC.l
+        jmp     $7bd0.l
+.key:   clr.b   V_WELC.l
+        jmp     $7c0a.l
+.none:  jmp     $7c02.l
 
 ; ---- the menu.  Returns d0.w = 1 start a game (V_ACT / V_START set), 0 back to the title.
 cp_menu:
@@ -681,6 +717,7 @@ t_a:    dc.b    "LOAD CAMPAIGN FROM DRIVE A",0
         endc
 t_back: dc.b    "BACK TO THE TITLE",0
 t_back2: dc.b   "< BACK",0
+t_whint: dc.b   13,23,"F10 = CAMPAIGNS",0
 t_loaded: dc.b  "LOADED CAMPAIGN: ",0
 t_tracks: dc.b  " TRACKS",0
 t_camp: dc.b    "CAMPAIGN: ",0

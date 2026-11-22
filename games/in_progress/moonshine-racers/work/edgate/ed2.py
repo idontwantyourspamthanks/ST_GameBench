@@ -10,7 +10,7 @@ from PIL import Image, ImageChops
 
 ap = argparse.ArgumentParser()
 ap.add_argument("--kind", default="stock"); ap.add_argument("--machine", default="ste"); ap.add_argument("--mem", type=int, default=2048)
-ap.add_argument("--quick", action="store_true"); ap.add_argument("--tag"); ap.add_argument("--build", default="/tmp/msred2/hd"); ap.add_argument("--norace", action="store_true")
+ap.add_argument("--quick", action="store_true"); ap.add_argument("--tag"); ap.add_argument("--build", default=os.environ.get("ED_BUILD", "/tmp/msred2/hd")); ap.add_argument("--norace", action="store_true")
 ap.add_argument("--level", type=int, default=3)
 a = ap.parse_args()
 short = f"{ {'ste': 'ste', 'megaste': 'mste', 'st': 'st'}[a.machine] }{a.mem // 1024}m"
@@ -288,14 +288,14 @@ try:
     # ---- leave: the track is kept in the campaign file in memory
     nseg_e, nobj_e = e.vu("nseg"), e.vu("nobj")
     e.send(0x01); check("Esc = back to the track list", e.wait(lambda: e.vu("state") == 0, 60)); time.sleep(2.0); r.shot("4_tracklist_after")
-    st = e.store(); Path(f"/tmp/msred2/{tag}.trk").write_bytes(st)
+    st = e.store(); Path(f"{os.environ.get('ED_TMP', '/tmp/msred2')}/{tag}.trk").write_bytes(st)
     ents = mt.parse_campaign(st)
     check(f"campaign in memory: {old_count + 1} tracks, V_COUNT / V_LOADED", len(ents) == old_count + 1 and r.w(V["count"]) == old_count + 1 and r.b(V["loaded"]) != 0, f"{len(ents)} entries, V_COUNT {r.w(V['count'])}")
     blk = bytes(ents[-1]["block"]); ln_last = len(blk)
     exp = M.block()
     check(f"the kept block ({len(blk)} B) == what the Python model of the edit script predicts (mt.encode_track of the model)", blk == exp, f"{len(blk)} vs {len(exp)} B, first diff {next((i for i, (x, y) in enumerate(zip(blk, exp)) if x != y), None)}")
     import subprocess
-    p = subprocess.run([sys.executable, str(HERE.parents[1] / "tools" / "msrtrack.py"), "validate", f"/tmp/msred2/{tag}.trk"], capture_output=True, text=True)
+    p = subprocess.run([sys.executable, str(HERE.parents[1] / "tools" / "msrtrack.py"), "validate", f"{os.environ.get('ED_TMP', '/tmp/msred2')}/{tag}.trk"], capture_output=True, text=True)
     log(p.stdout.strip()); check("msrtrack.py validate of the campaign file dumped from RAM: exit 0, no errors", p.returncode == 0 and "ERROR" not in p.stdout, p.stdout[-300:])
     if a.kind == "stock":
         orig = mt.parse_campaign((CAMP / "c3.trk").read_bytes())
@@ -315,10 +315,18 @@ try:
     # ---- PLAY THIS TRACK: a normal race on it
     if not a.norace:
         e.key(0x50, sel, 0.4); e.send(0x1c); time.sleep(1.2); e.key(0x50, 1, 0.4); r.shot("7_trackmenu_play"); e.send(0x1c)        # PLAY THIS TRACK
-        for i in range(8):
-            time.sleep(1.0); log(f"after PLAY +{i + 1} s: V_START {r.w(0xb8e06)} CPV+4 {r.w(0xb8e04)} $102c {r.w(0x102c):#x} editor vPlay {e.vu('play')}")
-        check("PLAY THIS TRACK: the editor handed the campaign position to the menu (vPlay = position + 1)", e.vu("play") == sel + 1, f"vPlay {e.vu('play')}")
-        res = r.play_races(1, "race")
+        # (the earlier version logged for 8 s before it looked for the race: the race of the right track came and went in that time, then the harness's SPACE presses started a new game from the title = track 0)
+        vp = e.vu("play"); log(f"vPlay {vp} V_START {r.w(0xb8e06)} CPV+4 {r.w(0xb8e04)} $102c {r.w(0x102c):#x}")
+        check("PLAY THIS TRACK: the editor handed the campaign position to the menu (vPlay = position + 1)", vp == sel + 1, f"vPlay {vp}")
+        res = []
+        w0 = r.wait_race(tmo=300, label="race")
+        if w0 is not None:
+            res.append(w0); r.st("race 0 start"); r.shot("race_start")
+            ring = r.mem(0x1bbc, 64); got = [struct.unpack(">h", ring[2 * i:2 * i + 2])[0] for i in range(32)]
+            tt, _ = mt.parse_block(blk); exp_ring = mt.expand_curve(tt["curve"], 32)
+            log(f"curve ring $1bbc[0..31] = {got}"); log(f"expected from the kept block      = {exp_ring}")
+            check("race start: the game's curve ring ($1bbc) == expand_curve of the kept block (the edited road)", got == exp_ring and any(got))
+            ok = r.drive_to_finish(tmo=300); r.st(f"race 0 over (finished={ok})"); r.shot("race_over")
         base_addr = 0x110000 + ents[-1]["offset"]
         check("race on the edited track: the stream pointer is inside its block in the campaign store, driven to the BAR", len(res) == 1 and base_addr <= res[0][2] < base_addr + ln_last + 64 and r.b(0x1024) == 0xff,
               f"{res} block ${base_addr:x}..${base_addr + ln_last:x} $1024 {r.b(0x1024):#x}")

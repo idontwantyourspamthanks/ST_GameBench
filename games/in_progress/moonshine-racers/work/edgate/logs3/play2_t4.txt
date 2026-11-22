@@ -1,0 +1,15 @@
+== play2_t4: HD STE 2 MB, build /tmp/msred3/hd, campaign c4.trk
+title reached: True
+CHECK title reached: PASS 
+CHECK LOAD CAMPAIGN FROM HARD DISK item: PASS 
+CHECK campaign loaded: PASS 
+CHECK editor overlay loaded (V_EDOK): FAIL 
+top list: M_SEL 3
+M_SEL after downs 3
+srcix 0
+M_SEL track menu 3
++0.5s vplay 0 V_START 0 CPV+4 0 $102c 0x0 state 0
++1.0s vplay 0 V_START 0 CPV+4 0 $102c 0x0 state 0
++1.5s vplay 0 V_START 0 CPV+4 0 $102c 0x0 state 0
++2.0s vplay 0 V_START 0 CPV+4 0 $102c 0x0 state 0
+[race up] vbl=10689 act=0xff loaded=0xff count=4 pos=0 start=0 ptr=0x1100b0 $102c=0x0000 len57890=19472 $23c0=0x1100d4 $1024=0x00 $1027=0x00 $100e=65 $5ff8=0 $1021=0x02

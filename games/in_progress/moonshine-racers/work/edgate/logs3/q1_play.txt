@@ -1,0 +1,56 @@
+== q1_play: HD STE 2 MB, build /tmp/msred3/hd, campaign c3.trk
+title reached: True
+CHECK title reached: PASS 
+CHECK LOAD CAMPAIGN FROM HARD DISK item: PASS 
+CHECK campaign loaded: PASS 
+CHECK editor overlay loaded (V_EDOK): PASS 
+CHECK viewer up: PASS 
+CHECK start: segment and object lists in RAM == the model (313 segments, 380 objects, after 0 edits): PASS 
+CHECK start: lists in RAM == the model: PASS 
+[  1] split seg 0 at 128
+[  2] split seg 1 at 256
+[  3] curve seg 2 = 8
+[  4] curve seg 1 = -6
+[  5] hill seg 2 shape 2
+[  6] width L seg 1 = 50
+[  7] length seg 1 = 100
+[  8] insert copy of seg 1
+[  9] delete seg 2
+[ 10] merge seg 1 with the next
+[ 11] add object at 265
+[ 12] object 6 type 4
+[ 13] object 6 side -50
+[ 14] BAR here (seg 3, unit 272) via the menu
+[ 15] undo
+[ 16] redo (menu)
+CHECK after the quick script: segment and object lists in RAM == the model (315 segments, 381 objects, after 16 edits): PASS 
+CHECK Esc = back to the track list: PASS 
+CHECK campaign in memory: 4 tracks, V_COUNT / V_LOADED: PASS 4 entries, V_COUNT 4
+CHECK the kept block (4378 B) == what the Python model of the edit script predicts (mt.encode_track of the model): PASS 4378 vs 4378 B, first diff None
+/tmp/msred3/q1_play.trk[0] 'TEST ONE EDIT1 BEND': OK (0 errors, 0 warnings)
+/tmp/msred3/q1_play.trk[1] 'TEST TWO LEVEL 4 BASE': OK (0 errors, 0 warnings)
+/tmp/msred3/q1_play.trk[2] 'TEST THREE LEVEL 6 BASE': OK (0 errors, 0 warnings)
+/tmp/msred3/q1_play.trk[3] 'COPY OF TRACK 04': OK (0 errors, 0 warnings)
+CHECK msrtrack.py validate of the campaign file dumped from RAM: exit 0, no errors: PASS red3/q1_play.trk[0] 'TEST ONE EDIT1 BEND': OK (0 errors, 0 warnings)
+/tmp/msred3/q1_play.trk[1] 'TEST TWO LEVEL 4 BASE': OK (0 errors, 0 warnings)
+/tmp/msred3/q1_play.trk[2] 'TEST THREE LEVEL 6 BASE': OK (0 errors, 0 warnings)
+/tmp/msred3/q1_play.trk[3] 'COPY OF TRACK 04': OK (0 errors, 0 warnings)
+
+CHECK the three campaign tracks before the new one are byte for byte unchanged: PASS 
+CHECK re-entered: viewer up: PASS 
+CHECK re-entered: the segment list (315) == the model's merged list, objects (381) == the model's: PASS 315 vs 315, 381 vs 381
+after PLAY +1 s: V_START 0 CPV+4 3 $102c 0x3 editor vPlay 4
+after PLAY +2 s: V_START 0 CPV+4 3 $102c 0x3 editor vPlay 4
+after PLAY +3 s: V_START 0 CPV+4 3 $102c 0x3 editor vPlay 4
+after PLAY +4 s: V_START 0 CPV+4 3 $102c 0x3 editor vPlay 4
+after PLAY +5 s: V_START 0 CPV+4 3 $102c 0x3 editor vPlay 4
+after PLAY +6 s: V_START 0 CPV+4 3 $102c 0x3 editor vPlay 4
+after PLAY +7 s: V_START 0 CPV+4 3 $102c 0x3 editor vPlay 4
+after PLAY +8 s: V_START 0 CPV+4 3 $102c 0x3 editor vPlay 4
+CHECK PLAY THIS TRACK: the editor handed the campaign position to the menu (vPlay = position + 1): PASS vPlay 4
+[race race 0 start] vbl=22413 act=0xff loaded=0xff count=4 pos=0 start=0 ptr=0x1100b0 $102c=0x0000 len57890=19472 $23c0=0x1100d4 $1024=0x00 $1027=0x00 $100e=84 $5ff8=0 $1021=0x02
+[race race 0 over (finished=True)] vbl=24491 act=0xff loaded=0xff count=4 pos=0 start=0 ptr=0x1100b0 $102c=0x0001 len57890=19472 $23c0=0x1100dc $1024=0xff $1027=0x00 $100e=288 $5ff8=666 $1021=0x02
+CHECK race on the edited track: the stream pointer is inside its block in the campaign store, driven to the BAR: FAIL [(19472, 0, 1114324, 0)] block $113820..$11493a $1024 0xff
+Bus/Address error lines in the Hatari log: 3
+wall 339 s
+RESULT q1_play: FAILED: race on the edited track: the stream pointer is inside its block in the campaign store, driven to the BAR
