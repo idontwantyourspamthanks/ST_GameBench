@@ -334,3 +334,78 @@ lives (the 1990 patch used the black bar under the picture). The next steps are:
    which at the WW1 map view is the strip the "GAME SPEED / FILE / GAME" panel opens into;
 3. the hover detection already exists in the port's notes (`tools/pwwgrid.py` has all 20
    command-cell centres), so only the drawing is missing.
+
+## 7. The text pipeline: what is now known (and what is still missing)
+
+A long session pinned down the game's screen-text architecture without finding the final
+"draw this string" entry point. Recorded so the next attempt starts here instead of from zero.
+
+### 7.1 The screen is 4-plane, 160 bytes a line
+
+`$eace` (text `$ebde`) is a **single-pixel** writer, not a glyph blitter. Decompiled exactly:
+
+```
+d0 *= 4                       ; d0 = x pixel
+d0 = LONG at text $ec52 + d0  ; entry = (bit_index << 16) | byte_row
+d0 += 32*y ; d1 = 128*y ; d0 += d1        ; += 160*y = one 320-px line
+a1 = a0 + d0                  ; a0 = the screen base
+swap d0                       ; d0 = bit_index (0,8,$10,...,$38)
+d0-d1 = two mask LONGs from text $ec10 indexed by bit_index
+d2 *= 4 ; AND mask from text $eb9e indexed by d2
+and/or, then movep.l d2,(a1)
+```
+
+`movep.l` touches bytes `+0,+2,+4,+6` — **the four bitplanes**. So `$eace` sets one pixel:
+`a0` = screen base, `d0` = x (0..319), `d1` = y, `d2` = colour.
+
+The 64-entry table at text `$ec52` is exactly `entry[x] = ((x & 7) * 8, x >> 3)`, i.e. byte
+`x >> 3` of the line and bit `(x & 7) * 8`. (I initially mis-read it as a glyph table because
+the rows jump 1, 8, 9 between blocks of 8 — that is simply `x >> 3`.)
+
+### 7.2 The font sheet lives at `$F8000`
+
+`[$e4ca] = $F8000` at the map view — the **font/sprite sheet**, a 4-plane bitmap. The 1990
+note's "font at `$8976` with 48-byte blocks" corresponds here to glyph data in *this* sheet,
+not to a table in the program text.
+
+### 7.3 Panels build a character buffer, then something blits it
+
+The command windows are descriptors walked by **`$a2ce`** (text `$a3de`):
+
+- it copies the first two bytes of the descriptor into `(a4)+` (a position), then walks the
+  rest;
+- bytes `< $40` are ASCII and go straight to `(a4)+`;
+- `$f0` = end of line (`$a30c` pads with spaces);
+- bytes `> $40` are **tokens**: the token table at `$a38c` maps them (e.g. `$e6` -> `$20`,
+  a space; `$b1`/`$d7`/`$e7` -> box-drawing characters), and `$40` itself indexes a per-screen
+  handler table `jsr (a6,d0.w)`.
+
+So `$a4` is a **plain character buffer**: the descriptors are the game's own ASCII art.
+
+The panel state is at **`$74c0`**: `+0` = the slot count, `+2` = colour, `+3` = **width in
+characters (`$28` = 40)**, `+6` = **height in rows** (values 4, 6, 8, `$c`, `$e`, `$10` …
+`$1e`). Slots are `$759a`-allocated, `$17c` bytes apart, and `$759a` sets `a4 = $74c0`.
+
+### 7.4 What is still missing
+
+**The routine that turns the character buffer into pixels.** Everything above is consistent
+and verified; the last step — reading `$74c0`-described text and calling the font — was not
+found. The leads, in the order I would try them:
+
+1. `$a2ce`'s callers set `$74c2`/`$74c6` (colour/height) *after* the call, so the blit is on a
+   later pass. Search for a routine that reads **all three** of `$74c2`, `$74c3` and `$74c6`
+   and loops with a glyph stride — that is the renderer. My searches matched single fields and
+   hit the panel-position maths at `$6c58` instead.
+2. `$74c3 = 40` is the width in characters, so the renderer's inner loop should run 40 times;
+   a `cmpi.w #$28` inside a loop that also indexes the font is the signature.
+3. Hatari's profiler would name it immediately, but `profile on`/`profile stats` returned
+   "no activity" — the debugger commands I used were wrong. The working form is
+   `hatari-debug profile on`, wait, `hatari-debug profile off`, then `hatari-debug profile`
+   (no "stats"), and the addresses need `--profile` enabled at start-up.
+
+### 7.5 A note on effort
+
+This is the one part of the port that has cost far more than it should. If the renderer is not
+found in one more focused attempt, the pragmatic path is to write the tooltip with its own
+font in the payload: `$eace` is a proven single-pixel writer, so a 6x7 bitmap font of ~95
+characters is about 700 bytes and needs no dependency on the game's text pipeline at all.
