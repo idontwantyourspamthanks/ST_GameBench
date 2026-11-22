@@ -272,3 +272,65 @@ name.
 
 The gate uses a name with no command letter in it (`BENCH`), so the test measures the keys and
 not the phantom.
+
+## 7. Tooltips: the font primitive found (work in progress)
+
+The tooltip port needs the game's own character writer. It is **`$eace`**, the single-glyph
+plotter, reached from six call sites (`$10c58`, `$10d66`, `$11e78`, `$129f0`, `$17602`,
+`$19702` — the last is the icon draw).
+
+```
+$eace  add.w d0,d0 / add.w d0,d0      ; d0 = char * 4
+$ead2  move.l $eb42(pc,d0.w),d0       ; d0 = entry = (bit_offset << 16) | row_base
+$ead6  lsl.w #$5,d1 / add.w d1,d0     ; += 32*y
+       add.w d1,d1 twice              ; d1 = 128*y
+       add.w d1,d0                    ; += 128*y        total += 160*y = one 320px line
+$eae0  lea.l (a0,d0.w),a1             ; a1 = a0 + row_base + 160*y
+$eae4  swap d0                        ; low word becomes the glyph's BIT offset
+$eae6  movem.l $ec10(pc,d0.w),d0-d1   ; two mask longs from a table indexed by that offset
+       and/or into movep.l (a1) / movep.l d2,(a1)
+```
+
+So: **`a0` = the screen/buffer base, `d0` = the character, `d1` = y in pixels, `d2` = the
+colour**, and the glyph's horizontal position and mask come from the per-character entry.
+
+The character table is at **runtime `$eb42`** (text `$ec52`), 4 bytes per character from
+`$14` upward, laid out as `(bit_offset << 16) | row_base`:
+
+| char | bit offset | row base | column |
+|---|---:|---:|---:|
+| `' '` | `$0020` | `$0001` | 4 |
+| `'!'` | `$0028` | `$0001` | 5 |
+| `'0'` | `$0020` | `$0009` | 4 |
+| `'A'` | `$0028` | `$0011` | 5 |
+| `'B'` | `$0030` | `$0011` | 6 |
+| `'a'` | `$0028` | `$0021` | 5 |
+
+The bit offset is always a multiple of 8 (0..`$38`), i.e. **8 pixels per glyph**, and the row
+base groups the characters (`$01` punctuation/space, `$09` digits, `$11` capitals, `$21`
+lowercase) — an 8-pixel-wide character sheet.
+
+**`$11e4e`** is the small wrapper the map view uses for single characters:
+
+```
+$11e4e  movem.l d0-d7/a0-a6,-(a7)
+$11e52  move.l d0,d3                 ; the cell
+$11e54  lea.l $46d97.l,a2            ; a dirty/drawn mask table, one byte per cell
+$11e5a  bset.b #$7,(a2,d3.w)
+$11e60  movea.l $2ed98.l,a0          ; the current buffer
+$11e66  move.w d3,d0 / andi.w #$3f   ; x = cell & $3f
+$11e6e  lsr.w #$6,d1 / addi.w #$7    ; y = (cell >> 6) + 7
+$11e74  move.w #$5,d2                ; colour 5
+$11e78  jsr $eace.l
+```
+
+**This is not yet a tooltip.** It writes one glyph at an absolute position with a fixed
+colour; a tooltip needs a string walker, a background/clear, and a choice of where the text
+lives (the 1990 patch used the black bar under the picture). The next steps are:
+
+1. find the string walker (whoever loops over a NUL-terminated string calling `$eace` or
+   `$11e4e`) — the six call sites are the place to look;
+2. decide the surface: the 1990 `pm_tooltip` wrote a 52-character line into the black HUD bar,
+   which at the WW1 map view is the strip the "GAME SPEED / FILE / GAME" panel opens into;
+3. the hover detection already exists in the port's notes (`tools/pwwgrid.py` has all 20
+   command-cell centres), so only the drawing is missing.
