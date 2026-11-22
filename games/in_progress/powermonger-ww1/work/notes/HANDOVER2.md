@@ -382,3 +382,26 @@ full run, and tries `Escape` to come back before giving up.
 Note for future long runs: `to_map()` clicks the island to get in, and one of those clicks
 occasionally lands as a game action later. That is why the run ended on a battle at ~2386
 rather than because of the tick.
+
+## Field report (user, real hardware)
+
+**Mega STE: PASS.** The fixed build "behaves itself" on the user's Mega STE. This is the first
+real-hardware confirmation of the tick, the protection removal and the box removal together.
+
+**TT: stutter and audio problems — banked, not investigated.** Recorded here so it is not
+lost and not confused with the tick port:
+
+- The 1990 project's `regression.md` has TT rows (3.06, 32 MHz, 60 Hz) working, so the engine
+  can run there; WW1's TT behaviour is a separate matter.
+- Candidates to check when this is picked up (none verified):
+  * the YM sample player (`$1bc92` timer-C, `movep` to `$ff8800`) — the 1990 `fal_ym` trap is
+    about the *Falcon*, whose YM is accessed differently; the TT's YM is ST-compatible, so
+    this is more likely a **timing** problem than an access problem.
+  * the tick itself is machine-independent by design (it counts VBLs and reads `$ff820a`), so
+    stutter on a 32 MHz TT points at something that *should* have got faster and did not —
+    e.g. a busy-wait that assumes 8 MHz (the render's VBL wait at `$e04`), or the DMA/window
+    copy path.
+  * audio: on a TT the sound path is the plain ST YM; if the sequencer's timer-C rate was
+    tuned to 8 MHz CPU timing, a 32 MHz CPU changes how often the player is re-entered.
+- Start from `tools/soak.py --build ... ` at 32 MHz plus `rate_check.py`, and compare the
+  world rate (it should still be 4.00) against the frame rate and the audio call frequency.

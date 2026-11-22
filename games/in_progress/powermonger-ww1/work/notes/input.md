@@ -250,3 +250,25 @@ postures (the table's comments name them). Every other scancode is untouched.
       1990 `pm_tooltip` wrote a 52-character line in the game's font into the black bar).
 - [ ] The Falcon `movep` trap for the sound (`$1bc92` writes `$ff8800/02/04/06`): the 1990
       `fal_ym` pattern applies if the sound is touched.
+
+### 5.5 The phantom click at the start of play — fixed in the port [obs, disasm]
+
+The 1990 project's hardest keys bug (`../../done/powermonger work/notes/phantom_click.md`)
+applies here too, and the prototype had it. The interrupt hook records a make code from the
+moment the game's keyboard handler exists — which is **before the name prompt**. The letters of
+the player's name therefore sat in the pending slot and were replayed as icon clicks, one per
+pass, on the first passes of the map. A name containing `R` (Derank) disbanded the starting
+formation; `H` (Go Home) issued an order.
+
+The 1990 fix, adopted here:
+
+* the **pass hook stamps `LASTV`** ($72806, a long) with the VBL counter `$71b7c` every pass;
+* the **interrupt drops** any press whose VBL count is more than `WIN` = 150 (3 s at 50 Hz)
+  past that stamp.
+
+So a key only counts while the map loop is actually running. `LASTV` is zero at boot, making
+the first difference huge, so every press before the first pass is dropped — including the
+name.
+
+The gate uses a name with no command letter in it (`BENCH`), so the test measures the keys and
+not the phantom.

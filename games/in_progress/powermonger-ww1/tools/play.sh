@@ -7,7 +7,8 @@
 #   tools/play.sh --ram 2048         # RAM in KiB (default 1024; 4096 on tt/falcon)
 #   tools/play.sh --cpu 16           # run at N MHz (8 stock): boots at 8 and is raised at VBL 200
 #   tools/play.sh --tos FILE         # another TOS image
-#   tools/play.sh --only tick        # exactly these patches (tools/wwbuild.py list shows them);
+#   tools/play.sh --only tick noprot # exactly these patches (tools/wwbuild.py list shows them);
+#                                    #   sets: tick, noprot, keys
 #                                    #   --only with nothing after it plays the unpatched set
 #   tools/play.sh --print            # only print the Hatari command line (no build)
 #   tools/play.sh --fresh            # discard build/play/ and rebuild from scratch
@@ -20,8 +21,11 @@
 # Screen is mouse-driven.  F12 opens Hatari's menu, AltGr+M toggles mouse grab.
 #
 # The patched build's world runs at 4.00 ticks/s on every machine (the unpatched one follows
-# the frame rate: 3.60 at 8 MHz, 7.62 at 16 MHz).  Saves go to the game's own save-disk code,
-# which needs a disk in A: - not wired up here yet.
+# the frame rate: 3.60 at 8 MHz, 7.62 at 16 MHz).  The keyboard shortcuts are the map view's
+# command icons: A attack, D drop food, E equip, F get food, G send captain, H go home,
+# I invent, L alliance, M get men, N drop items, O option, Q query, R derank, S supply food,
+# T trade, X transfer men, Y spy; 1/2/3 the postures.  Saves go to the game's own save-disk
+# code, which needs a disk in A: - not wired up here yet.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/.." && pwd -P)"
@@ -93,9 +97,9 @@ CMD=("${HATARI:-hatari}" "${OPTS[@]}" --harddrive "$DIR" --auto "C:\\WW1.PRG" "$
 
 if [[ $PRINT == 1 ]]; then printf '%q ' "${CMD[@]}"; echo; exit 0; fi
 
-# default patch set: the tick only, for now
+# default patch set: the tick, the protection removal and the keyboard shortcuts
 if [[ $VARIANT == patched && $ONLY_SET == 0 ]]; then
-    ONLY=(tick noprot)
+    ONLY=(tick noprot keys)
 fi
 
 rm -rf "$DIR"; mkdir -p "$DIR"

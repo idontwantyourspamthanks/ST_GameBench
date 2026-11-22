@@ -21,6 +21,12 @@
 ;
 ; BUILD: vasmm68k_mot -Fbin -o keys.bin keys.s   (org $72400, above the tick prototype)
 
+; Only a key pressed while the map loop is RUNNING is a shortcut. Without this, the letters
+; of the player's name (typed at the name prompt, long before the map) sit in the pending
+; slot and are replayed as icon clicks on the first passes of the map — the 1990 project's
+; `phantom_click.md` bug, where a name containing R (Derank) disbanded the starting army.
+; The 1990 fix: the pass hook stamps LASTV with the VBL counter every pass, and the
+; interrupt drops a press that comes more than WIN VBL past that stamp.
 	org	$72400
 
 ; ---- IKBD key path: remember a command key ----------------------------------------
@@ -28,6 +34,11 @@ KEYHOOK	move.l	d1,-(a7)
 	tst.b	d0			; bit 7 set = a key release: ignore
 	bmi.s	.store
 	andi.w	#$ff,d0
+; the map loop must have run recently (see the note above)
+	move.l	$71b7c.l,d1		; the VBL counter
+	sub.l	LASTV.l,d1
+	cmp.l	#WIN,d1
+	bhi.s	.store			; the loop is not running: not a shortcut
 	lea	KEYTAB(pc),a0
 .loop	move.b	(a0)+,d1		; the scancode
 	beq.s	.store			; end of table
@@ -47,6 +58,7 @@ KEYHOOK	move.l	d1,-(a7)
 CELLHOOK	move.l	d0,-(a7)
 	move.l	d1,-(a7)
 	move.l	a0,-(a7)
+	move.l	$71b7c.l,LASTV		; stamp the loop's liveness (see KEYHOOK)
 	tst.w	RELEASE		; a synthetic click from the last pass: release it
 	beq.s	.click
 	clr.w	RELEASE
@@ -120,3 +132,5 @@ KEYTAB	dc.b	$1e,0
 PENDX	equ	$72800
 PENDY	equ	$72802
 RELEASE	equ	$72804
+LASTV	equ	$72806			; the VBL count of the last map pass (the liveness stamp)
+WIN	equ	150			; a press more than this many VBLs after it is not a shortcut

@@ -89,9 +89,23 @@ NOPROT_BOX_SITES = [
 	(0xBCE2, bytes.fromhex("43f90000bbe8"), bytes.fromhex("4e754e714e71"), "protection box"),
 ]
 
+# Keyboard shortcuts (work/notes/input.md section 5.3; prototype work/keyproto/keys.s).
+# A letter key does what a click on its command icon does: the IKBD key path records the
+# scancode, and just before the map view's own click dispatch the hook writes the same words
+# a real click writes (the cell centre + the left latch + the pass stamp). Keys:
+# A D E F G H I L M N O Q R S T X Y for the commands, 1/2/3 for the postures.
+#
+#   runtime $f30  `move.b d0,$1d2b0`  -> jsr $72400   (the IKBD key path store)
+#   runtime $13e6a `jsr $d62a`        -> jsr $72480   (just before the input section)
+KEY_SITES = [
+	(0x1040, bytes.fromhex("13c00001d2b0"), bytes.fromhex("4eb900072400"), "key capture"),
+	(0x13F7A, bytes.fromhex("4eb90000d62a"), bytes.fromhex("4eb900072480"), "key dispatch"),
+]
+
 PATCHES = {
 	"tick": TICK_SITES,
 	"noprot": NOPROT_SITES + NOPROT_BOX_SITES,
+	"keys": KEY_SITES,
 }
 
 
@@ -168,7 +182,7 @@ def prg_parts(path: Path = PRG):
 	return dict(header=data[:28], text=data[28:28 + text], text_len=text, bss=bss, sym=sym)
 
 
-def plain_prg(packed_text: bytes, sites: list[tuple], with_tick: bool = True) -> bytes:
+def plain_prg(packed_text: bytes, sites: list[tuple], only: list[str]) -> bytes:
 	"""Depack `packed_text`, patch `sites` (text offsets), return a GEMDOS PRG.
 
 	The depacked blob is itself a PRG: 28-byte header, text, then a reloc table and
@@ -198,25 +212,52 @@ def plain_prg(packed_text: bytes, sites: list[tuple], with_tick: bool = True) ->
 		body[off:off + len(orig)] = new
 	if body[:6] != bytes.fromhex("4ef900024054"):
 		raise SystemExit(f"entry is {body[:6].hex()}, expected jmp ${ENTRY_JMP:x}")
-	if not sites or not with_tick:
-		# No tick: no stub, no data (a build with only in-text patches stays a plain PRG).
+	if not sites or not any(name in only for name in PAYLOADS):
+		# No payload patch: no stub, no data (a build with only in-text patches stays a
+		# plain PRG).
 		header = bytearray(28)
 		struct.pack_into(">HIIII", header, 0, 0x601A, len(body), 0, bss, 0)
 		return bytes(header) + bytes(body) + reloc
-	payload = bytearray(TICK_BIN.read_bytes())
-	if payload[:8] != bytes.fromhex("2f082f002f0152b9"):
-		raise SystemExit("tick.bin does not start with the payload signature")
-	if len(payload) < VARS_END:
-		payload.extend(b"\0" * (VARS_END - len(payload)))
+	payload = _payload_image(only)
 	stub = _copy_stub(len(payload))
 	struct.pack_into(">I", body, 2, len(body))   # existing reloc: entry jumps to the data segment
-	data = stub + bytes(payload)
+	data = stub + payload
 	reloc = _append_reloc(reloc, len(body) + STUB_JMP_AT)
 	header = bytearray(28)
 	struct.pack_into(">HIIII", header, 0, 0x601A, len(body), len(data), bss, 0)
 	prg = bytes(header) + bytes(body) + data + reloc
 	_audit(prg, len(body), data)
 	return prg
+
+
+# The payload blobs, each assembled to its own fixed runtime address. One copy stub carries
+# the whole span from the lowest to the highest: the bytes below a blob's start are simply
+# never executed, so a sparse image is cheaper than a stub per blob.
+PAYLOADS = {
+	"tick": (0x72000, GAME / "work" / "tickproto" / "tick.bin",
+	         bytes.fromhex("2f082f002f0152b9")),      # `move.l a0,-(a7)` ...
+	"keys": (0x72400, GAME / "work" / "keyproto" / "keys.bin",
+	         bytes.fromhex("2f01")),                   # KEYHOOK: `move.l d1,-(a7)`
+}
+BASE = 0x72000
+END = 0x72810          # past keys' variables at $72800..$72809 (LASTV ends $7280A)
+
+
+def _payload_image(only: list[str]) -> bytes:
+	"""The sparse image from $72000 to END holding every requested blob at its address."""
+	need = [name for name in ("tick", "keys") if name in only]
+	if not need:
+		raise SystemExit("no payload-bearing patch was requested")
+	image = bytearray(END - BASE)
+	for name in need:
+		addr, path, sig = PAYLOADS[name]
+		if not path.exists():
+			raise SystemExit(f"{path} is missing; assemble it from its .s first")
+		blob = path.read_bytes()
+		if not blob.startswith(sig):
+			raise SystemExit(f"{path} does not start with its signature {sig.hex(' ')}")
+		image[addr - BASE:addr - BASE + len(blob)] = blob
+	return bytes(image)
 
 
 def _audit(prg: bytes, text_len: int, data: bytes) -> None:
@@ -249,7 +290,7 @@ def _audit(prg: bytes, text_len: int, data: bytes) -> None:
 def build(only: list[str], out: Path) -> Path:
 	parts = prg_parts()
 	sites = [s for name in only for s in PATCHES[name]]
-	prg = plain_prg(parts["text"], sites, with_tick="tick" in only)
+	prg = plain_prg(parts["text"], sites, only)
 	out.mkdir(parents=True, exist_ok=True)
 	dest = out / "WW1.PRG"
 	dest.write_bytes(prg)
