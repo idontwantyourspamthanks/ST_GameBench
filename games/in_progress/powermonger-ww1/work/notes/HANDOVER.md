@@ -1,85 +1,71 @@
-# HANDOVER: Powermonger WW1 — state, and the one thing blocking a release
+# HANDOVER: Powermonger WW1 — depacker is done, next is play.sh
 
-Written at the end of the session that chose the base and hit the depacker wall. Read this
-first, then `cobra26.md`, `carrier.md`, `tickgate.md`, `tickproto.md`, `frameloop.md`,
-`input.md`, `baseline.md`.
+Read this first, then `cobra26.md`, `carrier.md`, `tickgate.md`, `tickproto.md`,
+`frameloop.md`, `input.md`, `baseline.md`.
 
 ## TL;DR
 
-- **Base is decided: Cobra #26** (`games/in_progress/powermonger-ww1/disks/cobra26.st`,
-  extracted to `extracted/cobra26/`). It runs `WW1.PRG` standalone from a folder — no floppy,
-  no chunk archive, no single-part crack.
-- **The tick patch already works on it, unmodified**: `work/tickproto/tick.bin` gives
-  **4.02 ticks/s at 8 MHz and 4.02 at 16 MHz** (unpatched 3.60 / 7.62). The game is address-
-  identical to the Pompey build, so nothing needed porting.
-- **Nothing shippable yet**, because there is no way to get the patch into `WW1.PRG` without
-  first depacking it. **That single blocker is `tools/atomik.py`** (the ATOMIK depacker).
-- Everything else — patch sites, original bytes, tool, harness, snapshots, the play.sh
-  interface — is in place. See "What is already done" below.
+- **Base is Cobra #26** (`extracted/cobra26/`). `WW1.PRG` runs standalone from a folder.
+- **`tools/atomik.py` is exact.** `python3 tools/atomik.py` prints **100.00%** (152182/152182)
+  against the live capture. The routine is the stub at text `$0c4..$23a`, transcribed with
+  the real `addx` refill. Do not reopen it.
+- **`tools/wwbuild.py build` writes a patched plain PRG.** It depacks, checks the 7 tick
+  sites, and emits the nested program's text plus its reloc table. The sites are text
+  offsets, which sit **`$110` above** the map-view runtime addresses (`$13DA0` → text
+  `$13EB0`). The previous table used the runtime addresses as file offsets; that was wrong.
+- **Not done:** `tools/play.sh`, and the live gates (cold boot to the map with `PMPO`, 4.00
+  ticks/s at 8 and 16 MHz, `pmtick_series.py`, 50/60 Hz, pause, save/load).
 
-## Your first hour: make the depacker exact
+## What the depacker actually produces
 
-Goal: `python3 tools/atomik.py` prints **`100.00%`**. It compares against a captured
-ground-truth image, so it needs no emulator and each attempt takes ~10 s.
+`depack()` returns 153665 bytes. They are a nested GEMDOS PRG, not a raw memory image:
+
+| | |
+|---|---|
+| header | 28 bytes, `601a`, text 152986, data 0, bss 0 |
+| text | starts `jmp $24054` then the string `ww1_fuzi.lfb` |
+| game entry | text `$e8` / image `$104`: `43 f9 00 00 d8 c2` (`lea $d8c2,a1`) |
+| reloc table | 651 bytes at the end, 57 entries, terminated by a 0 byte |
+
+`work/dumps/c26_image_full.bin` (160000 bytes) is a live dump that **starts at the game
+entry**, not at the PRG header, taken after the stub added its load address to those relocs.
+The delta in that dump is `$12576`. Comparing the raw buffer against byte 0 of the file will
+not read 100%; `tools/atomik.py` does the alignment and the reloc fixup itself. The match
+covers every non-zero text byte. Past that the dump leaves the depack buffer (the file keeps
+going through zero padding the depacker never wrote).
+
+Two details that the earlier notes had wrong, so they are not worth re-deriving:
+
+- The byte `d3` read before the span is the short-length limit, not part of the span. A short
+  code (a 1-bit within `d3+1` bits) is just the leading-zero count and branches to `$114`,
+  **skipping** `add.w d3,d5`. Only the long form adds `d3`.
+- `getbits` (`$152`) really does `add.b d7,d7` / `addx`. When the shift clears `d7`, the bit
+  that emptied it is parked in the next byte's low bit and the bit returned is the new byte's
+  high bit. A naive MSB reader will not match.
+
+## Next: play.sh and the live gates (mechanical)
+
+The interface is already specified in `carrier.md`:
 
 ```
-cd games/in_progress/powermonger-ww1
-python3 tools/atomik.py
-#   unpacked 153665 bytes
-#   vs the live capture: N/153665 identical (x.xx%)
+tools/play.sh                    # patched (default: tick), STE, 1 MB, TOS 1.62
+tools/play.sh --original         # the unpatched Cobra WW1.PRG
+tools/play.sh --machine megaste  # st|megast|ste|megaste|tt|falcon
+tools/play.sh --ram 2048
+tools/play.sh --cpu 16
+tools/play.sh --tos FILE
+tools/play.sh --only tick        # or no patches: --only (empty)
+tools/play.sh --print
+tools/play.sh ... -- OPTS
 ```
 
-**Reference image**: `work/dumps/c26_image_full.bin` — 153,665 bytes captured live at the
-ATOMIK hand-over (`$12896`). It starts `43 f9 00 00 d8 c2` (`lea $d8c2,a1`) and contains
-`d:\samples\ste.tos`, the keyboard tables, etc. **This is the acceptance oracle.**
+It should `wwbuild.py build --out build/play/`, copy `WW1_FUZI.LFB` beside that PRG, and boot
+the folder as drive C with `--fast-boot yes`.
 
-**Source**: `extracted/cobra26/WW1.PRG`, text = bytes `[28:28+61622]`. Header at text `$274`:
-unpacked `153665` (`$25841`), packed `60985` (`$ee39`), stream runs to the end of the text.
-
-**Already established about the format** (full listing in `carrier.md`): adaptive,
-block-based LZ; bits MSB-first from bytes taken **backwards** from the stream end; per block a
-length table (`$1d8`), a 16-byte model (`$204`) and a span (`$222`), then a loop of literals
-(`bit 0` -> byte from the stream) and matches (`bit 1` -> `d5 = getbits(3)`, copy from
-`a5+d5+1` backwards). A parameter search over bit order / class bits / distance width / table
-offset / length addend reached **40,434/153,665**, so the skeleton is right and one
-block-metadata detail is wrong.
-
-**The three things worth checking first** (in order):
-
-1. **`$152`'s Z flag.** `getbits` loops `d6+1` times, `d7 <<= 1`, `addx.w d5,d5`, refilling
-   from `-(a6)`, and the callers branch on **Z** (`6720`, `6712`), not on the value. The
-   `addx`/refill interplay may make the first bit read inverted relative to the naive reading.
-2. **The span at `$222`.** Three bytes are read: `d3 = byte`, then `d0 = (byte<<8) | byte`;
-   the loop uses `a3 = a5 - d0`, but `d3` is read and unused in my transcription — the block may
-   actually be `d3`-driven.
-3. **The model at `$204`.** `lea -$10(a2),a1` then `move.b -(a6),(a1)+` 16 times: a **forward**
-   store from a **backward** read, so the table is reversed relative to stream order.
-
-**The fastest way to settle it, if the loop stalls**: single-step the real routine on a tiny
-block. Set a breakpoint at `$1265E + $1d8` (= `$12836`) and step, logging `d3/d5/d7/a5/a6`
-around the `$222`/`$1c4` block. Four bytes of output is enough to pin the semantics by hand.
-That is how the 1990 project validated its `pm_depack` and it will not fight you like the
-listing does.
-
-Do not trust the parameter search's "best" figure as progress; it is a coincidence of matching
-literal runs. The oracle is the percentage at 100.00%.
-
-## Then: build and play (a few hours, all mechanical)
-
-Once the depacker is exact:
-
-1. `tools/wwbuild.py` already has everything it needs: `list` prints the 7 tick sites with
-   their verified `orig` bytes; `build` verifies each site against the depacked image and writes
-   a new **plain** PRG (no depacker, no reloc table problem). It currently refuses with a clear
-   message until the depacker is exact — keep that gate.
-2. Add `tools/play.sh` matching the other games' convention (interface already specified in
-   `carrier.md`): `--original`, `--machine`, `--ram`, `--cpu`, `--tos`, `--only A B`, `--print`,
-   `-- OPTS`. It must build via `wwbuild.py` into `build/play/` and boot that folder as drive C:
-   with `--fast-boot yes` (this base is a folder run, not a floppy).
-3. Gates before calling it done: cold boot to the map view with the marker (`PMPO`) set; world
-   rate 4.00 ticks/s at 8 and 16 MHz; the state-equality gate
-   (`tools/pmtick_series.py`, currently written for the Pompey addresses — it works unchanged
-   because the addresses are identical); 50 and 60 Hz; pause; a save/load round trip.
+Gates before calling it done: cold boot to the map view with the marker (`PMPO`) set; world
+rate 4.00 ticks/s at 8 and 16 MHz; the state-equality gate (`tools/pmtick_series.py` — the
+Pompey addresses, unchanged because the builds match); 50 and 60 Hz; pause; a save/load round
+trip.
 
 ## What is already done (do not redo)
 
@@ -94,8 +80,9 @@ Once the depacker is exact:
 | STUB LOAD BASE = `$1265E` | `carrier.md` | measured |
 | ATOMIK hand-over = `$12896` | `carrier.md` (disassembly `4e5a 2c1f 4e75`) | measured |
 | Ground-truth depacked image | `work/dumps/c26_image_full.bin` | captured |
-| Patch tool skeleton | `tools/wwbuild.py` | done, gated on the depacker |
-| **ATOMIK depacker** | `tools/atomik.py` | **NOT EXACT — the blocker** |
+| Patch tool | `tools/wwbuild.py` | builds the plain PRG |
+| **ATOMIK depacker** | `tools/atomik.py` | **exact, 100.00% vs the capture** |
+| Plain patched PRG | `tools/wwbuild.py build` | builds; tick sites at text offset = runtime+$110 |
 | Command-icon grid (all 20 cells) | `tools/pwwgrid.py` | done, oracle-verified |
 | Keyboard-shortcut prototype | `work/keyproto/keys.s` | works live (key -> the game's own click) |
 | Profile + baselines | `work/notes/{baseline,frameloop}.md` | done |
@@ -132,10 +119,8 @@ Once the depacker is exact:
 - The `hatari-stop`/`hatari-cont` remote commands are **not** available via `hatari-debug` in
   this build.
 
-## Suggested division for a stronger model / parallel wave
+## Suggested split from here
 
-The depacker is a tight, self-contained problem — give it to the strongest model alone with
-the oracle, no emulator contention. In parallel, a second agent can do the **tooltip font
-hunt** (pure static disassembly over `work/dumps/c26_image_full.bin`, no emulator) and a third
-can prepare the **play.sh + packaging** skeleton against `wwbuild.py` with the tick patch
-disabled. That way a working `play.sh --only tick` is one depacker fix away.
+`play.sh` plus the live gates is one job and needs the emulator. The tooltip font hunt is
+still pure static disassembly over the depacked image (the capture starts at image `$104`,
+so add that before using a capture offset as an image offset) and does not need Hatari.

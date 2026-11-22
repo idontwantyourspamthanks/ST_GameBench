@@ -34,7 +34,8 @@ So a carrier needs either (a) a working ATOMIK depacker at build time (depack ->
 write a new plain PRG), or (b) a runtime hook. (b) needs a place for the hook code, which
 needs either a data segment (impossible, above) or the 6-byte entry (too small).
 
-**Therefore (a) is the only route, and it needs `tools/atomik.py` to be exact.**
+**Therefore (a) is the only route. `tools/atomik.py` now is exact, and `wwbuild.py build`
+writes the plain PRG.**
 
 ## The ATOMIK format, as established
 
@@ -77,19 +78,18 @@ and one of the block-metadata steps is wrong. A straight transcription of the ab
    bytes — a forward store from a backward read, so the table is *reversed* relative to the
    stream order.
 
-## The fastest way to finish it
+## Settled
 
-The reference image is already captured, so the loop is: fix one of the three items, run
-`python3 tools/atomik.py`, read the percentage. A perfect run prints 100.00%. That is a
-30-second loop per variant and needs no emulator.
+The three guesses below are resolved. The working transcription is `tools/atomik.py`; the
+corrections (short lengths skip `add.w d3,d5`, and the bit refill is the `addx` form) are in
+`HANDOVER.md`. `python3 tools/atomik.py` prints 100.00%. Do not go back to the parameter search.
 
 ## Tooling that is already in place
 
-- `tools/wwbuild.py` — `list` shows every patch site (7 for the tick) with its original and
-  replacement bytes; `build` refuses unless the depacker is verified (`--allow-unverified`
-  writes the unverified rebuild and says so). It parses the PRG, checks the no-reloc-table
-  shape, verifies each site's original bytes, and writes a plain rebuilt PRG.
-- `tools/atomik.py` — the depacker under construction.
+- `tools/wwbuild.py` — `list` shows the 7 tick sites; `build` depacks, checks each original
+  byte sequence, and writes a plain PRG (nested text + its reloc table). Site offsets are
+  into that text, `$110` above the map-view runtime address.
+- `tools/atomik.py` — exact. `python3 tools/atomik.py` prints 100.00%.
 - `tools/pmww.py` — the harness, with `files_from=` for the Cobra folder.
 
 ## The play.sh that will ship (follows the convention of the other games)

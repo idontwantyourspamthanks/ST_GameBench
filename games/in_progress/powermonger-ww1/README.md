@@ -4,9 +4,9 @@ Status: **in progress** (started 2026-11-21). Porting the original Powermonger e
 (`../../done/powermonger/`) to the WW1 edition: the fixed-rate world tick, the tooltips, the
 keyboard shortcuts, and the performance work where the engine still matches.
 
-> **Resuming? Read [`work/notes/HANDOVER.md`](work/notes/HANDOVER.md) first.** It states the
-> chosen base, what is proven, the single blocker (the ATOMIK depacker) and the acceptance
-> oracle for it.
+> **Resuming? Read [`work/notes/HANDOVER.md`](work/notes/HANDOVER.md) first.** The ATOMIK
+> depacker is exact and `tools/wwbuild.py build` writes the patched PRG. What remains is
+> `play.sh` and the live gates.
 
 **Base: Cobra #26** (`disks/cobra26.st`, extracted to `extracted/cobra26/`) — the game as
 plain files (`WW1.PRG` + `WW1_FUZI.LFB`), runs standalone from a folder. It is the **same
@@ -21,13 +21,10 @@ the user's real-STE ~2 fps report). **The tick patch is complete and passes the 
 gate: 12 consecutive ticks byte-identical, pass counters in lockstep** (`work/notes/tickgate.md`,
 `tools/pmtick_series.py`).
 
-**Blocker:** `WW1.PRG` has no relocation table (28 + 61622 == the file length), so nothing can
-be appended, and its text is ATOMIK-packed, so the sites cannot be patched in the file. The only
-route is depack -> patch -> write a new plain PRG, which needs `tools/atomik.py` to be exact.
-It is not yet (skeleton right, one block-metadata detail wrong); the ground-truth depacked image
-is captured at `work/dumps/c26_image_full.bin` and the iterate loop is `python3 tools/atomik.py`
-(prints the % match, ~10 s, no emulator). `tools/wwbuild.py` holds the verified site table and
-refuses to build until the depacker is exact.
+**Depacker:** `tools/atomik.py` is exact (`python3 tools/atomik.py` → 100.00% against the live
+capture). `tools/wwbuild.py build` depacks, patches the seven tick sites, and writes a plain
+PRG that keeps the nested program's relocation table. `play.sh` and the live gates are not
+done yet; see the handover.
 
 
 
