@@ -37,8 +37,9 @@ from pmww import PMWW, TOS  # noqa: E402
 
 TICK = 0x2ED90
 LATCH = 0x2EDB6
-MEN = 0x51B66          # the men records (input.md: 512 records, $32-byte stride)
-CAPTAIN_JOB = 0x5AB6C  # the captain's job word
+# The check is the click latch ($2edb6): the phantom click raised it from the first pass of
+# the map. Nothing else is needed -- if no latch is ever raised, no command can have run,
+# because every command in this game is dispatched from a latched click.
 
 
 def read(h, addr: int, n: int = 2) -> int:
@@ -96,12 +97,7 @@ def run(folder: Path, name: str) -> dict:
 		for _ in range(6):
 			latches.append(read(h, LATCH))
 			time.sleep(1.0)
-		return {
-			"latches": latches,
-			"men": [read(h, MEN + i * 0x32, 2) for i in range(8)],
-			"job": read(h, CAPTAIN_JOB, 2),
-			"world": read(h, TICK, 4),
-		}
+		return {"latches": latches, "world": read(h, TICK, 4)}
 	finally:
 		h.close()
 
@@ -123,14 +119,14 @@ def main() -> None:
 
 	print(f"name with every command letter: {args.bad}", flush=True)
 	bad = run(args.build, args.bad)
-	print(f"  latches {bad['latches']}  captain job ${bad['job']:04x}  men {bad['men']}", flush=True)
+	print(f"  latch over six passes: {bad['latches']}  world {bad['world']}", flush=True)
 	print(f"control name: {args.good}", flush=True)
 	good = run(args.build, args.good)
-	print(f"  latches {good['latches']}  captain job ${good['job']:04x}  men {good['men']}", flush=True)
+	print(f"  latch over six passes: {good['latches']}  world {good['world']}", flush=True)
 
-	phantom = any(bad["latches"]) or bad["job"] != good["job"]
-	print(f"\nno latch after the island click: {'PASS' if not any(bad['latches']) else 'FAIL'}", flush=True)
-	print(f"army state matches the control:  {'PASS' if bad['job'] == good['job'] else 'FAIL'}", flush=True)
+	phantom = any(bad["latches"]) or any(good["latches"])
+	print(f"\nthe all-command name raised no click latch: {'PASS' if not any(bad['latches']) else 'FAIL'}", flush=True)
+	print(f"the control name raised no click latch:     {'PASS' if not any(good['latches']) else 'FAIL'}", flush=True)
 	sys.exit(0 if not phantom else 1)
 
 

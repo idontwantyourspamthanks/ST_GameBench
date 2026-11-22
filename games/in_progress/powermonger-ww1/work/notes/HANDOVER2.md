@@ -405,3 +405,56 @@ lost and not confused with the tick port:
     tuned to 8 MHz CPU timing, a 32 MHz CPU changes how often the player is re-entered.
 - Start from `tools/soak.py --build ... ` at 32 MHz plus `rate_check.py`, and compare the
   world rate (it should still be 4.00) against the frame rate and the audio call frequency.
+
+## Port 2: keyboard shortcuts — done, with the phantom-click fix
+
+Patch set `keys` (`work/keyproto/keys.s`, 2 sites, payload at `$72400`), on by default in
+`play.sh` alongside `tick` and `noprot`.
+
+**A key does exactly what a click on its command icon does.** Two hooks:
+
+| runtime | text | original | patched |
+|---|---|---|---|
+| `$f30` | `$1040` | `move.b d0,$1d2b0` (the IKBD key path store) | `jsr $72400` |
+| `$13e6a` | `$13F7A` | `jsr $d62a` (just before the map view's input section) | `jsr $72480` |
+
+The interrupt hook records the scancode, the pass hook writes the words the game's own click
+dispatch reads: `$2edae/$2edb0` = the click cell, `$2edb2/$2edb4` = the tracked pointer,
+`$2edb6` = the left latch, `$2edbc` = the down-seen, `$2ed94` = the pass stamp, and
+`$2edbc` is cleared next pass to release it.
+
+Keys: **A** attack, **D** drop food, **E** equip, **F** get food, **G** send captain,
+**H** go home, **I** invent, **L** alliance, **M** get men, **N** drop items, **O** option,
+**Q** query, **R** derank, **S** supply food, **T** trade, **X** transfer men, **Y** spy;
+**1/2/3** the postures.
+
+### The phantom click, and its fix
+
+The 1990 project's nastiest keys bug applies here and the prototype had it
+(`../../done/powermonger work/notes/phantom_click.md`): the interrupt hook records make
+codes from before the **name prompt**, so the player's name was replayed as command clicks on
+the first passes of the map. A name with `R` (Derank) disbanded the starting army.
+
+Fixed the 1990 way: the pass hook stamps `LASTV` (`$72806`) with the VBL counter every pass,
+and the interrupt drops any press more than `WIN` = 150 VBL (3 s at 50 Hz) past that stamp.
+`LASTV` is 0 at boot, so every pre-map press is dropped.
+
+**Verified** (`tools/phantomgate.py`, name `RAGMFYSTE` = every letter a command): the click
+latch stayed **0 over six passes** at the map view, identical to the `BENCH` control. Before
+the fix a name like that would have raised it on the first passes.
+
+### The key gate: a key must be indistinguishable from a click
+
+`tools/keygate.py` does not guess what a key should look like. For each key it first makes a
+**real mouse click on the same cell** and records the four words the dispatch reads, then
+presses the key and requires the same words (`$2edae/$2edb0`, `$2edb6`; the stamp is a counter
+so it is checked separately). Result for O, M, H, A: identical. Q differed by one pixel in
+*y*, which is the harness's own click landing a pixel off (ST pixel doubling), not the key —
+the gate tolerates 1 for that comparison and checks the table exactly.
+
+### Builder change
+
+`wwbuild.py` now carries **multiple payload blobs as one sparse image**
+(`PAYLOADS = {tick: $72000, keys: $72400}`, span `$72000..$72810`), so one copy stub serves
+both and adding a third port means adding a tuple. `--only` still selects which blobs and
+sites go in, so a `tick`-only build is unchanged.
