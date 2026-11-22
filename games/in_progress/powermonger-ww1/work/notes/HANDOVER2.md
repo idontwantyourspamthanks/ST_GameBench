@@ -272,3 +272,86 @@ run is that a paused game shows 0.00 ticks/s and resumes at 4.00 without a burst
 | 60 Hz (Mega STE) | **blocked by the stock game**, not the patch |
 | pause | to test |
 | pixel-identical frames vs unpatched | to test (needs a frame gate on the patched build) |
+
+## The crash the user reported: a 4-byte stack leak in the tick head
+
+The user reported that "after a while" the game throws an address error, with Hatari's log:
+
+```
+WARN : Address Error writing at address $1bebc25f, PC=$e09598 addr_e3=e09598 op_e3=48ee
+WARN : Address Error reading at address $1bebc1f7, PC=$84 addr_e3=84 op_e3=4e41
+```
+
+**Reproduced exactly** (`tools/soak.py`, STE 1.62, at the world ~371 every time). It is **our
+bug, not the release's**: the same soak on the `noprot`-only reference build ran **20 minutes
+and 6196 world ticks with no error at all**, and the reference is the same game with the same
+protection removed, minus the tick payload.
+
+### Root cause
+
+The tick head is entered with `jsr $72000` (the site at `$13da0` replaces
+`tst.w $5a856`), but both of its exits leave with `jmp` (to `$13da8` or `$13dcc`) because the
+head is a *pass-through*, not a subroutine. Nothing popped the return address `jsr` had
+pushed, so **every pass leaked 4 bytes of stack**.
+
+Measured live (A7 sampled at the map view):
+
+| build | world 12 | world 57 | world 101 | world 145 | world 189 | world 234 |
+|---|---|---|---|---|---|---|
+| stock | $2d740 | $2d740 | $2d724 | $2d6f2 | $2d730 | $2d740 |
+| leaking | $2d704 | $2d68c | $2d5e0 | $2d518 | $2d440 | $2d388 |
+
+Stock **oscillates** around `$2d740`; the leaking build marched down at **−4.02 bytes per
+tick** (4 bytes per pass; there is more than one pass per tick), i.e. −16 bytes/s.
+
+### Why it crashed where it did
+
+The stack grows down from `$2d740`, and the first thing below the stack is the map view's
+**scroll-phase word `$2cfde`** (only `$862` = 2146 bytes below, ≈ 535 ticks). The stack
+writes a return address over it, so the low word becomes whatever the pushed PC was — it read
+**3**. `$2cfde` indexes the 6-entry, `$a0`-byte scroll table at `$9da`:
+
+```
+$91c  move.w $2cfde.l,d0     ; the phase
+$924  adda.w d0,a3           ; a3 = $9da + phase
+$926  cmp.w  #$320,d0
+$954  move.w (a3)+,d0        ; phase 3 -> a3 = $9dd, an ODD address -> address error
+```
+
+That is the very first log line (`Address Error reading at address $9dd, PC=$956` — the PC is
+one instruction on). Everything after it (`$1bebc25f` from the VBL pointer blit, the TOS-ROM
+PCs) is fallout from the CPU's exception frame landing on a corrupted stack.
+
+### The fix
+
+Drop the return address on both exits — `addq.l #4,a7` **after** the register pops (the jsr
+return sits above them):
+
+```
+.logic  move.l (a7)+,d1 / move.l (a7)+,d0 / movea.l (a7)+,a0
+        addq.l #4,a7            ; drop the jsr return
+        jmp    $13da8.l
+.render move.l (a7)+,d1 / move.l (a7)+,d0 / movea.l (a7)+,a0
+        addq.l #4,a7
+        jmp    $13dcc.l
+```
+
+This is exactly the 1990 `tick_head`'s `movem.l (a7)+,d0-d2/a0` / **`addq.l #4,a7`** / `jmp
+$13058.l` — the instruction I dropped when transposing it.
+
+**Verified after the fix:** A7 oscillates around `$2d740` like stock ($2d740 → $2d73a →
+$2d734 → $2d768 → $2d74c → $2d74c → $2d740 → $2d76c) and the world still runs at 4.00 ticks/s.
+
+### Why the wrappers are not affected
+
+`WX`/`MEN`/`TER` are entered by `jsr $720e0` and leave by `jmp $1b90a` — but `$1b90a` ends in
+`rts`, so that `rts` consumes the return address the `jsr` pushed. Those are correct. Only the
+head jumps to a *mid-loop* address rather than a routine that returns.
+
+### The lesson for the gates
+
+`tools/release_gate.py` compared *state at the flip* and passed — the stack pointer is not
+part of the compared state, and the corruption had not reached any compared variable within
+the ticks it sampled. **A long-run soak is a separate gate**, and `tools/soak.py` is it
+(`--minutes N`, checks the payload's integrity, the world still advancing, the resource-cache
+cursor, and Hatari's error lines).

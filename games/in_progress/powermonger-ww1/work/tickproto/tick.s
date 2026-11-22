@@ -91,10 +91,12 @@ HEAD	equ	$72000
 .logic	move.l	(a7)+,d1
 	move.l	(a7)+,d0
 	movea.l	(a7)+,a0
+	addq.l	#4,a7			; drop the jsr return: the head leaves by jmp
 	jmp	$13da8.l		; the world counter + the logic calls
-.render	move.l	(a7)+,d1
-	move.l	(a7)+,d0
-	movea.l	(a7)+,a0
+.render	move.l	(a7)+,d1		; $13da0 was reached by `jsr $72000`, so the return
+	move.l	(a7)+,d0		; address is still on the stack and both exits leave by
+	movea.l	(a7)+,a0		; `jmp`. Without the addq the stack leaks 4 bytes a pass
+	addq.l	#4,a7			; and eventually runs into the game's data.
 	jmp	$13dcc.l		; the render setup (skips the logic)
 
 ; ---- wrappers at the three world/render call sites --------------------------------

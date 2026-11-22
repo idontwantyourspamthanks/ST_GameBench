@@ -78,6 +78,9 @@ reports/
 # Raw screen/RAM captures (contain game imagery)
 **/*.scr
 **/*.base
+
+# Long-run test logs (local output, reproducible with the tool named in the notes)
+**/work/*.log
 **/*.pi1
 **/*.neo
 # Pickled traces / raw dumps (may contain game RAM)

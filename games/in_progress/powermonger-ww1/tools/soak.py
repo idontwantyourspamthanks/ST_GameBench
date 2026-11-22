@@ -39,6 +39,8 @@ from pmww import PMWW, TOS  # noqa: E402
 TICK = 0x2ED90
 PAYLOAD = 0x72000
 VARS = 0x72180
+CACHE = 0x2CFDA        # the resource cache's bump cursor, starts at $80000, no upper bound
+PACKPAY = 0xC1D84      # the packer's own resident payload — the cache grows towards it
 PAYLOAD_SIG = bytes.fromhex("2f082f002f0152b9")     # tick.bin's first 8 bytes
 ERRORS = ("Address Error", "Bus Error", "Illegal Instruction", "double bus error",
           "CPU halted", "Halt dialog")
@@ -64,6 +66,17 @@ def read_long(h, addr: int) -> int:
 
 
 def to_map(h) -> None:
+	for attempt in range(3):
+		try:
+			_to_map(h)
+			return
+		except RuntimeError as e:
+			print(f"  navigation: {e} (retry {attempt + 1}/3)", flush=True)
+			time.sleep(3)
+	raise SystemExit("navigation failed three times")
+
+
+def _to_map(h) -> None:
 	time.sleep(6)
 	t = time.time()
 	while not h.at_gate("name"):
@@ -143,18 +156,29 @@ def main() -> None:
 			now = read_long(h, TICK)
 			vbl = h.vbl()
 			errs = errors_in_log(h)
+			cache = read_long(h, CACHE)
 			alive = now > last_tick
-			payload_ok = sig == PAYLOAD_SIG
+			payload_ok = (sig == PAYLOAD_SIG) if not args.stock else True
 			rate = (now - last_tick) / ((vbl - last_vbl) / 50.0) if vbl > last_vbl else -1
 			print(f"[{samples:3d}] t={(time.time() - start) / 60:5.1f}m "
 			      f"world={now:<6d} {'+' if alive else 'STUCK'} "
-			      f"{rate:5.2f} ticks/s  payload={'ok' if payload_ok else 'TRAMPLED ' + str(sig)}"
-			      f"  errors={len(errs)}", flush=True)
+			      f"{rate:5.2f} ticks/s  payload={'ok' if payload_ok else 'TRAMPLED ' + str(sig)} "
+			      f"cache=${cache:05x}  errors={len(errs)}", flush=True)
 			for e in errs[-3:]:
 				print(f"        {e}", flush=True)
+			if cache >= PAYLOAD:
+				print(f"  ---- the resource cache (${cache:05x}) has reached the payload area", flush=True)
 			if not payload_ok or not alive or errs:
 				print("  ---- stopping early", flush=True)
-				h.shot(str(GAME / "work" / "soak-fail.png"))
+				try:
+					h.shot(str(GAME / "work" / "soak-fail.png"))
+					dump = GAME / "work" / "soak-fail.bin"
+					dump.unlink(missing_ok=True)
+					h.cmd(f"hatari-debug savebin {dump} 0 1048576")
+					time.sleep(2)
+					print(f"  dump: {dump} ({dump.stat().st_size if dump.exists() else 0} bytes)", flush=True)
+				except Exception as e:      # a dead CPU can make the debugger unusable
+					print(f"  (could not dump: {e})", flush=True)
 				break
 			last_tick, last_vbl = now, vbl
 	finally:
