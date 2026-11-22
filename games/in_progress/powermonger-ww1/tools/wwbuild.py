@@ -58,8 +58,21 @@ TICK_SITES = [
 	(0x145C4, bytes.fromhex("0002ed90"),     bytes.fromhex("00072180"), "click expiry"),
 ]
 
+# Copy protection: the "passed" state is one long word at runtime $15998, a slot in a jump
+# table of `bra.w` instructions. It reads `60 00 15 ea` (bra.w) until the question is answered;
+# a right answer stores $0000002c, which disassembles as `ori.b #$2c,d0` and falls through into
+# the next `bra.w`. Writing $2c there is exactly what a correct answer does, so every reader of
+# the word sees the answered state and the check never starts. This is the 1990 project's
+# `pm_noprot` site ($14e4e there); the surrounding structure matches instruction for instruction
+# (work/notes/protection.md).
+#   runtime $15998 -> text offset $15998 + $110 = $15AA8
+NOPROT_SITES = [
+	(0x15AA8, bytes.fromhex("600015  ea".replace(" ", "")), bytes.fromhex("0000002c"), "protection pass flag"),
+]
+
 PATCHES = {
 	"tick": TICK_SITES,
+	"noprot": NOPROT_SITES,
 }
 
 
@@ -136,7 +149,7 @@ def prg_parts(path: Path = PRG):
 	return dict(header=data[:28], text=data[28:28 + text], text_len=text, bss=bss, sym=sym)
 
 
-def plain_prg(packed_text: bytes, sites: list[tuple]) -> bytes:
+def plain_prg(packed_text: bytes, sites: list[tuple], with_tick: bool = True) -> bytes:
 	"""Depack `packed_text`, patch `sites` (text offsets), return a GEMDOS PRG.
 
 	The depacked blob is itself a PRG: 28-byte header, text, then a reloc table and
@@ -166,8 +179,8 @@ def plain_prg(packed_text: bytes, sites: list[tuple]) -> bytes:
 		body[off:off + len(orig)] = new
 	if body[:6] != bytes.fromhex("4ef900024054"):
 		raise SystemExit(f"entry is {body[:6].hex()}, expected jmp ${ENTRY_JMP:x}")
-	if not sites:
-		# An unpatched build still has to be the original program: no stub, no data.
+	if not sites or not with_tick:
+		# No tick: no stub, no data (a build with only in-text patches stays a plain PRG).
 		header = bytearray(28)
 		struct.pack_into(">HIIII", header, 0, 0x601A, len(body), 0, bss, 0)
 		return bytes(header) + bytes(body) + reloc
@@ -217,7 +230,7 @@ def _audit(prg: bytes, text_len: int, data: bytes) -> None:
 def build(only: list[str], out: Path) -> Path:
 	parts = prg_parts()
 	sites = [s for name in only for s in PATCHES[name]]
-	prg = plain_prg(parts["text"], sites)
+	prg = plain_prg(parts["text"], sites, with_tick="tick" in only)
 	out.mkdir(parents=True, exist_ok=True)
 	dest = out / "WW1.PRG"
 	dest.write_bytes(prg)
@@ -231,7 +244,7 @@ def main() -> None:
 	sub = ap.add_subparsers(dest="cmd", required=True)
 	sub.add_parser("list")
 	b = sub.add_parser("build")
-	b.add_argument("--only", nargs="*", default=["tick"])
+	b.add_argument("--only", nargs="*", default=["tick", "noprot"])
 	b.add_argument("--out", type=Path, default=GAME / "build" / "patched")
 	args = ap.parse_args()
 

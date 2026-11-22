@@ -95,7 +95,7 @@ if [[ $PRINT == 1 ]]; then printf '%q ' "${CMD[@]}"; echo; exit 0; fi
 
 # default patch set: the tick only, for now
 if [[ $VARIANT == patched && $ONLY_SET == 0 ]]; then
-    ONLY=(tick)
+    ONLY=(tick noprot)
 fi
 
 rm -rf "$DIR"; mkdir -p "$DIR"
