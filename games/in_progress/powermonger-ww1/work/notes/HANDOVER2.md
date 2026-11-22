@@ -213,7 +213,12 @@ identical at every tick, and the negative control proving the gate is sensitive.
 **8 and 16 MHz at 50 Hz: PASS.** 4.00 ticks/s both, from the shipped PRG (gate output above
 and the earlier `PASS 85` / `PASS 232` runs).
 
-**Mega STE / 60 Hz: the STOCK game does not run on Hatari's Mega STE.** Confirmed on the
+**60 Hz: not yet verified.** Attempts on the Mega STE hit a release-level problem (below);
+TOS 1.04 on an STE would not boot reliably in the harness either. The tick reads `$ff820a`
+bit 1 at every look (6 units per VBL at 50 Hz, 5 at 60, TK = 75 = 0.25 s), which is the
+1990 project's verified design, but this build has not demonstrated it. **Do not claim 60 Hz.**
+
+**Mega STE: the STOCK game does not run on Hatari's Mega STE.** Confirmed on the
 completely unpatched Cobra build (`files_from=extracted/cobra26`, `machine=megaste`,
 `tos=TOS["2.06"]`): the screen stops at the cracktro (mean 23.8, never reaches the name
 prompt or the map). The same build on a 60 Hz *STE* is fine (TOS 1.62 + `--machine ste`), and
