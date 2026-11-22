@@ -1,7 +1,8 @@
 # HANDOVER: Powermonger WW1 — depacker is done, next is play.sh
 
-Read this first, then `cobra26.md`, `carrier.md`, `tickgate.md`, `tickproto.md`,
-`frameloop.md`, `input.md`, `baseline.md`.
+The successor note is `HANDOVER2.md`. Read that first: the tick payload now rides in the
+PRG's data segment and is copied to `$72000` before the game starts. Then `cobra26.md`,
+`carrier.md`, `tickgate.md`, `tickproto.md`, `frameloop.md`, `input.md`, `baseline.md`.
 
 ## TL;DR
 

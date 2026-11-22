@@ -1,4 +1,4 @@
-# HANDOVER 2: the depacker is fixed; the remaining blocker is payload placement
+# HANDOVER 2: payload reaches `$72000`; next is play.sh
 
 Successor notes. History: `HANDOVER.md` (written before the fix), `carrier.md`, `cobra26.md`,
 `tickgate.md`, `tickproto.md`, `frameloop.md`, `input.md`, `baseline.md`.
@@ -18,58 +18,46 @@ always added `d3`; the real routine skips that add** (the byte read before the s
 short-length limit, not part of the span). It also handles the nested PRG's 57-entry reloc
 table and the `$12576` load delta. The oracle is `work/dumps/c26_image_full.bin`.
 
-`python3 tools/wwbuild.py build` now depacks, verifies all **7 tick sites**, and writes a
-patched plain PRG at `build/patched/WW1.PRG` (text 152986 + the payload). That part works.
+`python3 tools/wwbuild.py build` depacks, verifies all **7 tick sites**, and writes a plain
+PRG (text 152986, data segment = the copy stub plus `tick.bin`). See below for where that
+payload actually runs.
 
-**One correction to Grok's note**: the sites are correct as they stand (`list` shows
-`$13eb0`/`$8f6` etc. — *text offsets*, i.e. runtime `$13da0`/`$7e6` + `$110`), and after a
-build the site really does read `4e b9 00 03 7b 10` (`jmp $37B10`). Do not "fix" the table.
+The sites stay as they are (`list` shows `$13eb0` / `$8f6` — text offsets, i.e. runtime
+`$13da0` / `$7e6` + `$110`). They read `jsr $72000` (`4e b9 00 07 20 00`). Do not retarget
+them at `load_base + offset`.
 
-## The remaining blocker (small, well-bounded)
+## Payload placement: fixed
 
-**The patch code never reaches RAM.** Measured:
+The earlier build appended the tick image **after the reloc table** and pointed the sites at
+`$37B10` (`$12576 + text offset`). TOS loads only `28 + text + data`, so those bytes never
+reached RAM: at the name screen `$37B10` was zeros and the signature was nowhere, while the
+game itself ran and jumped into empty memory.
 
-- The build appends the tick payload to the PRG and points the sites at `$37B10`
-  (`$12576 + payload text offset`) — the address the payload had in one measurement.
-- At the name screen of that build, `$37B10` is **all zeros**, and a whole-RAM scan for the
-  payload's signature (`2f 08 2f 00 2f 01 52 b9`) finds it **nowhere**.
-- The game itself runs fine (options screen, render loop at `$8362`, chart at `$1197c`, no bus
-  errors). So the *sites* are patched into a working game that then jumps into empty memory.
+That address was also the wrong home. The startup at text `$14` copies the game from text
+`$686` to **`$576`** and jumps there, which is why a site at text `$13eb0` executes at
+`$13da0` (`text_offset - $110`). An in-text payload left behind at `load_base + offset`
+is not where the copied sites jump, and `load_base` is not stable across machines. The tick
+image was assembled for `$72000`, with its own jumps aimed at the map-view addresses.
 
-Conclusion: **TOS only loads `28 + text + data` bytes**, and the payload was appended *after*
-the reloc table — past the declared text length — so it is never loaded.
+`tools/wwbuild.py` now does what that implies:
 
-### The fix
+- the proven `work/tickproto/tick.bin` rides in the **data segment**, behind a 26-byte stub
+- the entry `jmp` (its existing reloc) is aimed at the stub; one new reloc sends the stub
+  back to `$24054`
+- the stub copies the image to `$72000` (PC-relative source, fixed destination) and the
+  sites keep `jsr $72000`
 
-Put the payload **inside the declared text length**: `header.text = len(game_text) +
-len(payload)`, payload immediately after the game text, and the **reloc table after that**.
-TOS then loads it (`28 + text` covers it).
+Checked on a cold boot of that PRG (STE, 1 MB, TOS 1.62), at the options screen: `$72000`
+matches `tick.bin` 338/338, all 7 sites hold their `$72xxx` targets, and `PASS`/`ACC`/`KIND`
+are still zero. The signature is already at `$72000` during the intro and is still there
+after it. `play.sh` and the live gates are the remaining work.
 
-Then the payload's runtime address is `load_base + payload_text_offset`. `load_base` is
-measured, not assumed: put the payload in, boot, find the signature in a RAM dump, and read
-`found_address - payload_text_offset`. (It was `$12576` in one build; verify it for the final
-one — the base depends on what TOS has free, so it may not be constant across machines. If it
-is not constant, that is the moment to switch to a **base-independent** payload: instead of
-`jmp <abs>`, have the site `jmp` to a small relative stub in the game image that computes the
-target from its own PC. The 6-byte entry at text `$0` is available and plaintext.)
-
-`tools/wwbuild.py` is at the point where this is one edit: the working version of the day is in
-this commit's parent, and the change is `plain_prg()` — append `payload` to `body` **before**
-packing the header's text length, keep `reloc` after it, and return the payload's text offset
-so `build()` can compute `base = payload_off + LOAD_BASE`.
-
-### A trap that cost an hour
-
-My first attempt used `runtime = text_off - $110` for the payload. That is the mapping
-**inside the game image** (the stub's `$110` bytes precede the game), not from the file. Two
-constants, not one:
+Two constants, still not one:
 
 | mapping | value | source |
 |---|---|---|
-| game image offset -> its own runtime address | **`- $110`** | the sites: text `$13eb0` is runtime `$13da0` |
-| file text offset -> loaded runtime address | **`+ $12576`** | measured: payload at text `$2559a` ran at `$37b10` |
-
-Do not mix them.
+| text offset -> map-view address | **`- $110`** | the copy from text `$686` to `$576`; text `$13eb0` executes at `$13da0` |
+| relocated long -> its runtime value | **`+ load base`** | TOS adds it; the capture's delta was `$12576`. Not a place to put the payload |
 
 ## What is already done and must not be redone
 
@@ -77,7 +65,8 @@ Do not mix them.
 |---|---|---|
 | ATOMIK depacker, 100.00% | `tools/atomik.py` | **done** |
 | Ground-truth image | `work/dumps/c26_image_full.bin` | done |
-| 7 tick sites + verified originals | `tools/wwbuild.py list` | done |
+| 7 tick sites + verified originals | `tools/wwbuild.py list` | done, still `jsr $72000` |
+| Payload in the PRG, copied to `$72000` | `tools/wwbuild.py` data segment + stub | **done, seen at the options screen** |
 | Tick payload source | `work/tickproto/tick.s` (`PAYLOAD_BASE` equ) | done |
 | Payload assembled at a given base | `work/tickproto/tick_intext.s` (uses `-D PAYLOAD_BASE=$...`) | done |
 | Tick patch, live, on the stock base | `work/tickproto/tick.bin` applied by debugger | **4.02 ticks/s at 8 and 16 MHz** |
