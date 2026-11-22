@@ -144,3 +144,66 @@ with the right command line under Xvfb.
 on this build, 50/60 Hz, pause), then saves (the game's save-disk code wants a disk in A:; a
 blank `savedisk.st` plus `--disk-a` is the next step if saves matter for testing), then the
 other three ports (keys next - the prototype already works and the addresses are identical).
+
+## The release gate: PASS on real builds
+
+`tools/release_gate.py` is the gate that matters — it boots **two real PRGs** (not debugger
+patches) and compares them:
+
+| build | command |
+|---|---|
+| reference | `wwbuild.py build --only noprot` |
+| patched | `wwbuild.py build --only tick noprot` |
+
+The reference also carries `noprot` because the stock game stops at the protection question
+and can never reach the map; both builds therefore have the protection removed and the **only**
+difference between them is the tick.
+
+```
+world ticks captured: stock 18, patched 17, common 6
+
+tick  pass(stock/tick)  differing bytes
+   64     64/64         0
+   65     65/65         0
+   67     67/67         0
+   69     69/69         0
+   70     70/70         0
+   72     72/72         0
+
+negative control 64 vs 65: 63 differing bytes (must be > 0)
+
+PASS
+```
+
+Six consecutive world ticks, **byte-identical over the whole low 1 MB**, with the pass counter
+identical at every tick, and the negative control proving the gate is sensitive.
+
+### What the gate had to exclude (each justified)
+
+| range | why |
+|---|---|
+| `$0-$7ff` | TOS low memory |
+| `$7e6`, `$842`, `$144b4`, `$13da0`, `$13e24`, `$13e36`, `$13e42` | the tick's own patch sites |
+| `$1b900-$1b907` | the weather animation phase |
+| `$1d2a0-$2d5ff` | IKBD state, pointer words, both screen buffers (the pixel gate's job) |
+| `$2d600-$2dfff` | the stack |
+| `$2ed90-$2edbf` | world counter, click stamp, latches |
+| `$5ef00-$5efbf` | the sound sequencer |
+| `$71b7c-$71b83` | the VBL counter |
+| `$72000-$72fff` | the tick payload |
+| `$e7c2`, `$11dc6`, `$82c4` | the buffer pointers (flip parity) |
+| `$1bc9a-$1bc9f` | the **YM sample player's self-modified operand** (`$1bc92` stores its advancing pointer inside `movea.l #0,a0`, frameloop.md section 2) |
+| `$e518-$e523` | a self-modified operand in the icon/pattern draw |
+| `$1194e-$1195f` | a zero-padded gap after an `rts` in the chart code: uninitialised memory |
+
+### Traps this gate exposed (all harness, not patch)
+
+1. **The navigation is flaky.** The island click sometimes lands before the chart is ready.
+   `to_map()` now clicks until the world counter is *observed advancing* and retries the whole
+   series three times.
+2. **The camera cell differed between runs**, which changes every projected coordinate
+   (`$44830`-table, `$0f5xx`). The camera is re-derived from the pointer each pass, so it must
+   be pinned **inside the capture command file** (write `$50fd4/$50fd6` then `savebin`), not
+   once before the loop — the next pass overwrites a one-off write.
+3. **Runs reach the map at different tick numbers** (the patched build's intro is a few frames
+   different), so the series must be long enough to overlap; 20 dumps each gives ~6 common.
