@@ -472,3 +472,40 @@ therefore tolerates 1 pixel while the table check is exact.
 (`PAYLOADS = {tick: $72000, keys: $72400}`, span `$72000..$72810`), so one copy stub serves
 both and adding a third port means adding a tuple. `--only` still selects which blobs and
 sites go in, so a `tick`-only build is unchanged.
+
+## Port 3: tooltips — located the primitive, drawing not yet built
+
+This is the state to pick up from, not a finished port.
+
+**What is known** (full detail in `input.md` section 7):
+
+- **`$eace`** is the game's single-glyph plotter: `a0` = screen/buffer base, `d0` = the
+  character, `d1` = y in pixels, `d2` = the colour. Glyphs are **8 px wide**; the position and
+  mask come from a per-character table at runtime **`$eb42`** (`(bit_offset << 16) | row_base`,
+  4 bytes per character, entries from `$14` up).
+- **`$11e4e`** is the map view's one-character wrapper: it takes `d0` = a packed cell
+  `(row << 6) | col`, draws onto the current buffer `$2ed98` in **colour 5**, and marks the cell
+  in a `$46d97` mask.
+- Six call sites reach `$eace` (`$10c58`, `$10d66`, `$11e78`, `$129f0`, `$17602`, `$19702`);
+  `$19702` is the icon draw and `$129f0` is inside a HUD sequence that already passes colour 5.
+
+**What is still missing:**
+
+1. the **string walker** — the loop that steps a NUL-terminated string and calls `$eace` per
+   character. It was not found in the time available; the six call sites are all
+   single-character draws with the position computed by their caller, so the walker is
+   probably reached through one of them rather than being one of them. Search for a
+   `move.b (aN)+,dN` / `beq` / `jsr $eace` triple with `addq` on the x between iterations.
+2. the **surface**: where to draw. The 1990 `pm_tooltip` wrote a 52-character line into the
+   black bar under the picture. At the WW1 map view that bar is where the "GAME SPEED / FILE /
+   GAME" panel opens, so it is free when no panel is up — but the panel drawing must be
+   checked first (it may already clear or use that area).
+3. the **hover detection trigger**: `tools/pwwgrid.py` already has all 20 command-cell centres
+   (oracle-verified), so only the drawing and the "which cell is the pointer over" test are
+   needed.
+
+**Guidance for whoever picks this up:** the primitive is proven to exist and is used by the
+game's own HUD, so the tooltip does not need a font of its own — it needs the walker, or a
+short string loop written in the payload that calls `$eace` with the right `a0`. Writing the
+loop in the payload is likely cheaper than finding theirs, since `$eace` is a clean
+leaf routine (it saves and restores nothing, but the callers wrap it in `movem`).
