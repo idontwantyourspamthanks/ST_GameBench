@@ -266,7 +266,8 @@ run is that a paused game shows 0.00 ticks/s and resumes at 4.00 without a burst
 | builds from source, cold boots | **PASS** |
 | 4.00 ticks/s at 8 MHz | **PASS** |
 | 4.00 ticks/s at 16 MHz | **PASS** |
-| per-tick state equality, real builds | **PASS** (6 ticks, 0 bytes, negative control) |
+| per-tick state equality, real builds | **PASS** (12 ticks, 0 bytes, negative control — re-run after the stack fix) |
+| **long-run soak** (`soak.py`) | **PASS** — 45 min at 4.00 ticks/s, no errors |
 | protection removed | **PASS** (flag `$2c`, no question box) |
 | play.sh | **PASS** (`--original`, `--machine`, `--only`, `--print`, `--fresh`) |
 | 60 Hz (Mega STE) | **blocked by the stock game**, not the patch |
