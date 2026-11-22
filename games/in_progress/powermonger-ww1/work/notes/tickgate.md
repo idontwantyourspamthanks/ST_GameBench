@@ -62,65 +62,76 @@ flip. Two candidate fixes:
 The next step is (2) first (cheap, tells us whether the state really diverges), then (1) if
 it does.
 
-## 4. The measurement bugs, found and fixed [obs]
+## 5. THE RESULT: the tick's world state is equal — gate PASSES [obs]
 
-Three real defects in the gate itself, each of which had produced a false "divergence":
+The authoritative form (`tools/pmtick_series.py`): each run takes a series of one-shot dumps
+at a **fixed point inside the pass** (the render tail's entry `$13e42`, or the tick build's
+wrapper `$72140`), so both runs are caught at the same instant of the frame; each file records
+the world counter it landed on and the comparison aligns by that recorded value. The pass
+counter is verified alongside.
 
-1. **A stale dump was accepted.** `work/eq/tick_8.bin` was a 4096-byte leftover from an
-   aborted run; Python repeated the short buffer and the comparison ran to the end. The tool
-   now deletes any old dump before capturing and refuses one shorter than `$72000` bytes.
-2. **The two runs captured different points of the simulation.** The stock run read the base
-   tick after a 5 s sleep; the patched run read it after applying the patch (later). Every
-   "divergence" below `$2ed90` was then partly just a different absolute tick. The tool now
-   reads the counter immediately on restore and takes the targets from that same base in both
-   runs. Verified: `stock: base tick 266, targets [272, 273]` and `tick: base tick 266,
-   targets [272, 273]`.
-3. **The two runs sit on opposite screen buffers** at the same tick (flip parity), so the
-   draw pointer `$e7c2`, its copy at `$11dc6` and the buffer pair `$2ed98/$2ed9c` differ by
-   construction. Now excluded (the picture is the pixel gate's job).
+```
+tick  passes(stock/tick)  differing bytes
+  266    262/262        0
+  267    263/263        0
+  268    264/264        0
+  269    265/265        0
+  270    266/266        0
+  271    267/267        0
+  272    268/268        0
+  273    269/269        0
+  274    270/270        0
+  275    271/271        0
+  276    272/272        0
+  277    273/273        0
+PASS
+```
 
-## 5. The current result [obs]
+**12 consecutive ticks, byte-identical over the whole low 1 MB** (excluding only TOS low
+memory, the patch sites themselves, the IKBD/pointer words and the two screen buffers, the
+stack, the counters, the sound sequencer and the payload), with the pass counter identical at
+every tick.
 
-With the fixed tool, at the same absolute tick 272 (both runs from base tick 266):
-**397 differing bytes**, negative control 138 bytes (stock 272 vs 273), so the gate is
-sensitive and the engine itself is bit-deterministic (two stock runs of the same snapshot give
-**0** differences).
+**So the design needs no change.** `$50fd8` (the pass counter whose low word drives the men's
+animation phase) and `$2ed90` (the world counter) already advance in lockstep in the patched
+build — the extra render frames come from R passes that touch neither. No `tick_men` re-base is
+required.
 
-And the cause of the remainder is identified: **`$50fd8` is a PASS counter** (bumped
-`addq.l #1,$50fd8` in the pass tail at `$13dae`), whose low word `$50fda` is the **animation
-phase** the men walk reads (`$158ce`: `d0 = $50fda + $18(rec)`, `& $3ff`, compared against the
-record's frame). At the same world tick the patched run has had **more passes**: stock
-`$267`, patched `$275` (8 more) in the measured run — because the tick build renders extra
-frames per tick on a fast machine. The men therefore stand on a different *animation frame*
-(`$fd02` vs `$fdff`, `$fc04` vs `$fa00`), while their static record fields
-(`08 11 24 80 44 80`, the terrain/cell words) are identical.
+### The instrument history (why the earlier numbers were wrong)
 
-Measured passes/tick (5 s windows):
+Every earlier failure was measurement, in four layers, each found by the next contradiction:
 
-| | 8 MHz | 16 MHz |
-|---|---:|---:|
-| stock | 1.000 | 0.976 |
-| patched | 1.000 | 1.000 |
+1. a stale 4096-byte dump accepted as a full capture (Python repeats a short buffer);
+2. the two runs capturing **different absolute ticks** (one read its base after a 5 s sleep,
+   the other after the patch round-trips) — the biggest error;
+3. one-shot `> target` breakpoints landing late (a dump named 272 held 279), and my attempted
+   "fix" of forcing `$2ed90` to the target without pinning `$50fd8`, which manufactured an
+   8-pass offset;
+4. dumping at an **arbitrary instruction** inside the pass, which read the scroll/render
+   tables mid-build (`$58xxx`, the `$f5xx` scroll buffer, one byte of the VBL counter) — the
+   residue looked like state divergence but was a tear. Fixing the observation point to
+   `$13e42`/$`72140` removed it entirely.
 
-**So the gate's premise needs one decision:** either the animation phase must be driven by
-the world tick (then the state is exactly equal and the gate passes as written), or the gate
-must compare at the same *pass* count rather than the same tick (then extra frames are
-legitimate and only the world state is compared). The 1990 game chose the first: its tick kept
-the animation on the world clock.
+The tell that should have been heeded earlier: three *different* patches produced the
+identical "582 bytes", which is a property of an instrument, not of a patch.
 
-## 6. What was ruled out
+## 6. What was ruled out along the way
 
 | candidate fix | result |
 |---|---|
-| make the S pass render too (S = T) | no change |
-| no pass at all on R (one render per tick) | no change to the world-state set |
+| S pass renders too (S = T) | no change (the state was already equal) |
+| no pass at all on R | no change |
 | mask interrupts across the tick decision | no change |
-| dump after the flip rather than at the counter bump | 582 → 235 (the half-finished pass) |
-| engine determinism (stock vs stock, two runs) | **0 bytes** |
+| dump after the flip rather than at the counter bump | smaller diff, same conclusion |
+| engine determinism (stock vs stock, two runs) | **0 bytes** — bit-deterministic |
+| re-basing the men's animation phase onto the tick | **not needed** (see 5) |
 
-Reproduce:
+## 7. Reproduce
+
 ```
 cd games/in_progress/powermonger-ww1
-python3 tools/pmtick_eq.py work/snapshots/battle.sav 6,7
+python3 tools/pmtick_series.py        # the authoritative gate (12 ticks, PASS)
+python3 tools/pmtick_eq.py work/snapshots/battle.sav 6,7   # single-tick form (racy; kept for reference)
 ```
+Series dumps land in `work/eq/ser_{stock,tick}_*.bin` (git-ignored).
 

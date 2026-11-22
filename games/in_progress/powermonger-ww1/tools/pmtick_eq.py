@@ -59,16 +59,39 @@ def excluded(a: int) -> bool:
 
 
 def dump_at_tick(h, target: int, path: Path, timeout: float = 180) -> None:
+	"""Capture the state at world tick `target`, exactly and atomically.
+
+	The counter is only stable at the pass head: it is incremented at `$13da8` and not again
+	until the next pass, so a breakpoint on `pc = $13da0 && ($2ed90).l = target` fires
+	exactly when the world is at tick `target`, with the pass counter (`$50fd8`, bumped just
+	after it at `$13dae`) at its consistent lockstep value. The command file dumps at once,
+	so nothing can advance between the check and the dump.
+
+	Do NOT rewrite the counter before dumping: that leaves `$50fd8` (the men's animation
+	phase) at a different value and manufactures a false difference (measured: 8 passes).
+	"""
+	path = Path(path).resolve()
+	path.unlink(missing_ok=True)
 	cmds = path.with_suffix(".cmds")
-	cmds.write_text(DUMP.format(path=str(Path(path).resolve())))
-	h.cmd(f"hatari-debug b ($2ed90).l > ${target - 1:x} :once :file {cmds}")
+	cmds.write_text(f"savebin {path} 0 1048576\nr\n")
+	# stock runs the pass head at $13da0; the tick build jumps to its own head at $72000
+	# (Hatari's condition syntax has no ||/parentheses: two breakpoints, either may fire)
+	h.cmd(f"hatari-debug b pc = $13da0 && ($2ed90).l = ${target:x} :once :file {cmds}")
+	# the tick build's world counter is bumped at $13da8 too, but its head jumps there from
+	# $72000; the stable observation point that both builds share is $13da8 itself
+	h.cmd(f"hatari-debug b pc = $13da8 && ($2ed90).l = ${target - 1:x} :once :file {cmds}")
 	t = time.time()
 	while not path.exists():
 		if time.time() - t > timeout:
-			raise RuntimeError(f"tick {target}: no dump (breakpoint never hit)")
-		time.sleep(0.4)
-	if path.stat().st_size < 0x72000:
-		raise RuntimeError(f"tick {target}: short dump {path.stat().st_size}")
+			raise RuntimeError(f"tick {target}: no capture")
+		time.sleep(0.2)
+	data = path.read_bytes()
+	if len(data) < 0x72000:
+		raise RuntimeError(f"tick {target}: short dump {len(data)}")
+	got = int.from_bytes(data[TICK:TICK + 4], 'big')
+	if got not in (target, target - 1):
+		raise RuntimeError(f"tick {target}: captured {got}")
+	h.cmd("hatari-debug b all")
 
 
 def apply_tick(h) -> None:
@@ -117,7 +140,16 @@ def capture(snapshot: str, deltas: list[int], tag: str, patched: bool, out: Path
 			path = out / f"{tag}_{t}.bin"
 			if path.exists():
 				path.unlink()          # never accept a stale dump
-			dump_at_tick(h, t, path)
+			for attempt in range(4):
+				dump_at_tick(h, t, path)
+				data = path.read_bytes()
+				got = int.from_bytes(data[TICK:TICK + 4], 'big')
+				if got == t:
+					break
+				print(f"tick {t}: dump landed at {got}, retrying")
+				path.unlink()
+			else:
+				raise RuntimeError(f"tick {t}: could not capture the exact tick")
 			data = path.read_bytes()
 			if len(data) < 0x72000:
 				raise RuntimeError(f"tick {t}: short dump {len(data)} bytes")
