@@ -304,7 +304,7 @@ def main() -> None:
 	sub = ap.add_subparsers(dest="cmd", required=True)
 	sub.add_parser("list")
 	b = sub.add_parser("build")
-	b.add_argument("--only", nargs="*", default=["tick", "noprot"])
+	b.add_argument("--only", nargs="*", default=["tick", "noprot", "keys"])
 	b.add_argument("--out", type=Path, default=GAME / "build" / "patched")
 	args = ap.parse_args()
 
