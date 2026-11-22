@@ -77,15 +77,25 @@ def main():
 	import shutil
 	shutil.copy(GAME / "extracted" / "cobra26" / "WW1_FUZI.LFB", folder / "WW1_FUZI.LFB")
 
-	for machine, tos, clock in (("ste", "1.62", 8), ("ste", "1.62", 16),
-	                            ("megaste", "2.06", 8), ("megaste", "2.06", 16)):
+	from pmww import TOS
+	# STE takes TOS 1.06/1.62, Mega STE 2.05/2.06, ST/Mega ST 1.04.
+	# 60 Hz is not reachable by a TOS boot here (Hatari's STE images come up at 50 Hz and
+	# --monitor tv does not change it), so the 60 Hz case is tested as a RUNTIME switch:
+	# clear $ff820a bit 1 mid-run and check the world stays at 4.00 ticks/s of real time.
+	cases = [("ste", "1.62", 8, 50), ("ste", "1.62", 16, 50),
+	         ("ste", "1.62", 8, 60), ("ste", "1.62", 16, 60)]
+	for machine, tos, clock, hz in cases:
 		h = PMWW(disk=None, no_floppy=True, autorun_f="C:\\WW1.PRG", files_from=folder,
-		         machine=machine, tos=__import__('pmww').TOS[tos])
+		         machine=machine, tos=TOS[tos])
 		try:
 			to_map(h)
 			if clock != 8:
-				h.set_cpuclock(clock); time.sleep(2)
-			print(f"{machine:8s} {clock:2d} MHz: {rate(h):.2f} ticks/s")
+				h.set_cpuclock(clock)
+				time.sleep(2)
+			if hz == 60:
+				h.debug("w $ff820a 0 $fc", wait=0.6)     # bit 1 clear = 60 Hz
+				time.sleep(2)
+			print(f"{machine:6s} {clock:2d} MHz {hz} Hz: {rate(h):.2f} ticks/s")
 		finally:
 			h.close()
 	print("done")

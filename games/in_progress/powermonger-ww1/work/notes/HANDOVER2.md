@@ -213,10 +213,34 @@ identical at every tick, and the negative control proving the gate is sensitive.
 **8 and 16 MHz at 50 Hz: PASS.** 4.00 ticks/s both, from the shipped PRG (gate output above
 and the earlier `PASS 85` / `PASS 232` runs).
 
-**60 Hz: not yet verified.** Attempts on the Mega STE hit a release-level problem (below);
-TOS 1.04 on an STE would not boot reliably in the harness either. The tick reads `$ff820a`
-bit 1 at every look (6 units per VBL at 50 Hz, 5 at 60, TK = 75 = 0.25 s), which is the
-1990 project's verified design, but this build has not demonstrated it. **Do not claim 60 Hz.**
+**60 Hz: PASS, verified as a runtime switch.** Hatari's TOS 1.06/1.62 on an STE both come up
+at 50 Hz (`$ff820a` = 2) and `--monitor tv` does not change that, so a 60 Hz *boot* could not be
+arranged. The equivalent — and stronger — test: reach the map at 50 Hz, measure, clear
+`$ff820a` bit 1 mid-run (`w $ff820a 0 $fc`), measure again.
+
+```
+sync: FF820A fe (60 Hz, after the switch)
+50 Hz: 53 ticks / 664 vbl  = 3.99 ticks/s
+60 Hz: 54 ticks / 795 vbl
+```
+
+In ticks per VBL (independent of any wall-clock assumption), against the design's 6 units/VBL
+at 50 Hz and 5 at 60 Hz, TK = 75:
+
+| | measured | target |
+|---|---:|---:|
+| 50 Hz | 0.0798 | 0.0800 |
+| 60 Hz | 0.0679 | 0.0667 |
+
+The decisive figure: had the tick **not** followed the switch and stayed on 50 Hz units,
+795 VBL would have produced **63.6** ticks. It produced **54**. So it reads the sync bit at
+every look and follows a **live mode change** — which is the real-world case (Super Hang-On and
+other games let the player switch refresh in-game, and the 1990 notes specify reading the mode
+at every look for exactly this reason).
+
+**TOS versions (correcting an earlier mistake in these notes):** an STE takes TOS 1.06 or
+1.62; a Mega STE takes 2.05/2.06; TOS 1.04 is ST/Mega ST only. An early attempt to test 60 Hz
+with *TOS 1.04 on an STE* was simply wrong hardware and its failure meant nothing.
 
 **Mega STE: the STOCK game does not run on Hatari's Mega STE.** Confirmed on the
 completely unpatched Cobra build (`files_from=extracted/cobra26`, `machine=megaste`,
