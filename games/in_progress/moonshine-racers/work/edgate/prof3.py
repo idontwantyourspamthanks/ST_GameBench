@@ -2,7 +2,7 @@
 """where does one preview step spend its cycles?  env3.sh python3 prof3.py --tag T [--lst L]: Hatari profiler over one step (bend key in the main view, then DOWN in the width list), buckets = nearest global label of the listing"""
 import argparse, re, threading, bisect
 from ed2lib import *
-ap = argparse.ArgumentParser(); ap.add_argument("--tag", default="prof3"); ap.add_argument("--build", default=os.environ["ED_BUILD"]); ap.add_argument("--lst", default="/tmp/msred3/ovl.lst"); ap.add_argument("--seg", type=int, default=150)
+ap = argparse.ArgumentParser(); ap.add_argument("--tag", default="prof3"); ap.add_argument("--build", default=os.environ["ED_BUILD"]); ap.add_argument("--lst", default="/tmp/msred4/ovl.lst"); ap.add_argument("--seg", type=int, default=150)
 a = ap.parse_args()
 syms = []
 for l in open(a.lst):

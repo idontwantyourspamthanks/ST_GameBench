@@ -1,0 +1,16 @@
+== play3: HD STE 2 MB, build /tmp/msred4/hd, campaign ed2_stock_ste2m_b.trk
+title reached: True
+CHECK title reached: PASS 
+CHECK LOAD CAMPAIGN FROM HARD DISK item: PASS 
+CHECK campaign loaded: PASS 
+CHECK editor overlay loaded (V_EDOK): FAIL 
+[race up] vbl=9844 act=0xff loaded=0xff count=4 pos=0 start=0 ptr=0x1100b0 $102c=0x0000 len57890=19472 $23c0=0x1100d4 $1024=0x00 $1027=0x00 $100e=54 $5ff8=0 $1021=0x02
+CHECK a race stands without any key press: PASS 
+CHECK campaign position == 3 (the edited track), stream pointer inside its block: FAIL pos 0 ptr 0x1100d4 block $0x113820..$0x114934
+curve ring $1bbc[0..31] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+edited block expand_curve   = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+stock TRACK 04 expand_curve = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+CHECK curve ring == the edited block's curve: PASS 
+CHECK ... and differs from the stock TRACK 04's curve (the road is visibly different): FAIL 
+Bus/Address error lines: 3
+RESULT play3: FAILED: editor overlay loaded (V_EDOK), campaign position == 3 (the edited track), stream pointer inside its block, ... and differs from the stock TRACK 04's curve (the road is visibly different)

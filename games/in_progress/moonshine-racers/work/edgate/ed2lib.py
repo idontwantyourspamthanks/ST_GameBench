@@ -90,7 +90,7 @@ class Ed:
             self.send(0x50 if d <= cnt // 2 else 0x48)
             self.wait(lambda: self.v("lsel") != s, 6, 0.15); time.sleep(0.2); self.settle()
         return self.v("lsel") == idx
-    def boot_editor(self, load_camp=True):
+    def boot_editor(self, load_camp=True, ntr=3):
         r = self.r
         ok = r.boot_title(); log(f"title reached: {ok}"); check("title reached", ok)
         r.menu_open(); time.sleep(1)
@@ -98,7 +98,7 @@ class Ed:
             check("LOAD CAMPAIGN FROM HARD DISK item", self.goto_item(1)); self.send(0x1c); t0 = time.time()
             while time.time() - t0 < 60 and not r.b(V["loaded"]): time.sleep(0.5)
             check("campaign loaded", r.b(V["loaded"]) != 0)
-            time.sleep(2.5); self.goto_item(3); self.send(0x1c); time.sleep(2.0)   # the play list: < BACK row (3 tracks + back; item 3)
+            time.sleep(2.5); self.goto_item(ntr); self.send(0x1c); time.sleep(2.0)   # the play list: < BACK row (ntr tracks + back; item ntr)
             self.goto_item(4)
         else:
             self.goto_item(3)

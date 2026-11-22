@@ -1,0 +1,12 @@
+== play3_edit: HD STE 2 MB, build /tmp/msred4/hd, campaign camp_edit.trk
+title reached: True
+CHECK title reached: PASS 
+CHECK LOAD CAMPAIGN FROM HARD DISK item: PASS 
+CHECK campaign loaded: PASS 
+CHECK editor overlay loaded (V_EDOK): PASS 
+CHECK a race stands without any key press: FAIL 
+CHECK campaign position == 0 (the only track), stream pointer inside its block: PASS pos 0 ptr 0x110058 block $0x110038..$0x11114c
+after holding UP 10 s: $5ff8 406 $23c0 0x110058
+curve ring $1bbc[0..31] = [-356, -354, -352, -350, -348, -346, -344, -342, -340, -338, -336, -334, -332, -330, -328, -326, -324, -322, -320, -318, -316, -314, -312, -310, -308, -306, -304, -302, -300, -298, -296, -294]
+Bus/Address error lines: 3
+RESULT play3_edit: FAILED: a race stands without any key press

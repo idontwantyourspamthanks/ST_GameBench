@@ -1,0 +1,30 @@
+== q2_straight_ste: HD STE 2 MB, build /tmp/msred4/hd, campaign none
+title reached: True
+CHECK title reached: PASS 
+CHECK editor overlay loaded (V_EDOK): PASS 
+CHECK viewer up: PASS 
+CHECK start: segment and object lists in RAM == the model (1 segments, 1 objects, after 0 edits): PASS 
+CHECK start: lists in RAM == the model: PASS 
+[  1] split seg 0 at 640
+[  2] split seg 1 at 1280
+[  3] curve seg 2 = 8
+[  4] curve seg 1 = -6
+[  5] hill seg 2 shape 2
+[  6] width L seg 1 = 50
+[  7] length seg 1 = 100
+[  8] insert copy of seg 1
+[  9] delete seg 2
+[ 10] merge seg 1 with the next
+[ 11] add object at 18531
+[ 12] object 0 type 4
+[ 13] object 0 side -50
+EXCEPTION Traceback (most recent call last):
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/edgate/ed2.py", line 285, in <module>
+    (run_quick if a.quick else run_script)(D, a.kind)
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/edgate/ed2.py", line 236, in run_quick
+    D.barhere([k for k in range(2, len(M.segs) - 1) if M.segs[k][0] not in used][1])
+              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
+IndexError: list index out of range
+
+wall 207 s
+RESULT q2_straight_ste: FAILED: exception

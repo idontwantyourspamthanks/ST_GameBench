@@ -1,0 +1,53 @@
+== ed2_q_mste2m: HD Mega STE 2 MB, build /tmp/msred4/hd, campaign c3.trk
+title reached: True
+CHECK title reached: PASS 
+CHECK LOAD CAMPAIGN FROM HARD DISK item: PASS 
+CHECK campaign loaded: PASS 
+CHECK editor overlay loaded (V_EDOK): PASS 
+CHECK viewer up: PASS 
+CHECK start: segment and object lists in RAM == the model (313 segments, 380 objects, after 0 edits): PASS 
+CHECK start: lists in RAM == the model: PASS 
+[  1] split seg 0 at 128
+[  2] split seg 1 at 256
+[  3] curve seg 2 = 8
+[  4] curve seg 1 = -6
+[  5] hill seg 2 shape 2
+[  6] width L seg 1 = 50
+[  7] length seg 1 = 100
+[  8] insert copy of seg 1
+[  9] delete seg 2
+[ 10] merge seg 1 with the next
+[ 11] add object at 265
+[ 12] object 6 type 4
+[ 13] object 6 side -50
+[ 14] BAR here (seg 3, unit 272) via the menu
+[ 15] undo
+[ 16] redo (menu)
+CHECK after the quick script: segment and object lists in RAM == the model (315 segments, 381 objects, after 16 edits): PASS 
+CHECK Esc = back to the track list: PASS 
+CHECK campaign in memory: 4 tracks, V_COUNT / V_LOADED: PASS 4 entries, V_COUNT 4
+CHECK the kept block (4378 B) == what the Python model of the edit script predicts (mt.encode_track of the model): PASS 4378 vs 4378 B, first diff None
+/tmp/msred4/ed2_q_mste2m.trk[0] 'TEST ONE EDIT1 BEND': OK (0 errors, 0 warnings)
+/tmp/msred4/ed2_q_mste2m.trk[1] 'TEST TWO LEVEL 4 BASE': OK (0 errors, 0 warnings)
+/tmp/msred4/ed2_q_mste2m.trk[2] 'TEST THREE LEVEL 6 BASE': OK (0 errors, 0 warnings)
+/tmp/msred4/ed2_q_mste2m.trk[3] 'COPY OF TRACK 04': OK (0 errors, 0 warnings)
+CHECK msrtrack.py validate of the campaign file dumped from RAM: exit 0, no errors: PASS k[0] 'TEST ONE EDIT1 BEND': OK (0 errors, 0 warnings)
+/tmp/msred4/ed2_q_mste2m.trk[1] 'TEST TWO LEVEL 4 BASE': OK (0 errors, 0 warnings)
+/tmp/msred4/ed2_q_mste2m.trk[2] 'TEST THREE LEVEL 6 BASE': OK (0 errors, 0 warnings)
+/tmp/msred4/ed2_q_mste2m.trk[3] 'COPY OF TRACK 04': OK (0 errors, 0 warnings)
+
+CHECK the three campaign tracks before the new one are byte for byte unchanged: PASS 
+CHECK re-entered: viewer up: PASS 
+CHECK re-entered: the segment list (315) == the model's merged list, objects (381) == the model's: PASS 315 vs 315, 381 vs 381
+vPlay 0 V_START 3 CPV+4 0 $102c 0x3
+CHECK PLAY THIS TRACK: the menu got the campaign position (V_START = position; vPlay is already consumed by the hand-over): FAIL V_START 0 vPlay 0
+[race 0 start] vbl=19938 act=0xff loaded=0xff count=4 pos=3 start=0 ptr=0x113820 $102c=0x0003 len57890=19000 $23c0=0x113840 $1024=0x01 $1027=0x00 $100e=17 $5ff8=167 $1021=0x02
+curve ring $1bbc[0..31] = [1638, 1637, 1636, 1635, 1634, 1633, 1632, 1631, 1630, 1629, 1628, 1627, 1626, 1625, 1624, 1623, 1622, 1621, 1620, 1619, 1618, 1617, 1617, 1617, 1617, 1617, 1617, 1617, 1617, 1617, 1617, 1617]
+expected from the kept block      = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+CHECK race start: it is the edited track (campaign position == sel): PASS (19000, 3, 1128480, 3)
+CHECK race start: the game's curve ring ($1bbc) == expand_curve of the kept block (the edited road): FAIL 
+[race 0 over (finished=True)] vbl=20979 act=0xff loaded=0xff count=4 pos=3 start=0 ptr=0x113820 $102c=0x0003 len57890=19000 $23c0=0x113840 $1024=0xff $1027=0x00 $100e=111 $5ff8=240 $1021=0x02
+CHECK race on the edited track: the stream pointer is inside its block in the campaign store, driven to the BAR: PASS [(19000, 3, 1128480, 3)] block $113820..$11493a $1024 0xff
+Bus/Address error lines in the Hatari log: 0
+wall 238 s
+RESULT ed2_q_mste2m: FAILED: PLAY THIS TRACK: the menu got the campaign position (V_START = position; vPlay is already consumed by the hand-over), race start: the game's curve ring ($1bbc) == expand_curve of the kept block (the edited road)

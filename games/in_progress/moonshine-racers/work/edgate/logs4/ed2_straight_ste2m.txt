@@ -1,0 +1,44 @@
+== ed2_straight_ste2m: HD STE 2 MB, build /tmp/msred4/hd, campaign none
+title reached: True
+CHECK title reached: PASS 
+CHECK editor overlay loaded (V_EDOK): PASS 
+CHECK viewer up: PASS 
+CHECK start: segment and object lists in RAM == the model (1 segments, 1 objects, after 0 edits): PASS 
+CHECK start: lists in RAM == the model: PASS 
+[  1] split seg 0 at 640
+[  2] split seg 1 at 1280
+[  3] split seg 2 at 1920
+[  4] split seg 3 at 2560
+[  5] split seg 4 at 3200
+[  6] split seg 5 at 3840
+[  7] split seg 6 at 4480
+[  8] split seg 7 at 5120
+CHECK after 5 splits: segment and object lists in RAM == the model (9 segments, 1 objects, after 8 edits): PASS 
+[  9] curve seg 6 = 8
+[ 10] curve seg 5 = -6
+[ 11] curve seg 4 = 10
+[ 12] curve seg 3 = -9
+[ 13] curve seg 2 = 4
+[ 14] curve seg 1 = -3
+[ 15] Return = repeat curve -3 at seg 8
+CHECK after 7 curve edits: segment and object lists in RAM == the model (9 segments, 1 objects, after 15 edits): PASS 
+[ 16] hill seg 7 shape 4
+[ 17] hill seg 5 shape 12
+[ 18] hill seg 3 shape 7
+[ 19] hill seg 1 shape 2
+[ 20] raw accel seg 0 = -97
+[ 21] Return = repeat raw accel -97 at seg 2  -> refused HILL
+CHECK after 6 hill edits: segment and object lists in RAM == the model (15 segments, 1 objects, after 21 edits): PASS 
+[ 22] length seg 3 = 103
+[ 23] length seg 7 = 150
+[ 24] length seg 11 = 75
+EXCEPTION Traceback (most recent call last):
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/edgate/ed2.py", line 285, in <module>
+    (run_quick if a.quick else run_script)(D, a.kind)
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/edgate/ed2.py", line 182, in run_script
+    long_k = sel[3]
+             ~~~^^^
+IndexError: list index out of range
+
+wall 424 s
+RESULT ed2_straight_ste2m: FAILED: exception

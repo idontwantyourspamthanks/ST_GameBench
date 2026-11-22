@@ -12,7 +12,7 @@ import argparse, re, math
 from ed2lib import *
 
 ap = argparse.ArgumentParser()
-ap.add_argument("--tag", default="ed3"); ap.add_argument("--build", default=os.environ["ED_BUILD"]); ap.add_argument("--lst", default="/tmp/msred3/ovl.lst"); ap.add_argument("--level", type=int, default=3)
+ap.add_argument("--tag", default="ed3"); ap.add_argument("--build", default=os.environ["ED_BUILD"]); ap.add_argument("--lst", default="/tmp/msred4/ovl.lst"); ap.add_argument("--level", type=int, default=3)
 ap.add_argument("--only", default="")
 a = ap.parse_args()
 SYM = {}

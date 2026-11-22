@@ -1,0 +1,12 @@
+bp $7c02 at vbl 1502
+bp $7c02 at vbl 2650
+bp $7c02 at vbl 3583
+CHECK the welcome screen's key wait (pc $7c02) reached: PASS vbl 4257
+V_WELC (CPV+13) = 0x0  (0xff = the hint line was drawn)
+V_WELC after back = 0xff
+loaded 255 count 3
+after the menu: V_ACT 0xff V_START 1
+[race start] vbl=6264 act=0xff loaded=0xff count=3 pos=1 start=0 ptr=0x111742 $102c=0x0003 len57890=19000 $23c0=0x111756 $1024=0x00 $1027=0x00 $100e=79 $5ff8=0 $1021=0x02
+CHECK F10 menu on the welcome screen -> play from track 2 -> the race is campaign track 2 (pos 1): PASS (19000, 3, 1120086, 1) pos 1
+Bus/Address error lines: 3
+RESULT w2: ALL CHECKS PASS

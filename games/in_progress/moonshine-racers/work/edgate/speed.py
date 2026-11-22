@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Live-preview speed gate: ms per step (VBL deltas of Hatari's own frame counter, `e VBL` in breakpoint command files at the code points; 20 ms per VBL) and key bursts.
-   env3.sh python3 speed.py --tag T [--burst] ; addresses come from /tmp/msred3/ovl.lst (symbols of the overlay assembled by symlst.py)"""
+   env3.sh python3 speed.py --tag T [--burst] ; addresses come from /tmp/msred4/ovl.lst (symbols of the overlay assembled by symlst.py)"""
 import argparse, re
 from ed2lib import *
 ap = argparse.ArgumentParser(); ap.add_argument("--tag", default="speed"); ap.add_argument("--build", default=os.environ["ED_BUILD"]); ap.add_argument("--level", type=int, default=3)
-ap.add_argument("--lst", default="/tmp/msred3/ovl.lst"); ap.add_argument("--pcs", default="")
+ap.add_argument("--lst", default="/tmp/msred4/ovl.lst"); ap.add_argument("--pcs", default="")
 a = ap.parse_args()
 SYM = {}
 for l in open(a.lst):

@@ -1,0 +1,16 @@
+== sp1: HD STE 2 MB, build /tmp/msred4/hd, campaign c3.trk
+title reached: True
+CHECK title reached: PASS 
+CHECK LOAD CAMPAIGN FROM HARD DISK item: PASS 
+CHECK campaign loaded: PASS 
+CHECK editor overlay loaded (V_EDOK): PASS 
+CHECK viewer up: PASS 
+main view seg 0 key '.': [('apply_try', 7854), ('expand', 7854), ('full_draw', 7864), ('draw_all', 7864), ('draw_hi', 7874), ('full_draw_end', 7876)]
+  RESULT seg 0 '.': apply_try -> full_draw 10 VBL, expand -> draw_all 10 VBL
+main view seg 0 key ',': [('apply_try', 8035), ('expand', 8035), ('full_draw', 8045), ('draw_all', 8045), ('draw_hi', 8055), ('full_draw_end', 8057)]
+  RESULT seg 0 ',': apply_try -> full_draw 10 VBL, expand -> draw_all 10 VBL
+main view seg 150 key '.': [('apply_try', 10441), ('expand', 10441), ('full_draw', 10448), ('draw_all', 10448), ('draw_hi', 10458), ('full_draw_end', 10460)]
+  RESULT seg 150 '.': apply_try -> full_draw 7 VBL, expand -> draw_all 7 VBL
+main view seg 150 key ',': [('apply_try', 10622), ('expand', 10622), ('full_draw', 10629), ('draw_all', 10629), ('draw_hi', 10639), ('full_draw_end', 10641)]
+  RESULT seg 150 ',': apply_try -> full_draw 7 VBL, expand -> draw_all 7 VBL
+list preview (3 DOWN): [('lpreview', 13164), ('expand', 13165), ('lp_end', 13172), ('draw_all', 13172), ('lpreview', 13340), ('expand', 13341), ('lp_end', 13348), ('draw_all', 13348), ('lpreview', 13515), ('expand', 13516), ('lp_end', 13523), ('draw_all', 13523)]

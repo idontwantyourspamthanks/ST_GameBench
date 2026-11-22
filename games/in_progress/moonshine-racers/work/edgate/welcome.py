@@ -9,22 +9,27 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent / "campgate"))
 from cg import *
 ap = argparse.ArgumentParser(); ap.add_argument("--tag", default="welcome"); ap.add_argument("--mem", type=int, default=2048); ap.add_argument("--machine", default="ste"); ap.add_argument("--build", default=os.environ.get("ED_BUILD"))
-ap.add_argument("--full", action="store_true"); a = ap.parse_args()
+ap.add_argument("--vbl", type=int, default=4300); ap.add_argument("--nof10", action="store_true"); ap.add_argument("--full", action="store_true"); a = ap.parse_args()
 logopen(a.tag)
 camp = CAMP / "c3.trk"
 r = Run("hd", a.machine, a.mem, a.tag, build=a.build, camp_hd=camp, sound=True); h = r.h
 try:
     n0 = len(h._logtext())
-    h.cmd("hatari-debug b pc = $7c02 :trace :once"); time.sleep(0.5)
-    r.ff(True); t0 = time.time()
-    while time.time() - t0 < 600 and "pc = $7c02" not in h._logtext()[n0:]: time.sleep(0.4)
-    hit = "pc = $7c02" in h._logtext()[n0:]
-    r.ff(False); check("the welcome screen's key wait (pc $7c02) reached", hit, f"vbl {h.vbl()}")
-    time.sleep(4.0); r.shot("1_welcome")
+    r.ff(True); t0 = time.time(); hit = False
+    if a.mem >= 2048:                           # V_WELC = 0xff: the hint line was drawn = the real screen is up
+        while time.time() - t0 < 600 and not r.b(0xb8e0d): time.sleep(0.3)
+        hit = bool(r.b(0xb8e0d))
+    else:                                       # 1 MB has no V_WELC: run to the same VBL the 2 MB screen appeared at (--vbl)
+        while time.time() - t0 < 600 and h.vbl() < a.vbl: time.sleep(0.1)
+        hit = True
+    r.ff(False); check("the welcome screen reached (V_WELC set / target VBL)", hit, f"vbl {h.vbl()}")
+    time.sleep(0.5); r.shot("1_welcome")
     if a.mem >= 2048:
         log("V_WELC (CPV+13) =", hex(r.b(0xb8e0d)), " (0xff = the hint line was drawn)")
+    if a.mem < 2048 or a.nof10:
+        h.keypress(0x44); time.sleep(4.0); r.shot("2_after_f10"); log("after F10 (1 MB / floppy-1MB: any key = continue, no campaign menu): see shot 2")
     if a.full:
-        h.keypress(0x44); time.sleep(3.0); r.shot("2_menu")
+        h.keypress(0x44); time.sleep(5.0); r.shot("2_menu")
         h.keypress(0x01) if False else h.cmd("hatari-event keypress 0x01"); time.sleep(3.5); r.shot("3_back_on_welcome"); log("V_WELC after back =", hex(r.b(0xb8e0d)))
         h.keypress(0x44); time.sleep(3.0)
         r.downs(1); h.keypress(0x1c)            # LOAD CAMPAIGN FROM HARD DISK

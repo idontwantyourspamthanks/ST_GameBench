@@ -1,0 +1,13 @@
+== play3_stock: HD STE 2 MB, build /tmp/msred4/hd, campaign camp_stock.trk
+title reached: True
+CHECK title reached: PASS 
+CHECK LOAD CAMPAIGN FROM HARD DISK item: PASS 
+CHECK campaign loaded: PASS 
+CHECK editor overlay loaded (V_EDOK): PASS 
+[race up] vbl=8280 act=0xff loaded=0xff count=1 pos=0 start=0 ptr=0x110038 $102c=0x0003 len57890=19000 $23c0=0x11004c $1024=0x00 $1027=0x00 $100e=53 $5ff8=0 $1021=0x02
+CHECK a race stands without any key press: PASS 
+CHECK campaign position == 0 (the only track), stream pointer inside its block: PASS pos 0 ptr 0x11004c block $0x110038..$0x111134
+after holding UP 10 s: $5ff8 878 $23c0 0x11006c
+curve ring $1bbc[0..31] = [2222, 2221, 2220, 2219, 2218, 2217, 2216, 2215, 2214, 2213, 2212, 2211, 2210, 2209, 2208, 2207, 2206, 2205, 2204, 2203, 2202, 2201, 2200, 2199, 2198, 2197, 2196, 2195, 2194, 2193, 2192, 2191]
+Bus/Address error lines: 3
+RESULT play3_stock: ALL CHECKS PASS
