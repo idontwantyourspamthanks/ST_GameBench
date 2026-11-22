@@ -409,3 +409,31 @@ This is the one part of the port that has cost far more than it should. If the r
 found in one more focused attempt, the pragmatic path is to write the tooltip with its own
 font in the payload: `$eace` is a proven single-pixel writer, so a 6x7 bitmap font of ~95
 characters is about 700 bytes and needs no dependency on the game's text pipeline at all.
+
+### 7.6 One more approach I did not finish: watch a text pixel
+
+The cleanest way to identify the blitter is to catch it writing: pick a byte that holds a
+**text pixel** on a screen whose background is flat (the options screen), then set
+
+```
+b ($ADDR).b ! ($ADDR).b
+```
+
+and read `r`'s `Next PC` when it stops. I tried this and got `$8300`s every time — but that is
+the **terrain pattern combine**, because the watchpoint fires on *reads and writes* of the
+address and the combine's masked copy touches the same bytes while it repaints the frame.
+Two attempts were also wasted on wrong screen geometry: the picture is **320x200 at 4 bpp =
+160 bytes a line, two pixels per byte**, so a byte column is `x/2`, not `x/8` (that is the
+mono/1-bpp convention and it put my probe 4x too far right). With the geometry right the
+addresses do land on text.
+
+To make this decisive next time: pause the game (`$5a856 = 1`) so the combine cannot run, put
+the options screen up, and *then* arm the watchpoint while poking a single text byte by hand.
+Only the routine that redraws text will touch it.
+
+### 7.7 Honest status
+
+Tooltips are **not done**. Two sessions have mapped the whole surround — screen format, the
+one-pixel writer `$eace`, the font sheet at `$F8000`, the panel descriptor DSL `$a2ce`, the
+40-column character buffer at `$74c0` — without landing the final character-to-pixels routine.
+The leads above are concrete; the effort so far is not something to hide.
