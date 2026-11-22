@@ -116,3 +116,31 @@ Map view, after the standard navigation:
   8 MHz : 45 ticks / 563 vbl = 4.00 ticks/s   (PASS 85)
   16 MHz: 45 ticks / 563 vbl = 4.00 ticks/s   (PASS 232)
   screen mean 67.3, 160876 bright px (picture live, no bus errors)
+
+## play.sh (done)
+
+`tools/play.sh` follows the convention of the other games (cf. `../../nebulus/tools/play.sh`):
+
+```
+tools/play.sh                    # patched (default set = tick), STE, 1 MB, TOS 1.62
+tools/play.sh --original         # the unpatched Cobra WW1.PRG, for comparison
+tools/play.sh --machine megaste  # st, megast, ste, megaste, tt, falcon
+tools/play.sh --ram 2048
+tools/play.sh --cpu 16           # boots at 8 MHz, raised at VBL 200 (a real Mega STE powers up at 8)
+tools/play.sh --tos FILE
+tools/play.sh --only tick        # exactly these patches; `--only` alone = the unpatched set
+tools/play.sh --print            # print the Hatari command line, no build
+tools/play.sh --fresh            # discard build/play-*/ and rebuild
+tools/play.sh ... -- OPTS        # pass through to Hatari
+```
+
+How it runs: `wwbuild.py build --out build/play-<variant>` writes the patched (or copies the
+original) `WW1.PRG`, `WW1_FUZI.LFB` is copied beside it, and Hatari mounts that folder as C:
+with `--auto "C:\WW1.PRG"` (the Cobra disk has no AUTO folder, so the game is normally launched
+from the desktop). Verified: `--print` for every variant, `--fresh` builds, and Hatari starts
+with the right command line under Xvfb.
+
+**Remaining for the release**: the rest of the gate matrix (`pmtick_series.py` state equality
+on this build, 50/60 Hz, pause), then saves (the game's save-disk code wants a disk in A:; a
+blank `savedisk.st` plus `--disk-a` is the next step if saves matter for testing), then the
+other three ports (keys next - the prototype already works and the addresses are identical).

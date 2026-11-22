@@ -5,13 +5,17 @@ Status: **in progress** (started 2026-11-21). Porting the original Powermonger e
 keyboard shortcuts, and the performance work where the engine still matches.
 
 > **Resuming? Read [`work/notes/HANDOVER2.md`](work/notes/HANDOVER2.md) first.** The ATOMIK
-> depacker is exact, and `tools/wwbuild.py build` writes a patched PRG whose data segment
-> copies the tick payload to `$72000`. What remains is `play.sh` and the live gates.
+> depacker is exact, `tools/wwbuild.py build` writes a patched PRG that copies the tick
+> payload to `$72000`, and the shipped build holds **4.00 ticks/s at 8 and 16 MHz**.
+> `tools/play.sh` is done. What remains is the wider gate matrix and the other three ports.
 
 **Base: Cobra #26** (`disks/cobra26.st`, extracted to `extracted/cobra26/`) — the game as
 plain files (`WW1.PRG` + `WW1_FUZI.LFB`), runs standalone from a folder. It is the **same
 engine at the same addresses** as the Pompey build, so the tick patch works on it **unmodified:
-4.02 ticks/s at 8 and 16 MHz** (from 3.60 / 7.62).
+4.00 ticks/s at 8 and 16 MHz** (from 3.60 / 7.62).
+
+**Play it:** `tools/play.sh` (STE, 1 MB); `--original` for the unpatched game; `--machine`,
+`--ram`, `--cpu`, `--tos`, `--only`, `--print`, `--fresh` as in the other games.
 
 **Progress:** P0 (harness, navigation, snapshots) done. P1 (reverse engineering) done —
 `work/notes/frameloop.md` (main loop, flip/buffers, VBL, the complete 1990-patch -> WW1-site
@@ -24,8 +28,8 @@ gate: 12 consecutive ticks byte-identical, pass counters in lockstep** (`work/no
 **Depacker:** `tools/atomik.py` is exact (`python3 tools/atomik.py` → 100.00% against the live
 capture). `tools/wwbuild.py build` depacks, patches the seven tick sites to `jsr $72000`,
 and writes a plain PRG: the game text, a data segment that copies `tick.bin` to `$72000`
-before the startup, and the relocation table. `play.sh` and the live gates are not done
-yet; see `work/notes/HANDOVER2.md`.
+before the startup, and the relocation table. **The shipped build runs at 4.00 ticks/s at both
+8 and 16 MHz** (gate output in `work/notes/HANDOVER2.md`), and `tools/play.sh` runs it.
 
 
 
