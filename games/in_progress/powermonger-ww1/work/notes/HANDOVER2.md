@@ -267,7 +267,9 @@ run is that a paused game shows 0.00 ticks/s and resumes at 4.00 without a burst
 | 4.00 ticks/s at 8 MHz | **PASS** |
 | 4.00 ticks/s at 16 MHz | **PASS** |
 | per-tick state equality, real builds | **PASS** (12 ticks, 0 bytes, negative control — re-run after the stack fix) |
-| **long-run soak** (`soak.py`) | **PASS** — 45 min at 4.00 ticks/s, no errors |
+| **long-run soak** (`soak.py`) | **PASS** — 2372 world ticks (10 min) at 4.00 ticks/s with the FULL set (tick+noprot+keys), no errors, payload intact; stops only because the game enters a battle |
+| keyboard shortcuts (`keygate.py`) | **PASS** — 6 keys write byte-identical click words to a real click on the same cell |
+| phantom click (`phantomgate.py`) | **PASS** — a name of all command letters raises no click latch |
 | protection removed | **PASS** (flag `$2c`, no question box) |
 | play.sh | **PASS** (`--original`, `--machine`, `--only`, `--print`, `--fresh`) |
 | 60 Hz (Mega STE) | **blocked by the stock game**, not the patch |
