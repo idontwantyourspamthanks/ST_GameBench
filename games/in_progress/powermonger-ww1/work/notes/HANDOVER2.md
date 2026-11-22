@@ -370,3 +370,15 @@ So `soak.py` now distinguishes the two: a counter that stops with **no error lin
 either a pause (it re-reads after 10 s) or another screen (it screenshots, tries `Escape`
 to come back, and stops without calling it a failure). Only error lines or payload damage
 stop a soak as a fault.
+
+### The soak's stopping point is the battle view, not a fault
+
+The 45-minute run reached **world 2386** and then the counter stopped. The screenshot is the
+**3D battle view** (the general's portrait over the battlefield), which the game enters on its
+own when armies meet — `$2ed90` only advances at the map view. No error lines, payload intact.
+`soak.py` now reports this honestly ("until the game left the map view") instead of claiming a
+full run, and tries `Escape` to come back before giving up.
+
+Note for future long runs: `to_map()` clicks the island to get in, and one of those clicks
+occasionally lands as a game action later. That is why the run ended on a battle at ~2386
+rather than because of the tick.

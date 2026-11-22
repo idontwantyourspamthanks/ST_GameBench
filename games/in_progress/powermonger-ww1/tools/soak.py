@@ -144,6 +144,8 @@ def main() -> None:
 	h = PMWW(disk=None, no_floppy=True, autorun_f="C:\\WW1.PRG", files_from=folder,
 	         machine="ste", tos=TOS["1.62"])
 	samples = 0
+	stopped_early = False
+	ran_for = 0.0
 	try:
 		to_map(h)
 		start = time.time()
@@ -185,6 +187,7 @@ def main() -> None:
 					last_tick, last_vbl = back, h.vbl()
 					continue
 				print("       could not return; stopping (no errors: not a crash)", flush=True)
+				stopped_early = True
 				break
 			rate = (now - last_tick) / ((vbl - last_vbl) / 50.0) if vbl > last_vbl else -1
 			print(f"[{samples:3d}] t={(time.time() - start) / 60:5.1f}m "
@@ -208,11 +211,15 @@ def main() -> None:
 					print(f"  (could not dump: {e})", flush=True)
 				break
 			last_tick, last_vbl = now, vbl
+			ran_for = time.time() - start
 	finally:
 		h.close()
 
 	if errs:
 		print(f"\nFAIL: {len(errs)} error lines")
+	elif stopped_early:
+		print(f"\nOK: {samples} samples, {ran_for / 60:.1f} min until the game left the map view "
+		      f"(a battle or another screen, not a fault); no errors, payload intact")
 	else:
 		print(f"\nOK: {samples} samples over {args.minutes:.0f} minutes, no errors")
 
