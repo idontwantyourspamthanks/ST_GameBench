@@ -4,14 +4,31 @@ Status: **in progress** (started 2026-11-21). Porting the original Powermonger e
 (`../../done/powermonger/`) to the WW1 edition: the fixed-rate world tick, the tooltips, the
 keyboard shortcuts, and the performance work where the engine still matches.
 
-**Progress:** P0 (harness + navigation + snapshots) done; P1 (reverse engineering) largely
-done — `work/notes/frameloop.md` holds the main loop, the flip/buffers, the VBL and the
-complete 1990-patch -> WW1-site map; `work/notes/input.md` holds the IKBD, the click latch
-and the icon panel; `work/notes/baseline.md` holds the measurements (3.55 passes/s at 8 MHz,
-6.97 at 16 MHz: **1.96x**), the profile (renderer 40%, YM sample IRQ 11-14%, 32K window copy
-7.6%) and **the user's real-STE report (~2 fps vs 3-4 for the 1990 game)**, which makes a
-like-for-like busy-scene measurement the next baseline step. Open: the map-view command-icon
-cells (the tooltip/keys targets), the offline depacker + patch tool, then the four patches.
+> **Resuming? Read [`work/notes/HANDOVER.md`](work/notes/HANDOVER.md) first.** It states the
+> chosen base, what is proven, the single blocker (the ATOMIK depacker) and the acceptance
+> oracle for it.
+
+**Base: Cobra #26** (`disks/cobra26.st`, extracted to `extracted/cobra26/`) — the game as
+plain files (`WW1.PRG` + `WW1_FUZI.LFB`), runs standalone from a folder. It is the **same
+engine at the same addresses** as the Pompey build, so the tick patch works on it **unmodified:
+4.02 ticks/s at 8 and 16 MHz** (from 3.60 / 7.62).
+
+**Progress:** P0 (harness, navigation, snapshots) done. P1 (reverse engineering) done —
+`work/notes/frameloop.md` (main loop, flip/buffers, VBL, the complete 1990-patch -> WW1-site
+map), `input.md` (IKBD, click latch, icon panel, command grid with all 20 cell centres in
+`tools/pwwgrid.py`, the keyboard-shortcut prototype), `baseline.md` (measurements, profile,
+the user's real-STE ~2 fps report). **The tick patch is complete and passes the state-equality
+gate: 12 consecutive ticks byte-identical, pass counters in lockstep** (`work/notes/tickgate.md`,
+`tools/pmtick_series.py`).
+
+**Blocker:** `WW1.PRG` has no relocation table (28 + 61622 == the file length), so nothing can
+be appended, and its text is ATOMIK-packed, so the sites cannot be patched in the file. The only
+route is depack -> patch -> write a new plain PRG, which needs `tools/atomik.py` to be exact.
+It is not yet (skeleton right, one block-metadata detail wrong); the ground-truth depacked image
+is captured at `work/dumps/c26_image_full.bin` and the iterate loop is `python3 tools/atomik.py`
+(prints the % match, ~10 s, no emulator). `tools/wwbuild.py` holds the verified site table and
+refuses to build until the depacker is exact.
+
 
 
 Base: the cracked **Pompey Pirates #106** release (`disks/pp106.st`, converted from the

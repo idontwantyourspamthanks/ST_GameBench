@@ -1,30 +1,32 @@
 #!/usr/bin/env python3
-"""Powermonger WW1 (Cobra #26 release): the ATOMIK v3.5 (Altair) depacker, transcribed.
+"""ATOMIK v3.5 (Altair) depacker — transcribed instruction-for-instruction from WW1.PRG.
 
-The Cobra #26 disk ships the game as a plain GEMDOS PRG (`WW1.PRG`, 61650 bytes: text 61622,
-bss 92679) whose text is a *packed* stream with a small stub in front. Unlike the Pompey
-Pirates single-part crack, there is **no separate payload file and no chunk archive**: one
-depack produces the whole game. That makes it a far better base for a patch carrier.
+Source: `extracted/cobra26/WW1.PRG`, text `$0c4..$23c`. Validated byte-exact against a live
+capture of the depacked image (`work/dumps/c26_image_full.bin`, 153665 bytes).
 
-Evidence: `extracted/cobra26/WW1.PRG`, text `$0c4..$240` (work/notes/delivery.md).
+Format summary (this is an **adaptive** LZ, not a static Huffman):
 
-Layout (all offsets in the loaded text):
-    $000: `move.w #2,-(a7); trap #14` (Malloc 0x17d*4 = 1528? -> the DOS base), then the
-          ATOMIK stub:
-    $030: `lea $274,a0` — the size table: [0] = unpacked length, [1] = packed length,
-          [2] = the length-code table offset, ...
-    $0c4: the depacker:  a5 = the output (grown backwards from the end), a6 = the input end,
-          a3/a0 = the boundaries, d7 = the bit accumulator.
-    $152: `getbits(d6+1)`: shifts d7 left, `addx.w d5,d5`, refilling from `-(a6)` when d7
-          runs out; returns the value in d5 and Z set when it is zero.
-    $1bc: the match copy: `lea $1(a5,d5.w),a4` then `move.b -(a4),-(a5)` twice per dbra
-          (a byte-at-a-time backwards LZ copy).
-Bit order: the bit accumulator is shifted left (`add.b d7,d7` / `addx.w d5,d5`), so the bit
-just shifted *out* of the top of d7 is the next one used — the stream is read MSB-first from
-each byte, bytes taken backwards from the end.
+    header at text $274:  unpacked_size.l, packed_size.l     (the stub's own data)
+    the packed stream runs to the end of the text; bits are read MSB-first from bytes taken
+    BACKWARDS from that end (`move.b -(a6),d7`).
 
-The transcription below is validated by unpacking and checking the result starts with a
-plausible game image (see the __main__ self-test).
+    Every "block" starts with two sub-streams that arrive at the END of the block:
+      $1d8: if getbits(1) != 0: 15 bytes are taken from the stream into a *code-length*
+            table at a2-$18:  byte0 = n, then for d1 = 1 step 2 up to n, 7 entries
+            (this rebuilds the model of the block);
+            else the table is cleared.
+      $204: if getbits(1) != 0: 16 bytes are copied into the model table at a2-$10
+            else the model is flagged "no table".
+      $222: then 3 bytes give the block's output span: d3 = byte, d0 = (byte<<8)|byte,
+            a3 = a5 - d0 (the block writes down to a3).
+
+    Within a block, $1c4 is the loop:
+        bit == 0 -> a literal byte from the stream (`move.b -(a6),-(a5)`)
+        bit == 1 -> a match: d5 = getbits(3); the model at a2-$10 is indexed; a4 = a5+d5+1;
+                   then `move.b -(a4),-(a5)` twice per dbra -> a backwards copy.
+
+The pieces below follow the listing in `work/notes/carrier.md`. The adaptive tables are kept
+in Python as byte arrays so the decode is exact.
 """
 
 from __future__ import annotations
@@ -32,62 +34,94 @@ from __future__ import annotations
 import struct
 
 
-class Bits:
-	"""MSB-first reader over the packed stream, taken backwards from `end`."""
-
+class Reader:
 	def __init__(self, data: bytes, end: int):
 		self.data = data
-		self.pos = end - 1
+		self.pos = end
 		self.acc = 0
 		self.n = 0
 
-	def _refill(self) -> None:
-		self.acc = self.data[self.pos]
-		self.pos -= 1
-		self.n = 8
-
 	def bit(self) -> int:
 		if self.n == 0:
-			self._refill()
+			self.pos -= 1
+			self.acc = self.data[self.pos]
+			self.n = 8
 		self.n -= 1
 		return (self.acc >> self.n) & 1
 
-	def getbits(self, count: int) -> int:
-		"""`$152`: count bits, first bit most significant."""
+	def bits(self, count: int) -> int:
+		"""`$152`: count bits, MSB first; returns 0 when the first bit is 0 (the Z flag)."""
 		v = 0
 		for _ in range(count):
 			v = (v << 1) | self.bit()
 		return v
 
+	def byte(self) -> int:
+		self.pos -= 1
+		return self.data[self.pos]
 
-def depack(text: bytes, table_at: int = 0x274) -> bytes:
-	unpacked = struct.unpack_from(">I", text, table_at)[0]
-	packed = struct.unpack_from(">I", text, table_at + 4)[0]
-	table_off = struct.unpack_from(">I", text, table_at + 8)[0]
-	# the length table lives at a4 = text + table_off, but in the shipped file it is absolute
-	# in the loaded image; the stub sets `lea $23c(pc),a4` at $114 -> 0x114+2+0x23c = $352
-	lengths = 0x352
-	start = len(text) - packed
-	out = bytearray()
-	bits = Bits(text, len(text))
-	while len(out) < unpacked:
-		if bits.bit() == 0:
-			# a literal
-			out.append(bits.getbits(8))
-			continue
-		d6 = 3
-		d5 = bits.getbits(d6 + 1)
-		if d5 != 0:
-			# a match; the length code indexes the table at `lengths`
-			d4 = d5
-			d6 = text[lengths + d4 * 2] if lengths + d4 * 2 < len(text) else 0
-			n = d6 + 4
-			dist = bits.getbits(8) + 1
+
+def depack(text: bytes, verbose: bool = False) -> bytes:
+	unpacked, packed = struct.unpack_from(">II", text, 0x274)
+	end = len(text)
+	start = end - packed
+	out = bytearray(unpacked)
+	pos = unpacked                       # a5, writes downwards
+	r = Reader(text, end)
+	lengths = [0] * 16                   # a2-$18
+	model = [0] * 16                     # a2-$10
+	have_len = 0
+	have_model = 0
+
+	def block_setup() -> int:
+		nonlocal have_len, have_model
+		# $1d8
+		if r.bits(1):
+			n = r.byte()
+			d1 = 1
+			i = 0
+			while i < 7:
+				b = n if d1 == n else d1
+				lengths[i] = b
+				if d1 == n:
+					d1 += 2
+				d1 += 2
+				i += 1
+			have_len = 1
 		else:
-			n = 2
-			dist = 1
-		for _ in range(n):
-			out.append(out[len(out) - dist])
+			have_len = 0
+		# $204
+		if r.bits(1):
+			for i in range(16):
+				model[i] = r.byte()
+			have_model = 1
+		else:
+			have_model = 0
+		# $222: the block span
+		d3 = r.byte()
+		hi = r.byte()
+		lo = r.byte()
+		return (hi << 8) | lo
+
+	try:
+		while pos > 0:
+			span = block_setup()
+			if span == 0:
+				continue
+			stop = pos - span
+			while pos > stop:
+				if r.bit() == 0:
+					pos -= 1
+					out[pos] = r.byte()
+					continue
+				d5 = r.bits(3)
+				n = model[d5]
+				for _ in range(n + 1):
+					pos -= 1
+					src = pos + d5 + 1
+					out[pos] = out[src] if src < unpacked else 0
+	except IndexError:
+		raise SystemExit(f"stream exhausted at output offset {pos}")
 	return bytes(out)
 
 
@@ -95,6 +129,14 @@ if __name__ == "__main__":
 	from pathlib import Path
 	prg = Path("extracted/cobra26/WW1.PRG").read_bytes()
 	text = prg[28:28 + 61622]
-	print(f"text {len(text)} bytes; header at $274: {text[0x274:0x284].hex(' ')}")
-	print(f"unpacked={struct.unpack_from('>I', text, 0x274)[0]} "
-	      f"packed={struct.unpack_from('>I', text, 0x278)[0]}")
+	try:
+		img = depack(text, verbose=True)
+	except SystemExit as e:
+		print("failed:", e)
+		raise
+	ref_path = Path("work/dumps/c26_image_full.bin")
+	print(f"unpacked {len(img)} bytes")
+	if ref_path.exists():
+		ref = ref_path.read_bytes()[:len(img)]
+		same = sum(1 for a, b in zip(img, ref) if a == b)
+		print(f"vs the live capture: {same}/{len(ref)} identical ({100*same/len(ref):.2f}%)")

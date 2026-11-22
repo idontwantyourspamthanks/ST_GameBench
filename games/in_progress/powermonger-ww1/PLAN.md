@@ -1,8 +1,13 @@
 # Powermonger: World War I Edition — enhancement plan
 
-Base: the Pompey Pirates #106 cracked release (`disks/pp106.st`; README.md for the disk
-layout and the two boot chains). Method: `.omp/skills/st-game-speedup`, the sibling project
-`../done/powermonger/` as the reference.
+> **Resuming? Read [`work/notes/HANDOVER.md`](work/notes/HANDOVER.md) first.**
+
+Base: **Cobra #26** (`disks/cobra26.st`, extracted to `extracted/cobra26/`) — `WW1.PRG` and
+`WW1_FUZI.LFB` as plain files, runs standalone from a folder. The Pompey Pirates #106 single-part
+crack (`disks/pp106.st`) was the first base and is kept for reference only: its payload is a
+12-chunk POPI archive and its code is runtime-expanded, which needs a chunk depacker before
+anything can be delivered (`work/notes/delivery.md`). Method: `.omp/skills/st-game-speedup`,
+the sibling project `../done/powermonger/` as the reference.
 
 ## User decisions (2026-11-21)
 
