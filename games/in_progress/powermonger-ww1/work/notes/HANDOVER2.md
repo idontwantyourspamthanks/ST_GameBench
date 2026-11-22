@@ -100,3 +100,19 @@ Gates before shipping: cold boot to the map view with the marker `PMPO` set; **4
 - **Performance**: profile in `frameloop.md` — terrain 39.8%, YM sample IRQ 14.2%, window copy
   7.6%. The DMA-sound and `p6_cpy` blitter ports transpose from the 1990 project; the renderer
   does not (block-pattern combiner, not a triangle walker).
+# First shipped-PRG gate, Cobra #26 build via wwbuild.py
+
+Build: python3 tools/wwbuild.py build
+  wrote build/patched/WW1.PRG (154091 bytes, 152986 text, 422 data, sites: 7)
+  data segment = 26-byte copy stub + tick.bin (338 B); sites are `jsr $72000`
+
+Cold boot (PMWW, STE 1 MB TOS 1.62, folder run of build/play):
+  $72000 == tick.bin: True (checked at boot and at the name screen)
+  $13DA0 holds `4e b9 00 07 20 00` (jsr $72000); breakpoint on $13DA0 fires
+  payload entry $72000 fires; PASS increments
+
+Map view, after the standard navigation:
+  in_game: True
+  8 MHz : 45 ticks / 563 vbl = 4.00 ticks/s   (PASS 85)
+  16 MHz: 45 ticks / 563 vbl = 4.00 ticks/s   (PASS 232)
+  screen mean 67.3, 160876 bright px (picture live, no bus errors)
