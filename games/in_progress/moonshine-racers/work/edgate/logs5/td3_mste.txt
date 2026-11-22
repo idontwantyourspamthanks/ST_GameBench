@@ -1,0 +1,68 @@
+== td3_mste: HD Mega STE 2 MB, build /tmp/msred5/hd, campaign c3.trk
+title reached: True
+CHECK title reached: PASS 
+CHECK LOAD CAMPAIGN FROM HARD DISK item: PASS 
+CHECK campaign loaded: PASS 
+CHECK editor overlay loaded (V_EDOK): PASS 
+CHECK viewer up: PASS 
+edited copy: 314 segments, 380 objects, vMod 1
+CHECK the working copy is edited (vMod != 0): PASS 
+BAR at unit 19199
+[A_start] TEST DRIVE from unit 0 (segment 0)
+CHECK [A_start] race starts (td_ff ran, race standing, V_TD set): PASS in 4 s
+[A_start race up] vbl=11931 act=0xff loaded=0xff count=3 pos=0 start=0 ptr=0x1b0000 $102c=0x0003 len57890=19000 $23c0=0x1b0014 $1024=0x00 $1027=0x00 $100e=27 $5ff8=0 $1021=0x02
+CHECK [A_start] $5ff8 == the cursor unit 0 (distance counter): PASS 0
+CHECK [A_start] stream pointer inside ENCBUF ($1b0000..), campaign position / $102c = base level 3: PASS 0x1b0014 0x3
+[A_start] N=0 heads: curve $1bba=0 width $13ae=0 hill $23c6=0  $5ff8=0
+[A_start] curve ring: mismatches at shift 0 = 0; best shift 0 (0 mismatches); first entries [0, 0, 0, 0, 0, 0] expected [0, 0, 0, 0, 0, 0]
+[A_start] left ring: mismatches at shift 0 = 0; best shift 0 (0 mismatches); first entries [32, 32, 32, 32, 32, 32] expected [32, 32, 32, 32, 32, 32]
+[A_start] right ring: mismatches at shift 0 = 0; best shift -3 (0 mismatches); first entries [32, 32, 32, 32, 32, 32] expected [32, 32, 32, 32, 32, 32]
+[A_start] hill ring: mismatches at shift 0 = 0; best shift -3 (0 mismatches); first entries [0, 0, 0, 0, 0, 0] expected [0, 0, 0, 0, 0, 0]
+CHECK [A_start] rings == expansion of the working copy at unit 0 (curve / left / right / hill mismatches 0 0 0 0): PASS 
+[A_start] object slots active 25, expected 25 (window 0..1023); first got [(51, -38), (81, 44), (121, -53), (181, 84)] exp [(51, -38), (81, 44), (121, -53), (181, 84)]
+CHECK [A_start] object slots == the objects of the working copy in the window [0, 1023] (distance relative to the camera, lateral): PASS 25 vs 25
+[A_start] time bar: $10ce=0xd7825 rate $10d2=10385; R=18699 P=3838 expected start 0x0 (the bar has run on since: tolerance 600 passes)
+CHECK [A_start] time bar start == $ff0000 - (2 x R/10 + 100) x rate (clamped at 0): PASS 0xd7825 vs 0x0
+[A_start] after 5.0 s UP: $5ff8=418 $1024=0x0 $10ce=0x16a8ff
+CHECK [A_start] the car drove on from the cursor ($5ff8 > 0): PASS 478
+[A_start] returned after 1.6 s: why=0 ($1024 at return 0xff) $5ff8 at return 504
+CHECK [A_start] returned to the editor (esc): PASS 
+CHECK [A_start] esc ended it (neither BAR nor time-out): PASS 
+CHECK [A_start] back in the editor at the same cursor (unit 0 seg 0): PASS 0 0
+CHECK [A_start] working copy intact: 314 segments / 380 objects identical to before, vMod unchanged: PASS 
+CHECK [A_start] V_TD cleared, $1028 race flag clear, $102c as before: PASS $102c 0x0 vs 0x0
+[A_start] vectors: $118 0x130104 $70 0xd11e (editor hook inside $130000-$13ffff: True; VBL = the game's $d11e: True)
+CHECK [A_start] IKBD vector = the editor's kbhook again, VBL vector = the game's handler: PASS 
+CHECK [A_start] keys work after the return (RIGHT: cursor 0 -> 300): PASS 
+CHECK [A_start] LEFT puts the cursor back on 0: PASS 0
+cursor B_middle: unit 9054 seg 128
+[B_middle] TEST DRIVE from unit 9054 (segment 128)
+CHECK [B_middle] race starts (td_ff ran, race standing, V_TD set): PASS in 4 s
+[B_middle race up] vbl=16036 act=0xff loaded=0xff count=3 pos=0 start=0 ptr=0x1b0000 $102c=0x0003 len57890=19000 $23c0=0x1b00f8 $1024=0x00 $1027=0x00 $100e=21 $5ff8=9054 $1021=0x02
+CHECK [B_middle] $5ff8 == the cursor unit 9054 (distance counter): PASS 9054
+CHECK [B_middle] stream pointer inside ENCBUF ($1b0000..), campaign position / $102c = base level 3: PASS 0x1b00f8 0x3
+[B_middle] N=9054 heads: curve $1bba=1724 width $13ae=862 hill $23c6=862  $5ff8=9054
+[B_middle] curve ring: mismatches at shift 0 = 0; best shift 0 (0 mismatches); first entries [225, 225, 225, 225, 225, 225] expected [225, 225, 225, 225, 225, 225]
+[B_middle] left ring: mismatches at shift 0 = 0; best shift 0 (0 mismatches); first entries [37, 37, 37, 37, 37, 37] expected [37, 37, 37, 37, 37, 37]
+[B_middle] right ring: mismatches at shift 0 = 0; best shift 0 (0 mismatches); first entries [20, 20, 20, 20, 20, 20] expected [20, 20, 20, 20, 20, 20]
+[B_middle] hill ring: mismatches at shift 0 = 0; best shift 0 (0 mismatches); first entries [37, 37, 37, 37, 37, 37] expected [37, 37, 37, 37, 37, 37]
+CHECK [B_middle] rings == expansion of the working copy at unit 9054 (curve / left / right / hill mismatches 0 0 0 0): PASS 
+[B_middle] object slots active 15, expected 15 (window 9054..10077); first got [(208, 110), (218, -68), (306, 22), (326, 24)] exp [(208, 110), (218, -68), (306, 22), (326, 24)]
+CHECK [B_middle] object slots == the objects of the working copy in the window [9054, 10077] (distance relative to the camera, lateral): PASS 15 vs 15
+[B_middle] time bar: $10ce=0xc84bf rate $10d2=10385; R=9645 P=2028 expected start 0x0 (the bar has run on since: tolerance 600 passes)
+CHECK [B_middle] time bar start == $ff0000 - (2 x R/10 + 100) x rate (clamped at 0): PASS 0xc84bf vs 0x0
+[B_middle] after 3.0 s UP: $5ff8=9272 $1024=0x0 $10ce=0x128a45
+CHECK [B_middle] the car drove on from the cursor ($5ff8 > 9054): PASS 9332
+[B_middle] returned after 1.6 s: why=0 ($1024 at return 0xff) $5ff8 at return 9358
+CHECK [B_middle] returned to the editor (f10): PASS 
+CHECK [B_middle] f10 ended it (neither BAR nor time-out): PASS 
+CHECK [B_middle] back in the editor at the same cursor (unit 9054 seg 128): PASS 9054 128
+CHECK [B_middle] working copy intact: 314 segments / 380 objects identical to before, vMod unchanged: PASS 
+CHECK [B_middle] V_TD cleared, $1028 race flag clear, $102c as before: PASS $102c 0x0 vs 0x0
+[B_middle] vectors: $118 0x130104 $70 0xd11e (editor hook inside $130000-$13ffff: True; VBL = the game's $d11e: True)
+CHECK [B_middle] IKBD vector = the editor's kbhook again, VBL vector = the game's handler: PASS 
+CHECK [B_middle] keys work after the return (RIGHT: cursor 9054 -> 9059): PASS 
+CHECK [B_middle] LEFT puts the cursor back on 9054: PASS 9054
+CHECK Esc = back to the track list: PASS 
+Bus/Address error lines in the Hatari log: 0
+RESULT td3_mste: ALL CHECKS PASS

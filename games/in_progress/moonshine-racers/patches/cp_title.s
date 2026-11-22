@@ -47,6 +47,7 @@ M_TXT2  equ     CPWORK+$280     ; 40 bytes
         jmp     e1.l            ; $B9F00: title exit (site $74fe)
         jmp     e2.l            ; $B9F06: hi-score screen exit (cp_hiscore, site $8418)
         jmp     e3.l            ; $B9F0C: "WELCOME PARTNERS ... PRESS A KEY" screen key wait (cp_welcome, site $7c04)
+        jmp     e4.l            ; $B9F12: floppy title screen (cp_flhint, site $7446): the displaced loop-body instructions, then the hint line on both screens
 
 ; ---- title exit
 e1:     cmpi.b  #$44,$60ff.w            ; F10
@@ -85,12 +86,7 @@ e2:     cmpi.b  #$44,$60ff.w
 e3:     tst.b   V_WELC.l
         bne.s   .h
         st      V_WELC.l
-        movem.l d0-d7/a0-a6,-(a7)
-        lea     t_whint(pc),a0
-        movea.l $1004.w,a5
-        move.w  #$78,d4
-        jsr     $12268.l
-        movem.l (a7)+,d0-d7/a0-a6
+        bsr     hint
 .h:     tst.b   $60ff.w
         beq.s   .none
         cmpi.b  #$44,$60ff.w
@@ -112,6 +108,32 @@ e3:     tst.b   V_WELC.l
 .key:   clr.b   V_WELC.l
         jmp     $7c0a.l
 .none:  jmp     $7c02.l
+
+; ---- the hint line F10 = CAMPAIGNS (text row 23, the game's text routine) on the screen $1004 points to.  Registers kept.
+hint:   movem.l d0-d7/a0-a6,-(a7)
+        lea     t_whint(pc),a0
+        movea.l $1004.w,a5
+        move.w  #$78,d4
+        jsr     $12268.l
+        movem.l (a7)+,d0-d7/a0-a6
+        rts
+
+; ---- floppy title screen (cp_flhint, site $7446 = the first two instructions of the face / text loop body `move.l (a2),$10e8.w / movea.l (a2)+,a0`, executed once per message).  Between two messages the loop clears
+; both screens from line 64 down (`jsr $d8ca` at $74c8), so the hint line is drawn at the start of every message, into both screens (they are flipped while the text is typed).  The floppy flow never shows the WELCOME
+; PARTNERS screen, so this is where F10 = CAMPAIGNS is told there (the title key exit e1 opens the menu on F10).
+e4:     move.l  (a2),$10e8.w            ; the displaced instructions
+        movea.l (a2)+,a0
+        movem.l d0-d7/a0-a6,-(a7)
+        lea     t_whint(pc),a0
+        movea.l $1004.w,a5
+        move.w  #$78,d4
+        jsr     $12268.l
+        lea     t_whint(pc),a0
+        movea.l $1008.w,a5
+        move.w  #$78,d4
+        jsr     $12268.l
+        movem.l (a7)+,d0-d7/a0-a6
+        rts
 
 ; ---- the menu.  Returns d0.w = 1 start a game (V_ACT / V_START set), 0 back to the title.
 cp_menu:

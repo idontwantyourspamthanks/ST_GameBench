@@ -94,7 +94,7 @@ CP_EQUS = {"CPV": 0xB8E00,                    # campaign variables (in the paylo
            "CPSTORE": 0x110000,               # the campaign file as read (<= 128 KB; the format's maximum is 123,496 B)
            "EDBASE": 0x130000,                # the track editor overlay FILES\MSEDIT.OVL as read on first use (work/notes/editor_design.md; <= 64 KB)
            "EDWORK": 0x140000,                # the editor's work RAM (variables, track model, per-unit arrays, its screen)
-           "EDVER": 2}                        # overlay interface version: cp_title refuses an MSEDIT.OVL of another one
+           "EDVER": 3}                        # overlay interface version: cp_title refuses an MSEDIT.OVL of another one
 _FLOPPY = False                               # which release the predefined equate `FLOPPY` (0 / 1) selects: cp_title.s has one file reader per release; set_flavour() before assembling
 
 

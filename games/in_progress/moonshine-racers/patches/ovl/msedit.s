@@ -142,11 +142,30 @@ vXNS    equ     2280            ; w segments at the last expand
 vXEnd   equ     2282            ; l extent at the last expand
 vXk     equ     2286            ; w expand_from: the mask in use
 vLRd    equ     2288            ; w the list rows are stale (redrawn when no key is waiting)
+vTd102c equ    2300            ; w test drive: the game's $102c before the race
+vTd1021 equ    2302            ; b $1021 sound mode
+vTd1020 equ    2303            ; b $1020 music enable
+vTd1027 equ    2304            ; b $1027 lost races
+vTdScrA equ    2306            ; l $1004
+vTdScrB equ    2310            ; l $1008
+vTdN    equ    2314            ; w the cursor unit the race starts at
+vTdCnt  equ    2316            ; w VBL frames since the race was decided (tdvbl)
+vTdOldV equ    2318            ; l the game's VBL handler ($70) while tdvbl is in
+vTdOldK equ    2322            ; l the game's IKBD handler ($118) while tdkb is in
+vTdHit  equ    2326            ; w number of td_ff runs (read by the gate scripts)
+vTdRes  equ    2328            ; b $1024 when the race returned
+vTdRes2 equ    2329            ; b $1226
+vTdLast equ    2330            ; w $5ff8 when the race returned
+vTdRem  equ     2332            ; w td_ff: units still to fast-forward
+vTdKill equ     2335            ; b Esc / F10 was pressed in the race (tdkb)
+vTdWhy  equ     2334            ; b how the race was decided (tdvbl): 1 the BAR was reached, 2 time-out, 0 neither (F10, Esc, crashes)
 
         dc.b    'MSED'          ; +0  magic
         dc.w    EDVER,0         ; +4  version (cp_title refuses another one), flags
         dc.l    0               ; +8  file length (msrpatch.py)
         dc.l    0               ; +12 CRC-32 of the bytes from +16 (msrpatch.py)
+        bra.w   ed_main         ; +16 entry of the editor (cp_title: jsr EDBASE+16)
+        bra.w   td_ff           ; +20 entry of the test drive's fast-forward (cp_td: jsr EDBASE+20, inside the game's race setup)
 
 ; ---------------------------------------------------------------- entry (called by cp_title; supervisor, the title's context).  Returns when the user leaves.
 ed_main:
@@ -3111,13 +3130,13 @@ curve_step:                             ; d2 = -1 / +1: one step more to the lef
 ; working copy, re-expands and redraws (double buffered); BACK / Esc restores.  Types: a full screen list (no preview).  Left / right = exact value (fire / Control 10, Shift 100) in the numeric lists.
 cmd_edit:
         subi.w  #10,d0
-        cmpi.w  #16,d0
+        cmpi.w  #17,d0
         bcc   .r
         add.w   d0,d0
         move.w  .t(pc,d0.w),d0
         jmp     .t(pc,d0.w)
 .r:     rts
-.t:     dc.w    c_curve-.t,c_hill-.t,c_len-.t,c_wl-.t,c_wr-.t,c_ins-.t,c_spl-.t,c_del-.t,c_type-.t,c_bar-.t,c_undo-.t,c_redo-.t,c_check-.t,c_mrg-.t,c_cm-.t,c_cp-.t
+.t:     dc.w    c_curve-.t,c_hill-.t,c_len-.t,c_wl-.t,c_wr-.t,c_ins-.t,c_spl-.t,c_del-.t,c_type-.t,c_bar-.t,c_undo-.t,c_redo-.t,c_check-.t,c_mrg-.t,c_cm-.t,c_cp-.t,c_td-.t
 c_curve: moveq  #1,d0
         bra   el_road
 c_hill: moveq   #2,d0
@@ -4488,7 +4507,7 @@ pick:   movem.l d1-d7/a0-a4,-(a7)
         beq   .nm
         movea.l d3,a0
         clr.l   vMsg(a5)
-        moveq   #22,d1
+        moveq   #23,d1                  ; (row 22 is the 20th item of the longest menu)
         moveq   #6,d2
         bsr     ptext
 .nm:    moveq   #0,d6
@@ -4803,6 +4822,219 @@ lev_pick:
         tst.w   d0
         rts
 
+; ======================================================================================================= milestone 3: TEST DRIVE FROM THE CURSOR (design: work/notes/editor_design.md 13)
+; c_td (key P / menu): the working copy is encoded into ENCBUF and the game's own race routine ($76f4: setup, loop and exit in one subroutine) is CALLED from here, started at the cursor unit; the race's end (the BAR, the time,
+; the crashes, F10, Esc) is its `rts`.  cp_fetch's hookb sees V_TD (CPV+14) and leaves PTR (= ENCBUF) alone; cp_td's hook at the end of the setup calls td_ff.  No shop, no campaign advance, no hi-score.
+c_td:   movem.l d1-d7/a0-a6,-(a7)
+        cmpi.w  #$4eb9,$7926.w          ; cp_td's `jsr hooktd.l` is at the end of the race setup (without it the drive would start at unit 0)
+        bne   .nopatch
+        cmpi.l  #$b8260,$7928.w
+        bne   .nopatch
+        move.l  vPos(a5),d0
+        move.l  vBarAt(a5),d1
+        bmi   .go
+        cmp.l   d1,d0
+        bhi   .behind                   ; the BAR would lie behind the camera: no finish possible
+.go:    move.w  d0,vTdN(a5)
+        bsr     encode                  ; the block as it is now, kept or not (ENCBUF)
+        bsr     in_reset                ; no key, fire released
+        move.w  sr,-(a7)                ; the game's IKBD handler alone (the race reads $60ff itself); the editor's hook comes back afterwards
+        ori.w   #$700,sr
+        move.l  vOldKb(a5),$118.w
+        move.w  (a7)+,sr
+        move.w  $102c.w,vTd102c(a5)     ; what the title / the menu expect after the race
+        move.b  $1021.w,vTd1021(a5)
+        move.b  $1020.w,vTd1020(a5)
+        move.b  $1027.w,vTd1027(a5)
+        move.l  $1004.w,vTdScrA(a5)
+        move.l  $1008.w,vTdScrB(a5)
+        clr.l   vTdOldV(a5)
+        clr.b   vTdWhy(a5)
+        clr.b   vTdKill(a5)
+        move.w  vBase(a5),d0            ; the preparations of the campaign loop ($726c-$72c0) and of cp_wrap: $102c = the BASE level
+        move.w  d0,$102c.w
+        moveq   #0,d1                   ; $1029 = the world tier of the map screens ($7282-$72b4), read by the race ($112c8)
+        cmpi.w  #5,d0
+        bcs   .tier
+        moveq   #1,d1
+        cmpi.w  #10,d0
+        bcs   .tier
+        moveq   #2,d1
+.tier:  move.b  d1,$1029.w
+        clr.b   $1026.w                 ; crashes of this race
+        move.b  $1023.w,$1021.w         ; sound mode of the race
+        st      $1020.w
+        move.l  #ENCBUF,CPV+8.l         ; PTR (cp_ptr: the stream setup reads the block here)
+        st      CPV+14.l                ; V_TD
+        st      $1028.w                 ; race flag (the extra-frame patches look at it)
+        jsr     $d866.l                 ; the editor's screen fades to black with the game's own fade
+.f1:    tst.w   $3a88.w
+        bne   .f1
+        jsr     $76f4.l                 ; the race
+        lea     V.l,a5
+        move.b  $1024.w,vTdRes(a5)
+        move.b  $1226.w,vTdRes2(a5)
+        move.w  $5ff8.w,vTdLast(a5)
+        move.w  sr,-(a7)
+        ori.w   #$700,sr
+        tst.l   vTdOldV(a5)             ; td_ff put its wrappers in: take them out
+        beq   .nh
+        move.l  vTdOldV(a5),$70.w
+        move.l  vTdOldK(a5),$118.w
+        clr.l   vTdOldV(a5)
+.nh:    move.w  (a7)+,sr
+        clr.b   $6042.w                 ; the F10 hold byte the race loop reads (set by F10, or by tdkb / tdvbl)
+        clr.b   $60ff.w
+        clr.b   CPV+14.l
+        clr.w   $91f0.l                 ; the campaign loop's clean-up after the race ($72ca-$72e4)
+        clr.b   $1028.w
+        jsr     $d82c.l
+.f2:    tst.w   $3a88.w
+        bne   .f2
+        clr.b   $3d2e.w
+        jsr     $d770.l                 ; sound player reset
+        lea     V.l,a5
+        move.w  vTd102c(a5),$102c.w
+        move.b  vTd1021(a5),$1021.w
+        move.b  vTd1020(a5),$1020.w
+        move.b  vTd1027(a5),$1027.w
+        move.l  vTdScrA(a5),$1004.w
+        move.l  vTdScrB(a5),$1008.w
+        jsr     $d206.l                 ; the editor's screen and palette back
+        move.l  vShow(a5),d0
+        lsr.l   #8,d0
+        move.b  d0,$ffff8203.w
+        lsr.w   #8,d0
+        move.b  d0,$ffff8201.w
+        lea     pal(pc),a0
+        lea     $ffff8240.w,a1
+        moveq   #15,d0
+.p:     move.w  (a0)+,(a1)+
+        dbra    d0,.p
+        move.w  sr,-(a7)
+        ori.w   #$700,sr
+        clr.l   vKqH(a5)                ; vKqH / vKqT: nothing typed during the race is kept
+        move.w  (a7)+,sr
+        bsr     kb_hook
+        bsr     in_reset
+        move.w  #1,vRedraw(a5)
+        lea     t_tdover(pc),a0
+        bsr     msg
+        bra   .x
+.nopatch: lea   t_tdnopatch(pc),a0
+        bra   .m
+.behind: lea    t_tdbehind(pc),a0
+.m:     bsr     msg
+.x:     movem.l (a7)+,d1-d7/a0-a6
+        rts
+
+; td_ff: called by cp_td (`jsr EDBASE+20`) at the end of the race setup of a test drive, when the rings, the objects, the opponents and the race state stand at unit 0.  Fast-forward to the cursor unit N with the game's own
+; updaters, set the distance, the speech pointer and the time bar, put the test drive's two wrappers in.
+td_ff:  movem.l d0-d7/a0-a6,-(a7)
+        addq.w  #1,V+vTdHit.l           ; (the game's updaters below use every register: the counters live in memory)
+        clr.b   $C0008.l                ; rd_geom's standing-frame reuse off (trackloader.md 6)
+        move.w  V+vTdN.l,V+vTdRem.l     ; units still to go
+        beq   .nff
+.ch:    move.w  V+vTdRem.l,d0
+        cmpi.w  #1023,d0                ; the ring updaters take at most 1023 steps per call
+        bls   .c1
+        move.w  #1023,d0
+.c1:    move.w  d0,$130c.w
+        sub.w   d0,V+vTdRem.l
+        jsr     $e2e8.l                 ; objects: the ones passed are freed (BEFORE the spawner: the race loop spawns first, which is exact for steps of 10 only)
+        jsr     $e218.l                 ; objects: spawn what entered the 1023-unit window
+        jsr     $fe50.l                 ; left / right width rings
+        jsr     $ff76.l                 ; curve ring
+        jsr     $1003c.l                ; hill ring
+        tst.w   V+vTdRem.l
+        bne   .ch
+        clr.w   $130c.w
+.nff:   lea     V.l,a5
+        moveq   #0,d7
+        move.w  vTdN(a5),d7             ; N
+        move.w  d7,$5ff8.w              ; the distance
+        movea.w $12a4.w,a0              ; speech: the entries (distance + $320) below N are over
+.sp:    move.w  (a0),d0
+        beq   .spd
+        subi.w  #$320,d0
+        cmp.w   d7,d0
+        bcc   .spd
+        addq.l  #4,a0
+        bra   .sp
+.spd:   move.w  a0,$12a4.w
+        move.l  vBarAt(a5),d0           ; the time bar: 2 x (the distance left to the chase start at full speed) + 10 s, never more than the stock bar; the rate $10d2 stays the base level's
+        bmi   .tb
+        subi.l  #500,d0
+        sub.l   d7,d0
+        bpl   .r1
+        moveq   #0,d0
+.r1:    divu    #10,d0                  ; passes at 10 units per pass
+        andi.l  #$ffff,d0
+        add.l   d0,d0
+        addi.l  #100,d0                 ; + 100 passes (10 s)
+        moveq   #0,d1
+        move.w  $10d2.w,d1
+        mulu    d1,d0                   ; passes x rate (<= 6654 x 65535)
+        move.l  #$ff0000,d2
+        sub.l   d0,d2
+        bpl   .t1
+        moveq   #0,d2
+.t1:    move.l  d2,$10ce.w
+.tb:    clr.w   vTdCnt(a5)
+        move.w  sr,-(a7)                ; the wrappers go in now: every $d6fa call of the setup swaps the vectors through HAGA's TOS window
+        ori.w   #$700,sr
+        move.l  $70.w,vTdOldV(a5)
+        move.l  $118.w,vTdOldK(a5)
+        move.l  #tdvbl,$70.w
+        move.l  #tdkb,$118.w
+        move.w  (a7)+,sr
+        movem.l (a7)+,d0-d7/a0-a6
+        rts
+
+; tdkb: IKBD wrapper of the race: the game's handler, then Esc (make code 1 in $60ff) AND F10 (make $44) are turned into the F10 hold byte the race loop aborts on ($7970): the race loop polls it once per pass (10 per second), so
+; a quick tap of the real F10 (held byte set and cleared between two polls) would be missed; here the byte stays set until the editor clears it after the race
+tdkb:   pea     .back(pc)
+        move.w  sr,-(a7)
+        move.l  V+vTdOldK.l,-(a7)
+        rts                             ; = jmp to the game's handler, whose rte returns to .back
+.back:  cmpi.b  #1,$60ff.w
+        beq   .k
+        cmpi.b  #$44,$60ff.w
+        bne   .c
+.k:     clr.b   $60ff.w
+        st      V+vTdKill.l
+.c:     tst.b   V+vTdKill.l             ; asserted again after every IKBD byte: the break code of F10 clears the held byte
+        beq   .x
+        st      $6042.w
+.x:     rte
+
+; tdvbl: VBL wrapper of the race: the game's handler, then, once the race is decided (the finish: $1024 >= 2; the time-out message: $1226 = 5) and 75 frames (1.5 s) have passed, the same F10 byte ends the race: the stop at
+; the BAR / the time-out text stay visible, the closing message sequence, score count and place text of a real race are skipped
+tdvbl:  pea     .back(pc)
+        move.w  sr,-(a7)
+        move.l  V+vTdOldV.l,-(a7)
+        rts
+.back:  tst.b   $1024.w                 ; no register is touched: this runs in the middle of the interrupted code
+        beq   .t
+        cmpi.b  #2,$1024.w
+        bcs   .x                        ; 1 = the car is being driven into the BAR
+        cmpi.b  #3,$1024.w
+        bhi   .t                        ; $ff (over): only a time-out is still told apart
+        tst.w   V+vTdCnt.l              ; 2 / 3: the BAR is reached
+        bne   .c
+        move.b  #1,V+vTdWhy.l
+        bra   .c
+.t:     cmpi.b  #5,$1226.w
+        bcs   .x
+        tst.w   V+vTdCnt.l              ; the time-out message
+        bne   .c
+        move.b  #2,V+vTdWhy.l
+.c:     addq.w  #1,V+vTdCnt.l
+        cmpi.w  #75,V+vTdCnt.l
+        bcs   .x
+        st      $6042.w
+.x:     rte
+
 ; ---------------------------------------------------------------- tables and texts
 pal:    dc.w    $000,$444,$567,$070,$057,$740,$700,$777,$770,$777,$777,$777,$777,$777,$777,$777
 rltab:  dc.w    19472,19720,19800,19000,19375,18000,18626,20000,19000,20000,20000,22000,18500,22000,23000   ; race length of the 15 levels (word 0 of the minimap header, tools/msrtrack.py LEVELS)
@@ -4826,9 +5058,10 @@ keytab: dc.b    $01,1,$44,1             ; Esc, F10: leave (the track is kept)
         dc.b    $25,22                  ; K check
         dc.b    $32,23                  ; M
         dc.b    $33,24,$34,25           ; , . bend left / right
+        dc.b    $19,26                  ; P test drive from the cursor
         dc.b    0
-vmroad: dc.b    10,11,12,13,14,15,16,23,17,19,20,21,22,4,5,6,7,0,1
-vmobj:  dc.b    18,16,23,15,17,19,20,21,22,4,5,6,7,0,1
+vmroad: dc.b    10,11,12,13,14,15,16,23,17,19,20,21,22,26,4,5,6,7,0,1
+vmobj:  dc.b    18,16,23,15,17,19,20,21,22,26,4,5,6,7,0,1
         even
 enc_tab: dc.w   4,0, 8,1, 9,1, 6,0      ; the four ring streams: curve, left width, right width, hill = field offset in the segment, 1 = byte
 cv_tab: dc.w    4,2, 0,0, 2,2, 8,1, 9,1, 2,2, 4,2, 6,2   ; current value per act: offset, 0 none / 1 byte / 2 word
@@ -4886,6 +5119,7 @@ m_road:
         dc.b    "UNDO                               U",0
         dc.b    "REDO                         SHIFT U",0
         dc.b    "CHECK THE TRACK                    K",0
+        dc.b    "TEST DRIVE FROM THE CURSOR         P",0
         dc.b    "ZOOM IN                            +",0
         dc.b    "ZOOM OUT                           -",0
         dc.b    "ROAD <> OBJECTS                  TAB",0
@@ -4902,6 +5136,7 @@ m_obj:
         dc.b    "UNDO                               U",0
         dc.b    "REDO                         SHIFT U",0
         dc.b    "CHECK THE TRACK                    K",0
+        dc.b    "TEST DRIVE FROM THE CURSOR         P",0
         dc.b    "ZOOM IN                            +",0
         dc.b    "ZOOM OUT                           -",0
         dc.b    "ROAD <> OBJECTS                  TAB",0
@@ -4977,6 +5212,9 @@ t_ts:   dc.b    " SIZE ",0
 t_tp:   dc.b    " SPRITE ",0
 t_lhint: dc.b   "UP/DOWN + FIRE OR RETURN    ESC = BACK",0
 t_nobar: dc.b   "THIS TRACK HAS NO BAR (E-BAR)",0
+t_tdover: dc.b  "BACK FROM THE TEST DRIVE",0
+t_tdbehind: dc.b "TEST DRIVE: THE CURSOR IS BEHIND THE BAR",0
+t_tdnopatch: dc.b "TEST DRIVE NEEDS THE CP_TD PATCH",0
 t_top:  dc.b    "TRACK EDITOR: CAMPAIGN TRACKS",0
 t_top0: dc.b    "TRACK EDITOR: NO CAMPAIGN YET",0
 t_tstock: dc.b  "COPY OF AN ORIGINAL TRACK >",0
@@ -5005,6 +5243,7 @@ t_help: dc.b    "TRACK EDITOR KEYS",0
         dc.b    "SHIFT+B PUT THE BAR HERE",0
         dc.b    "U UNDO  SHIFT+U REDO  K CHECK",0
         dc.b    "RETURN / SPACE  REPEAT THE LAST PICK",0
+        dc.b    "P TEST DRIVE FROM CURSOR (F10/ESC ENDS)",0
         dc.b    " ",0
         dc.b    "LISTS: UP/DOWN, FIRE / RETURN = OK",0
         dc.b    "L/R = EXACT VALUE (CTRL OR FIRE 10,",0
