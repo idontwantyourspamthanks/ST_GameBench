@@ -24,6 +24,12 @@ sys.path.insert(0, str(BENCH / "tools"))
 from stharness import Hatari, TOS, retarget_snapshot  # noqa: E402,F401
 
 DISK = GAME / "disks" / "pp106.st"
+# The two releases are the same engine at a constant offset (work/notes/cobra26.md):
+# the Cobra #26 / Fuzion build's code and its runtime variables sit +$12686 from the Pompey
+# build's. A few things do NOT shift: the IKBD packet buffer/pointer words ($1d2a0-$1d2c0,
+# in the fixed IO page) and the file tables. `delta` selects the build.
+# NB: the code shifts, the *variables* do not (the code references them absolutely).
+DELTA = {"pp106": 0, "cobra26": 0}
 FILES = GAME / "extracted" / "pp106"       # the disk's files as a folder (GEMDOS C:)
 SNAP = GAME / "work" / "snapshots"
 REF = GAME / "work" / "ref"
@@ -37,7 +43,8 @@ GATES = {
 
 class PMWW(Hatari):
 	def __init__(self, snapshot: str | None = None, workdir: str | None = None, disk: Path | None = DISK,
-	             cpuclock: int | None = None, no_floppy: bool = False, **kw):
+	             cpuclock: int | None = None, no_floppy: bool = False,
+	             files_from: Path | None = None, **kw):
 		R = Path(workdir or tempfile.mkdtemp(prefix="strun-"))
 		R.mkdir(parents=True, exist_ok=True)
 		home = R / "home"
@@ -54,7 +61,7 @@ class PMWW(Hatari):
 			# (`extra=['--disk-a', ...]`) unless disk_b_none is set.
 			drive = R / "C"
 			drive.mkdir(parents=True, exist_ok=True)
-			for src in sorted(FILES.iterdir()):
+			for src in sorted((files_from or FILES).iterdir()):
 				if src.name == "AUTO":     # the PP menu hijacks any TOS boot (AUTO folder); run the game directly
 					continue
 				dst = drive / src.name
@@ -86,6 +93,7 @@ class PMWW(Hatari):
 			retarget_snapshot(snapshot, snap_in, R)
 			snapshot = str(snap_in)
 		old_home = os.environ.get("HOME")
+		self.delta = DELTA.get(disk.stem, 0) if disk is not None else kw.pop("delta", 0)
 		os.environ["HOME"] = str(home)
 		try:
 			super().__init__(game_dir=GAME, snapshot=snapshot, workdir=str(R), extra=extra, **kw)
@@ -116,7 +124,7 @@ if __name__ == "__main__":
 
 def _methods():
 	def mpos(self):
-		"""Title/option-screen pointer words ($1d2b2/$1d2b4, ST pixels)."""
+		"""Title/option-screen pointer words ($1d2b2/$1d2b4, ST pixels; fixed page, no delta)."""
 		for _ in range(3):
 			try:
 				f = self.debug("m $1d2b2 4", wait=0.7).strip().splitlines()[-1].split(':')[1].split()
@@ -231,16 +239,18 @@ def _methods():
 		proves the latch ran; 10 is the release event ($856: clears the down-seen flags),
 		0 the idle poll path.
 		"""
+		d = self.delta
 		self.goto_st(x, y)
 		fired = False
 		for _ in range(24):
-			self.debug("w $1d2af 4", wait=hold if not fired else 0.12)
-			f = self.debug("m $2edbc 2", wait=0.25).strip().splitlines()[-1].split(':')[1].split()
+			self.debug(f"w ${0x1d2af | 0:x} 4" if d == 0 else f"w ${0x1d2af + d:x} 4",
+			           wait=hold if not fired else 0.12)
+			f = self.debug(f"m ${0x2edbc + d:x} 2", wait=0.25).strip().splitlines()[-1].split(':')[1].split()
 			if f[0] != "00" or f[1] != "00":      # the word $2edbc is set: the latch ran
 				fired = True
 				break
-		self.debug("w $1d2af 10", wait=0.3)
-		self.debug("w $1d2af 0", wait=0.3)
+		self.debug(f"w ${0x1d2af + d:x} 10", wait=0.3)
+		self.debug(f"w ${0x1d2af + d:x} 0", wait=0.3)
 		if not fired:
 			raise RuntimeError("poke_click: the game's latch never consumed the button event")
 
