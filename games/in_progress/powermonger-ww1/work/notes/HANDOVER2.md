@@ -355,3 +355,17 @@ part of the compared state, and the corruption had not reached any compared vari
 the ticks it sampled. **A long-run soak is a separate gate**, and `tools/soak.py` is it
 (`--minutes N`, checks the payload's integrity, the world still advancing, the resource-cache
 cursor, and Hatari's error lines).
+
+### After the fix: what the soak shows
+
+`tools/soak.py --build build/soak-fix2 --minutes 25` ran to **world 2156** with zero errors,
+then the world counter stopped — and the screenshot showed the **3D battle view** (the
+general's portrait), not a hang. That is normal gameplay: `$2ed90` only advances at the map
+view, and the soak's navigation had clicked into a battle. The leaking build had died at
+world ~371; the fixed one passes that point by a factor of six and stops only because the
+game moved to another screen.
+
+So `soak.py` now distinguishes the two: a counter that stops with **no error lines** is
+either a pause (it re-reads after 10 s) or another screen (it screenshots, tries `Escape`
+to come back, and stops without calling it a failure). Only error lines or payload damage
+stop a soak as a fault.
