@@ -62,28 +62,65 @@ flip. Two candidate fixes:
 The next step is (2) first (cheap, tells us whether the state really diverges), then (1) if
 it does.
 
-## 4. The after-flip comparison (a second observation point) [obs]
+## 4. The measurement bugs, found and fixed [obs]
 
-Dumping at the **flip** (`$e0e`) instead of at the counter bump cuts the divergence from
-582 to **235 bytes** — so a large part of the first result was a half-finished pass. What
-remains:
+Three real defects in the gate itself, each of which had produced a false "divergence":
 
-| page | bytes | what |
-|---|---:|---|
-| `$2fc00-$305ff` | 78 | the entity/captain records (a 2-byte word differs: `$0227` vs `$8227`, a sign/flag bit) |
-| `$51a00-$51dff` | 89 | the **men records** |
-| `$55xxx-$56xxx` | 38 | the territory/selection tables |
-| `$4dxxx`, `$4fxxx`, `$500xx` | 9 | drawn glyph/icon words |
-| `$580xx`, `$5a0xx` | 19 | the scroll/conquest-meter words |
+1. **A stale dump was accepted.** `work/eq/tick_8.bin` was a 4096-byte leftover from an
+   aborted run; Python repeated the short buffer and the comparison ran to the end. The tool
+   now deletes any old dump before capturing and refuses one shorter than `$72000` bytes.
+2. **The two runs captured different points of the simulation.** The stock run read the base
+   tick after a 5 s sleep; the patched run read it after applying the patch (later). Every
+   "divergence" below `$2ed90` was then partly just a different absolute tick. The tool now
+   reads the counter immediately on restore and takes the targets from that same base in both
+   runs. Verified: `stock: base tick 266, targets [272, 273]` and `tick: base tick 266,
+   targets [272, 273]`.
+3. **The two runs sit on opposite screen buffers** at the same tick (flip parity), so the
+   draw pointer `$e7c2`, its copy at `$11dc6` and the buffer pair `$2ed98/$2ed9c` differ by
+   construction. Now excluded (the picture is the pixel gate's job).
 
-The negative control still passes. So: the pass-kind split does change when the world logic
-sees a given render state, and the men/entity records end a tick shifted by one step. This is
-the remaining gate failure and the next design question — the 1990 tick kept the world logic
-in the T pass only and let the S/R passes be pure render, verifying equality after the flip.
-The WW1 prototype's S pass runs the logic *and* skips the render, which is the likely source
-of the one-step shift (the logic sees a different number of renders between ticks at 8 MHz).
+## 5. The current result [obs]
 
-Reproduce: `tools/pmtick_eq.py` (the flip form is in this note's history; the tool's default
-form compares at the counter bump and shows the larger 582-byte picture).
+With the fixed tool, at the same absolute tick 272 (both runs from base tick 266):
+**397 differing bytes**, negative control 138 bytes (stock 272 vs 273), so the gate is
+sensitive and the engine itself is bit-deterministic (two stock runs of the same snapshot give
+**0** differences).
 
+And the cause of the remainder is identified: **`$50fd8` is a PASS counter** (bumped
+`addq.l #1,$50fd8` in the pass tail at `$13dae`), whose low word `$50fda` is the **animation
+phase** the men walk reads (`$158ce`: `d0 = $50fda + $18(rec)`, `& $3ff`, compared against the
+record's frame). At the same world tick the patched run has had **more passes**: stock
+`$267`, patched `$275` (8 more) in the measured run — because the tick build renders extra
+frames per tick on a fast machine. The men therefore stand on a different *animation frame*
+(`$fd02` vs `$fdff`, `$fc04` vs `$fa00`), while their static record fields
+(`08 11 24 80 44 80`, the terrain/cell words) are identical.
+
+Measured passes/tick (5 s windows):
+
+| | 8 MHz | 16 MHz |
+|---|---:|---:|
+| stock | 1.000 | 0.976 |
+| patched | 1.000 | 1.000 |
+
+**So the gate's premise needs one decision:** either the animation phase must be driven by
+the world tick (then the state is exactly equal and the gate passes as written), or the gate
+must compare at the same *pass* count rather than the same tick (then extra frames are
+legitimate and only the world state is compared). The 1990 game chose the first: its tick kept
+the animation on the world clock.
+
+## 6. What was ruled out
+
+| candidate fix | result |
+|---|---|
+| make the S pass render too (S = T) | no change |
+| no pass at all on R (one render per tick) | no change to the world-state set |
+| mask interrupts across the tick decision | no change |
+| dump after the flip rather than at the counter bump | 582 → 235 (the half-finished pass) |
+| engine determinism (stock vs stock, two runs) | **0 bytes** |
+
+Reproduce:
+```
+cd games/in_progress/powermonger-ww1
+python3 tools/pmtick_eq.py work/snapshots/battle.sav 6,7
+```
 

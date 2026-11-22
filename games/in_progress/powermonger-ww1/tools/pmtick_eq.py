@@ -45,6 +45,9 @@ EXCLUDE = [
 	(0x5EF00, 0x5EFC0),      # the sound sequencer state
 	(0x71B7C, 0x71B80),      # the VBL counter
 	(0x72000, 0x73000),      # the patch payload
+	(0x00E7C2, 0x00E7C6),    # the draw pointer (which buffer: parity of the flip)
+	(0x011DC6, 0x011DD0),    # a copy of the buffer pointer
+	(0x2ED90, 0x2EDA0),      # the screen-buffer pair + the world counter
 ]
 
 # the value-breakpoint's command file: dump the low 1 MB (savebin length is decimal)
@@ -85,19 +88,41 @@ def apply_tick(h) -> None:
 		w(a, [0x00, 0x07, 0x21, 0x80])
 
 
-def capture(snapshot: str, targets: list[int], tag: str, patched: bool, out: Path) -> dict[int, bytes]:
+def read_tick(h) -> int:
+	import re
+	for _ in range(6):
+		s = h.debug(f"m ${TICK:x} 4", wait=0.4)
+		toks = []
+		for line in s.splitlines():
+			if re.match(r"^[0-9A-F]{8}:", line):
+				toks += [t for t in line.split(':', 1)[1].split()
+				         if len(t) == 2 and all(c in "0123456789ABCDEFabcdef" for c in t)]
+		if len(toks) >= 4:
+			return int.from_bytes(bytes(int(t, 16) for t in toks[:4]), 'big')
+		time.sleep(0.3)
+	raise RuntimeError("tick read failed")
+
+
+def capture(snapshot: str, deltas: list[int], tag: str, patched: bool, out: Path) -> dict[int, bytes]:
 	h = PMWW(disk=None, snapshot=snapshot)
 	dumps: dict[int, bytes] = {}
 	try:
-		time.sleep(5)
+		# the targets are ABSOLUTE world ticks: read the counter at once (the snapshot already
+		# holds a fixed tick), so both runs compare the same point of the simulation
+		base = read_tick(h)
 		if patched:
 			apply_tick(h)
-			time.sleep(1)
-		for t in targets:
+		print(f"{tag}: base tick {base}, targets {[base + d for d in deltas]}")
+		for t in (base + d for d in deltas):
 			path = out / f"{tag}_{t}.bin"
+			if path.exists():
+				path.unlink()          # never accept a stale dump
 			dump_at_tick(h, t, path)
-			dumps[t] = path.read_bytes()
-			print(f"{tag} tick {t}: dumped {len(dumps[t])} bytes")
+			data = path.read_bytes()
+			if len(data) < 0x72000:
+				raise RuntimeError(f"tick {t}: short dump {len(data)} bytes")
+			dumps[t] = data
+			print(f"{tag} tick {t}: dumped {len(data)} bytes")
 	finally:
 		h.close()
 	return dumps

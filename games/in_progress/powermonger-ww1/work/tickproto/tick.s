@@ -36,11 +36,13 @@ CODE	equ	$72000
 
 ; ---- entry from the pass head ($13da0) -------------------------------------------
 HEAD	equ	$72000
+	move.w	sr,-(a7)		; no interrupt may see a half-updated tick state
+	ori.w	#$0700,sr		; mask levels 1-3 (VBL, MFP timers, ACIA)
 	move.l	a0,-(a7)
 	move.l	d0,-(a7)		; d1 is live at $13da0 (the scroll value); keep everything
 	move.l	d1,-(a7)
 
-; the pass counter PASS, bumped on every pass (T, S and R)
+; PASS = every pass (the click lifetime); the WORLD counter is bumped only on T
 	addq.l	#1,PASS
 
 ; ---- real time: delta VBLs * (6 or 5) units, 1/300 s -----------------------------
@@ -85,17 +87,16 @@ HEAD	equ	$72000
 	bra.s	.render
 .t	tst.w	$5a856			; the original pause gate
 	bne.s	.render
-	cmp.w	#1,KIND			; S: park the speed countdown so $13de8 skips the render
-	bne.s	.logic
-	move.w	#2,$5a854
 .logic	move.l	(a7)+,d1
 	move.l	(a7)+,d0
 	movea.l	(a7)+,a0
+	move.w	(a7)+,sr
 	jmp	$13da8.l		; the world counter + the logic calls
 .render	move.l	(a7)+,d1
 	move.l	(a7)+,d0
 	movea.l	(a7)+,a0
-	jmp	$13dcc.l		; the render setup (skips the logic)
+	move.w	(a7)+,sr
+	rts				; (test) no pass at all on R: one render per tick
 
 ; ---- wrappers at the three world/render call sites --------------------------------
 ; weather $13e24: world -> skip on R
@@ -116,12 +117,9 @@ MEN	tst.w	KIND
 .men	jmp	$158b2.l
 .menrts	rts
 
-; terrain $13e42: render -> skip on S
+; terrain $13e42: always rendered (S renders like T in this variant)
 	org	$72140
-TER	cmp.w	#1,KIND
-	beq.s	.terrts
-	jmp	$74e0.l
-.terrts	rts
+TER	jmp	$74e0.l
 
 ; ---- variables -------------------------------------------------------------------
 PASS	equ	$72180
