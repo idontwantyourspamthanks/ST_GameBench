@@ -83,3 +83,35 @@ is never reached, so the box patch is cosmetic — worth adding only if the box 
 (e.g. on a machine where the flag is written late). The WW1 box routine was not located: the
 box text is at `$BD14` but no `lea`/`pea` references it by address, so it is indexed from a
 table rather than referenced directly.
+
+
+## Part 2: the "Please Wait For The Protection Check" box [obs]
+
+Clearing the pass flag stops the check from *starting*, but the box is opened separately and
+**unconditionally**. The first instruction of the new-conquest start is `jsr $bbd2`, and
+runtime `$bbd2` (= text `$bce2`) is the box routine:
+
+```
+$bbd2  lea  $bbe8.l,a1     ; the panel descriptor; its text is at $bc04
+$bbd8  jsr  $759a.l        ; claim a panel slot
+$bbde  beq.s $bbe6
+$bbe0  jsr  $a2ce.l        ; draw it
+$bbe6  rts
+```
+
+The text at `$bc04` is `Please Wait For The  <icon> Protection Check`, and the box is only
+ever closed by the protection check itself (`$b2d4` -> `$b440`), which never runs once the
+flag is preset. So with `noprot` alone the box sits on screen permanently.
+
+`$bbd2` has exactly **one caller** in the whole image (text `$13e62` = runtime `$13d52`,
+the new-conquest start), so replacing the body with `rts` is safe and complete:
+
+| runtime | text | original | patched |
+|---|---|---|---|
+| `$bbd2` | `$BCE2` | `43 f9 00 00 bb e8` (`lea $bbe8,a1`) | `4e 75 4e 71 4e 71` (`rts`, two nops) |
+
+This is the 1990 project's `pm_noprot_box` (site `$bee0` there, `rts`); the two routines are
+the same shape, and the site is the routine's own first instruction in both.
+
+**Verified** (`build/np3`, STE 1.62 1 MB): chart screen reached with a clean mean of 48.8
+(no box), pass flag `$2c`, and the box routine's space left as ordinary data.

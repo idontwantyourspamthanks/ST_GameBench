@@ -70,9 +70,28 @@ NOPROT_SITES = [
 	(0x15AA8, bytes.fromhex("600015  ea".replace(" ", "")), bytes.fromhex("0000002c"), "protection pass flag"),
 ]
 
+# Part 2: the "Please Wait For The Protection Check" box. Clearing the pass flag stops the
+# check from starting, but the box is opened separately and unconditionally: the first
+# instruction of the new-conquest start ($13d52) is `jsr $bbd2`, and $bbd2 is
+#
+#     $bbd2  lea $bbe8.l,a1        ; the box descriptor (its text at $bc04)
+#     $bbd8  jsr $759a.l           ; claim a panel slot
+#     $bbde  beq.s $bbe6
+#     $bbe0  jsr $a2ce.l           ; draw it
+#     $bbe6  rts
+#
+# The original closes it from the protection check ($b2d4 -> $b440), which never runs once
+# the flag is preset, so the box would sit on screen forever. Only one caller exists, so
+# replacing the body with `rts` removes the box and nothing else. This is the 1990
+# project's `pm_noprot_box`; the routine is the same shape (work/notes/protection.md).
+#   runtime $bbd2 -> text offset $bbd2 + $110 = $BCE2
+NOPROT_BOX_SITES = [
+	(0xBCE2, bytes.fromhex("43f90000bbe8"), bytes.fromhex("4e754e714e71"), "protection box"),
+]
+
 PATCHES = {
 	"tick": TICK_SITES,
-	"noprot": NOPROT_SITES,
+	"noprot": NOPROT_SITES + NOPROT_BOX_SITES,
 }
 
 
