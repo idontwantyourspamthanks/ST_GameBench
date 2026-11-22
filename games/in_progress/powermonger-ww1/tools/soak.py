@@ -140,6 +140,11 @@ def main() -> None:
 		if folder is None:
 			raise SystemExit("--build DIR or --stock")
 
+	# the game cannot start without its data file beside the program: catch it here rather
+	# than after three failed navigations
+	if not (folder / "WW1_FUZI.LFB").exists():
+		raise SystemExit(f"{folder} has no WW1_FUZI.LFB; wwbuild.py writes only WW1.PRG — "
+		                 f"copy the data file in (play.sh does this for you)")
 	print(f"soaking {folder} for {args.minutes:.0f} minutes", flush=True)
 	h = PMWW(disk=None, no_floppy=True, autorun_f="C:\\WW1.PRG", files_from=folder,
 	         machine="ste", tos=TOS["1.62"])
