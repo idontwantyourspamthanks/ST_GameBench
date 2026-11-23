@@ -282,3 +282,95 @@ Built as designed in 13, with these differences found while running it:
 
 **Floppy (step 2)**: the floppy flow never shows the WELCOME PARTNERS screen, so `cp_flhint` (`; media: floppy`, `; gate: ram2mb`, site `$7446`) draws the same `F10 = CAMPAIGNS` line (`t_whint`, cp_title's new jump-table entry `e4` at `$B9F12`) at the start of every message of the title's face / typed-text loop, on both screens (the loop clears both from line 64 down between two messages: a hint drawn once, before the loop, vanished after the first message in the first try). cp_title's table now has four entries; `abs1m.py` anchors on `$B9F18` and allows the hook blobs of cp_fetch / cp_td.
 
+
+## 15. MAIN-VIEW REDESIGN: the TILE GRID (MSREditor6, 2026-11-23; written BEFORE the code; supersedes 5.2 and the map / strip / zoom / fine / coarse rows of 5.3)
+
+**Why.** The user tried the milestone 3 preview: 'really struggling to use this. It's very hard to know what you're doing in terms of which segment you're editing'; 'we've gone complicated but not really benefitted from it'. The top-down map plus three strips showed the whole track but never said WHICH segment the cursor was on, and every edit needed a "fine move" to a unit inside the segment. Bar: the Nebulus editor (a grid of cells, an obvious cursor, details as text). **User decisions (fixed):** the main view is a grid of tiles, one per segment, in driving order; direction as a symbol, hill as colour, a dot for objects, a chequered tile for the BAR, a bright frame on the selected tile; a text panel underneath; the map and the strips are DROPPED; objects are edited from the selected segment's object list; editing keys, pick lists, Return / Space repeat, undo / redo, test drive and validation stay.
+
+### 15.1 The screen (320 x 200, low resolution, own 16 colours; text = the game's 8 x 8 font, 40 x 25 cells)
+```
+text row 0     C01 TRACK NAME                      SCENERY 04*     source, name, base level, * = changed
+y 9..104       8 rows x 16 tiles; label column (text cols 0-3) = the number of the first segment of the row; tiles from x = 32
+text rows 13-23  the PANEL (left 28 columns: segment details and its object list); right 12 columns: key reminder, or a pick list's box
+text row 24    hint row (a message once, yellow, else the keys)
+```
+**Tile = 16 x 12 pixels** (one 16-pixel word per bitplane: a tile is 12 rows x 4 words, no masks): a 15 x 11 coloured area, a black gap column and row; pitch 16 x 12, so the grid is 256 x 96 pixels at x 32..287, y 9..104. 16 x 8 = 128 tiles on the screen; the tile at row r, column c is segment `vFirst + 16 r + c`; `vFirst` is always a multiple of 16. Row labels are drawn with a pixel-row text call (rows 11 + 12 r), the cursor's row in yellow, the others grey.
+
+**What a tile shows is what the player SEES, not the raw field.** A segment stores a curve DELTA (the road direction `c` changes by it every unit) and a hill ACCEL (the slope changes by it), so a segment with `curve = 0` in the middle of a long right turn is still turning. Showing the delta would show 'straight' there (stock segments are 20..50 units long; `c` reaches -4473..8876 only by summing many deltas) [obs: `/tmp/cstat.py`-style run over the 15 stock tracks, medians 20..50 units per segment, `c` at the segment middle 570..2450 at the median]. The editor therefore integrates along the track in one pass (`tiles_calc`, 16-bit wrap for `c` like the game, 32-bit slope) and classifies the VALUE AT THE MIDDLE of each segment:
+
+| symbol (11 x 7 pixels, black on the tile colour) | meaning | `|c|` at the middle |
+|---|---|---|
+| vertical bar | STRAIGHT | < 300 |
+| bar leaning 27 degrees, 45 degrees, 63 degrees to the left / right | GENTLE, MEDIUM, SHARP left / right | < 1200, < 2400, >= 2400 (sign = side) |
+
+| tile colour | meaning | slope at the middle (height units per unit, `|s|` = 1.0 at 65536) |
+|---|---|---|
+| green | LEVEL | < 0.02 |
+| yellow / red | RISE SMALL / RISE BIG (climbing) | < 0.10 / >= 0.10 |
+| light blue / blue | DROP SMALL / DROP BIG (dropping) | < 0.10 / >= 0.10 |
+
+Thresholds chosen on the 15 stock tracks (4,630 segments: straight 746, gentle 2,113, medium 1,190, sharp 581; level 2,411, rise 849 / 303, drop 742 / 325 at 300 / 1200 / 2400 and 0.02 / 0.10 [obs, same run]). Heights clamp at 0..127 in the game; a segment that pushes against the clamp is still drawn by its slope [INFERENCE: not worth a second integrator]. The panel gives both views of the segment: the EDITABLE values (CURVE = the delta, HILL = the accel) and what they make (BEND, HILL class), so the numbers and the tile agree.
+* **objects**: a 2 x 2 black dot at the top-right corner (x 12-13, y 1-2) when the segment holds an object (not drawn on the BAR tile).
+* **the BAR**: a chequered tile (2 x 2 pixel white / black squares) for the segment that holds the BAR object.
+* **selected tile**: a 2-pixel frame around the tile, white while the grid has the cursor, YELLOW while the object list of the panel has it; the glyph stays inside the frame.
+* beyond the extent (segments that start at or after `vEnd` = max(race length, BAR + 512) + 1024, the part of the stream the race never reaches) no tile is drawn and the cursor cannot go there.
+* The legend is on the KEY PAGE: HELP shows page 1 (keys), any key shows page 2 (**WHAT THE TILES MEAN**: the seven symbols and the five colours drawn with the real tile routine, the dot, the chequers, the frame).
+
+### 15.2 Redraw: only what changed
+`tiles_calc` (after any edit, undo, redo: one pass over the segments and the object list, about 400 x 100 cycles) fills `TILE[k]` = a word per segment (direction 0..6, hill class 0..4, object flag, BAR flag). The grid keeps a shadow of what each of the 128 screen slots shows (`vShw`: tile word + selection bits); `draw_grid` draws a slot only when its word differs, so a cursor move redraws two tiles, a bend edit redraws the tiles whose class changed, a scroll redraws what moved. The panel (about 12 text rows) is redrawn on every change. No second screen and no page flip any more (`SCR2` is gone): a tile is written as complete words and a text cell as eight complete rows, so nothing is ever half-cleared. The per-unit arrays, the checkpoints and the path (`expand_from`, `xp_hill`, `xp_width`, `xp_path`, `wfill`, `map_fit`, `mapxy`, `path`, `box`, the sine table) are deleted: the preview of a list value is `apply` + `tiles_calc` + `draw_grid` + panel (the old 0.9-1.8 s recompute is gone; what remains is `apply`'s whole-stream hill overflow test for hill / length edits, about 1M cycles).
+
+### 15.3 Scrolling and the cursor on the grid
+* **LEFT / RIGHT** = previous / next segment (held = auto-repeat); **UP / DOWN** = one row = 16 segments back / on (stops at the first / last segment of the extent).
+* **Scrolling** is by whole rows: when the cursor row is the first or last visible row and more rows exist, the grid scrolls one row so the cursor stays one row from the edge; a jump (Clr/Home, `B`, undo, a list preview that moves the cursor) re-centres the cursor row at row 3.
+* **Clr/Home** first segment; **`B`** the segment that holds the BAR.
+* The cursor is always a SEGMENT (`vSeg`; `vPos` = its first unit). The old 'fine' (Control + left / right: one strip pixel) and 'coarse' (Shift + left / right: 1000 units) moves and the zoom keys (`+` `-`, FIRE + UP / DOWN) are gone with the strips.
+
+### 15.4 The panel (text rows 13-24; the left 28 columns; the right 12 columns are the key reminder, or the box of an open pick list)
+```
+13  SEGMENT 0017/0390  AT 12345          number / total, first unit
+14  LENGTH 0120                          units
+15  CURVE  RIGHT 3                       the segment's delta (STRAIGHT / LEFT n / RIGHT n); what a pick list edits
+16  BEND   MEDIUM LEFT                   what the road does here = the tile symbol (STRAIGHT / GENTLE|MEDIUM|SHARP LEFT|RIGHT)
+17  HILL   RISE SMALL +0200              the slope class = the tile colour (LEVEL / RISE|DROP SMALL|BIG) and the accel
+18  WIDTH  LEFT 36  RIGHT 34
+19  OBJECTS 3                            (NONE: O ADDS ONE)
+20-23  up to four object lines, the selected one a white bar:   TYPE 026 LEFT 41 AT 12345   /   THE BAR AT 12345
+24  hint row: FIRE=MENU RET=REPEAT P=TEST DRIVE HELP=KEYS   (object list: T TYPE S SIDE M MOVE DEL TAB=BACK)
+```
+Labels are blue-grey, values white; a refused edit or a note is shown once on row 24 in yellow (as before). Longer object lists scroll (`vOTop`); the heading carries the total. The right 12 columns (rows 13-23) show the key reminder of the current focus (grid: `C CURVE H HILL L LENGTH W E WIDTH , . BEND I COPY S SPLIT M MERGE DEL DELETE O OBJECT`; object list: `T TYPE S SIDE M MOVE I O ADD DEL TAB BACK`); an open pick list takes this column (box_clr), so the panel text stays visible and live while the list's selection moves.
+
+### 15.5 The object list of the selected segment (replaces the objects row and its strip)
+The objects of the selected segment are those whose unit lies in `[start, start + length)`; `OBJT` is sorted, so they are a contiguous index range (`vOF` = first index, `vON` = count, found by one pass). **Focus**: `vFocus` 0 = the grid has the cursor, 1 = an object of the list has it (`vObj` = its index in `OBJT`; the tile frame turns yellow).
+* **Enter the list**: Tab, or joystick FIRE + DOWN, or the menu: the first object of the segment is selected; a segment without objects says `NO OBJECTS HERE: O ADDS ONE`. **Leave**: Tab, FIRE + UP, UP on the first object, LEFT / RIGHT (these also move to the previous / next segment, the focus returns to the grid), the menu.
+* **UP / DOWN** inside the list = previous / next object of this segment. Everything that acts on the object uses the selection: `T` TYPE list, `S` SIDE list, `M` MOVE, Delete, `I` or `O` ADD, Return / Space repeat the last picked TYPE or SIDE. Road edits (`C H L W E , .`, hill shapes, length) also work with the list focused: they act on the selected segment.
+* **`O` = ADD AN OBJECT** from either focus (the menu has it too): a new object of the last picked type (the first type that is not the BAR until one was picked) and side, in the selected segment, in the list, selected. **Where**: `pick_unit`: candidate = the selected object's unit + 1 (list focus; the segment start when that is past the end) or the middle of the segment, `start + length / 2` (grid focus); scanning up to the segment's last unit, then from its start, the first unit that is not 0 and holds no object; none free = `AN OBJECT IS ALREADY HERE (E-GAP)`. `W-DENS` is checked as before.
+* **Delete**: the selected object (never the BAR; the last object of the track is kept); the selection moves to the next object of the segment, or the focus returns to the grid when the segment has none left.
+* **MOVE (`M`)**: LEFT / RIGHT = 10 units, FIRE or Control = 1, Shift = 100; **UP / DOWN = into the previous / next segment** (same offset, at most its last unit); the object stays in unit order (it is re-inserted at its new place, `obj_sort`), a unit that holds another object is skipped in the direction of the move, the range is 1 .. extent - 1; the tile frame and the panel follow the object into its new segment. FIRE / Return / Space keep, Esc / F10 put it back. (The old rule 'an object cannot pass its neighbour' is gone with the strip.)
+* **Shift+B / menu PUT THE BAR HERE**: the BAR goes to the first free unit (`pick_unit`, BAR objects do not count as occupied) from the START of the selected segment; to place it exactly, select it in the list and move it.
+
+### 15.6 Segment edits without a cursor unit
+* **`S` SPLIT** (grid focus; in the object list `S` is the SIDE list): the segment is cut in half, `start + length / 2` (first part `length / 2`, second part the rest); a segment shorter than 2 units says `SEGMENT TOO SHORT TO SPLIT`. The cursor stays on the first half. (The old 'fine-move inside the segment, then split' is gone.)
+* **`I` INSERT A COPY** (grid focus), `M` MERGE, Delete: as before. The cursor goes to the copy after an insert, stays on the index after a delete / merge.
+* Pick lists (C H L W E T S): the box is the right 12 columns of rows 13-23 (heading row 13, ten items rows 14-23, scrolling); the preview is live in the grid and the panel. TYPES (36 entries) stay a full-screen list without a preview.
+
+### 15.7 Key map: what changed (5.3 stays valid for everything not listed)
+| key / joystick | before | now |
+|---|---|---|
+| LEFT / RIGHT | previous / next segment (object on the objects row) | previous / next segment (leaves the object list) |
+| UP / DOWN | road row <> objects row | grid: one row (16 segments); object list: previous / next object |
+| Tab | road <> objects row | grid <> object list of the selected segment |
+| FIRE + UP / DOWN | zoom | FIRE + DOWN = into the object list, FIRE + UP = back to the grid |
+| Control / FIRE + L/R, Shift + L/R | fine pixel / next 1000 units | (removed; in MOVE mode: 1 / 100 units) |
+| `+` `-` | zoom | (removed) |
+| `S` | split at the cursor unit | split in half (grid) / SIDE list (object list) |
+| `I` | insert a copy (road) / add an object (objects) | insert a copy (grid) / add an object (object list) |
+| `O` | - | **new**: add an object to the selected segment, either focus |
+| Shift + `B` | BAR at the cursor unit | BAR at the first free unit of the selected segment |
+| `M`, Delete, `T`, `C`, `H`, `L`, `W`, `E`, `,` `.`, `U`, Shift `U`, `K`, `P`, Return, Space, Help, Clr/Home, `B`, Esc / F10 | | unchanged (`P` starts at the segment's first unit, or at the selected object) |
+The FIRE menu loses ZOOM IN / OUT and gains ADD AN OBJECT and OBJECT LIST <> SEGMENTS; `vState` values are unchanged (0 lists, 1 view, 2 menu, 3 help / check).
+
+### 15.8 Budget and RAM (after the redesign)
+`SINT` (sine table 10 KB), `PTS` (path 32 KB), `HARR` / `WLARR` / `WRARR` (96 KB), `CKPT` (64 KB), `SCR2` (32 KB) are no longer used; `TILE` (4 KB at `$150000`) replaces them. W-HILL (CHECK) runs its own height integrator over the race length (no array). The overlay shrinks by the map / strips / expand code and the 2,050 B quarter-sine table.
+
+### 15.9 1 MB: the welcome screen says what 2 MB adds (user decision; the only code that runs at 1 MB)
+On a machine below 2 MB (the ST family at 1 MB: `$42e` < `$200000`) the WELCOME PARTNERS screen shows the line `2 MB: CAMPAIGNS + TRACK EDITOR` (text row 23, centred) in place of the 2 MB build's `F10 = CAMPAIGNS`. `cp_welcome` (HD build) loses its `; gate: ram2mb`, so its site `$7c04` (the key wait of the screen) is patched at 1 MB as well, to the same `jmp $B9F0C.l`; cp_title's `e3` first tests the gate byte `IB+4`: zero = list 2 closed -> the 1 MB path: draw the line once per showing, then do exactly what the stock loop does (`tst.b $60ff / beq $7c02`, any key `$7c0a`); nothing else of cp_title runs, no campaign code and no editor code is installed or executed, F10 is an ordinary key. TT / Falcon (gate closed, phystop >= 2 MB) show the stock screen. The floppy build keeps the old gated `cp_welcome` (renamed `cp_welcome_fl`, `; media: floppy`): its flow never shows this screen, and the floppy 1 MB title stays byte for byte as before. Proof obligations (abs1m): the HD 1 MB RUNME.TOS differs from the 2 MB-gated build only in the new site and in blobs; exactly the site `$7c04` holds a changed jump at 1 MB (all other campaign sites stock); the only cp_title code executed is `e3`'s 1 MB path and the hint routine; no GEMDOS call for MSEDIT.OVL; a race runs and its state is identical to a stock run.

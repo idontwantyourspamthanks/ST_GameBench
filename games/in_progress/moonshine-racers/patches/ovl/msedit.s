@@ -1,4 +1,4 @@
-; msedit.s - Moonshine Racers TRACK EDITOR overlay (FILES\MSEDIT.OVL).  Milestone 2: viewer + EDITING (in RAM; saving to disk is milestone 4).  Design: work/notes/editor_design.md.
+; msedit.s - Moonshine Racers TRACK EDITOR overlay (FILES\MSEDIT.OVL).  Milestone 2: viewer + EDITING (in RAM; saving to disk is milestone 4).  Design: work/notes/editor_design.md (section 15: the tile grid of milestone 2c).
 ; Not a patch: tools/msrpatch.py assembles this file at EDBASE ($130000, no `org` line here), fills in the header's length and CRC-32 and writes it to the HD build's FILES folder.
 ; cp_title.s (F10 menu, item TRACK EDITOR) reads it there on first use, checks magic / EDVER / length / CRC and calls EDBASE+16.  Machines: ST family with 2 MB or more (the `; gate: ram2mb` of cp_title).
 ; The tool predefines EDBASE, EDWORK ($140000), EDVER, CPV, CPSTORE.  Everything the editor owns lies above $100000; it calls the game's vertical sync ($d206), file service ($d6fa)
@@ -10,50 +10,47 @@ BLK     equ     EDWORK+$1000    ; raw track block read from the game's disk imag
 TYPS    equ     EDWORK+$2800    ; the object type table (S5 + end word) of the track being edited: copied verbatim into the block when it is kept
 SEGT    equ     EDWORK+$3000    ; segment list: 2048 x 12 B  start.w len.w curve.w hill.w wl.b wr.b pad.w
 OBJT    equ     EDWORK+$9000    ; object list: 1000 x 8 B  at.w type.w lateral.w flags.w (bit 0 = the BAR)
-HARR    equ     EDWORK+$10000   ; height byte per unit (32768)
-WLARR   equ     EDWORK+$18000   ; left half-width per unit
-WRARR   equ     EDWORK+$20000   ; right half-width per unit
-PTS     equ     EDWORK+$28000   ; top-down path: x.w y.w (world units / 4, y down) every 8 units (4097 points)
-SINT    equ     EDWORK+$2D000   ; sine table, 4096 steps per turn + a quarter (5120 words)
-SCR     equ     EDWORK+$30000   ; screen 1 (32000 B)
+TILE    equ     EDWORK+$10000   ; tile word per segment: bits 0-2 direction class, 3-5 hill class, 6 an object, 7 the BAR, 15 no tile (the segment is beyond the race)
+SHW     equ     EDWORK+$11000   ; 128 words: what each grid slot currently shows (tile word + bits 8/9 selection), so a redraw touches only changed tiles
+SCR     equ     EDWORK+$30000   ; screen (32000 B)
 ARENA   equ     EDWORK+$38000   ; undo history ($178000-$19FFFF); the campaign file is rebuilt here when a track is kept (history is dead by then)
 ARENAE  equ     EDWORK+$60000
-CKPT    equ     EDWORK+$60000   ; expand checkpoints: one 32 B state per segment (2048 x 32)
 ENCBUF  equ     EDWORK+$70000   ; the encoded track block (64 KB)
-SCR2    equ     EDWORK+$80000   ; screen 2: live-preview pages are drawn here and flipped in
 MAXSEG  equ     2048
 MAXOBJ  equ     999
 SEGSZ   equ     12
+GRIDX   equ     32              ; the grid: tile pitch 16 x 12, 16 x 8 tiles, x 32..287, y 8..103
+GRIDY   equ     8
+TILEW   equ     16
+TILEH   equ     12
 
 vScr    equ     0               ; b,b the game's video base (hi, mid)
 vPal    equ     2               ; 16 w the game's palette
 vNSeg   equ     34              ; w
 vNObj   equ     36              ; w
 vTotal  equ     38              ; l units covered by the four streams (<= 32768)
-vEnd    equ     42              ; l extent shown: max(race length, BAR) + 1024, <= vTotal
+vEnd    equ     42              ; l the segment whose start lies at or past this is beyond the race (no tile, no cursor)
 vRl     equ     46              ; w race length of the base level
 vBase   equ     48              ; w base level 0..14
 vBarT   equ     50              ; w the BAR's type (1-based), 0 = none in the type table
 vBarAt  equ     52              ; l position of the BAR object, -1 = none
 vNTypes equ     56              ; w
 vNBar   equ     58              ; w number of BAR objects
-vSeg    equ     60              ; w cursor: segment
-vPos    equ     62              ; l cursor: unit
-vObj    equ     66              ; w cursor: object
-vFocus  equ     68              ; w 0 road, 1 objects
-vZoom   equ     70              ; w 0..7 (strips 128 >> zoom units per pixel; map x1..x16)
-vVStart equ     72              ; l first unit of the strips
-vOx     equ     76              ; w map origin (world / 4)
-vOy     equ     78
-vS      equ     80              ; w map scale at zoom 0 (pixels per world/4 unit, 16 fraction bits)
-vSh     equ     82              ; w 16 - map zoom shift
-vCx     equ     84              ; w bbox centre
-vCy     equ     86
-vRedraw equ     88              ; w bit 0 everything, bit 1 highlight + status
+vSeg    equ     60              ; w cursor: segment (the grid's cell)
+vPos    equ     62              ; l cursor: the segment's first unit (the test drive starts here)
+vObj    equ     66              ; w cursor: object (its index in OBJT) while the object list has the cursor
+vFocus  equ     68              ; w 0 the grid, 1 the object list of the selected segment
+vFirst  equ     70              ; w the segment of the top-left tile (a multiple of 16)
+vTOk    equ     72              ; w the tile words in TILE are current
+vOCnt   equ     74              ; w objects in the selected segment
+vOF     equ     76              ; w first index of them in OBJT
+vOTop   equ     78              ; w object list: first object shown in the panel
+vPage   equ     80              ; w the key page (1 keys, 2 the legend)
+vRedraw equ     88              ; w bit 0 everything, bit 1 the grid + panel only
 vPDir   equ     90              ; w directions held at the previous poll
 vRep    equ     92              ; w auto-repeat countdown
-vRes    equ     94              ; w 1 = leave the viewer
-vState  equ     96              ; w 0 lists, 1 viewer, 2 viewer menu, 3 help (read by the gate scripts)
+vRes    equ     94              ; w 1 = leave the editor
+vState  equ     96              ; w 0 lists, 1 view, 2 menu, 3 help / check (read by the gate scripts)
 vSrc    equ     98              ; w 0 campaign track, 1 stock track, 2 plain straight
 vSrcIx  equ     100             ; w
 vMsg    equ     102             ; l message for the hint row (0 = the key hints)
@@ -61,28 +58,19 @@ vFire   equ     106             ; w fire is held
 vFireMv equ     108             ; w a direction was used while fire was held
 vMCnt   equ     110             ; w list picker: items
 vMSel   equ     112             ; w selection
-vAcc    equ     114             ; l expand: hill accel of the segment
-vAx     equ     118             ; l expand: path accumulators (world * 2^15)
-vAy     equ     122
-vTmp    equ     126             ; l
-vPX     equ     130             ; w path drawing: previous point
-vPY     equ     132
-vPOk    equ     134             ; w
-vThick  equ     136             ; w
+vAcc    equ     114             ; l tiles_calc: start unit of the segment
+vAx     equ     118             ; l (free)
+vAy     equ     122             ; l (free)
+vTmp    equ     126             ; w
+vTmp2   equ     128             ; w
 vBlkEnd equ     138             ; l
-vAcc2   equ     142             ; l
+vAcc2   equ     142             ; l tiles_calc: end unit of the segment
 vName   equ     146             ; 26 B track name
 vTyp    equ     172             ; l parse: start of the type table in the block
 vTypLen equ     176             ; w bytes of TYPS (entries + end word)
 vShow   equ     178             ; l the screen the shifter shows
 vDraw   equ     182             ; l the screen the drawing routines write to
-vMapW   equ     186             ; w map window width (304, or 208 while a list is open)
-vMapCx  equ     188             ; w map window centre x
-vMapLim equ     190             ; w map window right edge
-vBW     equ     192             ; w bounding box of the path (>= 1024)
-vBH     equ     194
-vK      equ     196             ; w expand: segment counter
-vDirty  equ     198             ; w first segment whose per-unit data is stale ($7fff = none)
+vK      equ     196             ; w (free)
 vMod    equ     200             ; w the working copy differs from the loaded one
 vHCur   equ     202             ; l undo history: the current entry
 vHTop   equ     206             ; l end of the last entry
@@ -126,7 +114,7 @@ vChkK   equ     338             ; 8 w message codes
 vChkT   equ     354             ; 40 B text
 vLTxt   equ     394             ; 48 B list item text
 vLMsg   equ     442             ; l the last message shown on the hint row (read by the gate scripts)
-vLBusy  equ     446             ; w a preview (apply, expand, draw) is running
+vLBusy  equ     446             ; w a preview (apply, tiles, draw) is running
 vMItems equ     1200            ; 24 l list picker item texts
 vLine   equ     1296            ; 64 B text line
 vTxt    equ     1360            ; 20 x 40 B item texts
@@ -134,13 +122,6 @@ vKqH    equ     2200            ; w key queue: next code to pop
 vKqT    equ     2202            ; w key queue: next free slot (the IKBD hook writes it)
 vOldKb  equ     2204            ; l the game's IKBD handler ($118) while the editor's hook is in
 vKq     equ     2208            ; 64 B ring of make codes
-vPend   equ     2272            ; w an edit left per-unit data stale: recomputed when no key is waiting
-vPD     equ     2274            ; w pending: first stale segment ($7fff = none)
-vPM     equ     2276            ; w pending: what is stale (bit 0 heights, 1 widths, 2 path)
-vXm     equ     2278            ; w what the edit being applied makes stale (bit 3: only that segment's own parameters changed)
-vXNS    equ     2280            ; w segments at the last expand
-vXEnd   equ     2282            ; l extent at the last expand
-vXk     equ     2286            ; w expand_from: the mask in use
 vLRd    equ     2288            ; w the list rows are stale (redrawn when no key is waiting)
 vTd102c equ    2300            ; w test drive: the game's $102c before the race
 vTd1021 equ    2302            ; b $1021 sound mode
@@ -156,9 +137,9 @@ vTdHit  equ    2326            ; w number of td_ff runs (read by the gate script
 vTdRes  equ    2328            ; b $1024 when the race returned
 vTdRes2 equ    2329            ; b $1226
 vTdLast equ    2330            ; w $5ff8 when the race returned
-vTdRem  equ     2332            ; w td_ff: units still to fast-forward
-vTdKill equ     2335            ; b Esc / F10 was pressed in the race (tdkb)
-vTdWhy  equ     2334            ; b how the race was decided (tdvbl): 1 the BAR was reached, 2 time-out, 0 neither (F10, Esc, crashes)
+vTdRem  equ    2332            ; w td_ff: units still to fast-forward
+vTdKill equ    2335            ; b Esc / F10 was pressed in the race (tdkb)
+vTdWhy  equ    2334            ; b how the race was decided (tdvbl): 1 the BAR was reached, 2 time-out, 0 neither (F10, Esc, crashes)
 
         dc.b    'MSED'          ; +0  magic
         dc.w    EDVER,0         ; +4  version (cp_title refuses another one), flags
@@ -175,10 +156,7 @@ ed_main:
         move.w  #$3ff,d0
 .zv:    clr.l   (a0)+
         dbra    d0,.zv
-        move.w  #304,vMapW(a5)
-        move.w  #160,vMapCx(a5)
-        move.w  #320,vMapLim(a5)
-        bsr     sin_init
+        move.w  #1,vPage(a5)
         bsr     crc_init
         bsr     take
 .top:   bsr     top_list                ; d0 = -1 leave, 0 a track is loaded, n = play track n-1
@@ -349,36 +327,13 @@ kq_arrow:                               ; d1.w = a cursor key at the head of the
 .n:     moveq   #0,d1
 .x:     movem.l (a7)+,d0/a0
         rts
-; flush_pend: the per-unit data an edit left stale (refresh remembers it while keys are waiting) is recomputed, then the view
+; flush_pend: the tile words are recomputed when no key is waiting (the view loop and the list loop call it), so a burst of keys is one recompute and one redraw
 flush_pend:
-        tst.w   vPend(a5)
-        beq   .x
-        clr.w   vPend(a5)
-        move.w  vPD(a5),d0
-        move.w  vPM(a5),d1
-        move.w  #$7fff,vPD(a5)
-        clr.w   vPM(a5)
-        bsr     expand_from
-        bsr     find_seg
-        bsr     set_zoom
+        tst.w   vTOk(a5)
+        bne   .x
+        bsr     tiles_calc
+        move.w  #3,vRedraw(a5)
 .x:     rts
-; act_mask: d0.w = pick list act -> d1.w = what its value makes stale (see expand_from)
-act_mask:
-        moveq   #7,d1
-        cmpi.w  #1,d0
-        beq   .p
-        cmpi.w  #4,d0
-        beq   .w
-        cmpi.w  #5,d0
-        beq   .w
-        cmpi.w  #8,d0
-        bne   .r
-        moveq   #1,d1
-.r:     rts
-.p:     moveq   #4,d1
-        rts
-.w:     moveq   #10,d1
-        rts
 
 cls:    movem.l d0-d7/a0,-(a7)
         movea.l vDraw(a5),a0
@@ -397,32 +352,6 @@ cls:    movem.l d0-d7/a0,-(a7)
         movem.l (a7)+,d0-d7/a0
         rts
 
-sin_init:                               ; SINT[i] = 32767 * sin(2 pi i / 4096), i = 0..5119 (cos = SINT[i + 1024])
-        lea     SINT.l,a0
-        lea     qsin(pc),a1
-        moveq   #0,d0
-.l:     move.w  d0,d1
-        andi.w  #$fff,d1
-        cmpi.w  #2048,d1
-        bcs   .pos
-        subi.w  #2048,d1
-        bsr   .q
-        neg.w   d2
-        bra   .st
-.pos:   bsr   .q
-.st:    move.w  d2,(a0)+
-        addq.w  #1,d0
-        cmpi.w  #5120,d0
-        bne   .l
-        rts
-.q:     cmpi.w  #1024,d1                ; d1 = 0..2047 -> d2 = sine of the half wave
-        bls   .q1
-        neg.w   d1
-        addi.w  #2048,d1
-.q1:    add.w   d1,d1
-        move.w  (a1,d1.w),d2
-        rts
-
 ; ---------------------------------------------------------------- text
 ; ptext: a0 = text (NUL), d0 = column 0..39, d1 = row 0..24, d2 = colour 0..15 (+16 = inverse: a bar of the colour, black text).  Lower case is shown as capitals (the game's font has no descenders).
 ptext:  movem.l d0-d7/a0-a3,-(a7)
@@ -435,7 +364,21 @@ ptext:  movem.l d0-d7/a0-a3,-(a7)
         adda.w  d3,a2
         andi.w  #1,d0
         adda.w  d0,a2
-.ch:    moveq   #0,d0
+        bra     pt_core
+; ptextp: as ptext but d1 = the pixel row (for the grid's row labels and the legend)
+ptextp: movem.l d0-d7/a0-a3,-(a7)
+        movea.l vDraw(a5),a2
+        mulu    #160,d1
+        adda.l  d1,a2
+        move.w  d0,d3
+        lsr.w   #3,d3
+        move.w  d3,d4
+        lsr.w   #1,d4
+        lsl.w   #3,d4
+        adda.w  d4,a2
+        andi.w  #1,d3
+        adda.w  d3,a2
+pt_core: moveq  #0,d0
         move.b  (a0)+,d0
         beq   .x
         cmpi.b  #'a',d0
@@ -479,7 +422,7 @@ ptext:  movem.l d0-d7/a0-a3,-(a7)
         beq   .ev
         addq.l  #6,a2
 .ev:    addq.l  #1,a2
-        bra   .ch
+        bra     pt_core
 .x:     movem.l (a7)+,d0-d7/a0-a3
         rts
 
@@ -523,143 +466,6 @@ lend:   lea     vLine+40(a5),a0
         lea     vLine(a5),a0
         moveq   #0,d0
         bra     ptext
-
-; ---------------------------------------------------------------- pixels
-; plot: d0 = x 0..319, d1 = y 0..199, d2 = colour (the planes of its set bits are OR-ed).  All registers kept.
-plot:   movem.l d0-d1/d3/a2,-(a7)
-        mulu    #160,d1
-        move.w  d0,d3
-        lsr.w   #4,d3
-        lsl.w   #3,d3
-        add.w   d3,d1
-        movea.l vDraw(a5),a2
-        adda.w  d1,a2
-        andi.w  #15,d0
-        move.w  #$8000,d3
-        lsr.w   d0,d3
-        btst    #0,d2
-        beq   .1
-        or.w    d3,(a2)
-.1:     btst    #1,d2
-        beq   .2
-        or.w    d3,2(a2)
-.2:     btst    #2,d2
-        beq   .3
-        or.w    d3,4(a2)
-.3:     btst    #3,d2
-        beq   .4
-        or.w    d3,6(a2)
-.4:     movem.l (a7)+,d0-d1/d3/a2
-        rts
-
-; vline: d0 = x, d1 = y0, d4 = y1 (>= y0), d2 = colour
-vline:  movem.l d0-d5/a1-a2,-(a7)
-        move.w  d4,d5
-        sub.w   d1,d5                   ; pixels - 1
-        bpl   .p
-        moveq   #0,d5                   ; a single pixel
-.p:     mulu    #160,d1
-        move.w  d0,d3
-        lsr.w   #4,d3
-        lsl.w   #3,d3
-        add.w   d3,d1
-        movea.l vDraw(a5),a2
-        adda.w  d1,a2
-        andi.w  #15,d0
-        move.w  #$8000,d3
-        lsr.w   d0,d3
-        btst    #0,d2
-        beq   .1
-        movea.l a2,a1
-        move.w  d5,d4
-.l1:    or.w    d3,(a1)
-        lea     160(a1),a1
-        dbra    d4,.l1
-.1:     btst    #1,d2
-        beq   .2
-        lea     2(a2),a1
-        move.w  d5,d4
-.l2:    or.w    d3,(a1)
-        lea     160(a1),a1
-        dbra    d4,.l2
-.2:     btst    #2,d2
-        beq   .3
-        lea     4(a2),a1
-        move.w  d5,d4
-.l3:    or.w    d3,(a1)
-        lea     160(a1),a1
-        dbra    d4,.l3
-.3:     btst    #3,d2
-        beq   .4
-        lea     6(a2),a1
-        move.w  d5,d4
-.l4:    or.w    d3,(a1)
-        lea     160(a1),a1
-        dbra    d4,.l4
-.4:     movem.l (a7)+,d0-d5/a1-a2
-        rts
-; hline: d0 = x0, d4 = x1 (>= x0), d1 = y, d2 = colour
-hline:  movem.l d0/d4,-(a7)
-.l:     bsr   plot
-        addq.w  #1,d0
-        cmp.w   d4,d0
-        ble   .l
-        movem.l (a7)+,d0/d4
-        rts
-
-; line: (d0,d1) -> (d4,d5), colour d2 (both ends on the screen); the start point is not drawn
-line:   movem.l d0-d7/a0,-(a7)
-        move.w  d4,d6
-        sub.w   d0,d6                   ; dx
-        moveq   #1,d3                   ; sx
-        tst.w   d6
-        bpl   .x1
-        neg.w   d6
-        moveq   #-1,d3
-.x1:    move.w  d5,d7
-        sub.w   d1,d7                   ; dy
-        movea.w #1,a0                   ; sy
-        tst.w   d7
-        bpl   .y1
-        neg.w   d7
-        movea.w #-1,a0
-.y1:    cmp.w   d7,d6
-        bcs   .steep
-        move.w  d6,d4                   ; count = dx, error in d5
-        beq   .done
-        move.w  d6,d5
-        lsr.w   #1,d5
-.lx:    add.w   d3,d0
-        sub.w   d7,d5
-        bpl   .px
-        add.w   d6,d5
-        add.w   a0,d1
-.px:    bsr     plot
-        subq.w  #1,d4
-        bne   .lx
-        bra   .done
-.steep: move.w  d7,d4
-        move.w  d7,d5
-        lsr.w   #1,d5
-.ly:    add.w   a0,d1
-        sub.w   d6,d5
-        bpl   .py
-        add.w   d7,d5
-        add.w   d3,d0
-.py:    bsr     plot
-        subq.w  #1,d4
-        bne   .ly
-.done:  movem.l (a7)+,d0-d7/a0
-        rts
-
-clr_hi:                                 ; clear bitplane 3 of rows 8..175 (the highlight and the cursor live there)
-        movea.l vDraw(a5),a0
-        adda.w  #8*160+6,a0
-        move.w  #168*20-1,d0
-.c:     clr.w   (a0)
-        addq.l  #8,a0
-        dbra    d0,.c
-        rts
 
 ; ---------------------------------------------------------------- the track model
 ; rd_stock: d0.w = level 0..14 -> the level's track block in BLK (the game's own file service, as the race setup $77c6 calls it); a0 = BLK, a6 = its end
@@ -861,443 +667,6 @@ find_bar:                               ; flag the BAR objects, vBarAt = the fir
         move.w  d2,vNBar(a5)
         rts
 
-; expand: the per-unit arrays as the game's own setup computes them ($ff3a curve ring, $fde0 widths, $ffe4 hill) and the top-down path (heading = curve value / 600 rad, as tools/msrtrack.py render).
-; expand_from(d0 = first segment): incremental.  Every segment's start state (c, 8-unit sum, slope, height, two widths, path accumulators) is kept in CKPT; units before the segment are not touched.
-expand: moveq   #0,d0
-        moveq   #7,d1
-; expand_from: d0.w = first stale segment, d1.w = what is stale: bit 0 heights, 1 widths, 2 path (3 = only that segment's own parameters changed: the width pass may stop where its state meets the old one).
-; Three passes (xp_hill, xp_width, xp_path) resume from the checkpoints of segment d0; a pass that is not stale is not run.  A changed segment count or extent makes everything stale.
-expand_from:
-        movem.l d0-d7/a0-a6,-(a7)
-        move.w  d0,vK(a5)
-        move.w  d1,vXk(a5)
-        bsr     calc_end
-        move.w  vNSeg(a5),d0
-        cmp.w   vXNS(a5),d0
-        beq   .e1
-        move.w  d0,vXNS(a5)
-        move.w  #7,vXk(a5)
-.e1:    move.l  vEnd(a5),d0
-        cmp.l   vXEnd(a5),d0
-        beq   .e2
-        move.l  d0,vXEnd(a5)
-        move.w  #7,vXk(a5)
-.e2:    move.w  vK(a5),d0
-        cmp.w   vNSeg(a5),d0
-        bcc   .e3
-        moveq   #0,d6
-        move.w  d0,d6
-        mulu    #SEGSZ,d6
-        lea     SEGT.l,a4
-        adda.l  d6,a4
-        move.w  (a4),d6                 ; start of the segment
-        cmp.w   vEnd+2(a5),d6
-        bcs   .e4
-.e3:    ori.w   #4,vXk(a5)              ; beyond the extent: nothing is shown there, the map is fitted again
-        bra   .x
-.e4:    move.w  vXk(a5),d0
-        btst    #0,d0
-        beq   .e5
-        bsr     xp_hill
-.e5:    move.w  vXk(a5),d0
-        btst    #1,d0
-        beq   .e6
-        bsr     xp_width
-.e6:    move.w  vXk(a5),d0
-        btst    #2,d0
-        beq   .xx
-        bsr     xp_path
-.x:     ; bounding box of the path -> scale and centre of the map
-        move.l  vEnd(a5),d0
-        lea     PTS.l,a0
-        lsr.l   #3,d0
-        move.w  (a0),d1                 ; min x
-        move.w  d1,d2                   ; max x
-        move.w  2(a0),d3
-        move.w  d3,d4
-.bb:    move.w  (a0)+,d5
-        cmp.w   d1,d5
-        bge   .b1
-        move.w  d5,d1
-.b1:    cmp.w   d2,d5
-        ble   .b2
-        move.w  d5,d2
-.b2:    move.w  (a0)+,d5
-        cmp.w   d3,d5
-        bge   .b3
-        move.w  d5,d3
-.b3:    cmp.w   d4,d5
-        ble   .b4
-        move.w  d5,d4
-.b4:    dbra    d0,.bb
-        move.w  d1,d5
-        add.w   d2,d5
-        asr.w   #1,d5
-        move.w  d5,vCx(a5)
-        move.w  d3,d5
-        add.w   d4,d5
-        asr.w   #1,d5
-        move.w  d5,vCy(a5)
-        sub.w   d1,d2                   ; width
-        cmpi.w  #1024,d2
-        bcc   .w1
-        move.w  #1024,d2
-.w1:    sub.w   d3,d4                   ; height
-        cmpi.w  #1024,d4
-        bcc   .w2
-        move.w  #1024,d4
-.w2:    move.w  d2,vBW(a5)
-        move.w  d4,vBH(a5)
-        bsr     map_fit
-.xx:    movem.l (a7)+,d0-d7/a0-a6
-        rts
-
-; xp_hill: heights from segment vK on: 16.16 integrator, slope += accel per unit, the byte = the integer part clamped to 0..127 (the game's ring filler $ffe4)
-xp_hill:
-        moveq   #0,d6
-        move.w  vK(a5),d6
-        move.l  d6,d7
-        mulu    #SEGSZ,d6
-        lea     SEGT.l,a4
-        adda.l  d6,a4
-        lsl.l   #5,d7
-        lea     CKPT.l,a6
-        adda.l  d7,a6
-        moveq   #0,d6
-        move.w  (a4),d6
-        lea     HARR.l,a0
-        adda.l  d6,a0
-        moveq   #0,d2
-        moveq   #0,d3
-        tst.w   vK(a5)
-        beq   .h
-        move.l  8(a6),d2
-        move.l  12(a6),d3
-.h:     move.w  vNSeg(a5),d5
-        sub.w   vK(a5),d5
-.seg:   move.l  d2,8(a6)
-        move.l  d3,12(a6)
-        move.w  6(a4),d4
-        ext.l   d4
-        moveq   #0,d6
-        move.w  2(a4),d6
-        subq.w  #1,d6
-.u:     add.l   d2,d3
-        add.l   d4,d2
-        move.l  d3,d7
-        bpl   .p
-        moveq   #0,d7
-        bra   .s
-.p:     swap    d7
-        cmpi.w  #127,d7
-        bls   .s
-        moveq   #127,d7
-.s:     move.b  d7,(a0)+
-        dbra    d6,.u
-        lea     SEGSZ(a4),a4
-        lea     32(a6),a6
-        subq.w  #1,d5
-        beq   .x
-        move.w  (a4),d6
-        cmp.w   vEnd+2(a5),d6
-        bcs   .seg
-.x:     rts
-
-; xp_width: left / right half-widths from segment vK on (1 per unit towards the segment's target: a ramp, then a run of the target).  With bit 3 of vXk the pass stops where its state equals the old checkpoint.
-xp_width:
-        moveq   #0,d6
-        move.w  vK(a5),d6
-        move.l  d6,d7
-        mulu    #SEGSZ,d6
-        lea     SEGT.l,a4
-        adda.l  d6,a4
-        lsl.l   #5,d7
-        lea     CKPT.l,a6
-        adda.l  d7,a6
-        moveq   #0,d6
-        move.w  (a4),d6
-        lea     WLARR.l,a1
-        adda.l  d6,a1
-        lea     WRARR.l,a2
-        adda.l  d6,a2
-        moveq   #0,d4
-        moveq   #0,d5
-        tst.w   vK(a5)
-        bne   .r
-        move.b  8(a4),d4                ; the widths start at the first targets
-        move.b  9(a4),d5
-        bra   .h
-.r:     move.l  16(a6),d4
-        move.l  20(a6),d5
-.h:     move.w  vNSeg(a5),d0
-        sub.w   vK(a5),d0
-        move.w  d0,vTmp(a5)
-        moveq   #0,d0                   ; 0 = the first segment (no early stop there)
-.seg:   tst.w   d0
-        beq   .nc
-        btst    #3,vXk+1(a5)
-        beq   .nc
-        cmp.l   16(a6),d4
-        bne   .nc
-        cmp.l   20(a6),d5
-        beq   .x
-.nc:    moveq   #1,d0
-        move.l  d4,16(a6)
-        move.l  d5,20(a6)
-        move.w  2(a4),d2                ; units
-        move.l  d4,d1
-        movea.l a1,a0
-        moveq   #0,d3
-        move.b  8(a4),d3
-        move.w  d2,d6
-        bsr     wfill
-        move.l  d1,d4
-        movea.l a0,a1
-        move.l  d5,d1
-        movea.l a2,a0
-        moveq   #0,d3
-        move.b  9(a4),d3
-        move.w  d2,d6
-        bsr     wfill
-        move.l  d1,d5
-        movea.l a0,a2
-        subq.w  #1,vTmp(a5)
-        beq   .x
-        lea     SEGSZ(a4),a4
-        lea     32(a6),a6
-        move.w  (a4),d6
-        cmp.w   vEnd+2(a5),d6
-        bcs   .seg
-.x:     rts
-; wfill: d1 = current width (byte), d3 = target, d6 = units (1..32768), a0 = array -> d1, a0 advanced.  Writes the current value, then steps one towards the target (as the game's ring filler); the run of the target goes by longs
-wfill:  cmp.b   d3,d1
-        beq   .f
-        bhi   .dn
-        move.w  d3,d7
-        sub.w   d1,d7
-        cmp.w   d6,d7
-        bls   .u1
-        move.w  d6,d7
-.u1:    sub.w   d7,d6
-        subq.w  #1,d7
-.ul:    move.b  d1,(a0)+
-        addq.b  #1,d1
-        dbra    d7,.ul
-        bra   .f
-.dn:    move.w  d1,d7
-        sub.w   d3,d7
-        cmp.w   d6,d7
-        bls   .d1
-        move.w  d6,d7
-.d1:    sub.w   d7,d6
-        subq.w  #1,d7
-.dl:    move.b  d1,(a0)+
-        subq.b  #1,d1
-        dbra    d7,.dl
-.f:     tst.w   d6
-        beq   .r
-        moveq   #0,d3
-        move.b  d1,d3
-        move.w  d3,d7
-        lsl.w   #8,d7
-        or.w    d7,d3
-        move.w  d3,d7
-        swap    d3
-        move.w  d7,d3                   ; the byte in all four lanes
-        move.w  a0,d7
-        btst    #0,d7
-        beq   .al
-        move.b  d1,(a0)+
-        subq.w  #1,d6
-        beq   .r
-.al:    move.w  d6,d7
-        lsr.w   #2,d7
-        beq   .tl
-        subq.w  #1,d7
-.l4:    move.l  d3,(a0)+
-        dbra    d7,.l4
-.tl:    andi.w  #3,d6
-        beq   .r
-        subq.w  #1,d6
-.l1:    move.b  d1,(a0)+
-        dbra    d6,.l1
-.r:     rts
-
-; xp_path: the top-down path from segment vK on.  c = the heading (curve value), c += the segment's delta per unit; every 8 units one point from the mean c (xp_emit).  A block of 8 units inside a segment is one closed-form step
-; (sum of c = 8 c0 + 36 delta, c = c0 + 8 delta) while c stays inside 16 bits; head, tail and the wrap case go unit by unit (xp_pu).
-xp_path:
-        moveq   #0,d6
-        move.w  vK(a5),d6
-        move.l  d6,d7
-        mulu    #SEGSZ,d6
-        lea     SEGT.l,a4
-        adda.l  d6,a4
-        lsl.l   #5,d7
-        lea     CKPT.l,a2
-        adda.l  d7,a2
-        moveq   #0,d6
-        move.w  (a4),d6
-        lsr.l   #3,d6
-        lsl.l   #2,d6
-        lea     PTS+4.l,a3
-        adda.l  d6,a3                   ; the next point to store
-        tst.w   vK(a5)
-        bne   .r
-        clr.l   PTS.l
-        suba.l  a0,a0                   ; a0 = x accumulator (world * 2^15), a1 = y accumulator, a6 = the sine table
-        suba.l  a1,a1
-        moveq   #0,d0
-        moveq   #0,d1
-        bra   .h
-.r:     movem.l (a2),d0-d1
-        movea.l 24(a2),a0
-        movea.l 28(a2),a1
-.h:     lea     SINT.l,a6
-        move.w  vNSeg(a5),d2
-        sub.w   vK(a5),d2
-        move.w  d2,vTmp(a5)
-.seg:   movem.l d0-d1,(a2)
-        move.l  a0,24(a2)
-        move.l  a1,28(a2)
-        move.w  4(a4),d4
-        ext.l   d4                      ; delta
-        moveq   #0,d3
-        move.w  2(a4),d3                ; units left
-        moveq   #0,d2
-        move.w  (a4),d2
-        andi.w  #7,d2                   ; place of the first unit in its block of 8
-.l:     tst.l   d3
-        beq   .sd
-        tst.w   d2
-        bne   .one
-        cmpi.l  #8,d3
-        bcs   .one
-        move.l  d3,d5
-        lsr.l   #3,d5                   ; full blocks of 8 from here to the end of the segment
-        move.l  d4,d7
-        asl.l   #3,d7                   ; 8 delta
-        muls    d5,d7
-        move.w  d0,d6
-        ext.l   d6                      ; c0
-        add.l   d6,d7                   ; c after the run: no 16-bit wrap in the run (+-32000: the mean stays in a word)
-        cmpi.l  #32000,d7
-        bgt   .one
-        cmpi.l  #-32000,d7
-        blt   .one
-        cmpi.l  #32000,d6
-        bgt   .one
-        cmpi.l  #-32000,d6
-        blt   .one
-        move.l  d4,d7
-        asl.l   #3,d7
-        add.l   d4,d7
-        asr.l   #1,d7                   ; floor(4.5 delta): the mean of a block is c + that (sum 8 c + 36 delta, / 8)
-        add.l   d7,d6
-        muls    #17801,d6               ; mean * 17801 for the first block; every next block adds 8 delta * 17801
-        move.w  d5,d1
-        subq.w  #1,d1
-        move.l  d4,d5
-        asl.l   #3,d5
-        muls    #17801,d5
-.blk:   move.l  d6,d7
-        asl.l   #2,d7
-        swap    d7                      ; = (product >> 14) in the low word: the heading in 1/4096 turns
-        andi.w  #$fff,d7
-        add.w   d7,d7
-        move.w  (a6,d7.w),d2            ; sine
-        ext.l   d2
-        asl.l   #3,d2
-        adda.l  d2,a0
-        addi.w  #2048,d7
-        move.w  (a6,d7.w),d2            ; cosine
-        ext.l   d2
-        asl.l   #3,d2
-        suba.l  d2,a1                   ; heading 0 = up the screen
-        move.l  a0,d2
-        swap    d2
-        asr.w   #1,d2
-        move.w  d2,(a3)+
-        move.l  a1,d2
-        swap    d2
-        asr.w   #1,d2
-        move.w  d2,(a3)+
-        add.l   d5,d6
-        dbra    d1,.blk
-        move.l  d3,d1
-        lsr.l   #3,d1
-        move.l  d4,d7
-        asl.l   #3,d7
-        muls    d1,d7
-        add.w   d7,d0                   ; c after the run
-        andi.l  #7,d3                   ; the units left (less than a block)
-        moveq   #0,d2
-        moveq   #0,d1
-        bra   .l
-.one:   bsr     xp_pu
-        subq.l  #1,d3
-        bra   .l
-.sd:    subq.w  #1,vTmp(a5)
-        beq   .x
-        lea     SEGSZ(a4),a4
-        lea     32(a2),a2
-        move.w  (a4),d6
-        cmp.w   vEnd+2(a5),d6
-        bcs   .seg
-.x:     rts
-xp_pu:  add.w   d4,d0
-        move.w  d0,d7
-        ext.l   d7
-        add.l   d7,d1
-        addq.w  #1,d2
-        cmpi.w  #8,d2
-        bne   .r
-        moveq   #0,d2
-        bra     xp_emit
-.r:     rts
-; xp_emit: d1 = sum of c over 8 units -> the next path point (a3); d1 = 0.  Mean c * 4096 / (2 pi 600) = the heading in 1/4096 turns
-xp_emit:
-        asr.l   #3,d1
-        muls    #17801,d1               ; * 4096 / (2 pi 600) = 1.08649 (17801 / 16384)
-        asl.l   #2,d1
-        swap    d1                      ; = (product >> 14) in the low word
-        andi.w  #$fff,d1
-        add.w   d1,d1
-        move.w  (a6,d1.w),d7            ; sine
-        ext.l   d7
-        asl.l   #3,d7
-        adda.l  d7,a0
-        addi.w  #2048,d1
-        move.w  (a6,d1.w),d7            ; cosine (the table is a quarter turn longer)
-        ext.l   d7
-        asl.l   #3,d7
-        suba.l  d7,a1                   ; heading 0 = up the screen
-        move.l  a0,d7
-        swap    d7
-        asr.w   #1,d7
-        move.w  d7,(a3)+
-        move.l  a1,d7
-        swap    d7
-        asr.w   #1,d7
-        move.w  d7,(a3)+
-        moveq   #0,d1
-        rts
-
-; map_fit: scale of the map so that the whole path fits the window (vMapW x 96 pixels)
-map_fit:
-        movem.l d0-d2,-(a7)
-        moveq   #0,d0
-        move.w  vMapW(a5),d0
-        swap    d0
-        divu    vBW(a5),d0
-        move.l  #96<<16,d1
-        divu    vBH(a5),d1
-        cmp.w   d0,d1
-        bcc   .w3
-        move.w  d1,d0
-.w3:    move.w  d0,vS(a5)
-        movem.l (a7)+,d0-d2
-        rts
-
 ; calc_end: the extent shown = max(race length, BAR) + 1024, at most the stream length
 calc_end:
         movem.l d0-d1/a0,-(a7)
@@ -1322,24 +691,6 @@ calc_end:
         movem.l (a7)+,d0-d1/a0
         rts
 
-; find_seg: vPos -> vSeg (the segment that holds the unit)
-find_seg:
-        movem.l d0-d2/a0,-(a7)
-        lea     SEGT.l,a0
-        move.l  vPos(a5),d0
-        moveq   #0,d1
-        move.w  vNSeg(a5),d2
-        subq.w  #1,d2
-.l:     cmp.w   d2,d1
-        bcc   .f
-        cmp.w   SEGSZ(a0),d0            ; the next segment starts beyond the unit
-        bcs   .f
-        lea     SEGSZ(a0),a0
-        addq.w  #1,d1
-        bra   .l
-.f:     move.w  d1,vSeg(a5)
-        movem.l (a7)+,d0-d2/a0
-        rts
 ; seg_ptr: vSeg -> a0
 seg_ptr:
         move.w  vSeg(a5),d0
@@ -1348,158 +699,591 @@ seg_ptr:
         adda.l  d0,a0
         rts
 
-; ---------------------------------------------------------------- the viewer's picture
-; mapxy: a0 -> path point -> d0 = x, d1 = y on the screen; carry set = outside the map window.  Trashes d3
-mapxy:  move.w  (a0),d0
-        sub.w   vOx(a5),d0
-        muls    vS(a5),d0
-        move.w  vSh(a5),d3
-        asr.l   d3,d0
-        move.w  vMapCx(a5),d1
-        ext.l   d1
-        add.l   d1,d0
-        move.w  vMapLim(a5),d1
-        ext.l   d1
-        cmp.l   d1,d0
-        bcc   .out
-        move.w  2(a0),d1
-        sub.w   vOy(a5),d1
-        muls    vS(a5),d1
-        asr.l   d3,d1
-        addi.l  #60,d1
-        cmpi.l  #8,d1
-        blt   .out
-        cmpi.l  #112,d1
-        bge   .out
-        andi    #$fe,ccr
-        rts
-.out:   ori     #1,ccr
+; ---------------------------------------------------------------- the tile grid (design: work/notes/editor_design.md 15)
+; tiles_calc: one pass over the segments and the sorted object list integrates what the game integrates (the curve value c, 16-bit like its ring, and the hill slope,
+; 32-bit) and classifies the value at each segment's middle: the tile shows what the player sees, not the raw field.
+; TILE[k] = bits 0-2 direction class (0 straight, 1-3 left gentle/medium/sharp, 4-6 right ...), 3-5 hill class (0 level, 1-2 rise small/big, 3-4 drop small/big),
+; 6 an object in the segment, 7 the BAR; $8000 = the segment starts at or past vEnd (beyond the race).
+tiles_calc:
+        movem.l d0-d7/a0-a6,-(a7)
+        bsr     calc_end
+        bsr     seg_ptr
+        movea.l a0,a4
+        lea     TILE.l,a0
+        moveq   #0,d2                   ; object index
+        moveq   #0,d0                   ; c (word)
+        moveq   #0,d1                   ; slope (32-bit, height units * 65536 per unit)
+        move.w  vNSeg(a5),d3
+        beq     .x
+        subq.w  #1,d3
+.seg:   move.w  vNSeg(a5),d5
+        sub.w   d3,d5
+        subq.w  #1,d5                   ; this segment's index
+        moveq   #0,d4
+        move.w  (a4),d4                 ; start
+        move.l  d4,vAcc(a5)
+        cmp.l   vEnd(a5),d4
+        bcc     .beyond
+        moveq   #0,d6
+        move.w  2(a4),d6                ; length
+        add.l   d6,d4
+        move.l  d4,vAcc2(a5)            ; end
+        clr.w   vTmp2(a5)               ; the tile word being built
+        clr.w   vTmp(a5)                ; objects in this segment
+        cmp.w   vSeg(a5),d5
+        bne     .nf
+        move.w  d2,vOF(a5)
+.nf:    move.w  d2,d4
+        lsl.w   #3,d4
+        lea     OBJT.l,a3
+        adda.l  d4,a3
+.of:    cmp.w   vNObj(a5),d2
+        bcc     .ofd
+        moveq   #0,d4
+        move.w  (a3),d4
+        cmp.l   vAcc(a5),d4
+        bcc     .os
+        addq.l  #8,a3
+        addq.w  #1,d2
+        bra     .of
+.os:    cmp.l   vAcc2(a5),d4
+        bcc     .ofd
+        ori.w   #$40,vTmp2(a5)
+        tst.w   6(a3)
+        beq     .on
+        ori.w   #$80,vTmp2(a5)
+.on:    addq.w  #1,vTmp(a5)
+        addq.l  #8,a3
+        addq.w  #1,d2
+        bra     .of
+.ofd:   cmp.w   vSeg(a5),d5
+        bne     .nd
+        move.w  vTmp(a5),vOCnt(a5)
+.nd:    move.w  d6,d7
+        lsr.w   #1,d7                   ; half the length: the middle
+        move.w  4(a4),d4                ; curve delta
+        muls    d7,d4
+        move.w  d0,d5
+        ext.l   d5
+        add.l   d4,d5
+        move.w  d5,d5                   ; the 16-bit wrap of the game's ring
+        ext.l   d5
+        moveq   #0,d4                   ; direction class
+        tst.l   d5
+        bmi     .cl
+        cmpi.w  #300,d5
+        bcs     .cd
+        moveq   #4,d4
+        cmpi.w  #1200,d5
+        bcs     .cd
+        moveq   #5,d4
+        cmpi.w  #2400,d5
+        bcs     .cd
+        moveq   #6,d4
+        bra     .cd
+.cl:    neg.l   d5
+        cmpi.w  #300,d5
+        bcs     .cd
+        moveq   #1,d4
+        cmpi.w  #1200,d5
+        bcs     .cd
+        moveq   #2,d4
+        cmpi.w  #2400,d5
+        bcs     .cd
+        moveq   #3,d4
+.cd:    or.w    d4,vTmp2(a5)
+        move.w  6(a4),d4                ; hill accel
+        muls    d7,d4
+        add.l   d1,d4                   ; slope at the middle
+        move.l  d4,d5
+        bpl     .hp
+        neg.l   d5
+        moveq   #3,d4
+        cmpi.l  #1311,d5
+        bcs     .hd
+        moveq   #4,d4
+        bra     .hd
+.hp:    moveq   #1,d4
+        cmpi.l  #1311,d5
+        bcs     .hd
+        moveq   #2,d4
+.hd:    lsl.w   #3,d4
+        or.w    d4,vTmp2(a5)
+        move.w  vTmp2(a5),(a0)+
+        move.w  4(a4),d4                ; c += delta * n
+        ext.l   d4
+        moveq   #0,d5
+        move.w  d6,d5
+        muls    d5,d4
+        move.w  d0,d5
+        ext.l   d5
+        add.l   d4,d5
+        move.w  d5,d0
+        move.w  6(a4),d4                ; slope += accel * n
+        ext.l   d4
+        moveq   #0,d5
+        move.w  d6,d5
+        muls    d5,d4
+        add.l   d4,d1
+        lea     SEGSZ(a4),a4
+        dbra    d3,.seg
+        bra     .x
+.beyond:
+        move.w  #$8000,(a0)+            ; no tile for this segment and the ones behind it
+        lea     SEGSZ(a4),a4
+        cmp.w   vSeg(a5),d5
+        bne     .by2
+        clr.w   vOCnt(a5)
+.by2:   dbra    d3,.beyond
+.x:     move.w  #1,vTOk(a5)
+        movem.l (a7)+,d0-d7/a0-a6
         rts
 
-; path: units d6 .. d7 of the path in colour d2; vThick = 2x2 pixels (the highlight).  A long range at a small map scale (the points lie a fraction of a pixel apart) takes every 2nd or 4th point; a point on the pixel
-; of the previous one is not drawn again.
-path:   movem.l d0-d7/a0-a1,-(a7)
-        lsr.l   #3,d6
-        lsr.l   #3,d7
-        sub.w   d6,d7
-        bcs   .x
-        lea     PTS.l,a0
-        lsl.w   #2,d6
-        adda.w  d6,a0
-        clr.w   vPOk(a5)
-        movea.w #4,a1                   ; bytes from point to point
-        cmpi.w  #64,d7
-        bls   .l
-        moveq   #0,d3
-        move.w  vS(a5),d3
-        lsl.l   #5,d3
-        move.w  vSh(a5),d4
-        lsr.l   d4,d3                   ; 16 x pixels per point
-        cmpi.w  #4,d3
-        bcc   .s2
-        lsr.w   #2,d7
-        movea.w #16,a1
-        bra   .l
-.s2:    cmpi.w  #8,d3
-        bcc   .l
-        lsr.w   #1,d7
-        movea.w #8,a1
-.l:     bsr   mapxy
-        bcs   .no
-        tst.w   vPOk(a5)
-        beq   .pl
-        move.w  d0,d4                   ; more than one pixel from the previous point: join them
-        sub.w   vPX(a5),d4
-        addq.w  #1,d4
-        cmpi.w  #2,d4
-        bhi   .ln
-        move.w  d1,d4
-        sub.w   vPY(a5),d4
-        addq.w  #1,d4
-        cmpi.w  #2,d4
-        bls   .pl
-.ln:    move.w  d0,d4
-        move.w  d1,d5
-        move.w  vPX(a5),d0
-        move.w  vPY(a5),d1
-        bsr     line
-        move.w  d4,d0
-        move.w  d5,d1
-.pl:    tst.w   vPOk(a5)
-        beq   .p1
-        cmp.w   vPX(a5),d0
-        bne   .p1
-        cmp.w   vPY(a5),d1
-        beq   .nx
-.p1:    bsr     plot
-        tst.w   vThick(a5)
-        beq   .th
-        addq.w  #1,d0
-        bsr     plot
-        addq.w  #1,d1
-        bsr     plot
-        subq.w  #1,d0
-        bsr     plot
-        subq.w  #1,d1
-.th:    move.w  d0,vPX(a5)
-        move.w  d1,vPY(a5)
-        move.w  #1,vPOk(a5)
-        bra   .nx
-.no:    clr.w   vPOk(a5)
-.nx:    adda.w  a1,a0
-        dbra    d7,.l
-.x:     movem.l (a7)+,d0-d7/a0-a1
-        rts
-
-; box: a 5x5 outline around the path point of unit d6 in colour d2
-box:    movem.l d0-d7/a0,-(a7)
-        lsr.l   #3,d6
-        lsl.w   #2,d6
-        lea     PTS.l,a0
-        adda.w  d6,a0
-        bsr     mapxy
-        bcs   .x
-        cmpi.w  #3,d0
-        bcs   .x
-        cmpi.w  #316,d0
-        bhi   .x
-        cmpi.w  #11,d1
-        bcs   .x
-        cmpi.w  #108,d1
-        bhi   .x
-        subq.w  #2,d0
-        subq.w  #2,d1
+; tile_draw: d0 = x (a multiple of 16), d1 = y, d2 = tile word (+ bit 8 white frame / bit 9 yellow frame).  Complete words only: a tile is never half drawn.
+tile_draw:
+        movem.l d0-d7/a0-a3,-(a7)
+        move.w  d1,d3
+        mulu    #160,d3
         move.w  d0,d4
-        addq.w  #4,d4
-        bsr     hline
-        addq.w  #4,d1
-        bsr     hline
-        subq.w  #4,d1
-        move.w  d1,d4
-        addq.w  #4,d4
-        bsr     vline
-        addq.w  #4,d0
-        bsr     vline
-.x:     movem.l (a7)+,d0-d7/a0
+        lsr.w   #4,d4
+        lsl.w   #3,d4
+        add.w   d4,d3
+        movea.l vDraw(a5),a0
+        adda.w  d3,a0
+        btst    #15,d2
+        beq     .full
+        moveq   #11,d0
+.er:    clr.w   (a0)
+        clr.w   2(a0)
+        clr.w   4(a0)
+        clr.w   6(a0)
+        lea     160(a0),a0
+        dbra    d0,.er
+        bra     .x
+.full:  move.w  d2,d3
+        andi.w  #$38,d3
+        lsr.w   #3,d3
+        add.w   d3,d3
+        lea     hillcol(pc),a1
+        move.w  (a1,d3.w),d7            ; the tile colour = the hill class
+        move.w  d7,d6                   ; the frame ring
+        btst    #8,d2
+        beq     .r1
+        moveq   #7,d6
+.r1:    btst    #9,d2
+        beq     .r2
+        moveq   #8,d6
+.r2:    move.w  d2,d3
+        andi.w  #7,d3                   ; direction class
+        moveq   #0,d0                   ; row
+.row:   cmpi.w  #11,d0
+        beq     .zero
+        move.w  #$8002,d4               ; the ring: the first and the last column
+        cmpi.w  #0,d0
+        beq     .allring
+        cmpi.w  #10,d0
+        beq     .allring
+        btst    #7,d2
+        bne     .bar
+        move.w  #$7FFC,d1               ; the 13 inner columns, in the tile colour
+        cmpi.w  #2,d0
+        bcs     .dot
+        cmpi.w  #8,d0
+        bcc     .dot
+        move.w  d3,d5                   ; the direction glyph: 7 rows, 11 pixels, black
+        mulu    #14,d5
+        add.w   d0,d5
+        add.w   d0,d5
+        subi.w  #4,d5
+        lea     gtab(pc),a1
+        move.w  (a1,d5.w),d5
+        not.w   d5
+        and.w   d5,d1
+.dot:   btst    #6,d2                   ; a 2x2 dot in the top right corner when the segment has objects
+        beq     .wr
+        cmpi.w  #1,d0
+        beq     .dot2
+        cmpi.w  #2,d0
+        bne     .wr
+.dot2:  and.w   #$fff3,d1
+        bra     .wr
+.bar:   move.w  d0,d5                   ; the BAR: a chequered tile
+        add.w   d5,d5
+        lea     cheq(pc),a1
+        move.w  (a1,d5.w),d1
+        bra     .wr
+.zero:  moveq   #0,d4
+        moveq   #0,d1
+        bra     .wr
+.allring:
+        move.w  #$fffe,d4
+        moveq   #0,d1
+.wr:    moveq   #0,d5                   ; the four bitplanes of this row
+.pl:    moveq   #0,d3
+        btst    d5,d7
+        beq     .pl1
+        move.w  d1,d3
+.pl1:   btst    d5,d6
+        beq     .pl2
+        or.w    d4,d3
+.pl2:   move.w  d3,(a0)+
+        addq.w  #1,d5
+        cmpi.w  #4,d5
+        bne     .pl
+        lea     152(a0),a0
+        addq.w  #1,d0
+        cmpi.w  #12,d0
+        bne     .row
+.x:     movem.l (a7)+,d0-d7/a0-a3
         rts
 
-; upx: d0.l = unit -> d0 = x of the strips (64..319); carry set = not in view
-upx:    sub.l   vVStart(a5),d0
-        bcs   .out
-        moveq   #7,d1
-        sub.w   vZoom(a5),d1
-        lsr.l   d1,d0
-        cmpi.l  #256,d0
-        bcc   .out
-        addi.w  #64,d0
-        andi    #$fe,ccr
-        rts
-.out:   ori     #1,ccr
+; draw_grid: every slot's desired word (tile + frame bits) against what it shows; only changed tiles are drawn
+draw_grid:
+        movem.l d0-d7/a0-a2,-(a7)
+        move.w  vFirst(a5),d7
+        moveq   #0,d6                   ; slot
+        moveq   #0,d5                   ; row
+.grow:  moveq   #0,d4                   ; column
+.gcol:  move.w  d7,d0
+        cmp.w   vNSeg(a5),d0
+        bcs     .have
+        move.w  #$8000,d2
+        bra     .cmp
+.have:  move.w  d7,d3
+        add.w   d3,d3
+        lea     TILE.l,a0
+        move.w  (a0,d3.w),d2
+        cmp.w   vSeg(a5),d7
+        bne     .cmp
+        move.w  #$100,d3
+        tst.w   vFocus(a5)
+        beq     .sel
+        move.w  #$200,d3
+.sel:   or.w    d3,d2
+.cmp:   move.w  d6,d3
+        add.w   d3,d3
+        lea     SHW.l,a0
+        cmp.w   (a0,d3.w),d2
+        beq     .next
+        move.w  d2,(a0,d3.w)
+        move.w  d4,d0
+        lsl.w   #4,d0
+        addi.w  #GRIDX,d0
+        move.w  d5,d1
+        mulu    #TILEH,d1
+        addi.w  #GRIDY,d1
+        bsr     tile_draw
+.next:  addq.w  #1,d7
+        addq.w  #1,d6
+        addq.w  #1,d4
+        cmpi.w  #16,d4
+        bne     .gcol
+        addq.w  #1,d5
+        cmpi.w  #8,d5
+        bne     .grow
+        movem.l (a7)+,d0-d7/a0-a2
         rts
 
-draw_all:
-        bsr     cls
-        ; header: source, name, scenery
+; draw_labels: the number of the first segment of every grid row, in the left margin
+draw_labels:
+        movem.l d0-d7/a0-a2,-(a7)
+        moveq   #0,d6
+.ll:    move.w  vFirst(a5),d0
+        move.w  d6,d1
+        lsl.w   #4,d1
+        add.w   d1,d0
+        cmp.w   vNSeg(a5),d0
+        bcs     .num
+        lea     t_dash(pc),a0
+        bra     .dr
+.num:   addq.w  #1,d0
+        lea     vLTxt(a5),a1
+        moveq   #4,d1
+        bsr     appn
+        clr.b   (a1)
+        lea     vLTxt(a5),a0
+.dr:    move.w  d6,d1
+        mulu    #TILEH,d1
+        addi.w  #GRIDY+2,d1
+        move.w  #1,d2
+        move.w  vSeg(a5),d3
+        lsr.w   #4,d3
+        cmp.w   d3,d6
+        bne     .pt
+        moveq   #8,d2
+.pt:    moveq   #0,d0
+        bsr     ptextp
+        addq.w  #1,d6
+        cmpi.w  #8,d6
+        bne     .ll
+        movem.l (a7)+,d0-d7/a0-a2
+        rts
+
+; lp28: pad vLine to 28 columns and show it at column 0, row d1, colour d2 (the panel's width)
+lp28:   lea     vLine+28(a5),a0
+.p:     cmpa.l  a0,a1
+        bcc     .t
+        move.b  #' ',(a1)+
+        bra     .p
+.t:     lea     vLine+28(a5),a0
+        cmpa.l  a0,a1
+        bls     .n
+        movea.l a0,a1
+.n:     clr.b   (a1)
+        lea     vLine(a5),a0
+        moveq   #0,d0
+        bra     ptext
+
+; draw_panel: the selected segment and its object list (text rows 13-23, the left 28 columns)
+draw_panel:
+        movem.l d0-d7/a0-a4,-(a7)
+        bsr     seg_ptr
+        movea.l a0,a4
+        bsr     lbeg                    ; SEG nnnn/nnnn AT nnnnn
+        lea     t_pseg(pc),a0
+        bsr     apps
+        move.w  vSeg(a5),d0
+        addq.w  #1,d0
+        moveq   #4,d1
+        bsr     appn
+        move.b  #'/',(a1)+
+        move.w  vNSeg(a5),d0
+        bsr     appn
+        lea     t_pat(pc),a0
+        bsr     apps
+        move.l  vPos(a5),d0
+        moveq   #5,d1
+        bsr     appn
+        moveq   #13,d1
+        moveq   #7,d2
+        bsr     lp28
+        bsr     lbeg                    ; LENGTH
+        lea     t_plen(pc),a0
+        bsr     apps
+        moveq   #0,d0
+        move.w  2(a4),d0
+        moveq   #5,d1
+        bsr     appn
+        moveq   #14,d1
+        moveq   #7,d2
+        bsr     lp28
+        bsr     lbeg                    ; CURVE (the field a list edits)
+        lea     t_pcur(pc),a0
+        bsr     apps
+        move.w  4(a4),d0
+        bne     .cv
+        lea     t_strt(pc),a0
+        bsr     apps
+        bra     .cv2
+.cv:    move.b  #'R',(a1)
+        tst.w   d0
+        bpl     .cvr
+        move.b  #'L',(a1)
+        neg.w   d0
+.cvr:   addq.l  #1,a1
+        andi.l  #$ffff,d0
+        moveq   #2,d1
+        bsr     appn
+.cv2:   moveq   #15,d1
+        moveq   #7,d2
+        bsr     lp28
+        bsr     lbeg                    ; BEND (what the road does here = the tile symbol)
+        lea     t_pben(pc),a0
+        bsr     apps
+        move.w  vSeg(a5),d0
+        add.w   d0,d0
+        lea     TILE.l,a0
+        move.w  (a0,d0.w),d0
+        andi.w  #7,d0
+        lea     bendtab(pc),a0
+        add.w   d0,d0
+        movea.l (a0,d0.w),a0
+        bsr     apps
+        moveq   #16,d1
+        moveq   #7,d2
+        bsr     lp28
+        bsr     lbeg                    ; HILL (class = the tile colour, then the accel)
+        lea     t_phil(pc),a0
+        bsr     apps
+        move.w  vSeg(a5),d0
+        add.w   d0,d0
+        lea     TILE.l,a0
+        move.w  (a0,d0.w),d0
+        lsr.w   #3,d0
+        andi.w  #7,d0
+        lea     hilltab(pc),a0
+        add.w   d0,d0
+        movea.l (a0,d0.w),a0
+        bsr     apps
+        move.w  6(a4),d0
+        moveq   #4,d1
+        bsr     apsn
+        moveq   #17,d1
+        moveq   #7,d2
+        bsr     lp28
+        bsr     lbeg                    ; WIDTH
+        lea     t_pwid(pc),a0
+        bsr     apps
+        moveq   #0,d0
+        move.b  8(a4),d0
+        moveq   #2,d1
+        bsr     appn
+        lea     t_prgt(pc),a0
+        bsr     apps
+        moveq   #0,d0
+        move.b  9(a4),d0
+        moveq   #2,d1
+        bsr     appn
+        moveq   #18,d1
+        moveq   #7,d2
+        bsr     lp28
+        bsr     lbeg                    ; OBJECTS n
+        lea     t_pobj(pc),a0
+        bsr     apps
+        moveq   #0,d0
+        move.w  vOCnt(a5),d0
+        moveq   #2,d1
+        bsr     appn
+        moveq   #19,d1
+        moveq   #7,d2
+        bsr     lp28
+        ; the object list: four lines, scrolled so the selection shows
+        tst.w   vOCnt(a5)
+        beq     .none
+        move.w  vObj(a5),d0
+        sub.w   vOF(a5),d0
+        cmp.w   vOTop(a5),d0
+        bcc     .o2
+        move.w  d0,vOTop(a5)
+.o2:    move.w  vOTop(a5),d1
+        addq.w  #3,d1
+        cmp.w   d1,d0
+        bls     .o3
+        move.w  d0,d1
+        subq.w  #3,d1
+        move.w  d1,vOTop(a5)
+.o3:    moveq   #0,d6                   ; line 0..3
+.ol:    move.w  vOTop(a5),d0
+        add.w   d6,d0
+        cmp.w   vOCnt(a5),d0
+        bcc     .obl
+        move.w  vOF(a5),d1
+        add.w   d0,d1
+        move.w  d1,d7                   ; OBJT index
+        lsl.w   #3,d1
+        lea     OBJT.l,a2
+        adda.w  d1,a2
+        bsr     lbeg
+        move.w  d0,d1
+        addq.w  #1,d1
+        moveq   #1,d0
+        move.w  d1,d0
+        moveq   #2,d1
+        bsr     appn
+        move.b  #' ',(a1)+
+        tst.w   6(a2)
+        bne     .obar
+        lea     t_ot(pc),a0
+        bsr     apps
+        moveq   #0,d0
+        move.w  2(a2),d0
+        moveq   #3,d1
+        bsr     appn
+        bra     .osd
+.obar:  lea     t_obar(pc),a0
+        bsr     apps
+.osd:   move.b  #' ',(a1)+
+        move.w  4(a2),d0
+        moveq   #4,d1
+        bsr     apsn
+        move.b  #' ',(a1)+
+        moveq   #0,d0
+        move.w  (a2),d0
+        moveq   #5,d1
+        bsr     appn
+        move.w  d6,d1
+        addi.w  #20,d1
+        moveq   #7,d2
+        tst.w   vFocus(a5)
+        beq     .op
+        cmp.w   vObj(a5),d7
+        bne     .op
+        moveq   #23,d2
+.op:    bsr     lp28
+.onext: addq.w  #1,d6
+        cmpi.w  #4,d6
+        bne     .ol
+        bra     .x
+.obl:   moveq   #0,d0                   ; an empty line
+        move.b  #0,vLine(a5)
+        lea     vLine(a5),a0
+        move.w  d6,d1
+        addi.w  #20,d1
+        moveq   #7,d2
+        bsr     ptext
+        bra     .onext
+.none:  moveq   #0,d0
+        move.b  #0,vLine(a5)
+        lea     vLine(a5),a0
+        moveq   #20,d1
+        moveq   #1,d2
+        bsr     ptext
+        moveq   #21,d1
+        bsr     ptext
+        moveq   #22,d1
+        bsr     ptext
+        moveq   #23,d1
+        bsr     ptext
+.x:     movem.l (a7)+,d0-d7/a0-a4
+        rts
+
+; draw_keys: the key reminder of the current focus in the right 12 columns (rows 13-23)
+draw_keys:
+        movem.l d0-d7/a0-a2,-(a7)
+        lea     t_keyg(pc),a2
+        tst.w   vFocus(a5)
+        beq     .g
+        lea     t_keyo(pc),a2
+.g:     moveq   #0,d6
+.l:     movea.l a2,a0
+        moveq   #28,d0
+        move.w  d6,d1
+        addi.w  #13,d1
+        moveq   #2,d2
+        bsr     ptext
+        lea     13(a2),a2
+        addq.w  #1,d6
+        cmpi.w  #11,d6
+        bne     .l
+        movem.l (a7)+,d0-d7/a0-a2
+        rts
+
+; draw_hint: the hint row (24): a message once (yellow), else the keys of what is going on
+draw_hint:
+        bsr     lbeg
+        moveq   #1,d2
+        lea     t_hint(pc),a0
+        tst.w   vLOpen(a5)
+        beq     .h1
+        movea.l vLHintP(a5),a0
+.h1:    tst.w   vLeaveW(a5)
+        beq     .h2
+        lea     t_hdisc(pc),a0
+.h2:    tst.w   vMode(a5)
+        beq     .h3
+        lea     t_hmove(pc),a0
+.h3:    move.l  vMsg(a5),d0
+        beq     .hm
+        movea.l d0,a0
+        move.l  d0,vLMsg(a5)
+        clr.l   vMsg(a5)
+        moveq   #8,d2
+.hm:    bsr     apps
+        moveq   #24,d1
+        bra     lend
+
+; draw_header: source, name, scenery (row 0)
+draw_header:
         bsr     lbeg
         lea     t_src(pc),a0
         move.w  vSrc(a5),d0
@@ -1507,7 +1291,7 @@ draw_all:
         adda.w  d0,a0
         bsr     apps
         cmpi.w  #2,vSrc(a5)
-        beq   .h1
+        beq     .h1
         moveq   #0,d0
         move.w  vSrcIx(a5),d0
         addq.w  #1,d0
@@ -1518,9 +1302,9 @@ draw_all:
         bsr     apps
         lea     vLine+29(a5),a0
 .h2:    cmpa.l  a0,a1
-        bcc   .h3
+        bcc     .h3
         move.b  #' ',(a1)+
-        bra   .h2
+        bra     .h2
 .h3:    lea     t_scen(pc),a0
         bsr     apps
         moveq   #0,d0
@@ -1529,433 +1313,314 @@ draw_all:
         moveq   #2,d1
         bsr     appn
         tst.w   vMod(a5)
-        beq   .h4
+        beq     .h4
         move.b  #'*',(a1)+
-.h4:
-        moveq   #0,d1
+.h4:    moveq   #0,d1
         moveq   #8,d2
-        bsr     lend
-        lea     t_hill(pc),a0
-        moveq   #0,d0
-        moveq   #15,d1
-        moveq   #3,d2
-        bsr     ptext
-        lea     t_width(pc),a0
-        moveq   #19,d1
-        moveq   #4,d2
-        bsr     ptext
-        lea     t_objs(pc),a0
-        moveq   #21,d1
-        moveq   #5,d2
-        bsr     ptext
-        ; ---- strips: one column per pixel, 128 >> zoom units each
-        moveq   #7,d7
-        sub.w   vZoom(a5),d7            ; shift
-        moveq   #0,d6                   ; a tick every 1000 units at the top of the hill strip
-.g:     move.l  d6,d0
-        bsr     upx
-        bcs   .g1
-        moveq   #114,d1                 ; a tick under the highlight bar
-        moveq   #117,d4
-        moveq   #1,d2
-        bsr     vline
-.g1:    addi.l  #1000,d6
-        cmp.l   vEnd(a5),d6
-        bcs   .g
-        moveq   #0,d5                   ; pixel column
-        lea     HARR.l,a0
-        lea     WLARR.l,a1
-        lea     WRARR.l,a2
-.c:     moveq   #0,d6
-        move.w  d5,d6
-        lsl.l   d7,d6
-        add.l   vVStart(a5),d6          ; unit
-        cmp.l   vEnd(a5),d6
-        bcc   .cd
-        moveq   #64,d0
-        add.w   d5,d0
-        moveq   #0,d3
-        move.b  (a0,d6.l),d3
-        lsr.w   #2,d3
-        move.w  #143,d4
-        move.w  d4,d1
-        sub.w   d3,d1
-        moveq   #3,d2
-        cmp.l   vBarAt(a5),d6
-        ble   .c1
-        tst.l   vBarAt(a5)
-        bmi   .c1
-        moveq   #1,d2                   ; behind the BAR: dim
-.c1:    bsr     vline
-        moveq   #0,d3
-        move.b  (a1,d6.l),d3
-        lsr.w   #3,d3
-        move.w  #156,d1
-        sub.w   d3,d1
-        moveq   #0,d3
-        move.b  (a2,d6.l),d3
-        lsr.w   #3,d3
-        move.w  #156,d4
-        add.w   d3,d4
-        moveq   #4,d2
-        bsr     vline
-        move.w  #172,d1
-        moveq   #1,d2
-        bsr     plot
-        addq.w  #1,d5
-        cmpi.w  #256,d5
-        bne   .c
-.cd:    lea     OBJT.l,a3               ; objects: left of the road above the line, right below, the BAR in red over both
-        move.w  vNObj(a5),d5
-        beq   .od
-        subq.w  #1,d5
-.o:     moveq   #0,d0
-        move.w  (a3),d0
-        cmp.l   vEnd(a5),d0
-        bcc   .on
-        bsr     upx
-        bcs   .on
-        tst.w   6(a3)
-        beq   .o1
-        move.w  #168,d1
-        move.w  #175,d4
-        moveq   #6,d2
-        bra   .o3
-.o1:    moveq   #5,d2
-        move.w  #169,d1
-        move.w  #171,d4
-        tst.w   4(a3)
-        bmi   .o3
-        move.w  #173,d1
-        move.w  #175,d4
-.o3:    bsr     vline
-.on:    addq.l  #8,a3
-        dbra    d5,.o
-.od:    ; ---- the map
-        clr.w   vThick(a5)
-        moveq   #0,d6
-        move.l  vEnd(a5),d7
-        moveq   #2,d2
-        move.l  vBarAt(a5),d0
-        bmi   .m1
-        cmp.l   d7,d0
-        bcc   .m1
-        move.l  d0,d7
-        bsr     path
-        move.l  d0,d6
-        move.l  vEnd(a5),d7
-        moveq   #1,d2                   ; behind the BAR: dim
-.m1:    bsr     path
-        move.l  #1000,d6                ; a dot every 1000 units
-.k:     cmp.l   vEnd(a5),d6
-        bcc   .kd
-        move.l  d6,d0
-        lsr.l   #3,d0
-        lsl.w   #2,d0
-        lea     PTS.l,a0
-        adda.w  d0,a0
-        bsr     mapxy
-        bcs   .kn
-        moveq   #5,d2
-        bsr     plot
-        addq.w  #1,d0
-        cmpi.w  #320,d0
-        bcc   .kn
-        bsr     plot
-.kn:    addi.l  #1000,d6
-        bra   .k
-.kd:    moveq   #0,d6
-        moveq   #3,d2
-        bsr     box                     ; start: green
-        move.l  vBarAt(a5),d6
-        bmi   .nb
-        cmp.l   vEnd(a5),d6
-        bcc   .nb
-        moveq   #6,d2
-        bsr     box                     ; the BAR: red
-.nb:    rts
-
-; draw_hi: the highlight (bitplane 3): the cursor's segment on the map and above / below the strips, the cursor, the two status rows and the hint row
-draw_hi:
-        bsr     clr_hi
-        bsr     seg_ptr
-        moveq   #0,d6
-        move.w  (a0),d6                 ; start
-        moveq   #0,d7
-        move.w  2(a0),d7
-        add.l   d6,d7                   ; end (exclusive)
-        cmp.l   vEnd(a5),d7
-        bls   .a
-        move.l  vEnd(a5),d7
-.a:     moveq   #8,d2
-        move.w  #1,vThick(a5)
-        bsr     path
-        clr.w   vThick(a5)
-        ; the segment's span on the strips
-        move.l  vVStart(a5),d0
-        cmp.l   d0,d6
-        bcc   .s1
-        move.l  d0,d6
-.s1:    moveq   #7,d1
-        sub.w   vZoom(a5),d1
-        move.l  #256,d3
-        lsl.l   d1,d3
-        add.l   d0,d3                   ; first unit right of the strips
-        cmp.l   d3,d7
-        bls   .s2
-        move.l  d3,d7
-.s2:    cmp.l   d7,d6
-        bcc   .s3
-        subq.l  #1,d7
-        move.l  d7,d0
-        bsr     upx
-        move.w  d0,d4
-        move.l  d6,d0
-        bsr     upx
-        moveq   #112,d1
-        moveq   #8,d2
-        bsr     hline
-        moveq   #113,d1
-        bsr     hline
-        move.w  #174,d1
-        bsr     hline
-        move.w  #175,d1
-        bsr     hline
-.s3:    move.l  vPos(a5),d0             ; the cursor
-        bsr     upx
-        bcs   .s4
-        moveq   #112,d1
-        move.w  #175,d4
-        moveq   #8,d2
-        bsr     vline
-.s4:    move.l  vPos(a5),d0
-        lsr.l   #3,d0
-        lsl.w   #2,d0
-        lea     PTS.l,a0
-        adda.w  d0,a0
-        bsr     mapxy
-        bcs   .st
-        cmpi.w  #4,d0
-        bcs   .st
-        cmpi.w  #315,d0
-        bhi   .st
-        cmpi.w  #12,d1
-        bcs   .st
-        cmpi.w  #107,d1
-        bhi   .st
-        moveq   #8,d2
-        subq.w  #4,d0
-        move.w  d0,d4
-        addq.w  #8,d4
-        bsr     hline
-        addq.w  #4,d0
-        subq.w  #4,d1
-        move.w  d1,d4
-        addq.w  #8,d4
-        bsr     vline
-.st:    ; ---- status row 22: SEG nnnn/nnnn AT nnnnn LEN nnnnn ZOOM n
-        bsr     lbeg
-        lea     t_seg(pc),a0
-        bsr     apps
-        moveq   #0,d0
-        move.w  vSeg(a5),d0
-        addq.w  #1,d0
-        moveq   #4,d1
-        bsr     appn
-        move.b  #'/',(a1)+
-        moveq   #0,d0
-        move.w  vNSeg(a5),d0
-        bsr     appn
-        lea     t_at(pc),a0
-        bsr     apps
-        move.l  vPos(a5),d0
-        moveq   #5,d1
-        bsr     appn
-        lea     t_len(pc),a0
-        bsr     apps
-        bsr     seg_ptr
-        movea.l a0,a2
-        moveq   #0,d0
-        move.w  2(a2),d0
-        moveq   #5,d1
-        bsr     appn
-        lea     t_zoom(pc),a0
-        bsr     apps
-        moveq   #0,d0
-        move.w  vZoom(a5),d0
-        addq.w  #1,d0
-        moveq   #1,d1
-        bsr     appn
-        moveq   #22,d1
-        moveq   #7,d2
-        bsr     lend
-        ; ---- status row 23
-        bsr     lbeg
-        tst.w   vFocus(a5)
-        bne   .ob
-        lea     t_curve(pc),a0          ; CURVE L09 / R10 / --- , HILL +nnnn, WIDTH nn/nn
-        bsr     apps
-        move.w  4(a2),d0
-        bne   .cv
-        lea     t_strt(pc),a0
-        bsr     apps
-        bra   .cw
-.cv:    move.b  #'R',(a1)
-        tst.w   d0
-        bpl   .cp
-        move.b  #'L',(a1)
-        neg.w   d0
-.cp:    addq.l  #1,a1
-        andi.l  #$ffff,d0
-        moveq   #2,d1
-        bsr     appn
-.cw:    lea     t_hil2(pc),a0
-        bsr     apps
-        move.w  6(a2),d0
-        moveq   #4,d1
-        bsr     apsn
-        lea     t_wid2(pc),a0
-        bsr     apps
-        moveq   #0,d0
-        move.b  8(a2),d0
-        moveq   #2,d1
-        bsr     appn
-        move.b  #'/',(a1)+
-        moveq   #0,d0
-        move.b  9(a2),d0
-        bsr     appn
-        bra   .r23
-.ob:    lea     t_obj(pc),a0            ; OBJ nnn/nnn AT nnnnn TYPE nnn SIDE +nnn
-        bsr     apps
-        moveq   #0,d0
-        move.w  vObj(a5),d0
-        move.w  d0,d3
-        addq.w  #1,d0
-        moveq   #3,d1
-        bsr     appn
-        move.b  #'/',(a1)+
-        moveq   #0,d0
-        move.w  vNObj(a5),d0
-        bsr     appn
-        lea     t_at(pc),a0
-        bsr     apps
-        lsl.w   #3,d3
-        lea     OBJT.l,a3
-        adda.w  d3,a3
-        moveq   #0,d0
-        move.w  (a3),d0
-        moveq   #5,d1
-        bsr     appn
-        tst.w   6(a3)
-        beq   .ot
-        lea     t_bar(pc),a0
-        bsr     apps
-        bra   .os
-.ot:    lea     t_type(pc),a0
-        bsr     apps
-        moveq   #0,d0
-        move.w  2(a3),d0
-        moveq   #3,d1
-        bsr     appn
-.os:    lea     t_side(pc),a0
-        bsr     apps
-        move.w  4(a3),d0
-        moveq   #3,d1
-        bsr     apsn
-.r23:   moveq   #23,d1
-        moveq   #7,d2
-        bsr     lend
-        bsr     lbeg                    ; hint row: a message once, else the keys
-        moveq   #1,d2
-        lea     t_hint(pc),a0
-        tst.w   vLOpen(a5)
-        beq   .hl1
-        movea.l vLHintP(a5),a0
-.hl1:   tst.w   vLeaveW(a5)
-        beq   .hl2
-        lea     t_hdisc(pc),a0
-.hl2:   tst.w   vMode(a5)
-        beq   .hl3
-        lea     t_hmove(pc),a0
-.hl3:
-        move.l  vMsg(a5),d0
-        beq   .hm
-        movea.l d0,a0
-        move.l  d0,vLMsg(a5)
-        clr.l   vMsg(a5)
-        moveq   #8,d2
-.hm:    bsr     apps
-        moveq   #24,d1
         bra     lend
 
-; ---------------------------------------------------------------- the viewer
-view:   move.w  #1,vState(a5)
-        clr.w   vRes(a5)
-        clr.w   vSeg(a5)
-        clr.l   vPos(a5)
-        clr.w   vObj(a5)
-        clr.w   vFocus(a5)
-        clr.w   vZoom(a5)
-        clr.l   vMsg(a5)
-        clr.w   vMod(a5)
-        clr.w   vMode(a5)
-        clr.w   vLeaveW(a5)
-        clr.w   vLastAct(a5)
-        clr.w   vLastType(a5)
-        clr.w   vLastSide(a5)
-        clr.w   vLOpen(a5)
-        move.w  #$7fff,vDirty(a5)
-        move.w  #$7fff,vPD(a5)
-        clr.w   vPM(a5)
-        clr.w   vPend(a5)
-        move.w  #7,vXm(a5)
-        bsr     set_zoom
-        bsr     in_reset
-        bsr     hist_init
-.loop:  bsr     kq_empty
-        bne   .in                       ; a key is waiting: nothing is recomputed or drawn before it is handled
-        bsr     flush_pend              ; per-unit data the edits made stale (with a pending edit this sets the redraw)
-        move.w  vRedraw(a5),d0
-        beq   .in
-        clr.w   vRedraw(a5)
-        btst    #0,d0
-        beq   .hi
-        bsr     full_draw
-        bra   .in
-.hi:    bsr     draw_hi
-.in:    jsr     $d206.l
-        bsr     input
-        tst.w   vRes(a5)
-        beq   .loop
-        clr.w   vState(a5)
-        rts
-
-; full_draw: the whole picture (map, strips, highlight, a list box when one is open) is drawn on the hidden screen and flipped in at the next vertical sync: no flicker
-full_draw:
-        bsr     hide
-        bsr     draw_all
-        bsr     draw_hi
+draw_view:
+        bsr     draw_header
+        bsr     draw_labels
+        bsr     draw_grid
+        bsr     draw_panel
         tst.w   vLOpen(a5)
-        beq   .s
-        bsr     lbox
-.s:     bra     show
-hide:   move.l  #SCR,d0                 ; vDraw = the screen that is not shown
-        cmp.l   vShow(a5),d0
-        bne   .a
-        move.l  #SCR2,d0
-.a:     move.l  d0,vDraw(a5)
-        rts
-show:   move.l  vDraw(a5),-(a7)         ; wait for the sync, point the shifter at vDraw; drawing continues on the screen that is shown
-        jsr     $d206.l
-        move.l  (a7)+,d0
-        move.l  d0,vShow(a5)
-        lsr.l   #8,d0
-        move.b  d0,$ffff8203.w
-        lsr.w   #8,d0
-        move.b  d0,$ffff8201.w
+        beq     .k
+        bra     lrows
+.k:     bra     draw_keys
+
+; grid_fit: d0 = 0 keep the cursor off the edge (scroll by whole rows), 1 centre its row at row 3
+grid_fit:
+        movem.l d0-d7/a0,-(a7)
+        move.w  d0,d6
+        move.w  vNSeg(a5),d7
+        beq     .x
+        subq.w  #1,d7                   ; the last segment index
+        tst.w   d6
+        beq     .edge
+        move.w  vSeg(a5),d0
+        andi.w  #$fff0,d0
+        move.w  #3*16,d1
+        cmp.w   d1,d0
+        bcs     .c0
+        sub.w   d1,d0
+        bra     .set
+.c0:    moveq   #0,d0
+        bra     .set
+.edge:  move.w  vFirst(a5),d0
+        move.w  vSeg(a5),d1
+        cmp.w   d0,d1
+        bcc     .e1
+        move.w  vSeg(a5),d0
+        andi.w  #$fff0,d0
+        bra     .set
+.e1:    move.w  d0,d1
+        addi.w  #128,d1
+        move.w  vSeg(a5),d2
+        cmp.w   d1,d2
+        bcs     .e2
+        move.w  vSeg(a5),d0
+        subi.w  #127,d0
+        andi.w  #$fff0,d0
+        bra     .set
+.e2:    move.w  vSeg(a5),d1             ; keep the cursor one row from the edge
+        sub.w   d0,d1
+        lsr.w   #4,d1
+        tst.w   d1
+        bne     .e3
+        tst.w   d0
+        beq     .e3
+        subi.w  #16,d0
+        bra     .set
+.e3:    cmpi.w  #7,d1
+        bne     .x
+        move.w  d0,d1
+        addi.w  #128,d1
+        cmp.w   d7,d1
+        bhi     .x
+        addi.w  #16,d0
+.set:   tst.w   d0
+        bpl     .s1
+        moveq   #0,d0
+.s1:    move.w  d7,d1
+        andi.w  #$fff0,d1
+        cmp.w   d1,d0
+        bls     .s2
+        move.w  d1,d0
+.s2:    move.w  d0,vFirst(a5)
+.x:     movem.l (a7)+,d0-d7/a0
         rts
 
-in_reset:                               ; forget every key and wait until fire is released
+; obj_find: the objects of the selected segment -> vOF / vOCnt; vPos = its first unit; vObj kept inside the range
+obj_find:
+        movem.l d0-d5/a0,-(a7)
+        bsr     seg_ptr
+        moveq   #0,d3
+        move.w  (a0),d3
+        move.l  d3,vPos(a5)
+        move.w  2(a0),d4
+        add.w   d3,d4                   ; end (exclusive)
+        lea     OBJT.l,a0
+        moveq   #0,d1
+        move.w  vNObj(a5),d2
+        beq     .none
+.s:     cmp.w   d2,d1
+        bcc     .done
+        cmp.w   (a0),d3
+        bhi     .sk
+        bra     .f
+.sk:    addq.l  #8,a0
+        addq.w  #1,d1
+        bra     .s
+.f:     move.w  d1,vOF(a5)
+        moveq   #0,d5
+.l:     cmp.w   d2,d1
+        bcc     .e
+        cmp.w   (a0),d4
+        bhi     .c
+        bra     .e
+.c:     addq.w  #1,d5
+        addq.l  #8,a0
+        addq.w  #1,d1
+        bra     .l
+.e:     move.w  d5,vOCnt(a5)
+        move.w  vObj(a5),d0
+        cmp.w   vOF(a5),d0
+        bcc     .c2
+        move.w  vOF(a5),d0
+        bra     .set
+.c2:    move.w  vOF(a5),d1
+        add.w   vOCnt(a5),d1
+        cmp.w   d1,d0
+        bcs     .set
+        subq.w  #1,d1
+        move.w  d1,d0
+        bpl     .set
+        moveq   #0,d0
+.set:   move.w  d0,vObj(a5)
+        bra     .x
+.done:  clr.w   vOCnt(a5)
+        move.w  #0,vOF(a5)
+        clr.w   vObj(a5)
+        bra     .x
+.none:  clr.w   vOCnt(a5)
+        move.w  #0,vOF(a5)
+        clr.w   vObj(a5)
+.x:     movem.l (a7)+,d0-d5/a0
+        rts
+
+; pick_unit: d0 = candidate unit, d1 = segment start, d2 = segment end (exclusive), d3 = 1: BAR objects do not block -> d0 = a free unit or 0
+pick_unit:
+        movem.l d1-d7/a0-a2,-(a7)
+        move.w  d0,d4
+        move.w  d1,d6
+        move.w  d2,d7
+        move.w  d3,d5
+        move.w  d4,d0
+.s1:    cmp.w   d7,d0
+        bcc     .w1
+        bsr     .occ
+        beq     .n1
+        bra     .ok
+.n1:    addq.w  #1,d0
+        bra     .s1
+.w1:    move.w  d6,d0
+        tst.w   d0
+        bne     .w2
+        addq.w  #1,d0
+.w2:    cmp.w   d4,d0
+        bcc     .fail
+        bsr     .occ
+        beq     .n2
+        bra     .ok
+.n2:    addq.w  #1,d0
+        bra     .w2
+.fail:  moveq   #0,d0
+        bra     .x
+.ok:    bra     .x
+.x:     movem.l (a7)+,d1-d7/a0-a2
+        rts
+.occ:   movem.l d1-d3/a0,-(a7)
+        lea     OBJT.l,a0
+        moveq   #0,d1
+        move.w  vNObj(a5),d2
+        beq     .free
+        subq.w  #1,d2
+.l:     move.w  (a0),d3
+        cmp.w   d0,d3
+        bcc     .hit
+        addq.l  #8,a0
+        dbra    d2,.l
+        bra     .free
+.hit:   cmp.w   d0,d3
+        bne     .free
+        tst.w   d5                      ; the BAR may be moved over
+        beq     .occ2
+        tst.w   6(a0)
+        bne     .free
+.occ2:  moveq   #1,d3
+        tst.w   d3
+        movem.l (a7)+,d1-d3/a0
+        rts
+.free:  moveq   #0,d3
+        tst.w   d3
+        movem.l (a7)+,d1-d3/a0
+        rts
+
+; obj_sort: the object selected by vObj changed its unit: re-insert it in the sorted list (vObj = its new index)
+obj_sort:
+        movem.l d0-d5/a0-a2,-(a7)
+        move.w  vObj(a5),d0
+        lsl.w   #3,d0
+        lea     OBJT.l,a0
+        adda.w  d0,a0
+        move.l  (a0),vAcc(a5)
+        move.l  4(a0),vAcc2(a5)
+        move.w  vNObj(a5),d4
+        sub.w   vObj(a5),d4
+        subq.w  #1,d4
+        beq     .rm
+        movea.l a0,a1
+        lea     8(a0),a2
+.sh:    move.l  (a2)+,(a1)+
+        dbra    d4,.sh
+.rm:    subq.w  #1,vNObj(a5)
+        move.l  vAcc(a5),d2
+        swap    d2
+        move.w  d2,d4                   ; the unit
+        moveq   #0,d5
+        lea     OBJT.l,a0
+.l:     cmp.w   vNObj(a5),d5
+        bcc     .ins
+        cmp.w   (a0),d4
+        bls     .ins
+        addq.l  #8,a0
+        addq.w  #1,d5
+        bra     .l
+.ins:   move.w  d5,-(a7)
+        move.w  d5,d0
+        move.w  vNObj(a5),d1
+        moveq   #2,d2
+        lea     OBJT.l,a2
+        bsr     lst_open
+        move.w  (a7)+,d5
+        move.w  d5,d0
+        lsl.w   #3,d0
+        lea     OBJT.l,a0
+        adda.w  d0,a0
+        move.l  vAcc(a5),(a0)+
+        move.l  vAcc2(a5),(a0)
+        addq.w  #1,vNObj(a5)
+        move.w  d5,vObj(a5)
+        bsr     find_bar
+        movem.l (a7)+,d0-d5/a0-a2
+        rts
+
+; obj_mv_seg: d0 = -1 / +1: the object being moved goes to the previous / next segment at the same offset (MOVE mode)
+obj_mv_seg:
+        movem.l d0-d7/a0-a2,-(a7)
+        move.w  d0,d7                   ; the direction
+        bsr     obj_ptr
+        move.w  (a0),d6                 ; its unit
+        move.w  vSeg(a5),d5
+        add.w   d7,d5
+        bmi     .x
+        cmp.w   vNSeg(a5),d5
+        bcc     .x
+        move.w  d5,d0
+        mulu    #SEGSZ,d0
+        lea     SEGT.l,a1
+        adda.l  d0,a1
+        moveq   #0,d4
+        move.w  (a1),d4                 ; target start
+        moveq   #0,d3
+        move.w  2(a1),d3
+        add.w   d4,d3                   ; target end
+        bsr     seg_ptr
+        moveq   #0,d0
+        move.w  (a0),d0                 ; the old segment's start
+        move.w  d6,d1
+        sub.w   d0,d1                   ; the offset in the old segment
+        add.w   d4,d1                   ; the target unit
+        cmpi.w  #1,d1
+        bge     .k1
+        moveq   #1,d1
+.k1:    move.w  d3,d0
+        subq.w  #1,d0                   ; the target's last unit
+        move.w  d0,d6
+        cmp.w   d0,d1
+        ble     .k2
+        move.w  d0,d1
+.k2:    move.w  d1,d3                   ; the candidate
+.loop:  move.w  d3,d0
+        move.w  vObj(a5),d1
+        bsr     occ_unit
+        bne     .got
+        tst.w   d7
+        bmi     .down
+        addq.w  #1,d3
+        cmp.w   d6,d3
+        bhi     .x
+        bra     .loop
+.down:  subq.w  #1,d3
+        tst.w   d3
+        beq     .x
+        bra     .loop
+.got:   bsr     obj_ptr
+        move.w  d3,(a0)
+        move.w  d5,vSeg(a5)
+        bsr     obj_sort
+        bsr     obj_find
+        clr.w   vFocus(a5)
+        clr.w   vTOk(a5)
+        moveq   #0,d0
+        bsr     grid_fit
+        move.w  #3,vRedraw(a5)
+.x:     movem.l (a7)+,d0-d7/a0-a2
+        rts
+
+; in_reset: forget every key and wait until fire is released
+in_reset:
         clr.b   $60ff.w
         move.w  #$f,vPDir(a5)
         clr.w   vFire(a5)
@@ -1964,70 +1629,51 @@ in_reset:                               ; forget every key and wait until fire i
         bne   .f
         rts
 
-; set_zoom: the strips start so that the cursor sits in the middle; the map is the whole track at zoom 0, else centred on the cursor (x2 .. x16)
-set_zoom:
-        moveq   #7,d1
-        sub.w   vZoom(a5),d1
-        move.l  #128,d0
-        lsl.l   d1,d0                   ; half the strip, in units
-        move.l  vPos(a5),d2
-        sub.l   d0,d2
-        bpl   .v1
-        moveq   #0,d2
-.v1:    lsr.l   d1,d2
-        lsl.l   d1,d2
-        move.l  d2,vVStart(a5)
-        move.w  vZoom(a5),d0
-        cmpi.w  #4,d0
-        bls   .z1
-        moveq   #4,d0
-.z1:    moveq   #16,d1
-        sub.w   d0,d1
-        move.w  d1,vSh(a5)
-        move.w  vCx(a5),vOx(a5)
-        move.w  vCy(a5),vOy(a5)
-        tst.w   d0
-        beq   .z2
-        move.l  vPos(a5),d0
-        lsr.l   #3,d0
-        lsl.w   #2,d0
-        lea     PTS.l,a0
-        adda.w  d0,a0
-        move.w  (a0)+,vOx(a5)
-        move.w  (a0),vOy(a5)
-.z2:    move.w  #1,vRedraw(a5)
+; ---------------------------------------------------------------- the editor's view
+view:   move.w  #1,vState(a5)
+        clr.w   vRes(a5)
+        clr.w   vSeg(a5)
+        clr.l   vPos(a5)
+        clr.w   vObj(a5)
+        clr.w   vFocus(a5)
+        clr.w   vFirst(a5)
+        move.w  #$7fff,vOTop(a5)        ; forces the object list to re-scroll
+        clr.l   vMsg(a5)
+        clr.w   vMod(a5)
+        clr.w   vMode(a5)
+        clr.w   vLeaveW(a5)
+        clr.w   vLastAct(a5)
+        clr.w   vLastType(a5)
+        clr.w   vLastSide(a5)
+        clr.w   vLOpen(a5)
+        clr.w   vTOk(a5)
+        clr.w   vOCnt(a5)
+        clr.w   vOF(a5)
+        move.w  #1,vPage(a5)
+        bsr     hist_init
+        bsr     obj_find
+        moveq   #1,d0
+        bsr     grid_fit
+        movea.l #SHW,a0                 ; every slot is drawn
+        moveq   #0,d0
+        move.w  #$ffff,d1
+.iv:    move.w  d1,(a0)+
+        dbra    d0,.iv
+        bsr     in_reset
+        move.w  #3,vRedraw(a5)
+.loop:  bsr     kq_empty
+        bne   .in                       ; a key is waiting: nothing is recomputed or drawn before it is handled
+        bsr     flush_pend              ; the tile words (when an edit made them stale), then the redraw
+        move.w  vRedraw(a5),d0
+        beq   .in
+        clr.w   vRedraw(a5)
+        bsr     draw_view
+.in:    jsr     $d206.l
+        bsr     input
+        tst.w   vRes(a5)
+        beq   .loop
+        clr.w   vState(a5)
         rts
-
-; moved: the cursor changed: scroll the strips / re-centre the zoomed map when it left the middle, else redraw the highlight only
-moved:  bsr     find_seg
-        ori.w   #2,vRedraw(a5)
-        move.l  vPos(a5),d0
-        bsr     upx
-        bcs   set_zoom
-        tst.l   vVStart(a5)
-        beq   .l1
-        cmpi.w  #64+16,d0
-        bcs   set_zoom
-.l1:    cmpi.w  #64+240,d0
-        bcc   set_zoom
-        tst.w   vZoom(a5)
-        beq   .x
-        move.l  vPos(a5),d0
-        lsr.l   #3,d0
-        lsl.w   #2,d0
-        lea     PTS.l,a0
-        adda.w  d0,a0
-        bsr     mapxy
-        bcs   set_zoom
-        cmpi.w  #48,d0
-        bcs   set_zoom
-        cmpi.w  #272,d0
-        bcc   set_zoom
-        cmpi.w  #28,d1
-        bcs     set_zoom
-        cmpi.w  #92,d1
-        bcc     set_zoom
-.x:     rts
 
 ; input: one poll per frame.  Directions = joystick port 1 or the cursor keys (latched makes, so a short tap counts), auto-repeat while held
 input:  bsr     kq_popn
@@ -2056,7 +1702,7 @@ input:  bsr     kq_popn
 .dirs:  bsr     poll_dirs
         tst.w   d2
         beq   .fire
-.act:   moveq   #0,d4                   ; modifier: 1 fine (fire or Control held), 2 coarse (Shift held)
+.act:   moveq   #0,d4                   ; modifier: 1 fire or Control (MOVE: one unit), 2 Shift (100 units)
         tst.b   $1d(a0)
         bne   .fi
         tst.b   d3
@@ -2069,7 +1715,23 @@ input:  bsr     kq_popn
         tst.b   $36(a0)
         beq   .m2
 .co:    moveq   #2,d4
-.m2:    btst    #3,d2
+.m2:    tst.w   vMode(a5)
+        beq   .nav
+        btst    #3,d2                   ; MOVE mode: left / right = move the object, up / down = another segment
+        beq   .mv1
+        moveq   #1,d0
+        bra     obj_mv_step
+.mv1:   btst    #2,d2
+        beq   .mv2
+        moveq   #-1,d0
+        bra     obj_mv_step
+.mv2:   btst    #1,d2
+        beq   .mv3
+        moveq   #1,d0
+        bra     obj_mv_seg
+.mv3:   moveq   #-1,d0
+        bra     obj_mv_seg
+.nav:   btst    #3,d2
         beq   .n1
         moveq   #1,d0
         bra     step
@@ -2077,15 +1739,16 @@ input:  bsr     kq_popn
         beq   .n2
         moveq   #-1,d0
         bra     step
-.n2:    cmpi.w  #1,d4                   ; fire + up / down = zoom, else up / down = road <> objects
-        bne   .n3
-        moveq   #4,d0
-        btst    #0,d2
-        bne     command
-        moveq   #5,d0
+.n2:    tst.b   d3                      ; fire + up / down = the grid <> the object list
+        bpl   .n3
+        moveq   #6,d0
         bra     command
-.n3:    moveq   #6,d0
-        bra     command
+.n3:    btst    #1,d2
+        beq   .n4
+        moveq   #1,d0
+        bra     step_row
+.n4:    moveq   #-1,d0
+        bra     step_row
 .fire:  tst.b   d3                      ; fire tapped (released with no direction used) = the menu
         bmi   .fd
         tst.w   vFire(a5)
@@ -2101,94 +1764,91 @@ input:  bsr     kq_popn
         clr.w   vFireMv(a5)
 .x:     rts
 
-; step: d0 = -1 / +1, d4 = 0 one segment (or object), 1 fine (one pixel of the strips), 2 coarse (to the next 1000 units)
-step:   tst.w   vMode(a5)
-        bne     obj_mv_step
-        move.l  vPos(a5),d1
-        tst.w   d4
-        beq   .item
-        cmpi.w  #1,d4
-        bne   .coarse
-        moveq   #7,d2
-        sub.w   vZoom(a5),d2
-        moveq   #1,d3
-        lsl.l   d2,d3
-        tst.w   d0
-        bpl   .f1
-        neg.l   d3
-.f1:    add.l   d3,d1
-        bra   .clamp
-.coarse:
-        divu    #1000,d1
-        move.l  d1,d2
-        swap    d2                      ; remainder
-        andi.l  #$ffff,d1
-        tst.w   d0
-        bmi   .c1
-        addq.w  #1,d1
-        bra   .c2
-.c1:    tst.w   d2
-        bne   .c2
-        subq.w  #1,d1
-        bpl   .c2
-        moveq   #0,d1
-.c2:    mulu    #1000,d1
-.clamp: tst.l   d1
-        bpl   .k1
-        moveq   #0,d1
-.k1:    move.l  vEnd(a5),d2
-        subq.l  #1,d2
-        cmp.l   d2,d1
-        bls   .k2
-        move.l  d2,d1
-.k2:    move.l  d1,vPos(a5)
-        bra     moved
-.item:  tst.w   vFocus(a5)
-        bne   .obj
-        move.w  d0,d5
-        bsr     seg_ptr
-        tst.w   d5
-        bmi   .left
-        move.w  vSeg(a5),d2
-        addq.w  #1,d2
-        cmp.w   vNSeg(a5),d2
-        bcc   step_no
-        moveq   #0,d1
-        move.w  SEGSZ(a0),d1
-        cmp.l   vEnd(a5),d1
-        bcc   step_no
-        bra   .k2
-.left:  moveq   #0,d2
-        move.w  (a0),d2
-        cmp.l   d2,d1                   ; inside the segment: to its start
-        bhi   .l1
-        tst.w   vSeg(a5)
-        beq   step_no
-        move.w  -SEGSZ(a0),d2
-.l1:    move.l  d2,d1
-        bra   .k2
-.obj:   move.w  vObj(a5),d2
-        add.w   d0,d2
-        bmi   step_no
-        cmp.w   vNObj(a5),d2
-        bcc   step_no
-        move.w  d2,vObj(a5)
-obj_pos:
-        move.w  vObj(a5),d2
-        lsl.w   #3,d2
-        lea     OBJT.l,a0
-        moveq   #0,d1
-        move.w  (a0,d2.w),d1
-        move.l  vEnd(a5),d2
-        subq.l  #1,d2
-        cmp.l   d2,d1
-        bls   .o1
-        move.l  d2,d1
-.o1:    move.l  d1,vPos(a5)
-        bra     moved
-step_no: rts
+; step: d0 = -1 / +1: the previous / next segment (the object list gives the cursor back to the grid)
+step:   bsr     seg_move
+        rts
 
-; command: d0 = 1 leave, 2 start, 3 the BAR, 4 zoom in, 5 zoom out, 6 road <> objects, 7 help, 8 menu, 9 Return / Space (the editor's "repeat": nothing to repeat in the viewer)
+; step_row: d0 = -1 / +1: one grid row = 16 segments
+step_row:
+        tst.w   vFocus(a5)
+        beq   .g
+        clr.w   vFocus(a5)
+        move.w  #3,vRedraw(a5)
+        rts
+.g:     move.w  d0,d1
+        lsl.w   #4,d1
+        move.w  d1,d0
+        bra     seg_move
+
+; seg_move: d0 = +-n: move the cursor by n segments (clamped to the segments the race reaches), axis ended = its first unit
+seg_move:
+        movem.l d0-d2/a0,-(a7)
+        move.w  d0,d2
+        add.w   vSeg(a5),d2
+        bsr     seg_last
+        tst.w   d2
+        bpl   .a
+        clr.w   d2
+.a:     cmp.w   d0,d2
+        bls   .b
+        move.w  d0,d2
+.b:     move.w  d2,vSeg(a5)
+        bsr     obj_find
+        moveq   #1,d0
+        bsr     grid_fit
+        move.w  #3,vRedraw(a5)
+        movem.l (a7)+,d0-d2/a0
+        rts
+
+; seg_last: d0 = the last segment whose start lies before vEnd (0 when there is none)
+seg_last:
+        movem.l d1/a0,-(a7)
+        move.w  vNSeg(a5),d0
+        subq.w  #1,d0
+        bmi   .z
+        move.w  d0,d1
+        mulu    #SEGSZ,d1
+        lea     SEGT.l,a0
+        adda.l  d1,a0
+.l:     moveq   #0,d1
+        move.w  (a0),d1
+        cmp.l   vEnd(a5),d1
+        bcs   .x
+        subq.w  #1,d0
+        bmi   .z
+        lea     -SEGSZ(a0),a0
+        bra   .l
+.z:     moveq   #0,d0
+.x:     movem.l (a7)+,d1/a0
+        rts
+
+; obj_sel: d0 = -1 / +1: the previous / next object of the selected segment (up on the first gives the cursor back to the grid)
+obj_sel:
+        movem.l d1-d3,-(a7)
+        move.w  vOCnt(a5),d1
+        beq   .x
+        move.w  vObj(a5),d2
+        add.w   d0,d2
+        move.w  vOF(a5),d3
+        cmp.w   d3,d2
+        bcc   .a
+        tst.w   d0
+        bpl   .a
+        clr.w   vFocus(a5)
+        move.w  #3,vRedraw(a5)
+        bra   .x
+.a:     add.w   vOCnt(a5),d3
+        cmp.w   d3,d2
+        bcs   .set
+        subq.w  #1,d3
+        move.w  d3,d2
+.set:   move.w  d2,vObj(a5)
+        move.w  #3,vRedraw(a5)
+.x:     movem.l (a7)+,d1-d3
+        rts
+
+; command: d0 = 1 leave, 2 start, 3 the BAR, 6 the grid <> the object list, 7 help, 8 menu, 9 Return / Space (repeat the last pick),
+; 10..27 the edits (see cmd_edit)
 command:
         tst.w   vMode(a5)
         bne     mv_cmd
@@ -2199,56 +1859,53 @@ command:
         bra     leave
 .c2:    subq.w  #1,d0
         bne   .c3
-        clr.l   vPos(a5)
-.go:    clr.w   vFocus(a5)
-        bra     moved
+        clr.w   vSeg(a5)                ; Clr/Home: the first segment
+        bsr     obj_find
+        moveq   #1,d0
+        bsr     grid_fit
+        move.w  #3,vRedraw(a5)
+        bra     .back
 .c3:    subq.w  #1,d0
         bne   .c4
-        move.l  vBarAt(a5),d1
+        move.l  vBarAt(a5),d1           ; B: the segment that holds the BAR
         bmi   .nobar
-        move.l  d1,vPos(a5)
-        bra   .go
+        move.w  d1,d0
+        bsr     seg_of
+        move.w  d0,vSeg(a5)
+        bsr     obj_find
+        moveq   #1,d0
+        bsr     grid_fit
+        move.w  #3,vRedraw(a5)
+        bra     .back
 .nobar: lea     t_nobar(pc),a0
 .msg:   move.l  a0,vMsg(a5)
         ori.w   #2,vRedraw(a5)
-        rts
+        bra     .back
 .c4:    subq.w  #1,d0
         bne   .c5
-        cmpi.w  #7,vZoom(a5)
-        bcc   .r
-        addq.w  #1,vZoom(a5)
-        bra     set_zoom
+.r:     rts
 .c5:    subq.w  #1,d0
         bne   .c6
-        tst.w   vZoom(a5)
-        beq   .r
-        subq.w  #1,vZoom(a5)
-        bra     set_zoom
+        bra     .r
 .c6:    subq.w  #1,d0
         bne   .c7
-        tst.w   vFocus(a5)
+        tst.w   vFocus(a5)              ; Tab / fire + up / down: the grid <> the object list
         beq   .toobj
         clr.w   vFocus(a5)
-        bra     moved
-.toobj: move.w  vNObj(a5),d1            ; the first object at or behind the cursor (else the last one)
-        beq   .r
-        lea     OBJT.l,a0
-        moveq   #0,d2
-        move.l  vPos(a5),d3
-.s:     cmp.w   (a0),d3
-        bls   .sf
-        addq.l  #8,a0
-        addq.w  #1,d2
-        cmp.w   d1,d2
-        bcs   .s
-        subq.w  #1,d2
-.sf:    move.w  d2,vObj(a5)
+        move.w  #3,vRedraw(a5)
+        bra     .back
+.toobj: tst.w   vOCnt(a5)
+        beq   .noobj
+        move.w  vOF(a5),vObj(a5)
         move.w  #1,vFocus(a5)
-        bra     obj_pos
+        move.w  #3,vRedraw(a5)
+        bra     .back
+.noobj: lea     t_noobj(pc),a0
+        bra     .msg
 .c7:    subq.w  #1,d0
         bne   .c8
         bsr     help
-        bra   .back
+        bra     .back
 .c8:    subq.w  #1,d0
         bne   .c9
         bsr     vmenu
@@ -2260,10 +1917,10 @@ command:
         rts
 .c9:    bra     rep_cmd
 .back:  bsr     in_reset
-        move.w  #1,vRedraw(a5)
-.r:     rts
+        move.w  #3,vRedraw(a5)
+        rts
 
-; vmenu: the menu (FIRE): the road row's or the objects row's edit items, then the common ones -> d0 = command or 0
+; vmenu: the menu (FIRE): the grid's or the object list's items, then the common ones -> d0 = command or 0
 vmenu:  move.w  #2,vState(a5)
         lea     m_road(pc),a0
         lea     vmroad(pc),a2
@@ -2284,8 +1941,12 @@ vmenu:  move.w  #2,vState(a5)
 .n:     moveq   #0,d0
         rts
 
+; help: page 1 the keys, page 2 what the tiles mean (the legend is drawn with the tile routine itself)
 help:   move.w  #3,vState(a5)
-        bsr     cls
+        move.w  #1,vPage(a5)
+.page:  bsr     cls
+        cmpi.w  #2,vPage(a5)
+        beq     .leg
         lea     t_help(pc),a0
         moveq   #1,d1
         moveq   #8,d2
@@ -2297,14 +1958,98 @@ help:   move.w  #3,vState(a5)
         addq.w  #1,d1
         tst.b   (a0)
         bne   .l
-        clr.b   $60ff.w
+        bra     .wait
+.leg:   bsr     legend
+.wait:  clr.b   $60ff.w
 .w:     jsr     $d206.l
         bsr     kq_pop
         tst.b   d0
-        bne   .d
+        bne     .d
         btst    #7,$6105.w
-        beq   .w
-.d:     move.w  #1,vState(a5)
+        beq     .w
+.d:     cmpi.w  #2,vPage(a5)
+        beq     .end
+        move.w  #2,vPage(a5)
+        bra     .page
+.end:   move.w  #1,vPage(a5)
+        move.w  #1,vState(a5)
+        move.w  #3,vRedraw(a5)
+        bsr     in_reset
+        rts
+
+; legend: the tile symbols and colours as they are drawn, with their names (the second page of HELP)
+legend:
+        movem.l d0-d7/a0-a3,-(a7)
+        lea     t_leg(pc),a0
+        moveq   #1,d0
+        moveq   #0,d1
+        moveq   #8,d2
+        bsr     ptext
+        moveq   #0,d6
+.sy:    move.w  d6,d1                   ; the seven directions on a level tile
+        mulu    #13,d1
+        addi.w  #18,d1
+        move.w  #16,d0
+        move.w  d6,d2
+        bsr     tile_draw
+        lea     symtab(pc),a0
+        move.w  d6,d0
+        add.w   d0,d0
+        movea.l (a0,d0.w),a0
+        moveq   #40,d0
+        move.w  d6,d1
+        mulu    #13,d1
+        addi.w  #20,d1
+        moveq   #8,d2
+        bsr     ptextp
+        addq.w  #1,d6
+        cmpi.w  #7,d6
+        bne   .sy
+        moveq   #0,d6
+.hc:    move.w  d6,d1                   ; the five hill classes on a straight tile
+        mulu    #13,d1
+        addi.w  #109,d1
+        move.w  #16,d0
+        move.w  d6,d2
+        lsl.w   #3,d2
+        bsr     tile_draw
+        lea     hilltab(pc),a0
+        move.w  d6,d0
+        add.w   d0,d0
+        movea.l (a0,d0.w),a0
+        moveq   #40,d0
+        move.w  d6,d1
+        mulu    #13,d1
+        addi.w  #111,d1
+        moveq   #8,d2
+        bsr     ptextp
+        addq.w  #1,d6
+        cmpi.w  #5,d6
+        bne   .hc
+        move.w  #16,d0                  ; a dot = the segment has objects
+        move.w  #174,d1
+        move.w  #$40,d2
+        bsr     tile_draw
+        lea     t_legdot(pc),a0
+        moveq   #40,d0
+        moveq   #176,d1
+        moveq   #8,d2
+        bsr     ptextp
+        move.w  #16,d0                  ; chequered = the segment holds the BAR
+        move.w  #187,d1
+        move.w  #$80,d2
+        bsr     tile_draw
+        lea     t_legbar(pc),a0
+        moveq   #40,d0
+        move.w  #189,d1
+        moveq   #8,d2
+        bsr     ptextp
+        lea     t_pak(pc),a0
+        moveq   #1,d0
+        moveq   #24,d1
+        moveq   #1,d2
+        bsr     ptext
+        movem.l (a7)+,d0-d7/a0-a3
         rts
 
 ; ======================================================================================================= milestone 2: EDITING
@@ -2531,13 +2276,6 @@ seg_of:                                 ; d0.w = unit -> d0.w = the segment that
 .f:     move.w  d1,d0
         movem.l (a7)+,d1-d2/a0
         rts
-dirty_end:                              ; the extent may change: recompute from the segment that holds its end
-        move.l  vEnd(a5),d0
-        subq.l  #1,d0
-        bsr     seg_of
-        move.w  d0,vDirty(a5)
-        rts
-
 ; obj_norm: objects strictly increasing (a later one that would meet its predecessor moves one unit on), the first at 1 or later -> d0 = 1 when the last lies past 32767
 obj_norm:
         movem.l d1-d2/a0,-(a7)
@@ -2748,9 +2486,7 @@ c_redo: movea.l vHCur(a5),a0
         bra     hist_done
 .no:    lea     t_noredo(pc),a0
         bra     msg
-hist_done:                              ; a state came back: all per-unit data is stale
-        clr.w   vDirty(a5)
-        move.w  #7,vXm(a5)
+hist_done:                              ; a state came back
         moveq   #1,d0
         cmpi.l  #ARENA,vHCur(a5)
         bne   .m
@@ -2760,28 +2496,13 @@ hist_done:                              ; a state came back: all per-unit data i
 .m:     move.w  d0,vMod(a5)
         clr.w   vLeaveW(a5)
         bra     refresh
-refresh:                                ; per-unit data stale from vDirty on: remembered (vPD, vPM) and recomputed by flush_pend when no key is waiting
-        move.w  vDirty(a5),d0
-        cmpi.w  #$7fff,d0
-        beq   .nd
-        cmp.w   vPD(a5),d0
-        bcc   .k
-        move.w  d0,vPD(a5)
-.k:     move.w  vXm(a5),d0
-        tst.w   vPend(a5)
-        beq   .f
-        andi.w  #7,d0                   ; two edits waiting: no early stop in the width pass
-        andi.w  #7,vPM(a5)
-.f:     or.w    d0,vPM(a5)
-        move.w  #1,vPend(a5)
-.nd:    move.w  #7,vXm(a5)
-        move.w  #$7fff,vDirty(a5)
-        bsr     find_seg
-        tst.w   vPend(a5)
-        bne   .r
-        bra     set_zoom
-.r:     rts
-ed_commit:                              ; an edit was made: history, modified, per-unit data, view
+refresh:                                ; the model changed: the tile words are recomputed by flush_pend when no key is waiting
+        clr.w   vTOk(a5)
+        move.w  #3,vRedraw(a5)
+        bsr     obj_find
+        moveq   #0,d0
+        bra     grid_fit
+ed_commit:                              ; an edit was made: history, modified, the view
         bsr     hist_push
         move.w  #1,vMod(a5)
         clr.w   vLeaveW(a5)
@@ -2789,7 +2510,7 @@ ed_commit:                              ; an edit was made: history, modified, p
 ed_fail:                                ; a0 = message: the edit is undone
         move.l  a0,-(a7)
         bsr     hist_cur
-        move.w  #$7fff,vDirty(a5)
+        clr.w   vTOk(a5)
         movea.l (a7)+,a0
         bra     msg
 rs_fail:                                ; d0 = road_shift result
@@ -2802,8 +2523,7 @@ rs_fail:                                ; d0 = road_shift result
 ; ---------------------------------------------------------------- apply: d0 = act, d1.w = value -> the working copy (the cursor's segment / object); d0 = 0 done / 1 refused (message set)
 ; acts: 1 curve 2 hill shape 3 length 4 width L 5 width R 6 object type 7 object side 8 raw hill accel
 apply:  movem.l d2-d7/a1-a3,-(a7)
-        move.w  vSeg(a5),vDirty(a5)
-        move.w  #7,vXm(a5)
+        clr.w   vTOk(a5)                ; (a preview: the working copy changed, the tiles follow)
         move.w  d0,d2
         bsr     seg_ptr
         subq.w  #1,d2
@@ -2820,21 +2540,18 @@ ap_bad: move.l  a0,vMsg(a5)             ; a0 = message
         moveq   #1,d0
         bra   ap_x
 ap_curve:
-        move.w  #4,vXm(a5)
         move.w  d1,4(a0)
         bra   ap_ok
 ap_wl:  cmpi.w  #10,d1
         blt   ap_range
         cmpi.w  #85,d1
         bgt   ap_range
-        move.w  #10,vXm(a5)
         move.b  d1,8(a0)
         bra   ap_ok
 ap_wr:  cmpi.w  #10,d1
         blt   ap_range
         cmpi.w  #85,d1
         bgt   ap_range
-        move.w  #10,vXm(a5)
         move.b  d1,9(a0)
         bra   ap_ok
 ap_range:
@@ -2844,14 +2561,13 @@ ap_raw: cmpi.w  #-6000,d1
         blt   ap_range
         cmpi.w  #4000,d1
         bgt   ap_range
-        move.w  #1,vXm(a5)
         move.w  d1,6(a0)
 ap_hov: bsr     hill_ovf
         tst.w   d0
         beq   ap_ok
         lea     t_ehill(pc),a0
         bra   ap_bad
-ap_type: move.w #$7fff,vDirty(a5)
+ap_type:
         bsr     obj_ptr
         tst.w   6(a0)
         bne   .bar
@@ -2859,7 +2575,7 @@ ap_type: move.w #$7fff,vDirty(a5)
         bra   ap_ok
 .bar:   lea     t_ebart(pc),a0
         bra   ap_bad
-ap_side: move.w #$7fff,vDirty(a5)
+ap_side:
         cmpi.w  #-128,d1
         blt   .r
         cmpi.w  #127,d1
@@ -3078,8 +2794,7 @@ apply_try:                              ; d0 = act, d1 = value: apply to the wor
         bne   .f
         bra     ed_commit
 .f:     bsr     hist_cur
-        move.w  #$7fff,vDirty(a5)
-        move.w  #7,vXm(a5)
+        clr.w   vTOk(a5)
         ori.w   #2,vRedraw(a5)
         rts
 record: move.w  vLAct(a5),vLastAct(a5)
@@ -3130,13 +2845,13 @@ curve_step:                             ; d2 = -1 / +1: one step more to the lef
 ; working copy, re-expands and redraws (double buffered); BACK / Esc restores.  Types: a full screen list (no preview).  Left / right = exact value (fire / Control 10, Shift 100) in the numeric lists.
 cmd_edit:
         subi.w  #10,d0
-        cmpi.w  #17,d0
+        cmpi.w  #18,d0
         bcc   .r
         add.w   d0,d0
         move.w  .t(pc,d0.w),d0
         jmp     .t(pc,d0.w)
 .r:     rts
-.t:     dc.w    c_curve-.t,c_hill-.t,c_len-.t,c_wl-.t,c_wr-.t,c_ins-.t,c_spl-.t,c_del-.t,c_type-.t,c_bar-.t,c_undo-.t,c_redo-.t,c_check-.t,c_mrg-.t,c_cm-.t,c_cp-.t,c_td-.t
+.t:     dc.w    c_curve-.t,c_hill-.t,c_len-.t,c_wl-.t,c_wr-.t,c_ins-.t,c_spl-.t,c_del-.t,c_type-.t,c_bar-.t,c_undo-.t,c_redo-.t,c_check-.t,c_mrg-.t,c_cm-.t,c_cp-.t,c_td-.t,c_objadd-.t
 c_curve: moveq  #1,d0
         bra   el_road
 c_hill: moveq   #2,d0
@@ -3147,11 +2862,7 @@ c_wl:   moveq   #4,d0
         bra   el_road
 c_wr:   moveq   #5,d0
         bra   el_road
-el_road: tst.w  vFocus(a5)
-        bne   .no
-        bra     edit_list
-.no:    lea     t_roadrow(pc),a0
-        bra     msg
+el_road: bra    edit_list
 c_type: moveq   #6,d0
 el_obj: tst.w   vFocus(a5)
         beq   .no
@@ -3172,6 +2883,7 @@ c_mrg:  tst.w   vFocus(a5)
         beq     seg_merge
         bra     obj_move
 c_bar:  bra     bar_here
+c_objadd: bra   obj_add
 c_cm:   moveq   #-1,d2
         bra     curve_step
 c_cp:   moveq   #1,d2
@@ -3207,10 +2919,10 @@ edit_list:                              ; d0 = act
         move.l  (a1)+,vLTab(a5)
         move.l  (a1)+,vLHead(a5)
         clr.w   vLWide(a5)
-        move.w  #28,vLCol(a5)
+        move.w  #28,vLCol(a5)           ; the box: the right 12 columns of the panel, rows 13-23
         move.w  #12,vLW(a5)
-        move.w  #2,vLRow0(a5)
-        move.w  #18,vLRows(a5)
+        move.w  #14,vLRow0(a5)          ; heading row 13, items 14..23
+        move.w  #10,vLRows(a5)
         lea     t_lhsel(pc),a0
         tst.w   vLAdj(a5)
         beq   .h
@@ -3244,10 +2956,7 @@ edit_list:                              ; d0 = act
         cmpi.w  #13,vLVal(a5)
         bne   .rec
         bsr     hist_cur                ; RAW ACCEL...: the exact list, from the unchanged segment
-        move.w  vSeg(a5),d0
-        moveq   #7,d1
-        bsr     expand_from
-        move.w  #7,vXm(a5)
+        clr.w   vTOk(a5)
         moveq   #8,d0
         bsr     edit_list
         bra   .x
@@ -3255,7 +2964,7 @@ edit_list:                              ; d0 = act
         bsr     hist_push
         move.w  #1,vMod(a5)
         clr.w   vLeaveW(a5)
-        bsr     set_zoom
+        move.w  #3,vRedraw(a5)
         bra   .x
 .wide:  bsr     record
         move.w  vLAct(a5),d0
@@ -3263,13 +2972,8 @@ edit_list:                              ; d0 = act
         bsr     apply_try
         bra   .x
 .cancel: bsr    hist_cur
-        move.w  vLAct(a5),d0
-        bsr     act_mask
-        move.w  vSeg(a5),d0
-        bsr     expand_from
-        move.w  #7,vXm(a5)
-        move.w  #$7fff,vDirty(a5)
-        bsr     set_zoom
+        clr.w   vTOk(a5)
+        move.w  #3,vRedraw(a5)
         bra   .x
 .last:  lea     t_elast(pc),a0
         bsr     msg
@@ -3482,7 +3186,8 @@ lrows:  movem.l d0-d7/a0-a3,-(a7)
 .h3:    clr.b   (a0)
         lea     vLine(a5),a0
         move.w  vLCol(a5),d0
-        moveq   #1,d1
+        move.w  vLRow0(a5),d1
+        subq.w  #1,d1
         moveq   #8,d2
         bsr     ptext
         move.w  vLTop(a5),d6
@@ -3502,10 +3207,10 @@ lrows:  movem.l d0-d7/a0-a3,-(a7)
         bsr     ptext
 .x:     movem.l (a7)+,d0-d7/a0-a3
         rts
-box_clr:                                ; the right 12 columns, rows 1..21
+box_clr:                                ; the right 12 columns, rows 13..23 (the panel stays visible while a list is open)
         movea.l vDraw(a5),a0
-        adda.w  #8*160+112,a0
-        move.w  #167,d0
+        adda.w  #104*160+112,a0
+        move.w  #87,d0
 .l:     moveq   #11,d1
 .i:     clr.l   (a0)+
         dbra    d1,.i
@@ -3516,27 +3221,24 @@ lbox:   tst.w   vLWide(a5)
         bne   lrows
         bsr     box_clr
         bra     lrows
-lb_open:                                ; narrow lists: the map goes into the left 224 columns, the page is redrawn with the box
+lb_open:                                ; narrow lists: the panel keeps the left 28 columns, the box takes the right 12; wide lists (types) take the page
         tst.w   vLWide(a5)
-        bne   .w
-        move.w  #208,vMapW(a5)
-        move.w  #112,vMapCx(a5)
-        move.w  #224,vMapLim(a5)
-        bsr     map_fit
+        bne     .w
         move.w  #1,vLOpen(a5)
         bsr     lscroll
-        bra     full_draw
+        bsr     draw_view
+        bsr     box_clr
+        move.w  #1,vLRd(a5)
+        rts
 .w:     move.w  #1,vLOpen(a5)
         bsr     lscroll
         bsr     cls
         bra     lrows
 lb_close:
         clr.w   vLOpen(a5)
-        move.w  #304,vMapW(a5)
-        move.w  #160,vMapCx(a5)
-        move.w  #320,vMapLim(a5)
-        bra     map_fit
-lpreview:                               ; the working copy with the shown value applied, expanded and drawn
+        bsr     draw_view
+        rts
+lpreview:                               ; the working copy with the shown value applied: the grid and the panel follow
         move.w  #1,vLBusy(a5)
         clr.w   vLPend(a5)
         bsr     hist_cur
@@ -3548,12 +3250,8 @@ lpreview:                               ; the working copy with the shown value 
         beq   .ok
         move.w  #1,vLBad(a5)
         bsr     hist_cur                ; refused: the old state, the message stays on the hint row
-.ok:    move.w  vDirty(a5),d0
-        move.w  vXm(a5),d1
-        bsr     expand_from
-        move.w  #$7fff,vDirty(a5)
-        move.w  #7,vXm(a5)
-        bsr     full_draw
+.ok:    bsr     tiles_calc
+        bsr     draw_view
         clr.w   vLBusy(a5)
         rts
 lpick:  movem.l d1-d7/a0-a4,-(a7)
@@ -3684,7 +3382,7 @@ lpick:  movem.l d1-d7/a0-a4,-(a7)
         rts
 
 ; ---------------------------------------------------------------- segment edits (the road row)
-seg_copy:                               ; I: insert a copy of the segment behind it (the road behind moves down by its length)
+seg_copy:                               ; I (grid): insert a copy of the segment behind it (the road behind moves down by its length)
         move.w  vSeg(a5),d6
         move.w  vNSeg(a5),d0
         subq.w  #1,d0
@@ -3715,16 +3413,14 @@ seg_copy:                               ; I: insert a copy of the segment behind
         bsr     hill_ovf
         tst.w   d0
         bne     hov_fail
-        move.l  d2,vPos(a5)
         addq.w  #1,d6
         move.w  d6,vSeg(a5)
-        move.w  d6,vDirty(a5)
         bra     ed_commit
 el_last: lea    t_elast(pc),a0
         bra     msg
 el_fullseg: lea t_efullseg(pc),a0
         bra     msg
-seg_del:                                ; Delete: remove the segment (the road behind moves up)
+seg_del:                                ; Delete (grid): remove the segment (the road behind moves up)
         move.w  vSeg(a5),d6
         move.w  vNSeg(a5),d0
         subq.w  #1,d0
@@ -3747,30 +3443,19 @@ seg_del:                                ; Delete: remove the segment (the road b
         bsr     hill_ovf
         tst.w   d0
         bne     hov_fail
-        bsr     seg_ptr
-        moveq   #0,d0
-        move.w  (a0),d0
-        move.l  d0,vPos(a5)
-        move.w  d6,vDirty(a5)
         bra     ed_commit
-seg_split:                              ; S: split at the cursor (after a fine move)
+seg_split:                              ; S (grid): cut the segment in half
         cmpi.w  #MAXSEG,vNSeg(a5)
         bcc   el_fullseg
         move.w  vSeg(a5),d6
         bsr     seg_ptr
-        moveq   #0,d2
-        move.w  (a0),d2
-        move.l  vPos(a5),d3
-        sub.l   d2,d3
-        bhi   .in
-        lea     t_esplit(pc),a0
-        bra     msg
-.in:    moveq   #0,d4
-        move.w  2(a0),d4
-        cmp.l   d4,d3
-        bcc   .out
-        move.w  d3,-(a7)                ; first part
-        move.w  d4,-(a7)                ; old length
+        moveq   #0,d4
+        move.w  2(a0),d4                ; the length
+        move.w  d4,d3
+        lsr.w   #1,d3                   ; the first part
+        beq   .short
+        move.w  d3,-(a7)
+        move.w  d4,-(a7)
         move.w  d6,d0
         addq.w  #1,d0
         bsr     seg_open
@@ -3781,7 +3466,10 @@ seg_split:                              ; S: split at the cursor (after a fine m
         lea     -SEGSZ(a0),a0
         move.w  (a7)+,d4
         move.w  (a7)+,d3
-        move.w  vPos+2(a5),(a0)         ; the new segment starts at the cursor
+        moveq   #0,d5
+        move.w  (a0),d5
+        add.w   d3,d5
+        move.w  d5,(a0)                 ; the new segment starts where the first one ends
         move.w  d4,d5
         sub.w   d3,d5
         move.w  d5,2(a0)
@@ -3789,9 +3477,8 @@ seg_split:                              ; S: split at the cursor (after a fine m
         addq.w  #1,d6
         move.w  d6,vSeg(a5)
         subq.w  #1,d6
-        move.w  d6,vDirty(a5)
         bra     ed_commit
-.out:   lea     t_esplit(pc),a0
+.short: lea     t_eshort(pc),a0
         bra     msg
 seg_merge:                              ; M: join the segment with the next one (this one's curve, hill and widths win)
         move.w  vSeg(a5),d6
@@ -3808,42 +3495,64 @@ seg_merge:                              ; M: join the segment with the next one 
         bsr     hill_ovf
         tst.w   d0
         bne     hov_fail
-        move.w  d6,vDirty(a5)
         bra     ed_commit
 hov_fail: lea   t_ehill(pc),a0
         bra     ed_fail
 
-; ---------------------------------------------------------------- object edits (the objects row)
-obj_add:                                ; I: an object of the last picked type at the cursor
-        move.l  vPos(a5),d3
-        beq   .e0
+; ---------------------------------------------------------------- object edits (the object list of the selected segment)
+; obj_add: O / the menu: an object of the last picked type at the first free unit of the selected segment (pick_unit), selected in the list
+obj_add:
         cmpi.w  #MAXOBJ,vNObj(a5)
         bcc   .full
-        lea     OBJT.l,a0
+        bsr     seg_ptr
+        moveq   #0,d1
+        move.w  (a0),d1                 ; start
+        moveq   #0,d2
+        move.w  2(a0),d2
+        add.w   d1,d2                   ; end
+        tst.w   vFocus(a5)
+        beq   .mid
+        bsr     obj_ptr                 ; list: behind the selected object
+        moveq   #0,d0
+        move.w  (a0),d0
+        addq.w  #1,d0
+        bra     .pick
+.mid:   move.w  d1,d0
+        move.w  d2,d3
+        sub.w   d1,d3
+        lsr.w   #1,d3
+        add.w   d3,d0                   ; grid: the middle of the segment
+.pick:  moveq   #1,d3                   ; the BAR may be moved over
+        bsr     pick_unit
+        tst.w   d0
+        bne     .ok
+        lea     t_egap(pc),a0
+        bra     msg
+.ok:    move.w  d0,d3                   ; the unit
         moveq   #0,d0
         move.w  vNObj(a5),d1
+        lea     OBJT.l,a0
 .f:     cmp.w   d1,d0
-        bcc   .ins
+        bcc     .ins
         cmp.w   (a0),d3
-        bcs   .ins
-        beq   .gap
+        bcs     .ins
         addq.l  #8,a0
         addq.w  #1,d0
-        bra   .f
+        bra     .f
 .ins:   move.w  d0,d6
         bsr     obj_open
         move.w  d3,(a0)
         move.w  vLastType(a5),d0
-        bne   .t
+        bne     .t
         moveq   #1,d0
         cmp.w   vBarT(a5),d0
-        bne   .t
+        bne     .t
         moveq   #2,d0
 .t:     move.w  d0,2(a0)
         move.w  vLastSide(a5),4(a0)
         clr.w   6(a0)
         move.w  d6,vObj(a5)
-        move.w  #$7fff,vDirty(a5)
+        move.w  #1,vFocus(a5)
         bsr     ed_commit
         bsr     dens_chk
         tst.w   d0
@@ -3851,34 +3560,36 @@ obj_add:                                ; I: an object of the last picked type a
         lea     t_wdens(pc),a0
         bra     msg
 .x:     rts
-.e0:    lea     t_eobj0(pc),a0
-        bra     msg
-.gap:   lea     t_egap(pc),a0
-        bra     msg
 .full:  lea     t_efullobj(pc),a0
         bra     msg
-obj_del:                                ; Delete: remove the object (never the BAR)
+obj_del:                                ; Delete: remove the selected object (never the BAR); the selection moves on, an empty segment gives the grid the cursor
         tst.w   vNObj(a5)
+        beq   .x
+        cmpi.w  #1,vNObj(a5)
         beq   .x
         bsr     obj_ptr
         tst.w   6(a0)
         bne   .bar
-        cmpi.w  #1,vNObj(a5)
-        beq   .x
         move.w  vObj(a5),d0
         bsr     obj_shut
-        move.w  vNObj(a5),d0
+        subq.w  #1,vOCnt(a5)
+        tst.w   vOCnt(a5)
+        beq   .grid
+        move.w  vObj(a5),d0
+        move.w  vOF(a5),d1
+        add.w   vOCnt(a5),d1
+        cmp.w   d1,d0
+        bcs   .sel
+        move.w  d1,d0
         subq.w  #1,d0
-        cmp.w   vObj(a5),d0
-        bcc   .k
         move.w  d0,vObj(a5)
-.k:     bsr     obj_pos
-        move.w  #$7fff,vDirty(a5)
+.sel:   bra     ed_commit
+.grid:  clr.w   vFocus(a5)
         bra     ed_commit
 .bar:   lea     t_ebardel(pc),a0
         bra     msg
 .x:     rts
-obj_move:                               ; M: the object follows left / right until FIRE / Return (Esc = back)
+obj_move:                               ; M: the object follows left / right (and up / down across the segments) until FIRE / Return (Esc = back)
         tst.w   vNObj(a5)
         beq   .x
         bsr     obj_ptr
@@ -3898,28 +3609,84 @@ obj_mv_step:                            ; moving: d0 = -1 / +1, d4 = 0 ten units
         bpl   .a3
         neg.w   d1
 .a3:    bsr     obj_ptr
-        move.w  (a0),d3
-        add.w   d1,d3                   ; the wanted position
-        move.w  #1,d5                   ; lowest: 1, or behind the object before
+        move.w  (a0),d2
+        add.w   d1,d2                   ; the wanted position
+        bsr     seg_ptr
+        moveq   #0,d3
+        move.w  (a0),d3                 ; the segment's first unit
+        move.w  d3,d5
+        addq.w  #1,d5                   ; lowest
         tst.w   vObj(a5)
         beq   .a4
+        bsr     obj_ptr
         move.w  -8(a0),d5
         addq.w  #1,d5
-.a4:    move.w  #32767,d6               ; highest: before the next object
-        move.w  vObj(a5),d2
-        addq.w  #1,d2
-        cmp.w   vNObj(a5),d2
-        bcc   .a5
-        move.w  8(a0),d6
-        subq.w  #1,d6
-.a5:    cmp.w   d5,d3
+.a4:    moveq   #0,d6
+        move.w  2(a0),d6
+        add.w   d3,d6
+        subq.w  #1,d6                   ; highest: the segment's last unit
+        cmp.w   d5,d2
         bge   .a6
-        move.w  d5,d3
-.a6:    cmp.w   d6,d3
+        move.w  d5,d2
+.a6:    cmp.w   d6,d2
         ble   .a7
-        move.w  d6,d3
-.a7:    move.w  d3,(a0)
-        bra     obj_pos
+        move.w  d6,d2
+.a7:    move.w  d2,d0
+        move.w  vObj(a5),d1
+        bsr     occ_unit
+        bne   .set                      ; free
+.skip:  tst.w   d1
+        bmi   .skd
+        addq.w  #1,d2
+        cmp.w   d6,d2
+        bhi   .stay
+        move.w  d2,d0
+        move.w  vObj(a5),d1
+        bsr     occ_unit
+        beq   .skip
+        bra   .set
+.skd:   subq.w  #1,d2
+        cmp.w   d5,d2
+        bcs   .stay
+        move.w  d2,d0
+        move.w  vObj(a5),d1
+        bsr     occ_unit
+        beq   .skip
+        bra   .set
+.stay:  rts
+.set:   bsr     obj_ptr
+        move.w  d2,(a0)
+        bsr     obj_sort
+        bsr     obj_find
+        move.w  #3,vRedraw(a5)
+        rts
+
+; occ_unit: d0 = unit, d1 = the object's index (ignored) -> Z=1 when no other object sits on that unit (all registers kept)
+occ_unit:
+        movem.l d0-d3/a0,-(a7)
+        move.w  d1,d3
+        moveq   #0,d1
+        lea     OBJT.l,a0
+        move.w  vNObj(a5),d2
+        beq     .fr
+        subq.w  #1,d2
+.l:     cmp.w   (a0),d0
+        beq   .hit
+        bhi   .fr
+        addq.l  #8,a0
+        addq.w  #1,d1
+        dbra    d2,.l
+        bra     .fr
+.hit:   cmp.w   d3,d1
+        beq   .fr
+        moveq   #0,d0
+        tst.w   d0
+        bra     .r
+.fr:    moveq   #1,d0
+        tst.w   d0
+.r:     movem.l (a7)+,d0-d3/a0
+        rts
+
 mv_cmd:                                 ; moving: Return / Space / FIRE = keep the new place, Esc / F10 = back
         cmpi.w  #8,d0
         beq   .ok
@@ -3930,40 +3697,37 @@ mv_cmd:                                 ; moving: Return / Space / FIRE = keep t
         clr.w   vMode(a5)
         bsr     obj_ptr
         move.w  vMoveOrg(a5),(a0)
-        bsr     obj_pos
-        ori.w   #3,vRedraw(a5)
+        bsr     obj_sort
+        bsr     obj_find
+        clr.w   vTOk(a5)
+        move.w  #3,vRedraw(a5)
         rts
 .ok:    clr.w   vMode(a5)
         bsr     obj_ptr
-        move.w  #$7fff,vDirty(a5)
         tst.w   6(a0)
         beq   .c
-        bsr     dirty_end               ; the BAR moved: the extent changes
         bsr     find_bar
-.c:     bra     ed_commit
+.c:     clr.w   vTOk(a5)
+        bra     ed_commit
 .x:     rts
-bar_here:                               ; Shift+B: the BAR goes to the cursor (it is moved, never deleted or doubled)
-        move.l  vPos(a5),d3
-        beq   .e0
+bar_here:                               ; Shift+B / menu: the BAR goes to the first free unit of the selected segment
         tst.w   vBarT(a5)
         beq   .nb
-        moveq   #0,d4                   ; the BAR's lateral
-        lea     OBJT.l,a0
-        move.w  vNObj(a5),d1
-        beq   .x
-        subq.w  #1,d1
-.s:     tst.w   6(a0)
-        beq   .sn
-        cmp.w   (a0),d3
-        beq   .gapok
-.sn:    cmp.w   (a0),d3
-        beq   .gap
-        addq.l  #8,a0
-        dbra    d1,.s
-        bra   .go
-.gapok: bra   .go
-.go:    bsr     dirty_end
-        move.w  vNObj(a5),d6
+        bsr     seg_ptr
+        moveq   #0,d1
+        move.w  (a0),d1
+        moveq   #0,d2
+        move.w  2(a0),d2
+        add.w   d1,d2
+        move.w  d1,d0
+        moveq   #1,d3                   ; BAR objects do not block
+        bsr     pick_unit
+        tst.w   d0
+        bne   .ok
+        lea     t_egap(pc),a0
+        bra     msg
+.ok:    move.w  d0,d3
+        move.w  vNObj(a5),d6            ; a damaged track may hold several BARs: they all go
         subq.w  #1,d6
 .d:     bmi   .dd
         move.w  d6,d0
@@ -3971,28 +3735,28 @@ bar_here:                               ; Shift+B: the BAR goes to the cursor (i
         lea     OBJT.l,a0
         tst.w   6(a0,d0.w)
         beq   .dn
-        move.w  4(a0,d0.w),d4
         move.w  d6,d0
         bsr     obj_shut
 .dn:    subq.w  #1,d6
         bra   .d
-.dd:    lea     OBJT.l,a0
-        moveq   #0,d0
+.dd:    moveq   #0,d0
         move.w  vNObj(a5),d1
+        lea     OBJT.l,a0
 .f:     cmp.w   d1,d0
         bcc   .ins
         cmp.w   (a0),d3
         bcs   .ins
         addq.l  #8,a0
         addq.w  #1,d0
-        bra   .f
+        bra     .f
 .ins:   move.w  d0,d6
         bsr     obj_open
         move.w  d3,(a0)
         move.w  vBarT(a5),2(a0)
-        move.w  d4,4(a0)
+        clr.w   4(a0)
         move.w  #1,6(a0)
         move.w  d6,vObj(a5)
+        move.w  #1,vFocus(a5)
         bsr     find_bar
         bsr     ed_commit
         move.l  vBarAt(a5),d0
@@ -4005,11 +3769,7 @@ bar_here:                               ; Shift+B: the BAR goes to the cursor (i
         lea     t_wfin(pc),a0
         bra     msg
 .x:     rts
-.e0:    lea     t_eobj0(pc),a0
-        bra     msg
 .nb:    lea     t_ebart0(pc),a0
-        bra     msg
-.gap:   lea     t_egap(pc),a0
         bra     msg
 
 ; ---------------------------------------------------------------- checks
@@ -4058,14 +3818,28 @@ check_all:
         lea     t_wdens(pc),a0
         moveq   #10,d1
         bsr     chk_add
-.w1:    lea     HARR.l,a0               ; W-HILL: the height sits at the top for more than 300 race units
-        moveq   #0,d2
-        move.w  vRl(a5),d1
+.w1:    moveq   #0,d2                   ; W-HILL: the height sits at the top for more than 300 race units (own integrator)
+        moveq   #0,d3
+        moveq   #0,d4
+        lea     SEGT.l,a0
+        move.w  vNSeg(a5),d1
         subq.w  #1,d1
-.hl:    cmpi.b  #127,(a0)+
-        bcs   .hn
+.hl:    move.w  6(a0),d5
+        ext.l   d5
+        move.w  2(a0),d6
+        subq.w  #1,d6
+.hu:    add.l   d3,d4
+        add.l   d5,d3
+        tst.l   d4
+        bmi   .hn
+        move.l  d4,d7
+        swap    d7
+        cmpi.w  #127,d7
+        blt   .hn
         addq.w  #1,d2
-.hn:    dbra    d1,.hl
+.hn:    dbra    d6,.hu
+        lea     SEGSZ(a0),a0
+        dbra    d1,.hl
         cmpi.w  #300,d2
         bls   .w2
         lea     t_whill(pc),a0
@@ -4757,7 +4531,8 @@ top_list:
         moveq   #2,d1
         bsr     appn
         clr.b   (a1)
-.have:  bsr     expand
+.have:  clr.w   vTOk(a5)
+        bsr     tiles_calc
         moveq   #0,d0
         rts
 .bad:   lea     t_ebad(pc),a0
@@ -5036,32 +4811,44 @@ tdvbl:  pea     .back(pc)
 .x:     rte
 
 ; ---------------------------------------------------------------- tables and texts
-pal:    dc.w    $000,$444,$567,$070,$057,$740,$700,$777,$770,$777,$777,$777,$777,$777,$777,$777
+pal:    dc.w    $000,$444,$567,$070,$057,$740,$700,$777,$770,$024,$777,$777,$777,$777,$777,$777   ; 9 = dark blue (DROP BIG tiles)
+; the tile grid's tables
+hillcol: dc.w   3,8,6,4,9                ; LEVEL green, RISE SMALL yellow, RISE BIG red, DROP SMALL light blue, DROP BIG dark blue
+cheq:   dc.w    $cccc,$cccc,$3332,$3332,$cccc,$cccc,$3332,$3332,$cccc,$cccc,$3332   ; the BAR's chequer (15 x 11)
+gtab:   dc.w    $0180,$0180,$0180,$0180,$0180,$0180,$0180   ; STRAIGHT
+        dc.w    $0c00,$0c00,$0600,$0600,$0300,$0300,$0180   ; GENTLE LEFT
+        dc.w    $1800,$0c00,$0600,$0300,$0180,$00c0,$0060   ; MEDIUM LEFT
+        dc.w    $0000,$3800,$0e00,$0380,$00e0,$0038,$0000   ; SHARP LEFT
+        dc.w    $0060,$0060,$00c0,$00c0,$0180,$0180,$0300   ; GENTLE RIGHT
+        dc.w    $0030,$0060,$00c0,$0180,$0300,$0600,$0c00   ; MEDIUM RIGHT
+        dc.w    $0000,$0038,$00e0,$0380,$0e00,$3800,$0000   ; SHARP RIGHT
+symtab: dc.l    t_sy0,t_sy1,t_sy2,t_sy3,t_sy4,t_sy5,t_sy6
+bendtab: dc.l   t_sy0,t_sy1,t_sy2,t_sy3,t_sy4,t_sy5,t_sy6
+hilltab: dc.l   t_hc0,t_hc1,t_hc2,t_hc3,t_hc4
 rltab:  dc.w    19472,19720,19800,19000,19375,18000,18626,20000,19000,20000,20000,22000,18500,22000,23000   ; race length of the 15 levels (word 0 of the minimap header, tools/msrtrack.py LEVELS)
 keytab: dc.b    $01,1,$44,1             ; Esc, F10: leave (the track is kept)
-        dc.b    $47,2                   ; Clr/Home: start
-        dc.b    $30,3                   ; B: the BAR (Shift + B: put the BAR here)
-        dc.b    $4e,4,$0d,4             ; keypad +, =/+: zoom in
-        dc.b    $4a,5,$0c,5             ; keypad -, -: zoom out
-        dc.b    $0f,6                   ; Tab: road <> objects
-        dc.b    $62,7,$3b,7             ; Help, F1
+        dc.b    $47,2                   ; Clr/Home: the first segment
+        dc.b    $30,3                   ; B: the segment that holds the BAR (Shift + B: put the BAR here)
+        dc.b    $0f,6                   ; Tab: the grid <> the object list
+        dc.b    $62,7,$3b,7             ; Help, F1 (the keys, then the legend)
         dc.b    $1c,9,$72,9,$39,9       ; Return, Enter, Space: repeat the last pick at the cursor
         dc.b    $2e,10                  ; C curve
         dc.b    $23,11                  ; H hill
         dc.b    $26,12                  ; L length
         dc.b    $11,13,$12,14           ; W E widths
-        dc.b    $17,15,$52,15           ; I, Insert
-        dc.b    $1f,16                  ; S
+        dc.b    $17,15,$52,15           ; I, Insert: a copy of the segment (grid) / an object (list)
+        dc.b    $1f,16                  ; S: split in half (grid) / the object's SIDE (list)
         dc.b    $53,17                  ; Delete
-        dc.b    $14,18                  ; T
+        dc.b    $14,18                  ; T: the object's TYPE (list)
         dc.b    $16,20,$61,20           ; U, Undo (Shift: redo)
         dc.b    $25,22                  ; K check
-        dc.b    $32,23                  ; M
+        dc.b    $32,23                  ; M: merge (grid) / move the object (list)
         dc.b    $33,24,$34,25           ; , . bend left / right
-        dc.b    $19,26                  ; P test drive from the cursor
+        dc.b    $19,26                  ; P test drive from the cursor (or from the selected object)
+        dc.b    $18,27                  ; O: add an object to the selected segment
         dc.b    0
-vmroad: dc.b    10,11,12,13,14,15,16,23,17,19,20,21,22,26,4,5,6,7,0,1
-vmobj:  dc.b    18,16,23,15,17,19,20,21,22,26,4,5,6,7,0,1
+vmroad: dc.b    10,11,12,13,14,15,16,23,17,27,19,20,21,22,26,6,7,0,1
+vmobj:  dc.b    18,16,23,27,17,19,20,21,22,26,6,7,0,1
         even
 enc_tab: dc.w   4,0, 8,1, 9,1, 6,0      ; the four ring streams: curve, left width, right width, hill = field offset in the segment, 1 = byte
 cv_tab: dc.w    4,2, 0,0, 2,2, 8,1, 9,1, 2,2, 4,2, 6,2   ; current value per act: offset, 0 none / 1 byte / 2 word
@@ -5112,38 +4899,35 @@ m_road:
         dc.b    "WIDTH LEFT...                      W",0
         dc.b    "WIDTH RIGHT...                     E",0
         dc.b    "INSERT A COPY BEHIND               I",0
-        dc.b    "SPLIT AT THE CURSOR                S",0
+        dc.b    "SPLIT IN HALF                      S",0
         dc.b    "MERGE WITH THE NEXT                M",0
         dc.b    "DELETE THIS SEGMENT              DEL",0
+        dc.b    "ADD AN OBJECT HERE                 O",0
         dc.b    "PUT THE BAR HERE             SHIFT B",0
         dc.b    "UNDO                               U",0
         dc.b    "REDO                         SHIFT U",0
         dc.b    "CHECK THE TRACK                    K",0
         dc.b    "TEST DRIVE FROM THE CURSOR         P",0
-        dc.b    "ZOOM IN                            +",0
-        dc.b    "ZOOM OUT                           -",0
-        dc.b    "ROAD <> OBJECTS                  TAB",0
+        dc.b    "OBJECTS <> SEGMENTS              TAB",0
         dc.b    "KEYS                            HELP",0
-        dc.b    "< BACK TO THE MAP",0
+        dc.b    "< BACK TO THE GRID",0
         dc.b    "LEAVE AND KEEP THIS TRACK         F10",0,0
 m_obj:
         dc.b    "TYPE...                            T",0
         dc.b    "SIDE...                            S",0
         dc.b    "MOVE THIS OBJECT                   M",0
-        dc.b    "ADD AN OBJECT HERE                 I",0
+        dc.b    "ADD AN OBJECT                      O",0
         dc.b    "DELETE THIS OBJECT               DEL",0
         dc.b    "PUT THE BAR HERE             SHIFT B",0
         dc.b    "UNDO                               U",0
         dc.b    "REDO                         SHIFT U",0
         dc.b    "CHECK THE TRACK                    K",0
-        dc.b    "TEST DRIVE FROM THE CURSOR         P",0
-        dc.b    "ZOOM IN                            +",0
-        dc.b    "ZOOM OUT                           -",0
-        dc.b    "ROAD <> OBJECTS                  TAB",0
+        dc.b    "TEST DRIVE FROM THIS OBJECT        P",0
+        dc.b    "SEGMENTS <> OBJECTS              TAB",0
         dc.b    "KEYS                            HELP",0
-        dc.b    "< BACK TO THE MAP",0
+        dc.b    "< BACK TO THE OBJECTS",0
         dc.b    "LEAVE AND KEEP THIS TRACK         F10",0,0
-t_vmenu: dc.b   "VIEWER MENU",0
+t_vmenu: dc.b   "EDIT MENU",0
 t_src:  dc.b    "C",0,0,0,"S",0,0,0,"NEW",0
 t_scen: dc.b    "SCENERY ",0
 t_hill: dc.b    "HILL",0
@@ -5161,17 +4945,17 @@ t_obj:  dc.b    "OBJ ",0
 t_type: dc.b    " TYPE ",0
 t_bar:  dc.b    " THE BAR ",0
 t_side: dc.b    " SIDE ",0
-t_hint: dc.b    "L/R MOVE  U/D ROAD/OBJ  FIRE=MENU  HELP",0
+t_hint: dc.b    "FIRE=MENU RET=REPEAT P=TEST DRIVE HELP=KEYS",0
 t_hdisc: dc.b   "ESC AGAIN = DISCARD THIS TRACK   K=CHECK",0
-t_hmove: dc.b   "MOVING: L/R  FIRE=OK  ESC=CANCEL",0
+t_hmove: dc.b   "MOVE: L/R U/D=FIRE=OK ESC=CANCEL",0
 t_lhsel: dc.b   "UP/DOWN PICK  FIRE/RETURN=OK  ESC=BACK",0
 t_lhadj: dc.b   "U/D PICK  L/R +-1 (FIRE 10)  FIRE=OK",0
 t_nound: dc.b   "NOTHING TO UNDO",0
 t_noredo: dc.b  "NOTHING TO REDO",0
 t_norep: dc.b   "NOTHING TO REPEAT: PICK A VALUE FIRST",0
-t_wrongrow: dc.b "THAT VALUE IS FOR THE OTHER ROW (TAB)",0
-t_roadrow: dc.b "ROAD ROW ONLY: PRESS TAB FIRST",0
-t_objrow: dc.b  "OBJECTS ROW ONLY: PRESS TAB FIRST",0
+t_wrongrow: dc.b "PICK THE OBJECT FIRST (TAB, THEN THE VALUE)",0
+
+t_objrow: dc.b  "THE OBJECT LIST ONLY: TAB FIRST",0
 t_climit: dc.b  "THE SHARPEST CURVE ALREADY",0
 t_elast: dc.b   "THE LAST SEGMENT IS THE PADDING (E-SUM)",0
 t_eroom: dc.b   "NO ROAD LEFT: LENGTH IS FIXED (E-SUM)",0
@@ -5183,7 +4967,7 @@ t_elat: dc.b    "SIDE MUST BE -128..127 (E-LAT)",0
 t_eshort: dc.b  "SEGMENT TOO SHORT FOR THAT SHAPE",0
 t_efullseg: dc.b "TOO MANY SEGMENTS (2048)",0
 t_efullobj: dc.b "TOO MANY OBJECTS (999)",0
-t_esplit: dc.b  "FINE-MOVE THE CURSOR INSIDE THE SEGMENT",0
+t_esplit: dc.b  "SEGMENT TOO SHORT TO SPLIT",0
 t_eobj0: dc.b   "NO OBJECT AT UNIT 0 (E-OBJ)",0
 t_egap: dc.b    "AN OBJECT IS ALREADY HERE (E-GAP)",0
 t_ebardel: dc.b "THE BAR CANNOT BE DELETED (E-BAR)",0
@@ -5206,6 +4990,56 @@ t_csegs: dc.b   " SEGMENTS  ",0
 t_cobjs: dc.b   " OBJECTS  ",0
 t_cbytes: dc.b  " BYTES OF 8192",0
 t_cok:  dc.b    "NO PROBLEMS FOUND",0
+t_dash: dc.b    "----",0
+t_pseg: dc.b    "SEG ",0
+t_pat:  dc.b    " AT ",0
+t_plen: dc.b    "LENGTH ",0
+t_pcur: dc.b    "CURVE  ",0
+t_pben: dc.b    "BEND   ",0
+t_phil: dc.b    "HILL   ",0
+t_pwid: dc.b    "WIDTH  L",0
+t_prgt: dc.b    " R",0
+t_pobj: dc.b    "OBJECTS ",0
+t_ot:   dc.b    "T",0
+t_obar: dc.b    "THE BAR",0
+t_noobj: dc.b   "NO OBJECTS HERE: O ADDS ONE",0
+t_sy0:  dc.b    "STRAIGHT",0
+t_sy1:  dc.b    "GENTLE LEFT",0
+t_sy2:  dc.b    "MEDIUM LEFT",0
+t_sy3:  dc.b    "SHARP LEFT",0
+t_sy4:  dc.b    "GENTLE RIGHT",0
+t_sy5:  dc.b    "MEDIUM RIGHT",0
+t_sy6:  dc.b    "SHARP RIGHT",0
+t_hc0:  dc.b    "LEVEL (GREEN)",0
+t_hc1:  dc.b    "RISE SMALL (YELLOW)",0
+t_hc2:  dc.b    "RISE BIG (RED)",0
+t_hc3:  dc.b    "DROP SMALL (LIGHT BLUE)",0
+t_hc4:  dc.b    "DROP BIG (BLUE)",0
+t_leg:  dc.b    "WHAT THE TILES MEAN",0
+t_legdot: dc.b  "AN OBJECT HERE",0
+t_legbar: dc.b  "THE BAR",0
+t_keyg: dc.b    "KEYS        ",0
+        dc.b    "C CURVE     ",0
+        dc.b    "H HILL      ",0
+        dc.b    "L LENGTH    ",0
+        dc.b    "W E WIDTH   ",0
+        dc.b    ", . BEND    ",0
+        dc.b    "I COPY      ",0
+        dc.b    "S SPLIT     ",0
+        dc.b    "M MERGE     ",0
+        dc.b    "DEL DELETE  ",0
+        dc.b    "O OBJECT    ",0
+t_keyo: dc.b    "OBJECT KEYS ",0
+        dc.b    "T TYPE      ",0
+        dc.b    "S SIDE      ",0
+        dc.b    "M MOVE      ",0
+        dc.b    "I O ADD     ",0
+        dc.b    "DEL DELETE  ",0
+        dc.b    "TAB BACK    ",0
+        dc.b    "UP DOWN PICK",0
+        dc.b    "L R SEGMENT ",0
+        dc.b    "            ",0
+        dc.b    "            ",0,0
 t_pak:  dc.b    "PRESS A KEY",0
 t_tk:   dc.b    " KIND ",0
 t_ts:   dc.b    " SIZE ",0
@@ -5229,25 +5063,24 @@ t_nnew: dc.b    "NEW STRAIGHT",0
 t_ebad: dc.b    "TRACK DATA IS DAMAGED (E-TERM)",0
 t_help: dc.b    "TRACK EDITOR KEYS",0
         dc.b    " ",0
-        dc.b    "L/R  PREVIOUS / NEXT SEGMENT (OBJECT)",0
-        dc.b    "U/D, TAB  ROAD ROW <> OBJECTS ROW",0
-        dc.b    "SHIFT+L/R 1000   CTRL+L/R ONE PIXEL",0
-        dc.b    "+ / -  ZOOM    HOME  START   B  THE BAR",0
-        dc.b    "FIRE  MENU   F10 / ESC  LEAVE (KEEPS)",0
+        dc.b    "L/R PREVIOUS / NEXT SEGMENT",0
+        dc.b    "U/D ONE GRID ROW (16 SEGMENTS)",0
+        dc.b    "TAB FIRE+U/D  THE OBJECT LIST",0
+        dc.b    "IN THE LIST: U/D AN OBJECT, L/R LEAVE",0
+        dc.b    "HOME FIRST   B THE BAR   FIRE MENU",0
+        dc.b    "F10 / ESC  LEAVE (KEEPS THE TRACK)",0
         dc.b    " ",0
-        dc.b    "C CURVE  , .  BEND LEFT / RIGHT",0
-        dc.b    "H HILL  L LENGTH  W / E WIDTH L / R",0
-        dc.b    "I INSERT A COPY / ADD AN OBJECT",0
-        dc.b    "S SPLIT / OBJECT SIDE  M MERGE / MOVE",0
-        dc.b    "DEL DELETE   T OBJECT TYPE",0
-        dc.b    "SHIFT+B PUT THE BAR HERE",0
+        dc.b    "C CURVE  H HILL  L LENGTH  W E WIDTH",0
+        dc.b    ", .  BEND LEFT / RIGHT",0
+        dc.b    "I COPY  S SPLIT  M MERGE  DEL DELETE",0
+        dc.b    "O ADD AN OBJECT   SHIFT+B PUT THE BAR",0
+        dc.b    "T TYPE  S SIDE  M MOVE  DEL DELETE",0
         dc.b    "U UNDO  SHIFT+U REDO  K CHECK",0
         dc.b    "RETURN / SPACE  REPEAT THE LAST PICK",0
-        dc.b    "P TEST DRIVE FROM CURSOR (F10/ESC ENDS)",0
+        dc.b    "P TEST DRIVE FROM THE CURSOR / OBJECT",0
         dc.b    " ",0
-        dc.b    "LISTS: UP/DOWN, FIRE / RETURN = OK",0
-        dc.b    "L/R = EXACT VALUE (CTRL OR FIRE 10,",0
-        dc.b    "SHIFT 100).  ESC = BACK, NOTHING CHANGES",0
+        dc.b    "GRAPH: DIRECTION = SYMBOL, HILL = COLOUR",0
+        dc.b    "A KEY SHOWS THE TILE LEGEND",0
         dc.b    " ",0
         dc.b    "PRESS A KEY",0,0
         even

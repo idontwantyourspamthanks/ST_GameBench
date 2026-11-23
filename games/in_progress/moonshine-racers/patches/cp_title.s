@@ -83,7 +83,16 @@ e2:     cmpi.b  #$44,$60ff.w
 ; ---- welcome screen key wait (cp_welcome, site $7c04 = `tst.b $60ff.w / beq.b $7c02` of the manual-question routine $7bd0, whose first screen is WELCOME PARTNERS ... PRESS A KEY; any key continues, d0 counts up
 ; meanwhile as the question's random seed).  First pass of a showing: the hint line F10 = CAMPAIGNS under PRESS A KEY.  F10 opens the campaign menu (not while the screen is still fading in: it stays in $60ff until the fade is
 ; over); a game start continues as a key does ($7c0a), back shows the screen again (the routine starts over: its pushed d7 is dropped).
-e3:     tst.b   V_WELC.l
+e3:     tst.b   IB+4.l                  ; the 2 MB gate: open = the campaigns are in
+        bne     .g2
+        movea.l $2dc.w,a0               ; closed: a 1 MB ST family machine, or >= 2 MB on a TT / Falcon (HAGA's machine type 4 / 5)
+        move.b  $83(a0),d0
+        subq.b  #2,d0
+        cmpi.b  #1,d0
+        bls     .mb1
+        bra     .stock
+.g2:
+        tst.b   V_WELC.l
         bne.s   .h
         st      V_WELC.l
         bsr     hint
@@ -108,6 +117,24 @@ e3:     tst.b   V_WELC.l
 .key:   clr.b   V_WELC.l
         jmp     $7c0a.l
 .none:  jmp     $7c02.l
+        ; ---- 1 MB: the screen says what 2 MB adds; any key (F10 too) continues as the stock key wait does
+.mb1:   tst.b   V_WELC.l
+        bne.s   .w1
+        st      V_WELC.l
+        lea     t_w1mb(pc),a0
+        movea.l $1004.w,a5
+        move.w  #$78,d4
+        jsr     $12268.l
+.w1:    tst.b   $60ff.w
+        beq.s   .n1
+        clr.b   V_WELC.l
+        jmp     $7c0a.l
+.n1:    jmp     $7c02.l
+        ; ---- closed by the machine type (TT / Falcon): the stock key wait, no hint
+.stock: tst.b   $60ff.w
+        beq.s   .n2
+        jmp     $7c0a.l
+.n2:    jmp     $7c02.l
 
 ; ---- the hint line F10 = CAMPAIGNS (text row 23, the game's text routine) on the screen $1004 points to.  Registers kept.
 hint:   movem.l d0-d7/a0-a6,-(a7)
@@ -740,6 +767,7 @@ t_a:    dc.b    "LOAD CAMPAIGN FROM DRIVE A",0
 t_back: dc.b    "BACK TO THE TITLE",0
 t_back2: dc.b   "< BACK",0
 t_whint: dc.b   13,23,"F10 = CAMPAIGNS",0
+t_w1mb: dc.b    4,23,"2 MB: CAMPAIGNS + TRACK EDITOR",0
 t_loaded: dc.b  "LOADED CAMPAIGN: ",0
 t_tracks: dc.b  " TRACKS",0
 t_camp: dc.b    "CAMPAIGN: ",0
