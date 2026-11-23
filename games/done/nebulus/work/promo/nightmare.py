@@ -34,48 +34,49 @@ def span(a, b):
 
 
 def level_squeeze():
-    """THE SQUEEZE: a full ring of ledge, a low stone ceiling (row 8) over columns 10..5, and two fast up/down eyes each side of the frog, staggered in
-    height and direction.  Eyes rebound between the ledge (row 1) and the ceiling, so each sweeps the whole corridor in a few frames."""
+    """THE SQUEEZE:   LLLLLLL      a ledge above and a ledge below, the frog in the middle, and a fast up/down eye on each of the two spots directly to its
+                       EEFEE       left and right (touching distance), staggered in height and direction.  The roof is 7 rows above the floor ledge so the
+                      LLLLLLL      frog's jump fits under it.  The gap beyond the ledges leads nowhere: the way out is a door on the far side of the ring."""
     rows = 24
     g = blank(rows)
-    put(g, range(16), 1, LEDGE)
-    put(g, span(10, 5), 8, PILLAR)                                   # the ceiling: 6 columns left of the start, 6 right
-    for col, row, v in ((14, 3, EYE_V_FAST), (12, 6, EYE_V_FAST | 1), (2, 6, EYE_V_FAST), (4, 3, EYE_V_FAST | 1)):
+    put(g, range(16), 1, LEDGE)                                       # the ground ring (the frog's start is on it)
+    put(g, span(13, 3), 8, LEDGE)                                     # the roof: 3 columns each side of the frog's column
+    for col, row, v in ((15, 2, EYE_V_FAST), (14, 5, EYE_V_FAST | 1), (1, 4, EYE_V_FAST), (2, 3, EYE_V_FAST | 1)):
         g[col][row] = v
-    put(g, [8], 2, EXIT); put(g, [8], 3, EXIT); put(g, [8], 4, EXIT)  # the way out is on the far side of the ring
+    put(g, [8], 2, EXIT); put(g, [8], 3, EXIT); put(g, [8], 4, EXIT)
     return dict(name='THE SQUEEZE', rows=rows, grid=g, time=0x0200)
 
 
 def level_escalator():
-    """THE ESCALATOR: three identical floors (a ledge ring segment, a charging ball each side, a lift to the next floor).  Lifts alternate between columns 1 and 15
-    (an arrival platform in the ledge row cannot also be the next slab).  Only 4 creatures live at once, so floors 1 and 2 fill the slots and floor 3 waits."""
+    """THE ESCALATOR: three identical floors (a ledge ring segment, a charging ball each side, ONE lift column with a stop on every floor: Up again to go on).
+    A second lift next to the arrival platform would sit in front of a ball.  Only 4 creatures live at once, so floors 1 and 2 fill the slots and floor 3 waits."""
     rows = 40
     g = blank(rows)
     bases = (1, 12, 23)
     for base in bases:
         put(g, span(11, 5), base, LEDGE)
         g[3][base + 1] = BALL_WAIT                                    # 24 units to the right of the frog's column
-        g[13][base + 1] = BALL_WAIT                                   # 20 units to the left
-    for n, base in enumerate(bases[:-1]):                             # lifts last: the end marker replaces a ledge cell of the next floor
-        ovl.add_lift(g, 1 if n % 2 == 0 else 15, base + 1, bases[n + 1])
+        g[14][base + 1] = BALL_WAIT                                   # 16 units to the left (one column closer than before)
+    ovl.add_lift(g, 1, 2, bases[-1], stops=bases[1:-1])                # slab on the ledge, `0c` stop in the middle floor's ledge row, end marker in the top floor's
     put(g, [14], 24, EXIT); put(g, [14], 25, EXIT); put(g, [14], 26, EXIT)
     return dict(name='THE ESCALATOR', rows=rows, grid=g, time=0x0300)
 
 
 def level_no_mans_land():
-    """NO MAN'S LAND: the frog starts on a one-cell ledge, the next ledges are one jump away on either side (a gap of one column), each patrolled by a fast
-    horizontal eye; the same again one jump further out.  Horizontal eyes only rebound off terrain: the exit door (column 8, the far side of the ring) is
-    the wall they sweep towards."""
-    rows = 24
+    """NO MAN'S LAND: high up the tower.  A lift from the ground ring carries the frog to a single ledge cell (the lift's top platform, column 1, row 12); a gap of one
+    column on each side, then a ledge with a fast up/down eye (ceiling above it for the eye to bounce off), another gap, another eyed ledge."""
+    rows = 30
     g = blank(rows)
-    put(g, [0], 1, LEDGE)
-    put(g, span(2, 4), 1, LEDGE); put(g, span(12, 14), 1, LEDGE)     # near ledges (gap columns 1 and 15)
-    put(g, span(6, 8), 1, LEDGE); put(g, span(9, 10), 1, LEDGE)      # far ledges (gap columns 5 and 11)
-    for c in (1, 5, 11, 15):                                         # one-high stones in the gaps: the eyes rebound off them, the frog jumps over
-        g[c][2] = PILLAR
-    g[3][2] = EYE_H_FAST; g[13][2] = EYE_H_FAST | 1
-    g[7][2] = EYE_H_FAST; g[10][2] = EYE_H_FAST | 1
-    put(g, [8], 2, EXIT); put(g, [8], 3, EXIT); put(g, [8], 4, EXIT)
+    put(g, range(16), 1, LEDGE)
+    top = 12
+    ovl.add_lift(g, 1, 2, top)                                        # the resting cell is the lift's top platform
+    for c in (15, 3, 13, 5):                                          # ledges 2 and 4 columns either side of the resting cell (gaps at 0/2 and 14/4)
+        g[c][top] = LEDGE
+        g[c][top + 7] = LEDGE                                         # roof for the eye
+    for c, row, v in ((15, top + 1, EYE_V_FAST), (3, top + 3, EYE_V_FAST | 1), (13, top + 4, EYE_V_FAST), (5, top + 2, EYE_V_FAST | 1)):
+        g[c][row] = v
+    g[7][top] = LEDGE                                                 # one more jump out (gap at column 6): the landing ledge with the exit door
+    put(g, [7], top + 1, EXIT); put(g, [7], top + 2, EXIT); put(g, [7], top + 3, EXIT)
     return dict(name='NO MANS LAND', rows=rows, grid=g, time=0x0200)
 
 
