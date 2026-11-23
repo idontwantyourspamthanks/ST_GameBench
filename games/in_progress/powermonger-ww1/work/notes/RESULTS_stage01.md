@@ -20,3 +20,15 @@ All lines are raw `GATE`/`CELL` lines from `work/runs/*.txt` (chain: `tools/stag
 * **Pattern-fill build (23988 B of pattern in $72000-$77fff)** [obs `fill_ste.txt`]: `CELL DONE fill/ste-1.62-1024K: OK (490s)`, every payload@ line PASS: nothing in the whole scenario writes into the range.
 * **Corrupted site** [obs `corrupt_ste.txt`]: marker `PMPF`, site left original, credit absent, payload unchanged, game booted on.
 * **NOT finished when this was written** (chain still running in background, logs appear in `work/runs/`): corrupt map step, core-only boot/map/lose, original-disk baseline (zero-range check), Mega STE TOS 2.06 4 MB default+fill, handover register check. Not done at all: save/load (needs a formatted save disk; the game's floppy format uses write-track, unsupported by Hatari .st), TT/Falcon/ST cells, Unicorn-free but 512 KB machines.
+
+## Explanation of `work/runs/default_ste_first_markerbug.txt` (lead's question)
+Cause: the gate, not the game or the payload. `build/*/expect.bin` is the built payload image, whose marker long at `$727F8` holds its initial value (zero); the hook writes `PMPO` there at run time. The first gate version compared the whole `$72000-$77fff` with that file, so every checkpoint reported exactly the marker span and nothing else [obs, same run]:
+```
+GATE default/ste-1.62-1024K payload@options FAIL $727f8-$727fb   (identical line for @map, @lose, @win, @round3)
+```
+(the same run's `marker PASS $727f8 = b'PMPO'` line confirms the value). Fix in `tools/wwgate.py` (`cell`, right after the marker is read):
+```
+want = b"PMPF" if a.corrupt else b"PMPO"
+expect[MARKER - IMG_BASE:MARKER - IMG_BASE + 4] = want   # the only byte the hook itself writes in the region
+```
+i.e. the expected image gets the marker the marker gate has just verified. Rerun `default_ste.txt` [obs]: `payload@options/map/lose/win/round3 PASS unchanged` = `$72000-$77fff` equals the expected image, marker included, so 0 other differences (the first run's failing span was only these 4 bytes, so nothing else differed there either). The first run's other lines (credit, map, pictures) were already PASS; it is kept unedited as the record.

@@ -10,3 +10,7 @@ GATE corrupt/ste-1.62-1024K boot PASS 37s
   [corrupt] [   45s vbl 4217] chart expected
   [corrupt] [   92s vbl 6541] island clicked
   [corrupt] [  116s vbl 7766] protection answer type 1 value 92
+  [corrupt] [  131s vbl 8500] 3D map view, world counter ticking
+GATE corrupt/ste-1.62-1024K map view PASS counter 33
+GATE corrupt/ste-1.62-1024K payload@map PASS unchanged
+CELL DONE corrupt/ste-1.62-1024K: OK (175s)

@@ -1,0 +1,32 @@
+  [original] [   26s vbl 1379] name prompt
+  [original] [   33s vbl 1732] option screen (typing attempt 1)
+GATE original/ste-1.62-1024K marker (original) PASS b'\x00\x00\x00\x00'
+GATE original/ste-1.62-1024K payload@options PASS region $72000-$77fff all zero
+GATE original/ste-1.62-1024K boot PASS 37s
+  [original] [   10s vbl 2422] requester: insert the original Powermonger disk
+  [original] [   24s vbl 3158] requester: insert the WW1 data disk
+  [original] [   45s vbl 4194] chart expected
+  [original] [   82s vbl 6012] island clicked
+  [original] [  109s vbl 7398] protection answer type 1 value 151
+  [original] [  124s vbl 8130] 3D map view, world counter ticking
+GATE original/ste-1.62-1024K map view PASS counter 33
+GATE original/ste-1.62-1024K payload@map PASS region $72000-$77fff all zero
+GATE original/ste-1.62-1024K lose picture PASS non-black 0.69, 16 colours, seen stable x3; cache cursor $9fc58 -> $a7958
+GATE original/ste-1.62-1024K lose picture still there after 8 s PASS non-black 0.69, 16 colours
+GATE original/ste-1.62-1024K payload@lose PASS region $72000-$77fff all zero
+GATE original/ste-1.62-1024K back to option screen PASS 
+  [original] [   39s vbl 13792] island clicked
+  [original] [   67s vbl 15190] protection answer type 1 value 151
+  [original] [   82s vbl 15925] 3D map view, world counter ticking
+GATE original/ste-1.62-1024K map view (2nd land) PASS counter 433
+GATE original/ste-1.62-1024K win picture PASS non-black 1.00, 11 colours, seen stable x3; cache cursor $af658
+GATE original/ste-1.62-1024K win picture still there after 8 s PASS non-black 0.99, 15 colours
+GATE original/ste-1.62-1024K payload@win PASS region $72000-$77fff all zero
+GATE original/ste-1.62-1024K back to option screen (after win) PASS 
+  [original] confirm dialog after START NEW CONQUEST on a won land: True ('WWI, are                you sure you want to    delete all o')
+  [original] [   39s vbl 22040] island clicked
+  [original] [   67s vbl 23437] protection answer type 1 value 151
+  [original] [   82s vbl 24173] 3D map view, world counter ticking
+GATE original/ste-1.62-1024K map view (3rd land) PASS counter 358
+GATE original/ste-1.62-1024K payload@round3 PASS region $72000-$77fff all zero
+CELL DONE original/ste-1.62-1024K: OK (488s)

@@ -1,0 +1,18 @@
+  [core_only] [   26s vbl 1379] name prompt
+  [core_only] [   33s vbl 1729] option screen (typing attempt 1)
+GATE core_only/ste-1.62-1024K marker PASS $727f8 = b'PMPO' (want b'PMPO')
+GATE core_only/ste-1.62-1024K payload@options PASS unchanged
+GATE core_only/ste-1.62-1024K boot PASS 36s
+  [core_only] [   10s vbl 2418] requester: insert the original Powermonger disk
+  [core_only] [   25s vbl 3154] requester: insert the WW1 data disk
+  [core_only] [   45s vbl 4187] chart expected
+  [core_only] [   82s vbl 6011] island clicked
+  [core_only] [   94s vbl 6626] protection answer type 0 value 20
+  [core_only] [  109s vbl 7362] 3D map view, world counter ticking
+GATE core_only/ste-1.62-1024K map view PASS counter 27
+GATE core_only/ste-1.62-1024K payload@map PASS unchanged
+GATE core_only/ste-1.62-1024K lose picture PASS non-black 0.69, 16 colours, seen stable x3; cache cursor $9fc58 -> $a7958
+GATE core_only/ste-1.62-1024K lose picture still there after 8 s PASS non-black 0.69, 16 colours
+GATE core_only/ste-1.62-1024K payload@lose PASS unchanged
+GATE core_only/ste-1.62-1024K back to option screen PASS 
+CELL DONE core_only/ste-1.62-1024K: OK (210s)

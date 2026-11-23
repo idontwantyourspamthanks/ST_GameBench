@@ -1,0 +1,28 @@
+  [default] [   28s vbl 1799] name prompt
+  [default] [   35s vbl 2221] option screen (typing attempt 1)
+GATE default/megaste-2.06-4096K marker PASS $727f8 = b'PMPO' (want b'PMPO')
+GATE default/megaste-2.06-4096K site pm_credit PASS $14baa = 4eb900072800 (want 4eb900072800)
+GATE default/megaste-2.06-4096K payload@options PASS unchanged
+GATE default/megaste-2.06-4096K credit visible PASS rows 194-199: 780 px of colours [(102, 102, 68)]
+GATE default/megaste-2.06-4096K boot PASS 40s
+  [default] [   10s vbl 3082] requester: insert the original Powermonger disk
+  [default] [   24s vbl 3961] requester: insert the WW1 data disk
+  [default] [   45s vbl 5197] chart expected
+  [default] [   91s vbl 7975] island clicked
+  [default] [  114s vbl 9332] protection answer type 0 value 71
+  [default] [  128s vbl 10210] 3D map view, world counter ticking
+GATE default/megaste-2.06-4096K map view PASS counter 20
+GATE default/megaste-2.06-4096K payload@map PASS unchanged
+GATE default/megaste-2.06-4096K lose picture PASS non-black 0.69, 16 colours, seen stable x3; cache cursor $9fc58 -> $a7958
+GATE default/megaste-2.06-4096K lose picture still there after 8 s PASS non-black 0.69, 16 colours
+GATE default/megaste-2.06-4096K payload@lose PASS unchanged
+GATE default/megaste-2.06-4096K back to option screen PASS 
+  [default] [   39s vbl 17028] island clicked
+  [default] [   62s vbl 18399] protection answer type 0 value 71
+  [default] [   77s vbl 19280] 3D map view, world counter ticking
+GATE default/megaste-2.06-4096K map view (2nd land) PASS counter 316
+GATE default/megaste-2.06-4096K win picture PASS non-black 1.00, 6 colours, seen stable x3; cache cursor $af658
+GATE default/megaste-2.06-4096K win picture still there after 8 s PASS non-black 0.99, 15 colours
+GATE default/megaste-2.06-4096K payload@win PASS unchanged
+GATE default/megaste-2.06-4096K back to option screen (after win) PASS 
+CELL DONE default/megaste-2.06-4096K: OK (383s)
