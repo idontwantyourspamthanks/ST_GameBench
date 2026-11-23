@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Track editor / campaigns: the 1 MB check (HD build, one machine; design section 15.9).
-   work/edgate/env7.sh python3 work/edgate/abs1m.py --machine ste [--build DIR] [--ref DIR]
+   work/edgate/env8.sh python3 work/edgate/abs1m.py --machine ste [--build DIR] [--ref DIR]
   1. static: RUNME.TOS of the new build against the shipped v1.1 RUNME.TOS: where they differ (expected: only inside cp_title's blob, the hook blobs of cp_fetch / cp_td and the trampoline's
      own core / site tables); HAGA, MS1, MS2, MSR_S1.FIC identical;
   2. cold boot at 1 MB with `--trace gemdos`: marker MSPO, IB+4 = 0 (gate closed); EXACTLY ONE campaign site is patched, cp_welcome's $7c04 (`jmp $B9F0C.l`, the WELCOME PARTNERS key wait:
@@ -10,12 +10,12 @@
 import argparse, sys, os, re, subprocess, tempfile
 from pathlib import Path
 HERE = Path(__file__).resolve().parent
-os.environ.setdefault("CG_LOGS", str(HERE / "logs7"))
+os.environ.setdefault("CG_LOGS", str(HERE / "logs8"))
 sys.path.insert(0, str(HERE.parent / "campgate"))
 from cg import *
 import msrpatch as P
 
-ap = argparse.ArgumentParser(); ap.add_argument("--machine", default="ste"); ap.add_argument("--build", default=os.environ.get("ED_BUILD", "/tmp/msred7/hd")); ap.add_argument("--ref", default="/tmp/msred7/v11/MOONSHR")
+ap = argparse.ArgumentParser(); ap.add_argument("--machine", default="ste"); ap.add_argument("--build", default=os.environ.get("ED_BUILD", "/tmp/msred8/hd")); ap.add_argument("--ref", default="/tmp/msred8/v11/MOONSHR")
 a = ap.parse_args()
 tag = f"abs1m_{ {'ste': 'ste', 'megaste': 'mste', 'st': 'st', 'megast': 'mst'}[a.machine] }"
 logopen(tag)
@@ -68,12 +68,12 @@ for f in ("HAGA", "FILES/MS1", "FILES/MS2", "FILES/MSR_S1.FIC"):
     check(f"{f} identical to v1.1", (Path(a.build) / f).read_bytes() == (Path(a.ref) / f).read_bytes())
 r = Run("hd", a.machine, 1024, tag, build=a.build, sound=True, extra_args=["--trace", "gemdos"])
 try:
+    for x, y in forbidden: r.h.cmd(f"hatari-debug b pc >= ${x:x} && pc < ${y:x} :trace"); time.sleep(0.3)      # set at power-on: the welcome screen follows the payload copy within seconds
+    r.h.cmd(f"hatari-debug b pc = ${sym['hint1mb']:x} :trace"); time.sleep(0.3); n0 = len(r.h._logtext())
     r.ff(True); t0 = time.time()
     while time.time() - t0 < 300 and r.mem(0xb2700, 4) != b"MSPO": time.sleep(0.2)
     r.ff(False)
     check("the payload is in RAM (marker MSPO) before the game starts", r.mem(0xb2700, 4) == b"MSPO", f"vbl {r.vbl()}")
-    for x, y in forbidden: r.h.cmd(f"hatari-debug b pc >= ${x:x} && pc < ${y:x} :trace"); time.sleep(0.3)
-    r.h.cmd(f"hatari-debug b pc = ${sym['hint1mb']:x} :trace"); time.sleep(0.3); n0 = len(r.h._logtext())
     ok = r.boot_title(); log(f"title reached: {ok} vbl {r.vbl()}"); check("title reached", ok)
     mk = r.mem(0xb2700, 5); st = {ad: r.mem(ad, len(o) // 2).hex() for ad, o in STOCK.items()}; w = r.mem(WELC[0], 6).hex()
     log(f"marker {mk[:4]} IB+4 {mk[4]:#x} $42e {r.l(0x42e):#x} sites {st} $7c04 {w}")

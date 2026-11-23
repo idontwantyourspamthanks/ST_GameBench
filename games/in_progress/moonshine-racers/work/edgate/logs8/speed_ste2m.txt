@@ -1,0 +1,26 @@
+== speed_ste2m: HD STE 2 MB, build /tmp/msred8/hd, campaign c3.trk
+title reached: True
+CHECK title reached: PASS 
+CHECK LOAD CAMPAIGN FROM HARD DISK item: PASS 
+CHECK campaign loaded: PASS 
+CHECK editor overlay loaded (V_EDOK): PASS 
+CHECK viewer up: PASS 
+TIMING one segment (RIGHT, same row): 21.0 ms (168840 cycles, 1 VBL boundaries crossed) from seg_move to draw_keys; hits {'seg_move': 1, 'draw_view': 1, 'draw_keys': 1, 'tile_draw': 2, 'tiles_calc': 0, 'apply_try': 0}
+TIMING one segment into the next grid row (RIGHT 16 -> 17: the row labels change): 31.3 ms (251464 cycles, 1 VBL boundaries crossed) from seg_move to draw_keys; hits {'seg_move': 1, 'draw_view': 1, 'draw_keys': 1, 'tile_draw': 2, 'tiles_calc': 0, 'apply_try': 0}
+TIMING one row (DOWN, no scroll): 41.1 ms (330026 cycles, 2 VBL boundaries crossed) from seg_move to draw_keys; hits {'seg_move': 1, 'draw_view': 1, 'draw_keys': 1, 'tile_draw': 2, 'tiles_calc': 0, 'apply_try': 0}
+TIMING one row that scrolls the grid (DOWN on row 7 of 8): 128.5 ms (1030854 cycles, 6 VBL boundaries crossed) from seg_move to draw_keys; hits {'seg_move': 1, 'draw_view': 1, 'draw_keys': 1, 'tile_draw': 120, 'tiles_calc': 0, 'apply_try': 0}
+CHECK the grid scrolled by one row: PASS first 0 -> 16
+TIMING bend key `.` at segment 151 (apply, history, tile words of 313 segments, redraw): 60.1 ms (482340 cycles, 3 VBL boundaries crossed) from apply_try to draw_keys; hits {'seg_move': 0, 'draw_view': 1, 'draw_keys': 1, 'tile_draw': 0, 'tiles_calc': 1, 'apply_try': 1}
+TIMING curve list, DOWN (live preview: apply, tile words, grid, panel): 85.1 ms; tiles drawn 0
+CHECK timing: every case measured: PASS {'step': 21.0490936073788, 'step_row_edge': 31.34973510356493, 'row': 41.14397161140012, 'row_scroll': 128.5154130629049, 'bend': 60.13278731688635, 'list': 85.13488175406121}
+RESULT ms: step 21, step_row_edge 31, row 41, row_scroll 129, bend 60, list 85
+CHECK a cursor step and a row move finish within 3 frames (60 ms), a scrolling row move and a bend within 0.4 s: PASS {'step': 21.0490936073788, 'step_row_edge': 31.34973510356493, 'row': 41.14397161140012, 'row_scroll': 128.5154130629049, 'bend': 60.13278731688635, 'list': 85.13488175406121}
+CHECK burst: 10 x RIGHT typed back to back = the cursor 10 segments on (40 -> 50); redraws 4: PASS 
+CHECK burst: 6 x `.` + 6 x `,` at segment 60: 12 applied steps (apply_try 12), the curve back at 0, recomputes 2, redraws 2: PASS 
+CHECK burst: 10 x U typed back to back = 10 undos (the curve is where it was after the first two `.`): PASS 2 vs 2
+CHECK two more undos: the curve and the history entry of before the burst: PASS 0 hcur 0x17b548 vs 0x17b548
+CHECK burst: 10 x DOWN in the curve list = the selection 10 items on (9 -> 19); previews 1: PASS 
+CHECK Esc: the curve is unchanged: PASS 
+CHECK typed ahead `C DOWN DOWN DOWN RETURN`: the curve of segment 60 is three items on (0 -> 3): PASS 
+Bus/Address error lines in the Hatari log: 1
+RESULT speed_ste2m: ALL CHECKS PASS

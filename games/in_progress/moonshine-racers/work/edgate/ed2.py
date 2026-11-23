@@ -3,7 +3,7 @@
 script through the UI (keys and joystick: grid cursor, lists with live preview, the object list of a segment, MOVE, menu, Return repeat, undo / redo, refused edits) mirrored by ed2model.py ->
 leave (the store is rebuilt) -> block == model, msrtrack.py validate -> re-enter -> PLAY THIS TRACK -> a normal race on it driven to the BAR.  After every group: segment list, object list,
 tile words and extent in RAM == the model.
-  work/edgate/env7.sh python3 work/edgate/ed2.py --kind stock|straight --machine ste|megaste|st --mem 2048 [--quick] [--tag X]"""
+  work/edgate/env8.sh python3 work/edgate/ed2.py --kind stock|straight --machine ste|megaste|st --mem 2048 [--quick] [--tag X]"""
 import argparse
 from ed2lib import *
 import ed2model as em
@@ -11,7 +11,7 @@ from PIL import Image, ImageChops
 
 ap = argparse.ArgumentParser()
 ap.add_argument("--kind", default="stock"); ap.add_argument("--machine", default="ste"); ap.add_argument("--mem", type=int, default=2048)
-ap.add_argument("--quick", action="store_true"); ap.add_argument("--tag"); ap.add_argument("--build", default=os.environ.get("ED_BUILD", "/tmp/msred7/hd")); ap.add_argument("--norace", action="store_true")
+ap.add_argument("--quick", action="store_true"); ap.add_argument("--tag"); ap.add_argument("--build", default=os.environ.get("ED_BUILD", "/tmp/msred8/hd")); ap.add_argument("--norace", action="store_true")
 ap.add_argument("--level", type=int, default=3)
 a = ap.parse_args()
 short = f"{ {'ste': 'ste', 'megaste': 'mste', 'st': 'st'}[a.machine] }{a.mem // 1024}m"
@@ -209,7 +209,8 @@ def run_script(D, kind):
     D.verify("after 5 objects deleted")
     # ---- the BAR is put into five segments (never deleted, never doubled); the last one is the segment it came from
     k0 = M.seg_of(M.bar_at())
-    for k in (60, 3, 100, 30, k0): D.barhere(k)
+    for k in (60, 3, 100, 30): D.barhere(k)
+    D.barhere(min(k0, M.seg_last()))                                  # the BAR's old segment may now lie beyond the (shrunken) extent: it came from past the race length
     D.verify("after 5 BAR moves")
     # ---- undo x3, redo x2
     for _ in range(3): D.undo()
@@ -225,7 +226,7 @@ def run_script(D, kind):
 def run_quick(D, kind):
     """one quick cell: a few edits of every family, through keys and the joystick"""
     M = D.m
-    D.split(0); D.split(1)
+    D.split(0); D.split(1 if kind == "stock" else 0)   # a plain straight: 20024 of 32768 units are the race, a split of segment 1 would start beyond it
     D.curve(2, 8); D.curve(1, -6, "joy")
     D.hill(2, 2)
     D.width(1, "L", 8); D.length(1, 5)
@@ -288,14 +289,14 @@ try:
     # ---- leave: the track is kept in the campaign file in memory
     nseg_e, nobj_e = e.vu("nseg"), e.vu("nobj")
     e.send(0x01); check("Esc = back to the track list", e.wait(lambda: e.vu("state") == 0, 60)); time.sleep(2.0); r.shot("4_tracklist_after")
-    st = e.store(); Path(f"{os.environ.get('ED_TMP', '/tmp/msred7')}/{tag}.trk").write_bytes(st)
+    st = e.store(); Path(f"{os.environ.get('ED_TMP', '/tmp/msred8')}/{tag}.trk").write_bytes(st)
     ents = mt.parse_campaign(st)
     check(f"campaign in memory: {old_count + 1} tracks, V_COUNT / V_LOADED", len(ents) == old_count + 1 and r.w(V["count"]) == old_count + 1 and r.b(V["loaded"]) != 0, f"{len(ents)} entries, V_COUNT {r.w(V['count'])}")
     blk = bytes(ents[-1]["block"]); ln_last = len(blk)
     exp = M.block()
     check(f"the kept block ({len(blk)} B) == what the Python model of the edit script predicts (mt.encode_track of the model)", blk == exp, f"{len(blk)} vs {len(exp)} B, first diff {next((i for i, (x, y) in enumerate(zip(blk, exp)) if x != y), None)}")
     import subprocess
-    p = subprocess.run([sys.executable, str(HERE.parents[1] / "tools" / "msrtrack.py"), "validate", f"{os.environ.get('ED_TMP', '/tmp/msred7')}/{tag}.trk"], capture_output=True, text=True)
+    p = subprocess.run([sys.executable, str(HERE.parents[1] / "tools" / "msrtrack.py"), "validate", f"{os.environ.get('ED_TMP', '/tmp/msred8')}/{tag}.trk"], capture_output=True, text=True)
     log(p.stdout.strip()); check("msrtrack.py validate of the campaign file dumped from RAM: exit 0, no errors", p.returncode == 0 and "ERROR" not in p.stdout, p.stdout[-300:])
     if a.kind == "stock":
         orig = mt.parse_campaign((CAMP / "c3.trk").read_bytes())

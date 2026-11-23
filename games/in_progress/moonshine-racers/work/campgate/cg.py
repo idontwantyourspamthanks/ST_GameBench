@@ -119,14 +119,14 @@ class Run:
             time.sleep(0.5)
             v = h.vbl()
             if v < lim: continue
-            self.ff(False)
             if self.kind == "fl":
+                self.ff(False)
                 if "pc = $7242 :trace" in h._logtext()[n0:]:
                     h.debug("b all", 0.3); return True
             else:
                 try: ok = self.b(0x1021) == 2 and self.w(0x100e) > 40 and self.l(0x23c0) == 0
                 except Exception: ok = False
-                if ok: return True
+                if ok: self.ff(False); return True
             if time.time() - last > 4: h.keypress(57); last = time.time()
         return False
 

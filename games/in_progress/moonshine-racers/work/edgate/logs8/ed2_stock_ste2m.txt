@@ -1,0 +1,181 @@
+== ed2_stock_ste2m: HD STE 2 MB, build /tmp/msred8/hd, campaign c3.trk
+title reached: True
+CHECK title reached: PASS 
+CHECK LOAD CAMPAIGN FROM HARD DISK item: PASS 
+CHECK campaign loaded: PASS 
+CHECK editor overlay loaded (V_EDOK): PASS 
+CHECK viewer up: PASS 
+CHECK start: segment and object lists in RAM == the model (313 segments, 380 objects, after 0 edits): PASS 
+CHECK start: tile words in RAM == the model's (313 tiles), extent 20024: PASS 
+CHECK start: lists in RAM == the model: PASS 
+[  1] split seg 0 (length 300) in half
+CHECK after the split the cursor stays on the first half (0): PASS seg 0 focus 0
+[  2] split seg 1 (length 150) in half
+CHECK after the split the cursor stays on the first half (1): PASS seg 1 focus 0
+[  3] split seg 3 (length 140) in half
+CHECK after the split the cursor stays on the first half (3): PASS seg 3 focus 0
+[  4] split seg 5 (length 140) in half
+CHECK after the split the cursor stays on the first half (5): PASS seg 5 focus 0
+[  5] split seg 7 (length 284) in half
+CHECK after the split the cursor stays on the first half (7): PASS seg 7 focus 0
+CHECK after 5 splits: segment and object lists in RAM == the model (318 segments, 380 objects, after 5 edits): PASS 
+CHECK after 5 splits: tile words in RAM == the model's (318 tiles), extent 20024: PASS 
+[  6] curve seg 6 = 8
+[  7] curve seg 5 = -6
+[  8] curve seg 4 = 10
+[  9] curve seg 3 = -9
+[ 10] curve seg 2 = 4
+[ 11] curve seg 1 = -3
+[ 12] Return = repeat curve -3 at seg 8
+CHECK after 7 curve edits: segment and object lists in RAM == the model (318 segments, 380 objects, after 12 edits): PASS 
+CHECK after 7 curve edits: tile words in RAM == the model's (318 tiles), extent 20024: PASS 
+[ 13] hill seg 7 shape 4
+[ 14] hill seg 5 shape 12
+[ 15] hill seg 3 shape 7
+[ 16] hill seg 1 shape 2
+[ 17] raw accel seg 0 = -97
+[ 18] Return = repeat raw accel -97 at seg 2
+CHECK after 6 hill edits: segment and object lists in RAM == the model (329 segments, 380 objects, after 18 edits): PASS 
+CHECK after 6 hill edits: tile words in RAM == the model's (329 tiles), extent 20024: PASS 
+[ 19] length seg 26 = 103
+[ 20] length seg 23 = 150
+[ 21] length seg 20 = 75
+[ 22] length seg 19 = 2000
+[ 23] length seg 10 = 50
+CHECK after 5 length edits: segment and object lists in RAM == the model (329 segments, 380 objects, after 23 edits): PASS 
+CHECK after 5 length edits: tile words in RAM == the model's (327 tiles), extent 21744: PASS 
+[ 24] width L seg 1 = 50
+[ 25] width R seg 2 = 20
+[ 26] width L seg 3 = 72
+[ 27] width R seg 4 = 59
+[ 28] width L seg 5 = 15
+CHECK after 5 width edits: segment and object lists in RAM == the model (329 segments, 380 objects, after 28 edits): PASS 
+CHECK after 5 width edits: tile words in RAM == the model's (327 tiles), extent 21744: PASS 
+[ 29] insert copy of seg 9
+CHECK after the copy the cursor is on the copy (10): PASS seg 10 focus 0
+[ 30] insert copy of seg 7
+CHECK after the copy the cursor is on the copy (8): PASS seg 8 focus 0
+[ 31] insert copy of seg 5
+CHECK after the copy the cursor is on the copy (6): PASS seg 6 focus 0
+[ 32] insert copy of seg 3
+CHECK after the copy the cursor is on the copy (4): PASS seg 4 focus 0
+[ 33] insert copy of seg 1
+CHECK after the copy the cursor is on the copy (2): PASS seg 2 focus 0
+[ 34] delete seg 10
+[ 35] delete seg 8
+[ 36] delete seg 6
+[ 37] delete seg 4
+[ 38] delete seg 2
+[ 39] merge seg 9 with the next  -> refused HILL
+[ 40] merge seg 7 with the next
+[ 41] merge seg 5 with the next
+[ 42] merge seg 3 with the next  -> refused HILL
+[ 43] merge seg 1 with the next
+CHECK after copies, deletes, merges: segment and object lists in RAM == the model (326 segments, 380 objects, after 43 edits): PASS 
+CHECK after copies, deletes, merges: tile words in RAM == the model's (324 tiles), extent 21688: PASS 
+[ 44] O = add an object to seg 12: unit 423
+CHECK the new object (13) is selected in the list of segment 12: PASS focus 1 seg 12 obj 13
+[ 45] O = add an object to seg 14: unit 537
+CHECK the new object (17) is selected in the list of segment 14: PASS focus 1 seg 14 obj 17
+[ 46] O = add an object to seg 14: unit 538
+CHECK the new object (18) is selected in the list of segment 14: PASS focus 1 seg 14 obj 18
+[ 47] I = add an object behind object 21 (seg 16): unit 704
+[ 48] I = add an object behind object 28 (seg 20): unit 2819
+CHECK after 5 objects added: segment and object lists in RAM == the model (326 segments, 385 objects, after 48 edits): PASS 
+CHECK after 5 objects added: tile words in RAM == the model's (324 tiles), extent 21688: PASS 
+[ 49] object 30 type 4
+[ 50] object 31 type 8
+[ 51] object 34 type 1
+[ 52] object 35 type 13
+[ 53] object 43 type 21
+[ 54] object 30 side -120
+[ 55] object 31 side -50
+[ 56] object 34 side 120
+[ 57] object 35 side 28
+[ 58] object 43 side 0
+[ 59] move object 30 (unit 3001) by [('lr', 1, 10), ('lr', 1, 10), ('lr', 1, 10)]: unit 3031, now object 33 of seg 23
+CHECK after the move the cursor follows the object (object 33, its segment): PASS obj 33 seg 23 focus 1
+[ 60] move object 30 (unit 3002) by [('lr', -1, 10), ('lr', -1, 10)]: unit 2982, now object 30 of seg 22
+CHECK after the move the cursor follows the object (object 30, its segment): PASS obj 30 seg 22 focus 1
+[ 61] move object 34 (unit 3098) by [('lr', 1, 1), ('lr', 1, 1), ('lr', 1, 1), ('lr', 1, 10)]: unit 3111, now object 34 of seg 24
+CHECK after the move the cursor follows the object (object 34, its segment): PASS obj 34 seg 24 focus 1
+[ 62] move object 35 (unit 3158) by [('seg', 1), ('lr', -1, 10)]: unit 3437, now object 41 of seg 25
+CHECK after the move the cursor follows the object (object 41, its segment): PASS obj 41 seg 25 focus 1
+[ 63] move object 43 (unit 3548) by [('seg', 1), ('seg', 1), ('seg', -1), ('lr', -1, 1)]: unit 3640, now object 47 of seg 28
+CHECK after the move the cursor follows the object (object 47, its segment): PASS obj 47 seg 28 focus 1
+CHECK after types, sides, moves: segment and object lists in RAM == the model (326 segments, 385 objects, after 63 edits): PASS 
+CHECK after types, sides, moves: tile words in RAM == the model's (324 tiles), extent 21688: PASS 
+[ 64] delete object 33
+[ 65] delete object 30
+[ 66] delete object 32
+[ 67] delete object 38
+[ 68] delete object 43
+CHECK after 5 objects deleted: segment and object lists in RAM == the model (326 segments, 380 objects, after 68 edits): PASS 
+CHECK after 5 objects deleted: tile words in RAM == the model's (324 tiles), extent 21688: PASS 
+[ 69] PUT THE BAR HERE (menu) at seg 60: unit 5003
+[ 70] PUT THE BAR HERE (menu) at seg 3: unit 227
+[ 71] PUT THE BAR HERE (menu) at seg 100: unit 7565
+[ 72] PUT THE BAR HERE (menu) at seg 30: unit 3702
+[ 73] PUT THE BAR HERE (menu) at seg 293: unit 19937
+CHECK after 5 BAR moves: segment and object lists in RAM == the model (326 segments, 380 objects, after 73 edits): PASS 
+CHECK after 5 BAR moves: tile words in RAM == the model's (302 tiles), extent 20448: PASS 
+[ 74] undo
+[ 75] undo
+[ 76] undo
+[ 77] redo (menu)
+[ 78] redo (menu)
+CHECK after 3 undos and 2 redos: segment and object lists in RAM == the model (326 segments, 380 objects, after 78 edits): PASS 
+CHECK after 3 undos and 2 redos: tile words in RAM == the model's (294 tiles), extent 20024: PASS 
+[ 79] hill seg 0 shape 0
+[ 80] Return = repeat FLAT at seg 1  -> refused HILL
+[ 81] Return = repeat FLAT at seg 2
+[ 82] Return = repeat FLAT at seg 3
+[ 83] Return = repeat FLAT at seg 4
+[ 84] Return = repeat FLAT at seg 5  -> refused HILL
+[ 85] Return = repeat FLAT at seg 6
+[ 86] Return = repeat FLAT at seg 8
+[ 87] Return = repeat FLAT at seg 9
+[ 88] Return = repeat FLAT at seg 11  -> refused HILL
+[ 89] Return = repeat FLAT at seg 12
+[ 90] Return = repeat FLAT at seg 14
+[ 91] Return = repeat FLAT at seg 15
+[ 92] Return = repeat FLAT at seg 18
+CHECK after flattening the hills: segment and object lists in RAM == the model (326 segments, 380 objects, after 92 edits): PASS 
+CHECK after flattening the hills: tile words in RAM == the model's (294 tiles), extent 20024: PASS 
+CHECK B: the cursor is on the segment that holds the BAR: PASS seg 30 focus 0
+BAR object 45 cursor object 45 nbar 1
+CHECK BAR delete refused: 'THE BAR CANNOT BE DELETED (E-BAR)', nothing changed: PASS message 'THE BAR CANNOT BE DELETED (E-BAR)' nobj 380/380
+CHECK Tab on a segment without objects: 'NO OBJECTS HERE: O ADDS ONE', the grid keeps the cursor: PASS message 'NO OBJECTS HERE: O ADDS ONE' focus 0
+CHECK width 86 refused: 'OUTSIDE THE ORIGINAL RANGE (E-RANGE)', the list refuses to close: PASS lbad 1 lval 86 lopen 1 message 'OUTSIDE THE ORIGINAL RANGE (E-RANGE)'
+CHECK width back to 85: accepted again (lbad 0): PASS 
+CHECK after the refused edits: segment and object lists in RAM == the model (326 segments, 380 objects, after 92 edits): PASS 
+CHECK after the refused edits: tile words in RAM == the model's (294 tiles), extent 20024: PASS 
+CHECK Esc: nothing changed (history entry and lists as before): PASS 
+CHECK raw accel 4000 on a 2000-unit segment refused: 'HILL TOO STEEP: OVERFLOW (E-HILL)': PASS lbad 1 lval 4000 message 'HILL TOO STEEP: OVERFLOW (E-HILL)' (segment 16, length 2000)
+CHECK after the hill overflow test: segment and object lists in RAM == the model (326 segments, 380 objects, after 92 edits): PASS 
+CHECK after the hill overflow test: tile words in RAM == the model's (294 tiles), extent 20024: PASS 
+CHECK Esc: nothing changed: PASS 
+CHECK K: the check page lists no blocking error: PASS messages 2, blocking 0
+CHECK Esc = back to the track list: PASS 
+CHECK campaign in memory: 4 tracks, V_COUNT / V_LOADED: PASS 4 entries, V_COUNT 4
+CHECK the kept block (4400 B) == what the Python model of the edit script predicts (mt.encode_track of the model): PASS 4400 vs 4400 B, first diff None
+/tmp/msred8/ed2_stock_ste2m.trk[0] 'TEST ONE EDIT1 BEND': OK (0 errors, 0 warnings)
+/tmp/msred8/ed2_stock_ste2m.trk[1] 'TEST TWO LEVEL 4 BASE': OK (0 errors, 0 warnings)
+/tmp/msred8/ed2_stock_ste2m.trk[2] 'TEST THREE LEVEL 6 BASE': OK (0 errors, 0 warnings)
+/tmp/msred8/ed2_stock_ste2m.trk[3] 'COPY OF TRACK 04': WARN W-CURVE: curve value c reaches -8335..58, stock tracks stay within -4473..8876 (heading drift is untested beyond that)
+/tmp/msred8/ed2_stock_ste2m.trk[3] 'COPY OF TRACK 04': WARN W-HILL: height is clamped at 127 for 18415 of the 19000 race units: the hill accel stays integrated while clamped, so the slope can be far steeper than it looks
+/tmp/msred8/ed2_stock_ste2m.trk[3] 'COPY OF TRACK 04': OK (0 errors, 2 warnings)
+CHECK msrtrack.py validate of the campaign file dumped from RAM: exit 0, no errors: PASS mp/msred8/ed2_stock_ste2m.trk[3] 'COPY OF TRACK 04': WARN W-HILL: height is clamped at 127 for 18415 of the 19000 race units: the hill accel stays integrated while clamped, so the slope can be far steeper than it looks
+/tmp/msred8/ed2_stock_ste2m.trk[3] 'COPY OF TRACK 04': OK (0 errors, 2 warnings)
+
+CHECK the three campaign tracks before the new one are byte for byte unchanged: PASS 
+CHECK re-entered: viewer up: PASS 
+CHECK re-entered: the segment list (321) == the model's merged list, objects (380) == the model's: PASS 321 vs 321, 380 vs 380
+vPlay 0 V_START 0 CPV+4 0 $102c 0x0
+after PLAY: V_START 3 (the menu consumes it at once) vPlay 0
+[race 0 start] vbl=35052 act=0xff loaded=0xff count=4 pos=3 start=0 ptr=0x113820 $102c=0x0003 len57890=19000 $23c0=0x113820 $1024=0x00 $1027=0x00 $100e=0 $5ff8=0 $1021=0x02
+[race 0 over (finished=True)] vbl=38726 act=0xff loaded=0xff count=4 pos=3 start=0 ptr=0x113820 $102c=0x0003 len57890=19000 $23c0=0x113884 $1024=0xff $1027=0x00 $100e=649 $5ff8=3661 $1021=0x02
+CHECK race on the edited track: the stream pointer is inside its block in the campaign store, driven to the BAR (drive_to_finish saw $1024 = $ff; the state is read before the end-of-race screens move on), campaign position = the edited track: PASS [(19000, 3, 1128480, 3)] finished True block $113820..$114950 $1024 0xff
+Bus/Address error lines in the Hatari log: 3
+wall 440 s
+RESULT ed2_stock_ste2m: ALL CHECKS PASS

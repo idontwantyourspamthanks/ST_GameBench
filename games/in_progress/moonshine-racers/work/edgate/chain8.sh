@@ -1,7 +1,7 @@
 #!/bin/bash
 # milestone 2c gate chain (tile-grid editor; one Hatari at a time): fresh HD + floppy builds, then every cell of RESULTS_m2c.md.  ./chain7.sh [cells...]  (default: all)
 cd "$(dirname "$(readlink -f "$0")")/../.."
-E=work/edgate/env7.sh; G=work/edgate; T=/tmp/msred7
+E=work/edgate/env8.sh; G=work/edgate; T=/tmp/msred8
 python3 tools/msrpatch.py verify | tail -1
 python3 tools/msrpatch.py build --out $T/hd | grep -E "MSEDIT|built"
 python3 tools/msrpatch.py build --floppy --out $T/fl | grep -E "payload|built"

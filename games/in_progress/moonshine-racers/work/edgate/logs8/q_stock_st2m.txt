@@ -1,0 +1,58 @@
+== q_stock_st2m: HD ST 2 MB, build /tmp/msred8/hd, campaign c3.trk
+title reached: True
+CHECK title reached: PASS 
+CHECK LOAD CAMPAIGN FROM HARD DISK item: PASS 
+CHECK campaign loaded: PASS 
+CHECK editor overlay loaded (V_EDOK): PASS 
+CHECK viewer up: PASS 
+CHECK start: segment and object lists in RAM == the model (313 segments, 380 objects, after 0 edits): PASS 
+CHECK start: tile words in RAM == the model's (313 tiles), extent 20024: PASS 
+CHECK start: lists in RAM == the model: PASS 
+[  1] split seg 0 (length 300) in half
+CHECK after the split the cursor stays on the first half (0): PASS seg 0 focus 0
+[  2] split seg 1 (length 150) in half
+CHECK after the split the cursor stays on the first half (1): PASS seg 1 focus 0
+[  3] curve seg 2 = 8
+[  4] curve seg 1 = -6
+[  5] hill seg 2 shape 2
+[  6] width L seg 1 = 50
+[  7] length seg 1 = 100
+[  8] insert copy of seg 1
+CHECK after the copy the cursor is on the copy (2): PASS seg 2 focus 0
+[  9] delete seg 2
+[ 10] merge seg 1 with the next
+[ 11] O = add an object to seg 1: unit 218
+CHECK the new object (4) is selected in the list of segment 1: PASS focus 1 seg 1 obj 4
+[ 12] object 4 type 4
+[ 13] object 4 side -50
+[ 14] move object 4 (unit 218) by [('lr', 1, 10), ('lr', -1, 1), ('seg', -1)]: unit 77, now object 1 of seg 0
+CHECK after the move the cursor follows the object (object 1, its segment): PASS obj 1 seg 0 focus 1
+[ 15] I = add an object behind object 1 (seg 0): unit 78
+[ 16] PUT THE BAR HERE (menu) at seg 3: unit 288
+[ 17] undo
+[ 18] redo (menu)
+CHECK after the quick script: segment and object lists in RAM == the model (316 segments, 382 objects, after 18 edits): PASS 
+CHECK after the quick script: tile words in RAM == the model's (316 tiles), extent 20024: PASS 
+CHECK Esc = back to the track list: PASS 
+CHECK campaign in memory: 4 tracks, V_COUNT / V_LOADED: PASS 4 entries, V_COUNT 4
+CHECK the kept block (4384 B) == what the Python model of the edit script predicts (mt.encode_track of the model): PASS 4384 vs 4384 B, first diff None
+/tmp/msred8/q_stock_st2m.trk[0] 'TEST ONE EDIT1 BEND': OK (0 errors, 0 warnings)
+/tmp/msred8/q_stock_st2m.trk[1] 'TEST TWO LEVEL 4 BASE': OK (0 errors, 0 warnings)
+/tmp/msred8/q_stock_st2m.trk[2] 'TEST THREE LEVEL 6 BASE': OK (0 errors, 0 warnings)
+/tmp/msred8/q_stock_st2m.trk[3] 'COPY OF TRACK 04': OK (0 errors, 0 warnings)
+CHECK msrtrack.py validate of the campaign file dumped from RAM: exit 0, no errors: PASS k[0] 'TEST ONE EDIT1 BEND': OK (0 errors, 0 warnings)
+/tmp/msred8/q_stock_st2m.trk[1] 'TEST TWO LEVEL 4 BASE': OK (0 errors, 0 warnings)
+/tmp/msred8/q_stock_st2m.trk[2] 'TEST THREE LEVEL 6 BASE': OK (0 errors, 0 warnings)
+/tmp/msred8/q_stock_st2m.trk[3] 'COPY OF TRACK 04': OK (0 errors, 0 warnings)
+
+CHECK the three campaign tracks before the new one are byte for byte unchanged: PASS 
+CHECK re-entered: viewer up: PASS 
+CHECK re-entered: the segment list (316) == the model's merged list, objects (382) == the model's: PASS 316 vs 316, 382 vs 382
+vPlay 0 V_START 0 CPV+4 0 $102c 0x0
+after PLAY: V_START 3 (the menu consumes it at once) vPlay 0
+[race 0 start] vbl=22397 act=0xff loaded=0xff count=4 pos=3 start=0 ptr=0x113820 $102c=0x0003 len57890=19000 $23c0=0x113820 $1024=0x00 $1027=0x00 $100e=0 $5ff8=0 $1021=0x02
+[race 0 over (finished=True)] vbl=23549 act=0xff loaded=0xff count=4 pos=3 start=0 ptr=0x113820 $102c=0x0003 len57890=19000 $23c0=0x113840 $1024=0xff $1027=0x00 $100e=115 $5ff8=256 $1021=0x02
+CHECK race on the edited track: the stream pointer is inside its block in the campaign store, driven to the BAR (drive_to_finish saw $1024 = $ff; the state is read before the end-of-race screens move on), campaign position = the edited track: PASS [(19000, 3, 1128480, 3)] finished True block $113820..$114940 $1024 0xff
+Bus/Address error lines in the Hatari log: 5
+wall 121 s
+RESULT q_stock_st2m: ALL CHECKS PASS

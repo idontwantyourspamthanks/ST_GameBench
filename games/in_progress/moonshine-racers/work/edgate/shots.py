@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Tile-grid editor: the screens of design section 15 on one boot (HD build, campaign c3.trk): a campaign track, a copy of an original track (grid, cursor moves, a row scroll,
 the object list, an open pick list, the two HELP pages, the FIRE menu) and a plain straight (as created, and after two splits and an inserted copy).
-   env7.sh python3 shots.py [--machine ste] [--mem 2048] [--tag T]
+   env8.sh python3 shots.py [--machine ste] [--mem 2048] [--tag T]
 Every shot is also saved 3x enlarged without the border (<name>_x3.png).  Checks: the grid's shadow (what the editor believes each of the 128 slots shows) against the tile words,
 and the screen RAM of every slot against a Python drawing of its tile word (the same rules as tile_draw)."""
 import argparse
@@ -9,7 +9,7 @@ from ed2lib import *
 from PIL import Image
 
 ap = argparse.ArgumentParser(); ap.add_argument("--machine", default="ste"); ap.add_argument("--mem", type=int, default=2048); ap.add_argument("--tag"); ap.add_argument("--level", type=int, default=3)
-ap.add_argument("--build", default=os.environ.get("ED_BUILD", "/tmp/msred7/hd"))
+ap.add_argument("--build", default=os.environ.get("ED_BUILD", "/tmp/msred8/hd"))
 a = ap.parse_args()
 tag = a.tag or f"shots_{ {'ste': 'ste', 'megaste': 'mste', 'st': 'st'}[a.machine] }{a.mem // 1024}m"
 e = Ed(tag, a.machine, a.mem, a.build, CAMP / "c3.trk"); r = e.r

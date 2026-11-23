@@ -1,0 +1,22 @@
+cp_title blob $b9f00-$bad5d; the 1 MB path: $b9f0c-$b9f11, $b9f86-$b9fa7, $b9ff8-$ba009, $ba012-$ba03f (e3 $b9f86, its 2 MB branch $b9fa8, exits $b9ff8, hintdr $ba012, hint1mb $ba026)
+execution breakpoints on: $b9f00-$b9f0b, $b9f12-$b9f85, $b9fa8-$b9ff7, $ba00a-$ba011, $ba040-$bad5d
+== abs1m_mste: RUNME.TOS new 73107 B, v1.1 73107 B; 4285 differing bytes, payload addresses $b2749..$bad5b
+differing bytes outside cp_title's blob, the cp_fetch / cp_td hook blobs and the trampoline (core + site tables, $b2700-$b7fff): 0
+CHECK RUNME.TOS differs from v1.1 only inside cp_title's blob, the cp_fetch / cp_td hook blobs and the trampoline's own core / site tables: PASS 
+CHECK HAGA identical to v1.1: PASS 
+CHECK FILES/MS1 identical to v1.1: PASS 
+CHECK FILES/MS2 identical to v1.1: PASS 
+CHECK FILES/MSR_S1.FIC identical to v1.1: PASS 
+CHECK the payload is in RAM (marker MSPO) before the game starts: PASS vbl 6469
+title reached: True vbl 9271
+CHECK title reached: PASS 
+marker b'MSPO' IB+4 0x0 $42e 0x100000 sites {29380: '4eb9000076f4', 30682: '41f900058c004eb90000d6fa', 64930: '41f900058c00', 29470: '0c40000f6408', 29266: '4eb9000073b8', 29950: '4fef000e6106', 33816: '610644fc00ff', 31014: '4eb90000edea'} $7c04 4ef9000b9f0c
+CHECK marker MSPO, gate closed (IB+4 = 0): PASS 
+CHECK exactly one campaign site is patched at 1 MB: $7c04 = jmp $B9F0C.l (cp_welcome); the other eight (incl. cp_td's $7926) hold the stock bytes: PASS 
+CHECK F10 on the title starts the game like any key: race 1 (stock block at $58c00): PASS (19472, 0, 363540, 0)
+CHECK the race runs: PASS $5ff8 1898
+CHECK the 1 MB line was drawn: hint1mb ran (1 time(s): once per showing of the WELCOME PARTNERS screen): PASS 
+CHECK no instruction of cp_title's blob outside the 1 MB path was executed (welcome screen, title, F10, race): no campaign menu, no file reader, no editor loader: PASS 0 hits
+CHECK no GEMDOS call names MSEDIT.OVL or MSTRACKS.TRK: PASS GEMDOS trace lines: 143
+Bus/Address error lines: 0
+RESULT abs1m_mste: ALL CHECKS PASS

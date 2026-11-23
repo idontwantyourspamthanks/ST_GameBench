@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Tile-grid editor SPEED and KEY QUEUE gate (HD build, one boot: campaign c3.trk -> TRACK EDITOR -> a copy of original track --level).
-   env7.sh python3 speed.py [--tag T] [--machine ste] [--level 3]
+   env8.sh python3 speed.py [--tag T] [--machine ste] [--level 3]
  timing: breakpoints at the code points (addresses from a listing of the source, ed2lib.symbols) print Hatari's VBL and CycleCounter: ms = CPU cycles between the routine that handles the
          key (seg_move / apply_try / lpreview) and the end of the redraw (the entry of draw_keys = the last call of draw_view; lpreview: its last instruction), at 8,021,248 cycles per second
          (the key itself waits for the editor's poll, once per frame = up to 20 ms more).  Cases: one segment (RIGHT), into the next grid row, one row (DOWN), a row move that scrolls the
@@ -9,7 +9,7 @@
          (selection +10), `C DOWN DOWN DOWN RETURN` typed ahead (the curve three items on)."""
 import argparse
 from ed2lib import *
-ap = argparse.ArgumentParser(); ap.add_argument("--tag", default="speed"); ap.add_argument("--build", default=os.environ.get("ED_BUILD", "/tmp/msred7/hd")); ap.add_argument("--level", type=int, default=3)
+ap = argparse.ArgumentParser(); ap.add_argument("--tag", default="speed"); ap.add_argument("--build", default=os.environ.get("ED_BUILD", "/tmp/msred8/hd")); ap.add_argument("--level", type=int, default=3)
 ap.add_argument("--machine", default="ste")
 a = ap.parse_args()
 SYM = symbols()
@@ -35,7 +35,7 @@ def hits(n0, pcs):
     for ln in h._logtext()[n0:].splitlines():
         for k, n in byaddr.items():
             if k in ln and "matched" not in ln and "Removed" not in ln: cur = n; vals = []
-        m = re.search(r"#(\d+) \(dec\)", ln)
+        m = re.search(r"#(\d+)(?:/-?\d+)? \(dec\)", ln)
         if m and cur:
             vals.append(int(m.group(1)))
             if len(vals) == 2: out.append((cur, vals[0], vals[1])); cur = None

@@ -64,3 +64,38 @@ Harness state: `ed2lib.py`, `ed2.py`, `ed2model.py`, `td3.py`, `speed.py`, `welc
 1. `cd games/in_progress/moonshine-racers; work/edgate/chain7.sh` runs everything one Hatari at a time (verify, HD + floppy builds into `/tmp/msred7`, then `ed2 speed td3 shots qstr qmste qst tdmste tdst w2m w1m abs fl`; single cells: `chain7.sh ed2 speed`). v1.1 references are unpacked in `/tmp/msred7/v11` and `/tmp/msred7/v11fl` (from `dist/*_v1.1.zip`; redo if /tmp was cleared). Expect script bugs in the unrun cells first.
 2. Floppy: `disk_a.st` now differs from v1.1 (`d6a23ef2...` vs `81e2a7b7...`: cp_title's blob changed; `cp_welcome` is `; media: hd`, so the floppy build has NO `$7c04` site; `editor_design.md` 15.9 still says a `cp_welcome_fl` exists: it does not). The 1 MB title check is `flshot.py` new vs v1.1 (`chain7.sh fl`).
 3. Then: `editor_design.md` section 16 (as built, the list of section 2), the open points of section 4, the preview zip (`msrpatch.py build --out work/testdisk/editor_preview2/MOONSHR`, copy `work/testdisk/MSTRACKS.TRK` into `FILES`, zip as `work/testdisk/MoonshineRacers_editor_preview2.zip`).
+
+
+# Finish pass (MSREditor8, 2026-11-23): gates on the CURRENT build, fixes, preview
+Build: `python3 tools/msrpatch.py build --out /tmp/msred8/hd` (verify ALL OK; overlay 19,218 B, md5 `3d52ea1c...`; RUNME.TOS md5 `7ff3733d...`). Chain `work/edgate/chain8.sh` (env8.sh, `/tmp/msred8`, logs `logs8/`; chain7 / env7 removed). v1.1 references `/tmp/msred8/v11`, `v11fl`.
+## Harness bugs found and fixed (not editor faults)
+* `cg.py boot_title`: switched fast-forward OFF at vbl 4500 and polled the title only at 50 vbl/s; on the current machine the attract race had started before the title was seen -> 'title reached: False'. Now fast-forward stays on until the title is seen.
+* `speed.py`: the CycleCounter now exceeds 2^31 and Hatari prints `#N/-M (dec)`; the regex matched nothing (every case 'code points hit: FAIL'). Fixed.
+* `ed2.py` quick, plain straight: the second split (segment 1) started at 24576 > the race extent 20024; now splits segment 0 twice. Stock full: the BAR's old segment (318) lay beyond the extent once the BAR had been moved to segment 30 (extent shrinks, by design); the last BAR move now uses `min(k0, seg_last)`.
+* `abs1m.py`: breakpoints were set after the payload copy, so the welcome screen had already run (hint1mb 0 times); set at power-on now. Defaults point at /tmp/msred8.
+## Editor fixes
+* `speed` first result: one segment 78 ms, next row 86, scrolling row 176, bend 126, list step 151 (criterion 60 ms): the panel (11 rows x 28 characters at ~1500 cycles per character) dominated. `lp28` now keeps a per-row shadow (`vPSh`) and draws only changed characters, `cls` invalidates it: one segment 21 ms, next grid row 31, row 41, scrolling row 129, bend 60, list step 85 [obs `logs8/speed_ste2m.txt`].
+* `draw_labels`: shadow key = (scroll + cursor row, last segment with a tile) (`vSLab`, `vSLab2`): the labels redraw when the segment count changes under an unchanged scroll / row. [INFERENCE: the trigger (insert / delete at the end) was not provoked in a gate; the shots check (screen == drawing) and the ed2 insert / delete / merge checks pass with it.]
+* Header of a plain straight: `NEW STRAIGHT` (was `NEW NEW STRAIGHT`): the source tag and number are skipped for source 2 [obs screenshot `q_straight_ste2m_2_start.png`].
+## Gates (all on the build above)
+| gate | result | log |
+|---|---|---|
+| ed2 full, STE 2 MB, stock | ALL CHECKS PASS | `ed2_stock_ste2m.txt` |
+| ed2 quick, STE 2 MB, plain straight (incl. PLAY to the BAR) | ALL CHECKS PASS | `q_straight_ste2m.txt` |
+| ed2 quick, Mega STE 2 MB / ST 2 MB, stock | ALL CHECKS PASS / ALL CHECKS PASS | `q_stock_mste2m.txt`, `q_stock_st2m.txt` |
+| speed (ms above; burst checks 10 x RIGHT = 2 redraws, 12 bend steps = 1 recompute, typed-ahead list) | ALL CHECKS PASS | `speed_ste2m.txt` |
+| td3, STE 2 MB (test drive from the cursor, incl. start at the selected object) | ALL CHECKS PASS | `td3_ste2m.txt` |
+| td3 quick, Mega STE / ST | ALL CHECKS PASS / ALL CHECKS PASS | `td3_mste2m.txt`, `td3_st2m.txt` |
+| shots (screen RAM == Python drawing of the shadow slots at every point) | ALL CHECKS PASS | `shots_ste2m.txt` |
+| welcome 2 MB (`--full`: F10 menu, play list, race) | ALL CHECKS PASS | `w2m.txt` |
+| welcome 1 MB: text row 23 = `2 MB: CAMPAIGNS + TRACK EDITOR` | ALL CHECKS PASS, screenshot `logs8/shots/w1m_1_welcome.png` | `w1m.txt` |
+| abs1m (1 MB, exactly the site `$7c04` patched, no blob instruction outside the 1 MB path, no editor / track GEMDOS call, race runs): STE / ST / Mega STE | ALL CHECKS PASS (3 runs) | `abs1m_ste.txt`, `abs1m_st.txt`, `abs1m_mste.txt` |
+| floppy 1 MB title vs v1.1 (two points: 32,000 visible bytes) | IDENTICAL; `sitefl` (no campaign site at 1 MB) PASS; `flhint` 2 MB (F10 hint) PASS | `fl1m_new.txt`, `fl1m_v11.txt`, `sitefl_1024.txt`, `flhint_2m.txt` |
+Floppy `disk_a.st` differs from v1.1 (`d6a23ef2...` vs `81e2a7b7...`) in the payload sectors only: cp_title's blob changed (shared source). The floppy has had no `cp_welcome` since the campaign feature (`; media: hd`; its screen is never shown there; the hint is `cp_flhint`), so no site reaches `e3`'s 1 MB path and the title is unchanged: intended per 15.9; the design note's `cp_welcome_fl` claim was stale and is corrected. `disk_b.st` is identical to v1.1.
+## Bus / Address error lines
+3 per race run on STE (the game's own STE probe at `$ff8e21`, PC `$21238` / `$b4928` / `$bf6b2`, same as in logs7), 1 in some cells: not the editor.
+## Open
+* Bend / hill thresholds left as they are (300 / 1200 / 2400, 0.02 / 0.10): the user to judge on the preview.
+* `vTmp2`, `TILEW` unused equates remain.
+## Preview
+`work/testdisk/MoonshineRacers_editor_preview2.zip` (MOONSHR/: RUNME.TOS md5 `7ff3733d...` and FILES/MSEDIT.OVL md5 `3d52ea1c...` == the gated build; FILES/MSTRACKS.TRK = `work/testdisk/MSTRACKS.TRK`, 11,650 B).

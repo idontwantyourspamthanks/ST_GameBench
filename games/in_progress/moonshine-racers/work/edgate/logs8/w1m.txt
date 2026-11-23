@@ -1,0 +1,8 @@
+CHECK the welcome screen reached (V_WELC set): PASS vbl 7310
+V_WELC (CPV+13) = 0xff gate byte IB+4 = 0x0 screen $70000: text row 23 has 680 non-zero bytes
+CHECK text row 23 of the screen holds the line: PASS 
+CHECK 1 MB: the gate is closed (IB+4 = 0): the line is `2 MB: CAMPAIGNS + TRACK EDITOR` (see the screenshot): PASS 
+after F10: V_ACT 0x0 V_LOADED 0x0 V_WELC 0x0
+CHECK 1 MB: F10 is an ordinary key (the screen is left, no campaign menu: V_WELC cleared, nothing loaded): PASS 
+Bus/Address error lines: 1
+RESULT w1m: ALL CHECKS PASS

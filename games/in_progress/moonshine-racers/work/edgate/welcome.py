@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""The WELCOME PARTNERS / PRESS A KEY screen (cp_welcome + cp_title e3).  env7.sh python3 welcome.py --tag T [--mem 2048|1024] [--machine ste] [--build DIR] [--full]
+"""The WELCOME PARTNERS / PRESS A KEY screen (cp_welcome + cp_title e3).  env8.sh python3 welcome.py --tag T [--mem 2048|1024] [--machine ste] [--build DIR] [--full]
  cold boot, fast-forward until the screen's line was drawn (V_WELC, CPV+13), screenshot: `F10 = CAMPAIGNS` at >= 2 MB, `2 MB: CAMPAIGNS + TRACK EDITOR` at 1 MB (gate byte IB+4 = 0; F10 is an
  ordinary key there); with --full (>= 2 MB): F10 -> menu (screenshot) -> Esc = back to the screen (screenshot) -> F10 -> LOAD CAMPAIGN FROM HARD DISK -> play list: track 2 -> a race on it."""
 import argparse

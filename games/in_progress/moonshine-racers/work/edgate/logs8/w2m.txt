@@ -1,0 +1,10 @@
+CHECK the welcome screen reached (V_WELC set): PASS vbl 7376
+V_WELC (CPV+13) = 0xff gate byte IB+4 = 0xff screen $70000: text row 23 has 344 non-zero bytes
+CHECK text row 23 of the screen holds the line: PASS 
+V_WELC after back = 0xff
+loaded 255 count 3
+after the menu: V_ACT 0xff V_START 1
+[race start] vbl=9384 act=0xff loaded=0xff count=3 pos=1 start=0 ptr=0x111742 $102c=0x0003 len57890=19000 $23c0=0x111756 $1024=0x00 $1027=0x00 $100e=79 $5ff8=0 $1021=0x02
+CHECK F10 menu on the welcome screen -> play from track 2 -> the race is campaign track 2 (pos 1): PASS (19000, 3, 1120086, 1) pos 1
+Bus/Address error lines: 3
+RESULT w2m: ALL CHECKS PASS

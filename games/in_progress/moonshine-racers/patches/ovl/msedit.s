@@ -62,6 +62,7 @@ vSLab   equ     114             ; w draw_labels: what the label column shows (sc
 vSHdr   equ     116             ; w draw_header: the changed mark the header shows + 1 (0 = no header)
 vSKey   equ     118             ; w draw_keys: the focus the key reminder shows + 1 (0 = none)
 vSHint  equ     120             ; l draw_hint: the text the hint row shows (0 = a message, or nothing)
+vSLab2  equ     124             ; w draw_labels: the last segment with a tile when the labels were drawn
 vTmp    equ     126             ; w
 vTmp2   equ     128             ; w
 vName   equ     146             ; 26 B track name
@@ -131,6 +132,7 @@ vTdN    equ    2314            ; w the cursor unit the race starts at
 vTdCnt  equ    2316            ; w VBL frames since the race was decided (tdvbl)
 vTdOldV equ    2318            ; l the game's VBL handler ($70) while tdvbl is in
 vTdOldK equ    2322            ; l the game's IKBD handler ($118) while tdkb is in
+vPSh    equ     2400            ; 11 x 32 B draw_panel shadow: per text row 13-23 the colour + 1 (0 = nothing drawn) and the 28 characters shown
 vTdHit  equ    2326            ; w number of td_ff runs (read by the gate scripts)
 vTdRes  equ    2328            ; b $1024 when the race returned
 vTdRes2 equ    2329            ; b $1226
@@ -347,6 +349,10 @@ cls:    movem.l d0-d7/a0,-(a7)
 .c:     movem.l d0-d7,-(a0)
         cmpa.l  vDraw(a5),a0
         bhi   .c
+        lea     vPSh(a5),a0             ; the panel shadow: nothing drawn
+        moveq   #87,d0
+.z:     clr.l   (a0)+
+        dbra    d0,.z
         movem.l (a7)+,d0-d7/a0
         rts
 
@@ -951,10 +957,14 @@ draw_labels:
         ror.w   #4,d0
         add.w   vFirst(a5),d0
         addq.w  #1,d0
-        cmp.w   vSLab(a5),d0
-        beq     .x
-        move.w  d0,vSLab(a5)
+        move.w  d0,d2
         bsr     seg_last
+        cmp.w   vSLab(a5),d2
+        bne     .nw
+        cmp.w   vSLab2(a5),d0
+        beq     .x
+.nw:    move.w  d2,vSLab(a5)
+        move.w  d0,vSLab2(a5)
         move.w  d0,d7                   ; the last segment that has a tile
         moveq   #0,d6
 .ll:    moveq   #0,d0
@@ -985,16 +995,50 @@ draw_labels:
 .x:     movem.l (a7)+,d0-d3/d6-d7/a0-a1
         rts
 
-; lp28: pad vLine to 28 columns (the panel's width; a longer line is cut) and show it at column 0, row d1, colour d2
+; lp28: pad vLine to 28 columns (the panel's width; a longer line is cut) and show it at column 0, row d1, colour d2.  Only the characters that differ from what the row shows (shadow vPSh) are drawn: a text call costs about 1500 cycles per character
 lp28:   lea     vLine+28(a5),a0
 .p:     cmpa.l  a0,a1
         bcc     .t
         move.b  #' ',(a1)+
         bra     .p
 .t:     clr.b   (a0)
+        movem.l d0/d3-d4/a0/a2-a3,-(a7)
+        move.w  d1,d3
+        subi.w  #13,d3
+        lsl.w   #5,d3
+        lea     vPSh(a5),a2
+        adda.w  d3,a2                   ; this row's shadow
+        move.b  d2,d4
+        addq.b  #1,d4
+        lea     vLine(a5),a0
+        cmp.b   (a2),d4
+        beq     .same
+        move.b  d4,(a2)                 ; another colour (or nothing drawn yet): the whole line
+        lea     1(a2),a3
+        moveq   #27,d3
+.cp:    move.b  (a0)+,(a3)+
+        dbra    d3,.cp
         lea     vLine(a5),a0
         moveq   #0,d0
-        bra     ptext
+        bsr     ptext
+        bra     .x
+.same:  lea     1(a2),a3
+        moveq   #0,d3
+.ch:    move.b  (a0,d3.w),d4
+        cmp.b   (a3,d3.w),d4
+        beq     .nx
+        move.b  d4,(a3,d3.w)
+        move.b  d4,vLine+30(a5)
+        clr.b   vLine+31(a5)
+        lea     vLine+30(a5),a0
+        move.w  d3,d0
+        bsr     ptext
+        lea     vLine(a5),a0
+.nx:    addq.w  #1,d3
+        cmpi.w  #28,d3
+        bne     .ch
+.x:     movem.l (a7)+,d0/d3-d4/a0/a2-a3
+        rts
 
 ; draw_panel: the selected segment and its object list (text rows 13-23, the left 28 columns)
 draw_panel:
@@ -1260,20 +1304,20 @@ draw_header:
         beq     .x
         move.w  d0,vSHdr(a5)
         bsr     lbeg
+        cmpi.w  #2,vSrc(a5)
+        beq   .h0
         lea     t_src(pc),a0
         move.w  vSrc(a5),d0
         lsl.w   #2,d0
         adda.w  d0,a0
         bsr     apps
-        cmpi.w  #2,vSrc(a5)
-        beq   .h1
         moveq   #0,d0
         move.w  vSrcIx(a5),d0
         addq.w  #1,d0
         moveq   #2,d1
         bsr     appn
-.h1:    move.b  #' ',(a1)+
-        lea     vName(a5),a0
+        move.b  #' ',(a1)+
+.h0:    lea     vName(a5),a0
         bsr     apps
         lea     vLine+29(a5),a0
 .h2:    cmpa.l  a0,a1

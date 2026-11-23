@@ -4,7 +4,7 @@ and SYM (routine addresses, for breakpoints) from the same source assembled exac
 import sys, time, struct, os, re, subprocess
 from pathlib import Path
 HERE = Path(__file__).resolve().parent
-os.environ.setdefault("CG_LOGS", str(HERE / "logs7"))
+os.environ.setdefault("CG_LOGS", str(HERE / "logs8"))
 sys.path.insert(0, str(HERE.parent / "campgate"))
 from cg import *
 import msrtrack as mt
@@ -14,7 +14,7 @@ EV = 0x140000
 CPS = 0x110000
 OVL = P.OVL_SRC.read_text()
 VAR = {m.group(1).lower(): int(m.group(2)) for m in re.finditer(r"^v(\w+)\s+equ\s+(\d+)", OVL, re.M)}
-ED_TMP = Path(os.environ.get("ED_TMP", "/tmp/msred7")); ED_TMP.mkdir(parents=True, exist_ok=True)
+ED_TMP = Path(os.environ.get("ED_TMP", "/tmp/msred8")); ED_TMP.mkdir(parents=True, exist_ok=True)
 
 def symbols():
     """{label: address} of the overlay (a vasm listing of the source assembled at EDBASE with the tool's equates)"""
@@ -46,7 +46,7 @@ def fast_mem(r):
     r.mem = mem
 
 class Ed:
-    def __init__(self, tag, machine="ste", mem=2048, build=os.environ.get("ED_BUILD", "/tmp/msred7/hd"), camp=None):
+    def __init__(self, tag, machine="ste", mem=2048, build=os.environ.get("ED_BUILD", "/tmp/msred8/hd"), camp=None):
         self.tag = tag; self.build = build
         logopen(tag)
         self.r = Run("hd", machine, mem, tag, build=build, camp_hd=camp, sound=True); fast_mem(self.r)

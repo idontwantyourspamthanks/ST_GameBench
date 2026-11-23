@@ -1,0 +1,51 @@
+== q_straight_ste2m: HD STE 2 MB, build /tmp/msred8/hd, campaign none
+title reached: True
+CHECK title reached: PASS 
+CHECK editor overlay loaded (V_EDOK): PASS 
+CHECK viewer up: PASS 
+CHECK start: segment and object lists in RAM == the model (1 segments, 1 objects, after 0 edits): PASS 
+CHECK start: tile words in RAM == the model's (1 tiles), extent 20024: PASS 
+CHECK start: lists in RAM == the model: PASS 
+[  1] split seg 0 (length 32768) in half
+CHECK after the split the cursor stays on the first half (0): PASS seg 0 focus 0
+[  2] split seg 0 (length 16384) in half
+CHECK after the split the cursor stays on the first half (0): PASS seg 0 focus 0
+[  3] curve seg 2 = 8
+[  4] curve seg 1 = -6
+[  5] hill seg 2 shape 2
+[  6] width L seg 1 = 50
+[  7] length seg 1 = 100
+[  8] insert copy of seg 1
+CHECK after the copy the cursor is on the copy (2): PASS seg 2 focus 0
+[  9] delete seg 2
+[ 10] merge seg 1 with the next
+[ 11] O = add an object to seg 1: unit 12338
+CHECK the new object (1) is selected in the list of segment 1: PASS focus 1 seg 1 obj 1
+[ 12] object 1 type 4
+[ 13] object 1 side -50
+[ 14] move object 1 (unit 12338) by [('lr', 1, 10), ('lr', -1, 1), ('seg', -1)]: unit 4155, now object 0 of seg 0
+CHECK after the move the cursor follows the object (object 0, its segment): PASS obj 0 seg 0 focus 1
+[ 15] I = add an object behind object 0 (seg 0): unit 4156
+[ 16] PUT THE BAR HERE (menu) at seg 2: unit 16484
+[ 17] undo
+[ 18] redo (menu)
+CHECK after the quick script: segment and object lists in RAM == the model (3 segments, 3 objects, after 18 edits): PASS 
+CHECK after the quick script: tile words in RAM == the model's (3 tiles), extent 20024: PASS 
+CHECK Esc = back to the track list: PASS 
+CHECK campaign in memory: 1 tracks, V_COUNT / V_LOADED: PASS 1 entries, V_COUNT 1
+CHECK the kept block (822 B) == what the Python model of the edit script predicts (mt.encode_track of the model): PASS 822 vs 822 B, first diff None
+/tmp/msred8/q_straight_ste2m.trk[0] 'NEW STRAIGHT': WARN W-CURVE: curve value c reaches -32768..32764, stock tracks stay within -4473..8876 (heading drift is untested beyond that)
+/tmp/msred8/q_straight_ste2m.trk[0] 'NEW STRAIGHT': OK (0 errors, 1 warnings)
+CHECK msrtrack.py validate of the campaign file dumped from RAM: exit 0, no errors: PASS /tmp/msred8/q_straight_ste2m.trk[0] 'NEW STRAIGHT': WARN W-CURVE: curve value c reaches -32768..32764, stock tracks stay within -4473..8876 (heading drift is untested beyond that)
+/tmp/msred8/q_straight_ste2m.trk[0] 'NEW STRAIGHT': OK (0 errors, 1 warnings)
+
+CHECK re-entered: viewer up: PASS 
+CHECK re-entered: the segment list (3) == the model's merged list, objects (3) == the model's: PASS 3 vs 3, 3 vs 3
+vPlay 0 V_START 0 CPV+4 0 $102c 0x0
+after PLAY: V_START 0 (the menu consumes it at once) vPlay 0
+[race 0 start] vbl=18583 act=0xff loaded=0xff count=1 pos=0 start=0 ptr=0x110038 $102c=0x0003 len57890=19000 $23c0=0x110038 $1024=0x00 $1027=0x00 $100e=0 $5ff8=0 $1021=0x02
+[race 0 over (finished=True)] vbl=27118 act=0xff loaded=0xff count=1 pos=0 start=0 ptr=0x110038 $102c=0x0003 len57890=19000 $23c0=0x110040 $1024=0xff $1027=0x01 $100e=1668 $5ff8=14032 $1021=0x02
+CHECK race on the edited track: the stream pointer is inside its block in the campaign store, driven to the BAR (drive_to_finish saw $1024 = $ff; the state is read before the end-of-race screens move on), campaign position = the edited track: PASS [(19000, 3, 1114168, 0)] finished True block $110038..$11036e $1024 0xff
+Bus/Address error lines in the Hatari log: 3
+wall 115 s
+RESULT q_straight_ste2m: ALL CHECKS PASS

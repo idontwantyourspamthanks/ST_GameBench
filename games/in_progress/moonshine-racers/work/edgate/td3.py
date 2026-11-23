@@ -5,7 +5,7 @@
    at every race start: $5ff8 == the cursor unit, the game's curve / width / hill rings and the object slots == a Python expansion of the encoded working copy (ENCBUF read back from RAM), the time bar,
    screenshot; ends: Esc (start), F10 (middle), the BAR (joystick up: finish, tdvbl returns), time-out (standing); after every return: the editor is where it was (cursor, segment / object lists unchanged, keys work,
    V_TD clear, vectors back); then leave (the store keeps the edits), PLAY THIS TRACK of a campaign track and a normal campaign race with the shop click: still normal.
-   work/edgate/env7.sh python3 work/edgate/td3.py --tag T [--machine ste|megaste|st] [--quick]"""
+   work/edgate/env8.sh python3 work/edgate/td3.py --tag T [--machine ste|megaste|st] [--quick]"""
 import argparse
 from ed2lib import *
 ap = argparse.ArgumentParser(); ap.add_argument("--tag", default="td3"); ap.add_argument("--build", default=os.environ["ED_BUILD"]); ap.add_argument("--machine", default="ste"); ap.add_argument("--level", type=int, default=3)
