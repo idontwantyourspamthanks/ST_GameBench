@@ -1,0 +1,14 @@
+== len2_hd_len2_t1_info_mste2m: hd Mega STE 2 MB build /tmp/msrwpab/hd  campaign work/trackedit/fixtures/len2.trk (v2) track 1 'LEN2 1000 L3' base 3 word 1000 Lb 19000
+PREDICT: rate_stock 10385  Tb 1609  P 179  rate 0xffff=65535  $57890 1000  time-up detected 257 passes after the setup
+CHECK campaign loaded: PASS 
+loaded: act=0xff loaded=0xff count=5
+CHECK campaign file version seen by the loader's validator: accepted: PASS count=5 expect 5
+list selection 1 (expect 1)
+CHECK race started: PASS 
+START vbl=13319 $102c=0x0003 $57890=1000 $10d2=65535 $10ce=0x0057ffa8 $100e=88 $5ff8=0 $1024=0x00 $1226=0x00 $1027=0x00 V_RLEN=1000 $23c0=0x1109be
+CHECK $102c = base level 3: PASS $102c=0x3
+CHECK $57890 = 1000 (the track's own length): PASS $57890=1000
+CHECK time bar rate $10d2 = 65535 (prediction): PASS $10d2=65535
+RATE passes allowed by the bar: $ff0000/65535 = 255.00
+Bus/Address error lines: 0
+== len2_hd_len2_t1_info_mste2m done: ALL CHECKS PASS; bus/address error lines 0

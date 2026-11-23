@@ -1,0 +1,35 @@
+CASE v2_good_len2: loaded=True message-row texts=['                                        ', 'LOADING CAMPAIGN FROM HARD DISK...', '                                        ', 'CHECKING CAMPAIGN...'] act=0xff loaded=0xff count=5
+CHECK v2_good_len2: loads (count 5): PASS 
+CASE v1_good_c3: loaded=True message-row texts=['                                        ', 'LOADING CAMPAIGN FROM HARD DISK...', '                                        ', 'CHECKING CAMPAIGN...'] act=0xff loaded=0xff count=3
+CHECK v1_good_c3: loads (count 3): PASS 
+CASE v2_word700: loaded=True message-row texts=['                                        ', 'LOADING CAMPAIGN FROM HARD DISK...', '                                        ', 'CHECKING CAMPAIGN...'] act=0xff loaded=0xff count=5
+CHECK v2_word700: loads (count 5): PASS 
+CASE v2_word28000: loaded=True message-row texts=['                                        ', 'LOADING CAMPAIGN FROM HARD DISK...', '                                        ', 'CHECKING CAMPAIGN...'] act=0xff loaded=0xff count=5
+CHECK v2_word28000: loads (count 5): PASS 
+CASE v2_all_zero_words: loaded=True message-row texts=['                                        ', 'LOADING CAMPAIGN FROM HARD DISK...', '                                        ', 'CHECKING CAMPAIGN...'] act=0xff loaded=0xff count=5
+CHECK v2_all_zero_words: loads (count 5): PASS 
+CASE v2_word699: loaded=False message-row texts=['                                        ', 'LOADING CAMPAIGN FROM HARD DISK...', '                                        ', 'CHECKING CAMPAIGN...', 'CHECKING CAMPAIGN...', '                                        ', 'NOT A VALID CAMPAIGN FILE'] act=0x0 loaded=0x0 count=5
+CHECK v2_word699: rejected with a message: PASS expect 'NOT A VALID'
+CHECK v2_word699: campaign not armed: PASS 
+CASE v2_word28001: loaded=False message-row texts=['                                        ', 'LOADING CAMPAIGN FROM HARD DISK...', '                                        ', 'CHECKING CAMPAIGN...', 'CHECKING CAMPAIGN...', '                                        ', 'NOT A VALID CAMPAIGN FILE'] act=0x0 loaded=0x0 count=5
+CHECK v2_word28001: rejected with a message: PASS expect 'NOT A VALID'
+CHECK v2_word28001: campaign not armed: PASS 
+CASE v2_word65535: loaded=False message-row texts=['                                        ', 'LOADING CAMPAIGN FROM HARD DISK...', '                                        ', 'CHECKING CAMPAIGN...', 'CHECKING CAMPAIGN...', '                                        ', 'NOT A VALID CAMPAIGN FILE'] act=0x0 loaded=0x0 count=5
+CHECK v2_word65535: rejected with a message: PASS expect 'NOT A VALID'
+CHECK v2_word65535: campaign not armed: PASS 
+CASE v2_word32768_bit15: loaded=False message-row texts=['                                        ', 'LOADING CAMPAIGN FROM HARD DISK...', '                                        ', 'CHECKING CAMPAIGN...', 'CHECKING CAMPAIGN...', '                                        ', 'NOT A VALID CAMPAIGN FILE'] act=0x0 loaded=0x0 count=5
+CHECK v2_word32768_bit15: rejected with a message: PASS expect 'NOT A VALID'
+CHECK v2_word32768_bit15: campaign not armed: PASS 
+CASE v1_with_word: loaded=False message-row texts=['                                        ', 'LOADING CAMPAIGN FROM HARD DISK...', '                                        ', 'CHECKING CAMPAIGN...', 'CHECKING CAMPAIGN...', '                                        ', 'NOT A VALID CAMPAIGN FILE'] act=0x0 loaded=0x0 count=3
+CHECK v1_with_word: rejected with a message: PASS expect 'NOT A VALID'
+CHECK v1_with_word: campaign not armed: PASS 
+CASE v3: loaded=False message-row texts=['                                        ', 'LOADING CAMPAIGN FROM HARD DISK...', '                                        ', 'CHECKING CAMPAIGN...', 'CHECKING CAMPAIGN...', '                                        ', 'NOT A VALID CAMPAIGN FILE'] act=0x0 loaded=0x0 count=3
+CHECK v3: rejected with a message: PASS expect 'NOT A VALID'
+CHECK v3: campaign not armed: PASS 
+CASE v0: loaded=False message-row texts=['                                        ', 'LOADING CAMPAIGN FROM HARD DISK...', '                                        ', 'CHECKING CAMPAIGN...', 'CHECKING CAMPAIGN...', '                                        ', 'NOT A VALID CAMPAIGN FILE'] act=0x0 loaded=0x0 count=3
+CHECK v0: rejected with a message: PASS expect 'NOT A VALID'
+CHECK v0: campaign not armed: PASS 
+CASE v2_good_again: loaded=True message-row texts=['                                        ', 'LOADING CAMPAIGN FROM HARD DISK...', '                                        ', 'CHECKING CAMPAIGN...'] act=0xff loaded=0xff count=5
+CHECK v2_good_again: loads (count 5): PASS 
+Bus/Address error lines: 1
+== len2_err_ste2m done: ALL CHECKS PASS; bus/address error lines 1

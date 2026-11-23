@@ -1,0 +1,18 @@
+== len2_fl_len2_t1_drive_ste2m: fl STE 2 MB build /tmp/msrwpab/fl  campaign work/trackedit/fixtures/len2.trk (v2) track 1 'LEN2 1000 L3' base 3 word 1000 Lb 19000
+PREDICT: rate_stock 10385  Tb 1609  P 179  rate 0xffff=65535  $57890 1000  time-up detected 257 passes after the setup
+CHECK campaign loaded: PASS 
+loaded: act=0xff loaded=0xff count=5
+CHECK campaign file version seen by the loader's validator: accepted: PASS count=5 expect 5
+list selection 1 (expect 1)
+[len2_fl_len2_t1_drive_ste2m] game's 'Insert Disk 2' prompt at vbl 6507: disk 2 into drive A
+CHECK race started: PASS 
+START vbl=7525 $102c=0x0003 $57890=1000 $10d2=65535 $10ce=0x0051ffae $100e=82 $5ff8=0 $1024=0x00 $1226=0x00 $1027=0x00 V_RLEN=1000 $23c0=0x1109be
+CHECK $102c = base level 3: PASS $102c=0x3
+CHECK $57890 = 1000 (the track's own length): PASS $57890=1000
+CHECK time bar rate $10d2 = 65535 (prediction): PASS $10d2=65535
+RATE passes allowed by the bar: $ff0000/65535 = 255.00
+DRIVE ended: BAR reached; vbl=9008 $102c=0x0002 $57890=1000 $10d2=0 $10ce=0x009aff65 $100e=313 $5ff8=966 $1024=0xff $1226=0x00 $1027=0x00 V_RLEN=1000 $23c0=0x1109be
+FINISH BAR reached: clock 0x009aff65 = 155 of 255 passes used (rate 65535); $5ff8=966 at the end; BAR near unit 1000
+CHECK the BAR ended the race before the time bar ran out: PASS state=BAR reached
+Bus/Address error lines: 2
+== len2_fl_len2_t1_drive_ste2m done: ALL CHECKS PASS; bus/address error lines 2

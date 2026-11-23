@@ -1,0 +1,18 @@
+== v1_hd_c3_t0_to_old: hd STE 2 MB build /tmp/msrwpab/hd_old  campaign work/camphd/camp/c3.trk (v1) track 0 'TEST ONE EDIT1 BEND' base 0 word 0 Lb 19472
+PREDICT: rate_stock 10136  Tb 1648  P 1648  rate 0x2798=10136  $57890 19472  time-up detected 1650 passes after the setup
+CHECK campaign loaded: PASS 
+loaded: act=0xff loaded=0xff count=3
+CHECK campaign file version seen by the loader's validator: accepted: PASS count=3 expect 3
+list selection 0 (expect 0)
+CHECK race started: PASS 
+START vbl=13967 $102c=0x0000 $57890=19472 $10d2=10136 $10ce=0x000c1050 $100e=79 $5ff8=0 $1024=0x00 $1226=0x00 $1027=0x00 V_RLEN=0 $23c0=0x1100ac
+CHECK $102c = base level 0: PASS $102c=0x0
+CHECK $57890 = 19472 (the base level's): PASS $57890=19472
+CHECK time bar rate $10d2 = 10136 (prediction): PASS $10d2=10136
+RATE passes allowed by the bar: $ff0000/10136 = 1648.75
+EVENTS [('0x792c', {'0x100e': '0000', '0x10ce': '00000000', '0x10d2': '2798', '0x57890': '4c10', '0x5ff8': '0000', '0x1027': '00'}), ('0x117be', {'0x100e': '0671', '0x10ce': '00ff31b0', '0x10d2': '2798', '0x57890': '4c10', '0x5ff8': '0000', '0x1027': '00'})]
+TIMEOUT: $100e at the setup end 0, at the time-up flag 1649: 1649 passes; clock then 0x00ff31b0; prediction 1650; difference -1
+CHECK time-out after 1650 +-2 passes (measured 1649): PASS 
+END vbl=22352 $102c=0x0000 $57890=19472 $10d2=10136 $10ce=0x00ff31b0 $100e=1756 $5ff8=0 $1024=0x00 $1226=0x05 $1027=0x00 V_RLEN=0 $23c0=0x1100ac
+Bus/Address error lines: 3
+== v1_hd_c3_t0_to_old done: ALL CHECKS PASS; bus/address error lines 3

@@ -1,0 +1,14 @@
+== v1_hd_td_t1_info_new: hd STE 2 MB build /tmp/msrwpab/hd  campaign work/testdisk/MSTRACKS.TRK (v1) track 1 'STRAIGHT TEST' base 5 word 0 Lb 18000
+PREDICT: rate_stock 10250  Tb 1630  P 1630  rate 0x280a=10250  $57890 18000  time-up detected 1632 passes after the setup
+CHECK campaign loaded: PASS 
+loaded: act=0xff loaded=0xff count=3
+CHECK campaign file version seen by the loader's validator: accepted: PASS count=3 expect 3
+list selection 1 (expect 1)
+CHECK race started: PASS 
+START vbl=15287 $102c=0x0005 $57890=18000 $10d2=10250 $10ce=0x000be2f8 $100e=76 $5ff8=0 $1024=0x00 $1226=0x00 $1027=0x00 V_RLEN=0 $23c0=0x110f30
+CHECK $102c = base level 5: PASS $102c=0x5
+CHECK $57890 = 18000 (the base level's): PASS $57890=18000
+CHECK time bar rate $10d2 = 10250 (prediction): PASS $10d2=10250
+RATE passes allowed by the bar: $ff0000/10250 = 1630.41
+Bus/Address error lines: 3
+== v1_hd_td_t1_info_new done: ALL CHECKS PASS; bus/address error lines 3

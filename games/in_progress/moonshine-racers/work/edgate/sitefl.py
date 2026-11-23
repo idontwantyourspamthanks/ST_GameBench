@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Floppy build, site $7c04 + gate: boot disk A, fast-forward to the title, read marker / IB+4 / the bytes at $7c04 / V_WELC.  env4.sh python3 sitefl.py --mem 1024|2048"""
+"""Floppy build, sites $7c04, $7926 (cp_len, gated: stock bytes at 1 MB) + gate: boot disk A, fast-forward to the title, read marker / IB+4 / the bytes at $7c04 / V_WELC.  env4.sh python3 sitefl.py --mem 1024|2048"""
 import argparse, sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "campgate"))
@@ -9,7 +9,7 @@ tag = f"sitefl_{a.mem}"; logopen(tag)
 r = Run("fl", a.machine, a.mem, tag, disk_a=a.disk, sound=True)
 try:
     ok = r.boot_title(); log("floppy title reached:", ok, "vbl", r.vbl()); check("title reached", ok)
-    mk = r.mem(0xb2700, 5); log("marker", mk[:4], "IB+4", hex(mk[4]), "site $7c04:", r.mem(0x7c04, 6).hex(), "V_WELC", hex(r.b(0xb8e0d)))
+    mk = r.mem(0xb2700, 5); log("marker", mk[:4], "IB+4", hex(mk[4]), "site $7c04:", r.mem(0x7c04, 6).hex(), "site $7926:", r.mem(0x7926, 6).hex(), "V_WELC", hex(r.b(0xb8e0d)))
     r.shot("title")
     r.h.keypress(0x44); time.sleep(5); r.shot("after_f10")
     if a.mem >= 2048: log("F10 at the floppy title -> campaign menu: see shot after_f10")

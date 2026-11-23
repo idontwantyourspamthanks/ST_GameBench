@@ -1,0 +1,17 @@
+== len2_hd_len2_t0_drive_ste2m: hd STE 2 MB build /tmp/msrwpab/hd  campaign work/trackedit/fixtures/len2.trk (v2) track 0 'LEN2 2000 L0' base 0 word 2000 Lb 19472
+PREDICT: rate_stock 10136  Tb 1648  P 258  rate 0xfd05=64773  $57890 2000  time-up detected 260 passes after the setup
+CHECK campaign loaded: PASS 
+loaded: act=0xff loaded=0xff count=5
+CHECK campaign file version seen by the loader's validator: accepted: PASS count=5 expect 5
+list selection 0 (expect 0)
+CHECK race started: PASS 
+START vbl=14591 $102c=0x0000 $57890=2000 $10d2=64773 $10ce=0x004d1786 $100e=79 $5ff8=0 $1024=0x00 $1226=0x00 $1027=0x00 V_RLEN=2000 $23c0=0x1100dc
+CHECK $102c = base level 0: PASS $102c=0x0
+CHECK $57890 = 2000 (the track's own length): PASS $57890=2000
+CHECK time bar rate $10d2 = 64773 (prediction): PASS $10d2=64773
+RATE passes allowed by the bar: $ff0000/64773 = 258.00
+DRIVE ended: BAR reached; vbl=16564 $102c=0x0001 $57890=2000 $10d2=0 $10ce=0x00f716e2 $100e=408 $5ff8=1956 $1024=0xff $1226=0x00 $1027=0x00 V_RLEN=2000 $23c0=0x1100dc
+FINISH BAR reached: clock 0x00f716e2 = 250 of 258 passes used (rate 64773); $5ff8=1956 at the end; BAR near unit 2000
+CHECK the BAR ended the race before the time bar ran out: PASS state=BAR reached
+Bus/Address error lines: 3
+== len2_hd_len2_t0_drive_ste2m done: ALL CHECKS PASS; bus/address error lines 3

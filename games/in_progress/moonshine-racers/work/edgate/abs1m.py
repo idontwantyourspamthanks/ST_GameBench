@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Track editor / campaigns: the 1 MB check (HD build, one machine; design section 15.9).
    work/edgate/env8.sh python3 work/edgate/abs1m.py --machine ste [--build DIR] [--ref DIR]
-  1. static: RUNME.TOS of the new build against the shipped v1.1 RUNME.TOS: where they differ (expected: only inside cp_title's blob, the hook blobs of cp_fetch / cp_td and the trampoline's
+  1. static: RUNME.TOS of the new build against the shipped v1.1 RUNME.TOS: where they differ (expected: only inside cp_title's blob, the hook blobs of cp_fetch / cp_len and the trampoline's
      own core / site tables); HAGA, MS1, MS2, MSR_S1.FIC identical;
   2. cold boot at 1 MB with `--trace gemdos`: marker MSPO, IB+4 = 0 (gate closed); EXACTLY ONE campaign site is patched, cp_welcome's $7c04 (`jmp $B9F0C.l`, the WELCOME PARTNERS key wait:
      the screen says `2 MB: CAMPAIGNS + TRACK EDITOR`), the other eight hold the stock bytes; execution breakpoints, armed as soon as the payload is in RAM, cover every byte of cp_title's
@@ -24,7 +24,7 @@ WELC = (0x7c04, "4a3860ff67f8", "4ef9000b9f0c")                       # cp_welco
 new, ref = (Path(a.build) / "RUNME.TOS").read_bytes(), (Path(a.ref) / "RUNME.TOS").read_bytes()
 pt = next(p for p in P.load_patches() if p.name == "cp_title")
 blob = [f for f in P.footprint(pt) if f[2] == "blob"][0]
-EXTRA = [f for n in ("cp_fetch", "cp_td") for f in P.footprint(next(p for p in P.load_patches() if p.name == n)) if f[2] == "blob"]
+EXTRA = [f for n in ("cp_fetch", "cp_len") for f in P.footprint(next(p for p in P.load_patches() if p.name == n)) if f[2] == "blob"]
 
 def listing():
     """cp_title's blob assembled as msrpatch.py does, with a listing: {global label: address} and the address of the first instruction at / behind a source line"""
@@ -62,8 +62,8 @@ addrs = [i - anchor + 0xb9f00 for i in diffs]
 lo_, hi_ = (addrs[0], addrs[-1]) if diffs else (0, 0)
 outside = [x for x in addrs if not (blob[0] <= x < blob[1] or P.IB <= x < P.TABLE_END or any(f[0] <= x < f[1] for f in EXTRA))]
 log(f"== {tag}: RUNME.TOS new {len(new)} B, v1.1 {len(ref)} B; {len(diffs)} differing bytes, payload addresses ${lo_:x}..${hi_:x}")
-log(f"differing bytes outside cp_title's blob, the cp_fetch / cp_td hook blobs and the trampoline (core + site tables, ${P.IB:x}-${P.TABLE_END - 1:x}): {len(outside)}")
-check("RUNME.TOS differs from v1.1 only inside cp_title's blob, the cp_fetch / cp_td hook blobs and the trampoline's own core / site tables", len(new) == len(ref) and diffs and not outside)
+log(f"differing bytes outside cp_title's blob, the cp_fetch / cp_len hook blobs and the trampoline (core + site tables, ${P.IB:x}-${P.TABLE_END - 1:x}): {len(outside)}")
+check("RUNME.TOS differs from v1.1 only inside cp_title's blob, the cp_fetch / cp_len hook blobs and the trampoline's own core / site tables", len(new) == len(ref) and diffs and not outside)
 for f in ("HAGA", "FILES/MS1", "FILES/MS2", "FILES/MSR_S1.FIC"):
     check(f"{f} identical to v1.1", (Path(a.build) / f).read_bytes() == (Path(a.ref) / f).read_bytes())
 r = Run("hd", a.machine, 1024, tag, build=a.build, sound=True, extra_args=["--trace", "gemdos"])
@@ -78,7 +78,7 @@ try:
     mk = r.mem(0xb2700, 5); st = {ad: r.mem(ad, len(o) // 2).hex() for ad, o in STOCK.items()}; w = r.mem(WELC[0], 6).hex()
     log(f"marker {mk[:4]} IB+4 {mk[4]:#x} $42e {r.l(0x42e):#x} sites {st} $7c04 {w}")
     check("marker MSPO, gate closed (IB+4 = 0)", mk[:4] == b"MSPO" and mk[4] == 0)
-    check("exactly one campaign site is patched at 1 MB: $7c04 = jmp $B9F0C.l (cp_welcome); the other eight (incl. cp_td's $7926) hold the stock bytes", w == WELC[2] and all(st[ad] == o for ad, o in STOCK.items()))
+    check("exactly one campaign site is patched at 1 MB: $7c04 = jmp $B9F0C.l (cp_welcome); the other eight (incl. cp_len's $7926) hold the stock bytes", w == WELC[2] and all(st[ad] == o for ad, o in STOCK.items()))
     r.h.cmd("hatari-event keypress 0x44"); time.sleep(4)                  # F10 at the title
     res = r.wait_race(tmo=300)
     check("F10 on the title starts the game like any key: race 1 (stock block at $58c00)", res is not None and res[2] >> 8 == 0x58c, f"{res}")

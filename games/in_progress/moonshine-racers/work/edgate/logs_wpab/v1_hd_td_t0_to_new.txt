@@ -1,0 +1,18 @@
+== v1_hd_td_t0_to_new: hd STE 2 MB build /tmp/msrwpab/hd  campaign work/testdisk/MSTRACKS.TRK (v1) track 0 'STOCK 12' base 12 word 0 Lb 18500
+PREDICT: rate_stock 12160  Tb 1374  P 1374  rate 0x2f80=12160  $57890 18500  time-up detected 1376 passes after the setup
+CHECK campaign loaded: PASS 
+loaded: act=0xff loaded=0xff count=3
+CHECK campaign file version seen by the loader's validator: accepted: PASS count=3 expect 3
+list selection 0 (expect 0)
+CHECK race started: PASS 
+START vbl=9775 $102c=0x000c $57890=18500 $10d2=12160 $10ce=0x000f3700 $100e=82 $5ff8=0 $1024=0x00 $1226=0x00 $1027=0x00 V_RLEN=0 $23c0=0x1100a0
+CHECK $102c = base level 12: PASS $102c=0xc
+CHECK $57890 = 18500 (the base level's): PASS $57890=18500
+CHECK time bar rate $10d2 = 12160 (prediction): PASS $10d2=12160
+RATE passes allowed by the bar: $ff0000/12160 = 1374.32
+EVENTS [('0x792c', {'0x100e': '0000', '0x10ce': '00000000', '0x10d2': '2f80', '0x57890': '4844', '0x5ff8': '0000', '0x1027': '00'}), ('0x117be', {'0x100e': '055f', '0x10ce': '00ff5000', '0x10d2': '2f80', '0x57890': '4844', '0x5ff8': '0000', '0x1027': '00'})]
+TIMEOUT: $100e at the setup end 0, at the time-up flag 1375: 1375 passes; clock then 0x00ff5000; prediction 1376; difference -1
+CHECK time-out after 1376 +-2 passes (measured 1375): PASS 
+END vbl=16799 $102c=0x000c $57890=18500 $10d2=12160 $10ce=0x00ff5000 $100e=0 $5ff8=0 $1024=0x00 $1226=0x05 $1027=0x01 V_RLEN=0 $23c0=0x110088
+Bus/Address error lines: 3
+== v1_hd_td_t0_to_new done: ALL CHECKS PASS; bus/address error lines 3

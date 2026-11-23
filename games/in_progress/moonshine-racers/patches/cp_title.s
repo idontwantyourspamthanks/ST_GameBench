@@ -19,7 +19,7 @@
 ; note: The menu screens use the game's own text routine $12268 (a0 = x,y,text,0; a5 = screen; d4 = colour code $b8; font $190be), the buffer clear $d8e0, the vertical sync $d206 and the palette registers directly.  The
 ; note: selected row is shown by inverting its 8 pixel rows (palette: black background, white text; inverted: white bar, black text), the headings by clearing bitplane 0 (yellow).  Keys: up/down, Return / Enter / Space, Esc /
 ; note: Backspace / Left; joystick port 1: up, down, fire.  The campaign file is read by `trk_read`: in the HD build with the HAGA-window reader (a port of Populous 2's part A/B, work/trackloader/trkread.s), in the floppy build with the game's own FDC driver ($cac0, FAT12 root directory, MSTRACKS.TRK stored contiguously) and a disk-present probe; both are validated before anything is used:
-; note: magic, version 1, count 1..15, file length, table CRC-32, per entry flags/base/offset/length/name and the block CRC-32; anything else rejects the file with a message (the game stays original).
+; note: magic, version 1 or 2, count 1..15, file length, table CRC-32, per entry race length word (version 1: 0; version 2: 0 or 700..28000) / base / offset / length / name and the block CRC-32; anything else rejects the file with a message (the game stays original).
 
 FL_FAIL equ     CPWORK+$2B0     ; w  floppy reader: unit+1 of the last attempt that found no disk
 V_ACT   equ     CPV             ; b  campaign active: the races use it
@@ -596,8 +596,10 @@ validate:
         lea     CPSTORE.l,a2
         cmpi.l  #'MSTK',(a2)
         bne     .bad
-        cmpi.w  #1,4(a2)
-        bne     .bad
+        move.w  4(a2),d0                ; version 1 or 2
+        subq.w  #1,d0
+        cmpi.w  #1,d0
+        bhi     .bad
         moveq   #0,d2
         move.w  6(a2),d2                ; count 1..15
         beq     .bad
@@ -627,8 +629,15 @@ validate:
         mulu    #40,d4
         addi.l  #16,d4                  ; d4 = offset the next block must have
         lea     16(a2),a3
-.e:     tst.w   26(a3)                  ; flags
+.e:     move.w  26(a3),d0               ; race length: version 1 = reserved, 0; version 2 = 0 (the base level's) or 700..28000
+        beq.s   .rl
+        cmpi.w  #2,4(a2)
         bne     .bad
+        cmpi.w  #700,d0
+        bcs     .bad
+        cmpi.w  #28000,d0
+        bhi     .bad
+.rl:
         cmpi.w  #14,24(a3)              ; base level
         bhi     .bad
         cmp.l   28(a3),d4               ; blocks follow each other

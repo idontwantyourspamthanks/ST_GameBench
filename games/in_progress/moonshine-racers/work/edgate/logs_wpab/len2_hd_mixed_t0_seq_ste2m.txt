@@ -1,0 +1,27 @@
+== len2_hd_mixed_t0_seq_ste2m: hd STE 2 MB build /tmp/msrwpab/hd  campaign work/trackedit/fixtures/mixed.trk (v2) track 0 'LEN2 1000 L3' base 3 word 1000 Lb 19000
+PREDICT: rate_stock 10385  Tb 1609  P 179  rate 0xffff=65535  $57890 1000  time-up detected 257 passes after the setup
+CHECK campaign loaded: PASS 
+loaded: act=0xff loaded=0xff count=4
+CHECK campaign file version seen by the loader's validator: accepted: PASS count=4 expect 4
+CHECK race 0 'LEN2 1000 L3' started: PASS 
+START race 0 (base 3, word 1000): vbl=14646 $102c=0x0003 $57890=1000 $10d2=65535 $10ce=0x004cffb3 $100e=78 $5ff8=0 $1024=0x00 $1226=0x00 $1027=0x00 V_RLEN=1000 $23c0=0x1100b4
+CHECK race 0: $102c = base 3, $57890 = 1000 (own), $10d2 = 65535, V_RLEN = 1000: PASS $102c=0x3 $57890=1000 $10d2=65535 V_RLEN=1000
+RACE 0 ended: BAR reached; clock 0x0096ff69 = 151 of 255 passes; $5ff8=966; vbl=16392 $102c=0x0001 $57890=1000 $10d2=0 $10ce=0x0096ff69 $100e=309 $5ff8=966 $1024=0xff $1226=0x00 $1027=0x00 V_RLEN=1000 $23c0=0x1100b4
+CHECK race 0: the BAR ended it before the time bar ran out: PASS state=BAR reached
+CHECK race 1 'TEST ONE EDIT1 BEND' started: PASS 
+START race 1 (base 0, word 0): vbl=17394 $102c=0x0000 $57890=19472 $10d2=10136 $10ce=0x000c8718 $100e=82 $5ff8=0 $1024=0x00 $1226=0x00 $1027=0x00 V_RLEN=0 $23c0=0x11060e
+CHECK race 1: $102c = base 0, $57890 = 19472 (base level), $10d2 = 10136, V_RLEN = 0: PASS $102c=0x0 $57890=19472 $10d2=10136 V_RLEN=0
+RACE 1 ended: BAR reached; clock 0x00135538 = 125 of 1649 passes; $5ff8=666; vbl=19026 $102c=0x0002 $57890=19472 $10d2=0 $10ce=0x00135538 $100e=294 $5ff8=666 $1024=0xff $1226=0x00 $1027=0x00 V_RLEN=0 $23c0=0x110616
+CHECK race 1: the BAR ended it before the time bar ran out: PASS state=BAR reached
+CHECK race 2 'LEN2 2000 L0' started: PASS 
+START race 2 (base 0, word 2000): vbl=20029 $102c=0x0000 $57890=2000 $10d2=64773 $10ce=0x005305a4 $100e=84 $5ff8=0 $1024=0x00 $1226=0x00 $1027=0x00 V_RLEN=2000 $23c0=0x111ca8
+CHECK race 2: $102c = base 0, $57890 = 2000 (own), $10d2 = 64773, V_RLEN = 2000: PASS $102c=0x0 $57890=2000 $10d2=64773 V_RLEN=2000
+RACE 2 ended: BAR reached; clock 0x00fe0205 = 257 of 258 passes; $5ff8=1956; vbl=22180 $102c=0x0003 $57890=2000 $10d2=0 $10ce=0x00fe0205 $100e=418 $5ff8=1956 $1024=0xff $1226=0x00 $1027=0x00 V_RLEN=2000 $23c0=0x111ca8
+CHECK race 2: the BAR ended it before the time bar ran out: PASS state=BAR reached
+CHECK race 3 'TEST TWO LEVEL 4 BASE' started: PASS 
+START race 3 (base 3, word 0): vbl=23174 $102c=0x0003 $57890=19000 $10d2=10385 $10ce=0x000c339d $100e=78 $5ff8=0 $1024=0x00 $1226=0x00 $1027=0x00 V_RLEN=0 $23c0=0x11259a
+CHECK race 3: $102c = base 3, $57890 = 19000 (base level), $10d2 = 10385, V_RLEN = 0: PASS $102c=0x3 $57890=19000 $10d2=10385 V_RLEN=0
+RACE 3 ended: BAR reached; clock 0x0014c233 = 131 of 1609 passes; $5ff8=766; vbl=25019 $102c=0x0003 $57890=19000 $10d2=0 $10ce=0x0014c233 $100e=306 $5ff8=766 $1024=0xff $1226=0x00 $1027=0x00 V_RLEN=0 $23c0=0x1125ae
+CHECK race 3: the BAR ended it before the time bar ran out: PASS state=BAR reached
+Bus/Address error lines: 3
+== len2_hd_mixed_t0_seq_ste2m done: ALL CHECKS PASS; bus/address error lines 3

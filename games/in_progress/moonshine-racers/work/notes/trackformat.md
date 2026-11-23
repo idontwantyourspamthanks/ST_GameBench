@@ -1,6 +1,6 @@
 # Moonshine Racers: track block, track JSON and campaign file (`MSTRACKS.TRK`) specification
 
-Stage 1 of the track editor (user decisions 2026-11-20: tracks from a file first; editable = curves, hills, road widths L/R, roadside objects; race length not editable; a track set REPLACES the 15 tracks and every custom track names a base level; no minimap work; campaign disk like Nebulus).
+Stage 1 of the track editor (user decisions 2026-11-20: tracks from a file first; editable = curves, hills, road widths L/R, roadside objects; race length not editable in stage 1, own per-track length since format version 2; a track set REPLACES the 15 tracks and every custom track names a base level; no minimap work; campaign disk like Nebulus).
 Tool: `tools/msrtrack.py` (pure Python 3 + PIL). Tests/fixtures: `work/trackedit/`. Evidence of the game side: `work/notes/trackeditor.md` (the viability study; section numbers below refer to it). Everything big-endian (the 68000's order); words are 16 bit, "signed" means two's complement.
 
 ## 1. The three representations
@@ -37,7 +37,7 @@ Stream semantics (from the game's own code, study 1.2 / `$fda2 $fde0 $ff3a $ffe4
 Stock facts used by the tool (verified by `msrtrack.py selftest` against the PP conversion's `FILES\MS2`, md5 `cc3ff52922aed94663c5e03949921688`):
 
 * Level n's track block starts at `MS2 + sector*512`, descriptor (sector, sectors) = table `$28a2` (embedded in the tool). The canonical block (S0..S5 + end word) is 3364..5770 bytes; the descriptor spans 3584..6144 bytes. **The bytes between the end word and the end of the descriptor are NOT free data**: in all 15 levels they hold the first 12..374 bytes of the next asset (the `Ice!`-packed object graphics, `Ice!` header at block offset `end+2`; the real copy starts at the next sector). The game never reads them as track data (the object graphics are loaded at `$5a400` afterwards), so they are padding for the tool. (The "free in block" column of study 1.3 counted this padding as spare room; it is the same spare room, but it is junk, not zeros.)
-* **Race length** (not editable) = word 0 of the minimap header block of the level (`$57890`); table of the 15 values embedded: 19472 19720 19800 19000 19375 18000 18626 20000 19000 20000 20000 22000 18500 22000 23000.
+* **Race length** = word 0 of the minimap header block of the level (`$57890`): the base level's own, table of the 15 values embedded: 19472 19720 19800 19000 19375 18000 18626 20000 19000 20000 20000 22000 18500 22000 23000. A campaign track may carry its OWN length (section 4, file version 2: 700..28000); the game then uses it for `$57890` (progress) and derives the time limit from it (section 4a).
 * every ring stream of all 15 stock tracks sums to exactly **32768** units, the object lists end at 18.6k..22.4k, stock objects are 333..462 per level (3-word gaps 1..351).
 
 ## 3. Track JSON (`format "msr-track/1"`)
@@ -47,7 +47,7 @@ Stock facts used by the tool (verified by `msrtrack.py selftest` against the PP 
   "format": "msr-track/1",
   "name": "EDIT1 BEND HILL",          1..24 printable ASCII (campaign entry name)
   "base_level": 0,                    0..14: scenery/colours/sky/object types/race length come from this level
-  "race_length": 19472,               informational; if present it must equal the base level's (not editable)
+  "race_length": 19472,               optional; absent or equal to the base level's = the base level's (file word 0, a version 1 track); any other value = the track's own length, 700..28000 (file word = that value)
   "curve": [[count, delta], ...],     S0
   "left":  [[count, target], ...],    S1
   "right": [[count, target], ...],    S2
@@ -58,27 +58,33 @@ Stock facts used by the tool (verified by `msrtrack.py selftest` against the PP 
 ```
 Unknown keys are errors. `decode` writes every key; the JSON is lossless: `encode(decode(level))` == the stock block, byte for byte (15/15, `selftest`). The tool writes a hand-editable layout (one segment / object per line).
 
-## 4. Campaign file `MSTRACKS.TRK` (version 1)
+## 4. Campaign file `MSTRACKS.TRK` (version 1, or 2 when a track has its own race length)
 
 ```
 offset size  field
 0      4     magic "MSTK"
-4      2     version = 1
+4      2     version = 1, or 2 when at least one entry has a race length word (writers: `msrtrack.py`, the editor); the released v1.1 game accepts only 1
 6      2     count   = 1..15 (entries, in campaign order: entry 0 = first race)
 8      4     file length (bytes, the whole file)
 12     4     CRC-32 (IEEE 802.3, zlib) of bytes 0..11 followed by the entry table (16 .. 16+40*count-1)
 16     40*count   entry table, entry i at 16 + 40*i:
          +0   24   name  ASCII 0x20..0x7E, NUL padded (1..24 chars; 24 chars have no NUL)
          +24  2    base level 0..14
-         +26  2    flags = 0 (reserved, must be 0)
+         +26  2    race length word: version 1 = reserved, must be 0; version 2 = 0 (the base level's, exactly a version 1 track) or 700..28000 (the track's own race length)
          +28  4    block offset from the start of the file (= 16 + 40*count + sum of the lengths of the earlier blocks)
          +32  4    block length in bytes (even, 2..8192)
          +36  4    CRC-32 of the block
 16+40*count  the blocks, back to back in entry order, each exactly the track block of section 2 (canonical: no padding)
 ```
-Maximum file: 16 + 15*(40 + 8192) = **123,496 bytes** (a stock 15-track campaign is 64,676). A reader checks, in this order: magic, version, count 1..15, file length == actual, table CRC, per entry flags == 0, name, base < 15, offset == running position (blocks are contiguous), length even and within 2..8192, block CRC; the file must end at the last block. Any failure refuses the whole file (`E-CAMP`).
+Maximum file: 16 + 15*(40 + 8192) = **123,496 bytes** (a stock 15-track campaign is 64,676). A reader checks, in this order: magic, version, count 1..15, file length == actual, table CRC, per entry race length word (version 1: 0; version 2: 0 or 700..28000), name, base < 15, offset == running position (blocks are contiguous), length even and within 2..8192, block CRC; the file must end at the last block. Any failure refuses the whole file (`E-CAMP`).
 
 **Why 8192 bytes per block**: the stock working buffer is 6144 bytes (`$58c00-$5a3ff`, the largest descriptor = level 0), the largest canonical stock block is 5770 bytes (level 0: 417 objects x 6 + 131 types x 12 + 421 pairs x 4 + terminators). 8 KB leaves ~2.4 KB (about 400 more objects, or ~600 more segments) on the biggest level and is a power of two (a 15-slot working set = 120 KB at >= 2 MB). The loader copies a block as is to its working buffer and points `$23c0/$1bb0/$1bb4/$27da/$133a/$1342` at it (`$fda2`).
+
+### 4a. Race length per track (version 2) and the time limit [game side: `patches/cp_len.s`, `cp_fetch.s`; work/notes/editor_design.md 17.9]
+
+* **Version rule**: header version 2 when any entry has a word, else 1. A campaign without own lengths (every stock copy, `campaign new --stock` = the 64,676-byte file) is byte for byte a version 1 file and still loads in the released v1.1 game; a v2 file is refused there by its version check (`cmpi.w #1,4(a2)`), by design (v1.1 would mis-time the track). Readers accept both: v1 (word 0), v2 (0 or 700..28000; bit 15 and 28001..65535 refused).
+* **Word 0** = the track's race length is the base level's (`$57890` as loaded from the level's minimap header), exactly as in version 1. **Word L** = the track's own length: `cp_fetch` copies it to `V_RLEN` (`CPV+16`) at every track fetch (0 for a stock race), and the hook `cp_len` at the end of the race setup (`$7926`, after `$edea`) sets, when `V_RLEN` is not 0: `$57890` word 0 = L (the progress compare `$fbc4` follows the built length) and the time bar rate `$10d2 = $ff0000 / P` (at most `$ffff` = 255 passes) with `P = (Tb - 100) * L / Lb + 100` passes, `Tb = $ff0000 / $10d2` = the passes the BASE level allows (1184..1678), `Lb` = the base level's length. I.e. the pace of the scenery's own level plus a start allowance of 100 passes, floor 255 passes; a track as long as its base level gets the level's own time. (The stock rate is proportional to the length, so writing L into `$57890` before `$edea` would give a long road less time.)
+* The JSON key `race_length` carries it: absent or equal to the base level's = word 0; another value = the word. The streams must be at least `max(race length, BAR position) + 1024` units long (E-SUM).
 
 Entry order = campaign order; **a track set replaces the 15 stock tracks** (several entries may share one base level in the stage-2 loader; `patch-ms2` cannot, see section 7).
 
@@ -91,10 +97,10 @@ Entry order = campaign order; **a track set replaces the 15 stock tracks** (seve
 | E-FORM | JSON shape: required keys, integer fields, `objects` entries exactly `{at,type,lateral}`, 5-field `types`, values fit their 16-bit word, no unknown keys, `format` = `msr-track/1` |
 | E-BASE | `base_level` integer 0..14 |
 | E-NAME | name 1..24 printable ASCII |
-| E-RACELEN | `race_length` present and different from the base level's |
+| E-RACELEN | `race_length` different from the base level's and outside 700..28000 (an own length; non-integer values are E-FORM) |
 | E-STREAM | stream not empty; every `count` 1..65535 (0 is the terminator) |
 | E-RANGE *R* | curve `delta` -9..10; width `target` 10..85 (left and right); hill `accel` -6000..4000 - exactly the envelope of all 15 stock tracks (study 2.2); anything else is untested in the game |
-| E-SUM | each of the four ring streams must cover at least **race length + 1024** units (the ring is filled 1024 ahead; stock tracks pad to 32768) |
+| E-SUM | each of the four ring streams must cover at least **max(race length, BAR position) + 1024** units (the ring is filled 1024 ahead; stock tracks pad to 32768) |
 | E-HILL | the 32-bit hill integrator must not overflow (it would wrap the height byte to garbage) |
 | E-OBJ | at least one object; first `at` 1..32767 (the first gap word must be non-zero) |
 | E-GAP | objects strictly increasing in `at`; every gap 1..32767 (gap 0 would end the list early) |
@@ -105,6 +111,7 @@ Entry order = campaign order; **a track set replaces the 15 stock tracks** (seve
 | E-SIZE | block <= 8192 bytes (campaign) / <= the slot's sector budget (`patch-ms2`); no unused bytes after the end word; even |
 | E-TERM | (raw blocks) a stream, the object list or the end word is missing/truncated |
 | E-CAMP | campaign file structure (section 4) |
+| W-FINISH | the BAR's position and the race length differ by more than 1100 (stock: -1043..+486; the time bar and the progress compare follow the race length, the race ends at the BAR) |
 | W-SUM | the four streams cover different lengths (stock: all 32768) |
 | W-CURVE | curve value `c` leaves the stock range -4473..8876 |
 | W-HILL | the height byte sits at the 127 clamp for > 300 race units |
@@ -119,7 +126,7 @@ Not checked (unknown/unproven): the exact win/finish rule (study 1.4), opponent 
 
 ## 7. `patch-ms2` (test aid, no game patch)
 
-`msrtrack.py patch-ms2 CAMP.trk -o MS2.new` copies `FILES\MS2` and writes each entry's block at `sector*512` of the slot of its **base level**, refusing a block larger than that slot's sector run (3584..6144 bytes) and two entries with the same base level; bytes after the block stay as they were. This replays exactly what the game loads when it parses the slot (proof: `trackeditor.md` section 3 for one edited word; this stage's Hatari run for a full edited track). The scenery/sky/colours/object graphics are tied to the slot, so the campaign order cannot change this way: that is the stage-2 loader's job (it redirects `$77da`/`$fda2` to a working copy of the entry). A stock campaign (`campaign new --stock`) patched into MS2 reproduces the original byte for byte (`selftest`).
+`msrtrack.py patch-ms2 CAMP.trk -o MS2.new` (refuses an entry with an own race length unless `--force`: MS2 has no place for it) copies `FILES\MS2` and writes each entry's block at `sector*512` of the slot of its **base level**, refusing a block larger than that slot's sector run (3584..6144 bytes) and two entries with the same base level; bytes after the block stay as they were. This replays exactly what the game loads when it parses the slot (proof: `trackeditor.md` section 3 for one edited word; this stage's Hatari run for a full edited track). The scenery/sky/colours/object graphics are tied to the slot, so the campaign order cannot change this way: that is the stage-2 loader's job (it redirects `$77da`/`$fda2` to a working copy of the entry). A stock campaign (`campaign new --stock`) patched into MS2 reproduces the original byte for byte (`selftest`).
 
 ## 8. Tool reference
 
@@ -134,4 +141,4 @@ msrtrack.py patch-ms2 CAMP.trk -o MS2.new [--check-only]
 msrtrack.py selftest                       15-level round trip + campaign/disk/patch self checks
 global: --ms2 FILES/MS2   (default originals/MOONSHR/FILES/MS2)   per command: --lenient, --force
 ```
-Tests: `python3 work/trackedit/test_msrtrack.py` (18 tests). Fixtures: `work/trackedit/make_fixtures.py` regenerates `edit1.json` (level 0: new S-bend units 100-400, hill 100-300, left road wider 100-250, right narrower 300-500, three moved objects) and the three `broken_*.json`.
+Tests: `python3 work/trackedit/test_msrtrack.py` (29 tests; `RaceLength` = format version 2). Fixtures: `work/trackedit/make_fixtures.py` regenerates `fixtures/len2.trk` (version 2: track 0 = level 0's scenery, own length 2000; track 1 = level 4, own length 6000; track 2 = level 9 untouched, word 0; for `work/edgate/len2.py`) and `edit1.json` (level 0: new S-bend units 100-400, hill 100-300, left road wider 100-250, right narrower 300-500, three moved objects) and the three `broken_*.json`.

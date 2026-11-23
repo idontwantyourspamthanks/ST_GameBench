@@ -77,7 +77,9 @@ class Rules(unittest.TestCase):
         self.check(lambda t: t["curve"].__setitem__(0, [100, 11]), "E-RANGE")
         self.check(lambda t: t["curve"].__setitem__(0, [100, -10]), "E-RANGE")
         self.check(lambda t: t["hill"].__setitem__(0, [100, 4001]), "E-RANGE")
-        self.check(lambda t: t.update(race_length=21000), "E-RACELEN")
+        self.check(lambda t: t.update(race_length=699), "E-RACELEN")
+        self.check(lambda t: t.update(race_length=28001), "E-RACELEN")
+        self.check(lambda t: t.update(race_length="x"), "E-FORM")
         self.check(lambda t: t["types"][0].__setitem__(2, 5), "E-TABLE")
         self.check(lambda t: t["types"].pop(), "E-TABLE")
         self.check(lambda t: t.update(base_level=15), "E-BASE")
@@ -155,7 +157,8 @@ class Campaign(unittest.TestCase):
         ents = M.parse_campaign(f)
         self.assertEqual([e["name"] for e in ents], ["EDIT1", "STOCK 05"])
         self.assertEqual(f[:4], b"MSTK")
-        self.assertEqual(struct.unpack_from(">HHL", f, 4)[:2], (1, 2))
+        self.assertEqual(struct.unpack_from(">HHL", f, 4)[:2], (1, 2))          # no own length: version 1 still
+        self.assertEqual([e["race"] for e in ents], [0, 0])
         self.assertEqual(struct.unpack_from(">L", f, 8)[0], len(f))
         self.assertEqual(ents[0]["offset"], 16 + 40 * 2)
         self.assertEqual(ents[1]["offset"], ents[0]["offset"] + len(ents[0]["block"]))
@@ -164,7 +167,7 @@ class Campaign(unittest.TestCase):
         f = bytearray(self.make())
         bad = {
             "magic": lambda b: b.__setitem__(0, 0x58),
-            "version": lambda b: b.__setitem__(5, 2),
+            "version": lambda b: b.__setitem__(5, 3),
             "count0": lambda b: b.__setitem__(7, 0),
             "count16": lambda b: b.__setitem__(7, 16),
             "table crc": lambda b: b.__setitem__(16 + 3, b[16 + 3] ^ 1),
@@ -223,6 +226,179 @@ class Campaign(unittest.TestCase):
         big["block"] = big["block"] + bytes(20)
         with self.assertRaises(M.TrackError):                      # over the sector budget of slot 7 (4086 + 20 > 4096)
             M.patch_ms2(MS2, [big])
+
+
+class RaceLength(unittest.TestCase):
+    """Format version 2: the entry word +26 = the track's own race length (work/notes/editor_design.md 17.9, 17.10)."""
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp(prefix="msrtrack_len_"))
+        self.addCleanup(shutil.rmtree, self.tmp, True)
+        self.t = F.shorten(0, 2000, "SHORT TWO THOUSAND")
+
+    def codes(self, t, w=False):
+        return {i.code for i in M.validate_track(t) if w or i.level == "ERROR"}
+
+    def test_stock_campaign_still_v1_bit_identical(self):
+        ents = [(f"STOCK {lev:02d}", lev, M.decode_stock(MS2, lev)[1]) for lev in range(M.NLEV)]
+        f = M.build_campaign(ents)
+        self.assertEqual((len(f), f[4:6]), (64676, b"\0\1"))
+        self.assertEqual(f, M.build_campaign([(n, b, k, 0) for n, b, k in ents]))
+        back = M.parse_campaign(f)
+        self.assertTrue(all(e["race"] == 0 and e["version"] == 1 for e in back))
+        self.assertEqual(M.build_campaign([(e["name"], e["base"], e["block"], e["race"]) for e in back]), f)
+        for lev in range(M.NLEV):                                       # the 15 stock tracks: word 0, encode == stock block
+            t, blk = M.decode_stock(MS2, lev)
+            self.assertEqual((M.race_word(t), M.encode_track(t)), (0, blk))
+
+    def test_race_word_rule(self):
+        t, _ = M.decode_stock(MS2, 0)
+        self.assertEqual(M.race_word(t), 0)                             # equal to the base level's: the base level's
+        t.pop("race_length")
+        self.assertEqual(M.race_word(t), 0)                             # absent: the base level's
+        self.assertEqual(M.race_word({**t, "race_length": 2000}), 2000)
+
+    def test_v2_roundtrip(self):
+        ms = [self.t, F.shorten(4, 6000, "SIX"), M.decode_stock(MS2, 9)[0]]
+        ents = [(t["name"], t["base_level"], M.encode_track(t), M.race_word(t)) for t in ms]
+        f = M.build_campaign(ents)
+        self.assertEqual(f[4:6], b"\0\2")
+        back = M.parse_campaign(f)
+        self.assertEqual([e["race"] for e in back], [2000, 6000, 0])
+        self.assertEqual(struct.unpack_from(">H", f, 16 + 26)[0], 2000)
+        self.assertEqual(struct.unpack_from(">H", f, 16 + 40 + 26)[0], 6000)
+        self.assertEqual(struct.unpack_from(">H", f, 16 + 80 + 26)[0], 0)
+        self.assertEqual(M.build_campaign([(e["name"], e["base"], e["block"], e["race"]) for e in back]), f)
+        for e, t in zip(back, ms):                                      # entry_track: the track dict carries the length (the base level's for word 0)
+            t2, iss = M.entry_track(e)
+            self.assertEqual((t2["race_length"], iss), (t["race_length"], []))
+            self.assertEqual(M.race_word(t2), M.race_word(t))
+            self.assertEqual(codes(M.validate_track(t2, block=e["block"])), set())
+        self.assertEqual(M.disk_read_file(M.build_disk(f)), f)
+        self.assertTrue(M.validate_campaign(f, "v2"))
+
+    def test_v2_with_all_words_zero_is_readable(self):
+        blk = M.decode_stock(MS2, 0)[1]
+        f = bytearray(M.build_campaign([("A", 0, blk)]))
+        f[5] = 2
+        f[12:16] = struct.pack(">L", zlib.crc32(bytes(f[:12]) + bytes(f[16:56])))
+        self.assertEqual(M.parse_campaign(bytes(f))[0]["race"], 0)
+
+    def test_word_ranges(self):
+        blk = M.decode_stock(MS2, 0)[1]
+        for w in (1, 699, 28001, 32768, 65535):
+            with self.assertRaises(M.TrackError, msg=w):
+                M.build_campaign([("A", 0, blk, w)])
+        for w in (700, 28000):
+            M.parse_campaign(M.build_campaign([("A", 0, blk, w)]))
+        for w, ver in ((300, 2), (29000, 2), (2000, 1)):                # a hand-patched file: the reader refuses what the game's check refuses
+            f = bytearray(M.build_campaign([("A", 0, blk, 2000)]))
+            f[5] = ver
+            f[16 + 26:16 + 28] = struct.pack(">H", w)
+            f[12:16] = struct.pack(">L", zlib.crc32(bytes(f[:12]) + bytes(f[16:56])))
+            with self.assertRaises(M.TrackError, msg=(w, ver)):
+                M.parse_campaign(bytes(f))
+
+    def test_v11_refuses_v2_by_its_version_check(self):
+        """cp_title `validate` of the released v1.1 game: `cmpi.w #1,4(a2) / bne .bad`: any file with an own length is version 2."""
+        blk = M.decode_stock(MS2, 0)[1]
+        v1 = M.build_campaign([("A", 0, blk), ("B", 0, blk, 0)])
+        v2 = M.build_campaign([("A", 0, blk), ("B", 0, blk, 2000)])
+        self.assertEqual(struct.unpack_from(">H", v1, 4)[0], 1)
+        self.assertEqual(struct.unpack_from(">H", v2, 4)[0], 2)
+
+    def test_validation(self):
+        t = self.t
+        self.assertEqual(self.codes(t, True), set())                    # 2000: BAR at 2000, streams 32768, no warnings
+        self.assertIn("E-RACELEN", self.codes({**t, "race_length": 650}))
+        self.assertIn("E-RACELEN", self.codes({**t, "race_length": 28100}))
+        self.assertNotIn("E-RACELEN", self.codes({**t, "race_length": 28000}))
+        self.assertNotIn("E-RACELEN", self.codes({**t, "race_length": 700}))
+        self.assertIn("W-FINISH", self.codes({**t, "race_length": 3200}, True))     # BAR 1200 before the end of the race
+        self.assertNotIn("W-FINISH", self.codes({**t, "race_length": 3100}, True))  # exactly 1100: allowed
+        self.assertIn("W-FINISH", self.codes({**t, "race_length": 899}, True))
+        s, _ = M.decode_stock(MS2, 0)
+        self.assertNotIn("W-FINISH", self.codes(s, True))
+
+    def test_esum_uses_length_and_bar(self):
+        t = copy.deepcopy(self.t)
+        t["race_length"] = 28000                                         # needs 29024 per ring stream: 32768 is fine
+        self.assertNotIn("E-SUM", self.codes(t))
+        for k in M.STREAMS:                                              # cut a stream to 3000 units: short of 2000 + 1024 ...
+            u = copy.deepcopy(self.t)
+            tot, out = 0, []
+            for c, v in u[k]:
+                take = min(c, 3023 - tot)
+                if take > 0:
+                    out.append([take, v])
+                tot += c
+            u[k] = out
+            self.assertIn("E-SUM", self.codes(u), k)
+            out[-1][0] += 1                                              # ... and exactly 2000 + 1024 passes
+            self.assertNotIn("E-SUM", self.codes(u), k)
+        u = copy.deepcopy(self.t)                                        # the BAR beyond the race length counts: BAR 2000, race 700 -> needs 3024
+        u["race_length"] = 700
+        for k in M.STREAMS:
+            tot, out = 0, []
+            for c, v in u[k]:
+                take = min(c, 3023 - tot)
+                if take > 0:
+                    out.append([take, v])
+                tot += c
+            u[k] = out
+        self.assertIn("E-SUM", self.codes(u))
+
+    def test_json_roundtrip_and_cli(self):
+        T = self.tmp
+        (T / "s.json").write_text(M.dumps_json(self.t))
+        r = cli("validate", T / "s.json", ok=True)
+        cli("campaign", "new", T / "c.trk", T / "s.json", ok=True)
+        f = (T / "c.trk").read_bytes()
+        self.assertEqual((f[4:6], M.parse_campaign(f)[0]["race"]), (b"\0\2", 2000))
+        r = cli("campaign", "list", T / "c.trk", ok=True)
+        self.assertIn("v2", r.stdout)
+        self.assertIn("2000*", r.stdout)
+        cli("campaign", "extract", T / "c.trk", 0, "-o", T / "x.json", ok=True)
+        self.assertEqual(json.loads((T / "x.json").read_text())["race_length"], 2000)
+        cli("campaign", "add", T / "c.trk", T / "x.json", ok=True)              # re-adding the extracted JSON keeps the length
+        self.assertEqual([e["race"] for e in M.parse_campaign((T / "c.trk").read_bytes())], [2000, 2000])
+        cli("campaign", "remove", T / "c.trk", 0, ok=True)
+        for lev in (1, 2, 3, 4):
+            (T / f"b{lev}.json").write_text(M.dumps_json(M.decode_stock(MS2, lev)[0]))
+        (T / "b.json").write_text((T / "b3.json").read_text())
+        cli("campaign", "new", T / "s5.trk", *(T / f"b{lev}.json" for lev in (1, 2, 3, 4)), ok=True)
+        cli("campaign", "add", T / "s5.trk", T / "s.json", "--at", 3, ok=True)
+        self.assertEqual([e["race"] for e in M.parse_campaign((T / "s5.trk").read_bytes())], [0, 0, 0, 2000, 0])
+        # a track with a base-level length writes version 1 again
+        cli("campaign", "new", T / "b.trk", T / "b.json", ok=True)
+        self.assertEqual((T / "b.trk").read_bytes()[4:6], b"\0\1")
+        # patch-ms2 has no place for an own length
+        r = cli("patch-ms2", T / "s5.trk", "-o", T / "m.new", ok=False)
+        self.assertIn("own race length", r.stdout)
+        self.assertFalse((T / "m.new").exists())
+        cli("patch-ms2", T / "s5.trk", "-o", T / "m.new", "--force", ok=True)
+        cli("render", T / "s.json", "-o", T / "r.png", ok=True)
+        cli("render", T / "s5.trk", "--entry", 3, "-o", T / "r3.png", ok=True)
+        cli("disk", T / "s5.trk", "-o", T / "s5.st", ok=True)
+        cli("validate", T / "s5.st", ok=True)
+
+    def test_mixed_campaign_fixture(self):
+        f = (HERE / "fixtures/mixed.trk").read_bytes()
+        self.assertEqual(f, F.mixed_campaign())
+        ents = M.parse_campaign(f)
+        self.assertEqual(f[4:6], b"\0\2")
+        self.assertEqual([(e["base"], e["race"]) for e in ents], [(3, 1000), (0, 0), (0, 2000), (3, 0)])
+        self.assertTrue(M.validate_campaign(f, "mixed"))
+        # drop the own lengths again: byte for byte a version 1 file of the same blocks
+        v1 = M.build_campaign([(e["name"], e["base"], e["block"]) for e in ents])
+        self.assertEqual(v1[4:6], b"\0\1")
+        self.assertEqual([e["block"] for e in M.parse_campaign(v1)], [e["block"] for e in ents])
+
+    def test_fixture(self):
+        fx = HERE / "fixtures/len2.trk"
+        self.assertEqual(fx.read_bytes(), F.len2_campaign())
+        ents = M.parse_campaign(fx.read_bytes())
+        self.assertEqual([(e["base"], e["race"]) for e in ents], [(0, 2000), (3, 1000), (4, 6000), (9, 0), (0, 6000)])
+        self.assertTrue(M.validate_campaign(fx.read_bytes(), "len2"))
 
 
 class Cli(unittest.TestCase):

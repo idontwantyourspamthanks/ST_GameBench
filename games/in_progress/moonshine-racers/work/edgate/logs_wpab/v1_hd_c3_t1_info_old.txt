@@ -1,0 +1,14 @@
+== v1_hd_c3_t1_info_old: hd STE 2 MB build /tmp/msrwpab/hd_old  campaign work/camphd/camp/c3.trk (v1) track 1 'TEST TWO LEVEL 4 BASE' base 3 word 0 Lb 19000
+PREDICT: rate_stock 10385  Tb 1609  P 1609  rate 0x2891=10385  $57890 19000  time-up detected 1611 passes after the setup
+CHECK campaign loaded: PASS 
+loaded: act=0xff loaded=0xff count=3
+CHECK campaign file version seen by the loader's validator: accepted: PASS count=3 expect 3
+list selection 1 (expect 1)
+CHECK race started: PASS 
+START vbl=15171 $102c=0x0003 $57890=19000 $10d2=10385 $10ce=0x000c0b0c $100e=76 $5ff8=0 $1024=0x00 $1226=0x00 $1027=0x00 V_RLEN=0 $23c0=0x111756
+CHECK $102c = base level 3: PASS $102c=0x3
+CHECK $57890 = 19000 (the base level's): PASS $57890=19000
+CHECK time bar rate $10d2 = 10385 (prediction): PASS $10d2=10385
+RATE passes allowed by the bar: $ff0000/10385 = 1609.21
+Bus/Address error lines: 3
+== v1_hd_c3_t1_info_old done: ALL CHECKS PASS; bus/address error lines 3

@@ -14,6 +14,7 @@ Format spec: work/notes/trackformat.md.  Source of truth for the stock tracks: `
   selftest                             the round-trip / format self checks (all 15 stock levels)
 
 SRC = level number 0..14 (stock, read from MS2), a track .json, or FILE.trk with --entry N.
+A track may carry its own race length (JSON `race_length` other than its base level's, 700..28000): the campaign file is then version 2 (entry word +26), else version 1.
 """
 from __future__ import annotations
 
@@ -35,7 +36,7 @@ NLEV = 15
 
 # ---------------------------------------------------------------- stock facts (verified against the game's MS2, `selftest`)
 # per level: (track block sector, track sectors, minimap-header sector, race length, #object types, CRC32 of the 12-byte type table)
-# race length = word 0 of the minimap header block ($57890 in RAM); not editable.  The type table CRC makes `validate` work
+# race length = word 0 of the minimap header block ($57890 in RAM): the base level's own; a track may carry its own (campaign file v2).  The type table CRC makes `validate` work
 # without the game files: a custom track must carry its base level's type table unchanged.
 LEVELS = [
     (163, 12, 155, 19472, 131, 0x76298587),
@@ -59,6 +60,8 @@ LEV_SECTOR, LEV_NSECT, LEV_MM, LEV_LEN, LEV_NTYPES, LEV_TCRC = range(6)
 RING = 32768            # every stock ring stream sums to exactly this
 LOOKAHEAD = 1024        # ring length: the game keeps the next 1024 units filled
 BLOCK_MAX = 8192        # campaign working-copy size per block (spec section 4)
+RACELEN_MIN, RACELEN_MAX = 700, 28000      # a track's OWN race length (campaign file v2 entry word +26); 0 = the base level's
+FINISH_SLACK = 1100     # W-FINISH: |BAR position - race length| beyond this (stock -1043..+486)
 MAX_ENTRIES = 15
 NAME_LEN = 24
 BAR_SPRITE = 0x21       # sprite index of the finish bar (BAR): the race ends when the car reaches the one object of this sprite
@@ -74,6 +77,24 @@ VIEW = 888              # furthest distance the camera sees
 STREAMS = ("curve", "left", "right", "hill")
 STREAM_LIMITS = {"curve": CURVE_DELTA, "left": WIDTH, "right": WIDTH, "hill": HILL_ACCEL}
 STREAM_VALNAME = {"curve": "delta", "left": "half-width target", "right": "half-width target", "hill": "accel"}
+
+
+def race_word(t: dict) -> int:
+    """The campaign-file race-length word of a track dict: 0 = the base level's (absent, or equal to it), else the track's own length."""
+    rl = t.get("race_length")
+    base = t.get("base_level")
+    if rl is None or not isinstance(base, int) or not 0 <= base < NLEV or rl == LEVELS[base][LEV_LEN]:
+        return 0
+    return rl
+
+
+def bar_positions(t: dict) -> list[int]:
+    """`at` of every finish-bar object (type whose sprite is $21); [] when the types / objects are malformed."""
+    try:
+        bar_types = {n + 1 for n, e in enumerate(t["types"]) if e[2] == BAR_SPRITE}
+        return [o["at"] for o in t["objects"] if o["type"] in bar_types and isinstance(o["at"], int)]
+    except (KeyError, IndexError, TypeError):
+        return []
 
 
 class TrackError(Exception):
@@ -299,8 +320,17 @@ def validate_track(t: dict, lenient=False, budget: int | None = None, block: byt
     if any(i.level == "ERROR" and i.code in ("E-FORM",) for i in I):
         return I
     rl = LEVELS[base][LEV_LEN] if base is not None else None
-    if "race_length" in t and base is not None and t["race_length"] != rl:
-        E("E-RACELEN", f"race_length {t['race_length']} differs from base level {base} ({rl}); the race length belongs to the base level and is not editable")
+    if "race_length" in t and base is not None:
+        own = t["race_length"]
+        if not _int(own):
+            E("E-FORM", f"race_length must be an integer, got {own!r}")
+            rl = None
+        elif own != rl:
+            if not RACELEN_MIN <= own <= RACELEN_MAX:
+                E("E-RACELEN", f"race_length {own} outside {RACELEN_MIN}..{RACELEN_MAX} (an own length; leave it out or use {rl} for the base level's)")
+            rl = own
+    barpos = bar_positions(t)
+    need = max([rl] + barpos) + LOOKAHEAD if rl is not None else None
 
     # --- the four ring streams
     sums = {}
@@ -324,9 +354,9 @@ def validate_track(t: dict, lenient=False, budget: int | None = None, block: byt
         sums[name_] = tot
         if not t[name_]:
             E("E-STREAM", f"{name_} stream is empty")
-        elif ok and rl is not None and tot < rl + LOOKAHEAD:
-            E("E-SUM", f"{name_} stream covers {tot} units, needs at least {rl + LOOKAHEAD} "
-                       f"(race length {rl} of base level {base} + {LOOKAHEAD} look-ahead); stock tracks cover {RING}")
+        elif ok and need is not None and tot < need:
+            E("E-SUM", f"{name_} stream covers {tot} units, needs at least {need} "
+                       f"(max of race length {rl} and BAR position {max(barpos, default=0)}, + {LOOKAHEAD} look-ahead); stock tracks cover {RING}")
     if len(set(sums.values())) > 1 and not any(i.code == "E-SUM" for i in I):
         W("W-SUM", "ring streams cover different lengths: " + ", ".join(f"{k} {v}" for k, v in sums.items()) + f" (stock: all {RING})")
     if rl is not None and t["curve"] and all(isinstance(p, list) and len(p) == 2 and _int(p[0]) and _int(p[1]) and p[0] > 0 for p in t["curve"]):
@@ -412,6 +442,9 @@ def validate_track(t: dict, lenient=False, budget: int | None = None, block: byt
             E("E-BAR", f"{len(bars)} finish-bar objects (type {'/'.join(map(str, sorted(bar_types))) or '?'} of base level {base}, sprite ${BAR_SPRITE:02x}); a track needs exactly one: "
                        f"{'it can only end by time-out' if not bars else 'the first one reached ends the race, the others are scenery that looks like a finish'}"
                        + (f" (objects {', '.join(f'[{i}] at {a}' for i, a in bars)})" if bars else ""))
+        elif rl is not None and abs(bars[0][1] - rl) > FINISH_SLACK:
+            W("W-FINISH", f"the BAR is at unit {bars[0][1]} but the race length is {rl} (difference {bars[0][1] - rl:+d}; stock tracks stay within -1043..+486, "
+                          f"the limit is +-{FINISH_SLACK}): the time bar and the progress compare follow the race length, not the BAR")
 
     # --- size
     if not any(i.level == "ERROR" for i in I):
@@ -437,38 +470,45 @@ def report(issues, label) -> bool:
 
 # ---------------------------------------------------------------- campaign file
 MAGIC = b"MSTK"
-VERSION = 1
+VERSIONS = (1, 2)       # 1: entry word +26 must be 0 (the released v1.1 game reads only this); 2: +26 = the track's own race length, 0 = the base level's
 HDR = 16
 ENT = 40
 
 
-def build_campaign(entries: list[tuple[str, int, bytes]]) -> bytes:
-    """entries = (name, base_level, block bytes) in campaign order."""
+def build_campaign(entries: list[tuple]) -> bytes:
+    """entries = (name, base_level, block bytes[, race length word]) in campaign order.  The word is 0 = the base level's (default) or
+    RACELEN_MIN..RACELEN_MAX.  Version 2 only when some entry has a word (a campaign without own lengths stays loadable by the v1.1 game)."""
     if not 1 <= len(entries) <= MAX_ENTRIES:
         raise TrackError(f"E-CAMP: a campaign holds 1..{MAX_ENTRIES} tracks, got {len(entries)}")
     off = HDR + ENT * len(entries)
     tab = bytearray()
     body = bytearray()
-    for name, base, blk in entries:
+    version = 1
+    for name, base, blk, *rw in entries:
+        rw = rw[0] if rw else 0
+        if rw and not RACELEN_MIN <= rw <= RACELEN_MAX:
+            raise TrackError(f"E-RACELEN: race length {rw} of '{name}' outside {RACELEN_MIN}..{RACELEN_MAX} (0 = the base level's)")
+        version = 2 if rw else version
         if len(blk) % 2 or not len(blk) or len(blk) > BLOCK_MAX:
             raise TrackError(f"E-SIZE: block of '{name}' is {len(blk)} bytes (must be even, 2..{BLOCK_MAX})")
-        tab += struct.pack(">24sHHLLL", name.encode("ascii").ljust(NAME_LEN, b"\0"), base, 0, off + len(body), len(blk), zlib.crc32(blk))
+        tab += struct.pack(">24sHHLLL", name.encode("ascii").ljust(NAME_LEN, b"\0"), base, rw, off + len(body), len(blk), zlib.crc32(blk))
         body += blk
     total = off + len(body)
-    head = struct.pack(">4sHHL", MAGIC, VERSION, len(entries), total)
+    head = struct.pack(">4sHHL", MAGIC, version, len(entries), total)
     crc = zlib.crc32(head + bytes(tab))
     return head + struct.pack(">L", crc) + bytes(tab) + bytes(body)
 
 
 def parse_campaign(f: bytes) -> list[dict]:
-    """Strict: raises TrackError('E-CAMP: ...') with a precise reason. Returns entries {name, base, block, crc, offset}."""
+    """Strict: raises TrackError('E-CAMP: ...') with a precise reason.  Returns entries {name, base, block, crc, offset, race, version};
+    race = the entry's own race length word (0 = the base level's; always 0 in a version 1 file)."""
     if len(f) < HDR:
         raise TrackError(f"E-CAMP: file is {len(f)} bytes, shorter than the {HDR}-byte header")
     magic, ver, cnt, total, crc = struct.unpack_from(">4sHHLL", f, 0)
     if magic != MAGIC:
         raise TrackError(f"E-CAMP: bad magic {magic!r}, expected {MAGIC!r} (not a Moonshine Racers campaign file)")
-    if ver != VERSION:
-        raise TrackError(f"E-CAMP: version {ver}, this tool reads version {VERSION}")
+    if ver not in VERSIONS:
+        raise TrackError(f"E-CAMP: version {ver}, this tool reads versions {', '.join(map(str, VERSIONS))}")
     if not 1 <= cnt <= MAX_ENTRIES:
         raise TrackError(f"E-CAMP: entry count {cnt} out of 1..{MAX_ENTRIES}")
     if total != len(f):
@@ -479,9 +519,11 @@ def parse_campaign(f: bytes) -> list[dict]:
     out = []
     end = tend
     for i in range(cnt):
-        nm, base, flags, off, ln, bcrc = struct.unpack_from(">24sHHLLL", f, HDR + ENT * i)
-        if flags:
-            raise TrackError(f"E-CAMP: entry {i}: reserved flags {flags:#x} must be 0")
+        nm, base, race, off, ln, bcrc = struct.unpack_from(">24sHHLLL", f, HDR + ENT * i)
+        if ver == 1 and race:
+            raise TrackError(f"E-CAMP: entry {i}: reserved flags {race:#x} must be 0 in a version 1 file")
+        if ver == 2 and race and not RACELEN_MIN <= race <= RACELEN_MAX:
+            raise TrackError(f"E-CAMP: entry {i}: race length {race} outside {RACELEN_MIN}..{RACELEN_MAX} (0 = the base level's)")
         name = nm.rstrip(b"\0")
         if b"\0" in name or any(not 0x20 <= c < 0x7F for c in name) or not name:
             raise TrackError(f"E-CAMP: entry {i}: name is empty or not printable ASCII")
@@ -496,7 +538,7 @@ def parse_campaign(f: bytes) -> list[dict]:
         blk = f[off:off + ln]
         if zlib.crc32(blk) != bcrc:
             raise TrackError(f"E-CAMP: entry {i} '{name.decode()}': block CRC mismatch (stored {bcrc:08x}, computed {zlib.crc32(blk):08x})")
-        out.append({"name": name.decode(), "base": base, "block": blk, "crc": bcrc, "offset": off})
+        out.append({"name": name.decode(), "base": base, "block": blk, "crc": bcrc, "offset": off, "race": race, "version": ver})
         end = off + ln
     if end != len(f):
         raise TrackError(f"E-CAMP: {len(f) - end} unused bytes after the last block")
@@ -506,7 +548,7 @@ def parse_campaign(f: bytes) -> list[dict]:
 def entry_track(e: dict) -> tuple[dict, list[Issue]]:
     """Block -> track dict (+ issues, incl. 'block is not canonical')."""
     t, n = parse_block(e["block"])
-    t = {"format": FORMAT, "name": e["name"], "base_level": e["base"], "race_length": LEVELS[e["base"]][LEV_LEN],
+    t = {"format": FORMAT, "name": e["name"], "base_level": e["base"], "race_length": e.get("race") or LEVELS[e["base"]][LEV_LEN],
          **{k: t[k] for k in STREAMS + ("objects", "types")}}
     iss = []
     if n != len(e["block"]):
@@ -676,7 +718,7 @@ def patch_ms2(ms2: bytes, ents: list[dict]) -> tuple[bytes, list[str]]:
 def render_png(t: dict, out: str):
     from PIL import Image, ImageDraw
     base = t["base_level"]
-    rl = LEVELS[base][LEV_LEN]
+    rl = t["race_length"] if _int(t.get("race_length")) and t["race_length"] > 0 else LEVELS[base][LEV_LEN]
     N = rl + LOOKAHEAD
     curve = expand_curve(t["curve"], N)
     left = expand_width(t["left"], N)
@@ -872,7 +914,7 @@ def _entry_from_json(path, a):
     iss = validate_track(t, a.lenient)
     if not report(iss, path) and not a.force:
         raise SystemExit(1)
-    return (t["name"], t["base_level"], encode_track(t))
+    return (t["name"], t["base_level"], encode_track(t), race_word(t))
 
 
 def cmd_campaign(a):
@@ -885,13 +927,13 @@ def cmd_campaign(a):
         Path(a.out).write_bytes(build_campaign(ents))
         print(f"{a.out}: {len(ents)} tracks, {Path(a.out).stat().st_size} bytes")
     elif a.sub == "add":
-        ents = [(e["name"], e["base"], e["block"]) for e in _camp_read(a.camp)]
+        ents = [(e["name"], e["base"], e["block"], e["race"]) for e in _camp_read(a.camp)]
         new = _entry_from_json(a.track, a)
         ents.insert(len(ents) if a.at is None else a.at, new)
         Path(a.camp).write_bytes(build_campaign(ents))
         print(f"{a.camp}: {len(ents)} tracks (added '{new[0]}' at position {ents.index(new)})")
     elif a.sub == "remove":
-        ents = [(e["name"], e["base"], e["block"]) for e in _camp_read(a.camp)]
+        ents = [(e["name"], e["base"], e["block"], e["race"]) for e in _camp_read(a.camp)]
         if not 0 <= a.index < len(ents):
             raise SystemExit(f"index {a.index} out of 0..{len(ents) - 1}")
         gone = ents.pop(a.index)
@@ -900,7 +942,7 @@ def cmd_campaign(a):
     elif a.sub == "list":
         f = Path(a.camp).read_bytes()
         ents = parse_campaign(f)
-        print(f"{a.camp}: MSTK v{VERSION}, {len(ents)} tracks, {len(f)} bytes")
+        print(f"{a.camp}: MSTK v{ents[0]['version']}, {len(ents)} tracks, {len(f)} bytes  (race: * = the track's own length, else the base level's)")
         print(f"{'#':>2} {'name':<24} {'base':>4} {'race':>6} {'block':>6} {'crc32':>8}  curve left right hill objs  status")
         for i, e in enumerate(ents):
             try:
@@ -908,7 +950,7 @@ def cmd_campaign(a):
                 iss += validate_track(t, a.lenient, block=e["block"])
                 err = sum(x.level == "ERROR" for x in iss)
                 st = "OK" if not err else f"{err} ERRORS"
-                print(f"{i:>2} {e['name']:<24} {e['base']:>4} {LEVELS[e['base']][LEV_LEN]:>6} {len(e['block']):>6} {e['crc']:08x}  "
+                print(f"{i:>2} {e['name']:<24} {e['base']:>4} {(str(e['race']) + '*') if e['race'] else LEVELS[e['base']][LEV_LEN]:>6} {len(e['block']):>6} {e['crc']:08x}  "
                       f"{len(t['curve']):>5} {len(t['left']):>4} {len(t['right']):>5} {len(t['hill']):>4} {len(t['objects']):>4}  {st}")
             except TrackError as ex:
                 print(f"{i:>2} {e['name']:<24} {e['base']:>4} {'':>6} {len(e['block']):>6} {e['crc']:08x}  unreadable: {ex}")
@@ -940,6 +982,9 @@ def cmd_patch(a):
     ms2 = read_ms2(a.ms2)
     ents = parse_campaign(Path(a.camp).read_bytes())
     for i, e in enumerate(ents):                                    # refuse broken tracks
+        if e["race"] and not a.force:
+            print(f"{a.camp}[{i}] '{e['name']}': ERROR E-PATCH: own race length {e['race']}: MS2 has no place for it (the time bar and progress would follow the base level's); --force patches the block anyway")
+            return 1
         t, iss = entry_track(e)
         iss += validate_track(t, a.lenient, budget=LEVELS[e["base"]][LEV_NSECT] * 512, block=e["block"])
         if not report(iss, f"{a.camp}[{i}] '{e['name']}'") and not a.force:
@@ -975,13 +1020,39 @@ def selftest(a):
     ents = [(f"STOCK {lev:02d}", lev, decode_stock(ms2, lev)[1]) for lev in range(NLEV)]
     camp = build_campaign(ents)
     back = parse_campaign(camp)
-    ok = [(e["name"], e["base"], e["block"]) for e in back] == ents
+    ok = [(e["name"], e["base"], e["block"]) for e in back] == ents and camp[4:6] == b"\0\1" and len(camp) == 64676 and all(e["race"] == 0 for e in back)
     st = build_disk(camp)
     ok &= disk_read_file(st) == camp and from_msa(to_msa(st)) == st
     new, _ = patch_ms2(ms2, back)
     ok &= new == ms2
     bad += not ok
     print(f"campaign: {len(ents)} tracks {len(camp)} B -> parse identical, disk {len(st)} B readback identical, patch-ms2 of the stock campaign == original MS2: {'OK' if ok else 'FAIL'}")
+    # version 2: an own race length per track; 0 = the base level's; v1 written again when no track has one
+    mix = [(e[0], e[1], e[2], w) for e, w in zip(ents[:4], (0, 2000, 0, 28000))]
+    c2 = build_campaign(mix)
+    b2 = parse_campaign(c2)
+    ok = c2[4:6] == b"\0\2" and [e["race"] for e in b2] == [0, 2000, 0, 28000] and [(e["name"], e["base"], e["block"]) for e in b2] == ents[:4]
+    ok &= build_campaign([(e["name"], e["base"], e["block"], e["race"]) for e in b2]) == c2
+    ok &= build_campaign([(e["name"], e["base"], e["block"], 0) for e in b2]) == build_campaign(ents[:4]) and build_campaign(ents[:4])[4:6] == b"\0\1"
+    ok &= disk_read_file(build_disk(c2)) == c2
+    for badw in (1, 699, 28001, 40000):
+        try:
+            build_campaign([(ents[0][0], 0, ents[0][2], badw)])
+            ok = False
+        except TrackError:
+            pass
+    g = bytearray(c2)                                                # the version 1 reader rule: a word in a v1 file is refused
+    g[4:6] = b"\0\1"
+    g[12:16] = struct.pack(">L", zlib.crc32(bytes(g[:12]) + bytes(g[HDR:HDR + ENT * 4])))
+    try:
+        parse_campaign(bytes(g))
+        ok = False
+    except TrackError:
+        pass
+    t0, _ = decode_stock(ms2, 0)
+    ok &= race_word(t0) == 0 and race_word({**t0, "race_length": 3000}) == 3000 and race_word({**t0, "race_length": LEVELS[0][LEV_LEN]}) == 0
+    bad += not ok
+    print(f"campaign v2: own race lengths [0, 2000, 0, 28000] -> version 2, parse / rebuild / disk identical, no own length -> version 1 again, range 700..28000, v1 file with a word refused: {'OK' if ok else 'FAIL'}")
     print("SELFTEST " + ("PASS" if not bad else f"FAIL ({bad})"))
     return 1 if bad else 0
 

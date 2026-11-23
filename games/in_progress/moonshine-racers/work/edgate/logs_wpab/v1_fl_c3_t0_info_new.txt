@@ -1,0 +1,15 @@
+== v1_fl_c3_t0_info_new: fl STE 2 MB build /tmp/msrwpab/fl  campaign work/camphd/camp/c3.trk (v1) track 0 'TEST ONE EDIT1 BEND' base 0 word 0 Lb 19472
+PREDICT: rate_stock 10136  Tb 1648  P 1648  rate 0x2798=10136  $57890 19472  time-up detected 1650 passes after the setup
+CHECK campaign loaded: PASS 
+loaded: act=0xff loaded=0xff count=3
+CHECK campaign file version seen by the loader's validator: accepted: PASS count=3 expect 3
+list selection 0 (expect 0)
+[v1_fl_c3_t0_info_new] game's 'Insert Disk 2' prompt at vbl 6004: disk 2 into drive A
+CHECK race started: PASS 
+START vbl=7021 $102c=0x0000 $57890=19472 $10d2=10136 $10ce=0x000caeb0 $100e=82 $5ff8=0 $1024=0x00 $1226=0x00 $1027=0x00 V_RLEN=0 $23c0=0x1100ac
+CHECK $102c = base level 0: PASS $102c=0x0
+CHECK $57890 = 19472 (the base level's): PASS $57890=19472
+CHECK time bar rate $10d2 = 10136 (prediction): PASS $10d2=10136
+RATE passes allowed by the bar: $ff0000/10136 = 1648.75
+Bus/Address error lines: 2
+== v1_fl_c3_t0_info_new done: ALL CHECKS PASS; bus/address error lines 2

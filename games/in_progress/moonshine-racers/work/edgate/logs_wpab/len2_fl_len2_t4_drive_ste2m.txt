@@ -1,0 +1,18 @@
+== len2_fl_len2_t4_drive_ste2m: fl STE 2 MB build /tmp/msrwpab/fl  campaign work/trackedit/fixtures/len2.trk (v2) track 4 'LEN2 6000 L0' base 0 word 6000 Lb 19472
+PREDICT: rate_stock 10136  Tb 1648  P 576  rate 0x7155=29013  $57890 6000  time-up detected 578 passes after the setup
+CHECK campaign loaded: PASS 
+loaded: act=0xff loaded=0xff count=5
+CHECK campaign file version seen by the loader's validator: accepted: PASS count=5 expect 5
+list selection 4 (expect 4)
+[len2_fl_len2_t4_drive_ste2m] game's 'Insert Disk 2' prompt at vbl 6115: disk 2 into drive A
+CHECK race started: PASS 
+START vbl=7133 $102c=0x0000 $57890=6000 $10d2=29013 $10ce=0x0026128e $100e=87 $5ff8=0 $1024=0x00 $1226=0x00 $1027=0x00 V_RLEN=6000 $23c0=0x112450
+CHECK $102c = base level 0: PASS $102c=0x0
+CHECK $57890 = 6000 (the track's own length): PASS $57890=6000
+CHECK time bar rate $10d2 = 29013 (prediction): PASS $10d2=29013
+RATE passes allowed by the bar: $ff0000/29013 = 576.01
+DRIVE ended: timed out; vbl=10163 $102c=0x0000 $57890=19472 $10d2=29013 $10ce=0x00ffe1ea $100e=635 $5ff8=4792 $1024=0xff $1226=0x05 $1027=0x01 V_RLEN=6000 $23c0=0x112450
+TIMEOUT: the time-up flag was set after 577 passes with $5ff8=4688 of the BAR near 6000; clock 0x00ffe1ea
+CHECK the BAR ended the race before the time bar ran out: FAIL state=timed out
+Bus/Address error lines: 2
+== len2_fl_len2_t4_drive_ste2m done: FAILED: the BAR ended the race before the time bar ran out; bus/address error lines 2

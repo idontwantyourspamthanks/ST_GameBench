@@ -1,0 +1,19 @@
+== len2_fl_len2_t1_to_ste2m: fl STE 2 MB build /tmp/msrwpab/fl  campaign work/trackedit/fixtures/len2.trk (v2) track 1 'LEN2 1000 L3' base 3 word 1000 Lb 19000
+PREDICT: rate_stock 10385  Tb 1609  P 179  rate 0xffff=65535  $57890 1000  time-up detected 257 passes after the setup
+CHECK campaign loaded: PASS 
+loaded: act=0xff loaded=0xff count=5
+CHECK campaign file version seen by the loader's validator: accepted: PASS count=5 expect 5
+list selection 1 (expect 1)
+[len2_fl_len2_t1_to_ste2m] game's 'Insert Disk 2' prompt at vbl 6040: disk 2 into drive A
+CHECK race started: PASS 
+START vbl=7058 $102c=0x0003 $57890=1000 $10d2=65535 $10ce=0x0053ffac $100e=85 $5ff8=0 $1024=0x00 $1226=0x00 $1027=0x00 V_RLEN=1000 $23c0=0x1109be
+CHECK $102c = base level 3: PASS $102c=0x3
+CHECK $57890 = 1000 (the track's own length): PASS $57890=1000
+CHECK time bar rate $10d2 = 65535 (prediction): PASS $10d2=65535
+RATE passes allowed by the bar: $ff0000/65535 = 255.00
+EVENTS [('0x792c', {'0x100e': '0000', '0x10ce': '00000000', '0x10d2': 'ffff', '0x57890': '03e8', '0x5ff8': '0000', '0x1027': '00'}), ('0x117be', {'0x100e': '0100', '0x10ce': '0100feff', '0x10d2': 'ffff', '0x57890': '03e8', '0x5ff8': '0000', '0x1027': '00'})]
+TIMEOUT: $100e at the setup end 0, at the time-up flag 256: 256 passes; clock then 0x0100feff; prediction 257; difference -1
+CHECK time-out after 257 +-2 passes (measured 256): PASS 
+END vbl=8555 $102c=0x0003 $57890=19000 $10d2=65535 $10ce=0x0100feff $100e=314 $5ff8=0 $1024=0xff $1226=0x05 $1027=0x01 V_RLEN=1000 $23c0=0x1109be
+Bus/Address error lines: 2
+== len2_fl_len2_t1_to_ste2m done: ALL CHECKS PASS; bus/address error lines 2
