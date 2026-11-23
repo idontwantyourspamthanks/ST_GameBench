@@ -17,6 +17,9 @@ want qmste  && $E python3 $G/ed2.py --kind stock --quick --machine megaste --tag
 want qst    && $E python3 $G/ed2.py --kind stock --quick --machine st --tag q_stock_st2m
 want tdmste && $E python3 $G/td3.py --quick --nonormal --machine megaste --tag td3_mste2m
 want tdst   && $E python3 $G/td3.py --quick --nonormal --machine st --tag td3_st2m
+want tdstr  && $E python3 $G/td3.py --straight --nonormal --tag td3_straight_ste2m
+want tdstrm && $E python3 $G/td3.py --straight --nonormal --machine megaste --tag td3_straight_mste2m
+want tdstrs && $E python3 $G/td3.py --straight --nonormal --machine st --tag td3_straight_st2m
 want w2m    && $E python3 $G/welcome.py --tag w2m --full
 want w1m    && $E python3 $G/welcome.py --tag w1m --mem 1024
 want abs    && $E python3 $G/abs1m.py --machine ste

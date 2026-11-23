@@ -385,3 +385,209 @@ Deviations from 15 (the code is right, 15 is the plan):
 * **Choices from the fix pass**: `P` with the object list focused starts the test drive at the selected object's unit; `S` splits in half and the cursor stays on the first half; a BAR moved inside the race shrinks the extent (`vEnd`), so a segment beyond it can no longer be selected; FIRE + DOWN enters, FIRE + UP leaves the object list (no toggle).
 * **Speed** (STE, `speed.py`, Hatari CycleCounter at 8.02 MHz, 313-segment track): one segment 21 ms (1 frame), next grid row 31 ms, one row 41 ms, a row that scrolls the grid (120 tiles) 129 ms, a bend key (apply, history, 313 tile words, redraw) 60 ms, one step of a live list preview 85 ms.
 * **1 MB / floppy**: see 15.9 (HD: the welcome line, one site; floppy: unchanged title).
+
+## 17. BUILD WHAT YOU WANT: the road is as long as what you build; NEW / ADD segments; a hill stays one tile; campaign file version 2 (MSRBuildModel, 2026-11-23; DESIGN, written BEFORE the code; nothing here is built or run)
+
+**Why (user feedback on preview 2).** (a) a plain straight is ONE segment of 32768 units with the BAR at 19958, and `H` + RISE BIG turned it into two segments of 16384; (b) the only way to get a new segment is a copy; (c) 'length should be set by what you build rather than being determined before'; (d) the test drive of that track crashed (another agent's ticket; 17.14 lists what this design needs from its result). Supersedes: 4 ('total length stays 32768: the last segment grows / shrinks', 'PUT THE BAR HERE'), 5.1 (`PLAIN STRAIGHT ROAD`), 5.4 (E-SUM / W-FINISH rows), 10 (hill shapes become 2..5 segments), 15.3 (extent), 15.5 (Shift+B), 15.6 (`I`), the `I` / Shift+B / `S` rows of 15.7. Everything else of 15 / 16 stays.
+Tags as in the rest of this note. **[obs]** here = a PC-side script or a file read during this design (no Hatari run was made for it); **[disasm]** = `tools/m68dis.py` on `work/dumps/ram_race_start.bin`.
+
+### 17.0 The proposal in one table
+| topic | now (preview 2) | proposed |
+|---|---|---|
+| what the grid shows | every segment up to max(race length + 1024, BAR + 512) (`calc_end`), the BAR somewhere inside | **THE ROAD** (your segments) and, as the last tile, **THE FINISH** (chequered). Nothing behind it is shown |
+| track length | fixed: 32768 units, the last segment absorbs every change; the race length is the base level's | **the sum of your segments** (700..28000 units). The BAR always stands at the end of the road and moves with it; the race length (time bar) of the track = that length |
+| new track | one segment of 32768, BAR where the scenery's original has it | **5 straight segments of 200 = 1000 units + the FINISH**, in the chosen scenery |
+| new segment | only `I` = a copy | **Insert / `I` = NEW segment after the cursor** (straight on, level, 200 long, the widths of the road there), Shift = before the cursor, **`A` = ADD one at the end of the road**; `D` = duplicate (the old copy) |
+| length of a segment | `L` list, left / right = 1 unit | panel row `LENGTH 0200 OF 02400 =  8%`; **`+` / `-` = next longer / shorter preset**; `L` list as before with left / right = 10 units |
+| hill shape (`H`) | the segment is replaced by 2..5 segments | **the shape belongs to the segment: still ONE tile**; picking another shape replaces it, FLAT removes it, a length change rescales it |
+| curve (`C`, `,` `.`) | whole segment (no split) | unchanged; the message says what it made (`ENDS THIS SEGMENT AS: MEDIUM RIGHT`) |
+| after KEEP and EDIT again | equal neighbours come back as one long segment | **your segment boundaries survive** (17.7) |
+| file | `MSTRACKS.TRK` version 1, no race length | **version 2: a race length per track** (0 = the base level's = a version 1 track); version 1 files load unchanged; a campaign without own lengths is still written as version 1 |
+| game | time bar and progress from the base level's length | a track with an own length gets the **same pace as its scenery's level** (17.9); tracks without one are bit for bit as today |
+
+### 17.1 Facts this builds on
+* **Readers of the race length** (`--xref 57890`, all five) [disasm]: `$7792` (the load: `lea $57890,a0 / jsr $d6fa`, in EVERY race setup, before the track block fetch `$77da`), `$ee82` (`mulu.w $57890.l,d0` inside `$edea`, the routine `$7926` calls as the last step of the setup: `$10d2 = (100 + $102c) * len / 200 + (10 - $edcc[$102c]) * 200`), `$fbc4` (`divu.w $57890.l,d1`: progress = `$5ff8 * 256 / len`, + 15, compared with the time bar's high word: the 'behind schedule' comments), `$ef00` and `$f280` (`lea`: they read words 2..10 and the nibble path = the minimap, never word 0). So word 0 has exactly two consumers, both after `$7798`.
+* **The time bar** [disasm `$11792`]: every pass `$10ce.l += $10d2.w`; high word >= `$ff` = time-out. `$10d2` is PROPORTIONAL to `len`, so the stock formula gives a longer track LESS time: it only works because the 15 lengths are all 18000..23000. Rates and passes allowed (`$ff0000 / rate`) of the 15 levels [arithmetic from the formula, the `$edcc` words `8 10 6 7 5 6 5 5 5 1 4 5 1 14 5` read from the dump and the lengths of `trackformat.md`; level 0's 10136 = the value observed in `timing.md`]: rates `10136 9958 10898 10385 11075 10250 10871 11700 11260 12700 12200 13210 12160 11630 14110`, passes `1648 1678 1533 1609 1508 1630 1537 1428 1484 1315 1369 1265 1374 1436 1184`; the pace this asks (units to the chase start per pass after the 55 passes of the start lights): 12.2 on level 0, 19.1 on level 14 (the car does 10 units per pass at speed `$5c`, `$130c = speed / 9` at `$10d94`; the car's limits `$10ae2..` come from the shop's upgrades `$176b0 / $176b2` and the level tier).
+* **End of a stream** [disasm; INFERENCE for the behaviour, not run]: the three initial fillers (`$fe1c`, `$ff3a`, `$ffe4`: 1024 entries) have no terminator test (a stream shorter than 1025 units makes them read the next stream as data); the per-pass updaters (`$fe50`, `$ff76`, `$1003c`) test the count word and, at a terminator, step back and return WITHOUT storing the ring head: the ring stops advancing (the road freezes), no walk through memory. Counts are unsigned 16 bit everywhere (`subq.w #1 / dbeq`), so a count up to 65535 is legal; stock counts are at most 17445 [obs: script over the 15 tracks], the plain straight of preview 2 wrote 32768.
+* **Stock tracks** [obs: script on `ed2model.union` over the 15 stock blocks]: the BAR lies INSIDE a segment in all 15 (8..145 units after its start); 2..16 segments and 5..15 objects lie behind the BAR; the last breakpoint of any stream is 40..1469 units behind the BAR, the rest (10300..13900 units) is one constant pair per stream; the longest segment before the BAR is 286..1000 units; none of the editor's 12 hill shapes occurs in a stock track (0 matches of the recogniser of 17.6).
+* **Version 1 readers**: `cp_title.s` `validate` has `cmpi.w #1,4(a2) / bne .bad` and `tst.w 26(a3) / bne .bad` (the reserved flags word) [read]: the released v1.1 game refuses a version 2 file as 'not a valid campaign file'. It checks CRCs and the table, not the streams.
+* **Keys**: the ST keyboard has no End key; under Hatari the PC's End key IS the ST's Undo (`src/sdl/keymap.c:226 case SDLK_END: code = 0x61`) [read], so 'End = append' cannot be offered: `A` is.
+
+### 17.2 The model: THE ROAD, THE FINISH, THE RUN-OUT
+The four ring streams still sum to **32768**, as in every stock track (nothing in the loader changes for that; E-SUM stays true by construction). What changes is what the editor calls the track:
+* **THE ROAD** = segments `0 .. F-1`. Its length `L` = their sum = the first unit of segment `F`. This is what the user builds and all the grid shows.
+* **THE FINISH** = segment `F`. **Invariant: the BAR stands on the first unit of segment F**, so the BAR's unit, `L` and the race length are one number. The FINISH is the last tile (chequered, as the BAR tile today). It can be selected (its panel: 17.8); its curve / hill / length / widths are not edited (`THE FINISH IS NOT EDITED: A ADDS ROAD`); the BAR's SIDE is (object list, `S`).
+* **THE RUN-OUT** = segment `F` and everything behind it: the road the player still sees behind the BAR (the car is stopped about 34 units before it, `trackloader.md` 3.2) and the 1024-unit ring look-ahead. Never shown, never selected. Its LAST segment absorbs every change of `L` (the existing `road_shift`), so the total stays 32768.
+  * a NEW track's run-out is one segment (segment F itself): curve 0, accel 0, the widths of segment `F-1` (kept equal to them by `fin_sync` after every edit, so there is no width step at the BAR).
+  * a LOADED track (copy of an original, campaign track) keeps the segments and objects behind its BAR exactly as loaded (they move with the road; stock: up to 16 segments and 15 objects).
+* **Limits**: `700 <= L <= 28000`. 700: the shortest BAR position that has been raced (`c3.trk`, BAR at 700..900, section 9) [obs there; 600 was never run]. 28000 leaves a run-out of 4768 units = the 1024 look-ahead + 3744 units (about 30 s of rolling at 13 units per pass: a car that timed out may pass the BAR while the message runs [INFERENCE: not measured]); the stock maximum is 22117.
+* **Loading (`parse`, new step `fin_norm`, before the hill recogniser)**: no BAR in the block -> one is added at the base level's race length (`NO BAR HERE: FINISH PUT AT 19472`); several -> the first stays, the others are removed (`2 BARS: THE FIRST IS THE FINISH NOW`); then, when the BAR is not on a segment's first unit, **its segment is split at the BAR's unit** (both parts keep every value). `F` = the segment that starts at the BAR. The split costs nothing in the block: `encode` joins equal neighbours per stream, so an untouched copy of an original track still encodes to the stock block byte for byte.
+* **Why the BAR is not a thing the user places** (the assignment's 'follows automatically, or stays where placed: decide'): it FOLLOWS, always. (1) it is the user's own model: the road ends where I stopped building; (2) a BAR in the middle of a longer road IS the old confusion (road that is drawn and edited but never driven, a length that was 'determined before'); (3) with the BAR tied to `F`, E-BAR, W-FINISH and 'the cursor is behind the BAR' cannot be produced any more; (4) what placing was used for is still there: a shorter race = **END THE ROAD HERE** (Shift + `B`: the segments behind the cursor's are removed, one undo step) or Delete; a longer one = add segments; (5) the run-out has to exist anyway, and nobody should have to build it.
+
+### 17.3 A new track
+Track list: `PLAIN STRAIGHT ROAD >` becomes **`NEW TRACK >`** (`NEW TRACK WITH THE SCENERY OF:` + the level list, as now). It makes: **5 segments of 200 units** (curve 0, FLAT, the start widths of that scenery's own track = the first targets of its S1 / S2, each with a kept boundary, 17.7), **the FINISH at unit 1000** (the BAR of that scenery: its type and the original's side), the run-out behind it (31768 units, one segment), name `NEW TRACK`. Five tiles and a chequered one: the grid shows at once what a segment is, any tile can be changed, `A` adds more. 1000 units = about 12 s of driving; the time bar allows 255 passes (17.9).
+No segment of the working copy is 32768 long any more (the longest possible is a run-out of 32068), so `len.w` never reads as negative (`tiles_calc`'s `muls` note) [INFERENCE: whether that was part of crash (d) is the other agent's finding].
+
+### 17.4 Adding and removing road
+| act | key / menu | what happens |
+|---|---|---|
+| NEW segment AFTER the cursor | Insert, `I` (grid focus) | a segment of `vNewLen` units (200; after the user picked a length with `L` / `+` / `-`: the last picked one), curve 0, hill FLAT, the widths of the segment before it. On the FINISH tile it goes before the FINISH. The cursor moves to it. `NEW SEGMENT 0200 LONG: L + - CHANGE IT` |
+| NEW segment BEFORE the cursor | Shift + Insert, Shift + `I` | the same, in front (the only way to get a new first segment; widths of the old first one) |
+| ADD at the end | `A` (either focus) | the same, in front of the FINISH; the cursor jumps there (the grid scrolls). `A A A` builds road. `NEW SEGMENT ADDED AT THE END: 0200 LONG` |
+| DUPLICATE | `D` | today's `I`: a copy of the cursor's segment (with its hill shape) behind it; not on the FINISH |
+| DELETE | Delete (grid focus) | the segment AND the objects standing on it go (today the objects pile up on the next segment); not the FINISH (`THE FINISH STAYS: DELETE ROAD BEFORE IT`) |
+| END THE ROAD HERE | Shift + `B`, menu | the segments between the cursor's and the FINISH go, with their objects (`ROAD ENDS HERE NOW: 0014 SEGMENTS CUT`); one undo step |
+A new segment has curve 0 and accel 0, i.e. it **carries on what the road does there**: after a turn-in segment it keeps turning (the tile shows it: BEND). That is the game's own model (15.1) and is not changed here (17.14).
+Every act: one history entry; `road_shift` moves everything behind (segments, objects, the BAR, the run-out's own segments); refused with a message when `L` would leave 700..28000 (`ROAD FULL: 28000 UNITS AT MOST`, `ROAD TOO SHORT: 700 UNITS AT LEAST`), at 2048 segments, or by E-HILL. The BAR cannot be moved (`M` on it: `THE BAR IS THE END OF THE ROAD: A / DEL`), deleted or retyped (as now).
+Implementation: `seg_new(index)` = `seg_open(index)`, fill (start = end of `index-1`, length, values, flags), `road_shift(P = start, +length, first moved = index + 1)`, `hill_ovf`, `vSeg = index`; `F` is recomputed by `find_bar` + `seg_of` in `tiles_calc` (it already calls `find_bar`). `seg_copy` -> `seg_dup` (refuse on `F`). `seg_del`: refuse on `F`, delete the segment's objects (`vOF` / `vOCnt` range) before `road_shift`. `bar_here` is replaced by `end_here`.
+
+### 17.5 Length
+* **Panel row 14**: `LENGTH 0200 OF 02400 =  8%` = this segment, the whole road, the share (integer per cent). The FINISH panel shows `ROAD LENGTH 02400` and the time limit (17.8).
+* **`+` / `-`** (main row `$0d` / `$0c`, keypad `$4e` / `$4a`): the next longer / shorter value of the `L` list (10 20 30 50 75 100 150 200 300 400 600 800 1000 1500 2000); immediate, like `,` `.` for bends; counts as the last pick (Return / Space repeat it on another segment). At 2000: `2000 IS THE LONGEST: ADD A SEGMENT (A)`.
+* **`L` list**: presets unchanged; left / right = **10** units, Shift = 100, FIRE or Control = 1 (was 1 / 10 with FIRE / 100; a per-list step `vLStep` in `ad_tab`); hint `U/D PICK  L/R +-10 (SHIFT 100 FIRE 1)`. Range 1..2000; a loaded longer segment keeps its length until it is changed.
+* Every accepted length (list, `+`, `-`) sets `vNewLen`; the message tells the result: `LENGTH 0300 (WAS 0200): ROAD NOW 02500`.
+* The messages `THE LAST SEGMENT IS THE PADDING (E-SUM)` and `NO ROAD LEFT: LENGTH IS FIXED (E-SUM)` go (the padding cannot be selected; the limit is the road's).
+
+### 17.6 Hills: the shape belongs to the segment (rule for `H`); the rule for `C`
+**Rule: a hill shape is applied to the WHOLE segment and the segment stays ONE segment.** Not chosen: 'split at the cursor with a marker'. Reasons: the split was the confusing part; and pieces that are separate segments are a trap (delete or lengthen one half of a RISE and the slope runs on to the end of the track: section 10's first gate run produced exactly that E-HILL; pick DIP on the first half of a RISE and the second half still pulls down). With the shape as an attribute, every tile starts and ends with the slope it found: insert, duplicate, delete, re-length and re-pick are all safe, and E-HILL can only come from RAW ACCEL.
+* **Segment record** (12 B, size unchanged): `start.w len.w curve.w hill.w wl.b wr.b shape.b flags.b`. `shape` 0 = RAW (`hill.w` = the accel, as now); 1..12 = RISE small / medium / big, DROP x 3, CREST x 3, DIP x 3 (the list's own index; `hill.w` = 0). `flags` bit 0: 17.7.
+* **`seg_pieces`** (a0 = segment -> `vPcN`, `vPc`: up to 5 x `len.w, accel.w`): RAW = one piece; a shape = exactly today's arithmetic (`ap_hill .shape .. pc_add`: RISE `+a n, 0 (odd unit), -a n` with n = len / 2; CREST `+a n, -a n, 0 (rest), -a n, +a n` with n = len / 4; `a = clamp(h * 65536 / n^2, 1..4000)`, h = 8 / 20 / 40). `ap_hill` only stores the code (and refuses a segment shorter than 2 / 4 units: `TOO SHORT FOR ITS HILL SHAPE`, also in `ap_len`). Four routines walk pieces instead of `6(a0)`: `hill_ovf`, `tiles_calc` (slope), `check_all` (W-HILL) and `encode` (the hill stream gets its own writer; the other three streams keep the `enc_tab` loop).
+* **Coming back from the block (`parse`, after `fin_norm`)**: the block has no shapes, only hill pairs. `shape_scan` walks the road's segments: at segment i with accel != 0 whose successor has the opposite accel (or is a 1-unit accel-0 piece followed by the opposite accel: a RISE of odd length), for the next k = 2, 3, 5 segments with equal curve and widths and no kept boundary inside, and each of the 12 codes: build `seg_pieces(total length, code)` and compare lengths and accels with the k segments; equal -> they become one segment with that code. 'Recognised' therefore always re-encodes to the same pairs (lossless by construction); what is not recognised stays RAW pieces. With 17.7 every shape the editor wrote is found again [INFERENCE: argument below, to be proven by the gate]; stock tracks: 0 matches [obs 17.1].
+* **`S` (split)**: a RAW segment is cut in half (as now); a shaped one is split **into its pieces** (2..5 RAW segments: what `H` did until now), `SPLIT INTO ITS 3 HILL PIECES (RAW ACCEL)`. `M` (merge): this segment's values and shape win (as now). `D` copies the shape.
+* **What the user sees**: the `H` list opens on the segment's shape; the preview and the result are one tile; message `RISE BIG: +38 OVER THE WHOLE SEGMENT` (the height really reached, `a * n^2 >> 16`: on long segments the integer accel rounds, e.g. RISE SMALL over 2000 units gives +15, not +8). Panel row 17: `HILL   CREST MEDIUM (+19)` for a shape, `HILL   RAW +0200 RISE SMALL` for a RAW segment (accel and slope class, as now).
+* **Tile colour = two halves**: the left half is the slope class at 1/4 of the segment, the right half at 3/4 (today: one class at the middle, which shows a CREST as LEVEL because its slope is 0 there). RISE = both halves yellow / red, CREST = rise | drop, DIP = drop | rise; a RAW segment looks as today unless its slope changes class inside it. Tile word: bits 3-5 = left class, **8-10 = right class** (new); the selection bits of the shadow `SHW` move from 8 / 9 to 12 / 13. Legend page: one line + two example tiles.
+* **`C`**: the delta is applied to the whole segment, as always; nothing splits. Because its effect adds up along the segment, the message says what it made: `ENDS THIS SEGMENT AS: MEDIUM RIGHT` (class of `c` at the segment's end), and `VERY LONG TURN (W-CURVE)` at once when `c` leaves -4473..8876 (today only on the check page).
+* Cheap fallback if the lead wants `H` untouched in the next preview: keep the pieces but say so (`RISE BIG: SEGMENT 0012 IS NOW 2 PIECES`); about 1 h instead of WP-D's 7, and the trap above stays.
+
+### 17.7 Your segment boundaries survive KEEP
+Today KEEP joins equal neighbours per stream and the next EDIT shows the union of the stream breakpoints: five equal 200-unit tiles come back as ONE tile of 1000 (and a join can exceed the `L` list's 2000). The block format allows two neighbouring pairs with the same value (the fillers just load the next pair [disasm]; the game never compares), so:
+* `flags` bit 0 = **kept boundary at this segment's start**. Set by the editor on every boundary it creates: the new segment and its successor (`seg_new`, `seg_dup`), the second half (`S`), pieces 2..n of an exploded shape, the 5 segments of a new track.
+* `encode`, curve stream only: a new pair starts when the delta differs **or the flag is set**. The other three streams join equal neighbours as now.
+* `parse`: a segment whose start is a pair boundary of the CURVE stream with the same delta on both sides gets the flag (the union loop knows when the curve count ran out).
+* Stock blocks hold no equal neighbours (section 4 [obs]), so a copy of an original track gets no flag and still encodes byte for byte; an edited copy gains 4 bytes per boundary the user made. Worst case a track of 2048 equal-curve segments costs 8 KB in the curve stream alone: E-SIZE (8192 B) is checked on leaving, as now.
+* This also makes the shape recogniser exact for editor-made tracks: every shaped segment starts and ends on a union boundary (its own first / last hill pair, or the kept boundary when a neighbour has the same accel), so two equal CRESTs side by side, whose `+a` pieces join in the hill stream, are still two segments in the union.
+* `tools/msrtrack.py`: nothing to do (`decode` / `encode` keep pairs as they are; `validate` has no rule against equal neighbours). `ed2model.py`: `union` returns the flag, `track()` honours it.
+
+### 17.8 Screen and keys
+**Tiles**: only segments `0 .. F`; the FINISH tile = today's BAR tile (white / black chequers + the direction symbol of what the road does at the BAR); two-half hill colour (17.6); `vEnd` / `calc_end` / `seg_last` are replaced by `F` (`vFin`). Row labels unchanged.
+**Panel, a road segment** (rows 13-23, 28 columns; changed rows marked):
+```
+13  SEGMENT 0017/0390  AT 12345          (0390 = the road's segments, the FINISH not counted)
+14  LENGTH 0200 OF 19958 =  1%           <- new
+15  CURVE  RIGHT 3
+16  BEND   MEDIUM RIGHT
+17  HILL   CREST MEDIUM (+19)            <- shape name and height, or RAW +0200 RISE SMALL
+18  WIDTH  LEFT 36  RIGHT 34
+19-23  the object list, as now
+```
+**Panel, the FINISH tile**:
+```
+13  FINISH             AT 19958
+14  ROAD LENGTH 19958
+15  TIME LIMIT 3:13 (SCENERY 04)         the passes of 17.9 / 8.33 passes per second (the paced rate of the shipped build, timing.md 3); here 1609 passes
+16  BEND   STRAIGHT                      what the road does at the BAR: the run-out carries it on
+17  HILL   LEVEL
+18  WIDTH  LEFT 36  RIGHT 34
+19  OBJECTS 01   UNIT
+20  01 THE BAR SIDE +043 19958
+```
+**Key column** (right 12 columns): `KEYS / INS NEW SEG / A ADD AT END / D DUPLICATE / DEL DELETE / L + - LENGTH / C , . CURVE / H HILL / W E WIDTH / S SPLT M MRG / O OBJECT`. **Hint row**: `INS=NEW A=ADD FIRE=MENU P=DRIVE HELP`.
+**FIRE menu (grid)**, the building items first: `NEW SEGMENT AFTER THIS  INS`, `NEW SEGMENT BEFORE THIS  SHIFT INS`, `ADD A SEGMENT AT THE END  A`, `CURVE...`, `HILL...`, `LENGTH...  L + -`, `WIDTH LEFT...`, `WIDTH RIGHT...`, `DELETE THIS SEGMENT`, `ADD AN OBJECT HERE`, `MORE: COPY SPLIT MERGE END HERE...`, `UNDO`, `REDO`, `TEST DRIVE FROM THE CURSOR`, `OBJECTS <> SEGMENTS`, `CHECK THE TRACK`, `KEYS`, `< BACK TO THE GRID`, `LEAVE AND KEEP THIS TRACK` = 19 rows (the menu holds 20). `MORE` opens a second list: `DUPLICATE THIS SEGMENT  D`, `SPLIT  S`, `MERGE WITH THE NEXT  M`, `END THE ROAD HERE  SHIFT B`, `< BACK`. The object menu loses `PUT THE BAR HERE`.
+**Key map: what changes** (everything not listed stays as 15.7 / 16)
+| key | now | proposed |
+|---|---|---|
+| Insert, `I` (grid) | a copy of the segment | a NEW segment after the cursor (object list: add an object, unchanged) |
+| Shift + Insert, Shift + `I` | - | a NEW segment before the cursor |
+| `A` | - | ADD a new segment at the end of the road (either focus) |
+| `D` | - | DUPLICATE the segment (the old `I`) |
+| `+` `-` (main row, keypad) | - | LENGTH: next longer / shorter preset |
+| left / right in the `L` list | 1 unit (FIRE 10, Shift 100) | 10 units (Shift 100, FIRE / Control 1) |
+| Shift + Clr/Home | - | to the FINISH (Clr/Home alone: the first segment; `B`: the FINISH too, as now) |
+| Shift + `B` | put the BAR on the selected segment | END THE ROAD HERE |
+| `H` | shape = 2..5 segments | shape = this segment (17.6) |
+| `S` (grid) | split in half | RAW: in half; a shaped segment: into its pieces |
+| Delete (grid) | segment (objects move on) | segment with its objects; never the FINISH |
+| `M` on the BAR (object list) | move it | refused |
+| `P` on the FINISH tile | (was: refused behind the BAR) | test drive of the last 1000 units (`TEST DRIVE OF THE LAST 1000 UNITS`) |
+End: not used (17.1). Scancodes: `A` `$1e`, `D` `$20`, `-` `$0c`, `=` / `+` `$0d`, keypad `-` `$4a`, keypad `+` `$4e`; Shift = `$5ffe + $2a / $36` as for Shift + `B`. HELP page 1 and the legend page are rewritten to match.
+
+### 17.9 The game side: a race length per track
+**File, `MSTRACKS.TRK` version 2** (`trackformat.md` 4): the reserved word at entry `+26` (v1: flags, must be 0) becomes the **race length**: `0` = the base level's (exactly a version 1 track), else `700..28000`. Nothing else moves (header 16 B, entries 40 B, blocks, CRCs). Header version = **2 when any entry has a race length, else 1**: every writer (`msrtrack.py`, the editor's `store_rebuild`) applies that rule, so a campaign of original copies stays loadable by the released v1.1 game, and v1.1 refuses the files it would mis-time (17.1). Readers accept version 1 (word must be 0) and 2 (0 or 700..28000).
+**Loader** (payload; all `; gate: ram2mb`, HD and floppy: floppy campaigns come from the same file):
+* `cp_title.s` `validate`: version 1 or 2; the entry check becomes 'version 1: `+26` = 0; version 2: 0 or 700..28000 (unsigned)'. About 20 B (the blob has 674 B to the next one). No stream check in the game, as now (CRCs; `msrtrack.py validate` and the editor guarantee E-SUM).
+* `cp_fetch.s` `hookb` (site `$77da`, runs right after the minimap header load): campaign path `move.w 26(a0),V_RLEN` (a0 = the entry it already points at), stock path `clr.w V_RLEN`, test-drive path untouched (the editor sets it). **`V_RLEN` = `CPV+16`** (w; `CPV+15..31` are unused [obs: grep of `CPV+` over `patches/`]). +12 B (the blob has 48 B to `$B8100`).
+* **new patch `cp_len.s`** owns site `$7926` (`jsr $edea.l`) on BOTH media and replaces `cp_td.s` (HD only until now; deleted; its test-drive call moves into the HD flavour of the new hook, same blob address `$B8260` so the editor's site test in `c_td` still matches; the hook is about 70 B and `$B8276-$B82FF` is free, `$B8300` belongs to the non-default `mf_pre` / `mx_pre` [obs: `msrpatch.py list`]):
+```
+hookl:  jsr     $edea.l                 ; stock: $10d2 = the BASE level's rate ($57890 word 0 is still the base level's Lb here)
+        movem.l d0-d2,-(a7)             ; ($edea's own register use was not traced: save what the hook touches)
+        move.w  V_RLEN.l,d1             ; this track's own length L (0 = none: every v1 track, the original game)
+        beq.s   .n
+        move.l  #$ff0000,d0
+        divu    $10d2.w,d0              ; Tb = the passes the base level allows (1184..1678)
+        subi.w  #100,d0                 ; less the start allowance P0 = 100 passes (lights 55 + getting up to speed)
+        mulu    d1,d0
+        divu    $57890.l,d0             ; (Tb - 100) * L / Lb   (<= 2455 for L <= 28000)
+        addi.w  #100,d0                 ; P = the passes this race allows
+        move.l  #$ff0000,d2
+        divu    d0,d2                   ; the rate; overflows (V) for P < 256 ...
+        bvc.s   .ok
+        moveq   #-1,d2                  ; ... then the fastest bar a word holds: 255 passes
+.ok:    move.w  d2,$10d2.w
+        move.w  d1,$57890.l             ; progress ($fbc4) is measured against the built length from here on
+.n:     movem.l (a7)+,d0-d2
+        ifeq    FLOPPY
+        tst.b   CPV+14.l                ; V_TD: the editor's test drive (was cp_td)
+        beq.s   .x
+        jsr     EDBASE+20.l
+        endc
+.x:     rts
+```
+**Why this rule and not 'write L into `$57890` before `$edea`'**: the stock rate grows with `len`, so a 2000-unit road would get 11900 passes and a 28000-unit one 1150 (too few to drive it). The rule above keeps **the pace of the scenery's own level** (a track as long as the original gets exactly the original's time: P(Lb) = Tb) and adds a fixed start. Numbers [arithmetic]: scenery 1 (level 0): L 1000 -> 255 passes (31 s at 8.33 passes per second), 2000 -> 258 (31 s), 6000 -> 576 (69 s), 12000 -> 1053 (126 s), 19472 -> 1648 (198 s, the stock value), 28000 -> 2325 (279 s); scenery 15: 6000 -> 382, 28000 -> 1419. Roads up to about 2000 units sit on the 255-pass floor. `$57890` is reloaded by every race setup (`$7792`), so the overwrite never reaches the next race; word 0's only other reader is the progress compare. [INFERENCE: whether the pace FEELS right on a short road was not driven; gate 17.12 measures a flat-out test.] Unchanged and worth knowing: the speech stream (`$1286[]`, distances along the base level) and the fourth opponent's start distance (`$e14a[]`, 5000..17000 units ahead) follow the BASE level, so on a short road late speech lines and that car simply do not appear [INFERENCE from `trackloader.md` 4.5].
+* A test drive: `c_td` sets `V_RLEN` to the word the track would be kept with (below) before `jsr $76f4` and clears it afterwards; `td_ff`'s bar rule (13.4) is unchanged and uses the new rate.
+**Editor (`store_rebuild`, `leave`)**: the word kept with a track = `L` when the track is a NEW TRACK, or its entry already had a length, or **the BAR's unit differs from the one it was loaded with**; else 0. So a copy of an original track keeps the original's timing and the file stays version 1 until its LENGTH is changed; curve, hill, width and object edits do not touch it. `store_rebuild` copies the other entries' words and writes the header version by the rule above. `EDVER` 4 -> 5.
+
+### 17.10 `tools/msrtrack.py` (and `trackformat.md` 2-5, `test_msrtrack.py`)
+* JSON `race_length`: absent or equal to the base level's = the base level's (file word 0); another value = the track's own (format string stays `msr-track/1`: old files mean the same).
+* **E-RACELEN becomes a range check**: an own length must be 700..28000. New **W-FINISH**: the BAR's position and the race length differ by more than 1100 (stock: -1043..+486, `trackloader.md` 3.2).
+* **E-SUM**: every ring stream >= `max(race length, BAR position) + 1024` (today: base length + 1024; all stock tracks and `c3.trk` pass).
+* `build_campaign(entries)` takes the word per entry and writes version 1 or 2 by the rule; `parse_campaign` accepts both (v1: word 0; v2: 0 or the range) and returns it; `entry_track` puts it into the track; `campaign list` prints it; `campaign add / new` take it from the JSON; `render` uses it for the extent.
+* `patch-ms2` refuses an entry with an own length (MS2 has no place for it) unless `--force`.
+* `selftest`: `campaign new --stock` is still the 64,676-byte version 1 file byte for byte; a v2 round trip; the released rule 'v2 only when needed'.
+
+### 17.11 Existing tracks
+| track | what happens |
+|---|---|
+| version 1 campaign file, played | unchanged: word 0, `V_RLEN` 0; `cp_len` adds `movem / move.w V_RLEN / beq / movem` to the race setup, nothing else |
+| campaign track or copy of an original, opened and left untouched | shown as ROAD + FINISH (the stock road behind the BAR is hidden, not lost); not rewritten (as now); a kept copy = the stock block, byte for byte |
+| the same, edited without a length change | block rewritten, word 0, version stays 1 |
+| the same, a length changed (any segment's length, add, delete, end here) | word = the new BAR unit; the file becomes version 2; the stock segments and objects behind the BAR move with it |
+| a track with no BAR / several (damaged, `--lenient`) | repaired on loading with a message (17.2) |
+| a track whose BAR is outside 700..28000 | shown; CHECK and KEEP refuse it: `ROAD LENGTH NOT 700..28000 (E-RACELEN)` until it is edited into range |
+| preview 2's plain straight (never saved to disk: milestone 4 is not built) | none exist outside RAM |
+
+### 17.12 Gates: what changes, what is new
+* `ed2model.py`: `union` + kept boundaries, `fin_norm`, `shape_scan`, `pieces()`; `hill_shape` = attribute; `tiles()` two classes + FINISH + no tile behind it; `seg_new / seg_dup / seg_del (objects go) / end_here`, road limits, `race_word()`; `track()` expands pieces and honours boundaries; the new-track constructor replaces `straight=True`.
+* `ed2.py`: `copy()` sends `D` (`$20`), not `I`; `barhere` -> `end_here`; hill checks expect an unchanged segment count; new cell **`--kind new`** replaces `--kind straight`: FIRST the untouched new track is test-driven to the BAR and PLAYed to the BAR (the user's crash scenario), then `A` x 3, Insert, Shift + Insert, `D`, `+` / `-`, each hill family, `S` on a shape, Delete down to the 700 refusal, growth to the 28000 refusal, END THE ROAD HERE, undo / redo over all of it; keep; store: header version 2, entry `+26` = the BAR unit, block == model; `msrtrack.py validate` of the dumped file: 0 errors; EDIT again: segment list (count, lengths, shapes, boundaries) == what was left.
+* `ed2.py --kind stock`: untouched copy kept = stock block byte for byte, word 0, version 1; a curve edit keeps word 0; a length edit sets it.
+* `td3.py`: on a track with a word: `$57890` word 0 == L and `$10d2` == the formula while the race stands; on a word-0 track both are the stock values; rings / objects / bar-start checks as now (they read `$10d2` from RAM).
+* **new `len2.py`** (HD STE 2 MB; quick cells Mega STE, ST; floppy STE 2 MB with a campaign disk): a v2 file made by `msrtrack.py` (track A own length 3000, track B word 0) loaded through the F10 menu: race A `$57890` = 3000, `$10d2` = the formula, driven flat out to the BAR (records the bar's high word at the chase start = the pace evidence); race A standing still times out after P passes (+- 2, counted on `$100e`); race B right after shows the base level's `$57890` and the stock `$10d2` (no leak); a v1 file: everything as v1.1; the v2 file on the RELEASED v1.1 build: refused with its message.
+* `shots.py` (`tile_px`: two halves, selection bits 12 / 13, FINISH; new panel rows), `speed.py` (add: `A`, a hill pick; criteria as now).
+* `abs1m.py` / `sitefl.py`: `cp_td` -> `cp_len` in the blob list; the floppy build gains the gated site `$7926` (stock bytes at 1 MB); `disk_a.st` changes in the payload sectors again.
+* Rerun unchanged: `work/campgate` (v1 campaigns: finish, time-out, ending), `welcome.py`, the floppy title cells; `msrtrack.py selftest` + `test_msrtrack.py`.
+
+### 17.13 Work packages (one Sonnet agent each; estimates in agent-hours, Hatari gate time included)
+`msedit.s` is one file: C, D and E need ONE owner at a time, in that order, starting from the commit that holds the crash fix (d). A and B touch no editor file and can run beside C. Contract between them: this section's 17.9 (entry `+26`, version rule, `V_RLEN = CPV+16`, hook `$B8260`).
+| WP | files | content | acceptance | h |
+|---|---|---|---|---:|
+| A | `tools/msrtrack.py`, `work/trackedit/test_msrtrack.py`, `work/notes/trackformat.md` | 17.10 | selftest + tests pass; stock campaign byte-identical (v1); v2 round trip; a v2 fixture for WP-B (`work/trackedit/fixtures/len2.trk`) | 3 |
+| B | `patches/cp_len.s` (new), `cp_td.s` (deleted), `cp_fetch.s`, `cp_title.s` (`validate`), `requires:` lines, `patches/README.md`, `PATCHES*.TXT`, `work/edgate/len2.py`, `abs1m.py`, `sitefl.py` | 17.9 loader | `msrpatch.py verify` ALL OK; `len2.py` cells; `abs1m`; campgate cells with a v1 file | 5 |
+| C | `patches/ovl/msedit.s`, `tools/msrpatch.py` (`EDVER` 5), `ed2model.py`, `ed2.py`, `ed2lib.py`, `td3.py` | 17.2-17.5, 17.7, the editor half of 17.9: `fin_norm`, `vFin`, new track, `seg_new / seg_dup / seg_del / end_here`, limits, BAR rules, `fin_sync`, kept boundaries (`parse`, `encode`), race word + version in `store_rebuild`, `V_RLEN` in `c_td`, the keys of 17.8 (plain key table entries), messages | `ed2 --kind new`, `--kind stock`, `td3` pass | 8 |
+| D | the same files + `shots.py` | 17.6: `shape.b`, `seg_pieces`, the four consumers, `shape_scan`, `S` on a shape, two-half tiles, HILL row, legend | `ed2` hill cells (count unchanged, re-edit finds the shapes, block == model), `shots` (screen == Python drawing) | 7 |
+| E | `msedit.s`, `shots.py`, `speed.py` | 17.8 rest: LENGTH row, FINISH panel + time limit, key column, hint, menu + MORE list, `+` / `-`, `L` step, the `C` message, HELP pages | `shots`, `speed` (criteria of section 16), every text <= its columns | 4 |
+| F | `work/edgate/chain9.sh`, `RESULTS_m4.md`, this note ('as built'), preview 3 zip | the whole chain on one fresh build, quick cells Mega STE / ST, 1 MB, floppy | all cells pass or are listed plainly | 4 |
+Total about **31 h**. Order of value: A + B + C + (E's keys, hint, LENGTH row) answer (b) and (c) = about 20 h; D (7 h) answers (a) properly, its 1 h fallback is in 17.6.
+
+### 17.14 Depends on, open, not in this proposal
+* **Crash (d)** (other agent): this design assumes the cause is not 'a track whose only object is the BAR' and not 'a stream pair longer than the stock maximum 17445'. If it is the first, the new-track recipe gets one scenery object (first type that is not the BAR, unit 100); if the second, `encode` cuts the run-out into pairs of at most 16384 (legal: 17.7; `parse` then sees several hidden run-out segments). Either is a few lines in WP-C.
+* **Open for the user**: (1) the time rule is 'the scenery's own pace'; the later sceneries ask 13..19 units per pass (level 14: 19.1; 17.1), which needs the shop's upgrades. If an EASY / NORMAL choice per track is wanted later, the entry has no spare word: bit 15 of the race-length word is free (lengths are <= 28000) and reserved (must be 0 in version 2). (2) Default segment length 200 and the new track's 5 x 200: numbers to taste.
+* **Not in this proposal** (same mechanism, next round if wanted): BEND shapes (turn in + hold + turn out as ONE tile, so every tile also ends as straight as it began; the second spare byte is `flags`, bits 1-7 free; note that a delta of at most 10 per unit needs about 270 units of turn-in for a SHARP bend, so such a tile is 600+ units long); a `STRAIGHTEN` key (delta = -c / length for the cursor's segment); track RENAME / MOVE / COPY in the track list (5.1, never built); saving to disk (milestone 4).

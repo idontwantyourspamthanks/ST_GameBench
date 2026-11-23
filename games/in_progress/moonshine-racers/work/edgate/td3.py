@@ -5,16 +5,20 @@
    at every race start: $5ff8 == the cursor unit, the game's curve / width / hill rings and the object slots == a Python expansion of the encoded working copy (ENCBUF read back from RAM), the time bar,
    screenshot; ends: Esc (start), F10 (middle), the BAR (joystick up: finish, tdvbl returns), time-out (standing); after every return: the editor is where it was (cursor, segment / object lists unchanged, keys work,
    V_TD clear, vectors back); then leave (the store keeps the edits), PLAY THIS TRACK of a campaign track and a normal campaign race with the shop click: still normal.
-   work/edgate/env8.sh python3 work/edgate/td3.py --tag T [--machine ste|megaste|st] [--quick]"""
+   --straight (regression for the user's crash report, work/edgate/RESULTS_tdcrash.md): NO campaign; PLAIN STRAIGHT ROAD (scenery level 0: ONE segment of 32768 units, the BAR at 19958) test-driven from unit 0, then H > RISE BIG
+   (two segments of 16384 units, a hill with a 16384-unit accel) from unit 0 and from the second segment (unit 16384, the fast-forward runs through 17 updater chunks), then the second segment cut up with S (starts 16384, 18432, 19456,
+   20480 ...) and driven from 19456 (502 units before the BAR) to the finish.  Every drive: the same ring / object / time bar / return checks as above, and the Hatari log must show no Address Error / unexpected Bus Error.
+   work/edgate/env8.sh python3 work/edgate/td3.py --tag T [--machine ste|megaste|st] [--quick] [--straight]"""
 import argparse
 from ed2lib import *
 ap = argparse.ArgumentParser(); ap.add_argument("--tag", default="td3"); ap.add_argument("--build", default=os.environ["ED_BUILD"]); ap.add_argument("--machine", default="ste"); ap.add_argument("--level", type=int, default=3)
-ap.add_argument("--quick", action="store_true"); ap.add_argument("--nonormal", action="store_true")
+ap.add_argument("--quick", action="store_true"); ap.add_argument("--nonormal", action="store_true"); ap.add_argument("--straight", action="store_true")
 a = ap.parse_args()
 VAR["encl"] = VAR["enclen"]
 TD = {k: VAR[k] for k in ("tdhit", "tdres", "tdlast", "tdwhy")}
 VTD = 0xb8e0e
-e = Ed(a.tag, a.machine, 2048, a.build, CAMP / "c3.trk"); r = e.r
+BASE = 0 if a.straight else 3                         # the base level of the track under test ($102c during the race): the plain straight is scenery level 0, the stock copy is level 3
+e = Ed(a.tag, a.machine, 2048, a.build, None if a.straight else CAMP / "c3.trk"); r = e.r
 S16 = lambda b: [struct.unpack(">h", b[i:i + 2])[0] for i in range(0, len(b), 2)]
 
 def vb(off): return r.b(EV + off)
@@ -30,13 +34,13 @@ def goto_pos(target, why=""):
     check(f"cursor {why}: segment {k} reached", e.seg_goto(k))
     log(f"cursor {why}: unit {e.vl('pos')} seg {e.vu('seg')}")
 
-def td_wait_race(hit0, tmo=90):
+def td_wait_race(hit0, tmo=90, n=None):
     """the test drive has fast-forwarded (td_ff ran once more) and the race stands"""
     t0 = time.time()
     while time.time() - t0 < tmo:
         time.sleep(0.4)
         try:
-            if vw(TD["tdhit"]) > hit0 and r.b(0x1024) == 0 and r.w(0x5ff8) >= 0 and r.b(VTD) == 0xff: return True
+            if vw(TD["tdhit"]) > hit0 and r.b(0x1024) == 0 and r.b(VTD) == 0xff and (n is None or r.w(0x5ff8) == n): return True
         except Exception: pass
     return False
 
@@ -96,7 +100,7 @@ def rings_check(label, N, blk_len, expect_bar):
         check(f"[{label}] time bar start == $ff0000 - (2 x R/10 + 100) x rate (clamped at 0)", exp0 <= ce <= exp0 + 600 * rate, f"{ce:#x} vs {exp0:#x}")
     return t
 
-def after_return(label, snap0, shot=True):
+def after_return(label, snap0, shot=True, keys=True):
     e.idle(); time.sleep(0.5)
     if shot: r.shot(f"{label}_back")
     s = snapshot()
@@ -106,13 +110,14 @@ def after_return(label, snap0, shot=True):
     ik = r.l(0x118); vb_ = r.l(0x70)
     log(f"[{label}] vectors: $118 {ik:#x} $70 {vb_:#x} (editor hook inside $130000-$13ffff: {0x130000 <= ik < 0x140000}; VBL = the game's $d11e: {vb_ == 0xd11e})")
     check(f"[{label}] IKBD vector = the editor's kbhook again, VBL vector = the game's handler", 0x130000 <= ik < 0x140000 and vb_ == 0xd11e)
-    p0 = e.vl("pos"); e.key(0x4d, 1, 0.3); e.idle(); p1 = e.vl("pos")
-    check(f"[{label}] keys work after the return (RIGHT: cursor {p0} -> {p1})", p1 != p0)
-    e.key(0x4b, 1, 0.3); e.idle()
-    check(f"[{label}] LEFT puts the cursor back on {p0}", e.vl("pos") == p0, f"{e.vl('pos')}")
+    if keys:
+        p0 = e.vl("pos"); e.key(0x4d, 1, 0.3); e.idle(); p1 = e.vl("pos")
+        check(f"[{label}] keys work after the return (RIGHT: cursor {p0} -> {p1})", p1 != p0)
+        e.key(0x4b, 1, 0.3); e.idle()
+        check(f"[{label}] LEFT puts the cursor back on {p0}", e.vl("pos") == p0, f"{e.vl('pos')}")
     return s
 
-def one_drive(label, N_target, how, bar_expect, drive=0.0, hold=6.0, endkey=None, from_obj=False):
+def one_drive(label, N_target, how, bar_expect, drive=0.0, hold=6.0, endkey=None, from_obj=False, keys=True):
     goto_pos(N_target, label)
     if from_obj:                                     # the next segment with two objects or more, its object list, the second object: P starts at that object
         for _ in range(60):
@@ -126,10 +131,10 @@ def one_drive(label, N_target, how, bar_expect, drive=0.0, hold=6.0, endkey=None
     r.shot(f"{label}_cursor")
     hit0 = vw(TD["tdhit"]); t0 = time.time()
     e.send(0x19)
-    ok = td_wait_race(hit0); check(f"[{label}] race starts (td_ff ran, race standing, V_TD set)", ok, f"in {time.time() - t0:.0f} s")
+    ok = td_wait_race(hit0, n=N); check(f"[{label}] race starts (td_ff ran, race standing, V_TD set)", ok, f"in {time.time() - t0:.0f} s")
     r.st(f"{label} race up")
     check(f"[{label}] $5ff8 == the cursor unit {N} (distance counter)", r.w(0x5ff8) == N, f"{r.w(0x5ff8)}")
-    check(f"[{label}] stream pointer inside ENCBUF ($1b0000..), campaign position / $102c = base level 3", 0x1b0000 <= r.l(0x23c0) < 0x1c0000 and r.w(0x102c) == 3, f"{r.l(0x23c0):#x} {r.w(0x102c):#x}")
+    check(f"[{label}] stream pointer inside ENCBUF ($1b0000..), campaign position / $102c = the base level {BASE}", 0x1b0000 <= r.l(0x23c0) < 0x1c0000 and r.w(0x102c) == BASE, f"{r.l(0x23c0):#x} {r.w(0x102c):#x}")
     t = rings_check(label, N, e.vl("encl"), bar_expect)
     r.shot(f"{label}_race_standing")
     if drive:
@@ -147,50 +152,84 @@ def one_drive(label, N_target, how, bar_expect, drive=0.0, hold=6.0, endkey=None
     if how == "bar": check(f"[{label}] the BAR ended it (tdvbl: why = 1)", why == 1)
     if how == "timeout": check(f"[{label}] the time-out ended it (tdvbl: why = 2)", why == 2)
     if how in ("esc", "f10"): check(f"[{label}] {how} ended it (neither BAR nor time-out)", why == 0)
-    return after_return(label, snap0)
+    return after_return(label, snap0, keys=keys)
+
+def bad_errors():
+    """Address Errors, and Bus Errors outside the I/O page: the ST / STE probe registers that the machine lacks ($ff8e21 Mega STE, $ff8924 / $ff8a28 STE sound / blitter on an ST) bus-error by design"""
+    out = []
+    for l in r.h._logtext().splitlines():
+        if "Address Error" in l: out.append(l)
+        elif "Bus Error" in l:
+            m = re.search(r"at address \$([0-9a-f]+)", l)
+            if not m or (int(m.group(1), 16) & 0xffffff) < 0xff8000: out.append(l)
+    return out
+
+def straight_cells():
+    check("viewer up (PLAIN STRAIGHT ROAD, scenery level 0)", e.open_track("straight", 0, ntr=0))
+    sg = e.segs(); barat = e.vl("barat"); log("plain straight segments", sg, "BAR at unit", barat)
+    check("a plain straight is ONE segment of 32768 units", len(sg) == 1 and sg[0][1] == 32768, f"{sg}")
+    one_drive("S0_plain", 0, "esc", barat, drive=2.0, keys=False)             # one segment only: RIGHT cannot move the cursor
+    e.send(0x23); check("H: the hill list opens", e.wait(lambda: e.vu("lopen") == 1, 25)); time.sleep(0.4)
+    check("hill list: RISE BIG (entry 3)", e.list_goto(3)); e.send(0x1c); e.wait(lambda: e.vu("lopen") == 0, 40); e.idle()
+    sg = e.segs(); log("after H > RISE BIG", sg)
+    check("RISE BIG split the segment in two of 16384 units (accel +1 then -1)", [(x[0], x[1], x[3]) for x in sg] == [(0, 16384, 1), (16384, 16384, -1)], f"{sg}")
+    one_drive("S1_hill_first", 0, "esc", barat, drive=2.0)
+    one_drive("S2_hill_second", 16384, "f10", barat, drive=2.0, keys=False)             # the last segment: RIGHT cannot move the cursor
+    e.seg_goto(1); e.idle()
+    for _ in range(3): e.send(0x1f); e.idle()                                        # S = split in half; the cursor stays on the first half: 16384 + 8192 > 4096 > 2048
+    e.seg_goto(2); e.idle(); e.send(0x1f); e.idle()                                  # [18432, 20480) -> [18432, 19456) + [19456, 20480)
+    sg = e.segs(); log("after the splits", [x[:4] for x in sg])
+    check("segments start at 0, 16384, 18432, 19456, 20480 (the BAR at 19958 is in the segment that starts at 19456)", [x[0] for x in sg[:5]] == [0, 16384, 18432, 19456, 20480], f"{[x[0] for x in sg]}")
+    one_drive("S3_before_bar", 19456, "bar", barat)
+    check("no Address Error / unexpected Bus Error in the Hatari log", not bad_errors(), f"{bad_errors()[:3]}")
+    e.send(0x01); check("Esc = back to the track list", e.wait(lambda: e.vu("state") == 0, 60))
 
 try:
-    e.boot_editor(True)
-    check("viewer up", e.open_track("stock", a.level))
-    seg_to = e.seg_goto
-    for k, key, n in ((20, 0x34, 3), (60, 0x33, 4), (120, 0x34, 2)):
-        seg_to(k); e.idle()
-        for _ in range(n): e.send(key); time.sleep(0.25)
-        e.idle()
-    seg_to(100); e.idle(); e.send(0x17); e.idle()                                    # I = insert a copy behind
-    e.send(0x47); e.idle()
-    s0 = snapshot(); log(f"edited copy: {s0['nseg']} segments, {s0['nobj']} objects, vMod {s0['mod']}")
-    check("the working copy is edited (vMod != 0)", s0["mod"] != 0)
-    barat = e.vl("barat"); log("BAR at unit", barat)
-    r.shot("1_edited")
-    # ---- START
-    one_drive("A_start", 0, "esc", barat, drive=5.0)
-    # ---- MIDDLE
-    one_drive("B_middle", 9000, "f10", barat, drive=3.0)
-    # ---- FROM AN OBJECT: the object list has the cursor
-    one_drive("E_object", 5000, "esc", barat, drive=2.0, from_obj=True)
-    if not a.quick:
-        # ---- NEAR THE BAR: the finish
-        one_drive("C_nearbar", barat - 1500, "bar", barat)
-        # ---- time-out: standing still near the BAR
-        one_drive("D_timeout", barat - 700, "timeout", barat)
-    # ---- leave: the store keeps the edited track; the editor's normal PLAY and a normal campaign race with the shop
-    e.send(0x01); check("Esc = back to the track list", e.wait(lambda: e.vu("state") == 0, 60)); time.sleep(2.0); r.shot("9_tracklist")
-    if not a.nonormal:
-        # normal PLAY THIS TRACK of the first campaign track (full race from unit 0 through the campaign), driven to the BAR, then the shop (real EXIT click) and the next race (position 1)
-        e.send(0x1c); time.sleep(1.2); e.key(0x50, 1, 0.4); e.send(0x1c)
-        got = None
-        for _ in range(240):
-            time.sleep(0.5)
-            if r.l(0x23c0) != 0 and r.b(0x1024) == 0 and r.b(VTD) == 0: got = r.st("normal PLAY race up"); break
-        check("normal PLAY THIS TRACK still works: a race stands, V_TD = 0, stream pointer in the campaign store, $5ff8 starts at 0, campaign position 0", got is not None and 0x110000 <= r.l(0x23c0) < 0x130000 and r.w(0x5ff8) < 50 and r.w(V["pos"]) == 0, f"$5ff8 {r.w(0x5ff8)} ptr {r.l(0x23c0):#x} pos {r.w(V['pos'])}")
-        r.shot("10_normal_play")
-        ok = r.drive_to_finish(tmo=300); r.st(f"normal race over (finished={ok})")
-        check("the normal race is driven to the BAR (the full end sequence, not cut: $1024 = $ff)", ok)
-        res = r.wait_race(tmo=300, press=True, shop=True)
-        r.st("race after the shop"); r.shot("11_race_after_shop")
-        check("shop EXIT click -> the next campaign race starts (position 1, V_TD = 0, $5ff8 starts at 0)", res is not None and r.w(V["pos"]) == 1 and r.b(VTD) == 0 and r.w(0x5ff8) < 50, f"{res} $5ff8 {r.w(0x5ff8)}")
-    log(f"Bus/Address error lines in the Hatari log: {r.errlines()}")
+    e.boot_editor(not a.straight)
+    if a.straight:
+        straight_cells()
+    else:
+        check("viewer up", e.open_track("stock", a.level))
+        seg_to = e.seg_goto
+        for k, key, n in ((20, 0x34, 3), (60, 0x33, 4), (120, 0x34, 2)):
+            seg_to(k); e.idle()
+            for _ in range(n): e.send(key); time.sleep(0.25)
+            e.idle()
+        seg_to(100); e.idle(); e.send(0x17); e.idle()                                    # I = insert a copy behind
+        e.send(0x47); e.idle()
+        s0 = snapshot(); log(f"edited copy: {s0['nseg']} segments, {s0['nobj']} objects, vMod {s0['mod']}")
+        check("the working copy is edited (vMod != 0)", s0["mod"] != 0)
+        barat = e.vl("barat"); log("BAR at unit", barat)
+        r.shot("1_edited")
+        # ---- START
+        one_drive("A_start", 0, "esc", barat, drive=5.0)
+        # ---- MIDDLE
+        one_drive("B_middle", 9000, "f10", barat, drive=3.0)
+        # ---- FROM AN OBJECT: the object list has the cursor
+        one_drive("E_object", 5000, "esc", barat, drive=2.0, from_obj=True)
+        if not a.quick:
+            # ---- NEAR THE BAR: the finish
+            one_drive("C_nearbar", barat - 1500, "bar", barat)
+            # ---- time-out: standing still near the BAR
+            one_drive("D_timeout", barat - 700, "timeout", barat)
+        # ---- leave: the store keeps the edited track; the editor's normal PLAY and a normal campaign race with the shop
+        e.send(0x01); check("Esc = back to the track list", e.wait(lambda: e.vu("state") == 0, 60)); time.sleep(2.0); r.shot("9_tracklist")
+        if not a.nonormal:
+            # normal PLAY THIS TRACK of the first campaign track (full race from unit 0 through the campaign), driven to the BAR, then the shop (real EXIT click) and the next race (position 1)
+            e.send(0x1c); time.sleep(1.2); e.key(0x50, 1, 0.4); e.send(0x1c)
+            got = None
+            for _ in range(240):
+                time.sleep(0.5)
+                if r.l(0x23c0) != 0 and r.b(0x1024) == 0 and r.b(VTD) == 0: got = r.st("normal PLAY race up"); break
+            check("normal PLAY THIS TRACK still works: a race stands, V_TD = 0, stream pointer in the campaign store, $5ff8 starts at 0, campaign position 0", got is not None and 0x110000 <= r.l(0x23c0) < 0x130000 and r.w(0x5ff8) < 50 and r.w(V["pos"]) == 0, f"$5ff8 {r.w(0x5ff8)} ptr {r.l(0x23c0):#x} pos {r.w(V['pos'])}")
+            r.shot("10_normal_play")
+            ok = r.drive_to_finish(tmo=300); r.st(f"normal race over (finished={ok})")
+            check("the normal race is driven to the BAR (the full end sequence, not cut: $1024 = $ff)", ok)
+            res = r.wait_race(tmo=300, press=True, shop=True)
+            r.st("race after the shop"); r.shot("11_race_after_shop")
+            check("shop EXIT click -> the next campaign race starts (position 1, V_TD = 0, $5ff8 starts at 0)", res is not None and r.w(V["pos"]) == 1 and r.b(VTD) == 0 and r.w(0x5ff8) < 50, f"{res} $5ff8 {r.w(0x5ff8)}")
+        log(f"Bus/Address error lines in the Hatari log: {r.errlines()}")
+
 except Exception:
     import traceback; log("EXCEPTION", traceback.format_exc()); FAILS.append("exception")
 finally:
