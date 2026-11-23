@@ -10,7 +10,7 @@ Plan and decisions: [`PLAN.md`](PLAN.md). Results of the stages: [`work/notes/RE
 - Intake: `python3 tools/stx2st.py <EA .stx> disks/ea.st`; unpacker of the game program: `tools/wwdepack.py`; address port from master's Powermonger: `tools/addrmap.py`.
 - Notes (one topic each): `work/notes/intake.md` (disk, files, the Powermonger-disk requester), `delivery.md` (how the patch gets in), `placement.md` (why `$72000..$77FFF`), `addrmap.md` (master -> WW1 addresses).
 
-**The unpatched game asks for the original Powermonger floppy** on the first START NEW CONQUEST of a session (then for the WW1 disk back). That request is a key-disk check (it only loads the file `DATA\\SPRITE8.DAT` from drive A: and throws it away): the enhanced disk removes it (`patches/pm_nokeydisk.s`, evidence in `work/notes/RESULTS_stage02.md`), so the finished release needs the WW1 disk only.
+**The unpatched game asks for the original Powermonger floppy** on the first START NEW CONQUEST of a session (then for the WW1 disk back). That request is a key-disk check (it only loads the file `DATA\\SPRITE8.DAT` from drive A: and throws it away): the enhanced disk removes it (`patches/pm_nokeydisk.s`, evidence in `work/notes/RESULTS_stage02.md`). Tested so far with the WW1 disk only: new conquest, save/load, lose, win, a third land, 5 minutes of play. **Not yet tested: the end of a whole campaign.** The game's resource table names `END_PIC1`, `END`, `BITMAP` and `CAP_SPR`, which are not on the WW1 disk; whether the campaign end needs them is open (gate planned before release).
 
 Game files are git-ignored. Put your own copies here:
 
