@@ -19,30 +19,33 @@ CL, EC = OUT / 'clips', OUT / 'editor/clips'
 DR = OUT / 'draft'; SEG = DR / 'seg'; SEG.mkdir(parents=True, exist_ok=True)
 FPS = 50
 BEAT = 60 / 177                      # the war-drum loop
-
-# (name, source, src_start_frame, out_start_s, out_end_s, src frames per out frame, zoom keyframes [(t_in_segment, zoom)], centre (x, y) in the 1280x800 source)
-FROG = (600, 440)
+P = 0.5                              # the dramatic pause inserted between "Until one day" and "they didn't" (the voice gets P seconds of silence at 8.12, everything after shifts)
+# (name, source, src_start_frame, out_start_s, out_end_s, src frames per out frame (0 = freeze the start frame), zoom keyframes [(t_in_segment, zoom)], centre (x, y) in the 1280x800 source)
+# The bullet camera: one slow push-in on the ball/frog pair (fixed centre, no pan), a pull-back as the frog falls, a creep during the freeze, then it holds.
+C = (520, 440)
 SEGS = [
     ('lift',      CL / 'liftbare_v12.mp4',   0, 0.00, 3.24, 1.0,  [(0, 1.0), (3.24, 1.6)], (620, 400)),
-    ('unfair',    CL / 'bullet_stock.mp4',   0, 3.24, 4.64, 0.57, [(0, 1.5), (1.4, 2.2)], FROG),
-    ('pass',      CL / 'bullet_stock.mp4',  40, 4.64, 7.16, 1.0,  [(0, 2.2), (0.20, 2.2), (0.34, 3.0), (1.0, 2.0), (1.3, 1.4), (2.5, 1.3)], FROG),
-    ('burst',     CL / 'bullet_v12.mp4',     0, 7.16, 9.08, 1.0,  [(0, 2.2), (0.95, 2.2), (1.10, 3.0), (1.9, 2.4)], FROG),
-    ('fight',     CL / 'bullet_v12.mp4',    96, 9.08, 10.48, 1.0, [(0, 2.4), (1.4, 1.7)], FROG),
-    ('editor',    EC / 'squeeze_map.mp4',   100, 10.48, 11.28, 1.0, [(0, 1.0), (0.8, 1.0)], (640, 400)),
-    ('colours',   EC / 'squeeze_colours.mp4', 40, 11.28, 12.00, 1.0, [(0, 1.0), (0.72, 1.0)], (640, 400)),
+    ('unfair',    CL / 'bullet_stock.mp4',   0, 3.24, 4.64, 0.57, [(0, 1.4), (1.4, 1.7)], C),
+    ('pass',      CL / 'bullet_stock.mp4',  40, 4.64, 7.16, 1.0,  [(0, 1.7), (1.3, 2.0), (2.52, 1.6)], C),
+    ('poised',    CL / 'bullet_v12.mp4',     0, 7.16, 8.12, 1.0,  [(0, 1.9), (0.96, 2.05)], C),
+    ('pause',     CL / 'bullet_v12.mp4',    47, 8.12, 8.12 + P, 0, [(0, 2.05), (P, 2.25)], C),
+    ('burst',     CL / 'bullet_v12.mp4',    48, 8.12 + P, 9.08 + P, 1.0, [(0, 2.25), (0.96, 2.25)], C),
+    ('fight',     CL / 'bullet_v12.mp4',    96, 9.08 + P, 10.48 + P, 1.0, [(0, 2.25), (1.4, 1.6)], C),
+    ('editor',    EC / 'squeeze_map.mp4',   100, 10.48 + P, 11.28 + P, 1.0, [(0, 1.0), (0.8, 1.0)], (640, 400)),
+    ('colours',   EC / 'squeeze_colours.mp4', 40, 11.28 + P, 12.00 + P, 1.0, [(0, 1.0), (0.72, 1.0)], (640, 400)),
 ]
-CUTS = [   # the nightmare, cut on every 2nd beat of the 177 bpm loop starting at 12.00
-    ('n1', EC / 'squeeze_playtest.mp4',     40, 12.000, None, 1.0, [(0, 1.8), (0.68, 1.4)], (540, 370)),
-    ('n2', EC / 'escalator_playtest.mp4',   60, None,   None, 1.0, [(0, 1.5), (0.68, 1.3)], (560, 370)),
-    ('n3', EC / 'nomansland_playtest.mp4',  70, None,   None, 1.0, [(0, 1.8), (0.68, 1.4)], (540, 370)),
-    ('n4', EC / 'squeeze_playtest.mp4',     80, None,   14.72, 1.0, [(0, 1.4), (0.68, 2.0)], (540, 370)),
+CUTS = [   # the nightmare, cut on every 2nd beat of the 177 bpm loop starting at 12.00 + P
+    ('n1', EC / 'squeeze_playtest.mp4',     40, None, None, 1.0, [(0, 1.8), (0.68, 1.4)], (540, 370)),
+    ('n2', EC / 'escalator_playtest.mp4',   60, None, None, 1.0, [(0, 1.5), (0.68, 1.3)], (560, 370)),
+    ('n3', EC / 'nomansland_playtest.mp4',  70, None, None, 1.0, [(0, 1.8), (0.68, 1.4)], (540, 370)),
+    ('n4', EC / 'squeeze_playtest.mp4',     80, None, None, 1.0, [(0, 1.4), (0.68, 2.0)], (540, 370)),
 ]
 OUTRO = [  # beat cuts after the voice
     ('o1', EC / 'escalator_playtest.mp4', 100, 1), ('o2', EC / 'nomansland_playtest.mp4', 84, 1), ('o3', EC / 'squeeze_playtest.mp4', 72, 1),
     ('o4', EC / 'escalator_playtest.mp4', 70, 1), ('o5', EC / 'nomansland_playtest.mp4', 100, 1), ('o6', EC / 'squeeze_playtest.mp4', 96, 1),
 ]
-GLITCH = [(10.38, 10.70), (11.90, 12.06), (14.60, 14.80), (18.0, 18.3)]
-END = 21.0
+GLITCH = [(10.38 + P, 10.70 + P), (11.90 + P, 12.06 + P), (14.60 + P, 14.80 + P), (18.0 + P, 18.3 + P)]
+END = 21.0 + P
 
 
 def kf_expr(kf):
@@ -56,10 +59,12 @@ def kf_expr(kf):
 def make_seg(name, src, s0, t0, t1, speed, kf, cen):
     n_out = round((t1 - t0) * FPS)
     n_src = int(n_out * speed) + 1
+    freeze = speed == 0
     z = kf_expr(kf)
     cx, cy = cen
-    vf = (f"select='between(n,{s0},{s0 + n_src - 1})',setpts=(N/({FPS}*TB))/{speed},fps={FPS},"
-          f"scale=w='trunc(1280*({z})/2)*2':h='trunc(800*({z})/2)*2':eval=frame:flags=neighbor,"
+    pre = (f"select='eq(n,{s0})',setpts=N/({FPS}*TB),loop=loop={n_out}:size=1:start=0,fps={FPS}," if freeze else
+           f"select='between(n,{s0},{s0 + n_src - 1})',setpts=(N/({FPS}*TB))/{speed},fps={FPS},")
+    vf = (pre + f"scale=w='trunc(1280*({z})/2)*2':h='trunc(800*({z})/2)*2':eval=frame:flags=neighbor,"
           f"crop=1280:800:x='clip({cx}*({z})-640,0,iw-1280)':y='clip({cy}*({z})-400,0,ih-800)',format=yuv420p")
     f = SEG / f'{name}.mp4'
     subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', str(src), '-vf', vf, '-frames:v', str(n_out), '-r', str(FPS), '-an', '-c:v', 'libx264', '-crf', '10', '-pix_fmt', 'yuv420p', str(f)], check=True)
@@ -84,8 +89,8 @@ def main():
     files = []
     for s in SEGS:
         files.append(make_seg(*s)); print('seg', s[0], flush=True)
-    t = 12.0
-    spans = [(12.0, 12.0 + 2 * BEAT), (12.0 + 2 * BEAT, 12.0 + 4 * BEAT), (12.0 + 4 * BEAT, 12.0 + 6 * BEAT), (12.0 + 6 * BEAT, 14.72)]
+    t = 12.0 + P
+    spans = [(t, t + 2 * BEAT), (t + 2 * BEAT, t + 4 * BEAT), (t + 4 * BEAT, t + 6 * BEAT), (t + 6 * BEAT, 14.72 + P)]
     for c, (a, b) in zip(CUTS, spans):
         name, src, s0, _, _, sp, kf, cen = c
         files.append(make_seg(name, src, s0, a, b, sp, kf, cen)); print('seg', name, flush=True)
@@ -105,10 +110,11 @@ def main():
     vfx = f"{g},{n},fade=t=in:st=0:d=0.4,fade=t=out:st={END - 0.5}:d=0.5"
     # audio: voice, ticking bed (ducked at the pause), boom whose peak (2.40 s into the sample) lands on the burst, drums from 10.305 (beat on 12.00)
     A = OUT / 'audio'
-    aud = (f"[1:a]volume=1.0[v];"
-           f"[2:a]atrim=0:9,volume='if(between(t,7.95,8.35),0,0.22)':eval=frame,afade=t=out:st=7.5:d=0.4[tick];"
-           f"[3:a]adelay=6000|6000,volume=0.9[boom];"
-           f"[4:a]aloop=loop=-1:size=2e9,atrim=0:{END - 10.305},afade=t=in:st=0:d=0.5,volume=0.8,adelay={int(10.305 * 1000)}|{int(10.305 * 1000)}[dr];"
+    aud = (f"[1:a]atrim=0:8.12,asetpts=PTS-STARTPTS[va];[1:a]atrim=8.12,asetpts=PTS-STARTPTS[vb];"
+           f"anullsrc=r=24000:cl=mono,atrim=0:{P}[vs];[va][vs][vb]concat=n=3:v=0:a=1[v];"
+           f"[2:a]atrim=0:9,volume='if(between(t,7.95,{8.35 + P}),0,0.22)':eval=frame,afade=t=out:st=7.5:d=0.4[tick];"
+           f"[3:a]adelay={int((6.0 + P) * 1000)}|{int((6.0 + P) * 1000)},volume=0.9[boom];"
+           f"[4:a]aloop=loop=-1:size=2e9,atrim=0:{END - 10.305 - P},afade=t=in:st=0:d=0.5,volume=0.8,adelay={int((10.305 + P) * 1000)}|{int((10.305 + P) * 1000)}[dr];"
            f"[v][tick][boom][dr]amix=inputs=4:normalize=0:duration=longest,atrim=0:{END},afade=t=out:st={END - 0.7}:d=0.7[a]")
     subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', str(silent), '-i', str(OUT / 'voice/promo.wav'),
                     '-i', str(A / 'tense-clock-ticking-jam-fx-1-00-27.mp3'), '-i', str(A / 'cinematic-transition-boom-piano-hit-tomas-herudek-4-4-00-08.mp3'),
