@@ -16,7 +16,8 @@ description: How to delegate Atari ST game reverse-engineering and patching work
 - **Escalate on a stall:** if an agent spends more than about 30 minutes on one bug without new evidence, stop it. Then fix it yourself or hand it to a stronger model with a precise handoff.
   - Example: the jsr/jmp load-hook crash took the lead about 5 minutes after Qwen had spent 40 on it.
 - **`fable` (Fable model, user agent `~/.omp/agent/agents/fable.md`):** deep algorithm and design work, e.g. a game-family study or an exact rewrite of a hot routine. Use it sparingly.
-  - After any provider or network error, check the session log for the model that actually ran. One study silently fell back to Grok and never switched back; most of its output was wrong. (The user has since removed that fallback.)
+  - After any provider or network error, check the session log for the model that actually ran. One study silently fell back to Grok and never switched back; most of its output was wrong. (The user has since removed that fallback.) Again 2026-11-23: the Moonshine editor redesign agent fell back to DeepSeek mid-run; its code crashed and a `fable` audit found 23 faults in it. Treat any fallback-era output as unreviewed.
+- **Results file as insurance:** every long or risky agent writes its findings incrementally to a file in the repo (`RESULTS_*.md`, `HOLD_*.md`: what changed, what's verified, exact resume steps) so a hold, a budget stop or context exhaustion loses nothing. It has carried three handoffs already (MSREditor3 hold, MSREditor7 -> MSREditor8, MW2SteSound).
 - **Changing a shared tool mid-wave** (`core.s`, the patch tool): broadcast it to the running agents (`write agent://all`) and tell them to rebuild before their final gates.
 - **Never default a patch on because "it's the same in another game"** (the lead did this with `pp_nofade` and broke Populous's LOAD). Defaults change only after that game's own gates.
 
