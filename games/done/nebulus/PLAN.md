@@ -14,7 +14,7 @@ own HD driver, then `Pterm0`). `tools/nebulus.py` builds a 16 MB FAT16 ACSI imag
 and partition loader (same user-supplied files as Hunter, `gamebench/hd/`) and autoruns `C:\START.TOS`.
 Verified: HW-detect screen, then the loader pictures, then the game's title ("Mission #1", "Sound On"), then a tower.
 
-## Status (2026-11-18)
+## Status: DONE (v1.2, user-tested on MiSTer). Log below dates from 2026-11-18, kept as history.
 - Boot: solved and frozen (`tools/nebulus.py`); in-tower snapshot/dump in `work/`.
 - Input lag: path mapped (`$38498` last IKBD byte, handler `$384fc`); poll frequency and the end-to-end delay
   measurement in progress (NebInput2). Trainer agent found a tap shorter than ~40 ms can be missed.
