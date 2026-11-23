@@ -1,0 +1,43 @@
+  [noprot] [   26s vbl 1375] name prompt
+  [noprot] [   33s vbl 1727] option screen (typing attempt 1)
+GATE noprot/ste-1.62-1024K marker PASS $727f8 = b'PMPO' (want b'PMPO')
+GATE noprot/ste-1.62-1024K site pm_credit PASS $14baa = 4eb900072800 (want 4eb900072800)
+GATE noprot/ste-1.62-1024K site pm_nokeydisk PASS $13cec = 4e714e714e71 (want 4e714e714e71)
+GATE noprot/ste-1.62-1024K site pm_noprot PASS $15998 = 0000002c (want 0000002c)
+GATE noprot/ste-1.62-1024K site pm_noprot_box PASS $bbd2 = 4e754e714e71 (want 4e754e714e71)
+GATE noprot/ste-1.62-1024K payload@options PASS unchanged
+GATE noprot/ste-1.62-1024K credit visible PASS rows 194-199: 780 px of colours [(102, 102, 68)]
+GATE noprot/ste-1.62-1024K boot PASS 39s
+GATE noprot/ste-1.62-1024K noprot flag PASS $15998 = $0000002c (want $0000002c) before the first land
+  [noprot] [   33s vbl 3869] no disk requester
+  [noprot] [   36s vbl 4009] chart expected
+  [noprot] [   64s vbl 5402] island clicked
+  [noprot] [   70s vbl 5698] 3D map view, world counter ticking
+GATE noprot/ste-1.62-1024K noprot: the check never ran PASS hits $acc4:0, $ae20:0, $b232:0, $b39c:0
+GATE noprot/ste-1.62-1024K noprot: 'Please wait' box skipped (stub reached) PASS $bbd2 reached 1x (an `rts` stub)
+GATE noprot/ste-1.62-1024K nokeydisk: the key-disk routine never ran, the flow went on PASS $1cf7c hit 0x, next instruction $13cf2 hit 1x; the Powermonger disk was never inserted
+GATE noprot/ste-1.62-1024K map view PASS counter 59, flag $15998 = $0000002c
+GATE noprot/ste-1.62-1024K payload@map PASS unchanged
+  [noprot] requester: insert the save game disk
+GATE noprot/ste-1.62-1024K save/load: loaded state == saved state PASS 101376 B: 0 differ
+GATE noprot/ste-1.62-1024K save/load: the world moved between save and load PASS saved vs the state just before the load: 287 differ
+GATE noprot/ste-1.62-1024K save/load: save disk slot A == saved state PASS sectors 1-198 equal: True, slot flag $ff, image 409600 B
+GATE noprot/ste-1.62-1024K save/load: the game runs on after the load PASS 
+GATE noprot/ste-1.62-1024K payload@saveload PASS unchanged
+GATE noprot/ste-1.62-1024K lose picture PASS non-black 0.69, 16 colours, seen stable x3; cache cursor $9fc58 -> $a7958
+GATE noprot/ste-1.62-1024K lose picture still there after 8 s PASS non-black 0.69, 16 colours
+GATE noprot/ste-1.62-1024K payload@lose PASS unchanged
+GATE noprot/ste-1.62-1024K back to option screen PASS 
+  [noprot] [   20s vbl 15992] island clicked
+  [noprot] [   26s vbl 16288] 3D map view, world counter ticking
+GATE noprot/ste-1.62-1024K map view (2nd land) PASS counter 38
+GATE noprot/ste-1.62-1024K win picture PASS non-black 0.99, 15 colours, seen stable x3; cache cursor $af658
+GATE noprot/ste-1.62-1024K win picture still there after 8 s PASS non-black 0.99, 15 colours
+GATE noprot/ste-1.62-1024K payload@win PASS unchanged
+GATE noprot/ste-1.62-1024K back to option screen (after win) PASS 
+  [noprot] confirm dialog after START NEW CONQUEST on a won land: True ('WWI, are                you sure you want to    delete all o')
+  [noprot] [   20s vbl 21441] island clicked
+  [noprot] [   26s vbl 21736] 3D map view, world counter ticking
+GATE noprot/ste-1.62-1024K map view (3rd land) PASS counter 35
+GATE noprot/ste-1.62-1024K payload@round3 PASS unchanged
+CELL DONE noprot/ste-1.62-1024K: OK (439s)

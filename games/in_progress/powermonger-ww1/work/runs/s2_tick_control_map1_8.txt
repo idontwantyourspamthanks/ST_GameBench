@@ -1,0 +1,6 @@
+AB map1 8 MHz CONTROL (unpatched vs unpatched): unpatched 37 loop tops (world clock 45..81), second run 37 loop tops (clock 45..81)
+AB   second: distinct world clocks 37, passes with a repeated clock (R passes) 0
+AB   unpatched: distinct world clocks 37, passes with a repeated clock (R passes) 0
+AB compared 37 loop tops over 37 distinct world ticks
+AB negative control: second tick k vs unpatched tick k+1 differs in 36 of 36 loop tops
+AB RESULT map1 8 MHz CONTROL (unpatched vs unpatched): IDENTICAL (everything in $0-$71fff except the masks)

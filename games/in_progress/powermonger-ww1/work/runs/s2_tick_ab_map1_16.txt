@@ -1,0 +1,6 @@
+AB map1 16 MHz: unpatched 179 loop tops (world clock 58..236), second run 111 loop tops (clock 54..124)
+AB   patched: distinct world clocks 71, passes with a repeated clock (R passes) 40
+AB   unpatched: distinct world clocks 179, passes with a repeated clock (R passes) 0
+AB compared 105 loop tops over 67 distinct world ticks
+AB negative control: second tick k vs unpatched tick k+1 differs in 106 of 106 loop tops
+AB RESULT map1 16 MHz: IDENTICAL (everything in $0-$71fff except the masks)

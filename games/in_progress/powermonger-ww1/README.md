@@ -1,16 +1,16 @@
 # Powermonger: World War One Edition (1992, Bullfrog / Electronic Arts): enhanced floppy
 
-Status: **in progress, stage 1 of `PLAN.md` done** (delivery core + floppy writer + first gates; credit line only, no gameplay patch yet).
+Status: **in progress, stage 2 of `PLAN.md` done** (delivery core + floppy writer; credit line, no copy protection (`pm_noprot`, `pm_noprot_box`, `pm_nokeydisk`), fixed 4.00/s world tick (`tick_*`), keyboard shortcuts (`qol_keys`, `qol_keys2`)).
 Base (user decision 2026-11-23): the **EA original** floppy. The cracked versions are for comparison only.
-Plan and decisions: [`PLAN.md`](PLAN.md). Results of the stages: [`work/notes/RESULTS_stage01.md`](work/notes/RESULTS_stage01.md). Method and reference project: `games/done/powermonger/`.
+Plan and decisions: [`PLAN.md`](PLAN.md). Results of the stages: [`work/notes/RESULTS_stage01.md`](work/notes/RESULTS_stage01.md), [`work/notes/RESULTS_stage02.md`](work/notes/RESULTS_stage02.md). Method and reference project: `games/done/powermonger/`.
 
 - Build: `python3 tools/wwpatch.py verify | list | build [--floppy] [--only NAME ...] [--none] [--corrupt] [--fill] [--out DIR]` (needs `disks/ea.st`, `vasmm68k_mot`).
   `build --floppy` writes `build/default/floppy.st` = the EA disk with a new `AUTO\WW1.PRG` (the payload rides in the program's data segment); nothing else on the disk changes.
-- Gates: `python3 tools/wwgate.py cell|handover ...` (docs in the file), the chain of stage 1: `tools/stage01_gates.sh`. Logs in `work/runs/`.
+- Gates: `python3 tools/wwgate.py cell|handover ...` (docs in the file), `tools/wwtick.py snap|rate|ab` (tick rates, per-tick state equality), `tools/wwkeys.py` (key == click, phantom click), `tools/wwgrid.py points|handlers`; the chains: `tools/stage01_gates.sh`, `tools/stage02_gates.sh`. Logs in `work/runs/`.
 - Intake: `python3 tools/stx2st.py <EA .stx> disks/ea.st`; unpacker of the game program: `tools/wwdepack.py`; address port from master's Powermonger: `tools/addrmap.py`.
 - Notes (one topic each): `work/notes/intake.md` (disk, files, the Powermonger-disk requester), `delivery.md` (how the patch gets in), `placement.md` (why `$72000..$77FFF`), `addrmap.md` (master -> WW1 addresses).
 
-**The game is a DATA DISK**: the first START NEW CONQUEST of a session asks for the *original Powermonger* floppy and then for the WW1 disk back. You need both disks (the enhanced WW1 disk replaces only the WW1 one).
+**The unpatched game asks for the original Powermonger floppy** on the first START NEW CONQUEST of a session (then for the WW1 disk back). That request is a key-disk check (it only loads the file `DATA\\SPRITE8.DAT` from drive A: and throws it away): the enhanced disk removes it (`patches/pm_nokeydisk.s`, evidence in `work/notes/RESULTS_stage02.md`), so the finished release needs the WW1 disk only.
 
 Game files are git-ignored. Put your own copies here:
 

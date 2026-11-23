@@ -19,6 +19,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import re
 import struct
 import subprocess
@@ -31,7 +32,7 @@ ROOT = HERE.parent
 sys.path.insert(0, str(HERE))
 import wwdepack  # noqa: E402
 
-PATCHDIR = ROOT / "patches"
+PATCHDIR = Path(os.environ.get("WW_PATCHDIR", str(ROOT / "patches")))      # WW_PATCHDIR: a scratch copy of patches/ (negative-control builds)
 BUILD = ROOT / "build"
 VASM = "vasmm68k_mot"
 DISK = ROOT / "disks" / "ea.st"
@@ -507,7 +508,8 @@ def cmd_build(patches, out: Path, floppy: bool, corrupt: bool, fill: bool, all_p
     out.mkdir(parents=True, exist_ok=True)
     (out / "WW1.PRG").write_bytes(prg)
     manifest = dict(patches=[p.name for p in patches], sites=[dict(name=s["name"], addr=s["addr"], orig=s["orig"].hex(), new=s["new"].hex()) for s in sites],
-                    used=[list(u) for u in used], fills=[list(f) for f in fills], image_base=IMG_BASE, image_end=IMG_END,
+                    used=[list(u) for u in used], fills=[list(f) for f in fills],
+                    data=[dict(patch=p.name, addr=a, len=ln) for p in patches for a, ln in p.data], image_base=IMG_BASE, image_end=IMG_END,
                     prg_md5=hashlib.md5(prg).hexdigest(), prg_size=len(prg), records=len(records))
     print(f"patches: {[p.name for p in patches]}")
     print(f"payload {len(img)} B image, {len(records)} B of records; WW1.PRG {len(prg)} B (original {len(prg_file())}); md5 {manifest['prg_md5']}")

@@ -1,0 +1,7 @@
+RATE map1 8 MHz 50 Hz sync $02 orig: 801 VBL = 16.02 s emulated, 160111 cycles/VBL, world clock +39 = 2.434/s
+RATE map1 8 MHz 50 Hz sync $fe patched: 801 VBL = 16.02 s emulated, 160124 cycles/VBL, world clock +63 = 3.933/s; tick passes 63, R passes 0, S passes 26
+RATE map1 16 MHz 50 Hz sync $02 orig: 801 VBL = 16.02 s emulated, 320397 cycles/VBL, world clock +100 = 6.242/s
+RATE map1 16 MHz 50 Hz sync $fe patched: 801 VBL = 16.02 s emulated, 320318 cycles/VBL, world clock +64 = 3.995/s; tick passes 64, R passes 36, S passes 0
+RATE map1 8 MHz 60 Hz sync $00 orig: 801 VBL = 13.35 s emulated, 133585 cycles/VBL, world clock +31 = 2.322/s
+RATE map1 8 MHz 60 Hz sync $fc patched: 801 VBL = 13.35 s emulated, 133499 cycles/VBL, world clock +53 = 3.970/s; tick passes 53, R passes 0, S passes 23
+RATE map1 16 MHz 60 Hz sync $fc patched: 801 VBL = 13.35 s emulated, 267016 cycles/VBL, world clock +54 = 4.045/s; tick passes 54, R passes 29, S passes 0

@@ -1,0 +1,34 @@
+  [default] [   26s vbl 1379] name prompt
+  [default] [   33s vbl 1732] option screen (typing attempt 1)
+GATE default/st-1.04-1024K marker PASS $727f8 = b'PMPO' (want b'PMPO')
+GATE default/st-1.04-1024K site pm_credit PASS $14baa = 4eb900072800 (want 4eb900072800)
+GATE default/st-1.04-1024K site pm_nokeydisk PASS $13cec = 4e714e714e71 (want 4e714e714e71)
+GATE default/st-1.04-1024K site pm_noprot PASS $15998 = 0000002c (want 0000002c)
+GATE default/st-1.04-1024K site pm_noprot_box PASS $bbd2 = 4e754e714e71 (want 4e754e714e71)
+GATE default/st-1.04-1024K site qol_keys PASS $13e70 = 4eb900072c00 (want 4eb900072c00)
+GATE default/st-1.04-1024K site qol_keys2 PASS $f30 = 4eb900073100 (want 4eb900073100)
+GATE default/st-1.04-1024K site tick_click PASS $7e6 = 00072aa0 (want 00072aa0)
+GATE default/st-1.04-1024K site tick_click2 PASS $842 = 00072aa0 (want 00072aa0)
+GATE default/st-1.04-1024K site tick_click3 PASS $144b4 = 00072aa0 (want 00072aa0)
+GATE default/st-1.04-1024K site tick_head PASS $13da0 = 4eb900072900 (want 4eb900072900)
+GATE default/st-1.04-1024K site tick_men PASS $13e36 = 4eb900072a60 (want 4eb900072a60)
+GATE default/st-1.04-1024K site tick_pass PASS $13de8 = 4eb900072a004e71 (want 4eb900072a004e71)
+GATE default/st-1.04-1024K site tick_wx PASS $13e24 = 4eb900072a40 (want 4eb900072a40)
+GATE default/st-1.04-1024K payload@options PASS unchanged
+GATE default/st-1.04-1024K credit visible PASS rows 194-199: 780 px of colours [(102, 102, 68)]
+GATE default/st-1.04-1024K boot PASS 43s
+GATE default/st-1.04-1024K noprot flag PASS $15998 = $0000002c (want $0000002c) before the first land
+  [default] [   33s vbl 4101] no disk requester
+  [default] [   36s vbl 4241] chart expected
+  [default] [   64s vbl 5638] island clicked
+  [default] [   70s vbl 5934] 3D map view, world counter ticking
+GATE default/st-1.04-1024K noprot: the check never ran PASS hits $acc4:0, $ae20:0, $b232:0, $b39c:0
+GATE default/st-1.04-1024K noprot: 'Please wait' box skipped (stub reached) PASS $bbd2 reached 1x (an `rts` stub)
+GATE default/st-1.04-1024K nokeydisk: the key-disk routine never ran, the flow went on PASS $1cf7c hit 0x, next instruction $13cf2 hit 1x; the Powermonger disk was never inserted
+GATE default/st-1.04-1024K map view PASS counter 71, flag $15998 = $0000002c
+GATE default/st-1.04-1024K payload@map PASS unchanged
+GATE default/st-1.04-1024K lose picture PASS non-black 0.69, 16 colours, seen stable x3; cache cursor $9fc58 -> $a7958
+GATE default/st-1.04-1024K lose picture still there after 8 s PASS non-black 0.69, 16 colours
+GATE default/st-1.04-1024K payload@lose PASS unchanged
+GATE default/st-1.04-1024K back to option screen PASS 
+CELL DONE default/st-1.04-1024K: OK (183s)

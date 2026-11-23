@@ -1,0 +1,33 @@
+  [default8] [   28s vbl 1804] name prompt
+  [default8] [   35s vbl 2227] option screen (typing attempt 1)
+GATE default8/megaste-2.06-4096K marker PASS $727f8 = b'PMPO' (want b'PMPO')
+GATE default8/megaste-2.06-4096K site pm_credit PASS $14baa = 4eb900072800 (want 4eb900072800)
+GATE default8/megaste-2.06-4096K site pm_nokeydisk PASS $13cec = 4e714e714e71 (want 4e714e714e71)
+GATE default8/megaste-2.06-4096K site pm_noprot PASS $15998 = 0000002c (want 0000002c)
+GATE default8/megaste-2.06-4096K site pm_noprot_box PASS $bbd2 = 4e754e714e71 (want 4e754e714e71)
+GATE default8/megaste-2.06-4096K site qol_keys PASS $13e70 = 4eb900072c00 (want 4eb900072c00)
+GATE default8/megaste-2.06-4096K site qol_keys2 PASS $f30 = 4eb900073100 (want 4eb900073100)
+GATE default8/megaste-2.06-4096K site tick_click PASS $7e6 = 00072aa0 (want 00072aa0)
+GATE default8/megaste-2.06-4096K site tick_click2 PASS $842 = 00072aa0 (want 00072aa0)
+GATE default8/megaste-2.06-4096K site tick_click3 PASS $144b4 = 00072aa0 (want 00072aa0)
+GATE default8/megaste-2.06-4096K site tick_head PASS $13da0 = 4eb900072900 (want 4eb900072900)
+GATE default8/megaste-2.06-4096K site tick_men PASS $13e36 = 4eb900072a60 (want 4eb900072a60)
+GATE default8/megaste-2.06-4096K site tick_pass PASS $13de8 = 4eb900072a004e71 (want 4eb900072a004e71)
+GATE default8/megaste-2.06-4096K site tick_wx PASS $13e24 = 4eb900072a40 (want 4eb900072a40)
+GATE default8/megaste-2.06-4096K payload@options PASS unchanged
+GATE default8/megaste-2.06-4096K credit visible PASS rows 194-199: 780 px of colours [(102, 102, 68)]
+GATE default8/megaste-2.06-4096K boot PASS 46s
+GATE default8/megaste-2.06-4096K noprot flag PASS $15998 = $0000002c (want $0000002c) before the first land
+  [default8] [   33s vbl 5068] no disk requester
+  [default8] [   36s vbl 5236] chart expected
+  [default8] [   64s vbl 6913] island clicked
+  [default8] [   70s vbl 7267] 3D map view, world counter ticking
+GATE default8/megaste-2.06-4096K noprot: the check never ran PASS hits $acc4:0, $ae20:0, $b232:0, $b39c:0
+GATE default8/megaste-2.06-4096K noprot: 'Please wait' box skipped (stub reached) PASS $bbd2 reached 1x (an `rts` stub)
+GATE default8/megaste-2.06-4096K nokeydisk: the key-disk routine never ran, the flow went on PASS $1cf7c hit 0x, next instruction $13cf2 hit 1x; the Powermonger disk was never inserted
+GATE default8/megaste-2.06-4096K map view PASS counter 71, flag $15998 = $0000002c
+GATE default8/megaste-2.06-4096K payload@map PASS unchanged
+RATE default8/megaste 8 MHz cold boot map view 60 Hz: 801 VBL = 13.35 s emulated, 133569 cycles/VBL, world clock +54 = 4.045/s; tick passes 54, R passes 0, S passes 10
+GATE default8/megaste-2.06-4096K rate PASS default8/megaste 8 MHz cold boot map view 60 Hz: 801 VBL = 13.35 s emulated, 133569 cycles/VBL, world clock +54 = 4.045/s; tick passes 54, R passes 0, S passes 10
+GATE default8/megaste-2.06-4096K world rate = 4.00/s (+-5 %) PASS 4.045 world steps per emulated second
+CELL DONE default8/megaste-2.06-4096K: OK (146s)

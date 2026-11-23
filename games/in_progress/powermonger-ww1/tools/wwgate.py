@@ -31,7 +31,7 @@ sys.path.insert(0, str(HERE))
 import pmww  # noqa: E402
 from PIL import Image  # noqa: E402
 
-SHOTS = ROOT / "work" / "shots" / "stage01"
+SHOTS = ROOT / "work" / "shots" / "stage02"
 IMG_BASE, IMG_END = 0x72000, 0x78000
 MARKER = 0x727F8
 
@@ -68,8 +68,13 @@ def diff_spans(got: bytes, ref: bytes, base: int, gap: int = 64):
     return [(base + a, base + b) for a, b in spans]
 
 
-def payload_diff(h, expect: bytes):
-    return diff_spans(h.ram(IMG_BASE, IMG_END - IMG_BASE), expect, IMG_BASE)
+def payload_diff(h, expect: bytes, mask=()):
+    """Spans of $72000..$77fff that differ from the expected image.  `mask` = [(addr, len)]: the patches' own run-time data blocks
+    (declared with `; data:`), which the patch code legitimately writes; compared as equal here."""
+    got = bytearray(h.ram(IMG_BASE, IMG_END - IMG_BASE))
+    for a, ln in mask:
+        got[a - IMG_BASE:a - IMG_BASE + ln] = expect[a - IMG_BASE:a - IMG_BASE + ln]
+    return diff_spans(bytes(got), expect, IMG_BASE)
 
 
 def fmt_spans(spans, k=6):
@@ -95,8 +100,11 @@ def cell(a):
         time.sleep(2.0)
         h.shot(str(SHOTS / f"{tag}_{machine}_options.png"))
         marker = bytes(h.ram(MARKER, 4))
+        dmask = [(d["addr"], d["len"]) for d in man.get("data", [])] if man else []
+        noprot = bool(man and "pm_noprot" in man["patches"] and not a.corrupt)      # a corrupt build refuses every optional site: the game stays original
+        keydisk = bool(man and "pm_nokeydisk" in man["patches"] and not a.corrupt)
         def region(name):
-            d = payload_diff(h, expect)
+            d = payload_diff(h, expect, dmask)
             g.line(f"payload@{name}", not d, ("unchanged" if man else "region $72000-$77fff all zero") if not d else fmt_spans(d))
 
         if man:
@@ -122,10 +130,60 @@ def cell(a):
             region("options")
         g.line("boot", True, f"{time.time() - t0:.0f}s")
         if "map" in steps:
-            h.options_to_map(log=log)
+            if noprot:
+                g.line("noprot flag", h.peekl(0x15998) == 0x2C, f"$15998 = ${h.peekl(0x15998):08x} (want $0000002c) before the first land")
+                h.watch_pcs([0xACC4, 0xAE20, 0xB232, 0xB39C, 0xBBD2, 0x1CF7C, 0x13CF2])           # check start, flag clear, answer check, wrong-answer box, 'Please wait' box
+            h.options_to_map(log=log, noprot=noprot, swap=not keydisk)
+            if noprot:
+                hits = h.hits()
+                g.line("noprot: the check never ran", all(hits.get(a, 0) == 0 for a in (0xACC4, 0xAE20, 0xB232, 0xB39C)),
+                       "hits " + ", ".join(f"${a:x}:{hits.get(a, 0)}" for a in (0xACC4, 0xAE20, 0xB232, 0xB39C)))
+                g.line("noprot: 'Please wait' box skipped (stub reached)", hits.get(0xBBD2, 0) >= 1, f"$bbd2 reached {hits.get(0xBBD2, 0)}x (an `rts` stub)")
+                if keydisk:
+                    g.line("nokeydisk: the key-disk routine never ran, the flow went on", hits.get(0x1CF7C, 0) == 0 and hits.get(0x13CF2, 0) >= 1,
+                           f"$1cf7c hit {hits.get(0x1CF7C, 0)}x, next instruction $13cf2 hit {hits.get(0x13CF2, 0)}x; the Powermonger disk was never inserted")
+                h.debug("b all", 0.3)
+            else:
+                log(f"flag $15998 after the correct answer: ${h.peekl(0x15998):08x}")
             h.shot(str(SHOTS / f"{tag}_{machine}_map.png"))
-            g.line("map view", h.ticking(2.0) and h.peekw(pmww.WINDOW_OPEN) == 0, f"counter {h.counter()}")
+            g.line("map view", h.ticking(2.0) and h.peekw(pmww.WINDOW_OPEN) == 0, f"counter {h.counter()}, flag $15998 = ${h.peekl(0x15998):08x}")
             region("map")
+        if "rate" in steps:
+            import wwtick
+            if a.mhz != 8:
+                h.set_cpuclock(a.mhz)
+            time.sleep(2)
+            patched = bool(man and "tick_head" in man["patches"])
+            line, r = wwtick.rate_numbers(h, None, a.vbls, patched, f"{tag}/{machine} {a.mhz} MHz cold boot map view")
+            print(line, flush=True)
+            g.line("rate", True, line[5:])
+            if patched:
+                g.line("world rate = 4.00/s (+-5 %)", 3.8 <= r <= 4.2, f"{r:.3f} world steps per emulated second")
+            if a.mhz != 8:
+                h.set_cpuclock(8)
+        if "soak" in steps:
+            c0, t_s, bad, n_win = h.counter(), time.time(), [], 0
+            log0 = len(h._logtext())
+            last = c0
+            while time.time() - t_s < a.soak:
+                time.sleep(15)
+                c = h.counter()
+                n_win += 1
+                if c <= last:
+                    bad.append((round(time.time() - t_s), last, c))
+                last = c
+            exc = re.findall(r"(?i)(bus error|address error|illegal instruction|double bus|exception)[^\n]*", h._logtext()[log0:])
+            g.line("soak: the world advances in every 15 s window", not bad, f"{n_win} windows over {time.time() - t_s:.0f} s, clock {c0} -> {last} ({(last - c0) / (time.time() - t_s):.2f}/s), stalls {bad}")
+            g.line("soak: no CPU exception in the Hatari log", not exc, f"{exc[:3]}")
+            region("soak")
+        if "saveload" in steps:
+            r = h.saveload(log=log)
+            g.line("save/load: loaded state == saved state", r["d_saved_loaded"] == 0, f"{r['n']} B: {r['d_saved_loaded']} differ")
+            g.line("save/load: the world moved between save and load", r["d_saved_pre"] > 0, f"saved vs the state just before the load: {r['d_saved_pre']} differ")
+            g.line("save/load: save disk slot A == saved state", r["disk_eq"] and r["disk_len"] == 800 * 512 and r["slot_flag"] == 0xFF,
+                   f"sectors 1-198 equal: {r['disk_eq']}, slot flag ${r['slot_flag']:02x}, image {r['disk_len']} B")
+            g.line("save/load: the game runs on after the load", r["ticking"], "")
+            region("saveload")
         if "lose" in steps:
             c0 = h.peekl(pmww.CACHE_CURSOR)
             h.retire(win=False, log=log)
@@ -140,7 +198,7 @@ def cell(a):
             g.line("back to option screen", h.wait_text("Welcome to the World", timeout=20), "")
         if "win" in steps:
             h.click_st(*pmww.START_NEW_XY, wait=3.0)
-            h.chart_to_map(log=log)
+            h.chart_to_map(log=log, noprot=noprot)
             g.line("map view (2nd land)", h.ticking(2.0), f"counter {h.counter()}")
             h.retire(win=True, log=log)
             ok, best, seen = _picture(h, f"{tag}_{machine}_win")
@@ -158,7 +216,7 @@ def cell(a):
             log(f"confirm dialog after START NEW CONQUEST on a won land: {dlg} ({h.wtext().strip()[:60]!r})")
             if dlg:
                 h.click_st(130, 111, wait=3.0)                       # YES (master: 'delete all of your conquered lands')
-            h.chart_to_map(log=log)
+            h.chart_to_map(log=log, noprot=noprot)
             g.line("map view (3rd land)", h.ticking(2.0), f"counter {h.counter()}")
             region("round3")
         print(f"CELL DONE {g.tag}: {'OK' if g.ok else 'FAIL'} ({time.time() - t0:.0f}s)", flush=True)
@@ -184,7 +242,8 @@ def _picture(h, name):
             fr, nc = pic_stats(h, None)
         except RuntimeError:
             fr, nc = 0.0, 0
-        best = max(best, (fr, nc))
+        if nc >= 12:                                              # a mid-redraw frame (1 colour) must not be reported as the picture
+            best = max(best, (fr, nc))
         if fr > 0.30 and nc >= 12:
             seen += 1
             if seen >= 3:
@@ -251,6 +310,9 @@ def main():
         p.add_argument("--mem", type=int, default=1024)
         p.add_argument("--tag")
         p.add_argument("--extra", default="", help='extra Hatari options as one string, e.g. "--mmu true --cpuclock 32" (TT)')
+        p.add_argument("--mhz", type=int, default=8, help="rate step: CPU clock (hatari-option --cpuclock)")
+        p.add_argument("--soak", type=int, default=300, help="soak step: seconds of play")
+        p.add_argument("--vbls", type=int, default=800, help="rate step: VBLs measured")
         p.add_argument("--corrupt", action="store_true", help="the build has a deliberately corrupted site: expect PMPF and an unpatched game")
         p.add_argument("--workdir")
     a = ap.parse_args()
