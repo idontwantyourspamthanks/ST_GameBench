@@ -170,9 +170,13 @@ move.w (a3)+,d5 ; rol.w d3,d5 ; andi.w #$f,d5   ; or.w d5,d4
 move.w d4,(a5)+
 ```
 (×4 unrolled, then `cmpa.l [$82c4],a5` / `bge`). About 20 instructions per 4 output pixels.
-The four nibbles `$f000/$f00/$f0/$f` combine the four sources' nibbles into one word
-[INFERENCE: a packed 4-px pattern word; the exact pixel format and whether the destination is
-the plane screen or a pattern cache is not yet proven].
+The four nibbles `$f000/$f00/$f0/$f` are the four columns of one 16-px word. `$82c8` through
+its `rts` at `$83f0` is **byte-identical** to the 1990 font composer at `$8838` (296 bytes).
+`a6` is not an anonymous pattern table: `$8406` matches the 1990 font at `$8976` (1536 bytes,
+12 bytes differ, all in glyphs 124..127). Index `ch` selects block `48 * (ch >> 2)`, column
+`ch & 3`. Colour 1 is the cell background. ASCII 32..126 decode as the letterforms, which is
+why the panel text and the map patterns share this one blit. The "12*row" above is
+`(ch & ~3) * 12`, the byte offset of that block.
 
 So the WW1's map-view terrain is drawn as **positioned blocks of a dithered pattern**, at
 4-pixel granularity through a per-plane rotate/mask/or combine — not as clipped triangles
