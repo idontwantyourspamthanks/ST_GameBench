@@ -85,3 +85,6 @@ Not run in this stage (not asked): 16 MHz Mega STE cells, TT / Falcon, HD, the w
 
 ## 6. Files
 New: `patches/pm_tooltip.s`, `tools/wwtt.py`, `tools/stage03_gates.sh`, `work/notes/RESULTS_stage03.md`, `work/runs/s3_*.txt` (12 logs). Changed: `patches/qol_keys.s` (KF word, data block 204 B, comment), `PLAN.md` (stage 3 marked). Screenshots are git-ignored.
+
+## 7. User review (2026-11-23)
+The user looked at `work/shots/stage03/sheet_ww1_vs_master.png` and the per-icon shots: happy with the tooltips; the posture-dependent (aggression level) texts are correct, WW1 behaves identically to Powermonger there. This closes the "posture amounts not re-traced" caveat.
