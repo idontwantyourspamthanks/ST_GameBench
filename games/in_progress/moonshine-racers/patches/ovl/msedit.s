@@ -58,19 +58,17 @@ vFire   equ     106             ; w fire is held
 vFireMv equ     108             ; w a direction was used while fire was held
 vMCnt   equ     110             ; w list picker: items
 vMSel   equ     112             ; w selection
-vAcc    equ     114             ; l tiles_calc: start unit of the segment
-vAx     equ     118             ; l (free)
-vAy     equ     122             ; l (free)
+vSLab   equ     114             ; w draw_labels: what the label column shows (scroll position + the cursor's row, + 1; 0 = nothing)
+vSHdr   equ     116             ; w draw_header: the changed mark the header shows + 1 (0 = no header)
+vSKey   equ     118             ; w draw_keys: the focus the key reminder shows + 1 (0 = none)
+vSHint  equ     120             ; l draw_hint: the text the hint row shows (0 = a message, or nothing)
 vTmp    equ     126             ; w
 vTmp2   equ     128             ; w
-vBlkEnd equ     138             ; l
-vAcc2   equ     142             ; l tiles_calc: end unit of the segment
 vName   equ     146             ; 26 B track name
 vTyp    equ     172             ; l parse: start of the type table in the block
 vTypLen equ     176             ; w bytes of TYPS (entries + end word)
 vShow   equ     178             ; l the screen the shifter shows
 vDraw   equ     182             ; l the screen the drawing routines write to
-vK      equ     196             ; w (free)
 vMod    equ     200             ; w the working copy differs from the loaded one
 vHCur   equ     202             ; l undo history: the current entry
 vHTop   equ     206             ; l end of the last entry
@@ -332,7 +330,7 @@ flush_pend:
         tst.w   vTOk(a5)
         bne   .x
         bsr     tiles_calc
-        move.w  #3,vRedraw(a5)
+        ori.w   #2,vRedraw(a5)
 .x:     rts
 
 cls:    movem.l d0-d7/a0,-(a7)
@@ -703,263 +701,222 @@ seg_ptr:
 ; tiles_calc: one pass over the segments and the sorted object list integrates what the game integrates (the curve value c, 16-bit like its ring, and the hill slope,
 ; 32-bit) and classifies the value at each segment's middle: the tile shows what the player sees, not the raw field.
 ; TILE[k] = bits 0-2 direction class (0 straight, 1-3 left gentle/medium/sharp, 4-6 right ...), 3-5 hill class (0 level, 1-2 rise small/big, 3-4 drop small/big),
-; 6 an object in the segment, 7 the BAR; $8000 = the segment starts at or past vEnd (beyond the race).
+; 6 an object in the segment, 7 the BAR; $8000 = the segment starts at or past vEnd (beyond the race).  Also: the extent (calc_end) and the cursor segment's objects (obj_find).
 tiles_calc:
-        movem.l d0-d7/a0-a6,-(a7)
+        movem.l d0-d7/a0/a3-a4,-(a7)
+        bsr     find_bar                ; (a length edit moves the objects behind it, the BAR too: its unit decides the extent)
         bsr     calc_end
-        bsr     seg_ptr
-        movea.l a0,a4
+        bsr     obj_find
+        lea     SEGT.l,a4
         lea     TILE.l,a0
+        lea     OBJT.l,a3
         moveq   #0,d2                   ; object index
         moveq   #0,d0                   ; c (word)
         moveq   #0,d1                   ; slope (32-bit, height units * 65536 per unit)
         move.w  vNSeg(a5),d3
         beq     .x
         subq.w  #1,d3
-.seg:   move.w  vNSeg(a5),d5
-        sub.w   d3,d5
-        subq.w  #1,d5                   ; this segment's index
-        moveq   #0,d4
+.seg:   moveq   #0,d4
         move.w  (a4),d4                 ; start
-        move.l  d4,vAcc(a5)
         cmp.l   vEnd(a5),d4
         bcc     .beyond
         moveq   #0,d6
         move.w  2(a4),d6                ; length
-        add.l   d6,d4
-        move.l  d4,vAcc2(a5)            ; end
-        clr.w   vTmp2(a5)               ; the tile word being built
-        clr.w   vTmp(a5)                ; objects in this segment
-        cmp.w   vSeg(a5),d5
-        bne     .nf
-        move.w  d2,vOF(a5)
-.nf:    move.w  d2,d4
-        lsl.w   #3,d4
-        lea     OBJT.l,a3
-        adda.l  d4,a3
-.of:    cmp.w   vNObj(a5),d2
+        add.l   d6,d4                   ; end (exclusive)
+        moveq   #0,d7                   ; the tile word
+.of:    cmp.w   vNObj(a5),d2            ; the objects of this segment (the segments are contiguous and the list is sorted: one pass)
         bcc     .ofd
-        moveq   #0,d4
-        move.w  (a3),d4
-        cmp.l   vAcc(a5),d4
-        bcc     .os
-        addq.l  #8,a3
-        addq.w  #1,d2
-        bra     .of
-.os:    cmp.l   vAcc2(a5),d4
+        moveq   #0,d5
+        move.w  (a3),d5
+        cmp.l   d4,d5
         bcc     .ofd
-        ori.w   #$40,vTmp2(a5)
+        ori.w   #$40,d7
         tst.w   6(a3)
         beq     .on
-        ori.w   #$80,vTmp2(a5)
-.on:    addq.w  #1,vTmp(a5)
-        addq.l  #8,a3
+        ori.w   #$80,d7
+.on:    addq.l  #8,a3
         addq.w  #1,d2
         bra     .of
-.ofd:   cmp.w   vSeg(a5),d5
-        bne     .nd
-        move.w  vTmp(a5),vOCnt(a5)
-.nd:    move.w  d6,d7
-        lsr.w   #1,d7                   ; half the length: the middle
-        move.w  4(a4),d4                ; curve delta
-        muls    d7,d4
-        move.w  d0,d5
-        ext.l   d5
-        add.l   d4,d5
-        move.w  d5,d5                   ; the 16-bit wrap of the game's ring
-        ext.l   d5
-        moveq   #0,d4                   ; direction class
+.ofd:   move.w  d6,d5
+        lsr.w   #1,d5
+        muls    4(a4),d5                ; curve delta * half the length
+        add.w   d0,d5                   ; c at the middle (the 16-bit wrap of the game's ring)
+        moveq   #3,d4                   ; to the right: classes 4..6
+        tst.w   d5
+        bpl     .cr
+        moveq   #0,d4                   ; to the left: 1..3
+        neg.w   d5
+.cr:    cmpi.w  #300,d5
+        bcs     .cd                     ; straight
+        addq.w  #1,d4
+        cmpi.w  #1200,d5
+        bcs     .co
+        addq.w  #1,d4
+        cmpi.w  #2400,d5
+        bcs     .co
+        addq.w  #1,d4
+.co:    or.w    d4,d7
+.cd:    move.w  d6,d5
+        lsr.w   #1,d5
+        muls    6(a4),d5                ; hill accel * half the length
+        add.l   d1,d5                   ; the slope at the middle
+        moveq   #0,d4                   ; climbing: classes 1..2
         tst.l   d5
-        bmi     .cl
-        cmpi.w  #300,d5
-        bcs     .cd
-        moveq   #4,d4
-        cmpi.w  #1200,d5
-        bcs     .cd
-        moveq   #5,d4
-        cmpi.w  #2400,d5
-        bcs     .cd
-        moveq   #6,d4
-        bra     .cd
-.cl:    neg.l   d5
-        cmpi.w  #300,d5
-        bcs     .cd
-        moveq   #1,d4
-        cmpi.w  #1200,d5
-        bcs     .cd
-        moveq   #2,d4
-        cmpi.w  #2400,d5
-        bcs     .cd
-        moveq   #3,d4
-.cd:    or.w    d4,vTmp2(a5)
-        move.w  6(a4),d4                ; hill accel
-        muls    d7,d4
-        add.l   d1,d4                   ; slope at the middle
-        move.l  d4,d5
-        bpl     .hp
+        bpl     .hr
+        moveq   #2,d4                   ; dropping: 3..4
         neg.l   d5
-        moveq   #3,d4
-        cmpi.l  #1311,d5
-        bcs     .hd
-        moveq   #4,d4
-        bra     .hd
-.hp:    moveq   #1,d4
-        cmpi.l  #1311,d5
-        bcs     .hd
-        moveq   #2,d4
-.hd:    lsl.w   #3,d4
-        or.w    d4,vTmp2(a5)
-        move.w  vTmp2(a5),(a0)+
-        move.w  4(a4),d4                ; c += delta * n
-        ext.l   d4
-        moveq   #0,d5
-        move.w  d6,d5
-        muls    d5,d4
-        move.w  d0,d5
-        ext.l   d5
-        add.l   d4,d5
-        move.w  d5,d0
-        move.w  6(a4),d4                ; slope += accel * n
-        ext.l   d4
-        moveq   #0,d5
-        move.w  d6,d5
-        muls    d5,d4
-        add.l   d4,d1
+.hr:    cmpi.l  #1311,d5                ; 0.02 height units per unit
+        bcs     .hd                     ; level
+        addq.w  #1,d4
+        cmpi.l  #6554,d5                ; 0.10
+        bcs     .ho
+        addq.w  #1,d4
+.ho:    lsl.w   #3,d4
+        or.w    d4,d7
+.hd:    move.w  d7,(a0)+
+        move.w  4(a4),d4                ; c += delta * length (the low word of the product is the same signed or unsigned)
+        mulu    d6,d4
+        add.w   d4,d0
+        move.w  6(a4),d4                ; slope += accel * length (a length of 32768 reads as -32768 in muls)
+        muls    d6,d4
+        tst.w   d6
+        bpl     .ls
+        neg.l   d4
+.ls:    add.l   d4,d1
         lea     SEGSZ(a4),a4
         dbra    d3,.seg
         bra     .x
 .beyond:
         move.w  #$8000,(a0)+            ; no tile for this segment and the ones behind it
-        lea     SEGSZ(a4),a4
-        cmp.w   vSeg(a5),d5
-        bne     .by2
-        clr.w   vOCnt(a5)
-.by2:   dbra    d3,.beyond
+        dbra    d3,.beyond
 .x:     move.w  #1,vTOk(a5)
-        movem.l (a7)+,d0-d7/a0-a6
+        movem.l (a7)+,d0-d7/a0/a3-a4
         rts
 
-; tile_draw: d0 = x (a multiple of 16), d1 = y, d2 = tile word (+ bit 8 white frame / bit 9 yellow frame).  Complete words only: a tile is never half drawn.
+; tile_draw: d0 = x (a multiple of 16), d1 = y, d2 = tile word (+ bit 8 white frame / bit 9 magenta frame).  Complete words only: a tile is never half drawn.
+; A tile is 15 x 11 pixels in its hill colour (the BAR: white chequers) with the direction symbol in black (rows 2..8, columns 2..12) and, when the segment holds
+; objects, a black 2 x 2 dot in the top right corner.  Selected: a two pixel frame in the frame colour, a black ring inside it, the tile's middle (9 x 5) inside that.
 tile_draw:
-        movem.l d0-d7/a0-a3,-(a7)
-        move.w  d1,d3
-        mulu    #160,d3
-        move.w  d0,d4
-        lsr.w   #4,d4
-        lsl.w   #3,d4
-        add.w   d4,d3
+        movem.l d0-d7/a0-a1,-(a7)
+        mulu    #160,d1
+        lsr.w   #4,d0
+        lsl.w   #3,d0
+        add.w   d0,d1
         movea.l vDraw(a5),a0
-        adda.w  d3,a0
-        btst    #15,d2
-        beq     .full
-        moveq   #11,d0
-.er:    clr.w   (a0)
-        clr.w   2(a0)
-        clr.w   4(a0)
-        clr.w   6(a0)
-        lea     160(a0),a0
+        adda.w  d1,a0
+        tst.w   d2
+        bpl     .full
+        moveq   #TILEH-1,d0             ; bit 15: no tile
+.er:    clr.l   (a0)+
+        clr.l   (a0)+
+        lea     152(a0),a0
         dbra    d0,.er
         bra     .x
 .full:  move.w  d2,d3
-        andi.w  #$38,d3
-        lsr.w   #3,d3
-        add.w   d3,d3
+        lsr.w   #2,d3
+        andi.w  #$e,d3                  ; 2 x the hill class
         lea     hillcol(pc),a1
-        move.w  (a1,d3.w),d7            ; the tile colour = the hill class
-        move.w  d7,d6                   ; the frame ring
-        btst    #8,d2
-        beq     .r1
-        moveq   #7,d6
-.r1:    btst    #9,d2
-        beq     .r2
-        moveq   #8,d6
-.r2:    move.w  d2,d3
-        andi.w  #7,d3                   ; direction class
-        moveq   #0,d0                   ; row
-.row:   cmpi.w  #11,d0
-        beq     .zero
-        move.w  #$8002,d4               ; the ring: the first and the last column
-        cmpi.w  #0,d0
-        beq     .allring
-        cmpi.w  #10,d0
-        beq     .allring
+        move.w  (a1,d3.w),d7            ; the tile colour
         btst    #7,d2
-        bne     .bar
-        move.w  #$7FFC,d1               ; the 13 inner columns, in the tile colour
+        beq     .c1
+        moveq   #7,d7                   ; the BAR: white
+.c1:    moveq   #0,d6                   ; the frame colour (0 = not selected)
+        btst    #8,d2
+        beq     .c2
+        moveq   #7,d6
+.c2:    btst    #9,d2
+        beq     .c3
+        moveq   #10,d6
+.c3:    move.w  d2,d3
+        andi.w  #7,d3
+        mulu    #14,d3
+        lea     gtab-4(pc),a1
+        adda.w  d3,a1                   ; the symbol's word for tile row r (2..8) is (a1, 2r)
+        moveq   #0,d0                   ; row
+.row:   moveq   #0,d1                   ; the pixels in the tile colour
+        moveq   #0,d4                   ; the pixels in the frame colour
+        cmpi.w  #TILEH-1,d0
+        beq     .wr                     ; the gap row
+        btst    #7,d2
+        beq     .gl
+        move.w  #$cccc,d1               ; the BAR: 2 x 2 chequers
+        btst    #1,d0
+        beq     .fr
+        move.w  #$3332,d1
+        bra     .fr
+.gl:    move.w  #$fffe,d1
         cmpi.w  #2,d0
         bcs     .dot
-        cmpi.w  #8,d0
-        bcc     .dot
-        move.w  d3,d5                   ; the direction glyph: 7 rows, 11 pixels, black
-        mulu    #14,d5
-        add.w   d0,d5
-        add.w   d0,d5
-        subi.w  #4,d5
-        lea     gtab(pc),a1
+        cmpi.w  #9,d0
+        bcc     .fr
+        move.w  d0,d5
+        add.w   d5,d5
         move.w  (a1,d5.w),d5
         not.w   d5
-        and.w   d5,d1
-.dot:   btst    #6,d2                   ; a 2x2 dot in the top right corner when the segment has objects
+        and.w   d5,d1                   ; the direction symbol
+        bra     .fr
+.dot:   btst    #6,d2
+        beq     .fr
+        andi.w  #$fff9,d1               ; the object dot (rows 0-1, columns 13-14)
+.fr:    tst.w   d6
         beq     .wr
-        cmpi.w  #1,d0
-        beq     .dot2
         cmpi.w  #2,d0
+        bcs     .edge
+        cmpi.w  #9,d0
+        bcc     .edge
+        move.w  #$c006,d4               ; selected: the frame's two first and last columns, ...
+        andi.w  #$1ff0,d1               ; ... the tile's middle (columns 3..11), black between them
+        cmpi.w  #2,d0
+        beq     .ring
+        cmpi.w  #8,d0
         bne     .wr
-.dot2:  and.w   #$fff3,d1
+.ring:  moveq   #0,d1                   ; rows 2 and 8: the black ring
         bra     .wr
-.bar:   move.w  d0,d5                   ; the BAR: a chequered tile
-        add.w   d5,d5
-        lea     cheq(pc),a1
-        move.w  (a1,d5.w),d1
-        bra     .wr
-.zero:  moveq   #0,d4
-        moveq   #0,d1
-        bra     .wr
-.allring:
-        move.w  #$fffe,d4
+.edge:  btst    #7,d2
+        beq     .e1
+        move.w  #$fffe,d1
+.e1:    move.w  d1,d4                   ; rows 0-1 and 9-10: the frame (the dot stays a notch in it)
         moveq   #0,d1
 .wr:    moveq   #0,d5                   ; the four bitplanes of this row
 .pl:    moveq   #0,d3
         btst    d5,d7
-        beq     .pl1
+        beq     .p1
         move.w  d1,d3
-.pl1:   btst    d5,d6
-        beq     .pl2
+.p1:    btst    d5,d6
+        beq     .p2
         or.w    d4,d3
-.pl2:   move.w  d3,(a0)+
+.p2:    move.w  d3,(a0)+
         addq.w  #1,d5
         cmpi.w  #4,d5
         bne     .pl
         lea     152(a0),a0
         addq.w  #1,d0
-        cmpi.w  #12,d0
+        cmpi.w  #TILEH,d0
         bne     .row
-.x:     movem.l (a7)+,d0-d7/a0-a3
+.x:     movem.l (a7)+,d0-d7/a0-a1
         rts
 
-; draw_grid: every slot's desired word (tile + frame bits) against what it shows; only changed tiles are drawn
+; draw_grid: every slot's desired word (tile + frame bits) against what it shows (SHW); only changed tiles are drawn
 draw_grid:
-        movem.l d0-d7/a0-a2,-(a7)
+        movem.l d0-d7/a0,-(a7)
         move.w  vFirst(a5),d7
         moveq   #0,d6                   ; slot
         moveq   #0,d5                   ; row
 .grow:  moveq   #0,d4                   ; column
-.gcol:  move.w  d7,d0
-        cmp.w   vNSeg(a5),d0
-        bcs     .have
-        move.w  #$8000,d2
-        bra     .cmp
-.have:  move.w  d7,d3
+.gcol:  move.w  #$8000,d2
+        cmp.w   vNSeg(a5),d7
+        bcc     .cmp
+        move.w  d7,d3
         add.w   d3,d3
         lea     TILE.l,a0
         move.w  (a0,d3.w),d2
+        bmi     .cmp
         cmp.w   vSeg(a5),d7
         bne     .cmp
-        move.w  #$100,d3
+        ori.w   #$100,d2                ; the cursor: a white frame, magenta while the object list has it
         tst.w   vFocus(a5)
-        beq     .sel
-        move.w  #$200,d3
-.sel:   or.w    d3,d2
+        beq     .cmp
+        eori.w  #$300,d2
 .cmp:   move.w  d6,d3
         add.w   d3,d3
         lea     SHW.l,a0
@@ -981,67 +938,73 @@ draw_grid:
         addq.w  #1,d5
         cmpi.w  #8,d5
         bne     .grow
-        movem.l (a7)+,d0-d7/a0-a2
+        movem.l (a7)+,d0-d7/a0
         rts
 
-; draw_labels: the number of the first segment of every grid row, in the left margin
+; draw_labels: the number of the first segment of every grid row in the left margin (the cursor's row yellow); drawn when the scroll position or the cursor's row changed
 draw_labels:
-        movem.l d0-d7/a0-a2,-(a7)
+        movem.l d0-d3/d6-d7/a0-a1,-(a7)
+        move.w  vSeg(a5),d3
+        sub.w   vFirst(a5),d3
+        lsr.w   #4,d3                   ; the cursor's row on the screen
+        move.w  d3,d0
+        ror.w   #4,d0
+        add.w   vFirst(a5),d0
+        addq.w  #1,d0
+        cmp.w   vSLab(a5),d0
+        beq     .x
+        move.w  d0,vSLab(a5)
+        bsr     seg_last
+        move.w  d0,d7                   ; the last segment that has a tile
         moveq   #0,d6
-.ll:    move.w  vFirst(a5),d0
-        move.w  d6,d1
-        lsl.w   #4,d1
-        add.w   d1,d0
-        cmp.w   vNSeg(a5),d0
-        bcs     .num
-        lea     t_dash(pc),a0
-        bra     .dr
-.num:   addq.w  #1,d0
+.ll:    moveq   #0,d0
+        move.w  d6,d0
+        lsl.w   #4,d0
+        add.w   vFirst(a5),d0           ; the first segment of this row
+        lea     t_nolab(pc),a0
+        cmp.w   d7,d0
+        bhi     .dr
+        addq.w  #1,d0
         lea     vLTxt(a5),a1
         moveq   #4,d1
         bsr     appn
         clr.b   (a1)
         lea     vLTxt(a5),a0
-.dr:    move.w  d6,d1
-        mulu    #TILEH,d1
-        addi.w  #GRIDY+2,d1
-        move.w  #1,d2
-        move.w  vSeg(a5),d3
-        lsr.w   #4,d3
+.dr:    moveq   #1,d2
         cmp.w   d3,d6
         bne     .pt
         moveq   #8,d2
-.pt:    moveq   #0,d0
+.pt:    move.w  d6,d1
+        mulu    #TILEH,d1
+        addi.w  #GRIDY+2,d1
+        moveq   #0,d0
         bsr     ptextp
         addq.w  #1,d6
         cmpi.w  #8,d6
         bne     .ll
-        movem.l (a7)+,d0-d7/a0-a2
+.x:     movem.l (a7)+,d0-d3/d6-d7/a0-a1
         rts
 
-; lp28: pad vLine to 28 columns and show it at column 0, row d1, colour d2 (the panel's width)
+; lp28: pad vLine to 28 columns (the panel's width; a longer line is cut) and show it at column 0, row d1, colour d2
 lp28:   lea     vLine+28(a5),a0
 .p:     cmpa.l  a0,a1
         bcc     .t
         move.b  #' ',(a1)+
         bra     .p
-.t:     lea     vLine+28(a5),a0
-        cmpa.l  a0,a1
-        bls     .n
-        movea.l a0,a1
-.n:     clr.b   (a1)
+.t:     clr.b   (a0)
         lea     vLine(a5),a0
         moveq   #0,d0
         bra     ptext
 
 ; draw_panel: the selected segment and its object list (text rows 13-23, the left 28 columns)
 draw_panel:
-        movem.l d0-d7/a0-a4,-(a7)
+        movem.l d0-d7/a0-a2/a4,-(a7)
         bsr     seg_ptr
         movea.l a0,a4
-        bsr     lbeg                    ; SEG nnnn/nnnn AT nnnnn
+        bsr     lbeg                    ; SEGMENT nnnn/nnnn  AT nnnnn
         lea     t_pseg(pc),a0
         bsr     apps
+        moveq   #0,d0
         move.w  vSeg(a5),d0
         addq.w  #1,d0
         moveq   #4,d1
@@ -1067,53 +1030,49 @@ draw_panel:
         moveq   #14,d1
         moveq   #7,d2
         bsr     lp28
-        bsr     lbeg                    ; CURVE (the field a list edits)
+        bsr     lbeg                    ; CURVE: the segment's own value (what the C list and , . change)
         lea     t_pcur(pc),a0
         bsr     apps
+        lea     t_sy0(pc),a0
         move.w  4(a4),d0
-        bne     .cv
-        lea     t_strt(pc),a0
-        bsr     apps
-        bra     .cv2
-.cv:    move.b  #'R',(a1)
-        tst.w   d0
-        bpl     .cvr
-        move.b  #'L',(a1)
+        beq     .cv
+        lea     t_cright(pc),a0
+        bpl     .cv
+        lea     t_cleft(pc),a0
         neg.w   d0
-.cvr:   addq.l  #1,a1
-        andi.l  #$ffff,d0
-        moveq   #2,d1
-        bsr     appn
+.cv:    bsr     apps
+        tst.w   d0
+        beq     .cv2
+        bsr     apdn
 .cv2:   moveq   #15,d1
         moveq   #7,d2
         bsr     lp28
-        bsr     lbeg                    ; BEND (what the road does here = the tile symbol)
+        move.w  vSeg(a5),d6
+        add.w   d6,d6
+        lea     TILE.l,a0
+        move.w  (a0,d6.w),d6            ; the tile word
+        bsr     lbeg                    ; BEND: what the road does here = the tile's symbol
         lea     t_pben(pc),a0
         bsr     apps
-        move.w  vSeg(a5),d0
-        add.w   d0,d0
-        lea     TILE.l,a0
-        move.w  (a0,d0.w),d0
+        move.w  d6,d0
         andi.w  #7,d0
+        lsl.w   #2,d0
         lea     bendtab(pc),a0
-        add.w   d0,d0
         movea.l (a0,d0.w),a0
         bsr     apps
         moveq   #16,d1
         moveq   #7,d2
         bsr     lp28
-        bsr     lbeg                    ; HILL (class = the tile colour, then the accel)
+        bsr     lbeg                    ; HILL: the slope class = the tile's colour, then the segment's own accel
         lea     t_phil(pc),a0
         bsr     apps
-        move.w  vSeg(a5),d0
-        add.w   d0,d0
-        lea     TILE.l,a0
-        move.w  (a0,d0.w),d0
-        lsr.w   #3,d0
-        andi.w  #7,d0
+        move.w  d6,d0
+        lsr.w   #1,d0
+        andi.w  #$1c,d0
         lea     hilltab(pc),a0
-        add.w   d0,d0
         movea.l (a0,d0.w),a0
+        bsr     apps
+        lea     t_pacc(pc),a0
         bsr     apps
         move.w  6(a4),d0
         moveq   #4,d1
@@ -1144,15 +1103,24 @@ draw_panel:
         move.w  vOCnt(a5),d0
         moveq   #2,d1
         bsr     appn
-        moveq   #19,d1
+        tst.w   vOCnt(a5)
+        beq     .oh
+        lea     vLine+22(a5),a0         ; the heading of the unit column
+.op:    move.b  #' ',(a1)+
+        cmpa.l  a0,a1
+        bcs     .op
+        lea     t_punit(pc),a0
+        bsr     apps
+.oh:    moveq   #19,d1
         moveq   #7,d2
         bsr     lp28
         ; the object list: four lines, scrolled so the selection shows
-        tst.w   vOCnt(a5)
-        beq     .none
         move.w  vObj(a5),d0
         sub.w   vOF(a5),d0
-        cmp.w   vOTop(a5),d0
+        tst.w   vFocus(a5)
+        bne     .o1
+        moveq   #0,d0                   ; the grid has the cursor: from the first object
+.o1:    cmp.w   vOTop(a5),d0
         bcc     .o2
         move.w  d0,vOTop(a5)
 .o2:    move.w  vOTop(a5),d1
@@ -1163,85 +1131,72 @@ draw_panel:
         subq.w  #3,d1
         move.w  d1,vOTop(a5)
 .o3:    moveq   #0,d6                   ; line 0..3
-.ol:    move.w  vOTop(a5),d0
+.ol:    bsr     lbeg
+        moveq   #7,d2
+        move.w  vOTop(a5),d0
         add.w   d6,d0
         cmp.w   vOCnt(a5),d0
-        bcc     .obl
-        move.w  vOF(a5),d1
-        add.w   d0,d1
-        move.w  d1,d7                   ; OBJT index
+        bcs     .obj
+        tst.w   d0
+        bne     .od                     ; an empty line
+        lea     t_pnone(pc),a0          ; no objects at all: how to add one
+        bsr     apps
+        moveq   #2,d2
+        bra     .od
+.obj:   move.w  vOF(a5),d7
+        add.w   d0,d7                   ; its index in OBJT
+        move.w  d7,d1
         lsl.w   #3,d1
         lea     OBJT.l,a2
         adda.w  d1,a2
-        bsr     lbeg
-        move.w  d0,d1
-        addq.w  #1,d1
-        moveq   #1,d0
-        move.w  d1,d0
+        andi.l  #$ffff,d0
+        addq.w  #1,d0
         moveq   #2,d1
         bsr     appn
-        move.b  #' ',(a1)+
+        lea     t_obar(pc),a0
         tst.w   6(a2)
-        bne     .obar
+        bne     .ob
         lea     t_ot(pc),a0
         bsr     apps
         moveq   #0,d0
         move.w  2(a2),d0
         moveq   #3,d1
         bsr     appn
-        bra     .osd
-.obar:  lea     t_obar(pc),a0
-        bsr     apps
-.osd:   move.b  #' ',(a1)+
+        lea     t_oside(pc),a0
+.ob:    bsr     apps
         move.w  4(a2),d0
-        moveq   #4,d1
+        moveq   #3,d1
         bsr     apsn
         move.b  #' ',(a1)+
         moveq   #0,d0
         move.w  (a2),d0
         moveq   #5,d1
         bsr     appn
-        move.w  d6,d1
-        addi.w  #20,d1
         moveq   #7,d2
         tst.w   vFocus(a5)
-        beq     .op
+        beq     .od
         cmp.w   vObj(a5),d7
-        bne     .op
-        moveq   #23,d2
-.op:    bsr     lp28
-.onext: addq.w  #1,d6
+        bne     .od
+        moveq   #23,d2                  ; the selected object: a white bar
+.od:    move.w  d6,d1
+        addi.w  #20,d1
+        bsr     lp28
+        addq.w  #1,d6
         cmpi.w  #4,d6
         bne     .ol
-        bra     .x
-.obl:   moveq   #0,d0                   ; an empty line
-        move.b  #0,vLine(a5)
-        lea     vLine(a5),a0
-        move.w  d6,d1
-        addi.w  #20,d1
-        moveq   #7,d2
-        bsr     ptext
-        bra     .onext
-.none:  moveq   #0,d0
-        move.b  #0,vLine(a5)
-        lea     vLine(a5),a0
-        moveq   #20,d1
-        moveq   #1,d2
-        bsr     ptext
-        moveq   #21,d1
-        bsr     ptext
-        moveq   #22,d1
-        bsr     ptext
-        moveq   #23,d1
-        bsr     ptext
-.x:     movem.l (a7)+,d0-d7/a0-a4
+        movem.l (a7)+,d0-d7/a0-a2/a4
         rts
 
-; draw_keys: the key reminder of the current focus in the right 12 columns (rows 13-23)
+; draw_keys: the key reminder of the current focus in the right 12 columns (rows 13-23); drawn when the focus changed (a pick list's box takes the same place)
 draw_keys:
-        movem.l d0-d7/a0-a2,-(a7)
+        movem.l d0-d2/d6/a0/a2,-(a7)
+        move.w  vFocus(a5),d0
+        addq.w  #1,d0
+        cmp.w   vSKey(a5),d0
+        beq     .x
+        move.w  d0,vSKey(a5)
         lea     t_keyg(pc),a2
-        tst.w   vFocus(a5)
+        subq.w  #1,d0
         beq     .g
         lea     t_keyo(pc),a2
 .g:     moveq   #0,d6
@@ -1250,40 +1205,60 @@ draw_keys:
         move.w  d6,d1
         addi.w  #13,d1
         moveq   #2,d2
-        bsr     ptext
+        tst.w   d6
+        bne     .p
+        moveq   #8,d2                   ; the heading
+.p:     bsr     ptext
         lea     13(a2),a2
         addq.w  #1,d6
         cmpi.w  #11,d6
         bne     .l
-        movem.l (a7)+,d0-d7/a0-a2
+.x:     movem.l (a7)+,d0-d2/d6/a0/a2
         rts
 
-; draw_hint: the hint row (24): a message once (yellow), else the keys of what is going on
+; draw_hint: the hint row (24): a message once (yellow), else the keys of what is going on (drawn when it changed)
 draw_hint:
-        bsr     lbeg
-        moveq   #1,d2
+        movem.l d0-d2/a0-a1,-(a7)
         lea     t_hint(pc),a0
-        tst.w   vLOpen(a5)
-        beq     .h1
+        tst.w   vFocus(a5)
+        beq   .h0
+        lea     t_hinto(pc),a0
+.h0:    tst.w   vLOpen(a5)
+        beq   .h1
         movea.l vLHintP(a5),a0
 .h1:    tst.w   vLeaveW(a5)
-        beq     .h2
+        beq   .h2
         lea     t_hdisc(pc),a0
 .h2:    tst.w   vMode(a5)
-        beq     .h3
+        beq   .h3
         lea     t_hmove(pc),a0
-.h3:    move.l  vMsg(a5),d0
-        beq     .hm
+.h3:    moveq   #1,d2
+        move.l  vMsg(a5),d0
+        beq   .hm
         movea.l d0,a0
         move.l  d0,vLMsg(a5)
         clr.l   vMsg(a5)
+        clr.l   vSHint(a5)
         moveq   #8,d2
-.hm:    bsr     apps
+        bra   .dr
+.hm:    cmpa.l  vSHint(a5),a0
+        beq   .x
+        move.l  a0,vSHint(a5)
+.dr:    bsr     lbeg
+        bsr     apps
         moveq   #24,d1
-        bra     lend
+        bsr     lend
+.x:     movem.l (a7)+,d0-d2/a0-a1
+        rts
 
-; draw_header: source, name, scenery (row 0)
+; draw_header: source, name, scenery, * = changed (row 0); drawn when the changed mark changes
 draw_header:
+        movem.l d0-d2/a0-a1,-(a7)
+        move.w  vMod(a5),d0
+        addq.w  #1,d0
+        cmp.w   vSHdr(a5),d0
+        beq     .x
+        move.w  d0,vSHdr(a5)
         bsr     lbeg
         lea     t_src(pc),a0
         move.w  vSrc(a5),d0
@@ -1291,7 +1266,7 @@ draw_header:
         adda.w  d0,a0
         bsr     apps
         cmpi.w  #2,vSrc(a5)
-        beq     .h1
+        beq   .h1
         moveq   #0,d0
         move.w  vSrcIx(a5),d0
         addq.w  #1,d0
@@ -1302,9 +1277,9 @@ draw_header:
         bsr     apps
         lea     vLine+29(a5),a0
 .h2:    cmpa.l  a0,a1
-        bcc     .h3
+        bcc   .h3
         move.b  #' ',(a1)+
-        bra     .h2
+        bra   .h2
 .h3:    lea     t_scen(pc),a0
         bsr     apps
         moveq   #0,d0
@@ -1313,176 +1288,158 @@ draw_header:
         moveq   #2,d1
         bsr     appn
         tst.w   vMod(a5)
-        beq     .h4
+        beq   .h4
         move.b  #'*',(a1)+
 .h4:    moveq   #0,d1
         moveq   #8,d2
-        bra     lend
+        bsr     lend
+.x:     movem.l (a7)+,d0-d2/a0-a1
+        rts
 
+; draw_full: the whole view on an empty page (after a menu, the key page, a full-screen list, a test drive).  draw_view: what changed since the last draw.
+draw_full:
+        bsr     cls
+        movem.l d0/a0,-(a7)
+        lea     SHW.l,a0                ; nothing is on the screen: no tile, no header, labels, key reminder, hint
+        moveq   #127,d0
+.iv:    move.w  #$ffff,(a0)+
+        dbra    d0,.iv
+        movem.l (a7)+,d0/a0
+        clr.w   vSHdr(a5)
+        clr.w   vSLab(a5)
+        clr.w   vSKey(a5)
+        clr.l   vSHint(a5)
 draw_view:
         bsr     draw_header
         bsr     draw_labels
         bsr     draw_grid
         bsr     draw_panel
+        bsr     draw_hint
         tst.w   vLOpen(a5)
-        beq     .k
-        bra     lrows
-.k:     bra     draw_keys
+        bne     lrows
+        bra     draw_keys
 
-; grid_fit: d0 = 0 keep the cursor off the edge (scroll by whole rows), 1 centre its row at row 3
+; grid_fit: the grid scrolls by whole rows so that the cursor stays one row from the edge while more rows exist; a cursor outside the window gets its row at row 3
 grid_fit:
-        movem.l d0-d7/a0,-(a7)
-        move.w  d0,d6
-        move.w  vNSeg(a5),d7
-        beq     .x
-        subq.w  #1,d7                   ; the last segment index
-        tst.w   d6
-        beq     .edge
-        move.w  vSeg(a5),d0
+        movem.l d0-d3,-(a7)
+        bsr     seg_last
         andi.w  #$fff0,d0
-        move.w  #3*16,d1
-        cmp.w   d1,d0
-        bcs     .c0
-        sub.w   d1,d0
-        bra     .set
-.c0:    moveq   #0,d0
-        bra     .set
-.edge:  move.w  vFirst(a5),d0
+        subi.w  #7*16,d0
+        bpl     .m
+        moveq   #0,d0
+.m:     move.w  d0,d2                   ; the highest first row: the last row of tiles is the grid's last row
         move.w  vSeg(a5),d1
-        cmp.w   d0,d1
-        bcc     .e1
-        move.w  vSeg(a5),d0
-        andi.w  #$fff0,d0
+        andi.w  #$fff0,d1               ; the cursor's row
+        move.w  vFirst(a5),d0
+        move.w  d1,d3
+        sub.w   d0,d3
+        asr.w   #4,d3                   ; its row on the screen
+        bmi     .ctr
+        cmpi.w  #7,d3
+        bgt     .ctr
+        bne     .top
+        addi.w  #16,d0                  ; the last row: one row on
         bra     .set
-.e1:    move.w  d0,d1
-        addi.w  #128,d1
-        move.w  vSeg(a5),d2
-        cmp.w   d1,d2
-        bcs     .e2
-        move.w  vSeg(a5),d0
-        subi.w  #127,d0
-        andi.w  #$fff0,d0
+.top:   tst.w   d3
+        bne     .set
+        subi.w  #16,d0                  ; the first row: one row back
         bra     .set
-.e2:    move.w  vSeg(a5),d1             ; keep the cursor one row from the edge
-        sub.w   d0,d1
-        lsr.w   #4,d1
-        tst.w   d1
-        bne     .e3
-        tst.w   d0
-        beq     .e3
-        subi.w  #16,d0
-        bra     .set
-.e3:    cmpi.w  #7,d1
-        bne     .x
-        move.w  d0,d1
-        addi.w  #128,d1
-        cmp.w   d7,d1
-        bhi     .x
-        addi.w  #16,d0
+.ctr:   move.w  d1,d0
+        subi.w  #3*16,d0
 .set:   tst.w   d0
         bpl     .s1
         moveq   #0,d0
-.s1:    move.w  d7,d1
-        andi.w  #$fff0,d1
-        cmp.w   d1,d0
+.s1:    cmp.w   d2,d0
         bls     .s2
-        move.w  d1,d0
+        move.w  d2,d0
 .s2:    move.w  d0,vFirst(a5)
-.x:     movem.l (a7)+,d0-d7/a0
+        movem.l (a7)+,d0-d3
         rts
 
-; obj_find: the objects of the selected segment -> vOF / vOCnt; vPos = its first unit; vObj kept inside the range
+; obj_find: the objects of the selected segment -> vOF / vOCnt; vPos = its first unit; vObj kept inside the range; a segment without objects gives the grid the cursor
 obj_find:
         movem.l d0-d5/a0,-(a7)
         bsr     seg_ptr
         moveq   #0,d3
         move.w  (a0),d3
         move.l  d3,vPos(a5)
+        moveq   #0,d4
         move.w  2(a0),d4
-        add.w   d3,d4                   ; end (exclusive)
+        add.l   d3,d4                   ; end (exclusive)
         lea     OBJT.l,a0
-        moveq   #0,d1
+        moveq   #0,d1                   ; index
+        moveq   #0,d5                   ; count
         move.w  vNObj(a5),d2
-        beq     .none
 .s:     cmp.w   d2,d1
-        bcc     .done
-        cmp.w   (a0),d3
-        bhi     .sk
-        bra     .f
-.sk:    addq.l  #8,a0
-        addq.w  #1,d1
-        bra     .s
-.f:     move.w  d1,vOF(a5)
-        moveq   #0,d5
-.l:     cmp.w   d2,d1
         bcc     .e
-        cmp.w   (a0),d4
-        bhi     .c
-        bra     .e
-.c:     addq.w  #1,d5
+        moveq   #0,d0
+        move.w  (a0),d0
+        cmp.l   d3,d0
+        bcc     .f
         addq.l  #8,a0
         addq.w  #1,d1
-        bra     .l
+        bra     .s
+.f:     move.w  d1,d0                   ; count the ones before its end
+        add.w   d5,d0
+        cmp.w   d2,d0
+        bcc     .e
+        moveq   #0,d0
+        move.w  (a0),d0
+        cmp.l   d4,d0
+        bcc     .e
+        addq.w  #1,d5
+        addq.l  #8,a0
+        bra     .f
 .e:     move.w  d5,vOCnt(a5)
+        bne     .has
+        clr.w   vOF(a5)
+        clr.w   vObj(a5)
+        clr.w   vFocus(a5)
+        bra     .x
+.has:   move.w  d1,vOF(a5)
         move.w  vObj(a5),d0
-        cmp.w   vOF(a5),d0
+        cmp.w   d1,d0
         bcc     .c2
-        move.w  vOF(a5),d0
-        bra     .set
-.c2:    move.w  vOF(a5),d1
-        add.w   vOCnt(a5),d1
+        move.w  d1,d0
+.c2:    add.w   d5,d1
         cmp.w   d1,d0
         bcs     .set
-        subq.w  #1,d1
         move.w  d1,d0
-        bpl     .set
-        moveq   #0,d0
+        subq.w  #1,d0
 .set:   move.w  d0,vObj(a5)
-        bra     .x
-.done:  clr.w   vOCnt(a5)
-        move.w  #0,vOF(a5)
-        clr.w   vObj(a5)
-        bra     .x
-.none:  clr.w   vOCnt(a5)
-        move.w  #0,vOF(a5)
-        clr.w   vObj(a5)
 .x:     movem.l (a7)+,d0-d5/a0
         rts
 
-; pick_unit: d0 = candidate unit, d1 = segment start, d2 = segment end (exclusive), d3 = 1: BAR objects do not block -> d0 = a free unit or 0
+; pick_unit: d0 = candidate unit, d1 = segment start, d2 = segment end (exclusive), d3 = 1: BAR objects do not block -> d0 = the first free unit from the candidate
+; to the segment's end, then from its start (never unit 0), or 0 = the segment is full
 pick_unit:
-        movem.l d1-d7/a0-a2,-(a7)
+        movem.l d1-d7/a0,-(a7)
         move.w  d0,d4
         move.w  d1,d6
         move.w  d2,d7
         move.w  d3,d5
-        move.w  d4,d0
 .s1:    cmp.w   d7,d0
         bcc     .w1
-        bsr     .occ
+        tst.w   d0
         beq     .n1
-        bra     .ok
+        bsr     .occ
+        beq     .x
 .n1:    addq.w  #1,d0
         bra     .s1
 .w1:    move.w  d6,d0
-        tst.w   d0
-        bne     .w2
-        addq.w  #1,d0
 .w2:    cmp.w   d4,d0
         bcc     .fail
-        bsr     .occ
+        tst.w   d0
         beq     .n2
-        bra     .ok
+        bsr     .occ
+        beq     .x
 .n2:    addq.w  #1,d0
         bra     .w2
 .fail:  moveq   #0,d0
-        bra     .x
-.ok:    bra     .x
-.x:     movem.l (a7)+,d1-d7/a0-a2
+.x:     movem.l (a7)+,d1-d7/a0
         rts
-.occ:   movem.l d1-d3/a0,-(a7)
+.occ:   movem.l d2-d3/a0,-(a7)          ; Z set = no object on unit d0 (a BAR counts as none when d5 is set)
         lea     OBJT.l,a0
-        moveq   #0,d1
         move.w  vNObj(a5),d2
         beq     .free
         subq.w  #1,d2
@@ -1492,131 +1449,117 @@ pick_unit:
         addq.l  #8,a0
         dbra    d2,.l
         bra     .free
-.hit:   cmp.w   d0,d3
-        bne     .free
-        tst.w   d5                      ; the BAR may be moved over
+.hit:   bne     .free
+        tst.w   d5
         beq     .occ2
         tst.w   6(a0)
         bne     .free
 .occ2:  moveq   #1,d3
-        tst.w   d3
-        movem.l (a7)+,d1-d3/a0
-        rts
+        bra     .r
 .free:  moveq   #0,d3
-        tst.w   d3
-        movem.l (a7)+,d1-d3/a0
+.r:     movem.l (a7)+,d2-d3/a0          ; (movem leaves the flags of the moveq)
         rts
 
 ; obj_sort: the object selected by vObj changed its unit: re-insert it in the sorted list (vObj = its new index)
 obj_sort:
-        movem.l d0-d5/a0-a2,-(a7)
+        movem.l d0-d3/a0,-(a7)
+        bsr     obj_ptr
+        move.l  (a0),d1                 ; unit.w type.w
+        move.l  4(a0),d2
         move.w  vObj(a5),d0
-        lsl.w   #3,d0
+        bsr     obj_shut
+        swap    d1                      ; the unit
         lea     OBJT.l,a0
-        adda.w  d0,a0
-        move.l  (a0),vAcc(a5)
-        move.l  4(a0),vAcc2(a5)
-        move.w  vNObj(a5),d4
-        sub.w   vObj(a5),d4
-        subq.w  #1,d4
-        beq     .rm
-        movea.l a0,a1
-        lea     8(a0),a2
-.sh:    move.l  (a2)+,(a1)+
-        dbra    d4,.sh
-.rm:    subq.w  #1,vNObj(a5)
-        move.l  vAcc(a5),d2
-        swap    d2
-        move.w  d2,d4                   ; the unit
-        moveq   #0,d5
-        lea     OBJT.l,a0
-.l:     cmp.w   vNObj(a5),d5
+        moveq   #0,d0
+.l:     cmp.w   vNObj(a5),d0
         bcc     .ins
-        cmp.w   (a0),d4
+        cmp.w   (a0),d1
         bls     .ins
         addq.l  #8,a0
-        addq.w  #1,d5
+        addq.w  #1,d0
         bra     .l
-.ins:   move.w  d5,-(a7)
-        move.w  d5,d0
-        move.w  vNObj(a5),d1
-        moveq   #2,d2
-        lea     OBJT.l,a2
-        bsr     lst_open
-        move.w  (a7)+,d5
-        move.w  d5,d0
-        lsl.w   #3,d0
-        lea     OBJT.l,a0
-        adda.w  d0,a0
-        move.l  vAcc(a5),(a0)+
-        move.l  vAcc2(a5),(a0)
-        addq.w  #1,vNObj(a5)
-        move.w  d5,vObj(a5)
+.ins:   swap    d1
+        move.w  d0,vObj(a5)
+        bsr     obj_open
+        move.l  d1,(a0)+
+        move.l  d2,(a0)
         bsr     find_bar
-        movem.l (a7)+,d0-d5/a0-a2
+        movem.l (a7)+,d0-d3/a0
         rts
 
-; obj_mv_seg: d0 = -1 / +1: the object being moved goes to the previous / next segment at the same offset (MOVE mode)
-obj_mv_seg:
-        movem.l d0-d7/a0-a2,-(a7)
-        move.w  d0,d7                   ; the direction
+; obj_follow: the object under the cursor (vObj) has a new unit: the list is sorted again and the cursor's segment is the one that holds it now
+obj_follow:
+        movem.l d0/a0,-(a7)
+        bsr     obj_sort
         bsr     obj_ptr
-        move.w  (a0),d6                 ; its unit
+        move.w  (a0),d0
+        bsr     seg_of
+        move.w  d0,vSeg(a5)
+        bsr     obj_find
+        clr.w   vTOk(a5)
+        bsr     grid_fit
+        ori.w   #2,vRedraw(a5)
+        movem.l (a7)+,d0/a0
+        rts
+
+; obj_mv_seg: MOVE mode, d0 = -1 / +1: the object goes into the previous / next segment at the same offset (at most its last unit); a unit that holds another
+; object is skipped in the direction of the move
+obj_mv_seg:
+        movem.l d0-d7/a0-a1,-(a7)
+        move.w  d0,d7                   ; the direction
         move.w  vSeg(a5),d5
         add.w   d7,d5
         bmi     .x
-        cmp.w   vNSeg(a5),d5
-        bcc     .x
-        move.w  d5,d0
-        mulu    #SEGSZ,d0
-        lea     SEGT.l,a1
-        adda.l  d0,a1
-        moveq   #0,d4
-        move.w  (a1),d4                 ; target start
-        moveq   #0,d3
-        move.w  2(a1),d3
-        add.w   d4,d3                   ; target end
+        bsr     seg_last
+        cmp.w   d0,d5
+        bhi     .x
         bsr     seg_ptr
-        moveq   #0,d0
-        move.w  (a0),d0                 ; the old segment's start
-        move.w  d6,d1
-        sub.w   d0,d1                   ; the offset in the old segment
-        add.w   d4,d1                   ; the target unit
-        cmpi.w  #1,d1
-        bge     .k1
-        moveq   #1,d1
-.k1:    move.w  d3,d0
-        subq.w  #1,d0                   ; the target's last unit
-        move.w  d0,d6
-        cmp.w   d0,d1
-        ble     .k2
-        move.w  d0,d1
-.k2:    move.w  d1,d3                   ; the candidate
-.loop:  move.w  d3,d0
+        movea.l a0,a1                   ; the segment it is in
+        bsr     obj_ptr
+        moveq   #0,d2
+        move.w  (a0),d2
+        sub.w   (a1),d2                 ; its offset there
+        lea     SEGSZ(a1),a1
+        tst.w   d7
+        bpl     .tg
+        lea     -2*SEGSZ(a1),a1
+.tg:    moveq   #0,d3
+        move.w  (a1),d3                 ; the target segment's first unit
+        moveq   #0,d6
+        move.w  2(a1),d6
+        add.l   d3,d6
+        subq.l  #1,d6                   ; ... and its last one (inside the race)
+        move.l  vEnd(a5),d4
+        subq.l  #1,d4
+        cmp.l   d4,d6
+        bls     .k1
+        move.l  d4,d6
+.k1:    add.l   d3,d2                   ; the candidate
+        cmp.l   d6,d2
+        bls     .k2
+        move.l  d6,d2
+.k2:    tst.l   d2
+        bne     .lp
+        moveq   #1,d2                   ; never unit 0
+.lp:    move.w  d2,d0
         move.w  vObj(a5),d1
         bsr     occ_unit
         bne     .got
         tst.w   d7
-        bmi     .down
-        addq.w  #1,d3
-        cmp.w   d6,d3
+        bmi     .dn
+        addq.l  #1,d2
+        cmp.l   d6,d2
         bhi     .x
-        bra     .loop
-.down:  subq.w  #1,d3
-        tst.w   d3
+        bra     .lp
+.dn:    subq.l  #1,d2
         beq     .x
-        bra     .loop
+        cmp.l   d3,d2
+        bcs     .x
+        bra     .lp
 .got:   bsr     obj_ptr
-        move.w  d3,(a0)
-        move.w  d5,vSeg(a5)
-        bsr     obj_sort
-        bsr     obj_find
-        clr.w   vFocus(a5)
-        clr.w   vTOk(a5)
-        moveq   #0,d0
-        bsr     grid_fit
-        move.w  #3,vRedraw(a5)
-.x:     movem.l (a7)+,d0-d7/a0-a2
+        move.w  d2,(a0)
+        bsr     obj_follow
+.x:     movem.l (a7)+,d0-d7/a0-a1
         rts
 
 ; in_reset: forget every key and wait until fire is released
@@ -1637,7 +1580,7 @@ view:   move.w  #1,vState(a5)
         clr.w   vObj(a5)
         clr.w   vFocus(a5)
         clr.w   vFirst(a5)
-        move.w  #$7fff,vOTop(a5)        ; forces the object list to re-scroll
+        clr.w   vOTop(a5)
         clr.l   vMsg(a5)
         clr.w   vMod(a5)
         clr.w   vMode(a5)
@@ -1646,28 +1589,22 @@ view:   move.w  #1,vState(a5)
         clr.w   vLastType(a5)
         clr.w   vLastSide(a5)
         clr.w   vLOpen(a5)
-        clr.w   vTOk(a5)
-        clr.w   vOCnt(a5)
-        clr.w   vOF(a5)
         move.w  #1,vPage(a5)
         bsr     hist_init
-        bsr     obj_find
-        moveq   #1,d0
-        bsr     grid_fit
-        movea.l #SHW,a0                 ; every slot is drawn
-        moveq   #0,d0
-        move.w  #$ffff,d1
-.iv:    move.w  d1,(a0)+
-        dbra    d0,.iv
+        bsr     tiles_calc              ; the tile words, the extent, the first segment's objects
         bsr     in_reset
-        move.w  #3,vRedraw(a5)
+        move.w  #1,vRedraw(a5)
 .loop:  bsr     kq_empty
         bne   .in                       ; a key is waiting: nothing is recomputed or drawn before it is handled
         bsr     flush_pend              ; the tile words (when an edit made them stale), then the redraw
         move.w  vRedraw(a5),d0
         beq   .in
         clr.w   vRedraw(a5)
-        bsr     draw_view
+        btst    #0,d0
+        beq   .part
+        bsr     draw_full
+        bra   .in
+.part:  bsr     draw_view
 .in:    jsr     $d206.l
         bsr     input
         tst.w   vRes(a5)
@@ -1702,7 +1639,7 @@ input:  bsr     kq_popn
 .dirs:  bsr     poll_dirs
         tst.w   d2
         beq   .fire
-.act:   moveq   #0,d4                   ; modifier: 1 fire or Control (MOVE: one unit), 2 Shift (100 units)
+        moveq   #0,d4                   ; modifier: 1 fire or Control (MOVE: one unit), 2 Shift (100 units)
         tst.b   $1d(a0)
         bne   .fi
         tst.b   d3
@@ -1717,7 +1654,7 @@ input:  bsr     kq_popn
 .co:    moveq   #2,d4
 .m2:    tst.w   vMode(a5)
         beq   .nav
-        btst    #3,d2                   ; MOVE mode: left / right = move the object, up / down = another segment
+        btst    #3,d2                   ; MOVE mode: left / right = move the object, up / down = into the previous / next segment
         beq   .mv1
         moveq   #1,d0
         bra     obj_mv_step
@@ -1734,20 +1671,26 @@ input:  bsr     kq_popn
 .nav:   btst    #3,d2
         beq   .n1
         moveq   #1,d0
-        bra     step
+        bra     seg_move
 .n1:    btst    #2,d2
         beq   .n2
         moveq   #-1,d0
-        bra     step
-.n2:    tst.b   d3                      ; fire + up / down = the grid <> the object list
+        bra     seg_move
+.n2:    tst.b   d3                      ; fire + down = into the object list, fire + up = back to the grid
         bpl   .n3
-        moveq   #6,d0
+        btst    #1,d2
+        beq   .fu
+        tst.w   vFocus(a5)
+        bne   .x
+        bra   .tab
+.fu:    tst.w   vFocus(a5)
+        beq   .x
+.tab:   moveq   #6,d0
         bra     command
-.n3:    btst    #1,d2
-        beq   .n4
-        moveq   #1,d0
-        bra     step_row
-.n4:    moveq   #-1,d0
+.n3:    moveq   #1,d0
+        btst    #1,d2
+        bne     step_row
+        moveq   #-1,d0
         bra     step_row
 .fire:  tst.b   d3                      ; fire tapped (released with no direction used) = the menu
         bmi   .fd
@@ -1764,40 +1707,30 @@ input:  bsr     kq_popn
         clr.w   vFireMv(a5)
 .x:     rts
 
-; step: d0 = -1 / +1: the previous / next segment (the object list gives the cursor back to the grid)
-step:   bsr     seg_move
-        rts
-
-; step_row: d0 = -1 / +1: one grid row = 16 segments
+; step_row: d0 = -1 / +1: one grid row = 16 segments; in the object list the previous / next object
 step_row:
         tst.w   vFocus(a5)
-        beq   .g
-        clr.w   vFocus(a5)
-        move.w  #3,vRedraw(a5)
-        rts
-.g:     move.w  d0,d1
-        lsl.w   #4,d1
-        move.w  d1,d0
-        bra     seg_move
+        bne     obj_sel
+        lsl.w   #4,d0
 
-; seg_move: d0 = +-n: move the cursor by n segments (clamped to the segments the race reaches), axis ended = its first unit
+; seg_move: d0 = +-n: the cursor moves by n segments (clamped to the segments the race reaches); the object list gives the cursor back to the grid
 seg_move:
-        movem.l d0-d2/a0,-(a7)
+        movem.l d0-d2,-(a7)
         move.w  d0,d2
         add.w   vSeg(a5),d2
         bsr     seg_last
         tst.w   d2
         bpl   .a
-        clr.w   d2
+        moveq   #0,d2
 .a:     cmp.w   d0,d2
         bls   .b
         move.w  d0,d2
 .b:     move.w  d2,vSeg(a5)
+        clr.w   vFocus(a5)
         bsr     obj_find
-        moveq   #1,d0
         bsr     grid_fit
-        move.w  #3,vRedraw(a5)
-        movem.l (a7)+,d0-d2/a0
+        ori.w   #2,vRedraw(a5)
+        movem.l (a7)+,d0-d2
         rts
 
 ; seg_last: d0 = the last segment whose start lies before vEnd (0 when there is none)
@@ -1822,32 +1755,25 @@ seg_last:
 .x:     movem.l (a7)+,d1/a0
         rts
 
-; obj_sel: d0 = -1 / +1: the previous / next object of the selected segment (up on the first gives the cursor back to the grid)
+; obj_sel: d0 = -1 / +1: the previous / next object of the selected segment (up on the first one gives the cursor back to the grid)
 obj_sel:
-        movem.l d1-d3,-(a7)
-        move.w  vOCnt(a5),d1
-        beq   .x
+        movem.l d1-d2,-(a7)
         move.w  vObj(a5),d2
         add.w   d0,d2
-        move.w  vOF(a5),d3
-        cmp.w   d3,d2
-        bcc   .a
-        tst.w   d0
-        bpl   .a
+        move.w  vOF(a5),d1
+        cmp.w   d1,d2
+        bge   .a
         clr.w   vFocus(a5)
-        move.w  #3,vRedraw(a5)
-        bra   .x
-.a:     add.w   vOCnt(a5),d3
-        cmp.w   d3,d2
-        bcs   .set
-        subq.w  #1,d3
-        move.w  d3,d2
-.set:   move.w  d2,vObj(a5)
-        move.w  #3,vRedraw(a5)
-.x:     movem.l (a7)+,d1-d3
+        bra   .r
+.a:     add.w   vOCnt(a5),d1
+        cmp.w   d1,d2
+        bge   .x                        ; the last one: stays
+        move.w  d2,vObj(a5)
+.r:     ori.w   #2,vRedraw(a5)
+.x:     movem.l (a7)+,d1-d2
         rts
 
-; command: d0 = 1 leave, 2 start, 3 the BAR, 6 the grid <> the object list, 7 help, 8 menu, 9 Return / Space (repeat the last pick),
+; command: d0 = 1 leave, 2 the first segment, 3 the BAR, 6 the grid <> the object list, 7 help, 8 menu, 9 Return / Space (repeat the last pick),
 ; 10..27 the edits (see cmd_edit)
 command:
         tst.w   vMode(a5)
@@ -1855,69 +1781,49 @@ command:
         cmpi.w  #10,d0
         bcc     cmd_edit
         subq.w  #1,d0
-        bne   .c2
-        bra     leave
-.c2:    subq.w  #1,d0
+        beq     leave
+        subq.w  #1,d0
         bne   .c3
-        clr.w   vSeg(a5)                ; Clr/Home: the first segment
-        bsr     obj_find
-        moveq   #1,d0
-        bsr     grid_fit
-        move.w  #3,vRedraw(a5)
-        bra     .back
+        move.w  vSeg(a5),d0             ; Clr/Home: the first segment
+        neg.w   d0
+        bra     seg_move
 .c3:    subq.w  #1,d0
-        bne   .c4
-        move.l  vBarAt(a5),d1           ; B: the segment that holds the BAR
-        bmi   .nobar
-        move.w  d1,d0
-        bsr     seg_of
-        move.w  d0,vSeg(a5)
-        bsr     obj_find
-        moveq   #1,d0
-        bsr     grid_fit
-        move.w  #3,vRedraw(a5)
-        bra     .back
-.nobar: lea     t_nobar(pc),a0
-.msg:   move.l  a0,vMsg(a5)
-        ori.w   #2,vRedraw(a5)
-        bra     .back
-.c4:    subq.w  #1,d0
-        bne   .c5
-.r:     rts
-.c5:    subq.w  #1,d0
         bne   .c6
-        bra     .r
-.c6:    subq.w  #1,d0
+        move.l  vBarAt(a5),d0           ; B: the segment that holds the BAR
+        bmi   .nobar
+        bsr     seg_of
+        sub.w   vSeg(a5),d0
+        bra     seg_move
+.nobar: lea     t_nobar(pc),a0
+        bra     msg
+.c6:    subq.w  #3,d0
         bne   .c7
-        tst.w   vFocus(a5)              ; Tab / fire + up / down: the grid <> the object list
+        tst.w   vFocus(a5)              ; Tab / fire + down / up: the grid <> the object list of the selected segment
         beq   .toobj
         clr.w   vFocus(a5)
-        move.w  #3,vRedraw(a5)
-        bra     .back
+        bra   .foc
 .toobj: tst.w   vOCnt(a5)
         beq   .noobj
         move.w  vOF(a5),vObj(a5)
         move.w  #1,vFocus(a5)
-        move.w  #3,vRedraw(a5)
-        bra     .back
+.foc:   ori.w   #2,vRedraw(a5)
+        rts
 .noobj: lea     t_noobj(pc),a0
-        bra     .msg
+        bra     msg
 .c7:    subq.w  #1,d0
         bne   .c8
         bsr     help
-        bra     .back
+        bsr     in_reset
+        move.w  #1,vRedraw(a5)
+        rts
 .c8:    subq.w  #1,d0
-        bne   .c9
+        bne     rep_cmd
         bsr     vmenu
         move.w  d0,-(a7)
         bsr     in_reset
         move.w  #1,vRedraw(a5)
         move.w  (a7)+,d0
         bgt     command                 ; a menu item = the same command
-        rts
-.c9:    bra     rep_cmd
-.back:  bsr     in_reset
-        move.w  #3,vRedraw(a5)
         rts
 
 ; vmenu: the menu (FIRE): the grid's or the object list's items, then the common ones -> d0 = command or 0
@@ -1941,7 +1847,7 @@ vmenu:  move.w  #2,vState(a5)
 .n:     moveq   #0,d0
         rts
 
-; help: page 1 the keys, page 2 what the tiles mean (the legend is drawn with the tile routine itself)
+; help: page 1 the keys, page 2 what the tiles mean (the legend is drawn with the tile routine itself); a key or fire turns the page
 help:   move.w  #3,vState(a5)
         move.w  #1,vPage(a5)
 .page:  bsr     cls
@@ -1960,96 +1866,49 @@ help:   move.w  #3,vState(a5)
         bne   .l
         bra     .wait
 .leg:   bsr     legend
-.wait:  clr.b   $60ff.w
+.wait:  bsr     in_reset
 .w:     jsr     $d206.l
         bsr     kq_pop
         tst.b   d0
         bne     .d
         btst    #7,$6105.w
         beq     .w
-.d:     cmpi.w  #2,vPage(a5)
-        beq     .end
-        move.w  #2,vPage(a5)
-        bra     .page
-.end:   move.w  #1,vPage(a5)
+.d:     addq.w  #1,vPage(a5)
+        cmpi.w  #3,vPage(a5)
+        bne     .page
+        move.w  #1,vPage(a5)
         move.w  #1,vState(a5)
-        move.w  #3,vRedraw(a5)
-        bsr     in_reset
         rts
 
-; legend: the tile symbols and colours as they are drawn, with their names (the second page of HELP)
+; legend: the second page of HELP, from legtab: every symbol, colour and mark drawn by the tile routine with its name beside it
 legend:
-        movem.l d0-d7/a0-a3,-(a7)
+        movem.l d0-d2/a0/a2,-(a7)
         lea     t_leg(pc),a0
         moveq   #1,d0
         moveq   #0,d1
         moveq   #8,d2
         bsr     ptext
-        moveq   #0,d6
-.sy:    move.w  d6,d1                   ; the seven directions on a level tile
-        mulu    #13,d1
-        addi.w  #18,d1
-        move.w  #16,d0
-        move.w  d6,d2
+        lea     legtab(pc),a2
+.l:     move.w  (a2)+,d0                ; x, y, tile word (bit 15: a heading, no tile), text
+        bmi   .e
+        move.w  (a2)+,d1
+        move.w  (a2)+,d2
+        movea.l (a2)+,a0                ; (movea leaves the flags of the tile word)
+        bmi   .h
         bsr     tile_draw
-        lea     symtab(pc),a0
-        move.w  d6,d0
-        add.w   d0,d0
-        movea.l (a0,d0.w),a0
-        moveq   #40,d0
-        move.w  d6,d1
-        mulu    #13,d1
-        addi.w  #20,d1
-        moveq   #8,d2
-        bsr     ptextp
-        addq.w  #1,d6
-        cmpi.w  #7,d6
-        bne   .sy
-        moveq   #0,d6
-.hc:    move.w  d6,d1                   ; the five hill classes on a straight tile
-        mulu    #13,d1
-        addi.w  #109,d1
-        move.w  #16,d0
-        move.w  d6,d2
-        lsl.w   #3,d2
-        bsr     tile_draw
-        lea     hilltab(pc),a0
-        move.w  d6,d0
-        add.w   d0,d0
-        movea.l (a0,d0.w),a0
-        moveq   #40,d0
-        move.w  d6,d1
-        mulu    #13,d1
-        addi.w  #111,d1
-        moveq   #8,d2
-        bsr     ptextp
-        addq.w  #1,d6
-        cmpi.w  #5,d6
-        bne   .hc
-        move.w  #16,d0                  ; a dot = the segment has objects
-        move.w  #174,d1
-        move.w  #$40,d2
-        bsr     tile_draw
-        lea     t_legdot(pc),a0
-        moveq   #40,d0
-        moveq   #176,d1
-        moveq   #8,d2
-        bsr     ptextp
-        move.w  #16,d0                  ; chequered = the segment holds the BAR
-        move.w  #187,d1
-        move.w  #$80,d2
-        bsr     tile_draw
-        lea     t_legbar(pc),a0
-        moveq   #40,d0
-        move.w  #189,d1
-        moveq   #8,d2
-        bsr     ptextp
-        lea     t_pak(pc),a0
-        moveq   #1,d0
+        addi.w  #24,d0
+        addq.w  #2,d1
+        moveq   #7,d2
+        bra   .t
+.h:     moveq   #2,d2
+.t:     bsr     ptextp
+        bra   .l
+.e:     lea     t_pak(pc),a0
+        moveq   #27,d0
         moveq   #24,d1
         moveq   #1,d2
         bsr     ptext
-        movem.l (a7)+,d0-d7/a0-a3
+        movem.l (a7)+,d0-d2/a0/a2
         rts
 
 ; ======================================================================================================= milestone 2: EDITING
@@ -2498,9 +2357,8 @@ hist_done:                              ; a state came back
         bra     refresh
 refresh:                                ; the model changed: the tile words are recomputed by flush_pend when no key is waiting
         clr.w   vTOk(a5)
-        move.w  #3,vRedraw(a5)
+        ori.w   #2,vRedraw(a5)
         bsr     obj_find
-        moveq   #0,d0
         bra     grid_fit
 ed_commit:                              ; an edit was made: history, modified, the view
         bsr     hist_push
@@ -2812,11 +2670,8 @@ rep_cmd:                                ; Return / Space: the last picked value 
         cmpi.w  #6,d0
         beq   .o
         cmpi.w  #7,d0
-        beq   .o
-        tst.w   vFocus(a5)
-        bne   .wrong
-        bra   .go
-.o:     tst.w   vFocus(a5)
+        bne   .go
+.o:     tst.w   vFocus(a5)              ; a type or a side needs the selected object
         beq   .wrong
 .go:    move.w  vLastVal(a5),d1
         bra     apply_try
@@ -2825,8 +2680,6 @@ rep_cmd:                                ; Return / Space: the last picked value 
 .wrong: lea     t_wrongrow(pc),a0
         bra     msg
 curve_step:                             ; d2 = -1 / +1: one step more to the left / right
-        tst.w   vFocus(a5)
-        bne   el_road
         bsr     seg_ptr
         move.w  4(a0),d1
         add.w   d2,d1
@@ -2964,7 +2817,7 @@ edit_list:                              ; d0 = act
         bsr     hist_push
         move.w  #1,vMod(a5)
         clr.w   vLeaveW(a5)
-        move.w  #3,vRedraw(a5)
+        ori.w   #2,vRedraw(a5)
         bra   .x
 .wide:  bsr     record
         move.w  vLAct(a5),d0
@@ -2973,7 +2826,7 @@ edit_list:                              ; d0 = act
         bra   .x
 .cancel: bsr    hist_cur
         clr.w   vTOk(a5)
-        move.w  #3,vRedraw(a5)
+        ori.w   #2,vRedraw(a5)
         bra   .x
 .last:  lea     t_elast(pc),a0
         bsr     msg
@@ -3217,27 +3070,21 @@ box_clr:                                ; the right 12 columns, rows 13..23 (the
         lea     160-48(a0),a0
         dbra    d0,.l
         rts
-lbox:   tst.w   vLWide(a5)
-        bne   lrows
-        bsr     box_clr
-        bra     lrows
-lb_open:                                ; narrow lists: the panel keeps the left 28 columns, the box takes the right 12; wide lists (types) take the page
-        tst.w   vLWide(a5)
-        bne     .w
+lb_open:                                ; narrow lists: the panel keeps the left 28 columns, the box takes the key reminder's 12; wide lists (types) take the page
         move.w  #1,vLOpen(a5)
         bsr     lscroll
-        bsr     draw_view
+        tst.w   vLWide(a5)
+        bne     .w
         bsr     box_clr
-        move.w  #1,vLRd(a5)
-        rts
-.w:     move.w  #1,vLOpen(a5)
-        bsr     lscroll
-        bsr     cls
+        clr.w   vSKey(a5)
+        bra     draw_view
+.w:     bsr     cls
         bra     lrows
 lb_close:
         clr.w   vLOpen(a5)
-        bsr     draw_view
-        rts
+        tst.w   vLWide(a5)
+        bne     draw_full
+        bra     draw_view
 lpreview:                               ; the working copy with the shown value applied: the grid and the panel follow
         move.w  #1,vLBusy(a5)
         clr.w   vLPend(a5)
@@ -3474,11 +3321,8 @@ seg_split:                              ; S (grid): cut the segment in half
         sub.w   d3,d5
         move.w  d5,2(a0)
         move.w  d3,-SEGSZ+2(a0)         ; the first part keeps the start
-        addq.w  #1,d6
-        move.w  d6,vSeg(a5)
-        subq.w  #1,d6
-        bra     ed_commit
-.short: lea     t_eshort(pc),a0
+        bra     ed_commit               ; (the cursor stays on the first half)
+.short: lea     t_esplit(pc),a0
         bra     msg
 seg_merge:                              ; M: join the segment with the next one (this one's curve, hill and widths win)
         move.w  vSeg(a5),d6
@@ -3522,7 +3366,7 @@ obj_add:
         sub.w   d1,d3
         lsr.w   #1,d3
         add.w   d3,d0                   ; grid: the middle of the segment
-.pick:  moveq   #1,d3                   ; the BAR may be moved over
+.pick:  moveq   #0,d3                   ; (a BAR's unit is taken too)
         bsr     pick_unit
         tst.w   d0
         bne     .ok
@@ -3597,7 +3441,8 @@ obj_move:                               ; M: the object follows left / right (an
         move.w  #1,vMode(a5)
         ori.w   #2,vRedraw(a5)
 .x:     rts
-obj_mv_step:                            ; moving: d0 = -1 / +1, d4 = 0 ten units, 1 one unit (fire / Control), 2 a hundred (Shift)
+obj_mv_step:                            ; MOVE mode: d0 = -1 / +1, d4 = 0 ten units, 1 one unit (fire / Control), 2 a hundred (Shift).  The object goes anywhere in the race
+        movem.l d0-d7/a0,-(a7)          ; (1 .. the extent - 1); a unit that holds another object is skipped in the direction of the move; the cursor follows it
         moveq   #10,d1
         cmpi.w  #1,d4
         bne   .a1
@@ -3605,63 +3450,41 @@ obj_mv_step:                            ; moving: d0 = -1 / +1, d4 = 0 ten units
 .a1:    cmpi.w  #2,d4
         bne   .a2
         moveq   #100,d1
-.a2:    tst.w   d0
+.a2:    moveq   #1,d7                   ; the direction
+        tst.w   d0
         bpl   .a3
-        neg.w   d1
+        moveq   #-1,d7
+        neg.l   d1
 .a3:    bsr     obj_ptr
+        moveq   #0,d2
         move.w  (a0),d2
-        add.w   d1,d2                   ; the wanted position
-        bsr     seg_ptr
-        moveq   #0,d3
-        move.w  (a0),d3                 ; the segment's first unit
-        move.w  d3,d5
-        addq.w  #1,d5                   ; lowest
-        tst.w   vObj(a5)
-        beq   .a4
-        bsr     obj_ptr
-        move.w  -8(a0),d5
-        addq.w  #1,d5
-.a4:    moveq   #0,d6
-        move.w  2(a0),d6
-        add.w   d3,d6
-        subq.w  #1,d6                   ; highest: the segment's last unit
-        cmp.w   d5,d2
-        bge   .a6
-        move.w  d5,d2
-.a6:    cmp.w   d6,d2
-        ble   .a7
-        move.w  d6,d2
-.a7:    move.w  d2,d0
+        add.l   d1,d2                   ; the wanted unit
+        moveq   #1,d5                   ; lowest
+        move.l  vEnd(a5),d6
+        subq.l  #1,d6                   ; highest
+        cmp.l   d5,d2
+        bge   .a4
+        move.l  d5,d2
+.a4:    cmp.l   d6,d2
+        ble   .a5
+        move.l  d6,d2
+.a5:    move.w  d2,d0
         move.w  vObj(a5),d1
         bsr     occ_unit
         bne   .set                      ; free
-.skip:  tst.w   d1
-        bmi   .skd
-        addq.w  #1,d2
-        cmp.w   d6,d2
-        bhi   .stay
-        move.w  d2,d0
-        move.w  vObj(a5),d1
-        bsr     occ_unit
-        beq   .skip
-        bra   .set
-.skd:   subq.w  #1,d2
-        cmp.w   d5,d2
-        bcs   .stay
-        move.w  d2,d0
-        move.w  vObj(a5),d1
-        bsr     occ_unit
-        beq   .skip
-        bra   .set
-.stay:  rts
+        add.l   d7,d2
+        cmp.l   d5,d2
+        blt   .x
+        cmp.l   d6,d2
+        ble   .a5
+        bra   .x
 .set:   bsr     obj_ptr
         move.w  d2,(a0)
-        bsr     obj_sort
-        bsr     obj_find
-        move.w  #3,vRedraw(a5)
+        bsr     obj_follow
+.x:     movem.l (a7)+,d0-d7/a0
         rts
 
-; occ_unit: d0 = unit, d1 = the object's index (ignored) -> Z=1 when no other object sits on that unit (all registers kept)
+; occ_unit: d0 = unit, d1 = an object's index -> Z clear when no OTHER object sits on that unit (all registers kept)
 occ_unit:
         movem.l d0-d3/a0,-(a7)
         move.w  d1,d3
@@ -3672,7 +3495,7 @@ occ_unit:
         subq.w  #1,d2
 .l:     cmp.w   (a0),d0
         beq   .hit
-        bhi   .fr
+        bcs   .fr
         addq.l  #8,a0
         addq.w  #1,d1
         dbra    d2,.l
@@ -3687,7 +3510,7 @@ occ_unit:
 .r:     movem.l (a7)+,d0-d3/a0
         rts
 
-mv_cmd:                                 ; moving: Return / Space / FIRE = keep the new place, Esc / F10 = back
+mv_cmd:                                 ; MOVE mode: Return / Space / FIRE = keep the new place, Esc / F10 = put the object back
         cmpi.w  #8,d0
         beq   .ok
         cmpi.w  #9,d0
@@ -3697,17 +3520,8 @@ mv_cmd:                                 ; moving: Return / Space / FIRE = keep t
         clr.w   vMode(a5)
         bsr     obj_ptr
         move.w  vMoveOrg(a5),(a0)
-        bsr     obj_sort
-        bsr     obj_find
-        clr.w   vTOk(a5)
-        move.w  #3,vRedraw(a5)
-        rts
+        bra     obj_follow
 .ok:    clr.w   vMode(a5)
-        bsr     obj_ptr
-        tst.w   6(a0)
-        beq   .c
-        bsr     find_bar
-.c:     clr.w   vTOk(a5)
         bra     ed_commit
 .x:     rts
 bar_here:                               ; Shift+B / menu: the BAR goes to the first free unit of the selected segment
@@ -3727,6 +3541,7 @@ bar_here:                               ; Shift+B / menu: the BAR goes to the fi
         lea     t_egap(pc),a0
         bra     msg
 .ok:    move.w  d0,d3
+        moveq   #0,d4                   ; the BAR keeps its side
         move.w  vNObj(a5),d6            ; a damaged track may hold several BARs: they all go
         subq.w  #1,d6
 .d:     bmi   .dd
@@ -3735,6 +3550,7 @@ bar_here:                               ; Shift+B / menu: the BAR goes to the fi
         lea     OBJT.l,a0
         tst.w   6(a0,d0.w)
         beq   .dn
+        move.w  4(a0,d0.w),d4
         move.w  d6,d0
         bsr     obj_shut
 .dn:    subq.w  #1,d6
@@ -3753,7 +3569,7 @@ bar_here:                               ; Shift+B / menu: the BAR goes to the fi
         bsr     obj_open
         move.w  d3,(a0)
         move.w  vBarT(a5),2(a0)
-        clr.w   4(a0)
+        move.w  d4,4(a0)
         move.w  #1,6(a0)
         move.w  d6,vObj(a5)
         move.w  #1,vFocus(a5)
@@ -3818,9 +3634,10 @@ check_all:
         lea     t_wdens(pc),a0
         moveq   #10,d1
         bsr     chk_add
-.w1:    moveq   #0,d2                   ; W-HILL: the height sits at the top for more than 300 race units (own integrator)
+.w1:    moveq   #0,d2                   ; W-HILL: the height sits at the top for more than 300 race units (the game's integrator, as tools/msrtrack.py validate)
         moveq   #0,d3
         moveq   #0,d4
+        move.w  vRl(a5),d0              ; the race's units only
         lea     SEGT.l,a0
         move.w  vNSeg(a5),d1
         subq.w  #1,d1
@@ -3828,7 +3645,9 @@ check_all:
         ext.l   d5
         move.w  2(a0),d6
         subq.w  #1,d6
-.hu:    add.l   d3,d4
+.hu:    subq.w  #1,d0
+        bcs   .he
+        add.l   d3,d4
         add.l   d5,d3
         tst.l   d4
         bmi   .hn
@@ -3840,7 +3659,7 @@ check_all:
 .hn:    dbra    d6,.hu
         lea     SEGSZ(a0),a0
         dbra    d1,.hl
-        cmpi.w  #300,d2
+.he:    cmpi.w  #300,d2
         bls   .w2
         lea     t_whill(pc),a0
         moveq   #11,d1
@@ -4531,9 +4350,7 @@ top_list:
         moveq   #2,d1
         bsr     appn
         clr.b   (a1)
-.have:  clr.w   vTOk(a5)
-        bsr     tiles_calc
-        moveq   #0,d0
+.have:  moveq   #0,d0
         rts
 .bad:   lea     t_ebad(pc),a0
         move.l  a0,vMsg(a5)
@@ -4605,7 +4422,13 @@ c_td:   movem.l d1-d7/a0-a6,-(a7)
         bne   .nopatch
         cmpi.l  #$b8260,$7928.w
         bne   .nopatch
-        move.l  vPos(a5),d0
+        move.l  vPos(a5),d0             ; from the selected segment's first unit, or from the selected object while the object list has the cursor
+        tst.w   vFocus(a5)
+        beq   .cu
+        bsr     obj_ptr
+        moveq   #0,d0
+        move.w  (a0),d0
+.cu:
         move.l  vBarAt(a5),d1
         bmi   .go
         cmp.l   d1,d0
@@ -4811,20 +4634,57 @@ tdvbl:  pea     .back(pc)
 .x:     rte
 
 ; ---------------------------------------------------------------- tables and texts
-pal:    dc.w    $000,$444,$567,$070,$057,$740,$700,$777,$770,$024,$777,$777,$777,$777,$777,$777   ; 9 = dark blue (DROP BIG tiles)
+pal:    dc.w    $000,$444,$567,$070,$067,$740,$700,$777,$770,$037,$707,$777,$777,$777,$777,$777   ; 4 / 9 = light / deep blue (DROP tiles), 10 = magenta (the cursor's frame while the object list has it)
 ; the tile grid's tables
 hillcol: dc.w   3,8,6,4,9                ; LEVEL green, RISE SMALL yellow, RISE BIG red, DROP SMALL light blue, DROP BIG dark blue
-cheq:   dc.w    $cccc,$cccc,$3332,$3332,$cccc,$cccc,$3332,$3332,$cccc,$cccc,$3332   ; the BAR's chequer (15 x 11)
-gtab:   dc.w    $0180,$0180,$0180,$0180,$0180,$0180,$0180   ; STRAIGHT
+gtab:   dc.w    $0180,$0180,$0180,$0180,$0180,$0180,$0180   ; STRAIGHT (7 rows, columns 2..12 of the tile)
         dc.w    $0c00,$0c00,$0600,$0600,$0300,$0300,$0180   ; GENTLE LEFT
         dc.w    $1800,$0c00,$0600,$0300,$0180,$00c0,$0060   ; MEDIUM LEFT
         dc.w    $0000,$3800,$0e00,$0380,$00e0,$0038,$0000   ; SHARP LEFT
         dc.w    $0060,$0060,$00c0,$00c0,$0180,$0180,$0300   ; GENTLE RIGHT
         dc.w    $0030,$0060,$00c0,$0180,$0300,$0600,$0c00   ; MEDIUM RIGHT
         dc.w    $0000,$0038,$00e0,$0380,$0e00,$3800,$0000   ; SHARP RIGHT
-symtab: dc.l    t_sy0,t_sy1,t_sy2,t_sy3,t_sy4,t_sy5,t_sy6
-bendtab: dc.l   t_sy0,t_sy1,t_sy2,t_sy3,t_sy4,t_sy5,t_sy6
-hilltab: dc.l   t_hc0,t_hc1,t_hc2,t_hc3,t_hc4
+bendtab: dc.l   t_sy0,t_sy1,t_sy2,t_sy3,t_sy4,t_sy5,t_sy6   ; names of the direction classes (long entries: index * 4)
+hilltab: dc.l   t_hc0,t_hc1,t_hc2,t_hc3,t_hc4               ; ... of the hill classes
+legtab: dc.w    16,10,$8000                                 ; the legend page: x, y, tile word (bit 15 = a heading), text
+        dc.l    t_lg1
+        dc.w    16,20,0
+        dc.l    t_sy0
+        dc.w    16,32,1
+        dc.l    t_sy1
+        dc.w    16,44,2
+        dc.l    t_sy2
+        dc.w    16,56,3
+        dc.l    t_sy3
+        dc.w    16,68,4
+        dc.l    t_sy4
+        dc.w    16,80,5
+        dc.l    t_sy5
+        dc.w    16,92,6
+        dc.l    t_sy6
+        dc.w    16,106,$8000
+        dc.l    t_lg2
+        dc.w    16,116,$00
+        dc.l    t_hc0
+        dc.w    16,128,$08
+        dc.l    t_hc1
+        dc.w    16,140,$10
+        dc.l    t_hc2
+        dc.w    16,152,$18
+        dc.l    t_hc3
+        dc.w    16,164,$20
+        dc.l    t_hc4
+        dc.w    176,10,$8000
+        dc.l    t_lg3
+        dc.w    176,20,$40
+        dc.l    t_legdot
+        dc.w    176,36,$80
+        dc.l    t_legbar
+        dc.w    176,52,$100
+        dc.l    t_legcur
+        dc.w    176,68,$200
+        dc.l    t_legobj
+        dc.w    -1
 rltab:  dc.w    19472,19720,19800,19000,19375,18000,18626,20000,19000,20000,20000,22000,18500,22000,23000   ; race length of the 15 levels (word 0 of the minimap header, tools/msrtrack.py LEVELS)
 keytab: dc.b    $01,1,$44,1             ; Esc, F10: leave (the track is kept)
         dc.b    $47,2                   ; Clr/Home: the first segment
@@ -4930,31 +4790,16 @@ m_obj:
 t_vmenu: dc.b   "EDIT MENU",0
 t_src:  dc.b    "C",0,0,0,"S",0,0,0,"NEW",0
 t_scen: dc.b    "SCENERY ",0
-t_hill: dc.b    "HILL",0
-t_width: dc.b   "WIDTH",0
-t_objs: dc.b    "OBJECTS",0
-t_seg:  dc.b    "SEG ",0
-t_at:   dc.b    " AT ",0
-t_len:  dc.b    " LEN ",0
-t_zoom: dc.b    " ZOOM ",0
-t_curve: dc.b   "CURVE ",0
-t_strt: dc.b    "---",0
-t_hil2: dc.b    "  HILL ",0
-t_wid2: dc.b    "  WIDTH ",0
-t_obj:  dc.b    "OBJ ",0
-t_type: dc.b    " TYPE ",0
-t_bar:  dc.b    " THE BAR ",0
-t_side: dc.b    " SIDE ",0
-t_hint: dc.b    "FIRE=MENU RET=REPEAT P=TEST DRIVE HELP=KEYS",0
+t_hint: dc.b    "FIRE=MENU RET=REPEAT P=DRIVE HELP=KEYS",0
+t_hinto: dc.b   "OBJECT LIST: UP/DOWN PICK  TAB=THE GRID",0
 t_hdisc: dc.b   "ESC AGAIN = DISCARD THIS TRACK   K=CHECK",0
-t_hmove: dc.b   "MOVE: L/R U/D=FIRE=OK ESC=CANCEL",0
+t_hmove: dc.b   "MOVE L/R U/D  RETURN=KEEP  ESC=PUT BACK",0
 t_lhsel: dc.b   "UP/DOWN PICK  FIRE/RETURN=OK  ESC=BACK",0
 t_lhadj: dc.b   "U/D PICK  L/R +-1 (FIRE 10)  FIRE=OK",0
 t_nound: dc.b   "NOTHING TO UNDO",0
 t_noredo: dc.b  "NOTHING TO REDO",0
 t_norep: dc.b   "NOTHING TO REPEAT: PICK A VALUE FIRST",0
-t_wrongrow: dc.b "PICK THE OBJECT FIRST (TAB, THEN THE VALUE)",0
-
+t_wrongrow: dc.b "THAT VALUE IS FOR AN OBJECT: TAB FIRST",0
 t_objrow: dc.b  "THE OBJECT LIST ONLY: TAB FIRST",0
 t_climit: dc.b  "THE SHARPEST CURVE ALREADY",0
 t_elast: dc.b   "THE LAST SEGMENT IS THE PADDING (E-SUM)",0
@@ -4968,7 +4813,6 @@ t_eshort: dc.b  "SEGMENT TOO SHORT FOR THAT SHAPE",0
 t_efullseg: dc.b "TOO MANY SEGMENTS (2048)",0
 t_efullobj: dc.b "TOO MANY OBJECTS (999)",0
 t_esplit: dc.b  "SEGMENT TOO SHORT TO SPLIT",0
-t_eobj0: dc.b   "NO OBJECT AT UNIT 0 (E-OBJ)",0
 t_egap: dc.b    "AN OBJECT IS ALREADY HERE (E-GAP)",0
 t_ebardel: dc.b "THE BAR CANNOT BE DELETED (E-BAR)",0
 t_ebart0: dc.b  "THIS BASE LEVEL HAS NO BAR TYPE (E-BAR)",0
@@ -4990,18 +4834,24 @@ t_csegs: dc.b   " SEGMENTS  ",0
 t_cobjs: dc.b   " OBJECTS  ",0
 t_cbytes: dc.b  " BYTES OF 8192",0
 t_cok:  dc.b    "NO PROBLEMS FOUND",0
-t_dash: dc.b    "----",0
-t_pseg: dc.b    "SEG ",0
-t_pat:  dc.b    " AT ",0
+t_nolab: dc.b   "    ",0
+t_pseg: dc.b    "SEGMENT ",0
+t_pat:  dc.b    "  AT ",0
 t_plen: dc.b    "LENGTH ",0
 t_pcur: dc.b    "CURVE  ",0
+t_cleft: dc.b   "LEFT ",0
+t_cright: dc.b  "RIGHT ",0
 t_pben: dc.b    "BEND   ",0
 t_phil: dc.b    "HILL   ",0
-t_pwid: dc.b    "WIDTH  L",0
-t_prgt: dc.b    " R",0
+t_pacc: dc.b    " ACC ",0
+t_pwid: dc.b    "WIDTH  LEFT ",0
+t_prgt: dc.b    "  RIGHT ",0
 t_pobj: dc.b    "OBJECTS ",0
-t_ot:   dc.b    "T",0
-t_obar: dc.b    "THE BAR",0
+t_punit: dc.b   "UNIT",0
+t_pnone: dc.b   "NONE HERE: O ADDS ONE",0
+t_ot:   dc.b    " TYPE ",0
+t_oside: dc.b   " SIDE ",0
+t_obar: dc.b    " THE BAR  SIDE ",0
 t_noobj: dc.b   "NO OBJECTS HERE: O ADDS ONE",0
 t_sy0:  dc.b    "STRAIGHT",0
 t_sy1:  dc.b    "GENTLE LEFT",0
@@ -5010,14 +4860,19 @@ t_sy3:  dc.b    "SHARP LEFT",0
 t_sy4:  dc.b    "GENTLE RIGHT",0
 t_sy5:  dc.b    "MEDIUM RIGHT",0
 t_sy6:  dc.b    "SHARP RIGHT",0
-t_hc0:  dc.b    "LEVEL (GREEN)",0
-t_hc1:  dc.b    "RISE SMALL (YELLOW)",0
-t_hc2:  dc.b    "RISE BIG (RED)",0
-t_hc3:  dc.b    "DROP SMALL (LIGHT BLUE)",0
-t_hc4:  dc.b    "DROP BIG (BLUE)",0
+t_hc0:  dc.b    "LEVEL",0
+t_hc1:  dc.b    "RISE SMALL",0
+t_hc2:  dc.b    "RISE BIG",0
+t_hc3:  dc.b    "DROP SMALL",0
+t_hc4:  dc.b    "DROP BIG",0
 t_leg:  dc.b    "WHAT THE TILES MEAN",0
+t_lg1:  dc.b    "SYMBOL = BEND",0
+t_lg2:  dc.b    "COLOUR = HILL",0
+t_lg3:  dc.b    "MARKS",0
 t_legdot: dc.b  "AN OBJECT HERE",0
 t_legbar: dc.b  "THE BAR",0
+t_legcur: dc.b  "THE CURSOR",0
+t_legobj: dc.b  "ITS OBJECT LIST",0
 t_keyg: dc.b    "KEYS        ",0
         dc.b    "C CURVE     ",0
         dc.b    "H HILL      ",0
@@ -5065,7 +4920,7 @@ t_help: dc.b    "TRACK EDITOR KEYS",0
         dc.b    " ",0
         dc.b    "L/R PREVIOUS / NEXT SEGMENT",0
         dc.b    "U/D ONE GRID ROW (16 SEGMENTS)",0
-        dc.b    "TAB FIRE+U/D  THE OBJECT LIST",0
+        dc.b    "TAB / FIRE+DOWN  THE OBJECT LIST",0
         dc.b    "IN THE LIST: U/D AN OBJECT, L/R LEAVE",0
         dc.b    "HOME FIRST   B THE BAR   FIRE MENU",0
         dc.b    "F10 / ESC  LEAVE (KEEPS THE TRACK)",0
@@ -5075,78 +4930,13 @@ t_help: dc.b    "TRACK EDITOR KEYS",0
         dc.b    "I COPY  S SPLIT  M MERGE  DEL DELETE",0
         dc.b    "O ADD AN OBJECT   SHIFT+B PUT THE BAR",0
         dc.b    "T TYPE  S SIDE  M MOVE  DEL DELETE",0
+        dc.b    "MOVE: L/R 10 UNITS, U/D A SEGMENT",0
         dc.b    "U UNDO  SHIFT+U REDO  K CHECK",0
         dc.b    "RETURN / SPACE  REPEAT THE LAST PICK",0
         dc.b    "P TEST DRIVE FROM THE CURSOR / OBJECT",0
         dc.b    " ",0
-        dc.b    "GRAPH: DIRECTION = SYMBOL, HILL = COLOUR",0
-        dc.b    "A KEY SHOWS THE TILE LEGEND",0
+        dc.b    "TILES: SYMBOL = BEND, COLOUR = HILL",0
+        dc.b    "A KEY: WHAT THE TILES MEAN",0
         dc.b    " ",0
         dc.b    "PRESS A KEY",0,0
         even
-qsin:
-        dc.w    0,50,101,151,201,251,302,352,402,452,503,553,603,653,704,754
-        dc.w    804,854,905,955,1005,1055,1106,1156,1206,1256,1307,1357,1407,1457,1507,1558
-        dc.w    1608,1658,1708,1758,1809,1859,1909,1959,2009,2059,2110,2160,2210,2260,2310,2360
-        dc.w    2410,2461,2511,2561,2611,2661,2711,2761,2811,2861,2911,2962,3012,3062,3112,3162
-        dc.w    3212,3262,3312,3362,3412,3462,3512,3562,3612,3662,3712,3761,3811,3861,3911,3961
-        dc.w    4011,4061,4111,4161,4210,4260,4310,4360,4410,4460,4509,4559,4609,4659,4708,4758
-        dc.w    4808,4858,4907,4957,5007,5056,5106,5156,5205,5255,5305,5354,5404,5453,5503,5552
-        dc.w    5602,5651,5701,5750,5800,5849,5899,5948,5998,6047,6096,6146,6195,6245,6294,6343
-        dc.w    6393,6442,6491,6540,6590,6639,6688,6737,6786,6836,6885,6934,6983,7032,7081,7130
-        dc.w    7179,7228,7277,7326,7375,7424,7473,7522,7571,7620,7669,7718,7767,7815,7864,7913
-        dc.w    7962,8010,8059,8108,8157,8205,8254,8303,8351,8400,8448,8497,8545,8594,8642,8691
-        dc.w    8739,8788,8836,8885,8933,8981,9030,9078,9126,9175,9223,9271,9319,9367,9416,9464
-        dc.w    9512,9560,9608,9656,9704,9752,9800,9848,9896,9944,9992,10039,10087,10135,10183,10231
-        dc.w    10278,10326,10374,10421,10469,10517,10564,10612,10659,10707,10754,10802,10849,10897,10944,10992
-        dc.w    11039,11086,11133,11181,11228,11275,11322,11370,11417,11464,11511,11558,11605,11652,11699,11746
-        dc.w    11793,11840,11886,11933,11980,12027,12074,12120,12167,12214,12260,12307,12353,12400,12446,12493
-        dc.w    12539,12586,12632,12679,12725,12771,12817,12864,12910,12956,13002,13048,13094,13141,13187,13233
-        dc.w    13279,13324,13370,13416,13462,13508,13554,13599,13645,13691,13736,13782,13828,13873,13919,13964
-        dc.w    14010,14055,14101,14146,14191,14236,14282,14327,14372,14417,14462,14507,14553,14598,14643,14688
-        dc.w    14732,14777,14822,14867,14912,14956,15001,15046,15090,15135,15180,15224,15269,15313,15358,15402
-        dc.w    15446,15491,15535,15579,15623,15667,15712,15756,15800,15844,15888,15932,15976,16019,16063,16107
-        dc.w    16151,16195,16238,16282,16325,16369,16413,16456,16499,16543,16586,16630,16673,16716,16759,16802
-        dc.w    16846,16889,16932,16975,17018,17061,17104,17146,17189,17232,17275,17317,17360,17403,17445,17488
-        dc.w    17530,17573,17615,17657,17700,17742,17784,17827,17869,17911,17953,17995,18037,18079,18121,18163
-        dc.w    18204,18246,18288,18330,18371,18413,18454,18496,18537,18579,18620,18661,18703,18744,18785,18826
-        dc.w    18868,18909,18950,18991,19032,19072,19113,19154,19195,19236,19276,19317,19357,19398,19438,19479
-        dc.w    19519,19560,19600,19640,19680,19721,19761,19801,19841,19881,19921,19961,20000,20040,20080,20120
-        dc.w    20159,20199,20238,20278,20317,20357,20396,20436,20475,20514,20553,20592,20631,20670,20709,20748
-        dc.w    20787,20826,20865,20904,20942,20981,21019,21058,21096,21135,21173,21212,21250,21288,21326,21364
-        dc.w    21403,21441,21479,21516,21554,21592,21630,21668,21705,21743,21781,21818,21856,21893,21930,21968
-        dc.w    22005,22042,22079,22116,22154,22191,22227,22264,22301,22338,22375,22411,22448,22485,22521,22558
-        dc.w    22594,22631,22667,22703,22739,22776,22812,22848,22884,22920,22956,22991,23027,23063,23099,23134
-        dc.w    23170,23205,23241,23276,23311,23347,23382,23417,23452,23487,23522,23557,23592,23627,23662,23697
-        dc.w    23731,23766,23801,23835,23870,23904,23938,23973,24007,24041,24075,24109,24143,24177,24211,24245
-        dc.w    24279,24312,24346,24380,24413,24447,24480,24514,24547,24580,24613,24647,24680,24713,24746,24779
-        dc.w    24811,24844,24877,24910,24942,24975,25007,25040,25072,25105,25137,25169,25201,25233,25265,25297
-        dc.w    25329,25361,25393,25425,25456,25488,25519,25551,25582,25614,25645,25676,25708,25739,25770,25801
-        dc.w    25832,25863,25893,25924,25955,25986,26016,26047,26077,26108,26138,26168,26198,26229,26259,26289
-        dc.w    26319,26349,26378,26408,26438,26468,26497,26527,26556,26586,26615,26644,26674,26703,26732,26761
-        dc.w    26790,26819,26848,26876,26905,26934,26962,26991,27019,27048,27076,27104,27133,27161,27189,27217
-        dc.w    27245,27273,27300,27328,27356,27384,27411,27439,27466,27493,27521,27548,27575,27602,27629,27656
-        dc.w    27683,27710,27737,27764,27790,27817,27843,27870,27896,27923,27949,27975,28001,28027,28053,28079
-        dc.w    28105,28131,28157,28182,28208,28234,28259,28284,28310,28335,28360,28385,28411,28436,28460,28485
-        dc.w    28510,28535,28560,28584,28609,28633,28658,28682,28706,28730,28755,28779,28803,28827,28850,28874
-        dc.w    28898,28922,28945,28969,28992,29016,29039,29062,29085,29108,29131,29154,29177,29200,29223,29246
-        dc.w    29268,29291,29313,29336,29358,29380,29403,29425,29447,29469,29491,29513,29534,29556,29578,29599
-        dc.w    29621,29642,29664,29685,29706,29728,29749,29770,29791,29812,29832,29853,29874,29894,29915,29936
-        dc.w    29956,29976,29997,30017,30037,30057,30077,30097,30117,30136,30156,30176,30195,30215,30234,30253
-        dc.w    30273,30292,30311,30330,30349,30368,30387,30406,30424,30443,30462,30480,30498,30517,30535,30553
-        dc.w    30571,30589,30607,30625,30643,30661,30679,30696,30714,30731,30749,30766,30783,30800,30818,30835
-        dc.w    30852,30868,30885,30902,30919,30935,30952,30968,30985,31001,31017,31033,31050,31066,31082,31097
-        dc.w    31113,31129,31145,31160,31176,31191,31206,31222,31237,31252,31267,31282,31297,31312,31327,31341
-        dc.w    31356,31371,31385,31400,31414,31428,31442,31456,31470,31484,31498,31512,31526,31539,31553,31567
-        dc.w    31580,31593,31607,31620,31633,31646,31659,31672,31685,31698,31710,31723,31736,31748,31760,31773
-        dc.w    31785,31797,31809,31821,31833,31845,31857,31869,31880,31892,31903,31915,31926,31937,31949,31960
-        dc.w    31971,31982,31993,32004,32014,32025,32036,32046,32057,32067,32077,32087,32098,32108,32118,32128
-        dc.w    32137,32147,32157,32166,32176,32185,32195,32204,32213,32223,32232,32241,32250,32258,32267,32276
-        dc.w    32285,32293,32302,32310,32318,32327,32335,32343,32351,32359,32367,32375,32382,32390,32397,32405
-        dc.w    32412,32420,32427,32434,32441,32448,32455,32462,32469,32476,32482,32489,32495,32502,32508,32514
-        dc.w    32521,32527,32533,32539,32545,32550,32556,32562,32567,32573,32578,32584,32589,32594,32599,32604
-        dc.w    32609,32614,32619,32624,32628,32633,32637,32642,32646,32650,32655,32659,32663,32667,32671,32674
-        dc.w    32678,32682,32685,32689,32692,32696,32699,32702,32705,32708,32711,32714,32717,32720,32722,32725
-        dc.w    32728,32730,32732,32735,32737,32739,32741,32743,32745,32747,32748,32750,32752,32753,32755,32756
-        dc.w    32757,32758,32759,32760,32761,32762,32763,32764,32765,32765,32766,32766,32766,32767,32767,32767
-        dc.w    32767

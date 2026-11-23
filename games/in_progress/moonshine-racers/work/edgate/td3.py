@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
-"""Milestone 3 gate: TEST DRIVE FROM THE CURSOR, HD build, one boot.
- campaign c3.trk -> TRACK EDITOR -> COPY OF TRACK 04 -> a few real edits (bend keys, an inserted segment) -> test drives from the cursor at START / MIDDLE / NEAR THE BAR:
+"""TEST DRIVE FROM THE CURSOR gate (tile-grid editor), HD build, one boot.
+ campaign c3.trk -> TRACK EDITOR -> COPY OF TRACK 04 -> a few real edits (bend keys, an inserted segment) -> test drives from the cursor (P: the selected segment's first unit, or the
+ selected object's unit while the object list has the cursor) at START / MIDDLE / AN OBJECT / NEAR THE BAR:
    at every race start: $5ff8 == the cursor unit, the game's curve / width / hill rings and the object slots == a Python expansion of the encoded working copy (ENCBUF read back from RAM), the time bar,
    screenshot; ends: Esc (start), F10 (middle), the BAR (joystick up: finish, tdvbl returns), time-out (standing); after every return: the editor is where it was (cursor, segment / object lists unchanged, keys work,
    V_TD clear, vectors back); then leave (the store keeps the edits), PLAY THIS TRACK of a campaign track and a normal campaign race with the shop click: still normal.
-   work/edgate/env5.sh python3 work/edgate/td3.py --tag T [--machine ste|megaste|st] [--quick]"""
+   work/edgate/env7.sh python3 work/edgate/td3.py --tag T [--machine ste|megaste|st] [--quick]"""
 import argparse
 from ed2lib import *
 ap = argparse.ArgumentParser(); ap.add_argument("--tag", default="td3"); ap.add_argument("--build", default=os.environ["ED_BUILD"]); ap.add_argument("--machine", default="ste"); ap.add_argument("--level", type=int, default=3)
 ap.add_argument("--quick", action="store_true"); ap.add_argument("--nonormal", action="store_true")
 a = ap.parse_args()
-VAR.update(encl=274, barat=52)
-TD = dict(tdhit=2326, tdres=2328, tdlast=2330, tdwhy=2334, encl=274)
+VAR["encl"] = VAR["enclen"]
+TD = {k: VAR[k] for k in ("tdhit", "tdres", "tdlast", "tdwhy")}
 VTD = 0xb8e0e
 e = Ed(a.tag, a.machine, 2048, a.build, CAMP / "c3.trk"); r = e.r
 S16 = lambda b: [struct.unpack(">h", b[i:i + 2])[0] for i in range(0, len(b), 2)]
@@ -23,14 +24,10 @@ def snapshot():
     return dict(pos=e.vl("pos"), seg=e.vu("seg"), segs=e.segs(), objs=e.objs(), nseg=e.vu("nseg"), nobj=e.vu("nobj"), mod=e.vu("mod"))
 
 def goto_pos(target, why=""):
-    """cursor to the first segment start >= target: Shift + RIGHT = next 1000 (coarse), then single RIGHT / LEFT steps"""
-    e.idle()
-    if e.vl("pos") == target: return
-    for _ in range(300):
-        p = e.vl("pos")
-        if p >= target: break
-        e.key(0x4d, 1, 0.1)
-    e.idle()
+    """the grid cursor to the first segment that starts at or behind the target unit"""
+    e.idle(); sg = e.segs()
+    k = next(i for i, s in enumerate(sg) if s[0] >= target)
+    check(f"cursor {why}: segment {k} reached", e.seg_goto(k))
     log(f"cursor {why}: unit {e.vl('pos')} seg {e.vu('seg')}")
 
 def td_wait_race(hit0, tmo=90):
@@ -115,10 +112,17 @@ def after_return(label, snap0, shot=True):
     check(f"[{label}] LEFT puts the cursor back on {p0}", e.vl("pos") == p0, f"{e.vl('pos')}")
     return s
 
-def one_drive(label, N_target, how, bar_expect, drive=0.0, hold=6.0, endkey=None):
+def one_drive(label, N_target, how, bar_expect, drive=0.0, hold=6.0, endkey=None, from_obj=False):
     goto_pos(N_target, label)
+    if from_obj:                                     # the next segment with two objects or more, its object list, the second object: P starts at that object
+        for _ in range(60):
+            if e.vu("ocnt") >= 2: break
+            e.send(0x4d); e.idle()
+        e.send(0x0f); e.wait(lambda: e.vu("focus") == 1, 10); e.send(0x50); e.idle()
     snap0 = snapshot(); snap0["102c"] = r.w(0x102c)
-    N = snap0["pos"]; log(f"[{label}] TEST DRIVE from unit {N} (segment {snap0['seg']})")
+    N = snap0["objs"][e.vu("obj")][0] if from_obj else snap0["pos"]
+    log(f"[{label}] TEST DRIVE from unit {N} (segment {snap0['seg']}" + (f", object {e.vu('obj')} of its list, the segment starts at {snap0['pos']})" if from_obj else ")"))
+    if from_obj: check(f"[{label}] the object list has the cursor on the second object of the segment (unit {N} > the segment's start {snap0['pos']})", e.vu("focus") == 1 and N > snap0["pos"])
     r.shot(f"{label}_cursor")
     hit0 = vw(TD["tdhit"]); t0 = time.time()
     e.send(0x19)
@@ -147,14 +151,8 @@ def one_drive(label, N_target, how, bar_expect, drive=0.0, hold=6.0, endkey=None
 
 try:
     e.boot_editor(True)
-    e.key(0x50, 3, 0.5); e.send(0x1c); time.sleep(1.0); e.key(0x50, a.level, 0.35); e.send(0x1c)
-    check("viewer up", e.wait(lambda: e.vu("state") == 1, 60)); time.sleep(1.5); e.idle()
-    # ---- real edits through the UI: bend keys (`.` = one step more to the right, `,` = to the left) at two segments, an inserted copy
-    def seg_to(k):
-        for _ in range(400):
-            s = e.vu("seg")
-            if s == k: return
-            e.key(0x4d if s < k else 0x4b, 1, 0.1)
+    check("viewer up", e.open_track("stock", a.level))
+    seg_to = e.seg_goto
     for k, key, n in ((20, 0x34, 3), (60, 0x33, 4), (120, 0x34, 2)):
         seg_to(k); e.idle()
         for _ in range(n): e.send(key); time.sleep(0.25)
@@ -169,6 +167,8 @@ try:
     one_drive("A_start", 0, "esc", barat, drive=5.0)
     # ---- MIDDLE
     one_drive("B_middle", 9000, "f10", barat, drive=3.0)
+    # ---- FROM AN OBJECT: the object list has the cursor
+    one_drive("E_object", 5000, "esc", barat, drive=2.0, from_obj=True)
     if not a.quick:
         # ---- NEAR THE BAR: the finish
         one_drive("C_nearbar", barat - 1500, "bar", barat)

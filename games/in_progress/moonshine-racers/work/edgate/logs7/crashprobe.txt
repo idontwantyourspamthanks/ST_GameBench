@@ -1,0 +1,53 @@
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $130A4E :once :trace :file /tmp/msred7/run/run_crashprobe/c1.txt
+Reading debugger commands from '/tmp/msred7/run/run_crashprobe/c1.txt'...
+Changed to input file dir '/tmp/msred7/run/run_crashprobe'.
+> r
+  D0 00000000   D1 0000000F   D2 00000007   D3 00000100 
+  D4 00000003   D5 00000006   D6 00000003   D7 0000FFFF 
+  A0 001336D6   A1 00140517   A2 001404C8   A3 001405C8 
+  A4 00143000   A5 00140000   A6 00142200   A7 00077F44 
+USP  000B1F40 ISP  00077F44 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 2070 (MOVEA) 0000 (OR) Chip latch 00000000
+00130a4e 2070 0000                movea.l ($00,a0,d0.w) == $001336d6 [00134612],a0
+Next PC: 00130a52
+> m $1336d6 28
+001336D6: 00 13 46 12 00 13 46 1b 00 13 46 27 00 13 46 33  ..F...F...F'..F3
+001336E6: 00 13 46 3e 00 13 46 4b 00 13 46 58              ..F>..FK..FX
+> m $150000 4
+00150000: 00 48 00 48                                      .H.H
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers' dir.
+Debugger re-init.
+Removed CPU breakpoint 1:
+	pc = $130A4E :once :trace :file /tmp/msred7/run/run_crashprobe/c1.txt
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $130A52 :once :trace :file /tmp/msred7/run/run_crashprobe/c2.txt
+Reading debugger commands from '/tmp/msred7/run/run_crashprobe/c2.txt'...
+Changed to input file dir '/tmp/msred7/run/run_crashprobe'.
+> r
+  D0 00000000   D1 0000000F   D2 00000007   D3 00000100 
+  D4 00000003   D5 00000006   D6 00000003   D7 0000FFFF 
+  A0 00134612   A1 00140517   A2 001404C8   A3 001405C8 
+  A4 00143000   A5 00140000   A6 00142200   A7 00077F44 
+USP  000B1F40 ISP  00077F44 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 6100 (BSR) f8f0 (ILLEGAL) Chip latch 00000000
+00130a52 6100 f8f0                bsr.w #$f8f0 == $00130344
+Next PC: 00130a56
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers' dir.
+Debugger re-init.
+Removed CPU breakpoint 1:
+	pc = $130A52 :once :trace :file /tmp/msred7/run/run_crashprobe/c2.txt
+WARN : Bus Error reading at address $46640013, PC=$130346 addr_e3=130346 op_e3=12d8
+WARN : Address Error writing at address $ffffff6d, PC=$e09598 addr_e3=e09598 op_e3=48ee
+8 repeats of: WARN : Address Error writing at address $ffffff6d, PC=$e09598 addr_e3=e09598 op_e3=48ee
+16 repeats of: WARN : Address Error writing at address $ffffff6d, PC=$e09598 addr_e3=e09598 op_e3=48ee
+32 repeats of: WARN : Address Error writing at address $ffffff6d, PC=$e09598 addr_e3=e09598 op_e3=48ee
+64 repeats of: WARN : Address Error writing at address $ffffff6d, PC=$e09598 addr_e3=e09598 op_e3=48ee
+128 repeats of: WARN : Address Error writing at address $ffffff6d, PC=$e09598 addr_e3=e09598 op_e3=48ee
+256 repeats of: WARN : Address Error writing at address $ffffff6d, PC=$e09598 addr_e3=e09598 op_e3=48ee
+512 repeats of: WARN : Address Error writing at address $ffffff6d, PC=$e09598 addr_e3=e09598 op_e3=48ee
+1024 repeats of: WARN : Address Error writing at address $ffffff6d, PC=$e09598 addr_e3=e09598 op_e3=48ee
+
+errors 11

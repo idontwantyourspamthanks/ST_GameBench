@@ -1,4 +1,5 @@
-"""Python model of the milestone 2 editing rules of msedit.s (segment list + object list, the same arithmetic): used to predict what the editor must produce for an edit script,
+"""Python model of the editing rules of msedit.s (segment list + object list, the same arithmetic; tile-grid editor of design section 15: split in half, objects added at the first free
+unit of the selected segment, MOVE across segments, the BAR put into a segment, the tile words): used to predict what the editor must produce for an edit script,
 and to encode it with tools/msrtrack.py's own encoder.  Every op returns None (done) or an error code string (refused: the model state is left as before, as the editor restores its history entry)."""
 import copy, struct, sys
 from pathlib import Path
@@ -7,6 +8,7 @@ import msrtrack as mt
 
 MAXSEG, MAXOBJ = 2048, 999
 HH = [8, 20, 40]
+RLTAB = [19472, 19720, 19800, 19000, 19375, 18000, 18626, 20000, 19000, 20000, 20000, 22000, 18500, 22000, 23000]   # msedit.s rltab
 
 
 def union(t):
@@ -171,12 +173,13 @@ class Model:
             del self.segs[k]
             return self.road_shift(P, -s[1], k) or ("HILL" if self.hill_ovf() else None)
         return self._do(f)
-    def seg_split(self, k, pos):
+    def seg_split(self, k):
+        """S: cut in half (first part = length >> 1); the cursor stays on the first half"""
         def f():
             if len(self.segs) >= MAXSEG: return "FULLSEG"
-            s = self.segs[k]
-            if not (pos > s[0] and pos - s[0] < s[1]): return "SPLIT"
-            new = list(s); new[0] = pos; new[1] = s[1] - (pos - s[0]); s[1] = pos - s[0]
+            s = self.segs[k]; first = s[1] >> 1
+            if first == 0: return "SPLIT"
+            new = list(s); new[0] = s[0] + first; new[1] = s[1] - first; s[1] = first
             self.segs.insert(k + 1, new)
         return self._do(f)
     def seg_merge(self, k):
@@ -186,29 +189,85 @@ class Model:
             return "HILL" if self.hill_ovf() else None
         return self._do(f)
 
+    # ---- the grid's view of the model (calc_end, seg_last, seg_of, tiles_calc)
+    def bar_at(self): return next((o[0] for o in self.objs if o[1] == self.bar_t), None) if self.bar_t else None
+    def end(self):
+        d = RLTAB[self.base] + 1024; b = self.bar_at()
+        if b is not None and b + 512 > d: d = b + 512
+        return min(d, self.total) & ~7
+    def seg_last(self):
+        e = self.end(); return max([k for k, s in enumerate(self.segs) if s[0] < e], default=0)
+    def seg_of(self, unit):
+        k = 0
+        while k < len(self.segs) - 1 and unit >= self.segs[k + 1][0]: k += 1
+        return k
+    def seg_objs(self, k):
+        s = self.segs[k]; return [j for j, o in enumerate(self.objs) if s[0] <= o[0] < s[0] + s[1]]
+    def tiles(self):
+        e = self.end(); c = 0; sl = 0; out = []
+        s16 = lambda v: ((v + 0x8000) & 0xffff) - 0x8000
+        s32 = lambda v: ((v + 0x80000000) & 0xffffffff) - 0x80000000
+        for k, s in enumerate(self.segs):
+            if s[0] >= e: out += [0x8000] * (len(self.segs) - k); break
+            w = 0
+            for j in self.seg_objs(k):
+                w |= 0x40
+                if self.bar_t and self.objs[j][1] == self.bar_t: w |= 0x80
+            half = s[1] >> 1
+            cm = s16(c + s[2] * half); base = 3 if cm >= 0 else 0; a = abs(cm)
+            if a >= 300: w |= base + (1 if a < 1200 else 2 if a < 2400 else 3)
+            sm = s32(sl + s[3] * half); base = 0 if sm >= 0 else 2; a = abs(sm)
+            if a >= 1311: w |= (base + (1 if a < 6554 else 2)) << 3
+            out.append(w)
+            c = s16(c + s[2] * s[1]); sl = s32(sl + s[3] * s[1])
+        return out
+
     # ---- objects
-    def obj_add(self, pos):
+    def pick_unit(self, cand, k, bar_ok):
+        s = self.segs[k]; occ = {o[0] for o in self.objs if not (bar_ok and o[1] == self.bar_t)}
+        for u in list(range(cand, s[0] + s[1])) + list(range(s[0], cand)):
+            if u != 0 and u not in occ: return u
+        return 0
+    def obj_add(self, k, after=None):
+        """O (grid: after = None, from the middle of segment k) / I, O in the object list (after = the selected object's index: from the unit behind it)"""
         def f():
-            if pos == 0: return "OBJ0"
             if len(self.objs) >= MAXOBJ: return "FULLOBJ"
+            s = self.segs[k]
+            pos = self.pick_unit(self.objs[after][0] + 1 if after is not None else s[0] + (s[1] >> 1), k, False)
+            if pos == 0: return "GAP"
             j = 0
             while j < len(self.objs) and self.objs[j][0] < pos: j += 1
-            if j < len(self.objs) and self.objs[j][0] == pos: return "GAP"
             t = self.last_type or (1 if self.bar_t != 1 else 2)
             self.objs.insert(j, [pos, t, self.last_side])
         return self._do(f)
     def obj_del(self, j):
         def f():
+            if len(self.objs) <= 1: return "LASTOBJ"
             if self.objs[j][1] == self.bar_t: return "BARDEL"
-            if len(self.objs) == 1: return None
             del self.objs[j]
         return self._do(f)
-    def obj_move(self, j, delta):
-        def f():
-            lo = 1 if j == 0 else self.objs[j - 1][0] + 1
-            hi = 32767 if j == len(self.objs) - 1 else self.objs[j + 1][0] - 1
-            self.objs[j][0] = min(max(self.objs[j][0] + delta, lo), hi)
-        return self._do(f)
+    def obj_move(self, j, steps):
+        """M, then the steps [('lr', +-1, units) | ('seg', +-1)], then Return: one history entry.  Returns the object's new index."""
+        ob = self.objs[j]; e = self.end()
+        def free(u): return not any(o is not ob and o[0] == u for o in self.objs)
+        for st in steps:
+            if st[0] == "lr":
+                d = st[1]; u = min(max(ob[0] + d * st[2], 1), e - 1)
+                while not free(u):
+                    u += d
+                    if not 1 <= u <= e - 1: u = None; break
+            else:
+                d = st[1]; k = self.seg_of(ob[0]); t = k + d; u = None
+                if 0 <= t <= self.seg_last():
+                    ts, tl = self.segs[t][0], self.segs[t][1]; last = min(ts + tl - 1, e - 1)
+                    u = min(ts + ob[0] - self.segs[k][0], last) or 1
+                    while not free(u):
+                        u += d
+                        if (d > 0 and u > last) or (d < 0 and (u == 0 or u < ts)): u = None; break
+            if u is not None:
+                ob[0] = u; self.objs.sort(key=lambda o: o[0]); e = self.end()
+        self.commit()
+        return next(i for i, o in enumerate(self.objs) if o is ob)
     def obj_type(self, j, t):
         def f():
             if self.objs[j][1] == self.bar_t: return "BART"
@@ -219,10 +278,12 @@ class Model:
             if not -128 <= v <= 127: return "LAT"
             self.objs[j][2] = v; self.last_side = v
         return self._do(f)
-    def bar_here(self, pos):
+    def bar_here(self, k):
+        """the BAR goes to the first free unit of segment k (BAR objects do not block) and keeps its side"""
         def f():
-            if pos == 0: return "OBJ0"
-            if any(o[0] == pos and o[1] != self.bar_t for o in self.objs): return "GAP"
+            if not self.bar_t: return "BART0"
+            pos = self.pick_unit(self.segs[k][0], k, True)
+            if pos == 0: return "GAP"
             lat = 0
             for j in range(len(self.objs) - 1, -1, -1):
                 if self.objs[j][1] == self.bar_t: lat = self.objs[j][2]; del self.objs[j]

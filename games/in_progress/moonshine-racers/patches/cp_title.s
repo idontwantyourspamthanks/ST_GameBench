@@ -84,13 +84,14 @@ e2:     cmpi.b  #$44,$60ff.w
 ; meanwhile as the question's random seed).  First pass of a showing: the hint line F10 = CAMPAIGNS under PRESS A KEY.  F10 opens the campaign menu (not while the screen is still fading in: it stays in $60ff until the fade is
 ; over); a game start continues as a key does ($7c0a), back shows the screen again (the routine starts over: its pushed d7 is dropped).
 e3:     tst.b   IB+4.l                  ; the 2 MB gate: open = the campaigns are in
-        bne     .g2
-        movea.l $2dc.w,a0               ; closed: a 1 MB ST family machine, or >= 2 MB on a TT / Falcon (HAGA's machine type 4 / 5)
-        move.b  $83(a0),d0
-        subq.b  #2,d0
-        cmpi.b  #1,d0
-        bls     .mb1
-        bra     .stock
+        bne.s   .g2
+        tst.b   V_WELC.l                ; closed (below 2 MB, or a TT / Falcon): the stock key wait; first pass of a showing: the 1 MB line
+        bne.s   .w1
+        st      V_WELC.l
+        bsr     hint1mb
+.w1:    tst.b   $60ff.w
+        beq.s   .none
+        bra.s   .key
 .g2:
         tst.b   V_WELC.l
         bne.s   .h
@@ -117,33 +118,24 @@ e3:     tst.b   IB+4.l                  ; the 2 MB gate: open = the campaigns ar
 .key:   clr.b   V_WELC.l
         jmp     $7c0a.l
 .none:  jmp     $7c02.l
-        ; ---- 1 MB: the screen says what 2 MB adds; any key (F10 too) continues as the stock key wait does
-.mb1:   tst.b   V_WELC.l
-        bne.s   .w1
-        st      V_WELC.l
-        lea     t_w1mb(pc),a0
-        movea.l $1004.w,a5
-        move.w  #$78,d4
-        jsr     $12268.l
-.w1:    tst.b   $60ff.w
-        beq.s   .n1
-        clr.b   V_WELC.l
-        jmp     $7c0a.l
-.n1:    jmp     $7c02.l
-        ; ---- closed by the machine type (TT / Falcon): the stock key wait, no hint
-.stock: tst.b   $60ff.w
-        beq.s   .n2
-        jmp     $7c0a.l
-.n2:    jmp     $7c02.l
 
 ; ---- the hint line F10 = CAMPAIGNS (text row 23, the game's text routine) on the screen $1004 points to.  Registers kept.
 hint:   movem.l d0-d7/a0-a6,-(a7)
         lea     t_whint(pc),a0
-        movea.l $1004.w,a5
+hintdr: movea.l $1004.w,a5
         move.w  #$78,d4
         jsr     $12268.l
-        movem.l (a7)+,d0-d7/a0-a6
+hintx:  movem.l (a7)+,d0-d7/a0-a6
         rts
+; ---- gate closed: an ST family machine (HAGA's machine type 1 ST / Mega ST, 2 STE, 3 Mega STE: below 2 MB, or the gate would be open) is told what 2 MB adds; a TT / Falcon (4 / 5) keeps the stock screen.  Registers kept.
+hint1mb: movem.l d0-d7/a0-a6,-(a7)
+        movea.l $2dc.w,a0
+        move.b  $83(a0),d0
+        subq.b  #1,d0
+        cmpi.b  #2,d0
+        bhi.s   hintx
+        lea     t_w1mb(pc),a0
+        bra.s   hintdr
 
 ; ---- floppy title screen (cp_flhint, site $7446 = the first two instructions of the face / text loop body `move.l (a2),$10e8.w / movea.l (a2)+,a0`, executed once per message).  Between two messages the loop clears
 ; both screens from line 64 down (`jsr $d8ca` at $74c8), so the hint line is drawn at the start of every message, into both screens (they are flipped while the text is typed).  The floppy flow never shows the WELCOME

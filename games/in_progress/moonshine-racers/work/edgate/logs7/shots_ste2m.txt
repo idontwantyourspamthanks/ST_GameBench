@@ -1,0 +1,58 @@
+== shots_ste2m: HD STE 2 MB, build /tmp/msred7/hd, campaign c3.trk
+title reached: True
+CHECK title reached: PASS 
+CHECK LOAD CAMPAIGN FROM HARD DISK item: PASS 
+CHECK campaign loaded: PASS 
+CHECK editor overlay loaded (V_EDOK): PASS 
+shot shots_ste2m_0_tracklist.png
+CHECK campaign track 1 opens: PASS 
+[camp] seg 0/406 pos 0 first 0 focus 0 obj 0 ocnt 1 of 0 nobj 417 end 20496 barat 700 mod 0 msg ''
+CHECK [camp] grid: first 0, cursor 0, 128 tiles; shadow == tile words; screen == the drawing of every slot: PASS shadow diffs 0, wrong pixels 0
+shot shots_ste2m_camp_1_open.png
+[camp seg 37] seg 37/406 pos 2230 first 0 focus 0 obj 0 ocnt 0 of 0 nobj 417 end 20496 barat 700 mod 0 msg ''
+CHECK [camp seg 37] grid: first 0, cursor 37, 128 tiles; shadow == tile words; screen == the drawing of every slot: PASS shadow diffs 0, wrong pixels 0
+shot shots_ste2m_camp_2_seg38.png
+[camp B] seg 12/406 pos 690 first 0 focus 0 obj 12 ocnt 2 of 12 nobj 417 end 20496 barat 700 mod 0 msg ''
+CHECK [camp BAR] grid: first 0, cursor 12, 128 tiles; shadow == tile words; screen == the drawing of every slot: PASS shadow diffs 0, wrong pixels 0
+shot shots_ste2m_camp_3_bar.png
+[camp BAR, object list] seg 12/406 pos 690 first 0 focus 1 obj 12 ocnt 2 of 12 nobj 417 end 20496 barat 700 mod 0 msg ''
+CHECK [camp BAR objects] grid: first 0, cursor 12, 128 tiles; shadow == tile words; screen == the drawing of every slot: PASS shadow diffs 0, wrong pixels 0
+shot shots_ste2m_camp_4_bar_objects.png
+CHECK Esc: back to the track list (unchanged track): PASS 
+CHECK copy of original track 4 opens: PASS 
+[stock] seg 0/313 pos 0 first 0 focus 0 obj 0 ocnt 6 of 0 nobj 380 end 20024 barat 19199 mod 0 msg ''
+CHECK [stock] grid: first 0, cursor 0, 128 tiles; shadow == tile words; screen == the drawing of every slot: PASS shadow diffs 0, wrong pixels 0
+shot shots_ste2m_stock_1_open.png
+[stock RIGHT x5] seg 5/313 pos 920 first 0 focus 0 obj 21 ocnt 1 of 21 nobj 380 end 20024 barat 19199 mod 0 msg ''
+CHECK [stock right 5] grid: first 0, cursor 5, 128 tiles; shadow == tile words; screen == the drawing of every slot: PASS shadow diffs 0, wrong pixels 0
+shot shots_ste2m_stock_2_right5.png
+[stock DOWN x7] seg 117/313 pos 8444 first 16 focus 0 obj 160 ocnt 2 of 160 nobj 380 end 20024 barat 19199 mod 0 msg ''
+CHECK [stock down 7] grid: first 16, cursor 117, 128 tiles; shadow == tile words; screen == the drawing of every slot: PASS shadow diffs 0, wrong pixels 0
+shot shots_ste2m_stock_3_down7_scrolled.png
+[stock object list, 2nd object] seg 119/313 pos 8668 first 16 focus 1 obj 163 ocnt 5 of 162 nobj 380 end 20024 barat 19199 mod 0 msg ''
+CHECK [stock objects] grid: first 16, cursor 119, 128 tiles; shadow == tile words; screen == the drawing of every slot: PASS shadow diffs 0, wrong pixels 0
+shot shots_ste2m_stock_4_objects.png
+shot shots_ste2m_stock_5_curve_list_preview.png
+[stock curve picked] seg 119/313 pos 8668 first 16 focus 0 obj 163 ocnt 5 of 162 nobj 380 end 20024 barat 19199 mod 1 msg ''
+CHECK [stock after the curve pick] grid: first 16, cursor 119, 128 tiles; shadow == tile words; screen == the drawing of every slot: PASS shadow diffs 0, wrong pixels 0
+shot shots_ste2m_stock_6_curve_picked.png
+shot shots_ste2m_stock_7_hill_list_preview.png
+CHECK [stock after the cancelled hill list] grid: first 16, cursor 119, 128 tiles; shadow == tile words; screen == the drawing of every slot: PASS shadow diffs 0, wrong pixels 0
+shot shots_ste2m_help_1_keys.png
+shot shots_ste2m_help_2_legend.png
+CHECK [stock after HELP] grid: first 16, cursor 119, 128 tiles; shadow == tile words; screen == the drawing of every slot: PASS shadow diffs 0, wrong pixels 0
+shot shots_ste2m_stock_8_after_help.png
+shot shots_ste2m_menu.png
+CHECK [stock after the menu] grid: first 16, cursor 119, 128 tiles; shadow == tile words; screen == the drawing of every slot: PASS shadow diffs 0, wrong pixels 0
+[stock HOME] seg 0/313 pos 0 first 0 focus 0 obj 5 ocnt 6 of 0 nobj 380 end 20024 barat 19199 mod 1 msg ''
+CHECK [stock home] grid: first 0, cursor 0, 128 tiles; shadow == tile words; screen == the drawing of every slot: PASS shadow diffs 0, wrong pixels 0
+left the copy: 
+CHECK plain straight opens: PASS 
+[straight] seg 0/1 pos 0 first 0 focus 0 obj 0 ocnt 1 of 0 nobj 1 end 20024 barat 19199 mod 0 msg ''
+CHECK [straight] grid: first 0, cursor 0, 1 tiles; shadow == tile words; screen == the drawing of every slot: PASS shadow diffs 0, wrong pixels 0
+shot shots_ste2m_straight_1_new.png
+[straight edited] seg 6/9 pos 600 first 0 focus 1 obj 0 ocnt 1 of 0 nobj 2 end 20024 barat 19199 mod 1 msg ''
+CHECK [straight after S S L I x6 . . O] grid: first 0, cursor 6, 9 tiles; shadow == tile words; screen == the drawing of every slot: PASS shadow diffs 0, wrong pixels 0
+shot shots_ste2m_straight_2_edited.png
+Bus/Address error lines in the Hatari log: 1
+RESULT shots_ste2m: ALL CHECKS PASS
