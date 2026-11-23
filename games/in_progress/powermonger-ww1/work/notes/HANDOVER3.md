@@ -8,8 +8,10 @@ current state and the work to be picked up. Read this first.
 ## 1. One-line summary
 
 The tick, the protection removal and the keyboard shortcuts are **done, gated, and confirmed
-on the user's real Mega STE**. **Tooltips are not done** — the font has just been located, but
-the routine that draws it has not. Performance is untouched.
+on the user's real Mega STE**. **Tooltips are not done** — neither the font nor the routine
+that draws text has been found. Performance is untouched.
+
+If you only read one more thing, read §5.3 and §9.
 
 ---
 
