@@ -1,0 +1,93 @@
+  [default] [   28s vbl 1799] name prompt
+  [default] [   35s vbl 2220] option screen (typing attempt 1)
+GATE default/megaste-2.06-4096K marker PASS $727f8 = b'PMPO' (want b'PMPO')
+GATE default/megaste-2.06-4096K site pm_cachecap PASS $e3f2 = 4eb900075800 (want 4eb900075800)
+GATE default/megaste-2.06-4096K site pm_credit PASS $14baa = 4eb900072800 (want 4eb900072800)
+GATE default/megaste-2.06-4096K site pm_nokeydisk PASS $13cec = 4e714e714e71 (want 4e714e714e71)
+GATE default/megaste-2.06-4096K site pm_noprot PASS $15998 = 0000002c (want 0000002c)
+GATE default/megaste-2.06-4096K site pm_noprot_box PASS $bbd2 = 4e754e714e71 (want 4e754e714e71)
+GATE default/megaste-2.06-4096K site pm_tooltip PASS $13e18 = 4eb900073400 (want 4eb900073400)
+GATE default/megaste-2.06-4096K site qol_keys PASS $13e70 = 4eb900072c00 (want 4eb900072c00)
+GATE default/megaste-2.06-4096K site qol_keys2 PASS $f30 = 4eb900073100 (want 4eb900073100)
+GATE default/megaste-2.06-4096K site tick_click PASS $7e6 = 00072aa0 (want 00072aa0)
+GATE default/megaste-2.06-4096K site tick_click2 PASS $842 = 00072aa0 (want 00072aa0)
+GATE default/megaste-2.06-4096K site tick_click3 PASS $144b4 = 00072aa0 (want 00072aa0)
+GATE default/megaste-2.06-4096K site tick_head PASS $13da0 = 4eb900072900 (want 4eb900072900)
+GATE default/megaste-2.06-4096K site tick_men PASS $13e36 = 4eb900072a60 (want 4eb900072a60)
+GATE default/megaste-2.06-4096K site tick_pass PASS $13de8 = 4eb900072a004e71 (want 4eb900072a004e71)
+GATE default/megaste-2.06-4096K site tick_wx PASS $13e24 = 4eb900072a40 (want 4eb900072a40)
+GATE default/megaste-2.06-4096K payload@options PASS unchanged
+GATE default/megaste-2.06-4096K hi@options PASS pattern / constants: 0 of 327680 bytes changed in $b0000-$f6fff, $f7000-$fffff
+GATE default/megaste-2.06-4096K cache cursor@options PASS [$2cfda] = $80000 (limit $b0000, 0 = no cache)
+GATE default/megaste-2.06-4096K credit visible PASS rows 194-199: 780 px of colours [(102, 102, 68)]
+GATE default/megaste-2.06-4096K boot PASS 48s
+GATE default/megaste-2.06-4096K noprot flag PASS $15998 = $0000002c (want $0000002c) before the first land
+  [default] [   33s vbl 5195] no disk requester
+  [default] [   36s vbl 5363] chart expected
+  [default] [   64s vbl 7035] island clicked
+  [default] [   70s vbl 7390] 3D map view, world counter ticking
+GATE default/megaste-2.06-4096K noprot: the check never ran PASS hits $acc4:0, $ae20:0, $b232:0, $b39c:0
+GATE default/megaste-2.06-4096K noprot: 'Please wait' box skipped (stub reached) PASS $bbd2 reached 1x (an `rts` stub)
+GATE default/megaste-2.06-4096K nokeydisk: the key-disk routine never ran, the flow went on PASS $1cf7c hit 0x, next instruction $13cf2 hit 1x; the Powermonger disk was never inserted
+GATE default/megaste-2.06-4096K map view PASS counter 67, flag $15998 = $0000002c
+GATE default/megaste-2.06-4096K payload@map PASS unchanged
+GATE default/megaste-2.06-4096K hi@map PASS pattern / constants: 0 of 327680 bytes changed in $b0000-$f6fff, $f7000-$fffff
+GATE default/megaste-2.06-4096K cache cursor@map PASS [$2cfda] = $9fc58 (limit $b0000, 0 = no cache)
+  [default] requester: insert the save game disk
+GATE default/megaste-2.06-4096K save/load: loaded state == saved state PASS 101376 B: 0 differ
+GATE default/megaste-2.06-4096K save/load: the world moved between save and load PASS saved vs the state just before the load: 354 differ
+GATE default/megaste-2.06-4096K save/load: save disk slot A == saved state PASS sectors 1-198 equal: True, slot flag $ff, image 409600 B
+GATE default/megaste-2.06-4096K save/load: the game runs on after the load PASS 
+GATE default/megaste-2.06-4096K payload@saveload PASS unchanged
+GATE default/megaste-2.06-4096K hi@saveload PASS pattern / constants: 0 of 327680 bytes changed in $b0000-$f6fff, $f7000-$fffff
+GATE default/megaste-2.06-4096K cache cursor@saveload PASS [$2cfda] = $9fc58 (limit $b0000, 0 = no cache)
+GATE default/megaste-2.06-4096K lose picture PASS non-black 0.69, 16 colours, seen stable x3; cache cursor $9fc58 -> $a7958
+GATE default/megaste-2.06-4096K lose picture still there after 8 s PASS non-black 0.69, 16 colours
+GATE default/megaste-2.06-4096K payload@lose PASS unchanged
+GATE default/megaste-2.06-4096K hi@lose PASS pattern / constants: 0 of 327680 bytes changed in $b0000-$f6fff, $f7000-$fffff
+GATE default/megaste-2.06-4096K cache cursor@lose PASS [$2cfda] = $a7958 (limit $b0000, 0 = no cache)
+GATE default/megaste-2.06-4096K back to option screen PASS 
+  [default] [   20s vbl 20004] island clicked
+  [default] [   26s vbl 20358] 3D map view, world counter ticking
+GATE default/megaste-2.06-4096K map view (2nd land) PASS counter 56
+GATE default/megaste-2.06-4096K win picture PASS non-black 0.99, 15 colours, seen stable x3; cache cursor $af658
+GATE default/megaste-2.06-4096K win picture still there after 8 s PASS non-black 0.99, 15 colours
+GATE default/megaste-2.06-4096K payload@win PASS unchanged
+GATE default/megaste-2.06-4096K hi@win PASS pattern / constants: 0 of 327680 bytes changed in $b0000-$f6fff, $f7000-$fffff
+GATE default/megaste-2.06-4096K cache cursor@win PASS [$2cfda] = $af658 (limit $b0000, 0 = no cache)
+GATE default/megaste-2.06-4096K back to option screen (after win) PASS 
+  [default] [   21s vbl 26147] island clicked
+  [default] [   26s vbl 26501] 3D map view, world counter ticking
+GATE default/megaste-2.06-4096K map view (CONTINUE CONQUEST, other island) PASS counter 57
+GATE default/megaste-2.06-4096K payload@continue PASS unchanged
+GATE default/megaste-2.06-4096K hi@continue PASS pattern / constants: 0 of 327680 bytes changed in $b0000-$f6fff, $f7000-$fffff
+GATE default/megaste-2.06-4096K cache cursor@continue PASS [$2cfda] = $af658 (limit $b0000, 0 = no cache)
+GATE default/megaste-2.06-4096K lose2 picture PASS non-black 0.69, 16 colours, seen stable x3; cache cursor $af658 -> $af658
+GATE default/megaste-2.06-4096K lose2 picture still there after 8 s PASS non-black 0.69, 16 colours
+GATE default/megaste-2.06-4096K payload@lose2 PASS unchanged
+GATE default/megaste-2.06-4096K hi@lose2 PASS pattern / constants: 0 of 327680 bytes changed in $b0000-$f6fff, $f7000-$fffff
+GATE default/megaste-2.06-4096K cache cursor@lose2 PASS [$2cfda] = $af658 (limit $b0000, 0 = no cache)
+GATE default/megaste-2.06-4096K back to option screen (after lose2) PASS 
+  [default] confirm dialog after START NEW CONQUEST on a won land: True ('WWI, are                you sure you want to    delete all o')
+  [default] [   20s vbl 32774] island clicked
+  [default] [   26s vbl 33128] 3D map view, world counter ticking
+GATE default/megaste-2.06-4096K map view (3rd land) PASS counter 57
+GATE default/megaste-2.06-4096K payload@round3 PASS unchanged
+GATE default/megaste-2.06-4096K hi@round3 PASS pattern / constants: 0 of 327680 bytes changed in $b0000-$f6fff, $f7000-$fffff
+GATE default/megaste-2.06-4096K cache cursor@round3 PASS [$2cfda] = $af658 (limit $b0000, 0 = no cache)
+GATE default/megaste-2.06-4096K win2 picture PASS non-black 0.99, 15 colours, seen stable x3; cache cursor $af658
+GATE default/megaste-2.06-4096K win2 picture still there after 8 s PASS non-black 0.99, 15 colours
+GATE default/megaste-2.06-4096K payload@win2 PASS unchanged
+GATE default/megaste-2.06-4096K hi@win2 PASS pattern / constants: 0 of 327680 bytes changed in $b0000-$f6fff, $f7000-$fffff
+GATE default/megaste-2.06-4096K cache cursor@win2 PASS [$2cfda] = $af658 (limit $b0000, 0 = no cache)
+GATE default/megaste-2.06-4096K back to option screen (after win2) PASS 
+GATE default/megaste-2.06-4096K map view (PLAY RANDOM LAND) PASS counter 35
+GATE default/megaste-2.06-4096K payload@random PASS unchanged
+GATE default/megaste-2.06-4096K hi@random PASS pattern / constants: 0 of 327680 bytes changed in $b0000-$f6fff, $f7000-$fffff
+GATE default/megaste-2.06-4096K cache cursor@random PASS [$2cfda] = $af658 (limit $b0000, 0 = no cache)
+LOADER 9:D559 0:D94 2:D83 3:D126 4:D116 5:D144 16:D+232 10:D+349 11:D213 1:D+162 8:D+154 1:c9 8:c9 1:c9 8:c9 14:D+229 16:c0 10:c20 11:D229 1:c11 8:c10 15:D+150 16:c0 10:c20 11:D224 1:c10 8:c9 14:c10 16:c0 10:c20 11:D217 1:c11 8:c10 15:c10 1:c10 8:c10
+LOADER legend: n:D = loaded from the disk, n:c = from the cache; + = cached (cursor store), S = cap skip; number = VBLs call to return
+GATE default/megaste-2.06-4096K loader: every cacheable resource (1 8 10 14 15 16) came from the disk at most once PASS disk loads per resource {1: 1, 8: 1, 10: 1, 14: 1, 15: 1, 16: 1}
+GATE default/megaste-2.06-4096K loader: cache hits are fast (<= 40 VBL) PASS 20 cache hits, slow []
+GATE default/megaste-2.06-4096K cap normal: no skip (M3a) PASS 0 skip(s)
+CELL DONE default/megaste-2.06-4096K: OK (666s)

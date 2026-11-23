@@ -34,10 +34,15 @@ MARKER  equ $727f8
 IMG     equ $72000
 HOOK    equ $72140
 APPLY   equ $721f0
+TPAMIN  equ $f8000                      ; minimum p_hitpa to install the payload: LOW area $72000-$77fff + HIGH area $b0000-$f6fff + the start-up stack below $f8000
+PUSHOFF equ $2cc                        ; text offset of the original copy-routine pushes (wwpatch.py PUSH_OFF)
 GAME    equ $576                        ; where the unpacked game starts: the copy routine's destination and the original `rts` target
 
         org     $0
-front:  lea     img(pc),a0              ; the payload records: right behind this stub
+front:  movea.l 4(a7),a0                ; TOS's basepage (the program's initial stack: return address, basepage pointer)
+        cmpi.l  #TPAMIN,4(a0)           ; p_hitpa: the end of the program's TPA.  1 MB machine: $f8000 (TOS's screen), the program's start-up stack
+        bcs.s   .refuse                 ; sits right below it.  Below that (512 KB: $78000) the payload area $72000.. would be the stack and the screen
+        lea     img(pc),a0              ; the payload records: right behind this stub
 .rec:   movea.l (a0)+,a1                ; record = {dest.l, len.l [, len bytes]}; dest 0 ends; len bit 31 = zero-fill, no bytes
         move.l  a1,d1
         beq.s   .done
@@ -67,6 +72,20 @@ front:  lea     img(pc),a0              ; the payload records: right behind this
 .out:   lea     front(pc),a0
         suba.l  #TEXTLEN-8,a0           ; TEXTLEN = original text size: this is text offset 8 (the rest of the Super code)
         jmp     (a0)
+; not enough RAM: install nothing.  The original copy routine (the 8 `move.l #imm,-(a7)` that build it on the stack, text offset PUSHOFF)
+; goes back in place, so the game runs exactly as the original program does (on 512 KB without its resource cache); MARKER stays 0.
+.refuse:lea     front(pc),a0
+        suba.l  #TEXTLEN,a0             ; the program's text
+        lea     PUSHOFF(a0),a0
+        lea     .push(pc),a1
+        moveq   #11,d0
+.rl:    move.l  (a1)+,(a0)+
+        dbra    d0,.rl
+        clr.l   -(a7)                   ; the program's own first instruction, verbatim: Super(0)
+        move.w  #$20,-(a7)
+        trap    #1
+        bra.s   .out
+.push:  dc.l    $2f3c005c,$4e752f3c,$00204fef,$2f3c4cef,$7fff2f3c,$538166fa,$2f3c66fa,$42192f3c,$12d85380,$2f3c2549,$005c2f3c,$45fafffe
 img:                                    ; payload records start here (not assembled; wwpatch.py appends them)
 
         org     $72000

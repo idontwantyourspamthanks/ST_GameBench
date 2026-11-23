@@ -1,0 +1,57 @@
+  [default] [   26s vbl 1375] name prompt
+  [default] [   33s vbl 1727] option screen (typing attempt 1)
+GATE default/ste-1.62-1024K marker PASS $727f8 = b'PMPO' (want b'PMPO')
+GATE default/ste-1.62-1024K site pm_cachecap PASS $e3f2 = 4eb900075800 (want 4eb900075800)
+GATE default/ste-1.62-1024K site pm_credit PASS $14baa = 4eb900072800 (want 4eb900072800)
+GATE default/ste-1.62-1024K site pm_nokeydisk PASS $13cec = 4e714e714e71 (want 4e714e714e71)
+GATE default/ste-1.62-1024K site pm_noprot PASS $15998 = 0000002c (want 0000002c)
+GATE default/ste-1.62-1024K site pm_noprot_box PASS $bbd2 = 4e754e714e71 (want 4e754e714e71)
+GATE default/ste-1.62-1024K site pm_tooltip PASS $13e18 = 4eb900073400 (want 4eb900073400)
+GATE default/ste-1.62-1024K site qol_keys PASS $13e70 = 4eb900072c00 (want 4eb900072c00)
+GATE default/ste-1.62-1024K site qol_keys2 PASS $f30 = 4eb900073100 (want 4eb900073100)
+GATE default/ste-1.62-1024K site tick_click PASS $7e6 = 00072aa0 (want 00072aa0)
+GATE default/ste-1.62-1024K site tick_click2 PASS $842 = 00072aa0 (want 00072aa0)
+GATE default/ste-1.62-1024K site tick_click3 PASS $144b4 = 00072aa0 (want 00072aa0)
+GATE default/ste-1.62-1024K site tick_head PASS $13da0 = 4eb900072900 (want 4eb900072900)
+GATE default/ste-1.62-1024K site tick_men PASS $13e36 = 4eb900072a60 (want 4eb900072a60)
+GATE default/ste-1.62-1024K site tick_pass PASS $13de8 = 4eb900072a004e71 (want 4eb900072a004e71)
+GATE default/ste-1.62-1024K site tick_wx PASS $13e24 = 4eb900072a40 (want 4eb900072a40)
+GATE default/ste-1.62-1024K payload@options PASS unchanged
+GATE default/ste-1.62-1024K hi@options PASS pattern / constants: 0 of 290816 bytes changed in $b0000-$f6fff
+GATE default/ste-1.62-1024K cache cursor@options PASS [$2cfda] = $80000 (limit $b0000, 0 = no cache)
+GATE default/ste-1.62-1024K credit visible PASS rows 194-199: 780 px of colours [(102, 102, 68)]
+GATE default/ste-1.62-1024K boot PASS 46s
+GATE default/ste-1.62-1024K cursor raised (M3b / M3c control) PASS $80000 -> $90000
+GATE default/ste-1.62-1024K noprot flag PASS $15998 = $0000002c (want $0000002c) before the first land
+  [default] [   33s vbl 4413] no disk requester
+  [default] [   36s vbl 4553] chart expected
+  [default] [   64s vbl 5950] island clicked
+  [default] [   70s vbl 6245] 3D map view, world counter ticking
+GATE default/ste-1.62-1024K noprot: the check never ran PASS hits $acc4:0, $ae20:0, $b232:0, $b39c:0
+GATE default/ste-1.62-1024K noprot: 'Please wait' box skipped (stub reached) PASS $bbd2 reached 1x (an `rts` stub)
+GATE default/ste-1.62-1024K nokeydisk: the key-disk routine never ran, the flow went on PASS $1cf7c hit 0x, next instruction $13cf2 hit 1x; the Powermonger disk was never inserted
+GATE default/ste-1.62-1024K map view PASS counter 70, flag $15998 = $0000002c
+GATE default/ste-1.62-1024K payload@map PASS unchanged
+GATE default/ste-1.62-1024K hi@map PASS pattern / constants: 0 of 290816 bytes changed in $b0000-$f6fff
+GATE default/ste-1.62-1024K cache cursor@map PASS [$2cfda] = $afc58 (limit $b0000, 0 = no cache)
+GATE default/ste-1.62-1024K lose picture PASS non-black 0.69, 16 colours, seen stable x3; cache cursor $afc58 -> $afc58
+GATE default/ste-1.62-1024K lose picture still there after 8 s PASS non-black 0.69, 16 colours
+GATE default/ste-1.62-1024K payload@lose PASS unchanged
+GATE default/ste-1.62-1024K hi@lose PASS pattern / constants: 0 of 290816 bytes changed in $b0000-$f6fff
+GATE default/ste-1.62-1024K cache cursor@lose PASS [$2cfda] = $afc58 (limit $b0000, 0 = no cache)
+GATE default/ste-1.62-1024K back to option screen PASS 
+  [default] [   21s vbl 11213] island clicked
+  [default] [   26s vbl 11508] 3D map view, world counter ticking
+GATE default/ste-1.62-1024K map view (2nd land) PASS counter 59
+GATE default/ste-1.62-1024K win picture PASS non-black 0.99, 15 colours, seen stable x3; cache cursor $afc58
+GATE default/ste-1.62-1024K win picture still there after 8 s PASS non-black 0.99, 15 colours
+GATE default/ste-1.62-1024K payload@win PASS unchanged
+GATE default/ste-1.62-1024K hi@win PASS pattern / constants: 0 of 290816 bytes changed in $b0000-$f6fff
+GATE default/ste-1.62-1024K cache cursor@win PASS [$2cfda] = $afc58 (limit $b0000, 0 = no cache)
+GATE default/ste-1.62-1024K back to option screen (after win) PASS 
+LOADER 9:D467 0:D77 2:D58 3:D93 4:D83 5:D117 16:D+187 10:D+288 11:D188 1:D+123 8:D+107 14:DS178 16:c1 10:c16 11:D181 1:c9 8:c8 15:DS120
+LOADER legend: n:D = loaded from the disk, n:c = from the cache; + = cached (cursor store), S = cap skip; number = VBLs call to return
+GATE default/ste-1.62-1024K loader: every cacheable resource (1 8 10 14 15 16) came from the disk at most once PASS disk loads per resource {1: 1, 8: 1, 10: 1, 14: 1, 15: 1, 16: 1}
+GATE default/ste-1.62-1024K loader: cache hits are fast (<= 40 VBL) PASS 4 cache hits, slow []
+GATE default/ste-1.62-1024K cap forced: the resource that would end above the limit was skipped (M3b) PASS 2 skip(s): [(14, 8173), (15, 13198)]
+CELL DONE default/ste-1.62-1024K: OK (293s)

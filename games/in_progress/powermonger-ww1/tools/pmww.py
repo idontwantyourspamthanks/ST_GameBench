@@ -132,6 +132,8 @@ class PMW(Hatari):
         """{pc: executions} since watch_pcs (parsed from the debugger log)."""
         out, res = self._logtext()[self._wmark:], {}
         for blk in out.split("Reading debugger commands")[1:]:
+            if "/tr_" in blk.split("\n", 1)[0]:          # the loader trace's own breakpoints (wwgate --trace) are not pc watches
+                continue
             m = re.findall(r"\$([0-9a-f]+) \(hex\)", blk)
             if m:
                 res[int(m[0], 16)] = res.get(int(m[0], 16), 0) + 1
@@ -204,12 +206,12 @@ class PMW(Hatari):
         stamp("chart expected")
         return self.chart_to_map(log, noprot, t0)
 
-    def chart_to_map(self, log=print, noprot: bool = False, t0: float | None = None) -> bool:
+    def chart_to_map(self, log=print, noprot: bool = False, t0: float | None = None, xy=None) -> bool:
         """Chart on screen -> the small island -> protection question (answered from RAM) -> 3D map view, world counter ticking."""
         t0 = t0 or time.time()
         stamp = lambda s: log(f"[{time.time() - t0:5.0f}s vbl {self.vbl()}] {s}")
         for attempt in range(8):
-            self.goto_st(*ISLAND_XY)
+            self.goto_st(*(xy or ISLAND_XY))
             time.sleep(0.8)
             self.click(hold=0.3)
             if noprot:                            # no question may ever show up: poll for the map view instead of waiting for the question

@@ -50,6 +50,55 @@ FRONT_ORIG = bytes.fromhex("42a73f3c00204e41")           # clr.l -(a7); move.w #
 # ---- payload layout ($72000..$77FFF, below the game's BSS end $71b84 .. TOS-style screen at $78000; work/notes/placement.md) ----
 IMG_BASE, IMG_END = 0x72000, 0x78000
 CODE_BASE = 0x72800                     # first address a patch blob may use
+# ---- HIGH area $b0000-$f6fff: big buffers only (work/notes/memory_plan.md 3.2).  HI_BASE is also the resource-cache cap CAPLIM (pm_cachecap.s):
+# the cache grows up from $80000 and must never reach a HIGH byte.  $f7000-$fffff is TOS's (start-up stack, screen on a 1 MB machine): never ours.
+HI_BASE, HI_END = 0xB0000, 0xF7000
+LOW_MAX_SPAN = 0x800                    # rule: a blob / `; data:` / `; scratch:` span larger than 2 KB goes HIGH
+# patch-name prefix -> (LOW ranges [lo, hi), HIGH ranges [lo, hi)); first match wins; memory_plan.md 3.1 / 3.2 (pm_tooltip, qol_: where stage 3 / 2 put them)
+RANGES = [
+    ("pm_credit",   [(0x72800, 0x72900)], []),
+    ("tick_",       [(0x72900, 0x72C00)], []),
+    ("qol_",        [(0x72C00, 0x73400), (0x73900, 0x73C00), (0x74B00, 0x75800)], []),
+    ("pm_tooltip",  [(0x73400, 0x75800)], []),
+    ("p3b_",        [(0x73C00, 0x74000)], [(0xC0000, 0xC2000)]),
+    ("tt_",         [(0x75800, 0x75C00)], []),
+    ("pm_mste",     [(0x75800, 0x75C00)], []),
+    ("pm_cachecap", [(0x75800, 0x75C00)], []),
+    ("pm_intro_",   [(0x75800, 0x75C00)], []),
+    ("fal_",        [(0x75800, 0x75C00)], []),
+    ("p4_",         [(0x75C00, 0x76400)], [(0xDF000, HI_END)]),       # sprite cache $df000 + the reserve above it
+    ("snd_",        [(0x76400, 0x76800)], [(0xBC000, 0xC0000)]),
+    ("p6_",         [(0x76800, 0x77200)], [(0xB8000, 0xBC000)]),
+    ("p7_",         [(0x77200, 0x77400)], [(0xB0000, 0xB8000)]),
+    ("hd_",         [(0x77400, 0x77C00)], [(0xC2000, 0xDF000)]),
+    ("test_",       [(0x77C00, 0x78000)], []),
+]
+
+
+def ranges_of(name: str):
+    for pre, lo, hi in RANGES:
+        if name.startswith(pre):
+            return lo, hi
+    return [], []
+
+
+def check_span(pname: str, what: str, a: int, ln: int):
+    """Build errors for a blob / data / scratch span: outside its patch's ranges, between the areas, a LOW span > 2 KB, HIGH below HI_BASE."""
+    e = a + ln
+    if ln <= 0:
+        raise SystemExit(f"{pname}: empty {what} at ${a:x}")
+    lo_r, hi_r = ranges_of(pname)
+    if IMG_BASE <= a < IMG_END:
+        if e > IMG_END or not any(l <= a and e <= h for l, h in lo_r):
+            raise SystemExit(f"{pname}: {what} ${a:x}..${e - 1:x} outside its LOW range(s) " + (", ".join(f"${l:x}..${h - 1:x}" for l, h in lo_r) or "(none: the name has no entry in RANGES)"))
+        if ln > LOW_MAX_SPAN:
+            raise SystemExit(f"{pname}: {what} ${a:x}+{ln} is larger than 2 KB: big buffers go in the HIGH area (rule of memory_plan.md 3.1)")
+    elif a >= HI_BASE:
+        if e > HI_END or not any(l <= a and e <= h for l, h in hi_r):
+            raise SystemExit(f"{pname}: {what} ${a:x}..${e - 1:x} outside its HIGH range(s) " + (", ".join(f"${l:x}..${h - 1:x}" for l, h in hi_r) or "(none)") + f" (HIGH area ${HI_BASE:x}..${HI_END - 1:x})")
+    else:
+        raise SystemExit(f"{pname}: {what} ${a:x}..${e - 1:x} is neither in the LOW area ${IMG_BASE:x}..${IMG_END - 1:x} nor at or above HI_BASE ${HI_BASE:x} (the resource cache lives in between)")
+
 HOOK, APPLY = IMG_BASE + 0x140, IMG_BASE + 0x1F0
 CORE_ORGS = {"front": 0x0, "entry": IMG_BASE, "hook": HOOK, "apply": APPLY}
 
@@ -66,6 +115,7 @@ def core_equs() -> dict[str, int]:
 EQU = core_equs()
 TABLE, UINITTBL, INITTBL, MARKER = EQU["TABLE"], EQU["UINITTBL"], EQU["INITTBL"], EQU["MARKER"]
 assert EQU["IMG"] == IMG_BASE and EQU["HOOK"] == HOOK and EQU["APPLY"] == APPLY and EQU["GAME"] == GAME
+assert EQU["PUSHOFF"] == PUSH_OFF
 
 
 # ---- FAT12 image (GEMDOS: 512 B sectors, 2 sectors/cluster; 1 or 2 sides) -----------------------------------------------
@@ -216,6 +266,7 @@ class Patch:
         self.mandatory = False    # `; mandatory: yes`: verified/applied as its own group before the optional sites
         self.orig = None
         self.data = []            # (addr, len) zero-init reservations
+        self.scratch = []         # (addr, len) HIGH spans the patch writes at run time but that need no initial value (no record, not zero-filled)
         self.inits = []           # routines the core calls from `init` (supervisor, TOS's world)
         self.uinits = []          # same from `uinit` (user mode, before Super)
         self.segments = []        # (org, lines)
@@ -236,6 +287,9 @@ class Patch:
                 elif k == "data":
                     a, l = v.split()
                     self.data.append((hx(a), int(l, 0)))
+                elif k == "scratch":
+                    a, l = v.split()
+                    self.scratch.append((hx(a), int(l, 0)))
                 elif k == "init": self.inits.append(hx(v))
                 elif k == "uinit": self.uinits.append(hx(v))
                 continue
@@ -253,14 +307,15 @@ def load_all():
     return [p for p in (Patch(f) for f in sorted(PATCHDIR.glob("*.s")) if f.name != "core.s") if p.site is not None or p.segments]
 
 
-def selected(patches, only):
+def selected(patches, only, hd=False):
+    """--only NAMES (exactly those), else every default patch; `hd` adds the hd_* patches (HD build: GEMDOS loader + save disk file, `; mandatory: yes`)."""
     if only:
         names = {p.name for p in patches}
         bad = [n for n in only if n not in names]
         if bad:
             raise SystemExit(f"unknown patch(es): {bad}; have {sorted(names)}")
-        return [p for p in patches if p.name in only]
-    return [p for p in patches if p.default]
+        return [p for p in patches if p.name in only or (hd and p.name.startswith("hd_"))]
+    return [p for p in patches if p.default or (hd and p.name.startswith("hd_"))]
 
 
 def assemble(org: int, lines: list[str], equ: str = "") -> bytes:
@@ -284,6 +339,8 @@ def core_segments() -> dict[str, bytes]:
     segs = {name: assemble(org, by_org[org], equ) for name, org in CORE_ORGS.items()}
     if assemble(0x1000, by_org[0], equ) != segs["front"]:
         raise SystemExit("core.s front stub is not position independent")
+    if PUSH_ORIG[:48] not in segs["front"]:
+        raise SystemExit("core.s front stub does not carry the original copy-routine pushes (its `.refuse` path restores them)")
     order = ["entry", "hook", "apply"]
     for a, b in zip(order, order[1:] + ["table"]):
         end = CORE_ORGS[a] + len(segs[a])
@@ -343,25 +400,39 @@ def build_image(patches: list[Patch], corrupt: bool = False, fill: tuple[int, in
         raise SystemExit("more than 11 init / uinit routines")
     used = [(CORE_ORGS[k], CORE_ORGS[k] + len(core[k])) for k in ("entry", "hook", "apply")] + [
         (TABLE, TABLE + len(tbl)), (UINITTBL, UINITTBL + 48), (INITTBL, INITTBL + 48), (MARKER, MARKER + 4)]
-    blobs = []
+    blobs, hi_blobs, hi_used, hi_data, hi_scratch = [], [], [], [], []
     for p in patches:
+        m = re.search(r"^\s*CAPLIM\s+equ\s+\$([0-9a-fA-F]+)", "\n".join(p.preamble), re.M)
+        if m and int(m.group(1), 16) != HI_BASE:
+            raise SystemExit(f"{p.name}: CAPLIM ${m.group(1)} != HI_BASE ${HI_BASE:x}: the resource-cache cap must be exactly the start of the HIGH area")
         for org, lines in p.segments:
             if org == p.site:
                 continue
             b = assemble(org, lines, "\n".join(p.preamble))
-            if not (CODE_BASE <= org and org + len(b) <= IMG_END):
-                raise SystemExit(f"{p.name}: blob ${org:x}..${org + len(b) - 1:x} outside ${CODE_BASE:x}..${IMG_END - 1:x}")
-            blobs.append((org, b, p.name))
+            check_span(p.name, "blob", org, len(b))
+            if org >= HI_BASE:
+                hi_blobs.append((org, b, p.name))
+                hi_used.append((org, org + len(b)))
+            else:
+                blobs.append((org, b, p.name))
             used.append((org, org + len(b)))
         for a, ln in p.data:
-            if not (CODE_BASE <= a and a + ln <= IMG_END):
-                raise SystemExit(f"{p.name}: data ${a:x}+{ln} outside ${CODE_BASE:x}..${IMG_END - 1:x}")
+            check_span(p.name, "data", a, ln)
             used.append((a, a + ln))
+            if a >= HI_BASE:
+                hi_data.append((a, a + ln))
+        for a, ln in p.scratch:
+            if a < HI_BASE:
+                raise SystemExit(f"{p.name}: `; scratch:` is for HIGH spans only (${a:x})")
+            check_span(p.name, "scratch", a, ln)
+            used.append((a, a + ln))
+            hi_scratch.append((a, a + ln))
     used.sort()
     for (a0, a1), (b0, b1) in zip(used, used[1:]):
         if a1 > b0:
             raise SystemExit(f"image overlap: ${a0:x}-${a1:x} vs ${b0:x}-${b1:x}")
-    end = (max(a1 for _, a1 in used) + 3) & ~3
+    lo_used = [u for u in used if u[0] < IMG_END]
+    end = (max(a1 for _, a1 in lo_used) + 3) & ~3
     img = bytearray(end - IMG_BASE)
     for key in ("entry", "hook", "apply"):
         o = CORE_ORGS[key] - IMG_BASE
@@ -377,7 +448,7 @@ def build_image(patches: list[Patch], corrupt: bool = False, fill: tuple[int, in
     fills = []
     if fill:                                       # test build: every free long in [lo, hi) holds a known non-zero pattern
         lo, hi = fill
-        marks = sorted(used + [(a, b) for a, b in zeros])
+        marks = sorted(lo_used + [(a, b) for a, b in zeros if a < IMG_END])
         cur = lo
         for a, b in marks:
             a, b = a & ~3, (b + 3) & ~3
@@ -387,10 +458,26 @@ def build_image(patches: list[Patch], corrupt: bool = False, fill: tuple[int, in
         if cur < hi:
             fills.append((cur, hi))
         fills = [(a, b) for a, b in fills if b > a]
-    return bytes(img), sites, used, zeros, fills
+    hi = dict(blobs=hi_blobs, used=sorted(hi_used), data=sorted(hi_data), scratch=sorted(hi_scratch))
+    return bytes(img), sites, lo_used, zeros, fills, hi
 
 
-def pack_records(img: bytes, zeros, fills=()) -> bytes:
+def free_hi(hi: dict):
+    """HIGH spans no patch declared (blob / data / scratch): the gate fills them with a pattern and demands 0 changes.  Guards and reserve included."""
+    marks = sorted(hi["used"] + hi["data"] + hi["scratch"])
+    out, cur = [], HI_BASE
+    for a, b in marks:
+        if a > cur:
+            out.append((cur, a))
+        cur = max(cur, b)
+    if cur < HI_END:
+        out.append((cur, HI_END))
+    return out
+
+
+
+
+def pack_records(img: bytes, zeros, fills=(), hi_blobs=()) -> bytes:
     """The payload as `front` reads it: records {dest.l, len.l, bytes}, zero-fill records {dest.l, len.l | $80000000}, a long 0
     at the end.  Zero spans first (so the non-zero runs overwrite where they overlap), then the non-zero runs of `img`, long
     aligned, runs closer than 12 zero bytes merged.  Empty space between blobs costs no disk bytes."""
@@ -423,6 +510,9 @@ def pack_records(img: bytes, zeros, fills=()) -> bytes:
         out += struct.pack(">II", IMG_BASE + a, b - a) + pad[a:b]
     for a, b in fills:
         out += struct.pack(">II", a, b - a) + bytes(fill_byte(x) for x in range(a, b))
+    for org, blob, _n in hi_blobs:                  # HIGH blobs (rare: the big buffers are zero spans or generated at init)
+        blob += bytes(-len(blob) % 4)
+        out += struct.pack(">II", org, len(blob)) + blob
     return bytes(out) + b"\0\0\0\0"
 
 
@@ -500,16 +590,19 @@ def build_floppy(out: Path, prg: bytes):
     return n
 
 
-def cmd_build(patches, out: Path, floppy: bool, corrupt: bool, fill: bool, all_patches):
+def cmd_build(patches, out: Path, floppy: bool, corrupt: bool, fill: bool, all_patches, hd: bool = False):
     fillr = (IMG_BASE, IMG_END) if fill else None
-    img, sites, used, zeros, fills = build_image(patches, corrupt, fillr)
-    records = pack_records(img, zeros, fills)
+    img, sites, used, zeros, fills, hi = build_image(patches, corrupt, fillr)
+    records = pack_records(img, zeros, fills, hi["blobs"])
     prg, front = build_prg(records)
     out.mkdir(parents=True, exist_ok=True)
     (out / "WW1.PRG").write_bytes(prg)
     manifest = dict(patches=[p.name for p in patches], sites=[dict(name=s["name"], addr=s["addr"], orig=s["orig"].hex(), new=s["new"].hex()) for s in sites],
                     used=[list(u) for u in used], fills=[list(f) for f in fills],
-                    data=[dict(patch=p.name, addr=a, len=ln) for p in patches for a, ln in p.data], image_base=IMG_BASE, image_end=IMG_END,
+                    data=[dict(patch=p.name, addr=a, len=ln) for p in patches for a, ln in p.data if a < IMG_END], image_base=IMG_BASE, image_end=IMG_END,
+                    hi_base=HI_BASE, hi_end=HI_END, caplim=HI_BASE,
+                    hi_used=[list(u) for u in hi["used"]], hi_data=[list(u) for u in hi["data"]], hi_scratch=[list(u) for u in hi["scratch"]],
+                    free_hi=[list(u) for u in free_hi(hi)],
                     prg_md5=hashlib.md5(prg).hexdigest(), prg_size=len(prg), records=len(records))
     print(f"patches: {[p.name for p in patches]}")
     print(f"payload {len(img)} B image, {len(records)} B of records; WW1.PRG {len(prg)} B (original {len(prg_file())}); md5 {manifest['prg_md5']}")
@@ -521,11 +614,33 @@ def cmd_build(patches, out: Path, floppy: bool, corrupt: bool, fill: bool, all_p
         manifest["floppy"] = str(st)
         manifest["floppy_md5"] = hashlib.md5(st.read_bytes()).hexdigest()
         print(f"floppy {st} ({n} clusters for WW1.PRG, {Fat12(st.read_bytes()).free_bytes()} B free) md5 {manifest['floppy_md5']}")
+    if hd:                                      # the hard-disk layout (master's): AUTO\WW1.PRG, the game's files in the root, SAVEDISK.DAT (the game's own save disk image)
+        import shutil
+        import pmww
+        hdd = out / "hd"
+        shutil.rmtree(hdd, ignore_errors=True)
+        (hdd / "AUTO").mkdir(parents=True)
+        (hdd / "AUTO" / "WW1.PRG").write_bytes(prg)
+        fs = Fat12(DISK.read_bytes())
+        names = []
+        for _o, name11, attr, start, size in fs.dir_entries(None):
+            if attr & 0x18 or name11[:3] == b"AUT":          # volume label / directory
+                continue
+            fn = name11[:8].decode().rstrip() + ("." + name11[8:].decode().rstrip() if name11[8:].strip() else "")
+            (hdd / fn).write_bytes(fs.read(start, size))
+            names.append(fn)
+        (hdd / "SAVEDISK.DAT").write_bytes(pmww.save_disk_image())
+        manifest["hd"] = str(hdd)
+        print(f"hd folder {hdd}: AUTO\\WW1.PRG ({len(prg)} B), {len(names)} data files, SAVEDISK.DAT")
     exp = bytearray(IMG_END - IMG_BASE)           # what $72000..$77fff must hold at any time after the hand-over
     exp[:len(img)] = img
     for a, b in fills:
         exp[a - IMG_BASE:b - IMG_BASE] = bytes(fill_byte(x) for x in range(a, b))
     (out / "expect.bin").write_bytes(bytes(exp))
+    hexp = bytearray(fill_byte(HI_BASE + i) for i in range(HI_END - HI_BASE))        # HIGH: pattern in the free spans, the blobs' bytes where a HIGH blob sits
+    for org, blob, _n in hi["blobs"]:
+        hexp[org - HI_BASE:org - HI_BASE + len(blob)] = blob
+    (out / "hi_expect.bin").write_bytes(bytes(hexp))
     (out / "manifest.json").write_text(json.dumps(manifest, indent=1))
     return 0
 
@@ -633,6 +748,7 @@ def main():
     b.add_argument("--out", default=str(BUILD / "default"))
     b.add_argument("--corrupt", action="store_true")
     b.add_argument("--fill", action="store_true", help="test build: free payload RAM holds a known pattern (free-RAM proof)")
+    b.add_argument("--hd", action="store_true", help="HD build: adds the hd_* patches and writes <out>/hd/ (AUTO\\WW1.PRG, the game's files, SAVEDISK.DAT)")
     a = ap.parse_args()
     allp = load_all()
     if a.cmd == "list":
@@ -641,10 +757,10 @@ def main():
         return cmd_dumps()
     if a.cmd == "checkdisk":
         return cmd_checkdisk(Path(a.disk))
-    pats = [] if getattr(a, "none", False) else selected(allp, getattr(a, "only", None))
+    pats = [] if getattr(a, "none", False) else selected(allp, getattr(a, "only", None), getattr(a, "hd", False))
     if a.cmd == "verify":
         return cmd_verify(pats)
-    return cmd_build(pats, Path(a.out), a.floppy, a.corrupt, a.fill, allp)
+    return cmd_build(pats, Path(a.out), a.floppy, a.corrupt, a.fill, allp, a.hd)
 
 
 if __name__ == "__main__":

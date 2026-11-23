@@ -1,0 +1,47 @@
+  [hineg] [   26s vbl 1379] name prompt
+  [hineg] [   33s vbl 1732] option screen (typing attempt 1)
+GATE hineg/ste-1.62-1024K marker PASS $727f8 = b'PMPO' (want b'PMPO')
+GATE hineg/ste-1.62-1024K site pm_cachecap PASS $e3f2 = 4eb900075800 (want 4eb900075800)
+GATE hineg/ste-1.62-1024K site pm_credit PASS $14baa = 4eb900072800 (want 4eb900072800)
+GATE hineg/ste-1.62-1024K site pm_nokeydisk PASS $13cec = 4e714e714e71 (want 4e714e714e71)
+GATE hineg/ste-1.62-1024K site pm_noprot PASS $15998 = 0000002c (want 0000002c)
+GATE hineg/ste-1.62-1024K site pm_noprot_box PASS $bbd2 = 4e754e714e71 (want 4e754e714e71)
+GATE hineg/ste-1.62-1024K site pm_tooltip PASS $13e18 = 4eb900073400 (want 4eb900073400)
+GATE hineg/ste-1.62-1024K site qol_keys PASS $13e70 = 4eb900072c00 (want 4eb900072c00)
+GATE hineg/ste-1.62-1024K site qol_keys2 PASS $f30 = 4eb900073100 (want 4eb900073100)
+GATE hineg/ste-1.62-1024K site tick_click PASS $7e6 = 00072aa0 (want 00072aa0)
+GATE hineg/ste-1.62-1024K site tick_click2 PASS $842 = 00072aa0 (want 00072aa0)
+GATE hineg/ste-1.62-1024K site tick_click3 PASS $144b4 = 00072aa0 (want 00072aa0)
+GATE hineg/ste-1.62-1024K site tick_head PASS $13da0 = 4eb900072900 (want 4eb900072900)
+GATE hineg/ste-1.62-1024K site tick_men PASS $13e36 = 4eb900072a60 (want 4eb900072a60)
+GATE hineg/ste-1.62-1024K site tick_pass PASS $13de8 = 4eb900072a004e71 (want 4eb900072a004e71)
+GATE hineg/ste-1.62-1024K site tick_wx PASS $13e24 = 4eb900072a40 (want 4eb900072a40)
+GATE hineg/ste-1.62-1024K payload@options PASS unchanged
+GATE hineg/ste-1.62-1024K hi@options PASS pattern / constants: 0 of 290816 bytes changed in $b0000-$f6fff
+GATE hineg/ste-1.62-1024K cache cursor@options PASS [$2cfda] = $80000 (limit $b0000, 0 = no cache)
+GATE hineg/ste-1.62-1024K credit visible PASS rows 194-199: 780 px of colours [(102, 102, 68)]
+GATE hineg/ste-1.62-1024K boot PASS 46s
+GATE hineg/ste-1.62-1024K noprot flag PASS $15998 = $0000002c (want $0000002c) before the first land
+  [hineg] [   33s vbl 4217] no disk requester
+  [hineg] [   36s vbl 4357] chart expected
+  [hineg] [   64s vbl 5748] island clicked
+  [hineg] [   70s vbl 6044] 3D map view, world counter ticking
+GATE hineg/ste-1.62-1024K noprot: the check never ran PASS hits $acc4:0, $ae20:0, $b232:0, $b39c:0
+GATE hineg/ste-1.62-1024K noprot: 'Please wait' box skipped (stub reached) PASS $bbd2 reached 1x (an `rts` stub)
+GATE hineg/ste-1.62-1024K nokeydisk: the key-disk routine never ran, the flow went on PASS $1cf7c hit 0x, next instruction $13cf2 hit 1x; the Powermonger disk was never inserted
+GATE hineg/ste-1.62-1024K map view PASS counter 68, flag $15998 = $0000002c
+GATE hineg/ste-1.62-1024K payload@map PASS unchanged
+GATE hineg/ste-1.62-1024K hi@map FAIL pattern / constants: 1 of 290816 bytes changed in $b0000-$f6fff; changed $ee500-$ee500
+GATE hineg/ste-1.62-1024K cache cursor@map PASS [$2cfda] = $9fc58 (limit $b0000, 0 = no cache)
+GATE hineg/ste-1.62-1024K lose picture PASS non-black 0.69, 16 colours, seen stable x3; cache cursor $9fc58 -> $a7958
+GATE hineg/ste-1.62-1024K lose picture still there after 8 s PASS non-black 0.69, 16 colours
+GATE hineg/ste-1.62-1024K payload@lose PASS unchanged
+GATE hineg/ste-1.62-1024K hi@lose FAIL pattern / constants: 1 of 290816 bytes changed in $b0000-$f6fff; changed $ee500-$ee500
+GATE hineg/ste-1.62-1024K cache cursor@lose PASS [$2cfda] = $a7958 (limit $b0000, 0 = no cache)
+GATE hineg/ste-1.62-1024K back to option screen PASS 
+LOADER 9:D458 0:D81 2:D69 3:D102 4:D98 5:D106 16:D+193 10:D+291 11:D185 1:D+135 8:D+118 14:D+189
+LOADER legend: n:D = loaded from the disk, n:c = from the cache; + = cached (cursor store), S = cap skip; number = VBLs call to return
+GATE hineg/ste-1.62-1024K loader: every cacheable resource (1 8 10 14 15 16) came from the disk at most once PASS disk loads per resource {1: 1, 8: 1, 10: 1, 14: 1, 16: 1}
+GATE hineg/ste-1.62-1024K loader: cache hits are fast (<= 40 VBL) PASS 0 cache hits, slow []
+GATE hineg/ste-1.62-1024K cap normal: no skip (M3a) PASS 0 skip(s)
+CELL DONE hineg/ste-1.62-1024K: FAIL (189s)

@@ -1,0 +1,93 @@
+  [default] [   26s vbl 1379] name prompt
+  [default] [   33s vbl 1730] option screen (typing attempt 1)
+GATE default/ste-1.62-1024K marker PASS $727f8 = b'PMPO' (want b'PMPO')
+GATE default/ste-1.62-1024K site pm_cachecap PASS $e3f2 = 4eb900075800 (want 4eb900075800)
+GATE default/ste-1.62-1024K site pm_credit PASS $14baa = 4eb900072800 (want 4eb900072800)
+GATE default/ste-1.62-1024K site pm_nokeydisk PASS $13cec = 4e714e714e71 (want 4e714e714e71)
+GATE default/ste-1.62-1024K site pm_noprot PASS $15998 = 0000002c (want 0000002c)
+GATE default/ste-1.62-1024K site pm_noprot_box PASS $bbd2 = 4e754e714e71 (want 4e754e714e71)
+GATE default/ste-1.62-1024K site pm_tooltip PASS $13e18 = 4eb900073400 (want 4eb900073400)
+GATE default/ste-1.62-1024K site qol_keys PASS $13e70 = 4eb900072c00 (want 4eb900072c00)
+GATE default/ste-1.62-1024K site qol_keys2 PASS $f30 = 4eb900073100 (want 4eb900073100)
+GATE default/ste-1.62-1024K site tick_click PASS $7e6 = 00072aa0 (want 00072aa0)
+GATE default/ste-1.62-1024K site tick_click2 PASS $842 = 00072aa0 (want 00072aa0)
+GATE default/ste-1.62-1024K site tick_click3 PASS $144b4 = 00072aa0 (want 00072aa0)
+GATE default/ste-1.62-1024K site tick_head PASS $13da0 = 4eb900072900 (want 4eb900072900)
+GATE default/ste-1.62-1024K site tick_men PASS $13e36 = 4eb900072a60 (want 4eb900072a60)
+GATE default/ste-1.62-1024K site tick_pass PASS $13de8 = 4eb900072a004e71 (want 4eb900072a004e71)
+GATE default/ste-1.62-1024K site tick_wx PASS $13e24 = 4eb900072a40 (want 4eb900072a40)
+GATE default/ste-1.62-1024K payload@options PASS unchanged
+GATE default/ste-1.62-1024K hi@options PASS pattern / constants: 0 of 290816 bytes changed in $b0000-$f6fff
+GATE default/ste-1.62-1024K cache cursor@options PASS [$2cfda] = $80000 (limit $b0000, 0 = no cache)
+GATE default/ste-1.62-1024K credit visible PASS rows 194-199: 780 px of colours [(102, 102, 68)]
+GATE default/ste-1.62-1024K boot PASS 46s
+GATE default/ste-1.62-1024K noprot flag PASS $15998 = $0000002c (want $0000002c) before the first land
+  [default] [   33s vbl 4212] no disk requester
+  [default] [   36s vbl 4352] chart expected
+  [default] [   64s vbl 5745] island clicked
+  [default] [   70s vbl 6040] 3D map view, world counter ticking
+GATE default/ste-1.62-1024K noprot: the check never ran PASS hits $acc4:0, $ae20:0, $b232:0, $b39c:0
+GATE default/ste-1.62-1024K noprot: 'Please wait' box skipped (stub reached) PASS $bbd2 reached 1x (an `rts` stub)
+GATE default/ste-1.62-1024K nokeydisk: the key-disk routine never ran, the flow went on PASS $1cf7c hit 0x, next instruction $13cf2 hit 1x; the Powermonger disk was never inserted
+GATE default/ste-1.62-1024K map view PASS counter 68, flag $15998 = $0000002c
+GATE default/ste-1.62-1024K payload@map PASS unchanged
+GATE default/ste-1.62-1024K hi@map PASS pattern / constants: 0 of 290816 bytes changed in $b0000-$f6fff
+GATE default/ste-1.62-1024K cache cursor@map PASS [$2cfda] = $9fc58 (limit $b0000, 0 = no cache)
+  [default] requester: insert the save game disk
+GATE default/ste-1.62-1024K save/load: loaded state == saved state PASS 101376 B: 0 differ
+GATE default/ste-1.62-1024K save/load: the world moved between save and load PASS saved vs the state just before the load: 313 differ
+GATE default/ste-1.62-1024K save/load: save disk slot A == saved state PASS sectors 1-198 equal: True, slot flag $ff, image 409600 B
+GATE default/ste-1.62-1024K save/load: the game runs on after the load PASS 
+GATE default/ste-1.62-1024K payload@saveload PASS unchanged
+GATE default/ste-1.62-1024K hi@saveload PASS pattern / constants: 0 of 290816 bytes changed in $b0000-$f6fff
+GATE default/ste-1.62-1024K cache cursor@saveload PASS [$2cfda] = $9fc58 (limit $b0000, 0 = no cache)
+GATE default/ste-1.62-1024K lose picture PASS non-black 0.70, 16 colours, seen stable x3; cache cursor $9fc58 -> $a7958
+GATE default/ste-1.62-1024K lose picture still there after 8 s PASS non-black 0.69, 16 colours
+GATE default/ste-1.62-1024K payload@lose PASS unchanged
+GATE default/ste-1.62-1024K hi@lose PASS pattern / constants: 0 of 290816 bytes changed in $b0000-$f6fff
+GATE default/ste-1.62-1024K cache cursor@lose PASS [$2cfda] = $a7958 (limit $b0000, 0 = no cache)
+GATE default/ste-1.62-1024K back to option screen PASS 
+  [default] [   20s vbl 16600] island clicked
+  [default] [   26s vbl 16895] 3D map view, world counter ticking
+GATE default/ste-1.62-1024K map view (2nd land) PASS counter 58
+GATE default/ste-1.62-1024K win picture PASS non-black 0.99, 15 colours, seen stable x3; cache cursor $af658
+GATE default/ste-1.62-1024K win picture still there after 8 s PASS non-black 0.99, 15 colours
+GATE default/ste-1.62-1024K payload@win PASS unchanged
+GATE default/ste-1.62-1024K hi@win PASS pattern / constants: 0 of 290816 bytes changed in $b0000-$f6fff
+GATE default/ste-1.62-1024K cache cursor@win PASS [$2cfda] = $af658 (limit $b0000, 0 = no cache)
+GATE default/ste-1.62-1024K back to option screen (after win) PASS 
+  [default] [   20s vbl 21678] island clicked
+  [default] [   26s vbl 21974] 3D map view, world counter ticking
+GATE default/ste-1.62-1024K map view (CONTINUE CONQUEST, other island) PASS counter 58
+GATE default/ste-1.62-1024K payload@continue PASS unchanged
+GATE default/ste-1.62-1024K hi@continue PASS pattern / constants: 0 of 290816 bytes changed in $b0000-$f6fff
+GATE default/ste-1.62-1024K cache cursor@continue PASS [$2cfda] = $af658 (limit $b0000, 0 = no cache)
+GATE default/ste-1.62-1024K lose2 picture PASS non-black 0.69, 16 colours, seen stable x3; cache cursor $af658 -> $af658
+GATE default/ste-1.62-1024K lose2 picture still there after 8 s PASS non-black 0.69, 16 colours
+GATE default/ste-1.62-1024K payload@lose2 PASS unchanged
+GATE default/ste-1.62-1024K hi@lose2 PASS pattern / constants: 0 of 290816 bytes changed in $b0000-$f6fff
+GATE default/ste-1.62-1024K cache cursor@lose2 PASS [$2cfda] = $af658 (limit $b0000, 0 = no cache)
+GATE default/ste-1.62-1024K back to option screen (after lose2) PASS 
+  [default] confirm dialog after START NEW CONQUEST on a won land: True ('WWI, are                you sure you want to    delete all o')
+  [default] [   20s vbl 27162] island clicked
+  [default] [   26s vbl 27457] 3D map view, world counter ticking
+GATE default/ste-1.62-1024K map view (3rd land) PASS counter 58
+GATE default/ste-1.62-1024K payload@round3 PASS unchanged
+GATE default/ste-1.62-1024K hi@round3 PASS pattern / constants: 0 of 290816 bytes changed in $b0000-$f6fff
+GATE default/ste-1.62-1024K cache cursor@round3 PASS [$2cfda] = $af658 (limit $b0000, 0 = no cache)
+GATE default/ste-1.62-1024K win2 picture PASS non-black 0.99, 15 colours, seen stable x3; cache cursor $af658
+GATE default/ste-1.62-1024K win2 picture still there after 8 s PASS non-black 0.99, 15 colours
+GATE default/ste-1.62-1024K payload@win2 PASS unchanged
+GATE default/ste-1.62-1024K hi@win2 PASS pattern / constants: 0 of 290816 bytes changed in $b0000-$f6fff
+GATE default/ste-1.62-1024K cache cursor@win2 PASS [$2cfda] = $af658 (limit $b0000, 0 = no cache)
+GATE default/ste-1.62-1024K back to option screen (after win2) PASS 
+GATE default/ste-1.62-1024K map view (PLAY RANDOM LAND) PASS counter 27
+GATE default/ste-1.62-1024K payload@random PASS unchanged
+GATE default/ste-1.62-1024K hi@random PASS pattern / constants: 0 of 290816 bytes changed in $b0000-$f6fff
+GATE default/ste-1.62-1024K cache cursor@random PASS [$2cfda] = $af658 (limit $b0000, 0 = no cache)
+LOADER 9:D457 0:D86 2:D67 3:D100 4:D91 5:D115 16:D+191 10:D+289 11:D200 1:D+130 8:D+110 1:c8 8:c7 1:c7 8:c8 14:D+176 16:c1 10:c16 11:D183 1:c9 8:c8 15:D+125 16:c0 10:c16 11:D195 1:c8 8:c8 14:c7 16:c0 10:c16 11:D180 1:c9 8:c8 15:c8 1:c8 8:c9
+LOADER legend: n:D = loaded from the disk, n:c = from the cache; + = cached (cursor store), S = cap skip; number = VBLs call to return
+GATE default/ste-1.62-1024K loader: every cacheable resource (1 8 10 14 15 16) came from the disk at most once PASS disk loads per resource {1: 1, 8: 1, 10: 1, 14: 1, 15: 1, 16: 1}
+GATE default/ste-1.62-1024K loader: cache hits are fast (<= 40 VBL) PASS 20 cache hits, slow []
+GATE default/ste-1.62-1024K cap normal: no skip (M3a) PASS 0 skip(s)
+CELL DONE default/ste-1.62-1024K: OK (656s)
