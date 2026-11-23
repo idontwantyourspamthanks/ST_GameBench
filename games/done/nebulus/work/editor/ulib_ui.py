@@ -1,6 +1,6 @@
 import sys, os, time, struct, re, shutil
 os.environ.setdefault('HOME', '/tmp/nlg/home')
-sys.path.insert(0, '/home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/editor')
+sys.path.insert(0, '/home/ryan/Code/AtariST/gamebench/games/done/nebulus/work/editor')
 from ui import *
 from pathlib import Path
 import stharness

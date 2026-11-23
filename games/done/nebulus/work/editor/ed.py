@@ -1,7 +1,7 @@
 import sys,time,re,os,struct
-sys.path.insert(0,'/home/ryan/Code/AtariST/gamebench/tools'); sys.path.insert(0,'/home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/tools')
+sys.path.insert(0,'/home/ryan/Code/AtariST/gamebench/tools'); sys.path.insert(0,'/home/ryan/Code/AtariST/gamebench/games/done/nebulus/tools')
 from nebulus import Nebulus
-G='/home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/'
+G='/home/ryan/Code/AtariST/gamebench/games/done/nebulus/'
 E=G+'work/editor/'
 def grab(h,a,n,name='x'):
     p=f'/tmp/ned_{os.getpid()}_{name}.bin'
