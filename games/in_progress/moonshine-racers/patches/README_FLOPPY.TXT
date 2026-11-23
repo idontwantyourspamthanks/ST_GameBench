@@ -8,6 +8,12 @@ What it is
   new top-bar HUD, and no manual copy-protection question.  disk_b.st is the original disk 2, unchanged.  PATCHES.TXT lists
   every change.
 
+v1.2
+  New: per-track race length (MSTRACKS.TRK version 2, `cp_len` patch, 2 MB+ ST family): campaign tracks built with their own
+  race length (700..28000 units) race with that length and a scaled time limit; version 1 campaign disks stay unchanged.
+  New: `F10 = CAMPAIGNS` hint shown on the title screen on 2 MB+ ST-family machines (1 MB title screen unchanged).
+  (The in-game track editor is HD-only for now.)
+
 v1.1
   New: CAMPAIGNS.  Track sets made with the track tool (tools/msrtrack.py: a file MSTRACKS.TRK, put on a 720 KB campaign disk with
   `msrtrack.py disk`) replace the 15 tracks; see "Campaigns" below.  Needs an ST, Mega ST, STE or Mega STE with 2 MB or more; on a

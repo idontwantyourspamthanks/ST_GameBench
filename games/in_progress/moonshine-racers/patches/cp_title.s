@@ -104,17 +104,18 @@ e3:     tst.b   IB+4.l                  ; the 2 MB gate: open = the campaigns ar
         tst.w   $3a88.w
         bne.s   .none
         clr.b   $60ff.w
-        move.w  d0,-(a7)
+        clr.b   V_WELC.l
+        ifeq    FLOPPY
+        addq.l  #6,a7                   ; leave $7bd0 permanently (pushed d7.w + return $71a8): run the one-time boot init ($71a8..$723c) before cp_menu so sprite banks, sound and joystick are ready
+        bsr     boot_init
         bsr     cp_menu
+        clr.b   $60ff.w
         tst.w   d0
-        beq.s   .back
-        move.w  (a7)+,d0
-        clr.b   V_WELC.l
-        jmp     $7c0a.l
-.back:  addq.l  #2,a7
-        addq.l  #2,a7
-        clr.b   V_WELC.l
-        jmp     $7bd0.l
+        beq.s   .title
+        jsr     $750a.l                 ; fade out, then start the game directly
+        jmp     $724e.l
+.title: jmp     $7242.l                 ; BACK TO THE TITLE -> title loop ($73e6 / $83ca)
+        endc
 .key:   clr.b   V_WELC.l
         jmp     $7c0a.l
 .none:  jmp     $7c02.l
@@ -752,6 +753,28 @@ ed_load:
 .err:   move.l  a0,M_MSG.l
         moveq   #1,d0
         rts
+; ---- one-time boot init ($71a8..$723c) when F10 leaves the WELCOME PARTNERS screen ($7bd0) early:
+; relocates the 9 sprite banks (incl. the player car bank $21568: without this, a test drive from the editor crashes at $edc4), clears wheel caches, inits sound & hi-score, enables joystick.
+boot_init:
+        lea     .banks(pc),a1
+.bl:    move.l  (a1)+,d0
+        beq.s   .bd
+        movea.l d0,a0
+        move.l  a1,-(a7)
+        jsr     $dc24.l
+        movea.l (a7)+,a1
+        bra.s   .bl
+.bd:    clr.b   $1227.w
+        clr.b   $1228.w
+        clr.b   $1229.w
+        move.b  #2,$1021.w
+        move.b  #2,$1023.w
+        jsr     $8bb6.l
+        st      $1020.w
+        jsr     $8380.l
+        jsr     $d140.l
+        rts
+.banks: dc.l    $19d0e,$1a12c,$3d16c,$1b074,$21568,$25242,$28f0a,$2ca46,$306c2,0
         endc
 
 ; ---- strings

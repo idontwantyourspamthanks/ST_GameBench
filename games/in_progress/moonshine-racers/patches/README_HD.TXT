@@ -7,6 +7,22 @@ What it is
   start-up: fixed game speed, faster drawing, extra in-between pictures on machines with time to spare, a new top-bar HUD.
   The game files are PP's, unchanged.  PATCHES.TXT lists every change.
 
+v1.2
+  New: IN-GAME TRACK EDITOR (ST, Mega ST, STE and Mega STE with 2 MB or more; overlay FILES\MSEDIT.OVL loaded on first use).
+  Open from F10 -> TRACK EDITOR (F10 now also works on the WELCOME PARTNERS screen, which shows `F10 = CAMPAIGNS` on 2 MB+
+  machines and `2 MB: CAMPAIGNS + TRACK EDITOR` on 1 MB ST-family machines).
+  - Build-as-you-go tile grid + text panel: NEW TRACK starts with 5 x 200-unit straight segments + FINISH (1000 units), or copy
+    any of the 15 original tracks or edit a loaded campaign track.
+  - Road building: INS / I = new segment after cursor (Shift = before), A = add at end, D = duplicate, DEL = delete segment
+    and its objects, Shift+B = end the road here (700..28000 units), L / + / - = length, C / , / . = curve, H = hill shapes
+    (stay one tile with two-half rise/drop colour; S explodes a shape into raw pieces), W / E = widths, O = add object,
+    TAB = object list (T type, S side, M move, DEL delete), U / Shift+U = undo / redo, K = check, HELP / F1 = keys & legend.
+  - Test drive from the cursor with P (on the FINISH tile: last 1000 units); Esc / F10 or finishing returns to the editor.
+  - Kept tracks update the campaign in RAM (with per-track race length, MSTRACKS.TRK version 2; saving to disk from inside
+    the editor is not yet built).
+  New: per-track race length (MSTRACKS.TRK version 2, `cp_len` patch): custom tracks shorter or longer than their base level
+  (700..28000 units) race with their own length and a scaled time limit; version 1 campaigns stay unchanged.
+
 v1.1
   New: CAMPAIGNS.  Track sets made with the track tool (tools/msrtrack.py: a file MSTRACKS.TRK, put in this folder's FILES\ or on a
   campaign disk in drive A) replace the 15 tracks; see "Campaigns" below.  Needs an ST, Mega ST, STE or Mega STE with 2 MB or more;
