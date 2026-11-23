@@ -48,17 +48,17 @@ def level_squeeze():
 
 
 def level_escalator():
-    """THE ESCALATOR: three identical floors (a ledge ring segment, a charging ball each side, ONE lift column with a stop on every floor: Up again to go on).
-    A second lift next to the arrival platform would sit in front of a ball.  Only 4 creatures live at once, so floors 1 and 2 fill the slots and floor 3 waits."""
-    rows = 40
+    """THE ESCALATOR: two identical floors, a charging ball each side of the lift column (right: 3 columns out, left: 2 columns out), a lift between them.
+    The frog rides up to the same pair of balls.  Four creatures fill the four slots, so everything is on screen at once."""
+    rows = 24
     g = blank(rows)
-    bases = (1, 12, 23)
+    bases = (1, 12)
     for base in bases:
         put(g, span(11, 5), base, LEDGE)
         g[3][base + 1] = BALL_WAIT                                    # 24 units to the right of the frog's column
-        g[14][base + 1] = BALL_WAIT                                   # 16 units to the left (one column closer than before)
-    ovl.add_lift(g, 1, 2, bases[-1], stops=bases[1:-1])                # slab on the ledge, `0c` stop in the middle floor's ledge row, end marker in the top floor's
-    put(g, [14], 24, EXIT); put(g, [14], 25, EXIT); put(g, [14], 26, EXIT)
+        g[14][base + 1] = BALL_WAIT                                   # 16 units to the left
+    ovl.add_lift(g, 1, 2, bases[1])                                   # slab on the ledge, end marker in the upper floor's ledge row
+    put(g, [5], 13, EXIT); put(g, [5], 14, EXIT); put(g, [5], 15, EXIT)      # the way out is past the right-hand ball
     return dict(name='THE ESCALATOR', rows=rows, grid=g, time=0x0300)
 
 
