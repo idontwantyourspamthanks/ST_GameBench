@@ -1,0 +1,40 @@
+  [default] [   26s vbl 1379] name prompt
+  [default] [   33s vbl 1732] option screen (typing attempt 1)
+GATE default/ste-1.62-1024K marker PASS $727f8 = b'PMPO' (want b'PMPO')
+GATE default/ste-1.62-1024K site pm_credit PASS $14baa = 4eb900072800 (want 4eb900072800)
+GATE default/ste-1.62-1024K payload@options FAIL $727f8-$727fb
+/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1/tools/wwgate.py:108: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  for c in im.getdata():
+GATE default/ste-1.62-1024K credit visible PASS rows 194-199: 780 px of colours [(102, 102, 68)]
+GATE default/ste-1.62-1024K boot PASS 37s
+  [default] [   10s vbl 2450] requester: insert the original Powermonger disk
+  [default] [   24s vbl 3186] requester: insert the WW1 data disk
+  [default] [   45s vbl 4218] chart expected
+  [default] [   93s vbl 6632] island clicked
+  [default] [  113s vbl 7608] protection answer type 1 value 140
+  [default] [  127s vbl 8340] 3D map view, world counter ticking
+GATE default/ste-1.62-1024K map view PASS counter 26
+GATE default/ste-1.62-1024K payload@map FAIL $727f8-$727fb
+/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1/tools/wwgate.py:52: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  px = list(im.getdata())
+GATE default/ste-1.62-1024K lose picture PASS non-black 0.69, 16 colours, seen stable x3; cache cursor $9fc58 -> $a7958
+GATE default/ste-1.62-1024K lose picture still there after 8 s PASS non-black 0.69, 16 colours
+GATE default/ste-1.62-1024K payload@lose FAIL $727f8-$727fb
+GATE default/ste-1.62-1024K back to option screen PASS 
+  [default] [   39s vbl 14012] island clicked
+  [default] [   59s vbl 14993] protection answer type 1 value 140
+  [default] [   74s vbl 15729] 3D map view, world counter ticking
+GATE default/ste-1.62-1024K map view (2nd land) PASS counter 323
+/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1/tools/wwgate.py:52: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  px = list(im.getdata())
+GATE default/ste-1.62-1024K win picture PASS non-black 0.99, 15 colours, seen stable x3; cache cursor $af658
+GATE default/ste-1.62-1024K win picture still there after 8 s PASS non-black 0.99, 15 colours
+GATE default/ste-1.62-1024K payload@win FAIL $727f8-$727fb
+GATE default/ste-1.62-1024K back to option screen (after win) PASS 
+  [default] confirm dialog after START NEW CONQUEST on a won land: True ('WWI, are                you sure you want to    delete all o')
+  [default] [   39s vbl 21841] island clicked
+  [default] [   59s vbl 22821] protection answer type 1 value 140
+  [default] [   74s vbl 23557] 3D map view, world counter ticking
+GATE default/ste-1.62-1024K map view (3rd land) PASS counter 357
+GATE default/ste-1.62-1024K payload@round3 FAIL $727f8-$727fb
+CELL DONE default/ste-1.62-1024K: FAIL (476s)

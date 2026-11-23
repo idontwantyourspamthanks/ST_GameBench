@@ -1,0 +1,34 @@
+  [default] [   26s vbl 1379] name prompt
+  [default] [   33s vbl 1729] option screen (typing attempt 1)
+GATE default/ste-1.62-1024K marker PASS $727f8 = b'PMPO' (want b'PMPO')
+GATE default/ste-1.62-1024K site pm_credit PASS $14baa = 4eb900072800 (want 4eb900072800)
+GATE default/ste-1.62-1024K payload@options PASS unchanged
+GATE default/ste-1.62-1024K credit visible PASS rows 194-199: 780 px of colours [(102, 102, 68)]
+GATE default/ste-1.62-1024K boot PASS 37s
+  [default] [   10s vbl 2446] requester: insert the original Powermonger disk
+  [default] [   24s vbl 3179] requester: insert the WW1 data disk
+  [default] [   45s vbl 4211] chart expected
+  [default] [   91s vbl 6531] island clicked
+  [default] [  122s vbl 8061] protection answer type 1 value 174
+  [default] [  137s vbl 8794] 3D map view, world counter ticking
+GATE default/ste-1.62-1024K map view PASS counter 30
+GATE default/ste-1.62-1024K payload@map PASS unchanged
+GATE default/ste-1.62-1024K lose picture PASS non-black 0.69, 16 colours, seen stable x3; cache cursor $9fc58 -> $a7958
+GATE default/ste-1.62-1024K lose picture still there after 8 s PASS non-black 0.69, 16 colours
+GATE default/ste-1.62-1024K payload@lose PASS unchanged
+GATE default/ste-1.62-1024K back to option screen PASS 
+  [default] [   39s vbl 14457] island clicked
+  [default] [   70s vbl 15985] protection answer type 1 value 174
+  [default] [   84s vbl 16715] 3D map view, world counter ticking
+GATE default/ste-1.62-1024K map view (2nd land) PASS counter 418
+GATE default/ste-1.62-1024K win picture PASS non-black 1.00, 1 colours, seen stable x3; cache cursor $af658
+GATE default/ste-1.62-1024K win picture still there after 8 s PASS non-black 0.99, 15 colours
+GATE default/ste-1.62-1024K payload@win PASS unchanged
+GATE default/ste-1.62-1024K back to option screen (after win) PASS 
+  [default] confirm dialog after START NEW CONQUEST on a won land: True ('WWI, are                you sure you want to    delete all o')
+  [default] [   39s vbl 22812] island clicked
+  [default] [   70s vbl 24336] protection answer type 1 value 174
+  [default] [   84s vbl 25068] 3D map view, world counter ticking
+GATE default/ste-1.62-1024K map view (3rd land) PASS counter 496
+GATE default/ste-1.62-1024K payload@round3 PASS unchanged
+CELL DONE default/ste-1.62-1024K: OK (506s)

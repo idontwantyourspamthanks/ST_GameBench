@@ -1,0 +1,12 @@
+  [corrupt] [   26s vbl 1376] name prompt
+  [corrupt] [   33s vbl 1729] option screen (typing attempt 1)
+GATE corrupt/ste-1.62-1024K marker PASS $727f8 = b'PMPF' (want b'PMPF')
+GATE corrupt/ste-1.62-1024K site pm_credit PASS $14baa = 4eb9000074e0 (want 4eb9000074e0 = original, patch refused)
+GATE corrupt/ste-1.62-1024K payload@options PASS unchanged
+GATE corrupt/ste-1.62-1024K credit absent (patch refused) PASS rows 194-199: 0 px of colours []
+GATE corrupt/ste-1.62-1024K boot PASS 37s
+  [corrupt] [   10s vbl 2447] requester: insert the original Powermonger disk
+  [corrupt] [   24s vbl 3183] requester: insert the WW1 data disk
+  [corrupt] [   45s vbl 4217] chart expected
+  [corrupt] [   92s vbl 6541] island clicked
+  [corrupt] [  116s vbl 7766] protection answer type 1 value 92

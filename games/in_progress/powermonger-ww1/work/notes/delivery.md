@@ -1,0 +1,26 @@
+# WW1: how the payload gets in (stage 1)  (PMWW1Stage01, 2026-11-23)
+
+Tags: **[obs]** run this session (`work/runs/*.txt`, `work/notes/RESULTS_stage01.md`); **[INFERENCE]** not run.
+Model: master's `games/done/powermonger/patches/core.s` + `tools/pmpatch.py`.  Code: `patches/core.s`, `tools/wwpatch.py`, `tools/wwdepack.py`.
+
+## The program (verified before anything was built on it)  [obs]
+* `AUTO\WW1.PRG`: header `601a`, text 76304 B ($12a10), data/bss/symbols 0, relocation table = one zero long (76336 B in all).
+  TOS 1.62 loads the text at **$AA9A**; A4/A5 = $1D4AA = its end at the stub's copy routine (Hatari register dump).
+* text $0-$7: `Super(0)` (`42a7 3f3c0020 4e41`, master's same 8 bytes); $8-$6d: sets all exception vectors to $506, copies a 6-word routine to $508, `jmp $508` -> that routine copies text[$6e..] (76194 B) to $514 and `rte`s into it; $6e..: sets the video base to $78000 and builds a table at $94.
+* text $d0..$244: unpacker for the stream at text $2fe, header `RNC\x01 <unpacked 145036 = $2368c> <packed 75525 = $12705>` followed directly by the data (no CRC fields: the textbook RNC1 header is 18 bytes). It is **not** run-of-the-mill RNC code: the bit stream is read from the END, the output is written backwards (in place), with the usual RNC method-1 tables (literal run 1/2-4/5-7/8-14/15+, match length 2..., offsets 0-31/32-287/288+ and the special short offsets for length 2). `tools/wwdepack.py` re-implements it in 80 lines.
+* The unpacked data is itself a TOS program (`601a`, text+data 118072 B = $1cd38, reloc table present). text $244..$2ca of the stub relocate it (add base **$576**) and pad a 32-byte routine onto the stack (8 x `move.l #imm,-(a7)` at text **$2cc**, then `jmp (a7)` at $2f2 = master's constants, byte for byte `PUSH_ORIG`): `move.l a1,$5c(a2)` (stores $576 as the return address), copy d0 bytes a0 -> a1, clear d1 bytes, `movem.l $20(a7),d0-d7/a0-a6`, `lea $5c(a7),a7`, `rts` -> **$576**.
+* [obs] Registers at the instant the game's first instruction `lea $2ec8a,a0` ($576) is reached (breakpoint `pc = $576 && ($576).w = $41f9`): D0=$00070080 D1=$FA114E73 D2-D7=0 A0=$0000053A A1=$00012EB6 A2=A4=A5=$0001D4AA A3=0 A6=$000F7FC6 A7=$000004F8 SR=$2304.
+* **Validation (rules R1/R2 of PLAN.md):** the image derived from the file alone (`wwdepack.resident_image`, 118072 B, md5 `694b94a1e1e06aa05bd6579cbb8c3778`, $576..$1d2ad) is byte-identical to RAM $576..$1d2ad of a Hatari dump taken at that breakpoint (`work/dumps/entry576.bin`, whole 1 MB md5 `b10511e0b3df0d32b00fa1c188db0bfc`) [obs: `wwpatch.py verify` prints `IDENTICAL`]. The cold boot of the unmodified converted disk reaches the title and a whole game (screenshots `work/shots/stage0_*.png`). The title RAM differs from the hand-over image in 146 clusters inside $576..$24000 (the game's own writes to variables, tables and self-modified code), so **patch sites are verified against the hand-over image, never against a later dump**.
+  (Static emulation with Unicorn was tried first and abandoned: its m68k core raises "illegal instruction" on `lsr.w #8,d0`.)
+
+## The delivery (same as master, one stage)
+* `wwpatch.py build` rewrites `AUTO\WW1.PRG`: header data length = len(front + records), text with two edits, then the data segment, then a 5-byte relocation table (`00 00 00 02 00`: one relocation, the `jmp front.l` operand at text offset 2).
+  * edit 1: text $0-$7 `Super(0)` -> `jmp front.l ; nop` (TOS loads text+data: no file API, no change to the disk layout);
+  * edit 2: the 8 pushes at text $2cc rebuild the 32-byte routine with `lea $60(a7),a7 ; jmp hook` instead of `lea $5c(a7),a7 ; rts` (and without the two instructions that stored the return address); registers and a7 are what the `rts` left [obs: hand-over RAM identical, see gates].
+* `front` (data segment start, position independent) copies the records {dest.l, len.l, bytes} (zero-fill records for the tables) to $72000.., calls the payload's `uinit` (user mode), repeats `Super(0)`, calls `init` (supervisor: CPU caches / MMU off on 68020+, init routines) and continues at text offset 8.
+* The hook ($72140): verifies the ORIGINAL bytes of every site (mandatory group first, then optional), applies a group all or nothing, writes `PMPO` (all applied) or `PMPF` (refused) at **$727F8**, restores registers/SR and `jmp $576`.
+* Payload map: $72000 entry/init, $72140 hook, $721f0 apply, $72250 site table (<= 1344 B), $72790 uinit table, $727c0 init table, $727f8 marker, **$72800-$77fff patch blobs** (22.5 KB). Placement argued in `placement.md`.
+* `.st` writer: `Fat12.write_file` replaces WW1.PRG (extends the cluster chain into the lowest free clusters); only the FAT copies, the directory entry's size and the file's clusters change.
+
+## Differences from master's core
+one hand-over (WW1 has one packed program, no `DATA\SPRITE40.DAT` stage), so `hook1`/`hook2` become one `hook`; payload at $72000 not $B8000; no STE DMA-sound probe (FLAGS), no Falcon-only class, no instruction-cache switch-on (ICMODE/ICVAL) - none of them has a user in WW1 yet; `init`'s cache/MMU switch-off is kept verbatim because the stub is the same shape (unpacker `rts` into freshly written code) [INFERENCE for WW1 on TT/Falcon, not run].
