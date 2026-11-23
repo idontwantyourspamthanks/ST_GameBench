@@ -161,12 +161,19 @@ def main() -> None:
 		for key in args.keys.split():
 			want_x, want_y = KEYS[key]
 
-			# (a) A REAL mouse click at the same cell: this is the reference.
-			h.debug("w $2edb6 0 0", wait=0.3)
-			time.sleep(2.5)
-			h.poke_click(want_x, want_y, hold=0.25)
-			time.sleep(0.6)
-			real = click_words()
+			# (a) A REAL mouse click at the same cell: this is the reference. poke_click can
+			# miss (the pointer moves through the IKBD and the latch needs re-arming), so
+			# retry until it latches the requested cell.
+			real = (0, 0, 0, 0)
+			for attempt in range(4):
+				h.debug("w $2edb6 0 0", wait=0.3)
+				time.sleep(2.5)
+				h.poke_click(want_x, want_y, hold=0.25)
+				time.sleep(0.8)
+				real = click_words()
+				if abs(real[0] - want_x) <= 2 and abs(real[1] - want_y) <= 2:
+					break
+			time.sleep(4)
 			time.sleep(4)               # let whatever it opened close
 			h.key("Escape")
 			time.sleep(2.5)

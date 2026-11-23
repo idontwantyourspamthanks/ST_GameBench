@@ -7,11 +7,13 @@ current state and the work to be picked up. Read this first.
 
 ## 1. One-line summary
 
-The tick, the protection removal and the keyboard shortcuts are **done, gated, and confirmed
-on the user's real Mega STE**. **Tooltips are not done** — neither the font nor the routine
-that draws text has been found. Performance is untouched.
+The tick, the protection removal, the keyboard shortcuts **and tooltips** are **done and
+gated**; the tick, protection and keys are confirmed on the user's real Mega STE. Only
+performance is untouched.
 
-If you only read one more thing, read §5.3 and §9.
+Tooltips were unblocked by Grok, who identified the font (runtime `$8406`) and the composer
+(runtime `$82c8`) — the latter being the routine this project's own profile note called the
+"terrain pattern combine", which is why three earlier searches dismissed it. See §5.3.
 
 ---
 
@@ -43,7 +45,7 @@ Verified on the user's hardware: **Mega STE, behaves itself.**
 | protection gone | visual | **PASS** — flag `$2c`, no box |
 | keyboard shortcuts | `tools/keygate.py` | **PASS** — 6 keys write byte-identical click words to a real click |
 | phantom click | `tools/phantomgate.py` | **PASS** — all-command name raises no latch |
-| tooltips | — | **NOT DONE** |
+| tooltips | `tools/tooltipgate.py` | **PASS** — 6/6 icons, correct text, nothing shown off-panel |
 | performance | — | **NOT STARTED** |
 
 ### The gates that matter most, and why
@@ -128,7 +130,7 @@ counter is **observed advancing**, with three retries. Do not remove that.
 
 ---
 
-## 5. THE OPEN PROBLEM: tooltips
+## 5. Tooltips (done) — and what was hard about them
 
 ### 5.1 What the feature is
 
@@ -155,48 +157,41 @@ window copy, so the next pass's copy erases the text by itself. No cleanup code 
 - **A pixel writer** — `$eace`: `a0` = screen base, `d0` = x, `d1` = y, `d2` = colour. Proven
   and exactly decompiled (`input.md` §7.1).
 
-### 5.3 What is missing
+### 5.3 Tooltips — DONE
 
-**Neither the font nor its reader has been found.**
+`work/ttproto/tooltip.s`, patch set `tooltip`, payload at `$72C00`, site runtime `$13e0a`.
 
-I claimed twice that I had found the font, and both times I was wrong:
+**The two facts that mattered, both wrong in my earlier notes:**
 
-- **`$F8000`** is not a font. It is the live screen base, copied from the shifter register
-  `$ffff8200` at start-up (`text $0668`). `$eace` plots a pixel into the screen.
-- **`text $8a86`** (runtime `$8976`, where the *1990* game keeps its font) is texture data in
-  this build. Decoded as a 4bpp bitmap it is a dither field; as 6-row glyph blocks it gives
-  gradient rows at 44% ink density, not letterforms. The 1990 offsets do not transpose.
+| | wrong | right |
+|---|---|---|
+| the font | `$8976` (1990 address) or `$F8000` | **runtime `$8406`** (text `$8516`) |
+| the composer | a separate text routine | **runtime `$82c8`** — the *same* routine as the pattern blit |
 
-So the honest state is: the game obviously draws text (every panel, the HUD, the name
-prompt), the panel *descriptor* machinery is well understood, but the character-to-pixels
-step and the font it reads are both unidentified.
+`$82c8` paints a 16-pixel (4 glyph) × 6-row strip per call, 48 bytes per group of four
+characters, phases from the 8 bytes before the font (text `$850e` = `04 08 0c 00 04 08 0c 00`).
+Patterns and glyphs are the same 4-plane cell format, which is exactly why `frameloop.md` §6a
+calling it the "terrain pattern combine" sent me away from it. **My own write-watchpoints kept
+stopping inside `$82c8..$83f0` and I dismissed them three times as terrain.** That was the
+expensive mistake of this port.
 
-**The next test, and it must be done this way:**
+How the patch works: the site is the map pass's 32K window copy, so the hook runs that copy
+first (back buffer = clean frame) and then paints the hover line into the same buffer. The
+next pass's copy erases it — no cleanup code, the 1990 `pm_tooltip` trick unchanged.
 
-1. Navigate to the **options screen** and **pause the world** (`write $5a856, 1`).
-2. Pick a byte that holds a **text pixel** — the picture is 4bpp, **160 bytes a line, 2 pixels
-   per byte**, so byte column = `x/2`. The panel text "Please select option." is around ST
-   x 115..205, y 45..62, i.e. byte columns 57..102. Verify the byte is non-zero by `m`.
-3. Arm a **stop** breakpoint: `b ($ADDR).b ! ($ADDR).b`.
-4. Read `r` — the `Next PC` is the writer.
+The hit test is an exact port of the game's perspective-grid test (tables `$13bde`, `$13c58`,
+action table `$1a89a`), because the cells are quadrilaterals and boxes overlap on 24 pairs.
+`tools/pwwgrid.py` is the reference; the 68k port matched it on 5200 points, and the assembled
+routine was then verified in the emulator.
 
-**I ran this and it did not work for me.** Three variants (any text byte, a text *edge* byte,
-with the world paused, with the byte poked to 0 to force a repaint) returned `$8300`s (the
-terrain combiner) or `$e0c` (the VBL-wait `rts`). The `!` tracker appears to report the PC at
-poll time rather than the faulting instruction, so the stop is not landing on the writer. If
-that is the case, the reliable alternative is Hatari's `:trace` on a conditional breakpoint
-whose condition includes a register test, or `next`/`step` from a known-good anchor.
+**Gate**: `tools/tooltipgate.py` — hovers six icons, compares the composed line against
+`pwwgrid.NAMES`, requires the top bar to change, and checks nothing shows with the pointer off
+the panel. **PASS 6/6.** The release gate still passes with the patch in (world state
+untouched).
 
-**Do not assume my method works.** It produced three different wrong answers, and the
-possibility that the "text" on the options screen is itself part of the pattern-blitted panel
-image (so no separate text routine runs at all) has not been ruled out. Check that first: if
-the panel is one pre-composed bitmap, there is no text renderer to find, and the payload-font
-fallback becomes the *only* option rather than a fallback.
-
-**If that does not work**, the fallback is a payload font: `$eace` is a proven pixel writer,
-so a 6x7 font of 95 characters is ~700 bytes at `$72C00` (free: the payload span ends
-`$72810`) and needs no dependency on the game's text pipeline. It would not look native, but
-it would work and the effort is bounded.
+Traps that cost time here are listed in `input.md` §7.4 — notably that `$2edb2/$2edb4` are
+rewritten by the IKBD handler every VBL (so pokes to them last under a frame; use `goto_st`),
+and that `movem.l d2-d7` around a routine returning in `d2` wipes the result.
 
 ### 5.4 The 1990 reference
 
@@ -252,18 +247,8 @@ the TT. Worth investigating together.
 
 ## 9. The honest bit
 
-Two sessions went into tooltips and it is still not done. What that bought is a precise map of
-the screen architecture (three buffers, the two flips, the 4bpp line format, the pixel writer,
-the panel descriptor DSL) and the correction of **three** wrong beliefs:
+`$F8000` is the screen. `$8976` in this build is not the font. Byte column is `x/2`. The
+composer is the same routine as 1990 `$8838`, at `$82c8`, and it loads the font from `$8406`.
 
-1. `$F8000` is the screen, not a font;
-2. byte column is `x/2`, not `x/8` (4bpp);
-3. the 1990 `$8976` font does not transpose here — that region is texture data.
-
-What it did not buy is the feature. I also wasted a lot of time on watchpoints that fired on
-the terrain combiner, and on a profiler I never made work.
-
-**The single best next action is §5.3 step 3**: pause the world, then stop on a text pixel.
-That is the experiment that was never run cleanly. If it does not land in one attempt, take the
-payload font in §5.3's fallback and stop digging — the bounded option is better than a fourth
-session.
+**Next:** port `pm_tooltip.s` with `FONT equ $8406`, hooked on the `jsr $13a94` at `$13e0a`.
+Do not invent a font.
