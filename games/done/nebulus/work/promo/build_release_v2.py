@@ -23,10 +23,13 @@ CL, EC = B.CL, B.EC
 CARD = 2.0
 BEAT = B.BEAT
 C = (520, 440)
-END = 23.0                                    # end of the picture before the card is added in front
-PAUSE = (10.22, 10.62)
-PHRASE_START = {1: 0.80, 2: 1.60, 3: 2.55, 4: 3.95, 5: 5.65, 6: 8.75, 7: 10.62, 8: 11.35, 9: 12.95, 10: 14.75, 11: 17.80}
-BURST = 10.62 + 0.28                          # the burst frame of the v1.2 clip (src 62) lands on "didn't"
+GAP = 0.8                                    # the pause between "until one day" and "they didn't" (was 0.4)
+SH = GAP - 0.4                               # everything after the pause moves by this
+END = 23.0 + SH                              # end of the picture before the card is added in front
+TOTAL = END + CARD
+PAUSE = (10.22, 10.22 + GAP)
+PHRASE_START = {1: 0.80, 2: 1.60, 3: 2.55, 4: 3.95, 5: 5.65, 6: 8.75, 7: 10.62 + SH, 8: 11.35 + SH, 9: 12.95 + SH, 10: 14.75 + SH, 11: 17.80 + SH}
+BURST = PAUSE[1] + 0.28                      # the burst frame of the v1.2 clip (src 62) lands on "didn't"
 SEGS = [
     ('v2_lift',     CL / 'liftbare_v12.mp4',    0, 0.00, 3.95, 1.0,  [(0, 1.0), (3.95, 1.6)], (620, 400)),
     ('v2_unfair',   CL / 'bullet_stock.mp4',    0, 3.95, 5.75, 48 / 90, [(0, 1.4), (1.8, 1.8)], C),
@@ -34,16 +37,16 @@ SEGS = [
     ('v2_poised',   CL / 'bullet_v12.mp4',      0, 8.75, PAUSE[0], 47 / 73.5, [(0, 1.9), (PAUSE[0] - 8.75, 2.05)], C),
     ('v2_pause',    CL / 'bullet_v12.mp4',     47, PAUSE[0], PAUSE[1], 0, [(0, 2.05), (PAUSE[1] - PAUSE[0], 2.2)], C),
     ('v2_burst',    CL / 'bullet_v12.mp4',     48, PAUSE[1], PAUSE[1] + 0.96, 1.0, [(0, 2.2), (0.96, 2.2)], C),
-    ('v2_fight',    CL / 'bullet_v12.mp4',     96, PAUSE[1] + 0.96, 12.70, 1.0, [(0, 2.2), (12.70 - PAUSE[1] - 0.96, 1.7)], C),
-    ('v2_editor',   EC / 'squeeze_map.mp4',   100, 12.70, 13.50, 1.0, [(0, 1.0), (0.8, 1.0)], (640, 400)),
-    ('v2_colours',  EC / 'squeeze_colours.mp4', 40, 13.50, 14.75, 1.0, [(0, 1.0), (1.25, 1.0)], (640, 400)),
+    ('v2_fight',    CL / 'bullet_v12.mp4',     96, PAUSE[1] + 0.96, 12.70 + SH, 1.0, [(0, 2.2), (12.70 + SH - PAUSE[1] - 0.96, 1.7)], C),
+    ('v2_editor',   EC / 'squeeze_map.mp4',   100, 12.70 + SH, 13.50 + SH, 1.0, [(0, 1.0), (0.8, 1.0)], (640, 400)),
+    ('v2_colours',  EC / 'squeeze_colours.mp4', 40, 13.50 + SH, 14.75 + SH, 1.0, [(0, 1.0), (1.25, 1.0)], (640, 400)),
 ]
 CUTS = [('v2_n1', 'squeeze_playtest', 40, (1.8, 1.4), (540, 370)), ('v2_n2', 'escalator_playtest', 60, (1.5, 1.3), (560, 370)),
         ('v2_n3', 'nomansland_playtest', 70, (1.8, 1.4), (540, 370)), ('v2_n4', 'squeeze_playtest', 80, (1.4, 2.0), (540, 370)),
         ('v2_n5', 'escalator_playtest', 100, (1.4, 1.8), (560, 370)), ('v2_n6', 'nomansland_playtest', 84, (1.6, 1.4), (540, 370)),
         ('v2_n7', 'squeeze_playtest', 96, (1.4, 1.9), (540, 370))]
 OUTRO = [('v2_o1', 'escalator_playtest', 70), ('v2_o2', 'nomansland_playtest', 100), ('v2_o3', 'squeeze_playtest', 72), ('v2_o4', 'escalator_playtest', 130)]
-GLITCH = [(12.55, 12.85), (14.60, 14.85), (END - 2.2, END - 1.9)]
+GLITCH = [(12.55 + SH, 12.85 + SH), (14.60 + SH, 14.85 + SH), (END - 2.2, END - 1.9)]
 
 
 def title_card(t, name, lines, glitch=True):
@@ -103,7 +106,7 @@ def build_voice():
           f"[dry0]highpass=f=75,bass=g=4:f=180,equalizer=f=3500:t=q:w=1:g=3,acompressor=threshold=0.06:ratio=3.5:attack=8:release=180:makeup=2,asplit=3[d][pd][rv];"
           f"[pd]asetrate=44100*0.8409,aresample=44100,atempo=1.1892,volume=0.35[dbl];"
           f"[rv][{ik}:a]afir=dry=0:wet=1,volume=0.20[wet];"
-          f"[d][dbl][wet]amix=inputs=3:normalize=0:duration=longest,alimiter=limit=0.9,aformat=sample_fmts=fltp:channel_layouts=stereo,asplit=2[voice][vsc]")
+          f"[d][dbl][wet]amix=inputs=3:normalize=0:duration=longest,alimiter=limit=0.9,apad=whole_dur={TOTAL},aformat=sample_fmts=fltp:channel_layouts=stereo,asplit=2[voice][vsc]")
     return inputs, fx
 
 
@@ -111,7 +114,7 @@ def main():
     files = []
     for name, src, s0, t0, t1, sp, kf, cen in SEGS:
         files.append(B.make_seg(name, src, s0, t0, t1, sp, kf, cen)); print('seg', name, flush=True)
-    t = 14.75
+    t = 14.75 + SH
     for name, clip, s0, kf, cen in CUTS:
         files.append(B.make_seg(name, EC / f'{clip}.mp4', s0, t, t + 2 * BEAT, 1.0, [(0, kf[0]), (2 * BEAT, kf[1])], cen)); t += 2 * BEAT; print('seg', name, flush=True)
     for name, clip, s0 in OUTRO:
@@ -129,10 +132,10 @@ def main():
     off = len(inputs) // 2                                              # index of the first extra input after the 11 phrases + IR
     bed = (f"[{off}:a]atrim=0:{PAUSE[0] + CARD},volume='0.22*clip(({PAUSE[0] + CARD}-t)/0.25,0,1)':eval=frame[tick];"
            f"[{off + 1}:a]adelay={int((BURST + CARD - 2.40) * 1000)}|{int((BURST + CARD - 2.40) * 1000)},volume=0.9[boom];"
-           f"[{off + 2}:a]aloop=loop=-1:size=2e9,atrim=0:{total - (14.75 + CARD - 5 * BEAT)},afade=t=in:st=0:d=0.6,volume=0.8,"
-           f"adelay={int((14.75 + CARD - 5 * BEAT) * 1000)}|{int((14.75 + CARD - 5 * BEAT) * 1000)}[dr];"
+           f"[{off + 2}:a]aloop=loop=-1:size=2e9,atrim=0:{total - (14.75 + SH + CARD - 5 * BEAT)},afade=t=in:st=0:d=0.6,volume=1.9,"
+           f"adelay={int((14.75 + SH + CARD - 5 * BEAT) * 1000)}|{int((14.75 + SH + CARD - 5 * BEAT) * 1000)}[dr];"
            f"[tick][dr]amix=inputs=2:normalize=0:duration=longest,aformat=sample_fmts=fltp:channel_layouts=stereo[music];"
-           f"[music][vsc]sidechaincompress=threshold=0.02:ratio=6:attack=15:release=350[duck];"
+           f"[music][vsc]sidechaincompress=threshold=0.04:ratio=3:attack=15:release=350[duck];"
            f"[voice][duck][boom]amix=inputs=3:normalize=0:duration=longest,volume=-1.5dB,alimiter=limit=0.89:level=false,atrim=0:{total},afade=t=out:st={total - 0.7}:d=0.7[a]")
     extra = ['-i', str(A / 'tense-clock-ticking-jam-fx-1-00-27.mp3'), '-i', str(A / 'cinematic-transition-boom-piano-hit-tomas-herudek-4-4-00-08.mp3'),
              '-i', str(A / 'cinematic-war-drums_177bpm.wav')]
