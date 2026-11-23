@@ -1,0 +1,30 @@
+  [corrupt] [   28s vbl 1498] name prompt
+  [corrupt] [   35s vbl 1852] option screen (typing attempt 1)
+GATE corrupt/ste-1.62-1024K marker PASS $727f8 = b'PMPF' (want b'PMPF')
+GATE corrupt/ste-1.62-1024K site pm_credit PASS $14baa = 4eb9000074e0 (want 4eb9000074e0 = original, patch refused)
+GATE corrupt/ste-1.62-1024K site pm_nokeydisk PASS $13cec = 4eb90001cf7c (want 4eb90001cf7c = original, patch refused)
+GATE corrupt/ste-1.62-1024K site pm_noprot PASS $15998 = 600015ea (want 600015ea = original, patch refused)
+GATE corrupt/ste-1.62-1024K site pm_noprot_box PASS $bbd2 = 43f90000bbe8 (want 43f90000bbe8 = original, patch refused)
+GATE corrupt/ste-1.62-1024K site pm_tooltip PASS $13e18 = 4eb900018570 (want 4eb900018570 = original, patch refused)
+GATE corrupt/ste-1.62-1024K site qol_keys PASS $13e70 = 4eb900006c16 (want 4eb900006c16 = original, patch refused)
+GATE corrupt/ste-1.62-1024K site qol_keys2 PASS $f30 = 13c00001d2b0 (want 13c00001d2b0 = original, patch refused)
+GATE corrupt/ste-1.62-1024K site tick_click PASS $7e6 = 0002ed90 (want 0002ed90 = original, patch refused)
+GATE corrupt/ste-1.62-1024K site tick_click2 PASS $842 = 0002ed90 (want 0002ed90 = original, patch refused)
+GATE corrupt/ste-1.62-1024K site tick_click3 PASS $144b4 = 0002ed90 (want 0002ed90 = original, patch refused)
+GATE corrupt/ste-1.62-1024K site tick_head PASS $13da0 = 4a790005a856 (want 4a790005a856 = original, patch refused)
+GATE corrupt/ste-1.62-1024K site tick_men PASS $13e36 = 4eb9000158b2 (want 4eb9000158b2 = original, patch refused)
+GATE corrupt/ste-1.62-1024K site tick_pass PASS $13de8 = 047900010005a854 (want 047900010005a854 = original, patch refused)
+GATE corrupt/ste-1.62-1024K site tick_wx PASS $13e24 = 4eb90001b90a (want 4eb90001b90a = original, patch refused)
+GATE corrupt/ste-1.62-1024K payload@options PASS unchanged
+GATE corrupt/ste-1.62-1024K credit absent (patch refused) PASS rows 194-199: 0 px of colours []
+GATE corrupt/ste-1.62-1024K boot PASS 46s
+  [corrupt] [   10s vbl 2897] requester: insert the original Powermonger disk
+  [corrupt] [   25s vbl 3633] requester: insert the WW1 data disk
+  [corrupt] [   45s vbl 4670] chart expected
+  [corrupt] [   82s vbl 6494] island clicked
+  [corrupt] [  109s vbl 7865] protection answer type 1 value 88
+  [corrupt] [  124s vbl 8601] 3D map view, world counter ticking
+  [corrupt] flag $15998 after the correct answer: $0000002c
+GATE corrupt/ste-1.62-1024K map view PASS counter 40, flag $15998 = $0000002c
+GATE corrupt/ste-1.62-1024K payload@map PASS unchanged
+CELL DONE corrupt/ste-1.62-1024K: OK (180s)

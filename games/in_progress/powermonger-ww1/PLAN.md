@@ -215,7 +215,7 @@ Each stage has: scope, owner model, gates (a stage is "done" only when its gates
 * **Gates (fresh, master's tools as templates)**: `pmtick`-style 12-tick state equality + negative control on built floppies; rate matrix 8/16 MHz (ST, STE, MSTE; 50 and a *real* 60 Hz boot); soak 20 min with hard criteria (world advancing, no exception, payload intact, stack margin); protection: no question, Save/Format work; keys: key == real-click words (exact, fix the 1-px harness tolerance by synthesizing the click at the cell centre); phantom-click gate; Retire/Win/Lose gate (analog of `pmretire.py`); save/load round trip via a save disk.
 * Budget for re-gating the branch's PASS claims is inside this stage: ~1 day.
 
-### Stage 3 - Tooltips (1-1.5 days, Sonnet; wording/visual review by lead and user)
+### Stage 3 - Tooltips (1-1.5 days, Sonnet; wording/visual review by lead and user) - **DONE 2026-11-23, awaiting the lead's commit and the user's visual review** (`work/notes/RESULTS_stage03.md`, `patches/pm_tooltip.s`, `tools/wwtt.py`; the village hover `qol_hover` / `qol_hover2` stays in stage 4)
 * Port `pm_tooltip.s` structure: own composer + bg-colour mapping + 52-char wording table + posture levels + key labels + 32 ids; WW1 sites/tables from section 3.3; keep the back-buffer-after-copy trick (site `jsr $13a94` at `$13e0a`, validated).
 * **Gates**: `pmtt_ab` frame A/B with pointer held; `pmtt_state` full-RAM tick-state with tooltips on (world untouched); `pmtt_check` (52 chars); **side-by-side screenshot sheet vs master's (`pmtt_*.png`) reviewed by the user** - the missing gate in the branch. No box, no junk, cream on black.
 * Risk: WW1 font/palette differs; contained by the first task (read font bytes) and the sheet.

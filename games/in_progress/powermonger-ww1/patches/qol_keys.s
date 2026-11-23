@@ -2,7 +2,7 @@
 ; default: yes
 ; site: $13e70
 ; orig: 4eb900006c16
-; data: $73000 200
+; data: $73000 204
 ; note: keyboard shortcuts for every command of the icon grid (master's qol_keys, games/done/powermonger/work/notes/qol.md has the key table; WW1's grid is
 ;       pixel-identical to master's: tools/wwgrid.py reads WW1's own tables $13bde / $13c58 / $1a89a / rects $13fc4 and every one of master's click points resolves to
 ;       the same icon id).  A key press is turned into the SAME click the mouse would have made: the click position words $2edae/$2edb0 are set to a point inside
@@ -21,7 +21,8 @@
 ;       pass; qol_keys2 (the interrupt) only records a press while LASTV is at most WIN VBLs old, and the first pass after a longer gap (game start: the letters of the
 ;       name typed at the name prompt, a key pressed in a menu or during a disk access) flushes every key state before anything is replayed as an icon click.
 ;       Scan codes are physical key positions: [ and ] are the keys right of P (UK / US labels); the cursor keys keep scrolling, F1-F4 are the map icons, the number
-;       row or the keypad 1-3 the posture.  (The tooltip key labels of master's version belong to stage 3 and are not here.)
+;       row or the keypad 1-3 the posture.  The tooltip's key labels (pm_tooltip) are switched on by this hook writing 1 to KF every pass (the word lives in this patch's
+;       own data block: without qol_keys it stays 0 and the tooltips show no labels).
 D       equ     $73000                  ; KS: 1 byte per KT entry (right-button repeat armed); +$3e REP.w; +$40 OWN9E.w; +$42 ANY.w; +$44 PEND: 128 bytes by scan code; +$c4 LASTV.l
 KS      equ     D
 OWN9E   equ     D+$40
@@ -29,6 +30,7 @@ ANY     equ     D+$42                   ; a press is (or may be) pending: writte
 REP     equ     D+$3e                   ; some KS byte is set (a repeat is running)
 PEND    equ     D+$44                   ; written by qol_keys2 (interrupt), consumed here
 LASTV   equ     D+$c4                   ; VBL count ($71b7c) of the previous pass hook; read by qol_keys2
+KF      equ     D+$c8                   ; .w, 1 once this hook has run: pm_tooltip shows the key labels (pm_tooltip's KF equ = $730c8)
 WIN     equ     150                     ; a press counts while the loop's last pass is at most this many VBLs old (3 s at 50 Hz; a pass is 13-26 VBLs)
 NK      equ     33
 
@@ -37,6 +39,7 @@ NK      equ     33
 
         org     $72c00
 hook:   movem.l d0-d5/a0-a4,-(a7)
+        move.w  #1,KF.l
         tst.w   OWN9E.l                 ; a right-button state this patch raised last pass: drop it before the dispatch
         beq.s   .o9
         clr.w   OWN9E.l
