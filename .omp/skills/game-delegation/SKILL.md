@@ -6,6 +6,7 @@ description: How to delegate Atari ST game reverse-engineering and patching work
 # Delegating game work to subagents
 
 ## Model routing (user's standing instruction)
+- **Cost first (user, 2026-11-23):** keep the expensive models (Opus as lead, `fable`) for coordination and for genuinely hard work: architecture/design decisions, root-causing a crash a cheaper model couldn't, auditing code a weaker model wrote. Everything else goes to `task` (Sonnet), which handles a lot: implementation from a written design, harness/gate work, test runs, packaging, docs. **When in doubt, pick the smaller model.** Split a big job so the expensive model does only the hard part and writes a handoff file; a Sonnet agent finishes the rest from it (e.g. the Moonshine editor redesign: `fable` fixed the crash and audited the code, Sonnet ran the gates).
 - **`task` (Sonnet) or the lead (Opus):** anything that drives the emulator or the game UI.
   - This covers navigation, scripted input, judging screenshots, multi-step dynamic debugging, and running gates.
   - Small models second-guess themselves when the UI misbehaves.
