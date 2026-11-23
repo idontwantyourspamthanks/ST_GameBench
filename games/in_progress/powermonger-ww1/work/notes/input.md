@@ -362,10 +362,9 @@ The 64-entry table at text `$ec52` is exactly `entry[x] = ((x & 7) * 8, x >> 3)`
 `x >> 3` of the line and bit `(x & 7) * 8`. (I initially mis-read it as a glyph table because
 the rows jump 1, 8, 9 between blocks of 8 — that is simply `x >> 3`.)
 
-### 7.2 CORRECTION: `$F8000` is the SCREEN, not a font
+### 7.2 `$e4ca` is the screen, `$F8000` is not a font
 
-I got this wrong in the first draft of this section. `$e4ca` is set once at start-up from the
-shifter's screen address:
+`$e4ca` is set once at start-up from the shifter's screen address:
 
 ```
 $00668  move.l $8200.w,d0     ; $ffff8200 = the video base
@@ -374,95 +373,75 @@ $0066e  andi.l #$ffffff,d0
 $00674  move.l d0,$e4ca.l     ; -> the live SCREEN base
 ```
 
-So `[$e4ca]` = the framebuffer, and `$eace` plots a pixel **into the screen**. There is no
-font sheet at `$F8000`. (The buffers are `$2ed98`, and `$2ed9c = $2ed98 + $7D00` — two
-32000-byte screens.)
+So `[$e4ca]` is the framebuffer. The two draw buffers are `$2ed98` and `$2ed9c`
+(`= $2ed98 + $7D00`), and they swap every flip; `$eace` plots a single pixel.
 
-### 7.2b The 1990 "font at $8976" does NOT transpose
+### 7.3 The font: runtime `$8406`, and the composer is the same routine as the terrain blit
 
-I checked this properly and it is **not** a font here. `text $8a86` (runtime `$8976`) holds
-texture/pattern data: decoded as a 4bpp bitmap it is a dither field, and as 6-row glyph blocks
-it gives gradient rows (many fully-set 16-pixel rows), not letterforms. Ink density is 44%,
-far too high for text, and no row has all four planes set (so it is not a solid mask either).
+**This is the finding that unblocked tooltips, and it corrects two earlier wrong guesses.**
 
-Two things follow:
+- The font is **runtime `$8406`** (text `$8516`). It is NOT at `$8976` (the 1990 address,
+  which is texture data here) and NOT at `$F8000` (the screen).
+- The routine that reads it is **runtime `$82c8`** (text `$83d8`) — the same code the profile
+  called the "terrain pattern combine", because **patterns and glyphs are both 4-glyph,
+  4-plane cell strips through one composer**. `frameloop.md` §6a's wording ("pattern
+  combine") is what made this easy to dismiss, and I dismissed it three times while my own
+  watchpoints kept landing inside it.
 
-1. The 1990 game's `$8976` font has no counterpart at the same place in this build. Do not
-   assume the 1990 offsets hold; that has now produced two wrong conclusions in this project.
-2. **No font has been located at all.** The font must exist (the game draws text everywhere),
-   but it is not where I thought, and I have not found it.
-
-### 7.3 Panels build a character buffer, then something blits it
-
-The command windows are descriptors walked by **`$a2ce`** (text `$a3de`):
-
-- it copies the first two bytes of the descriptor into `(a4)+` (a position), then walks the
-  rest;
-- bytes `< $40` are ASCII and go straight to `(a4)+`;
-- `$f0` = end of line (`$a30c` pads with spaces);
-- bytes `> $40` are **tokens**: the token table at `$a38c` maps them (e.g. `$e6` -> `$20`,
-  a space; `$b1`/`$d7`/`$e7` -> box-drawing characters), and `$40` itself indexes a per-screen
-  handler table `jsr (a6,d0.w)`.
-
-So `$a4` is a **plain character buffer**: the descriptors are the game's own ASCII art.
-
-The panel state is at **`$74c0`**: `+0` = the slot count, `+2` = colour, `+3` = **width in
-characters (`$28` = 40)**, `+6` = **height in rows** (values 4, 6, 8, `$c`, `$e`, `$10` …
-`$1e`). Slots are `$759a`-allocated, `$17c` bytes apart, and `$759a` sets `a4 = $74c0`.
-
-### 7.4 What is still missing
-
-**Both the font and its reader are missing.** `$8976` is texture data, not a font (7.2b), so
-the 1990 offsets do not transpose and I have no confirmed font location. The leads, in the
-order I would try them:
-
-0. **Find the font by watching a glyph get drawn.** Pause the world (`$5a856 = 1`), put the
-   options screen up, and use a *stop* breakpoint on a byte that holds a text pixel — with the
-   world paused the terrain combiner cannot run, so the stop can only be the text routine.
-   This is the experiment that was never run cleanly (see 7.6) and it should end the search.
-
-1. `$a2ce`'s callers set `$74c2`/`$74c6` (colour/height) *after* the call, so the blit is on a
-   later pass. Search for a routine that reads **all three** of `$74c2`, `$74c3` and `$74c6`
-   and loops with a glyph stride — that is the renderer. My searches matched single fields and
-   hit the panel-position maths at `$6c58` instead.
-2. `$74c3 = 40` is the width in characters, so the renderer's inner loop should run 40 times;
-   a `cmpi.w #$28` inside a loop that also indexes the font is the signature.
-3. Hatari's profiler would name it immediately, but `profile on`/`profile stats` returned
-   "no activity" — the debugger commands I used were wrong. The working form is
-   `hatari-debug profile on`, wait, `hatari-debug profile off`, then `hatari-debug profile`
-   (no "stats"), and the addresses need `--profile` enabled at start-up.
-
-### 7.5 A note on effort
-
-This is the one part of the port that has cost far more than it should. If the renderer is not
-found in one more focused attempt, the pragmatic path is to write the tooltip with its own
-font in the payload: `$eace` is a proven single-pixel writer, so a 6x7 bitmap font of ~95
-characters is about 700 bytes and needs no dependency on the game's text pipeline at all.
-
-### 7.6 One more approach I did not finish: watch a text pixel
-
-The cleanest way to identify the blitter is to catch it writing: pick a byte that holds a
-**text pixel** on a screen whose background is flat (the options screen), then set
+Verified in the shipped image:
 
 ```
-b ($ADDR).b ! ($ADDR).b
+rt $74e0  movem.l d1-d7/a0-a6,-(a7)
+rt $74e4  movea.l $2ed9c.l,a0        ; the draw buffer
+rt $74ee  move.l  a0,$82c4           ; the clip limit the composer tests
+rt $74f4  lea.l   $8516(pc),a6       ; text $7604 = 4d fa 0f 10 -> a6 = $8406, THE FONT
+rt $7540  bsr.w   $83d8              ; the composer, once per 4-character cell
 ```
 
-and read `r`'s `Next PC` when it stops. I tried this and got `$8300`s every time — but that is
-the **terrain pattern combine**, because the watchpoint fires on *reads and writes* of the
-address and the combine's masked copy touches the same bytes while it repaints the frame.
-Two attempts were also wasted on wrong screen geometry: the picture is **320x200 at 4 bpp =
-160 bytes a line, two pixels per byte**, so a byte column is `x/2`, not `x/8` (that is the
-mono/1-bpp convention and it put my probe 4x too far right). With the geometry right the
-addresses do land on text.
+In `$82c8`: `move.b (a4)+,d4` reads a character code four times; `d4 & 3` is the column and
+`(char & ~3) * 12` is the block offset, i.e. **48 bytes per group of four characters**;
+`move.b -$5(a6,d4.w),d0` fetches the rotate phase from the 8 bytes before the font (text
+`$850e` = `04 08 0c 00 04 08 0c 00`), and the unrolled body combines four plane words and
+stores 8 bytes per screen line. It advances `a5` by 8 per call, so **one call paints a
+16-pixel (4 glyph) strip, 6 rows tall**.
 
-To make this decisive next time: pause the game (`$5a856 = 1`) so the combine cannot run, put
-the options screen up, and *then* arm the watchpoint while poking a single text byte by hand.
-Only the routine that redraws text will touch it.
+The font decodes to legible 4x6 letterforms. Rendering A-Z and 0-9 from `$8516` gives the
+complete alphabet, and the options screen's own text ("Welcome to the World War I Scenario",
+"Please select option.") is produced by the same code path.
 
-### 7.7 Honest status
+### 7.4 The tooltip port
 
-Tooltips are **not done**. Two sessions have mapped the whole surround — screen format, the
-one-pixel writer `$eace`, the font sheet at `$F8000`, the panel descriptor DSL `$a2ce`, the
-40-column character buffer at `$74c0` — without landing the final character-to-pixels routine.
-The leads above are concrete; the effort so far is not something to hide.
+`work/ttproto/tooltip.s`, patch set `tooltip`, payload at `$72C00`.
+
+**Site**: runtime `$13e0a` (text `$13F1A`), the map pass's 32K window copy `jsr $13a94`.
+The hook performs the copy first — so the back buffer holds the clean frame — and then paints
+the hover line into that same buffer. **The next pass's copy erases it**, so the text
+disappears when the pointer leaves the icon and there is no cleanup code at all. That is the
+1990 `pm_tooltip` trick, unchanged.
+
+**Hit test**: an exact port of the game's perspective-grid test (the line tables at `$13bde`
+and `$13c58` and the 24-entry action table `$1a89a`), because the cells are quadrilaterals
+and bounding boxes overlap on 24 pairs. The reference is `tools/pwwgrid.py`; the 68k port was
+checked against it on 5200 points with zero mismatches, and the *assembled* routine was then
+checked in the emulator.
+
+**Surface**: screen rows 0..5, from ST x 104 (byte column 52) rightwards — measured free from
+a live screenshot (24% occupied left of 104, 0% right of it).
+
+**What cost the most time, so it is not repeated:**
+
+1. `w <addr> <bytes>` has **no length argument**. My first pokes passed a length and wrote it
+   as data.
+2. `$2edb2/$2edb4` (the tracked pointer) are rewritten by the IKBD handler **every VBL**, so
+   poking them lasts less than a frame. Use `goto_st` (the host pointer) instead.
+3. `move.l d0,<abs>.l` is not encodable; vasm emits an `$aaaaaaaa` placeholder silently.
+   `lea` the address into an `a0` first.
+4. `dbra` runs `N+1` times, and `addq` only takes 1..8 (`#\$10` needs `addi`).
+5. A `movem.l d2-d7,-(a7)` around a routine that **returns d2** wipes the result on exit.
+6. Reading a buffer the payload composes every pass races it — freeze the world first.
+7. `TEXTS` must be indexed from id 0; starting at `T1` shifted every low id by one and made
+   four icons show their neighbour's text.
+
+**Gate**: `tools/tooltipgate.py` — hovers six icons, reads the composed line and compares it
+with `pwwgrid.NAMES`, and requires the top bar to change. It also checks that nothing is shown
+with the pointer away from the panel. All six pass.

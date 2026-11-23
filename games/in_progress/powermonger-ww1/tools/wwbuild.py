@@ -102,8 +102,17 @@ KEY_SITES = [
 	(0x13F7A, bytes.fromhex("4eb90000d62a"), bytes.fromhex("4eb900072480"), "key dispatch"),
 ]
 
+# Tooltips (work/notes/input.md section 7.4; prototype work/ttproto/tooltip.s).
+# The site is the map pass's 32K window copy. The hook performs the copy and then paints the
+# hover line into the same back buffer, so the next pass's copy erases it (the 1990
+# pm_tooltip trick).   runtime $13e0a -> text offset $13e0a + $110 = $13F1A
+TOOLTIP_SITES = [
+	(0x13F1A, bytes.fromhex("4eb900013a94"), bytes.fromhex("4eb900072c00"), "tooltip hook"),
+]
+
 PATCHES = {
 	"tick": TICK_SITES,
+	"tooltip": TOOLTIP_SITES,
 	"noprot": NOPROT_SITES + NOPROT_BOX_SITES,
 	"keys": KEY_SITES,
 }
@@ -238,14 +247,16 @@ PAYLOADS = {
 	         bytes.fromhex("2f082f002f0152b9")),      # `move.l a0,-(a7)` ...
 	"keys": (0x72400, GAME / "work" / "keyproto" / "keys.bin",
 	         bytes.fromhex("2f01")),                   # KEYHOOK: `move.l d1,-(a7)`
+	"tooltip": (0x72C00, GAME / "work" / "ttproto" / "tooltip.bin",
+	            bytes.fromhex("48e7fffe")),            # HOOK: `movem.l d0-d7/a0-a6,-(a7)`
 }
 BASE = 0x72000
-END = 0x72810          # past keys' variables at $72800..$72809 (LASTV ends $7280A)
+END = 0x73620          # past the tooltip payload/data at $72C00..$7361C
 
 
 def _payload_image(only: list[str]) -> bytes:
 	"""The sparse image from $72000 to END holding every requested blob at its address."""
-	need = [name for name in ("tick", "keys") if name in only]
+	need = [name for name in ("tick", "keys", "tooltip") if name in only]
 	if not need:
 		raise SystemExit("no payload-bearing patch was requested")
 	image = bytearray(END - BASE)
@@ -304,7 +315,7 @@ def main() -> None:
 	sub = ap.add_subparsers(dest="cmd", required=True)
 	sub.add_parser("list")
 	b = sub.add_parser("build")
-	b.add_argument("--only", nargs="*", default=["tick", "noprot", "keys"])
+	b.add_argument("--only", nargs="*", default=["tick", "noprot", "keys", "tooltip"])
 	b.add_argument("--out", type=Path, default=GAME / "build" / "patched")
 	args = ap.parse_args()
 

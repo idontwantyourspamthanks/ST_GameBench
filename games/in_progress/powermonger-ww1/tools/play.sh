@@ -8,7 +8,7 @@
 #   tools/play.sh --cpu 16           # run at N MHz (8 stock): boots at 8 and is raised at VBL 200
 #   tools/play.sh --tos FILE         # another TOS image
 #   tools/play.sh --only tick noprot # exactly these patches (tools/wwbuild.py list shows them);
-#                                    #   sets: tick, noprot, keys
+#                                    #   sets: tick, noprot, keys, tooltip
 #                                    #   --only with nothing after it plays the unpatched set
 #   tools/play.sh --print            # only print the Hatari command line (no build)
 #   tools/play.sh --fresh            # discard build/play/ and rebuild from scratch
@@ -99,7 +99,7 @@ if [[ $PRINT == 1 ]]; then printf '%q ' "${CMD[@]}"; echo; exit 0; fi
 
 # default patch set: the tick, the protection removal and the keyboard shortcuts
 if [[ $VARIANT == patched && $ONLY_SET == 0 ]]; then
-    ONLY=(tick noprot keys)
+    ONLY=(tick noprot keys tooltip)
 fi
 
 rm -rf "$DIR"; mkdir -p "$DIR"
