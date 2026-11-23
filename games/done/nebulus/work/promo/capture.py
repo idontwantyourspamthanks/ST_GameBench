@@ -10,11 +10,13 @@ the same bytes the shipped release writes (np_shot 4 bytes in place, np_lift 6 s
 pure function of the loop index (breakpoint hit counts, never host time), as in work/shotmiss and work/liftperf; the AVI is started with the
 `recanim` shortcut just before arming (`--avirecord` on the command line makes the harness lose the Hatari window) and cut afterwards by post.py using the per-flip VBL log written here.
 
-bullet: work/shotmiss/ledge.sav (tower 1, frog on ledge row 14, x=104), a hopping ball is spawned 12 units to its left (attempt 0 of
-        attempts.json 'targeted_miss': ball x=92, hop counter 4, speed +1), 4 loops later the frog fires.  Stock: the shot flies through the
-        ball (np_shot's missing `andi.w #$3ff`, shotmiss.md) and the ball rolls into the frog; v1.2: the ball dies.
-lift:   tower 6 stock snapshot (frog at the tower start), enemies ON, a lift in column 0 from row 1 to row 24, Up held for 4 loops
-        (liftperf.md: stock 23.00 fps, 16 of 92 ride loops take 3 VBL; v1.2 25.00 fps, none).
+bullet: work/shotmiss/ledge.sav (tower 1, frog on ledge row 14).  The ball is the tower's OWN waiting ball: the spawner is re-enabled and
+        its scan pointer reset to row 15, so the marker `$30` at col 9 row 15 spawns it (x=76) with the game's own sprite fields (a slot poked by
+        hand showed the shot sprite).  It hops in place until the frog is within 32 units.  The frog starts at x=110 (34 away), walks left
+        4 loops (x=106), and fires at loop 24 while the ball is rolling at it.  Stock (found with spawn_search.py, sim == Hatari): the shot
+        misses (np_shot's missing `andi.w #$3ff`, shotmiss.md), the ball hits the frog and knocks it off the ledge; v1.2: the ball dies.
+lift:   tower 6 stock snapshot (frog at the tower start), enemies ON with extra markers beside the ride path (LIFT_MARKERS), a lift in
+        column 0 from row 1 to row 24, Up held for 4 loops (liftperf.md: stock 23.00 fps, 16 of 92 ride loops take 3 VBL; v1.2 25.00 fps, none).
 """
 import json, re, subprocess, sys, time
 from pathlib import Path
@@ -45,24 +47,35 @@ def live_cmds(name):
 
 
 def scene_bullet(variant):
-    import hatt
-    d = json.load(open(NEB / 'work/shotmiss/attempts.json'))['targeted_miss'][0]
+    G = 0x327f0
+    w = lambda a, v: f'w ${a:x} ${(v >> 8) & 255:02x} ${v & 255:02x}'
     cmds = ['w $3ad98 $00 $48 $00 $48 $00 $48', 'w $338fc $00 $00']
     if variant == 'v12':
         cmds += live_cmds('np_shot')
-    cmds += hatt.poke_cmds(hatt.attempt_pokes(d, False))
-    return dict(snap=NEB / 'work/shotmiss/ledge.sav', event=cmds, inputs={4: 0x80, 6: 0x00}, loops=70, attempt=d)
+    cmds += ['w $3792c $30 $39',                        # spawner back on (the snapshot has `rts`)
+             'w $3393c $00 $03 $27 $ff',                # scan pointer = grid (col 0, row 15) = $327ff
+             f'w ${G+12*256+15:x} 0', f'w ${G+12*256+16:x} 0']             # the 2-block stack beside the frog is gone
+    cmds += [w(0x33944 + 0x48 + 2 * k, 0) for k in range(4)]               # creature slots free
+    cmds += [w(0x33944 + 0x48 + 8, 0), w(0x33944 + 0x3c + 8, 0xffff)]      # shot slot idle
+    cmds += [w(0x33a16, 110), w(0x33a18, 60), w(0x33a20, 0), w(0x33a1e, 0), w(0x33a1c, 0)]   # frog x y state step dir (facing left)
+    return dict(snap=NEB / 'work/shotmiss/ledge.sav', event=cmds, inputs={8: 0x04, 12: 0x00, 24: 0x80, 26: 0x00}, loops=110)
 
 
-def scene_lift(variant, snap):
+# extra creature markers for the lift ride: (col, row, marker value); cells must be empty in the tower-6 map (work/level/tools/nebedit.py dump)
+import os
+LIFT_MARKERS = [tuple(int(x, 0) for x in m.split(',')) for m in os.environ.get('MARKERS', '3,21,0x10;15,23,0x10;3,23,0x10').split(';') if m]
+
+def scene_lift(variant, snap, markers):
     COL = 0x327f0
     END = 24
     cmds = ['w $3ad98 $00 $20 $00 $00 $00 $00', 'w $3b0aa $60', 'w $338fc $00 $00']
     if variant == 'v12':
         cmds += live_cmds('np_lift')
     cmds += [f'w ${COL+1:x} $85'] + [f'w ${COL+r:x} 0' for r in range(2, END)] + [f'w ${COL+END:x} 8']
+    cmds += [f'w ${COL+c*256+r:x} ${m:02x}' for c, r, m in markers]
     cmds.append('w $3792c $30 $39')        # undo the snapshot's `rts` on the enemy spawner (stock bytes): enemies ON
     return dict(snap=snap, event=cmds, inputs={3: 0x01, 7: 0x00}, loops=110)
+
 
 
 def main():
@@ -74,7 +87,7 @@ def main():
         sc = scene_bullet(variant)
     else:
         snap = out / 'snap/ste_stock_t6.sav'
-        sc = scene_lift(variant, snap)
+        sc = scene_lift(variant, snap, [] if scenario == 'liftbare' else LIFT_MARKERS)
     wd = Path('/tmp/promo') / tag
     wd.mkdir(parents=True, exist_ok=True)
     for f in wd.glob('*.cmd'):

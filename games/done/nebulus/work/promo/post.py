@@ -50,7 +50,7 @@ def match_start(d, flips):
 def main():
     lines = []
     anchors = {}
-    for sc in ('bullet', 'lift'):
+    for sc in ('bullet', 'lift', 'liftbare'):
         for var in ('stock', 'v12'):
             tag = f'{sc}_{var}'
             d = diffs(tag)
