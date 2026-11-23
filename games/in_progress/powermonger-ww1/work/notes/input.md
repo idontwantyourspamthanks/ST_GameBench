@@ -362,11 +362,35 @@ The 64-entry table at text `$ec52` is exactly `entry[x] = ((x & 7) * 8, x >> 3)`
 `x >> 3` of the line and bit `(x & 7) * 8`. (I initially mis-read it as a glyph table because
 the rows jump 1, 8, 9 between blocks of 8 — that is simply `x >> 3`.)
 
-### 7.2 The font sheet lives at `$F8000`
+### 7.2 CORRECTION: `$F8000` is the SCREEN, not a font
 
-`[$e4ca] = $F8000` at the map view — the **font/sprite sheet**, a 4-plane bitmap. The 1990
-note's "font at `$8976` with 48-byte blocks" corresponds here to glyph data in *this* sheet,
-not to a table in the program text.
+I got this wrong in the first draft of this section. `$e4ca` is set once at start-up from the
+shifter's screen address:
+
+```
+$00668  move.l $8200.w,d0     ; $ffff8200 = the video base
+$0066c  lsl.w  #$8,d0
+$0066e  andi.l #$ffffff,d0
+$00674  move.l d0,$e4ca.l     ; -> the live SCREEN base
+```
+
+So `[$e4ca]` = the framebuffer, and `$eace` plots a pixel **into the screen**. There is no
+font sheet at `$F8000`. (The buffers are `$2ed98`, and `$2ed9c = $2ed98 + $7D00` — two
+32000-byte screens.)
+
+### 7.2b The 1990 "font at $8976" does NOT transpose
+
+I checked this properly and it is **not** a font here. `text $8a86` (runtime `$8976`) holds
+texture/pattern data: decoded as a 4bpp bitmap it is a dither field, and as 6-row glyph blocks
+it gives gradient rows (many fully-set 16-pixel rows), not letterforms. Ink density is 44%,
+far too high for text, and no row has all four planes set (so it is not a solid mask either).
+
+Two things follow:
+
+1. The 1990 game's `$8976` font has no counterpart at the same place in this build. Do not
+   assume the 1990 offsets hold; that has now produced two wrong conclusions in this project.
+2. **No font has been located at all.** The font must exist (the game draws text everywhere),
+   but it is not where I thought, and I have not found it.
 
 ### 7.3 Panels build a character buffer, then something blits it
 
@@ -388,9 +412,14 @@ characters (`$28` = 40)**, `+6` = **height in rows** (values 4, 6, 8, `$c`, `$e`
 
 ### 7.4 What is still missing
 
-**The routine that turns the character buffer into pixels.** Everything above is consistent
-and verified; the last step — reading `$74c0`-described text and calling the font — was not
-found. The leads, in the order I would try them:
+**Both the font and its reader are missing.** `$8976` is texture data, not a font (7.2b), so
+the 1990 offsets do not transpose and I have no confirmed font location. The leads, in the
+order I would try them:
+
+0. **Find the font by watching a glyph get drawn.** Pause the world (`$5a856 = 1`), put the
+   options screen up, and use a *stop* breakpoint on a byte that holds a text pixel — with the
+   world paused the terrain combiner cannot run, so the stop can only be the text routine.
+   This is the experiment that was never run cleanly (see 7.6) and it should end the search.
 
 1. `$a2ce`'s callers set `$74c2`/`$74c6` (colour/height) *after* the call, so the blit is on a
    later pass. Search for a routine that reads **all three** of `$74c2`, `$74c3` and `$74c6`
