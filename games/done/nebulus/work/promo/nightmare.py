@@ -63,20 +63,17 @@ def level_escalator():
 
 
 def level_no_mans_land():
-    """NO MAN'S LAND: high up the tower.  A lift from the ground ring carries the frog to a single ledge cell (the lift's top platform, column 1, row 12); a gap of one
-    column on each side, then a ledge with a fast up/down eye (ceiling above it for the eye to bounce off), another gap, another eyed ledge."""
-    rows = 30
+    """NO MAN'S LAND: no ground at all.  The frog starts on a SINGLE ledge cell (column 0), a one-column gap each side, then a ledge with a fast up/down eye (roof above
+    it for the eye to bounce off), another gap, another eyed ledge, and so on round to the exit ledge on the far side.  Falling = the sea.  (The start row is the
+    game's fixed one, so the level hangs over the water instead of being up the tower; see the notes.)"""
+    rows = 24
     g = blank(rows)
-    put(g, range(16), 1, LEDGE)
-    top = 12
-    ovl.add_lift(g, 1, 2, top)                                        # the resting cell is the lift's top platform
-    for c in (15, 3, 13, 5):                                          # ledges 2 and 4 columns either side of the resting cell (gaps at 0/2 and 14/4)
-        g[c][top] = LEDGE
-        g[c][top + 7] = LEDGE                                         # roof for the eye
-    for c, row, v in ((15, top + 1, EYE_V_FAST), (3, top + 3, EYE_V_FAST | 1), (13, top + 4, EYE_V_FAST), (5, top + 2, EYE_V_FAST | 1)):
-        g[c][row] = v
-    g[7][top] = LEDGE                                                 # one more jump out (gap at column 6): the landing ledge with the exit door
-    put(g, [7], top + 1, EXIT); put(g, [7], top + 2, EXIT); put(g, [7], top + 3, EXIT)
+    for c in range(0, 16, 2):                                         # a ledge on every second column: each jump is over a gap of one column
+        g[c][1] = LEDGE
+    for c, row, v in ((14, 2, EYE_V_FAST), (2, 4, EYE_V_FAST | 1), (12, 5, EYE_V_FAST), (4, 3, EYE_V_FAST | 1)):
+        g[c][row] = v                                                 # the two ledges each side of the start carry an eye; staggered height and direction
+        g[c][8] = LEDGE                                               # roof
+    put(g, [8], 2, EXIT); put(g, [8], 3, EXIT); put(g, [8], 4, EXIT)
     return dict(name='NO MANS LAND', rows=rows, grid=g, time=0x0200)
 
 
