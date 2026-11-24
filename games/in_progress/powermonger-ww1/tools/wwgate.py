@@ -335,6 +335,20 @@ def cell(a):
                     seen |= b1(0xFF8901) & 1 if wantf == 3 else 0
                     time.sleep(0.4)
                 g.line("snd_core: the DMA plays a chunk (play bit $ff8901.0 seen in 60 s)" if wantf == 3 else "snd_core: plain ST path (no DMA, original YM player)", bool(seen) == (wantf == 3), f"bit seen {bool(seen)}, SV busy {b1(0x76700):02x}, sequencer active {b1(0x2D7B2):02x}, chunk busy {b1(0x2D7B3):02x}")
+        if "hw" in steps and man and ("p4_spr" in man["patches"] or "p7_triple_wait" in man["patches"]):
+            if "p4_spr" in man["patches"]:
+                blt, hdr = h.peekl(0xDF004), h.peekl(0xDF000)
+                want = 0xB17E0001 if machine in ("ste", "megaste") else 0xB17E0002
+                g.line("p4_spr: sprite path chosen (BLT word $df004)", blt == want, f"${blt:08x} (want ${want:08x}: blitter on STE / Mega STE, pre-shifted cache on ST / TT / Falcon)")
+                if want == 0xB17E0002:
+                    g.line("p4_spr: cache initialised (HDR $df000 = 'PRE0')", hdr == 0x50524530, f"${hdr:08x}")
+            if "p7_triple_wait" in man["patches"]:
+                seen = set()
+                for _ in range(12):
+                    seen.add(h.peekl(0x2ED98))
+                    seen.add(h.peekl(0x2ED9C))
+                    time.sleep(0.5)
+                g.line("p7_triple: the three buffers rotate ($1d500 / $25200 / $b0000 all seen as shown or drawing)", {0x1D500, 0x25200, 0xB0000} <= seen, "seen " + " ".join(f"${v:x}" for v in sorted(seen)))
         if "rate" in steps:
             import wwtick
             if a.mhz != 8:

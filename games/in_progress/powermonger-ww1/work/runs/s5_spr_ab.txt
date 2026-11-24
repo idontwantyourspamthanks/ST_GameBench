@@ -1,0 +1,54 @@
+## blitter (auto) map_idle
+machine ste
+base set    : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b
+patched set : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr
+ste_map_idle ste @8 MHz: IDENTICAL (back frames matched 80, shown+pointer matched 43, flips captured 99/98) | work/pass 1511662 -> 1506824 (-4838, -0.32 %, n 98/99) | paired 1537229 -> 1530075 (-0.47 %, n 80) | world ticks/s 4.004 -> 4.027 | flips 98 -> 99 fps 5.031 -> 5.046 (+0.3 %) | same-tick consecutive R frames identical: base 0/0, patched 0/0
+   hits (last point) base $75f20:0 $75ffe:0 $7610a:0 | patched $75f20:99 $75ffe:0 $7610a:0
+ALL IDENTICAL
+## blitter (auto) get_men
+machine ste
+base set    : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b
+patched set : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr
+ste_get_men ste @8 MHz: IDENTICAL (back frames matched 56, shown+pointer matched 38, flips captured 72/58) | work/pass 2574728 -> 2069207 (-505521, -19.63 %, n 58/72) | paired 2574740 -> 2063056 (-19.87 %, n 56) | world ticks/s 3.983 -> 3.971 | flips 58 -> 72 fps 3.040 -> 3.762 (+23.7 %) | same-tick consecutive R frames identical: base 0/0, patched 0/0
+   hits (last point) base $75f20:0 $75ffe:0 $7610a:0 | patched $75f20:3282 $75ffe:0 $7610a:0
+ALL IDENTICAL
+## blitter (auto) random
+machine ste
+base set    : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b
+patched set : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr
+ste_random ste @8 MHz: IDENTICAL (back frames matched 79, shown+pointer matched 76, flips captured 81/79) | work/pass 1895292 -> 1844023 (-51270, -2.71 %, n 79/81) | paired 1895292 -> 1847679 (-2.51 %, n 79) | world ticks/s 4.022 -> 4.035 | flips 79 -> 81 fps 4.022 -> 4.137 (+2.8 %) | same-tick consecutive R frames identical: base 0/0, patched 0/0
+   hits (last point) base $75f20:0 $75ffe:0 $7610a:0 | patched $75f20:410 $75ffe:0 $7610a:0
+ALL IDENTICAL
+## pre-shifted cache (BLT=2 poked) map_idle
+machine ste
+base set    : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b
+patched set : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr
+ste_map_idle ste @8 MHz: IDENTICAL (back frames matched 80, shown+pointer matched 43, flips captured 99/98) | work/pass 1511691 -> 1508567 (-3124, -0.21 %, n 98/99) | paired 1537263 -> 1531876 (-0.35 %, n 80) | world ticks/s 4.004 -> 4.027 | flips 98 -> 99 fps 5.031 -> 5.046 (+0.3 %) | same-tick consecutive R frames identical: base 0/0, patched 0/0
+   hits (last point) base $75f20:0 $75ffe:0 $7610a:0 | patched $75f20:99 $75ffe:99 $7610a:1
+ALL IDENTICAL
+## pre-shifted cache (BLT=2 poked) get_men
+machine ste
+base set    : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b
+patched set : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr
+ste_get_men ste @8 MHz: IDENTICAL (back frames matched 49, shown+pointer matched 26, flips captured 68/58) | work/pass 2574763 -> 2208772 (-365991, -14.21 %, n 58/68) | paired 2576020 -> 2205126 (-14.40 %, n 49) | world ticks/s 3.983 -> 3.998 | flips 58 -> 68 fps 3.040 -> 3.531 (+16.1 %) | same-tick consecutive R frames identical: base 0/0, patched 0/0
+   hits (last point) base $75f20:0 $75ffe:0 $7610a:0 | patched $75f20:3060 $75ffe:3060 $7610a:22
+ALL IDENTICAL
+## pre-shifted cache (BLT=2 poked) random
+machine ste
+base set    : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b
+patched set : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr
+ste_random ste @8 MHz: IDENTICAL (back frames matched 78, shown+pointer matched 75, flips captured 80/79) | work/pass 1895302 -> 1858772 (-36531, -1.93 %, n 79/80) | paired 1895760 -> 1865784 (-1.58 %, n 78) | world ticks/s 4.022 -> 4.000 | flips 79 -> 80 fps 4.022 -> 4.103 (+2.0 %) | same-tick consecutive R frames identical: base 0/0, patched 0/0
+   hits (last point) base $75f20:0 $75ffe:0 $7610a:0 | patched $75f20:405 $75ffe:405 $7610a:5
+ALL IDENTICAL
+## 16 MHz, T frames hard (R frames depend on pass timing), blitter + cache, get_men
+machine ste
+base set    : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b
+patched set : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr
+ste_get_men ste @16 MHz: IDENTICAL (back frames matched 79, shown+pointer matched 4, R frames differing (allowed) 6, flips captured 151/121) | work/pass 2461292 -> 1953073 (-508218, -20.65 %, n 121/151) | paired 2505128 -> 2014959 (-19.57 %, n 79) | world ticks/s 3.967 -> 4.014 | flips 121 -> 151 fps 6.155 -> 7.673 (+24.7 %) | same-tick consecutive R frames identical: base 0/0, patched 0/0
+ALL IDENTICAL
+machine ste
+base set    : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b
+patched set : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr
+ste_get_men ste @16 MHz: IDENTICAL (back frames matched 79, shown+pointer matched 11, R frames differing (allowed) 4, flips captured 141/121) | work/pass 2461501 -> 2078338 (-383163, -15.57 %, n 121/141) | paired 2505324 -> 2136021 (-14.74 %, n 79) | world ticks/s 3.967 -> 3.971 | flips 121 -> 141 fps 6.155 -> 7.179 (+16.6 %) | same-tick consecutive R frames identical: base 0/0, patched 0/0
+ALL IDENTICAL
+DONE

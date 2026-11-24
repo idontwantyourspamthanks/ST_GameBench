@@ -1,0 +1,10 @@
+GATE sprhw/ste-1.62-1024K site p4_spr PASS $1325e = 4ef900075f20 (want 4ef900075f20)
+GATE sprhw/ste-1.62-1024K p4_spr: sprite path chosen (BLT word $df004) PASS $b17e0001 (want $b17e0001: blitter on STE / Mega STE, pre-shifted cache on ST / TT / Falcon)
+CELL DONE sprhw/ste-1.62-1024K: OK (138s)
+GATE sprhw/st-1.04-1024K site p4_spr PASS $1325e = 4ef900075f20 (want 4ef900075f20)
+GATE sprhw/st-1.04-1024K p4_spr: sprite path chosen (BLT word $df004) PASS $b17e0002 (want $b17e0002: blitter on STE / Mega STE, pre-shifted cache on ST / TT / Falcon)
+GATE sprhw/st-1.04-1024K p4_spr: cache initialised (HDR $df000 = 'PRE0') PASS $50524530
+CELL DONE sprhw/st-1.04-1024K: OK (204s)
+GATE sprhw/megaste-2.06-4096K site p4_spr PASS $1325e = 4ef900075f20 (want 4ef900075f20)
+GATE sprhw/megaste-2.06-4096K p4_spr: sprite path chosen (BLT word $df004) PASS $b17e0001 (want $b17e0001: blitter on STE / Mega STE, pre-shifted cache on ST / TT / Falcon)
+CELL DONE sprhw/megaste-2.06-4096K: OK (134s)

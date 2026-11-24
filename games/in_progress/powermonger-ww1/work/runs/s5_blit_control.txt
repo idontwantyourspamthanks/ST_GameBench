@@ -1,0 +1,5 @@
+BLIT mode 1 (blitter) source random words: trials 2000, mismatching trials 2000, register mismatches 0, first fail (s, rows, col, which) (5, 4, 2, 1), BLT b17e0001 HDR 00000000 -> FAIL
+BLIT mode 1 (blitter) source sheet: trials 2000, mismatching trials 1987, register mismatches 0, first fail (s, rows, col, which) (5, 4, 2, 1), BLT b17e0001 HDR 00000000 -> FAIL
+BLIT mode 2 (pre-shifted cache) source random words: trials 2000, mismatching trials 0, register mismatches 0, first fail (s, rows, col, which) (0, 0, 0, 0), BLT b17e0002 HDR 50524530 -> PASS
+BLIT mode 2 (pre-shifted cache) source sheet: trials 2000, mismatching trials 1882, register mismatches 0, first fail (s, rows, col, which) (5, 4, 2, 1), BLT b17e0002 HDR 50524530 -> FAIL
+BLIT FAIL

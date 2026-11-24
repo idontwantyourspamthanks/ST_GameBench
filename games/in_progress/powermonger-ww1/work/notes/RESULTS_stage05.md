@@ -36,13 +36,15 @@ Gates:
   `s5_ptr_keys.txt` line 50 `KEYS 39 of 39 key/click pairs identical`; `s5_ptr_tt.txt` line 123 `TOOLTIP GATE ptr_tt: 116 lines PASS, 0 FAIL`.
 * Speed (work/pass, STE): `map_idle` 8 MHz -4.43 %, fps 4.844 -> 5.010; `get_men` -4.48 %, 2.883 -> 3.014 (+4.5 %); `random` -4.35 %, 3.799 -> 3.989 (+5.0 %); 16 MHz -1.8 .. -2.1 % (lines 4-6, 12-14, 30-32). Master: -4.4 .. -5.6 % at 8 MHz.
 
-## 2. p4_spr (`$1325e`; blob `$75f20`, init `$762e0`, cache data `$df000` 62 464 B) - state: differential + A/B PASS, regression cell RUNNING
+## 2. p4_spr (`$1325e`; blob `$75f20`, init `$762e0`, cache data `$df000` 62 464 B) - state: differential + A/B PASS, ALL GATES PASS
 Not failing now. History: first version (lazy cookie probe) crashed in the A/B (Address Error in the probe: `$5a0` is overwritten by the game); fixed by an `init` routine; all gates below are on the fixed code.
 * `tools/wwblit.py`, 40 000 trials per case (`s5_blit.txt`): blitter + random words, blitter + real sheet addresses, cache + random words, cache + sheet: 0 mismatching trials, 0 register mismatches, `BLIT ALL PASS`.
   Negative controls (`s5_blit_control.txt`): blitter dest X inc 10 -> FAIL (2000/2000, 1987/2000), cache `or.l`->`and.l` -> FAIL (1882/2000); cache + random words PASS by design (outside the sheets the original code runs).
 * `tools/wwab.py` (`s5_spr_ab.txt`, STE, base = ptr patches live): blitter 8 MHz `map_idle` IDENTICAL (back 80, shown 43), `get_men` IDENTICAL (56 / 38), `random` IDENTICAL (79 / 76); cache path (BLT=2 poked) the same three IDENTICAL (80/43, 49/26, 78/75); 16 MHz `get_men`, T frames hard: blitter and cache IDENTICAL.
 * Speed (work/pass, fps): blitter `get_men` -19.6 %, fps 3.040 -> 3.762 (+23.7 %) (master -12 %); `random` -2.7 %, 4.022 -> 4.137; `map_idle` -0.3 % (this start view has 1 blit call per pass); cache `get_men` -14.2 %, 3.040 -> 3.531 (+16.1 %); 16 MHz get_men blitter 6.155 -> 7.673 fps (+24.7 %), cache 7.179.
   Cache hit rate (calls at `$75ffe` vs builds at `$7610a`): get_men 3060 / 22, random 405 / 5, map_idle 99 / 1 (>= 99 %); ST-machine rate not yet measured.
-* Pending: regression cell on `build/s5_spr` (running), ST + Mega STE cold-boot `hw` check (BLT word), ST speed.
+* Regression `build/s5_spr` (`PFX=s5 stage04b_regress.sh spr`): `s5_spr_ste.txt` `CELL DONE spr/ste-1.62-1024K: OK (521s)`, 0 FAIL, hi@ PASS at every checkpoint; `s5_spr_keys.txt` `CELL DONE spr_keys: OK`; `s5_spr_tt.txt` `TOOLTIP GATE spr_tt: 116 lines PASS, 0 FAIL`.
+* Cold-boot `hw` (`s5_spr_hw.txt`): STE `$df004 = $b17e0001` PASS, Mega STE `$b17e0001` PASS, plain ST `$b17e0002` + cache initialised `$50524530` PASS.
+* Not yet: ST speed / ST cache hit rate (needs ST snapshots).
 
 (sections 3.. follow as the patches are gated)
