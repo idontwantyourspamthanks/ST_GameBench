@@ -1,0 +1,51 @@
+  [fal_hd_dbg] [   16s vbl 881] name prompt
+  [fal_hd_dbg] [   21s vbl 1155] option screen (typing attempt 1)
+GATE fal_hd_dbg/falcon-4.04-4096K-hd marker PASS $727f8 = b'PMPO' (want b'PMPO')
+GATE fal_hd_dbg/falcon-4.04-4096K-hd site fal_ym PASS $1bcb8 = 4eb900075bd04e71 (want 4eb900075bd04e71)
+GATE fal_hd_dbg/falcon-4.04-4096K-hd site hd_kbd PASS $e78 = 102900024a390001d2ae (want 102900024a390001d2ae)
+GATE fal_hd_dbg/falcon-4.04-4096K-hd site hd_load PASS $d962 = 4ef900077408 (want 4ef900077408)
+GATE fal_hd_dbg/falcon-4.04-4096K-hd site hd_sector PASS $ddea = 4ef90007740c (want 4ef90007740c)
+GATE fal_hd_dbg/falcon-4.04-4096K-hd site p3b_delta PASS $13e3c = 4eb900073e00 (want 4eb900073e00)
+GATE fal_hd_dbg/falcon-4.04-4096K-hd site p3b_interp PASS $13e1e = 4eb900073c00 (want 4eb900073c00)
+GATE fal_hd_dbg/falcon-4.04-4096K-hd site p4_clamp PASS $ed6 = 4eb900075c004e714e71 (want 4eb900075c004e714e71)
+GATE fal_hd_dbg/falcon-4.04-4096K-hd site pm_cachecap PASS $e3f2 = 4eb900075800 (want 4eb900075800)
+GATE fal_hd_dbg/falcon-4.04-4096K-hd site pm_credit PASS $14baa = 4eb900072800 (want 4eb900072800)
+GATE fal_hd_dbg/falcon-4.04-4096K-hd site pm_nokeydisk PASS $13cec = 4e714e714e71 (want 4e714e714e71)
+GATE fal_hd_dbg/falcon-4.04-4096K-hd site pm_noprot PASS $15998 = 0000002c (want 0000002c)
+GATE fal_hd_dbg/falcon-4.04-4096K-hd site pm_noprot_box PASS $bbd2 = 4e754e714e71 (want 4e754e714e71)
+GATE fal_hd_dbg/falcon-4.04-4096K-hd site pm_tooltip PASS $13e18 = 4eb900073400 (want 4eb900073400)
+GATE fal_hd_dbg/falcon-4.04-4096K-hd site qol_hover PASS $13e2a = 4eb900074b00 (want 4eb900074b00)
+GATE fal_hd_dbg/falcon-4.04-4096K-hd site qol_hover2 PASS $12ee0 = 4eb900073940 (want 4eb900073940)
+GATE fal_hd_dbg/falcon-4.04-4096K-hd site qol_keys PASS $13e70 = 4eb900072c00 (want 4eb900072c00)
+GATE fal_hd_dbg/falcon-4.04-4096K-hd site qol_keys2 PASS $f30 = 4eb900073100 (want 4eb900073100)
+GATE fal_hd_dbg/falcon-4.04-4096K-hd site snd_core PASS $1c4de = 4eb900076400 (want 4eb900076400)
+GATE fal_hd_dbg/falcon-4.04-4096K-hd site snd_setup PASS $6de = 4eb90007640c4e714e71 (want 4eb90007640c4e714e71)
+GATE fal_hd_dbg/falcon-4.04-4096K-hd site snd_start PASS $1bbbc = 4ef900076404 (want 4ef900076404)
+GATE fal_hd_dbg/falcon-4.04-4096K-hd site snd_stop PASS $1bb96 = 4ef9000764084e714e71 (want 4ef9000764084e714e71)
+GATE fal_hd_dbg/falcon-4.04-4096K-hd site tick_click PASS $7e6 = 00072aa0 (want 00072aa0)
+GATE fal_hd_dbg/falcon-4.04-4096K-hd site tick_click2 PASS $842 = 00072aa0 (want 00072aa0)
+GATE fal_hd_dbg/falcon-4.04-4096K-hd site tick_click3 PASS $144b4 = 00072aa0 (want 00072aa0)
+GATE fal_hd_dbg/falcon-4.04-4096K-hd site tick_head PASS $13da0 = 4eb900072900 (want 4eb900072900)
+GATE fal_hd_dbg/falcon-4.04-4096K-hd site tick_men PASS $13e36 = 4eb900072a60 (want 4eb900072a60)
+GATE fal_hd_dbg/falcon-4.04-4096K-hd site tick_pass PASS $13de8 = 4eb900072a004e71 (want 4eb900072a004e71)
+GATE fal_hd_dbg/falcon-4.04-4096K-hd site tick_rain PASS $13e24 = 4eb900072ac0 (want 4eb900072ac0)
+GATE fal_hd_dbg/falcon-4.04-4096K-hd site tt_ptr PASS $e20 = 4eb900075a40 (want 4eb900075a40)
+GATE fal_hd_dbg/falcon-4.04-4096K-hd payload@options PASS unchanged
+GATE fal_hd_dbg/falcon-4.04-4096K-hd credit visible PASS rows 194-199: 7680 px of colours [(255, 255, 255)]
+GATE fal_hd_dbg/falcon-4.04-4096K-hd boot PASS 40s
+GATE fal_hd_dbg/falcon-4.04-4096K-hd noprot flag PASS $15998 = $0000002c (want $0000002c) before the first land
+  [fal_hd_dbg] [   40s vbl 4268] no disk requester
+  [fal_hd_dbg] [   43s vbl 4409] chart expected
+  [fal_hd_dbg] [   60s vbl 5257] island clicked
+  [fal_hd_dbg] [   66s vbl 5552] 3D map view, world counter ticking
+GATE fal_hd_dbg/falcon-4.04-4096K-hd noprot: the check never ran PASS hits $acc4:0, $ae20:0, $b232:0, $b39c:0
+GATE fal_hd_dbg/falcon-4.04-4096K-hd noprot: 'Please wait' box skipped (stub reached) PASS $bbd2 reached 1x (an `rts` stub)
+GATE fal_hd_dbg/falcon-4.04-4096K-hd nokeydisk: the key-disk routine never ran, the flow went on PASS $1cf7c hit 0x, next instruction $13cf2 hit 1x; the Powermonger disk was never inserted
+GATE fal_hd_dbg/falcon-4.04-4096K-hd map view PASS counter 62, flag $15998 = $0000002c
+GATE fal_hd_dbg/falcon-4.04-4096K-hd payload@map PASS unchanged
+GATE fal_hd_dbg/falcon-4.04-4096K-hd save/load: loaded state == saved state PASS 101376 B: 0 differ
+GATE fal_hd_dbg/falcon-4.04-4096K-hd save/load: the world moved between save and load PASS saved vs the state just before the load: 291 differ
+GATE fal_hd_dbg/falcon-4.04-4096K-hd save/load: save disk slot A == saved state PASS sectors 1-198 equal: True, slot flag $ff, image 409600 B
+GATE fal_hd_dbg/falcon-4.04-4096K-hd save/load: the game runs on after the load PASS 
+GATE fal_hd_dbg/falcon-4.04-4096K-hd payload@saveload PASS unchanged
+CELL DONE fal_hd_dbg/falcon-4.04-4096K-hd: OK (220s)

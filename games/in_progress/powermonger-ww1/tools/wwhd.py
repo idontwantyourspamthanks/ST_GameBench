@@ -103,7 +103,8 @@ class PMWHD(PMW):
         t = time.time()
         while not (out / "load.bin").exists() or (out / "load.bin").stat().st_size < n:
             if time.time() - t > 120:
-                raise RuntimeError("the load never returned")
+                self.shot(str(self.R / "shots" / "load_stuck.png"))
+                raise RuntimeError(f"the load never returned (window text: {self.wtext().strip()[:80]!r})")
             time.sleep(1)
         time.sleep(3)
         ok_run = self.ticking(2.0) and self.peekw(pmww.WINDOW_OPEN) == 0

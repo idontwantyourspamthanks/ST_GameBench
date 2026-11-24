@@ -123,3 +123,9 @@ core.s `init` now calls `ttlow` (TT: `clr.b $ffff8262.w` = ST low, `_MCH` high w
 * Falcon VGA (`--monitor vga`) and RGB (`s4d2_fal_vga.txt`, `s4d2_fal_rgb.txt`): both `CELL DONE ...: OK (137s)`; map screenshots after the fix are pixel-identical between RGB and VGA (0 of 256000 px differ over the 640 x 400 picture area; `fal_vga_falcon_map.png` read by me: correct picture) and match the TT picture except 328 px (animation / pointer).
 * ST / STE / Mega STE unaffected: quick cells on `s4d_tt2` below (s4d2_q_*.txt).
 * ST / STE / Mega STE unaffected (quick cells on s4d_tt2: boot,map,hw,saveload,lose): CELL DONE q_st/st-1.04-1024K: OK (397s), q_ste/ste-1.62-1024K: OK (328s), q_mste/megaste-2.06-4096K: OK (312s) (s4d2_q_*.txt; FALCON flag $00 on each, save/load 0 differ, lose picture stable).
+* **User confirmation (2026-11-24):** after `489b187` the user ran WW1 on a TT and reported "works great on a TT" (the user's own run; the report doesn't say whether it was Hatari or real hardware).
+
+## 7. Falcon HD hang: OPEN
+* First Falcon HD GEMDOS cell: save/load "the load never returned". Reruns on the same (pre-Vsetmode) build: run 1 passed save/load but failed "back to option screen" after Retire lose; run 2 failed in save/load with the FILE window still open (the LOAD click didn't land). The failure screenshot is noise: those HD builds predate the Falcon Vsetmode fix. [INFERENCE] the harness clicking on a garbled Falcon screen.
+* The floppy Falcon full cell on the fixed core passes (`s4d_fal_flop_full.txt`: save/load, lose, win, round 3, `CELL DONE ... OK (479s)`).
+* Rerun on the fixed HD build (`build/s4d_hd2`): `s4d_hd2_fal_1.txt` stops after `boot PASS` (the run was cut off; no verdict). Not done: a complete run on the fixed HD build, and the comparison with master's Powermonger HD on a Falcon.
