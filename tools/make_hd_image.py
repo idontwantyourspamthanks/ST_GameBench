@@ -361,7 +361,8 @@ Requirements
    plays the original sound.
  - Moonshine Racers: STE or Mega STE for the extra in-between frames (the game
    runs at a fixed 10 steps per second on every machine; faster machines show
-   more frames). A plain ST runs it at its own speed.
+   more frames). A plain ST runs it at its own speed. Campaigns and the track
+   editor (F10 on the title or the WELCOME PARTNERS screen) need 2 MB.
  - Populous needs 1 MB; on a TT start it from the desktop (it runs from
    this disk there). Populous 2 needs 2 MB (Mega STE / TT, or an STE with
    2 MB or more).
