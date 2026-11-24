@@ -1,0 +1,5 @@
+machine ste
+base set    : snapshot + test_walk test_walk2 test_walk3
+patched set : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b
+ste_get_men ste @8 MHz: IDENTICAL (back frames matched 65, shown+pointer matched 38, flips captured 88/84) | work/pass 2699332 -> 2570644 (-128688, -4.77 %, n 84/88) | paired 2689575 -> 2572598 (-4.35 %, n 65) | flips 84 -> 88 fps 2.883 -> 3.024 (+4.9 %) | same-tick consecutive R frames identical: base 0/0, patched 0/0
+ALL IDENTICAL

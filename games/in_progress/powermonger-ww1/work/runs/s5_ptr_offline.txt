@@ -1,0 +1,6 @@
+# tools/wwptr_test.py (unicorn lock-step, whole 1 MB after every step), patches p4_ptr_a p4_ptr_b; verbatim job output of 2026-11-24
+$ python3 tools/wwptr_test.py --trials 30 --steps 60
+PTRTEST 5400 steps in 90 trials over 3 dumps, events {'nothing': 1969, 'vbl counter': 315, 'move': 832, 'frame word': 373, 'hide': 239, 'poke screen': 801, 'flip': 514, 'buffer pointer elsewhere': 208, 'pointer record cleared': 149}; skip path taken in 1063 steps; IDENTICAL (whole 1 MB after every step)
+# negative control: WW_PATCHDIR=<copy of patches/ with the rectangle compare (bne.w .full after every cmpm) replaced by nops>
+$ WW_PATCHDIR=/tmp/pmww1s5/mut_ptr python3 tools/wwptr_test.py --trials 30 --steps 60
+PTRTEST 2271 steps in 90 trials over 3 dumps, events {'nothing': 821, 'vbl counter': 131, 'move': 352, 'frame word': 154, 'hide': 104, 'poke screen': 330, 'flip': 214, 'buffer pointer elsewhere': 92, 'pointer record cleared': 73}; skip path taken in 409 steps; 68 MISMATCH

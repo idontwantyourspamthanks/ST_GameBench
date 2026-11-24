@@ -1,0 +1,87 @@
+  [ptr] [   26s vbl 1378] name prompt
+  [ptr] [   33s vbl 1728] option screen (typing attempt 1)
+GATE ptr/ste-1.62-1024K marker PASS $727f8 = b'PMPO' (want b'PMPO')
+GATE ptr/ste-1.62-1024K site fal_ym PASS $1bcb8 = 03c88df101888df1 (want 03c88df101888df1 = original: Falcon-only site, this is not a Falcon)
+GATE ptr/ste-1.62-1024K site p3b_delta PASS $13e3c = 4eb900073e00 (want 4eb900073e00)
+GATE ptr/ste-1.62-1024K site p3b_interp PASS $13e1e = 4eb900073c00 (want 4eb900073c00)
+GATE ptr/ste-1.62-1024K site p4_clamp PASS $ed6 = 4eb900075c004e714e71 (want 4eb900075c004e714e71)
+GATE ptr/ste-1.62-1024K site p4_ptr_a PASS $87e = 4ef900075c40 (want 4ef900075c40)
+GATE ptr/ste-1.62-1024K site p4_ptr_b PASS $9b8 = 4ef900075d20 (want 4ef900075d20)
+GATE ptr/ste-1.62-1024K site pm_cachecap PASS $e3f2 = 4eb900075800 (want 4eb900075800)
+GATE ptr/ste-1.62-1024K site pm_credit PASS $14baa = 4eb900072800 (want 4eb900072800)
+GATE ptr/ste-1.62-1024K site pm_nokeydisk PASS $13cec = 4e714e714e71 (want 4e714e714e71)
+GATE ptr/ste-1.62-1024K site pm_noprot PASS $15998 = 0000002c (want 0000002c)
+GATE ptr/ste-1.62-1024K site pm_noprot_box PASS $bbd2 = 4e754e714e71 (want 4e754e714e71)
+GATE ptr/ste-1.62-1024K site pm_tooltip PASS $13e18 = 4eb900073400 (want 4eb900073400)
+GATE ptr/ste-1.62-1024K site qol_hover PASS $13e2a = 4eb900074b00 (want 4eb900074b00)
+GATE ptr/ste-1.62-1024K site qol_hover2 PASS $12ee0 = 4eb900073940 (want 4eb900073940)
+GATE ptr/ste-1.62-1024K site qol_keys PASS $13e70 = 4eb900072c00 (want 4eb900072c00)
+GATE ptr/ste-1.62-1024K site qol_keys2 PASS $f30 = 4eb900073100 (want 4eb900073100)
+GATE ptr/ste-1.62-1024K site snd_core PASS $1c4de = 4eb900076400 (want 4eb900076400)
+GATE ptr/ste-1.62-1024K site snd_setup PASS $6de = 4eb90007640c4e714e71 (want 4eb90007640c4e714e71)
+GATE ptr/ste-1.62-1024K site snd_start PASS $1bbbc = 4ef900076404 (want 4ef900076404)
+GATE ptr/ste-1.62-1024K site snd_stop PASS $1bb96 = 4ef9000764084e714e71 (want 4ef9000764084e714e71)
+GATE ptr/ste-1.62-1024K site tick_click PASS $7e6 = 00072aa0 (want 00072aa0)
+GATE ptr/ste-1.62-1024K site tick_click2 PASS $842 = 00072aa0 (want 00072aa0)
+GATE ptr/ste-1.62-1024K site tick_click3 PASS $144b4 = 00072aa0 (want 00072aa0)
+GATE ptr/ste-1.62-1024K site tick_head PASS $13da0 = 4eb900072900 (want 4eb900072900)
+GATE ptr/ste-1.62-1024K site tick_men PASS $13e36 = 4eb900072a60 (want 4eb900072a60)
+GATE ptr/ste-1.62-1024K site tick_pass PASS $13de8 = 4eb900072a004e71 (want 4eb900072a004e71)
+GATE ptr/ste-1.62-1024K site tick_rain PASS $13e24 = 4eb900072ac0 (want 4eb900072ac0)
+GATE ptr/ste-1.62-1024K site tt_ptr PASS $e20 = 4eb900075a40 (want 4eb900075a40)
+GATE ptr/ste-1.62-1024K payload@options PASS unchanged
+GATE ptr/ste-1.62-1024K hi@options PASS pattern / constants: 0 of 267264 bytes changed in $b0000-$bbfff, $c1c00-$f6fff
+GATE ptr/ste-1.62-1024K cache cursor@options PASS [$2cfda] = $80000 (limit $b0000, 0 = no cache)
+GATE ptr/ste-1.62-1024K credit visible PASS rows 194-199: 780 px of colours [(102, 102, 68)]
+GATE ptr/ste-1.62-1024K boot PASS 52s
+GATE ptr/ste-1.62-1024K noprot flag PASS $15998 = $0000002c (want $0000002c) before the first land
+  [ptr] [   34s vbl 4591] no disk requester
+  [ptr] [   37s vbl 4731] chart expected
+  [ptr] [   61s vbl 5910] island clicked
+  [ptr] [   67s vbl 6206] 3D map view, world counter ticking
+GATE ptr/ste-1.62-1024K noprot: the check never ran PASS hits $acc4:0, $ae20:0, $b232:0, $b39c:0
+GATE ptr/ste-1.62-1024K noprot: 'Please wait' box skipped (stub reached) PASS $bbd2 reached 1x (an `rts` stub)
+GATE ptr/ste-1.62-1024K nokeydisk: the key-disk routine never ran, the flow went on PASS $1cf7c hit 0x, next instruction $13cf2 hit 1x; the Powermonger disk was never inserted
+GATE ptr/ste-1.62-1024K map view PASS counter 52, flag $15998 = $0000002c
+GATE ptr/ste-1.62-1024K payload@map PASS unchanged
+GATE ptr/ste-1.62-1024K hi@map PASS pattern / constants: 0 of 267264 bytes changed in $b0000-$bbfff, $c1c00-$f6fff
+GATE ptr/ste-1.62-1024K cache cursor@map PASS [$2cfda] = $9fc58 (limit $b0000, 0 = no cache)
+RATE ptr/ste 8 MHz cold boot map view 50 Hz: 801 VBL = 16.02 s emulated, 160256 cycles/VBL, world clock +64 = 3.995/s; tick passes 64, R passes 18, S passes 0
+GATE ptr/ste-1.62-1024K rate PASS ptr/ste 8 MHz cold boot map view 50 Hz: 801 VBL = 16.02 s emulated, 160256 cycles/VBL, world clock +64 = 3.995/s; tick passes 64, R passes 18, S passes 0
+GATE ptr/ste-1.62-1024K world rate = 4.00/s (+-5 %) PASS 3.995 world steps per emulated second
+  [ptr] requester: insert the save game disk
+GATE ptr/ste-1.62-1024K save/load: loaded state == saved state PASS 101376 B: 0 differ
+GATE ptr/ste-1.62-1024K save/load: the world moved between save and load PASS saved vs the state just before the load: 274 differ
+GATE ptr/ste-1.62-1024K save/load: save disk slot A == saved state PASS sectors 1-198 equal: True, slot flag $ff, image 409600 B
+GATE ptr/ste-1.62-1024K save/load: the game runs on after the load PASS 
+GATE ptr/ste-1.62-1024K payload@saveload PASS unchanged
+GATE ptr/ste-1.62-1024K hi@saveload PASS pattern / constants: 0 of 267264 bytes changed in $b0000-$bbfff, $c1c00-$f6fff
+GATE ptr/ste-1.62-1024K cache cursor@saveload PASS [$2cfda] = $9fc58 (limit $b0000, 0 = no cache)
+GATE ptr/ste-1.62-1024K lose picture PASS non-black 0.69, 16 colours, seen stable x3; cache cursor $9fc58 -> $a7958
+GATE ptr/ste-1.62-1024K lose picture still there after 8 s PASS non-black 0.69, 16 colours
+GATE ptr/ste-1.62-1024K payload@lose PASS unchanged
+GATE ptr/ste-1.62-1024K hi@lose PASS pattern / constants: 0 of 267264 bytes changed in $b0000-$bbfff, $c1c00-$f6fff
+GATE ptr/ste-1.62-1024K cache cursor@lose PASS [$2cfda] = $a7958 (limit $b0000, 0 = no cache)
+GATE ptr/ste-1.62-1024K back to option screen PASS 
+  [ptr] [   23s vbl 19026] island clicked
+  [ptr] [   29s vbl 19321] 3D map view, world counter ticking
+GATE ptr/ste-1.62-1024K map view (2nd land) PASS counter 64
+GATE ptr/ste-1.62-1024K win picture PASS non-black 0.99, 15 colours, seen stable x3; cache cursor $af658
+GATE ptr/ste-1.62-1024K win picture still there after 8 s PASS non-black 0.99, 15 colours
+GATE ptr/ste-1.62-1024K payload@win PASS unchanged
+GATE ptr/ste-1.62-1024K hi@win PASS pattern / constants: 0 of 267264 bytes changed in $b0000-$bbfff, $c1c00-$f6fff
+GATE ptr/ste-1.62-1024K cache cursor@win PASS [$2cfda] = $af658 (limit $b0000, 0 = no cache)
+GATE ptr/ste-1.62-1024K back to option screen (after win) PASS 
+  [ptr] confirm dialog after START NEW CONQUEST on a won land: True ('WWI, are                you sure you want to    delete all o')
+  [ptr] [   23s vbl 25263] island clicked
+  [ptr] [   29s vbl 25559] 3D map view, world counter ticking
+GATE ptr/ste-1.62-1024K map view (3rd land) PASS counter 64
+GATE ptr/ste-1.62-1024K payload@round3 PASS unchanged
+GATE ptr/ste-1.62-1024K hi@round3 PASS pattern / constants: 0 of 267264 bytes changed in $b0000-$bbfff, $c1c00-$f6fff
+GATE ptr/ste-1.62-1024K cache cursor@round3 PASS [$2cfda] = $af658 (limit $b0000, 0 = no cache)
+LOADER 9:D439 0:D92 2:D78 3:D99 4:D86 5:D118 16:D+188 10:D+236 11:D180 1:D+122 8:D+92 1:c7 8:c7 1:c6 8:c7 14:D+168 16:c1 10:c13 11:D184 1:c7 8:c7 15:D+124 16:c0 10:c13 11:D188 1:c7 8:c7
+LOADER legend: n:D = loaded from the disk, n:c = from the cache; + = cached (cursor store), S = cap skip; number = VBLs call to return
+GATE ptr/ste-1.62-1024K loader: every cacheable resource (1 8 10 14 15 16) came from the disk at most once PASS disk loads per resource {1: 1, 8: 1, 10: 1, 14: 1, 15: 1, 16: 1}
+GATE ptr/ste-1.62-1024K loader: cache hits are fast (<= 40 VBL) PASS 12 cache hits, slow []
+GATE ptr/ste-1.62-1024K cap normal: no skip (M3a) PASS 0 skip(s)
+CELL DONE ptr/ste-1.62-1024K: OK (517s)
