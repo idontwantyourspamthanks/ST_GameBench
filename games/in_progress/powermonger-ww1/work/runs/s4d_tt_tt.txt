@@ -1,0 +1,34 @@
+[   23s vbl 1498] name prompt
+[   29s vbl 1830] option screen (typing attempt 1)
+[   64s vbl 3944] no disk requester
+[   67s vbl 4111] chart expected
+[   90s vbl 5530] island clicked
+[   96s vbl 5884] 3D map view, world counter ticking
+GATE tt_low_tt map view PASS counter 68
+GATE tt_low_tt tooltip hook alive PASS state (60, 24, 0, 0, 1) MAG $50544950
+GATE tt_low_tt key labels flag follows qol_keys PASS KF = 1, qol_keys in the build: True
+GATE tt_low_tt font in RAM == the file-derived resident image PASS 0 bytes differ
+GATE tt_low_tt palette: colour 0 black, text colours 2..5 differ from each other and from black PASS [(0, 0, 0), (68, 68, 34), (102, 102, 68), (136, 136, 102), (170, 170, 136), (204, 204, 170)]
+GATE tt_low_tt id  3 Get Food level 2 swords hover state PASS pointer (202,181) id 3 want 3, KEY $10d want $10d (posture word 3, level 1, keys True)
+GATE tt_low_tt id  3 Get Food level 2 swords the hook wrote exactly one buffer PASS changed a=True b=False
+GATE tt_low_tt id  3 Get Food level 2 swords footprint PASS 242 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_low_tt id  3 Get Food level 2 swords the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_low_tt id  3 Get Food level 2 swords pixels == reference rendering PASS text "Get Food (F): take 50% of a town's rations": 0 of 624 bytes differ
+GATE tt_low_tt id  3 Get Food level 2 swords registers and stack pointer preserved PASS differences {}
+GATE tt_low_tt id  3 Get Food level 2 swords displayed buffer pixels == reference PASS base $25200, 0 bytes differ
+Traceback (most recent call last):
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1/tools/wwtt.py", line 519, in run_gate
+    full(f"id {i:2d} {TABLE[i][0]} level {lv + 1} sword{'s' if lv else ''}", i, x, y, tag=f"id{i}_lv{lv}" if i in (3, 6, 2, 28, 30, 14, 7, 32) else None)
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1/tools/wwtt.py", line 505, in full
+    probe(h, live, g, name, x, y, pal, keys_on, shot=shot)
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1/tools/wwtt.py", line 405, in probe
+    rgb, uni = screen_crop_rgb(Path(shot), 112, 320, 0, 6)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1/tools/wwtt.py", line 293, in screen_crop_rgb
+    px = [im.getpixel((96 + 2 * x + dx, 58 + 2 * y + dy)) for dy in (0, 1) for dx in (0, 1)]
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ryan/.pyenv/versions/3.12.12/lib/python3.12/site-packages/PIL/Image.py", line 1766, in getpixel
+    return self.im.getpixel(tuple(xy))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+IndexError: image index out of range
+CELL DONE tt_low_tt: FAIL (exception)

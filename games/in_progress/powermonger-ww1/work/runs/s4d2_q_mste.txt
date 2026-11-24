@@ -1,0 +1,58 @@
+  [q_mste] [   23s vbl 1502] name prompt
+  [q_mste] [   29s vbl 1832] option screen (typing attempt 1)
+GATE q_mste/megaste-2.06-4096K marker PASS $727f8 = b'PMPO' (want b'PMPO')
+GATE q_mste/megaste-2.06-4096K site fal_ym PASS $1bcb8 = 03c88df101888df1 (want 03c88df101888df1 = original: Falcon-only site, this is not a Falcon)
+GATE q_mste/megaste-2.06-4096K site p3b_delta PASS $13e3c = 4eb900073e00 (want 4eb900073e00)
+GATE q_mste/megaste-2.06-4096K site p3b_interp PASS $13e1e = 4eb900073c00 (want 4eb900073c00)
+GATE q_mste/megaste-2.06-4096K site p4_clamp PASS $ed6 = 4eb900075c004e714e71 (want 4eb900075c004e714e71)
+GATE q_mste/megaste-2.06-4096K site pm_cachecap PASS $e3f2 = 4eb900075800 (want 4eb900075800)
+GATE q_mste/megaste-2.06-4096K site pm_credit PASS $14baa = 4eb900072800 (want 4eb900072800)
+GATE q_mste/megaste-2.06-4096K site pm_nokeydisk PASS $13cec = 4e714e714e71 (want 4e714e714e71)
+GATE q_mste/megaste-2.06-4096K site pm_noprot PASS $15998 = 0000002c (want 0000002c)
+GATE q_mste/megaste-2.06-4096K site pm_noprot_box PASS $bbd2 = 4e754e714e71 (want 4e754e714e71)
+GATE q_mste/megaste-2.06-4096K site pm_tooltip PASS $13e18 = 4eb900073400 (want 4eb900073400)
+GATE q_mste/megaste-2.06-4096K site qol_hover PASS $13e2a = 4eb900074b00 (want 4eb900074b00)
+GATE q_mste/megaste-2.06-4096K site qol_hover2 PASS $12ee0 = 4eb900073940 (want 4eb900073940)
+GATE q_mste/megaste-2.06-4096K site qol_keys PASS $13e70 = 4eb900072c00 (want 4eb900072c00)
+GATE q_mste/megaste-2.06-4096K site qol_keys2 PASS $f30 = 4eb900073100 (want 4eb900073100)
+GATE q_mste/megaste-2.06-4096K site snd_core PASS $1c4de = 4eb900076400 (want 4eb900076400)
+GATE q_mste/megaste-2.06-4096K site snd_setup PASS $6de = 4eb90007640c4e714e71 (want 4eb90007640c4e714e71)
+GATE q_mste/megaste-2.06-4096K site snd_start PASS $1bbbc = 4ef900076404 (want 4ef900076404)
+GATE q_mste/megaste-2.06-4096K site snd_stop PASS $1bb96 = 4ef9000764084e714e71 (want 4ef9000764084e714e71)
+GATE q_mste/megaste-2.06-4096K site tick_click PASS $7e6 = 00072aa0 (want 00072aa0)
+GATE q_mste/megaste-2.06-4096K site tick_click2 PASS $842 = 00072aa0 (want 00072aa0)
+GATE q_mste/megaste-2.06-4096K site tick_click3 PASS $144b4 = 00072aa0 (want 00072aa0)
+GATE q_mste/megaste-2.06-4096K site tick_head PASS $13da0 = 4eb900072900 (want 4eb900072900)
+GATE q_mste/megaste-2.06-4096K site tick_men PASS $13e36 = 4eb900072a60 (want 4eb900072a60)
+GATE q_mste/megaste-2.06-4096K site tick_pass PASS $13de8 = 4eb900072a004e71 (want 4eb900072a004e71)
+GATE q_mste/megaste-2.06-4096K site tick_rain PASS $13e24 = 4eb900072ac0 (want 4eb900072ac0)
+GATE q_mste/megaste-2.06-4096K site tt_ptr PASS $e20 = 4eb900075a40 (want 4eb900075a40)
+GATE q_mste/megaste-2.06-4096K payload@options PASS unchanged
+GATE q_mste/megaste-2.06-4096K credit visible PASS rows 194-199: 780 px of colours [(102, 102, 68)]
+GATE q_mste/megaste-2.06-4096K boot PASS 46s
+GATE q_mste/megaste-2.06-4096K noprot flag PASS $15998 = $0000002c (want $0000002c) before the first land
+  [q_mste] [   34s vbl 5124] no disk requester
+  [q_mste] [   37s vbl 5292] chart expected
+  [q_mste] [   61s vbl 6709] island clicked
+  [q_mste] [   67s vbl 7063] 3D map view, world counter ticking
+GATE q_mste/megaste-2.06-4096K noprot: the check never ran PASS hits $acc4:0, $ae20:0, $b232:0, $b39c:0
+GATE q_mste/megaste-2.06-4096K noprot: 'Please wait' box skipped (stub reached) PASS $bbd2 reached 1x (an `rts` stub)
+GATE q_mste/megaste-2.06-4096K nokeydisk: the key-disk routine never ran, the flow went on PASS $1cf7c hit 0x, next instruction $13cf2 hit 1x; the Powermonger disk was never inserted
+GATE q_mste/megaste-2.06-4096K map view PASS counter 65, flag $15998 = $0000002c
+GATE q_mste/megaste-2.06-4096K payload@map PASS unchanged
+GATE q_mste/megaste-2.06-4096K pm_mste: speed / cache register $ff8e21 PASS $03 (want $03: Mega STE 16 MHz + cache, STE unmapped, ST nothing)
+GATE q_mste/megaste-2.06-4096K tt_ptr: LIVE flag PASS $00
+GATE q_mste/megaste-2.06-4096K core: FALCON flag ($727f4, _MCH cookie high word 3) PASS $00 on megaste
+GATE q_mste/megaste-2.06-4096K snd_core: FLAGS (DMA sound probe) PASS $3 (STE-class 3, plain ST 6)
+GATE q_mste/megaste-2.06-4096K snd_core: the DMA plays a chunk (play bit $ff8901.0 seen in 60 s) PASS bit seen True, SV busy ff, sequencer active 01, chunk busy ff
+  [q_mste] requester: insert the save game disk
+GATE q_mste/megaste-2.06-4096K save/load: loaded state == saved state PASS 101376 B: 0 differ
+GATE q_mste/megaste-2.06-4096K save/load: the world moved between save and load PASS saved vs the state just before the load: 194 differ
+GATE q_mste/megaste-2.06-4096K save/load: save disk slot A == saved state PASS sectors 1-198 equal: True, slot flag $ff, image 409600 B
+GATE q_mste/megaste-2.06-4096K save/load: the game runs on after the load PASS 
+GATE q_mste/megaste-2.06-4096K payload@saveload PASS unchanged
+GATE q_mste/megaste-2.06-4096K lose picture PASS non-black 0.69, 16 colours, seen stable x3; cache cursor $9fc58 -> $a7958
+GATE q_mste/megaste-2.06-4096K lose picture still there after 8 s PASS non-black 0.69, 16 colours
+GATE q_mste/megaste-2.06-4096K payload@lose PASS unchanged
+GATE q_mste/megaste-2.06-4096K back to option screen PASS 
+CELL DONE q_mste/megaste-2.06-4096K: OK (312s)

@@ -287,10 +287,11 @@ def screen_crop_rgb(png: Path, x0, x1, y0, y1):
     from PIL import Image
     im = Image.open(png).convert("RGB")
     out, uniform = [], True
+    ox, oy = (0, 0) if im.width == 640 else (96, 58)          # TT / Falcon (borders off) shots: 640 wide, picture at (0,0)
     for y in range(y0, y1):
         row = []
         for x in range(x0, x1):
-            px = [im.getpixel((96 + 2 * x + dx, 58 + 2 * y + dy)) for dy in (0, 1) for dx in (0, 1)]
+            px = [im.getpixel((ox + 2 * x + dx, oy + 2 * y + dy)) for dy in (0, 1) for dx in (0, 1)]
             uniform &= len(set(px)) == 1
             row.append(px[0])
         out.append(row)
@@ -474,7 +475,7 @@ def run_gate(a) -> int:
     g = Gate(a.tag)
     SHOTS.mkdir(parents=True, exist_ok=True)
     cen, extra = hover_points()
-    kw = dict(disk=Path(a.disk), workdir=a.workdir, machine=a.machine, tos=pmww.TOS[a.tos], memsize_kb=a.mem)
+    kw = dict(disk=Path(a.disk), workdir=a.workdir, machine=a.machine, tos=pmww.TOS[a.tos], memsize_kb=a.mem, extra=a.extra.split())
     if a.snapshot:
         kw["snapshot"] = a.snapshot
     h = pmww.PMW(**kw)
@@ -603,6 +604,7 @@ def main():
     g.add_argument("--machine", default="ste")
     g.add_argument("--tos", default="1.62")
     g.add_argument("--mem", type=int, default=1024)
+    g.add_argument("--extra", default="", help='extra Hatari options, e.g. "--mmu true --cpuclock 32 --monitor vga" (TT) or "--borders false" (Falcon)')
     g.add_argument("--tag", default="tt")
     g.add_argument("--quick", action="store_true", help="a few icons at the neutral posture, the erase, live level and window checks (other machines)")
     g.add_argument("--shots", action="store_true", help="a screenshot per probe (the pixel comparison of the screenshot is always done)")

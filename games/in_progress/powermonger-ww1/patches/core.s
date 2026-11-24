@@ -96,6 +96,7 @@ img:                                    ; payload records start here (not assemb
 init:   movem.l d0-d7/a0-a6,-(a7)
         bsr.w   cacroff
         bsr.w   falcon
+        bsr.w   ttlow
         lea     INITTBL.l,a2
         bra.s   tbl
 uinit:  movem.l d0-d7/a0-a6,-(a7)
@@ -160,6 +161,33 @@ falcon: clr.b   FALCON.l
         cmpi.w  #3,d1
         bne.s   .r
         st      FALCON.l
+        ; Falcon: the desktop may be a VGA 640 x 480 (or other) mode: Vsetmode(-1) reads the mode, Vsetmode(ST-compatible, 16 colours, 320 x 200, keeping the VGA / PAL bits)
+        move.w  #-1,-(a7)
+        move.w  #88,-(a7)               ; Vsetmode
+        trap    #14
+        addq.l  #4,a7
+        andi.w  #$30,d0                 ; keep VGA ($10) and PAL ($20)
+        ori.w   #$82,d0                 ; ST compatible, 4 bit planes, 40 columns
+        move.w  d0,-(a7)
+        move.w  #88,-(a7)
+        trap    #14
+        addq.l  #4,a7
+.r:     rts
+
+; TT: TOS 3.06's default desktop is TT medium (640 x 480, 4 bit): the ST-low game would be shown 2 x 2 tiled.  `ttlow` (_MCH cookie high word 2) writes the TT shifter mode
+; $ffff8262 = 0 = ST low before the game's first instruction; the game then sets its own screen base and palette ($ff8240).
+ttlow:  move.l  $5a0.w,d0
+        beq.s   .r
+        movea.l d0,a0
+.l:     move.l  (a0)+,d0
+        beq.s   .r
+        move.l  (a0)+,d1
+        cmpi.l  #'_MCH',d0
+        bne.s   .l
+        swap    d1
+        cmpi.w  #2,d1
+        bne.s   .r
+        clr.b   $ffff8262.w
 .r:     rts
 
         org     $72140
