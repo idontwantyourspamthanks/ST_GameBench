@@ -58,7 +58,8 @@ VOLUME = "GAMES"
 
 # folder on C: -> game; versions/requirements for README.TXT are taken from the builds where possible (see readme_text)
 FOLDERS = ("MIDWINTR", "MW1ORIG", "MIDWINT2", "MW2ORIG", "MOONSHR", "HUNTER", "HUNTORIG", "NEBULUS", "NEBORIG", "POWERMON", "POPULOUS",
-           "POPORIG", "POPS2", "POP2ORIG", "AUTO")
+           "POPORIG", "POPS2", "POP2ORIG", "FLOOD", "AUTO")
+FLOOD_VERSION = "1.0"                                   # the shipped release zip games/done/flood/dist/Flood_hd_v<this>.zip
 
 
 def run(cmd, cwd=None, quiet=True, env=None):
@@ -162,6 +163,21 @@ def build_orig(src: Path, name: str) -> Path:
         if p.name in ("alt", "build", "dist", "patches", "tools", "work", "originals", "tos") or p.suffix.lower() == ".md":
             continue
         (shutil.copytree if p.is_dir() else shutil.copy2)(p, dst / p.name)
+    return dst
+
+
+def build_flood() -> Path:
+    r"""Flood: the shipped HD release (`dist/Flood_hd_v<FLOOD_VERSION>.zip`, made by its tools/package_flood.py), whose FLOOD\
+    folder is copied as it is: FLO.PRG + the game's files + AM_MUS.BIN / AM_SFX.BIN (Amiga sound) + README.TXT."""
+    import zipfile
+    dst = STAGE / "FLOOD"
+    shutil.rmtree(dst, ignore_errors=True)
+    tmp = STAGE / "flood_zip"
+    shutil.rmtree(tmp, ignore_errors=True)
+    with zipfile.ZipFile(GAMES / "flood" / "dist" / f"Flood_hd_v{FLOOD_VERSION}.zip") as z:
+        z.extractall(tmp)
+    shutil.move(tmp / "FLOOD", dst)
+    shutil.rmtree(tmp)
     return dst
 
 
@@ -276,6 +292,7 @@ BUILDERS = {"MIDWINTR": build_midwinter, "MOONSHR": build_moonshine, "MW1ORIG": 
             "POWERMON": build_powermonger, "POPULOUS": build_populous,
             "POPORIG": lambda: build_orig(GAMES / "populous" / "originals" / "POPULOUS", "POPORIG"),
             "POPS2": build_populous2, "POP2ORIG": lambda: build_orig(GAMES / "populous-2" / "originals" / "POPUL2", "POP2ORIG"),
+            "FLOOD": build_flood,
             "AUTO": build_auto}
 
 
@@ -340,6 +357,7 @@ a 3-second question about Powermonger at boot.
   C:\POPORIG   Populous (original)    double-click RUNME.TOS     PP's release, unpatched
   C:\POPS2     Populous 2             double-click RUNME.TOS     {vers['POPS2']}
   C:\POP2ORIG  Populous 2 (original)  double-click RUNME.TOS     PP's release, unpatched
+  C:\FLOOD     Flood                  double-click FLO.PRG       v{FLOOD_VERSION}
 
 Boot: HDDRIVER banner, then "Powermonger? P = start, else desktop". Press
 P within 3 seconds to start Powermonger; any other key (or waiting) goes
@@ -366,6 +384,8 @@ Requirements
  - Populous needs 1 MB; on a TT start it from the desktop (it runs from
    this disk there). Populous 2 needs 2 MB (Mega STE / TT, or an STE with
    2 MB or more).
+ - Flood: STE, Mega STE, TT or Falcon for the Amiga music and sound (DMA
+   sound) and the blitter scrolling; a plain ST plays the original YM sound.
  - Tested in the Hatari emulator only (STE, Mega STE, TT; Hunter also on a
    plain ST). On a TT the Midwinters need the PMMU (Hatari: --mmu true, as
    run_tt.sh does); PP's unpatched Midwinter does not start on a TT.
@@ -482,6 +502,7 @@ def versions() -> dict[str, str]:
         v["POWERMON"] = f"v{m.group(1)}" if m else "patched"
     except OSError:
         v["POWERMON"] = "patched"
+    v["FLOOD"] = f"v{FLOOD_VERSION}"
     return v
 
 
@@ -512,12 +533,14 @@ def layout_text(img: Path, tgt: str, total: int, psz: int, folders: dict[str, Pa
            "NEBULUS": "Nebulus (Gamex by PP, patched; NEPATCH.BIN = patch code)", "NEBORIG": "Nebulus (Gamex by PP, unpatched, for comparison)",
            "HUNTORIG": "Hunter (Gamex by PP, unpatched, for comparison)", "POPORIG": "Populous (HAGA by PP, unpatched, for comparison)",
            "POP2ORIG": "Populous 2 (HAGA by PP, unpatched, for comparison)",
+           "FLOOD": "Flood (shipped HD release, patched FLO.PRG + Amiga sound files)",
            "AUTO": "boot prompt PMBOOT.PRG (tools/hd_pmboot.s): P = start Powermonger, any other key / 3 s = desktop"}
     for name, src in folders.items():
         n = sum(1 for p in src.rglob("*") if p.is_file())
         t.append(f"  {name + chr(92):<14} {why[name]}: {n} files, {tree_kb(src)} KB" + (f", {VERSIONS[name]}" if name in VERSIONS else ""))
     t += ["", "Start of the games: see README.TXT in the root (Powermonger: press P at the boot prompt; the others: double-click",
-          "  MIDWINTR\\RUNME.TOS, MIDWINT2\\RUNME.TOS, MOONSHR\\RUNME.TOS, POPULOUS\\RUNME.TOS, POPS2\\RUNME.TOS, HUNTER\\START.TOS, NEBULUS\\START.TOS on the desktop).", "",
+          "  MIDWINTR\\RUNME.TOS, MIDWINT2\\RUNME.TOS, MOONSHR\\RUNME.TOS, POPULOUS\\RUNME.TOS, POPS2\\RUNME.TOS, HUNTER\\START.TOS, NEBULUS\\START.TOS,",
+          "  FLOOD\\FLO.PRG on the desktop).", "",
           "Use",
           f"  real disk / SD card (ACSI2STM, UltraSatan, SCSI2SD + ACSI/SCSI bridge, ...): dd if={img.name} of=/dev/sdX bs=1M conv=fsync",
           "    (check the target device first; a bigger card works, the rest stays unpartitioned)",
