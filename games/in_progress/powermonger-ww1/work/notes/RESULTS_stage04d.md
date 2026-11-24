@@ -103,3 +103,22 @@ GATE interp interp16 16 MHz people table restored ... PASS 250 of 250 (passes wi
 GATE interp interp16 16 MHz passes with offsets applied (T0 != TMID) PASS 250 of 250   (from 16b: offsets touch only the low bytes of x / z PASS 0 records with other bytes changed; 118 distinct drawn x low bytes)
 ```
 Default-set regressions (section 2, with p3b_* loaded) passed on ST / STE / Mega STE.
+
+## 5. HD build (`build/s4d_hd`: `wwpatch.py build --hd --floppy`, hd_* + default set; AUTO\WW1.PRG 86259 B, SAVEDISK.DAT)
+Cell = `wwgate.py cell --hd build/s4d_hd/hd [--acsi] --fill-hi --trace --steps boot,map,hw,saveload,lose,win,round3`, cold boot -> name prompt -> map -> save/load (SAVEDISK.DAT via hd_sector) -> RETIRE lose -> win -> round 3. `work/runs/s4d_hd_*.txt`:
+```
+CELL DONE ste_gemdos/ste-1.62-1024K-hd: OK (443s)          (Hatari GEMDOS folder)
+CELL DONE ste_acsi/ste-1.62-1024K-hd-acsi: OK (448s)       (real ACSI image + HDDRIVER, TOS's own GEMDOS)
+CELL DONE mste_gemdos/megaste-2.06-4096K-hd: OK (429s)
+CELL DONE mste_acsi/megaste-2.06-4096K-hd-acsi: OK (507s)
+```
+each with `save/load: loaded state == saved state PASS 101376 B: 0 differ`, lose / win pictures stable and still there after 8 s, `hi@...` PASS (STE: `0 of 148480 bytes changed in $b0000-$bbfff, $c1c00-$c1fff, $df000-$f6fff`), loader checks. (`grep FAIL` on the four files: see the run files; the CELL lines are OK.)
+**Falcon HD via the GEMDOS folder: NOT passing** [obs `s4d_hd_fal_gemdos.txt`]: boot, map view, `snd_core` DMA PASS, then `RuntimeError: the load never returned` in `saveload_hd` / `CELL FAILED fal_gemdos/falcon-4.04-4096K-hd`. Not investigated (Falcon HD through a real disk is untestable in Hatari, `--acsi` ignored by TOS 4.04; whether this is the harness's Falcon click geometry or the game's load is unknown [INFERENCE: harness]).
+
+## 6. TT / Falcon video mode (lead's request after a user report: TT shows the 2 x 2 tiled picture from the TOS 3.06 desktop)
+core.s `init` now calls `ttlow` (TT: `clr.b $ffff8262.w` = ST low, `_MCH` high word 2) and, in `falcon` (Falcon only), `Vsetmode(-1)` then `Vsetmode((old & $30) | $82)` (keep VGA / PAL bits; ST compatible, 4 planes, 40 columns). Build `build/s4d_tt2` (default set); `s4d_tt` = TT part only.
+* Before (build `s4d_tt` on the Falcon with `--monitor vga`, `work/shots/stage02/fal_vga_falcon_map.png` of the first run): the map view is noise (tiled / garbled picture) although the old cell said `map view PASS` / `CELL DONE ... OK`: **the cells do not judge the picture; the screenshots do.**
+* TT 4 MB TOS 3.06 `--mmu true --cpuclock 32 --monitor vga`, default TT-medium desktop (`s4d2_tt_cell.txt`): `CELL DONE tt_low/tt-3.06-4096K: OK (130s)` (boot, credit, map, hw: `tt_ptr: LIVE flag PASS $ff`, DMA plays); screenshots `tt_low_tt_options.png` / `tt_low_tt_map.png`: correct picture, credit line, pointer, status panel (read by me). Pointer (`s4d_tt_ptr.txt`): `FLIPS tt_low tt: at 120 flip returns ... inside the new displayed buffer in 120`, `PTR tt_low tt TOS 3.06: visible in 24 of 24 screenshots`.
+* TT tooltips pixel-exact (`wwtt.py` now handles 640-wide TT / Falcon shots and has `--extra`; `s4d2_tt_tt.txt`): `TOOLTIP GATE tt_low_tt: 116 lines PASS, 0 FAIL`, `CELL DONE tt_low_tt: OK`.
+* Falcon VGA (`--monitor vga`) and RGB (`s4d2_fal_vga.txt`, `s4d2_fal_rgb.txt`): both `CELL DONE ...: OK (137s)`; map screenshots after the fix are pixel-identical between RGB and VGA (0 of 256000 px differ over the 640 x 400 picture area; `fal_vga_falcon_map.png` read by me: correct picture) and match the TT picture except 328 px (animation / pointer).
+* ST / STE / Mega STE unaffected: quick cells on `s4d_tt2` below (s4d2_q_*.txt).
