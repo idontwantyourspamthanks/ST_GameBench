@@ -1,0 +1,26 @@
+## map_idle 8 MHz
+machine ste
+base set    : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri p6_cpy
+patched set : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri p6_cpy p7_triple_wait p7_triple_flip p7_triple_tail
+ste_map_idle ste @8 MHz: IDENTICAL (back frames matched 77, shown+pointer matched 55, flips captured 89/86) | work/pass 1202803 -> 1215600 (+12797, +1.06 %, n 86/89) | paired 1206877 -> 1222385 (+1.28 %, n 77) | world ticks/s 4.044 -> 4.056 | flips 86 -> 89 fps 6.324 -> 6.563 (+3.8 %) | world state ($44c3e..) identical in 77 frames, differing only in render-only frames: 0 | same-tick consecutive R frames identical: base 0/0, patched 0/0
+ALL IDENTICAL
+## get_men 8 MHz
+machine ste
+base set    : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri p6_cpy
+patched set : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri p6_cpy p7_triple_wait p7_triple_flip p7_triple_tail
+ste_get_men ste @8 MHz: DIFFER (back frames matched 56, shown+pointer matched 49, flips captured 60/59) | work/pass 1749238 -> 1768769 (+19531, +1.12 %, n 59/60) | paired 1752604 -> 1772357 (+1.13 %, n 56) | world ticks/s 3.961 -> 4.009 | flips 59 -> 60 fps 4.410 -> 4.539 (+2.9 %) | world state ($44c3e..) identical in 56 frames, differing only in render-only frames: 0 | same-tick consecutive R frames identical: base 0/0, patched 0/0
+    p0:   BACK DIFFER key (tick 292, R) patched flip 34 / base flip 33: 57 B differ, rows 88-98, 16-px columns 18-18
+    p0:   SHOWN DIFFER (pointer 229,173) patched flip 35 / base flip 34: 57 B differ, rows 88-98, 16-px columns 18-18
+MISMATCH
+## random 8 MHz
+machine ste
+base set    : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri p6_cpy
+patched set : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri p6_cpy p7_triple_wait p7_triple_flip p7_triple_tail
+ste_random ste @8 MHz: IDENTICAL (back frames matched 59, shown+pointer matched 43, flips captured 67/66) | work/pass 1570282 -> 1575998 (+5716, +0.36 %, n 66/67) | paired 1583308 -> 1592661 (+0.59 %, n 59) | world ticks/s 4.015 -> 4.032 | flips 66 -> 67 fps 4.818 -> 4.912 (+2.0 %) | world state ($44c3e..) identical in 59 frames, differing only in render-only frames: 0 | same-tick consecutive R frames identical: base 0/0, patched 0/0
+ALL IDENTICAL
+## 16 MHz get_men tonly
+machine ste
+base set    : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri p6_cpy
+patched set : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri p6_cpy p7_triple_wait p7_triple_flip p7_triple_tail
+ste_get_men ste @16 MHz: IDENTICAL (back frames matched 56, shown+pointer matched 0, R frames differing (allowed) 9, flips captured 132/115) | work/pass 1661941 -> 1670949 (+9008, +0.54 %, n 115/132) | paired 1692332 -> 1705317 (+0.77 %, n 56) | world ticks/s 4.020 -> 3.997 | flips 115 -> 132 fps 8.406 -> 9.593 (+14.1 %) | world state ($44c3e..) identical in 56 frames, differing only in render-only frames: 0 | same-tick consecutive R frames identical: base 2/4, patched 11/20
+ALL IDENTICAL

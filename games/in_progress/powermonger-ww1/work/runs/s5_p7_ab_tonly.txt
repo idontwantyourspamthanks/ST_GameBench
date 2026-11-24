@@ -1,0 +1,6 @@
+## get_men 8 MHz tonly (R frames informational)
+machine ste
+base set    : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri p6_cpy
+patched set : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri p6_cpy p7_triple_wait p7_triple_flip p7_triple_tail
+ste_get_men ste @8 MHz: IDENTICAL (back frames matched 54, shown+pointer matched 45, R frames differing (allowed) 1, flips captured 60/59) | work/pass 1749240 -> 1768730 (+19490, +1.11 %, n 59/60) | paired 1754700 -> 1774457 (+1.13 %, n 54) | world ticks/s 3.961 -> 4.009 | flips 59 -> 60 fps 4.410 -> 4.539 (+2.9 %) | world state ($44c3e..) identical in 54 frames, differing only in render-only frames: 0 | same-tick consecutive R frames identical: base 0/0, patched 0/0
+ALL IDENTICAL

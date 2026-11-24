@@ -354,10 +354,13 @@ def cell(a):
                     g.line("p4_spr: cache initialised (HDR $df000 = 'PRE0')", hdr == 0x50524530, f"${hdr:08x}")
             if "p7_triple_wait" in man["patches"]:
                 seen = set()
-                for _ in range(12):
-                    seen.add(h.peekl(0x2ED98))
-                    seen.add(h.peekl(0x2ED9C))
-                    time.sleep(0.5)
+                for _ in range(40):                              # one debugger read of both pointers ([$2ed98] shown/latest, [$2ed9c] drawing): atomic (peekl is two reads 0.6 s apart)
+                    out = h.debug("m $2ed98 8", 0.6)
+                    m = re.search(r"0002ED98:\s+((?:[0-9a-f]{2}\s+){7}[0-9a-f]{2})", out, re.I)
+                    if m:
+                        bs = bytes(int(x, 16) for x in m.group(1).split())
+                        seen.add(int.from_bytes(bs[:4], "big"))
+                        seen.add(int.from_bytes(bs[4:], "big"))
                 g.line("p7_triple: the three buffers rotate ($1d500 / $25200 / $b0000 all seen as shown or drawing)", {0x1D500, 0x25200, 0xB0000} <= seen, "seen " + " ".join(f"${v:x}" for v in sorted(seen)))
         if "rate" in steps:
             import wwtick

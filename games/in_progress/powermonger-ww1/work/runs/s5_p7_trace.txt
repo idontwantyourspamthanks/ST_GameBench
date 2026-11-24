@@ -1,0 +1,14 @@
+## trace map_idle
+TRACE ste_map_idle ste 8 MHz 700 VBL, set p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri p6_cpy p7_triple_wait p7_triple_flip p7_triple_tail: draw intervals 90, VBLs inside 682, violations 0, (L,D) at flip entry {('A', 'B'): 30, ('B', 'C'): 30, ('C', 'A'): 29}, VBLs between flips min/max/mean 7/8/7.73 -> PASS
+## trace get_men
+TRACE ste_get_men ste 8 MHz 700 VBL, set p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri p6_cpy p7_triple_wait p7_triple_flip p7_triple_tail: draw intervals 61, VBLs inside 673, violations 0, (L,D) at flip entry {('A', 'B'): 20, ('B', 'C'): 20, ('C', 'A'): 20}, VBLs between flips min/max/mean 10/12/11.24 -> PASS
+## trace random
+TRACE ste_random ste 8 MHz 700 VBL, set p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri p6_cpy p7_triple_wait p7_triple_flip p7_triple_tail: draw intervals 64, VBLs inside 669, violations 0, (L,D) at flip entry {('A', 'C'): 21, ('B', 'A'): 21, ('C', 'B'): 21}, VBLs between flips min/max/mean 8/12/10.98 -> PASS
+## control: test_nowait (double buffer, loop-head wait removed), violations expected
+TRACE ste_get_men ste 8 MHz 700 VBL, set p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri p6_cpy test_nowait: draw intervals 61, VBLs inside 673, violations 51, (L,D) at flip entry {('A', 'B'): 30, ('B', 'A'): 30}, VBLs between flips min/max/mean 10/12/11.24 -> PASS
+   violation (8229, 'draw start', 'drawing into A while scanned A / pointer buffer B')
+   violation (8240, 'draw start', 'drawing into B while scanned B / pointer buffer A')
+   violation (8251, 'draw start', 'drawing into A while scanned A / pointer buffer B')
+   violation (8262, 'draw start', 'drawing into B while scanned B / pointer buffer A')
+   violation (8273, 'draw start', 'drawing into A while scanned A / pointer buffer B')
+   violation (8284, 'draw start', 'drawing into B while scanned B / pointer buffer A')

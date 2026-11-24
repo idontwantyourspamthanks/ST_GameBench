@@ -35,7 +35,7 @@ KF = 0x730C8
 HOOK_ENTRY, HOOK_EXIT = 0x73400, 0x18570
 POSTURE_WORD = lambda sel: 0x5574E + sel + 0x3C      # + [$5a834]
 SEL = 0x5A834
-SCREEN_A, SCREEN_B = 0x1D500, 0x25200
+SCREEN_A, SCREEN_B, SCREEN_C = 0x1D500, 0x25200, 0xB0000      # C = the third buffer of p7_triple (idle / unchanged in a double-buffer build)
 SHOTS = ROOT / "work" / "shots" / "stage03"
 
 IDS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23] + list(range(24, 33))   # the 29 ids that have a text (ET has 33 words, 4 blank)
@@ -319,11 +319,11 @@ class Live:
         tag = f"cap{self.n}"
         files = {}
         for ph in ("in", "out"):
-            files[ph] = [h.R / f"{tag}_{ph}_{k}.bin" for k in "ab"]
+            files[ph] = [h.R / f"{tag}_{ph}_{k}.bin" for k in "abc"]
             for f in files[ph]:
                 f.unlink(missing_ok=True)
             extra = "m $ff8201 1\nm $ff8203 1\n" if ph == "out" else ""
-            (h.R / f"{tag}_{ph}.txt").write_text(f"savebin {files[ph][0]} ${SCREEN_A:x} 32000\nsavebin {files[ph][1]} ${SCREEN_B:x} 32000\nr\n{extra}")
+            (h.R / f"{tag}_{ph}.txt").write_text(f"savebin {files[ph][0]} ${SCREEN_A:x} 32000\nsavebin {files[ph][1]} ${SCREEN_B:x} 32000\nsavebin {files[ph][2]} ${SCREEN_C:x} 32000\nr\n{extra}")
         h.debug("b all", 0.3)
         mark = len(h._logtext())
         h.cmd(f"hatari-debug b pc = ${HOOK_ENTRY:x} :trace :once :file {h.R}/{tag}_in.txt")
@@ -377,16 +377,18 @@ def probe(h, live, g, name, x, y, pal, keys_on=True, window=False, shot=None):
     text = text_for(TABLE, want_id, level, keys_on) if want_id else " " * NCH
     exp = expected_bytes(text)
     black = bytes(len(exp))
-    a_in, b_in = cap["inn"]
-    a_out, b_out = cap["out"]
+    a_in, b_in, c_in = cap["inn"]
+    a_out, b_out, c_out = cap["out"]
     back_is_a = a_in != a_out
     back_is_b = b_in != b_out
+    back_is_c = c_in != c_out
+    nchg = back_is_a + back_is_b + back_is_c
     if want_id == 0:
-        g.line(f"{name} no tooltip: the hook wrote nothing", not back_is_a and not back_is_b, f"changed buffers a={back_is_a} b={back_is_b}")
+        g.line(f"{name} no tooltip: the hook wrote nothing", nchg == 0, f"changed buffers a={back_is_a} b={back_is_b} c={back_is_c}")
         back_in, back_out = (a_in, a_out)
     else:
-        g.line(f"{name} the hook wrote exactly one buffer", back_is_a != back_is_b, f"changed a={back_is_a} b={back_is_b}")
-        back_in, back_out = (a_in, a_out) if back_is_a else (b_in, b_out)
+        g.line(f"{name} the hook wrote exactly one buffer", nchg == 1, f"changed a={back_is_a} b={back_is_b} c={back_is_c}")
+        back_in, back_out = (a_in, a_out) if back_is_a else (b_in, b_out) if back_is_b else (c_in, c_out)
     # the hook's footprint: every changed byte inside rows 0..5, bytes 56..159
     diff = [i for i in range(32000) if back_in[i] != back_out[i]]
     outside = [i for i in diff if not (i // 160 < 6 and (i % 160) >= 56)]
@@ -397,7 +399,7 @@ def probe(h, live, g, name, x, y, pal, keys_on=True, window=False, shot=None):
     g.line(f"{name} pixels == reference rendering", got == exp, f"text {text.rstrip()!r}: {nbad} of {len(exp)} bytes differ")
     same = {k: v for k, v in cap["regs_in"].items() if cap["regs_out"].get(k) != v}
     g.line(f"{name} registers and stack pointer preserved", not same and len(cap["regs_in"]) == 16, f"differences {same}")
-    front = a_out if cap["base"] == SCREEN_A else b_out if cap["base"] == SCREEN_B else None
+    front = a_out if cap["base"] == SCREEN_A else b_out if cap["base"] == SCREEN_B else c_out if cap["base"] == SCREEN_C else None
     if front is None:
         g.line(f"{name} displayed buffer found", False, f"video base ${cap['base']:x}")
     else:
