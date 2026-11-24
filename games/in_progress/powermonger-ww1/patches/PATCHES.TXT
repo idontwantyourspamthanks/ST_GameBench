@@ -1,0 +1,39 @@
+Powermonger: World War One Edition - patched v@VER@: the patches
+================================================================
+
+The patched game is the EA original (AUTO\WW1.PRG on the disk) with a loader in front of
+it. The loader copies the patch code to $72000-$77FFF and a few tables above $B0000,
+runs the game's unpacker, and when the game is in memory it checks the original bytes
+of every patch site; only if ALL of them are as expected are the patches applied (marker
+"PMPO" at $727F8; "PMPF" = nothing changed, the game starts as the original).
+
+core                loader, hook, machine class (_MCH cookie), CPU caches off on a 68020+,
+                    TT / Falcon video mode
+pm_credit           version line "v@VER@ enhanced by dad_prg" on the main menu
+pm_noprot, pm_noprot_box   no copy-protection question, no "please wait" box
+pm_nokeydisk        no request for the original Powermonger disk on a new conquest
+pm_cachecap         the resource cache stops below the patch code (Retire / win / lose)
+tick_head, tick_pass, tick_men, tick_rain, tick_click, tick_click2, tick_click3
+                    fixed 4 world ticks per second at any frame rate / 50 / 60 Hz;
+                    rain drawn on every frame; clicks last one pass
+p3b_interp, p3b_delta   men walk smoothly between world ticks (fast machines)
+pm_tooltip          hover help in the top bar, with key labels
+qol_hover, qol_hover2   what a town's workshop is making (hover on a town)
+qol_keys, qol_keys2     keys for the command icons, the map icons, rotate and zoom
+p4_clamp            ignore a mouse position outside the screen (IKBD packet parser)
+p4_ptr_a, p4_ptr_b  redraw the mouse pointer only when it moved
+p4_spr              sprite blit: blitter (STE-class) or a pre-shifted cache (plain ST)
+p6_cpy              3D window copy with the blitter / long moves
+p6_slope, p6_tri    faster landscape triangle setup (slope table computed at start)
+p7_triple_wait, p7_triple_flip, p7_triple_tail   third screen buffer, no wait for the refresh
+snd_core, snd_setup, snd_start, snd_stop   sound effects through the DMA sound chip
+                    (STE, Mega STE, TT, Falcon; a plain ST keeps the YM player)
+fal_ym              Falcon only: the game's YM sample player through addresses the Falcon has
+pm_mste             Mega STE only: speed register $FF8E21 = 3 (16 MHz, cache on) unless set
+tt_ptr              TT / Falcon: pointer drawn into the new picture before it is shown
+
+Hard-disk version only:
+hd_core, hd_load, hd_sector, hd_kbd   the game's file loader and its sector driver
+                    replaced by GEMDOS calls (TOS swap, SAVEDISK.DAT as the save disk)
+
+Source and gate notes: games/in_progress/powermonger-ww1/ (patches/*.s, work/notes/).
