@@ -64,6 +64,12 @@ Re-site (cluster +$3e0, ring variable `$ffa2` -> `$10412`, filler base `$e3e2` -
   * cold boot cell (`s5_p6_ste.txt`): line 3 `marker PASS PMPO`; `hi@` PASS at options (35) / map (49) / saveload (60) / lose (65) / win (74) / round3 (82) `0 of 204800 bytes changed` (includes the `$b8000-$bbfff` table vs the Python model); `payload@` PASS everywhere; line 53 world rate 3.995/s; line 55 save/load `0 differ`; line 89 `CELL DONE p6/ste-1.62-1024K: OK (521s)`; 73 PASS lines, 0 FAIL.
   * keys `s5_p6_keys.txt` line 50 `KEYS 39 of 39 key/click pairs identical`, line 61 `CELL DONE p6_keys: OK`; tooltips `s5_p6_tt.txt` line 123 `TOOLTIP GATE p6_tt: 116 lines PASS, 0 FAIL`.
 
+
+## 3b. p6_cpy (`$13a94`; blob `$77000`) on the cold boot build `build/s5_cpy2` (p6 set + p6_cpy; md5 floppy `5d21f7c6...`) - ALL GATES PASS
+* A/B (`work/runs/s5_cpy_ab.txt`, base ptr+spr+slope+tri live, blitter path): STE 8 MHz `map_idle` IDENTICAL (back 71, shown 46) work/pass -2.84 %, fps 6.065 -> 6.324; `get_men` IDENTICAL (54/46) -1.74 %, 4.279 -> 4.410; `random` IDENTICAL (58/43) -2.11 %, 4.720 -> 4.818; 16 MHz `get_men` IDENTICAL -1.73 %. (the copy 163 k -> 133 k cycles = -30 k per pass, as master's design.)
+* IKBD overrun stress (`s5_cpy_stress.txt`, 9000 emulated VBLs, random pointer + keys): get_men `IKBD bytes 83749, overruns 0, bus/address errors 0 ... PASS`; random `bytes 84036, overruns 0 ... PASS`.
+* Regression (`s5_cpy_ste.txt`: `CELL DONE cpy/ste-1.62-1024K: OK (526s)`, 0 FAIL; `s5_cpy_keys.txt` line 50 `KEYS 39 of 39`, line 61 `CELL DONE cpy_keys: OK`; `s5_cpy_tt.txt` line 123 `TOOLTIP GATE cpy_tt: 116 lines PASS, 0 FAIL`).
+
 ## 4. Not done (budget of this run reached)
 * p6_cpy (written, builds, `build/s5_cpy`): needs wwab A/B + `tools/wwstress.py --set ... p6_cpy` (IKBD overrun, test_ovr) + regress.
 * p7_triple_* (written, builds, `build/s5_p7`): needs wwab `--c3 b0000 --state`, `tools/wwtriple.py trace` (+ `--only test_nowait --expect-violations` control), regress, `hw` step (rotation check added to wwgate).

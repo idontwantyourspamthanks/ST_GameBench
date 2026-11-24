@@ -1,0 +1,24 @@
+## map_idle 8 MHz
+machine ste
+base set    : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri
+patched set : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri p6_cpy
+ste_map_idle ste @8 MHz: IDENTICAL (back frames matched 71, shown+pointer matched 46, flips captured 86/82) | work/pass 1238007 -> 1202811 (-35196, -2.84 %, n 82/86) | paired 1244572 -> 1211679 (-2.64 %, n 71) | world ticks/s 3.994 -> 4.044 | flips 82 -> 86 fps 6.065 -> 6.324 (+4.3 %) | same-tick consecutive R frames identical: base 0/0, patched 0/0
+ALL IDENTICAL
+## get_men 8 MHz
+machine ste
+base set    : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri
+patched set : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri p6_cpy
+ste_get_men ste @8 MHz: IDENTICAL (back frames matched 54, shown+pointer matched 46, flips captured 59/57) | work/pass 1780313 -> 1749252 (-31061, -1.74 %, n 57/59) | paired 1783200 -> 1754696 (-1.60 %, n 54) | world ticks/s 3.979 -> 3.961 | flips 57 -> 59 fps 4.279 -> 4.410 (+3.0 %) | same-tick consecutive R frames identical: base 0/0, patched 0/0
+ALL IDENTICAL
+## random 8 MHz
+machine ste
+base set    : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri
+patched set : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri p6_cpy
+ste_random ste @8 MHz: IDENTICAL (back frames matched 58, shown+pointer matched 43, flips captured 66/64) | work/pass 1604112 -> 1570280 (-33832, -2.11 %, n 64/66) | paired 1619763 -> 1588312 (-1.94 %, n 58) | world ticks/s 4.056 -> 4.015 | flips 64 -> 66 fps 4.720 -> 4.818 (+2.1 %) | same-tick consecutive R frames identical: base 0/0, patched 0/0
+ALL IDENTICAL
+## 16 MHz get_men tonly
+machine ste
+base set    : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri
+patched set : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri p6_cpy
+ste_get_men ste @16 MHz: IDENTICAL (back frames matched 56, shown+pointer matched 0, R frames differing (allowed) 0, flips captured 116/116) | work/pass 1691205 -> 1661873 (-29332, -1.73 %, n 116/116) | paired 1722294 -> 1692743 (-1.72 %, n 56) | world ticks/s 3.986 -> 3.986 | flips 116 -> 116 fps 8.406 -> 8.406 (+0.0 %) | same-tick consecutive R frames identical: base 2/5, patched 2/5
+ALL IDENTICAL
