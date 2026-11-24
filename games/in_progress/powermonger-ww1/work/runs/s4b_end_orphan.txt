@@ -1,0 +1,13 @@
+  [   26s vbl 1379] name prompt
+  [   33s vbl 1732] option screen (typing attempt 1)
+  [   68s vbl 3499] no disk requester
+  [   71s vbl 3640] chart expected
+  [  101s vbl 5158] island clicked
+  [  107s vbl 5453] 3D map view, world counter ticking
+GATE end_orphan retire dispatch rewritten: jsr $1b182 -> jsr $1b3a6 PASS 4eb90001b3a6
+GATE end_orphan image@orphan_end FAIL 1880 of 118072 bytes differ from the hand-over image in 32 span(s); spans >= 256 B: $763c-$793d, $120fa-$12425; all: $2073-$2073, $74bb-$74c7, $763c-$793d, $82c5-$82c6, $a38b-$a38b, $d41f-$d42d, $d6de-$d6df, $dbd5-$dbe8, $e2d6-$e2d7, $e431-$e439, $e453-$e45d, $e473-$e473, $e4bf-$e501, $e51f-$e53d, $e554-$e555, $e584-$e585, $e7c3-$e7c5, $f5c2-$f5da, $fc70-$fc77, $1025b-$10273, $10335-$10335, $1040b-$10414, $1194d-$1194d, $120fa-$12425, $1243f-$1243f, $12483-$12483, $13ccd-$13ccd, $1af77-$1af77, $1af96-$1afb3, $1b8fe-$1b900, $1bc9b-$1bc9d, $1d0d0-$1d0d5
+LOADER (after the retire click) 12:D0
+HITS $1b3a6:1, $1b3b2:1
+GATE end_orphan the orphan routine ran PASS $1b3a6 1x, $1b3b2 1x, $1b3cc 0x
+GATE end_orphan WW1 disk only: the requester for the missing file appears (the game would wait for it forever) PASS 'DISK STATUS REQUESTER                                       PLEASE INS' resources [12]
+CELL DONE end_orphan: FAIL

@@ -1,0 +1,16 @@
+  [   26s vbl 1377] name prompt
+  [   33s vbl 1731] option screen (typing attempt 1)
+  [   68s vbl 3499] no disk requester
+  [   71s vbl 3639] chart expected
+  [  101s vbl 5157] island clicked
+  [  107s vbl 5453] 3D map view, world counter ticking
+GATE end_final campaign table $44760..$44837 forced to all ones (sum >= $b1) PASS 
+GATE end_final image@final_end FAIL 2284 of 118072 bytes differ from the hand-over image in 30 span(s); spans >= 256 B: $763c-$793d, $dbd5-$dd68, $120fa-$12425; all: $2073-$2073, $74bb-$74c7, $763c-$793d, $82c5-$82c6, $a389-$a38b, $d41f-$d42d, $dbd5-$dd68, $e2d6-$e2d7, $e431-$e439, $e453-$e45d, $e46f-$e473, $e4bf-$e501, $e51f-$e53d, $e573-$e585, $e7c3-$e7c5, $f5c2-$f5da, $fc70-$fc77, $1025b-$10273, $10335-$10335, $1040b-$10414, $1194d-$1194d, $120fa-$12425, $1243f-$1243f, $12483-$12483, $13ccd-$13ccd, $1af76-$1af77, $1af96-$1afb3, $1b8fe-$1b900, $1bc9b-$1bc9d, $1d0d0-$1d0d5
+LOADER (after the retire click) 15:D+133
+HITS $1b182:1, $1b264:1
+GATE end_final the win routine ran ($1b182) and the closing text routine ($1b264) PASS $1b182 1x, $1b264 1x
+GATE end_final the orphan END routine ($1b3a6) never ran PASS 0x
+GATE end_final only resource 15 (WIN.PAK) was requested at the end PASS resources [15]
+GATE end_final no disk requester PASS 'ABOUT                                         WORLD INFO    '
+GATE end_final the (closing) win picture is shown and stable PASS non-black 0.99, 15 colours, stable x3
+CELL DONE end_final: FAIL

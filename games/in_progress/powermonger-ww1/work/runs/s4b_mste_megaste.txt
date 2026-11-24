@@ -1,0 +1,48 @@
+  [mste] [   23s vbl 1499] name prompt
+  [mste] [   29s vbl 1831] option screen (typing attempt 1)
+GATE mste/megaste-2.06-4096K marker PASS $727f8 = b'PMPO' (want b'PMPO')
+GATE mste/megaste-2.06-4096K site p4_clamp PASS $ed6 = 4eb900075c004e714e71 (want 4eb900075c004e714e71)
+GATE mste/megaste-2.06-4096K site pm_cachecap PASS $e3f2 = 4eb900075800 (want 4eb900075800)
+GATE mste/megaste-2.06-4096K site pm_credit PASS $14baa = 4eb900072800 (want 4eb900072800)
+GATE mste/megaste-2.06-4096K site pm_nokeydisk PASS $13cec = 4e714e714e71 (want 4e714e714e71)
+GATE mste/megaste-2.06-4096K site pm_noprot PASS $15998 = 0000002c (want 0000002c)
+GATE mste/megaste-2.06-4096K site pm_noprot_box PASS $bbd2 = 4e754e714e71 (want 4e754e714e71)
+GATE mste/megaste-2.06-4096K site pm_tooltip PASS $13e18 = 4eb900073400 (want 4eb900073400)
+GATE mste/megaste-2.06-4096K site qol_keys PASS $13e70 = 4eb900072c00 (want 4eb900072c00)
+GATE mste/megaste-2.06-4096K site qol_keys2 PASS $f30 = 4eb900073100 (want 4eb900073100)
+GATE mste/megaste-2.06-4096K site tick_click PASS $7e6 = 00072aa0 (want 00072aa0)
+GATE mste/megaste-2.06-4096K site tick_click2 PASS $842 = 00072aa0 (want 00072aa0)
+GATE mste/megaste-2.06-4096K site tick_click3 PASS $144b4 = 00072aa0 (want 00072aa0)
+GATE mste/megaste-2.06-4096K site tick_head PASS $13da0 = 4eb900072900 (want 4eb900072900)
+GATE mste/megaste-2.06-4096K site tick_men PASS $13e36 = 4eb900072a60 (want 4eb900072a60)
+GATE mste/megaste-2.06-4096K site tick_pass PASS $13de8 = 4eb900072a004e71 (want 4eb900072a004e71)
+GATE mste/megaste-2.06-4096K site tick_wx PASS $13e24 = 4eb900072a40 (want 4eb900072a40)
+GATE mste/megaste-2.06-4096K site tt_ptr PASS $e20 = 4eb900075a40 (want 4eb900075a40)
+GATE mste/megaste-2.06-4096K payload@options PASS unchanged
+GATE mste/megaste-2.06-4096K hi@options PASS pattern / constants: 0 of 327680 bytes changed in $b0000-$f6fff, $f7000-$fffff
+GATE mste/megaste-2.06-4096K cache cursor@options PASS [$2cfda] = $80000 (limit $b0000, 0 = no cache)
+GATE mste/megaste-2.06-4096K credit visible PASS rows 194-199: 780 px of colours [(102, 102, 68)]
+GATE mste/megaste-2.06-4096K boot PASS 43s
+GATE mste/megaste-2.06-4096K noprot flag PASS $15998 = $0000002c (want $0000002c) before the first land
+  [mste] [   34s vbl 4942] no disk requester
+  [mste] [   37s vbl 5110] chart expected
+  [mste] [   61s vbl 6534] island clicked
+  [mste] [   67s vbl 6889] 3D map view, world counter ticking
+GATE mste/megaste-2.06-4096K noprot: the check never ran PASS hits $acc4:0, $ae20:0, $b232:0, $b39c:0
+GATE mste/megaste-2.06-4096K noprot: 'Please wait' box skipped (stub reached) PASS $bbd2 reached 1x (an `rts` stub)
+GATE mste/megaste-2.06-4096K nokeydisk: the key-disk routine never ran, the flow went on PASS $1cf7c hit 0x, next instruction $13cf2 hit 1x; the Powermonger disk was never inserted
+GATE mste/megaste-2.06-4096K map view PASS counter 62, flag $15998 = $0000002c
+GATE mste/megaste-2.06-4096K payload@map PASS unchanged
+GATE mste/megaste-2.06-4096K hi@map PASS pattern / constants: 0 of 327680 bytes changed in $b0000-$f6fff, $f7000-$fffff
+GATE mste/megaste-2.06-4096K cache cursor@map PASS [$2cfda] = $9fc58 (limit $b0000, 0 = no cache)
+GATE mste/megaste-2.06-4096K pm_mste: speed / cache register $ff8e21 PASS $03 (want $03: Mega STE 16 MHz + cache, STE unmapped, ST nothing)
+GATE mste/megaste-2.06-4096K tt_ptr: LIVE flag PASS $00
+RATE mste/megaste 8 MHz cold boot map view 60 Hz: 801 VBL = 13.35 s emulated, 267116 cycles/VBL, world clock +53 = 3.970/s; tick passes 53, R passes 47, S passes 0
+GATE mste/megaste-2.06-4096K rate PASS mste/megaste 8 MHz cold boot map view 60 Hz: 801 VBL = 13.35 s emulated, 267116 cycles/VBL, world clock +53 = 3.970/s; tick passes 53, R passes 47, S passes 0
+GATE mste/megaste-2.06-4096K world rate = 4.00/s (+-5 %) PASS 3.970 world steps per emulated second
+LOADER 9:D419 0:D83 2:D86 3:D99 4:D88 5:D109 16:D+213 10:D+234 11:D221 1:D+123 8:D+114
+LOADER legend: n:D = loaded from the disk, n:c = from the cache; + = cached (cursor store), S = cap skip; number = VBLs call to return
+GATE mste/megaste-2.06-4096K loader: every cacheable resource (1 8 10 14 15 16) came from the disk at most once PASS disk loads per resource {1: 1, 8: 1, 10: 1, 16: 1}
+GATE mste/megaste-2.06-4096K loader: cache hits are fast (<= 40 VBL) PASS 0 cache hits, slow []
+GATE mste/megaste-2.06-4096K cap normal: no skip (M3a) PASS 0 skip(s)
+CELL DONE mste/megaste-2.06-4096K: OK (142s)
