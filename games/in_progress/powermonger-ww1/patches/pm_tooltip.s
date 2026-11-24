@@ -363,7 +363,7 @@ e3:     dc.b    3,"Get Food",0,"F",0,"take 25% of a town's rations",0,"take 50% 
 e4:     dc.b    3,"Get Men",0,"M",0,"recruit a few men",0,"recruit more men",0,"recruit nearly every man",0
 e5:     dc.b    1,"Go Home",0,"H",0,"army walks back to base",0
 e6:     dc.b    3,"Attack",0,"A",0,"conquer, spare as many as you can",0,"conquer, some die and some live",0,"kill everyone and take everything",0
-e7:     dc.b    3,"Build",0,"I",0,"ploughs, boats; iron: swords",0,"pikes; iron: swords",0,"rifles, planes; iron: swords, tanks",0
+e7:     dc.b    3,"Build",0,"I",0,"a town workshop makes rifles",0,"a town workshop makes planes",0,"a town workshop makes tanks",0   ; WW1: the build order $505a picks the item by posture only (table $510c: tank / plane / rifle for 3 / 2 / 1 swords), no wood / iron rules
 e8:     dc.b    3,"Equip",0,"E",0,"pick up 25% of the items",0,"pick up 50% of the items",0,"pick up all the items",0
 e9:     dc.b    3,"Drop Food",0,"D",0,"leave 25% of your rations",0,"leave 50% of your rations",0,"leave ALL of your rations",0
 e10:    dc.b    3,"Derank",0,"R",0,"send 25% of the army home",0,"send 50% of the army home",0,"disband the whole army",0

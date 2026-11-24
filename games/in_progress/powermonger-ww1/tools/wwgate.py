@@ -149,6 +149,26 @@ def payload_diff(h, expect: bytes, mask=()):
     return diff_spans(bytes(got), expect, IMG_BASE)
 
 
+def imgcheck(h, g, name, man):
+    """`--img`: the resident game image $576..$1d2ad against the hand-over dump (work/dumps/entry576.bin) at this checkpoint: spans that differ (sites of the patches masked).
+    Code that was loaded later would show up as a large block; the diffs are listed so a human can classify them (variables / tables / self-modified bytes)."""
+    ref = (ROOT / "work" / "dumps" / "entry576.bin").read_bytes()
+    lo, hi = 0x576, 0x1D2AE
+    got = bytearray(h.ram(lo, hi - lo))
+    ref = bytearray(ref[lo:hi])
+    for s in (man["sites"] if man else []):
+        n = len(s["new"]) // 2
+        a = s["addr"]
+        if lo <= a < hi:
+            got[a - lo:a - lo + n] = ref[a - lo:a - lo + n]
+    sp = diff_spans(bytes(got), bytes(ref), lo, gap=16)
+    tot = sum(b - a for a, b in sp)
+    big = [(a, b) for a, b in sp if b - a >= 256]
+    g.line(f"image@{name}", not big, f"{tot} of {hi - lo} bytes differ from the hand-over image in {len(sp)} span(s); spans >= 256 B: {fmt_spans(big)}; all: {fmt_spans(sp, 40)}")
+    import hashlib
+    Path(h.R / f"img_{name}.bin").write_bytes(bytes(got))
+
+
 def fmt_spans(spans, k=6):
     return ", ".join(f"${a:x}-${b - 1:x}" for a, b in spans[:k]) + (f" (+{len(spans) - k} more)" if len(spans) > k else "")
 
@@ -158,16 +178,25 @@ def cell(a):
     man = json.loads(Path(a.manifest).read_text()) if a.manifest else None
     # the original disk (no manifest): the game itself must leave $72000..$77fff all zero
     expect = bytearray((Path(a.manifest).parent / "expect.bin").read_bytes()) if man else bytearray(IMG_END - IMG_BASE)
-    tag = a.tag or Path(a.disk).parent.name
-    g = Gate(f"{tag}/{a.machine}-{a.tos}-{a.mem}K")
+    tag = a.tag or Path(a.disk or a.hd).parent.name
+    g = Gate(f"{tag}/{a.machine}-{a.tos}-{a.mem}K{'-hd-acsi' if a.hd and a.acsi else '-hd' if a.hd else ''}")
     machine = a.machine
     kw = dict(machine=machine, tos=pmww.TOS[a.tos], memsize_kb=a.mem, extra=a.extra.split())
-    h = pmww.PMW(disk=Path(a.disk), workdir=a.workdir, **kw)
+    if a.psg:                                   # emulated sound ON + the strict YM port-direction build + psgcheck on the streamed trace (st-hatari-harness PSG gate)
+        kw.update(sound=True, trace_psg=True, strict=True)
+    if a.hd:                                    # the HD build's folder (tools/wwpatch.py build --hd): GEMDOS emulation, or --acsi = a real ACSI disk with HDDRIVER
+        import wwhd
+        h = wwhd.PMWHD(Path(a.hd), acsi=a.acsi, workdir=a.workdir, **kw)
+    else:
+        h = pmww.PMW(disk=Path(a.disk), workdir=a.workdir, **kw)
     steps = a.steps.split(",")
     top_hi = 0x100000 if a.mem > 1024 else HI_END           # on a 1 MB machine $f7000.. is TOS's (start-up stack, screen): never ours, never checked
     spans_hi = None
     if a.fill_hi:
         spans_hi = [tuple(x) for x in man["free_hi"]] if man else [(HI_BASE, HI_END)]
+        if a.hd and a.hd_rlen:                  # HD: S = $c3000.. holds TOS's low RAM (RLEN bytes); the rest of S's capacity up to the sprite cache is free
+            lo = (0xC3000 + int(a.hd_rlen, 16) + 0x100 + 3) & ~3
+            spans_hi.append((lo, 0xDF000))
         if a.mem > 1024:
             spans_hi.append((HI_END, 0x100000))
         arm_hi_fill(h, spans_hi)
@@ -209,6 +238,8 @@ def cell(a):
             g.line(f"cache cursor@{name}", cur <= HI_BASE, f"[$2cfda] = ${cur:x} (limit ${HI_BASE:x}, 0 = no cache)")
 
         def region(name):
+            if a.img:
+                imgcheck(h, g, name, man)
             d = payload_diff(h, expect, dmask)
             g.line(f"payload@{name}", not d, ("unchanged" if man else "region $72000-$77fff all zero") if not d else fmt_spans(d))
             hicheck(name)
@@ -259,6 +290,30 @@ def cell(a):
             h.shot(str(SHOTS / f"{tag}_{machine}_map.png"))
             g.line("map view", h.ticking(2.0) and h.peekw(pmww.WINDOW_OPEN) == 0, f"counter {h.counter()}, flag $15998 = ${h.peekl(0x15998):08x}")
             region("map")
+        if "hw" in steps:
+            import wwtick
+            b1 = lambda addr: wwtick.rd(h, addr, 1)[0]
+            has = lambda n: bool(man and n in man["patches"])
+            mste = b1(0xFF8E21)
+            if has("pm_mste"):
+                want = {"megaste": 0x03, "ste": 0xFF, "st": 0x00, "megast": 0x00}.get(machine)
+                if a.mste_want is not None and machine == "megaste":
+                    want = int(a.mste_want, 16)         # a pre-set register ($02 from a test patch) must be kept
+                g.line("pm_mste: speed / cache register $ff8e21", want is None or mste == want, f"${mste:02x} (want ${want:02x}: Mega STE 16 MHz + cache, STE unmapped, ST nothing)" if want is not None else f"${mste:02x} (TT / Falcon: left alone, cookie _MCH 2 / 3)")
+            else:
+                print(f"  $ff8e21 reads ${mste:02x} (no pm_mste in the build)", flush=True)
+            if has("tt_ptr"):
+                live = b1(0x75BF0)
+                g.line("tt_ptr: LIVE flag", live == (0xFF if machine in ("tt", "falcon") else 0), f"${live:02x}")
+            if has("snd_core"):
+                fl = h.peekl(0x76718)
+                wantf = 6 if machine in ("st", "megast") else 3
+                g.line("snd_core: FLAGS (DMA sound probe)", fl == wantf, f"${fl:x} (STE-class 3, plain ST 6)")
+                seen, t1 = 0, time.time()
+                while time.time() - t1 < 60 and not seen:
+                    seen |= b1(0xFF8901) & 1 if wantf == 3 else 0
+                    time.sleep(0.4)
+                g.line("snd_core: the DMA plays a chunk (play bit $ff8901.0 seen in 60 s)" if wantf == 3 else "snd_core: plain ST path (no DMA, original YM player)", bool(seen) == (wantf == 3), f"bit seen {bool(seen)}, SV busy {b1(0x76700):02x}, sequencer active {b1(0x2D7B2):02x}, chunk busy {b1(0x2D7B3):02x}")
         if "rate" in steps:
             import wwtick
             if a.mhz != 8:
@@ -288,7 +343,7 @@ def cell(a):
             g.line("soak: no CPU exception in the Hatari log", not exc, f"{exc[:3]}")
             region("soak")
         if "saveload" in steps:
-            r = h.saveload(log=log)
+            r = h.saveload_hd(log=log) if a.hd else h.saveload(log=log)
             g.line("save/load: loaded state == saved state", r["d_saved_loaded"] == 0, f"{r['n']} B: {r['d_saved_loaded']} differ")
             g.line("save/load: the world moved between save and load", r["d_saved_pre"] > 0, f"saved vs the state just before the load: {r['d_saved_pre']} differ")
             g.line("save/load: save disk slot A == saved state", r["disk_eq"] and r["disk_len"] == 800 * 512 and r["slot_flag"] == 0xFF,
@@ -388,6 +443,13 @@ def cell(a):
         return 1
     finally:
         h.close()
+        if a.psg:
+            try:
+                r = h.psg_check()
+                g.line("PSG gate (strict Hatari, sound on): no FDC command / reg-14 write with reg 7 bit 6 = 0, frames start with bits 6/7 set", r.ok,
+                       f"violations {len(r.violations)}, warnings {len(r.warnings)}: {r.summary}")
+            except Exception as e:  # noqa: BLE001
+                g.line("PSG gate ran", False, repr(e))
 
 
 def _picture(h, name):
@@ -470,7 +532,10 @@ def main():
     sub = ap.add_subparsers(dest="cmd", required=True)
     for n in ("cell", "handover"):
         p = sub.add_parser(n)
-        p.add_argument("--disk", required=True)
+        p.add_argument("--disk")
+        p.add_argument("--hd", help="HD build folder (the `hd` dir of a wwpatch.py build --hd output)")
+        p.add_argument("--acsi", action="store_true", help="with --hd: a real ACSI disk image with HDDRIVER instead of Hatari's GEMDOS folder")
+        p.add_argument("--hd-rlen", help="hex: RLEN printed by a first HD run; with --fill-hi the unused tail of the swap buffer [S + RLEN, $df000) is pattern-checked too")
         p.add_argument("--manifest")
         p.add_argument("--steps", default="boot,map,lose,win,round3")
         p.add_argument("--machine", default="ste")
@@ -483,11 +548,14 @@ def main():
         p.add_argument("--vbls", type=int, default=800, help="rate step: VBLs measured")
         p.add_argument("--corrupt", action="store_true", help="the build has a deliberately corrupted site: expect PMPF and an unpatched game")
         p.add_argument("--workdir")
+        p.add_argument("--psg", action="store_true", help="sound ON + strict Hatari + psgcheck (sound patches)")
         p.add_argument("--fill-hi", action="store_true", help="M1: pattern in every undeclared HIGH byte at the hand-over, checked at every checkpoint")
         p.add_argument("--trace", action="store_true", help="loader trace ($e34c / $e388 / $e3f8 / $e42a)")
         p.add_argument("--raise-cursor", help="hex: add to the resource-cache cursor at the option screen (M3b / M3c)")
         p.add_argument("--expect-overrun", action="store_true", help="M3c negative control: the build has no cap, the gate is EXPECTED to print FAIL lines")
         p.add_argument("--events-out", help="write the loader calls as JSON")
+        p.add_argument("--mste-want", help="hex: expected $ff8e21 on a Mega STE (default 03; 02 with a pre-set register)")
+        p.add_argument("--img", action="store_true", help="at every checkpoint compare the resident game image $576-$1d2ad with the hand-over dump (is all code resident?)")
     c = sub.add_parser("cmpevents")
     c.add_argument("a")
     c.add_argument("b")

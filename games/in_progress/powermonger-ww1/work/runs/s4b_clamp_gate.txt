@@ -1,0 +1,9 @@
+  [   69s vbl 3576] chart expected
+  [   97s vbl 4973] island clicked
+  [  103s vbl 5269] 3D map view, world counter ticking
+GATE clamp/ste site $ed6 PASS 4eb900075c004e714e71 (want 4eb900075c004e714e71)
+GATE clamp/ste normal use: the drop path is never taken PASS 0 hit(s) of $75c1e in 20 s of pointer motion
+  log after the poke: > w $1d2b2 $05 $00 $ad $fd | Wrote 4 'b' values starting from 0x1d2b2. | > b pc = $ef4 :trace :once :file /tmp/pmww1s4b/clamp1/dump.txt | CPU condition breakpoint 2 with 1 condition(s) added: | 	pc = $ef4 | -> Break only once, and delete breakpoint afterwards. | -> Trace (just show breakpoint info, instead of dropping to debugger). | -> Execute debugger commands from '/tmp/pmww1s4b/clamp1/dump.txt' file on hit. | Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir. | Debugger re-init. | Removed CPU breakpoint 1: | 	pc = $ed6 :once :trace :file /tmp/pmww1s4b/clamp1/poke.txt | 1. CPU breakpoint condition(s) matched 1 times. | 	pc = $ef4 :once :trace :file /tmp/pmww1s4b/clamp1/dump.
+GATE clamp/ste clamp: the garbage position is dropped, $2edb2 / $2edb4 keep the last good position PASS after the poke ('0x78', '0x46'), before ('0x78', '0x46')
+GATE clamp/ste the game runs on: no CPU exception, counter ticking PASS errors [], ticking True
+CELL DONE clamp/ste: OK

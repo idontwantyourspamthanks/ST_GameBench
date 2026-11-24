@@ -32,6 +32,9 @@ class PMW(Hatari):
         (home / ".config/hatari").mkdir(parents=True, exist_ok=True)
         txt = (Path(os.environ["HOME"]) / ".config/hatari/hatari.cfg").read_text()
         txt = re.sub(r"(?m)^szMemoryCaptureFileName = .*$", f"szMemoryCaptureFileName = {R}/state.sav", txt)
+        ymwav = kw.pop("ymwav", None)               # WAV capture target (`hatari-shortcut recsound`), tools/wwsnd.py
+        if ymwav:
+            txt = re.sub(r"(?m)^szYMCaptureFileName.*$", f"szYMCaptureFileName = {ymwav}", txt)
         (home / ".config/hatari/hatari.cfg").write_text(txt)
         kw.setdefault("files", [])
         kw.setdefault("overlay", Path("/nonexistent"))
@@ -76,13 +79,21 @@ class PMW(Hatari):
     def goto_st(self, x: int, y: int, tol: int = 1):
         """Move the pointer to ST pixel (x, y): home it, then close the loop on the pointer RAM words."""
         self.home()
-        for _ in range(5):
+        g = getattr(self, "gain", 2.0)             # host px per ST px: 2 in the ST / STE window, 1 on a TT (measured by the loop, kept for later calls)
+        for _ in range(8):
             cx, cy = self.mpos()
             dx, dy = x - cx, y - cy
             if abs(dx) <= tol and abs(dy) <= tol:
                 break
-            self.rel(dx * 2, dy * 2, max(2, min(10, (abs(dx) + abs(dy)) // 4 + 1)))
+            self.rel(round(dx * g), round(dy * g), max(2, min(10, (abs(dx) + abs(dy)) // 4 + 1)))
             time.sleep(0.3)
+            nx, ny = self.mpos()
+            if abs(nx - cx) >= 12 and abs(dx) >= 12:       # measured gain: requested host px / ST px moved
+                g = max(0.5, min(4.0, g * abs(dx) / abs(nx - cx)))
+                self.gain = g
+            elif abs(ny - cy) >= 12 and abs(dy) >= 12:
+                g = max(0.5, min(4.0, g * abs(dy) / abs(ny - cy)))
+                self.gain = g
         return self.mpos()
 
     def click_st(self, x: int, y: int, hold: float = 0.2, wait: float = 1.0):
