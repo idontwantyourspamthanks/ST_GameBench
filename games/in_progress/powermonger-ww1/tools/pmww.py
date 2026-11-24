@@ -96,9 +96,11 @@ class PMW(Hatari):
                 self.gain = g
         return self.mpos()
 
-    def click_st(self, x: int, y: int, hold: float = 0.2, wait: float = 1.0):
+    def click_st(self, x: int, y: int, hold: float | None = None, wait: float = 1.0):
+        """Click at ST pixel (x, y).  hold: seconds the button stays down; default $WW_CLICK_HOLD or 0.2 (0.10 = a short human click: the HD build's
+        late-VBL race lost the click after a save / load with those, RESULTS_stage04d.md section 7)."""
         p = self.goto_st(x, y)
-        self.click(hold=hold)
+        self.click(hold=float(os.environ.get("WW_CLICK_HOLD", "0.2")) if hold is None else hold)
         time.sleep(wait)
         return p
 
@@ -333,6 +335,7 @@ class PMW(Hatari):
 
 # ---- RAM map of the EA original (1 MB STE, TOS 1.62); evidence: work/notes/addrmap.md ---------------
 MOUSE_X, MOUSE_Y = 0x2EDB2, 0x2EDB4        # words: pointer in ST low-res pixels
+BTN_HELD = 0x2EDBC                         # words $2edbc / $2edbe: left / right button held (VBL handler $7ba..$85e, from the IKBD's press / release reports; a press is ignored while set)
 ITER = 0x2ED90                             # long: main-loop pass counter (+1 per pass; master $2df70)
 WINDOW_OPEN = 0x74C0                       # word: window table slot, non-zero while a window (dialog, menu, question) is open (master $7a36)
 WTEXT = 0x7640                             # the open window's text instance buffer

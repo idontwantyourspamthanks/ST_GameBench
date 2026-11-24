@@ -1,0 +1,37 @@
+--- a/games/in_progress/powermonger-ww1/patches/hd_core.s
++++ b/games/in_progress/powermonger-ww1/patches/hd_core.s
+@@ -224,6 +224,16 @@
+ ; replay: the game's own byte processor ($18e8: `tst.b $1c48e` after the `move.b 2(a1),d0` that reads the ACIA, checked by
+ ; the site of hd_kbd.s; d0 = the byte, d0-d1/a0 clobbered) gets the queued bytes in order.  Game context, SR $2700.  The ACIA is
+ ; drained between the bytes: a long replay must not overrun it either.
++; THE LATE VBL.  A VBL that came due during the call is still pending and would be taken by the game's handler ($774) the moment
++; the caller's SR comes back, at any point of the frame.  That handler looks at the button byte of the last IKBD packet ($1d2af:
++; "pressed / released since the previous interrogation", reported ONCE) and then sends the next interrogation ($0D); the reply
++; takes about 10 ms.  The regular VBL can follow the late one within those 10 ms: its handler sees the old byte, interrogates
++; again, and the second reply (no change) overwrites the first one before any handler has looked at it.  A release lost that way
++; leaves the game's "left button held" flag $2edbc set: the next click is ignored and the pointer drags the overview map
++; (Falcon, load: work/notes/RESULTS_stage04d.md section 7).  So the pending VBL is taken HERE by an `rte` stub instead, at the
++; caller's own interrupt level (its saved SR is the word under the return address: hd_load / hd_sector push it first; a caller
++; that runs with the VBL masked lets nothing in): the game's handler then only runs at real VBLs, one interrogation per frame,
++; as without the HD code.  a0 clobbered too.
+ replay: movem.l d3/a3,-(a7)
+         moveq   #0,d3
+ .l:     bsr.w   drain
+@@ -235,8 +245,17 @@
+         jsr     $e7c.l
+         bra.s   .l
+ .o:     clr.w   FIFOW.l
++        move.l  $70.w,-(a7)
++        lea     .rte(pc),a0
++        move.l  a0,$70.w
++        move.w  16(a7),sr               ; the caller's SR (old $70, d3, a3, return address above it): the pending VBL goes to the stub (MFP interrupts: the game's own handlers)
++        nop
++        nop
++        move.w  #$2700,sr
++        move.l  (a7)+,$70.w
+         movem.l (a7)+,d3/a3
+         rts
++.rte:   rte
+ 
+ ; exchange R = [$8, RHI) and S.  d0-d1/a0-a1 clobbered, no stack use.
+ xchg:   lea     $8.w,a0

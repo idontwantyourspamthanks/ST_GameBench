@@ -68,6 +68,14 @@ class PMWHD(PMW):
         subprocess.run(["mcopy", "-n", "-i", f"{self.img}@@{ps}", "::SAVEDISK.DAT", str(out)], check=True, env=dict(os.environ, MTOOLS_SKIP_CHECK="1"))
         return out.read_bytes()
 
+    def held_check(self, what: str, log=print) -> int:
+        """No button is down: the game's "left / right button held" flags ($2edbc / $2edbe, set and cleared by the VBL handler from the IKBD's press / release reports) should be 0.
+        A release report lost around an HD call leaves $2edbc set: the next click is ignored (RESULTS_stage04d.md section 7b; the hd_core fix is parked, so this only reports:
+        a `HELD ... STUCK` line, the cell's own gates decide)."""
+        held = self.peekl(pmww.BTN_HELD)
+        log(f"HELD after the HD {what}, no button down: $2edbc/$2edbe = ${held:08x} {'STUCK (a release report was lost: the next click will be ignored)' if held else 'ok'}")
+        return held
+
     def saveload_hd(self, log=print) -> dict:
         """Option -> FILE -> SAVE (slot A, SAVEDISK.DAT through hd_sector), let the world run, Option -> FILE -> LOAD.  Same captures as PMW.saveload: the state ($44c3e, $c6 sectors) at the
         write call ($1cbc2) and right after the read call returns ($1cb2a); SAVEDISK.DAT (flushed) is compared with the saved bytes."""
@@ -94,6 +102,7 @@ class PMWHD(PMW):
         while time.time() - t < 240 and not (self.peekw(pmww.WINDOW_OPEN) == 0 and self.ticking(1.5)):
             time.sleep(2)
         time.sleep(6)
+        self.held_check("save", log)
         self.debug(f"savebin {out}/pre.bin ${pmww.SAVE_BASE:x} ${n:x}", 3.0)
         self.debug("b all", 0.3)
         self.cmd(f"hatari-debug b pc = ${pmww.SAVE_READ_RET:x} :trace :once :file {out / 'ld.txt'}")
@@ -107,6 +116,7 @@ class PMWHD(PMW):
                 raise RuntimeError(f"the load never returned (window text: {self.wtext().strip()[:80]!r})")
             time.sleep(1)
         time.sleep(3)
+        self.held_check("load", log)
         ok_run = self.ticking(2.0) and self.peekw(pmww.WINDOW_OPEN) == 0
         sv, pre, ld = ((out / f"{k}.bin").read_bytes() for k in ("save", "pre", "load"))
         time.sleep(1)

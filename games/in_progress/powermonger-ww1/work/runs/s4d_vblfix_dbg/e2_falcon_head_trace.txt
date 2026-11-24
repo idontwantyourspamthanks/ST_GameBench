@@ -1,0 +1,71 @@
+[   16s vbl 878] name prompt
+[   21s vbl 1154] option screen (typing attempt 1)
+[   34s vbl 3015] no disk requester
+[   37s vbl 3155] chart expected
+[   54s vbl 4007] island clicked
+[   60s vbl 4302] 3D map view, world counter ticking
+saved (hold 0.6): held=0 window=0x0 slot flag on disk=0xff
+LOAD hold 0.10 s (option window before: 0x17c): button up, held latch $2edbc = 0 -> next OPTION click opens the window; held after = 0
+    vbl 8474 hbl 175  packet complete, buttons 00
+    vbl 8475 hbl   0  VBL handler dispatch $1d2af / held $2edbc 00 / 00 00
+    vbl 8475 hbl   0  VBL handler sends $0D 
+    vbl 8475 hbl 174  packet complete, buttons 04
+    vbl 8476 hbl   0  VBL handler dispatch $1d2af / held $2edbc 04 / 00 00
+    vbl 8476 hbl   0  VBL handler sends $0D 
+    vbl 8476 hbl 173  packet complete, buttons 00
+    vbl 8477 hbl   0  VBL handler dispatch $1d2af / held $2edbc 00 / 00 01
+    vbl 8477 hbl   0  VBL handler sends $0D 
+    vbl 8477 hbl 176  packet complete, buttons 00
+    vbl 8478 hbl   0  VBL handler dispatch $1d2af / held $2edbc 00 / 00 01
+    vbl 8478 hbl   0  VBL handler sends $0D 
+    vbl 8478 hbl 171  packet complete, buttons 00
+    vbl 8479 hbl   0  VBL handler dispatch $1d2af / held $2edbc 00 / 00 01
+    vbl 8479 hbl   0  VBL handler sends $0D 
+    vbl 8479 hbl 133  hd_sector entry 
+    vbl 8485 hbl 279  packet complete, buttons 00
+    vbl 8485 hbl 296  VBL handler dispatch $1d2af / held $2edbc 00 / 00 01
+    vbl 8485 hbl 296  VBL handler sends $0D 
+    vbl 8485 hbl 307  hd_sector entry 
+    vbl 8492 hbl 143  packet complete, buttons 08
+    vbl 8492 hbl 160  VBL handler dispatch $1d2af / held $2edbc 08 / 00 01
+    vbl 8492 hbl 160  VBL handler sends $0D 
+    vbl 8493 hbl   8  VBL handler dispatch $1d2af / held $2edbc 08 / 00 00
+    vbl 8493 hbl   8  VBL handler sends $0D 
+    vbl 8493 hbl  20  packet complete, buttons 00
+    vbl 8493 hbl 222  packet complete, buttons 00
+    vbl 8494 hbl   0  VBL handler dispatch $1d2af / held $2edbc 00 / 00 00
+    vbl 8494 hbl   0  VBL handler sends $0D 
+    vbl 8494 hbl 177  packet complete, buttons 00
+    vbl 8495 hbl   0  VBL handler dispatch $1d2af / held $2edbc 00 / 00 00
+    vbl 8495 hbl   0  VBL handler sends $0D 
+    vbl 8495 hbl 172  packet complete, buttons 00
+    vbl 8496 hbl   0  VBL handler dispatch $1d2af / held $2edbc 00 / 00 00
+    vbl 8496 hbl   0  VBL handler sends $0D 
+LOAD hold 0.14 s (option window before: 0x17c): button up, held latch $2edbc = 0 -> next OPTION click opens the window; held after = 0
+LOAD hold 0.22 s (option window before: 0x17c): button up, held latch $2edbc = 1 -> next OPTION click LOST; held after = 0
+    vbl 23096 hbl 171  packet complete, buttons 00
+    vbl 23097 hbl   0  VBL handler dispatch $1d2af / held $2edbc 00 / 00 00
+    vbl 23097 hbl   0  VBL handler sends $0D 
+    vbl 23097 hbl 172  packet complete, buttons 04
+    vbl 23098 hbl   0  VBL handler dispatch $1d2af / held $2edbc 04 / 00 00
+    vbl 23098 hbl   0  VBL handler sends $0D 
+    vbl 23098 hbl 175  packet complete, buttons 00
+    vbl 23098 hbl 215  hd_sector entry 
+    vbl 23105 hbl  63  VBL handler dispatch $1d2af / held $2edbc 00 / 00 01
+    vbl 23105 hbl  63  VBL handler sends $0D 
+    vbl 23105 hbl  73  hd_sector entry 
+    vbl 23111 hbl 223  packet complete, buttons 00
+    vbl 23111 hbl 240  VBL handler dispatch $1d2af / held $2edbc 00 / 00 01
+    vbl 23111 hbl 240  VBL handler sends $0D 
+    vbl 23112 hbl   8  VBL handler dispatch $1d2af / held $2edbc 00 / 00 01
+    vbl 23112 hbl   8  VBL handler sends $0D 
+    vbl 23112 hbl 123  packet complete, buttons 08
+    vbl 23112 hbl 303  packet complete, buttons 00
+    vbl 23113 hbl   0  VBL handler dispatch $1d2af / held $2edbc 00 / 00 01
+    vbl 23113 hbl   0  VBL handler sends $0D 
+    vbl 23113 hbl 196  packet complete, buttons 00
+    vbl 23114 hbl   0  VBL handler dispatch $1d2af / held $2edbc 00 / 00 01
+    vbl 23114 hbl   0  VBL handler sends $0D 
+    vbl 23114 hbl 173  packet complete, buttons 00
+    vbl 23115 hbl   0  VBL handler dispatch $1d2af / held $2edbc 00 / 00 01
+    vbl 23115 hbl   0  VBL handler sends $0D 
