@@ -48,6 +48,7 @@ Stages: `games/queue/` (not started) -> `games/in_progress/` (being worked on) -
 | Baby Jo - Going Home | baby-jo | floppy (FAT) | user floppies | 6 cracks, base not chosen |
 | Castle Master (+ II: The Crypt) | castle-master | floppy (FAT; Empire crack non-FAT) | user floppies | 3 dumps + sequel |
 | Austerlitz | austerlitz | floppy (FAT) | user floppies | 1 image |
+| Overlander | overlander | original floppy (STX, protected) + Automation menu crack | user floppies | Amiga ADFs + manual scans kept locally; base not chosen |
 
 ## Ideas and requests
 
