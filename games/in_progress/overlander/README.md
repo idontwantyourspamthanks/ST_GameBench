@@ -1,12 +1,15 @@
 # Overlander
 
 - Slug: `overlander`
-- Status: **queued, not started**
+- Status: **in progress** (STE/TT/Falcon Enhanced **v1.0** built & verified across all 5 machines)
 - Source: user floppies (copied 2026-11-16), not the VHD
-- Original: Elite Systems (Atari ST); the Amiga disks are dated v1.0 1989-11-27
+- Original: Elite Systems (Atari ST, `"Overlander-Atari ST Final V1.9 06/07/88"`); Amiga audio from v1.0 1989-11-27
 - Local copies: `originals/`, `alt/amiga/` and `manual/` (game files, Amiga disks and manual scans: git-ignored, never committed)
-- Loader: original floppy (`overlander.stx`, in `originals/overlander_elite.zip`, presumed copy-protected: STX dump); also `OVERLAND.WAS` (41,434 B, packed) on an Automation menu disk crack
-- Base: not chosen. The STX is the original (as for Powermonger WW1); the Automation file is for comparison only.
+- Base: decrypted original `AUTO\RUN.PRO` from `originals/overlander_elite.zip` (`overlander.stx`, checksum-verified `0xa08be7cd`)
+- Builds:
+  - `dist/Overlander_hd_v1.0.zip` (hard-drive / GEMDOS release)
+  - `dist/Overlander_floppy_v1.0.zip` (auto-booting 720 KB floppy image `Overlander_v1.0.st`)
+- Test launchers: `./tools/run_ste.sh`, `./tools/run_megaste.sh`, `./tools/run_tt.sh`, `./tools/run_falcon.sh`, `./tools/run_st.sh`
 
 ## Files
 
