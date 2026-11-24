@@ -31,6 +31,12 @@ Game files are git-ignored. Put your own copies here:
 
 Free space on the disk: 36864 B (the patched `WW1.PRG` grows by about 0.6-1 KB for the credit line).
 
+## Machines (Hatari-tested; real hardware not run)
+
+- ST, STE, Mega STE (16 MHz + cache set by `pm_mste`): floppy cells pass (`work/notes/RESULTS_stage04d.md` section 2). ST uses the game's own YM sample player, STE-class machines the DMA player (`snd_*`).
+- **Falcon (TOS 4.04, 4 MB, Hatari):** boots to the map view and plays sound **with and without the DMA player**. The loader's `core.s` switches the 68030 caches off (`cacroff`; without it the game does not reach the name prompt, bus errors at `$5d0` / `$e0fbd2`) and, on a Falcon only (`_MCH` cookie), `fal_ym` rewrites the game's own YM sample player (`$1bcb8`, `movep` to `$ff8804/06`, a bus error on a Falcon) through `$ff8800/02`. Without `snd_*` and without `fal_ym` the game bus-errors there. The Falcon's DMA output in Hatari is the STE waveform with inverted sign (inaudible; real Falcon untested).
+- **Hard disk on a Falcon is untestable in Hatari** (`--acsi` is ignored by TOS 4.04, the machine sits in the desktop); a Falcon HD run is only possible through Hatari's GEMDOS folder, and HDDRIVER with real IDE/SCSI was not run.
+
 ## Running
 
 Play it: `tools/play.sh` (enhanced floppy from the last commit, STE, TOS 1.62, 1 MB; `--machine st|megast|ste|megaste|tt|falcon`, `--ram KiB`, `--mhz`, `--original`, `--worktree`, `--fresh`; `tools/play.sh -h`). Boot, type a name, START NEW CONQUEST, pick the small island at the top of the chart. Saves go to the blank save disk next to the game disk (`build/play-patched/savedisk.st`): swap it in with F12 -> Floppy disks when the game asks. `--original` asks for the original Powermonger disk on START NEW CONQUEST (`../../done/powermonger/disks/protected.st`), then the WW1 disk back.

@@ -1,0 +1,40 @@
+  [fal_nofalym] [   31s vbl 1631] name prompt
+  [fal_nofalym] [   36s vbl 1907] option screen (typing attempt 1)
+GATE fal_nofalym/falcon-4.04-4096K marker PASS $727f8 = b'PMPO' (want b'PMPO')
+GATE fal_nofalym/falcon-4.04-4096K site p3b_delta PASS $13e3c = 4eb900073e00 (want 4eb900073e00)
+GATE fal_nofalym/falcon-4.04-4096K site p3b_interp PASS $13e1e = 4eb900073c00 (want 4eb900073c00)
+GATE fal_nofalym/falcon-4.04-4096K site p4_clamp PASS $ed6 = 4eb900075c004e714e71 (want 4eb900075c004e714e71)
+GATE fal_nofalym/falcon-4.04-4096K site pm_cachecap PASS $e3f2 = 4eb900075800 (want 4eb900075800)
+GATE fal_nofalym/falcon-4.04-4096K site pm_credit PASS $14baa = 4eb900072800 (want 4eb900072800)
+GATE fal_nofalym/falcon-4.04-4096K site pm_nokeydisk PASS $13cec = 4e714e714e71 (want 4e714e714e71)
+GATE fal_nofalym/falcon-4.04-4096K site pm_noprot PASS $15998 = 0000002c (want 0000002c)
+GATE fal_nofalym/falcon-4.04-4096K site pm_noprot_box PASS $bbd2 = 4e754e714e71 (want 4e754e714e71)
+GATE fal_nofalym/falcon-4.04-4096K site pm_tooltip PASS $13e18 = 4eb900073400 (want 4eb900073400)
+GATE fal_nofalym/falcon-4.04-4096K site qol_hover PASS $13e2a = 4eb900074b00 (want 4eb900074b00)
+GATE fal_nofalym/falcon-4.04-4096K site qol_hover2 PASS $12ee0 = 4eb900073940 (want 4eb900073940)
+GATE fal_nofalym/falcon-4.04-4096K site qol_keys PASS $13e70 = 4eb900072c00 (want 4eb900072c00)
+GATE fal_nofalym/falcon-4.04-4096K site qol_keys2 PASS $f30 = 4eb900073100 (want 4eb900073100)
+GATE fal_nofalym/falcon-4.04-4096K site tick_click PASS $7e6 = 00072aa0 (want 00072aa0)
+GATE fal_nofalym/falcon-4.04-4096K site tick_click2 PASS $842 = 00072aa0 (want 00072aa0)
+GATE fal_nofalym/falcon-4.04-4096K site tick_click3 PASS $144b4 = 00072aa0 (want 00072aa0)
+GATE fal_nofalym/falcon-4.04-4096K site tick_head PASS $13da0 = 4eb900072900 (want 4eb900072900)
+GATE fal_nofalym/falcon-4.04-4096K site tick_men PASS $13e36 = 4eb900072a60 (want 4eb900072a60)
+GATE fal_nofalym/falcon-4.04-4096K site tick_pass PASS $13de8 = 4eb900072a004e71 (want 4eb900072a004e71)
+GATE fal_nofalym/falcon-4.04-4096K site tick_rain PASS $13e24 = 4eb900072ac0 (want 4eb900072ac0)
+GATE fal_nofalym/falcon-4.04-4096K site tt_ptr PASS $e20 = 4eb900075a40 (want 4eb900075a40)
+GATE fal_nofalym/falcon-4.04-4096K payload@options FAIL $727f4-$727f4
+GATE fal_nofalym/falcon-4.04-4096K credit visible PASS rows 194-199: 7680 px of colours [(255, 255, 255)]
+GATE fal_nofalym/falcon-4.04-4096K boot PASS 51s
+GATE fal_nofalym/falcon-4.04-4096K noprot flag PASS $15998 = $0000002c (want $0000002c) before the first land
+  [fal_nofalym] [   40s vbl 4820] no disk requester
+  [fal_nofalym] [   43s vbl 4960] chart expected
+Traceback (most recent call last):
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1/tools/wwgate.py", line 295, in cell
+    h.options_to_map(log=log, noprot=noprot, swap=not keydisk)
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1/tools/pmww.py", line 218, in options_to_map
+    return self.chart_to_map(log, noprot, t0)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1/tools/pmww.py", line 242, in chart_to_map
+    raise RuntimeError("island click never started the land generation")
+RuntimeError: island click never started the land generation
+CELL FAILED fal_nofalym/falcon-4.04-4096K

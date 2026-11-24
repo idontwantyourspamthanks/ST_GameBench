@@ -1,6 +1,6 @@
 ; core.s -- Powermonger WW1 patch delivery mechanism (always installed by tools/wwpatch.py).  Evidence: work/notes/delivery.md.
 ; Modelled on games/done/powermonger/patches/core.s; differences: ONE hand-over (WW1 has a single packed program, no second stage), the
-; payload lives at $72000 (work/notes/placement.md), no DMA-sound probe, no Falcon class, no instruction-cache switch-on.
+; payload lives at $72000 (work/notes/placement.md), no DMA-sound probe.  Falcon class (4): sites of `; falcon: yes` patches, applied only when `init` found a Falcon (master's fal_ym mechanism).
 ;
 ; Segments, assembled separately (wwpatch.py CORE_ORGS):
 ;   org $0      front    position independent.  First thing in the data segment that wwpatch.py appends to AUTO\WW1.PRG (TOS loads
@@ -31,6 +31,7 @@ TABLE   equ $72250
 UINITTBL equ $72790
 INITTBL equ $727c0
 MARKER  equ $727f8
+FALCON  equ $727f4                      ; byte: $ff on a Falcon (_MCH cookie high word 3), set by `init`; the hook then also applies the `; falcon: yes` sites (class 4)
 IMG     equ $72000
 HOOK    equ $72140
 APPLY   equ $721f0
@@ -94,6 +95,7 @@ img:                                    ; payload records start here (not assemb
         bra.w   uinit                   ; IMG+8: user-mode init
 init:   movem.l d0-d7/a0-a6,-(a7)
         bsr.w   cacroff
+        bsr.w   falcon
         lea     INITTBL.l,a2
         bra.s   tbl
 uinit:  movem.l d0-d7/a0-a6,-(a7)
@@ -144,6 +146,22 @@ cacroff: movea.l a7,a2                  ; the exception handler resets the stack
         move.l  a3,$2c.w
         rts
 
+; Falcon? _MCH cookie ($5a0 -> list of {tag, value}) high word 3 (ST 0, STE 1, TT 2, Falcon 3).  FALCON = 0 elsewhere (and without a cookie jar).
+falcon: clr.b   FALCON.l
+        move.l  $5a0.w,d0
+        beq.s   .r
+        movea.l d0,a0
+.l:     move.l  (a0)+,d0
+        beq.s   .r
+        move.l  (a0)+,d1
+        cmpi.l  #'_MCH',d0
+        bne.s   .l
+        swap    d1
+        cmpi.w  #3,d1
+        bne.s   .r
+        st      FALCON.l
+.r:     rts
+
         org     $72140
 ; hook -- the hand-over: WW1.PRG's copy routine ends in `jmp hook` instead of `rts`.  Applies the sites (all or nothing per group) and
 ; continues at $576.
@@ -156,6 +174,12 @@ hook:   movem.l d0-d7/a0-a6,-(a7)
         moveq   #0,d7                   ; optional sites
         bsr.w   APPLY
         bne.s   .o                      ; refused: nothing optional written, the mandatory ones are in, marker stays PMPF
+        tst.b   FALCON.l
+        beq.s   .nf
+        moveq   #4,d7                   ; Falcon-only sites (class 4)
+        bsr.w   APPLY
+        bne.s   .o
+.nf:
         move.l  #'PMPO',MARKER.l
 .o:     move.w  (a7)+,sr
         movem.l (a7)+,d0-d7/a0-a6

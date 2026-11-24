@@ -1,0 +1,25 @@
+  [   28s vbl 1504] name prompt
+  [   35s vbl 1857] option screen (typing attempt 1)
+  [   70s vbl 3624] no disk requester
+  [   73s vbl 3765] chart expected
+  [   97s vbl 4952] island clicked
+  [  103s vbl 5247] 3D map view, world counter ticking
+GATE hover hover_ws pm_tooltip alive ('PTIP') PASS $50544950
+  house candidates drawn in the view: 1: $542fa@(193,69)
+GATE hover hover_ws the sprite hook ran for houses (candidates found) PASS 1 houses
+  houses drawn 1; of towns with a workshop: 0
+  TEST SETUP: no drawn town has a workshop: kind byte of house $542fa (chain head of settlement $53372) set to 7 (was 11)
+GATE hover hover_ws the hovered town has a workshop (house kind 7 in the chain) PASS 1 town(s)
+GATE hover hover_ws a house under the resting pointer is picked (HIT) PASS HIT $542fa, RES 1, ARM 0, house $542fa at pointer (205,81)
+  SB = 'Ranatey: workshop idle'; settlement $53372 owner 1 item 0 countdown 0 T-base 10
+GATE hover hover_ws SB has the hover format PASS 'Ranatey: workshop idle'
+GATE hover hover_ws text equals the settlement record (no item: workshop idle / none) PASS 'workshop idle', item word 0
+GATE hover hover_ws BUF == reference rendering of SB (wwtt composer) PASS 0 of 624 bytes differ
+GATE hover hover_ws the text is in a screen buffer at rows 0-5 / byte 56 PASS buffers ['B']
+GATE hover hover_ws pointer away: the hover text is gone from both buffers PASS HIT $0
+GATE hover hover_ws item 0x6 in the making: the text follows the record PASS got 'Ranatey: making rifles (50%)', want making rifles ([50] %), record item 0x6 countdown 7 (T 14)
+GATE hover hover_ws item 0x6: BUF == reference rendering of the text PASS 0 of 624 bytes differ
+GATE hover hover_ws item 0xe in the making: the text follows the record PASS got 'Ranatey: making planes (24%)', want making planes ([24] %), record item 0xe countdown 779 (T 1038)
+GATE hover hover_ws item 0xe: BUF == reference rendering of the text PASS 0 of 624 bytes differ
+GATE hover hover_ws Build icon selected: the hover says what Build would make here PASS got 'Build here: planes (2 swords)' want 'Build here: planes (2 swords)' (posture word 3, workshop True)
+CELL DONE hover hover_ws: OK

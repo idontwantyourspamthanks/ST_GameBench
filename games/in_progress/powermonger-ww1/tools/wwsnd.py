@@ -11,6 +11,7 @@ master's + $e20, checked against the sequencer $1c4de) while Hatari records the 
 """
 from __future__ import annotations
 import argparse
+import re
 import shutil
 import struct
 import sys
@@ -73,7 +74,7 @@ def cmd_cmp(a):
 def cmd_wav(a):
     out = Path(a.out)
     cap = Path(a.workdir) / "cap.wav"
-    h = pmww.PMW(disk=Path(a.disk), workdir=a.workdir, machine=a.machine, tos=pmww.TOS[a.tos], memsize_kb=a.mem, sound=True, ymwav=str(cap))
+    h = pmww.PMW(disk=Path(a.disk), workdir=a.workdir, machine=a.machine, tos=pmww.TOS[a.tos], memsize_kb=a.mem, sound=True, ymwav=str(cap), extra=a.extra.split())
     try:
         h.boot_to_map(noprot=True, swap=False, log=lambda s: print("  " + s, flush=True))
         time.sleep(3)
@@ -97,6 +98,8 @@ def cmd_wav(a):
         h.cmd("hatari-shortcut recsound")
         time.sleep(1.0)
         st = [h.peekw(ACTIVE), h.peekw(STEP)]
+        exc = re.findall(r"(?i)(?:bus error|address error|illegal instruction|double bus|line-?f|exception)[^\n]*", h._logtext())
+        print(f"  CPU exceptions in the Hatari log: {len(exc)} {exc[:4]}", flush=True)
         print(f"  state after: active ${st[0]:x}, step {st[1]}, FLAGS ${h.peekl(0x76718):x}", flush=True)
     finally:
         h.close()
@@ -120,6 +123,7 @@ def main():
     w.add_argument("--machine", default="ste")
     w.add_argument("--tos", default="1.62")
     w.add_argument("--mem", type=int, default=1024)
+    w.add_argument("--extra", default="", help='extra Hatari options as one string, e.g. "--borders false" (Falcon / TT)')
     w.add_argument("--loop", action="store_true")
     c = sub.add_parser("cmp")
     c.add_argument("a")

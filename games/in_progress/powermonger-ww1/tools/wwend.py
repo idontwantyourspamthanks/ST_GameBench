@@ -49,6 +49,7 @@ def main():
     ap.add_argument("--orig-flow", action="store_true", help="a build without pm_noprot / pm_nokeydisk (core only, the original): the game's own disk swap and protection question")
     ap.add_argument("--watch", help="file with spans `$a-$b, ...` (the differing spans of a first run): breakpoints from the first instruction; any pc inside = code executed from a span that is not the hand-over image")
     ap.add_argument("--machine", default="ste")
+    ap.add_argument("--mem", type=int, default=1024)
     ap.add_argument("--tos", default="1.62")
     a = ap.parse_args()
     ok = True
@@ -67,9 +68,9 @@ def main():
         if a.endfiles:
             for n in ("END_PIC1.PAK", "END.PAK"):
                 shutil.copy(Path(a.endfiles) / n, folder / n)
-        h = wwhd.PMWHD(folder, acsi=a.acsi, workdir=str(Path(a.workdir) / "run"), machine=a.machine, tos=pmww.TOS[a.tos], memsize_kb=1024)
+        h = wwhd.PMWHD(folder, acsi=a.acsi, workdir=str(Path(a.workdir) / "run"), machine=a.machine, tos=pmww.TOS[a.tos], memsize_kb=a.mem)
     else:
-        h = pmww.PMW(disk=Path(a.disk), workdir=a.workdir, machine=a.machine, tos=pmww.TOS[a.tos], memsize_kb=1024)
+        h = pmww.PMW(disk=Path(a.disk), workdir=a.workdir, machine=a.machine, tos=pmww.TOS[a.tos], memsize_kb=a.mem)
     try:
         wwgate.arm_trace(h)
         watch = [tuple(int(x, 16) for x in t.replace("$", "").split("-")) for t in re.split(r"[,\s]+", Path(a.watch).read_text().strip()) if t] if a.watch else []

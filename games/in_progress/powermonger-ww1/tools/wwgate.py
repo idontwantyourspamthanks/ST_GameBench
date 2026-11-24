@@ -261,7 +261,9 @@ def cell(a):
 
         if man:
             want = b"PMPF" if a.corrupt else b"PMPO"
-            expect[MARKER - IMG_BASE:MARKER - IMG_BASE + 4] = want          # the only byte the hook itself writes in the region
+            expect[MARKER - IMG_BASE:MARKER - IMG_BASE + 4] = want          # the marker and, on a Falcon, the FALCON flag $727f4 (core.s init) are the only bytes the core itself writes in the region
+            if machine == "falcon":
+                expect[0x727F4 - IMG_BASE] = 0xFF
             g.line("marker", marker == want, f"${MARKER:x} = {marker!r} (want {want!r})")
             for s in man["sites"]:
                 want_s = s["orig"][:len(s["new"])] if (a.corrupt or (s.get("falcon") and machine != "falcon")) else s["new"]       # refused build: the game stays untouched; a Falcon-class site only on a Falcon
@@ -269,7 +271,9 @@ def cell(a):
                 g.line(f"site {s['name']}", got == want_s, f"${s['addr']:x} = {got} (want {want_s}{' = original, patch refused' if a.corrupt else ' = original: Falcon-only site, this is not a Falcon' if (s.get('falcon') and machine != 'falcon') else ''})")
             region("options")
             if "pm_credit" in man["patches"]:
-                im = Image.open(h.shot()).convert("RGB").crop((96, 58 + 2 * 194, 736, 58 + 2 * 200))
+                sh = Image.open(h.shot()).convert("RGB")
+                ox, oy = (0, 0) if sh.width == 640 else (96, 58)          # TT / Falcon shots: 640 wide, picture at (0,0); ST family: 832 x 588, picture at (96,58)
+                im = sh.crop((ox, oy + 2 * 194, ox + 640, oy + 2 * 200))
                 cols = {}
                 for c in im.get_flattened_data() if hasattr(im, "get_flattened_data") else im.getdata():
                     cols[c] = cols.get(c, 0) + 1

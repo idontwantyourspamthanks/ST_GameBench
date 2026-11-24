@@ -1,0 +1,17 @@
+  [   28s vbl 1500] name prompt
+  [   35s vbl 1854] option screen (typing attempt 1)
+  [   70s vbl 3621] no disk requester
+  [   73s vbl 3761] chart expected
+  [   97s vbl 4947] island clicked
+  [  103s vbl 5243] 3D map view, world counter ticking
+GATE interp interp8 8 MHz men are moving (get_men scene) PASS 20 records change position within 0.4 s
+  PD before 00000000000000000000005b00000000000000110000004e0000000000000000 after 00000000000000000000005b00000000000000110000004e0000000000000000
+GATE interp interp8 8 MHz counters PASS NMOV 0, passes drawn with offsets +0, scans +0
+GATE interp interp8 8 MHz passes captured PASS 115 complete passes in 40 s
+GATE interp interp8 8 MHz people table restored after the render in every pass (T1 == T0) FAIL 71 of 115
+  T0 != T1: 20 record(s) differ: #1 bytes ['0xc', '0xd', '0x11', '0x14', '0x15', '0x16', '0x17', '0x1e', '0x1f'], #2 bytes ['0xc', '0xd', '0x11', '0x14', '0x15', '0x16', '0x17', '0x1e', '0x1f'], #3 bytes ['0x9', '0x13'], #4 bytes ['0x9', '0x13'], #5 bytes ['0x9', '0x13'], #6 bytes ['0x9', '0x13']; T0 == TMID: True
+  T0 != T1: 20 record(s) differ: #1 bytes ['0x9', '0xb', '0x13'], #2 bytes ['0x9', '0xb', '0x13'], #3 bytes ['0x9', '0x13'], #4 bytes ['0x9', '0xc', '0xd', '0x11', '0x13', '0x29'], #5 bytes ['0x9', '0x13'], #6 bytes ['0x9', '0x13']; T0 == TMID: True
+  T0 != T1: 20 record(s) differ: #1 bytes ['0x9', '0xb', '0x13'], #2 bytes ['0x9', '0xb', '0x13'], #3 bytes ['0xb', '0x13'], #4 bytes ['0xb', '0x13'], #5 bytes ['0xb', '0x13'], #6 bytes ['0xb', '0x13']; T0 == TMID: True
+  T0 != T1: 20 record(s) differ: #1 bytes ['0x9', '0xb', '0x13', '0x1f'], #2 bytes ['0x9', '0xb', '0x13', '0x1f'], #3 bytes ['0xb', '0x13'], #4 bytes ['0xb', '0x13'], #5 bytes ['0xb', '0x13'], #6 bytes ['0xb', '0x13']; T0 == TMID: True
+GATE interp interp8 8 MHz no offsets at 8 MHz (no render-only pass) PASS 0 passes with offsets
+CELL DONE interp interp8 8 MHz: FAIL

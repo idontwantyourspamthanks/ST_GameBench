@@ -1,0 +1,12 @@
+== Falcon YM (fal_ym) vs STE YM (original player)
+A /tmp/pmww1s4c/e47_ym.wav: onset 0.938 s end 1.381 s (dur 0.443), rms 4158
+B /tmp/pmww1s4d/e47_fal_nosnd.wav: onset 0.878 s end 1.323 s (dur 0.445), rms 3325
+CMP rho = +0.8671 at lag +0.0 ms (|lag| <= 50 ms, LP 9 taps); durations 0.443 / 0.445 s; rms 4158 / 3325
+== Falcon DMA vs STE DMA
+A /tmp/pmww1s4c/e47_dma.wav: onset 0.940 s end 1.379 s (dur 0.439), rms 5436
+B /tmp/pmww1s4d/e47_old.wav: onset 0.819 s end 1.252 s (dur 0.432), rms 3247
+CMP rho = -0.4474 at lag -47.6 ms (|lag| <= 50 ms, LP 9 taps); durations 0.439 / 0.432 s; rms 5436 / 3247
+== Falcon YM vs STE DMA
+A /tmp/pmww1s4c/e47_dma.wav: onset 0.940 s end 1.379 s (dur 0.439), rms 5436
+B /tmp/pmww1s4d/e47_fal_nosnd.wav: onset 0.878 s end 1.323 s (dur 0.445), rms 3325
+CMP rho = +0.8482 at lag -0.0 ms (|lag| <= 50 ms, LP 9 taps); durations 0.439 / 0.445 s; rms 5436 / 3325

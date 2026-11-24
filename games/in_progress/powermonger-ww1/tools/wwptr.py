@@ -11,6 +11,7 @@ except the slow world tick; the arrow is bright).  Result `PTR <tag>: visible in
 """
 from __future__ import annotations
 import argparse
+import re
 import sys
 import time
 from pathlib import Path
@@ -38,6 +39,7 @@ def main():
     ap.add_argument("--mem", type=int, default=4096)
     ap.add_argument("--trials", type=int, default=10)
     ap.add_argument("--tag")
+    ap.add_argument("--flips", action="store_true", help="also (first): at every return of the flip routine ($e34) the pointer's saved-screen address [$1d2ba] against the buffer now displayed [$2ed98] (master's ptr_buffer)")
     ap.add_argument("--extra", default="--mmu true --cpuclock 32 --monitor vga")   # as dist/run_tt.sh: with the harness' default RGB monitor TOS 3.06 boots TT medium and the ST-low game is tiled 2 x 2
     a = ap.parse_args()
     tag = a.tag or Path(a.disk).parent.name
@@ -47,6 +49,24 @@ def main():
         time.sleep(3)
         live = h.ram(0x75BF0, 1)[0]
         print(f"  LIVE = ${live:02x}, marker {h.ram(0x727F8, 4)!r}", flush=True)
+        if a.flips:
+            f = h.R / "ptrbuf.txt"
+            f.write_text("e ($1d2ba).l\ne ($2ed98).l\ne ($ff8201).b\ne ($ff8203).b\n")
+            h.goto_st(150, 100)
+            time.sleep(1.5)
+            h.debug("b all", 0.3)
+            s0 = len(h._logtext())
+            h.cmd(f"hatari-debug b pc = $e34 :trace :file {f}")
+            time.sleep(6.0)
+            h.debug("b all", 0.5)
+            n = inside = base_ok = 0
+            for blk in h._logtext()[s0:].split("CPU breakpoint condition(s) matched")[1:]:
+                m = [int(v) for v in re.findall(r"#(\d+)(?:/-?\d+)? \(dec\)", blk)]
+                if len(m) >= 4:
+                    n += 1
+                    inside += m[1] <= m[0] < m[1] + 32000
+                    base_ok += ((m[2] << 16) | (m[3] << 8)) == m[1]
+            print(f"FLIPS {tag} {a.machine}: at {n} flip returns the pointer record [$1d2ba] lies inside the new displayed buffer [$2ed98] in {inside} (video base register == [$2ed98] in {base_ok})", flush=True)
         probe = grab(h)
         H, W = probe.shape[:2]
         sc = 2 if W < 700 else 2                                    # ST low resolution shown doubled
