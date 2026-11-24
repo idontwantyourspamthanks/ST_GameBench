@@ -1,3 +1,5 @@
+  [head_ste] [   26s vbl 1378] name prompt
+  [head_ste] [   33s vbl 1730] option screen (typing attempt 1)
 GATE head_ste/ste-1.62-1024K marker PASS $727f8 = b'PMPO' (want b'PMPO')
 GATE head_ste/ste-1.62-1024K site fal_ym PASS $1bcb8 = 03c88df101888df1 (want 03c88df101888df1 = original: Falcon-only site, this is not a Falcon)
 GATE head_ste/ste-1.62-1024K site p4_clamp PASS $ed6 = 4eb900075c004e714e71 (want 4eb900075c004e714e71)
@@ -27,6 +29,10 @@ GATE head_ste/ste-1.62-1024K cache cursor@options PASS [$2cfda] = $80000 (limit 
 GATE head_ste/ste-1.62-1024K credit visible PASS rows 194-199: 780 px of colours [(102, 102, 68)]
 GATE head_ste/ste-1.62-1024K boot PASS 49s
 GATE head_ste/ste-1.62-1024K noprot flag PASS $15998 = $0000002c (want $0000002c) before the first land
+  [head_ste] [   34s vbl 4448] no disk requester
+  [head_ste] [   37s vbl 4588] chart expected
+  [head_ste] [   61s vbl 5772] island clicked
+  [head_ste] [   67s vbl 6068] 3D map view, world counter ticking
 GATE head_ste/ste-1.62-1024K noprot: the check never ran PASS hits $acc4:0, $ae20:0, $b232:0, $b39c:0
 GATE head_ste/ste-1.62-1024K noprot: 'Please wait' box skipped (stub reached) PASS $bbd2 reached 1x (an `rts` stub)
 GATE head_ste/ste-1.62-1024K nokeydisk: the key-disk routine never ran, the flow went on PASS $1cf7c hit 0x, next instruction $13cf2 hit 1x; the Powermonger disk was never inserted
@@ -39,8 +45,10 @@ GATE head_ste/ste-1.62-1024K tt_ptr: LIVE flag PASS $00
 GATE head_ste/ste-1.62-1024K core: FALCON flag ($727f4, _MCH cookie high word 3) PASS $00 on ste
 GATE head_ste/ste-1.62-1024K snd_core: FLAGS (DMA sound probe) PASS $3 (STE-class 3, plain ST 6)
 GATE head_ste/ste-1.62-1024K snd_core: the DMA plays a chunk (play bit $ff8901.0 seen in 60 s) PASS bit seen True, SV busy ff, sequencer active 01, chunk busy ff
+RATE head_ste/ste 8 MHz cold boot map view 50 Hz: 801 VBL = 16.02 s emulated, 160256 cycles/VBL, world clock +64 = 3.995/s; tick passes 64, R passes 16, S passes 0
 GATE head_ste/ste-1.62-1024K rate PASS head_ste/ste 8 MHz cold boot map view 50 Hz: 801 VBL = 16.02 s emulated, 160256 cycles/VBL, world clock +64 = 3.995/s; tick passes 64, R passes 16, S passes 0
 GATE head_ste/ste-1.62-1024K world rate = 4.00/s (+-5 %) PASS 3.995 world steps per emulated second
+  [head_ste] requester: insert the save game disk
 GATE head_ste/ste-1.62-1024K save/load: loaded state == saved state PASS 101376 B: 0 differ
 GATE head_ste/ste-1.62-1024K save/load: the world moved between save and load PASS saved vs the state just before the load: 311 differ
 GATE head_ste/ste-1.62-1024K save/load: save disk slot A == saved state PASS sectors 1-198 equal: True, slot flag $ff, image 409600 B
@@ -54,6 +62,8 @@ GATE head_ste/ste-1.62-1024K payload@lose PASS unchanged
 GATE head_ste/ste-1.62-1024K hi@lose PASS pattern / constants: 0 of 274432 bytes changed in $b0000-$bbfff, $c0000-$f6fff
 GATE head_ste/ste-1.62-1024K cache cursor@lose PASS [$2cfda] = $a7958 (limit $b0000, 0 = no cache)
 GATE head_ste/ste-1.62-1024K back to option screen PASS 
+  [head_ste] [   23s vbl 19187] island clicked
+  [head_ste] [   29s vbl 19483] 3D map view, world counter ticking
 GATE head_ste/ste-1.62-1024K map view (2nd land) PASS counter 64
 GATE head_ste/ste-1.62-1024K win picture PASS non-black 1.00, 13 colours, seen stable x3; cache cursor $af658
 GATE head_ste/ste-1.62-1024K win picture still there after 8 s PASS non-black 0.99, 15 colours
@@ -61,9 +71,1571 @@ GATE head_ste/ste-1.62-1024K payload@win PASS unchanged
 GATE head_ste/ste-1.62-1024K hi@win PASS pattern / constants: 0 of 274432 bytes changed in $b0000-$bbfff, $c0000-$f6fff
 GATE head_ste/ste-1.62-1024K cache cursor@win PASS [$2cfda] = $af658 (limit $b0000, 0 = no cache)
 GATE head_ste/ste-1.62-1024K back to option screen (after win) PASS 
+LOADER 0:D95 2:D73 3:D98 4:D104 5:D113 16:D+189 10:D+248 11:D188 1:D+120 8:D+112 1:c7 8:c6 1:c7 8:c7 14:D+170 16:c0 10:c13 11:D179 1:c6 8:c6 15:D+122
+LOADER legend: n:D = loaded from the disk, n:c = from the cache; + = cached (cursor store), S = cap skip; number = VBLs call to return
 GATE head_ste/ste-1.62-1024K loader: every cacheable resource (1 8 10 14 15 16) came from the disk at most once PASS disk loads per resource {1: 1, 8: 1, 10: 1, 14: 1, 15: 1, 16: 1}
 GATE head_ste/ste-1.62-1024K loader: cache hits are fast (<= 40 VBL) PASS 8 cache hits, slow []
 GATE head_ste/ste-1.62-1024K cap normal: no skip (M3a) PASS 0 skip(s)
 CELL DONE head_ste/ste-1.62-1024K: OK (460s)
+  line 13: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $c0) at pc=e0008a
 PSGCHECK leadhead: PASS (violations 0, warnings 0; reg-7 writes 2, reg-14 writes 427, FDC commands 1017, selects 441, data writes 439, frames 2041, frames with reg 7 bits 6/7 not both set 0 (longest run 0), final reg 7 = $ff)
 GATE head_ste/ste-1.62-1024K PSG gate (strict Hatari, sound on): no FDC command / reg-14 write with reg 7 bit 6 = 0, frames start with bits 6/7 set PASS violations 0, warnings 0: PSGCHECK leadhead: PASS (violations 0, warnings 0; reg-7 writes 2, reg-14 writes 427, FDC commands 1017, selects 441, data writes 439, frames 2041, frames with reg 7 bits 6/7 not both set 0 (longest run 0), final reg 7 = $ff)
+txt' file on hit.
+> b pc = $bbd2 :trace :file /tmp/leadhead/watch.txt
+CPU condition breakpoint 9 with 1 condition(s) added:
+	pc = $bbd2
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/leadhead/watch.txt' file on hit.
+> b pc = $1cf7c :trace :file /tmp/leadhead/watch.txt
+CPU condition breakpoint 10 with 1 condition(s) added:
+	pc = $1cf7c
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/leadhead/watch.txt' file on hit.
+> b pc = $13cf2 :trace :file /tmp/leadhead/watch.txt
+CPU condition breakpoint 11 with 1 condition(s) added:
+	pc = $13cf2
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/leadhead/watch.txt' file on hit.
+> m $2edb2 2
+0002EDB2: 00 00                                            ..
+> m $2edb4 2
+0002EDB4: 00 00                                            ..
+> m $2edb2 2
+0002EDB2: 00 a0                                            ..
+> m $2edb4 2
+0002EDB4: 00 55                                            .U
+> m $2edb2 2
+0002EDB2: 00 a0                                            ..
+> m $2edb4 2
+0002EDB4: 00 55                                            .U
+> m $2edb2 2
+0002EDB2: 00 a0                                            ..
+> m $2edb4 2
+0002EDB4: 00 55                                            .U
+1. CPU breakpoint condition(s) matched 2 times.
+	pc = $e34c :trace :file /tmp/leadhead/tr_call.txt
+Reading debugger commands from '/tmp/leadhead/tr_call.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %110000100101 (bin), #3109 (dec), $c25 (hex)
+> r
+  D0 00010000   D1 0002FFFF   D2 00000000   D3 00000073 
+  D4 06210541   D5 06610451   D6 00000000   D7 00000002 
+  A0 00025200   A1 0000BE67   A2 000074C0   A3 00000000 
+  A4 0000763C   A5 00044838   A6 0000BC86   A7 0002D72E 
+USP  000F7FF2 ISP  0002D72E 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch e54a (LSL) 41f9 (LEA) Chip latch 00000000
+0000e34c e54a                     lsl.w #$02,d2
+Next PC: 0000e34e
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+2. CPU breakpoint condition(s) matched 2 times.
+	pc = $e388 :trace :file /tmp/leadhead/tr_miss.txt
+Reading debugger commands from '/tmp/leadhead/tr_miss.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %110000100101 (bin), #3109 (dec), $c25 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 2 times.
+	pc = $e42a :trace :file /tmp/leadhead/tr_ret.txt
+Reading debugger commands from '/tmp/leadhead/tr_ret.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %110010000100 (bin), #3204 (dec), $c84 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+11. CPU breakpoint condition(s) matched 1 times.
+	pc = $13cf2 :trace :file /tmp/leadhead/watch.txt
+Reading debugger commands from '/tmp/leadhead/watch.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e pc
+= %10011110011110010 (bin), #81138 (dec), $13cf2 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+1. CPU breakpoint condition(s) matched 3 times.
+	pc = $e34c :trace :file /tmp/leadhead/tr_call.txt
+Reading debugger commands from '/tmp/leadhead/tr_call.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %110010000100 (bin), #3204 (dec), $c84 (hex)
+> r
+  D0 00010000   D1 0002FFFF   D2 00000002   D3 00000073 
+  D4 06210541   D5 06610451   D6 00000000   D7 00000002 
+  A0 00025200   A1 0000BE67   A2 000074C0   A3 00000000 
+  A4 0000763C   A5 00044838   A6 0000BC86   A7 0002D72E 
+USP  000F7FF2 ISP  0002D72E 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch e54a (LSL) 41f9 (LEA) Chip latch 00000000
+0000e34c e54a                     lsl.w #$02,d2
+Next PC: 0000e34e
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+2. CPU breakpoint condition(s) matched 3 times.
+	pc = $e388 :trace :file /tmp/leadhead/tr_miss.txt
+Reading debugger commands from '/tmp/leadhead/tr_miss.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %110010000100 (bin), #3204 (dec), $c84 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 3 times.
+	pc = $e42a :trace :file /tmp/leadhead/tr_ret.txt
+Reading debugger commands from '/tmp/leadhead/tr_ret.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %110011001101 (bin), #3277 (dec), $ccd (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+1. CPU breakpoint condition(s) matched 4 times.
+	pc = $e34c :trace :file /tmp/leadhead/tr_call.txt
+Reading debugger commands from '/tmp/leadhead/tr_call.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %110011001101 (bin), #3277 (dec), $ccd (hex)
+> r
+  D0 00010000   D1 0002FFFF   D2 00000003   D3 00000073 
+  D4 06210541   D5 06610451   D6 00000000   D7 00000002 
+  A0 00025200   A1 0000BE67   A2 000074C0   A3 00000000 
+  A4 0000763C   A5 00044838   A6 0000BC86   A7 0002D72E 
+USP  000F7FF2 ISP  0002D72E 
+SR=2310 T=00 S=1 M=0 X=1 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch e54a (LSL) 41f9 (LEA) Chip latch 00000000
+0000e34c e54a                     lsl.w #$02,d2
+Next PC: 0000e34e
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+2. CPU breakpoint condition(s) matched 4 times.
+	pc = $e388 :trace :file /tmp/leadhead/tr_miss.txt
+Reading debugger commands from '/tmp/leadhead/tr_miss.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %110011001101 (bin), #3277 (dec), $ccd (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 4 times.
+	pc = $e42a :trace :file /tmp/leadhead/tr_ret.txt
+Reading debugger commands from '/tmp/leadhead/tr_ret.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %110100101111 (bin), #3375 (dec), $d2f (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+1. CPU breakpoint condition(s) matched 5 times.
+	pc = $e34c :trace :file /tmp/leadhead/tr_call.txt
+Reading debugger commands from '/tmp/leadhead/tr_call.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %110100101111 (bin), #3375 (dec), $d2f (hex)
+> r
+  D0 00010000   D1 0002FFFF   D2 00000004   D3 00000073 
+  D4 06210541   D5 06610451   D6 00000000   D7 00000002 
+  A0 00025200   A1 0000BE67   A2 000074C0   A3 00000000 
+  A4 0000763C   A5 00044838   A6 0000BC86   A7 0002D72E 
+USP  000F7FF2 ISP  0002D72E 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch e54a (LSL) 41f9 (LEA) Chip latch 00000000
+0000e34c e54a                     lsl.w #$02,d2
+Next PC: 0000e34e
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+2. CPU breakpoint condition(s) matched 5 times.
+	pc = $e388 :trace :file /tmp/leadhead/tr_miss.txt
+Reading debugger commands from '/tmp/leadhead/tr_miss.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %110100101111 (bin), #3375 (dec), $d2f (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 5 times.
+	pc = $e42a :trace :file /tmp/leadhead/tr_ret.txt
+Reading debugger commands from '/tmp/leadhead/tr_ret.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %110110010111 (bin), #3479 (dec), $d97 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+1. CPU breakpoint condition(s) matched 6 times.
+	pc = $e34c :trace :file /tmp/leadhead/tr_call.txt
+Reading debugger commands from '/tmp/leadhead/tr_call.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %110110010111 (bin), #3479 (dec), $d97 (hex)
+> r
+  D0 00010000   D1 0002FFFF   D2 00000005   D3 00000073 
+  D4 06210541   D5 06610451   D6 00000000   D7 00000002 
+  A0 00025200   A1 0000BE67   A2 000074C0   A3 00000000 
+  A4 0000763C   A5 00044838   A6 0000BC86   A7 0002D72E 
+USP  000F7FF2 ISP  0002D72E 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch e54a (LSL) 41f9 (LEA) Chip latch 00000000
+0000e34c e54a                     lsl.w #$02,d2
+Next PC: 0000e34e
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+2. CPU breakpoint condition(s) matched 6 times.
+	pc = $e388 :trace :file /tmp/leadhead/tr_miss.txt
+Reading debugger commands from '/tmp/leadhead/tr_miss.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %110110010111 (bin), #3479 (dec), $d97 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 6 times.
+	pc = $e42a :trace :file /tmp/leadhead/tr_ret.txt
+Reading debugger commands from '/tmp/leadhead/tr_ret.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %111000001000 (bin), #3592 (dec), $e08 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+1. CPU breakpoint condition(s) matched 7 times.
+	pc = $e34c :trace :file /tmp/leadhead/tr_call.txt
+Reading debugger commands from '/tmp/leadhead/tr_call.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %111000110101 (bin), #3637 (dec), $e35 (hex)
+> r
+  D0 00010000   D1 0000FFFF   D2 00000010   D3 00000073 
+  D4 06210541   D5 06610451   D6 00000000   D7 00000002 
+  A0 0005A8A2   A1 0000BE67   A2 000074C0   A3 00000000 
+  A4 0000763C   A5 00044838   A6 0000BC86   A7 0002D6EA 
+USP  000F7FF2 ISP  0002D6EA 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch e54a (LSL) 41f9 (LEA) Chip latch 00000000
+0000e34c e54a                     lsl.w #$02,d2
+Next PC: 0000e34e
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+2. CPU breakpoint condition(s) matched 7 times.
+	pc = $e388 :trace :file /tmp/leadhead/tr_miss.txt
+Reading debugger commands from '/tmp/leadhead/tr_miss.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %111000110101 (bin), #3637 (dec), $e35 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+3. CPU breakpoint condition(s) matched 1 times.
+	pc = $e3f8 :trace :file /tmp/leadhead/tr_store.txt
+Reading debugger commands from '/tmp/leadhead/tr_store.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %111011110010 (bin), #3826 (dec), $ef2 (hex)
+> r
+  D0 000800D8   D1 0000418C   D2 000000D8   D3 00000073 
+  D4 06210541   D5 06610451   D6 00000000   D7 00000002 
+  A0 0004483A   A1 00080000   A2 000074C0   A3 00000000 
+  A4 0000763C   A5 00044838   A6 0000BC86   A7 0002D6EA 
+USP  000F7FF2 ISP  0002D6EA 
+SR=2309 T=00 S=1 M=0 X=0 N=1 Z=0 V=0 C=1 IM=3 STP=0
+Prefetch b3fc (CMPA) 0000 (OR) Chip latch 00000000
+0000e3f8 b3fc 0000 0000           cmpa.l #$00000000,a1
+Next PC: 0000e3fe
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 7 times.
+	pc = $e42a :trace :file /tmp/leadhead/tr_ret.txt
+Reading debugger commands from '/tmp/leadhead/tr_ret.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %111011110010 (bin), #3826 (dec), $ef2 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+1. CPU breakpoint condition(s) matched 8 times.
+	pc = $e34c :trace :file /tmp/leadhead/tr_call.txt
+Reading debugger commands from '/tmp/leadhead/tr_call.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %111011110010 (bin), #3826 (dec), $ef2 (hex)
+> r
+  D0 0000FFFF   D1 0000FF00   D2 0000000A   D3 00000073 
+  D4 06210541   D5 06610451   D6 00000000   D7 00000002 
+  A0 00044912   A1 00044838   A2 000074C0   A3 00000000 
+  A4 0000763C   A5 00044838   A6 0000BC86   A7 0002D6EA 
+USP  000F7FF2 ISP  0002D6EA 
+SR=2310 T=00 S=1 M=0 X=1 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch e54a (LSL) 41f9 (LEA) Chip latch 00000000
+0000e34c e54a                     lsl.w #$02,d2
+Next PC: 0000e34e
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+2. CPU breakpoint condition(s) matched 8 times.
+	pc = $e388 :trace :file /tmp/leadhead/tr_miss.txt
+Reading debugger commands from '/tmp/leadhead/tr_miss.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %111011110010 (bin), #3826 (dec), $ef2 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+3. CPU breakpoint condition(s) matched 2 times.
+	pc = $e3f8 :trace :file /tmp/leadhead/tr_store.txt
+Reading debugger commands from '/tmp/leadhead/tr_store.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %111111011101 (bin), #4061 (dec), $fdd (hex)
+> r
+  D0 00090258   D1 000095CC   D2 00010180   D3 00000073 
+  D4 06210541   D5 06610451   D6 00000000   D7 00000002 
+  A0 0004483A   A1 000800D8   A2 000074C0   A3 00000000 
+  A4 0000763C   A5 00044838   A6 0000BC86   A7 0002D6EA 
+USP  000F7FF2 ISP  0002D6EA 
+SR=2309 T=00 S=1 M=0 X=0 N=1 Z=0 V=0 C=1 IM=3 STP=0
+Prefetch b3fc (CMPA) 0000 (OR) Chip latch 00000000
+0000e3f8 b3fc 0000 0000           cmpa.l #$00000000,a1
+Next PC: 0000e3fe
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 8 times.
+	pc = $e42a :trace :file /tmp/leadhead/tr_ret.txt
+Reading debugger commands from '/tmp/leadhead/tr_ret.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %111111101010 (bin), #4074 (dec), $fea (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+> savebin /tmp/leadhead/ram.bin $7640 $c0
+  Wrote 0xc0 bytes.
+> e VBL
+= %1000101100000 (bin), #4448 (dec), $1160 (hex)
+> e VBL
+= %1000111101100 (bin), #4588 (dec), $11ec (hex)
+> m $2edb2 2
+0002EDB2: 00 00                                            ..
+> m $2edb4 2
+0002EDB4: 00 00                                            ..
+> m $2edb2 2
+0002EDB2: 00 3c                                            .<
+> m $2edb4 2
+0002EDB4: 00 14                                            ..
+> m $2edb2 2
+0002EDB2: 00 3c                                            .<
+> m $2edb4 2
+0002EDB4: 00 14                                            ..
+> m $2edb2 2
+0002EDB2: 00 3c                                            .<
+> m $2edb4 2
+0002EDB4: 00 18                                            ..
+> m $2edb2 2
+0002EDB2: 00 3c                                            .<
+> m $2edb4 2
+0002EDB4: 00 18                                            ..
+> m $2edb2 2
+0002EDB2: 00 3c                                            .<
+> m $2edb4 2
+0002EDB4: 00 18                                            ..
+> m $74c0 2
+000074C0: 00 00                                            ..
+> m $74c0 2
+000074C0: 00 00                                            ..
+1. CPU breakpoint condition(s) matched 9 times.
+	pc = $e34c :trace :file /tmp/leadhead/tr_call.txt
+Reading debugger commands from '/tmp/leadhead/tr_call.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %1010001010000 (bin), #5200 (dec), $1450 (hex)
+> r
+  D0 00000010   D1 0000FFFF   D2 847C000B   D3 0000002F 
+  D4 00000031   D5 00000011   D6 0000FFFF   D7 0000FFFF 
+  A0 0005A85A   A1 00027020   A2 000074C0   A3 00000002 
+  A4 00012426   A5 00044838   A6 0000BC86   A7 0002D6EA 
+USP  000F7FF2 ISP  0002D6EA 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch e54a (LSL) 41f9 (LEA) Chip latch 00000000
+0000e34c e54a                     lsl.w #$02,d2
+Next PC: 0000e34e
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+2. CPU breakpoint condition(s) matched 9 times.
+	pc = $e388 :trace :file /tmp/leadhead/tr_miss.txt
+Reading debugger commands from '/tmp/leadhead/tr_miss.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %1010001010000 (bin), #5200 (dec), $1450 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+> m $2ed92 2
+0002ED92: 00 00                                            ..
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+4. CPU breakpoint condition(s) matched 9 times.
+	pc = $e42a :trace :file /tmp/leadhead/tr_ret.txt
+Reading debugger commands from '/tmp/leadhead/tr_ret.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %1010100001100 (bin), #5388 (dec), $150c (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+> m $2ed92 2
+0002ED92: 00 00                                            ..
+1. CPU breakpoint condition(s) matched 10 times.
+	pc = $e34c :trace :file /tmp/leadhead/tr_call.txt
+Reading debugger commands from '/tmp/leadhead/tr_call.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %1010101000000 (bin), #5440 (dec), $1540 (hex)
+> r
+  D0 00000000   D1 0000FFFF   D2 00000001   D3 0000002A 
+  D4 00000006   D5 00000005   D6 00002080   D7 00002A80 
+  A0 00056262   A1 00056262   A2 0005A9B4   A3 00055DF2 
+  A4 00051B30   A5 0005A882   A6 00054232   A7 0002D6AE 
+USP  000F7FF2 ISP  0002D6AE 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch e54a (LSL) 41f9 (LEA) Chip latch 00000000
+0000e34c e54a                     lsl.w #$02,d2
+Next PC: 0000e34e
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+2. CPU breakpoint condition(s) matched 10 times.
+	pc = $e388 :trace :file /tmp/leadhead/tr_miss.txt
+Reading debugger commands from '/tmp/leadhead/tr_miss.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %1010101000000 (bin), #5440 (dec), $1540 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+> m $74c0 2
+000074C0: 00 00                                            ..
+> m $74c0 2
+000074C0: 00 00                                            ..
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+3. CPU breakpoint condition(s) matched 3 times.
+	pc = $e3f8 :trace :file /tmp/leadhead/tr_store.txt
+Reading debugger commands from '/tmp/leadhead/tr_store.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %1010110110001 (bin), #5553 (dec), $15b1 (hex)
+> r
+  D0 00097F58   D1 000035B4   D2 00007D00   D3 0000002A 
+  D4 00000006   D5 00000005   D6 00002080   D7 00002A80 
+  A0 00078000   A1 00090258   A2 0005A9B4   A3 00055DF2 
+  A4 00051B30   A5 0005A882   A6 00054232   A7 0002D6AE 
+USP  000F7FF2 ISP  0002D6AE 
+SR=2309 T=00 S=1 M=0 X=0 N=1 Z=0 V=0 C=1 IM=3 STP=0
+Prefetch b3fc (CMPA) 0000 (OR) Chip latch 00000000
+0000e3f8 b3fc 0000 0000           cmpa.l #$00000000,a1
+Next PC: 0000e3fe
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 10 times.
+	pc = $e42a :trace :file /tmp/leadhead/tr_ret.txt
+Reading debugger commands from '/tmp/leadhead/tr_ret.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %1010110111000 (bin), #5560 (dec), $15b8 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+1. CPU breakpoint condition(s) matched 11 times.
+	pc = $e34c :trace :file /tmp/leadhead/tr_call.txt
+Reading debugger commands from '/tmp/leadhead/tr_call.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %1010111001011 (bin), #5579 (dec), $15cb (hex)
+> r
+  D0 00000000   D1 0000FFFF   D2 00000008   D3 0000002A 
+  D4 00000006   D5 00000005   D6 00002080   D7 00002A80 
+  A0 00056262   A1 00056262   A2 0005A9B4   A3 00055DF2 
+  A4 00051B30   A5 0005A882   A6 00054232   A7 0002D6AE 
+USP  000F7FF2 ISP  0002D6AE 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch e54a (LSL) 41f9 (LEA) Chip latch 00000000
+0000e34c e54a                     lsl.w #$02,d2
+Next PC: 0000e34e
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+2. CPU breakpoint condition(s) matched 11 times.
+	pc = $e388 :trace :file /tmp/leadhead/tr_miss.txt
+Reading debugger commands from '/tmp/leadhead/tr_miss.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %1010111001011 (bin), #5579 (dec), $15cb (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+> m $2ed92 2
+0002ED92: 00 00                                            ..
+3. CPU breakpoint condition(s) matched 4 times.
+	pc = $e3f8 :trace :file /tmp/leadhead/tr_store.txt
+Reading debugger commands from '/tmp/leadhead/tr_store.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %1011000110100 (bin), #5684 (dec), $1634 (hex)
+> r
+  D0 0009FC58   D1 00002D98   D2 00007D00   D3 0000002A 
+  D4 00000006   D5 00000005   D6 00002080   D7 00002A80 
+  A0 00025200   A1 00097F58   A2 0005A9B4   A3 00055DF2 
+  A4 00051B30   A5 0005A882   A6 00054232   A7 0002D6AE 
+USP  000F7FF2 ISP  0002D6AE 
+SR=2309 T=00 S=1 M=0 X=0 N=1 Z=0 V=0 C=1 IM=3 STP=0
+Prefetch b3fc (CMPA) 0000 (OR) Chip latch 00000000
+0000e3f8 b3fc 0000 0000           cmpa.l #$00000000,a1
+Next PC: 0000e3fe
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 11 times.
+	pc = $e42a :trace :file /tmp/leadhead/tr_ret.txt
+Reading debugger commands from '/tmp/leadhead/tr_ret.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %1011000111011 (bin), #5691 (dec), $163b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+9. CPU breakpoint condition(s) matched 1 times.
+	pc = $bbd2 :trace :file /tmp/leadhead/watch.txt
+Reading debugger commands from '/tmp/leadhead/watch.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e pc
+= %1011101111010010 (bin), #48082 (dec), $bbd2 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+> m $2ed92 2
+0002ED92: 00 01                                            ..
+> e VBL
+= %1011010001100 (bin), #5772 (dec), $168c (hex)
+> m $74c0 2
+000074C0: 00 00                                            ..
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+> m $2ed92 2
+0002ED92: 00 07                                            ..
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+> m $2ed92 2
+0002ED92: 00 12                                            ..
+> m $74c0 2
+000074C0: 00 00                                            ..
+> e VBL
+= %1011110110100 (bin), #6068 (dec), $17b4 (hex)
+WARN : PNG screen dump saved to: /tmp/leadhead/shots/grab0003.png
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+> m $2ed92 2
+0002ED92: 00 1d                                            ..
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+> m $2ed92 2
+0002ED92: 00 2a                                            .*
+> m $74c0 2
+000074C0: 00 00                                            ..
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+> m $2ed92 2
+0002ED92: 00 31                                            .1
+> m $15998 2
+00015998: 00 00                                            ..
+> m $1599a 2
+0001599A: 00 2c                                            .,
+> savebin /tmp/leadhead/ram.bin $72000 $6000
+  Wrote 0x6000 bytes.
+> savebin /tmp/leadhead/ram.bin $b0000 $47000
+  Wrote 0x47000 bytes.
+> m $2cfda 2
+0002CFDA: 00 09                                            ..
+> m $2cfdc 2
+0002CFDC: fc 58                                            .X
+> m $ff8e21 1
+00FF8E21: ff                                               .
+> m $75bf0 1
+00075BF0: 00                                               .
+> m $727f4 1
+000727F4: 00                                               .
+> m $76718 2
+00076718: 00 00                                            ..
+> m $7671a 2
+0007671A: 00 03                                            ..
+> m $ff8901 1
+00FF8901: 01                                               .
+> m $76700 1
+00076700: ff                                               .
+> m $2d7b2 1
+0002D7B2: 01                                               .
+> m $2d7b3 1
+0002D7B3: ff                                               .
+> m $ff820a 1
+00FF820A: fe                                               .
+> e VBL
+= %1101100111110 (bin), #6974 (dec), $1b3e (hex)
+> b VBL > 7014 :trace :once :file /tmp/leadhead/smp7014.txt
+CPU condition breakpoint 12 with 1 condition(s) added:
+	VBL > 7014
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/leadhead/smp7014.txt' file on hit.
+12. CPU breakpoint condition(s) matched 1 times.
+	VBL > 7014 :once :trace :file /tmp/leadhead/smp7014.txt
+Reading debugger commands from '/tmp/leadhead/smp7014.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %1101101100111 (bin), #7015 (dec), $1b67 (hex)
+> e CycleCounter
+= %1000011000000001001100110011000 (bin), #1124112792 (dec), $43009998 (hex)
+> e ($2ed90).l
+  value at ($2ed90).l = $62
+= %1100010 (bin), #98 (dec), $62 (hex)
+> e ($72a88).l
+  value at ($72a88).l = $62
+= %1100010 (bin), #98 (dec), $62 (hex)
+> e ($72a8c).l
+  value at ($72a8c).l = $19
+= %11001 (bin), #25 (dec), $19 (hex)
+> e ($72a90).l
+  value at ($72a90).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+Removed CPU breakpoint 12:
+	VBL > 7014 :once :trace :file /tmp/leadhead/smp7014.txt
+> b VBL > 7815 :trace :once :file /tmp/leadhead/smp7815.txt
+CPU condition breakpoint 12 with 1 condition(s) added:
+	VBL > 7815
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/leadhead/smp7815.txt' file on hit.
+12. CPU breakpoint condition(s) matched 1 times.
+	VBL > 7815 :once :trace :file /tmp/leadhead/smp7815.txt
+Reading debugger commands from '/tmp/leadhead/smp7815.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %1111010001000 (bin), #7816 (dec), $1e88 (hex)
+> e CycleCounter
+= %1001010101001110100101110010100 (bin), #1252477844 (dec), $4aa74b94 (hex)
+> e ($2ed90).l
+  value at ($2ed90).l = $a2
+= %10100010 (bin), #162 (dec), $a2 (hex)
+> e ($72a88).l
+  value at ($72a88).l = $a2
+= %10100010 (bin), #162 (dec), $a2 (hex)
+> e ($72a8c).l
+  value at ($72a8c).l = $29
+= %101001 (bin), #41 (dec), $29 (hex)
+> e ($72a90).l
+  value at ($72a90).l = $0
+= %0 (bin), #0 (dec), $0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+Removed CPU breakpoint 12:
+	VBL > 7815 :once :trace :file /tmp/leadhead/smp7815.txt
+> b pc = $1cbc2 :trace :once :file /tmp/leadhead/sl/sv.txt
+CPU condition breakpoint 12 with 1 condition(s) added:
+	pc = $1cbc2
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/leadhead/sl/sv.txt' file on hit.
+> m $2edb2 2
+0002EDB2: 00 00                                            ..
+> m $2edb4 2
+0002EDB4: 00 00                                            ..
+> m $2edb2 2
+0002EDB2: 00 46                                            .F
+> m $2edb4 2
+0002EDB4: 00 87                                            ..
+> m $2edb2 2
+0002EDB2: 00 46                                            .F
+> m $2edb4 2
+0002EDB4: 00 87                                            ..
+> m $2edb2 2
+0002EDB2: 00 46                                            .F
+> m $2edb4 2
+0002EDB4: 00 89                                            ..
+> m $2edb2 2
+0002EDB2: 00 46                                            .F
+> m $2edb4 2
+0002EDB4: 00 89                                            ..
+> m $2edb2 2
+0002EDB2: 00 46                                            .F
+> m $2edb4 2
+0002EDB4: 00 89                                            ..
+> m $2edb2 2
+0002EDB2: 00 00                                            ..
+> m $2edb4 2
+0002EDB4: 00 00                                            ..
+> m $2edb2 2
+0002EDB2: 00 0f                                            ..
+> m $2edb4 2
+0002EDB4: 00 19                                            ..
+> m $2edb2 2
+0002EDB2: 00 0f                                            ..
+> m $2edb4 2
+0002EDB4: 00 19                                            ..
+> m $2edb2 2
+0002EDB2: 00 0f                                            ..
+> m $2edb4 2
+0002EDB4: 00 19                                            ..
+> m $2edb2 2
+0002EDB2: 00 00                                            ..
+> m $2edb4 2
+0002EDB4: 00 00                                            ..
+> m $2edb2 2
+0002EDB2: 00 28                                            .(
+> m $2edb4 2
+0002EDB4: 00 1e                                            ..
+> m $2edb2 2
+0002EDB2: 00 28                                            .(
+> m $2edb4 2
+0002EDB4: 00 1e                                            ..
+> m $2edb2 2
+0002EDB2: 00 2b                                            .+
+> m $2edb4 2
+0002EDB4: 00 20                                            . 
+> m $2edb2 2
+0002EDB2: 00 2b                                            .+
+> m $2edb4 2
+0002EDB4: 00 20                                            . 
+> m $2edb2 2
+0002EDB2: 00 2b                                            .+
+> m $2edb4 2
+0002EDB4: 00 20                                            . 
+> savebin /tmp/leadhead/ram.bin $7640 $c0
+  Wrote 0xc0 bytes.
+Command line with '2' arguments:
+- '--disk-a'
+- '/tmp/leadhead/sl/save_a.st'
+INFO : Floppy A: has been removed from drive.
+INFO : Inserted disk '/tmp/leadhead/sl/save_a.st' to drive A:.
+> m $2edb2 2
+0002EDB2: 00 00                                            ..
+> m $2edb4 2
+0002EDB4: 00 00                                            ..
+> m $2edb2 2
+0002EDB2: 00 7d                                            .}
+> m $2edb4 2
+0002EDB4: 00 7d                                            .}
+> m $2edb2 2
+0002EDB2: 00 7d                                            .}
+> m $2edb4 2
+0002EDB4: 00 7d                                            .}
+> m $2edb2 2
+0002EDB2: 00 77                                            .w
+> m $2edb4 2
+0002EDB4: 00 75                                            .u
+> m $2edb2 2
+0002EDB2: 00 77                                            .w
+> m $2edb4 2
+0002EDB4: 00 75                                            .u
+> m $2edb2 2
+0002EDB2: 00 77                                            .w
+> m $2edb4 2
+0002EDB4: 00 75                                            .u
+12. CPU breakpoint condition(s) matched 1 times.
+	pc = $1cbc2 :once :trace :file /tmp/leadhead/sl/sv.txt
+Reading debugger commands from '/tmp/leadhead/sl/sv.txt'...
+Changed to input file dir '/tmp/leadhead/sl'.
+> savebin /tmp/leadhead/sl/save.bin $44c3e $18c00
+  Wrote 0x18c00 bytes.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+Removed CPU breakpoint 12:
+	pc = $1cbc2 :once :trace :file /tmp/leadhead/sl/sv.txt
+> m $74c0 2
+000074C0: 00 00                                            ..
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+> m $2ed92 2
+0002ED92: 01 1f                                            ..
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+> m $2ed92 2
+0002ED92: 01 1f                                            ..
+> m $74c0 2
+000074C0: 00 00                                            ..
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+> m $2ed92 2
+0002ED92: 01 2b                                            .+
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+> m $2ed92 2
+0002ED92: 01 36                                            .6
+> savebin /tmp/leadhead/sl/pre.bin $44c3e $18c00
+  Wrote 0x18c00 bytes.
+> b pc = $1cb2a :trace :once :file /tmp/leadhead/sl/ld.txt
+CPU condition breakpoint 12 with 1 condition(s) added:
+	pc = $1cb2a
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/leadhead/sl/ld.txt' file on hit.
+> m $2edb2 2
+0002EDB2: 00 00                                            ..
+> m $2edb4 2
+0002EDB4: 00 00                                            ..
+> m $2edb2 2
+0002EDB2: 00 46                                            .F
+> m $2edb4 2
+0002EDB4: 00 8c                                            ..
+> m $2edb2 2
+0002EDB2: 00 46                                            .F
+> m $2edb4 2
+0002EDB4: 00 8c                                            ..
+> m $2edb2 2
+0002EDB2: 00 46                                            .F
+> m $2edb4 2
+0002EDB4: 00 89                                            ..
+> m $2edb2 2
+0002EDB2: 00 46                                            .F
+> m $2edb4 2
+0002EDB4: 00 89                                            ..
+> m $2edb2 2
+0002EDB2: 00 46                                            .F
+> m $2edb4 2
+0002EDB4: 00 89                                            ..
+> m $2edb2 2
+0002EDB2: 00 00                                            ..
+> m $2edb4 2
+0002EDB4: 00 00                                            ..
+> m $2edb2 2
+0002EDB2: 00 0f                                            ..
+> m $2edb4 2
+0002EDB4: 00 19                                            ..
+> m $2edb2 2
+0002EDB2: 00 0f                                            ..
+> m $2edb4 2
+0002EDB4: 00 19                                            ..
+> m $2edb2 2
+0002EDB2: 00 0f                                            ..
+> m $2edb4 2
+0002EDB4: 00 19                                            ..
+> m $2edb2 2
+0002EDB2: 00 00                                            ..
+> m $2edb4 2
+0002EDB4: 00 00                                            ..
+> m $2edb2 2
+0002EDB2: 00 28                                            .(
+> m $2edb4 2
+0002EDB4: 00 0f                                            ..
+> m $2edb2 2
+0002EDB2: 00 28                                            .(
+> m $2edb4 2
+0002EDB4: 00 0f                                            ..
+> m $2edb2 2
+0002EDB2: 00 2b                                            .+
+> m $2edb4 2
+0002EDB4: 00 0f                                            ..
+> m $2edb2 2
+0002EDB2: 00 2b                                            .+
+> m $2edb4 2
+0002EDB4: 00 0f                                            ..
+> m $2edb2 2
+0002EDB2: 00 2b                                            .+
+> m $2edb4 2
+0002EDB4: 00 0f                                            ..
+12. CPU breakpoint condition(s) matched 1 times.
+	pc = $1cb2a :once :trace :file /tmp/leadhead/sl/ld.txt
+Reading debugger commands from '/tmp/leadhead/sl/ld.txt'...
+Changed to input file dir '/tmp/leadhead/sl'.
+> savebin /tmp/leadhead/sl/load.bin $44c3e $18c00
+  Wrote 0x18c00 bytes.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+Removed CPU breakpoint 12:
+	pc = $1cb2a :once :trace :file /tmp/leadhead/sl/ld.txt
+1. CPU breakpoint condition(s) matched 12 times.
+	pc = $e34c :trace :file /tmp/leadhead/tr_call.txt
+Reading debugger commands from '/tmp/leadhead/tr_call.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %11001101111011 (bin), #13179 (dec), $337b (hex)
+> r
+  D0 00000154   D1 00030002   D2 00000001   D3 00000017 
+  D4 00000000   D5 0000004F   D6 00000042   D7 00000000 
+  A0 000558A2   A1 0000763C   A2 0005A830   A3 000558A2 
+  A4 0005A7C8   A5 00030334   A6 0000F0C2   A7 0002D69E 
+USP  000F7FF2 ISP  0002D69E 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch e54a (LSL) 41f9 (LEA) Chip latch 00000000
+0000e34c e54a                     lsl.w #$02,d2
+Next PC: 0000e34e
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 12 times.
+	pc = $e42a :trace :file /tmp/leadhead/tr_ret.txt
+Reading debugger commands from '/tmp/leadhead/tr_ret.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %11001110000010 (bin), #13186 (dec), $3382 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+1. CPU breakpoint condition(s) matched 13 times.
+	pc = $e34c :trace :file /tmp/leadhead/tr_call.txt
+Reading debugger commands from '/tmp/leadhead/tr_call.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %11001110010110 (bin), #13206 (dec), $3396 (hex)
+> r
+  D0 00000154   D1 00030002   D2 00000008   D3 00000017 
+  D4 00000000   D5 0000004F   D6 00000042   D7 00000000 
+  A0 000558A2   A1 0000763C   A2 0005A830   A3 000558A2 
+  A4 0005A7C8   A5 00030334   A6 0000F0C2   A7 0002D69E 
+USP  000F7FF2 ISP  0002D69E 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch e54a (LSL) 41f9 (LEA) Chip latch 00000000
+0000e34c e54a                     lsl.w #$02,d2
+Next PC: 0000e34e
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 13 times.
+	pc = $e42a :trace :file /tmp/leadhead/tr_ret.txt
+Reading debugger commands from '/tmp/leadhead/tr_ret.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %11001110011100 (bin), #13212 (dec), $339c (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+1. CPU breakpoint condition(s) matched 14 times.
+	pc = $e34c :trace :file /tmp/leadhead/tr_call.txt
+Reading debugger commands from '/tmp/leadhead/tr_call.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %11001110100000 (bin), #13216 (dec), $33a0 (hex)
+> r
+  D0 00000154   D1 0005A882   D2 00000001   D3 00000017 
+  D4 00000000   D5 0000004F   D6 00000042   D7 00000000 
+  A0 0000763E   A1 0000763C   A2 0005A830   A3 000558A2 
+  A4 0005A7C8   A5 00030334   A6 0000F0C2   A7 0002D6B2 
+USP  000F7FF2 ISP  0002D6B2 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch e54a (LSL) 41f9 (LEA) Chip latch 00000000
+0000e34c e54a                     lsl.w #$02,d2
+Next PC: 0000e34e
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 14 times.
+	pc = $e42a :trace :file /tmp/leadhead/tr_ret.txt
+Reading debugger commands from '/tmp/leadhead/tr_ret.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %11001110100111 (bin), #13223 (dec), $33a7 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+1. CPU breakpoint condition(s) matched 15 times.
+	pc = $e34c :trace :file /tmp/leadhead/tr_call.txt
+Reading debugger commands from '/tmp/leadhead/tr_call.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %11001110111010 (bin), #13242 (dec), $33ba (hex)
+> r
+  D0 00000154   D1 0005A882   D2 00000008   D3 00000017 
+  D4 00000000   D5 0000004F   D6 00000042   D7 00000000 
+  A0 0000763E   A1 0000763C   A2 0005A830   A3 000558A2 
+  A4 0005A7C8   A5 00030334   A6 0000F0C2   A7 0002D6B2 
+USP  000F7FF2 ISP  0002D6B2 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch e54a (LSL) 41f9 (LEA) Chip latch 00000000
+0000e34c e54a                     lsl.w #$02,d2
+Next PC: 0000e34e
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 15 times.
+	pc = $e42a :trace :file /tmp/leadhead/tr_ret.txt
+Reading debugger commands from '/tmp/leadhead/tr_ret.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %11001111000001 (bin), #13249 (dec), $33c1 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+> m $2ed92 2
+0002ED92: 01 de                                            ..
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+> m $2ed92 2
+0002ED92: 01 eb                                            ..
+> m $74c0 2
+000074C0: 00 00                                            ..
+Command line with '2' arguments:
+- '--disk-a'
+- '/tmp/leadhead/a.st'
+INFO : Updated the contents of floppy image '/tmp/leadhead/sl/save_a.st'.
+INFO : Floppy A: has been removed from drive.
+INFO : Inserted disk '/tmp/leadhead/a.st' to drive A:.
+> savebin /tmp/leadhead/ram.bin $72000 $6000
+  Wrote 0x6000 bytes.
+> savebin /tmp/leadhead/ram.bin $b0000 $47000
+  Wrote 0x47000 bytes.
+> m $2cfda 2
+0002CFDA: 00 09                                            ..
+> m $2cfdc 2
+0002CFDC: fc 58                                            .X
+> m $2cfda 2
+0002CFDA: 00 09                                            ..
+> m $2cfdc 2
+0002CFDC: fc 58                                            .X
+> m $2edb2 2
+0002EDB2: 00 00                                            ..
+> m $2edb4 2
+0002EDB4: 00 00                                            ..
+> m $2edb2 2
+0002EDB2: 00 4b                                            .K
+> m $2edb4 2
+0002EDB4: 00 96                                            ..
+> m $2edb2 2
+0002EDB2: 00 4b                                            .K
+> m $2edb4 2
+0002EDB4: 00 96                                            ..
+> m $2edb2 2
+0002EDB2: 00 46                                            .F
+> m $2edb4 2
+0002EDB4: 00 87                                            ..
+> m $2edb2 2
+0002EDB2: 00 46                                            .F
+> m $2edb4 2
+0002EDB4: 00 87                                            ..
+> m $2edb2 2
+0002EDB2: 00 46                                            .F
+> m $2edb4 2
+0002EDB4: 00 89                                            ..
+> m $2edb2 2
+0002EDB2: 00 46                                            .F
+> m $2edb4 2
+0002EDB4: 00 89                                            ..
+> m $2edb2 2
+0002EDB2: 00 46                                            .F
+> m $2edb4 2
+0002EDB4: 00 89                                            ..
+> m $2edb2 2
+0002EDB2: 00 00                                            ..
+> m $2edb4 2
+0002EDB4: 00 00                                            ..
+> m $2edb2 2
+0002EDB2: 00 28                                            .(
+> m $2edb4 2
+0002EDB4: 00 14                                            ..
+> m $2edb2 2
+0002EDB2: 00 28                                            .(
+> m $2edb4 2
+0002EDB4: 00 14                                            ..
+> m $2edb2 2
+0002EDB2: 00 2e                                            ..
+> m $2edb4 2
+0002EDB4: 00 1a                                            ..
+> m $2edb2 2
+0002EDB2: 00 2e                                            ..
+> m $2edb4 2
+0002EDB4: 00 1a                                            ..
+> m $2edb2 2
+0002EDB2: 00 2e                                            ..
+> m $2edb4 2
+0002EDB4: 00 1a                                            ..
+> m $2edb2 2
+0002EDB2: 00 00                                            ..
+> m $2edb4 2
+0002EDB4: 00 00                                            ..
+> m $2edb2 2
+0002EDB2: 00 19                                            ..
+> m $2edb4 2
+0002EDB4: 00 32                                            .2
+> m $2edb2 2
+0002EDB2: 00 19                                            ..
+> m $2edb4 2
+0002EDB4: 00 32                                            .2
+> m $2edb2 2
+0002EDB2: 00 19                                            ..
+> m $2edb4 2
+0002EDB4: 00 32                                            .2
+WARN : PNG screen dump saved to: /tmp/leadhead/shots/grab0004.png
+1. CPU breakpoint condition(s) matched 16 times.
+	pc = $e34c :trace :file /tmp/leadhead/tr_call.txt
+Reading debugger commands from '/tmp/leadhead/tr_call.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %11110111010111 (bin), #15831 (dec), $3dd7 (hex)
+> r
+  D0 00020052   D1 0001D500   D2 0000000E   D3 0000000C 
+  D4 00001261   D5 00050098   D6 00002049   D7 00002B11 
+  A0 0001C854   A1 00025200   A2 0004CE5A   A3 000558A2 
+  A4 0005A7C8   A5 00030334   A6 0000F0C2   A7 0002D69A 
+USP  000F7FF2 ISP  0002D69A 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch e54a (LSL) 41f9 (LEA) Chip latch 00000000
+0000e34c e54a                     lsl.w #$02,d2
+Next PC: 0000e34e
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+2. CPU breakpoint condition(s) matched 12 times.
+	pc = $e388 :trace :file /tmp/leadhead/tr_miss.txt
+Reading debugger commands from '/tmp/leadhead/tr_miss.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %11110111010111 (bin), #15831 (dec), $3dd7 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+WARN : PNG screen dump saved to: /tmp/leadhead/shots/grab0005.png
+3. CPU breakpoint condition(s) matched 5 times.
+	pc = $e3f8 :trace :file /tmp/leadhead/tr_store.txt
+Reading debugger commands from '/tmp/leadhead/tr_store.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %11111001111011 (bin), #15995 (dec), $3e7b (hex)
+> r
+  D0 000A7958   D1 00006008   D2 00007D00   D3 0000000C 
+  D4 00001261   D5 00050098   D6 00002049   D7 00002B11 
+  A0 00025200   A1 0009FC58   A2 0004CE5A   A3 000558A2 
+  A4 0005A7C8   A5 00030334   A6 0000F0C2   A7 0002D69A 
+USP  000F7FF2 ISP  0002D69A 
+SR=2309 T=00 S=1 M=0 X=0 N=1 Z=0 V=0 C=1 IM=3 STP=0
+Prefetch b3fc (CMPA) 0000 (OR) Chip latch 00000000
+0000e3f8 b3fc 0000 0000           cmpa.l #$00000000,a1
+Next PC: 0000e3fe
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 16 times.
+	pc = $e42a :trace :file /tmp/leadhead/tr_ret.txt
+Reading debugger commands from '/tmp/leadhead/tr_ret.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %11111010000001 (bin), #16001 (dec), $3e81 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+WARN : PNG screen dump saved to: /tmp/leadhead/shots/grab0006.png
+WARN : PNG screen dump saved to: /tmp/leadhead/shots/grab0007.png
+WARN : PNG screen dump saved to: /tmp/leadhead/shots/grab0008.png
+WARN : PNG screen dump saved to: /tmp/leadhead/shots/grab0009.png
+> m $2cfda 2
+0002CFDA: 00 0a                                            ..
+> m $2cfdc 2
+0002CFDC: 79 58                                            yX
+WARN : PNG screen dump saved to: /tmp/leadhead/shots/grab0010.png
+> savebin /tmp/leadhead/ram.bin $72000 $6000
+  Wrote 0x6000 bytes.
+> savebin /tmp/leadhead/ram.bin $b0000 $47000
+  Wrote 0x47000 bytes.
+> m $2cfda 2
+0002CFDA: 00 0a                                            ..
+> m $2cfdc 2
+0002CFDC: 79 58                                            yX
+> m $2edb2 2
+0002EDB2: 00 00                                            ..
+> m $2edb4 2
+0002EDB4: 00 00                                            ..
+> m $2edb2 2
+0002EDB2: 00 a5                                            ..
+> m $2edb4 2
+0002EDB4: 00 69                                            .i
+> m $2edb2 2
+0002EDB2: 00 a5                                            ..
+> m $2edb4 2
+0002EDB4: 00 69                                            .i
+> m $2edb2 2
+0002EDB2: 00 9f                                            ..
+> m $2edb4 2
+0002EDB4: 00 63                                            .c
+> m $2edb2 2
+0002EDB2: 00 9f                                            ..
+> m $2edb4 2
+0002EDB4: 00 63                                            .c
+> m $2edb2 2
+0002EDB2: 00 9f                                            ..
+> m $2edb4 2
+0002EDB4: 00 63                                            .c
+> savebin /tmp/leadhead/ram.bin $7640 $c0
+  Wrote 0xc0 bytes.
+> m $2edb2 2
+0002EDB2: 00 00                                            ..
+> m $2edb4 2
+0002EDB4: 00 00                                            ..
+> m $2edb2 2
+0002EDB2: 00 a0                                            ..
+> m $2edb4 2
+0002EDB4: 00 55                                            .U
+> m $2edb2 2
+0002EDB2: 00 a0                                            ..
+> m $2edb4 2
+0002EDB4: 00 55                                            .U
+> m $2edb2 2
+0002EDB2: 00 a0                                            ..
+> m $2edb4 2
+0002EDB4: 00 55                                            .U
+1. CPU breakpoint condition(s) matched 17 times.
+	pc = $e34c :trace :file /tmp/leadhead/tr_call.txt
+Reading debugger commands from '/tmp/leadhead/tr_call.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %100011000001110 (bin), #17934 (dec), $460e (hex)
+> r
+  D0 00020000   D1 0000FFFF   D2 00000010   D3 0000000C 
+  D4 00001261   D5 00050098   D6 00000000   D7 00000002 
+  A0 0005A8A2   A1 0000BE67   A2 000074C0   A3 000558A2 
+  A4 0000763C   A5 00044838   A6 0000BC86   A7 0002D696 
+USP  000F7FF2 ISP  0002D696 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch e54a (LSL) 41f9 (LEA) Chip latch 00000000
+0000e34c e54a                     lsl.w #$02,d2
+Next PC: 0000e34e
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 17 times.
+	pc = $e42a :trace :file /tmp/leadhead/tr_ret.txt
+Reading debugger commands from '/tmp/leadhead/tr_ret.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %100011000001110 (bin), #17934 (dec), $460e (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+1. CPU breakpoint condition(s) matched 18 times.
+	pc = $e34c :trace :file /tmp/leadhead/tr_call.txt
+Reading debugger commands from '/tmp/leadhead/tr_call.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %100011000001110 (bin), #17934 (dec), $460e (hex)
+> r
+  D0 0000FFFF   D1 0000FF00   D2 0000000A   D3 0000000C 
+  D4 00001261   D5 00050098   D6 00000000   D7 00000002 
+  A0 00044912   A1 00044838   A2 000074C0   A3 000558A2 
+  A4 0000763C   A5 00044838   A6 0000BC86   A7 0002D696 
+USP  000F7FF2 ISP  0002D696 
+SR=2310 T=00 S=1 M=0 X=1 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch e54a (LSL) 41f9 (LEA) Chip latch 00000000
+0000e34c e54a                     lsl.w #$02,d2
+Next PC: 0000e34e
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 18 times.
+	pc = $e42a :trace :file /tmp/leadhead/tr_ret.txt
+Reading debugger commands from '/tmp/leadhead/tr_ret.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %100011000011011 (bin), #17947 (dec), $461b (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+> m $2edb2 2
+0002EDB2: 00 00                                            ..
+> m $2edb4 2
+0002EDB4: 00 00                                            ..
+> m $2edb2 2
+0002EDB2: 00 3c                                            .<
+> m $2edb4 2
+0002EDB4: 00 14                                            ..
+> m $2edb2 2
+0002EDB2: 00 3c                                            .<
+> m $2edb4 2
+0002EDB4: 00 14                                            ..
+> m $2edb2 2
+0002EDB2: 00 3c                                            .<
+> m $2edb4 2
+0002EDB4: 00 18                                            ..
+> m $2edb2 2
+0002EDB2: 00 3c                                            .<
+> m $2edb4 2
+0002EDB4: 00 18                                            ..
+> m $2edb2 2
+0002EDB2: 00 3c                                            .<
+> m $2edb4 2
+0002EDB4: 00 18                                            ..
+> m $74c0 2
+000074C0: 00 00                                            ..
+> m $74c0 2
+000074C0: 00 00                                            ..
+1. CPU breakpoint condition(s) matched 19 times.
+	pc = $e34c :trace :file /tmp/leadhead/tr_call.txt
+Reading debugger commands from '/tmp/leadhead/tr_call.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %100100010110111 (bin), #18615 (dec), $48b7 (hex)
+> r
+  D0 00000010   D1 0000FFFF   D2 847C000B   D3 0000002F 
+  D4 00000031   D5 00000011   D6 0000FFFF   D7 0000FFFF 
+  A0 0005A85A   A1 00027020   A2 000074C0   A3 00000002 
+  A4 00012426   A5 00044838   A6 0000BC86   A7 0002D696 
+USP  000F7FF2 ISP  0002D696 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch e54a (LSL) 41f9 (LEA) Chip latch 00000000
+0000e34c e54a                     lsl.w #$02,d2
+Next PC: 0000e34e
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+2. CPU breakpoint condition(s) matched 13 times.
+	pc = $e388 :trace :file /tmp/leadhead/tr_miss.txt
+Reading debugger commands from '/tmp/leadhead/tr_miss.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %100100010110111 (bin), #18615 (dec), $48b7 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+> m $2ed92 2
+0002ED92: 02 96                                            ..
+4. CPU breakpoint condition(s) matched 19 times.
+	pc = $e42a :trace :file /tmp/leadhead/tr_ret.txt
+Reading debugger commands from '/tmp/leadhead/tr_ret.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %100100101101010 (bin), #18794 (dec), $496a (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+> m $2ed92 2
+0002ED92: 00 00                                            ..
+1. CPU breakpoint condition(s) matched 20 times.
+	pc = $e34c :trace :file /tmp/leadhead/tr_call.txt
+Reading debugger commands from '/tmp/leadhead/tr_call.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %100100110011111 (bin), #18847 (dec), $499f (hex)
+> r
+  D0 00000000   D1 0000FFFF   D2 00000001   D3 0000002A 
+  D4 00000006   D5 00000005   D6 00002080   D7 00002A80 
+  A0 00056262   A1 00056262   A2 0005A9B4   A3 00055DF2 
+  A4 00051BBC   A5 0005A882   A6 00054232   A7 0002D656 
+USP  000F7FF2 ISP  0002D656 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch e54a (LSL) 41f9 (LEA) Chip latch 00000000
+0000e34c e54a                     lsl.w #$02,d2
+Next PC: 0000e34e
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 20 times.
+	pc = $e42a :trace :file /tmp/leadhead/tr_ret.txt
+Reading debugger commands from '/tmp/leadhead/tr_ret.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %100100110100101 (bin), #18853 (dec), $49a5 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+1. CPU breakpoint condition(s) matched 21 times.
+	pc = $e34c :trace :file /tmp/leadhead/tr_call.txt
+Reading debugger commands from '/tmp/leadhead/tr_call.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %100100110111010 (bin), #18874 (dec), $49ba (hex)
+> r
+  D0 00000000   D1 0000FFFF   D2 00000008   D3 0000002A 
+  D4 00000006   D5 00000005   D6 00002080   D7 00002A80 
+  A0 00056262   A1 00056262   A2 0005A9B4   A3 00055DF2 
+  A4 00051BBC   A5 0005A882   A6 00054232   A7 0002D656 
+USP  000F7FF2 ISP  0002D656 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch e54a (LSL) 41f9 (LEA) Chip latch 00000000
+0000e34c e54a                     lsl.w #$02,d2
+Next PC: 0000e34e
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 21 times.
+	pc = $e42a :trace :file /tmp/leadhead/tr_ret.txt
+Reading debugger commands from '/tmp/leadhead/tr_ret.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %100100111000000 (bin), #18880 (dec), $49c0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+> m $74c0 2
+000074C0: 00 00                                            ..
+> m $74c0 2
+000074C0: 00 00                                            ..
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+> m $2ed92 2
+0002ED92: 00 02                                            ..
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+> m $2ed92 2
+0002ED92: 00 0f                                            ..
+> e VBL
+= %100101011110011 (bin), #19187 (dec), $4af3 (hex)
+> m $74c0 2
+000074C0: 00 00                                            ..
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+> m $2ed92 2
+0002ED92: 00 19                                            ..
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+> m $2ed92 2
+0002ED92: 00 23                                            .#
+> m $74c0 2
+000074C0: 00 00                                            ..
+> e VBL
+= %100110000011011 (bin), #19483 (dec), $4c1b (hex)
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+> m $2ed92 2
+0002ED92: 00 2e                                            ..
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+> m $2ed92 2
+0002ED92: 00 3b                                            .;
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+> m $2ed92 2
+0002ED92: 00 40                                            .@
+> m $2edb2 2
+0002EDB2: 00 00                                            ..
+> m $2edb4 2
+0002EDB4: 00 00                                            ..
+> m $2edb2 2
+0002EDB2: 00 46                                            .F
+> m $2edb4 2
+0002EDB4: 00 8c                                            ..
+> m $2edb2 2
+0002EDB2: 00 46                                            .F
+> m $2edb4 2
+0002EDB4: 00 8c                                            ..
+> m $2edb2 2
+0002EDB2: 00 46                                            .F
+> m $2edb4 2
+0002EDB4: 00 89                                            ..
+> m $2edb2 2
+0002EDB2: 00 46                                            .F
+> m $2edb4 2
+0002EDB4: 00 89                                            ..
+> m $2edb2 2
+0002EDB2: 00 46                                            .F
+> m $2edb4 2
+0002EDB4: 00 89                                            ..
+> m $2edb2 2
+0002EDB2: 00 00                                            ..
+> m $2edb4 2
+0002EDB4: 00 00                                            ..
+> m $2edb2 2
+0002EDB2: 00 2d                                            .-
+> m $2edb4 2
+0002EDB4: 00 19                                            ..
+> m $2edb2 2
+0002EDB2: 00 2d                                            .-
+> m $2edb4 2
+0002EDB4: 00 19                                            ..
+> m $2edb2 2
+0002EDB2: 00 2f                                            ./
+> m $2edb4 2
+0002EDB4: 00 1a                                            ..
+> m $2edb2 2
+0002EDB2: 00 2f                                            ./
+> m $2edb4 2
+0002EDB4: 00 1a                                            ..
+> m $2edb2 2
+0002EDB2: 00 2f                                            ./
+> m $2edb4 2
+0002EDB4: 00 1a                                            ..
+> b pc = $d6c8 :trace :once :file /tmp/leadhead/win.txt
+CPU condition breakpoint 12 with 1 condition(s) added:
+	pc = $d6c8
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/leadhead/win.txt' file on hit.
+> m $2edb2 2
+0002EDB2: 00 00                                            ..
+> m $2edb4 2
+0002EDB4: 00 00                                            ..
+> m $2edb2 2
+0002EDB2: 00 19                                            ..
+> m $2edb4 2
+0002EDB4: 00 32                                            .2
+> m $2edb2 2
+0002EDB2: 00 19                                            ..
+> m $2edb4 2
+0002EDB4: 00 32                                            .2
+> m $2edb2 2
+0002EDB2: 00 19                                            ..
+> m $2edb4 2
+0002EDB4: 00 32                                            .2
+12. CPU breakpoint condition(s) matched 1 times.
+	pc = $d6c8 :once :trace :file /tmp/leadhead/win.txt
+Reading debugger commands from '/tmp/leadhead/win.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> w $5a830 $00 $04
+Wrote 2 'b' values starting from 0x5a830.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+Removed CPU breakpoint 12:
+	pc = $d6c8 :once :trace :file /tmp/leadhead/win.txt
+1. CPU breakpoint condition(s) matched 22 times.
+	pc = $e34c :trace :file /tmp/leadhead/tr_call.txt
+Reading debugger commands from '/tmp/leadhead/tr_call.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %101001110111011 (bin), #21435 (dec), $53bb (hex)
+> r
+  D0 000100D5   D1 00025200   D2 0020000F   D3 0000000C 
+  D4 00001261   D5 0005C8B8   D6 00002049   D7 00002B11 
+  A0 00044838   A1 0001D500   A2 0004CE5A   A3 0004AE19 
+  A4 0005A7C8   A5 00030374   A6 0005A820   A7 0002D69A 
+USP  000F7FF2 ISP  0002D69A 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch e54a (LSL) 41f9 (LEA) Chip latch 00000000
+0000e34c e54a                     lsl.w #$02,d2
+Next PC: 0000e34e
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+2. CPU breakpoint condition(s) matched 14 times.
+	pc = $e388 :trace :file /tmp/leadhead/tr_miss.txt
+Reading debugger commands from '/tmp/leadhead/tr_miss.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %101001110111011 (bin), #21435 (dec), $53bb (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+WARN : PNG screen dump saved to: /tmp/leadhead/shots/grab0011.png
+3. CPU breakpoint condition(s) matched 6 times.
+	pc = $e3f8 :trace :file /tmp/leadhead/tr_store.txt
+Reading debugger commands from '/tmp/leadhead/tr_store.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %101010000101111 (bin), #21551 (dec), $542f (hex)
+> r
+  D0 000AF658   D1 00003180   D2 00007D00   D3 0000000C 
+  D4 00001261   D5 0005C8B8   D6 00002049   D7 00002B11 
+  A0 0001D500   A1 000A7958   A2 0004CE5A   A3 0004AE19 
+  A4 0005A7C8   A5 00030374   A6 0005A820   A7 0002D69A 
+USP  000F7FF2 ISP  0002D69A 
+SR=2309 T=00 S=1 M=0 X=0 N=1 Z=0 V=0 C=1 IM=3 STP=0
+Prefetch b3fc (CMPA) 0000 (OR) Chip latch 00000000
+0000e3f8 b3fc 0000 0000           cmpa.l #$00000000,a1
+Next PC: 0000e3fe
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 22 times.
+	pc = $e42a :trace :file /tmp/leadhead/tr_ret.txt
+Reading debugger commands from '/tmp/leadhead/tr_ret.txt'...
+Changed to input file dir '/tmp/leadhead'.
+> e VBL
+= %101010000110101 (bin), #21557 (dec), $5435 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1' dir.
+Debugger re-init.
+WARN : PNG screen dump saved to: /tmp/leadhead/shots/grab0012.png
+WARN : PNG screen dump saved to: /tmp/leadhead/shots/grab0013.png
+WARN : PNG screen dump saved to: /tmp/leadhead/shots/grab0014.png
+WARN : PNG screen dump saved to: /tmp/leadhead/shots/grab0015.png
+> m $2cfda 2
+0002CFDA: 00 0a                                            ..
+> m $2cfdc 2
+0002CFDC: f6 58                                            .X
+WARN : PNG screen dump saved to: /tmp/leadhead/shots/grab0016.png
+> savebin /tmp/leadhead/ram.bin $72000 $6000
+  Wrote 0x6000 bytes.
+> savebin /tmp/leadhead/ram.bin $b0000 $47000
+  Wrote 0x47000 bytes.
+> m $2cfda 2
+0002CFDA: 00 0a                                            ..
+> m $2cfdc 2
+0002CFDC: f6 58                                            .X
+> m $2edb2 2
+0002EDB2: 00 00                                            ..
+> m $2edb4 2
+0002EDB4: 00 00                                            ..
+> m $2edb2 2
+0002EDB2: 00 aa                                            ..
+> m $2edb4 2
+0002EDB4: 00 69                                            .i
+> m $2edb2 2
+0002EDB2: 00 aa                                            ..
+> m $2edb4 2
+0002EDB4: 00 69                                            .i
+> m $2edb2 2
+0002EDB2: 00 a0                                            ..
+> m $2edb4 2
+0002EDB4: 00 63                                            .c
+> m $2edb2 2
+0002EDB2: 00 a0                                            ..
+> m $2edb4 2
+0002EDB4: 00 63                                            .c
+> m $2edb2 2
+0002EDB2: 00 a0                                            ..
+> m $2edb4 2
+0002EDB4: 00 63                                            .c
+> savebin /tmp/leadhead/ram.bin $7640 $c0
+  Wrote 0xc0 bytes.
