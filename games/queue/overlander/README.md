@@ -3,7 +3,7 @@
 - Slug: `overlander`
 - Status: **queued, not started**
 - Source: user floppies (copied 2026-11-16), not the VHD
-- Original: Elite Systems, 1988 (Atari ST); Amiga v1.0 1989-11-27
+- Original: Elite Systems (Atari ST); the Amiga disks are dated v1.0 1989-11-27
 - Local copies: `originals/`, `alt/amiga/` and `manual/` (game files, Amiga disks and manual scans: git-ignored, never committed)
 - Loader: original floppy (`overlander.stx`, in `originals/overlander_elite.zip`, presumed copy-protected: STX dump); also `OVERLAND.WAS` (41,434 B, packed) on an Automation menu disk crack
 - Base: not chosen. The STX is the original (as for Powermonger WW1); the Automation file is for comparison only.
