@@ -211,7 +211,7 @@ def main():
             hunter.build_hd = lambda img, **k: shutil.copy(SRC, img)     # pmpatch's ACSI mode asks hunter.build_hd for its image
             h = pmpatch.make_pm(None, GAMES / "powermonger" / "work", acsi=True, **kw)
             R = h.R
-            # AUTO\\PMBOOT.PRG asks "Powermonger? P = start, else desktop" (waits 3 s; keys pressed earlier sit in TOS's buffer).
+            # AUTO\\PMBOOT.PRG asks "P Powermonger, W WW1, else desktop" (waits 3 s; keys pressed earlier sit in TOS's buffer).
             # Keys sent during the TOS 2.06 memory test killed Hatari ("CPU halted"), so wait until HDDRIVER has installed drive C
             # (_drvbits $4c2 bit 2), then press P every second until the game's hd_core has taken TOS's snapshot (RAM $BC000 = 'HDSW').
             wait_drive_c(h)
