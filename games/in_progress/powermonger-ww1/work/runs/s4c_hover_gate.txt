@@ -1,0 +1,25 @@
+Traceback (most recent call last):
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1/tools/wwhover.py", line 199, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1/tools/wwhover.py", line 67, in main
+    h.boot_to_map(noprot=True, swap=False, log=lambda s: print("  " + s, flush=True))
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1/tools/pmww.py", line 187, in boot_to_map
+    self.boot_to_options(name, log)
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1/tools/pmww.py", line 169, in boot_to_options
+    if not self.wait_text("Powermonger WW1", timeout=t_name, poll=2):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1/tools/pmww.py", line 113, in wait_text
+    w = self.wtext().upper()
+        ^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1/tools/pmww.py", line 107, in wtext
+    return "".join(chr(b) if 32 <= b < 127 else " " for b in self.ram(WTEXT, 0xC0))
+                                                             ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1/tools/pmww.py", line 68, in ram
+    self.debug(f"savebin {out} ${start:x} ${length:x}", 0.5)
+  File "/home/ryan/Code/AtariST/gamebench/tools/stharness.py", line 251, in debug
+    self.cmd(f"hatari-debug {s}")
+  File "/home/ryan/Code/AtariST/gamebench/tools/stharness.py", line 245, in cmd
+    fd = os.open(self.fifo, os.O_WRONLY | os.O_NONBLOCK)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/pmww1s4c/hover_g2/fifo'

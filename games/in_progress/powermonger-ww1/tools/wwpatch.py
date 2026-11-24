@@ -263,6 +263,7 @@ class Patch:
         self.name = path.stem
         self.default = True
         self.site = None
+        self.falcon = False       # `; falcon: yes`: site class 4, applied only on a Falcon (core.s FALCON)
         self.mandatory = False    # `; mandatory: yes`: verified/applied as its own group before the optional sites
         self.orig = None
         self.data = []            # (addr, len) zero-init reservations
@@ -282,6 +283,7 @@ class Patch:
                 if k == "name": self.name = v
                 elif k == "default": self.default = v.lower() not in ("no", "false", "0")
                 elif k == "site": self.site = hx(v)
+                elif k == "falcon": self.falcon = v.lower() in ("yes", "true", "1")
                 elif k == "mandatory": self.mandatory = v.lower() in ("yes", "true", "1")
                 elif k == "orig": self.orig = bytes.fromhex(v.replace(" ", ""))
                 elif k == "data":
@@ -380,7 +382,7 @@ def build_image(patches: list[Patch], corrupt: bool = False, fill: tuple[int, in
         if p.site is None:
             continue
         orig, new = resolve(p)
-        sites.append(dict(name=p.name, addr=p.site, mandatory=p.mandatory, orig=orig, new=new))
+        sites.append(dict(name=p.name, addr=p.site, mandatory=p.mandatory, falcon=p.falcon, orig=orig, new=new))
     by_addr = sorted(sites, key=lambda s: s["addr"])
     for a, b in zip(by_addr, by_addr[1:]):
         if a["addr"] + len(a["orig"]) > b["addr"]:
@@ -390,7 +392,7 @@ def build_image(patches: list[Patch], corrupt: bool = False, fill: tuple[int, in
         orig = bytearray(s["orig"])
         if corrupt and s is next(x for x in sites if not x["mandatory"]):
             orig[0] ^= 0xFF                      # test only: the hook must refuse (PMPF) and apply nothing optional
-        tbl += struct.pack(">IHH", s["addr"], len(orig), 2 * s["mandatory"]) + bytes(orig) + s["new"]
+        tbl += struct.pack(">IHH", s["addr"], len(orig), 2 * s["mandatory"] + 4 * s["falcon"]) + bytes(orig) + s["new"]
     tbl += b"\0\0\0\0"
     if TABLE + len(tbl) > UINITTBL:
         raise SystemExit(f"site table overflow: {len(tbl)} B > {UINITTBL - TABLE} B in ${TABLE:x}..${UINITTBL - 1:x}")
@@ -597,7 +599,7 @@ def cmd_build(patches, out: Path, floppy: bool, corrupt: bool, fill: bool, all_p
     prg, front = build_prg(records)
     out.mkdir(parents=True, exist_ok=True)
     (out / "WW1.PRG").write_bytes(prg)
-    manifest = dict(patches=[p.name for p in patches], sites=[dict(name=s["name"], addr=s["addr"], orig=s["orig"].hex(), new=s["new"].hex()) for s in sites],
+    manifest = dict(patches=[p.name for p in patches], sites=[dict(name=s["name"], addr=s["addr"], orig=s["orig"].hex(), new=s["new"].hex(), falcon=s["falcon"]) for s in sites],
                     used=[list(u) for u in used], fills=[list(f) for f in fills],
                     data=[dict(patch=p.name, addr=a, len=ln) for p in patches for a, ln in p.data if a < IMG_END], image_base=IMG_BASE, image_end=IMG_END,
                     hi_base=HI_BASE, hi_end=HI_END, caplim=HI_BASE,

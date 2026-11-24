@@ -1,5 +1,5 @@
 ; name: tick_wx
-; default: yes
+; default: no
 ; site: $13e24
 ; orig: 4eb90001b90a
 ; note: (needs tick_head) `jsr $1b90a`: the season/weather step (master `jsr $1abaa` at $130b0).  World logic: once per tick, not on a render-only pass (RON).

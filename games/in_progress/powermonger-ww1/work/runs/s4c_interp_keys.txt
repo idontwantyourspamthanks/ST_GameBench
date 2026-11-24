@@ -1,0 +1,61 @@
+[   26s vbl 1379] name prompt
+[   33s vbl 1732] option screen (typing attempt 1)
+[   68s vbl 3500] no disk requester
+[   71s vbl 3640] chart expected
+[  101s vbl 5157] island clicked
+[  107s vbl 5453] 3D map view, world counter ticking
+GATE interp_keys map view PASS counter 65
+GATE interp_keys key 1 == click (92,135) PASS click words [92, 135, 1, 0, 0] key words [92, 135, 1, 0, 0]
+GATE interp_keys key 2 == click (95,145) PASS click words [95, 145, 1, 0, 0] key words [95, 145, 1, 0, 0]
+GATE interp_keys key 3 == click (97,157) PASS click words [97, 157, 1, 0, 0] key words [97, 157, 1, 0, 0]
+GATE interp_keys key KP_1 == click (92,135) PASS click words [92, 135, 1, 0, 0] key words [92, 135, 1, 0, 0]
+GATE interp_keys key KP_2 == click (95,145) PASS click words [95, 145, 1, 0, 0] key words [95, 145, 1, 0, 0]
+GATE interp_keys key KP_3 == click (97,157) PASS click words [97, 157, 1, 0, 0] key words [97, 157, 1, 0, 0]
+GATE interp_keys key a == click (244,191) PASS click words [244, 191, 1, 0, 0] key words [244, 191, 1, 0, 0]
+GATE interp_keys key d == click (142,193) PASS click words [142, 193, 1, 0, 0] key words [142, 193, 1, 0, 0]
+GATE interp_keys key e == click (298,157) PASS click words [298, 157, 1, 0, 0] key words [298, 157, 1, 0, 0]
+GATE interp_keys key f == click (202,181) PASS click words [202, 181, 1, 0, 0] key words [202, 181, 1, 0, 0]
+GATE interp_keys key g == click (300,183) PASS click words [300, 183, 1, 0, 0] key words [300, 183, 1, 0, 0]
+GATE interp_keys key h == click (100,170) PASS click words [100, 170, 1, 0, 0] key words [100, 170, 1, 0, 0]
+GATE interp_keys key i == click (274,188) PASS click words [274, 188, 1, 0, 0] key words [274, 188, 1, 0, 0]
+GATE interp_keys key l == click (73,161) PASS click words [73, 161, 1, 0, 0] key words [73, 161, 1, 0, 0]
+GATE interp_keys key m == click (275,163) PASS click words [275, 163, 1, 0, 0] key words [275, 163, 1, 0, 0]
+GATE interp_keys key n == click (173,188) PASS click words [173, 188, 1, 0, 0] key words [173, 188, 1, 0, 0]
+GATE interp_keys key o == click (72,139) PASS click words [72, 139, 1, 0, 0] key words [72, 139, 1, 0, 0]
+GATE interp_keys key o opens the same window as the click PASS click opened a window: True, key: True
+GATE interp_keys keys are swallowed while a window is open (h) PASS captured []
+GATE interp_keys window closed PASS click on the window's tick (57,4)
+GATE interp_keys key q == click (76,191) PASS click words [76, 191, 1, 0, 0] key words [76, 191, 1, 0, 0]
+GATE interp_keys key r == click (252,168) PASS click words [252, 168, 1, 0, 0] key words [252, 168, 1, 0, 0]
+GATE interp_keys key s == click (228,175) PASS click words [228, 175, 1, 0, 0] key words [228, 175, 1, 0, 0]
+GATE interp_keys key t == click (74,176) PASS click words [74, 176, 1, 0, 0] key words [74, 176, 1, 0, 0]
+GATE interp_keys key x == click (103,187) PASS click words [103, 187, 1, 0, 0] key words [103, 187, 1, 0, 0]
+GATE interp_keys key y == click (72,149) PASS click words [72, 149, 1, 0, 0] key words [72, 149, 1, 0, 0]
+GATE interp_keys key F1 == click (8,2) PASS click words [8, 2, 1, 0, 0] key words [8, 2, 1, 0, 0]
+GATE interp_keys key F2 == click (24,2) PASS click words [24, 2, 1, 0, 0] key words [24, 2, 1, 0, 0]
+GATE interp_keys key F3 == click (40,2) PASS click words [40, 2, 1, 0, 0] key words [40, 2, 1, 0, 0]
+GATE interp_keys key F4 == click (56,2) PASS click words [56, 2, 1, 0, 0] key words [56, 2, 1, 0, 0]
+GATE interp_keys key bracketleft == click (28,158) PASS click words [28, 158, 1, 0, 0] key words [28, 158, 1, 0, 0]
+GATE interp_keys key bracketleft +Shift == click (28,158) PASS click words [28, 158, 0, 1, 1] key words [28, 158, 0, 1, 1]
+GATE interp_keys key bracketright == click (37,165) PASS click words [37, 165, 1, 0, 0] key words [37, 165, 1, 0, 0]
+GATE interp_keys key bracketright +Shift == click (37,165) PASS click words [37, 165, 0, 1, 1] key words [37, 165, 0, 1, 1]
+GATE interp_keys key equal == click (53,166) PASS click words [53, 166, 1, 0, 0] key words [53, 166, 1, 0, 0]
+GATE interp_keys key equal +Shift == click (53,166) PASS click words [53, 166, 0, 1, 1] key words [53, 166, 0, 1, 1]
+GATE interp_keys key KP_Add == click (53,166) PASS click words [53, 166, 1, 0, 0] key words [53, 166, 1, 0, 0]
+GATE interp_keys key KP_Add +Shift == click (53,166) PASS click words [53, 166, 0, 1, 1] key words [53, 166, 0, 1, 1]
+GATE interp_keys key minus == click (53,185) PASS click words [53, 185, 1, 0, 0] key words [53, 185, 1, 0, 0]
+GATE interp_keys key minus +Shift == click (53,185) PASS click words [53, 185, 0, 1, 1] key words [53, 185, 0, 1, 1]
+GATE interp_keys key KP_Subtract == click (53,185) PASS click words [53, 185, 1, 0, 0] key words [53, 185, 1, 0, 0]
+GATE interp_keys key KP_Subtract +Shift == click (53,185) PASS click words [53, 185, 0, 1, 1] key words [53, 185, 0, 1, 1]
+KEYS 39 of 39 key/click pairs identical
+GATE interp_keys command word through click/key/key/click: a (icon 6) PASS $5a836 = [12, 0, 12, 0] want [12, 0, 12, 0]
+GATE interp_keys command word through click/key/key/click: e (icon 8) PASS $5a836 = [16, 0, 16, 0] want [16, 0, 16, 0]
+GATE interp_keys command word through click/key/key/click: f (icon 3) PASS $5a836 = [6, 0, 6, 0] want [6, 0, 6, 0]
+GATE interp_keys command word through click/key/key/click: g (icon 1) PASS $5a836 = [2, 0, 2, 0] want [2, 0, 2, 0]
+GATE interp_keys command word through click/key/key/click: i (icon 7) PASS $5a836 = [14, 0, 14, 0] want [14, 0, 14, 0]
+GATE interp_keys command word through click/key/key/click: l (icon 15) PASS $5a836 = [30, 0, 30, 0] want [30, 0, 30, 0]
+GATE interp_keys command word through click/key/key/click: m (icon 4) PASS $5a836 = [8, 0, 8, 0] want [8, 0, 8, 0]
+GATE interp_keys command word through click/key/key/click: s (icon 13) PASS $5a836 = [26, 0, 26, 0] want [26, 0, 26, 0]
+GATE interp_keys command word through click/key/key/click: t (icon 14) PASS $5a836 = [28, 0, 28, 0] want [28, 0, 28, 0]
+GATE interp_keys command word through click/key/key/click: y (icon 16) PASS $5a836 = [32, 0, 32, 0] want [32, 0, 32, 0]
+CELL DONE interp_keys: OK

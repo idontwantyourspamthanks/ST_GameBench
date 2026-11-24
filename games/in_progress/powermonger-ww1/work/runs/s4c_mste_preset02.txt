@@ -1,0 +1,39 @@
+  [mste_pre] [   26s vbl 1654] name prompt
+  [mste_pre] [   33s vbl 2078] option screen (typing attempt 1)
+GATE mste_pre/megaste-2.06-4096K marker PASS $727f8 = b'PMPO' (want b'PMPO')
+GATE mste_pre/megaste-2.06-4096K site p4_clamp PASS $ed6 = 4eb900075c004e714e71 (want 4eb900075c004e714e71)
+GATE mste_pre/megaste-2.06-4096K site pm_cachecap PASS $e3f2 = 4eb900075800 (want 4eb900075800)
+GATE mste_pre/megaste-2.06-4096K site pm_credit PASS $14baa = 4eb900072800 (want 4eb900072800)
+GATE mste_pre/megaste-2.06-4096K site pm_nokeydisk PASS $13cec = 4e714e714e71 (want 4e714e714e71)
+GATE mste_pre/megaste-2.06-4096K site pm_noprot PASS $15998 = 0000002c (want 0000002c)
+GATE mste_pre/megaste-2.06-4096K site pm_noprot_box PASS $bbd2 = 4e754e714e71 (want 4e754e714e71)
+GATE mste_pre/megaste-2.06-4096K site pm_tooltip PASS $13e18 = 4eb900073400 (want 4eb900073400)
+GATE mste_pre/megaste-2.06-4096K site qol_keys PASS $13e70 = 4eb900072c00 (want 4eb900072c00)
+GATE mste_pre/megaste-2.06-4096K site qol_keys2 PASS $f30 = 4eb900073100 (want 4eb900073100)
+GATE mste_pre/megaste-2.06-4096K site tick_click PASS $7e6 = 00072aa0 (want 00072aa0)
+GATE mste_pre/megaste-2.06-4096K site tick_click2 PASS $842 = 00072aa0 (want 00072aa0)
+GATE mste_pre/megaste-2.06-4096K site tick_click3 PASS $144b4 = 00072aa0 (want 00072aa0)
+GATE mste_pre/megaste-2.06-4096K site tick_head PASS $13da0 = 4eb900072900 (want 4eb900072900)
+GATE mste_pre/megaste-2.06-4096K site tick_men PASS $13e36 = 4eb900072a60 (want 4eb900072a60)
+GATE mste_pre/megaste-2.06-4096K site tick_pass PASS $13de8 = 4eb900072a004e71 (want 4eb900072a004e71)
+GATE mste_pre/megaste-2.06-4096K site tick_wx PASS $13e24 = 4eb900072a40 (want 4eb900072a40)
+GATE mste_pre/megaste-2.06-4096K site tt_ptr PASS $e20 = 4eb900075a40 (want 4eb900075a40)
+GATE mste_pre/megaste-2.06-4096K payload@options PASS unchanged
+GATE mste_pre/megaste-2.06-4096K credit visible PASS rows 194-199: 780 px of colours [(102, 102, 68)]
+GATE mste_pre/megaste-2.06-4096K boot PASS 45s
+GATE mste_pre/megaste-2.06-4096K noprot flag PASS $15998 = $0000002c (want $0000002c) before the first land
+  [mste_pre] [   35s vbl 5106] no disk requester
+  [mste_pre] [   37s vbl 5274] chart expected
+  [mste_pre] [   68s vbl 7094] island clicked
+  [mste_pre] [   74s vbl 7448] 3D map view, world counter ticking
+GATE mste_pre/megaste-2.06-4096K noprot: the check never ran PASS hits $acc4:0, $ae20:0, $b232:0, $b39c:0
+GATE mste_pre/megaste-2.06-4096K noprot: 'Please wait' box skipped (stub reached) PASS $bbd2 reached 1x (an `rts` stub)
+GATE mste_pre/megaste-2.06-4096K nokeydisk: the key-disk routine never ran, the flow went on PASS $1cf7c hit 0x, next instruction $13cf2 hit 1x; the Powermonger disk was never inserted
+GATE mste_pre/megaste-2.06-4096K map view PASS counter 73, flag $15998 = $0000002c
+GATE mste_pre/megaste-2.06-4096K payload@map PASS unchanged
+GATE mste_pre/megaste-2.06-4096K pm_mste: speed / cache register $ff8e21 PASS $02 (want $02: Mega STE 16 MHz + cache, STE unmapped, ST nothing)
+GATE mste_pre/megaste-2.06-4096K tt_ptr: LIVE flag PASS $00
+RATE mste_pre/megaste 8 MHz cold boot map view 60 Hz: 801 VBL = 13.35 s emulated, 267040 cycles/VBL, world clock +54 = 4.045/s; tick passes 54, R passes 0, S passes 4
+GATE mste_pre/megaste-2.06-4096K rate PASS mste_pre/megaste 8 MHz cold boot map view 60 Hz: 801 VBL = 13.35 s emulated, 267040 cycles/VBL, world clock +54 = 4.045/s; tick passes 54, R passes 0, S passes 4
+GATE mste_pre/megaste-2.06-4096K world rate = 4.00/s (+-5 %) PASS 4.045 world steps per emulated second
+CELL DONE mste_pre/megaste-2.06-4096K: OK (150s)

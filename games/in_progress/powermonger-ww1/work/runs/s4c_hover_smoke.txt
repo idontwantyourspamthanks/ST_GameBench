@@ -1,0 +1,47 @@
+  [hover_smoke] [   26s vbl 1379] name prompt
+  [hover_smoke] [   33s vbl 1732] option screen (typing attempt 1)
+GATE hover_smoke/ste-1.62-1024K marker PASS $727f8 = b'PMPO' (want b'PMPO')
+GATE hover_smoke/ste-1.62-1024K site p4_clamp PASS $ed6 = 4eb900075c004e714e71 (want 4eb900075c004e714e71)
+GATE hover_smoke/ste-1.62-1024K site pm_cachecap PASS $e3f2 = 4eb900075800 (want 4eb900075800)
+GATE hover_smoke/ste-1.62-1024K site pm_credit PASS $14baa = 4eb900072800 (want 4eb900072800)
+GATE hover_smoke/ste-1.62-1024K site pm_nokeydisk PASS $13cec = 4e714e714e71 (want 4e714e714e71)
+GATE hover_smoke/ste-1.62-1024K site pm_noprot PASS $15998 = 0000002c (want 0000002c)
+GATE hover_smoke/ste-1.62-1024K site pm_noprot_box PASS $bbd2 = 4e754e714e71 (want 4e754e714e71)
+GATE hover_smoke/ste-1.62-1024K site pm_tooltip PASS $13e18 = 4eb900073400 (want 4eb900073400)
+GATE hover_smoke/ste-1.62-1024K site qol_hover PASS $13e2a = 4eb900074b00 (want 4eb900074b00)
+GATE hover_smoke/ste-1.62-1024K site qol_hover2 PASS $12ee0 = 4eb900073940 (want 4eb900073940)
+GATE hover_smoke/ste-1.62-1024K site qol_keys PASS $13e70 = 4eb900072c00 (want 4eb900072c00)
+GATE hover_smoke/ste-1.62-1024K site qol_keys2 PASS $f30 = 4eb900073100 (want 4eb900073100)
+GATE hover_smoke/ste-1.62-1024K site tick_click PASS $7e6 = 00072aa0 (want 00072aa0)
+GATE hover_smoke/ste-1.62-1024K site tick_click2 PASS $842 = 00072aa0 (want 00072aa0)
+GATE hover_smoke/ste-1.62-1024K site tick_click3 PASS $144b4 = 00072aa0 (want 00072aa0)
+GATE hover_smoke/ste-1.62-1024K site tick_head PASS $13da0 = 4eb900072900 (want 4eb900072900)
+GATE hover_smoke/ste-1.62-1024K site tick_men PASS $13e36 = 4eb900072a60 (want 4eb900072a60)
+GATE hover_smoke/ste-1.62-1024K site tick_pass PASS $13de8 = 4eb900072a004e71 (want 4eb900072a004e71)
+GATE hover_smoke/ste-1.62-1024K site tick_rain PASS $13e24 = 4eb900072ac0 (want 4eb900072ac0)
+GATE hover_smoke/ste-1.62-1024K site tt_ptr PASS $e20 = 4eb900075a40 (want 4eb900075a40)
+GATE hover_smoke/ste-1.62-1024K payload@options PASS unchanged
+GATE hover_smoke/ste-1.62-1024K hi@options PASS pattern / constants: 0 of 290816 bytes changed in $b0000-$f6fff
+GATE hover_smoke/ste-1.62-1024K cache cursor@options PASS [$2cfda] = $80000 (limit $b0000, 0 = no cache)
+GATE hover_smoke/ste-1.62-1024K credit visible PASS rows 194-199: 780 px of colours [(102, 102, 68)]
+GATE hover_smoke/ste-1.62-1024K boot PASS 48s
+GATE hover_smoke/ste-1.62-1024K noprot flag PASS $15998 = $0000002c (want $0000002c) before the first land
+  [hover_smoke] [   34s vbl 4378] no disk requester
+  [hover_smoke] [   37s vbl 4518] chart expected
+  [hover_smoke] [   68s vbl 6036] island clicked
+  [hover_smoke] [   74s vbl 6332] 3D map view, world counter ticking
+GATE hover_smoke/ste-1.62-1024K noprot: the check never ran PASS hits $acc4:0, $ae20:0, $b232:0, $b39c:0
+GATE hover_smoke/ste-1.62-1024K noprot: 'Please wait' box skipped (stub reached) PASS $bbd2 reached 1x (an `rts` stub)
+GATE hover_smoke/ste-1.62-1024K nokeydisk: the key-disk routine never ran, the flow went on PASS $1cf7c hit 0x, next instruction $13cf2 hit 1x; the Powermonger disk was never inserted
+GATE hover_smoke/ste-1.62-1024K map view PASS counter 70, flag $15998 = $0000002c
+GATE hover_smoke/ste-1.62-1024K payload@map PASS unchanged
+GATE hover_smoke/ste-1.62-1024K hi@map PASS pattern / constants: 0 of 290816 bytes changed in $b0000-$f6fff
+GATE hover_smoke/ste-1.62-1024K cache cursor@map PASS [$2cfda] = $9fc58 (limit $b0000, 0 = no cache)
+GATE hover_smoke/ste-1.62-1024K pm_mste: speed / cache register $ff8e21 PASS $ff (want $ff: Mega STE 16 MHz + cache, STE unmapped, ST nothing)
+GATE hover_smoke/ste-1.62-1024K tt_ptr: LIVE flag PASS $00
+LOADER 9:D456 0:D83 2:D64 3:D92 4:D87 5:D117 16:D+185 10:D+294 11:D179 1:D+132 8:D+121
+LOADER legend: n:D = loaded from the disk, n:c = from the cache; + = cached (cursor store), S = cap skip; number = VBLs call to return
+GATE hover_smoke/ste-1.62-1024K loader: every cacheable resource (1 8 10 14 15 16) came from the disk at most once PASS disk loads per resource {1: 1, 8: 1, 10: 1, 16: 1}
+GATE hover_smoke/ste-1.62-1024K loader: cache hits are fast (<= 40 VBL) PASS 0 cache hits, slow []
+GATE hover_smoke/ste-1.62-1024K cap normal: no skip (M3a) PASS 0 skip(s)
+CELL DONE hover_smoke/ste-1.62-1024K: OK (136s)

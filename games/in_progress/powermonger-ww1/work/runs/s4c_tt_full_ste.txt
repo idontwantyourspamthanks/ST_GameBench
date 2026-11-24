@@ -1,0 +1,592 @@
+[   26s vbl 1380] name prompt
+[   33s vbl 1733] option screen (typing attempt 1)
+[   68s vbl 3501] no disk requester
+[   71s vbl 3642] chart expected
+[  101s vbl 5160] island clicked
+[  107s vbl 5455] 3D map view, world counter ticking
+GATE tt_ctl map view PASS counter 66
+GATE tt_ctl tooltip hook alive PASS state (60, 24, 0, 0, 1) MAG $50544950
+GATE tt_ctl key labels flag follows qol_keys PASS KF = 1, qol_keys in the build: True
+GATE tt_ctl font in RAM == the file-derived resident image PASS 0 bytes differ
+GATE tt_ctl palette: colour 0 black, text colours 2..5 differ from each other and from black PASS [(0, 0, 0), (68, 68, 34), (102, 102, 68), (136, 136, 102), (170, 170, 136), (204, 204, 170)]
+GATE tt_ctl posture click (97,157) sets the captain's posture word PASS word 2 want 2
+GATE tt_ctl id  2 Transfer Men level 3 swords hover state PASS pointer (103,187) id 2 want 2, KEY $10a want $10a (posture word 2, level 2, keys True)
+GATE tt_ctl id  2 Transfer Men level 3 swords the hook wrote exactly one buffer PASS changed a=False b=True
+GATE tt_ctl id  2 Transfer Men level 3 swords footprint PASS 215 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id  2 Transfer Men level 3 swords the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id  2 Transfer Men level 3 swords pixels == reference rendering PASS text 'Transfer Men (X): give the whole army': 0 of 624 bytes differ
+GATE tt_ctl id  2 Transfer Men level 3 swords registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id  2 Transfer Men level 3 swords displayed buffer pixels == reference PASS base $1d500, 0 bytes differ
+GATE tt_ctl id  2 Transfer Men level 3 swords screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id  2 Transfer Men level 3 swords no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id  3 Get Food level 3 swords hover state PASS pointer (202,181) id 3 want 3, KEY $10e want $10e (posture word 2, level 2, keys True)
+GATE tt_ctl id  3 Get Food level 3 swords the hook wrote exactly one buffer PASS changed a=True b=False
+GATE tt_ctl id  3 Get Food level 3 swords footprint PASS 235 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id  3 Get Food level 3 swords the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id  3 Get Food level 3 swords pixels == reference rendering PASS text "Get Food (F): take ALL of a town's rations": 0 of 624 bytes differ
+GATE tt_ctl id  3 Get Food level 3 swords registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id  3 Get Food level 3 swords displayed buffer pixels == reference PASS base $25200, 0 bytes differ
+GATE tt_ctl id  3 Get Food level 3 swords screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id  3 Get Food level 3 swords no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id  4 Get Men level 3 swords hover state PASS pointer (275,163) id 4 want 4, KEY $112 want $112 (posture word 2, level 2, keys True)
+GATE tt_ctl id  4 Get Men level 3 swords the hook wrote exactly one buffer PASS changed a=True b=False
+GATE tt_ctl id  4 Get Men level 3 swords footprint PASS 216 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id  4 Get Men level 3 swords the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id  4 Get Men level 3 swords pixels == reference rendering PASS text 'Get Men (M): recruit nearly every man': 0 of 624 bytes differ
+GATE tt_ctl id  4 Get Men level 3 swords registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id  4 Get Men level 3 swords displayed buffer pixels == reference PASS base $25200, 0 bytes differ
+GATE tt_ctl id  4 Get Men level 3 swords screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id  4 Get Men level 3 swords no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id  6 Attack level 3 swords hover state PASS pointer (245,190) id 6 want 6, KEY $11a want $11a (posture word 2, level 2, keys True)
+GATE tt_ctl id  6 Attack level 3 swords the hook wrote exactly one buffer PASS changed a=True b=False
+GATE tt_ctl id  6 Attack level 3 swords footprint PASS 263 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id  6 Attack level 3 swords the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id  6 Attack level 3 swords pixels == reference rendering PASS text 'Attack (A): kill everyone and take everything': 0 of 624 bytes differ
+GATE tt_ctl id  6 Attack level 3 swords registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id  6 Attack level 3 swords displayed buffer pixels == reference PASS base $25200, 0 bytes differ
+GATE tt_ctl id  6 Attack level 3 swords screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id  6 Attack level 3 swords no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id  7 Build level 3 swords hover state PASS pointer (274,188) id 7 want 7, KEY $11e want $11e (posture word 2, level 2, keys True)
+GATE tt_ctl id  7 Build level 3 swords the hook wrote exactly one buffer PASS changed a=False b=True
+GATE tt_ctl id  7 Build level 3 swords footprint PASS 221 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id  7 Build level 3 swords the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id  7 Build level 3 swords pixels == reference rendering PASS text 'Build (I): a town workshop makes tanks': 0 of 624 bytes differ
+GATE tt_ctl id  7 Build level 3 swords registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id  7 Build level 3 swords displayed buffer pixels == reference PASS base $1d500, 0 bytes differ
+GATE tt_ctl id  7 Build level 3 swords screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id  7 Build level 3 swords no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id  8 Equip level 3 swords hover state PASS pointer (298,157) id 8 want 8, KEY $122 want $122 (posture word 2, level 2, keys True)
+GATE tt_ctl id  8 Equip level 3 swords the hook wrote exactly one buffer PASS changed a=True b=False
+GATE tt_ctl id  8 Equip level 3 swords footprint PASS 190 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id  8 Equip level 3 swords the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id  8 Equip level 3 swords pixels == reference rendering PASS text 'Equip (E): pick up all the items': 0 of 624 bytes differ
+GATE tt_ctl id  8 Equip level 3 swords registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id  8 Equip level 3 swords displayed buffer pixels == reference PASS base $25200, 0 bytes differ
+GATE tt_ctl id  8 Equip level 3 swords screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id  8 Equip level 3 swords no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id  9 Drop Food level 3 swords hover state PASS pointer (142,193) id 9 want 9, KEY $126 want $126 (posture word 2, level 2, keys True)
+GATE tt_ctl id  9 Drop Food level 3 swords the hook wrote exactly one buffer PASS changed a=True b=False
+GATE tt_ctl id  9 Drop Food level 3 swords footprint PASS 230 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id  9 Drop Food level 3 swords the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id  9 Drop Food level 3 swords pixels == reference rendering PASS text 'Drop Food (D): leave ALL of your rations': 0 of 624 bytes differ
+GATE tt_ctl id  9 Drop Food level 3 swords registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id  9 Drop Food level 3 swords displayed buffer pixels == reference PASS base $25200, 0 bytes differ
+GATE tt_ctl id  9 Drop Food level 3 swords screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id  9 Drop Food level 3 swords no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id 10 Derank level 3 swords hover state PASS pointer (252,168) id 10 want 10, KEY $12a want $12a (posture word 2, level 2, keys True)
+GATE tt_ctl id 10 Derank level 3 swords the hook wrote exactly one buffer PASS changed a=False b=True
+GATE tt_ctl id 10 Derank level 3 swords footprint PASS 190 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id 10 Derank level 3 swords the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id 10 Derank level 3 swords pixels == reference rendering PASS text 'Derank (R): disband the whole army': 0 of 624 bytes differ
+GATE tt_ctl id 10 Derank level 3 swords registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id 10 Derank level 3 swords displayed buffer pixels == reference PASS base $1d500, 0 bytes differ
+GATE tt_ctl id 10 Derank level 3 swords screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id 10 Derank level 3 swords no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id 12 Drop Items level 3 swords hover state PASS pointer (173,188) id 12 want 12, KEY $132 want $132 (posture word 2, level 2, keys True)
+GATE tt_ctl id 12 Drop Items level 3 swords the hook wrote exactly one buffer PASS changed a=False b=True
+GATE tt_ctl id 12 Drop Items level 3 swords footprint PASS 222 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id 12 Drop Items level 3 swords the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id 12 Drop Items level 3 swords pixels == reference rendering PASS text 'Drop Items (N): leave all spare stores': 0 of 624 bytes differ
+GATE tt_ctl id 12 Drop Items level 3 swords registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id 12 Drop Items level 3 swords displayed buffer pixels == reference PASS base $1d500, 0 bytes differ
+GATE tt_ctl id 12 Drop Items level 3 swords screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id 12 Drop Items level 3 swords no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id 13 Supply Food level 3 swords hover state PASS pointer (228,175) id 13 want 13, KEY $136 want $136 (posture word 2, level 2, keys True)
+GATE tt_ctl id 13 Supply Food level 3 swords the hook wrote exactly one buffer PASS changed a=True b=False
+GATE tt_ctl id 13 Supply Food level 3 swords footprint PASS 268 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id 13 Supply Food level 3 swords the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id 13 Supply Food level 3 swords pixels == reference rendering PASS text 'Supply Food (S): ferry all the rations, repeat': 0 of 624 bytes differ
+GATE tt_ctl id 13 Supply Food level 3 swords registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id 13 Supply Food level 3 swords displayed buffer pixels == reference PASS base $25200, 0 bytes differ
+GATE tt_ctl id 13 Supply Food level 3 swords screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id 13 Supply Food level 3 swords no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id 14 Trade level 3 swords hover state PASS pointer (75,175) id 14 want 14, KEY $13a want $13a (posture word 2, level 2, keys True)
+GATE tt_ctl id 14 Trade level 3 swords the hook wrote exactly one buffer PASS changed a=False b=True
+GATE tt_ctl id 14 Trade level 3 swords footprint PASS 175 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id 14 Trade level 3 swords the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id 14 Trade level 3 swords pixels == reference rendering PASS text 'Trade (T): tanks, planes first': 0 of 624 bytes differ
+GATE tt_ctl id 14 Trade level 3 swords registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id 14 Trade level 3 swords displayed buffer pixels == reference PASS base $1d500, 0 bytes differ
+GATE tt_ctl id 14 Trade level 3 swords screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id 14 Trade level 3 swords no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl posture click (95,145) sets the captain's posture word PASS word 3 want 3
+GATE tt_ctl id  1 Send Captain level 2 swords hover state PASS pointer (300,183) id 1 want 1, KEY $105 want $105 (posture word 3, level 1, keys True)
+GATE tt_ctl id  1 Send Captain level 2 swords the hook wrote exactly one buffer PASS changed a=False b=True
+GATE tt_ctl id  1 Send Captain level 2 swords footprint PASS 244 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id  1 Send Captain level 2 swords the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id  1 Send Captain level 2 swords pixels == reference rendering PASS text 'Send Captain (G): walk to a spot you pick': 0 of 624 bytes differ
+GATE tt_ctl id  1 Send Captain level 2 swords registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id  1 Send Captain level 2 swords displayed buffer pixels == reference PASS base $1d500, 0 bytes differ
+GATE tt_ctl id  1 Send Captain level 2 swords screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id  1 Send Captain level 2 swords no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id  2 Transfer Men level 2 swords hover state PASS pointer (103,187) id 2 want 2, KEY $109 want $109 (posture word 3, level 1, keys True)
+GATE tt_ctl id  2 Transfer Men level 2 swords the hook wrote exactly one buffer PASS changed a=True b=False
+GATE tt_ctl id  2 Transfer Men level 2 swords footprint PASS 221 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id  2 Transfer Men level 2 swords the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id  2 Transfer Men level 2 swords pixels == reference rendering PASS text 'Transfer Men (X): give 50% of the army': 0 of 624 bytes differ
+GATE tt_ctl id  2 Transfer Men level 2 swords registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id  2 Transfer Men level 2 swords displayed buffer pixels == reference PASS base $25200, 0 bytes differ
+GATE tt_ctl id  2 Transfer Men level 2 swords screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id  2 Transfer Men level 2 swords no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id  3 Get Food level 2 swords hover state PASS pointer (202,181) id 3 want 3, KEY $10d want $10d (posture word 3, level 1, keys True)
+GATE tt_ctl id  3 Get Food level 2 swords the hook wrote exactly one buffer PASS changed a=False b=True
+GATE tt_ctl id  3 Get Food level 2 swords footprint PASS 242 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id  3 Get Food level 2 swords the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id  3 Get Food level 2 swords pixels == reference rendering PASS text "Get Food (F): take 50% of a town's rations": 0 of 624 bytes differ
+GATE tt_ctl id  3 Get Food level 2 swords registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id  3 Get Food level 2 swords displayed buffer pixels == reference PASS base $1d500, 0 bytes differ
+GATE tt_ctl id  3 Get Food level 2 swords screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id  3 Get Food level 2 swords no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id  4 Get Men level 2 swords hover state PASS pointer (275,163) id 4 want 4, KEY $111 want $111 (posture word 3, level 1, keys True)
+GATE tt_ctl id  4 Get Men level 2 swords the hook wrote exactly one buffer PASS changed a=False b=True
+GATE tt_ctl id  4 Get Men level 2 swords footprint PASS 167 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id  4 Get Men level 2 swords the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id  4 Get Men level 2 swords pixels == reference rendering PASS text 'Get Men (M): recruit more men': 0 of 624 bytes differ
+GATE tt_ctl id  4 Get Men level 2 swords registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id  4 Get Men level 2 swords displayed buffer pixels == reference PASS base $1d500, 0 bytes differ
+GATE tt_ctl id  4 Get Men level 2 swords screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id  4 Get Men level 2 swords no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id  5 Go Home level 2 swords hover state PASS pointer (100,170) id 5 want 5, KEY $115 want $115 (posture word 3, level 1, keys True)
+GATE tt_ctl id  5 Go Home level 2 swords the hook wrote exactly one buffer PASS changed a=True b=False
+GATE tt_ctl id  5 Go Home level 2 swords footprint PASS 204 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id  5 Go Home level 2 swords the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id  5 Go Home level 2 swords pixels == reference rendering PASS text 'Go Home (H): army walks back to base': 0 of 624 bytes differ
+GATE tt_ctl id  5 Go Home level 2 swords registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id  5 Go Home level 2 swords displayed buffer pixels == reference PASS base $25200, 0 bytes differ
+GATE tt_ctl id  5 Go Home level 2 swords screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id  5 Go Home level 2 swords no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id  6 Attack level 2 swords hover state PASS pointer (244,191) id 6 want 6, KEY $119 want $119 (posture word 3, level 1, keys True)
+GATE tt_ctl id  6 Attack level 2 swords the hook wrote exactly one buffer PASS changed a=True b=False
+GATE tt_ctl id  6 Attack level 2 swords footprint PASS 242 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id  6 Attack level 2 swords the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id  6 Attack level 2 swords pixels == reference rendering PASS text 'Attack (A): conquer, some die and some live': 0 of 624 bytes differ
+GATE tt_ctl id  6 Attack level 2 swords registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id  6 Attack level 2 swords displayed buffer pixels == reference PASS base $25200, 0 bytes differ
+GATE tt_ctl id  6 Attack level 2 swords screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id  6 Attack level 2 swords no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id  7 Build level 2 swords hover state PASS pointer (274,188) id 7 want 7, KEY $11d want $11d (posture word 3, level 1, keys True)
+GATE tt_ctl id  7 Build level 2 swords the hook wrote exactly one buffer PASS changed a=False b=True
+GATE tt_ctl id  7 Build level 2 swords footprint PASS 232 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id  7 Build level 2 swords the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id  7 Build level 2 swords pixels == reference rendering PASS text 'Build (I): a town workshop makes planes': 0 of 624 bytes differ
+GATE tt_ctl id  7 Build level 2 swords registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id  7 Build level 2 swords displayed buffer pixels == reference PASS base $1d500, 0 bytes differ
+GATE tt_ctl id  7 Build level 2 swords screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id  7 Build level 2 swords no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id  8 Equip level 2 swords hover state PASS pointer (298,157) id 8 want 8, KEY $121 want $121 (posture word 3, level 1, keys True)
+GATE tt_ctl id  8 Equip level 2 swords the hook wrote exactly one buffer PASS changed a=False b=True
+GATE tt_ctl id  8 Equip level 2 swords footprint PASS 218 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id  8 Equip level 2 swords the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id  8 Equip level 2 swords pixels == reference rendering PASS text 'Equip (E): pick up 50% of the items': 0 of 624 bytes differ
+GATE tt_ctl id  8 Equip level 2 swords registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id  8 Equip level 2 swords displayed buffer pixels == reference PASS base $1d500, 0 bytes differ
+GATE tt_ctl id  8 Equip level 2 swords screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id  8 Equip level 2 swords no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id  9 Drop Food level 2 swords hover state PASS pointer (142,193) id 9 want 9, KEY $125 want $125 (posture word 3, level 1, keys True)
+GATE tt_ctl id  9 Drop Food level 2 swords the hook wrote exactly one buffer PASS changed a=True b=False
+GATE tt_ctl id  9 Drop Food level 2 swords footprint PASS 237 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id  9 Drop Food level 2 swords the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id  9 Drop Food level 2 swords pixels == reference rendering PASS text 'Drop Food (D): leave 50% of your rations': 0 of 624 bytes differ
+GATE tt_ctl id  9 Drop Food level 2 swords registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id  9 Drop Food level 2 swords displayed buffer pixels == reference PASS base $25200, 0 bytes differ
+GATE tt_ctl id  9 Drop Food level 2 swords screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id  9 Drop Food level 2 swords no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id 10 Derank level 2 swords hover state PASS pointer (252,168) id 10 want 10, KEY $129 want $129 (posture word 3, level 1, keys True)
+GATE tt_ctl id 10 Derank level 2 swords the hook wrote exactly one buffer PASS changed a=True b=False
+GATE tt_ctl id 10 Derank level 2 swords footprint PASS 212 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id 10 Derank level 2 swords the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id 10 Derank level 2 swords pixels == reference rendering PASS text 'Derank (R): send 50% of the army home': 0 of 624 bytes differ
+GATE tt_ctl id 10 Derank level 2 swords registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id 10 Derank level 2 swords displayed buffer pixels == reference PASS base $25200, 0 bytes differ
+GATE tt_ctl id 10 Derank level 2 swords screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id 10 Derank level 2 swords no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id 12 Drop Items level 2 swords hover state PASS pointer (173,188) id 12 want 12, KEY $131 want $131 (posture word 3, level 1, keys True)
+GATE tt_ctl id 12 Drop Items level 2 swords the hook wrote exactly one buffer PASS changed a=True b=False
+GATE tt_ctl id 12 Drop Items level 2 swords footprint PASS 244 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id 12 Drop Items level 2 swords the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id 12 Drop Items level 2 swords pixels == reference rendering PASS text 'Drop Items (N): leave 50% of spare stores': 0 of 624 bytes differ
+GATE tt_ctl id 12 Drop Items level 2 swords registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id 12 Drop Items level 2 swords displayed buffer pixels == reference PASS base $25200, 0 bytes differ
+GATE tt_ctl id 12 Drop Items level 2 swords screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id 12 Drop Items level 2 swords no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id 13 Supply Food level 2 swords hover state PASS pointer (228,175) id 13 want 13, KEY $135 want $135 (posture word 3, level 1, keys True)
+GATE tt_ctl id 13 Supply Food level 2 swords the hook wrote exactly one buffer PASS changed a=False b=True
+GATE tt_ctl id 13 Supply Food level 2 swords footprint PASS 278 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id 13 Supply Food level 2 swords the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id 13 Supply Food level 2 swords pixels == reference rendering PASS text 'Supply Food (S): ferry 50% of rations, repeat': 0 of 624 bytes differ
+GATE tt_ctl id 13 Supply Food level 2 swords registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id 13 Supply Food level 2 swords displayed buffer pixels == reference PASS base $1d500, 0 bytes differ
+GATE tt_ctl id 13 Supply Food level 2 swords screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id 13 Supply Food level 2 swords no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id 14 Trade level 2 swords hover state PASS pointer (75,175) id 14 want 14, KEY $139 want $139 (posture word 3, level 1, keys True)
+GATE tt_ctl id 14 Trade level 2 swords the hook wrote exactly one buffer PASS changed a=False b=True
+GATE tt_ctl id 14 Trade level 2 swords footprint PASS 230 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id 14 Trade level 2 swords the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id 14 Trade level 2 swords pixels == reference rendering PASS text 'Trade (T): boats, pikes, ploughs first': 0 of 624 bytes differ
+GATE tt_ctl id 14 Trade level 2 swords registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id 14 Trade level 2 swords displayed buffer pixels == reference PASS base $1d500, 0 bytes differ
+GATE tt_ctl id 14 Trade level 2 swords screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id 14 Trade level 2 swords no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id 15 Alliance level 2 swords hover state PASS pointer (73,161) id 15 want 15, KEY $13d want $13d (posture word 3, level 1, keys True)
+GATE tt_ctl id 15 Alliance level 2 swords the hook wrote exactly one buffer PASS changed a=True b=False
+GATE tt_ctl id 15 Alliance level 2 swords footprint PASS 204 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id 15 Alliance level 2 swords the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id 15 Alliance level 2 swords pixels == reference rendering PASS text 'Alliance (L): pay tribute for a pact': 0 of 624 bytes differ
+GATE tt_ctl id 15 Alliance level 2 swords registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id 15 Alliance level 2 swords displayed buffer pixels == reference PASS base $25200, 0 bytes differ
+GATE tt_ctl id 15 Alliance level 2 swords screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id 15 Alliance level 2 swords no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id 16 Spy level 2 swords hover state PASS pointer (72,149) id 16 want 16, KEY $141 want $141 (posture word 3, level 1, keys True)
+GATE tt_ctl id 16 Spy level 2 swords the hook wrote exactly one buffer PASS changed a=True b=False
+GATE tt_ctl id 16 Spy level 2 swords footprint PASS 130 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id 16 Spy level 2 swords the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id 16 Spy level 2 swords pixels == reference rendering PASS text 'Spy (Y): scout a town': 0 of 624 bytes differ
+GATE tt_ctl id 16 Spy level 2 swords registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id 16 Spy level 2 swords displayed buffer pixels == reference PASS base $25200, 0 bytes differ
+GATE tt_ctl id 16 Spy level 2 swords screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id 16 Spy level 2 swords no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id 19 Aggressive (3 swords) level 2 swords hover state PASS pointer (97,157) id 19 want 19, KEY $14d want $14d (posture word 3, level 1, keys True)
+GATE tt_ctl id 19 Aggressive (3 swords) level 2 swords the hook wrote exactly one buffer PASS changed a=True b=False
+GATE tt_ctl id 19 Aggressive (3 swords) level 2 swords footprint PASS 288 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id 19 Aggressive (3 swords) level 2 swords the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id 19 Aggressive (3 swords) level 2 swords pixels == reference rendering PASS text 'Aggressive (3 swords) (3): takes all, kills all': 0 of 624 bytes differ
+GATE tt_ctl id 19 Aggressive (3 swords) level 2 swords registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id 19 Aggressive (3 swords) level 2 swords displayed buffer pixels == reference PASS base $25200, 0 bytes differ
+GATE tt_ctl id 19 Aggressive (3 swords) level 2 swords screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id 19 Aggressive (3 swords) level 2 swords no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id 20 Neutral (2 swords) level 2 swords hover state PASS pointer (95,145) id 20 want 20, KEY $151 want $151 (posture word 3, level 1, keys True)
+GATE tt_ctl id 20 Neutral (2 swords) level 2 swords the hook wrote exactly one buffer PASS changed a=True b=False
+GATE tt_ctl id 20 Neutral (2 swords) level 2 swords footprint PASS 278 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id 20 Neutral (2 swords) level 2 swords the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id 20 Neutral (2 swords) level 2 swords pixels == reference rendering PASS text 'Neutral (2 swords) (2): takes half, spares some': 0 of 624 bytes differ
+GATE tt_ctl id 20 Neutral (2 swords) level 2 swords registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id 20 Neutral (2 swords) level 2 swords displayed buffer pixels == reference PASS base $25200, 0 bytes differ
+GATE tt_ctl id 20 Neutral (2 swords) level 2 swords screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id 20 Neutral (2 swords) level 2 swords no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id 21 Passive (1 sword) level 2 swords hover state PASS pointer (92,135) id 21 want 21, KEY $155 want $155 (posture word 3, level 1, keys True)
+GATE tt_ctl id 21 Passive (1 sword) level 2 swords the hook wrote exactly one buffer PASS changed a=False b=True
+GATE tt_ctl id 21 Passive (1 sword) level 2 swords footprint PASS 301 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id 21 Passive (1 sword) level 2 swords the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id 21 Passive (1 sword) level 2 swords pixels == reference rendering PASS text 'Passive (1 sword) (1): takes a quarter, spares most': 0 of 624 bytes differ
+GATE tt_ctl id 21 Passive (1 sword) level 2 swords registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id 21 Passive (1 sword) level 2 swords displayed buffer pixels == reference PASS base $1d500, 0 bytes differ
+GATE tt_ctl id 21 Passive (1 sword) level 2 swords screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id 21 Passive (1 sword) level 2 swords no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id 22 Query level 2 swords hover state PASS pointer (76,191) id 22 want 22, KEY $159 want $159 (posture word 3, level 1, keys True)
+GATE tt_ctl id 22 Query level 2 swords the hook wrote exactly one buffer PASS changed a=False b=True
+GATE tt_ctl id 22 Query level 2 swords footprint PASS 200 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id 22 Query level 2 swords the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id 22 Query level 2 swords pixels == reference rendering PASS text 'Query (Q): info on what you click': 0 of 624 bytes differ
+GATE tt_ctl id 22 Query level 2 swords registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id 22 Query level 2 swords displayed buffer pixels == reference PASS base $1d500, 0 bytes differ
+GATE tt_ctl id 22 Query level 2 swords screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id 22 Query level 2 swords no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id 23 Option level 2 swords hover state PASS pointer (72,139) id 23 want 23, KEY $15d want $15d (posture word 3, level 1, keys True)
+GATE tt_ctl id 23 Option level 2 swords the hook wrote exactly one buffer PASS changed a=True b=False
+GATE tt_ctl id 23 Option level 2 swords footprint PASS 240 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id 23 Option level 2 swords the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id 23 Option level 2 swords pixels == reference rendering PASS text 'Option (O): speed, save/load, retire, pause': 0 of 624 bytes differ
+GATE tt_ctl id 23 Option level 2 swords registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id 23 Option level 2 swords displayed buffer pixels == reference PASS base $25200, 0 bytes differ
+GATE tt_ctl id 23 Option level 2 swords screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id 23 Option level 2 swords no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id 24 Map level 2 swords hover state PASS pointer (7,1) id 24 want 24, KEY $161 want $161 (posture word 3, level 1, keys True)
+GATE tt_ctl id 24 Map level 2 swords the hook wrote exactly one buffer PASS changed a=False b=True
+GATE tt_ctl id 24 Map level 2 swords footprint PASS 150 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id 24 Map level 2 swords the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id 24 Map level 2 swords pixels == reference rendering PASS text 'Map (F1): height contours': 0 of 624 bytes differ
+GATE tt_ctl id 24 Map level 2 swords registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id 24 Map level 2 swords displayed buffer pixels == reference PASS base $1d500, 0 bytes differ
+GATE tt_ctl id 24 Map level 2 swords screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id 24 Map level 2 swords no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id 25 Map level 2 swords hover state PASS pointer (24,1) id 25 want 25, KEY $165 want $165 (posture word 3, level 1, keys True)
+GATE tt_ctl id 25 Map level 2 swords the hook wrote exactly one buffer PASS changed a=True b=False
+GATE tt_ctl id 25 Map level 2 swords footprint PASS 158 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id 25 Map level 2 swords the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id 25 Map level 2 swords pixels == reference rendering PASS text 'Map (F2): trees, houses, men': 0 of 624 bytes differ
+GATE tt_ctl id 25 Map level 2 swords registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id 25 Map level 2 swords displayed buffer pixels == reference PASS base $25200, 0 bytes differ
+GATE tt_ctl id 25 Map level 2 swords screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id 25 Map level 2 swords no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id 26 Map level 2 swords hover state PASS pointer (40,1) id 26 want 26, KEY $169 want $169 (posture word 3, level 1, keys True)
+GATE tt_ctl id 26 Map level 2 swords the hook wrote exactly one buffer PASS changed a=True b=False
+GATE tt_ctl id 26 Map level 2 swords footprint PASS 144 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id 26 Map level 2 swords the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id 26 Map level 2 swords pixels == reference rendering PASS text 'Map (F3): towns and roads': 0 of 624 bytes differ
+GATE tt_ctl id 26 Map level 2 swords registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id 26 Map level 2 swords displayed buffer pixels == reference PASS base $25200, 0 bytes differ
+GATE tt_ctl id 26 Map level 2 swords screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id 26 Map level 2 swords no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id 27 Map level 2 swords hover state PASS pointer (56,1) id 27 want 27, KEY $16d want $16d (posture word 3, level 1, keys True)
+GATE tt_ctl id 27 Map level 2 swords the hook wrote exactly one buffer PASS changed a=False b=True
+GATE tt_ctl id 27 Map level 2 swords footprint PASS 218 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id 27 Map level 2 swords the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id 27 Map level 2 swords pixels == reference rendering PASS text 'Map (F4): town rations (click: update)': 0 of 624 bytes differ
+GATE tt_ctl id 27 Map level 2 swords registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id 27 Map level 2 swords displayed buffer pixels == reference PASS base $1d500, 0 bytes differ
+GATE tt_ctl id 27 Map level 2 swords screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id 27 Map level 2 swords no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id 28 Rotate left level 2 swords hover state PASS pointer (28,157) id 28 want 28, KEY $171 want $171 (posture word 3, level 1, keys True)
+GATE tt_ctl id 28 Rotate left level 2 swords the hook wrote exactly one buffer PASS changed a=True b=False
+GATE tt_ctl id 28 Rotate left level 2 swords footprint PASS 317 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id 28 Rotate left level 2 swords the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id 28 Rotate left level 2 swords pixels == reference rendering PASS text 'Rotate left ([): 90 deg; right-click/Shift+[: fine': 0 of 624 bytes differ
+GATE tt_ctl id 28 Rotate left level 2 swords registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id 28 Rotate left level 2 swords displayed buffer pixels == reference PASS base $25200, 0 bytes differ
+GATE tt_ctl id 28 Rotate left level 2 swords screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id 28 Rotate left level 2 swords no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id 29 Rotate right level 2 swords hover state PASS pointer (37,165) id 29 want 29, KEY $175 want $175 (posture word 3, level 1, keys True)
+GATE tt_ctl id 29 Rotate right level 2 swords the hook wrote exactly one buffer PASS changed a=True b=False
+GATE tt_ctl id 29 Rotate right level 2 swords footprint PASS 317 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id 29 Rotate right level 2 swords the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id 29 Rotate right level 2 swords pixels == reference rendering PASS text 'Rotate right (]): 90 deg; right-click/Shift+]: fine': 0 of 624 bytes differ
+GATE tt_ctl id 29 Rotate right level 2 swords registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id 29 Rotate right level 2 swords displayed buffer pixels == reference PASS base $25200, 0 bytes differ
+GATE tt_ctl id 29 Rotate right level 2 swords screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id 29 Rotate right level 2 swords no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id 30 Zoom in level 2 swords hover state PASS pointer (53,166) id 30 want 30, KEY $179 want $179 (posture word 3, level 1, keys True)
+GATE tt_ctl id 30 Zoom in level 2 swords the hook wrote exactly one buffer PASS changed a=True b=False
+GATE tt_ctl id 30 Zoom in level 2 swords footprint PASS 289 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id 30 Zoom in level 2 swords the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id 30 Zoom in level 2 swords pixels == reference rendering PASS text 'Zoom in (= or KP+): right-click or Shift: closest': 0 of 624 bytes differ
+GATE tt_ctl id 30 Zoom in level 2 swords registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id 30 Zoom in level 2 swords displayed buffer pixels == reference PASS base $25200, 0 bytes differ
+GATE tt_ctl id 30 Zoom in level 2 swords screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id 30 Zoom in level 2 swords no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id 31 Zoom out level 2 swords hover state PASS pointer (53,185) id 31 want 31, KEY $17d want $17d (posture word 3, level 1, keys True)
+GATE tt_ctl id 31 Zoom out level 2 swords the hook wrote exactly one buffer PASS changed a=True b=False
+GATE tt_ctl id 31 Zoom out level 2 swords footprint PASS 302 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id 31 Zoom out level 2 swords the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id 31 Zoom out level 2 swords pixels == reference rendering PASS text 'Zoom out (- or KP-): right-click or Shift: farthest': 0 of 624 bytes differ
+GATE tt_ctl id 31 Zoom out level 2 swords registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id 31 Zoom out level 2 swords displayed buffer pixels == reference PASS base $25200, 0 bytes differ
+GATE tt_ctl id 31 Zoom out level 2 swords screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id 31 Zoom out level 2 swords no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id 32 Compass (cursor keys) level 2 swords hover state PASS pointer (15,185) id 32 want 32, KEY $181 want $181 (posture word 3, level 1, keys True)
+GATE tt_ctl id 32 Compass (cursor keys) level 2 swords the hook wrote exactly one buffer PASS changed a=False b=True
+GATE tt_ctl id 32 Compass (cursor keys) level 2 swords footprint PASS 230 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id 32 Compass (cursor keys) level 2 swords the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id 32 Compass (cursor keys) level 2 swords pixels == reference rendering PASS text 'Compass (cursor keys): scroll the view': 0 of 624 bytes differ
+GATE tt_ctl id 32 Compass (cursor keys) level 2 swords registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id 32 Compass (cursor keys) level 2 swords displayed buffer pixels == reference PASS base $1d500, 0 bytes differ
+GATE tt_ctl id 32 Compass (cursor keys) level 2 swords screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id 32 Compass (cursor keys) level 2 swords no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl posture click (92,135) sets the captain's posture word PASS word 4 want 4
+GATE tt_ctl id  2 Transfer Men level 1 sword hover state PASS pointer (103,187) id 2 want 2, KEY $108 want $108 (posture word 4, level 0, keys True)
+GATE tt_ctl id  2 Transfer Men level 1 sword the hook wrote exactly one buffer PASS changed a=True b=False
+GATE tt_ctl id  2 Transfer Men level 1 sword footprint PASS 220 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id  2 Transfer Men level 1 sword the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id  2 Transfer Men level 1 sword pixels == reference rendering PASS text 'Transfer Men (X): give 25% of the army': 0 of 624 bytes differ
+GATE tt_ctl id  2 Transfer Men level 1 sword registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id  2 Transfer Men level 1 sword displayed buffer pixels == reference PASS base $25200, 0 bytes differ
+GATE tt_ctl id  2 Transfer Men level 1 sword screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id  2 Transfer Men level 1 sword no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id  3 Get Food level 1 sword hover state PASS pointer (202,181) id 3 want 3, KEY $10c want $10c (posture word 4, level 0, keys True)
+GATE tt_ctl id  3 Get Food level 1 sword the hook wrote exactly one buffer PASS changed a=False b=True
+GATE tt_ctl id  3 Get Food level 1 sword footprint PASS 241 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id  3 Get Food level 1 sword the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id  3 Get Food level 1 sword pixels == reference rendering PASS text "Get Food (F): take 25% of a town's rations": 0 of 624 bytes differ
+GATE tt_ctl id  3 Get Food level 1 sword registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id  3 Get Food level 1 sword displayed buffer pixels == reference PASS base $1d500, 0 bytes differ
+GATE tt_ctl id  3 Get Food level 1 sword screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id  3 Get Food level 1 sword no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id  4 Get Men level 1 sword hover state PASS pointer (275,163) id 4 want 4, KEY $110 want $110 (posture word 4, level 0, keys True)
+GATE tt_ctl id  4 Get Men level 1 sword the hook wrote exactly one buffer PASS changed a=False b=True
+GATE tt_ctl id  4 Get Men level 1 sword footprint PASS 170 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id  4 Get Men level 1 sword the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id  4 Get Men level 1 sword pixels == reference rendering PASS text 'Get Men (M): recruit a few men': 0 of 624 bytes differ
+GATE tt_ctl id  4 Get Men level 1 sword registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id  4 Get Men level 1 sword displayed buffer pixels == reference PASS base $1d500, 0 bytes differ
+GATE tt_ctl id  4 Get Men level 1 sword screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id  4 Get Men level 1 sword no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id  6 Attack level 1 sword hover state PASS pointer (244,191) id 6 want 6, KEY $118 want $118 (posture word 4, level 0, keys True)
+GATE tt_ctl id  6 Attack level 1 sword the hook wrote exactly one buffer PASS changed a=True b=False
+GATE tt_ctl id  6 Attack level 1 sword footprint PASS 253 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id  6 Attack level 1 sword the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id  6 Attack level 1 sword pixels == reference rendering PASS text 'Attack (A): conquer, spare as many as you can': 0 of 624 bytes differ
+GATE tt_ctl id  6 Attack level 1 sword registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id  6 Attack level 1 sword displayed buffer pixels == reference PASS base $25200, 0 bytes differ
+GATE tt_ctl id  6 Attack level 1 sword screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id  6 Attack level 1 sword no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id  7 Build level 1 sword hover state PASS pointer (274,188) id 7 want 7, KEY $11c want $11c (posture word 4, level 0, keys True)
+GATE tt_ctl id  7 Build level 1 sword the hook wrote exactly one buffer PASS changed a=False b=True
+GATE tt_ctl id  7 Build level 1 sword footprint PASS 236 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id  7 Build level 1 sword the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id  7 Build level 1 sword pixels == reference rendering PASS text 'Build (I): a town workshop makes rifles': 0 of 624 bytes differ
+GATE tt_ctl id  7 Build level 1 sword registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id  7 Build level 1 sword displayed buffer pixels == reference PASS base $1d500, 0 bytes differ
+GATE tt_ctl id  7 Build level 1 sword screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id  7 Build level 1 sword no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id  8 Equip level 1 sword hover state PASS pointer (298,157) id 8 want 8, KEY $120 want $120 (posture word 4, level 0, keys True)
+GATE tt_ctl id  8 Equip level 1 sword the hook wrote exactly one buffer PASS changed a=True b=False
+GATE tt_ctl id  8 Equip level 1 sword footprint PASS 217 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id  8 Equip level 1 sword the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id  8 Equip level 1 sword pixels == reference rendering PASS text 'Equip (E): pick up 25% of the items': 0 of 624 bytes differ
+GATE tt_ctl id  8 Equip level 1 sword registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id  8 Equip level 1 sword displayed buffer pixels == reference PASS base $25200, 0 bytes differ
+GATE tt_ctl id  8 Equip level 1 sword screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id  8 Equip level 1 sword no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id  9 Drop Food level 1 sword hover state PASS pointer (142,193) id 9 want 9, KEY $124 want $124 (posture word 4, level 0, keys True)
+GATE tt_ctl id  9 Drop Food level 1 sword the hook wrote exactly one buffer PASS changed a=True b=False
+GATE tt_ctl id  9 Drop Food level 1 sword footprint PASS 236 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id  9 Drop Food level 1 sword the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id  9 Drop Food level 1 sword pixels == reference rendering PASS text 'Drop Food (D): leave 25% of your rations': 0 of 624 bytes differ
+GATE tt_ctl id  9 Drop Food level 1 sword registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id  9 Drop Food level 1 sword displayed buffer pixels == reference PASS base $25200, 0 bytes differ
+GATE tt_ctl id  9 Drop Food level 1 sword screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id  9 Drop Food level 1 sword no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id 10 Derank level 1 sword hover state PASS pointer (252,168) id 10 want 10, KEY $128 want $128 (posture word 4, level 0, keys True)
+GATE tt_ctl id 10 Derank level 1 sword the hook wrote exactly one buffer PASS changed a=False b=True
+GATE tt_ctl id 10 Derank level 1 sword footprint PASS 211 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id 10 Derank level 1 sword the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id 10 Derank level 1 sword pixels == reference rendering PASS text 'Derank (R): send 25% of the army home': 0 of 624 bytes differ
+GATE tt_ctl id 10 Derank level 1 sword registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id 10 Derank level 1 sword displayed buffer pixels == reference PASS base $1d500, 0 bytes differ
+GATE tt_ctl id 10 Derank level 1 sword screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id 10 Derank level 1 sword no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id 12 Drop Items level 1 sword hover state PASS pointer (173,188) id 12 want 12, KEY $130 want $130 (posture word 4, level 0, keys True)
+GATE tt_ctl id 12 Drop Items level 1 sword the hook wrote exactly one buffer PASS changed a=True b=False
+GATE tt_ctl id 12 Drop Items level 1 sword footprint PASS 244 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id 12 Drop Items level 1 sword the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id 12 Drop Items level 1 sword pixels == reference rendering PASS text 'Drop Items (N): leave 25% of spare stores': 0 of 624 bytes differ
+GATE tt_ctl id 12 Drop Items level 1 sword registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id 12 Drop Items level 1 sword displayed buffer pixels == reference PASS base $25200, 0 bytes differ
+GATE tt_ctl id 12 Drop Items level 1 sword screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id 12 Drop Items level 1 sword no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id 13 Supply Food level 1 sword hover state PASS pointer (228,175) id 13 want 13, KEY $134 want $134 (posture word 4, level 0, keys True)
+GATE tt_ctl id 13 Supply Food level 1 sword the hook wrote exactly one buffer PASS changed a=False b=True
+GATE tt_ctl id 13 Supply Food level 1 sword footprint PASS 277 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id 13 Supply Food level 1 sword the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id 13 Supply Food level 1 sword pixels == reference rendering PASS text 'Supply Food (S): ferry 25% of rations, repeat': 0 of 624 bytes differ
+GATE tt_ctl id 13 Supply Food level 1 sword registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id 13 Supply Food level 1 sword displayed buffer pixels == reference PASS base $1d500, 0 bytes differ
+GATE tt_ctl id 13 Supply Food level 1 sword screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id 13 Supply Food level 1 sword no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl id 14 Trade level 1 sword hover state PASS pointer (75,175) id 14 want 14, KEY $138 want $138 (posture word 4, level 0, keys True)
+GATE tt_ctl id 14 Trade level 1 sword the hook wrote exactly one buffer PASS changed a=False b=True
+GATE tt_ctl id 14 Trade level 1 sword footprint PASS 226 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl id 14 Trade level 1 sword the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl id 14 Trade level 1 sword pixels == reference rendering PASS text 'Trade (T): ploughs, boats, pots first': 0 of 624 bytes differ
+GATE tt_ctl id 14 Trade level 1 sword registers and stack pointer preserved PASS differences {}
+GATE tt_ctl id 14 Trade level 1 sword displayed buffer pixels == reference PASS base $1d500, 0 bytes differ
+GATE tt_ctl id 14 Trade level 1 sword screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl id 14 Trade level 1 sword no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl posture click (95,145) sets the captain's posture word PASS word 3 want 3
+GATE tt_ctl erase after id 3 -> (150,100) hover state PASS pointer (150,100) id 0 want 0, KEY $0 want $0 (posture word 3, level 1, keys True)
+GATE tt_ctl erase after id 3 -> (150,100) no tooltip: the hook wrote nothing PASS changed buffers a=False b=False
+GATE tt_ctl erase after id 3 -> (150,100) footprint PASS 0 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl erase after id 3 -> (150,100) the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl erase after id 3 -> (150,100) pixels == reference rendering PASS text '': 0 of 624 bytes differ
+GATE tt_ctl erase after id 3 -> (150,100) registers and stack pointer preserved PASS differences {}
+GATE tt_ctl erase after id 3 -> (150,100) displayed buffer pixels == reference PASS base $1d500, 0 bytes differ
+GATE tt_ctl erase after id 3 -> (150,100) screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl erase after id 3 -> (150,100) no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl sequence id 6 (Attack) hover state PASS pointer (245,190) id 6 want 6, KEY $119 want $119 (posture word 3, level 1, keys True)
+GATE tt_ctl sequence id 6 (Attack) the hook wrote exactly one buffer PASS changed a=True b=False
+GATE tt_ctl sequence id 6 (Attack) footprint PASS 242 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl sequence id 6 (Attack) the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl sequence id 6 (Attack) pixels == reference rendering PASS text 'Attack (A): conquer, some die and some live': 0 of 624 bytes differ
+GATE tt_ctl sequence id 6 (Attack) registers and stack pointer preserved PASS differences {}
+GATE tt_ctl sequence id 6 (Attack) displayed buffer pixels == reference PASS base $25200, 0 bytes differ
+GATE tt_ctl sequence id 6 (Attack) screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl sequence id 6 (Attack) no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl sequence id 5 (Go Home) hover state PASS pointer (100,170) id 5 want 5, KEY $115 want $115 (posture word 3, level 1, keys True)
+GATE tt_ctl sequence id 5 (Go Home) the hook wrote exactly one buffer PASS changed a=False b=True
+GATE tt_ctl sequence id 5 (Go Home) footprint PASS 204 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl sequence id 5 (Go Home) the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl sequence id 5 (Go Home) pixels == reference rendering PASS text 'Go Home (H): army walks back to base': 0 of 624 bytes differ
+GATE tt_ctl sequence id 5 (Go Home) registers and stack pointer preserved PASS differences {}
+GATE tt_ctl sequence id 5 (Go Home) displayed buffer pixels == reference PASS base $1d500, 0 bytes differ
+GATE tt_ctl sequence id 5 (Go Home) screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl sequence id 5 (Go Home) no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl sequence id 3 (Get Food) hover state PASS pointer (202,181) id 3 want 3, KEY $10d want $10d (posture word 3, level 1, keys True)
+GATE tt_ctl sequence id 3 (Get Food) the hook wrote exactly one buffer PASS changed a=True b=False
+GATE tt_ctl sequence id 3 (Get Food) footprint PASS 242 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl sequence id 3 (Get Food) the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl sequence id 3 (Get Food) pixels == reference rendering PASS text "Get Food (F): take 50% of a town's rations": 0 of 624 bytes differ
+GATE tt_ctl sequence id 3 (Get Food) registers and stack pointer preserved PASS differences {}
+GATE tt_ctl sequence id 3 (Get Food) displayed buffer pixels == reference PASS base $25200, 0 bytes differ
+GATE tt_ctl sequence id 3 (Get Food) screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl sequence id 3 (Get Food) no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl sequence id 1 (Send Captain) hover state PASS pointer (300,183) id 1 want 1, KEY $105 want $105 (posture word 3, level 1, keys True)
+GATE tt_ctl sequence id 1 (Send Captain) the hook wrote exactly one buffer PASS changed a=False b=True
+GATE tt_ctl sequence id 1 (Send Captain) footprint PASS 244 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl sequence id 1 (Send Captain) the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl sequence id 1 (Send Captain) pixels == reference rendering PASS text 'Send Captain (G): walk to a spot you pick': 0 of 624 bytes differ
+GATE tt_ctl sequence id 1 (Send Captain) registers and stack pointer preserved PASS differences {}
+GATE tt_ctl sequence id 1 (Send Captain) displayed buffer pixels == reference PASS base $1d500, 0 bytes differ
+GATE tt_ctl sequence id 1 (Send Captain) screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl sequence id 1 (Send Captain) no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl sequence id 24 (Map) hover state PASS pointer (7,1) id 24 want 24, KEY $161 want $161 (posture word 3, level 1, keys True)
+GATE tt_ctl sequence id 24 (Map) the hook wrote exactly one buffer PASS changed a=True b=False
+GATE tt_ctl sequence id 24 (Map) footprint PASS 150 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl sequence id 24 (Map) the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl sequence id 24 (Map) pixels == reference rendering PASS text 'Map (F1): height contours': 0 of 624 bytes differ
+GATE tt_ctl sequence id 24 (Map) registers and stack pointer preserved PASS differences {}
+GATE tt_ctl sequence id 24 (Map) displayed buffer pixels == reference PASS base $25200, 0 bytes differ
+GATE tt_ctl sequence id 24 (Map) screenshot == reference (colours of the machine's palette) PASS 0 of 1248 pixels differ, 2x2 blocks uniform True
+GATE tt_ctl sequence id 24 (Map) no stray colours (khaki box, junk) in the line area PASS 0 pixels outside black + the text's own colours
+GATE tt_ctl live posture change to 4 while hovering Get Food PASS KEY $10c want $10c
+GATE tt_ctl live posture change to 2 while hovering Get Food PASS KEY $10e want $10e
+GATE tt_ctl live posture change to 3 while hovering Get Food PASS KEY $10d want $10d
+GATE tt_ctl Option window opened PASS $74c0 = 0x17c
+GATE tt_ctl map icon 1 with the Option window open (no tooltip) hover state PASS pointer (24,1) id 0 want 0, KEY $0 want $0 (posture word 3, level 1, keys True)
+GATE tt_ctl map icon 1 with the Option window open (no tooltip) no tooltip: the hook wrote nothing PASS changed buffers a=False b=False
+GATE tt_ctl map icon 1 with the Option window open (no tooltip) footprint PASS 0 bytes changed, 0 outside rows 0-5 / byte 56..159
+GATE tt_ctl map icon 1 with the Option window open (no tooltip) the line was composed on a clean bar PASS region before the hook is all colour 0
+GATE tt_ctl map icon 1 with the Option window open (no tooltip) pixels == reference rendering PASS text '': 0 of 624 bytes differ
+GATE tt_ctl map icon 1 with the Option window open (no tooltip) registers and stack pointer preserved PASS differences {}
+GATE tt_ctl map icon 1 with the Option window open (no tooltip) displayed buffer pixels == reference PASS base $1d500, 0 bytes differ
+GATE tt_ctl Option window closed PASS tick at (57,4)
+GATE tt_ctl hit id 1 extra point 0 (293,168) PASS machine id 1 key $105, reference id 1 key $105
+GATE tt_ctl hit id 1 extra point 1 (319,199) PASS machine id 1 key $105, reference id 1 key $105
+GATE tt_ctl hit id 2 extra point 0 (115,174) PASS machine id 5 key $115, reference id 5 key $115
+GATE tt_ctl hit id 2 extra point 1 (90,199) PASS machine id 2 key $109, reference id 2 key $109
+GATE tt_ctl hit id 3 extra point 0 (205,171) PASS machine id 3 key $10d, reference id 3 key $10d
+GATE tt_ctl hit id 3 extra point 1 (196,192) PASS machine id 3 key $10d, reference id 3 key $10d
+GATE tt_ctl hit id 4 extra point 0 (275,154) PASS machine id 4 key $111, reference id 4 key $111
+GATE tt_ctl hit id 4 extra point 1 (273,172) PASS machine id 4 key $111, reference id 4 key $111
+GATE tt_ctl hit id 5 extra point 0 (113,160) PASS machine id 5 key $115, reference id 5 key $115
+GATE tt_ctl hit id 5 extra point 1 (89,181) PASS machine id 2 key $109, reference id 2 key $109
+GATE tt_ctl hit id 6 extra point 0 (247,179) PASS machine id 6 key $119, reference id 6 key $119
+GATE tt_ctl hit id 6 extra point 1 (269,199) PASS machine id 6 key $119, reference id 6 key $119
+GATE tt_ctl hit id 7 extra point 0 (270,173) PASS machine id 7 key $11d, reference id 7 key $11d
+GATE tt_ctl hit id 7 extra point 1 (303,199) PASS machine id 7 key $11d, reference id 7 key $11d
+GATE tt_ctl hit id 8 extra point 0 (295,150) PASS machine id 8 key $121, reference id 8 key $121
+GATE tt_ctl hit id 8 extra point 1 (295,165) PASS machine id 8 key $121, reference id 8 key $121
+GATE tt_ctl hit id 9 extra point 0 (152,184) PASS machine id 9 key $125, reference id 9 key $125
+GATE tt_ctl hit id 9 extra point 1 (160,199) PASS machine id 9 key $125, reference id 9 key $125
+GATE tt_ctl hit id 10 extra point 0 (254,159) PASS machine id 10 key $129, reference id 10 key $129
+GATE tt_ctl hit id 10 extra point 1 (250,178) PASS machine id 10 key $129, reference id 10 key $129
+GATE tt_ctl hit id 12 extra point 0 (180,177) PASS machine id 12 key $131, reference id 12 key $131
+GATE tt_ctl hit id 12 extra point 1 (170,199) PASS machine id 12 key $131, reference id 12 key $131
+GATE tt_ctl hit id 13 extra point 0 (230,165) PASS machine id 13 key $135, reference id 13 key $135
+GATE tt_ctl hit id 13 extra point 1 (223,185) PASS machine id 13 key $135, reference id 13 key $135
+GATE tt_ctl hit id 14 extra point 0 (82,166) PASS machine id 14 key $139, reference id 14 key $139
+GATE tt_ctl hit id 14 extra point 1 (66,184) PASS machine id 14 key $139, reference id 14 key $139
+GATE tt_ctl hit id 15 extra point 0 (79,153) PASS machine id 16 key $141, reference id 16 key $141
+GATE tt_ctl hit id 15 extra point 1 (66,168) PASS machine id 15 key $13d, reference id 15 key $13d
+GATE tt_ctl hit id 16 extra point 0 (76,143) PASS machine id 16 key $141, reference id 16 key $141
+GATE tt_ctl hit id 16 extra point 1 (67,156) PASS machine id 16 key $141, reference id 16 key $141
+GATE tt_ctl hit id 19 extra point 0 (107,149) PASS machine id 19 key $14d, reference id 19 key $14d
+GATE tt_ctl hit id 19 extra point 1 (86,165) PASS machine id 19 key $14d, reference id 19 key $14d
+GATE tt_ctl hit id 20 extra point 0 (105,139) PASS machine id 20 key $151, reference id 20 key $151
+GATE tt_ctl hit id 20 extra point 1 (83,154) PASS machine id 19 key $14d, reference id 19 key $14d
+GATE tt_ctl hit id 21 extra point 0 (99,129) PASS machine id 0 key $0, reference id 0 key $0
+GATE tt_ctl hit id 21 extra point 1 (81,142) PASS machine id 21 key $155, reference id 21 key $155
+GATE tt_ctl hit id 22 extra point 0 (81,182) PASS machine id 22 key $159, reference id 22 key $159
+GATE tt_ctl hit id 22 extra point 1 (88,199) PASS machine id 22 key $159, reference id 22 key $159
+GATE tt_ctl hit id 23 extra point 0 (75,133) PASS machine id 23 key $15d, reference id 23 key $15d
+GATE tt_ctl hit id 23 extra point 1 (64,145) PASS machine id 23 key $15d, reference id 23 key $15d
+GATE tt_ctl hit none point 0 (30,80) PASS machine id 0 key $0, reference id 0 key $0
+GATE tt_ctl hit none point 1 (150,59) PASS machine id 0 key $0, reference id 0 key $0
+GATE tt_ctl hit none point 2 (150,128) PASS machine id 0 key $0, reference id 0 key $0
+GATE tt_ctl hit none point 3 (48,150) PASS machine id 0 key $0, reference id 0 key $0
+GATE tt_ctl hit none point 4 (199,2) PASS machine id 0 key $0, reference id 0 key $0
+GATE tt_ctl hit none point 5 (319,0) PASS machine id 0 key $0, reference id 0 key $0
+GATE tt_ctl hit none point 6 (65,6) PASS machine id 0 key $0, reference id 0 key $0
+GATE tt_ctl hit none point 7 (10,101) PASS machine id 0 key $0, reference id 0 key $0
+GATE tt_ctl hit none point 8 (100,128) PASS machine id 0 key $0, reference id 0 key $0
+GATE tt_ctl hit none point 9 (319,99) PASS machine id 0 key $0, reference id 0 key $0
+TOOLTIP GATE tt_ctl: 584 lines PASS, 0 FAIL
+CELL DONE tt_ctl: OK

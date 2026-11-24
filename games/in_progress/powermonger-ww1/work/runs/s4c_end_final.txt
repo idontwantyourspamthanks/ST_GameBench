@@ -1,0 +1,19 @@
+  [   23s vbl 1423] name prompt
+  [   30s vbl 1774] option screen (typing attempt 1)
+  [   65s vbl 3536] no disk requester
+  [   68s vbl 3676] chart expected
+  [   98s vbl 5190] island clicked
+  [  104s vbl 5486] 3D map view, world counter ticking
+GATE end_final image@final_map (listed) PASS 2282 B differ in 30 span(s): $2073-$2073, $74bb-$74c5, $763c-$793d, $82c5-$82c6, $a38b-$a38b, $d41f-$d42d, $dbd5-$dd80, $e2d6-$e2d7, $e431-$e439, $e453-$e45d, $e473-$e473, $e4bf-$e501, $e51f-$e53d, $e584-$e585, $e7c3-$e7c5, $f5c2-$f5da, $fc70-$fc77, $1025b-$10273, $10335-$10335, $1040b-$10414, $1194d-$1194d, $120fa-$12425, $1243f-$1243f, $12483-$12483, $13ccd-$13ccd, $1af77-$1af77, $1af96-$1afb3, $1b8fe-$1b900, $1bc9b-$1bc9d, $1d0d0-$1d0d5
+GATE end_final campaign table $44760..$44837 forced to all ones (sum >= $b1) PASS 
+GATE end_final image@final_end span watch positive control (pc breakpoint over $1b182-$1b19f sees the win routine) PASS 7 distinct pc(s) $1b182, $1b186, $1b188, $1b18e, $1b194, $1b19a, $1b19c
+GATE end_final image@final_end every differing span was watched for execution PASS 30 of 30 spans inside the watch list; unwatched: none
+GATE end_final image@final_end no instruction was executed inside the watched spans (nothing was loaded as code later) PASS executed pcs inside the watched spans: none; 2284 B differ in 30 span(s): $2073-$2073, $74bb-$74c7, $763c-$793d, $82c5-$82c6, $a389-$a38b, $d41f-$d42d, $dbd5-$dd68, $e2d6-$e2d7, $e431-$e439, $e453-$e45d, $e46f-$e473, $e4bf-$e501, $e51f-$e53d, $e573-$e585, $e7c3-$e7c5, $f5c2-$f5da, $fc70-$fc77, $1025b-$10273, $10335-$10335, $1040b-$10414, $1194d-$1194d, $120fa-$12425, $1243f-$1243f, $12483-$12483, $13ccd-$13ccd, $1af76-$1af77, $1af96-$1afb3, $1b8fe-$1b900, $1bc9b-$1bc9d, $1d0d0-$1d0d5
+LOADER (after the retire click) 15:D+137
+HITS $1b182:2, $1b186:1, $1b188:1, $1b18e:1, $1b194:1, $1b19a:1, $1b19c:1, $1b264:1
+GATE end_final the win routine ran ($1b182) and the closing text routine ($1b264) PASS $1b182 2x, $1b264 1x
+GATE end_final the orphan END routine ($1b3a6) never ran PASS 0x
+GATE end_final only resource 15 (WIN.PAK) was requested at the end PASS resources [15]
+GATE end_final no disk requester PASS 'ABOUT                                         WORLD INFO    '
+GATE end_final the (closing) win picture is shown and stable PASS non-black 0.99, 15 colours, stable x3
+CELL DONE end_final: OK

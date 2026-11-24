@@ -4,9 +4,10 @@
 set -u
 cd "$(dirname "$0")/.."
 N=$1; B=$2; shift 2
+PFX=${PFX:-s4b}
 W=${WORK:-/tmp/pmww1s4b}
 rm -rf "$W/${N}_ste" "$W/${N}_keys" "$W/${N}_tt"
-python3 tools/wwgate.py cell --disk $B/floppy.st --manifest $B/manifest.json --tag $N --fill-hi --trace --steps boot,map,rate,saveload,lose,win,round3 --workdir "$W/${N}_ste" "$@" > work/runs/s4b_${N}_ste.txt 2>&1
-python3 tools/wwkeys.py --disk $B/floppy.st --manifest $B/manifest.json --workdir "$W/${N}_keys" --tag ${N}_keys > work/runs/s4b_${N}_keys.txt 2>&1
-python3 tools/wwtt.py gate --disk $B/floppy.st --manifest $B/manifest.json --quick --workdir "$W/${N}_tt" --tag ${N}_tt > work/runs/s4b_${N}_tt.txt 2>&1
-grep -h "CELL DONE\|CELL FAILED\|FAIL" work/runs/s4b_${N}_{ste,keys,tt}.txt | head -30
+python3 tools/wwgate.py cell --disk $B/floppy.st --manifest $B/manifest.json --tag $N --fill-hi --trace --steps boot,map,rate,saveload,lose,win,round3 --workdir "$W/${N}_ste" "$@" > work/runs/${PFX:-s4b}_${N}_ste.txt 2>&1
+python3 tools/wwkeys.py --disk $B/floppy.st --manifest $B/manifest.json --workdir "$W/${N}_keys" --tag ${N}_keys > work/runs/${PFX:-s4b}_${N}_keys.txt 2>&1
+python3 tools/wwtt.py gate --disk $B/floppy.st --manifest $B/manifest.json --quick --workdir "$W/${N}_tt" --tag ${N}_tt > work/runs/${PFX:-s4b}_${N}_tt.txt 2>&1
+grep -h "CELL DONE\|CELL FAILED\|FAIL" work/runs/${PFX:-s4b}_${N}_{ste,keys,tt}.txt | head -30

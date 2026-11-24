@@ -149,7 +149,7 @@ def payload_diff(h, expect: bytes, mask=()):
     return diff_spans(bytes(got), expect, IMG_BASE)
 
 
-def imgcheck(h, g, name, man):
+def imgcheck(h, g, name, man, info=False, executed=None, ctl=None, watch=None):
     """`--img`: the resident game image $576..$1d2ad against the hand-over dump (work/dumps/entry576.bin) at this checkpoint: spans that differ (sites of the patches masked).
     Code that was loaded later would show up as a large block; the diffs are listed so a human can classify them (variables / tables / self-modified bytes)."""
     ref = (ROOT / "work" / "dumps" / "entry576.bin").read_bytes()
@@ -164,6 +164,21 @@ def imgcheck(h, g, name, man):
     sp = diff_spans(bytes(got), bytes(ref), lo, gap=16)
     tot = sum(b - a for a, b in sp)
     big = [(a, b) for a, b in sp if b - a >= 256]
+    if executed is not None:      # code = a span with an executed instruction ($576..$1d2ad); data / variables are only written and read
+        seen = sorted(x for x in executed if ctl and ctl[0] <= x <= ctl[1])
+        g.line(f"image@{name} span watch positive control (pc breakpoint over ${ctl[0]:x}-${ctl[1]:x} sees the win routine)", bool(seen), f"{len(seen)} distinct pc(s) {', '.join('$%x' % x for x in seen)}")
+        run = sorted(x for x in executed if not (ctl[0] <= x <= ctl[1]))
+        cov = watch or []
+        unw = [(a, b) for a, b in sp if not any(w0 <= a and b - 1 <= w1 for w0, w1 in cov)]
+        g.line(f"image@{name} every differing span was watched for execution", not unw, f"{len(sp) - len(unw)} of {len(sp)} spans inside the watch list; unwatched: {fmt_spans(unw, 40) or 'none'}")
+        g.line(f"image@{name} no instruction was executed inside the watched spans (nothing was loaded as code later)", not run,
+               f"executed pcs inside the watched spans: {', '.join('$%x' % x for x in run[:20]) or 'none'}; {tot} B differ in {len(sp)} span(s): {fmt_spans(sp, 40)}")
+        Path(h.R / f"img_{name}.bin").write_bytes(bytes(got))
+        return
+    if info:
+        g.line(f"image@{name} (listed)", True, f"{tot} B differ in {len(sp)} span(s): {fmt_spans(sp, 40)}")
+        Path(h.R / f"img_{name}.bin").write_bytes(bytes(got))
+        return
     g.line(f"image@{name}", not big, f"{tot} of {hi - lo} bytes differ from the hand-over image in {len(sp)} span(s); spans >= 256 B: {fmt_spans(big)}; all: {fmt_spans(sp, 40)}")
     import hashlib
     Path(h.R / f"img_{name}.bin").write_bytes(bytes(got))
@@ -249,9 +264,9 @@ def cell(a):
             expect[MARKER - IMG_BASE:MARKER - IMG_BASE + 4] = want          # the only byte the hook itself writes in the region
             g.line("marker", marker == want, f"${MARKER:x} = {marker!r} (want {want!r})")
             for s in man["sites"]:
-                want_s = s["orig"][:len(s["new"])] if a.corrupt else s["new"]       # refused build: the game stays untouched
+                want_s = s["orig"][:len(s["new"])] if (a.corrupt or (s.get("falcon") and machine != "falcon")) else s["new"]       # refused build: the game stays untouched; a Falcon-class site only on a Falcon
                 got = h.ram(s["addr"], len(s["new"]) // 2).hex()
-                g.line(f"site {s['name']}", got == want_s, f"${s['addr']:x} = {got} (want {want_s}{' = original, patch refused' if a.corrupt else ''})")
+                g.line(f"site {s['name']}", got == want_s, f"${s['addr']:x} = {got} (want {want_s}{' = original, patch refused' if a.corrupt else ' = original: Falcon-only site, this is not a Falcon' if (s.get('falcon') and machine != 'falcon') else ''})")
             region("options")
             if "pm_credit" in man["patches"]:
                 im = Image.open(h.shot()).convert("RGB").crop((96, 58 + 2 * 194, 736, 58 + 2 * 200))
@@ -305,6 +320,8 @@ def cell(a):
             if has("tt_ptr"):
                 live = b1(0x75BF0)
                 g.line("tt_ptr: LIVE flag", live == (0xFF if machine in ("tt", "falcon") else 0), f"${live:02x}")
+            fl_f = b1(0x727F4)
+            g.line("core: FALCON flag ($727f4, _MCH cookie high word 3)", fl_f == (0xFF if machine == "falcon" else 0), f"${fl_f:02x} on {machine}")
             if has("snd_core"):
                 fl = h.peekl(0x76718)
                 wantf = 6 if machine in ("st", "megast") else 3

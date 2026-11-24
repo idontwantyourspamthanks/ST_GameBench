@@ -14,6 +14,8 @@ no disk requester may appear.  `orphan`: the retire dispatch's `jsr $1b182` is r
 """
 from __future__ import annotations
 import argparse
+import json
+import re
 import sys
 import time
 from pathlib import Path
@@ -22,6 +24,17 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import pmww  # noqa: E402
 import wwgate  # noqa: E402
+
+
+def span_hits(h, watch):
+    """{pc: n} of the `--watch` breakpoints (log blocks of sp_*.txt)."""
+    res = {}
+    for blk in h._logtext().split("Reading debugger commands")[1:]:
+        if "/sp_" in blk.split("\n", 1)[0]:
+            m = re.findall(r"\$([0-9a-f]+) \(hex\)", blk)
+            if m:
+                res[int(m[0], 16)] = res.get(int(m[0], 16), 0) + 1
+    return res
 
 
 def main():
@@ -33,6 +46,8 @@ def main():
     ap.add_argument("--endfiles", help="folder with END_PIC1.PAK / END.PAK to copy next to the data files of --hd (the original Powermonger's DATA\\END_PIC1.DAT / END.DAT)")
     ap.add_argument("--workdir", required=True)
     ap.add_argument("--manifest", help="the build's manifest.json: sites are masked in the resident-image check")
+    ap.add_argument("--orig-flow", action="store_true", help="a build without pm_noprot / pm_nokeydisk (core only, the original): the game's own disk swap and protection question")
+    ap.add_argument("--watch", help="file with spans `$a-$b, ...` (the differing spans of a first run): breakpoints from the first instruction; any pc inside = code executed from a span that is not the hand-over image")
     ap.add_argument("--machine", default="ste")
     ap.add_argument("--tos", default="1.62")
     a = ap.parse_args()
@@ -57,8 +72,19 @@ def main():
         h = pmww.PMW(disk=Path(a.disk), workdir=a.workdir, machine=a.machine, tos=pmww.TOS[a.tos], memsize_kb=1024)
     try:
         wwgate.arm_trace(h)
-        h.boot_to_map(noprot=True, swap=False, log=lambda s: print("  " + s, flush=True))
+        watch = [tuple(int(x, 16) for x in t.replace("$", "").split("-")) for t in re.split(r"[,\s]+", Path(a.watch).read_text().strip()) if t] if a.watch else []
+        CTL = (0x1B182, 0x1B19F)                                      # positive control: the win routine's first instructions MUST be seen by the same kind of breakpoint
+        for i, (x, y) in enumerate(watch + [CTL]):                            # code-execution watch from the very first instruction: any instruction fetched inside a span that differs from the hand-over image
+            (h.R / f"sp_{i}.txt").write_text("e pc\n")
+            h.cmd(f"hatari-debug b pc > ${x - 1:x} && pc < ${y + 1:x} :trace :file {h.R / f'sp_{i}.txt'}")
+            time.sleep(0.1)
+        h.boot_to_map(noprot=not a.orig_flow, swap=a.orig_flow, log=lambda s: print("  " + s, flush=True))
         time.sleep(2)
+        man = json.loads(Path(a.manifest).read_text()) if a.manifest else None
+        class _G0:
+            def line(self, name, good, detail=""):
+                line(name, good, detail)
+        wwgate.imgcheck(h, _G0(), f"{a.mode}_map", man, info=True)   # the image at the map view (before the ending), listed only
         h.watch_pcs([0x1B182, 0x1B264, 0x1B3A6, 0x1B3B2, 0x1B3CC])
         if a.mode == "final":
             f = h.R / "ones.bin"
@@ -82,13 +108,14 @@ def main():
             if a.mode == "orphan" and a.hd and time.time() - t0 > 60:
                 break
         h.shot(str(Path(a.workdir) / f"{tag}.png"))
-        import json
-
         class _G:
             def line(self, name, good, detail=""):
                 line(name, good, detail)
-        man = json.loads(Path(a.manifest).read_text()) if a.manifest else None
-        wwgate.imgcheck(h, _G(), f"{a.mode}_end", man)               # is all code resident?  the image $576-$1d2ad after the ending vs the hand-over dump
+        # is all code resident?  the image $576-$1d2ad after the ending vs the hand-over dump; a differing span that holds an EXECUTED instruction is code that was loaded later (FAIL)
+        if a.mode == "final":
+            wwgate.imgcheck(h, _G(), f"{a.mode}_end", man, executed=span_hits(h, watch), ctl=CTL, watch=watch)
+        else:                                                         # orphan: the dispatch is rewritten on purpose ($d6de), the win routine does not run: listed only
+            wwgate.imgcheck(h, _G(), f"{a.mode}_end", man, info=True)
         calls = wwgate.loader_calls(wwgate.loader_events(h))[c0:]
         res = [c["n"] for c in calls]
         hits = h.hits()

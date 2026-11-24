@@ -1,0 +1,13 @@
+  [   26s vbl 1379] name prompt
+  [   33s vbl 1732] option screen (typing attempt 1)
+  [   68s vbl 3500] no disk requester
+  [   71s vbl 3640] chart expected
+  [  101s vbl 5158] island clicked
+  [  107s vbl 5454] 3D map view, world counter ticking
+GATE interp interp8 8 MHz men are moving (get_men scene) PASS 20 records change position within 0.4 s
+  PD before 0000000000000000000000000000000000000000000000000000000000000000 after 0000000000000000000000000000000000000000000000000000000000000000
+GATE interp interp8 8 MHz counters PASS NMOV 0, passes drawn with offsets +0, scans +0
+GATE interp interp8 8 MHz passes captured PASS 103 complete passes in 40 s
+GATE interp interp8 8 MHz people table restored after the render in every pass (T1 == T0) FAIL 46 of 103
+GATE interp interp8 8 MHz no offsets at 8 MHz (no render-only pass) PASS 0 passes with offsets
+CELL DONE interp interp8 8 MHz: FAIL

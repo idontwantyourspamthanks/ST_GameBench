@@ -1,0 +1,16 @@
+  [   23s vbl 1429] name prompt
+  [   30s vbl 1780] option screen (typing attempt 1)
+  [   65s vbl 3543] no disk requester
+  [   68s vbl 3683] chart expected
+  [   98s vbl 5198] island clicked
+  [  104s vbl 5493] 3D map view, world counter ticking
+GATE end_orphan image@orphan_map (listed) PASS 2283 B differ in 30 span(s): $2073-$2073, $74bb-$74c5, $763c-$793d, $82c5-$82c6, $a38b-$a38b, $d41f-$d42d, $dbd5-$dd80, $e2d6-$e2d7, $e431-$e439, $e453-$e45d, $e473-$e473, $e4bf-$e501, $e51f-$e53d, $e584-$e585, $e7c3-$e7c5, $f5c2-$f5db, $fc70-$fc77, $1025b-$10273, $10335-$10335, $1040b-$10414, $1194d-$1194d, $120fa-$12425, $1243f-$1243f, $12483-$12483, $13ccd-$13ccd, $1af77-$1af77, $1af96-$1afb3, $1b8fe-$1b900, $1bc9b-$1bc9d, $1d0d0-$1d0d5
+GATE end_orphan retire dispatch rewritten: jsr $1b182 -> jsr $1b3a6 PASS 4eb90001b3a6
+GATE end_orphan image@orphan_end span watch positive control (pc breakpoint over $1b182-$1b19f sees the win routine) FAIL 0 distinct pc(s) 
+GATE end_orphan image@orphan_end every differing span was watched for execution FAIL 30 of 32 spans inside the watch list; unwatched: $d6de-$d6df, $e554-$e555
+GATE end_orphan image@orphan_end no instruction was executed inside the watched spans (nothing was loaded as code later) PASS executed pcs inside the watched spans: none; 1880 B differ in 32 span(s): $2073-$2073, $74bb-$74c7, $763c-$793d, $82c5-$82c6, $a38b-$a38b, $d41f-$d42d, $d6de-$d6df, $dbd5-$dbe8, $e2d6-$e2d7, $e431-$e439, $e453-$e45d, $e473-$e473, $e4bf-$e501, $e51f-$e53d, $e554-$e555, $e584-$e585, $e7c3-$e7c5, $f5c2-$f5da, $fc70-$fc77, $1025b-$10273, $10335-$10335, $1040b-$10414, $1194d-$1194d, $120fa-$12425, $1243f-$1243f, $12483-$12483, $13ccd-$13ccd, $1af77-$1af77, $1af96-$1afb3, $1b8fe-$1b900, $1bc9b-$1bc9d, $1d0d0-$1d0d5
+LOADER (after the retire click) 12:D0
+HITS $1b3a6:1, $1b3b2:1
+GATE end_orphan the orphan routine ran PASS $1b3a6 1x, $1b3b2 1x, $1b3cc 0x
+GATE end_orphan WW1 disk only: the requester for the missing file appears (the game would wait for it forever) PASS 'DISK STATUS REQUESTER                                       PLEASE INS' resources [12]
+CELL DONE end_orphan: FAIL
