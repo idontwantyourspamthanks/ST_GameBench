@@ -5,7 +5,7 @@
 
 map_idle  = the 3D map view after the island click (the world counter ticking), 2 s later.
 get_men   = overview click on the island, the 3-sword icon, GET MEN (a zoomed view with men moving; same clicks as work/profile/snap_getmen.py).
-random    = Retire (lose) -> click -> PLAY RANDOM LAND -> map view (an enemy captain starts beside the player's; the battle route is in RESULTS_stage05.md).
+random    = Retire (lose) -> click -> PLAY RANDOM LAND -> map view (an enemy captain starts beside the player's; the battle: `--scenes ...,battle` after random: captain click, 3 swords, Attack, click the village).
 Snapshots are written as <out>/<machine>_<scene>.sav (+ .png).  One Hatari at a time, private HOME (pmww.PMW).
 """
 from __future__ import annotations
@@ -65,6 +65,16 @@ def main():
             h.shot(str(out / f"{a.machine}_random.png"))
             h.savemem(str(out / f"{a.machine}_random.sav"))
             print("saved random", flush=True)
+        if "battle" in scenes:
+            # random land: the player's captain is at minimap (12,112); 3 swords, the Attack icon, then the village next to it (3D view (192,133)): men fight, angels rise (explored in /tmp/pmww1s5b/exp)
+            h.click_st(12, 112, wait=5.0)
+            h.click_st(97, 158, wait=1.0)
+            h.click_st(244, 191, wait=1.5)
+            h.click_st(192, 133, wait=3.0)
+            time.sleep(9)
+            h.shot(str(out / f"{a.machine}_battle.png"))
+            h.savemem(str(out / f"{a.machine}_battle.sav"))
+            print("saved battle", flush=True)
     finally:
         h.close()
 

@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1/tools/wwtt.py", line 485, in run_gate
+    h.boot_to_map(noprot=noprot, swap=not keydisk)
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1/tools/pmww.py", line 189, in boot_to_map
+    self.boot_to_options(name, log)
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1/tools/pmww.py", line 172, in boot_to_options
+    raise RuntimeError("name prompt not reached")
+RuntimeError: name prompt not reached
+CELL DONE tri_tt: FAIL (exception)

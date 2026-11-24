@@ -1,0 +1,10 @@
+machine ste
+base set    : snapshot + test_walk test_walk2 test_walk3
+patched set : snapshot + test_walk test_walk2 test_walk3 test_delay
+ste_get_men ste @16 MHz: DIFFER (back frames matched 136, shown+pointer matched 61, flips captured 167/179) | work/pass 2514489 -> 2676648 (+162159, +6.45 %, n 179/167) | paired 2542305 -> 2696904 (+6.08 %, n 136) | flips 179 -> 167 fps 6.019 -> 5.619 (-6.6 %) | same-tick consecutive R frames identical: base 0/0, patched 0/0
+    p0:   BACK DIFFER key (tick 303, R) patched flip 59 / base flip 63: 38 B differ, rows 89-98, 16-px columns 18-18
+    p0:   SHOWN DIFFER (pointer 229,173) patched flip 60 / base flip 64: 38 B differ, rows 89-98, 16-px columns 18-18
+    p0:   BACK DIFFER key (tick 351, R) patched flip 126 / base flip 135: 37 B differ, rows 82-91, 16-px columns 18-18
+    p0:   SHOWN DIFFER (pointer 229,173) patched flip 127 / base flip 136: 37 B differ, rows 82-91, 16-px columns 18-18
+MISMATCH
+DONE

@@ -1,0 +1,68 @@
+## ste map_idle mhz 8 16
+machine ste
+base set    : snapshot + test_walk test_walk2 test_walk3
+patched set : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri p6_cpy p7_triple_wait p7_triple_flip p7_triple_tail
+ste_map_idle ste @8 MHz: speed only | work/pass 1550245 -> 1217046 (-333199, -21.49 %, n 49/64) | world ticks/s 4.046 -> 4.012 | flips 49 -> 64 fps 5.083 -> 6.584 (+29.5 %)
+ste_map_idle ste @16 MHz: speed only | work/pass 1402511 -> 1134467 (-268044, -19.11 %, n 99/138) | world ticks/s 3.980 -> 3.988 | flips 99 -> 138 fps 10.102 -> 14.110 (+39.7 %)
+ALL IDENTICAL
+## ste get_men mhz 8 16
+machine ste
+base set    : snapshot + test_walk test_walk2 test_walk3
+patched set : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri p6_cpy p7_triple_wait p7_triple_flip p7_triple_tail
+ste_get_men ste @8 MHz: speed only | work/pass 2668519 -> 1765209 (-903310, -33.85 %, n 27/43) | world ticks/s 4.075 -> 4.051 | flips 27 -> 43 fps 2.974 -> 4.584 (+54.2 %)
+ste_get_men ste @16 MHz: speed only | work/pass 2480269 -> 1670803 (-809466, -32.64 %, n 62/94) | world ticks/s 3.996 -> 3.996 | flips 62 -> 94 fps 6.352 -> 9.631 (+51.6 %)
+ALL IDENTICAL
+## ste random mhz 8 16
+machine ste
+base set    : snapshot + test_walk test_walk2 test_walk3
+patched set : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri p6_cpy p7_triple_wait p7_triple_flip p7_triple_tail
+ste_random ste @8 MHz: speed only | work/pass 1937339 -> 1576776 (-360563, -18.61 %, n 38/47) | world ticks/s 4.000 -> 4.000 | flips 38 -> 47 fps 4.000 -> 4.947 (+23.7 %)
+ste_random ste @16 MHz: speed only | work/pass 1768795 -> 1435533 (-333262, -18.84 %, n 82/107) | world ticks/s 4.004 -> 4.021 | flips 82 -> 107 fps 8.419 -> 11.031 (+31.0 %)
+ALL IDENTICAL
+## ste battle mhz 8 16
+machine ste
+base set    : snapshot + test_walk test_walk2 test_walk3
+patched set : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri p6_cpy p7_triple_wait p7_triple_flip p7_triple_tail
+ste_battle ste @8 MHz: speed only | work/pass 1741450 -> 1365315 (-376136, -21.60 %, n 42/55) | world ticks/s 4.017 -> 4.046 | flips 42 -> 55 fps 4.440 -> 5.705 (+28.5 %)
+ste_battle ste @16 MHz: speed only | work/pass 1564181 -> 1248239 (-315942, -20.20 %, n 91/124) | world ticks/s 3.988 -> 3.988 | flips 91 -> 124 fps 9.305 -> 12.679 (+36.3 %)
+ALL IDENTICAL
+## st map_idle mhz 8 16
+machine st
+base set    : snapshot + test_walk test_walk2 test_walk3
+patched set : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri p6_cpy p7_triple_wait p7_triple_flip p7_triple_tail
+st_map_idle st @8 MHz: speed only | work/pass 2255803 -> 1793440 (-462363, -20.50 %, n 33/43) | world ticks/s 4.105 -> 4.062 | flips 33 -> 43 fps 3.474 -> 4.479 (+28.9 %)
+st_map_idle st @16 MHz: speed only | work/pass 1654383 -> 1362281 (-292102, -17.66 %, n 82/115) | world ticks/s 3.909 -> 3.996 | flips 82 -> 115 fps 8.436 -> 11.783 (+39.7 %)
+ALL IDENTICAL
+## st get_men mhz 8 16
+machine st
+base set    : snapshot + test_walk test_walk2 test_walk3
+patched set : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri p6_cpy p7_triple_wait p7_triple_flip p7_triple_tail
+st_get_men st @8 MHz: speed only | work/pass 3235027 -> 2305091 (-929937, -28.75 %, n 23/32) | world ticks/s 4.104 -> 4.084 | flips 23 -> 32 fps 2.484 -> 3.532 (+42.2 %)
+st_get_men st @16 MHz: speed only | work/pass 2717834 -> 1989855 (-727979, -26.79 %, n 54/79) | world ticks/s 4.054 -> 4.107 | flips 54 -> 79 fps 5.613 -> 8.111 (+44.5 %)
+ALL IDENTICAL
+## st random mhz 8 16
+machine st
+base set    : snapshot + test_walk test_walk2 test_walk3
+patched set : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri p6_cpy p7_triple_wait p7_triple_flip p7_triple_tail
+st_random st @8 MHz: speed only | work/pass 2520511 -> 2033337 (-487174, -19.33 %, n 26/34) | world ticks/s 3.978 -> 3.987 | flips 26 -> 34 fps 2.796 -> 3.664 (+31.1 %)
+st_random st @16 MHz: speed only | work/pass 1744942 -> 1451311 (-293631, -16.83 %, n 82/107) | world ticks/s 4.004 -> 3.963 | flips 82 -> 107 fps 8.419 -> 10.874 (+29.2 %)
+ALL IDENTICAL
+## megaste map_idle mhz 0
+machine megaste
+base set    : snapshot + test_walk test_walk2 test_walk3
+patched set : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri p6_cpy p7_triple_wait p7_triple_flip p7_triple_tail
+megaste_map_idle megaste @0 MHz: speed only | work/pass 1419537 -> 1140985 (-278552, -19.62 %, n 82/115) | world ticks/s 3.388 -> 3.360 | flips 82 -> 115 fps 8.419 -> 11.711 (+39.1 %)
+ALL IDENTICAL
+## megaste get_men mhz 0
+machine megaste
+base set    : snapshot + test_walk test_walk2 test_walk3
+patched set : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri p6_cpy p7_triple_wait p7_triple_flip p7_triple_tail
+megaste_get_men megaste @0 MHz: speed only | work/pass 2517751 -> 1684796 (-832955, -33.08 %, n 49/77) | world ticks/s 3.333 -> 3.313 | flips 49 -> 77 fps 5.104 -> 7.971 (+56.2 %)
+ALL IDENTICAL
+## megaste random mhz 0
+machine megaste
+base set    : snapshot + test_walk test_walk2 test_walk3
+patched set : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri p6_cpy p7_triple_wait p7_triple_flip p7_triple_tail
+megaste_random megaste @0 MHz: speed only | work/pass 4097388 -> 3187077 (-910311, -22.22 %, n 30/39) | world ticks/s 3.305 -> 3.312 | flips 30 -> 39 fps 3.198 -> 4.167 (+30.3 %)
+ALL IDENTICAL
+SPEED_DONE
