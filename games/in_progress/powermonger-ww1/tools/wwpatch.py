@@ -195,7 +195,8 @@ class Fat12:
         need = -(-len(data) // self.csize)
         ch = self.chain(start)
         if need > len(ch):
-            free = [n for n in range(2, self.ncl + 2) if self.get(n) == 0]
+            real = (len(self.d) - self.dstart) // self.csize          # the BPB may claim more sectors than the image has (ea.st: 820 vs 800)
+            free = [n for n in range(2, min(self.ncl, real) + 2) if self.get(n) == 0]
             if len(free) < need - len(ch):
                 raise SystemExit(f"{path}: needs {need - len(ch)} more clusters, only {len(free)} free ({len(free) * self.csize} bytes) on the disk")
             ch += free[:need - len(ch)]
@@ -212,7 +213,8 @@ class Fat12:
         return len(ch)
 
     def free_bytes(self) -> int:
-        return sum(1 for n in range(2, self.ncl + 2) if self.get(n) == 0) * self.csize
+        real = (len(self.d) - self.dstart) // self.csize
+        return sum(1 for n in range(2, min(self.ncl, real) + 2) if self.get(n) == 0) * self.csize
 
 
 _prg_cache: dict = {}
@@ -267,6 +269,7 @@ class Patch:
         self.mandatory = False    # `; mandatory: yes`: verified/applied as its own group before the optional sites
         self.orig = None
         self.data = []            # (addr, len) zero-init reservations
+        self.mutable = []         # (addr, len) spans INSIDE the patch's blobs that the code rewrites at run time (initial bytes ship on the disk; the payload gate does not compare them)
         self.scratch = []         # (addr, len) HIGH spans the patch writes at run time but that need no initial value (no record, not zero-filled)
         self.inits = []           # routines the core calls from `init` (supervisor, TOS's world)
         self.uinits = []          # same from `uinit` (user mode, before Super)
@@ -289,6 +292,9 @@ class Patch:
                 elif k == "data":
                     a, l = v.split()
                     self.data.append((hx(a), int(l, 0)))
+                elif k == "mutable":
+                    a, l = v.split()
+                    self.mutable.append((hx(a), int(l, 0)))
                 elif k == "scratch":
                     a, l = v.split()
                     self.scratch.append((hx(a), int(l, 0)))
@@ -404,6 +410,9 @@ def build_image(patches: list[Patch], corrupt: bool = False, fill: tuple[int, in
         (TABLE, TABLE + len(tbl)), (UINITTBL, UINITTBL + 48), (INITTBL, INITTBL + 48), (MARKER, MARKER + 4)]
     blobs, hi_blobs, hi_used, hi_data, hi_scratch = [], [], [], [], []
     for p in patches:
+        for a, ln in p.mutable:
+            if not any(org <= a and a + ln <= org + len(assemble(org, lines, "\n".join(p.preamble))) for org, lines in p.segments if org != p.site):
+                raise SystemExit(f"{p.name}: `; mutable: ${a:x} {ln}` is not inside one of its blobs")
         m = re.search(r"^\s*CAPLIM\s+equ\s+\$([0-9a-fA-F]+)", "\n".join(p.preamble), re.M)
         if m and int(m.group(1), 16) != HI_BASE:
             raise SystemExit(f"{p.name}: CAPLIM ${m.group(1)} != HI_BASE ${HI_BASE:x}: the resource-cache cap must be exactly the start of the HIGH area")
@@ -601,7 +610,8 @@ def cmd_build(patches, out: Path, floppy: bool, corrupt: bool, fill: bool, all_p
     (out / "WW1.PRG").write_bytes(prg)
     manifest = dict(patches=[p.name for p in patches], sites=[dict(name=s["name"], addr=s["addr"], orig=s["orig"].hex(), new=s["new"].hex(), falcon=s["falcon"]) for s in sites],
                     used=[list(u) for u in used], fills=[list(f) for f in fills],
-                    data=[dict(patch=p.name, addr=a, len=ln) for p in patches for a, ln in p.data if a < IMG_END], image_base=IMG_BASE, image_end=IMG_END,
+                    data=[dict(patch=p.name, addr=a, len=ln) for p in patches for a, ln in p.data if a < IMG_END],
+                    mutable=[dict(patch=p.name, addr=a, len=ln) for p in patches for a, ln in p.mutable], image_base=IMG_BASE, image_end=IMG_END,
                     hi_base=HI_BASE, hi_end=HI_END, caplim=HI_BASE,
                     hi_used=[list(u) for u in hi["used"]], hi_data=[list(u) for u in hi["data"]], hi_scratch=[list(u) for u in hi["scratch"]],
                     free_hi=[list(u) for u in free_hi(hi)],

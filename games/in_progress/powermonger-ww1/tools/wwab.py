@@ -51,7 +51,7 @@ D_TICKS, D_RON = 0x72A88, 0x72A86
 STATE = (0x44C3E, 0x18C00)  # the game state a save slot holds (the whole world: people, captains, houses, ...)
 TOFF = 0x73F80              # p3b_interp PD+0
 MODE, PXA = 0x77C00, 0x77C02  # test_walk data
-WORK = Path("/tmp/pmww1s5/ab")
+WORK = Path("/tmp/pmww1s5b/ab")
 NUM = re.compile(r"#(\d+)(?:/-?\d+)? \(dec\)")
 MACH = {"ste": ("ste", "1.62", 1024), "st": ("st", "1.04", 1024), "megaste": ("megaste", "2.06", 4096)}
 TIMEOUT = 420
@@ -80,6 +80,9 @@ def patch_writes(names: list[str]) -> list[tuple[int, bytes]]:
             out.append((org, wwpatch.assemble(org, lines, "\n".join(p.preamble))))
         for a, ln in p.data:
             out.append((a, bytes(ln)))
+        if n == "p6_slope":                      # the table its `init` computes at boot: run that init code (unicorn, wwfill_test) and write the result
+            import wwfill_test
+            out += [w for w in wwfill_test.with_init_data(out, [n]) if w[0] == 0xB8000][-1:]
     return out
 
 

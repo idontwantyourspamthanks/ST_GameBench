@@ -45,6 +45,20 @@ def load_patch(names):
     return writes
 
 
+def with_init_data(writes, names):
+    """p6_slope's table is computed by its `init` at boot: run that code here (blank RAM, the patch's own bytes) and add the result as a write."""
+    allp = {p.name: p for p in wwpatch.load_all()}
+    for n in names:
+        for ia in allp[n].inits:
+            e = Emu(bytes(0x100000))
+            for a, b in writes:
+                e.mu.mem_write(a, b)
+            e.call(ia, maxn=5_000_000)
+            for da, ln in allp[n].data:
+                writes = writes + [(da, bytes(e.mu.mem_read(da, ln)))]
+    return writes
+
+
 class Emu:
     def __init__(self, ram: bytes):
         self.mu = Uc(UC_ARCH_M68K, UC_MODE_BIG_ENDIAN)
@@ -186,7 +200,7 @@ def main():
     ap.add_argument("--fuzz", type=int, default=0, help="direct random calls of the triangle setup (instead of views)")
     ap.add_argument("--mask", nargs="*", default=["f5c2:30"], help="ADDR:LEN ranges that may differ (scratch: the setup's record buffer, which p6_tri no longer writes)")
     a = ap.parse_args()
-    writes = load_patch(a.patch)
+    writes = with_init_data(load_patch(a.patch), a.patch)
     if a.fuzz:
         sys.exit(1 if fuzz(a, writes) else 0)
     rng = random.Random(a.seed)

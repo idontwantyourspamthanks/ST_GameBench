@@ -1,0 +1,24 @@
+## map_idle 8 MHz
+machine ste
+base set    : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr
+patched set : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri
+ste_map_idle ste @8 MHz: IDENTICAL (back frames matched 84, shown+pointer matched 37, flips captured 117/99) | work/pass 1506816 -> 1272583 (-234233, -15.54 %, n 99/117) | paired 1523957 -> 1305605 (-14.33 %, n 84) | world ticks/s 4.027 -> 3.992 | flips 99 -> 117 fps 5.046 -> 5.988 (+18.7 %) | same-tick consecutive R frames identical: base 0/0, patched 0/0
+ALL IDENTICAL
+## get_men 8 MHz
+machine ste
+base set    : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr
+patched set : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri
+ste_get_men ste @8 MHz: IDENTICAL (back frames matched 72, shown+pointer matched 63, flips captured 81/72) | work/pass 2069176 -> 1830509 (-238667, -11.53 %, n 72/81) | paired 2069176 -> 1835120 (-11.31 %, n 72) | world ticks/s 3.971 -> 3.977 | flips 72 -> 81 fps 3.762 -> 4.184 (+11.2 %) | same-tick consecutive R frames identical: base 0/0, patched 0/0
+ALL IDENTICAL
+## random 8 MHz
+machine ste
+base set    : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr
+patched set : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri
+ste_random ste @8 MHz: IDENTICAL (back frames matched 80, shown+pointer matched 69, flips captured 90/81) | work/pass 1844179 -> 1658550 (-185629, -10.07 %, n 81/90) | paired 1847950 -> 1684863 (-8.83 %, n 80) | world ticks/s 4.035 -> 4.014 | flips 81 -> 90 fps 4.137 -> 4.573 (+10.5 %) | same-tick consecutive R frames identical: base 0/0, patched 0/0
+ALL IDENTICAL
+## 16 MHz get_men tonly
+machine ste
+base set    : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr
+patched set : snapshot + test_walk test_walk2 test_walk3 p4_ptr_a p4_ptr_b p4_spr p6_slope p6_tri
+ste_get_men ste @16 MHz: IDENTICAL (back frames matched 80, shown+pointer matched 0, R frames differing (allowed) 11, flips captured 166/151) | work/pass 1952973 -> 1718307 (-234666, -12.02 %, n 151/166) | paired 2014969 -> 1782113 (-11.56 %, n 80) | world ticks/s 4.010 -> 3.990 | flips 151 -> 166 fps 7.665 -> 8.384 (+9.4 %) | same-tick consecutive R frames identical: base 0/0, patched 3/7
+ALL IDENTICAL

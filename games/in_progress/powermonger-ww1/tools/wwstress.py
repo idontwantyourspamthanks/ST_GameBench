@@ -36,7 +36,7 @@ def main():
     a = ap.parse_args()
     m, tos, mem = wwab.MACH[a.machine]
     info = wwab.snap_info(Path(a.snapshot), a.machine)
-    h = wwab.make_pm(snapshot=a.snapshot, machine=m, tos=pmww.TOS[tos], memsize_kb=mem, workdir=f"/tmp/pmww1s5/stress_{a.tag}")
+    h = wwab.make_pm(snapshot=a.snapshot, machine=m, tos=pmww.TOS[tos], memsize_kb=mem, workdir=f"/tmp/pmww1s5b/stress_{a.tag}")
     rng = random.Random(5)
     try:
         time.sleep(1.0)

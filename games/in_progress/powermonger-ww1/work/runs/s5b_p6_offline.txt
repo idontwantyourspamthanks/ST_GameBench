@@ -1,0 +1,11 @@
+# tools/wwfill_test.py (unicorn), patches p6_slope(init-computed table) p6_tri; 2026-11-24 (PMWW1Stage05b)
+$ python3 tools/wwfill_test.py --views 500 --seed 5 --show 5
+1500 views (94 skipped: the original faults too), 2327351 scanlines (original), 13332 non-setup streams: IDENTICAL (whole RAM)
+$ python3 tools/wwfill_test.py --fuzz 30000 --seed 7 --show 5
+fuzz: 30000 triangles (0 where the original faults too): IDENTICAL (whole RAM)
+# negative control: mutant p6_tri, first subq.w #2,d5 -> #3
+$ WW_PATCHDIR=/tmp/pmww1s5b/mut/patches python3 tools/wwfill_test.py --views 100 --seed 5 --show 3
+ste_get_men #1 {'x': 15, 'y': 59, 'hd': 112, 'tilt': 150, 'tilt2': 360, 'scale': 18, 'z': 4, 'phase': 32680}: 245 bytes differ, first at $290e0 (orig e0 patched ef)
+ste_get_men #2 {'x': 13, 'y': 20, 'hd': 80, 'tilt': 150, 'tilt2': 300, 'scale': 24, 'z': 3, 'phase': 9428}: 75 bytes differ, first at $28c69 (orig 06 patched 00)
+ste_get_men #5 {'x': 11, 'y': 31, 'hd': 80, 'tilt': 110, 'tilt2': 320, 'scale': 18, 'z': 5, 'phase': 43496}: 322 bytes differ, first at $292b1 (orig 00 patched 3c)
+300 views (18 skipped: the original faults too), 472695 scanlines (original), 2611 non-setup streams, 218 MISMATCH

@@ -225,7 +225,7 @@ def cell(a):
         time.sleep(2.0)
         h.shot(str(SHOTS / f"{tag}_{machine}_options.png"))
         marker = bytes(h.ram(MARKER, 4))
-        dmask = [(d["addr"], d["len"]) for d in man.get("data", [])] if man else []
+        dmask = [(d["addr"], d["len"]) for d in man.get("data", []) + man.get("mutable", [])] if man else []
         noprot = bool(man and "pm_noprot" in man["patches"] and not a.corrupt)      # a corrupt build refuses every optional site: the game stays original
         keydisk = bool(man and "pm_nokeydisk" in man["patches"] and not a.corrupt)
         def hicheck(name):
@@ -245,6 +245,16 @@ def cell(a):
                 ref = hx.read_bytes()[lo - HI_BASE:hi - HI_BASE]
                 d = diff_spans(got[lo - HI_BASE:hi - HI_BASE].tobytes(), ref, lo)
                 n_all += hi - lo
+                n_bad += sum(y - x for x, y in d)
+                bad += d
+            if man and "p6_slope" in man["patches"]:          # the table p6_slope's init computes (not a disk blob): compare with the Python model
+                exp_t = bytearray(16384)
+                for dy in range(1, 64):
+                    for mag in range(64):
+                        v = (mag << 16) // dy if dy > mag else (((mag << 8) // dy) << 8)
+                        exp_t[dy * 256 + mag * 4:dy * 256 + mag * 4 + 4] = v.to_bytes(4, "big")
+                d = diff_spans(got[0xB8000 - HI_BASE:0xBC000 - HI_BASE].tobytes(), bytes(exp_t), 0xB8000)
+                n_all += 16384
                 n_bad += sum(y - x for x, y in d)
                 bad += d
             cur = h.peekl(pmww.CACHE_CURSOR)

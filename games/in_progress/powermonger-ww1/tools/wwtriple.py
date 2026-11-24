@@ -33,7 +33,7 @@ def nm(a):
 def run(a):
     m, tos, mem = wwab.MACH[a.machine]
     info = wwab.snap_info(Path(a.snapshot), a.machine)
-    h = wwab.make_pm(snapshot=a.snapshot, machine=m, tos=pmww.TOS[tos], memsize_kb=mem, workdir=f"/tmp/pmww1s5/trace_{a.tag}")
+    h = wwab.make_pm(snapshot=a.snapshot, machine=m, tos=pmww.TOS[tos], memsize_kb=mem, workdir=f"/tmp/pmww1s5b/trace_{a.tag}")
     try:
         time.sleep(1.0)
         if a.mhz != 8:
