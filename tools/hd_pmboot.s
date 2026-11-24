@@ -1,11 +1,14 @@
-; PMBOOT.PRG - AUTO-folder boot prompt for Powermonger on the all-games hard disk (tools/make_hd_image.py wraps it into a .PRG).
+; PMBOOT.PRG - AUTO-folder boot prompt for the Powermongers on the all-games hard disk (tools/make_hd_image.py wraps it into a .PRG).
 ;
-; Why: the Powermonger HD build must be started from the AUTO folder (games/done/powermonger/work/notes/loading.md section 7.1: it
-; copies TOS's low RAM aside; started from the GEM desktop that region is too big and the game stops with "cannot swap the low
-; RAM of TOS").  A bare AUTO\WAR.PRG would start the game on every boot; this program asks first:
-;     "Powermonger? P = start, else desktop" (3 s, or any other key)
+; Why: the Powermonger HD builds must be started from the AUTO folder (games/done/powermonger/work/notes/loading.md section 7.1: they
+; copy TOS's low RAM aside; started from the GEM desktop that region is too big and the game stops with "cannot swap the low
+; RAM of TOS").  Powermonger: World War 1 Edition uses the same HD loader.  A bare AUTO\<game>.PRG would start a game on every
+; boot; this program asks first:
+;     "P Powermonger, W WW1, else desktop" (3 s, or any other key)
 ; P: current directory := \POWERMON (the game looks for DATA\, PMLATE.DAT and SAVEDISK.DAT in the folder it was started from),
-;    Pexec(\POWERMON\WAR.PRG).  Other key / timeout / WAR.PRG missing: return, TOS goes on to the desktop.
+;    Pexec(\POWERMON\WAR.PRG).
+; W: current directory := \PMWW1 (WW1.PRG, its data files and SAVEDISK.DAT are in that folder), Pexec(\PMWW1\WW1.PRG).
+; Other key / timeout / program missing: return, TOS goes on to the desktop.
 ; Position independent, no relocation.  Uses only GEMDOS (works from user or supervisor mode, i.e. in the AUTO phase).
 WAIT_HZ equ 600                         ; 3 s at 200 Hz
 STK     equ 400
@@ -50,21 +53,31 @@ key:    move.w  #8,-(sp)                ; Cnecin
         trap    #1
         addq.l  #2,sp
         and.b   #$df,d0                 ; upper case
+        lea     pm_dir(pc),a3
+        lea     pm_prog(pc),a4
         cmp.b   #'P',d0
+        beq.s   run
+        lea     ww_dir(pc),a3
+        lea     ww_prog(pc),a4
+        cmp.b   #'W',d0
         bne.s   done
 
-        pea     dir(pc)                 ; Dsetpath("\POWERMON")
+run:    move.l  a3,-(sp)                ; Dsetpath(dir)
         move.w  #$3b,-(sp)
         trap    #1
         addq.l  #6,sp
-        clr.l   -(sp)                   ; Pexec(0, "\POWERMON\WAR.PRG", "", 0): never returns when the game runs
+        clr.l   -(sp)                   ; Pexec(0, prog, "", 0): never returns when the game runs
         pea     noargs(pc)
-        pea     prog(pc)
+        move.l  a4,-(sp)
         clr.w   -(sp)
         move.w  #$4b,-(sp)
         trap    #1
         lea     16(sp),sp
-        pea     nomsg(pc)               ; only reached when WAR.PRG could not be started
+        pea     nomsg(pc)               ; only reached when the program could not be started
+        move.w  #9,-(sp)
+        trap    #1
+        addq.l  #6,sp
+        move.l  a4,-(sp)
         move.w  #9,-(sp)
         trap    #1
         addq.l  #6,sp
@@ -78,11 +91,13 @@ done:   pea     crlf(pc)
 gethz:  move.l  $4ba.w,d0
         rts
 
-msg:    dc.b    13,10,"Powermonger? P = start, else desktop",0     ; <= 39 columns (low resolution)
-nomsg:  dc.b    13,10,"POWERMON\WAR.PRG not started",0
+msg:    dc.b    13,10,"P Powermonger, W WW1, else desktop",0      ; <= 39 columns (low resolution)
+nomsg:  dc.b    13,10,"not started: ",0
 crlf:   dc.b    13,10,0
-dir:    dc.b    "\POWERMON",0
-prog:   dc.b    "\POWERMON\WAR.PRG",0
+pm_dir: dc.b    "\POWERMON",0
+pm_prog: dc.b   "\POWERMON\WAR.PRG",0
+ww_dir: dc.b    "\PMWW1",0
+ww_prog: dc.b   "\PMWW1\WW1.PRG",0
 noargs: dc.b    0,0
         even
         ds.b    STK

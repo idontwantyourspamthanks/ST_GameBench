@@ -57,9 +57,11 @@ DEFAULT_SIZE_KB = 32000                                 # one partition, 64000 s
 VOLUME = "GAMES"
 
 # folder on C: -> game; versions/requirements for README.TXT are taken from the builds where possible (see readme_text)
-FOLDERS = ("MIDWINTR", "MW1ORIG", "MIDWINT2", "MW2ORIG", "MOONSHR", "HUNTER", "HUNTORIG", "NEBULUS", "NEBORIG", "POWERMON", "POPULOUS",
-           "POPORIG", "POPS2", "POP2ORIG", "FLOOD", "AUTO")
+FOLDERS = ("MIDWINTR", "MW1ORIG", "MIDWINT2", "MW2ORIG", "MOONSHR", "HUNTER", "HUNTORIG", "NEBULUS", "NEBORIG", "POWERMON", "PMWW1",
+           "POPULOUS", "POPORIG", "POPS2", "POP2ORIG", "FLOOD", "OVERLAND", "AUTO")
 FLOOD_VERSION = "1.0"                                   # the shipped release zip games/done/flood/dist/Flood_hd_v<this>.zip
+OVERLANDER_VERSION = "1.0"                              # games/*/overlander/dist/Overlander_hd_v<this>.zip
+PMWW1_VERSION = "1.0"                                   # games/*/powermonger-ww1/dist/PowermongerWW1_v<this>_patched_hd_<date>.zip (newest)
 
 
 def run(cmd, cwd=None, quiet=True, env=None):
@@ -166,18 +168,48 @@ def build_orig(src: Path, name: str) -> Path:
     return dst
 
 
+def stage_zip_folder(zip_path: Path, member_dir: str, name: str) -> Path:
+    r"""Copy one folder of a shipped release zip, as it is, to STAGE/<name>."""
+    import zipfile
+    dst = STAGE / name
+    shutil.rmtree(dst, ignore_errors=True)
+    tmp = STAGE / f"{name.lower()}_zip"
+    shutil.rmtree(tmp, ignore_errors=True)
+    with zipfile.ZipFile(zip_path) as z:
+        z.extractall(tmp)
+    if not (tmp / member_dir).is_dir():
+        sys.exit(f"{zip_path.name}: no folder {member_dir}")
+    shutil.move(tmp / member_dir, dst)
+    shutil.rmtree(tmp)
+    return dst
+
+
 def build_flood() -> Path:
     r"""Flood: the shipped HD release (`dist/Flood_hd_v<FLOOD_VERSION>.zip`, made by its tools/package_flood.py), whose FLOOD\
     folder is copied as it is: FLO.PRG + the game's files + AM_MUS.BIN / AM_SFX.BIN (Amiga sound) + README.TXT."""
-    import zipfile
-    dst = STAGE / "FLOOD"
-    shutil.rmtree(dst, ignore_errors=True)
-    tmp = STAGE / "flood_zip"
-    shutil.rmtree(tmp, ignore_errors=True)
-    with zipfile.ZipFile(GAMES / "flood" / "dist" / f"Flood_hd_v{FLOOD_VERSION}.zip") as z:
-        z.extractall(tmp)
-    shutil.move(tmp / "FLOOD", dst)
-    shutil.rmtree(tmp)
+    return stage_zip_folder(GAMES / "flood" / "dist" / f"Flood_hd_v{FLOOD_VERSION}.zip", "FLOOD", "FLOOD")
+
+
+def build_overlander() -> Path:
+    r"""Overlander: the shipped HD release (`dist/Overlander_hd_v<OVERLANDER_VERSION>.zip`), OVERLAND\ copied as it is
+    (OVERLAND.PRG + G.TOS + LOADSCR.IMG + Amiga sound files + README.TXT)."""
+    return stage_zip_folder(GAMES / "overlander" / "dist" / f"Overlander_hd_v{OVERLANDER_VERSION}.zip", "OVERLAND", "OVERLAND")
+
+
+def build_pmww1() -> Path:
+    r"""Powermonger WW1: the newest shipped HD release zip; its POWERMONGER_WW1\ folder becomes C:\PMWW1\ with WW1.PRG moved up
+    next to the data files (as POWERMON\WAR.PRG): it must be started from the AUTO phase, by AUTO\PMBOOT.PRG (W)."""
+    zips = sorted((GAMES / "powermonger-ww1" / "dist").glob(f"PowermongerWW1_v{PMWW1_VERSION}_patched_hd_*.zip"))
+    if not zips:
+        sys.exit(f"no PowermongerWW1_v{PMWW1_VERSION}_patched_hd_*.zip in powermonger-ww1/dist")
+    dst = stage_zip_folder(zips[-1], "POWERMONGER_WW1", "PMWW1")
+    shutil.move(dst / "AUTO" / "WW1.PRG", dst / "WW1.PRG")
+    (dst / "AUTO").rmdir()
+    note = ("NOTE (all-games hard disk): here the game is C:\\PMWW1\\WW1.PRG next to its data files (not in AUTO\\). At boot,\n"
+            "C:\\AUTO\\PMBOOT.PRG asks \"P Powermonger, W WW1, else desktop\"; W sets the current directory to C:\\PMWW1 and\n"
+            "starts WW1.PRG. The installing text below is for a stand-alone install; WW1.PRG started from the desktop does not work.\n\n")
+    body = (dst / "README.TXT").read_bytes().decode("latin-1")
+    (dst / "README.TXT").write_bytes(note.replace("\n", "\r\n").encode("latin-1") + body.encode("latin-1"))
     return dst
 
 
@@ -234,7 +266,7 @@ def build_powermonger() -> Path:
     (dst / "AUTO").rmdir()
     ver = versions()["POWERMON"].lstrip("v")
     note = ("NOTE (all-games hard disk): here the game is C:\\POWERMON\\WAR.PRG next to DATA\\ (not in AUTO\\). At boot,\n"
-            "C:\\AUTO\\PMBOOT.PRG asks \"Powermonger? P = start, else desktop\"; P sets the current directory to C:\\POWERMON and\n"
+            "C:\\AUTO\\PMBOOT.PRG asks \"P Powermonger, W WW1, else desktop\"; P sets the current directory to C:\\POWERMON and\n"
             "starts WAR.PRG. The \"Installing\" text below is for a stand-alone install; WAR.PRG started from the desktop stops\n"
             "with \"cannot swap the low RAM of TOS\".\n\n")
     body = (g / "patches" / "README_HD.TXT").read_text().replace("@VER@", ver)
@@ -243,7 +275,8 @@ def build_powermonger() -> Path:
 
 
 def build_auto() -> Path:
-    r"""AUTO\PMBOOT.PRG: the boot prompt that starts Powermonger (tools/hd_pmboot.s; the game must be started from the AUTO phase)."""
+    r"""AUTO\PMBOOT.PRG: the boot prompt that starts Powermonger (P) or Powermonger WW1 (W) (tools/hd_pmboot.s; both must be
+    started from the AUTO phase)."""
     dst = STAGE / "AUTO"
     shutil.rmtree(dst, ignore_errors=True)
     dst.mkdir(parents=True)
@@ -292,7 +325,7 @@ BUILDERS = {"MIDWINTR": build_midwinter, "MOONSHR": build_moonshine, "MW1ORIG": 
             "POWERMON": build_powermonger, "POPULOUS": build_populous,
             "POPORIG": lambda: build_orig(GAMES / "populous" / "originals" / "POPULOUS", "POPORIG"),
             "POPS2": build_populous2, "POP2ORIG": lambda: build_orig(GAMES / "populous-2" / "originals" / "POPUL2", "POP2ORIG"),
-            "FLOOD": build_flood,
+            "FLOOD": build_flood, "OVERLAND": build_overlander, "PMWW1": build_pmww1,
             "AUTO": build_auto}
 
 
@@ -353,23 +386,26 @@ a 3-second question about Powermonger at boot.
   C:\NEBULUS   Nebulus                double-click START.TOS     {vers['NEBULUS']}
   C:\NEBORIG   Nebulus (original)     double-click START.TOS     PP's release, unpatched
   C:\POWERMON  Powermonger            press P at boot (below)    {vers['POWERMON']}
+  C:\PMWW1     Powermonger WW1        press W at boot (below)    v{PMWW1_VERSION}
   C:\POPULOUS  Populous               double-click RUNME.TOS     {vers['POPULOUS']}
   C:\POPORIG   Populous (original)    double-click RUNME.TOS     PP's release, unpatched
   C:\POPS2     Populous 2             double-click RUNME.TOS     {vers['POPS2']}
   C:\POP2ORIG  Populous 2 (original)  double-click RUNME.TOS     PP's release, unpatched
   C:\FLOOD     Flood                  double-click FLO.PRG       v{FLOOD_VERSION}
+  C:\OVERLAND  Overlander             double-click OVERLAND.PRG  v{OVERLANDER_VERSION}
 
-Boot: HDDRIVER banner, then "Powermonger? P = start, else desktop". Press
-P within 3 seconds to start Powermonger; any other key (or waiting) goes
-to the desktop. Open drive C: and double-click the game's start file.
+Boot: HDDRIVER banner, then "P Powermonger, W WW1, else desktop". Press
+P within 3 seconds for Powermonger, W for Powermonger: World War 1
+Edition; any other key (or waiting) goes to the desktop. Open drive C:
+and double-click the game's start file.
 
 DESKTOP.INF / NEWDESK.INF only size the desktop windows to fit a 320x200
 screen (TOS 1.x does not shrink wider ones); they start nothing.
 
-Why Powermonger is different: its hard-disk version copies TOS's memory
-aside while it runs and only works when started from the AUTO folder
-(before the desktop exists); started from the desktop it says "cannot swap
-the low RAM of TOS". AUTO\PMBOOT.PRG is the small program that asks.
+Why the Powermongers are different: their hard-disk versions copy TOS's
+memory aside while they run and only work when started from the AUTO
+folder (before the desktop exists); started from the desktop they stop.
+AUTO\PMBOOT.PRG is the small program that asks.
 
 Requirements
  - Atari ST/STE, Mega ST/STE or TT with 1 MB RAM or more, and an ACSI hard
@@ -386,6 +422,9 @@ Requirements
    2 MB or more).
  - Flood: STE, Mega STE, TT or Falcon for the Amiga music and sound (DMA
    sound) and the blitter scrolling; a plain ST plays the original YM sound.
+ - Overlander: STE, Mega STE, TT or Falcon for the Amiga music and sound
+   (DMA sound) and the blitter; a plain ST plays the original YM sound.
+ - Powermonger WW1: 1 MB; the same machines as Powermonger, plus the Falcon.
  - Tested in the Hatari emulator only (STE, Mega STE, TT; Hunter also on a
    plain ST). On a TT the Midwinters need the PMMU (Hatari: --mmu true, as
    run_tt.sh does); PP's unpatched Midwinter does not start on a TT.
@@ -404,6 +443,7 @@ Saving
    the original's cheat code is in NEBULUS\NEBCHEAT.TXT; F9 leaves to the desktop
    (PP's Gamex). Tested in Hatari on the STE and Mega STE; NEBORIG is PP's original.
  - Powermonger: Option -> File -> Save/Load, in POWERMON\SAVEDISK.DAT.
+ - Powermonger WW1: Option -> File -> Save/Load, in PMWW1\SAVEDISK.DAT.
  - Populous: the game's own Save/Load, into FILES\POP in its folder.
  - Populous 2: the game's own SAVE/LOAD GAME does not work in PP's
    conversion (it crashes, unpatched too); use HAGA's statesave on the
@@ -503,6 +543,8 @@ def versions() -> dict[str, str]:
     except OSError:
         v["POWERMON"] = "patched"
     v["FLOOD"] = f"v{FLOOD_VERSION}"
+    v["OVERLAND"] = f"v{OVERLANDER_VERSION}"
+    v["PMWW1"] = f"v{PMWW1_VERSION}"
     return v
 
 
@@ -534,13 +576,15 @@ def layout_text(img: Path, tgt: str, total: int, psz: int, folders: dict[str, Pa
            "HUNTORIG": "Hunter (Gamex by PP, unpatched, for comparison)", "POPORIG": "Populous (HAGA by PP, unpatched, for comparison)",
            "POP2ORIG": "Populous 2 (HAGA by PP, unpatched, for comparison)",
            "FLOOD": "Flood (shipped HD release, patched FLO.PRG + Amiga sound files)",
-           "AUTO": "boot prompt PMBOOT.PRG (tools/hd_pmboot.s): P = start Powermonger, any other key / 3 s = desktop"}
+           "OVERLAND": "Overlander (shipped HD release, patched OVERLAND.PRG + Amiga sound files)",
+           "PMWW1": "Powermonger WW1 (shipped HD release, WW1.PRG moved up from AUTO\\; start it from the boot prompt, see README.TXT)",
+           "AUTO": "boot prompt PMBOOT.PRG (tools/hd_pmboot.s): P = Powermonger, W = Powermonger WW1, any other key / 3 s = desktop"}
     for name, src in folders.items():
         n = sum(1 for p in src.rglob("*") if p.is_file())
         t.append(f"  {name + chr(92):<14} {why[name]}: {n} files, {tree_kb(src)} KB" + (f", {VERSIONS[name]}" if name in VERSIONS else ""))
-    t += ["", "Start of the games: see README.TXT in the root (Powermonger: press P at the boot prompt; the others: double-click",
+    t += ["", "Start of the games: see README.TXT in the root (Powermonger: P at the boot prompt, Powermonger WW1: W; the others: double-click",
           "  MIDWINTR\\RUNME.TOS, MIDWINT2\\RUNME.TOS, MOONSHR\\RUNME.TOS, POPULOUS\\RUNME.TOS, POPS2\\RUNME.TOS, HUNTER\\START.TOS, NEBULUS\\START.TOS,",
-          "  FLOOD\\FLO.PRG on the desktop).", "",
+          "  FLOOD\\FLO.PRG, OVERLAND\\OVERLAND.PRG on the desktop).", "",
           "Use",
           f"  real disk / SD card (ACSI2STM, UltraSatan, SCSI2SD + ACSI/SCSI bridge, ...): dd if={img.name} of=/dev/sdX bs=1M conv=fsync",
           "    (check the target device first; a bigger card works, the rest stays unpartitioned)",
