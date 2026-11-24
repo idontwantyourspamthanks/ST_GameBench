@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-r"""Build one raw Atari ST hard-disk image with all four enhanced games (current default builds).
+r"""Build one raw Atari ST hard-disk image with all the enhanced games (current default builds; Flood from its shipped release zip).
 
     python3 tools/make_hd_image.py                 # build the games, write dist/AtariST_enhanced_games_<date>.img (+ .md5, + .layout.txt)
     python3 tools/make_hd_image.py --no-build      # reuse the staged builds in dist/_stage (fast re-pack)
