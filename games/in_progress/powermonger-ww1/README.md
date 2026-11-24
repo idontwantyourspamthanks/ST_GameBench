@@ -33,8 +33,8 @@ Free space on the disk: 36864 B (the patched `WW1.PRG` grows by about 0.6-1 KB f
 
 ## Running
 
-Hatari 2.6.1 (`~/Code/AtariST/hattari/build/src/hatari`), STE, TOS 1.62, 1 MB: `--disk-a build/default/floppy.st`. Boot, type a name, START NEW CONQUEST, swap in the original Powermonger disk when asked, swap the WW1 disk back, pick the small island at the top of the chart.
-Stage-1 results on STE TOS 1.62 and Mega STE TOS 2.06 are in `work/notes/RESULTS_stage01.md`.
+Play it: `tools/play.sh` (enhanced floppy from the last commit, STE, TOS 1.62, 1 MB; `--machine st|megast|ste|megaste|tt|falcon`, `--ram KiB`, `--mhz`, `--original`, `--worktree`, `--fresh`; `tools/play.sh -h`). Boot, type a name, START NEW CONQUEST, pick the small island at the top of the chart. Saves go to the blank save disk next to the game disk (`build/play-patched/savedisk.st`): swap it in with F12 -> Floppy disks when the game asks. `--original` asks for the original Powermonger disk on START NEW CONQUEST (`../../done/powermonger/disks/protected.st`), then the WW1 disk back.
+Gate results per stage: `work/notes/RESULTS_stage*.md`.
 
 ## Release md5s
 
