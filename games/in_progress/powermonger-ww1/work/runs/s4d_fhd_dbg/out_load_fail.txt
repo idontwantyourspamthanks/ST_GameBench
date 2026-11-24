@@ -1,0 +1,44 @@
+[   16s vbl 881] name prompt
+[   21s vbl 1155] option screen (typing attempt 1)
+[   34s vbl 3016] no disk requester
+[   37s vbl 3156] chart expected
+[   54s vbl 4006] island clicked
+[   60s vbl 4301] 3D map view, world counter ticking
+[map] WINDOW_OPEN=0x0 wtext='Welcome to the World       War I Scenario                WWI          ' ticking=True
+EXC the load never returned (window text: 'FILE                   LOAD     A                               B      SAVE     ')
+ticking True WINDOW_OPEN 0x0
+disk flag@104 255 len 409600 sector0 on disk == RAM block: True ram flag 255
+disk sector0: 504f5745524d4f4e47455220574f524c4420574152204f4e4520444154412044 ram: 504f5745524d4f4e47455220574f524c4420574152204f4e4520444154412044
+> m $74c0 2
+000074C0: 00 00                                            ..
+> savebin /tmp/pmww1fhd/dbg/w_l1/ram.bin $1c860 $200
+  Wrote 0x200 bytes.
+> r
+  D0 E000FB1E   D1 E000FB1E   D2 FB1EFB1E   D3 FB1EFB1E 
+  D4 00000081   D5 C9240085   D6 0002EFB0   D7 0005000D 
+  A0 0000F5D6   A1 000237E0   A2 00023784   A3 FFFC0000 
+  A4 0000C924   A5 0002EFAC   A6 0000F0C2   A7 0002D73C 
+USP  003E0AF2 ISP  0002D73C SFC  00000000 DFC  00000000 
+CACR 00000000 VBR  00000000 CAAR 00000000 MSP  00000000 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch 0000e838 da453c36 (1) 4847 (SWAP) d844 (ADD) da45 (ADD) Chip latch 00000000
+0000e832 2a46                     movea.l d6,a5
+Next PC: 0000e834
+> b
+1 conditional CPU breakpoints:
+   1:	pc = $1cb2a :once :trace :file /tmp/pmww1fhd/dbg/w_l1/sl/ld.txt
+> m $c2000 64
+000C2000: 48 44 53 57 00 00 fc 6c 00 00 fc 64 00 02 d6 ca  HDSW...l...d....
+000C2010: 64 3e 64 51 3e 00 00 00 00 e0 32 88 00 00 00 00  d>dQ>.....2.....
+000C2020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+000C2030: 00 00 0e 52 00 00 00 00 00 00 00 00 00 00 00 00  ...R............
+> m $1cb20 16
+0001CB20: 00 04 4c 3e 4e b9 00 00 dd ea 67 10 4e b9 00 01  ..L>N.....g.N...
+
+Traceback (most recent call last):
+  File "/tmp/pmww1fhd/dbg.py", line 18, in <module>
+    r = h.saveload_hd(log=print); print(r, flush=True)
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/powermonger-ww1/tools/wwhd.py", line 107, in saveload_hd
+    raise RuntimeError(f"the load never returned (window text: {self.wtext().strip()[:80]!r})")
+RuntimeError: the load never returned (window text: 'FILE                   LOAD     A                               B      SAVE     ')

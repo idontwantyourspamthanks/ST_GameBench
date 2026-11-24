@@ -1,0 +1,1806 @@
+INFO : Hatari v2.6.1-devel (Nov 13 2026), compiled on:  Nov 13 2026, 20:20:35
+ERROR: SDL_GetDesktopDisplayMode failed: Invalid display
+INFO : GEMDOS HDD emulation, C: <-> /tmp/pmww1fhd/dbg/w_n1/C.
+ERROR: Microphone: SDL_OpenAudioDevice failed.
+INFO : NVRAM not found at '/tmp/pmww1fhd/dbg/w_n1/home/.config/hatari/hatari.nvram'
+> savebin /tmp/pmww1fhd/dbg/w_n1/ram.bin $7640 $c0
+  Wrote 0xc0 bytes.
+> savebin /tmp/pmww1fhd/dbg/w_n1/ram.bin $7640 $c0
+  Wrote 0xc0 bytes.
+> savebin /tmp/pmww1fhd/dbg/w_n1/ram.bin $7640 $c0
+  Wrote 0xc0 bytes.
+> savebin /tmp/pmww1fhd/dbg/w_n1/ram.bin $7640 $c0
+  Wrote 0xc0 bytes.
+> savebin /tmp/pmww1fhd/dbg/w_n1/ram.bin $7640 $c0
+  Wrote 0xc0 bytes.
+> savebin /tmp/pmww1fhd/dbg/w_n1/ram.bin $7640 $c0
+  Wrote 0xc0 bytes.
+> savebin /tmp/pmww1fhd/dbg/w_n1/ram.bin $7640 $c0
+  Wrote 0xc0 bytes.
+> e VBL
+= %1101101101 (bin), #877 (dec), $36d (hex)
+> savebin /tmp/pmww1fhd/dbg/w_n1/ram.bin $7640 $c0
+  Wrote 0xc0 bytes.
+> e VBL
+= %10001111111 (bin), #1151 (dec), $47f (hex)
+> m $2edb2 2
+0002EDB2: 00 00                                            ..
+> m $2edb4 2
+0002EDB4: 00 00                                            ..
+> m $2edb2 2
+0002EDB2: 00 a0                                            ..
+> m $2edb4 2
+0002EDB4: 00 55                                            .U
+> m $2edb2 2
+0002EDB2: 00 a0                                            ..
+> m $2edb4 2
+0002EDB4: 00 55                                            .U
+> m $2edb2 2
+0002EDB2: 00 a0                                            ..
+> m $2edb4 2
+0002EDB4: 00 55                                            .U
+> savebin /tmp/pmww1fhd/dbg/w_n1/ram.bin $7640 $c0
+  Wrote 0xc0 bytes.
+> e VBL
+= %101111000011 (bin), #3011 (dec), $bc3 (hex)
+> e VBL
+= %110001001111 (bin), #3151 (dec), $c4f (hex)
+> m $2edb2 2
+0002EDB2: 00 00                                            ..
+> m $2edb4 2
+0002EDB4: 00 00                                            ..
+> m $2edb2 2
+0002EDB2: 00 3c                                            .<
+> m $2edb4 2
+0002EDB4: 00 14                                            ..
+> m $2edb2 2
+0002EDB2: 00 3c                                            .<
+> m $2edb4 2
+0002EDB4: 00 14                                            ..
+> m $2edb2 2
+0002EDB2: 00 3c                                            .<
+> m $2edb4 2
+0002EDB4: 00 18                                            ..
+> m $2edb2 2
+0002EDB2: 00 3c                                            .<
+> m $2edb4 2
+0002EDB4: 00 18                                            ..
+> m $2edb2 2
+0002EDB2: 00 3c                                            .<
+> m $2edb4 2
+0002EDB4: 00 18                                            ..
+> m $74c0 2
+000074C0: 00 00                                            ..
+> m $74c0 2
+000074C0: 00 00                                            ..
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+> m $2ed92 2
+0002ED92: 00 00                                            ..
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+> m $2ed92 2
+0002ED92: 00 09                                            ..
+> e VBL
+= %111110011111 (bin), #3999 (dec), $f9f (hex)
+> m $74c0 2
+000074C0: 00 00                                            ..
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+> m $2ed92 2
+0002ED92: 00 13                                            ..
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+> m $2ed92 2
+0002ED92: 00 1e                                            ..
+> m $74c0 2
+000074C0: 00 00                                            ..
+> e VBL
+= %1000011000110 (bin), #4294 (dec), $10c6 (hex)
+WARN : PNG screen dump saved to: /tmp/pmww1fhd/dbg/w_n1/shots/grab0001.png
+> m $74c0 2
+000074C0: 00 00                                            ..
+> savebin /tmp/pmww1fhd/dbg/w_n1/ram.bin $7640 $c0
+  Wrote 0xc0 bytes.
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+> m $2ed92 2
+0002ED92: 00 35                                            .5
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+> m $2ed92 2
+0002ED92: 00 3e                                            .>
+> b pc = $1cac4 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_ent.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $1cac4
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_ent.txt' file on hit.
+> b pc = $1cb2a :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_rd.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $1cb2a
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_rd.txt' file on hit.
+> b pc = $7740c :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_sec.txt
+CPU condition breakpoint 3 with 1 condition(s) added:
+	pc = $7740c
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_sec.txt' file on hit.
+> b pc = $ef4 && ($1d2af).b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+CPU condition breakpoint 4 with 2 condition(s) added:
+	pc = $ef4 && ( $1d2af ) . b > 0
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt' file on hit.
+> b pc = $1cbc2 :trace :once :file /tmp/pmww1fhd/dbg/w_n1/sl/sv.txt
+CPU condition breakpoint 5 with 1 condition(s) added:
+	pc = $1cbc2
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/pmww1fhd/dbg/w_n1/sl/sv.txt' file on hit.
+> m $2edb2 2
+0002EDB2: 00 00                                            ..
+> m $2edb4 2
+0002EDB4: 00 00                                            ..
+> m $2edb2 2
+0002EDB2: 00 46                                            .F
+> m $2edb4 2
+0002EDB4: 00 87                                            ..
+> m $2edb2 2
+0002EDB2: 00 46                                            .F
+> m $2edb4 2
+0002EDB4: 00 87                                            ..
+> m $2edb2 2
+0002EDB2: 00 46                                            .F
+> m $2edb4 2
+0002EDB4: 00 89                                            ..
+> m $2edb2 2
+0002EDB2: 00 46                                            .F
+> m $2edb4 2
+0002EDB4: 00 89                                            ..
+> m $2edb2 2
+0002EDB2: 00 46                                            .F
+> m $2edb4 2
+0002EDB4: 00 89                                            ..
+4. CPU breakpoint condition(s) matched 1 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1010000010010 (bin), #5138 (dec), $1412 (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 46 00 89                                      .F..
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 2 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1010000010011 (bin), #5139 (dec), $1413 (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 46 00 89                                      .F..
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 3 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1010000010011 (bin), #5139 (dec), $1413 (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 46 00 89                                      .F..
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 4 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1010000010011 (bin), #5139 (dec), $1413 (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 46 00 89                                      .F..
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 5 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1010000010011 (bin), #5139 (dec), $1413 (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 46 00 89                                      .F..
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 6 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1010000011100 (bin), #5148 (dec), $141c (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 46 00 89                                      .F..
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 7 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1010000011101 (bin), #5149 (dec), $141d (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 46 00 89                                      .F..
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 8 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1010000011101 (bin), #5149 (dec), $141d (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 46 00 89                                      .F..
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 9 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1010000011101 (bin), #5149 (dec), $141d (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 46 00 89                                      .F..
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 10 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1010000011101 (bin), #5149 (dec), $141d (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 46 00 89                                      .F..
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+> m $2edb2 2
+0002EDB2: 00 00                                            ..
+> m $2edb4 2
+0002EDB4: 00 00                                            ..
+> m $2edb2 2
+0002EDB2: 00 0f                                            ..
+> m $2edb4 2
+0002EDB4: 00 19                                            ..
+> m $2edb2 2
+0002EDB2: 00 0f                                            ..
+> m $2edb4 2
+0002EDB4: 00 19                                            ..
+> m $2edb2 2
+0002EDB2: 00 0f                                            ..
+> m $2edb4 2
+0002EDB4: 00 19                                            ..
+4. CPU breakpoint condition(s) matched 11 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1010111001110 (bin), #5582 (dec), $15ce (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 0f 00 19                                      ....
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 12 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1010111001111 (bin), #5583 (dec), $15cf (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 0f 00 19                                      ....
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 13 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1010111001111 (bin), #5583 (dec), $15cf (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 0f 00 19                                      ....
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 14 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1010111001111 (bin), #5583 (dec), $15cf (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 0f 00 19                                      ....
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 15 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1010111001111 (bin), #5583 (dec), $15cf (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 0f 00 19                                      ....
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 16 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1010111011000 (bin), #5592 (dec), $15d8 (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 0f 00 19                                      ....
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 17 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1010111011001 (bin), #5593 (dec), $15d9 (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 0f 00 19                                      ....
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 18 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1010111011001 (bin), #5593 (dec), $15d9 (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 0f 00 19                                      ....
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 19 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1010111011001 (bin), #5593 (dec), $15d9 (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 0f 00 19                                      ....
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 20 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1010111011001 (bin), #5593 (dec), $15d9 (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 0f 00 19                                      ....
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+> m $2edb2 2
+0002EDB2: 00 00                                            ..
+> m $2edb4 2
+0002EDB4: 00 00                                            ..
+> m $2edb2 2
+0002EDB2: 00 28                                            .(
+> m $2edb4 2
+0002EDB4: 00 1e                                            ..
+> m $2edb2 2
+0002EDB2: 00 28                                            .(
+> m $2edb4 2
+0002EDB4: 00 1e                                            ..
+> m $2edb2 2
+0002EDB2: 00 2b                                            .+
+> m $2edb4 2
+0002EDB4: 00 20                                            . 
+> m $2edb2 2
+0002EDB2: 00 2b                                            .+
+> m $2edb4 2
+0002EDB4: 00 20                                            . 
+> m $2edb2 2
+0002EDB2: 00 2b                                            .+
+> m $2edb4 2
+0002EDB4: 00 20                                            . 
+4. CPU breakpoint condition(s) matched 21 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1100000010101 (bin), #6165 (dec), $1815 (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 2b 00 20                                      .+. 
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 22 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1100000010110 (bin), #6166 (dec), $1816 (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 2b 00 20                                      .+. 
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 23 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1100000010110 (bin), #6166 (dec), $1816 (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 2b 00 20                                      .+. 
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 24 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1100000010110 (bin), #6166 (dec), $1816 (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 2b 00 20                                      .+. 
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 25 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1100000010110 (bin), #6166 (dec), $1816 (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 2b 00 20                                      .+. 
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+3. CPU breakpoint condition(s) matched 1 times.
+	pc = $7740c :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_sec.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_sec.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1100000010111 (bin), #6167 (dec), $1817 (hex)
+> r
+  D0 00000000   D1 00020000   D2 00000001   D3 00000000 
+  D4 00000000   D5 00000041   D6 00000042   D7 00000000 
+  A0 0001C860   A1 00044D16   A2 0005A830   A3 000558A2 
+  A4 0005A7C8   A5 0002EE34   A6 0000F0C2   A7 0002D700 
+USP  003E0AF2 ISP  0002D700 SFC  00000000 DFC  00000000 
+CACR 00000000 VBR  00000000 CAAR 00000000 MSP  00000000 
+SR=2314 T=00 S=1 M=0 X=1 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 00077410 48e7fffe (1) 0410 (SUB) 48e7 (MVMLE) fffe (ILLEGAL) Chip latch 00000000
+0007740c 6000 0410                bra.w #$0410 == $0007781e (T)
+Next PC: 00077410
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+5. CPU breakpoint condition(s) matched 1 times.
+	pc = $1cbc2 :once :trace :file /tmp/pmww1fhd/dbg/w_n1/sl/sv.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/sl/sv.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1/sl'.
+> savebin /tmp/pmww1fhd/dbg/w_n1/sl/save.bin $44c3e $18c00
+  Wrote 0x18c00 bytes.
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+Removed CPU breakpoint 5:
+	pc = $1cbc2 :once :trace :file /tmp/pmww1fhd/dbg/w_n1/sl/sv.txt
+3. CPU breakpoint condition(s) matched 2 times.
+	pc = $7740c :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_sec.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_sec.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1100000011110 (bin), #6174 (dec), $181e (hex)
+> r
+  D0 00000000   D1 00000001   D2 000000C6   D3 00008001 
+  D4 00000000   D5 00000041   D6 00000042   D7 00000000 
+  A0 00044C3E   A1 00044D16   A2 0005A830   A3 000558A2 
+  A4 0005A7C8   A5 0002EE34   A6 0000F0C2   A7 0002D704 
+USP  003E0AF2 ISP  0002D704 SFC  00000000 DFC  00000000 
+CACR 00000000 VBR  00000000 CAAR 00000000 MSP  00000000 
+SR=2318 T=00 S=1 M=0 X=1 N=1 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch 00077410 48e7fffe (1) 0410 (SUB) 48e7 (MVMLE) fffe (ILLEGAL) Chip latch 00000000
+0007740c 6000 0410                bra.w #$0410 == $0007781e (T)
+Next PC: 00077410
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+3. CPU breakpoint condition(s) matched 3 times.
+	pc = $7740c :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_sec.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_sec.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1100000100100 (bin), #6180 (dec), $1824 (hex)
+> r
+  D0 00000000   D1 00000000   D2 00000001   D3 00000001 
+  D4 00000000   D5 00000041   D6 00000042   D7 00000000 
+  A0 0001C860   A1 00044D16   A2 0005A830   A3 000558A2 
+  A4 0005A7C8   A5 0002EE34   A6 0000F0C2   A7 0002D704 
+USP  003E0AF2 ISP  0002D704 SFC  00000000 DFC  00000000 
+CACR 00000000 VBR  00000000 CAAR 00000000 MSP  00000000 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch 00077410 48e7fffe (1) 0410 (SUB) 48e7 (MVMLE) fffe (ILLEGAL) Chip latch 00000000
+0007740c 6000 0410                bra.w #$0410 == $0007781e (T)
+Next PC: 00077410
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 26 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1100000101011 (bin), #6187 (dec), $182b (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 2b 00 20                                      .+. 
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 27 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1100000101011 (bin), #6187 (dec), $182b (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 2b 00 20                                      .+. 
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 28 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1100000101011 (bin), #6187 (dec), $182b (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 2b 00 20                                      .+. 
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 29 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1100000101011 (bin), #6187 (dec), $182b (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 2b 00 20                                      .+. 
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 30 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1100000101011 (bin), #6187 (dec), $182b (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 2b 00 20                                      .+. 
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+> m $74c0 2
+000074C0: 00 00                                            ..
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+> m $2ed92 2
+0002ED92: 00 c9                                            ..
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+> m $2ed92 2
+0002ED92: 00 d3                                            ..
+> savebin /tmp/pmww1fhd/dbg/w_n1/sl/pre.bin $44c3e $18c00
+  Wrote 0x18c00 bytes.
+> b pc = $1cb2a :trace :once :file /tmp/pmww1fhd/dbg/w_n1/sl/ld.txt
+CPU condition breakpoint 5 with 1 condition(s) added:
+	pc = $1cb2a
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/pmww1fhd/dbg/w_n1/sl/ld.txt' file on hit.
+> m $2edb2 2
+0002EDB2: 00 00                                            ..
+> m $2edb4 2
+0002EDB4: 00 00                                            ..
+> m $2edb2 2
+0002EDB2: 00 4b                                            .K
+> m $2edb4 2
+0002EDB4: 00 91                                            ..
+> m $2edb2 2
+0002EDB2: 00 4b                                            .K
+> m $2edb4 2
+0002EDB4: 00 91                                            ..
+> m $2edb2 2
+0002EDB2: 00 45                                            .E
+> m $2edb4 2
+0002EDB4: 00 89                                            ..
+> m $2edb2 2
+0002EDB2: 00 45                                            .E
+> m $2edb4 2
+0002EDB4: 00 89                                            ..
+> m $2edb2 2
+0002EDB2: 00 45                                            .E
+> m $2edb4 2
+0002EDB4: 00 89                                            ..
+4. CPU breakpoint condition(s) matched 31 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1110100110110 (bin), #7478 (dec), $1d36 (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 45 00 89                                      .E..
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 32 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1110100110111 (bin), #7479 (dec), $1d37 (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 45 00 89                                      .E..
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 33 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1110100110111 (bin), #7479 (dec), $1d37 (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 45 00 89                                      .E..
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 34 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1110100110111 (bin), #7479 (dec), $1d37 (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 45 00 89                                      .E..
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 35 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1110100110111 (bin), #7479 (dec), $1d37 (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 45 00 89                                      .E..
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 36 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1110100111111 (bin), #7487 (dec), $1d3f (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 45 00 89                                      .E..
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 37 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1110101000000 (bin), #7488 (dec), $1d40 (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 45 00 89                                      .E..
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 38 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1110101000000 (bin), #7488 (dec), $1d40 (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 45 00 89                                      .E..
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 39 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1110101000000 (bin), #7488 (dec), $1d40 (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 45 00 89                                      .E..
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 40 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1110101000000 (bin), #7488 (dec), $1d40 (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 45 00 89                                      .E..
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+> m $2edb2 2
+0002EDB2: 00 00                                            ..
+> m $2edb4 2
+0002EDB4: 00 00                                            ..
+> m $2edb2 2
+0002EDB2: 00 0f                                            ..
+> m $2edb4 2
+0002EDB4: 00 19                                            ..
+> m $2edb2 2
+0002EDB2: 00 0f                                            ..
+> m $2edb4 2
+0002EDB4: 00 19                                            ..
+> m $2edb2 2
+0002EDB2: 00 0f                                            ..
+> m $2edb4 2
+0002EDB4: 00 19                                            ..
+4. CPU breakpoint condition(s) matched 41 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1111011110001 (bin), #7921 (dec), $1ef1 (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 0f 00 19                                      ....
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 42 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1111011110010 (bin), #7922 (dec), $1ef2 (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 0f 00 19                                      ....
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 43 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1111011110010 (bin), #7922 (dec), $1ef2 (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 0f 00 19                                      ....
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 44 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1111011110010 (bin), #7922 (dec), $1ef2 (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 0f 00 19                                      ....
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 45 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1111011110010 (bin), #7922 (dec), $1ef2 (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 0f 00 19                                      ....
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 46 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1111011111011 (bin), #7931 (dec), $1efb (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 0f 00 19                                      ....
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 47 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1111011111100 (bin), #7932 (dec), $1efc (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 0f 00 19                                      ....
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 48 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1111011111100 (bin), #7932 (dec), $1efc (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 0f 00 19                                      ....
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 49 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1111011111100 (bin), #7932 (dec), $1efc (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 0f 00 19                                      ....
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 50 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %1111011111100 (bin), #7932 (dec), $1efc (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 0f 00 19                                      ....
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+> m $2edb2 2
+0002EDB2: 00 00                                            ..
+> m $2edb4 2
+0002EDB4: 00 00                                            ..
+> m $2edb2 2
+0002EDB2: 00 28                                            .(
+> m $2edb4 2
+0002EDB4: 00 0f                                            ..
+> m $2edb2 2
+0002EDB2: 00 28                                            .(
+> m $2edb4 2
+0002EDB4: 00 0f                                            ..
+> m $2edb2 2
+0002EDB2: 00 2b                                            .+
+> m $2edb4 2
+0002EDB4: 00 0f                                            ..
+> m $2edb2 2
+0002EDB2: 00 2b                                            .+
+> m $2edb4 2
+0002EDB4: 00 0f                                            ..
+> m $2edb2 2
+0002EDB2: 00 2b                                            .+
+> m $2edb4 2
+0002EDB4: 00 0f                                            ..
+4. CPU breakpoint condition(s) matched 51 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %10000100111001 (bin), #8505 (dec), $2139 (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 2b 00 0f                                      .+..
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 52 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %10000100111010 (bin), #8506 (dec), $213a (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 2b 00 0f                                      .+..
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 53 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %10000100111010 (bin), #8506 (dec), $213a (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 2b 00 0f                                      .+..
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 54 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %10000100111010 (bin), #8506 (dec), $213a (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 2b 00 0f                                      .+..
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 55 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %10000100111010 (bin), #8506 (dec), $213a (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 2b 00 0f                                      .+..
+> m $74c0 2
+000074C0: 01 7c                                            .|
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+3. CPU breakpoint condition(s) matched 4 times.
+	pc = $7740c :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_sec.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_sec.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %10000100111011 (bin), #8507 (dec), $213b (hex)
+> r
+  D0 00000000   D1 00030000   D2 00000001   D3 00000000 
+  D4 00000000   D5 0000004F   D6 00000042   D7 00000000 
+  A0 0001C860   A1 0000763C   A2 0005A830   A3 000558A2 
+  A4 0005A7C8   A5 0002EF34   A6 0000F0C2   A7 0002D700 
+USP  003E0AF2 ISP  0002D700 SFC  00000000 DFC  00000000 
+CACR 00000000 VBR  00000000 CAAR 00000000 MSP  00000000 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 00077410 48e7fffe (1) 0410 (SUB) 48e7 (MVMLE) fffe (ILLEGAL) Chip latch 00000000
+0007740c 6000 0410                bra.w #$0410 == $0007781e (T)
+Next PC: 00077410
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+3. CPU breakpoint condition(s) matched 5 times.
+	pc = $7740c :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_sec.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_sec.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %10000101000010 (bin), #8514 (dec), $2142 (hex)
+> r
+  D0 00000000   D1 00000001   D2 000000C6   D3 00008000 
+  D4 00000000   D5 0000004F   D6 00000042   D7 00000000 
+  A0 00044C3E   A1 0000763C   A2 0005A830   A3 000558A2 
+  A4 0005A7C8   A5 0002EF34   A6 0000F0C2   A7 0002D704 
+USP  003E0AF2 ISP  0002D704 SFC  00000000 DFC  00000000 
+CACR 00000000 VBR  00000000 CAAR 00000000 MSP  00000000 
+SR=2318 T=00 S=1 M=0 X=1 N=1 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch 00077410 48e7fffe (1) 0410 (SUB) 48e7 (MVMLE) fffe (ILLEGAL) Chip latch 00000000
+0007740c 6000 0410                bra.w #$0410 == $0007781e (T)
+Next PC: 00077410
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+2. CPU breakpoint condition(s) matched 1 times.
+	pc = $1cb2a :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_rd.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_rd.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %10000101001000 (bin), #8520 (dec), $2148 (hex)
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+5. CPU breakpoint condition(s) matched 1 times.
+	pc = $1cb2a :once :trace :file /tmp/pmww1fhd/dbg/w_n1/sl/ld.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/sl/ld.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1/sl'.
+> savebin /tmp/pmww1fhd/dbg/w_n1/sl/load.bin $44c3e $18c00
+  Wrote 0x18c00 bytes.
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+Removed CPU breakpoint 5:
+	pc = $1cb2a :once :trace :file /tmp/pmww1fhd/dbg/w_n1/sl/ld.txt
+4. CPU breakpoint condition(s) matched 56 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %10000101001001 (bin), #8521 (dec), $2149 (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 2b 00 0f                                      .+..
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 57 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %10000101001001 (bin), #8521 (dec), $2149 (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 2b 00 0f                                      .+..
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 58 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %10000101001001 (bin), #8521 (dec), $2149 (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 2b 00 0f                                      .+..
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 59 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %10000101001001 (bin), #8521 (dec), $2149 (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 2b 00 0f                                      .+..
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 60 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %10000101001001 (bin), #8521 (dec), $2149 (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 2b 00 0f                                      .+..
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+> m $2ed92 2
+0002ED92: 01 8c                                            ..
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+> m $2ed92 2
+0002ED92: 01 99                                            ..
+> m $74c0 2
+000074C0: 00 00                                            ..
+WARN : PNG screen dump saved to: /tmp/pmww1fhd/dbg/w_n1/shots/grab0002.png
+> m $74c0 2
+000074C0: 00 00                                            ..
+> savebin /tmp/pmww1fhd/dbg/w_n1/ram.bin $7640 $c0
+  Wrote 0xc0 bytes.
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+> m $2ed92 2
+0002ED92: 01 b5                                            ..
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+> m $2ed92 2
+0002ED92: 01 be                                            ..
+> m $2edb2 2
+0002EDB2: 00 00                                            ..
+> m $2edb4 2
+0002EDB4: 00 00                                            ..
+> m $2edb2 2
+0002EDB2: 00 4b                                            .K
+> m $2edb4 2
+0002EDB4: 00 91                                            ..
+> m $2edb2 2
+0002EDB2: 00 4b                                            .K
+> m $2edb4 2
+0002EDB4: 00 91                                            ..
+> m $2edb2 2
+0002EDB2: 00 45                                            .E
+> m $2edb4 2
+0002EDB4: 00 89                                            ..
+> m $2edb2 2
+0002EDB2: 00 45                                            .E
+> m $2edb4 2
+0002EDB4: 00 89                                            ..
+> m $2edb2 2
+0002EDB2: 00 45                                            .E
+> m $2edb4 2
+0002EDB4: 00 89                                            ..
+4. CPU breakpoint condition(s) matched 61 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %10011011110110 (bin), #9974 (dec), $26f6 (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 45 00 89                                      .E..
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 62 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %10011011110111 (bin), #9975 (dec), $26f7 (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 45 00 89                                      .E..
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 63 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %10011011110111 (bin), #9975 (dec), $26f7 (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 45 00 89                                      .E..
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 64 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %10011011110111 (bin), #9975 (dec), $26f7 (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 45 00 89                                      .E..
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 65 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %10011011110111 (bin), #9975 (dec), $26f7 (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 45 00 89                                      .E..
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 66 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %10011100000000 (bin), #9984 (dec), $2700 (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 45 00 89                                      .E..
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 67 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %10011100000001 (bin), #9985 (dec), $2701 (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 45 00 89                                      .E..
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 68 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %10011100000001 (bin), #9985 (dec), $2701 (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 45 00 89                                      .E..
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 69 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %10011100000001 (bin), #9985 (dec), $2701 (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 45 00 89                                      .E..
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 70 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %10011100000001 (bin), #9985 (dec), $2701 (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 45 00 89                                      .E..
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+WARN : PNG screen dump saved to: /tmp/pmww1fhd/dbg/w_n1/shots/grab0003.png
+> m $74c0 2
+000074C0: 00 00                                            ..
+> savebin /tmp/pmww1fhd/dbg/w_n1/ram.bin $7640 $c0
+  Wrote 0xc0 bytes.
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+> m $2ed92 2
+0002ED92: 01 f9                                            ..
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+> m $2ed92 2
+0002ED92: 02 01                                            ..
+> m $2edb2 2
+0002EDB2: 00 00                                            ..
+> m $2edb4 2
+0002EDB4: 00 00                                            ..
+> m $2edb2 2
+0002EDB2: 00 2d                                            .-
+> m $2edb4 2
+0002EDB4: 00 19                                            ..
+> m $2edb2 2
+0002EDB2: 00 2d                                            .-
+> m $2edb4 2
+0002EDB4: 00 19                                            ..
+> m $2edb2 2
+0002EDB2: 00 2f                                            ./
+> m $2edb4 2
+0002EDB4: 00 1a                                            ..
+> m $2edb2 2
+0002EDB2: 00 2f                                            ./
+> m $2edb4 2
+0002EDB4: 00 1a                                            ..
+> m $2edb2 2
+0002EDB2: 00 2f                                            ./
+> m $2edb4 2
+0002EDB4: 00 1a                                            ..
+4. CPU breakpoint condition(s) matched 71 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %10101000111101 (bin), #10813 (dec), $2a3d (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 2f 00 1a                                      ./..
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 72 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %10101000111110 (bin), #10814 (dec), $2a3e (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 2f 00 1a                                      ./..
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 73 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %10101000111110 (bin), #10814 (dec), $2a3e (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 2f 00 1a                                      ./..
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 74 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %10101000111110 (bin), #10814 (dec), $2a3e (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 2f 00 1a                                      ./..
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 75 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %10101000111110 (bin), #10814 (dec), $2a3e (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 2f 00 1a                                      ./..
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 76 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %10101001000111 (bin), #10823 (dec), $2a47 (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 2f 00 1a                                      ./..
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 77 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %10101001001000 (bin), #10824 (dec), $2a48 (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 2f 00 1a                                      ./..
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 78 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %10101001001000 (bin), #10824 (dec), $2a48 (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 2f 00 1a                                      ./..
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 79 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %10101001001000 (bin), #10824 (dec), $2a48 (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 2f 00 1a                                      ./..
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 80 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %10101001001000 (bin), #10824 (dec), $2a48 (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 2f 00 1a                                      ./..
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+WARN : PNG screen dump saved to: /tmp/pmww1fhd/dbg/w_n1/shots/grab0004.png
+> m $74c0 2
+000074C0: 00 00                                            ..
+> savebin /tmp/pmww1fhd/dbg/w_n1/ram.bin $7640 $c0
+  Wrote 0xc0 bytes.
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+> m $2ed92 2
+0002ED92: 02 3c                                            .<
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+> m $2ed92 2
+0002ED92: 02 45                                            .E
+> m $2edb2 2
+0002EDB2: 00 00                                            ..
+> m $2edb4 2
+0002EDB4: 00 00                                            ..
+> m $2edb2 2
+0002EDB2: 00 19                                            ..
+> m $2edb4 2
+0002EDB4: 00 32                                            .2
+> m $2edb2 2
+0002EDB2: 00 19                                            ..
+> m $2edb4 2
+0002EDB4: 00 32                                            .2
+> m $2edb2 2
+0002EDB2: 00 19                                            ..
+> m $2edb4 2
+0002EDB4: 00 32                                            .2
+4. CPU breakpoint condition(s) matched 81 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %10110011110111 (bin), #11511 (dec), $2cf7 (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 19 00 32                                      ...2
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 82 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %10110011111000 (bin), #11512 (dec), $2cf8 (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 19 00 32                                      ...2
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 83 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %10110011111000 (bin), #11512 (dec), $2cf8 (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 19 00 32                                      ...2
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 84 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %10110011111000 (bin), #11512 (dec), $2cf8 (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 19 00 32                                      ...2
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 85 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %10110011111000 (bin), #11512 (dec), $2cf8 (hex)
+> m $1d2af 1
+0001D2AF: 04                                               .
+> m $2edb2 4
+0002EDB2: 00 19 00 32                                      ...2
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 86 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %10110100000001 (bin), #11521 (dec), $2d01 (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 19 00 32                                      ...2
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 87 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %10110100000010 (bin), #11522 (dec), $2d02 (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 19 00 32                                      ...2
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 88 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %10110100000010 (bin), #11522 (dec), $2d02 (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 19 00 32                                      ...2
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 89 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %10110100000010 (bin), #11522 (dec), $2d02 (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 19 00 32                                      ...2
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+4. CPU breakpoint condition(s) matched 90 times.
+	pc = $ef4 && ( $1d2af ) . b > 0 :trace :file /tmp/pmww1fhd/dbg/w_n1/tr_btn.txt
+Reading debugger commands from '/tmp/pmww1fhd/dbg/w_n1/tr_btn.txt'...
+Changed to input file dir '/tmp/pmww1fhd/dbg/w_n1'.
+> e VBL
+= %10110100000010 (bin), #11522 (dec), $2d02 (hex)
+> m $1d2af 1
+0001D2AF: 08                                               .
+> m $2edb2 4
+0002EDB2: 00 19 00 32                                      ...2
+> m $74c0 2
+000074C0: 00 00                                            ..
+Changed back to '/tmp/pmww1fhd' dir.
+Debugger re-init.
+WARN : PNG screen dump saved to: /tmp/pmww1fhd/dbg/w_n1/shots/grab0005.png
+> m $74c0 2
+000074C0: 00 00                                            ..
+> savebin /tmp/pmww1fhd/dbg/w_n1/ram.bin $7640 $c0
+  Wrote 0xc0 bytes.
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+> m $2ed92 2
+0002ED92: 02 76                                            .v
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+> m $2ed92 2
+0002ED92: 02 7e                                            .~
+WARN : PNG screen dump saved to: /tmp/pmww1fhd/dbg/w_n1/shots/grab0006.png
+> m $74c0 2
+000074C0: 00 00                                            ..
+> savebin /tmp/pmww1fhd/dbg/w_n1/ram.bin $7640 $c0
+  Wrote 0xc0 bytes.
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+> m $2ed92 2
+0002ED92: 02 b0                                            ..
+> m $2ed90 2
+0002ED90: 00 00                                            ..
+> m $2ed92 2
+0002ED92: 02 b9                                            ..
