@@ -1,0 +1,20 @@
+  [   28s vbl 1504] name prompt
+  [   35s vbl 1857] option screen (typing attempt 1)
+  [   70s vbl 3625] no disk requester
+  [   73s vbl 3765] chart expected
+  [   97s vbl 4951] island clicked
+  [  103s vbl 5246] 3D map view, world counter ticking
+GATE interp interp8 8 MHz men are moving (get_men scene) PASS 20 records change position within 0.4 s
+  PD before 00000000000000000000005b00000000000000110000004e0000000000000000 after 00000000000000000000005b00000000000000110000004e0000000000000000
+GATE interp interp8 8 MHz counters PASS NMOV 0, passes drawn with offsets +0, scans +0
+GATE interp interp8 8 MHz passes captured PASS 116 complete passes in 40 s
+GATE interp interp8 8 MHz people table restored after the render in every pass without a world step (T1 == T0, clock not advanced) PASS 72 of 72 (passes with a world step: 44)
+  passes where the world clock ITER advanced between T0 and T1: 44 of 116; table changed: 44; both: 44; byte columns that changed: ['0x0', '0x1', '0x2', '0x3', '0x8', '0x9', '0xa', '0xb', '0xc', '0xd', '0xe', '0x11', '0x13', '0x14', '0x15', '0x16', '0x17', '0x1e', '0x1f', '0x29']
+GATE interp interp8 8 MHz every pass whose people table changed during the call is a pass in which the world clock advanced (the world step runs inside it) PASS 44 of 44 changed passes advanced the clock; clock advanced in 44 passes
+GATE interp interp8 8 MHz every pass in which the clock advanced changed the table PASS 44 of 44
+  T0 != T1: 20 record(s) differ: #1 bytes ['0xc', '0xd', '0x11', '0x14', '0x15', '0x16', '0x17', '0x1e', '0x1f'], #2 bytes ['0xc', '0xd', '0x11', '0x14', '0x15', '0x16', '0x17', '0x1e', '0x1f'], #3 bytes ['0x9', '0x13'], #4 bytes ['0x9', '0x13'], #5 bytes ['0x9', '0x13'], #6 bytes ['0x9', '0x13']; T0 == TMID: True
+  T0 != T1: 20 record(s) differ: #1 bytes ['0x9', '0xb', '0x13'], #2 bytes ['0x9', '0xb', '0x13'], #3 bytes ['0x9', '0x13'], #4 bytes ['0x9', '0x13'], #5 bytes ['0x9', '0x13'], #6 bytes ['0x9', '0x13']; T0 == TMID: True
+  T0 != T1: 20 record(s) differ: #1 bytes ['0x3', '0x9', '0xb', '0x13'], #2 bytes ['0x0', '0x1', '0x8', '0x9', '0xb', '0x13'], #3 bytes ['0xb', '0x13'], #4 bytes ['0xb', '0x13'], #5 bytes ['0xb', '0x13'], #6 bytes ['0xb', '0x13']; T0 == TMID: True
+  T0 != T1: 20 record(s) differ: #1 bytes ['0x9', '0xb', '0x13', '0x1f'], #2 bytes ['0x9', '0xb', '0x13', '0x1f'], #3 bytes ['0xb', '0x13'], #4 bytes ['0xb', '0x13'], #5 bytes ['0xb', '0x13'], #6 bytes ['0xb', '0x13']; T0 == TMID: True
+GATE interp interp8 8 MHz no offsets at 8 MHz (no render-only pass) PASS 0 passes with offsets
+CELL DONE interp interp8 8 MHz: OK

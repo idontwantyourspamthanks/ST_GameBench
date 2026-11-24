@@ -45,7 +45,7 @@ def collect(h, secs):
     for tag, pc in BPS:
         f = h.R / f"ip_{tag}.bin"
         f.unlink(missing_ok=True)
-        (h.R / f"ip_{tag}.txt").write_text(f"savebin {f} ${PEOPLE:x} ${PN * PS:x}\ne (${D + 6:x}).w\n")
+        (h.R / f"ip_{tag}.txt").write_text(f"savebin {h.R / f'it_{tag}.bin'} ${pmww.ITER:x} 4\nsavebin {f} ${PEOPLE:x} ${PN * PS:x}\ne (${D + 6:x}).w\n")
         files[tag] = f
     got, stop = [], threading.Event()
 
@@ -62,7 +62,11 @@ def collect(h, secs):
                     st2 = f.stat()
                     if st2.st_mtime_ns == st.st_mtime_ns:
                         last[tag] = st.st_mtime_ns
-                        got.append((st.st_mtime_ns, tag, f.read_bytes()))
+                        try:
+                            it = int.from_bytes((h.R / f"it_{tag}.bin").read_bytes(), "big")
+                        except OSError:
+                            it = -1
+                        got.append((st.st_mtime_ns, tag, f.read_bytes(), it))
             time.sleep(0.005)
     th = threading.Thread(target=poll, daemon=True)
     th.start()
@@ -116,18 +120,29 @@ def main():
              f"NMOV {nmov}, passes drawn with offsets +{npass}, scans +{nscan}")
         # group into passes: t0, mid, t1
         passes, cur = [], {}
-        for ts, tg, b in got:
+        for ts, tg, b, it in got:
             if tg == "t0":
-                cur = {"t0": b}
+                cur = {"t0": b, "it0": it}
             elif tg == "mid" and "t0" in cur:
                 cur["mid"] = b
             elif tg == "t1" and "t0" in cur:
                 cur["t1"] = b
+                cur["it1"] = it
                 passes.append(cur)
                 cur = {}
         line("passes captured", len(passes) >= 10, f"{len(passes)} complete passes in {a.secs:.0f} s")
-        restored = sum(1 for p in passes if p["t0"] == p["t1"])
-        line("people table restored after the render in every pass (T1 == T0)", restored == len(passes), f"{restored} of {len(passes)}")
+        # A pass in which the world clock advanced between T0 and T1 contains the game's world step (men move): the table changes there in the UNPATCHED game too
+        # (8 MHz control build without p3b_*: the same 45 passes, the same byte columns; s4d_interp_gate8b_control.txt), so T1 == T0 is required in the passes without a world step.
+        still = [p for p in passes if p["it1"] == p["it0"]]
+        restored = sum(1 for p in still if p["t0"] == p["t1"])
+        line("people table restored after the render in every pass without a world step (T1 == T0, clock not advanced)", restored == len(still), f"{restored} of {len(still)} (passes with a world step: {len(passes) - len(still)})")
+        chg = [p for p in passes if p["t0"] != p["t1"]]
+        adv = [p for p in passes if p["it1"] != p["it0"]]
+        cols = sorted({j for p in chg for i in range(PN) for j in range(PS) if p["t0"][i * PS + j] != p["t1"][i * PS + j]})
+        both = sum(1 for p in chg if p["it1"] != p["it0"])
+        print(f"  passes where the world clock ITER advanced between T0 and T1: {len(adv)} of {len(passes)}; table changed: {len(chg)}; both: {both}; byte columns that changed: {[hex(j) for j in cols]}", flush=True)
+        line("every pass whose people table changed during the call is a pass in which the world clock advanced (the world step runs inside it)", all(p["it1"] != p["it0"] for p in chg), f"{both} of {len(chg)} changed passes advanced the clock; clock advanced in {len(adv)} passes")
+        line("every pass in which the clock advanced changed the table", all(p["t0"] != p["t1"] for p in adv), f"{sum(1 for p in adv if p['t0'] != p['t1'])} of {len(adv)}")
         shown = 0
         for p in passes:
             if p["t0"] != p["t1"] and shown < 4:

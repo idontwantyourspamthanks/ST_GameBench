@@ -1,0 +1,19 @@
+  [   28s vbl 1497] name prompt
+  [   35s vbl 1851] option screen (typing attempt 1)
+  [   70s vbl 3617] no disk requester
+  [   73s vbl 3757] chart expected
+  [   97s vbl 4939] island clicked
+  [  103s vbl 5234] 3D map view, world counter ticking
+GATE interp interp16 16 MHz men are moving (get_men scene) PASS 20 records change position within 0.4 s
+  PD before 0000000e000e00000000016c000000000000009c000000d20008000000000000 after 00000014001400000000027200000000000000fa0000017a0008000000000000
+GATE interp interp16 16 MHz counters PASS NMOV 20, passes drawn with offsets +262, scans +168
+GATE interp interp16 16 MHz passes captured PASS 250 complete passes in 40 s
+GATE interp interp16 16 MHz people table restored after the render in every pass without a world step (T1 == T0, clock not advanced) PASS 250 of 250 (passes with a world step: 0)
+  passes where the world clock ITER advanced between T0 and T1: 0 of 250; table changed: 0; both: 0; byte columns that changed: []
+GATE interp interp16 16 MHz every pass whose people table changed during the call is a pass in which the world clock advanced (the world step runs inside it) PASS 0 of 0 changed passes advanced the clock; clock advanced in 0 passes
+GATE interp interp16 16 MHz every pass in which the clock advanced changed the table PASS 0 of 0
+GATE interp interp16 16 MHz passes with offsets applied (T0 != TMID) PASS 250 of 250
+GATE interp interp16 16 MHz offsets touch only the low bytes of x / z ($9, $b of a record) PASS 0 records with other bytes changed
+  mover record 2: x low byte at T0 / drawn: [(109, 96), (109, 83), (90, 71), (90, 61), (71, 47), (52, 35), (52, 23), (33, 10), (14, 0), (14, 0), (251, 230), (232, 218), (232, 206), (213, 194), (194, 181), (194, 169), (175, 157), (175, 146), (156, 133), (137, 121), (137, 108), (118, 96), (99, 84), (99, 72)]
+GATE interp interp16 16 MHz a mover is drawn at several distinct positions within the run PASS 111 distinct drawn x low bytes
+CELL DONE interp interp16 16 MHz: OK

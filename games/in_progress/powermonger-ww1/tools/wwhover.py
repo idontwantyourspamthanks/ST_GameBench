@@ -87,7 +87,33 @@ def main():
         line("the sprite hook ran for houses (candidates found)", len(cand) > 0, f"{len(cand)} houses")
         if not cand:
             return 2
-        # ---- 2. rest the pointer on the houses until one hovers
+        # ---- 2. rest the pointer on the houses until one hovers.  Houses of a town WITH a workshop (a house of kind $7 in the settlement's chain) come first; if no drawn town has one,
+        #         the kind byte of the first candidate is set to 7 (a test setup, printed) so that the 'workshop' branches (idle / making / Build here: planes ...) run on a real workshop.
+        def chain_has_ws(hp):
+            sro = int.from_bytes(h.ram(hp + 0xE, 2), "big")
+            a_ = int.from_bytes(h.ram(SETT + sro + 2, 2), "big")
+            hb_ = h.ram(HOUSE_LO, HOUSE_HI - HOUSE_LO)
+            n = 0
+            while a_ and n < 300:
+                if hb_[a_ + 7] == 7:
+                    return True
+                a_ = int.from_bytes(hb_[a_ + 8:a_ + 10], "big")
+                n += 1
+            return False
+        usable = [p for p in cand if 0 < h.ram(p, 0x18)[5] < 0x80]
+        ws = [p for p in usable if chain_has_ws(p)]
+        print(f"  houses drawn {len(usable)}; of towns with a workshop: {len(ws)}", flush=True)
+        if not ws and usable:
+            hb_ = h.ram(HOUSE_LO, HOUSE_HI - HOUSE_LO)
+            sro = int.from_bytes(h.ram(usable[0] + 0xE, 2), "big")
+            a_ = int.from_bytes(h.ram(SETT + sro + 2, 2), "big")
+            h.debug(f"w ${HOUSE_LO + a_ + 7:x} $07", 0.3)                         # the first house of the chain becomes a workshop
+            print(f"  TEST SETUP: no drawn town has a workshop: kind byte of house ${HOUSE_LO + a_:x} (chain head of settlement ${SETT + sro:x}) set to 7 (was {hb_[a_ + 7]})", flush=True)
+            ws = [usable[0]] if chain_has_ws(usable[0]) else []
+        line("the hovered town has a workshop (house kind 7 in the chain)", bool(ws), f"{len(ws)} town(s)")
+        if not ws:
+            return 2
+        cand = {p: cand[p] for p in ws}
         res = None
         for p, (x, y) in cand.items():
             rec = h.ram(p, 0x18)

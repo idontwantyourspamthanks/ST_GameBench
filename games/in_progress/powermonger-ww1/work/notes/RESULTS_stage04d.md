@@ -70,3 +70,36 @@ FLIPS fal_nottptr falcon: at 70 flip returns the pointer record [$1d2ba] lies in
 ```
 The Falcon's video follows the base register live (as the TT): with tt_ptr 69 of 69, without 0 of 70. The screenshot gate (`wwptr.py` spots) is NOT decisive on the WW1 Falcon: `PTR fal_ttptr falcon: visible in 29 of 60 screenshots (LIVE $ff)` vs control `39 of 60` (`s4d_fal_ptr*.txt`): the area compare is disturbed by the map's animation / rain, so I do not use it for the Falcon verdict (failure recorded plainly; TT gate needed ST low, 4b).
 README: `## Machines` section added (Falcon works with and without DMA; HD on Falcon untestable in Hatari).
+
+## 3. qol_hover / qol_hover2: extended item-path gate (`wwhover.py`, STE 1 MB, `s4d_hover_gate.txt`)
+`wwhover.py` now prefers a drawn town whose settlement chain has a workshop house (kind byte 7). **No drawn town had one** (`houses drawn 1; of towns with a workshop: 0`), so the gate sets the kind byte of the settlement's chain head to 7 and prints it (`TEST SETUP: ... house $542fa ... set to 7 (was 11)`): the workshop is a test setup, not a natural one. [obs]
+```
+GATE hover hover_ws the hovered town has a workshop (house kind 7 in the chain) PASS 1 town(s)
+GATE hover hover_ws a house under the resting pointer is picked (HIT) PASS HIT $542fa, RES 1, ARM 0, house $542fa at pointer (205,81)
+GATE hover hover_ws text equals the settlement record (no item: workshop idle / none) PASS 'workshop idle', item word 0
+GATE hover hover_ws BUF == reference rendering of SB (wwtt composer) PASS 0 of 624 bytes differ
+GATE hover hover_ws pointer away: the hover text is gone from both buffers PASS HIT $0
+GATE hover hover_ws item 0x6 in the making: the text follows the record PASS got 'Ranatey: making rifles (50%)', want making rifles ([50] %), record item 0x6 countdown 7 (T 14)
+GATE hover hover_ws item 0x6: BUF == reference rendering of the text PASS 0 of 624 bytes differ
+GATE hover hover_ws item 0xe in the making: the text follows the record PASS got 'Ranatey: making planes (24%)', want making planes ([24] %), record item 0xe countdown 779 (T 1038)
+GATE hover hover_ws item 0xe: BUF == reference rendering of the text PASS 0 of 624 bytes differ
+GATE hover hover_ws Build icon selected: the hover says what Build would make here PASS got 'Build here: planes (2 swords)' want 'Build here: planes (2 swords)' (posture word 3, workshop True)
+CELL DONE hover hover_ws: OK
+```
+`making <item> (NN%)` is pixel-exact (0 of 624 bytes) for two item kinds (rifles, planes). The default-set regressions of section 2 (ST / STE / Mega STE, keys, tooltips) ran with qol_hover(2) loaded and passed.
+
+## 4. p3b_interp / p3b_delta at 8 MHz: the T1 != T0 difference is the game's world step (legitimate), not a restore bug
+The gate now saves the world clock (`$2ed90`, +1 per world step) with each people-table snapshot (`it_*.bin`, written just before the table). 8 MHz, patched (`s4d_interp_gate8b.txt`) and the control without any p3b_* (`s4d_interp_gate8b_control.txt`), same scene:
+```
+patched : passes where the world clock ITER advanced between T0 and T1: 45 of 115; table changed: 45; both: 45; byte columns that changed: ['0x0','0x1','0x2','0x3','0x8','0x9','0xa','0xb','0xc','0xd','0xe','0x11','0x13','0x14','0x15','0x16','0x17','0x1e','0x1f','0x29']
+control : passes where the world clock ITER advanced between T0 and T1: 45 of 116; table changed: 45; both: 45; byte columns that changed: [the same 20 columns]
+```
+The table changes in exactly the passes that contain the world step (45 of 45 both ways), with the same columns in the UNPATCHED game; at 8 MHz T0 == TMID (no offset applied). At 16 MHz no pass contains a world step (0 of 250) and 250 of 250 are restored. Gate corrected: T1 == T0 is required in the passes where the clock did not advance, plus the two cross checks. Final runs (`s4d_interp_gate8c.txt`, `s4d_interp_gate16c.txt`):
+```
+GATE interp interp8 8 MHz people table restored after the render in every pass without a world step (T1 == T0, clock not advanced) PASS 72 of 72 (passes with a world step: 44)
+GATE interp interp8 8 MHz every pass whose people table changed during the call is a pass in which the world clock advanced ... PASS 44 of 44 ...
+GATE interp interp8 8 MHz every pass in which the clock advanced changed the table PASS 44 of 44        CELL DONE interp interp8 8 MHz: OK
+GATE interp interp16 16 MHz people table restored ... PASS 250 of 250 (passes with a world step: 0)         CELL DONE interp interp16 16 MHz: OK
+GATE interp interp16 16 MHz passes with offsets applied (T0 != TMID) PASS 250 of 250   (from 16b: offsets touch only the low bytes of x / z PASS 0 records with other bytes changed; 118 distinct drawn x low bytes)
+```
+Default-set regressions (section 2, with p3b_* loaded) passed on ST / STE / Mega STE.
