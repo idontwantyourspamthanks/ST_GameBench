@@ -10,8 +10,9 @@ disk.
 What is new in v1.3: faster drawing on 8 MHz STE (viewport-culled walker
 interpolation, empty-row sprite trimming, pre-shifted 8x11 small-sprite
 cache), F5 (or Alt+D) 3D detail toggle (High / Medium / Low with top-bar
-flash), and buffered fast typing in the name / save boxes so no keys are
-dropped.
+flash), buffered fast typing in the name / save boxes so no keys are
+dropped, and a clickable golden VICTORY button replacing the balance
+scales when in a full winning position.
 
 What was new in v1.2: on a Mega STE the loader sets the CPU to 16 MHz with
 the cache on (speed register $FF8E21 = 3) at start, before the game runs,

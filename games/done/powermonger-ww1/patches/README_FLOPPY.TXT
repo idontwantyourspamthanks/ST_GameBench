@@ -63,6 +63,9 @@ What is different
   cache that grows without a limit; the cache now stops below the patch code, and a
   picture that does not fit is read from the disk again the next time. (Without this
   the picture after Options -> Game -> Retire could land on the patch code.)
+- Victory button: when you reach a full winning position, the balance gauge above the
+  compass is replaced by a golden VICTORY button; clicking it retires straight to the
+  victory screen.
 - Keyboard / mouse: a position that the mouse packet parser would take from outside
   the screen is ignored (it could crash the game after a lost byte), the blitter copy
   is done in short pieces so that the keyboard chip is not starved, and typing in the

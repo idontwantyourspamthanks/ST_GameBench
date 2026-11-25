@@ -101,6 +101,8 @@ EXTRA_RANGES = {                          # a patch NAME (not prefix) that may a
     "qol_detail_rain": [(0xDC300, 0xDCFFF)],
     "qol_type": [(0xDCB00, 0xDCFFF)],
     "qol_type2": [(0xDCB00, 0xDCFFF)],
+    "qol_victory": [(0xDCC00, 0xDCFFF)],
+    "qol_victory2": [(0xDCC00, 0xDCFFF)],
 }
 
 

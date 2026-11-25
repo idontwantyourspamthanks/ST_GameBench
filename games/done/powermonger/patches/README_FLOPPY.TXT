@@ -59,6 +59,9 @@ What is different
   machine: its delays were busy loops, 10 times too short on a TT. Its
   palette writes that ran past the palette (blank screen on a TT) are
   fixed.
+- Victory button (new in v1.3): when you reach a full winning position,
+  the balance scales above the compass are replaced by a golden VICTORY
+  button; clicking it retires straight to the victory screen.
 - Keyboard / mouse: a mouse packet that lost a byte (the blitter held
   the bus too long for the keyboard chip) could send the pointer to a
   garbage address and crash the game; the blitter copy is now done in
