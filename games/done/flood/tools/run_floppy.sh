@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Launch Flood v1.0 auto-booting 720 KB floppy image in Hatari.
+# Launch Flood v1.1 auto-booting 720 KB floppy image in Hatari.
 # Usage: ./run_floppy.sh <ste|megaste|tt|falcon> [extra hatari args...]
 set -euo pipefail
 
@@ -7,14 +7,14 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 FLOOD_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 BENCH_DIR="$(cd "$FLOOD_DIR/../../.." && pwd)"
 TOS_DIR="$BENCH_DIR/tos"
-ZIP="$FLOOD_DIR/dist/Flood_floppy_v1.0.zip"
+ZIP="$FLOOD_DIR/dist/Flood_floppy_v1.1.zip"
 HATARI="${HATARI:-/home/ryan/Code/AtariST/hattari/build/src/hatari}"
 if [[ ! -x "$HATARI" ]]; then
     HATARI="$(command -v hatari)"
 fi
 
 if [[ ! -f "$ZIP" ]]; then
-    echo "Missing $ZIP — run: python3 $SCRIPT_DIR/package_flood.py --version v1.0" >&2
+    echo "Missing $ZIP — run: python3 $SCRIPT_DIR/package_flood.py --version v1.1" >&2
     exit 1
 fi
 

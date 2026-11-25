@@ -59,7 +59,7 @@ VOLUME = "GAMES"
 # folder on C: -> game; versions/requirements for README.TXT are taken from the builds where possible (see readme_text)
 FOLDERS = ("MIDWINTR", "MW1ORIG", "MIDWINT2", "MW2ORIG", "MOONSHR", "HUNTER", "HUNTORIG", "NEBULUS", "NEBORIG", "POWERMON", "PMWW1",
            "POPULOUS", "POPORIG", "POPS2", "POP2ORIG", "FLOOD", "OVERLAND", "AUTO")
-FLOOD_VERSION = "1.0"                                   # the shipped release zip games/done/flood/dist/Flood_hd_v<this>.zip
+FLOOD_VERSION = "1.1"                                   # the shipped release zip games/done/flood/dist/Flood_hd_v<this>.zip
 OVERLANDER_VERSION = "1.0"                              # games/*/overlander/dist/Overlander_hd_v<this>.zip
 PMWW1_VERSION = "1.0"                                   # games/*/powermonger-ww1/dist/PowermongerWW1_v<this>_patched_hd_<date>.zip (newest)
 

@@ -276,6 +276,10 @@ def build(out_dir: Path, disable_blitter: bool = False):
         (144, 0x143E4 + patch_size),         # ptr_backbuf (BSS, RAM $2695a)
         (148, 0x0141C),                      # ptr_water_cpu (RAM $13992)
         (152, 0x143E0 + patch_size),         # ptr_frontbuf (BSS, RAM $26956)
+        (156, 0x144F2 + patch_size),         # ptr_joy_byte (BSS, RAM $26a68)
+        (160, 0x002CE),                      # ptr_orig_kbd_key (RAM $12844)
+        (168, 0x0C248),                      # ptr_surf_bits (DATA, RAM $1e7be)
+        (172, 0x07C1C),                      # ptr_water_depth (TEXT, RAM $1a192)
     ]
     for slot_off, target in ptrs:
         struct.pack_into(">I", pt_body, slot_off, target)
@@ -350,6 +354,19 @@ def build(out_dir: Path, disable_blitter: bool = False):
     # Phase 3e: Clean Exit -> stop STE DMA (text+$0668: jsr $1b598 -> jsr patch_exit_hook)
     remove_relocs_in(0x0668, 0x066E)
     patch_bytes(0x0668, struct.pack(">HI", 0x4EB9, patch_base + 40), reloc_offsets=(2,))
+
+    # Phase 4: Zero-lag IKBD Joystick Event Reporting ($14) + overrun-safe ISR
+    #   - text+$0058: move.b #$15,$fc02.w -> move.b #$14,$fc02.w (Joy Event mode)
+    #   - text+$005e: move.l #$127f0,$118.w -> move.l #patch_ikbd_isr,$118.w
+    #   - text+$0498: skip per-frame $16 joystick interrogate poll (14 bytes -> bra.s +12 + 6x NOP)
+    patch_bytes(0x005B, bytes([0x14]))
+    remove_relocs_in(0x0060, 0x0064)
+    patch_bytes(0x0060, struct.pack(">I", patch_base + 164), reloc_offsets=(0,))
+    patch_bytes(0x0498, bytes([0x60, 0x0C]) + b"\x4e\x71" * 6)
+
+    # Phase 4b: Walk-animation staircase anti-aliasing fix (text+$ae4e = RAM $1d3c4)
+    remove_relocs_in(0xAE4E, 0xAE54)
+    patch_bytes(0xAE4E, struct.pack(">HI", 0x4EB9, patch_base + 176), reloc_offsets=(2,))
 
     # Build final TOS .PRG
     hdr = struct.pack(">HIIIIHII", 0x601A, tlen, new_dlen, new_blen, 0, 0, 0, 0)[:28]

@@ -134,6 +134,12 @@ ptr_scroll_y:      dc.l 0               ; +140
 ptr_backbuf:       dc.l 0               ; +144
 ptr_water_cpu:     dc.l 0               ; +148
 ptr_frontbuf:      dc.l 0               ; +152
+ptr_joy_byte:      dc.l 0               ; +156 (BSS $26a68 = Joy 1 state)
+ptr_orig_kbd_key:  dc.l 0               ; +160 (text+$02ce = RAM $012844)
+        bra.w   patch_ikbd_isr          ; +164 (replaces IKBD vector $127f0)
+ptr_surf_bits:     dc.l 0               ; +168 (DATA $1e7be = surface contact bits)
+ptr_water_depth:   dc.l 0               ; +172 (TEXT $1a192 = sub_01a192)
+        bra.w   patch_anim_step         ; +176 (replaces add.w $1e674.l,d5 at text+$ae4e)
 
 ; ============================================================================
 ; 1. patch_init — switch to ST Low (fixes TT Medium / ST Med), call orig init,
@@ -532,7 +538,7 @@ patch_draw_tiles:
         andi.w  #$f, d0                 ; d0 = fine_x (0..15)
         bne.s   .blit_shifted
 
-        ; fine_x == 0: 16 chunks x 12 lines, all 4 planes together
+        ; fine_x == 0: 32 chunks x 6 lines, all 4 planes together (max ~0.48ms HOG burst for IKBD safety)
         move.w  #2, BLT_SRC_XINC(a4)
         move.w  #10, BLT_SRC_YINC(a4)   ; 168 - 79*2 = 10
         move.w  #2, BLT_DST_XINC(a4)
@@ -541,15 +547,15 @@ patch_draw_tiles:
         clr.b   BLT_SKEW(a4)
         move.l  bg_cache_ptr(pc), BLT_SRC_ADDR(a4)
         move.l  bg_cur_a5(pc), BLT_DST_ADDR(a4)
-        moveq   #15, d3
+        moveq   #31, d3
 .copy_unshifted:
-        move.w  #12, BLT_YCOUNT(a4)
+        move.w  #6, BLT_YCOUNT(a4)
         move.b  d7, BLT_LINE_NUM(a4)
         dbra    d3, .copy_unshifted
         bra.s   .tiles_done
 
 .blit_shifted:
-        ; fine_x = 1..15: 4 bitplane passes x 4 chunks x 48 lines (FXSR=1, SKEW = $80 | (16-fine_x))
+        ; fine_x = 1..15: 4 bitplane passes x 12 chunks x 16 lines (max ~0.33ms HOG burst -> zero ACIA overruns!)
         moveq   #16, d1
         sub.w   d0, d1
         ori.b   #$80, d1                ; FXSR | (16 - fine_x)
@@ -566,9 +572,9 @@ patch_draw_tiles:
 .plane_lp:
         move.l  a0, BLT_SRC_ADDR(a4)
         move.l  a1, BLT_DST_ADDR(a4)
-        moveq   #3, d3                  ; 4 chunks x 48 lines = 192 lines
+        moveq   #11, d3                 ; 12 chunks x 16 lines = 192 lines
 .chunk_lp:
-        move.w  #48, BLT_YCOUNT(a4)
+        move.w  #16, BLT_YCOUNT(a4)
         move.b  d7, BLT_LINE_NUM(a4)
         dbra    d3, .chunk_lp
         addq.l  #2, a0
@@ -1143,7 +1149,7 @@ patch_title_hook:
         move.l  ptr_orig_title(pc), a0
         jmp     (a0)
 
-; --- Draw small "enhanced by dad_prg v1.0" at top-left (x=4, y=4) of Title Screen ($26956) ---
+; --- Draw small "enhanced by dad_prg v1.1" at top-left (x=4, y=4) of Title Screen ($26956) ---
 ; Uses compact 5x5 pixel bitmap font with 1px black drop-shadow (color 0) + color 15 text.
 draw_credit_banner:
         movem.l d0-d7/a0-a4, -(a7)
@@ -1247,7 +1253,7 @@ draw_credit_banner:
         or.w    d3, (a4)
         rts
 
-credit_str:     dc.b    "enhanced by dad_prg v1.0",0
+credit_str:     dc.b    "enhanced by dad_prg v1.1",0
 credit_chars:   dc.b    "enhacdbypgrv1.0_",0
         even
 ; 5x5 bitmap glyphs (MSB = leftmost pixel, bits 7..3)
@@ -1312,7 +1318,11 @@ patch_sfx_hook:
 
 ; --- Hook: Clean exit (replaces jsr $1b598) ---
 patch_exit_hook:
-        ; Re-enable IKBD relative mouse reporting ($08) for TOS Desktop
+        ; Disable IKBD joystick reporting ($1a) and re-enable relative mouse ($08) for TOS Desktop
+.ikbd_wait_j:
+        btst.b  #1, $fffffc00.w
+        beq.s   .ikbd_wait_j
+        move.b  #$1a, $fffffc02.w
 .ikbd_wait_e:
         btst.b  #1, $fffffc00.w
         beq.s   .ikbd_wait_e
@@ -1727,6 +1737,131 @@ mix_ch_add:
         rts
 
 ; ============================================================================
+; 8. Zero-Lag IKBD Event-Mode ISR (replaces $0127f0)
+;    Works with IKBD $14 (Joystick Event Reporting) so Joy 1 changes ($ff, byte)
+;    update $26a68 immediately (~2.5ms) with zero 1-frame ($16) polling lag.
+;    Drains ACIA in a loop, resyncs on OVRN, and drains MIDI ACIA if needed.
+; ============================================================================
+patch_ikbd_isr:
+        movem.l d0-d2/a0-a1, -(a7)
+        lea     $fffffc00.w, a1
+.ikbd_loop:
+        move.b  (a1), d2                ; ACIA status
+        btst    #0, d2                  ; RDRF (byte ready)?
+        beq.w   .ikbd_done
+        move.b  2(a1), d0               ; read ACIA data (also clears OVRN)
+        btst    #5, d2                  ; OVRN?
+        beq.s   .no_ovrn
+        clr.b   ikbd_state              ; resync packet state on overrun
+.no_ovrn:
+        move.b  ikbd_state(pc), d1
+        beq.s   .state_idle
+        cmp.b   #1, d1
+        beq.s   .state_joy1
+        cmp.b   #2, d1
+        beq.s   .state_skip1
+        cmp.b   #3, d1
+        beq.s   .state_fd_joy0
+        subq.b  #1, d1
+        cmp.b   #3, d1
+        bgt.s   .save_st
+        moveq   #0, d1
+.save_st:
+        move.b  d1, ikbd_state
+        bra.s   .ikbd_loop
+
+.state_joy1:
+        move.l  ptr_joy_byte(pc), a0
+        move.b  d0, (a0)                ; live Joy 1 state -> $26a68
+        clr.b   ikbd_state
+        bra.s   .ikbd_loop
+
+.state_skip1:
+        clr.b   ikbd_state              ; discard Joy 0 byte
+        bra.s   .ikbd_loop
+
+.state_fd_joy0:
+        move.b  #1, ikbd_state          ; $fd reply: discard Joy 0, next byte is Joy 1
+        bra.s   .ikbd_loop
+
+.state_idle:
+        cmp.b   #$f6, d0
+        blo.s   .is_key
+        cmp.b   #$ff, d0
+        beq.s   .hdr_ff                 ; Joy 1 event (1 byte)
+        cmp.b   #$fe, d0
+        beq.s   .hdr_fe                 ; Joy 0 event (1 byte)
+        cmp.b   #$fd, d0
+        beq.s   .hdr_fd                 ; Joy interrogate reply (joy0, joy1)
+        cmp.b   #$fc, d0
+        beq.s   .hdr_fc                 ; Clock (6 bytes)
+        cmp.b   #$f7, d0
+        beq.s   .hdr_f7                 ; Abs mouse (5 bytes)
+        cmp.b   #$f6, d0
+        beq.s   .hdr_f6                 ; Status (7 bytes)
+        move.b  #5, ikbd_state          ; $f8..$fb rel mouse (2 bytes)
+        bra.w   .ikbd_loop
+.hdr_ff:
+        move.b  #1, ikbd_state
+        bra.w   .ikbd_loop
+.hdr_fe:
+        move.b  #2, ikbd_state
+        bra.w   .ikbd_loop
+.hdr_fd:
+        move.b  #3, ikbd_state
+        bra.w   .ikbd_loop
+.hdr_fc:
+        move.b  #9, ikbd_state
+        bra.w   .ikbd_loop
+.hdr_f7:
+        move.b  #8, ikbd_state
+        bra.w   .ikbd_loop
+.hdr_f6:
+        move.b  #10, ikbd_state
+        bra.w   .ikbd_loop
+
+.is_key:
+        move.l  ptr_orig_kbd_key(pc), a0
+        jsr     (a0)                    ; Flood's keyboard scancode handler ($012844)
+        bra.w   .ikbd_loop
+
+.ikbd_done:
+        btst    #0, $fffffc04.w         ; drain MIDI ACIA if RDRF set (shared MFP GPIP4)
+        beq.s   .no_midi
+        tst.b   $fffffc06.w
+.no_midi:
+        bclr.b  #6, $fffffa11.w         ; clear MFP ISRB bit 6
+        movem.l (a7)+, d0-d2/a0-a1
+        rte
+
+; ============================================================================
+; 9. Staircase Walk-Animation Anti-Aliasing Fix (replaces text+$ae4e = $01d3c4)
+;    In original Flood, anim_frame ($1e7ae) keeps ticking modulo 4 every 2 frames
+;    (8-frame period) even while falling in dry mid-air when Quiffy's sprite is
+;    frozen. Walking down 1-tile-drop, 2-tile-wide stairs also has an exact 8-frame
+;    period (6 frames falling + 2 frames on step), aliasing anim_frame back to the
+;    same value on every step so Quiffy slides down frozen in one frame!
+;    Fix: pause anim_frame while in dry mid-air (surf.b == 0 && water_depth == 0).
+; ============================================================================
+patch_anim_step:
+        move.l  ptr_surf_bits(pc), a0
+        tst.b   1(a0)                   ; ($1e7be).b != 0 (touching surface)?
+        bne.s   .do_anim_step
+        move.l  d0, -(a7)
+        move.l  ptr_water_depth(pc), a0
+        jsr     (a0)                    ; sub_01a192(d1=px, d2=py) -> d0
+        tst.l   d0
+        beq.s   .dry_air
+        move.l  (a7)+, d0
+.do_anim_step:
+        move.l  ptr_water_tog(pc), a0
+        add.w   (a0), d5
+        rts
+.dry_air:
+        move.l  (a7)+, d0
+        rts
+
+; ============================================================================
 ; Patch Data & State
 ; ============================================================================
         even
@@ -1747,6 +1882,7 @@ bg_last_d6:     dc.w    0
 orig_rez:       dc.w    0
 dma_wr_slot:    dc.w    0
 bg_valid:       dc.b    0
+ikbd_state:     dc.b    0
         even
 bg_map_copy:    dcb.b   280, 0
 vch_table:      dcb.b   4*VCH_SIZE, 0

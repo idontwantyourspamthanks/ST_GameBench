@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Package Flood STE Enhanced v1.0 into:
-  - dist/Flood_hd_v1.0.zip      (Hard-drive folder: FLO.PRG + AM_MUS.BIN + AM_SFX.BIN + game data)
-  - dist/Flood_floppy_v1.0.zip  (Auto-booting 720 KB Atari ST/STE floppy image Flood_v1.0.st)
+Package Flood STE Enhanced v1.1 into:
+  - dist/Flood_hd_v1.1.zip      (Hard-drive folder: FLO.PRG + AM_MUS.BIN + AM_SFX.BIN + game data)
+  - dist/Flood_floppy_v1.1.zip  (Auto-booting 720 KB Atari ST/STE floppy image Flood_v1.1.st)
 """
 import argparse
 import os
@@ -42,6 +42,11 @@ What's new in {version}:
   * Automatic fallback to ST YM audio on plain ST (with Falcon YM-mirror fix).
 - Restored Amiga 12-bit STE palettes for tilesets B and C (ST originally
   duplicated tileset A's palette across all three slots).
+- Zero-lag IKBD Joystick Event Reporting ($14) with overrun-safe ISR and
+  shorter Blitter HOG chunks (eliminates 1-frame polling lag when exiting
+  water / wrapping ledges, matching Amiga responsiveness).
+- Fixed staircase walk-animation aliasing (pauses walk-cycle counter during
+  dry mid-air drops so Quiffy animates cleanly on every step).
 
 How to run:
 - Hard drive: copy the FLOOD folder anywhere on your hard drive and run FLO.PRG.
@@ -49,7 +54,7 @@ How to run:
 """
 
 
-def package(version: str = "v1.0"):
+def package(version: str = "v1.1"):
     # Ensure fresh build
     subprocess.run(["python3", str(ROOT / "tools" / "build_flood.py")], check=True)
     DIST.mkdir(parents=True, exist_ok=True)
@@ -95,6 +100,6 @@ def package(version: str = "v1.0"):
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("--version", default="v1.0")
+    ap.add_argument("--version", default="v1.1")
     args = ap.parse_args()
     package(args.version)

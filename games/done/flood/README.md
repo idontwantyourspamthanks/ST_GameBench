@@ -1,7 +1,7 @@
-# Flood — Atari STE Enhanced (v1.0)
+# Flood — Atari STE Enhanced (v1.1)
 
 **Original game:** Bullfrog Productions / Electronic Arts (1990)  
-**Status:** v1.0 built, verified across ST / STE / Mega STE / TT / Falcon + auto-booting 720 KB floppy.
+**Status:** v1.1 built, verified across ST / STE / Mega STE / TT / Falcon + auto-booting 720 KB floppy.
 
 ## What's Implemented
 
@@ -18,18 +18,20 @@
    - **Title / High-Score / Ending:** Full Amiga music (`TRACK.DA` + `INSTR.DA` → `AM_MUS.BIN`, 129,920 B).
    - **Gameplay:** Full Amiga 4-channel stereo SFX (`FLDFX.DU` + `FLDFX.IN` → `AM_SFX.BIN`, 99,460 B) with SFX ID bounds guard (`1..61`), replacing ST Timer A YM2149 digi-SFX (cutting audio CPU cost from 12.7% → 8.0%).
    - Automatic runtime STE DMA probe (`$ffff8901.w`) with clean fallback to ST YM audio on plain ST — plus Falcon-safe YM mirror fix (`$01acd4`, **0 `crit`** in `tools/hwscan.py`).
-4. **Polish & Compatibility Fixes:**
+4. **Controls & Polish Fixes:**
+   - **Zero-lag IKBD Joystick Event Reporting (`$14`):** Replaced ST Flood's 1-frame-lagged `$15/$16` joystick interrogation with live `$14` event reporting and an overrun-safe, ACIA-draining IKBD ISR (`patch_ikbd_isr`), plus shorter Blitter HOG chunks (≤ 0.48 ms) — fixes sluggish water-exit / ledge-wrapping controls to match Amiga responsiveness.
+   - **Staircase Walk-Animation Anti-Aliasing (`$01d3c4`):** Pauses Quiffy's 8-frame walk-cycle counter (`$1e7ae`) during dry mid-air drops so walking down 8-frame-period stairs advances the walk animation on every step instead of freezing in one pose.
    - Restored Amiga 12-bit STE palettes for tilesets **B** (`pal 1`) and **C** (`pal 2`) — ST originally duplicated tileset A's palette across all 3 slots.
-   - Disables IKBD mouse reporting (`$12`) on startup and re-enables (`$08`) on exit so mouse movement cannot inject spurious joystick/keyboard packets into Flood's IKBD handler.
+   - Disables IKBD mouse reporting (`$12`) on startup and restores (`$1a` + `$08`) on exit so mouse movement cannot inject spurious joystick/keyboard packets.
    - Switches TT / Medium-res video modes cleanly to ST Low (`Setscreen(-1,-1,0)`) and restores on exit.
-   - Added subtle `"enhanced by dad_prg v1.0"` banner at top-left of the title/password screen.
+   - Added subtle `"enhanced by dad_prg v1.1"` banner at top-left of the title/password screen.
 
 ## Verification Results
 
 | Machine | Media | FPS (Live Lv1) | Audio | Status |
 |---|---|---:|---|---|
-| **1 MB 8 MHz STE** (TOS 1.62) | HD (`FLO.PRG`) | **24.6–25.0 fps** (up from 17.5) | 12.5 kHz Stereo Amiga DMA (Title WAV RMS L=2739/R=1932, SFX WAV RMS L=741/R=767) | Pass |
-| **1 MB 8 MHz STE** (TOS 1.62) | **720 KB Floppy** (`Flood_v1.0.st`) | **Auto-boots** from `\AUTO\FLO.PRG` | 12.5 kHz Stereo Amiga DMA | Pass |
+| **1 MB 8 MHz STE** (TOS 1.62) | HD (`FLO.PRG`) | **25.0 fps** (up from 17.5) | 12.5 kHz Stereo Amiga DMA (Title WAV RMS L=2739/R=1932, SFX WAV RMS L=741/R=767) | Pass |
+| **1 MB 8 MHz STE** (TOS 1.62) | **720 KB Floppy** (`Flood_v1.1.st`) | **Auto-boots** from `\AUTO\FLO.PRG` | 12.5 kHz Stereo Amiga DMA | Pass |
 | **1 MB 8 MHz ST** (TOS 1.04) | HD (`FLO.PRG`) | **25.0 fps** (CPU fallback) | ST YM fallback, 0 errors | Pass |
 | **2 MB 16 MHz Mega STE** (TOS 2.06) | HD (`FLO.PRG`) | **Paced (no 2.5× speedup)** | 12.5 kHz Stereo Amiga DMA, 0 errors | Pass |
 | **4 MB 32 MHz TT** (TOS 3.06) | HD (`FLO.PRG`) | **25.0 fps** (down from 50.0) | 12.5 kHz Stereo Amiga DMA, 0 errors | Pass |
@@ -39,12 +41,12 @@
 
 ```bash
 python3 games/done/flood/tools/build_flood.py
-python3 games/done/flood/tools/package_flood.py --version v1.0
+python3 games/done/flood/tools/package_flood.py --version v1.1
 ```
 
 Outputs (gitignored):
-- `dist/Flood_hd_v1.0.zip` (491 KB) — ready-to-run HD `FLOOD/` folder
-- `dist/Flood_floppy_v1.0.zip` (485 KB) — auto-booting 720 KB Atari ST/STE floppy image (`Flood_v1.0.st`)
+- `dist/Flood_hd_v1.1.zip` (492 KB) — ready-to-run HD `FLOOD/` folder
+- `dist/Flood_floppy_v1.1.zip` (486 KB) — auto-booting 720 KB Atari ST/STE floppy image (`Flood_v1.1.st`)
 
 ## Files
 
