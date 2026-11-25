@@ -8,9 +8,12 @@ Changes against PP's release:
   The original ran one turn per drawn frame: about 3 to 9 turns a second on an 8 MHz STE depending on how busy the map was,
   twice that at 16 MHz and up to 40 on a Falcon. The pointer and scrolling stay smooth while the world waits; a click acts on
   the next turn (at most 0.2 s later). Paused, painting land and two-player link games run as before.
-- Faster, same picture: the land score the game recomputes around every building each turn, its multiply routine, the pointer
-  (only redrawn when something changed) and the background copy were rewritten with identical results. A busy map on an 8 MHz
-  STE went from about 3.2 to 5.3 frames a second, enough for the full 5 turns a second.
+- Faster, same picture: the terrain/object tile blit, cliff blit, 16px sprite blit, land score, multiply routine, pointer
+  (only redrawn when something changed) and background copy were rewritten with identical results. STE, Mega STE, TT and Falcon
+  also play SFX through STE DMA sound instead of the Timer-A YM interrupt (plain ST keeps YM). A busy map on an 8 MHz STE went
+  from about 3.2 to 5.6 frames a second (and 5.4 during earthquakes/volcanoes), holding the full 5 turns a second.
+- Low Detail toggle: press F5 during map play to toggle between High and Low detail (with a brief top-strip flash); Low skips
+  decorative trees/rocks and cliff-face blocks and freezes water animation.
 - Keyboard shortcuts (during map play only; typing names or using dialogs never triggers them). A key does exactly what
   clicking its icon does:
     R raise/lower land   Q query   P place papal magnet

@@ -15,9 +15,9 @@ KD      equ     $bd000
 KT      equ     $bc200
 WIN     equ     150
         org     $2008c
-        jsr     $bc300.l
+        jsr     $b6900.l
 
-        org     $bc300
+        org     $b6900
 kh:     move.b  d0,$37eec.l             ; the displaced store
         tst.b   d0
         beq.s   .r                      ; a release
@@ -27,7 +27,14 @@ kh:     move.b  d0,$37eec.l             ; the displaced store
         sub.l   KD.l,d1
         cmp.l   #WIN,d1
         bhi.s   .r                      ; the map loop is not running
-        lea     KT.l,a0
+        cmp.b   #$3f,d0                 ; F5: toggle detail level (High / Low)
+        bne.s   .n_f5
+        eor.w   #1,$bd6c0.l
+        move.l  $16d2a.l,d1
+        addq.l  #1,d1
+        move.l  d1,$bd6c2.l             ; 2 s top-strip flash stamp + 1
+        rts
+.n_f5:  lea     KT.l,a0
 .f:     move.b  (a0)+,d1
         beq.s   .r                      ; not a shortcut key
         cmp.b   d1,d0

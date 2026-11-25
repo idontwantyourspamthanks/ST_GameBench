@@ -22,7 +22,23 @@ BLOB    equ     PB+$5800
 tt:     movem.l d0-d7/a0-a6,-(a7)
         cmpi.w  #8,$39766.l
         bne.w   .out
-        move.w  $393fa.l,d6
+        ; F7 detail banner (2 s = 100 VBLs)?
+        move.l  (PB+$18e2).l,d0
+        beq.s   .nodet
+        move.l  $392d8.l,d1
+        sub.l   d0,d1
+        addq.l  #1,d1
+        cmp.l   #100,d1
+        bhi.s   .nodet
+        lea     sdet_hi(pc),a2
+        tst.w   (PB+$18e0).l
+        beq.s   .dsho
+        lea     sdet_lo(pc),a2
+.dsho:  lea     sdet_k(pc),a3
+        moveq   #0,d4
+        moveq   #0,d5
+        bra.w   .show
+.nodet: move.w  $393fa.l,d6
         move.w  $393fc.l,d7
         suba.l  a3,a3                   ; a3 = key string (0 = none), d4 / d5 = digit characters patched into it (0 = none)
         moveq   #0,d4
@@ -283,6 +299,9 @@ e53:    dc.b    "HELEN OF TROY",0
 e54:    dc.b    "TIDAL WAVE",0
 kcat:   dc.b    "KEY: F0",0
 keff:   dc.b    "KEY: F0 THEN 0",0
+sdet_hi: dc.b   "DETAIL: HIGH",0
+sdet_lo: dc.b   "DETAIL: LOW",0
+sdet_k: dc.b    "KEY: F7",0
         even
 L1:     ds.b    18
 L2:     ds.b    16

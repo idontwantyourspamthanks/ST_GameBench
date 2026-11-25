@@ -18,7 +18,15 @@ oDOTS   equ     $100
         org     PB+$2400
         tst.w   D+oSKIP.l
         bne.s   .out
-        move.l  a1,-(a7)
+        tst.w   (PB+$18e0).l            ; Low Detail mode?
+        beq.s   .hi
+        move.w  $3979c.l,-(a7)          ; throttle minimap dots to 1 in 4 turns (no reg clobber)
+        andi.w  #3,(a7)
+        beq.s   .hi2
+        addq.l  #2,a7
+        rts
+.hi2:   addq.l  #2,a7
+.hi:    move.l  a1,-(a7)
         movea.l D+oWPTR.l,a1
         cmpa.l  #D+oDOTS+6*900,a1
         bhs.s   .full

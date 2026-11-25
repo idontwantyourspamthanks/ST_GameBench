@@ -1,6 +1,6 @@
 ; name: pop2_credit
 ; default: yes
-; version: 1.0
+; version: 1.1
 ; site: $15338
 ; orig: 4eb900001b9a
 ; doc: the main menu carries a small "v1.0 enhanced by dad_prg" line in the lower part of the slate panel

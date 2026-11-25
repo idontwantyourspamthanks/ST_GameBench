@@ -1,6 +1,6 @@
 ; name: pop_credit
 ; default: yes
-; version: 1.0
+; version: 1.1
 ; prog: demo
 ; site: $b42a
 ; orig: 33fc00020004c576

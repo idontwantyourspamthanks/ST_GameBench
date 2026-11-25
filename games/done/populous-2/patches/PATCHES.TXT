@@ -21,8 +21,11 @@ Changes vs the original HAGA release:
   given between turns are queued and run in order, one per turn, as on a stock 8 MHz STE.
 - Runs at 60 Hz: the game refused 60 Hz machines ("SORRY PAL MACHINES ONLY") and, past that, wiped memory when the
   pointer reached the bottom of the screen. Both fixed; at 60 Hz it draws exactly the same frames as at 50 Hz.
-- Faster, same picture: sprites are drawn with the STE blitter (a pre-shifted cache on a plain ST), and the pointer is
-  only redrawn when something changed.
+- Faster, same picture: sprites are drawn with the STE blitter with empty-row trimming (a pre-shifted cache on a plain ST),
+  the pointer is only redrawn when something changed, the 32 KB background copy is unrolled, the land-score stagger divide is
+  replaced by a shift, and 2 MB+ machines use triple buffering (3rd buffer at $90000) plus STE DMA sound for SFX (plain ST keeps YM).
+- Low Detail toggle: press F7 during map play to toggle High / Low detail (with a brief sky-strip flash; F1-F6 remain effect
+  categories); Low throttles minimap per-peep dot plotting to 1 in 4 turns.
 - Tooltips: pointing at an icon shows its name and its key (the game's own F1-F6, 1-5 and keypad keys) in the sky at
   the top of the screen.
 - Falcon: the sample player no longer risks a bus error on the Falcon's sound chip.

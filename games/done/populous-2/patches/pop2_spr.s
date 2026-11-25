@@ -54,6 +54,36 @@ spr:    move.l  BLT.l,d1
         beq.w   .cpu                    ; 0 rows (the original runs 65,536 of them): the original
         cmpi.w  #64,d2
         bhi.w   .cpu                    ; absurd row counts: the original
+        ; trim empty top/bottom rows (mask0 == $ffff && mask1 == $ffff) before running 8 blitter passes
+        move.w  d2,-(a7)                ; save original row count for final a0/a1 advance
+        move.l  a0,-(a7)
+        move.l  a1,-(a7)
+        moveq   #-1,d5
+.ttop:  cmp.w   (a1),d5
+        bne.s   .tbot
+        cmp.w   10(a1),d5
+        bne.s   .tbot
+        lea     20(a1),a1
+        lea     160(a0),a0
+        subq.w  #1,d2
+        bne.s   .ttop
+        ; completely empty sprite!
+        movea.l (a7)+,a1
+        movea.l (a7)+,a0
+        move.w  (a7)+,d2
+        bra.w   .fin
+.tbot:  move.w  d2,d3
+        mulu.w  #20,d3
+        move.l  a2,-(a7)
+        lea     (a1,d3.w),a2
+.tblp:  cmp.w   -20(a2),d5
+        bne.s   .tbdn
+        cmp.w   -10(a2),d5
+        bne.s   .tbdn
+        lea     -20(a2),a2
+        subq.w  #1,d2
+        bne.s   .tblp
+.tbdn:  movea.l (a7)+,a2
         move.w  #10,$ffff8a20.w         ; source X inc
         move.w  #10,$ffff8a22.w         ; source Y inc
         move.w  #8,$ffff8a2e.w          ; dest X inc
@@ -94,7 +124,10 @@ spr:    move.l  BLT.l,d1
         addq.l  #2,d3
         addq.l  #2,d4
         dbra    d7,.o
-        move.w  d2,d3                   ; the original's final registers
+        movea.l (a7)+,a1
+        movea.l (a7)+,a0
+        move.w  (a7)+,d2
+.fin:   move.w  d2,d3                   ; the original's final registers
         lsl.w   #5,d3
         adda.w  d3,a0                   ; rows*32
         lsl.w   #2,d3

@@ -62,7 +62,19 @@ tt:     jsr     $0d4c0.l                ; the displaced call
         bhi.s   .hover
         moveq   #ID_ARM,d7
         bra.s   .have
-.hover: move.w  $24786.l,d0
+.hover: move.l  $bd6c2.l,d0             ; F5 detail banner (stamp + 1, 2 s = 100 VBLs)
+        beq.s   .h2
+        move.l  $16d2a.l,d1
+        sub.l   d0,d1
+        addq.l  #1,d1
+        cmp.l   #100,d1
+        bhi.s   .h2
+        moveq   #26,d7                  ; DETAIL: HIGH
+        tst.w   $bd6c0.l
+        beq.s   .have
+        moveq   #27,d7                  ; DETAIL: LOW
+        bra.s   .have
+.h2:    move.w  $24786.l,d0
         move.w  $24788.l,d1
         cmp.w   tCX(a3),d0
         bne.s   .calc
@@ -329,6 +341,7 @@ RT:     dc.b    19,0,0,22,23            ; i0: options (scales), music, effects
 ; `words` checks it).
 TTB:    dc.w    s1-TTB,s2-TTB,s3-TTB,s4-TTB,s5-TTB,s6-TTB,s7-TTB,s8-TTB,s9-TTB,s10-TTB,s11-TTB,s12-TTB,s13-TTB
         dc.w    s14-TTB,s15-TTB,s16-TTB,s17-TTB,s18-TTB,s19-TTB,s20-TTB,s21-TTB,s22-TTB,s23-TTB,s24-TTB,s25-TTB
+        dc.w    s26-TTB,s27-TTB
 s1:     dc.b    "Flood",1,"F",0,"COST 40K",0
 s2:     dc.b    "Armageddon",1,"AA",0,0
 s3:     dc.b    "Volcano",1,"V",0,"COST 10K",0
@@ -354,3 +367,5 @@ s22:    dc.b    "Music",1,"U",0,"ON / OFF",0
 s23:    dc.b    "Effects",1,"X",0,"ON / OFF",0
 s24:    dc.b    "Pause",1,"Space",0,0
 s25:    dc.b    "ARMAGEDDON?",0,"A AGAIN",0
+s26:    dc.b    "Detail: High",0,"F5 TOGGLE",0
+s27:    dc.b    "Detail: Low",0,"F5 TOGGLE",0
