@@ -39,7 +39,7 @@ ROOT = Path(__file__).resolve().parent.parent          # gamebench/
 class _Games:
     """`GAMES / "midwinter"` finds a game in whichever stage folder it lives (in_progress, done, queue)."""
     def __truediv__(self, name: str) -> Path:
-        for stage in ("in_progress", "done", "queue"):
+        for stage in ("done", "in_progress", "queue"):
             p = ROOT / "games" / stage / name
             if p.is_dir():
                 return p

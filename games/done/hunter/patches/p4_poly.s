@@ -48,8 +48,8 @@ p4_poly:
         lea     (a4,d0.w),a3            ; edge record
         move.w  a3,(a1)+                ; ring entries are record addresses (< $8000)
         move.w  a3,(a2)+
-        movem.w 4(a3),d0/d4             ; y0, dy
-        tst.w   d4
+        move.w  4(a3),d0                ; y0
+        move.w  6(a3),d4                ; dy (sets N flag)
         bmi     .fb
         add.w   d0,d4                   ; y bottom
         cmp.w   d4,d3
@@ -112,15 +112,21 @@ p4_poly:
         move.w  d1,P4_EMIT.l
         clr.w   P4_SKIP.l
         move.w  d2,d4
-.t1:    mulu.w  #160,d4
-        add.l   $144(a5),d4
-        move.l  d4,P4_SCR.l
+.t1:    moveq   #0,d0
+        move.w  d4,d0
+        lsl.w   #5,d0                   ; y * 32
+        move.w  d0,d4
+        add.w   d0,d0                   ; y * 64
+        add.w   d0,d0                   ; y * 128
+        add.w   d4,d0                   ; y * 160 (upper word of d0 is 0)
+        add.l   $144(a5),d0
+        move.l  d0,P4_SCR.l
         sf.b    $1618(a5)
 ; ---- C: early rejection (exact, see p4_raster.md) --------------------------------------------------------------------
         lea     P4_RING.l,a1
         movea.w (a1),a2
         move.w  2(a2),d0
-        blt     .xleft
+        blt.s   .xleft
         cmp.w   #320,d0
         blt     .scan
         move.w  P4_N.l,d7
@@ -128,9 +134,9 @@ p4_poly:
 .xr:    movea.w (a1)+,a2
         move.w  2(a2),d0
         cmp.w   #320,d0
-        blt     .scan
+        blt.s   .scan
         cmp.w   #8191,d0
-        bgt     .scan
+        bgt.s   .scan
         ext.l   d0
         lsl.l   #5,d0                   ; A = x0*32
         move.w  6(a2),d1
@@ -144,18 +150,18 @@ p4_poly:
         bmi.s   .rn
         add.l   d0,d2                   ; hi = A + S   (lo = A >= 10240)
         cmp.l   #$fffff,d2
-        bgt     .scan
+        bgt.s   .scan
         bra.s   .rx
 .rn:    add.l   d0,d2                   ; lo = A + S   (hi = A <= 262112)
         cmp.l   #10240,d2
-        blt     .scan
+        blt.s   .scan
 .rx:    dbra    d7,.xr
         rts                             ; every row is empty: nothing to draw ($1618 = sf as the original leaves it)
 .xleft: move.w  P4_N.l,d7
         subq.w  #1,d7
 .xl:    movea.w (a1)+,a2
         move.w  2(a2),d0
-        bge     .scan
+        bge.s   .scan
         ext.l   d0
         lsl.l   #5,d0                   ; A < 0
         move.w  6(a2),d1
@@ -168,7 +174,7 @@ p4_poly:
 .l2:    tst.l   d2
         bmi.s   .l3
         add.l   d2,d0                   ; hi = A + S
-        bge     .scan
+        bge.s   .scan
 .l3:    dbra    d7,.xl
         rts
 ; ---- D: edge walk ---------------------------------------------------------------------------------------------------------
@@ -177,20 +183,7 @@ p4_poly:
         move.w  P4_SKIP.l,d0
         beq.s   .emit
         move.w  d0,P4_ROWS.l
-.sb:    bsr     .ensure
-        move.w  d3,d2
-        cmp.w   d4,d2
-        ble.s   .s1
-        move.w  d4,d2
-.s1:    move.w  P4_ROWS.l,d0
-        cmp.w   d0,d2
-        ble.s   .s2
-        move.w  d0,d2
-.s2:    sub.w   d2,d3
-        sub.w   d2,d4
-        sub.w   d2,d0
-        move.w  d0,P4_ROWS.l
-        subq.w  #1,d2
+.sb:    bsr     .blk
 .sr:    add.l   a0,d6
         add.l   d5,d7
         dbra    d2,.sr
@@ -198,20 +191,7 @@ p4_poly:
         bne.s   .sb
 .emit:  move.w  P4_EMIT.l,P4_ROWS.l
         lea     P4_SPAN.l,a1
-.eb:    bsr     .ensure
-        move.w  d3,d2
-        cmp.w   d4,d2
-        ble.s   .e1
-        move.w  d4,d2
-.e1:    move.w  P4_ROWS.l,d0
-        cmp.w   d0,d2
-        ble.s   .e2
-        move.w  d0,d2
-.e2:    sub.w   d2,d3
-        sub.w   d2,d4
-        sub.w   d2,d0
-        move.w  d0,P4_ROWS.l
-        subq.w  #1,d2
+.eb:    bsr     .blk
 .er:    move.l  d6,d0
         move.l  d7,d1
         cmp.l   d0,d1
@@ -222,12 +202,16 @@ p4_poly:
         cmp.w   #319,d1
         ble.s   .o2
         move.w  #319,d1
-.o2:    asr.l   #5,d0
-        bpl.s   .o3
+        asr.l   #5,d0
+        bpl.s   .o3c
         moveq   #0,d0
-.o3:    cmp.w   d0,d1
+.o3c:   cmp.w   d0,d1
         bge.s   .o4
 .em:    moveq   #-1,d1
+        bra.s   .o4
+.o2:    asr.l   #5,d0
+        bpl.s   .o4
+        moveq   #0,d0
 .o4:    move.w  d0,(a1)+
         move.w  d1,(a1)+
         add.l   a0,d6
@@ -235,51 +219,29 @@ p4_poly:
         dbra    d2,.er
         tst.w   P4_ROWS.l
         bne.s   .eb
-; ---- E: spans -------------------------------------------------------------------------------------------------------------
-        move.w  P4_EMIT.l,d7
-        subq.w  #1,d7
-        movea.l P4_SCR.l,a1
-        lea     P4_SPAN.l,a4
-        lea     P4_LTAB.l,a2
-        move.w  $76ee.l,d0
-        lea     $76ee.l,a3
-        adda.w  d0,a3                   ; the fill routine the original `bsr.w $7af0` would call
-        moveq   #15,d6
-.p2:    move.w  (a4)+,d4                ; xl
-        move.w  (a4)+,d5                ; xr
-        bmi.s   .nx2
-        move.w  d4,d0
-        and.w   d6,d0
-        add.w   d0,d0
-        add.w   d0,d0
-        move.l  (a2,d0.w),d0            ; left mask (both words)
-        move.w  d5,d3
-        and.w   d6,d3
-        add.w   d3,d3
-        add.w   d3,d3
-        move.l  64(a2,d3.w),d3          ; right-side mask A
-        move.l  d0,d2
-        not.l   d2
-        move.l  d3,d1
-        not.l   d1
-        lsr.w   #4,d4
-        lsr.w   #4,d5
-        sub.w   d4,d5                   ; groups - 1
-        lsl.w   #3,d4
-        lea     (a1,d4.w),a0
-        jsr     (a3)
-.nx2:   adda.w  #160,a1
-        dbra    d7,.p2
-        rts
-; ---- edge loading -------------------------------------------------------------------------------------------------------------
-.ensure:
-        tst.w   d3
+; ---- E: spans (handled by opt_span at $8dc20) -----------------------------------------------------------------------------
+        jmp     $8dc20.l
+; ---- edge loading (16.16 fixed point = 27.5 << 11, bit-identical to original) -----------------------------------------------
+.blk:   tst.w   d3
         bgt.s   .n1
         bsr.s   .loadl
 .n1:    tst.w   d4
         bgt.s   .n2
         bsr.s   .loadr
-.n2:    rts
+.n2:    move.w  d3,d2
+        cmp.w   d4,d2
+        ble.s   .b1
+        move.w  d4,d2
+.b1:    move.w  P4_ROWS.l,d0
+        cmp.w   d0,d2
+        ble.s   .b2
+        move.w  d0,d2
+.b2:    sub.w   d2,d3
+        sub.w   d2,d4
+        sub.w   d2,d0
+        move.w  d0,P4_ROWS.l
+        subq.w  #1,d2
+        rts
 .loadl: movea.w -(a3),a2
         move.l  (a2),d6
         lsl.l   #5,d6
@@ -305,8 +267,10 @@ p4_poly:
         bgt.s   .rc
         moveq   #1,d4
 .rc:    rts
-; ---- fallback: the original code ---------------------------------------------------------------------------------------------
-.fb:    movea.l P4_A0.l,a0
+.fb:    move.w  $8dffe.l,d0             ; restore $76ee.l from OPT_COL (skipped by opt_col)
+        lea     $7a3c.l,a0
+        move.w  (a0,d0.w),$76ee.l
+        movea.l P4_A0.l,a0
         move.w  P4_N.l,d0
         move.w  d0,d6
         add.w   d6,d6

@@ -17,11 +17,16 @@ WHAT YOU GET ON YOUR MACHINE (v@VERSION@; 1 MB RAM is the minimum, 2 MB or more 
   ** by the same RAM and sky test as the STE; not run on a plain ST in the test setup.
 
 What changed against the original release:
-- Faster 3D view on a stock 8 MHz ST/STE, pixel-identical to the original:
-  * the polygon filler was rewritten (rows outside the screen are skipped, edges are walked in blocks),
+- Faster 3D view on a stock 8 MHz ST/STE, pixel-identical to the original (expanded in v1.4):
+  * the polygon filler was rewritten (rows outside the screen are skipped, edges are walked in blocks, shift-add y*160),
+  * multi-group polygon spans are offloaded to the STE Blitter on 68000+Blitter machines (4-plane halftone HOG pass per
+    scanline, <=46 us bursts so Timer B sky bands stay jitter-free), with an unrolled 68000 Duff's-device fallback on
+    plain ST, TT and Falcon (24 cycles/16 px vs 50 in the original),
+  * 3D vertex rotation replaces slow 38-50 cycle `asr.l` shifts with bit-exact `swap`-accelerated shifts (12-18 cycles),
+  * stationary 3D mouse sprite redraws above the HUD are skipped,
   * the edge set-up avoids the slow divide when it is not needed,
   * the joystick poll in the 50 Hz interrupt no longer waits 350 microseconds each time.
-  Together this is about 6.5% (standing) to 13.7% (walking) fewer CPU cycles per frame.
+  Together this cuts 3D frame work by about 8% to 17% (+10% to +20% FPS on an 8 MHz STE; 4.80 -> 5.40 fps at HQ standing).
 - STE sound (STE, Mega STE, TT, Falcon; reworked in v1.3): the YM sound effects are replaced
   by the Amiga version's samples, played through the STE DMA sound chip (mono, 12517 Hz native
   on STE, Mega STE, TT and Falcon, two voices, with a 1-pole IIR low-pass smoothing filter

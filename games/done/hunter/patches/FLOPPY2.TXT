@@ -21,8 +21,10 @@ WHAT YOU GET ON YOUR MACHINE (v@VERSION@; 1 MB RAM is the minimum, 2 MB or more 
   Floppy: the plain-ST floppy never reads the sound disk/bank, so it keeps the ST dashboard at any RAM. Saving is the game's
   own disk save, as before.
 
-Release v@VERSION@: STE DMA sound reworked (12517 Hz native on STE/Mega STE/TT/Falcon, 1-pole IIR low-pass smoothing filter
-  matching the Amiga A500's analog filter, Amiga engine base periods, and Amiga effect durations).  Includes v1.2.1 YM port-direction hardening.
+Release v@VERSION@: STE Blitter 4-plane halftone polygon span filler (with unrolled CPU fallback on plain ST/TT/Falcon),
+  bit-exact swap-accelerated 3D vertex rotation, and stationary 3D mouse redraw skip (+10-20% FPS on an 8 MHz STE, pixel-identical).
+  Includes v1.3 reworked 12517 Hz STE DMA sound with 1-pole IIR low-pass filter, Amiga engine periods and effect durations, responsive
+  1:1 mouse pointer, and v1.2.1 YM port-direction hardening.
 
 When to use this set
   Use it only if your floppy drive or disk writer cannot handle the one-disk set (82 tracks x 11 sectors).

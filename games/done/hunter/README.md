@@ -1,6 +1,6 @@
 # Hunter (PP's "Gamex" hard-disk version, 2010)
 
-Status: **done** (HD and floppy releases, see `REPORT.md`); current release **v1.3** (reworked STE DMA sound: 12517 Hz native on STE/Mega STE/TT/Falcon, 1-pole IIR low-pass filter, Amiga engine base periods and effect durations). Activision, 1991: a 3D open-world island game (vehicles, boats, aircraft).
+Status: **done** (HD and floppy releases, see `REPORT.md`); current release **v1.4** (STE Blitter 4-plane halftone polygon span filler with unrolled CPU fallback on ST/TT/Falcon, bit-exact `swap`-accelerated 3D vertex rotation, and stationary 3D mouse redraw skip — +10–20% FPS on an 8 MHz STE, pixel-identical; includes v1.3 reworked 12517 Hz STE DMA sound with 1-pole IIR low-pass filter and responsive 1:1 mouse). Activision, 1991: a 3D open-world island game (vehicles, boats, aircraft).
 
 Build: `tools/package.sh` (zips into `dist/`, named `Hunter_v<VERSION>_patched_..._<date>.zip`); play: `tools/play.sh [--floppy] [--original] [--machine ste]`.
 

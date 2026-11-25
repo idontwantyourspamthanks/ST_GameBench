@@ -94,6 +94,7 @@ PREFIX_RANGES = {                        # blob orgs allowed per patch-name pref
     "sky2_": (0x8ECEA, 0x8EFFF),      # v1.2 sky/panel state: the hole between snd_core's code (ends $8ece9) and its state ($8f000)
     "fdc_": (0x8D360, 0x8D3FF),       # v1.2 floppy loader hook (fdc_dma): the spare gap between p4_poly's tables and hn_credit
     "ptr_": (0x8DA3A, 0x8DBEF),       # even mouse pointer (ptr_vbl, ptr_x, ptr_y): the spare gap after hn_hz (inside the hn_ window; hn_hz state is $8DBF0)
+    "opt_": (0x8C620, 0x8DFFF),       # v1.4 speedups (opt_span at $8DC00, opt_xform in p4_poly's spare tail $8C620..$8C72B)
 }
 
 
