@@ -61,12 +61,10 @@ What changed against the original release:
   original dithered sky (their video timing is not safe for the bands; the STE palette still applies there).
 - Triple buffering (new in v1.2, patches tb_*; 68000 machines with 1 MB or more): the game draws into a third screen page, so it no
   longer waits for the screen between frames: the 3D view is up to about 9% faster. On the TT and Falcon the original two pages are kept.
-- Even mouse pointer (new, patches ptr_*; every machine): the pointer moved by however many mouse reports had arrived since the last
-  screen refresh. An emulator that sends them 53 times per second against the 50 Hz refresh made the pointer stop for one refresh and
-  then jump double about every 0.3 s (at 60 Hz it stopped on about every third refresh), and the game halved only leftward and
-  upward movement, so left and up were slower than right and down. Now the pointer moves once per refresh by the mean of the last three
-  refreshes' motion, without losing or inventing any, and all four directions have the same speed (right and down are unchanged;
-  left and up are as fast as they are). The pointer follows the mouse one refresh later and stops two refreshes after it.
+- Responsive, even mouse pointer (patches ptr_thr, ptr_vbl, ptr_x, ptr_y; every machine): Hunter set the IKBD mouse
+  threshold to (3,3), holding back 1-2 count movements, and halved only leftward and upward movement. Now the IKBD
+  threshold is (1,1), each packet's X and Y are committed together 1:1 on the next refresh with zero multi-frame lag,
+  and all four directions have the same speed.
 - TT (new in v1.1): a TT booting from hard disk was taken for a Falcon by the sound code, which then used the Falcon's
   rate. It now plays at the STE rate, as on the floppy.
 - Save and Load work on the hard disk (new in v1.2). PP's build had them switched off: its file hook ignored the

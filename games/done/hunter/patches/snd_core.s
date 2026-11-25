@@ -555,7 +555,11 @@ snd_vstart:                             ; a3 = slot, d7 = channel, a1 = driver s
         rts
 ; ---------------------------------------------------------------------------------------------------------------
 snd_mix:                                ; d0 = groups of 8 outputs (>=1), d5 = voices, a2/a3 = voices, a4 = SV
+        move.w  sr,-(sp)                ; allow IKBD ACIA & Timer B (IPL 6) during the mixer to prevent 6850 OVRN
+        move.b  $fffffa15.w,-(sp)       ; save MFP IMRB (sky_vbl masks bit 6 = ACIA during VBL)
         move.w  d5,-(sp)
+        bset    #6,$fffffa15.w          ; unmask IKBD ACIA
+        move.w  #$2500,sr               ; IPL 5: ACIA & Timer B preempt cleanly; VBL (IPL 4) stays masked
         move.w  d0,v_n8(a4)
         move.w  v_wr(a4),d1
         move.w  #RL,d2
@@ -592,7 +596,10 @@ snd_mix:                                ; d0 = groups of 8 outputs (>=1), d5 = v
         add.w   v_wr(a4),d0
         andi.w  #RM,d0
         move.w  d0,v_wr(a4)
+        ori.w   #$0700,sr               ; restore IMRB and SR atomically
         move.w  (sp)+,d5
+        move.b  (sp)+,$fffffa15.w
+        move.w  (sp)+,sr
         rts
 mixz:   clr.w   v_filt(a4)
         moveq   #0,d0
@@ -610,13 +617,14 @@ mixz:   clr.w   v_filt(a4)
 .r:     rts
 ; ---- 1-voice and 2-voice mixers with 1-pole IIR low-pass filter y[n] = (x[n] + y[n-1]) >> 1
 ; At 12517 Hz every effect has inc < 1.0 (x_inci == 0), so d6 = 0 serves both voices in MIX2R and d7 holds y[n-1].
+; a5 ($806, game globals) and a6 ($ff8000, hardware base) are NEVER modified so sky_acia ($118) can preempt safely!
 MIX1T   macro
         move.b  (a0,d0.w),d4
         move.b  (a2,d4.w),d5
         ext.w   d5
         add.w   d5,d3
         asr.w   #1,d3
-        move.b  d3,(a6)+
+        move.b  d3,(a1)+
         add.w   a4,d1
         addx.w  d6,d0
         endm
@@ -625,7 +633,7 @@ MIX1D   macro
         ext.w   d4
         add.w   d4,d3
         asr.w   #1,d3
-        move.b  d3,(a6)+
+        move.b  d3,(a1)+
         add.w   a4,d1
         addx.w  d6,d0
         endm
@@ -639,10 +647,10 @@ MIX2TT  macro
         ext.w   d4
         add.w   d4,d7
         asr.w   #1,d7
-        move.b  d7,(a6)+
-        add.w   a4,d1
+        move.b  d7,(a4)+
+        add.w   6(sp),d1
         addx.w  d6,d0
-        add.w   a5,d3
+        add.w   8(sp),d3
         addx.w  d6,d2
         endm
 MIX2DT  macro
@@ -653,10 +661,10 @@ MIX2DT  macro
         ext.w   d4
         add.w   d4,d7
         asr.w   #1,d7
-        move.b  d7,(a6)+
-        add.w   a4,d1
+        move.b  d7,(a4)+
+        add.w   6(sp),d1
         addx.w  d6,d0
-        add.w   a5,d3
+        add.w   8(sp),d3
         addx.w  d6,d2
         endm
 MIX2DD  macro
@@ -666,14 +674,14 @@ MIX2DD  macro
         ext.w   d4
         add.w   d4,d7
         asr.w   #1,d7
-        move.b  d7,(a6)+
-        add.w   a4,d1
+        move.b  d7,(a4)+
+        add.w   6(sp),d1
         addx.w  d6,d0
-        add.w   a5,d3
+        add.w   8(sp),d3
         addx.w  d6,d2
         endm
 MIX1R   macro
-\1:     movem.l a2/a4-a6,-(sp)
+\1:     movem.l a2/a4,-(sp)
         movea.l x_base(a2),a0
         move.w  x_idx(a2),d0
         move.w  x_frac(a2),d1
@@ -682,22 +690,22 @@ MIX1R   macro
         move.w  SV+v_filt,d3
         movea.l x_vt(a2),a2
         moveq   #0,d4
-        lea     RING.l,a6
-        adda.w  SV+v_wr,a6
+        lea     RING.l,a1
+        adda.w  SV+v_wr,a1
         move.w  SV+v_run1,-(sp)
         beq.s   .s1
         bsr.s   .loop
 .s1:    addq.w  #2,sp
         move.w  SV+v_run2,-(sp)
         beq.s   .s2
-        lea     RING.l,a6
+        lea     RING.l,a1
         bsr.s   .loop
 .s2:    addq.w  #2,sp
         move.w  d3,SV+v_filt
         movea.l (sp),a2
         move.w  d0,x_idx(a2)
         move.w  d1,x_frac(a2)
-        movem.l (sp)+,a2/a4-a6
+        movem.l (sp)+,a2/a4
         rts
 .loop:  rept    8
         \2
@@ -707,32 +715,32 @@ MIX1R   macro
         rts
         endm
 MIX2R   macro
-\1:     movem.l a2-a6,-(sp)
+\1:     movem.l a2-a4,-(sp)
+        move.w  x_incf(a3),-(sp)        ; 8(sp) inside .loop
+        move.w  x_incf(a2),-(sp)        ; 6(sp) inside .loop
         movea.l x_base(a2),a0
         movea.l x_base(a3),a1
         move.w  x_idx(a2),d0
         move.w  x_frac(a2),d1
-        movea.w x_incf(a2),a4
         move.w  x_idx(a3),d2
         move.w  x_frac(a3),d3
-        movea.w x_incf(a3),a5
         moveq   #0,d6
         move.w  SV+v_filt,d7
         movea.l x_vt(a3),a3
         movea.l x_vt(a2),a2
         moveq   #0,d4
         moveq   #0,d5
-        lea     RING.l,a6
-        adda.w  SV+v_wr,a6
+        lea     RING.l,a4
+        adda.w  SV+v_wr,a4
         move.w  SV+v_run1,-(sp)
         beq.s   .s1
         bsr.s   .loop
 .s1:    addq.w  #2,sp
         move.w  SV+v_run2,-(sp)
         beq.s   .s2
-        lea     RING.l,a6
+        lea     RING.l,a4
         bsr.s   .loop
-.s2:    addq.w  #2,sp
+.s2:    addq.w  #6,sp                   ; pop run2, incf0, incf1
         move.w  d7,SV+v_filt
         movea.l (sp),a0
         move.w  d0,x_idx(a0)
@@ -740,7 +748,7 @@ MIX2R   macro
         movea.l 4(sp),a1
         move.w  d2,x_idx(a1)
         move.w  d3,x_frac(a1)
-        movem.l (sp)+,a2-a6
+        movem.l (sp)+,a2-a4
         rts
 .loop:  asl.w   4(sp)
 .l4:    rept    4
