@@ -97,9 +97,15 @@ common: cmpi.b  #1,BST.l
         add.w   d2,d3
         move.w  d3,$100c.l              ; the stock kernel's scratch word
         lea     (a5,d3.w),a3
-        move.w  (a2),d3                 ; 2P
-        mulu.w  d4,d3                   ; source bytes per row
-        move.l  a6,-(a7)
+        move.w  (a2),d3                 ; 2P (d4 is 1, 2, or 3: avoid mulu.w)
+        cmpi.w  #1,d4
+        beq.s   .rb1
+        move.w  d3,d0
+        add.w   d3,d3                   ; 4P
+        cmpi.w  #2,d4
+        beq.s   .rb1
+        add.w   d0,d3                   ; 6P
+.rb1:   move.l  a6,-(a7)
         cmpi.w  #3,d4
         bcc.s   .many
         bsr.w   grp                     ; 1 or 2 columns: one group
@@ -124,7 +130,7 @@ common: cmpi.b  #1,BST.l
         beq.w   .go
         bra.w   fb
 
-minr:   dc.b    0,16,10,16
+minr:   dc.b    0,12,8,12
 ; descriptors: 2P, dest byte offsets of the P data planes, P
 d7_:    dc.w    6,0,2,4,0,3
 d11_:   dc.w    6,0,2,6,0,3
@@ -137,7 +143,9 @@ grp:    move.w  d4,d5
         tst.w   d6
         beq.s   .g0
         addq.w  #1,d5                   ; n
-.g0:    lea     cht(pc),a0
+.g0:    cmpi.b  #8,$fffffa1b.w          ; Timer B stopped (past last sky band): single unguarded HOG pass (no chunking, no per-plane TB checks)
+        bne.w   grp_fast
+        lea     cht(pc),a0
         add.w   d5,d5
         move.w  (a0,d5.w),d1            ; max rows per blit pass
         lsr.w   #1,d5
@@ -244,6 +252,112 @@ chunk:  move.w  d7,d2                   ; rows of this chunk
         bra     chunk
 .done:  lea     6(a7),a7
         rts
+
+; grp_fast: Timer B is stopped (TBCR != 8) — draw all d7 rows in one unguarded HOG pass (no chunk loop, no per-plane TB checks).
+; Note: TMP at $B5880 holds 384 bytes (192 words: 192 rows for 1-col, 96 rows for 2-col); if d7*d4 > 192 words, fall back to chunked loop.
+grp_fast:
+        move.w  d7,d2
+        cmpi.w  #1,d4
+        beq.s   .fok
+        cmpi.w  #96,d2
+        bls.s   .fok
+        moveq   #96,d1
+        bra.w   .fchk
+.fok:   move.w  d4,d0
+        add.w   d0,d0
+        movea.w d0,a4                   ; plane step = 2 * cols
+        move.w  d3,d0
+        sub.w   a4,d0
+        addq.w  #2,d0                   ; src yinc = row bytes - 2 * (cols - 1)
+        move.l  #$00020000,d1
+        move.w  d0,d1
+        move.l  d1,BL+$20.w             ; src xinc = 2 : yinc
+        move.l  #$00020002,BL+$2e.w     ; dst xinc = yinc = 2
+        moveq   #-1,d0
+        move.l  d0,BL+$28.w             ; endmask 1, 2
+        move.w  d0,BL+$2c.w             ; endmask 3
+        move.w  d4,BL+$36.w             ; xcount = cols
+        move.w  #$0203,BL+$3a.w         ; HOP = source, LOP = S
+        clr.b   BL+$3d.w
+        move.w  10(a2),d0
+        subq.w  #1,d0                   ; P - 1
+        movea.l a1,a0
+        move.l  a0,BL+$24.w
+        move.l  #TMP,BL+$32.w
+        move.w  d2,BL+$38.w
+        move.b  #$c0,BL+$3c.w
+        move.b  #7,BL+$3b.w             ; LOP = S | D
+.fmb:   adda.l  a4,a0
+        move.l  a0,BL+$24.w
+        move.l  #TMP,BL+$32.w
+        move.w  d2,BL+$38.w
+        move.b  #$c0,BL+$3c.w
+        subq.w  #1,d0
+        bne.s   .fmb
+        move.l  #$00020002,BL+$20.w     ; mask apply: D &= ~M on the 4 destination planes
+        move.w  #168,d0
+        move.w  d5,d1
+        lsl.w   #3,d1
+        sub.w   d1,d0                   ; dst yinc = 160 - 8 * (n - 1)
+        move.l  #$00080000,d1
+        move.w  d0,d1
+        move.l  d1,BL+$2e.w
+        moveq   #-1,d0
+        lsr.w   d6,d0                   ; em1
+        swap    d0
+        move.w  #$ffff,d0               ; em2
+        move.l  d0,BL+$28.w
+        moveq   #-1,d0
+        moveq   #16,d1
+        sub.w   d6,d1
+        lsl.w   d1,d0                   ; em3
+        move.w  d0,BL+$2c.w
+        move.w  d6,d0
+        ori.w   #$40,d0
+        move.b  d0,BL+$3d.w             ; skew + FXSR
+        move.w  d5,BL+$36.w             ; xcount = n
+        move.b  #4,BL+$3b.w             ; LOP = ~S & D
+        move.l  a3,d0
+        moveq   #3,d7
+.fma:   move.l  #TMP,BL+$24.w
+        move.l  d0,BL+$32.w
+        move.w  d2,BL+$38.w
+        move.b  #$c0,BL+$3c.w
+        addq.l  #2,d0
+        dbra    d7,.fma
+        move.w  d3,d0                   ; data: D |= S per present plane
+        sub.w   a4,d0
+        addq.w  #2,d0
+        move.l  #$00020000,d1
+        move.w  d0,d1
+        move.l  d1,BL+$20.w
+        move.b  #7,BL+$3b.w
+        move.w  10(a2),d7
+        subq.w  #1,d7
+        movea.l a1,a0
+        lea     2(a2),a6
+.fda:   move.l  a0,BL+$24.w
+        move.w  (a6)+,d0
+        ext.l   d0
+        add.l   a3,d0
+        move.l  d0,BL+$32.w
+        move.w  d2,BL+$38.w
+        move.b  #$c0,BL+$3c.w
+        adda.l  a4,a0
+        dbra    d7,.fda
+        rts
+.fchk:  moveq   #-1,d0
+        lsr.w   d6,d0
+        move.w  d0,-(a7)
+        moveq   #-1,d0
+        moveq   #16,d2
+        sub.w   d6,d2
+        lsl.w   d2,d0
+        move.w  d0,-(a7)
+        move.w  d6,d0
+        ori.w   #$40,d0
+        move.w  d0,-(a7)
+        bra.w   chunk
 
         ifne    GUARD
 gwait:  move.w  d0,-(a7)                ; bounded spin until Timer B's counter is >= GTH again (the raster interrupt has run) or Timer B stops
