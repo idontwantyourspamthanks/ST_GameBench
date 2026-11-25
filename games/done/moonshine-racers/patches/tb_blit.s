@@ -3,7 +3,8 @@
 ; site: $39a0
 ; requires: tb_blit11 tb_blit13 tb_blit15
 ; data: $B5800 512
-; doc: STE blitter for the big shifted 1-3 column sprites, only between two raster interrupts (Timer-B guard); stock kernels for everything else, and on ST, Mega STE, TT, Falcon, 68010+ (generated from work/tightB/blit_template.s; the four tb_blit* files belong together).
+; ram: $DF000-$E2BFF 1-bit sprite mask cache (256-slot hash table $DF000-$DF7FF + 13 KB mask pool $DF800-$E2BFF)
+; doc: STE blitter for shifted 1-3 column sprites with lazy 1-bit mask cache (pixel-identical); unguarded single-chunk HOG when Timer B is stopped, Timer-B guarded otherwise; stock kernels on ST, Mega STE, TT, Falcon, 68010+.
 ; note: Generated file (work/tightB/gen_blit.py, BUDGET=900 GUARD=1 GTH=3).  Sites: the kernel pointer tables `$399c` (nibble 7), `$39b0` (11), `$39c4` (13), `$3a14` (15): the 1-, 2- and 3-column entries point at 16-byte stubs
 ; note: at $B4510... (one patch file per table: tb_blit = nibble 7 + the blob, tb_blit11/13/15).  Hooking the tables (not `$ed6e`) keeps it working with the tc_* object-stage patches, which call the same entries without `$ecc8`.  4 columns stay stock (nibble 7: tb_car).
 ; note: A stub sets d4 = columns, a2 = descriptor, d3 = the stock entry and jumps to `common`, which jumps to the stock entry (registers untouched, d7 clamped to the screen bottom like the stock kernel does) unless: blitter present (probe at the first call:
@@ -14,7 +15,15 @@
 BL      equ     $ffff8a00
 BST     equ     $B5800                  ; b: 0 = not probed, 1 = blitter path on, 2 = off
 SAVSP   equ     $B5804
-TMP     equ     $B5880                  ; mask rows
+MPTR    equ     $B5808                  ; w: next free byte offset in MPOOL (0..MPOOLSZ)
+MLAST   equ     $B580A                  ; w: last $100e pass count seen
+MLEV    equ     $B580C                  ; w: last $102c level seen
+MCOL    equ     $B5810                  ; l: last $135a colour table seen
+MOK     equ     $B5814                  ; b: 1 = mask cache initialised
+TMP     equ     $B5880                  ; fallback mask rows when pool full or TB-chunked
+MTAB    equ     $DF000                  ; 256 x 8 B direct-mapped mask cache: key_a1.l, cols.b, rows.b, pool_off.w
+MPOOL   equ     $DF800                  ; 13,312 B ($3400) 1-bit mask pool
+MPOOLSZ equ     $3400
 BUDGET  equ     900
 GUARD   equ     1
 GTH     equ     3
@@ -130,7 +139,7 @@ common: cmpi.b  #1,BST.l
         beq.w   .go
         bra.w   fb
 
-minr:   dc.b    0,12,8,12
+minr:   dc.b    0,5,4,6
 ; descriptors: 2P, dest byte offsets of the P data planes, P
 d7_:    dc.w    6,0,2,4,0,3
 d11_:   dc.w    6,0,2,6,0,3
@@ -253,8 +262,7 @@ chunk:  move.w  d7,d2                   ; rows of this chunk
 .done:  lea     6(a7),a7
         rts
 
-; grp_fast: Timer B is stopped (TBCR != 8) — draw all d7 rows in one unguarded HOG pass (no chunk loop, no per-plane TB checks).
-; Note: TMP at $B5880 holds 384 bytes (192 words: 192 rows for 1-col, 96 rows for 2-col); if d7*d4 > 192 words, fall back to chunked loop.
+; grp_fast: Timer B is stopped (TBCR != 8) — draw all d7 rows in one unguarded HOG pass with lazy 1-bit mask cache.
 grp_fast:
         move.w  d7,d2
         cmpi.w  #1,d4
@@ -263,11 +271,70 @@ grp_fast:
         bls.s   .fok
         moveq   #96,d1
         bra.w   .fchk
-.fok:   move.w  d4,d0
+.fok:   ; ---- mask cache validity check (fast path: same $100e pass -> 2 instructions)
+        tst.b   MOK.l
+        beq.s   .mflush
+        move.w  $100e.w,d0
+        cmp.w   MLAST.l,d0
+        beq.s   .mchk
+        bcs.s   .mflush
+        move.w  d0,MLAST.l
+        move.w  $102c.w,d0
+        cmp.w   MLEV.l,d0
+        bne.s   .mflush
+        move.l  $135a.w,d0
+        cmp.l   MCOL.l,d0
+        beq.s   .mchk
+.mflush: bsr.w  mcache_clr
+.mchk:  ; ---- direct-mapped lookup in MTAB by (a1, d4, rows >= d2)
+        move.l  a1,d0
+        lsr.l   #4,d0
+        move.w  d0,d1
+        lsr.w   #8,d1
+        eor.w   d1,d0
+        andi.w  #$ff,d0
+        lsl.w   #3,d0
+        lea     MTAB.l,a0
+        adda.w  d0,a0                   ; a0 = hash slot
+        cmpa.l  (a0),a1
+        bne.s   .mmiss
+        cmp.b   4(a0),d4
+        bne.s   .mmiss
+        cmp.b   5(a0),d2                ; cached_rows >= d2? (if d2 > cached_rows -> miss)
+        bhi.s   .mmiss
+        ; ---- CACHE HIT! a4 = MPOOL + pool_off, skip all 3 mask-build blits!
+        moveq   #0,d0
+        move.w  6(a0),d0
+        lea     MPOOL.l,a4
+        adda.l  d0,a4
+        bra.w   .have_m
+.mmiss: ; ---- CACHE MISS: allocate d2 * d4 * 2 bytes in MPOOL (or fall back to TMP if full)
+        move.w  d2,d1
+        add.w   d1,d1                   ; d2 * 2
+        cmpi.w  #1,d4
+        beq.s   .ms1
+        add.w   d1,d1                   ; d2 * 4 (2 cols)
+.ms1:   move.w  MPTR.l,d0
+        move.w  d0,d7                   ; save offset
+        add.w   d1,d0
+        cmpi.w  #MPOOLSZ,d0
+        bhi.s   .mfull
+        move.w  d0,MPTR.l
+        move.l  a1,(a0)
+        move.b  d4,4(a0)
+        move.b  d2,5(a0)
+        move.w  d7,6(a0)
+        moveq   #0,d0
+        move.w  d7,d0
+        lea     MPOOL.l,a4
+        adda.l  d0,a4
+        bra.s   .mbld
+.mfull: lea     TMP.l,a4                ; pool full: build into TMP as fallback
+.mbld:  move.w  d4,d0
         add.w   d0,d0
-        movea.w d0,a4                   ; plane step = 2 * cols
+        movea.w d0,a6                   ; plane step = 2 * cols
         move.w  d3,d0
-        sub.w   a4,d0
+        sub.w   a6,d0
         addq.w  #2,d0                   ; src yinc = row bytes - 2 * (cols - 1)
         move.l  #$00020000,d1
         move.w  d0,d1
@@ -283,18 +350,19 @@ grp_fast:
         subq.w  #1,d0                   ; P - 1
         movea.l a1,a0
         move.l  a0,BL+$24.w
-        move.l  #TMP,BL+$32.w
+        move.l  a4,BL+$32.w
         move.w  d2,BL+$38.w
         move.b  #$c0,BL+$3c.w
         move.b  #7,BL+$3b.w             ; LOP = S | D
-.fmb:   adda.l  a4,a0
+.fmb:   adda.l  a6,a0
         move.l  a0,BL+$24.w
-        move.l  #TMP,BL+$32.w
+        move.l  a4,BL+$32.w
         move.w  d2,BL+$38.w
         move.b  #$c0,BL+$3c.w
         subq.w  #1,d0
         bne.s   .fmb
-        move.l  #$00020002,BL+$20.w     ; mask apply: D &= ~M on the 4 destination planes
+.have_m:
+        move.l  #$00020002,BL+$20.w     ; mask apply: D &= ~M on the 4 destination planes (reading from a4)
         move.w  #168,d0
         move.w  d5,d1
         lsl.w   #3,d1
@@ -316,22 +384,25 @@ grp_fast:
         ori.w   #$40,d0
         move.b  d0,BL+$3d.w             ; skew + FXSR
         move.w  d5,BL+$36.w             ; xcount = n
-        move.b  #4,BL+$3b.w             ; LOP = ~S & D
+        move.w  #$0204,BL+$3a.w         ; HOP = source, LOP = ~S & D
         move.l  a3,d0
         moveq   #3,d7
-.fma:   move.l  #TMP,BL+$24.w
+.fma:   move.l  a4,BL+$24.w
         move.l  d0,BL+$32.w
         move.w  d2,BL+$38.w
         move.b  #$c0,BL+$3c.w
         addq.l  #2,d0
         dbra    d7,.fma
-        move.w  d3,d0                   ; data: D |= S per present plane
+        move.w  d4,d0                   ; data: D |= S per present plane
+        add.w   d0,d0
+        movea.w d0,a4                   ; plane step = 2 * cols
+        move.w  d3,d0
         sub.w   a4,d0
         addq.w  #2,d0
         move.l  #$00020000,d1
         move.w  d0,d1
         move.l  d1,BL+$20.w
-        move.b  #7,BL+$3b.w
+        move.b  #7,BL+$3b.w             ; LOP = S | D
         move.w  10(a2),d7
         subq.w  #1,d7
         movea.l a1,a0
@@ -358,6 +429,20 @@ grp_fast:
         ori.w   #$40,d0
         move.w  d0,-(a7)
         bra.w   chunk
+
+; mcache_clr: zero all 256 slot keys in MTAB and reset bump pointer MPTR (preserves d2-d7, a1-a6)
+mcache_clr:
+        lea     MTAB.l,a0
+        move.w  #255,d0
+.z:     clr.l   (a0)
+        addq.l  #8,a0
+        dbra    d0,.z
+        clr.w   MPTR.l
+        move.w  $100e.w,MLAST.l
+        move.w  $102c.w,MLEV.l
+        move.l  $135a.w,MCOL.l
+        move.b  #1,MOK.l
+        rts
 
         ifne    GUARD
 gwait:  move.w  d0,-(a7)                ; bounded spin until Timer B's counter is >= GTH again (the raster interrupt has run) or Timer B stops
