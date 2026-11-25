@@ -8,6 +8,10 @@ What it is
   new top-bar HUD, and no manual copy-protection question.  disk_b.st is the original disk 2, unchanged.  PATCHES.TXT lists
   every change.
 
+v1.3
+  Version bump matching the HD v1.3 release (which adds in-game saving of `MSTRACKS.TRK` to hard disk or to a formatted
+  campaign disk in drive A:; floppy campaign disks saved from the HD editor load directly here via F10).
+
 v1.2
   New: per-track race length (MSTRACKS.TRK version 2, `cp_len` patch, 2 MB+ ST family): campaign tracks built with their own
   race length (700..28000 units) race with that length and a scaled time limit; version 1 campaign disks stay unchanged.

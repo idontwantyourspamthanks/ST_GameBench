@@ -7,6 +7,14 @@ What it is
   start-up: fixed game speed, faster drawing, extra in-between pictures on machines with time to spare, a new top-bar HUD.
   The game files are PP's, unchanged.  PATCHES.TXT lists every change.
 
+v1.3
+  New: IN-GAME CAMPAIGN SAVING in the Track Editor (`FILES\MSEDIT.OVL`, 2 MB+ ST family).
+  - From the editor's track list, choose `SAVE CAMPAIGN... >` to write `MSTRACKS.TRK` either to the hard disk
+    (`FILES\MSTRACKS.TRK`) or to a formatted campaign disk in drive A: (`A:\MSTRACKS.TRK`).
+  - Floppy save prompts to insert a formatted campaign disk in drive A:, checks the disk format via BIOS `Getbpb` before
+    writing, flushes dirty FAT/directory buffers (`Dfree`), and reports write-protected, unformatted/missing, or full disks
+    so you can swap and retry.
+
 v1.2
   New: IN-GAME TRACK EDITOR (ST, Mega ST, STE and Mega STE with 2 MB or more; overlay FILES\MSEDIT.OVL loaded on first use).
   Open from F10 -> TRACK EDITOR (F10 now also works on the WELCOME PARTNERS screen, which shows `F10 = CAMPAIGNS` on 2 MB+
@@ -18,8 +26,7 @@ v1.2
     (stay one tile with two-half rise/drop colour; S explodes a shape into raw pieces), W / E = widths, O = add object,
     TAB = object list (T type, S side, M move, DEL delete), U / Shift+U = undo / redo, K = check, HELP / F1 = keys & legend.
   - Test drive from the cursor with P (on the FINISH tile: last 1000 units); Esc / F10 or finishing returns to the editor.
-  - Kept tracks update the campaign in RAM (with per-track race length, MSTRACKS.TRK version 2; saving to disk from inside
-    the editor is not yet built).
+  - Kept tracks update the campaign in RAM (with per-track race length, MSTRACKS.TRK version 2).
   New: per-track race length (MSTRACKS.TRK version 2, `cp_len` patch): custom tracks shorter or longer than their base level
   (700..28000 units) race with their own length and a scaled time limit; version 1 campaigns stay unchanged.
 

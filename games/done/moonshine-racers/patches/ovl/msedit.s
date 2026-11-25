@@ -5227,9 +5227,15 @@ top_list:
         move.l  a0,(a2)+
         lea     t_tstr(pc),a0
         move.l  a0,(a2)+
-        lea     t_tback(pc),a0
+        addq.w  #2,d5
+        tst.w   d6                      ; a campaign in memory: offer Save
+        beq   .nsv
+        lea     t_tsave(pc),a0
         move.l  a0,(a2)+
-        addq.w  #3,d5
+        addq.w  #1,d5
+.nsv:   lea     t_tback(pc),a0
+        move.l  a0,(a2)+
+        addq.w  #1,d5
         move.w  d5,vMCnt(a5)
         lea     t_top(pc),a0
         tst.w   d6
@@ -5280,7 +5286,14 @@ top_list:
 .other: sub.w   d6,d0
         beq   .stock
         subq.w  #1,d0
-        bne     .leave
+        beq   .newtrk
+        tst.w   d6
+        beq   .leave
+        subq.w  #1,d0
+        bne   .leave
+        bsr     save_menu
+        bra     .again
+.newtrk:
         ; ---- NEW TRACK: 5 straight segments of 200 units = 1000 units + FINISH (BAR at 1000) + run-out 31768
         lea     t_pscen(pc),a0
         bsr     lev_pick
@@ -5392,6 +5405,526 @@ top_list:
         bra     .again
 .leave: moveq   #-1,d0
         rts
+
+; ======================================================================================================= milestone 4: SAVE CAMPAIGN (HD & FLOPPY DRIVE A:)
+; Offers saving the validated campaign in CPSTORE (MSTRACKS.TRK) either to the hard disk (FILES\MSTRACKS.TRK, HAGA's current directory)
+; or to a formatted campaign disk in drive A: (A:\MSTRACKS.TRK), through the HAGA TOS window (port of Populous 2's write half + floppy BCB forget + Dfree flush).
+save_menu:
+        movem.l d1-d7/a0-a4,-(a7)
+.sm:    lea     m_save(pc),a0
+        bsr     list_fixed
+        lea     t_saveh(pc),a0
+        moveq   #0,d0
+        bsr     pick
+        tst.w   d0
+        bmi   .x
+        beq   .hd
+        cmpi.w  #1,d0
+        beq   .fl
+        bra   .x
+.hd:    bsr     cls
+        lea     t_svhdh(pc),a0
+        moveq   #1,d0
+        moveq   #1,d1
+        moveq   #8,d2
+        bsr     ptext
+        lea     t_svhdw(pc),a0
+        moveq   #1,d0
+        moveq   #5,d1
+        moveq   #7,d2
+        bsr     ptext
+        lea     p_hd(pc),a0
+        moveq   #0,d7
+        bsr     do_save
+        bne   .sm
+        lea     t_svhdok(pc),a0
+        move.l  a0,vMsg(a5)
+        move.l  a0,vLMsg(a5)
+        bra   .x
+.fl:    bsr     save_floppy
+        beq   .x
+        bra   .sm
+.x:     movem.l (a7)+,d1-d7/a0-a4
+        rts
+
+; save_floppy: prompt for a formatted campaign disk in drive A: -> d0 = 0 saved (vMsg set), 1 cancelled
+save_floppy:
+        movem.l d1-d7/a0-a4,-(a7)
+.fp:    bsr     cls
+        lea     t_svflh(pc),a0
+        moveq   #1,d0
+        moveq   #1,d1
+        moveq   #8,d2
+        bsr     ptext
+        lea     t_flp1(pc),a0
+        moveq   #1,d0
+        moveq   #4,d1
+        moveq   #7,d2
+        bsr     ptext
+        lea     t_flp2(pc),a0
+        moveq   #1,d0
+        moveq   #5,d1
+        moveq   #7,d2
+        bsr     ptext
+        lea     t_flp3(pc),a0
+        moveq   #1,d0
+        moveq   #7,d1
+        moveq   #2,d2
+        bsr     ptext
+        lea     t_flp4(pc),a0
+        moveq   #1,d0
+        moveq   #8,d1
+        moveq   #2,d2
+        bsr     ptext
+        move.l  vMsg(a5),d3
+        beq   .nerr
+        movea.l d3,a0
+        clr.l   vMsg(a5)
+        moveq   #1,d0
+        moveq   #11,d1
+        moveq   #6,d2
+        bsr     ptext
+.nerr:  lea     t_flpgo(pc),a0
+        moveq   #1,d0
+        moveq   #14,d1
+        moveq   #23,d2
+        bsr     ptext
+        lea     t_flhint(pc),a0
+        moveq   #1,d0
+        moveq   #24,d1
+        moveq   #1,d2
+        bsr     ptext
+        move.b  $6105.w,d7
+        clr.b   $60ff.w
+.k:     jsr     $d206.l
+        bsr     kq_pop
+        tst.b   d0
+        bne   .key
+        move.b  $6105.w,d1
+        move.b  d7,d2
+        move.b  d1,d7
+        not.b   d2
+        and.b   d2,d1
+        beq   .k
+        btst    #2,d1                   ; joystick left = cancel
+        bne   .canc
+        tst.b   d1                      ; fire = save
+        bpl   .k
+        bra   .go
+.key:   cmpi.b  #$1c,d0                 ; Return
+        beq   .go
+        cmpi.b  #$72,d0                 ; Enter
+        beq   .go
+        cmpi.b  #$39,d0                 ; Space
+        beq   .go
+        cmpi.b  #$01,d0                 ; Esc
+        beq   .canc
+        cmpi.b  #$0e,d0                 ; Backspace
+        beq   .canc
+        cmpi.b  #$44,d0                 ; F10
+        beq   .canc
+        cmpi.b  #$4b,d0                 ; Left arrow
+        beq   .canc
+        bra   .k
+.go:    jsr     $d206.l
+        btst    #7,$6105.w
+        bne   .go
+        lea     t_clr40(pc),a0
+        moveq   #0,d0
+        moveq   #11,d1
+        moveq   #7,d2
+        bsr     ptext
+        lea     t_svflw(pc),a0
+        moveq   #1,d0
+        moveq   #11,d1
+        moveq   #8,d2
+        bsr     ptext
+        lea     p_fl(pc),a0
+        moveq   #1,d7
+        bsr     do_save
+        bne   .fp
+        lea     t_svflok(pc),a0
+        move.l  a0,vMsg(a5)
+        move.l  a0,vLMsg(a5)
+        moveq   #0,d0
+        bra   .out
+.canc:  jsr     $d206.l
+        btst    #7,$6105.w
+        bne   .canc
+        clr.b   $60ff.w
+        moveq   #1,d0
+.out:   movem.l (a7)+,d1-d7/a0-a4
+        tst.w   d0
+        rts
+
+; do_save: a0 = path, d7.w = 0 HD / 1 floppy -> d0 = 0 ok / 1 error (vMsg set), Z set accordingly
+do_save:
+        movem.l d1-d6/a0-a4,-(a7)
+        movea.l a0,a4
+        tst.b   CPV+1.l
+        beq   .bad
+        cmpi.l  #'MSTK',CPSTORE.l
+        bne   .bad
+        move.l  CPSTORE+8.l,d1
+        cmpi.l  #16,d1
+        bcs   .bad
+        cmpi.l  #$1f000,d1
+        bhi   .bad
+        move.w  sr,-(a7)                ; restore the game's IKBD handler while HAGA swaps TOS in/out
+        ori.w   #$700,sr
+        move.l  vOldKb(a5),$118.w
+        move.w  (a7)+,sr
+        movea.l a4,a0
+        lea     CPSTORE.l,a1
+        bsr     trk_write
+        move.l  d0,d6
+        move.w  sr,-(a7)                ; clear key queue and re-install the editor's IKBD hook
+        ori.w   #$700,sr
+        clr.l   vKqH(a5)
+        clr.b   $60ff.w
+        move.w  (a7)+,sr
+        bsr     kb_hook
+        jsr     $d206.l                 ; re-assert the editor's screen and palette
+        move.b  #SCR>>16,$ffff8201.w
+        move.b  #(SCR>>8)&$ff,$ffff8203.w
+        lea     pal(pc),a0
+        lea     $ffff8240.w,a1
+        moveq   #15,d0
+.rp:    move.w  (a0)+,(a1)+
+        dbra    d0,.rp
+        tst.l   d6
+        beq   .ok
+        lea     t_svna(pc),a0
+        cmpi.l  #-1,d6
+        beq   .err
+        lea     t_svwp(pc),a0
+        cmpi.l  #-13,d6
+        beq   .err
+        lea     t_svfull(pc),a0
+        cmpi.l  #$dd,d6
+        beq   .err
+        tst.w   d7
+        beq   .hderr
+        lea     t_svnofl(pc),a0
+        bra   .err
+.hderr: lea     t_svio(pc),a0
+        bra   .err
+.bad:   lea     t_svbad(pc),a0
+.err:   move.l  a0,vMsg(a5)
+        move.l  a0,vLMsg(a5)
+        moveq   #1,d0
+        bra   .x
+.ok:    moveq   #0,d0
+.x:     movem.l (a7)+,d1-d6/a0-a4
+        tst.w   d0
+        rts
+
+; ---- HAGA-window file writer (same HAGA slot BLK=$3900 as cp_title's trk_read, distinct magic 'MSWR' so both co-exist cleanly)
+;   trk_write: a0 = path (NUL), a1 = source buffer, d1 = bytes to write
+;   -> d0 = 0 ok | GEMDOS error (negative) | $dd short write (disk full) | -1 HAGA not recognised; d1 = bytes written
+TW_BSZ    equ   $d00
+TW_RET    equ   $000-TW_BSZ
+TW_A7     equ   $004-TW_BSZ
+TW_USP    equ   $008-TW_BSZ
+TW_BASE   equ   $00c-TW_BSZ
+TW_BUF    equ   $010-TW_BSZ
+TW_LEN    equ   $014-TW_BSZ
+TW_RES0   equ   $018-TW_BSZ
+TW_RES1   equ   $01c-TW_BSZ
+TW_SR     equ   $024-TW_BSZ
+TW_H      equ   $028-TW_BSZ
+TW_CRIT   equ   $02c-TW_BSZ
+TW_MAGIC  equ   $038-TW_BSZ
+TW_DF     equ   $06c-TW_BSZ
+TW_PATH   equ   $080-TW_BSZ
+TW_USPTOP equ   $500-TW_BSZ
+TW_SSPTOP equ   $d00-TW_BSZ
+TW_BOUNCE equ   $1400-TW_BSZ
+TW_BSIZE  equ   $2000
+TW_BLK    equ   $3900
+
+trk_write:
+        movem.l d2/a2-a4,-(a7)
+        movea.l a0,a3
+        movea.l $2dc.w,a2               ; HAGA base
+        move.l  a2,d2
+        cmpi.l  #$100000,d2
+        bcs.s   .fail
+        btst    #0,d2
+        bne.s   .fail
+        cmpi.l  #$4dfa1c04,$17be(a2)
+        bne.s   .fail
+        cmpi.l  #$45fa0e1e,$1166(a2)
+        bne.s   .fail
+        cmpi.l  #$123aed0f,$1372(a2)
+        bne.s   .fail
+        cmpi.b  #4,$83(a2)              ; Falcon swaps differently: refused
+        beq.s   .fail
+        lea     TW_BLK(a2),a4
+        cmpi.l  #'MSWR',TW_MAGIC+TW_BSZ(a4)
+        beq.s   .have
+        movea.l a4,a2
+        move.w  #TW_BSZ/4-1,d2
+.z:     clr.l   (a2)+
+        dbra    d2,.z
+        lea     tw_bstart(pc),a0
+        move.w  #(tw_bend-tw_bstart)/4+1,d2
+.c:     move.l  (a0)+,(a2)+
+        dbra    d2,.c
+        move.l  #'MSWR',TW_MAGIC+TW_BSZ(a4)
+.have:  lea     TW_BSZ(a4),a4
+        movea.l a3,a0
+        jsr     (a4)
+        movem.l (a7)+,d2/a2-a4
+        rts
+.fail:  moveq   #-1,d0
+        moveq   #0,d1
+        movem.l (a7)+,d2/a2-a4
+        rts
+
+        even
+tw_bstart:
+        movem.l d2-d7/a0-a6,-(a7)
+        lea     tw_bstart(pc),a5
+        move.l  d1,TW_LEN(a5)
+        move.l  a1,TW_BUF(a5)
+        moveq   #-1,d2
+        move.l  d2,TW_RES0(a5)
+        clr.l   TW_RES1(a5)
+        movea.l $2dc.w,a2
+        move.l  a2,TW_BASE(a5)
+        lea     TW_PATH(a5),a1
+        lea     TW_PATH+$78(a5),a2
+.cp:    move.b  (a0)+,d0
+        cmpa.l  a2,a1
+        bcc.s   .cpd
+        move.b  d0,(a1)+
+        bne.s   .cp
+        bra.s   .go
+.cpd:   clr.b   (a1)
+.go:    movea.l TW_BASE(a5),a2
+        tst.b   $af(a2)
+        bne.s   .direct
+        bsr.w   tw_run
+        bra.s   .o1
+.direct:bsr.w   tw_body
+.o1:    lea     tw_bstart(pc),a5
+        move.l  TW_RES1(a5),d1
+        move.l  TW_RES0(a5),d0
+        movem.l (a7)+,d2-d7/a0-a6
+        rts
+
+tw_run: move.l  (a7)+,TW_RET(a5)
+        move.w  sr,TW_SR(a5)
+        move.w  #$2700,sr
+        move.l  a7,TW_A7(a5)
+        move    usp,a0
+        move.l  a0,TW_USP(a5)
+        lea     TW_USPTOP(a5),a0
+        move    a0,usp
+        lea     TW_SSPTOP(a5),a7
+        movea.l TW_BASE(a5),a0
+        jsr     $17be(a0)
+        lea     tw_bstart(pc),a5
+        movea.l TW_BASE(a5),a0
+        jsr     $1166(a0)
+        lea     tw_bstart(pc),a5
+        bsr.w   tw_body
+        lea     tw_bstart(pc),a5
+        move.w  #$2700,sr
+        movea.l TW_BASE(a5),a0
+        jsr     $1372(a0)
+        lea     tw_bstart(pc),a5
+        movea.l TW_BASE(a5),a6
+        lea     $33c4(a6),a6
+        lea     $fffffa07.l,a1
+        move.b  (a6)+,(a1)
+        addq.l  #2,a1
+        move.b  (a6)+,(a1)
+        lea     $a(a1),a1
+        move.b  (a6)+,(a1)
+        addq.l  #2,a1
+        move.b  (a6),(a1)
+        movea.l TW_USP(a5),a0
+        move    a0,usp
+        movea.l TW_A7(a5),a7
+.k:     btst    #0,$fffffc00.l
+        beq.s   .k2
+        tst.b   $fffffc02.l
+        bra.s   .k
+.k2:    clr.b   $6102.l
+        clr.b   $6103.l
+        clr.b   $610e.l
+        movea.l TW_RET(a5),a0
+        move.w  TW_SR(a5),sr
+        jmp     (a0)
+
+tw_body:
+        move.l  $404.w,TW_CRIT(a5)
+        lea     tw_crit(pc),a0
+        move.l  a0,$404.w
+        bsr.s   tw_body1
+        move.l  TW_CRIT(a5),$404.w
+        rts
+tw_crit:
+        move.w  4(a7),d0
+        ext.l   d0
+        rts
+
+tw_body1:
+        bsr.w   tw_forget               ; forget BIOS cache for drives A:/B: (disk may have been swapped)
+        bsr.w   tw_chkfmt               ; floppy: verify a formatted FAT disk is in the drive via BIOS Getbpb
+        tst.l   d0
+        bmi.s   tw_e0
+        bsr.w   tw_fcreate
+        ext.l   d0
+        bmi.s   tw_e0
+        move.w  d0,TW_H(a5)
+        bsr.w   tw_wrloop
+        moveq   #0,d6
+        cmp.l   TW_LEN(a5),d0
+        beq.s   .cl
+        tst.l   d0
+        bmi.s   .we
+        move.l  #$dd,d0
+.we:    move.l  d0,d6
+.cl:    bsr.w   tw_fclose
+        ext.l   d0
+        bpl.s   .nc
+        tst.l   d6
+        bne.s   .nc
+        move.l  d0,d6
+.nc:    tst.l   d6
+        beq.s   .fl
+        bsr.w   tw_fdelete              ; no half-written campaign file
+.fl:    bsr.w   tw_flush                ; Dfree evicts dirty FAT/dir buffers to disk
+        move.l  d6,TW_RES0(a5)
+        bne.s   .x
+        move.l  TW_LEN(a5),TW_RES1(a5)
+.x:     rts
+tw_e0:  move.l  d0,TW_RES0(a5)
+        rts
+
+tw_wrloop:
+        move.l  TW_LEN(a5),d4
+        movea.l TW_BUF(a5),a4
+.l:     tst.l   d4
+        ble.s   .done
+        move.l  d4,d3
+        cmpi.l  #TW_BSIZE,d3
+        ble.s   .c
+        move.l  #TW_BSIZE,d3
+.c:     movea.l a4,a0
+        lea     TW_BOUNCE(a5),a1
+        move.l  d3,d2
+        bsr.w   tw_copy
+        pea     TW_BOUNCE(a5)
+        move.l  d3,-(a7)
+        move.w  TW_H(a5),-(a7)
+        move.w  #$40,-(a7)              ; Fwrite
+        trap    #1
+        lea     12(a7),a7
+        cmp.l   d3,d0
+        bne.s   .bad
+        adda.l  d3,a4
+        sub.l   d3,d4
+        bra.s   .l
+.done:  move.l  TW_LEN(a5),d0
+        rts
+.bad:   tst.l   d0
+        bmi.s   .r
+        move.l  #$dd,d0
+.r:     rts
+
+tw_copy:
+        move.l  d2,d0
+        lsr.l   #2,d0
+        beq.s   .t
+        subq.l  #1,d0
+.q:     move.l  (a0)+,(a1)+
+        dbra    d0,.q
+.t:     andi.w  #3,d2
+        beq.s   .x
+        subq.w  #1,d2
+.b:     move.b  (a0)+,(a1)+
+        dbra    d2,.b
+.x:     rts
+
+tw_fcreate:
+        clr.w   -(a7)
+        pea     TW_PATH(a5)
+        move.w  #$3c,-(a7)              ; Fcreate
+        trap    #1
+        addq.l  #8,a7
+        rts
+tw_fclose:
+        move.w  TW_H(a5),-(a7)
+        move.w  #$3e,-(a7)              ; Fclose
+        trap    #1
+        addq.l  #4,a7
+        rts
+tw_fdelete:
+        pea     TW_PATH(a5)
+        move.w  #$41,-(a7)              ; Fdelete
+        trap    #1
+        addq.l  #6,a7
+        rts
+tw_flush:
+        moveq   #0,d0
+        lea     TW_PATH(a5),a0
+        cmpi.b  #':',1(a0)
+        bne.s   .d
+        move.b  (a0),d0
+        andi.w  #$df,d0
+        subi.w  #'A'-1,d0
+.d:     move.w  d0,-(a7)
+        pea     TW_DF(a5)
+        move.w  #$36,-(a7)              ; Dfree(buf, drive)
+        trap    #1
+        addq.l  #8,a7
+        rts
+tw_forget:
+        lea     $4b2.w,a0
+        moveq   #1,d1
+.l1:    movea.l (a0)+,a1
+.l2:    move.l  a1,d0
+        beq.s   .l4
+        cmpi.w  #1,4(a1)
+        bhi.s   .l3
+        move.w  #-1,4(a1)
+.l3:    movea.l (a1),a1
+        bra.s   .l2
+.l4:    dbra    d1,.l1
+        rts
+tw_chkfmt:
+        lea     TW_PATH(a5),a0
+        cmpi.b  #':',1(a0)
+        bne.s   .ok
+        moveq   #0,d0
+        move.b  (a0),d0
+        andi.w  #$df,d0
+        subi.w  #'A',d0
+        cmpi.w  #1,d0
+        bhi.s   .ok
+        move.w  d0,-(a7)
+        move.w  #7,-(a7)                ; BIOS Getbpb(dev): reads boot sector, NULL if empty or unformatted
+        trap    #13
+        addq.l  #4,a7
+        tst.l   d0
+        beq.s   .bad
+        movea.l d0,a0
+        cmpi.w  #512,(a0)               ; recsiz == 512
+        bne.s   .bad
+        tst.w   2(a0)                   ; clsiz > 0
+        beq.s   .bad
+        tst.w   14(a0)                  ; numcl > 0
+        beq.s   .bad
+.ok:    moveq   #0,d0
+        rts
+.bad:   moveq   #-16,d0
+        rts
+        even
+tw_bend: dc.w   0
 
 ; lev_pick: a0 = heading -> d0 = level 0..14 or -1 (list: TRACK 01 .. TRACK 15, < BACK)
 lev_pick:
@@ -5893,7 +6426,7 @@ k_hill: dc.b    "HILL OVERFLOW (E-HILL). ESC = DISCARD",0
 k_size: dc.b    "TRACK FULL (E-SIZE). ESC AGAIN=DISCARD",0
 k_rlen: dc.b    "LENGTH NOT 700..28000. ESC=DISCARD",0
 t_efull: dc.b   "CAMPAIGN FULL: 15 TRACKS (E-CAMP)",0
-t_kept: dc.b    "KEPT IN THE CAMPAIGN (NOT ON DISK YET)",0
+t_kept: dc.b    "KEPT IN CAMPAIGN (SAVE TO WRITE DISK)",0
 t_chk:  dc.b    "TRACK CHECK",0
 t_csegs: dc.b   " SEGMENTS  ",0
 t_cobjs: dc.b   " OBJECTS  ",0
@@ -5981,7 +6514,33 @@ t_top:  dc.b    "TRACK EDITOR: CAMPAIGN TRACKS",0
 t_top0: dc.b    "TRACK EDITOR: NO CAMPAIGN YET",0
 t_tstock: dc.b  "COPY OF AN ORIGINAL TRACK >",0
 t_tstr: dc.b    "NEW TRACK >",0
+t_tsave: dc.b   "SAVE CAMPAIGN... >",0
 t_tback: dc.b   "< BACK TO THE CAMPAIGN MENU",0
+m_save: dc.b    "SAVE TO HARD DISK (FILES\MSTRACKS.TRK)",0
+        dc.b    "SAVE TO FLOPPY DISK (DRIVE A:)",0
+        dc.b    "< BACK",0,0
+t_saveh: dc.b   "SAVE CAMPAIGN (MSTRACKS.TRK)",0
+t_svhdh: dc.b   "SAVE CAMPAIGN TO HARD DISK",0
+t_svhdw: dc.b   "SAVING FILES\MSTRACKS.TRK...",0
+t_svhdok: dc.b  "SAVED TO FILES\MSTRACKS.TRK",0
+t_svflh: dc.b   "SAVE CAMPAIGN TO FLOPPY (DRIVE A:)",0
+t_flp1: dc.b    "INSERT A FORMATTED CAMPAIGN DISK",0
+t_flp2: dc.b    "IN DRIVE A:",0
+t_flp3: dc.b    "WRITES A:\MSTRACKS.TRK",0
+t_flp4: dc.b    "(ANY EXISTING FILE IS OVERWRITTEN)",0
+t_flpgo: dc.b   "PRESS RETURN OR FIRE TO SAVE",0
+t_flhint: dc.b  "RETURN / FIRE = SAVE       ESC = BACK",0
+t_svflw: dc.b   "SAVING TO A:\MSTRACKS.TRK...",0
+t_svflok: dc.b  "SAVED TO A:\MSTRACKS.TRK",0
+t_svna: dc.b    "FILE ACCESS NOT AVAILABLE HERE",0
+t_svwp: dc.b    "DISK IS WRITE PROTECTED",0
+t_svfull: dc.b  "DISK FULL: NOT ENOUGH FREE SPACE",0
+t_svnofl: dc.b  "NO FORMATTED DISK IN DRIVE A",0
+t_svio: dc.b    "DISK WRITE ERROR",0
+t_svbad: dc.b   "NO VALID CAMPAIGN IN MEMORY",0
+t_clr40: dc.b   "                                        ",0
+p_hd:   dc.b    "MSTRACKS.TRK",0
+p_fl:   dc.b    "A:\MSTRACKS.TRK",0
 t_back: dc.b    "< BACK",0
 t_pstock: dc.b  "COPY WHICH ORIGINAL TRACK?",0
 t_pscen: dc.b   "NEW TRACK WITH THE SCENERY OF:",0
