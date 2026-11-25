@@ -22,11 +22,8 @@ tb_cpu1:
         subq.w  #1,d7                   ; dbra counter
         cmpi.w  #8,d6
         bgt.w   .hi
-        ; ---- Case A: 1 <= d6 <= 8 (ror.l d6 -> low = left col, high = right col)
-.lpA:   moveq   #0,d1
-        moveq   #0,d2
-        moveq   #0,d3
-        move.w  (a1)+,d1
+        ; ---- Case A: 1 <= d6 <= 8 (82% of rows are left-column only -> make left-only the fall-through path!)
+.lpA:   move.w  (a1)+,d1
         move.w  (a1)+,d2
         move.w  (a1)+,d3
         moveq   #0,d0
@@ -35,14 +32,42 @@ tb_cpu1:
         or.w    d3,d0
         beq.s   .empA
         ror.l   d6,d0                   ; d0.w = mask_L, d0.hi = mask_R
-        tst.w   d0
-        beq.w   .rA                     ; left col empty -> right col only (lsl.w d5)
-        swap    d0
-        tst.w   d0
-        beq.w   .lA                     ; right col empty -> left col only (lsr.w d6)
-        ; both columns non-empty
+        move.l  d0,d4
+        swap    d4
+        tst.w   d4
+        bne.s   .hasR                   ; right col non-empty (18% of Case A)
+        ; ---- left col ONLY (82% of Case A: no moveq #0 d1-d3, no swap d0, no taken branch!)
+        not.w   d0
+        lsr.w   d6,d1
+        lsr.w   d6,d2
+        lsr.w   d6,d3
+        move.w  d0,d4
+        and.w   (a3),d4
+        or.w    d1,d4
+        move.w  d4,(a3)+
+        move.w  d0,d4
+        and.w   (a3),d4
+        or.w    d2,d4
+        move.w  d4,(a3)+
+        and.w   d0,(a3)+
+        and.w   (a3),d0
+        or.w    d3,d0
+        move.w  d0,(a3)+
+        lea     $98(a3),a3
+        dbra    d7,.lpA
+        move.w  (a7)+,d5
+        rts
+.empA:  lea     160(a3),a3
+        dbra    d7,.lpA
+        move.w  (a7)+,d5
+        rts
+.hasR:  tst.w   d0
+        beq.s   .rA                     ; left col empty -> right col only
+        ; both columns non-empty: clear high words of d1-d3 before ror.l
+        andi.l  #$ffff,d1
+        andi.l  #$ffff,d2
+        andi.l  #$ffff,d3
         not.l   d0
-        swap    d0                      ; d0.w = ~mask_L, d0.hi = ~mask_R
         ror.l   d6,d1
         ror.l   d6,d2
         ror.l   d6,d3
@@ -78,32 +103,7 @@ tb_cpu1:
         dbra    d7,.lpA
         move.w  (a7)+,d5
         rts
-.empA:  lea     160(a3),a3
-        dbra    d7,.lpA
-        move.w  (a7)+,d5
-        rts
-.lA:    swap    d0
-        not.w   d0
-        lsr.w   d6,d1
-        lsr.w   d6,d2
-        lsr.w   d6,d3
-        move.w  d0,d4
-        and.w   (a3),d4
-        or.w    d1,d4
-        move.w  d4,(a3)+
-        move.w  d0,d4
-        and.w   (a3),d4
-        or.w    d2,d4
-        move.w  d4,(a3)+
-        and.w   d0,(a3)+
-        and.w   (a3),d0
-        or.w    d3,d0
-        move.w  d0,(a3)+
-        lea     $98(a3),a3
-        dbra    d7,.lpA
-        move.w  (a7)+,d5
-        rts
-.rA:    swap    d0
+.rA:    move.w  d4,d0
         not.w   d0
         lsl.w   d5,d1
         lsl.w   d5,d2

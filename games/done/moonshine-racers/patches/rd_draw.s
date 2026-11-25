@@ -16,30 +16,27 @@ WPTR    equ     WT+$C040        ; the $135a value the tables were built for (0 =
         jmp     $B5004.l
 
         org     $B5000
-TBL     macro                           ; \1 family number, \2 continuation: jump table entry n (index 4n) -> chain entry; n = 2m -> even chain + 4*(10-m), n = 2m+1 -> odd chain + 4*(9-m)
-t\1:    bra.w   \2                      ; n = 0 (callers never use it)
+TBL     macro                           ; \1 family number, \2 continuation (immediately follows): 2-byte bra.s jump table (index 2n) + inline even/odd chains (odd falls straight through to \2!)
+t\1:    bra.s   \2                      ; n = 0 (callers never use it)
 nn      set     1
         rept    20
         ifne    nn&1
-        bra.w   c\1_odd+4*(9-nn/2)
+        bra.s   c\1_odd+4*(9-nn/2)
         else
-        bra.w   c\1_even+4*(10-nn/2)
+        bra.s   c\1_even+4*(10-nn/2)
         endif
 nn      set     nn+1
         endr
-        endm
-CH      macro                           ; \1 family number, \2 continuation: unrolled fills of the pattern a2,a3,a4,a6 (2 groups per movem)
 c\1_even:
         rept    10
         movem.l a2-a4/a6,-(a0)
         endr
-        bra.w   \2
+        bra.s   \2
 c\1_odd:
         rept    9
         movem.l a2-a4/a6,-(a0)
         endr
         movem.l a2-a3,-(a0)
-        bra.w   \2
         endm
 ; $B5000 = pre-warm entry (called once per race by rd_init): builds the window tables now instead of in the first road frame
         bra.w   rdd_init
@@ -87,7 +84,7 @@ rd_rec: movem.w (a1)+,d0-d3             ; w0, A, B, F
         move.w  #288,d6
         sub.w   d4,d6
         beq.w   rd_fa
-        lsr.w   #2,d6
+        lsr.w   #3,d6
         tst.w   d3
         bmi.s   .g1b
         movem.l $6000(a5),a2-a3
@@ -103,7 +100,7 @@ rd_fa:  movem.l (a5,d1.w),a2-a4/a6
         sub.w   d5,d6
         sub.w   #32,d6
         beq.w   rd_fb
-        lsr.w   #2,d6
+        lsr.w   #3,d6
         btst    #14,d3
         bne.s   .i3
         movem.l $6010(a5),a2-a3
@@ -117,7 +114,7 @@ rd_fb:  movem.l (a5,d2.w),a2-a4/a6
         movem.l a2-a4/a6,-(a0)
         move.w  d5,d6
         beq.w   rd_end
-        lsr.w   #2,d6
+        lsr.w   #3,d6
         tst.w   d3
         bmi.s   .g4b
         movem.l $6000(a5),a2-a3
@@ -126,15 +123,16 @@ rd_fb:  movem.l (a5,d2.w),a2-a4/a6
 .g4c:   movea.l a2,a4
         movea.l a3,a6
         jmp     tu3(pc,d6.w)
-        TBL     u3,rd_end
+        TBL     u3,rd_u3end
+rd_u3end: bra.w rd_end
         ; ---- generic rows (some edge window clipped or off screen)
 rd_gen: move.w  #288,d6
         sub.w   d4,d6
         ble.w   rd_awin
-        lsr.w   #2,d6
-        cmp.w   #80,d6
+        lsr.w   #3,d6
+        cmp.w   #40,d6
         ble.s   .g1
-        moveq   #80,d6
+        moveq   #40,d6
 .g1:    tst.w   d3
         bmi.s   .g1b
         movem.l $6000(a5),a2-a3
@@ -171,7 +169,7 @@ rd_int: cmp.w   #16,d4
         sub.w   #32,d6
 .i2:    cmp.w   #1,d6
         blt.w   rd_bwin
-        lsr.w   #2,d6
+        lsr.w   #3,d6
         btst    #14,d3
         bne.s   .i3
         movem.l $6010(a5),a2-a3
@@ -197,12 +195,12 @@ rd_bwin: ; ---- edge window B
         bra.s   rd_f4
 .b_both: movem.l a2-a4/a6,-(a0)
 rd_f4:  cmp.w   #16,d5
-        blt.s   rd_end
+        blt.w   rd_end
         move.w  d5,d6
-        lsr.w   #2,d6
-        cmp.w   #80,d6
+        lsr.w   #3,d6
+        cmp.w   #40,d6
         ble.s   .g4
-        moveq   #80,d6
+        moveq   #40,d6
 .g4:    tst.w   d3
         bmi.s   .g4b
         movem.l $6000(a5),a2-a3
@@ -230,13 +228,6 @@ rd_mid: move.w  -8(a1),d2
 rd_stock0: movea.l $4b84.w,a1
         lea     $4ff8.w,a2
         jmp     $17c4a.l
-
-        CH      u1,rd_fa
-        CH      u2,rd_fb
-        CH      u3,rd_end
-        CH      1,rd_awin
-        CH      2,rd_bwin
-        CH      3,rd_end
 
 ; rdd_init: the window-table generation the first road frame would run when $135a differs from the table pointer the windows were built for
 rdd_init:
