@@ -127,19 +127,20 @@ rd_geom:
         move.b  (a0,d5.w),d6
         move.w  d2,-(a3)
         move.w  #$ffff,-(a6)
-        move.w  d2,d0                   ; d0 = $e8 for the loop
+        movea.w d2,a2                   ; a2 = $e8 for the loop (frees d0 for #$3ff)
+        move.w  #$3ff,d0
         move.w  d6,d1
         lea     $68080.l,a0             ; map base + 128, advances 256 per slice
         moveq   #$6e,d7
 .l2:    move.w  d3,d5
         add.w   (a1)+,d5
-        andi.w  #$3ff,d5
+        and.w   d0,d5
         move.b  (a5,d5.w),d5
         sub.b   d4,d5
         ext.w   d5
         moveq   #0,d6
         move.b  (a0,d5.w),d6
-        move.w  d0,d2
+        move.w  a2,d2
         sub.w   d6,d2
         move.w  d2,-(a3)
         sub.w   d6,d1
