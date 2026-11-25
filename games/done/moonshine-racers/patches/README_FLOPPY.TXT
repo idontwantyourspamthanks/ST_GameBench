@@ -8,6 +8,16 @@ What it is
   new top-bar HUD, and no manual copy-protection question.  disk_b.st is the original disk 2, unchanged.  PATCHES.TXT lists
   every change.
 
+v1.4
+  New: 8 MHz STE Blitter & 68000 rendering speedups (100% pixel-identical; ~18-23 fps while driving on 8 MHz STE,
+  up from ~16 fps in v1.3 and ~4-8 fps in the original game; plain ST and Mega STE also benefit from the 68000 paths):
+  - STE Blitter: unguarded HOG passes when Timer B is stopped, lazy 1-bit sprite mask cache (98.7% hit rate across both
+    normal and Timer-B-guarded paths), 3-part sprite inner kernel hooks (`$38b0-$38f7`), 1-pass `ENDMASK` post/stem blits
+    (`tb_post`), and Blitter horizon copy + sky fill (`tb_horiz`).
+  - 68000 CPU (ST / STE / Mega STE): fast zero-SMC 1-column shifted sprite kernels (`tb_cpu1` / `tb_cpu13`, skipping empty
+    rows/columns and using `rol.l (16-shift)` for shifts > 8), 4x-unrolled road geometry passes (`rd_geom`), and inline
+    fall-through span fill chains (`rd_draw`).
+
 v1.3
   Version bump matching the HD v1.3 release (which adds in-game saving of `MSTRACKS.TRK` to hard disk or to a formatted
   campaign disk in drive A:; floppy campaign disks saved from the HD editor load directly here via F10).
@@ -51,7 +61,7 @@ Extra pictures (smoothness)
   When the machine has time left in a step it draws additional in-between pictures of the same step; the game logic does not
   run in them.  Displayed pictures per second over steered racing (steps after the standing start), measured in Hatari with the
   HD build of the same patches:
-     8 MHz STE:          16.0  (an extra picture in 63 % of the steps; the original shows 8.3)
+     8 MHz STE:          18.1 - 23.5  (an extra picture in 80 - 100 % of the steps; v1.3 showed 16.0, original 8.3)
      16 MHz Mega STE:    28.8
      32 MHz:             47.9
   (Floppy release, a different, whole-drive measurement in Hatari: STE 1 MB 15.8 native / 26.6 at 16 MHz.)  None of these are
