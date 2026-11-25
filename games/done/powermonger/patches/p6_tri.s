@@ -104,7 +104,9 @@ s1:     cmp.w   d0,d2
         exg     d1,d2
         exg     d0,d1
 ; ---- pattern ring phase: j = scanlines before the first wrap ------------------------------------------------------
-s9:     move.w  d0,d5
+s9:     cmpi.w  #2,$dc300.l             ; qol_detail Low: flat-shaded terrain filler
+        beq.w   $dc700.l
+        move.w  d0,d5
         lsl.w   #4,d5
         add.b   $ffa5.l,d5
         and.w   #$fc,d5

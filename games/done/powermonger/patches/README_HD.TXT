@@ -7,7 +7,13 @@ game with the same patches as the patched floppy (see the README of that
 zip), but loading and saving go through GEMDOS, so it runs from a hard
 disk.
 
-What is new in v1.2: on a Mega STE the loader sets the CPU to 16 MHz with
+What is new in v1.3: faster drawing on 8 MHz STE (viewport-culled walker
+interpolation, empty-row sprite trimming, pre-shifted 8x11 small-sprite
+cache), F5 (or Alt+D) 3D detail toggle (High / Medium / Low with top-bar
+flash), and buffered fast typing in the name / save boxes so no keys are
+dropped.
+
+What was new in v1.2: on a Mega STE the loader sets the CPU to 16 MHz with
 the cache on (speed register $FF8E21 = 3) at start, before the game runs,
 unless that register already holds a non-zero value; about 1.8 times the
 frame rate in Hatari. See the floppy README, "Mega STE: 16 MHz", for what

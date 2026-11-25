@@ -3,7 +3,7 @@
 ; stage: 2
 ; site: $124a8
 ; orig: 727844015342
-; data: $bdc00 62464
+; data: $bdc00 52224
 ; note: P4 item 4, masked 32 px sprite blits (work/notes/p4_raster.md section 6): the STE blitter where there is one, else a pre-shifted
 ;       sprite cache for the CPU, else (s = 0, odd addresses) the original code.  `$124a8` is the main variant of the sprite blitter
 ;       `$12326` (3 screen columns fully on screen, 96 % of all its cycles): a0 = screen address of column c, row y (the clip front end
@@ -51,7 +51,53 @@ blit:   move.l  BLT.l,d1
         bsr.w   probe                   ; anything else (first call, or the HD build's bounce left junk here): BLT = 1 or 2
         cmpi.l  #$b17e0001,BLT.l
         bne.w   PRE
-.go:    move.w  #10,$ffff8a20.w         ; source X inc
+.go:    move.l  a3,-(a7)
+        movea.l a1,a3                   ; trim empty top/bottom rows (M0==$ffff, M1==$ffff, P0..3==0, Q0..3==0)
+        move.w  d2,d6                   ; active rows
+        moveq   #0,d5                   ; top skipped rows
+.top:   cmpi.w  #-1,(a3)
+        bne.s   .t_end
+        cmpi.w  #-1,10(a3)
+        bne.s   .t_end
+        move.l  2(a3),d1
+        or.l    6(a3),d1
+        or.l    12(a3),d1
+        or.l    16(a3),d1
+        bne.s   .t_end
+        lea     20(a3),a3
+        addq.w  #1,d5
+        subq.w  #1,d6
+        bne.s   .top
+        bra.w   .fin                    ; all rows empty: skip blitter completely
+.t_end: move.l  a3,d3                   ; active sprite rows start
+        move.w  d6,d7
+        add.w   d7,d7
+        add.w   d7,d7
+        move.w  d7,d1
+        add.w   d7,d7
+        add.w   d7,d7
+        add.w   d1,d7                   ; d6 * 20
+        adda.w  d7,a3
+.bot:   lea     -20(a3),a3
+        cmpi.w  #-1,(a3)
+        bne.s   .b_end
+        cmpi.w  #-1,10(a3)
+        bne.s   .b_end
+        move.l  2(a3),d1
+        or.l    6(a3),d1
+        or.l    12(a3),d1
+        or.l    16(a3),d1
+        bne.s   .b_end
+        subq.w  #1,d6
+        bra.s   .bot
+.b_end: move.l  a0,d4                   ; active screen start = a0 + d5*160
+        tst.w   d5
+        beq.s   .ns
+        lsl.w   #5,d5
+        add.l   d5,d4
+        lsl.w   #2,d5
+        add.l   d5,d4
+.ns:    move.w  #10,$ffff8a20.w         ; source X inc
         move.w  #SYIN,$ffff8a22.w       ; source Y inc
         move.w  #8,$ffff8a2e.w          ; dest X inc
         move.w  #144,$ffff8a30.w        ; dest Y inc
@@ -62,21 +108,19 @@ blit:   move.l  BLT.l,d1
         ori.b   #$40,d1
         move.b  d1,$ffff8a3d.w          ; NFSR + skew
         moveq   #-1,d5
-        move.w  d5,d6
-        lsr.w   d0,d6
-        move.w  d6,$ffff8a28.w          ; endmask 1 = $ffff >> s
+        move.w  d5,d1
+        lsr.w   d0,d1
+        move.w  d1,$ffff8a28.w          ; endmask 1 = $ffff >> s
         move.w  d5,$ffff8a2a.w
         moveq   #16,d7
         sub.w   d0,d7
-        move.w  d5,d6
-        lsl.w   d7,d6
-        move.w  d6,$ffff8a2c.w          ; endmask 3 = $ffff << (16-s)  (0 for s = 0)
-        move.l  a1,d3                   ; sprite rows
-        move.l  a0,d4                   ; screen
+        move.w  d5,d1
+        lsl.w   d7,d1
+        move.w  d1,$ffff8a2c.w          ; endmask 3 = $ffff << (16-s)  (0 for s = 0)
         moveq   #3,d7
 .a:     move.l  d3,$ffff8a24.w
         move.l  d4,$ffff8a32.w
-        move.w  d2,$ffff8a38.w
+        move.w  d6,$ffff8a38.w
         move.b  #$c0,$ffff8a3c.w        ; start, HOG
         addq.l  #2,d4
         dbra    d7,.a
@@ -87,11 +131,12 @@ blit:   move.l  BLT.l,d1
         moveq   #3,d7
 .o:     move.l  d3,$ffff8a24.w
         move.l  d4,$ffff8a32.w
-        move.w  d2,$ffff8a38.w
+        move.w  d6,$ffff8a38.w
         move.b  #$c0,$ffff8a3c.w
         addq.l  #2,d3
         addq.l  #2,d4
         dbra    d7,.o
+.fin:   movea.l (a7)+,a3
         move.w  d2,d3                   ; the original's final registers
         lsl.w   #5,d3
         adda.w  d3,a0                   ; rows*32
@@ -168,7 +213,7 @@ pre:    tst.w   d0
         lea     TAGS.l,a2
         adda.w  d1,a2                   ; set record: +0 rr.w, +2.. 6 entries {a1.l, data.l, s.w, rows.w}
         lea     2(a2),a3
-        moveq   #5,d3
+        moveq   #4,d3
 .w:     cmpa.l  (a3),a1
         bne.s   .n
         cmp.w   8(a3),d0
@@ -178,7 +223,7 @@ pre:    tst.w   d0
         move.w  (a2),d3                 ; miss: round-robin victim
         move.w  d3,d4
         addq.w  #1,d4
-        cmpi.w  #6,d4
+        cmpi.w  #5,d4
         bcs.s   .rr
         moveq   #0,d4
 .rr:    move.w  d4,(a2)
@@ -342,14 +387,14 @@ init:   lea     TAGS.l,a2
         lea     SLOTS.l,a3
         moveq   #7,d3
 .s:     clr.w   (a2)+                   ; round-robin counter
-        moveq   #5,d4
+        moveq   #4,d4
 .e:     clr.l   (a2)+                   ; tag
         move.l  a3,(a2)+                ; data pointer
         clr.w   (a2)+                   ; s
         clr.w   (a2)+                   ; rows built
         lea     1280(a3),a3
         dbra    d4,.e
-        lea     6(a2),a2                ; record stride 80
+        lea     18(a2),a2               ; record stride 80 (2 + 5*12 + 18)
         dbra    d3,.s
         move.l  #MAGIC,HDR.l
         rts

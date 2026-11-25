@@ -10,20 +10,47 @@
 PEND    equ     $73044
 ANY     equ     $73042
 LASTV   equ     $730c4                  ; qol_keys: D + $c4
+DET_REQ equ     $75302                  ; qol_detail: F5 / Alt+D request byte
+TH      equ     $72f80                  ; qol_type: FIFO head
+TT      equ     $72f82                  ; qol_type: FIFO tail
+RING    equ     $72f84                  ; qol_type: 64-byte ring buffer
 WIN     equ     150                     ; = qol_keys.s
 
         org     $f30
-        jsr     $73100.l
+        jsr     $72e50.l
 
-        org     $73100
+        org     $72e50
 kh:     move.b  d0,$1d2b0.l             ; the displaced instruction
         tst.b   d0
-        beq.s   .r                      ; a break code (d0 was cleared)
-        move.l  $71b7c.l,d1             ; VBL count now
+        beq.w   .r                      ; a break code (d0 was cleared)
+        tst.b   $d424.l                 ; typing into a text box (name prompt, save name)?
+        beq.s   .map
+        move.w  TT.l,d1                 ; push (scancode.b, shift.b) into TFIFO
+        move.w  d1,a0
+        addq.w  #2,d1
+        andi.w  #62,d1
+        cmp.w   TH.l,d1
+        beq.s   .r                      ; FIFO full
+        move.w  d1,TT.l
+        move.w  a0,d1
+        lea     RING.l,a0
+        move.b  d0,0(a0,d1.w)
+        tst.w   $2edaa.l
+        sne     1(a0,d1.w)
+        rts
+.map:   move.l  $71b7c.l,d1             ; VBL count now
         sub.l   LASTV.l,d1              ; VBLs since the last pass hook (LASTV = 0 before the first pass: a huge difference)
         cmp.l   #WIN,d1
         bhi.s   .r                      ; the loop is not running: not a shortcut
-        lea     PEND.l,a0
+        cmpi.b  #$3f,d0                 ; F5: cycle detail level
+        beq.s   .det
+        cmpi.b  #$20,d0                 ; D key?
+        bne.s   .norm
+        tst.b   $2ec8c+$38.l            ; Alt held?
+        beq.s   .norm
+.det:   st.b    DET_REQ.l               ; F5 / Alt+D: cycle detail level (do not fire D = Drop Food)
+        rts
+.norm:  lea     PEND.l,a0
         moveq   #1,d1
         tst.w   $2edaa.l                ; Shift down?
         beq.s   .s

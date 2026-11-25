@@ -29,6 +29,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/.." && pwd -P)"
+export PYTHONPATH="$ROOT/../../../tools${PYTHONPATH:+:$PYTHONPATH}"   # stharness, for the git-archive export in build/play-src
 TOSDIR="$ROOT/../../../tos"     # gamebench/tos
 MACHINE=ste
 RAM=""

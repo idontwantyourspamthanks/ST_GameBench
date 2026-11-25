@@ -364,7 +364,9 @@ def cell(a):
                 g.line("p7_triple: the three buffers rotate ($1d500 / $25200 / $b0000 all seen as shown or drawing)", {0x1D500, 0x25200, 0xB0000} <= seen, "seen " + " ".join(f"${v:x}" for v in sorted(seen)))
         if "rate" in steps:
             import wwtick
-            if a.mhz != 8:
+            if a.set_mhz:                                        # release matrix: Mega STE forced to 8 MHz (the loader's 16 MHz + cache is overridden at runtime), kept for the later steps
+                h.set_cpuclock(a.set_mhz)
+            elif a.mhz != 8:
                 h.set_cpuclock(a.mhz)
             time.sleep(2)
             patched = bool(man and "tick_head" in man["patches"])
@@ -373,7 +375,7 @@ def cell(a):
             g.line("rate", True, line[5:])
             if patched:
                 g.line("world rate = 4.00/s (+-5 %)", 3.8 <= r <= 4.2, f"{r:.3f} world steps per emulated second")
-            if a.mhz != 8:
+            if a.mhz != 8 and not a.set_mhz:
                 h.set_cpuclock(8)
         if "soak" in steps:
             c0, t_s, bad, n_win = h.counter(), time.time(), [], 0
@@ -592,6 +594,7 @@ def main():
         p.add_argument("--tag")
         p.add_argument("--extra", default="", help='extra Hatari options as one string, e.g. "--mmu true --cpuclock 32" (TT)')
         p.add_argument("--mhz", type=int, default=8, help="rate step: CPU clock (hatari-option --cpuclock)")
+        p.add_argument("--set-mhz", type=int, default=0, help="rate step: set this CPU clock at runtime and keep it (Mega STE at 8 MHz in the release matrix)")
         p.add_argument("--soak", type=int, default=300, help="soak step: seconds of play")
         p.add_argument("--vbls", type=int, default=800, help="rate step: VBLs measured")
         p.add_argument("--corrupt", action="store_true", help="the build has a deliberately corrupted site: expect PMPF and an unpatched game")

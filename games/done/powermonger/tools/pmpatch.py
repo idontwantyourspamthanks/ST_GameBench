@@ -86,6 +86,7 @@ PREFIX_RANGES = {                         # blob orgs allowed per patch-name pre
     "snd_": (0xD0000, 0xDCFFF),      # $DD000..$EFFFF: reserved for the real-hardware HD build's TOS swap buffer
     "p6_": (0xD5000, 0xDCFFF),       # PMPerf2: raster patches (triangle setup + fill + slope table): the snd_ range's unused tail after its 16 KB STAGE buffer; $CE000.. stays test_ (pmab's test_walk lives there)
     "p7_": (0xDB000, 0xDBFFF),       # PMTriple: triple buffering (3 tiny hooks + data block T); inside p6_'s range after its code, in the HD overlay window
+    "p8_": (0xDA100, 0xDAFFF),       # 8px small-sprite pre-shifted cache code
     "fal_": (0xDC000, 0xDC0FF),      # PMPack: Falcon fixes (YM mirror writes): the free page at the end of p6_'s range
     "tt_": (0xBA900, 0xBAFFF),       # PMTT: TT / Falcon fixes (pointer): the free tail of tick_'s / p3b_'s range, outside the HD overlay window
     "qol_": (0xCF000, 0xCFFFF),      # PMQoL: keys + village hover (4 KB carved from test_'s tail; test_*.s end below $CF000); in the HD overlay window (PMLATE.DAT $BD000-$DCFFF)
@@ -95,6 +96,11 @@ EXTRA_RANGES = {                          # a patch NAME (not prefix) that may a
     "qol_keys": [(0xCD460, 0xCD6FF)], "qol_keys2": [(0xCD460, 0xCD6FF)], "qol_hover": [(0xCD460, 0xCD6FF)], "qol_hover2": [(0xCD460, 0xCD6FF)],   # data blocks + the two small hooks: pm_tooltip's code ends at $CD444, pm_credit starts at $CDB00, so $CD460-$CD6FF is free  # its wording table (patches/pm_tooltip.s `TXT`), $CD000-$CDFFF is full of code + state + pm_credit
     "pm_mste": [(0xDC200, 0xDC2FF)],          # Mega STE 16 MHz (mste16.md): `init` routine, the page after the cache cap's
     "pm_cachecap": [(0xDC100, 0xDC1FF)],      # the resource-cache cap (retire.md): the free page after fal_ym's, inside p6_'s range, in the HD overlay window
+    "p8_spr8": [(0xCA800, 0xCCFFF)],          # 32-slot pre-shifted cache for 8x11 small sprites (carved from p4_spr's 6th way)
+    "qol_detail": [(0xDC300, 0xDCFFF)],       # Alt+D detail toggle + HUD banner + flat-shaded terrain filler
+    "qol_detail_rain": [(0xDC300, 0xDCFFF)],
+    "qol_type": [(0xDCB00, 0xDCFFF)],
+    "qol_type2": [(0xDCB00, 0xDCFFF)],
 }
 
 

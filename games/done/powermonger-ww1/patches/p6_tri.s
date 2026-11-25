@@ -1,8 +1,8 @@
 ; name: p6_tri
 ; default: yes
 ; site: $f342
-; mutable: $76db8 150
-; mutable: $76ece 160
+; mutable: $76dc2 150
+; mutable: $76ed8 160
 ; orig: 4a406b00029c
 ; note: replacement for the terrain triangle setup `$f342` + span filler `$e7c6` on the common path (master p6_tri / work/notes/hotpaths2.md, re-sited: setup $ef62 -> $f342, filler $e3e6 -> $e7c6, the whole
 ;       cluster is +$3e0 except the ring variable $ffa2 -> $10412; the routines are 234/234 + 105/105 + 55/55 instructions equal, profile_ww1.md section 3).  Needs p6_slope (the slope table at $b8000, HIGH
@@ -104,7 +104,9 @@ s1:     cmp.w   d0,d2
         exg     d1,d2
         exg     d0,d1
 ; ---- pattern ring phase: j = scanlines before the first wrap ------------------------------------------------------
-s9:     move.w  d0,d5
+s9:     cmpi.w  #2,$75300.l             ; qol_detail Low: flat-shaded terrain filler
+        beq.w   $75360.l
+        move.w  d0,d5
         lsl.w   #4,d5
         add.b   $10415.l,d5
         and.w   #$fc,d5

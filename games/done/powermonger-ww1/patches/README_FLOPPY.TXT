@@ -41,7 +41,9 @@ What is different
   F Get Food, G Send Captain, H Go Home, I Invent / Build, L Alliance, M Get Men,
   N Drop Items, O Option, Q Query, R Derank, S Supply Food, T Trade, X Transfer Men,
   Y Spy; F1-F4 the map icons; [ ] rotate, = and - zoom, Shift gives the fine rotation
-  and the closest / farthest zoom). A key does exactly what the click on the icon
+  and the closest / farthest zoom; F5 (or Alt+D) cycles the 3D detail level between High,
+  Medium (no rain/snow, 50% trees) and Low (no rain/snow, no trees, flat-shaded
+  terrain) with a brief top-bar message). A key does exactly what the click on the icon
   does; the cursor keys still scroll. Keys are ignored while you type or while a
   window is open.
 - TT and Falcon: the game starts from the normal desktop mode (the loader sets the
@@ -62,8 +64,10 @@ What is different
   picture that does not fit is read from the disk again the next time. (Without this
   the picture after Options -> Game -> Retire could land on the patch code.)
 - Keyboard / mouse: a position that the mouse packet parser would take from outside
-  the screen is ignored (it could crash the game after a lost byte), and the blitter
-  copy is done in short pieces so that the keyboard chip is not starved.
+  the screen is ignored (it could crash the game after a lost byte), the blitter copy
+  is done in short pieces so that the keyboard chip is not starved, and typing in the
+  name / save boxes is buffered in a 32-key FIFO and drawn immediately so fast typing
+  never drops letters.
 - The main menu shows the version and credit line (v@VER@ enhanced by dad_prg) at the
   bottom of the screen.
 - Every change checks the original bytes first. If anything is not as expected

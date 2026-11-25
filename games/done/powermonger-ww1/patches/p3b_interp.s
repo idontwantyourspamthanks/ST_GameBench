@@ -4,7 +4,7 @@
 ; orig: 4eb90000fc78
 ; data: $73f80 32
 ; data: $c0000 2048
-; data: $c0800 5120
+; data: $c0800 5632
 ; note: predict-ahead (extrapolation) interpolation of the moving people-table records (master p3b_interp / work/notes/interp.md, re-sited).  Needs tick_* and p3b_delta (the second
 ;       half: it fills the velocity list after every world tick).  Site: `jsr $fc78` (landscape + objects, the only call; master $f898), replaced by `jsr ap`.  The renderer
 ;       takes a record's screen position from the LOW BYTES of its x/z words ($8/$a(a3), `andi.w #$ff` at $12cc2 = master's sub_011f1a), so a render-only pass can draw a man part-way
@@ -20,12 +20,13 @@
 D       equ     $72a80
 PD      equ     $73f80
 LST     equ     $c0800
+RST     equ     $c15b0                  ; 350 x 6 B restore list (only visible movers applied this pass)
 PEOPLE  equ     $55df4
         org     $13e1e
         jsr     $73c00.l
 
         org     $73c00
-ap:     movem.l d0-d7/a0-a2,-(a7)
+ap:     movem.l d0-d7/a0-a5,-(a7)
         moveq   #0,d7
         tst.w   $5a856.l                ; paused: the world is not moving, draw it as it is
         bne.w   .go
@@ -44,64 +45,86 @@ ap:     movem.l d0-d7/a0-a2,-(a7)
         move.w  #384,d0                 ; at most 1.5 steps ahead
 .have:  tst.w   d0
         beq.w   .go
-        move.w  d6,d7                   ; applied
+        move.w  $50fd4.l,d4             ; visible cell window: [cam - rad - 1 .. cam - rad + grid + 1]
+        sub.w   $5a860.l,d4
+        subq.w  #1,d4                   ; min_x
+        move.w  $50fd6.l,d5
+        sub.w   $5a860.l,d5
+        subq.w  #1,d5                   ; min_z
+        move.w  $10260.l,d1
+        addq.w  #2,d1
+        movea.w d1,a3                   ; span (unsigned upper bound)
         subq.w  #1,d6
         lea     LST.l,a1
         lea     PEOPLE.l,a0
-.al:    move.w  (a1)+,d1                ; record byte offset
+        lea     RST.l,a4
+.al:    move.w  (a1),d1                 ; record byte offset
         lea     (a0,d1.w),a2
-        move.w  (a1)+,d2                ; dx
-        move.w  (a1)+,d3                ; dz
-        move.w  8(a2),d4                ; x
-        move.w  10(a2),d5               ; z
-        move.w  d4,(a1)+                ; saved
-        move.w  d5,(a1)+
-        muls.w  d0,d2
-        asr.l   #8,d2
-        muls.w  d0,d3
-        asr.l   #8,d3
-        move.w  d4,d1
-        andi.w  #$ff,d1
-        add.w   d2,d1
+        moveq   #0,d2
+        move.b  8(a2),d2                ; cell_x = high byte of x
+        sub.w   d4,d2
+        cmp.w   a3,d2
+        bhi.s   .skp
+        moveq   #0,d2
+        move.b  10(a2),d2               ; cell_z = high byte of z
+        sub.w   d5,d2
+        cmp.w   a3,d2
+        bhi.s   .skp
+        move.w  d1,(a4)+                ; visible: record for restore
+        move.w  8(a2),d2                ; x
+        move.w  10(a2),d3               ; z
+        move.w  d2,(a4)+                ; saved_x
+        move.w  d3,(a4)+                ; saved_z
+        move.w  2(a1),d1                ; dx
+        muls.w  d0,d1
+        asr.l   #8,d1
+        movea.w d2,a5
+        andi.w  #$ff,d2
+        add.w   d1,d2
         bpl.s   .x1
-        moveq   #0,d1
+        moveq   #0,d2
         bra.s   .x2
-.x1:    cmpi.w  #255,d1
+.x1:    cmpi.w  #255,d2
         ble.s   .x2
-        move.w  #255,d1
-.x2:    andi.w  #$ff00,d4
-        or.w    d1,d4
-        move.w  d4,8(a2)
-        move.w  d5,d1
-        andi.w  #$ff,d1
-        add.w   d3,d1
+        move.w  #255,d2
+.x2:    move.w  a5,d1
+        andi.w  #$ff00,d1
+        or.w    d2,d1
+        move.w  d1,8(a2)
+        move.w  4(a1),d1                ; dz
+        muls.w  d0,d1
+        asr.l   #8,d1
+        movea.w d3,a5
+        andi.w  #$ff,d3
+        add.w   d1,d3
         bpl.s   .z1
-        moveq   #0,d1
+        moveq   #0,d3
         bra.s   .z2
-.z1:    cmpi.w  #255,d1
+.z1:    cmpi.w  #255,d3
         ble.s   .z2
-        move.w  #255,d1
-.z2:    andi.w  #$ff00,d5
-        or.w    d1,d5
-        move.w  d5,10(a2)
+        move.w  #255,d3
+.z2:    move.w  a5,d1
+        andi.w  #$ff00,d1
+        or.w    d3,d1
+        move.w  d1,10(a2)
+        addq.w  #1,d7
+.skp:   lea     10(a1),a1
         dbra    d6,.al
         addq.l  #1,PD+8.l
 .go:    move.w  d7,PD+4.l
-        movem.l (a7)+,d0-d7/a0-a2
+        movem.l (a7)+,d0-d7/a0-a5
         jsr     $fc78.l
         tst.w   PD+4.l
         beq.s   .out
-        movem.l d0-d2/d7/a0-a2,-(a7)
+        movem.l d1/d7/a0-a2,-(a7)
         move.w  PD+4.l,d7
         subq.w  #1,d7
-        lea     LST.l,a1
+        lea     RST.l,a1
         lea     PEOPLE.l,a0
-.rl:    move.w  (a1),d1
+.rl:    move.w  (a1)+,d1
         lea     (a0,d1.w),a2
-        move.w  6(a1),8(a2)
-        move.w  8(a1),10(a2)
-        lea     10(a1),a1
+        move.l  (a1)+,8(a2)
         dbra    d7,.rl
         clr.w   PD+4.l
-        movem.l (a7)+,d0-d2/d7/a0-a2
+        movem.l (a7)+,d1/d7/a0-a2
 .out:   rts

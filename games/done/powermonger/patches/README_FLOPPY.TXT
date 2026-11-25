@@ -37,8 +37,10 @@ What is different
   L Alliance, M Get Men, N Drop Items, O Option, Q Query, R Derank,
   S Supply Food, T Trade, X Transfer Men, Y Spy; F1-F4 the map icons;
   [ ] rotate, = and - zoom, Shift gives the fine rotation and the
-  closest / farthest zoom). A key does exactly what the click on the
-  icon does; the cursor keys still scroll.
+  closest / farthest zoom; F5 (or Alt+D) cycles the 3D detail level between High,
+  Medium (no rain/snow, 50% trees) and Low (no rain/snow, no trees,
+  flat-shaded terrain) with a brief top-bar message). A key does exactly
+  what the click on the icon does; the cursor keys still scroll.
 - Triple buffering: the game draws into a third screen buffer and no
   longer waits for the next screen refresh before it starts a new
   picture, so the frame rate gains the half refresh it used to waste
@@ -60,7 +62,9 @@ What is different
 - Keyboard / mouse: a mouse packet that lost a byte (the blitter held
   the bus too long for the keyboard chip) could send the pointer to a
   garbage address and crash the game; the blitter copy is now done in
-  short pieces and a position outside the screen is ignored.
+  short pieces and a position outside the screen is ignored. Typing in
+  the name / save boxes is buffered in a 32-key FIFO and drawn
+  immediately so fast typing never drops letters.
 - Retire, and the win / lose pictures (new in v1.1): the game keeps
   every picture it loads in a RAM cache that starts at 512 KB and grows
   without a limit; the "you have been defeated" / victory picture landed

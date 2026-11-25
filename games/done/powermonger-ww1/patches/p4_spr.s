@@ -39,7 +39,53 @@ blit:   move.l  BLT.l,d1
         cmpi.l  #$b17e0003,d1
         beq.w   .cpu                    ; 3 = the original code (test mode)
         bra.w   pre                     ; 2 (or anything else: `init` did not run): the pre-shifted cache
-.go:    move.w  #10,$ffff8a20.w         ; source X inc
+.go:    move.l  a3,-(a7)
+        movea.l a1,a3                   ; trim empty top/bottom rows (M0==$ffff, M1==$ffff, P0..3==0, Q0..3==0)
+        move.w  d2,d6                   ; active rows
+        moveq   #0,d5                   ; top skipped rows
+.top:   cmpi.w  #-1,(a3)
+        bne.s   .t_end
+        cmpi.w  #-1,10(a3)
+        bne.s   .t_end
+        move.l  2(a3),d1
+        or.l    6(a3),d1
+        or.l    12(a3),d1
+        or.l    16(a3),d1
+        bne.s   .t_end
+        lea     20(a3),a3
+        addq.w  #1,d5
+        subq.w  #1,d6
+        bne.s   .top
+        bra.w   .fin                    ; all rows empty: skip blitter completely
+.t_end: move.l  a3,d3                   ; active sprite rows start
+        move.w  d6,d7
+        add.w   d7,d7
+        add.w   d7,d7
+        move.w  d7,d1
+        add.w   d7,d7
+        add.w   d7,d7
+        add.w   d1,d7                   ; d6 * 20
+        adda.w  d7,a3
+.bot:   lea     -20(a3),a3
+        cmpi.w  #-1,(a3)
+        bne.s   .b_end
+        cmpi.w  #-1,10(a3)
+        bne.s   .b_end
+        move.l  2(a3),d1
+        or.l    6(a3),d1
+        or.l    12(a3),d1
+        or.l    16(a3),d1
+        bne.s   .b_end
+        subq.w  #1,d6
+        bra.s   .bot
+.b_end: move.l  a0,d4                   ; active screen start = a0 + d5*160
+        tst.w   d5
+        beq.s   .ns
+        lsl.w   #5,d5
+        add.l   d5,d4
+        lsl.w   #2,d5
+        add.l   d5,d4
+.ns:    move.w  #10,$ffff8a20.w         ; source X inc
         move.w  #SYIN,$ffff8a22.w       ; source Y inc
         move.w  #8,$ffff8a2e.w          ; dest X inc
         move.w  #144,$ffff8a30.w        ; dest Y inc
@@ -50,21 +96,19 @@ blit:   move.l  BLT.l,d1
         ori.b   #$40,d1
         move.b  d1,$ffff8a3d.w          ; NFSR + skew
         moveq   #-1,d5
-        move.w  d5,d6
-        lsr.w   d0,d6
-        move.w  d6,$ffff8a28.w          ; endmask 1 = $ffff >> s
+        move.w  d5,d1
+        lsr.w   d0,d1
+        move.w  d1,$ffff8a28.w          ; endmask 1 = $ffff >> s
         move.w  d5,$ffff8a2a.w
         moveq   #16,d7
         sub.w   d0,d7
-        move.w  d5,d6
-        lsl.w   d7,d6
-        move.w  d6,$ffff8a2c.w          ; endmask 3 = $ffff << (16-s)  (0 for s = 0)
-        move.l  a1,d3                   ; sprite rows
-        move.l  a0,d4                   ; screen
+        move.w  d5,d1
+        lsl.w   d7,d1
+        move.w  d1,$ffff8a2c.w          ; endmask 3 = $ffff << (16-s)  (0 for s = 0)
         moveq   #3,d7
 .a:     move.l  d3,$ffff8a24.w
         move.l  d4,$ffff8a32.w
-        move.w  d2,$ffff8a38.w
+        move.w  d6,$ffff8a38.w
         move.b  #$c0,$ffff8a3c.w        ; start, HOG
         addq.l  #2,d4
         dbra    d7,.a
@@ -75,11 +119,12 @@ blit:   move.l  BLT.l,d1
         moveq   #3,d7
 .o:     move.l  d3,$ffff8a24.w
         move.l  d4,$ffff8a32.w
-        move.w  d2,$ffff8a38.w
+        move.w  d6,$ffff8a38.w
         move.b  #$c0,$ffff8a3c.w
         addq.l  #2,d3
         addq.l  #2,d4
         dbra    d7,.o
+.fin:   movea.l (a7)+,a3
         move.w  d2,d3                   ; the original's final registers
         lsl.w   #5,d3
         adda.w  d3,a0                   ; rows*32

@@ -11,6 +11,7 @@
 set -euo pipefail
 ROOT="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/.." && pwd -P)"
 cd "$ROOT"
+export PYTHONPATH="$ROOT/../../../tools${PYTHONPATH:+:$PYTHONPATH}"   # stharness (tools/pmww.py finds it relative to its own folder, which the git export is not)
 WORKTREE=0
 [[ "${1:-}" == "--worktree" ]] && WORKTREE=1
 DATE=${DATE:-$(date +%F)}

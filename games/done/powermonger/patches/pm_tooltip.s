@@ -85,7 +85,12 @@ plane   macro                           ; \1 = plane byte offset 0,2,4,6
 hook:   movem.l d0-d7/a0-a6,-(a7)
         lea     S.l,a6
         move.l  #$50544950,sMAG(a6)     ; 'PTIP': qol_hover checks this before it calls the exports
-        move.w  $2df92.l,d0
+        tst.w   $dc360.l                ; qol_detail present?
+        beq.s   .nodet
+        jsr     $dc360.l                ; qol_detail HUD banner check (Alt+D)
+        tst.w   d0
+        bne.w   .out
+.nodet: move.w  $2df92.l,d0
         move.w  $2df94.l,d1
         tst.w   sVAL(a6)
         beq.s   .mv
