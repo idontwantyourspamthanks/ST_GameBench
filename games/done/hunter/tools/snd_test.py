@@ -59,7 +59,7 @@ REALHOME = Path.home()
 HOME = Path(f"/tmp/hsnd/home_{os.getpid()}")
 CAP = Path(f"/tmp/hsnd/cap_{os.getpid()}.wav")
 atexit.register(lambda: (shutil.rmtree(HOME, ignore_errors=True), CAP.unlink(missing_ok=True)))
-BANK, RING, RL = 0x90000, 0x8F800, 1024
+BANK, RING, RL = 0x90000, 0x8F800, 2048
 SV = 0x8F000
 
 
@@ -152,16 +152,21 @@ def model_mix(bank: bytes, sv: bytes, nv: int, v_wr: int, n8: int, ring: bytearr
     act = [v for v in vox if v["ch"] < 0x80]
     assert len(act) == nv, (len(act), nv)
     w = v_wr
+    filt = struct.unpack_from(">h", sv, 14)[0] if nv else 0
     for _ in range(n8 * 8):
-        acc = 0
-        for v in act:
-            s = bank[v["base"] - BANK + v["idx"]]
-            k = (v["vt"] - (BANK + 0x1000)) >> 8
-            acc += struct.unpack("b", bytes([s if v["mode"] else bank[0x1000 + k * 256 + s]]))[0]
-            f = v["frac"] + v["incf"]
-            v["idx"] = (v["idx"] + v["inci"] + (f >> 16)) & 0xFFFF
-            v["frac"] = f & 0xFFFF
-        ring[w] = acc & 0xFF
+        if nv:
+            acc = 0
+            for v in act:
+                s = bank[v["base"] - BANK + v["idx"]]
+                k = (v["vt"] - (BANK + 0x1000)) >> 8
+                acc += struct.unpack("b", bytes([s if v["mode"] else bank[0x1000 + k * 256 + s]]))[0]
+                f = v["frac"] + v["incf"]
+                v["idx"] = (v["idx"] + v["inci"] + (f >> 16)) & 0xFFFF
+                v["frac"] = f & 0xFFFF
+            filt = (filt + acc) >> 1
+            ring[w] = filt & 0xFF
+        else:
+            ring[w] = 0
         w = (w + 1) % RL
     return vox, w
 
@@ -185,7 +190,7 @@ def cmd_mixcheck(a) -> int:
         cf_pre = h.R / "pre.txt"
         cf_pre.write_text("r\nm $8f000 160\n")
         cf_post = h.R / "post.txt"
-        cf_post.write_text(f"m $8f000 160\nm ${RING:x} 1024\n")
+        cf_post.write_text(f"m $8f000 160\nm ${RING:x} {RL}\n")
         h.debug("b all", 0.3)
         h.cmd(f"hatari-debug b pc = ${pre:x} :trace :file {cf_pre}")
         time.sleep(0.2)

@@ -41,13 +41,18 @@ from amiga_extract import DEFAULT_ADF, PAL_CLOCK, load_sound  # noqa: E402
 import pnl_data  # noqa: E402
 
 BANK = 0x90000
-VERSION = 2
-OFF_FX, OFF_PRIO, OFF_MULV, OFF_ENV2, OFF_HB, OFF_VTAB, OFF_SAMP = 0x100, 0x300, 0x400, 0x500, 0x600, 0x1000, 0x2000
-PAD = 512                                   # >= the source bytes one VBL can consume (<= 252 outputs * inc < 2)
-OUT_RATE = 8010613 / 1280                   # STE DMA rate 0
-K4 = int(PAL_CLOCK * 65536 / OUT_RATE / 4)  # 9285653; patches/snd_core.s uses the same constant
+VERSION = 3
+OFF_FX, OFF_PRIO, OFF_DUR, OFF_MULV, OFF_ENV2, OFF_HB, OFF_VTAB, OFF_SAMP = 0x100, 0x300, 0x320, 0x400, 0x500, 0x600, 0x1000, 0x2000
+PAD = 512                                   # >= the source bytes one VBL can consume (<= 504 outputs * inc < 1.0)
+OUT_RATE = 8010613 / 640                    # STE DMA rate 1 (12516.58 Hz; native on STE, Mega STE, TT, and Falcon)
+K4 = int(PAL_CLOCK * 65536 / OUT_RATE / 4)  # 4642826; patches/snd_core.s uses the same constant
 PRIO = [1, 2, 2, 3, 3, 3, 6, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5]   # game $AF38 (22 entries)
-PER_MIN, PER_MAX = 284, 2047                # engine pitch clamp: 12.5 kHz = inc < 2.0 .. 1.7 kHz
+# Amiga main ($b12e: `lea $422(a0),a1`) reads engine base periods one 16-byte record earlier than soundfile+$432:
+#   fx09 truck 713 (4975 Hz), fx10 jeep 595 (5961 Hz), fx11 car 448 (7917 Hz), fx12 plane 503 (7051 Hz).
+# Using those for fx09..12 matches the real Amiga pitch; fx07 tank keeps 895 (3963 Hz) instead of Amiga's
+# off-by-one read of fx06 bullet's 424.
+ENGINE_PERIOD = {9: 713, 10: 595, 11: 448, 12: 503}
+PER_MIN, PER_MAX = 284, 2047                # engine pitch clamp: 12.49 kHz (inc < 1.0) .. 1.73 kHz
 F_LOOP, F_ENV2, F_SUST = 1, 2, 4
 
 
@@ -133,11 +138,13 @@ def build(adf_path: Path) -> tuple[bytes, dict]:
         flags = (F_LOOP if s["looped"] else 0) | (F_ENV2 if e["env"] == 2 else 0) | (F_SUST if e["forever"] else 0)
         end = s["loop_off"] + s["loop_len"] if s["looped"] else s["length"]
         loop = s["loop_len"] if s["looped"] else 0
+        per = ENGINE_PERIOD.get(e["id"], e["period"])
         if s["looped"] and s["loop_off"] != 0:
             raise SystemExit("loop_off != 0 is not supported by the mixer wrap (idx -= loop_len)")
-        struct.pack_into(">IHHHHI", bank, OFF_FX + 16 * e["id"], addr[e["sample"]], end, loop, e["period"], flags,
-                         inc16(e["period"]))
+        struct.pack_into(">IHHHHI", bank, OFF_FX + 16 * e["id"], addr[e["sample"]], end, loop, per, flags,
+                         inc16(per))
     bank[OFF_PRIO:OFF_PRIO + len(PRIO)] = bytes(PRIO)
+    bank[OFF_DUR:OFF_DUR + len(effects)] = bytes(e["dur"] for e in effects)
     for e in effects:
         struct.pack_into(">I", bank, OFF_HB + 4 * e["id"], half.get(e["sample"], 0))
 

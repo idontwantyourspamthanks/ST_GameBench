@@ -3,40 +3,40 @@
 ; site: $c628
 ; orig: 082d00070093
 ; data: $8f000 256
-; data: $8f800 1024
-; data: $8fc00 1024
-; note: STE DMA sound for Hunter (work/notes/snd.md).  The site is the sound-driver tick `$C628` (`btst #7,$93(a5)` = "3D loop
-; note: active", then `movea.l $7f44(pc),a0 / jmp $40(a0)`); it becomes `jmp $8e000.l` (6 B).  The payload does the btst itself.
-; note: Plain ST (FLAGS bit0 clear), no bank ('HSND' at $90000 missing): the payload runs the ORIGINAL tick unchanged (YM plays).
-; note: STE: the original driver state machine runs as before, but its 16 YM operands ($ff8800/$ff8802 absolute.l inside the driver,
-; note: offsets in tab_ym) are redirected to a scratch long (SV+$30) so the YM stays silent; then the payload reads the driver
-; note: state (per channel: request/lock $c, duration $10, effect id $18, game volume word $4+2c), allocates up to 2 mixer
-; note: voices (best sustained/loop + best one-shot, class table $AF38), mixes the Amiga samples (bank at $90000, native rate,
-; note: 16.16 phase stepping, 16 volume tables) into a 1024-byte DMA ring at 6258 Hz mono, engine pitch from the object speed
-; note: ($3e(obj) via the channel record $1de(a5)+8c: period = base - 4*speed, as the Amiga main code at $2dea).
-; note: The 3D view left ($93 bit 7 clear): DMA stopped.  No timer, no new interrupt: everything runs inside the VBL tick.
-; note: Memory: code $8e000..$8efff, state SV $8f000.., mix ring $8f800..$8fbff, Falcon DMA ring $8fc00..$8ffff.
-; note: Falcon (FLAGS bit3, core.s probe): the DMA cannot play 6258 Hz ($ff8921=$80 is silent there), so it runs at 12517 Hz ($81) from the Falcon
-; note: DMA ring; the mixer is unchanged (512-sample mix ring, 6258 Hz) and every mixed sample is written twice into the DMA ring (snd_expand).  Preserves a5/a6/sp, uses d0-d7/a0-a4 (VBL saved them).
-; note: 50/60 Hz (hn_hz.s, work/notes/timing.md): HZ_SKIP (written by hn_hz each VBL) non-zero = this VBL is not a world tick (60 Hz: 1 in 6).
-; note: The original driver tick (state machine: request/priority/duration/volume) and the scan/voice allocation then wait, so effect durations
-; note: and envelopes run on 50 Hz-equivalent ticks; the mixer (snd_act) still tops up the ring to TARGET samples ahead of the DMA position every VBL.
+; data: $8f800 2048
+; note: STE DMA sound for Hunter v1.3 (12517 Hz mono + 1-pole IIR low-pass filter, Amiga durations & engine periods).
+; note: The site is the sound-driver tick `$C628` (`btst #7,$93(a5)` = "3D loop active", then `movea.l $7f44(pc),a0 / jmp $40(a0)`);
+; note: it becomes `jmp $8e000.l` (6 B).  The payload does the btst itself.
+; note: Plain ST (FLAGS bit0 clear), no bank ('HSND' v3 at $90000 missing): runs the ORIGINAL tick unchanged (YM plays).
+; note: STE/Mega STE/TT/Falcon: the original driver state machine runs as before, with its 16 YM operands redirected to SV+$30
+; note: and its 21 effect durations patched to the Amiga durations (BANK+$320, fixing the 1.92s seagull loop and early cutoffs);
+; note: then the payload allocates up to 2 mixer voices (best one-shot + best of the rest), mixes the Amiga samples (bank at $90000,
+; note: native rate, 16.16 phase stepping with inc < 1.0, 16 volume tables) into a 2048-byte DMA ring at 12517 Hz mono ($ff8921=$81,
+; note: native on STE, Mega STE, TT, and Falcon) through a 1-pole IIR low-pass filter y[n]=(x[n]+y[n-1])>>1 matching the Amiga A500's
+; note: analog RC filter.  Engine pitch follows object speed ($3e(obj) via $1de(a5)+8c: period = base - 4*speed, clamped 284..2047).
+; note: 3D view left ($93 bit 7 clear): DMA stopped.  No timer, no new interrupt: everything runs inside the VBL tick.
+; note: Memory: code $8e000..$8ed7f, state SV $8f000..$8f0ff, DMA ring $8f800..$8ffff (2048 B).  Preserves a5/a6/sp, uses d0-d7/a0-a4.
+; note: 50/60 Hz (hn_hz.s): HZ_SKIP non-zero = not a world tick (60 Hz: 1 in 6); driver & scan wait, mixer still tops up the ring.
 ENTRY   equ     $8e000
 FLAGS   equ     $8bff0
 HZ_SKIP equ     $8dbf2                  ; hn_hz.s: non-zero = this VBL is not a world tick (0 when hn_hz is not built)
 BANK    equ     $90000
 B_FX    equ     BANK+$100
 B_PRIO  equ     BANK+$300
+B_DUR   equ     BANK+$320
 B_MULV  equ     BANK+$400
 B_ENV2  equ     BANK+$500
 B_HB    equ     BANK+$600
 B_VTAB  equ     BANK+$1000
 SV      equ     $8f000
 RING    equ     $8f800
-RL      equ     1024
-DRING   equ     $8fc00                  ; Falcon DMA ring (1024 B = 512 mixed samples, each twice)
-TARGET  equ     192
-K4      equ     9285653
+RL      equ     2048
+RM      equ     RL-1
+RMSK    equ     RL-8
+RTHR    equ     RL*3/4
+TARGET  equ     384                     ; 30.7 ms ahead of DMA at 12517 Hz
+MAXG    equ     63                      ; <= 504 samples per VBL (< PAD=512 since inc < 1.0)
+K4      equ     4642826                 ; floor(3546895 * 65536 / 12516.58 / 4)
 v_mode  equ     0
 v_in3d  equ     1
 v_dma   equ     2
@@ -46,6 +46,7 @@ v_mw    equ     6
 v_n8    equ     8
 v_run1  equ     10
 v_run2  equ     12
+v_filt  equ     14                      ; 1-pole IIR filter state y[n-1] (signed word)
 v_gen   equ     $10
 v_age   equ     $14
 v_done  equ     $18
@@ -53,11 +54,6 @@ v_vol   equ     $20
 v_key   equ     $24
 v_keyp  equ     $2a
 v_scr   equ     $30
-v_rm    equ     $f0                     ; mix ring length - 1 (STE 1023, Falcon 511)
-v_msk   equ     $f2                     ; mix ring length - 8
-v_thr   equ     $f4                     ; underrun threshold: 3/4 of the mix ring
-v_rl    equ     $f6                     ; mix ring length in samples
-v_fal   equ     $f8                     ; non-zero: Falcon (12517 Hz DMA, samples doubled)
 v_vox0  equ     $40
 v_vox1  equ     $68
 x_ch    equ     0
@@ -80,13 +76,12 @@ x_size  equ     40
         jmp     ENTRY.l
         org     $8e000
 snd_vbl:
+        tst.b   SV+v_mode
+        bne.s   .inited
+        bsr     snd_init0
+.inited:
         btst    #7,$93(a5)
         beq     snd_off3d
-        cmpi.b  #2,SV+v_mode
-        beq     snd_run
-        tst.b   SV+v_mode
-        bne.s   snd_pass
-        bsr     snd_init0
         cmpi.b  #2,SV+v_mode
         beq     snd_run
 snd_pass:                               ; the original tick
@@ -95,26 +90,16 @@ snd_pass:                               ; the original tick
         movea.l $7f44.w,a0
         jmp     $40(a0)
 .rts:   rts
-snd_init0:                              ; once: STE hardware (loader probe) and sample bank present?
+snd_init0:                              ; once: STE hardware (loader probe) and sample bank v3 present?
         move.b  #1,SV+v_mode
         btst    #0,FLAGS+3.l
         beq.s   .rts
         cmpi.l  #'HSND',BANK.l
         bne.s   .rts
-        cmpi.w  #2,BANK+4.l
+        cmpi.w  #3,BANK+4.l
         bne.s   .rts
-        move.w  #RL-1,SV+v_rm
-        move.w  #RL-8,SV+v_msk
-        move.w  #RL*3/4,SV+v_thr
-        move.w  #RL,SV+v_rl
-        btst    #3,FLAGS+3.l            ; Falcon: mix ring of 512 samples, DMA ring of 1024 bytes
-        beq.s   .ste
-        move.w  #RL/2-1,SV+v_rm
-        move.w  #RL/2-8,SV+v_msk
-        move.w  #RL*3/8,SV+v_thr
-        move.w  #RL/2,SV+v_rl
-        st      SV+v_fal
-.ste:   move.b  #2,SV+v_mode
+        move.b  #$0b,$dbdd.l            ; type 1 (car): ST has fx 10 (s05), Amiga has fx 11 (s06); patched before mission loads
+        move.b  #2,SV+v_mode
 .rts:   rts
 snd_run:
         tst.b   SV+v_in3d
@@ -137,6 +122,7 @@ snd_off3d:                              ; 3D view not active: the original did n
         clr.b   SV+v_in3d
         clr.b   $ff8901.l               ; DMA off
         clr.b   SV+v_dma
+        clr.w   SV+v_filt
         st      SV+v_vox0+x_ch
         st      SV+v_vox1+x_ch
 .rts:   rts
@@ -152,13 +138,14 @@ snd_enter:                              ; first tick of a 3D session
         move.l  d0,v_gen(a0)
         move.l  d0,v_age(a0)
         move.l  d0,v_done(a0)
+        clr.w   v_filt(a0)
         clr.b   v_dma(a0)
         clr.b   v_silent(a0)
         st      v_vox0+x_ch(a0)
         st      v_vox1+x_ch(a0)
         st      v_in3d(a0)
         rts
-snd_ympatch:                            ; redirect the driver's YM absolute operands to SV+v_scr (idempotent)
+snd_ympatch:                            ; redirect the driver's YM absolute operands to SV+v_scr + patch Amiga durations (idempotent)
         movea.l $7f44.w,a0
         lea     tab_ym(pc),a1
         moveq   #15,d0
@@ -172,6 +159,12 @@ snd_ympatch:                            ; redirect the driver's YM absolute oper
         bne.s   .n
 .w:     move.l  d3,(a0,d1.w)
 .n:     dbra    d0,.l
+        lea     $4cb(a0),a1             ; ST driver effect table ($4c8) + 3 (duration byte): replace with Amiga durations
+        lea     B_DUR.l,a2
+        moveq   #20,d0
+.dl:    move.b  (a2)+,(a1)
+        lea     16(a1),a1
+        dbra    d0,.dl
         bra     snd_cflush
 tab_ym: dc.w    $24,$2e,$38,$15c,$162,$16e,$174,$17c,$2fe,$304,$314,$31a,$34c,$354,$36c,$378
 snd_cflush:                             ; 68020+ (the _CPU cookie): drop the instruction cache after the code patch
@@ -223,66 +216,29 @@ snd_microwire:                          ; master 40 (0 dB), left/right 20 (0 dB)
 .berr:  movea.l a2,sp
         bra.s   .out
 .cmds:  dc.w    $04e8,$0554,$0514,$0401,$0486,$0446
-snd_dmapos:                             ; d0.w = DMA read position inside the ring
+snd_dmapos:                             ; d0.w = DMA read position inside the 2048-byte ring
         lea     $ff8909.l,a0
 .rd:    movep.l 0(a0),d0
         movep.l 0(a0),d1
         cmp.l   d0,d1
         bne.s   .rd
         lsr.l   #8,d0
-        tst.b   SV+v_fal
-        bne.s   .fal
         subi.l  #RING,d0
-        andi.w  #RL-1,d0
-        rts
-.fal:   subi.l  #DRING,d0
-        andi.w  #RL-1,d0
-        lsr.w   #1,d0                   ; DMA bytes -> mixed samples (each is two bytes)
+        andi.w  #RM,d0
         rts
 snd_dmastart:
         lea     $ff8900.l,a0
         moveq   #0,d0
         move.b  d0,1(a0)
-        tst.b   SV+v_fal
-        bne.s   .fal
         move.b  #(RING>>16)&$ff,3(a0)
         move.b  #(RING>>8)&$ff,5(a0)
         move.b  #RING&$ff,7(a0)
         move.b  #((RING+RL)>>16)&$ff,$f(a0)
         move.b  #((RING+RL)>>8)&$ff,$11(a0)
         move.b  #(RING+RL)&$ff,$13(a0)
-        move.b  #$80,$21(a0)            ; mono, 6258 Hz
-.go:    move.b  #3,1(a0)                ; play + repeat
+        move.b  #$81,$21(a0)            ; mono, 12517 Hz (native on STE, Mega STE, TT, and Falcon)
+        move.b  #3,1(a0)                ; play + repeat
         rts
-.fal:   move.b  #(DRING>>16)&$ff,3(a0)
-        move.b  #(DRING>>8)&$ff,5(a0)
-        move.b  #DRING&$ff,7(a0)
-        move.b  #((DRING+RL)>>16)&$ff,$f(a0)
-        move.b  #((DRING+RL)>>8)&$ff,$11(a0)
-        move.b  #(DRING+RL)&$ff,$13(a0)
-        move.b  #$81,$21(a0)            ; mono, 12517 Hz: the Falcon's STE-compatible DMA plays nothing at $80 (6258 Hz)
-        bra.s   .go
-snd_expand:                             ; Falcon: the samples just mixed (v_wr, v_run1/v_run2 groups) -> DMA ring, each twice
-        lea     RING.l,a0
-        adda.w  v_wr(a4),a0
-        lea     DRING.l,a1
-        move.w  v_wr(a4),d0
-        adda.w  d0,a1
-        adda.w  d0,a1
-        move.w  v_run1(a4),d1
-        bsr.s   .run
-        lea     RING.l,a0
-        lea     DRING.l,a1
-        move.w  v_run2(a4),d1
-.run:   subq.w  #1,d1
-        bmi.s   .r
-.g:     rept    8
-        move.b  (a0)+,d0
-        move.b  d0,(a1)+
-        move.b  d0,(a1)+
-        endr
-        dbra    d1,.g
-.r:     rts
 ; ---------------------------------------------------------------------------------------------------------------
 snd_update:
         movea.l $7f44.w,a1
@@ -497,6 +453,7 @@ snd_act:
         tst.w   d5
         beq     snd_ret
         clr.w   v_wr(a4)                ; start: fill the first TARGET samples, then enable the DMA at the ring start
+        clr.w   v_filt(a4)
         moveq   #TARGET/8,d0
         bsr     snd_mix
         bsr     snd_dmastart
@@ -506,21 +463,21 @@ snd_act:
 .on:    bsr     snd_dmapos              ; d0 = play position; keep the write cursor TARGET samples ahead
         move.w  v_wr(a4),d1
         sub.w   d0,d1
-        and.w   SV+v_rm,d1
-        cmp.w   SV+v_thr,d1
+        andi.w  #RM,d1
+        cmpi.w  #RTHR,d1
         bls.s   .okp
-        addi.w  #16,d0                  ; underrun: resync just ahead of the DMA
-        and.w   SV+v_msk,d0
+        addi.w  #32,d0                  ; underrun: resync just ahead of the DMA
+        andi.w  #RMSK,d0
         move.w  d0,v_wr(a4)
-        moveq   #16,d1
+        moveq   #32,d1
 .okp:   move.w  #TARGET,d0
         sub.w   d1,d0
         ble.s   .sil
         lsr.w   #3,d0
         beq.s   .sil
-        cmpi.w  #31,d0
+        cmpi.w  #MAXG,d0
         bls.s   .n8
-        moveq   #31,d0
+        moveq   #MAXG,d0
 .n8:    bsr     snd_mix
 .sil:   tst.w   d5
         bne.s   .nsil
@@ -529,6 +486,7 @@ snd_act:
         blo     .post
         clr.b   $ff8901.l
         clr.b   v_dma(a4)
+        clr.w   v_filt(a4)
         bra     .post
 .nsil:  clr.b   v_silent(a4)
 .post:  lea     v_vox0(a4),a3           ; loop wrap / one-shot end
@@ -581,17 +539,14 @@ snd_vstart:                             ; a3 = slot, d7 = channel, a1 = driver s
         clr.w   x_idx(a3)
         tst.w   x_loop(a3)
         bne.s   .rts
-        moveq   #0,d0                   ; a one-shot that was not heard from its start: skip ahead by its age
+        moveq   #0,d0                   ; a one-shot that was not heard from its start: skip ahead by its age (250 samples/tick)
         move.b  v_age(a4,d7.w),d0
         beq.s   .rts
-        mulu.w  #125,d0
+        mulu.w  #250,d0
         move.w  d0,d2
         mulu.w  x_incf(a3),d2
         swap    d2
-        tst.w   x_inci(a3)
-        beq.s   .ni
-        add.w   d0,d2
-.ni:    cmp.w   x_end(a3),d2
+        cmp.w   x_end(a3),d2
         bhs.s   .dead
         move.w  d2,x_idx(a3)
 .rts:   rts
@@ -603,7 +558,7 @@ snd_mix:                                ; d0 = groups of 8 outputs (>=1), d5 = v
         move.w  d5,-(sp)
         move.w  d0,v_n8(a4)
         move.w  v_wr(a4),d1
-        move.w  v_rl(a4),d2
+        move.w  #RL,d2
         sub.w   d1,d2
         lsr.w   #3,d2                   ; groups to the ring end
         cmp.w   d0,d2
@@ -632,17 +587,15 @@ snd_mix:                                ; d0 = groups of 8 outputs (>=1), d5 = v
 .od:    bsr     mix1d
         bra.s   .adv
 .z:     bsr     mixz
-.adv:   tst.b   v_fal(a4)
-        beq.s   .nf
-        bsr     snd_expand
-.nf:    move.w  v_n8(a4),d0
+.adv:   move.w  v_n8(a4),d0
         lsl.w   #3,d0
         add.w   v_wr(a4),d0
-        and.w   v_rm(a4),d0
+        andi.w  #RM,d0
         move.w  d0,v_wr(a4)
         move.w  (sp)+,d5
         rts
-mixz:   moveq   #0,d0
+mixz:   clr.w   v_filt(a4)
+        moveq   #0,d0
         lea     RING.l,a0
         adda.w  v_wr(a4),a0
         move.w  v_run1(a4),d1
@@ -655,49 +608,69 @@ mixz:   moveq   #0,d0
         move.l  d0,(a0)+
         dbra    d1,.l
 .r:     rts
+; ---- 1-voice and 2-voice mixers with 1-pole IIR low-pass filter y[n] = (x[n] + y[n-1]) >> 1
+; At 12517 Hz every effect has inc < 1.0 (x_inci == 0), so d6 = 0 serves both voices in MIX2R and d7 holds y[n-1].
 MIX1T   macro
         move.b  (a0,d0.w),d4
-        move.b  (a2,d4.w),(a6)+
+        move.b  (a2,d4.w),d5
+        ext.w   d5
+        add.w   d5,d3
+        asr.w   #1,d3
+        move.b  d3,(a6)+
         add.w   a4,d1
         addx.w  d6,d0
         endm
 MIX1D   macro
-        move.b  (a0,d0.w),(a6)+
+        move.b  (a0,d0.w),d4
+        ext.w   d4
+        add.w   d4,d3
+        asr.w   #1,d3
+        move.b  d3,(a6)+
         add.w   a4,d1
         addx.w  d6,d0
         endm
 MIX2TT  macro
+        moveq   #0,d4
         move.b  (a0,d0.w),d4
         move.b  (a2,d4.w),d4
         move.b  (a1,d2.w),d5
         move.b  (a3,d5.w),d5
         add.b   d5,d4
-        move.b  d4,(a6)+
+        ext.w   d4
+        add.w   d4,d7
+        asr.w   #1,d7
+        move.b  d7,(a6)+
         add.w   a4,d1
         addx.w  d6,d0
         add.w   a5,d3
-        addx.w  d7,d2
+        addx.w  d6,d2
         endm
 MIX2DT  macro
         move.b  (a0,d0.w),d4
         move.b  (a1,d2.w),d5
         move.b  (a3,d5.w),d5
         add.b   d5,d4
-        move.b  d4,(a6)+
+        ext.w   d4
+        add.w   d4,d7
+        asr.w   #1,d7
+        move.b  d7,(a6)+
         add.w   a4,d1
         addx.w  d6,d0
         add.w   a5,d3
-        addx.w  d7,d2
+        addx.w  d6,d2
         endm
 MIX2DD  macro
         move.b  (a0,d0.w),d4
         move.b  (a1,d2.w),d5
         add.b   d5,d4
-        move.b  d4,(a6)+
+        ext.w   d4
+        add.w   d4,d7
+        asr.w   #1,d7
+        move.b  d7,(a6)+
         add.w   a4,d1
         addx.w  d6,d0
         add.w   a5,d3
-        addx.w  d7,d2
+        addx.w  d6,d2
         endm
 MIX1R   macro
 \1:     movem.l a2/a4-a6,-(sp)
@@ -705,7 +678,8 @@ MIX1R   macro
         move.w  x_idx(a2),d0
         move.w  x_frac(a2),d1
         movea.w x_incf(a2),a4
-        move.w  x_inci(a2),d6
+        moveq   #0,d6
+        move.w  SV+v_filt,d3
         movea.l x_vt(a2),a2
         moveq   #0,d4
         lea     RING.l,a6
@@ -719,6 +693,7 @@ MIX1R   macro
         lea     RING.l,a6
         bsr.s   .loop
 .s2:    addq.w  #2,sp
+        move.w  d3,SV+v_filt
         movea.l (sp),a2
         move.w  d0,x_idx(a2)
         move.w  d1,x_frac(a2)
@@ -738,11 +713,11 @@ MIX2R   macro
         move.w  x_idx(a2),d0
         move.w  x_frac(a2),d1
         movea.w x_incf(a2),a4
-        move.w  x_inci(a2),d6
         move.w  x_idx(a3),d2
         move.w  x_frac(a3),d3
         movea.w x_incf(a3),a5
-        move.w  x_inci(a3),d7
+        moveq   #0,d6
+        move.w  SV+v_filt,d7
         movea.l x_vt(a3),a3
         movea.l x_vt(a2),a2
         moveq   #0,d4
@@ -758,6 +733,7 @@ MIX2R   macro
         lea     RING.l,a6
         bsr.s   .loop
 .s2:    addq.w  #2,sp
+        move.w  d7,SV+v_filt
         movea.l (sp),a0
         move.w  d0,x_idx(a0)
         move.w  d1,x_frac(a0)
@@ -766,11 +742,12 @@ MIX2R   macro
         move.w  d3,x_frac(a1)
         movem.l (sp)+,a2-a6
         rts
-.loop:  rept    8
+.loop:  asl.w   4(sp)
+.l4:    rept    4
         \2
         endr
         subq.w  #1,4(sp)
-        bne     .loop
+        bne     .l4
         rts
         endm
         MIX1R   mix1t,MIX1T

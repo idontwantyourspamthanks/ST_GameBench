@@ -22,11 +22,14 @@ What changed against the original release:
   * the edge set-up avoids the slow divide when it is not needed,
   * the joystick poll in the 50 Hz interrupt no longer waits 350 microseconds each time.
   Together this is about 6.5% (standing) to 13.7% (walking) fewer CPU cycles per frame.
-- STE sound (STE, Mega STE, TT, Falcon): the YM sound effects are replaced by the Amiga
-  version's samples, played through the STE DMA sound chip (mono, 6258 Hz, two voices;
-  the Falcon's DMA cannot do 6258 Hz, there it runs at 12517 Hz with every sample doubled).
-  The engine pitch follows the speed, as on the Amiga. Costs about 0.2% of the CPU when
-  nothing plays, up to about 10% with two sounds. A plain ST keeps the original YM sound.
+- STE sound (STE, Mega STE, TT, Falcon; reworked in v1.3): the YM sound effects are replaced
+  by the Amiga version's samples, played through the STE DMA sound chip (mono, 12517 Hz native
+  on STE, Mega STE, TT and Falcon, two voices, with a 1-pole IIR low-pass smoothing filter
+  matching the Amiga A500's analog filter). Engine pitch follows the speed using the Amiga's
+  actual vehicle base periods, and all 21 effect durations match the Amiga (fixing the long
+  looping seagull and early one-shot cutoffs). Costs about 0.2% of the CPU when nothing plays,
+  about 10% for one engine voice, up to about 21% with two table-scaled voices. A plain ST
+  keeps the original YM sound.
 - 50/60 Hz: the original game counts display refreshes. It asks the shifter for 50 Hz when it starts, but wherever the
   screen runs at 60 Hz anyway (hardware or an adapter that ignores that, an emulator set to 60 Hz) everything that moves or
   counts down ran 20% too fast: walking and driving, turning, NPCs, projectiles, the game clock, stamina and message
@@ -78,9 +81,9 @@ What changed against the original release:
   Only the hard-disk build: the floppy release keeps its own loader and saving, which is unchanged.
 - Version line: the title screen shows a small, dim "v@VERSION@ enhanced by dad_prg" at the bottom, so this release can not be
   mistaken for the original. Nothing else on the screen changes.
-- Hardening (v@VERSION@): the YM I/O port direction is now set explicitly (no known failure). The STE sound patch writes PSG register 7
+- Hardening (v1.2.1): the YM I/O port direction is now set explicitly (no known failure). The STE sound patch writes PSG register 7
   as an absolute value ($FF, both I/O ports outputs) when it takes over the YM, instead of reading it back and OR-ing; the
-  floppy drive select lines (port A) can not be left as inputs. Nothing else changes.
+  floppy drive select lines (port A) can not be left as inputs.
 - Every patch checks the original bytes it replaces first. If anything is not as
   expected, nothing is changed and the game starts as before.
 - Nothing else in the game is changed: keyboard, mouse buttons and joystick controls and saves work as in PP's release, and at 50 Hz so does the game speed.
