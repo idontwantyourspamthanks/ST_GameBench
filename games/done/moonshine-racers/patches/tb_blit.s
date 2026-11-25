@@ -116,11 +116,17 @@ common: cmpi.b  #1,BST.l
         add.w   d0,d3                   ; 6P
 .rb1:   move.l  a6,-(a7)
         cmpi.w  #3,d4
-        bcc.s   .many
+        bcc.s   many_c
         bsr.w   grp                     ; 1 or 2 columns: one group
         movea.l (a7)+,a6
         rts
-.many:  movem.l d4/d7/a1/a3,-(a7)       ; 3 columns: the plane-major pair, then one single column
+.nb:    cmpi.b  #2,BST.l
+        beq.w   fb
+        bsr.w   probe
+        cmpi.b  #1,BST.l
+        beq.w   .go
+        bra.w   fb
+many_c: movem.l d4/d7/a1/a3,-(a7)       ; 3 columns: the plane-major pair, then one single column
         moveq   #2,d4
         bsr.w   grp
         movem.l (a7)+,d4/d7/a1/a3
@@ -132,14 +138,8 @@ common: cmpi.b  #1,BST.l
         bsr.w   grp
         movea.l (a7)+,a6
         rts
-.nb:    cmpi.b  #2,BST.l
-        beq.w   fb
-        bsr.w   probe
-        cmpi.b  #1,BST.l
-        beq.w   .go
-        bra.w   fb
 
-minr:   dc.b    0,5,4,6
+minr:   dc.b    0,14,7,10
 ; descriptors: 2P, dest byte offsets of the P data planes, P
 d7_:    dc.w    6,0,2,4,0,3
 d11_:   dc.w    6,0,2,6,0,3
@@ -147,28 +147,192 @@ d13_:   dc.w    6,0,4,6,0,3
 d15_:   dc.w    8,0,2,4,6,4
 cht:    dc.w    0,BUDGET/12,BUDGET/24,BUDGET/36,BUDGET/48,BUDGET/60
 
-; grp: draw d4 columns (1 or 2) of d7 rows at a1 -> a3, shift d6, d3 = source bytes per sprite row, a2 = descriptor.  Clobbers d0-d2, d5, d7, a0, a1, a3, a4, a6.
+; grp: draw d4 columns (1 or 2) of d7 rows at a1 -> a3, shift d6 (!= 0), d3 = source bytes per sprite row, a2 = descriptor.  Clobbers d0-d2, d5, d7, a0, a1, a3, a4, a6.
 grp:    move.w  d4,d5
-        tst.w   d6
-        beq.s   .g0
-        addq.w  #1,d5                   ; n
-.g0:    cmpi.b  #8,$fffffa1b.w          ; Timer B stopped (past last sky band): single unguarded HOG pass (no chunking, no per-plane TB checks)
-        bne.w   grp_fast
+        addq.w  #1,d5                   ; n = cols + 1 (d6 != 0 always)
+        ; ---- mask cache validity check (fast path: same $100e pass -> 2 instructions)
+        tst.b   MOK.l
+        beq.s   .mflush
+        move.w  $100e.w,d0
+        cmp.w   MLAST.l,d0
+        beq.s   .mchk
+        bcs.s   .mflush
+        move.w  d0,MLAST.l
+        move.w  $102c.w,d0
+        cmp.w   MLEV.l,d0
+        bne.s   .mflush
+        move.l  $135a.w,d0
+        cmp.l   MCOL.l,d0
+        beq.s   .mchk
+.mflush: bsr.w  mcache_clr
+.mchk:  ; ---- direct-mapped lookup in MTAB by (a1, d4, rows >= d7)
+        move.w  a1,d0
+        move.w  d0,d1
+        lsr.w   #7,d1
+        eor.w   d1,d0
+        andi.w  #$7f8,d0                ; (hash & 255) * 8
+        lea     MTAB.l,a0
+        adda.w  d0,a0                   ; a0 = hash slot
+        cmpa.l  (a0),a1
+        bne.w   .cmiss
+        cmp.b   4(a0),d4
+        bne.w   .cmiss
+        cmp.b   5(a0),d7                ; cached_rows >= d7?
+        bhi.w   .cmiss
+        ; ---- CACHE HIT! a4 = MPOOL + pool_off (used by BOTH grp_fast and TB-chunked path!)
+        moveq   #0,d0
+        move.w  6(a0),d0
+        lea     MPOOL.l,a4
+        adda.l  d0,a4
+        cmpi.b  #8,$fffffa1b.w
+        bne.w   grp_fast_hit
+        ; ---- TB running + CACHE HIT: chunked apply directly from a4 (skips all 3 mask-build blits!)
         lea     cht(pc),a0
         add.w   d5,d5
-        move.w  (a0,d5.w),d1            ; max rows per blit pass
+        move.w  (a0,d5.w),d1
         lsr.w   #1,d5
+        bsr.w   push_em
+.chkh:  move.w  d7,d2
+        cmp.w   d1,d2
+        ble.s   .ch1
+        move.w  d1,d2
+.ch1:   movem.l d1/d7/a4,-(a7)
+        move.l  #$00020002,BL+$20.w     ; mask apply: D &= ~M from cached a4
+        move.w  #168,d0
+        move.w  d5,d1
+        lsl.w   #3,d1
+        sub.w   d1,d0
+        move.l  #$00080000,d1
+        move.w  d0,d1
+        move.l  d1,BL+$2e.w
+        move.w  12(a7),d1               ; skew (stack: d1/d7/a4, skew, em3, em1)
+        move.w  16(a7),d0               ; em1
+        swap    d0
+        move.w  #$ffff,d0
+        move.l  d0,BL+$28.w
+        move.w  14(a7),BL+$2c.w         ; em3
+        move.b  d1,BL+$3d.w
+        move.w  d5,BL+$36.w
+        move.w  #$0204,BL+$3a.w         ; HOP = source, LOP = ~S & D
+        move.l  a3,d0
+        moveq   #3,d7
+.cma:   move.l  a4,BL+$24.w
+        move.l  d0,BL+$32.w
+        move.w  d2,BL+$38.w
+        PASS
+        addq.l  #2,d0
+        dbra    d7,.cma
+        move.w  d4,d0                   ; data: D |= S per present plane
+        add.w   d0,d0
+        movea.w d0,a4                   ; plane step = 2 * cols
+        move.w  d3,d0
+        sub.w   a4,d0
+        addq.w  #2,d0
+        move.l  #$00020000,d1
+        move.w  d0,d1
+        move.l  d1,BL+$20.w
+        move.b  #7,BL+$3b.w
+        move.w  10(a2),d7
+        subq.w  #1,d7
+        movea.l a1,a0
+        lea     2(a2),a6
+.cda:   move.l  a0,BL+$24.w
+        move.w  (a6)+,d0
+        ext.l   d0
+        add.l   a3,d0
+        move.l  d0,BL+$32.w
+        move.w  d2,BL+$38.w
+        PASS
+        adda.l  a4,a0
+        dbra    d7,.cda
+        movem.l (a7)+,d1/d7/a4
+        sub.w   d2,d7
+        ble.s   .chdn
+        move.w  d2,d0                   ; advance cached mask ptr a4 += d2 * 2 * d4
+        add.w   d0,d0
+        cmpi.w  #1,d4
+        beq.s   .ca1
+        add.w   d0,d0
+.ca1:   adda.w  d0,a4
+        move.w  d3,d0
+        mulu.w  d2,d0
+        adda.l  d0,a1
+        mulu.w  #160,d2
+        adda.l  d2,a3
+        bra.w   .chkh
+.chdn:  lea     6(a7),a7
+        rts
+.cmiss: cmpi.b  #8,$fffffa1b.w
+        bne.w   grp_fast_miss
+        ; ---- TB running + CACHE MISS: if single-chunk (d7 <= d1), allocate in MPOOL so future frames HIT!
+        lea     cht(pc),a4
+        add.w   d5,d5
+        move.w  (a4,d5.w),d1            ; max rows per blit pass
+        lsr.w   #1,d5
+        cmp.w   d1,d7
+        bgt.w   .cm_tmp
+        move.w  d7,d2
+        add.w   d2,d2                   ; d7 * 2
+        cmpi.w  #1,d4
+        beq.s   .cms1
+        add.w   d2,d2                   ; d7 * 4 (2 cols)
+.cms1:  move.w  MPTR.l,d0
+        move.w  d0,a6                   ; save offset in a6
+        add.w   d2,d0
+        cmpi.w  #MPOOLSZ,d0
+        bls.s   .cmput
+        move.l  a0,-(a7)
+        bsr.w   mcache_clr
+        movea.l (a7)+,a0
+        suba.l  a6,a6
+        move.w  d2,d0
+        cmpi.w  #MPOOLSZ,d0
+        bhi.w   .cm_tmp
+.cmput: move.w  d0,MPTR.l
+        move.l  a1,(a0)
+        move.b  d4,4(a0)
+        move.b  d7,5(a0)
+        move.w  a6,6(a0)
+        moveq   #0,d0
+        move.w  a6,d0
+        lea     MPOOL.l,a4
+        adda.l  d0,a4                   ; a4 = cached mask dest in MPOOL
+        ; build mask into a4 with TB-guarded PASSes (d7 rows <= d1)
+        move.w  d4,d0
+        add.w   d0,d0
+        movea.w d0,a6                   ; plane step = 2 * cols
+        move.w  d3,d0
+        sub.w   a6,d0
+        addq.w  #2,d0
+        move.l  #$00020000,d2
+        move.w  d0,d2
+        move.l  d2,BL+$20.w
+        move.l  #$00020002,BL+$2e.w
         moveq   #-1,d0
-        lsr.w   d6,d0
-        move.w  d0,-(a7)                ; em1
-        moveq   #-1,d0
-        moveq   #16,d2
-        sub.w   d6,d2
-        lsl.w   d2,d0
-        move.w  d0,-(a7)                ; em3
-        move.w  d6,d0
-        ori.w   #$40,d0
-        move.w  d0,-(a7)                ; skew byte
+        move.l  d0,BL+$28.w
+        move.w  d0,BL+$2c.w
+        move.w  d4,BL+$36.w
+        move.w  #$0203,BL+$3a.w
+        clr.b   BL+$3d.w
+        move.w  10(a2),d2
+        subq.w  #1,d2                   ; P - 1
+        movea.l a1,a0
+        move.l  a0,BL+$24.w
+        move.l  a4,BL+$32.w
+        move.w  d7,BL+$38.w
+        PASS
+        move.b  #7,BL+$3b.w
+.tmb:   adda.l  a6,a0
+        move.l  a0,BL+$24.w
+        move.l  a4,BL+$32.w
+        move.w  d7,BL+$38.w
+        PASS
+        subq.w  #1,d2
+        bne.s   .tmb
+        bsr.w   push_em
+        bra.w   .chkh
+.cm_tmp:
+        bsr.w   push_em
 chunk:  move.w  d7,d2                   ; rows of this chunk
         cmp.w   d1,d2
         ble.s   .c1
@@ -262,53 +426,36 @@ chunk:  move.w  d7,d2                   ; rows of this chunk
 .done:  lea     6(a7),a7
         rts
 
-; grp_fast: Timer B is stopped (TBCR != 8) — draw all d7 rows in one unguarded HOG pass with lazy 1-bit mask cache.
-grp_fast:
+; push_em: push em1, em3, skew words onto caller's stack (above return addr)
+push_em:
+        movea.l (a7)+,a6                ; save return addr in a6
+        moveq   #-1,d0
+        lsr.w   d6,d0
+        move.w  d0,-(a7)                ; em1
+        moveq   #-1,d0
+        moveq   #16,d2
+        sub.w   d6,d2
+        lsl.w   d2,d0
+        move.w  d0,-(a7)                ; em3
+        move.w  d6,d0
+        ori.w   #$40,d0
+        move.w  d0,-(a7)                ; skew byte
+        jmp     (a6)
+
+; grp_fast_hit / grp_fast_miss: Timer B is stopped (TBCR != 8) — single unguarded HOG pass.
+grp_fast_hit:
+        move.w  d7,d2
+        bra.w   have_m
+grp_fast_miss:
         move.w  d7,d2
         cmpi.w  #1,d4
-        beq.s   .fok
+        beq.s   .mmiss
         cmpi.w  #96,d2
-        bls.s   .fok
+        bls.s   .mmiss
         moveq   #96,d1
-        bra.w   .fchk
-.fok:   ; ---- mask cache validity check (fast path: same $100e pass -> 2 instructions)
-        tst.b   MOK.l
-        beq.s   .mflush
-        move.w  $100e.w,d0
-        cmp.w   MLAST.l,d0
-        beq.s   .mchk
-        bcs.s   .mflush
-        move.w  d0,MLAST.l
-        move.w  $102c.w,d0
-        cmp.w   MLEV.l,d0
-        bne.s   .mflush
-        move.l  $135a.w,d0
-        cmp.l   MCOL.l,d0
-        beq.s   .mchk
-.mflush: bsr.w  mcache_clr
-.mchk:  ; ---- direct-mapped lookup in MTAB by (a1, d4, rows >= d2)
-        move.l  a1,d0
-        lsr.l   #4,d0
-        move.w  d0,d1
-        lsr.w   #8,d1
-        eor.w   d1,d0
-        andi.w  #$ff,d0
-        lsl.w   #3,d0
-        lea     MTAB.l,a0
-        adda.w  d0,a0                   ; a0 = hash slot
-        cmpa.l  (a0),a1
-        bne.s   .mmiss
-        cmp.b   4(a0),d4
-        bne.s   .mmiss
-        cmp.b   5(a0),d2                ; cached_rows >= d2? (if d2 > cached_rows -> miss)
-        bhi.s   .mmiss
-        ; ---- CACHE HIT! a4 = MPOOL + pool_off, skip all 3 mask-build blits!
-        moveq   #0,d0
-        move.w  6(a0),d0
-        lea     MPOOL.l,a4
-        adda.l  d0,a4
-        bra.w   .have_m
-.mmiss: ; ---- CACHE MISS: allocate d2 * d4 * 2 bytes in MPOOL (or fall back to TMP if full)
+        bsr.s   push_em
+        bra.w   chunk
+.mmiss: ; ---- CACHE MISS: allocate d2 * d4 * 2 bytes in MPOOL (flush-on-full)
         move.w  d2,d1
         add.w   d1,d1                   ; d2 * 2
         cmpi.w  #1,d4
@@ -319,7 +466,7 @@ grp_fast:
         add.w   d1,d0
         cmpi.w  #MPOOLSZ,d0
         bhi.s   .mfull
-        move.w  d0,MPTR.l
+.mput:  move.w  d0,MPTR.l
         move.l  a1,(a0)
         move.b  d4,4(a0)
         move.b  d2,5(a0)
@@ -329,7 +476,14 @@ grp_fast:
         lea     MPOOL.l,a4
         adda.l  d0,a4
         bra.s   .mbld
-.mfull: lea     TMP.l,a4                ; pool full: build into TMP as fallback
+.mfull: move.l  a0,-(a7)                ; pool full: flush cache and re-allocate from offset 0
+        bsr.w   mcache_clr
+        movea.l (a7)+,a0
+        moveq   #0,d7
+        move.w  d1,d0
+        cmpi.w  #MPOOLSZ,d0
+        bls.s   .mput
+        lea     TMP.l,a4                ; single sprite larger than pool: build into TMP
 .mbld:  move.w  d4,d0
         add.w   d0,d0
         movea.w d0,a6                   ; plane step = 2 * cols
@@ -361,7 +515,7 @@ grp_fast:
         move.b  #$c0,BL+$3c.w
         subq.w  #1,d0
         bne.s   .fmb
-.have_m:
+have_m:
         move.l  #$00020002,BL+$20.w     ; mask apply: D &= ~M on the 4 destination planes (reading from a4)
         move.w  #168,d0
         move.w  d5,d1
@@ -417,18 +571,6 @@ grp_fast:
         adda.l  a4,a0
         dbra    d7,.fda
         rts
-.fchk:  moveq   #-1,d0
-        lsr.w   d6,d0
-        move.w  d0,-(a7)
-        moveq   #-1,d0
-        moveq   #16,d2
-        sub.w   d6,d2
-        lsl.w   d2,d0
-        move.w  d0,-(a7)
-        move.w  d6,d0
-        ori.w   #$40,d0
-        move.w  d0,-(a7)
-        bra.w   chunk
 
 ; mcache_clr: zero all 256 slot keys in MTAB and reset bump pointer MPTR (preserves d2-d7, a1-a6)
 mcache_clr:
@@ -498,3 +640,63 @@ probe:  movem.l d0-d2/a0-a1,-(a7)
 .out:   move.w  d2,sr
         movem.l (a7)+,d0-d2/a0-a1
         rts
+
+; ---- Inner-entry stubs ($B4E00) for the 3-part sprite inner kernel tables ($38b0..$38f7, hooked by tb_blit_in).
+; Contract: d0 = x, d6 = x & 15, d7 = rows (clamped > 0), a1 = bitmap, a3 = screen dest, a5 = screen base.
+        dcb.b   $B4E00-*,0
+ISTUB   macro   ; label, cols, descriptor, stock inner entry
+\1:     moveq   #\2,d4
+        lea     \3(pc),a2
+        move.l  #\4,d3
+        bra.w   inner_c
+        endm
+        ISTUB   i_n7c1,1,d7_,$129fc
+        ISTUB   i_n7c2,2,d7_,$12fca
+        ISTUB   i_n7c3,3,d7_,$136ca
+        ISTUB   i_n11c1,1,d11_,$12b00
+        ISTUB   i_n11c2,2,d11_,$1314c
+        ISTUB   i_n11c3,3,d11_,$138b4
+        ISTUB   i_n13c1,1,d13_,$12c14
+        ISTUB   i_n13c2,2,d13_,$132e8
+        ISTUB   i_n13c3,3,d13_,$13ac6
+        ISTUB   i_n15c1,1,d15_,$12d42
+        ISTUB   i_n15c2,2,d15_,$134ca
+        ISTUB   i_n15c3,3,d15_,$13d30
+
+inner_c:
+        cmpi.b  #1,BST.l
+        bne.s   .inb
+.igo:   tst.w   d6
+        beq.w   fb
+        tst.w   d0
+        bmi.w   fb
+        tst.w   d7
+        ble.w   fb
+        lea     minr(pc),a0
+        cmp.b   (a0,d4.w),d7
+        bcs.w   fb
+        move.w  d0,d2
+        lsr.w   #4,d2
+        add.w   d4,d2
+        cmpi.w  #19,d2
+        bgt.w   fb
+        move.w  (a2),d3                 ; 2P
+        cmpi.w  #1,d4
+        beq.s   .irb1
+        move.w  d3,d0
+        add.w   d3,d3                   ; 4P
+        cmpi.w  #2,d4
+        beq.s   .irb1
+        add.w   d0,d3                   ; 6P
+.irb1:  move.l  a6,-(a7)
+        cmpi.w  #3,d4
+        bcc.w   many_c
+        bsr.w   grp
+        movea.l (a7)+,a6
+        rts
+.inb:   cmpi.b  #2,BST.l
+        beq.w   fb
+        bsr.w   probe
+        cmpi.b  #1,BST.l
+        beq.s   .igo
+        bra.w   fb

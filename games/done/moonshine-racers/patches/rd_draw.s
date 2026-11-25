@@ -73,11 +73,11 @@ rd_rec: movem.w (a1)+,d0-d3             ; w0, A, B, F
         lsr.w   #5,d6
         and.w   #$700,d6                ; combo << 8
         add.w   d6,d0                   ; K
-        and.w   #15,d1
+        sub.w   d4,d1                   ; d1 & 15 (since d4 = d1 & $fff0)
         lsl.w   #4,d1
         add.w   d0,d1
         sub.w   #$6000,d1               ; window A index (A table sits below a5)
-        and.w   #15,d2
+        sub.w   d5,d2                   ; d2 & 15 (since d5 = d2 & $fff0)
         lsl.w   #4,d2
         add.w   d0,d2                   ; window B index
         cmp.w   #288,d4                 ; both edge windows fully on screen (0 <= Aal, Bal <= 288, Aal >= Bal + 32): no clipping at all

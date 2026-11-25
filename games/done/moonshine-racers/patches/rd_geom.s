@@ -2,6 +2,7 @@
 ; default: yes
 ; site: $100b4
 ; orig: 41f8456443f81bbc
+; conflicts: sb_bar
 ; ram: $C0000-$CAFFF  rd_geom tables (magic, cached $1316, standing-frame result, product table); zero at game start, built lazily behind the magic
 ; doc: Faster road geometry $100b4 (pixel-identical): per-slice loop split into tight passes, the two mulu.w per slice become one table lookup each, unused near slices are skipped.
 ; note: Moonshine Racers road study (work/notes/road.md).  Site $100b4 (the first two `lea`s of the road geometry routine) -> `jmp $B4004.l` ($B4000 = the pre-warm entry used by rd_init); the blob is the WHOLE routine (same memory results, same rts).
@@ -189,38 +190,42 @@ rd_geom:
         asr.l   #5,d0
         move.l  d0,$131c.w
         move.l  d0,d4                   ; S
-        ; ---- pass A: centre table, 112 slices
+        ; ---- pass A: centre table, 112 slices (unrolled 4x)
         moveq   #0,d3                   ; accumulator ($1320 at the end)
         lea     $4804.w,a5
         lea     CBASE.l,a1
-        moveq   #111,d7
-.a:     add.l   d4,d3
+        moveq   #27,d7
+.a:     rept    4
+        add.l   d4,d3
         move.l  d3,d0
         swap    d0
         add.w   (a1)+,d0
         add.w   (a2)+,d0
         move.w  d0,(a5)+
+        endr
         dbra    d7,.a
         move.l  d3,$1320.w
-        ; ---- pass B: left/right edge positions, 80 slices
+        ; ---- pass B: left/right edge positions, 80 slices (unrolled 4x, a4 = $13b0+$400)
+        move.l  a4,-(a7)
         lea     $4644.w,a1              ; T1 descending
         lea     $4804.w,a2
         lea     SCR.l,a3
         lea     $13b0.w,a5
+        lea     $17b0.w,a4              ; $13b0 + $400 (eliminates addi.w #$400,d1)
         lea     PT.l,a6
         move.w  $13ae.w,d4
         move.w  #$3ff,d0
-        moveq   #79,d7
-.b:     move.w  -(a1),d1
+        moveq   #19,d7
+.b:     rept    4
+        move.w  -(a1),d1
         add.w   d4,d1
         and.w   d0,d1
         moveq   #0,d2
         move.b  (a5,d1.w),d2
         add.w   d2,d2
         move.w  (a6,d2.w),d2            ; wL
-        addi.w  #$400,d1
         moveq   #0,d3
-        move.b  (a5,d1.w),d3
+        move.b  (a4,d1.w),d3
         add.w   d3,d3
         move.w  (a6,d3.w),d3            ; wR
         move.w  (a2)+,d1                ; C
@@ -229,7 +234,9 @@ rd_geom:
         move.w  d3,(a3)+
         move.w  d1,(a3)+
         lea     512(a6),a6
+        endr
         dbra    d7,.b
+        movea.l (a7)+,a4
         ; ---- pass C: stripes + records (stock logic)
         lea     $4644.w,a3
         lea     $4f78.w,a6
