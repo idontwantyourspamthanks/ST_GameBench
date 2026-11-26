@@ -28,13 +28,13 @@
 
 | Item | MD5 |
 |---|---|
-| `dist/PlayerManager_v1.1_patched_hd_2026-11-26.zip` | `cc0a74e9d51d45558b7254e69e548c9c` |
+| `dist/PlayerManager_v1.1_patched_hd_2026-11-26.zip` | `8e6fa88b01982a550dbfe17b47ebf53c` |
 | `build/game/HAGA` | `1074342dd4a917bafdc7d2a031e9b088` |
-| `build/game/FILES/PMLA` | `5abd64e49eaa56c15fdddcdc05725767` |
+| `build/game/FILES/PMLA` | `937af79136b921461dd7afc4f990f729` |
 | `build/game/FILES/KO2ENG.BIN` | `934b13a84279197ab58d46312253f078` |
 | `build/game/FILES/KO2HND.BIN` | `a3505e2d266ec54f926b300b88d6be73` |
 | `build/game/FILES/PMMATCH.BIN` | `573090dad53da0a8539136558de7a1ae` |
-| `build/game/FILES/KO2STE.BIN` | `6f185b91e6528fe1a7da096099988106` |
+| `build/game/FILES/KO2STE.BIN` | `01be37dba2d169b554b25503871d69da` |
 | `build/game/FILES/AMIGASND.BIN` | `d5bd5ab3b9e1051ed23d2d778a718753` |
 | `build/game/FILES/AMIGAP0.BIN` | `29cb99c7587974a2b2fb4a571c31eaa7` |
 

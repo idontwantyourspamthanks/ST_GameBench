@@ -31,12 +31,13 @@ STE_PIT_TILES   equ     $082e20         ; 24,576 bytes (256 x 96 bytes)
 STE_CORK_BUF    equ     $088f00         ; 73,984 bytes (424 x 168 + 480 slack)
 STE_SAVE_UNDER  equ     $09b000         ; 8,192 bytes (32 x 256 byte save-under slots)
 ; STE Blitter HUD/Radar save-under & 1bpp mask buffers (100% inside 1 MB RAM!):
-STE_HUD_MASK    equ     $07fd00         ; 1,024 bytes (1bpp HUD mask & 32B sprite mask scratch)
+STE_HUD_MASK    equ     $07fd00         ; 320 bytes (1bpp HUD/Banner mask & 32B sprite mask)
 STE_MASK_BUF    equ     $07fd00         ; 32 bytes (16-line 1bpp sprite mask scratch)
-STE_RADAR_SAVE  equ     $080100         ; 3,520 bytes (88 lines x 5 cols x 8B) -> $080ec0
-STE_BHUD_SAVE   equ     $0b20f0         ; 1,128 bytes (tight 3-box Bottom HUD) -> $0b2558
-STE_DRAW_STACK  equ     $0b2560         ; 512 bytes (32 x 16B overlap-safe LIFO sprite stack!) -> $0b2760
-STE_BAN_SAVE    equ     $0b2a20         ; 1,344 bytes (8 lines x 21 cols x 8B) -> $0b2f60 (< PMOK $0b2ff8!)
+STE_RADAR_SAVE  equ     $07fe40         ; 4,544 bytes (454 x 10B transparent vector radar save-under!)
+STE_RADAR_MAX   equ     450             ; max 10-byte saved cells for transparent radar
+STE_BHUD_SAVE   equ     $0b2300         ; 1,128 bytes (tight 3-box Bottom HUD) -> $0b2768
+STE_DRAW_STACK  equ     $0b2780         ; 512 bytes (32 x 16B overlap-safe LIFO sprite stack!) -> $0b2980
+STE_BAN_SAVE    equ     $0b2980         ; 1,344 bytes (8 lines x 21 cols x 8B) -> $0b2ec0 (< PMOK $0b2ff8!)
 
 CORK_STRIDE     equ     168             ; 336 pixels = 21 x 16px words (4 planes)
 CORK_RING_H     equ     224             ; 14 tile rows = 224 scanlines
@@ -91,8 +92,9 @@ STE_VIEW_HSCR:  dc.w    0               ; current STE fine hscroll (0..15)
 STE_SLOT_NEXT:  dc.w    0               ; next free save-under slot (0..31)
 STE_ST_PAL:     ds.w    8               ; saved Classic ST palette 0..7
 STE_ST_PAL_OK:  dc.w    0               ; 1 = saved ST palette captured
-STE_HUD_ACTIVE: dc.w    0               ; bit0=radar+bhud saved, bit1=banner saved
+STE_HUD_ACTIVE: dc.w    0               ; bit0=bhud saved, bit1=banner saved
 STE_HUD_VBASE:  dc.l    0               ; STE_VIEW_BASE where HUD/Radar was drawn
+STE_RADAR_CNT:  dc.w    0               ; active transparent radar saved cells (0..450)
 STE_DRAW_CNT:   dc.w    0               ; number of sprites on LIFO draw stack (0..32)
 
 ; ---------------------------------------------------------------------------
@@ -110,6 +112,7 @@ ste_install_hooks:
         clr.w   STE_PITCH_OK
         clr.w   STE_ST_PAL_OK
         clr.w   STE_HUD_ACTIVE
+        clr.w   STE_RADAR_CNT
         clr.w   STE_DRAW_CNT
         clr.w   STE_SLOT_NEXT
         move.w  #-999,STE_CUR_TX
@@ -159,6 +162,12 @@ ste_install_hooks:
         move.w  #$4ef9,$01b564.l
         move.l  #ste_key_hook,$01b566.l
 
+        ; 6. Pre-VBL HUD/Radar overlay hook ($01b4b2: tst.w -$131a(a4) ; beq.s $01b4b2)
+        ;    Drawing HUD & Transparent Radar AFTER sprites guarantees sprites NEVER save-under
+        ;    Radar lines -> ZERO ghosts when players cross the Radar or press X/D!
+        move.w  #$4ef9,$01b4b2.l
+        move.l  #ste_vbl_wait_hook,$01b4b4.l
+
         rts
 
 ste_inst_trap8:
@@ -192,6 +201,7 @@ ste_load_pitch:
         move.w  #1,STE_AMIGA_ON
         clr.w   STE_SLOT_NEXT
         clr.w   STE_DRAW_CNT
+        clr.w   STE_RADAR_CNT
         clr.w   STE_HUD_ACTIVE
         move.w  #-999,STE_CUR_TX
         move.w  #-999,STE_CUR_TY
@@ -438,8 +448,8 @@ ste_key_hook:
 .do_toggle:
         tst.w   STE_PITCH_OK
         beq.s   .v_done
-        bsr.w   ste_erase_all_slots     ; LIFO: restore sprites BEFORE HUD/Radar!
-        bsr.w   ste_hud_restore         ; restore HUD/Radar to pristine grass!
+        bsr.w   ste_hud_restore         ; LIFO: restore HUD/Radar BEFORE sprites!
+        bsr.w   ste_erase_all_slots     ; restore all sprites to pristine grass!
         eori.w  #1,STE_AMIGA_ON
         tst.w   STE_AMIGA_ON
         beq.s   .to_classic
@@ -619,9 +629,6 @@ ste_pitch_update:
 .upd_done:
         move.w  d2,STE_CUR_TX
         move.w  d3,STE_CUR_TY
-        ; Immediately redraw Radar & HUD right after scroll (absent < 0.5 ms -> ZERO FLICKER!)
-        ; LIFO order: Pitch -> HUD/Radar -> Sprites (next frame restores Sprites -> HUD/Radar -> Pitch!)
-        bsr.w   ste_hud_draw
         movem.l (sp)+,d0-d7/a0-a3
         ; Still draw KO2's off-screen goal arrow ($01bffa)!
         jmp     $01bffa.l
@@ -662,7 +669,13 @@ ste_draw_row:
 ste_skip_beam_1:
         tst.w   STE_AMIGA_ON
         beq.s   .sb1_st
-        jmp     $01a39c.l               ; Amiga mode: skip Timer B raster wait!
+        ; Amiga STE Mode: wait if STE CRT beam ($ff8205/$07/$09) is right at sprite_y (d1)!
+        ; Eliminates single-buffer player flicker identically to Classic ST KO2!
+        movem.l d0/d2,-(sp)
+        moveq   #7,d0                   ; cmd 7 = ste_beam_wait(d1=sprite_y)
+        trap    #8
+        movem.l (sp)+,d0/d2
+        jmp     $01a39c.l
 .sb1_st:
         move.l  -$1320(a4),d4
         move.w  d4,d2
@@ -671,7 +684,11 @@ ste_skip_beam_1:
 ste_skip_beam_2:
         tst.w   STE_AMIGA_ON
         beq.s   .sb2_st
-        jmp     $01a3f2.l               ; Amiga mode: skip Timer B raster wait!
+        movem.l d0/d2,-(sp)
+        moveq   #7,d0                   ; cmd 7 = ste_beam_wait(d1=sprite_y)
+        trap    #8
+        movem.l (sp)+,d0/d2
+        jmp     $01a3f2.l
 .sb2_st:
         move.l  -$1320(a4),d4
         move.w  d4,d2
@@ -942,23 +959,43 @@ ste_erase_all_slots:
         rts
 
 ; ---------------------------------------------------------------------------
-; HUD & Radar STE Hardware Blitter Overlay (called directly from ste_pitch_update)
-; Uses TRAP #8 cmd 5 (hud_draw_band), cmd 6 (hud_rest_band), cmd 7 (radar_opaque)
+; Pre-VBL HUD & Transparent Vector Radar Overlay ($01b4b2 hook)
+; Drawn AFTER all sprites (strict LIFO: restored at top of ste_pitch_update
+; BEFORE any sprite erases/draws next frame -> ZERO Radar ghosts on X/D!)
 ; ---------------------------------------------------------------------------
+ste_vbl_wait_hook:
+        tst.w   STE_AMIGA_ON
+        beq.s   ste_vbl_wait_loop
+        bsr.w   ste_hud_draw
+ste_vbl_wait_loop:
+        tst.w   -$131a(a4)              ; original $01b4b2 VBL wait!
+        beq.s   ste_vbl_wait_loop
+        jmp     $01b4b8.l
+
 ste_hud_restore:
-        movem.l d0-d3/a0-a1,-(sp)
+        movem.l d0-d3/a0-a2,-(sp)
+        ; 1. Reverse-LIFO restore of Transparent Vector Radar cells (10B each: [off.w, l0.l, l1.l])
+        move.w  STE_RADAR_CNT(pc),d0
+        beq.s   .hr_no_rad
+        clr.w   STE_RADAR_CNT
+        move.w  d0,d1
+        mulu.w  #10,d0
+        lea     STE_RADAR_SAVE.l,a0
+        adda.l  d0,a0
+        movea.l STE_HUD_VBASE(pc),a2
+        subq.w  #1,d1
+.hr_rlp:
+        lea     -10(a0),a0
+        moveq   #0,d2
+        move.w  (a0),d2                 ; unsigned 16-bit byte offset from STE_HUD_VBASE
+        lea     0(a2,d2.l),a1
+        move.l  2(a0),(a1)
+        move.l  6(a0),4(a1)
+        dbra    d1,.hr_rlp
+.hr_no_rad:
         move.w  STE_HUD_ACTIVE(pc),d3
         beq.w   .hr_done
         clr.w   STE_HUD_ACTIVE
-        ; 1. Restore Compact Mini-Radar at Bottom-Left (y=134..177, 44 lines x 5 cols = 20 words/line)
-        ;    At 50 FPS, ste_pitch_update runs at y~14..28 (100 scanlines before y=134) -> ZERO FLICKER!
-        lea     STE_RADAR_SAVE.l,a0
-        movea.l STE_HUD_VBASE(pc),a1
-        adda.l  #134*CORK_STRIDE,a1
-        moveq   #20,d1                  ; XCOUNT = 5 cols * 4 planes
-        moveq   #44,d2                  ; YCOUNT = 44 lines (2:1 compact!)
-        moveq   #6,d0                   ; cmd 6 = hud_rest_band
-        trap    #8
         ; 2. Restore Bottom HUD tight 3 boxes:
         ;    2a. Player name (y=183..189, 7 lines, x=0..159 -> 11 cols = 44 words)
         lea     STE_BHUD_SAVE.l,a0
@@ -995,7 +1032,7 @@ ste_hud_restore:
         moveq   #6,d0
         trap    #8
 .hr_done:
-        movem.l (sp)+,d0-d3/a0-a1
+        movem.l (sp)+,d0-d3/a0-a2
         rts
 
 ste_hud_draw:
@@ -1006,17 +1043,10 @@ ste_hud_draw:
         movem.l d0-d5/a0-a2,-(sp)
         move.l  STE_VIEW_BASE(pc),STE_HUD_VBASE
         move.w  STE_VIEW_HSCR(pc),d3    ; d3 = skew (0..15)
-        moveq   #1,d5                   ; active flags: bit0=radar+bhud
+        moveq   #1,d5                   ; active flags: bit0=bhud
 
-        ; 1. Compact Mini-Radar at Bottom-Left (y=134..177, odd scanlines 5..91 hit all pitch lines!)
-        lea     $078000+5*160,a0
-        movea.l STE_HUD_VBASE(pc),a1
-        adda.l  #134*CORK_STRIDE,a1
-        lea     STE_RADAR_SAVE.l,a2
-        moveq   #4,d1                   ; W = 4 words
-        moveq   #44,d2                  ; H = 44 lines (2x faster!)
-        moveq   #7,d0                   ; cmd 7 = hud_radar_opaque
-        trap    #8
+        ; 1. Transparent, X-Resizable, D-Toggleable Vector Radar (directly from KO2 vars!)
+        bsr.w   ste_radar_draw
 
         ; 2. Bottom HUD tight 3 boxes (2 planes: black + orange, ~12k cycles total!):
         ;    2a. Player Name: y=183..189 (7 lines), x=0..159 (W=10 words, offset +0)
@@ -1072,6 +1102,267 @@ ste_hud_draw:
 .hd_done:
         move.w  d5,STE_HUD_ACTIVE
         movem.l (sp)+,d0-d5/a0-a2
+        rts
+
+; ---------------------------------------------------------------------------
+; ste_radar_draw: 100% Transparent, X-Resizable, D-Toggleable Vector Radar!
+; Reads KO2's live radar state:
+;   -$0e10(a4) > 0 : Radar ON (D key toggles)
+;   -$0e0e(a4)     : rx (top-left X)
+;   -$0e0c(a4)     : ry (top-left Y)
+;   -$0e0a(a4)     : scale (8, 12, 16, 20, 24 — cycled by X key!)
+;   -$4d78(a4)     : KO2's exact pitch outline line table (hlines then vlines)
+;   -$5012(a4)     : Home 11 players (stride $186, $20/$22 = radar dot x,y)
+;   -$4fbc(a4)     : Away 11 players (stride $186, $20/$22 = radar dot x,y)
+;   -$0e14/-$0e12  : Ball radar dot x,y
+; Saves every touched 8-byte screen cell as 10B [off.w, l0.l, l1.l] into STE_RADAR_SAVE!
+; ---------------------------------------------------------------------------
+ste_radar_draw:
+        tst.w   -$0e10(a4)              ; Radar ON (> 0)?
+        ble.w   .rd_ret
+        movem.l d0-d7/a0-a3/a5-a6,-(sp)
+        lea     STE_RADAR_SAVE.l,a2     ; a2 = save-under cursor
+        moveq   #0,d7                   ; d7 = saved cell count (max STE_RADAR_MAX)
+        movea.l STE_HUD_VBASE(pc),a6    ; a6 = STE_VIEW_BASE
+        move.w  -$0e0a(a4),d6           ; d6 = radar scale (8, 12, 16, 20, 24)
+        ble.w   .rd_done
+
+        ; --- A. Horizontal pitch outline lines from -$4d78(a4) ---
+        lea     -$4d78(a4),a3
+.rd_hlp:
+        move.w  (a3)+,d0                ; x1
+        blt.s   .rd_vstart
+        move.w  (a3)+,d1                ; y
+        move.w  (a3)+,d2                ; x2
+        ext.l   d0
+        divs.w  d6,d0
+        add.w   -$0e0e(a4),d0           ; sx1
+        ext.l   d1
+        divs.w  d6,d1
+        add.w   -$0e0c(a4),d1           ; sy
+        ext.l   d2
+        divs.w  d6,d2
+        add.w   -$0e0e(a4),d2           ; sx2
+        bsr.s   .rd_hline
+        bra.s   .rd_hlp
+
+        ; --- B. Vertical pitch outline lines ---
+.rd_vstart:
+        move.w  (a3)+,d0                ; x
+        blt.s   .rd_dots
+        move.w  (a3)+,d1                ; y1
+        move.w  (a3)+,d2                ; y2
+        ext.l   d0
+        divs.w  d6,d0
+        add.w   -$0e0e(a4),d0           ; sx
+        ext.l   d1
+        divs.w  d6,d1
+        add.w   -$0e0c(a4),d1           ; sy1
+        ext.l   d2
+        divs.w  d6,d2
+        add.w   -$0e0c(a4),d2           ; sy2
+        bsr.w   .rd_vline
+        bra.s   .rd_vstart
+
+        ; --- C. 22 Player dots (Home=colour 10 orange, Away=colour 12 red) + Ball (colour 8 white) ---
+.rd_dots:
+        movea.l -$5012(a4),a5           ; Home 11 players
+        moveq   #10,d5                  ; 11 - 1
+        moveq   #2,d4                   ; colour 10 (p1=1, p3=1 -> $730 orange)
+        bsr.w   .rd_team
+        movea.l -$4fbc(a4),a5           ; Away 11 players
+        moveq   #10,d5
+        moveq   #4,d4                   ; colour 12 (p2=1, p3=1 -> $500 red)
+        bsr.w   .rd_team
+        ; Ball dot
+        move.w  -$0e14(a4),d0
+        blt.s   .rd_done
+        move.w  -$0e12(a4),d1
+        moveq   #0,d4                   ; colour 8 (p0=p1=p2=0, p3=1 -> $777 white!)
+        bsr.w   .rd_dot
+
+.rd_done:
+        move.w  d7,STE_RADAR_CNT
+        movem.l (sp)+,d0-d7/a0-a3/a5-a6
+.rd_ret:
+        rts
+
+; Draw transparent black horizontal line (colour 9 = $000): d0=sx1, d1=sy, d2=sx2
+.rd_hline:
+        cmpi.w  #200,d1
+        bcc.s   .hl_ret
+        add.w   STE_VIEW_HSCR(pc),d0
+        add.w   STE_VIEW_HSCR(pc),d2
+        movea.w d0,a1                   ; save sx1 in a1 for exact left-edge clip!
+        mulu.w  #CORK_STRIDE,d1         ; row_off = sy * 168
+        move.w  d0,d3
+        lsr.w   #4,d3                   ; w1 = sx1 >> 4
+        move.w  d2,d4
+        lsr.w   #4,d4                   ; w2 = sx2 >> 4
+.hl_wlp:
+        cmpi.w  #STE_RADAR_MAX,d7
+        bcc.s   .hl_ret
+        moveq   #-1,d5                  ; d5.w = $ffff
+        ; Left-edge clip if col_x0 < sx1
+        move.w  d3,d0
+        lsl.w   #4,d0                   ; col_x0 = d3 * 16
+        move.w  a1,d0
+        sub.w   d0,d0                   ; dummy -> compute sx1 - col_x0 cleanly:
+        move.w  d3,d0
+        lsl.w   #4,d0
+        neg.w   d0
+        add.w   a1,d0                   ; d0 = sx1 - col_x0 (1..15 on first word, <=0 otherwise)
+        ble.s   .hl_l_ok
+        lsr.w   d0,d5                   ; clear left bits!
+.hl_l_ok:
+        ; Right-edge clip if col_x1 > sx2
+        move.w  d3,d0
+        lsl.w   #4,d0
+        addi.w  #15,d0                  ; col_x1 = d3*16 + 15
+        sub.w   d2,d0                   ; trailing zeros = col_x1 - sx2
+        ble.s   .hl_r_ok
+        moveq   #-1,d0
+        ; shift right mask: (-1 << trailing)
+        move.w  d3,d0
+        lsl.w   #4,d0
+        addi.w  #15,d0
+        sub.w   d2,d0
+        move.w  d5,-(sp)
+        moveq   #-1,d5
+        lsl.w   d0,d5
+        and.w   (sp)+,d5                ; combine left & right clip masks!
+.hl_r_ok:
+        ; Byte offset = row_off + d3 * 8
+        moveq   #0,d0
+        move.w  d3,d0
+        lsl.w   #3,d0
+        add.w   d1,d0                   ; d0.l = unsigned byte offset in STE_VIEW_BASE
+        lea     0(a6,d0.l),a0
+        ; Save 10B record [off.w, l0.l, l1.l]
+        move.w  d0,(a2)+
+        move.l  (a0),(a2)+
+        move.l  4(a0),(a2)+
+        addq.w  #1,d7
+        ; Plot colour 9 (black $000): p0|=m, p1&=~m, p2&=~m, p3|=m
+        or.w    d5,(a0)
+        or.w    d5,6(a0)
+        not.w   d5
+        and.w   d5,2(a0)
+        and.w   d5,4(a0)
+        addq.w  #1,d3
+        cmp.w   d4,d3
+        ble.s   .hl_wlp
+.hl_ret:
+        rts
+
+; Draw transparent black vertical line (colour 9 = $000): d0=sx, d1=sy1, d2=sy2
+.rd_vline:
+        cmpi.w  #320,d0
+        bcc.s   .vl_ret
+        cmpi.w  #200,d1
+        bcc.s   .vl_ret
+        cmpi.w  #200,d2
+        bcs.s   .vl_yok
+        move.w  #199,d2
+.vl_yok:
+        add.w   STE_VIEW_HSCR(pc),d0
+        move.w  d0,d3
+        andi.w  #15,d3                  ; bit = 15 - (sx & 15)
+        moveq   #15,d4
+        sub.w   d3,d4
+        moveq   #0,d5
+        bset    d4,d5                   ; d5.w = single-pixel mask
+        move.w  d5,d4
+        not.w   d4                      ; d4.w = ~mask
+        lsr.w   #4,d0
+        lsl.w   #3,d0                   ; col_off = (sx >> 4) * 8
+        sub.w   d1,d2                   ; count = sy2 - sy1
+        blt.s   .vl_ret
+        mulu.w  #CORK_STRIDE,d1
+        add.w   d0,d1                   ; d1.w = initial byte offset (0..33600)
+        ; At scale==8 (giant 176-line radar), step by 2 scanlines so save buffer never overflows!
+        moveq   #1,d3                   ; step = 1 line
+        move.w  #CORK_STRIDE,d0         ; byte step = 168
+        cmpi.w  #10,d6
+        bgt.s   .vl_lp
+        lsr.w   #1,d2                   ; half iterations
+        move.w  #(CORK_STRIDE*2),d0     ; step 2 scanlines (dotted crisp line!)
+.vl_lp:
+        cmpi.w  #STE_RADAR_MAX,d7
+        bcc.s   .vl_ret
+        moveq   #0,d3
+        move.w  d1,d3
+        lea     0(a6,d3.l),a0
+        move.w  d1,(a2)+
+        move.l  (a0),(a2)+
+        move.l  4(a0),(a2)+
+        addq.w  #1,d7
+        or.w    d5,(a0)
+        or.w    d5,6(a0)
+        and.w   d4,2(a0)
+        and.w   d4,4(a0)
+        add.w   d0,d1
+        dbra    d2,.vl_lp
+.vl_ret:
+        rts
+
+; Draw 11 player dots for team at a5 (stride $186), d5=10, d4=colour (2=orange, 4=red)
+.rd_team:
+        tst.w   $0c(a5)
+        beq.s   .rt_nxt
+        move.w  $20(a5),d0
+        blt.s   .rt_nxt
+        move.w  $22(a5),d1
+        bsr.s   .rd_dot
+.rt_nxt:
+        lea     $186(a5),a5
+        dbra    d5,.rd_team
+        rts
+
+; Plot transparent 2x2 dot at (d0=x, d1=y), d4=colour (0->8 white, 2->10 orange, 4->12 red)
+.rd_dot:
+        cmpi.w  #318,d0
+        bcc.s   .dot_ret
+        cmpi.w  #198,d1
+        bcc.s   .dot_ret
+        add.w   STE_VIEW_HSCR(pc),d0
+        move.w  d0,d2
+        andi.w  #15,d2
+        move.w  #$c000,d3               ; 2-pixel wide dot mask
+        lsr.w   d2,d3                   ; shifted into word (if d2==15, 1px wide, still crisp!)
+        lsr.w   #4,d0
+        lsl.w   #3,d0
+        mulu.w  #CORK_STRIDE,d1
+        add.w   d0,d1                   ; d1.w = byte offset for top row of 2x2 dot
+        moveq   #1,d2                   ; 2 scanlines
+.dot_lp:
+        cmpi.w  #STE_RADAR_MAX,d7
+        bcc.s   .dot_ret
+        moveq   #0,d0
+        move.w  d1,d0
+        lea     0(a6,d0.l),a0
+        move.w  d1,(a2)+
+        move.l  (a0),(a2)+
+        move.l  4(a0),(a2)+
+        addq.w  #1,d7
+        move.w  d3,d0
+        not.w   d0                      ; ~mask
+        and.w   d0,(a0)                 ; clear p0
+        and.w   d0,2(a0)                ; clear p1
+        and.w   d0,4(a0)                ; clear p2
+        or.w    d3,6(a0)                ; set p3 (palette 8..15!)
+        tst.w   d4
+        beq.s   .dot_c_ok               ; d4==0 -> colour 8 (white ball!)
+        cmpi.w  #2,d4
+        bne.s   .dot_c4
+        or.w    d3,2(a0)                ; d4==2 -> colour 10 ($730 orange!)
+        bra.s   .dot_c_ok
+.dot_c4:
+        or.w    d3,4(a0)                ; d4==4 -> colour 12 ($500 red!)
+.dot_c_ok:
+        addi.w  #CORK_STRIDE,d1
+        dbra    d2,.dot_lp
+.dot_ret:
         rts
 
 ; ---------------------------------------------------------------------------
@@ -1449,95 +1740,31 @@ ste_trap8_handler:
         move.b  #$c0,BLT_LINE.l
         rte
 
-; --- cmd 7: Ultra-fast opaque Radar panel (4-plane OP=3 copy + dot highlight on plane 3) ---
-; a0 = src ($078000+4*160), a1 = dst (STE_VIEW_BASE+4*168), a2 = STE_RADAR_SAVE
-; d1.w = 4 (words), d2.w = 88 (lines), d3.w = skew (0..15)
+; --- cmd 7: STE Hardware Video Counter Beam-Wait (d1.w = sprite_y) ---
+; Exact STE equivalent of KO2's $01a376/$01a3cc Timer B beam-chasing -> ZERO player flicker!
 .cmd7_radar_opaque:
-        movem.l d5-d7,-(sp)
-        ; 1. Save-under (a1 -> a2): 20 words x 88 lines
-        move.l  a1,BLT_SRC_ADDR.l
-        move.l  a2,BLT_DST_ADDR.l
-        move.w  #2,BLT_SRC_XINC.l
-        move.w  #(CORK_STRIDE-38),BLT_SRC_YINC.l
-        move.w  #2,BLT_DST_XINC.l
-        move.w  #2,BLT_DST_YINC.l
-        move.w  #$ffff,BLT_ENDMASK1.l
-        move.w  #$ffff,BLT_ENDMASK2.l
-        move.w  #$ffff,BLT_ENDMASK3.l
-        move.w  #20,BLT_XCOUNT.l
-        move.w  d2,BLT_YCOUNT.l
-        move.w  #$0203,BLT_HOP.l
-        clr.b   BLT_SKEW.l
-        move.b  #$c0,BLT_LINE.l
-
-        ; 2. Configure skew for 4-word Compact Mini-Radar (stride 320 = every 2nd scanline!)
-        move.w  #8,BLT_SRC_XINC.l
-        move.w  #(320-24),BLT_SRC_YINC.l ; 320 - 3*8 = 296 (2:1 vertical subsample!)
-        move.w  #8,BLT_DST_XINC.l
-        tst.w   d3
-        bne.s   .c7_skew
-        move.w  #4,BLT_XCOUNT.l
-        move.w  #(CORK_STRIDE-24),BLT_DST_YINC.l
-        clr.b   BLT_SKEW.l
-        bra.s   .c7_copy
-.c7_skew:
-        move.w  #$ffff,d5
-        lsr.w   d3,d5
-        move.w  d5,BLT_ENDMASK1.l
-        not.w   d5
-        move.w  d5,BLT_ENDMASK3.l
-        move.w  #5,BLT_XCOUNT.l
-        move.w  #(CORK_STRIDE-32),BLT_DST_YINC.l
-        move.b  d3,d5
-        ori.b   #$40,d5                 ; NFSR = 1
-        move.b  d5,BLT_SKEW.l
-
-.c7_copy:
-        ; Copy planes 0, 1, 2, 3 directly (OP=3: NO mask, NO dst read on middle words!)
-        move.w  #$0203,BLT_HOP.l
-        move.l  a0,BLT_SRC_ADDR.l
-        move.l  a1,BLT_DST_ADDR.l
-        move.w  d2,BLT_YCOUNT.l
-        move.b  #$c0,BLT_LINE.l
-
-        pea     2(a0)
-        move.l  (sp)+,BLT_SRC_ADDR.l
-        pea     2(a1)
-        move.l  (sp)+,BLT_DST_ADDR.l
-        move.w  d2,BLT_YCOUNT.l
-        move.b  #$c0,BLT_LINE.l
-
-        pea     4(a0)
-        move.l  (sp)+,BLT_SRC_ADDR.l
-        pea     4(a1)
-        move.l  (sp)+,BLT_DST_ADDR.l
-        move.w  d2,BLT_YCOUNT.l
-        move.b  #$c0,BLT_LINE.l
-
-        pea     6(a0)
-        move.l  (sp)+,BLT_SRC_ADDR.l
-        pea     6(a1)
-        move.l  (sp)+,BLT_DST_ADDR.l
-        move.w  d2,BLT_YCOUNT.l
-        move.b  #$c0,BLT_LINE.l
-
-        ; OR planes 1 & 2 into dst plane 3 so player dots use bright KO2 colours 10 & 12!
-        move.w  #$0207,BLT_HOP.l
-        pea     2(a0)
-        move.l  (sp)+,BLT_SRC_ADDR.l
-        pea     6(a1)
-        move.l  (sp)+,BLT_DST_ADDR.l
-        move.w  d2,BLT_YCOUNT.l
-        move.b  #$c0,BLT_LINE.l
-
-        pea     4(a0)
-        move.l  (sp)+,BLT_SRC_ADDR.l
-        pea     6(a1)
-        move.l  (sp)+,BLT_DST_ADDR.l
-        move.w  d2,BLT_YCOUNT.l
-        move.b  #$c0,BLT_LINE.l
-
-        movem.l (sp)+,d5-d7
+        movem.l d2-d3,-(sp)
+        move.w  d1,d3
+        mulu.w  #CORK_STRIDE,d3         ; d3.l = sprite_y * 168
+.bw_lp:
+        moveq   #0,d0
+        move.b  $00ff8205.l,d0
+        swap    d0
+        move.b  $00ff8207.l,d2
+        lsl.w   #8,d2
+        move.b  $00ff8209.l,d2
+        move.w  d2,d0                   ; d0.l = current 24-bit STE Shifter address
+        sub.l   STE_VIEW_BASE(pc),d0
+        blt.s   .bw_ok                  ; in border -> safe!
+        cmpi.l  #(200*CORK_STRIDE),d0
+        bge.s   .bw_ok                  ; in bottom border -> safe!
+        sub.l   d3,d0                   ; d0.l = (beam_y - sprite_y) * 168
+        cmpi.l  #-(12*CORK_STRIDE),d0
+        blt.s   .bw_ok                  ; beam > 12 lines above sprite -> safe!
+        cmpi.l  #(18*CORK_STRIDE),d0
+        ble.s   .bw_lp                  ; beam is RIGHT AT sprite (-12..+18) -> wait!
+.bw_ok:
+        movem.l (sp)+,d2-d3
         rte
 
 ; --- cmd 8: Batched 21-tile horizontal row blit (d1=tx_left, d2=ty_row) ---
