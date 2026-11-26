@@ -127,6 +127,8 @@ STE_SHOW_IDX:   dc.w    0               ; 0 = Buffer A displayed, 1 = Buffer B d
 STE_STATS_DIRTY: dc.w   0               ; 1 = returning from Half-Time/Stats ($078000 was overwritten)
 STE_ORIG_TB:    dc.l    0               ; saved KO2 original Timer B vector ($120.w)
 STE_ORIG_VBL:   dc.l    0               ; saved TOS original VBL vector ($70.w)
+STE_ORIG_TC:    dc.l    0               ; saved Timer C vector ($114.w) for Timer B preemption
+STE_ORIG_IKBD:  dc.l    0               ; saved IKBD vector ($118.w) for Timer B preemption
 STE_CUR_WX:     dc.w    176             ; current camera world X (pixels) for sprite world coords
 STE_CUR_WY:     dc.w    64              ; current camera world Y (pixels)
 STE_SPR_CNT:    dc.w    0               ; active sprites in STE_SPR_LIST (0..32)
@@ -168,6 +170,8 @@ ste_install_hooks:
         clr.w   STE_STATS_DIRTY
         clr.l   STE_ORIG_TB
         clr.l   STE_ORIG_VBL
+        clr.l   STE_ORIG_TC
+        clr.l   STE_ORIG_IKBD
         clr.w   STE_SPR_CNT
         clr.w   STE_RAD_C_SC
         clr.l   STE_UL_DASH
@@ -242,6 +246,16 @@ ste_cleanup:
         beq.s   .cl_novbl
         move.l  STE_ORIG_VBL(pc),$70.w
 .cl_novbl:
+        tst.l   STE_ORIG_TC
+        beq.s   .cl_notc
+        move.l  STE_ORIG_TC(pc),$0114.w
+        clr.l   STE_ORIG_TC
+.cl_notc:
+        tst.l   STE_ORIG_IKBD
+        beq.s   .cl_noik
+        move.l  STE_ORIG_IKBD(pc),$0118.w
+        clr.l   STE_ORIG_IKBD
+.cl_noik:
         clr.b   $ffff820f.w
         clr.b   $ffff8265.w
         move.b  #$07,$ffff8201.w
@@ -320,18 +334,20 @@ ste_play_sound_hi:
         bne.s   ste_ps_rts
         tst.l   STE_SND_BASE
         beq.s   ste_ps_rts
+        clr.b   STE_SND_PEND            ; disarm VBL stepper during update (zero IRQ race!)
+        clr.l   STE_SCRIPT_PTR
         move.l  a2,STE_SCRIPT_ST
-        move.l  a2,STE_SCRIPT_PTR
-        clr.w   STE_REPEAT_CNT
+        clr.w   STE_REPEAT_CNT          ; 0 -> first step advances normally
         move.w  #1,-$142a(a4)
         clr.b   STE_SND_STOP
-        move.b  #1,STE_SND_PEND
+        move.l  a2,STE_SCRIPT_PTR
+        move.b  #1,STE_SND_PEND         ; trigger VBL stepper atomically LAST!
 ste_ps_rts:
         rts
 
 ste_stop_sound:
-        clr.l   STE_SCRIPT_PTR
         clr.b   STE_SND_PEND
+        clr.l   STE_SCRIPT_PTR
         move.b  #1,STE_SND_STOP
         clr.w   -$142a(a4)
         rts
@@ -361,6 +377,22 @@ ste_vbl_irq:
         bne.s   .vt_tb_ok
         move.l  $0120.w,STE_ORIG_TB
 .vt_tb_ok:
+        ; Wrap Timer C ($114.w) & IKBD ($118.w) so higher-priority MFP Timer B (prio 8)
+        ; ALWAYS preempts them immediately (fixes MiSTerFPGA/real-STE Timer C/IKBD black-line slip!)
+        move.l  $0114.w,d0
+        beq.s   .vt_tc_ok
+        cmpi.l  #ste_tc_wrap,d0
+        beq.s   .vt_tc_ok
+        move.l  d0,STE_ORIG_TC
+        move.l  #ste_tc_wrap,$0114.w
+.vt_tc_ok:
+        move.l  $0118.w,d0
+        beq.s   .vt_ik_ok
+        cmpi.l  #ste_ikbd_wrap,d0
+        beq.s   .vt_ik_ok
+        move.l  d0,STE_ORIG_IKBD
+        move.l  #ste_ikbd_wrap,$0118.w
+.vt_ik_ok:
         ; Load STE 12-bit Amiga pitch palette (0..7)
         lea     STE_PIT_PAL.l,a0
         lea     $ffff8240.w,a1
@@ -430,6 +462,16 @@ ste_vbl_irq:
 .vt_stats_mark:
         move.w  #1,STE_STATS_DIRTY
         clr.b   $fffffa1b.w
+        tst.l   STE_ORIG_TC
+        beq.s   .vsm_notc
+        move.l  STE_ORIG_TC(pc),$0114.w
+        clr.l   STE_ORIG_TC
+.vsm_notc:
+        tst.l   STE_ORIG_IKBD
+        beq.s   .vsm_noik
+        move.l  STE_ORIG_IKBD(pc),$0118.w
+        clr.l   STE_ORIG_IKBD
+.vsm_noik:
         move.b  #$07,$ffff8201.w
         move.b  #$80,$ffff8203.w
         clr.b   $ffff820d.w
@@ -439,6 +481,17 @@ ste_vbl_irq:
         clr.b   $ffff820f.w
         clr.b   $ffff8265.w
         bra.s   .vt_exit
+
+; MFP IPL-5 preemption wrappers: ISRB stays set (no re-entry!), but Timer B (prio 8) preempts immediately!
+ste_tc_wrap:
+        move.w  #$2500,sr
+        move.l  STE_ORIG_TC(pc),-(sp)
+        rts
+
+ste_ikbd_wrap:
+        move.w  #$2500,sr
+        move.l  STE_ORIG_IKBD(pc),-(sp)
+        rts
 
 ; ---------------------------------------------------------------------------
 ; Exact HBlank-Locked Timer B ISRs (Blitter-Paused -> ZERO bus-steal jitter!):
@@ -461,17 +514,23 @@ ste_tb_wrap:
         ; 1-line-early exact HBlank lock (tolerates up to 50 us interrupt latency!):
         ; Step 1: if in HBlank of line (wrap_y-2), wait for DE=1 of line (wrap_y-1)
 .tw_de: move.b  4(a0),d0
+        nop
         cmp.b   4(a0),d0
         beq.s   .tw_de
         ; Step 2: wait for DE=0 of line (wrap_y-1) = EXACT start of HBlank!
 .tw_hb: move.b  4(a0),d0
+        nop
         cmp.b   4(a0),d0
         bne.s   .tw_hb
 
 ste_tb_wrap_do:
         nop
         nop
-        ; Reload live video counter HIGH->MID->LOW in 36 cycles (4.5 us, dead-center in HBlank!)
+        nop
+        nop
+        nop
+        nop
+        ; Reload live video counter HIGH->MID->LOW dead-center in HBlank (after LINEWID add, before pre-fetch!)
         move.b  d1,(a0)                 ; $ffff8205 HIGH
         move.b  d2,2(a0)                ; $ffff8207 MID
         move.b  d3,4(a0)                ; $ffff8209 LOW
@@ -500,12 +559,16 @@ ste_tb_hud:
 ste_tb_hud_wait:
         ; Step 1: if in HBlank of line 179, wait for DE=1 of line 180
 .th_de: move.b  4(a0),d0
+        nop
         cmp.b   4(a0),d0
         beq.s   .th_de
         ; Step 2: wait for DE=0 of line 180 = EXACT start of HBlank before HUD line 181!
 .th_hb: move.b  4(a0),d0
+        nop
         cmp.b   4(a0),d0
         bne.s   .th_hb
+        nop
+        nop
         nop
         nop
         ; Step 3: Write HUD address, linewidth=0, hscroll=0, and HUD palette dead-center in HBlank!
@@ -538,11 +601,15 @@ ste_tb_bot:
         lea     $ffff8205.w,a0
         ; 1-line-early exact HBlank lock on line 196 (4 scanlines before line 199 -> NEVER blocks VBL!)
 .tb_de: move.b  4(a0),d0
+        nop
         cmp.b   4(a0),d0
         beq.s   .tb_de
 .tb_hb: move.b  4(a0),d0
+        nop
         cmp.b   4(a0),d0
         bne.s   .tb_hb
+        nop
+        nop
         nop
         nop
         move.b  #$08,(a0)               ; point lines 197..199 to zeroed STE_BLACK_LINE ($080d00) FIRST!
@@ -581,53 +648,63 @@ ste_vbl_end:
         bne.w   .vbl_done
 .do_step:
         clr.b   STE_SND_PEND
-        movem.l d0-d3/a0-a1,-(sp)
+        movem.l d0-d4/a0-a1,-(sp)
         movea.l STE_SND_BASE(pc),a1
         move.l  a1,d0
         beq.w   .step_stop
+        moveq   #8,d4                   ; guard against >8 control words per VBL
 .next_cmd:
+        subq.w  #1,d4
+        blt.w   .step_stop
         movea.l STE_SCRIPT_PTR(pc),a0
         move.l  a0,d0
         beq.w   .step_stop
+        ; Exact KO2 16-bit word script interpreter (matches $018610..$018714!):
+        ;   d0 == 0        : end of script -> stop
+        ;   d0 == -1       : loop back to STE_SCRIPT_ST
+        ;   d0 <= -2       : repeat next word (-d0) times
+        ;   d0 >= 200      : pitch override (d0 - 200), advance to next word
+        ;   100 <= d0 <200 : play sample (d0 - 101) (0..16)
+        ;   1   <= d0 <100 : play sample (d0 - 1)   (0..16)
         addq.w  #1,STE_REPEAT_CNT
-        cmpi.w  #32,STE_REPEAT_CNT
-        bgt.w   .step_stop
-        move.b  (a0)+,d0
-        move.l  a0,STE_SCRIPT_PTR
-        cmpi.b  #-1,d0
-        beq.s   .cmd_loop
-        cmpi.b  #-2,d0
-        beq.w   .step_stop
-        cmpi.b  #-3,d0
-        beq.s   .cmd_pitch
-        cmpi.b  #-4,d0
-        beq.s   .cmd_pitch
-        cmpi.b  #-5,d0
-        beq.w   .step_stop
-        cmpi.b  #-6,d0
-        beq.s   .cmd_wait
+        blt.s   .keep_ptr               ; still repeating current word!
+        addq.l  #2,STE_SCRIPT_PTR       ; advance to next 16-bit word
+.keep_ptr:
+        move.w  (a0),d0                 ; read 16-bit signed script word!
+        beq.w   .step_stop              ; 0 = end of script!
+        blt.s   .cmd_neg
+        cmpi.w  #200,d0
+        bge.s   .cmd_pitch
+        cmpi.w  #100,d0
+        bge.s   .cmd_s_hi
+        subq.w  #1,d0                   ; 1..17 -> 0..16
         bra.s   .cmd_sample
+.cmd_s_hi:
+        subi.w  #101,d0                 ; 101..117 -> 0..16
+        bra.s   .cmd_sample
+.cmd_neg:
+        cmpi.w  #-1,d0
+        beq.s   .cmd_loop
+        move.w  d0,STE_REPEAT_CNT       ; repeat next word (-d0) times!
+        bra.s   .next_cmd
 .cmd_loop:
         move.l  STE_SCRIPT_ST(pc),STE_SCRIPT_PTR
+        clr.w   STE_REPEAT_CNT
         bra.s   .next_cmd
 .cmd_pitch:
-        move.b  (a0)+,STE_SND_PITCH
-        move.l  a0,STE_SCRIPT_PTR
-        bra.s   .next_cmd
-.cmd_wait:
-        addq.l  #1,STE_SCRIPT_PTR
+        subi.w  #200,d0
+        move.b  d0,STE_SND_PITCH
         bra.s   .next_cmd
 .cmd_sample:
-        andi.w  #$00ff,d0
         cmpi.w  #17,d0
-        bcc.s   .next_cmd
+        bcc.s   .next_cmd               ; out-of-range -> skip safely
         mulu.w  #12,d0
         lea     0(a1,d0.w),a0
-        move.l  (a0)+,d1
-        move.l  (a0)+,d2
-        move.w  (a0)+,d3
+        move.l  (a0)+,d1                ; sample offset
+        move.l  (a0)+,d2                ; sample length
+        move.w  (a0)+,d3                ; DMA mode ($0080 = 6258 Hz mono)
         cmpi.l  #16,d2
-        ble.s   .step_stop
+        ble.s   .step_ret               ; 2-byte silence placeholder (samples 4/6/10/11) -> pause 1 VBL (20ms)!
         add.l   a1,d1
         add.l   d1,d2
         clr.b   $ffff8901.w
@@ -648,9 +725,10 @@ ste_vbl_end:
 .step_stop:
         clr.b   $ffff8901.w
         clr.l   STE_SCRIPT_PTR
+        clr.w   STE_REPEAT_CNT
         clr.w   $0284aa-$142a
 .step_ret:
-        movem.l (sp)+,d0-d3/a0-a1
+        movem.l (sp)+,d0-d4/a0-a1
 .vbl_done:
         rts
 
@@ -894,15 +972,19 @@ ste_pitch_update:
         move.l  d1,DB_START(a6)         ; start_addr = RING + y0*168 + tx*8
         move.w  #RING_H,d1
         sub.w   d4,d1                   ; wrap_y = 208 - y0 (1..208)
-        cmpi.w  #1,d1
-        bne.s   .pu_wyok
-        ; y0 == 207 (wrap_y == 1): mirror visible row 0 -> row 208 so wrap_y = 2 (full 1-line TB margin!)
+        ; Always mirror visible Row 0 -> Row 208 whenever a ring wrap is on-screen (wrap_y <= 181)
+        ; so Row 208 is NEVER black zeroes (eliminates any possibility of a black wrap seam!)
+        cmpi.w  #PITCH_VIS_H,d1
+        bgt.s   .pu_wyok
         movea.l d0,a0                   ; src = RING + tx*8 (row 0)
         movea.l d0,a1
         adda.l  #RING_BYTES,a1          ; dst = RING + 208*168 + tx*8 (row 208)
         moveq   #41,d2                  ; 42 longs = 168 bytes (1 full scanline)
 .pu_m0: move.l  (a0)+,(a1)+
         dbra    d2,.pu_m0
+        cmpi.w  #1,d1
+        bne.s   .pu_wyok
+        ; y0 == 207 (wrap_y == 1): Row 208 now mirrors Row 0 -> wrap at line 2 to Row 1!
         addi.l  #RING_STRIDE,d0         ; wrap_addr = RING + 168 + tx*8 (row 1)
         move.l  d0,DB_WRAP(a6)
         moveq   #2,d1                   ; wrap_y = 2!
