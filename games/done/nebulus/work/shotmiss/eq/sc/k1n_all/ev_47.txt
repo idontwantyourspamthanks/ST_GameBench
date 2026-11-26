@@ -1,0 +1,4 @@
+e VBL
+w $38498 $00
+b pc = $3868e :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/shotmiss/eq/sc/k1n_all/cap_47.txt
+b pc = $3dcf4 && ($3ad98).w = $18 && ($3ad9a).w = $48 && ($3ad9c).w = $5 :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/shotmiss/eq/sc/k1n_all/ev_48.txt

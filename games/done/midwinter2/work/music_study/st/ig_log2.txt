@@ -1,0 +1,439 @@
+ump saved to: /tmp/mw2run-gaj20x4t/shots/grab0010.png
+WARN : PNG screen dump saved to: /tmp/mw2run-gaj20x4t/shots/grab0011.png
+WARN : PNG screen dump saved to: /tmp/mw2run-gaj20x4t/shots/grab0012.png
+5. CPU breakpoint condition(s) matched 4 times.
+	pc = $321fe :trace :file /tmp/mw2run-gaj20x4t/bp_start_tune.txt
+Reading debugger commands from '/tmp/mw2run-gaj20x4t/bp_start_tune.txt'...
+Changed to input file dir '/tmp/mw2run-gaj20x4t'.
+> e VBL
+= %101111101111010 (bin), #24442 (dec), $5f7a (hex)
+> r
+  D0 00000001   D1 000001F2   D2 FFE6D0B5   D3 00842B2E 
+  D4 00169000   D5 00000009   D6 00000000   D7 00000006 
+  A0 000040C6   A1 00010D5E   A2 0000EF34   A3 0007CF38 
+  A4 0007C718   A5 0007BE0E   A6 0000770E   A7 00008022 
+USP  000B1F40 ISP  00008022 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch b078 (CMP) 7626 (MOVE) Chip latch 00000000
+000321fe b078 7626                cmp.w $00007626.w [ffff],d0
+Next PC: 00032202
+> m a7 16
+00008022: 00 03 21 38 00 03 2f 2c 00 03 23 ca 00 02 c6 cc  ..!8../,..#ט..הכ
+> m $7626 2
+00007626: ff ff                                            ¯¯
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $757c 2
+0000757C: 00 06                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+> m $f92a 2
+0000F92A: 00 01                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 4 times.
+	pc = $c6c :trace :file /tmp/mw2run-gaj20x4t/bp_ym_start_c6c.txt
+Reading debugger commands from '/tmp/mw2run-gaj20x4t/bp_ym_start_c6c.txt'...
+Changed to input file dir '/tmp/mw2run-gaj20x4t'.
+> e VBL
+= %101111101111010 (bin), #24442 (dec), $5f7a (hex)
+> r
+  D0 00000001   D1 000001F2   D2 FFE6D0B5   D3 00842B2E 
+  D4 00169000   D5 00000009   D6 00000000   D7 00000006 
+  A0 00000806   A1 00000C6C   A2 0000EF34   A3 0007CF38 
+  A4 0007C718   A5 0007BE0E   A6 0000770E   A7 00007FE2 
+USP  000B1F40 ISP  00007FE2 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 31fc (MOVE) 0001 (OR) Chip latch 00000000
+00000c6c 31fc 0001 0c44           move.w #$0001,$00000c44.w [0000]
+Next PC: 00000c72
+> m a7 16
+00007FE2: 00 03 22 2e 00 00 00 01 00 00 01 f2 ff e6 d0 b5  .."........≥¯µסŒ
+> m $7626 2
+00007626: 00 01                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $757c 2
+0000757C: 00 06                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+> m $f92a 2
+0000F92A: 00 01                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 4 times.
+	pc = $c4c :trace :file /tmp/mw2run-gaj20x4t/bp_ym_stop_c4c.txt
+Reading debugger commands from '/tmp/mw2run-gaj20x4t/bp_ym_stop_c4c.txt'...
+Changed to input file dir '/tmp/mw2run-gaj20x4t'.
+> e VBL
+= %101111101111010 (bin), #24442 (dec), $5f7a (hex)
+> r
+  D0 00000001   D1 000001F2   D2 FFE6D0B5   D3 00842B2E 
+  D4 00169000   D5 00000009   D6 00000000   D7 00000006 
+  A0 00000806   A1 00000C6C   A2 0000EF34   A3 0007CF38 
+  A4 0007C718   A5 0007BE0E   A6 0000770E   A7 00007FDE 
+USP  000B1F40 ISP  00007FDE 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch 303c (MOVE) 000d (ILLEGAL) Chip latch 00000000
+00000c4c 303c 000d                move.w #$000d,d0
+Next PC: 00000c50
+> m a7 16
+00007FDE: 00 00 0c 76 00 03 22 2e 00 00 00 01 00 00 01 f2  ...v.."........≥
+> m $7626 2
+00007626: 00 01                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $757c 2
+0000757C: 00 06                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+> m $f92a 2
+0000F92A: 00 01                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+6. CPU breakpoint condition(s) matched 4 times.
+	pc = $3225c :trace :file /tmp/mw2run-gaj20x4t/bp_setvec_3225c.txt
+Reading debugger commands from '/tmp/mw2run-gaj20x4t/bp_setvec_3225c.txt'...
+Changed to input file dir '/tmp/mw2run-gaj20x4t'.
+> e VBL
+= %101111101111010 (bin), #24442 (dec), $5f7a (hex)
+> r
+  D0 0000000C   D1 000001F2   D2 FFE6D0B5   D3 00842B2E 
+  D4 00169000   D5 00000009   D6 00000000   D7 00000006 
+  A0 00000806   A1 00000B9A   A2 0000EF34   A3 0007CF38 
+  A4 0007C718   A5 0007BE0E   A6 0000770E   A7 00007FE6 
+USP  000B1F40 ISP  00007FE6 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch 21d0 (MOVE) 5138 (SUB) Chip latch 00000000
+0003225c 21d0 5138                move.l (a0) == $00000806 [00000d0e],$00005138.w [00000d0e]
+Next PC: 00032260
+> m a7 16
+00007FE6: 00 00 00 01 00 00 01 f2 ff e6 d0 b5 00 84 2b 2e  .......≥¯µסŒ.ä+.
+> m $7626 2
+00007626: 00 01                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $757c 2
+0000757C: 00 06                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+> m $f92a 2
+0000F92A: 00 01                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+12. CPU breakpoint condition(s) matched 2 times.
+	pc = $18e32 :trace :file /tmp/mw2run-gaj20x4t/bp_sfx_init_18e32.txt
+Reading debugger commands from '/tmp/mw2run-gaj20x4t/bp_sfx_init_18e32.txt'...
+Changed to input file dir '/tmp/mw2run-gaj20x4t'.
+> e VBL
+= %110000000100000 (bin), #24608 (dec), $6020 (hex)
+> r
+  D0 0000FFFF   D1 000001F2   D2 FFE6D0B5   D3 00842B2E 
+  D4 00169000   D5 00000009   D6 00000000   D7 00000006 
+  A0 00007384   A1 00019F54   A2 0000EF34   A3 0007CF38 
+  A4 0007C718   A5 0007BE0E   A6 0000770E   A7 00007FE2 
+USP  000B1F40 ISP  00007FE2 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch 21fc (MOVE) 0001 (OR) Chip latch 00000000
+00018e32 21fc 0001 8f92 513c      move.l #$00018f92,$0000513c.w [0003386e]
+Next PC: 00018e3a
+> m a7 16
+00007FE2: 00 02 7e d8 00 00 01 38 00 00 01 f2 ff e6 d0 b5  ..~ן...8...≥¯µסŒ
+> m $7626 2
+00007626: 00 01                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $757c 2
+0000757C: 00 06                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+> m $f92a 2
+0000F92A: 00 01                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+5. CPU breakpoint condition(s) matched 5 times.
+	pc = $321fe :trace :file /tmp/mw2run-gaj20x4t/bp_start_tune.txt
+Reading debugger commands from '/tmp/mw2run-gaj20x4t/bp_start_tune.txt'...
+Changed to input file dir '/tmp/mw2run-gaj20x4t'.
+> e VBL
+= %110001011010100 (bin), #25300 (dec), $62d4 (hex)
+> r
+  D0 00000005   D1 00000000   D2 01464100   D3 0086C710 
+  D4 00010000   D5 00000010   D6 00520019   D7 0000FFFF 
+  A0 00049C80   A1 00049C80   A2 000482F6   A3 0007CF38 
+  A4 0007C718   A5 0007BE0E   A6 0000770E   A7 00007FDA 
+USP  000B1F40 ISP  00007FDA 
+SR=2310 T=00 S=1 M=0 X=1 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch b078 (CMP) 7626 (MOVE) Chip latch 00000000
+000321fe b078 7626                cmp.w $00007626.w [0001],d0
+Next PC: 00032202
+> m a7 16
+00007FDA: 00 03 21 5c 00 03 76 30 00 40 00 a4 00 00 00 00  ..!\..v0.@.ñ....
+> m $7626 2
+00007626: 00 01                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $757c 2
+0000757C: 00 06                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+> m $f92a 2
+0000F92A: 00 01                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 5 times.
+	pc = $c6c :trace :file /tmp/mw2run-gaj20x4t/bp_ym_start_c6c.txt
+Reading debugger commands from '/tmp/mw2run-gaj20x4t/bp_ym_start_c6c.txt'...
+Changed to input file dir '/tmp/mw2run-gaj20x4t'.
+> e VBL
+= %110001011010100 (bin), #25300 (dec), $62d4 (hex)
+> r
+  D0 00000005   D1 00000000   D2 01464100   D3 0086C710 
+  D4 00010000   D5 00000010   D6 00520019   D7 0000FFFF 
+  A0 00000806   A1 00000C6C   A2 000482F6   A3 0007CF38 
+  A4 0007C718   A5 0007BE0E   A6 0000770E   A7 00007F9A 
+USP  000B1F40 ISP  00007F9A 
+SR=2314 T=00 S=1 M=0 X=1 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 31fc (MOVE) 0001 (OR) Chip latch 00000000
+00000c6c 31fc 0001 0c44           move.w #$0001,$00000c44.w [0000]
+Next PC: 00000c72
+> m a7 16
+00007F9A: 00 03 22 2e 00 00 00 05 00 00 00 00 01 46 41 00  .."..........FA.
+> m $7626 2
+00007626: 00 05                                            ..
+> m $b96 4
+00000B96: 00 00 00 05                                      ....
+> m $757c 2
+0000757C: 00 06                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+> m $f92a 2
+0000F92A: 00 01                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 5 times.
+	pc = $c4c :trace :file /tmp/mw2run-gaj20x4t/bp_ym_stop_c4c.txt
+Reading debugger commands from '/tmp/mw2run-gaj20x4t/bp_ym_stop_c4c.txt'...
+Changed to input file dir '/tmp/mw2run-gaj20x4t'.
+> e VBL
+= %110001011010100 (bin), #25300 (dec), $62d4 (hex)
+> r
+  D0 00000005   D1 00000000   D2 01464100   D3 0086C710 
+  D4 00010000   D5 00000010   D6 00520019   D7 0000FFFF 
+  A0 00000806   A1 00000C6C   A2 000482F6   A3 0007CF38 
+  A4 0007C718   A5 0007BE0E   A6 0000770E   A7 00007F96 
+USP  000B1F40 ISP  00007F96 
+SR=2310 T=00 S=1 M=0 X=1 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch 303c (MOVE) 000d (ILLEGAL) Chip latch 00000000
+00000c4c 303c 000d                move.w #$000d,d0
+Next PC: 00000c50
+> m a7 16
+00007F96: 00 00 0c 76 00 03 22 2e 00 00 00 05 00 00 00 00  ...v..".........
+> m $7626 2
+00007626: 00 05                                            ..
+> m $b96 4
+00000B96: 00 00 00 05                                      ....
+> m $757c 2
+0000757C: 00 06                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+> m $f92a 2
+0000F92A: 00 01                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+6. CPU breakpoint condition(s) matched 5 times.
+	pc = $3225c :trace :file /tmp/mw2run-gaj20x4t/bp_setvec_3225c.txt
+Reading debugger commands from '/tmp/mw2run-gaj20x4t/bp_setvec_3225c.txt'...
+Changed to input file dir '/tmp/mw2run-gaj20x4t'.
+> e VBL
+= %110001011010100 (bin), #25300 (dec), $62d4 (hex)
+> r
+  D0 0000003C   D1 00000000   D2 01464100   D3 0086C710 
+  D4 00010000   D5 00000010   D6 00520019   D7 0000FFFF 
+  A0 00000806   A1 00000B9A   A2 000482F6   A3 0007CF38 
+  A4 0007C718   A5 0007BE0E   A6 0000770E   A7 00007F9E 
+USP  000B1F40 ISP  00007F9E 
+SR=2310 T=00 S=1 M=0 X=1 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch 21d0 (MOVE) 5138 (SUB) Chip latch 00000000
+0003225c 21d0 5138                move.l (a0) == $00000806 [00000d0e],$00005138.w [00000d0e]
+Next PC: 00032260
+> m a7 16
+00007F9E: 00 00 00 05 00 00 00 00 01 46 41 00 00 86 c7 10  .........FA..åו.
+> m $7626 2
+00007626: 00 05                                            ..
+> m $b96 4
+00000B96: 00 00 00 05                                      ....
+> m $757c 2
+0000757C: 00 06                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+> m $f92a 2
+0000F92A: 00 01                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+5. CPU breakpoint condition(s) matched 6 times.
+	pc = $321fe :trace :file /tmp/mw2run-gaj20x4t/bp_start_tune.txt
+Reading debugger commands from '/tmp/mw2run-gaj20x4t/bp_start_tune.txt'...
+Changed to input file dir '/tmp/mw2run-gaj20x4t'.
+> e VBL
+= %110001100101000 (bin), #25384 (dec), $6328 (hex)
+> r
+  D0 00000005   D1 0000000C   D2 000C0009   D3 0000000C 
+  D4 0000FFA6   D5 FFFF0272   D6 FFFFC340   D7 00000001 
+  A0 00004CEA   A1 00004A8A   A2 000482F6   A3 0007CF38 
+  A4 0007C718   A5 0007BE0E   A6 0000770E   A7 00007FD6 
+USP  000B1F40 ISP  00007FD6 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch b078 (CMP) 7626 (MOVE) Chip latch 00000000
+000321fe b078 7626                cmp.w $00007626.w [0005],d0
+Next PC: 00032202
+> m a7 16
+00007FD6: 00 03 21 5c 00 03 76 30 00 00 00 30 00 00 00 0c  ..!\..v0...0....
+> m $7626 2
+00007626: 00 05                                            ..
+> m $b96 4
+00000B96: 00 00 00 05                                      ....
+> m $757c 2
+0000757C: 00 06                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+> m $f92a 2
+0000F92A: 00 01                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 2 times.
+	pc = $338c2 :trace :file /tmp/mw2run-gaj20x4t/bp_stop_restore_502c.txt
+Reading debugger commands from '/tmp/mw2run-gaj20x4t/bp_stop_restore_502c.txt'...
+Changed to input file dir '/tmp/mw2run-gaj20x4t'.
+> e VBL
+= %110001100111100 (bin), #25404 (dec), $633c (hex)
+> r
+  D0 00000000   D1 FFFF0000   D2 00000028   D3 FFFFFFBB 
+  D4 FFFF01A0   D5 00090000   D6 FFFF0000   D7 00000000 
+  A0 0001858C   A1 0007CF38   A2 00079F42   A3 0007CEE4 
+  A4 0007C718   A5 0007BDD2   A6 0007D058   A7 00008022 
+USP  000B1F40 ISP  00008022 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5032 (ADD) Chip latch 00000000
+000338c2 4eb8 5032                jsr $00005032.w
+Next PC: 000338c6
+> m a7 16
+00008022: 00 03 24 8c 00 03 2f 4e 00 03 23 ca 00 02 c6 cc  ..$î../N..#ט..הכ
+> m $7626 2
+00007626: 00 05                                            ..
+> m $b96 4
+00000B96: 00 00 00 05                                      ....
+> m $757c 2
+0000757C: 00 06                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+> m $f92a 2
+0000F92A: 00 01                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+3. CPU breakpoint condition(s) matched 4 times.
+	pc = $33870 :trace :file /tmp/mw2run-gaj20x4t/bp_stop_5032.txt
+Reading debugger commands from '/tmp/mw2run-gaj20x4t/bp_stop_5032.txt'...
+Changed to input file dir '/tmp/mw2run-gaj20x4t'.
+> e VBL
+= %110001100111100 (bin), #25404 (dec), $633c (hex)
+> r
+  D0 00000000   D1 FFFF0000   D2 00000028   D3 FFFFFFBB 
+  D4 FFFF01A0   D5 00090000   D6 FFFF0000   D7 00000000 
+  A0 0001858C   A1 0007CF38   A2 00079F42   A3 0007CEE4 
+  A4 0007C718   A5 0007BDD2   A6 0007D058   A7 0000801E 
+USP  000B1F40 ISP  0000801E 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 48e7 (MVMLE) fffe (ILLEGAL) Chip latch 00000000
+00033870 48e7 fffe                movem.l d0-d7/a0-a6,-(a7) == $0000801a
+Next PC: 00033874
+> m a7 16
+0000801E: 00 03 38 c6 00 03 24 8c 00 03 2f 4e 00 03 23 ca  ..8ה..$î../N..#ט
+> m $7626 2
+00007626: 00 05                                            ..
+> m $b96 4
+00000B96: 00 00 00 05                                      ....
+> m $757c 2
+0000757C: 00 06                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+> m $f92a 2
+0000F92A: 00 01                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+11. CPU breakpoint condition(s) matched 2 times.
+	pc = $338c6 :trace :file /tmp/mw2run-gaj20x4t/bp_tick_restore_338c6.txt
+Reading debugger commands from '/tmp/mw2run-gaj20x4t/bp_tick_restore_338c6.txt'...
+Changed to input file dir '/tmp/mw2run-gaj20x4t'.
+> e VBL
+= %110001100111100 (bin), #25404 (dec), $633c (hex)
+> r
+  D0 00000000   D1 FFFF0000   D2 00000028   D3 FFFFFFBB 
+  D4 FFFF01A0   D5 00090000   D6 FFFF0000   D7 00000000 
+  A0 0001858C   A1 0007CF38   A2 00079F42   A3 0007CEE4 
+  A4 0007C718   A5 0007BDD2   A6 0007D058   A7 00008022 
+USP  000B1F40 ISP  00008022 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch 21f8 (MOVE) 513c (ILLEGAL) Chip latch 00000000
+000338c6 21f8 513c 5138           move.l $0000513c.w [00018f92],$00005138.w [0003386e]
+Next PC: 000338cc
+> m a7 16
+00008022: 00 03 24 8c 00 03 2f 4e 00 03 23 ca 00 02 c6 cc  ..$î../N..#ט..הכ
+> m $7626 2
+00007626: 00 05                                            ..
+> m $b96 4
+00000B96: 00 00 00 05                                      ....
+> m $757c 2
+0000757C: 00 06                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+> m $f92a 2
+0000F92A: 00 01                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+5. CPU breakpoint condition(s) matched 7 times.
+	pc = $321fe :trace :file /tmp/mw2run-gaj20x4t/bp_start_tune.txt
+Reading debugger commands from '/tmp/mw2run-gaj20x4t/bp_start_tune.txt'...
+Changed to input file dir '/tmp/mw2run-gaj20x4t'.
+> e VBL
+= %110001100111101 (bin), #25405 (dec), $633d (hex)
+> r
+  D0 00000005   D1 00000000   D2 FE6600FB   D3 018C000A 
+  D4 FFFF01F2   D5 00090000   D6 FFFF0001   D7 00000007 
+  A0 00007686   A1 00010D62   A2 00079F42   A3 0007CEE4 
+  A4 0007C718   A5 000034F0   A6 0000770E   A7 00007FE2 
+USP  000B1F40 ISP  00007FE2 
+SR=2310 T=00 S=1 M=0 X=1 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch b078 (CMP) 7626 (MOVE) Chip latch 00000000
+000321fe b078 7626                cmp.w $00007626.w [0005],d0
+Next PC: 00032202
+> m a7 16
+00007FE2: 00 03 21 5c 00 03 76 30 00 14 00 a4 00 00 00 00  ..!\..v0...ñ....
+> m $7626 2
+00007626: 00 05                                            ..
+> m $b96 4
+00000B96: 00 00 00 05                                      ....
+> m $757c 2
+0000757C: 00 06                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+> m $f92a 2
+0000F92A: 00 01                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+5. CPU breakpoint condition(s) matched 8 times.
+	pc = $321fe :trace :file /tmp/mw2run-gaj20x4t/bp_start_tune.txt
+Reading debugger commands from '/tmp/mw2run-gaj20x4t/bp_start_tune.txt'...
+Changed to input file dir '/tmp/mw2run-gaj20x4t'.
+> e VBL
+= %110001101011000 (bin), #25432 (dec), $6358 (hex)
+> r
+  D0 00000005   D1 00000000   D2 000C00FB   D3 0000000C 
+  D4 FFFF02D8   D5 FFFF028B   D6 FFFF0001   D7 00000007 
+  A0 00007686   A1 0007D22C   A2 00079F42   A3 0007D1D8 
+  A4 0007C718   A5 0007BE22   A6 0000770E   A7 00007FE2 
+USP  000B1F40 ISP  00007FE2 
+SR=2310 T=00 S=1 M=0 X=1 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch b078 (CMP) 7626 (MOVE) Chip latch 00000000
+000321fe b078 7626                cmp.w $00007626.w [0005],d0
+Next PC: 00032202
+> m a7 16
+00007FE2: 00 03 21 5c 00 03 76 30 00 14 00 a4 00 00 00 00  ..!\..v0...ñ....
+> m $7626 2
+00007626: 00 05                                            ..
+> m $b96 4
+00000B96: 00 00 00 05                                      ....
+> m $757c 2
+0000757C: 00 06                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+> m $f92a 2
+0000F92A: 00 01                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+WARN : PNG screen dump saved to: /tmp/mw2run-gaj20x4t/shots/grab0013.png

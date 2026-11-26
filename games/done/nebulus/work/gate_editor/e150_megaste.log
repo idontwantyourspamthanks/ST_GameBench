@@ -1,0 +1,48 @@
+title True
+blob at title (prev,pad frz noen): 000000000000
+in editor: (1, 0) (0, 1)
+PASS blob after T,E,T,E in edit view: got 000000000000 expected 000000000000
+PASS key l -> (col 0,row 10): got 129 expected 129
+PASS key p -> (col 1,row 10): got 128 expected 128
+PASS key b -> (col 2,row 10): got 130 expected 130
+PASS key d -> (col 3,row 10): got 131 expected 131
+PASS key x -> (col 4,row 10): got 195 expected 195
+PASS key s -> (col 5,row 10): got 16 expected 16
+PASS key r -> (col 6,row 10): got 32 expected 32
+PASS key w -> (col 7,row 10): got 48 expected 48
+PASS key u -> (col 8,row 10): got 64 expected 64
+PASS key i -> (col 9,row 10): got 80 expected 80
+PASS key j -> (col 10,row 10): got 96 expected 96
+PASS key k -> (col 11,row 10): got 112 expected 112
+PASS key c -> (col 12,row 10): got 0 expected 0
+PASS door x3 col 3 rows 10..12: got 83 83 83 expected 83 83 83
+PASS exit x3 col 4 rows 10..12: got c3 c3 c3 expected c3 c3 c3
+PASS s again flips (col 5): got 17 expected 17
+PASS s again flips back: got 16 expected 16
+PASS l, Return, space -> cols 13,14,15: got [129, 129, 129] expected [129, 129, 129]
+PASS Delete clears (col 15): got 0 expected 0
+every key done; blob: 000000000000
+PASS blob after all shortcut keys: got 000000000000 expected 000000000000
+  at 2 2
+vLift 3
+  at 2 8
+PASS lift via a / Up / Return: col 2 rows 0..9: got 00 81 85 00 00 00 00 00 08 00 expected 00 81 85 00 00 00 00 00 08 00
+  at 2 5
+PASS z = lift stop (col 2 row 5): got 12 expected 12
+  at 15 14
+  at 15 8
+PASS lift end picked below: col 15 rows 6..14: got 00 81 85 00 00 00 00 00 08 expected 00 81 85 00 00 00 00 00 08
+  at 6 6
+  at 6 2
+  at 6 9
+PASS pillar-blocks-lift warning set (vMsg != 0): got True expected True
+PASS col 6 rows 1..9: got 81 85 00 00 00 80 00 00 08 expected 81 85 00 00 00 80 00 00 08
+PASS blob after unmapped + shortcut keys: got 000000000000 expected 000000000000
+PASS playtest running, not paused/quit (timer moves): got True expected True
+  timer 00200020002d 002000180038 blob 000000000000
+PASS trainer flags still 0 on entering the playtest: got 00000000 expected 00000000
+  blob after e,t in the playtest 9400ffffffff
+PASS T/E work in the playtest: got ffffffff expected ffffffff
+  back in editor (1, 0)
+PASS T/E keys in the edit view after the playtest do not toggle: got ffffffff expected ffffffff
+FAILS []

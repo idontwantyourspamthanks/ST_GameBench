@@ -1,7 +1,7 @@
 # Moonshine Racers
 
 - Slug: `moonshine-racers`
-- Status: **done** (v1.4 released 2026-11-25: HD and floppy zips in `dist/`, 8 MHz STE Blitter + 68000 rendering speedups pushing driving to 18.1–23.5 fps pixel-identical, in-game build-as-you-go track editor `FILES\MSEDIT.OVL` on 2 MB+ HD with in-game save to hard disk or formatted floppy campaign disk in drive A:, per-track race length v2; open: floppy editor, real-hardware pass, TT/Falcon/MiSTer untested)
+- Status: **done** (v1.4.1 released 2026-11-26: HD and floppy zips in `dist/`, Track Editor stuck-Down IKBD fix after HAGA/TOS swaps, 8 MHz STE Blitter + 68000 rendering speedups pushing driving to 18.1–23.5 fps pixel-identical, in-game build-as-you-go track editor `FILES\MSEDIT.OVL` on 2 MB+ HD with in-game save to hard disk or formatted floppy campaign disk in drive A:, per-track race length v2; open: floppy editor, real-hardware pass, TT/Falcon/MiSTer untested)
 - VHD source: `Atari3gb.vhd`, partition at offset 1840700928 (letters G-R), folder ::/M/MOONSHR
 - Local copy: `originals/MOONSHR` (git-ignored)
 - Loader: PP's HAGA conversion (RUNME.TOS + HAGA)

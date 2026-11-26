@@ -1,0 +1,21 @@
+snapshot boot True
+PASS flags: fixture flags: [202, 53, 255]
+PASS flags: F10 opens the manager: True
+PASS flags: Edit loads flags $35 into rsFlg (RS+50): 53
+PASS flags: after Edit + commit: [202, 53, 255]
+PASS flags: edit changed the grid of level 1 only: [False, True, False]
+PASS flags: level 1 mission/tower/time/name unchanged: [(1, 0, 1536, 'FLAGS 0'), (2, 1, 1536, 'FLAGS 1'), (1, 2, 1536, 'FLAGS 2')]
+PASS flags: store validates: []
+PASS flags: after Copy of level 1: [202, 53, 255, 53]
+PASS flags: after Delete of level 0: [53, 255, 53]
+PASS flags: new level clears rsFlg: 0
+PASS flags: after a new level (flags 0): [53, 255, 53, 0]
+PASS flags: store validates: []
+PASS flags: Save to campaign disk: 'Saved'
+PASS flags: saved disk usable: True
+FAIL flags: saved file flags: []  (expected [53, 255, 53, 0])
+FAIL flags: saved file == RAM store: False  (expected True)
+PASS flags: Load from campaign disk: 'Loaded 4 levels / 1 campaigns'
+PASS flags: reloaded store flags: [53, 255, 53, 0]
+PASS flags: no Address/Bus Error/exception in the Hatari log: []
+FAILS ['flags: saved file flags', 'flags: saved file == RAM store']

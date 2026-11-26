@@ -1,0 +1,53 @@
+Midwinter 2 (HAGA HD version by PP) - patched build, 2026-11-08
+Release v@VERSION@ enhanced by dad_prg
+
+Changes vs the original HAGA release:
+- Game speed is fixed to real time: the world no longer speeds up on
+  faster machines (Mega STE 16 MHz, TT, Falcon, accelerators).
+- Moving and turning is smoother in every vehicle and on foot: the game's 5 steps per
+  second are unchanged, but the view is redrawn between them as often as the machine
+  can manage, at a pose extrapolated from the last step (no game logic runs in the
+  extra frames; positions at each step are identical to the original game's).
+- About 20% faster 3D display on a stock 8 MHz ST/STE (18-23% in tests),
+  pixel-identical: less wasted work on hidden terrain and cockpit overdraw.
+- Direct controls: the mouse turns only while it moves; joystick/keyboard
+  turn at a constant rate while held and stop on release.
+- No grey fading while loading.
+- Standing still, the 3D view is only redrawn when something in it changes
+  (about 25 fps instead of 5 in the quiet scenes; identical picture).
+- Floppy set: the manual security check is skipped, as in the HD release.
+- fixed: >=4 MB hang. With 4 MB or more RAM on an ST/STE/Mega STE, earlier
+  patched builds stopped at the orange "Flames of Freedom" title. PP's loader
+  caches whole disk images in RAM from 4 MB up, which overwrote the patch code
+  (the unpatched game was fine). The patched build now keeps the loader's
+  200 KB chunked caching on those machines, as on 1-2 MB; loading takes a few
+  seconds longer than the unpatched game does at 4 MB. TT/Falcon are unchanged.
+- Atari Jaguar pad (new in v1.4; STE enhanced joystick ports, either port), in joystick mode: d-pad = stick,
+  B = fire, A / C = < / > (nose down / up, dive / climb), Option = Esc (leave vehicle), Pause = P,
+  keypad 1-9 / 0 = F1-F10, * / # = keypad - / +. Each button is read every 80 ms. Other machines run as before.
+- fixed (v1.4): on a TT the mouse pointer was missing on the map screens (also in the original release); it is
+  now drawn on every frame there. ST/STE/Mega STE are unchanged.
+- fixed (v1.4): after an explosion, parts of its circles could stay in the sky once the view turned (a bug in the
+  faster sky redraw of the earlier patched releases; the original game was fine).
+- fixed (v1.4): on fast machines (TT, Mega STE) one press of the joystick button could throw 2-3 grenades or
+  missiles: the smooth in-between frames also read the fire button. Fire is now read once per world step (5 a second),
+  as the original does on a stock STE.
+- fixed (v1.3): after leaving a boat, the frogman's diving mask could show only its top half.
+- Version line: the orange MIDWINTER II logo screen (shown while the game loads, before the intro) carries a small, dim
+  "v@VERSION@ enhanced by dad_prg" at the bottom, so this release can not be mistaken for the original. Nothing else on the
+  screen changes.
+
+- Optional, not enabled in this build: the Amiga release's sound effects through the STE's DMA
+  sound (mono, 6258 Hz, mixed in software) instead of the YM beeps, on an STE / Mega STE only
+  (ST, Mega ST, TT, Falcon keep the YM). Needs FILES\ASNBANK.BIN, built from your own Amiga
+  disk 1 by tools/asn_build.py, and costs about 5-9% of the frame rate while sounds play.
+  Build it with: MW2_BANK=build/asn_bank.bin python3 tools/mw2patch.py build --only <the
+  default set> asn_core asn_wd asn_lvc asn_lv1 asn_lv2   (or tools/play.sh --asn).
+
+
+Requirements and usage are as in README.TXT (1 MB RAM minimum).
+Run RUNME.TOS from a hard disk / GEMDOS drive.
+Create a campaign first: War Room -> Start New Campaign (copies the
+missions disk into FILES\FFD), then Control.
+Tested on Hatari: ST (TOS 1.04) and STE (TOS 1.62) at 1 and 4 MB, Mega STE
+(TOS 2.06) at 1, 2, 4, 8 and 14 MB, STE 16 MHz, TT (TOS 3.06) at 4 MB.

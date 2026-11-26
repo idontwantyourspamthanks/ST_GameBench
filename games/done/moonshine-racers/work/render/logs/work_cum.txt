@@ -1,0 +1,14 @@
+race_start stock: 58 passes, wrap violations 0; work/pass mean 847,306 cycles = 5.287 VBL, min 791,884 max 895,356; period mean 5.983 VBL
+race_start mr_edge: 55 passes, wrap violations 0; work/pass mean 794,278 cycles = 4.956 VBL, min 746,300 max 847,544; period mean 5.418 VBL
+race_start mr_edge+mr_map: 57 passes, wrap violations 0; work/pass mean 774,630 cycles = 4.834 VBL, min 727,548 max 827,496; period mean 5.228 VBL
+race_start mr_edge+mr_map+mr_digit: 58 passes, wrap violations 0; work/pass mean 760,181 cycles = 4.744 VBL, min 709,620 max 809,640; period mean 5.069 VBL
+common passes 53: work/render/w_race_start_stock.json mean 844,745 (5.271 VBL) -> work/render/w_race_start_edge.json mean 793,501 (4.951 VBL): saving 51,244 cycles = 6.1%
+common passes 52: work/render/w_race_start_stock.json mean 843,983 (5.266 VBL) -> work/render/w_race_start_edge_map.json mean 772,673 (4.821 VBL): saving 71,310 cycles = 8.4%
+common passes 52: work/render/w_race_start_stock.json mean 843,983 (5.266 VBL) -> work/render/w_race_start_all3.json mean 757,788 (4.729 VBL): saving 86,195 cycles = 10.2%
+race_grid stock: 59 passes, wrap violations 0; work/pass mean 762,992 cycles = 4.761 VBL, min 742,520 max 777,760; period mean 5.000 VBL
+race_grid mr_edge: 59 passes, wrap violations 0; work/pass mean 721,082 cycles = 4.500 VBL, min 699,352 max 747,192; period mean 5.000 VBL
+race_grid mr_edge+mr_map: 59 passes, wrap violations 0; work/pass mean 701,173 cycles = 4.375 VBL, min 677,516 max 728,436; period mean 5.000 VBL
+race_grid mr_edge+mr_map+mr_digit: 59 passes, wrap violations 0; work/pass mean 701,173 cycles = 4.375 VBL, min 677,516 max 728,436; period mean 5.000 VBL
+common passes 53: work/render/w_race_grid_stock.json mean 762,256 (4.756 VBL) -> work/render/w_race_grid_edge.json mean 720,107 (4.493 VBL): saving 42,149 cycles = 5.5%
+common passes 53: work/render/w_race_grid_stock.json mean 762,256 (4.756 VBL) -> work/render/w_race_grid_edge_map.json mean 700,168 (4.369 VBL): saving 62,088 cycles = 8.1%
+common passes 53: work/render/w_race_grid_stock.json mean 762,256 (4.756 VBL) -> work/render/w_race_grid_all3.json mean 700,168 (4.369 VBL): saving 62,088 cycles = 8.1%

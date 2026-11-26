@@ -1,0 +1,90 @@
+predicted stage-2 image vs ram_stage2_1mb.bin: 271849 game bytes compared, 0 differ
+site $03522e orig 30390003390c new 303900077cbe  dump-orig OK
+site $0363a4 orig 30390003390c new 303900077cb2  dump-orig OK
+site $0366de orig 30390003390c new 303900077cbe  dump-orig OK
+site $036b68 orig 30390003390c new 303900077cbe  dump-orig OK
+site $0377a2 orig 41f9000327f0 new 4ef900075810  dump-orig OK
+site $03792c orig 303900033a20 new 4eb900076c58  dump-orig OK
+site $037a90 orig 20090480000327f0 new 4eb9000758544e71  dump-orig OK
+site $037c42 orig 424010230c35002800006600001a new 424010236a200c35002800006618  dump-orig OK
+site $037c74 orig 424010230c35002800006600000e new 424010236a140c3500280000660c  dump-orig OK
+site $037c96 orig 424010230c350028000066000010 new 424010236a160c3500280000660e  dump-orig OK
+site $037d0c orig 4240102310350000b03c00286400002c new 424010236a3410350000b03c0028642a  dump-orig OK
+site $037d5a orig 4240102310350000b03c002864000022 new 424010236a2a10350000b03c00286420  dump-orig OK
+site $037d90 orig 4240102310350000b03c00286400001c new 424010236a2410350000b03c0028641a  dump-orig OK
+site $038486 orig 46fc23006100b9f8 new 4ef90007726c4e71  dump-orig OK
+site $038514 orig 13c000038498 new 4ef900076d04  dump-orig OK
+site $03851a orig 301f08b80006 new 4ef900077864  dump-orig OK
+site $03853a orig 48e7c080103aff58 new 4ef9000772944e71  dump-orig OK
+site $03855a orig 33c1000338f0 new 4eb900076d22  dump-orig OK
+site $039e2c orig 4e75 new 4e71  dump-orig OK
+site $039ffa orig 4e75 new 602a  dump-orig OK
+site $03a332 orig 4e75 new 4e71  dump-orig OK
+site $03adb4 orig d040303b00e6 new 4eb900075868  dump-orig OK
+site $03b0a4 orig 4a7900033938 new 4eb900076c40  dump-orig OK
+site $03b87a orig 66000008 new 66084880  dump-orig OK
+site $03d110 orig e549d0c12050 new 4eb90007588a  dump-orig OK
+site $03d662 orig 6100dcfc60000030 new 4ef90007789c4e71  dump-orig OK
+site $03d698 orig 33fcfffe00038212 new 4eb9000779fa4e71  dump-orig OK
+site $03d6c4 orig 6100ae744a79000338f0 new 4eb9000759c64e714e71  dump-orig OK
+site $03dbf0 orig 4eb90003636e new 4eb9000757ce  dump-orig OK
+site $03dc1e orig 30390003390c new 303900077cbe  dump-orig OK
+site $03dcf4 orig 4eb90003853a new 4eb900076c08  dump-orig OK
+site $03dfd6 orig 4eb90003868a new 4eb90007596e  dump-orig OK
+site $03e352 orig 303900033a34 new 4ef9000758aa  dump-orig OK
+clear $076c00 +8  (state, zeroed unconditionally; stage-2 dump there zero)
+clear $076d00 +4  (state, zeroed unconditionally; stage-2 dump there zero)
+clear $077c80 +320  (state, zeroed unconditionally; stage-2 dump there zero)
+33 verified sites, 3 clear ranges (332 B), 11 blocks; ZONE_STRICT=False
+---
+cr_credit    unmapped generator == patches/cr_credit.nep blocks: yes  ($779fa+64)
+ni_latch     unmapped generator == patches/ni_latch.nep blocks: yes  ($76d00+60)
+nt_trainers  unmapped generator == patches/nt_trainers.nep blocks: yes  ($76c00+118)
+ed_overlay   unmapped generator == patches/ed_overlay.nep blocks: yes  ($75740+5312, $76c76+136, $76d40+1324, $772da+34, $77300+1776, $77a40+570, $77dc0+252)
+ni_ikbd      unmapped generator == patches/ni_ikbd.nep blocks: yes  ($7726c+90)
+---
+  cr_credit    PP $03d698 -> floppy $03d690  33fcfffe00038212 -> 4eb9000779fa4e71
+  ed_overlay   PP $0377a2 -> floppy $0377a2  41f9000327f0 -> 4ef900075810
+  ed_overlay   PP $037a90 -> floppy $037a90  20090480000327f0 -> 4eb9000758544e71
+  ed_overlay   PP $03d6c4 -> floppy $03d6bc  6100ae7c4a79000338f0 -> 4eb9000759c64e714e71
+  ed_overlay   PP $03adb4 -> floppy $03ad90  d040303b00e6 -> 4eb900075868
+  ed_overlay   PP $03d110 -> floppy $03d108  e549d0c12050 -> 4eb90007588a
+  ed_overlay   PP $03e352 -> floppy $03e34a  303900033a34 -> 4ef9000758aa
+  ed_overlay   PP $03dfd6 -> floppy $03dfce  4eb90003868a -> 4eb90007596e
+  ed_overlay   PP $03851a -> floppy $03851a  301f08b80006 -> 4ef900077864
+  ed_overlay   PP $03d662 -> floppy $03d65a  6100dce060000030 -> 4ef90007789c4e71
+  ed_overlay   PP $03dbf0 -> floppy $03dbe8  4eb90003636e -> 4eb9000757ce
+  ed_overlay   PP $03522e -> floppy $03522e  30390003390c -> 303900077cbe
+  ed_overlay   PP $03dc1e -> floppy $03dc16  30390003390c -> 303900077cbe
+  ed_overlay   PP $0366de -> floppy $0366de  30390003390c -> 303900077cbe
+  ed_overlay   PP $036b68 -> floppy $036b68  30390003390c -> 303900077cbe
+  ed_overlay   PP $0363a4 -> floppy $0363a4  30390003390c -> 303900077cb2
+  ni_ikbd      PP $038486 -> floppy $038486  46fc23006100b9f8 -> 4ef900077f004e71
+  ni_ikbd      PP $03853a -> floppy $03853a  48e7c080103aff58 -> 4ef900077f284e71
+  ni_jump      PP $039ffa -> floppy $039fd6  4e75 -> 602a
+  ni_latch     PP $038514 -> floppy $038514  13c000038498 -> 4ef900076d04
+  ni_latch     PP $03855a -> floppy $03855a  33c1000338f0 -> 4eb900076d22
+  ni_shoot     PP $03a332 -> floppy $03a30e  4e75 -> 4e71
+  ni_turn      PP $039e2c -> floppy $039e08  4e75 -> 4e71
+  np_lift      PP $037d5a -> floppy $037d5a  4240102310350000b03c002864000022 -> 424010236a2a10350000b03c00286420
+  np_lift      PP $037d0c -> floppy $037d0c  4240102310350000b03c00286400002c -> 424010236a3410350000b03c0028642a
+  np_lift      PP $037d90 -> floppy $037d90  4240102310350000b03c00286400001c -> 424010236a2410350000b03c0028641a
+  np_lift      PP $037c74 -> floppy $037c74  424010230c35002800006600000e -> 424010236a140c3500280000660c
+  np_lift      PP $037c42 -> floppy $037c42  424010230c35002800006600001a -> 424010236a200c35002800006618
+  np_lift      PP $037c96 -> floppy $037c96  424010230c350028000066000010 -> 424010236a160c3500280000660e
+  np_shot      PP $03b87a -> floppy $03b856  66000008 -> 66084880
+  nt_trainers  PP $03dcf4 -> floppy $03dcec  4eb90003853a -> 4eb900076c08
+  nt_trainers  PP $03b0a4 -> floppy $03b080  4a7900033938 -> 4eb900076c40
+  nt_trainers  PP $03792c -> floppy $03792c  303900033a20 -> 4eb900076c58
+  cr_credit    block $0779fa 64 B
+  ed_overlay   block $075740 5312 B
+  ed_overlay   block $076c76 136 B
+  ed_overlay   block $076d40 1324 B
+  ed_overlay   block $0772da 34 B
+  ed_overlay   block $077300 1776 B
+  ed_overlay   block $077a40 570 B
+  ed_overlay   block $077dc0 252 B
+  ed_overlay   block $07726c 110 B
+  ni_ikbd      block $077f00 90 B
+  ni_latch     block $076d00 60 B
+  nt_trainers  block $076c00 118 B

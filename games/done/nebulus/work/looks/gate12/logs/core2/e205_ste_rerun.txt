@@ -1,0 +1,21 @@
+PASS open manager: True
+PASS play CRUMBL: True
+CRUMBL: start frog (4, 8, 0); row1 cols2..9 [145, 145, 129, 129, 129, 129, 129, 129] row0 [129, 129, 0, 0, 0, 0, 0, 0]
+  t=1.35s frog(x,y,st)=(5, 8, 0) row1[2..9]=[0, 145, 129, 129, 129, 129, 129, 129] row0[2..9]=[129, 129, 0, 0, 0, 0, 0, 0]
+  t=2.70s frog(x,y,st)=(26, 4, 0) row1[2..9]=[0, 0, 129, 129, 129, 129, 129, 129] row0[2..9]=[129, 129, 0, 0, 0, 0, 0, 0]
+  t=4.06s frog(x,y,st)=(57, 8, 0) row1[2..9]=[0, 0, 129, 129, 129, 129, 129, 129] row0[2..9]=[129, 129, 0, 0, 0, 0, 0, 0]
+  2 s after releasing: frog (82, 0, 8)
+FAIL open manager: False  (expected True)
+Traceback (most recent call last):
+  File "/tmp/ng12hd/nb/work/editor/e205.py", line 51, in run
+    chk(f'play {nm}', play(h, idx)); c = cells(h); P(f'{nm}: start frog {frog(h)}; row1 cols2..9 {[c[k*256+1] for k in range(2,10)]} row0 {[c[k*256] for k in range(2,10)]}')
+                      ^^^^^^^^^^^^
+  File "/tmp/ng12hd/nb/work/editor/e205.py", line 42, in play
+    pick(h, 'Levels'); pick(h, idx); pick(h, 'Play', 1.0)
+    ^^^^^^^^^^^^^^^^^
+  File "/tmp/ng12hd/nb/work/editor/ulib_ui.py", line 24, in pick
+    idx = what if isinstance(what, int) else [i for i, (a, p, t) in enumerate(items) if t.startswith(what)][0]
+                                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
+IndexError: list index out of range
+FAIL exception: "IndexError('list index out of range')"  (expected 'none')
+FAILS ['open manager', 'exception']

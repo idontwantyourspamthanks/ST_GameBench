@@ -1,0 +1,39 @@
+PASS odd2.ovl: ovl.py validate: []
+== odd2.ovl: 2 levels, sizes [115, 165], 2 campaigns [('ODD2', [128, 0, 130, 1]), ('ODD2 REV', [1, 0])]
+title 68.62829685211182
+PASS odd2.ovl: F10 opens the manager: True
+FAIL odd2.ovl: Load from campaign disk (nebcampaign.py new --ovl): ''  (expected 'Loaded 2 levels / 2 campaigns')
+PASS odd2.ovl: store in RAM == file: True
+Traceback (most recent call last):
+  File "e180_floppy", line 143, in run_file
+  File "e180_floppy", line 49, in pick
+IndexError: list index out of range
+FAIL odd2.ovl: exception in the script: "IndexError('list index out of range')"  (expected 'none')
+PASS looks.ovl: ovl.py validate: []
+== looks.ovl: 10 levels, sizes [159, 159, 159, 159, 159, 159, 159, 159, 159, 159], 1 campaigns [('LOOKS', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])]
+title 68.55101704597473
+PASS looks.ovl: F10 opens the manager: True
+PASS looks.ovl: Load from campaign disk (nebcampaign.py new --ovl): 'Loaded 10 levels / 1 campaigns'
+PASS looks.ovl: store in RAM == file: True
+PASS looks.ovl: level list shows all levels: ['M1T1', 'M1T2', 'M1T3', 'M1T4', 'M1T5', 'M1T6', 'M1T7', 'M1T8', 'M2T1', 'M2T4']
+PASS looks.ovl level 1 (record size 159) Play: tower started: True
+PASS looks.ovl level 1 (record size 159) Play: grid == decoded record (M1T2): []
+PASS looks.ovl level 1 (record size 159) Play: rows/mission/tower: (48, 1, 1)
+PASS looks.ovl level 1 (record size 159) Play: initial time 600 s (remaining 587): True
+PASS looks.ovl level 1 (record size 159) Play: tower name hook A0=$bc1b7 text: b'M1T2\x00'
+      record 1: size 159, name A0 $bc1b7 (odd address)
+PASS looks.ovl level 1 (record size 159): F10 opens the manager again (= back at the title after Q): True
+PASS looks.ovl level 9 (record size 159) Play: tower started: True
+PASS looks.ovl level 9 (record size 159) Play: grid == decoded record (M2T4): []
+PASS looks.ovl level 9 (record size 159) Play: rows/mission/tower: (48, 2, 3)
+PASS looks.ovl level 9 (record size 159) Play: initial time 600 s (remaining 587): True
+PASS looks.ovl level 9 (record size 159) Play: tower name hook A0=$bc6af text: b'M2T4\x00'
+      record 9: size 159, name A0 $bc6af (odd address)
+PASS looks.ovl level 9 (record size 159): F10 opens the manager again (= back at the title after Q): True
+PASS looks.ovl: campaign list shows all campaigns: ['LOOKS']
+Traceback (most recent call last):
+  File "e180_floppy", line 163, in run_file
+  File "e180_floppy", line 49, in pick
+IndexError: list index out of range
+FAIL looks.ovl: exception in the script: "IndexError('list index out of range')"  (expected 'none')
+FAILS ['odd2.ovl: Load from campaign disk (nebcampaign.py new --ovl)', 'odd2.ovl: exception in the script', 'looks.ovl: exception in the script']

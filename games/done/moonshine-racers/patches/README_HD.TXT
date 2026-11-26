@@ -7,6 +7,13 @@ What it is
   start-up: fixed game speed, faster drawing, extra in-between pictures on machines with time to spare, a new top-bar HUD.
   The game files are PP's, unchanged.  PATCHES.TXT lists every change.
 
+v1.4.1
+  Fixed: Track Editor (`FILES\MSEDIT.OVL`) could get stuck scrolling down as if the Down key were held.
+  When HAGA swapped TOS in and out to read/write files (entering the editor, loading a track via `rd_stock`, saving a
+  campaign, or returning from test drive), any key-break or joystick-release packet that arrived while TOS owned the IKBD
+  was lost, leaving `$5ffe+$50` (Down held) or `$6105` latched.  The editor and `trk_read` now clear the held-key table,
+  joystick bytes, IKBD parser state, and key queue on entry and after every HAGA/TOS swap, and reset the repeat timer.
+
 v1.4
   New: 8 MHz STE Blitter & 68000 rendering speedups (100% pixel-identical; ~18-23 fps while driving on 8 MHz STE,
   up from ~16 fps in v1.3 and ~4-8 fps in the original game; plain ST and Mega STE also benefit from the 68000 paths):

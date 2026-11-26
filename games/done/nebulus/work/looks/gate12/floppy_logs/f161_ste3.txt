@@ -1,0 +1,86 @@
+title 62.634315490722656
+   (7.2 s) 'No disk'
+PASS empty drive (game disk ejected): 'No disk'
+   (4.3 s) 'Not a campaign disk'
+PASS disk without NEBLEVEL.OVL: 'Not a campaign disk'
+   (5.3 s) 'Not a campaign disk'
+PASS NEBLEVEL.OVL 4096 B: 'Not a campaign disk'
+   (5.3 s) 'Not a campaign disk'
+PASS 8192 B text file: 'Not a campaign disk'
+   (5.3 s) 'Loaded 0 levels / 0 campaigns'
+PASS blank campaign disk (all zero file): 'Loaded 0 levels / 0 campaigns'
+PASS   store is zero (blank loaded): True
+   (5.3 s) 'Loaded 1 levels / 1 campaigns'
+PASS valid campaign disk: 'Loaded 1 levels / 1 campaigns'
+PASS   store == file: True
+   (5.3 s) 'Loaded 1 levels / 1 campaigns'
+PASS write-protected disk, load: 'Loaded 1 levels / 1 campaigns'
+   (5.3 s) 'Disk is write protected'
+PASS write-protected disk, SAVE: 'Disk is write protected'
+PASS game still alive after the disk operations: True
+   (5.3 s) 'Not a campaign disk'
+PASS fuzz fz_00_random0: ('Not a campaign disk', 'store ok')
+   (5.3 s) 'Not a campaign disk'
+PASS fuzz fz_01_random1: ('Not a campaign disk', 'store ok')
+   (5.3 s) 'Not a campaign disk'
+PASS fuzz fz_02_random2: ('Not a campaign disk', 'store ok')
+   (5.3 s) 'Not a campaign disk'
+PASS fuzz fz_03_random3: ('Not a campaign disk', 'store ok')
+   (5.3 s) 'Not a campaign disk'
+PASS fuzz fz_04_random4: ('Not a campaign disk', 'store ok')
+   (5.3 s) 'Not a campaign disk'
+PASS fuzz fz_05_magic_random: ('Not a campaign disk', 'store ok')
+   (5.3 s) 'Loaded 1 levels / 1 campaigns'
+PASS fuzz fz_06_flip1: ('Loaded 1 levels / 1 campaigns', 'store ok')
+   (5.3 s) 'Not a campaign disk'
+PASS fuzz fz_07_flip2: ('Not a campaign disk', 'store ok')
+   (5.3 s) 'Loaded 1 levels / 1 campaigns'
+PASS fuzz fz_08_flip3: ('Loaded 1 levels / 1 campaigns', 'store ok')
+   (5.3 s) 'Loaded 1 levels / 1 campaigns'
+PASS fuzz fz_09_flip5: ('Loaded 1 levels / 1 campaigns', 'store ok')
+   (5.3 s) 'Loaded 1 levels / 1 campaigns'
+PASS fuzz fz_10_flip8: ('Loaded 1 levels / 1 campaigns', 'store ok')
+   (5.3 s) 'Not a campaign disk'
+PASS fuzz fz_11_flip12: ('Not a campaign disk', 'store ok')
+   (5.3 s) 'Not a campaign disk'
+PASS fuzz fz_12_truncated300: ('Not a campaign disk', 'store ok')
+   (5.3 s) 'Not a campaign disk'
+PASS fuzz fz_13_version2: ('Not a campaign disk', 'store ok')
+   (5.3 s) 'Not a campaign disk'
+PASS fuzz fz_14_nlev127: ('Not a campaign disk', 'store ok')
+   (5.3 s) 'Not a campaign disk'
+PASS fuzz fz_15_ncamp200: ('Not a campaign disk', 'store ok')
+   (5.3 s) 'Not a campaign disk'
+PASS fuzz fz_16_rows0: ('Not a campaign disk', 'store ok')
+   (5.3 s) 'Not a campaign disk'
+PASS fuzz fz_17_rows255: ('Not a campaign disk', 'store ok')
+   (5.3 s) 'Not a campaign disk'
+PASS fuzz fz_18_len65535: ('Not a campaign disk', 'store ok')
+   (5.3 s) 'Not a campaign disk'
+PASS fuzz fz_19_camp255: ('Not a campaign disk', 'store ok')
+   (5.3 s) 'Loaded 1 levels / 1 campaigns'
+PASS fuzz fz_20_badentries: ('Loaded 1 levels / 1 campaigns', 'store ok')
+   (5.3 s) 'Loaded 1 levels / 1 campaigns'
+PASS fuzz fz_21_valid: ('Loaded 1 levels / 1 campaigns', 'store ok')
+PASS alive after the fuzz set: True
+   (5.3 s) 'Loaded 1 levels / 1 campaigns'
+PASS Save from the editor root menu: 'Saved'
+PASS   RAM store has 2 levels now: 2
+PASS image after save: usable campaign disk: True
+   NEBLEVEL.OVL valid: 2 levels / 1 campaigns
+PASS image NEBLEVEL.OVL == RAM store: True
+  bytes differing from the original image outside the file data: []
+PASS   boot sector + FATs untouched: []
+PASS   directory differs only in the entry (date/time): []
+   (4.3 s) 'Not a campaign disk'
+PASS Save to a disk without NEBLEVEL.OVL: 'Not a campaign disk'
+PASS   that image is unchanged: True
+   (5.3 s) 'Disk is write protected'
+PASS Save to a write-protected campaign disk: 'Disk is write protected'
+PASS   that image is unchanged: True
+   (5.3 s) 'Loaded 2 levels / 1 campaigns'
+PASS Load the disk saved above: 'Loaded 2 levels / 1 campaigns'
+PASS   store == saved file: True
+PASS tower after all disk operations: timer runs: True
+PASS   frog answers the joystick (x changed): True
+FAILS []

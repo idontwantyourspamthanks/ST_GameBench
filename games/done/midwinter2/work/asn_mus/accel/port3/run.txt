@@ -1,0 +1,10 @@
+snapshot VBL 20726 $6220 0xd $5138 00018f92 $7626 0x1
+waypoint mode: $40b6 = 0xffff list 04800b48ffff0000
+waypoint 0 660,150: list 04800b4808b00d60ffff0000000000000000000000000000
+waypoint 1 560,330: list 04800b4808b00d6007200a90ffff00000000000000000000
+waypoint 2 680,435: list 04800b4808b00d6007200a90090008d8ffff000000000000
+waypoint 3 470,440: list 04800b4808b00d6007200a90090008d805b808d8ffff0000
+click far-left icon at VBL 25188
+route end (40b6 == 0 for 25+ s): wall 36 s; $40b6 0xffff $5138 00018f92 VBL 27129
+wav /home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/asn_mus/accel/port3/port3.wav 7988548
+VBL_GO 25188

@@ -1,0 +1,244 @@
+hd_clouds          site $07b3a len 6
+    declared/derived orig : 4eb90000dd50
+    ram at hook instant   : 4eb90000dd50  (match)   [work/dumps/ram_hook_1024.bin]
+    ram at game entry     : 4eb90000dd50  (match)   [work/dumps/ram_entry_1024.bin]
+    new                   : 4e714e714e71
+    ram of the orig floppy: 4eb90000dd50  (match)   [work/floppy/ram_answered.bin]
+hd_nomap           site $0f9dc len 4
+    declared/derived orig : 45f83a70
+    ram at hook instant   : 45f83a70  (match)   [work/dumps/ram_hook_1024.bin]
+    ram at game entry     : 45f83a70  (match)   [work/dumps/ram_entry_1024.bin]
+    new                   : 4e754e71
+    ram of the orig floppy: 45f83a70  (match)   [work/floppy/ram_answered.bin]
+hd_nomap2          site $120d6 len 6
+    declared/derived orig : 47f90006f000
+    ram at hook instant   : 47f90006f000  (match)   [work/dumps/ram_hook_1024.bin]
+    ram at game entry     : 47f90006f000  (match)   [work/dumps/ram_entry_1024.bin]
+    new                   : 4e754e714e71
+    ram of the orig floppy: 47f90006f000  (match)   [work/floppy/ram_answered.bin]
+hd_stage           site $0ef7a len 6
+    declared/derived orig : 2a7810084eb9
+    ram at hook instant   : 2a7810084eb9  (match)   [work/dumps/ram_hook_1024.bin]
+    ram at game entry     : 2a7810084eb9  (match)   [work/dumps/ram_entry_1024.bin]
+    new                   : 4ef9000bb004
+    ram of the orig floppy: 2a7810084eb9  (match)   [work/floppy/ram_answered.bin]
+mg_pace            site $07b74 len 6
+    declared/derived orig : 4eb90000d1e4
+    ram at hook instant   : 4eb90000d1e4  (match)   [work/dumps/ram_hook_1024.bin]
+    ram at game entry     : 4eb90000d1e4  (match)   [work/dumps/ram_entry_1024.bin]
+    new                   : 4eb9000b8180
+    ram of the orig floppy: 4eb90000d1e4  (match)   [work/floppy/ram_answered.bin]
+mg_sync            site $07b52 len 6
+    declared/derived orig : 4a3810246606
+    ram at hook instant   : 4a3810246606  (match)   [work/dumps/ram_hook_1024.bin]
+    ram at game entry     : 4a3810246606  (match)   [work/dumps/ram_entry_1024.bin]
+    new                   : 4eb9000b8100
+    ram of the orig floppy: 4a3810246606  (match)   [work/floppy/ram_answered.bin]
+mr_edge            site $17c4a len 6
+    declared/derived orig : 49f90001058a
+    ram at hook instant   : 49f90001058a  (match)   [work/dumps/ram_hook_1024.bin]
+    ram at game entry     : 49f90001058a  (match)   [work/dumps/ram_entry_1024.bin]
+    new                   : 4eb9000b3040
+    ram of the orig floppy: 49f90001058a  (match)   [work/floppy/ram_answered.bin]
+mt_clock           site $0d128 len 6
+    declared/derived orig : 52390000611b
+    ram at hook instant   : 52390000611b  (match)   [work/dumps/ram_hook_1024.bin]
+    ram at game entry     : 52390000611b  (match)   [work/dumps/ram_entry_1024.bin]
+    new                   : 4eb9000b8000
+    ram of the orig floppy: 52390000611b  (match)   [work/floppy/ram_answered.bin]
+mt_pre             site $07b0a len 6
+    declared/derived orig : 4eb900017c42
+    ram at hook instant   : 4eb900017c42  (match)   [work/dumps/ram_hook_1024.bin]
+    ram at game entry     : 4eb900017c42  (match)   [work/dumps/ram_entry_1024.bin]
+    new                   : 4eb9000b8200
+    ram of the orig floppy: 4eb900017c42  (match)   [work/floppy/ram_answered.bin]
+rd_draw            site $17c42 len 8
+    declared/derived orig : 22784b8445f84ff8
+    ram at hook instant   : 22784b8445f84ff8  (match)   [work/dumps/ram_hook_1024.bin]
+    ram at game entry     : 22784b8445f84ff8  (match)   [work/dumps/ram_entry_1024.bin]
+    new                   : 4ef9000b5004
+    ram of the orig floppy: 22784b8445f84ff8  (match)   [work/floppy/ram_answered.bin]
+rd_geom            site $100b4 len 8
+    declared/derived orig : 41f8456443f81bbc
+    ram at hook instant   : 41f8456443f81bbc  (match)   [work/dumps/ram_hook_1024.bin]
+    ram at game entry     : 41f8456443f81bbc  (match)   [work/dumps/ram_entry_1024.bin]
+    new                   : 4ef9000b4004
+    ram of the orig floppy: 41f8456443f81bbc  (match)   [work/floppy/ram_answered.bin]
+rd_init            site $078f6 len 6
+    declared/derived orig : 4eb90000fde0
+    ram at hook instant   : 4eb90000fde0  (match)   [work/dumps/ram_hook_1024.bin]
+    ram at game entry     : 4eb90000fde0  (match)   [work/dumps/ram_entry_1024.bin]
+    new                   : 4eb9000b6000
+    ram of the orig floppy: 4eb90000fde0  (match)   [work/floppy/ram_answered.bin]
+ta_erase           site $1209c len 6
+    declared/derived orig : 4eb90001242c
+    ram at hook instant   : 4eb90001242c  (match)   [work/dumps/ram_hook_1024.bin]
+    ram at game entry     : 4eb90001242c  (match)   [work/dumps/ram_entry_1024.bin]
+    new                   : 4eb9000be000
+    ram of the orig floppy: 4eb90001242c  (match)   [work/floppy/ram_answered.bin]
+ta_facestat        site $0f994 len 6
+    declared/derived orig : 41f90001b076
+    ram at hook instant   : 41f90001b076  (match)   [work/dumps/ram_hook_1024.bin]
+    ram at game entry     : 41f90001b076  (match)   [work/dumps/ram_entry_1024.bin]
+    new                   : 4ef9000be180
+    ram of the orig floppy: 41f90001b076  (match)   [work/floppy/ram_answered.bin]
+ta_glyph           site $14fd4 len 6
+    declared/derived orig : 5347284b1219
+    ram at hook instant   : 5347284b1219  (match)   [work/dumps/ram_hook_1024.bin]
+    ram at game entry     : 5347284b1219  (match)   [work/dumps/ram_entry_1024.bin]
+    new                   : 4ef9000be600
+    ram of the orig floppy: 5347284b1219  (match)   [work/floppy/ram_answered.bin]
+ta_init            site $0edea len 6
+    declared/derived orig : 4eb90000dd18
+    ram at hook instant   : 4eb90000dd18  (match)   [work/dumps/ram_hook_1024.bin]
+    ram at game entry     : 4eb90000dd18  (match)   [work/dumps/ram_entry_1024.bin]
+    new                   : 4eb9000be200
+    ram of the orig floppy: 4eb90000dd18  (match)   [work/floppy/ram_answered.bin]
+ta_nomouse         site $0d486 len 6
+    declared/derived orig : 4eb90000d138
+    ram at hook instant   : 4eb90000d138  (match)   [work/dumps/ram_hook_1024.bin]
+    ram at game entry     : 4eb90000d138  (match)   [work/dumps/ram_entry_1024.bin]
+    new                   : 4eb9000be500
+    ram of the orig floppy: 4eb90000d138  (match)   [work/floppy/ram_answered.bin]
+ta_rb              site $0d5e6 len 6
+    declared/derived orig : 08f80000fa07
+    ram at hook instant   : 08f80000fa07  (match)   [work/dumps/ram_hook_1024.bin]
+    ram at game entry     : 08f80000fa07  (match)   [work/dumps/ram_entry_1024.bin]
+    new                   : 4eb9000be700
+    ram of the orig floppy: 08f80000fa07  (match)   [work/floppy/ram_answered.bin]
+ta_rb0             site $0d57c len 14
+    declared/derived orig : 303812fe323813005b4111c0fa21
+    ram at hook instant   : 303812fe323813005b4111c0fa21  (match)   [work/dumps/ram_hook_1024.bin]
+    ram at game entry     : 303812fe323813005b4111c0fa21  (match)   [work/dumps/ram_entry_1024.bin]
+    new                   : 4ef9000bed00
+    ram of the orig floppy: 303812fe323813005b4111c0fa21  (match)   [work/floppy/ram_answered.bin]
+ta_ymw             site $08e2c len 10
+    declared/derived orig : 41ee001243f900ff8800
+    ram at hook instant   : 41ee001243f900ff8800  (match)   [work/dumps/ram_hook_1024.bin]
+    ram at game entry     : 41ee001243f900ff8800  (match)   [work/dumps/ram_entry_1024.bin]
+    new                   : 4ef9000be400
+    ram of the orig floppy: 41ee001243f900ff8800  (match)   [work/floppy/ram_answered.bin]
+tb_blit            site $039a0 len 12
+    declared/derived orig : 0001299400012f6000013662
+    ram at hook instant   : 0001299400012f6000013662  (match)   [work/dumps/ram_hook_1024.bin]
+    ram at game entry     : 0001299400012f6000013662  (match)   [work/dumps/ram_entry_1024.bin]
+    new                   : 000b4510000b4520000b4530
+    ram of the orig floppy: 0001299400012f6000013662  (match)   [work/floppy/ram_answered.bin]
+tb_blit11          site $039b4 len 12
+    declared/derived orig : 00012a98000130e20001384c
+    ram at hook instant   : 00012a98000130e20001384c  (match)   [work/dumps/ram_hook_1024.bin]
+    ram at game entry     : 00012a98000130e20001384c  (match)   [work/dumps/ram_entry_1024.bin]
+    new                   : 000b4540000b4550000b4560
+    ram of the orig floppy: 00012a98000130e20001384c  (match)   [work/floppy/ram_answered.bin]
+tb_blit13          site $039c8 len 12
+    declared/derived orig : 00012bac0001327e00013a5e
+    ram at hook instant   : 00012bac0001327e00013a5e  (match)   [work/dumps/ram_hook_1024.bin]
+    ram at game entry     : 00012bac0001327e00013a5e  (match)   [work/dumps/ram_entry_1024.bin]
+    new                   : 000b4570000b4580000b4590
+    ram of the orig floppy: 00012bac0001327e00013a5e  (match)   [work/floppy/ram_answered.bin]
+tb_blit15          site $03a18 len 12
+    declared/derived orig : 00012ce00001345a00013cc8
+    ram at hook instant   : 00012ce00001345a00013cc8  (match)   [work/dumps/ram_hook_1024.bin]
+    ram at game entry     : 00012ce00001345a00013cc8  (match)   [work/dumps/ram_entry_1024.bin]
+    new                   : 000b45a0000b45b0000b45c0
+    ram of the orig floppy: 00012ce00001345a00013cc8  (match)   [work/floppy/ram_answered.bin]
+tb_car             site $039ac len 4
+    declared/derived orig : 00013f6e
+    ram at hook instant   : 00013f6e  (match)   [work/dumps/ram_hook_1024.bin]
+    ram at game entry     : 00013f6e  (match)   [work/dumps/ram_entry_1024.bin]
+    new                   : 000bf500
+    ram of the orig floppy: 00013f6e  (match)   [work/floppy/ram_answered.bin]
+tb_carph           site $0ed90 len 8
+    declared/derived orig : 302a0006d06a0008
+    ram at hook instant   : 302a0006d06a0008  (match)   [work/dumps/ram_hook_1024.bin]
+    ram at game entry     : 302a0006d06a0008  (match)   [work/dumps/ram_entry_1024.bin]
+    new                   : 4ef9000bfc004e71
+    ram of the orig floppy: 302a0006d06a0008  (match)   [work/floppy/ram_answered.bin]
+tc_clr             site $17c24 len 6
+    declared/derived orig : 41f900004ff8
+    ram at hook instant   : 41f900004ff8  (match)   [work/dumps/ram_hook_1024.bin]
+    ram at game entry     : 41f900004ff8  (match)   [work/dumps/ram_entry_1024.bin]
+    new                   : 4ef9000b6d40
+    ram of the orig floppy: 41f900004ff8  (match)   [work/floppy/ram_answered.bin]
+tc_dist            site $0e2e8 len 6
+    declared/derived orig : 41f82d807e1f
+    ram at hook instant   : 41f82d807e1f  (match)   [work/dumps/ram_hook_1024.bin]
+    ram at game entry     : 41f82d807e1f  (match)   [work/dumps/ram_entry_1024.bin]
+    new                   : 4ef9000b6a00
+    ram of the orig floppy: 41f82d807e1f  (match)   [work/floppy/ram_answered.bin]
+tc_hit1            site $18bf4 len 6
+    declared/derived orig : 43f82d807e1f
+    ram at hook instant   : 43f82d807e1f  (match)   [work/dumps/ram_hook_1024.bin]
+    ram at game entry     : 43f82d807e1f  (match)   [work/dumps/ram_entry_1024.bin]
+    new                   : 4ef9000b6a80
+    ram of the orig floppy: 43f82d807e1f  (match)   [work/floppy/ram_answered.bin]
+tc_hit2            site $18c86 len 6
+    declared/derived orig : 41f82d807e1f
+    ram at hook instant   : 41f82d807e1f  (match)   [work/dumps/ram_hook_1024.bin]
+    ram at game entry     : 41f82d807e1f  (match)   [work/dumps/ram_entry_1024.bin]
+    new                   : 4ef9000b6b40
+    ram of the orig floppy: 41f82d807e1f  (match)   [work/floppy/ram_answered.bin]
+tc_ord             site $0e406 len 8
+    declared/derived orig : 2a78100841f829c8
+    ram at hook instant   : 2a78100841f829c8  (match)   [work/dumps/ram_hook_1024.bin]
+    ram at game entry     : 2a78100841f829c8  (match)   [work/dumps/ram_entry_1024.bin]
+    new                   : 4ef9000b68204e71
+    ram of the orig floppy: 2a78100841f829c8  (match)   [work/floppy/ram_answered.bin]
+tc_proj            site $0e316 len 8
+    declared/derived orig : 43f8100047f84804
+    ram at hook instant   : 43f8100047f84804  (match)   [work/dumps/ram_hook_1024.bin]
+    ram at game entry     : 43f8100047f84804  (match)   [work/dumps/ram_entry_1024.bin]
+    new                   : 4ef9000b6c004e71
+    ram of the orig floppy: 43f8100047f84804  (match)   [work/floppy/ram_answered.bin]
+test_delay         stage-1 site $78524 len 6  (phase stage1: applied by RUNME's copy routine / disk A edit, before the trampoline)
+    declared orig         : 41f9000782ba
+    MSR_S1.FIC unpacked   : 41f9000782ba  (match)   [originals/MOONSHR/FILES/MSR_S1.FIC, +$0524]
+    original floppy disk A: 41f9000782ba  (match)   [disk A +$02d24]
+    new                   : 4eb9000bfd00
+RUNME unpack          : pp_depack(RUNME.TOS) 17634 B == work/dumps/RUNME_unpacked.tos
+RUNME stage hook  text $03b4: file 4ef900078000  ram $b1fa6 4ef900078000  (match)
+RUNME PP tail     text $045c: file 4ef81000  ram $b204e 4ef81000  (match)
+RUNME tail padding    text $0460: 0000  (zero, free)
+RUNME bss pc-relative references: 4 `lea d(pc),aN` ($98, $b34, $40fa, $410c), no others
+pp_bigram_cache    image HAGA  1 edit(s)
+    HB+$3228 len  2  orig 2412
+        file  2412  (match)
+        dump  2412  (match)   [HAGA at $F8000 in ram_hook_1024.bin]
+        new   602a  (same length; identical at HB = $f8000, $1f8000, $3f8000)
+verify: ALL OK
+HAGA+$3228    2 2412 -> 602a   [pp_bigram_cache]
+built /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/build/tdelay_20000 with 33 patch(es) + 1 file patch(es); payload 54808 B at $b2700-$bfd17
+site     len  orig -> new
+$07b3a     6 4eb90000dd50 -> 4e714e714e71   [hd_clouds]
+$0f9dc     4 45f83a70 -> 4e754e71   [hd_nomap]
+$120d6     6 47f90006f000 -> 4e754e714e71   [hd_nomap2]
+$0ef7a     6 2a7810084eb9 -> 4ef9000bb004   [hd_stage]
+$07b74     6 4eb90000d1e4 -> 4eb9000b8180   [mg_pace]
+$07b52     6 4a3810246606 -> 4eb9000b8100   [mg_sync]
+$17c4a     6 49f90001058a -> 4eb9000b3040   [mr_edge]
+$0d128     6 52390000611b -> 4eb9000b8000   [mt_clock]
+$07b0a     6 4eb900017c42 -> 4eb9000b8200   [mt_pre]
+$17c42     8 22784b8445f84ff8 -> 4ef9000b50044e71   [rd_draw]
+$100b4     8 41f8456443f81bbc -> 4ef9000b40044e71   [rd_geom]
+$078f6     6 4eb90000fde0 -> 4eb9000b6000   [rd_init]
+$1209c     6 4eb90001242c -> 4eb9000be000   [ta_erase]
+$0f994     6 41f90001b076 -> 4ef9000be180   [ta_facestat]
+$14fd4     6 5347284b1219 -> 4ef9000be600   [ta_glyph]
+$0edea     6 4eb90000dd18 -> 4eb9000be200   [ta_init]
+$0d486     6 4eb90000d138 -> 4eb9000be500   [ta_nomouse]
+$0d5e6     6 08f80000fa07 -> 4eb9000be700   [ta_rb]
+$0d57c    14 303812fe323813005b4111c0fa21 -> 4ef9000bed004e714e714e714e71   [ta_rb0]
+$08e2c    10 41ee001243f900ff8800 -> 4ef9000be4004e714e71   [ta_ymw]
+$039a0    12 0001299400012f6000013662 -> 000b4510000b4520000b4530   [tb_blit]
+$039b4    12 00012a98000130e20001384c -> 000b4540000b4550000b4560   [tb_blit11]
+$039c8    12 00012bac0001327e00013a5e -> 000b4570000b4580000b4590   [tb_blit13]
+$03a18    12 00012ce00001345a00013cc8 -> 000b45a0000b45b0000b45c0   [tb_blit15]
+$039ac     4 00013f6e -> 000bf500   [tb_car]
+$0ed90     8 302a0006d06a0008 -> 4ef9000bfc004e71   [tb_carph]
+$17c24     6 41f900004ff8 -> 4ef9000b6d40   [tc_clr]
+$0e2e8     6 41f82d807e1f -> 4ef9000b6a00   [tc_dist]
+$18bf4     6 43f82d807e1f -> 4ef9000b6a80   [tc_hit1]
+$18c86     6 41f82d807e1f -> 4ef9000b6b40   [tc_hit2]
+$0e406     8 2a78100841f829c8 -> 4ef9000b68204e71   [tc_ord]
+$0e316     8 43f8100047f84804 -> 4ef9000b6c004e71   [tc_proj]
+$78524     6 41f9000782ba -> 4eb9000bfd00   [test_delay, stage-1: applied by RUNME's copy routine before $78000 runs]

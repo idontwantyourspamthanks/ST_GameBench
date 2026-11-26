@@ -1,0 +1,15 @@
+$075740-$076c00  5312 ed_overlay 
+$076c00-$076c76   118 nt_trainers 
+$076c76-$076cfe   136 ed_overlay 
+$076d00-$076d3c    60 ni_latch 
+$076d40-$07726c  1324 ed_overlay 
+$07726c-$0772da   110 ed_overlay 
+$0772da-$0772fc    34 ed_overlay 
+$077300-$0779f0  1776 ed_overlay 
+$0779fa-$077a3a    64 cr_credit 
+$077a40-$077c7a   570 ed_overlay 
+$077dc0-$077ebc   252 ed_overlay 
+$077f00-$077f5a    90 ni_ikbd 
+clear 0x76c00 8 overlaps blocks: none (own-patch state cells only)
+clear 0x76d00 4 overlaps blocks: none (own-patch state cells only)
+clear 0x77c80 320 overlaps blocks: none (own-patch state cells only)

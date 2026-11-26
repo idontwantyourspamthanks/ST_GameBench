@@ -1,0 +1,6 @@
+Predicted saving of the HOG blitter path on type-0 calls (measured fixed costs/slopes, interior sprites only; calls that clip at an edge stay CPU), per frame:
+scene        t0 kernel cyc  saving  (% of t0)  calls on blitter/frame   by cols 1,2,3,4
+race_grid      155783     23275    14.9%     10.6        [5743, 7344, 926, 9261]
+race_start     154916     24662    15.9%     11.3        [4166, 6984, 5190, 8322]
+race_up        159102     28990    18.2%      9.0        [2552, 18530, 970, 6938]
+race_drive     139002     21963    15.8%     11.4        [3343, 9572, 1726, 7322]

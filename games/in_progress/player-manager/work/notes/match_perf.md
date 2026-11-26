@@ -82,3 +82,15 @@ Measured on **Hatari 8 MHz 68000 STE, 1 MB RAM, TOS 1.62, RGB 50 Hz PAL** (`buil
 - `$0ae940..$0affff`: `KO2STE.BIN` (5,786 B / 5,824 B slot)
 - `$0b0000..$0b20ef`: KO2 `$010a2e` static buffer (8.4 KB)
 - `$0b20f0..$0b2f5f`: Bottom HUD & Center Event Banner save-under (3.7 KB, cleanly below `PMOK` at `$0b2ff8`)
+
+## v1.1 Atari STE 50 Hz Lossless AVI Verification (2026-11-26)
+Verified via Hatari `--avirecord --avi-vcodec png --avi-fps 50` (120 consecutive 50 Hz frames per test, extracted via `ffmpeg` and audited frame-to-frame):
+- **Key fixes in `KO2STE.BIN` (6,566 bytes <= 6,592 limit):**
+  - Replaced 68000 Blitter Bottom HUD (~22k cycles/frame) with **0-cycle STE Hardware Split-Screen** (Timer B ISR at scanline 181 -> `$07f1c0`, second Timer B at +18 scanlines for jet-black bottom border).
+  - Replaced 68000 per-pixel vector Radar (~90k cycles/frame) with **Batched STE Blitter `ENDMASK` Transparent Vector Radar** (`cmd 7` + batched `cmd 6`, pre-scaled line cache, `Y_STEP=4` vertical lines, `2×1` dots, skipping KO2's redundant `$01fae8` hidden radar drawer).
+  - Added **KO2-style narrow STE hardware raster-beam avoidance** (`[-28 .. +18]` scanlines via `$ff8205/$07/$09`) to `ste_skip_beam_1`/`2`, eliminating player flicker & mid-blit tearing.
+  - Moved 1bpp sprite mask generation into the STE Blitter inside `cmd 3`, precomputed 2D overlap bounds (`±20` vertical tolerance) in `ste_erase_spr_amiga`, expanded `STE_LIFT_PTRS` to 32 entries, and added Corkscrew Primary/Mirror wrap sprite transfer (`ste_cork_wrap_spr`).
+- **Measured Results (1 MB 8 MHz Atari STE, TOS 1.62):**
+  - Default Radar (`scale=16`): **47.22–49.81 FPS (`1.004–1.059 VBL/frame`)**, **0/119** radar drops, **0/119** player drops, **0/119** HUD drops.
+  - Large Radar (`scale=8`): **49.80 FPS (`1.004 VBL/frame`)**, **0/119** radar drops (pixel-identical every frame), **0/119** player drops, **0/119** HUD drops.
+  - Live `V`-key toggle: Classic ST **49.71 FPS** <-> Amiga STE **50.29 FPS**, `PMOK @ $b2ff8 = $504d4f4b` intact.

@@ -1,0 +1,18 @@
+floppy title True
+campaigns list: ['<new campaign>', '< back']
+after <new campaign>: ['<add entry>', '< back']
+after <add entry>: ['01 O 1-1', '<add entry>', '< back']
+Left 1: ['NEW CAMP', '<new campaign>', '< back']
+campaign menu: ['Play', 'Edit entries', 'Rename', 'Delete', '< back']
+entries list: ['01 O 1-1', '<add entry>', '< back']
+entry menu: ['Change source', 'Insert after', 'Remove', 'Move up', 'Move down', '< back']
+main menu again: ['Original game', 'Campaigns >', 'Levels >', 'Load from campaign disk', 'Save to campaign disk']
+levels list: ['NEW LEVEL  ', '<new level>', '< back']
+level menu: ['Play', 'Edit', 'Copy', 'Delete', '< back']
+PASS T and E do nothing in the editor map: (128, 128, 8, 5)
+PASS Delete clears: 0
+PASS C clears: 0
+PASS L then Return, Space repeat the ledge: [129, 129, 129]
+stone ball S then S again on the same enemy: 0x10 -> 0x11
+name prompt hint status: 'No ledge below!'
+FAILS []

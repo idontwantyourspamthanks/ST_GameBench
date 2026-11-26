@@ -1,0 +1,98 @@
+Nebulus (Hewson, 1987-8) - PP's Gamex conversion, enhanced release v1.0
+build: git 613b9f6
+==============================================================================
+
+This folder is PP's Gamex conversion of Nebulus (NEBEXE.FIC, NEBULTIT.FIC,
+NEBULUS.PCH, GXUT270.PRG, NEBCHEAT.TXT are his, unchanged) with these
+differences:
+
+  START.TOS    PP's loader with 4 bytes changed at the point where it waits
+               for the hard disk to settle, and a short routine added in an
+               unused part of the program.  The routine opens NEPATCH.BIN
+               (GEMDOS), reads it to RAM $B0000 and, only if the file starts
+               with 'NEPA', arranges for the game's start to run the patch
+               code first.  Without the file the original game runs.
+  NEPATCH.BIN  The patch code and the table of changes.  After the game has
+               unpacked and relocated itself, the code compares the ORIGINAL
+               bytes of every site with what the table expects; only if every
+               site matches does it write the new bytes (otherwise it changes
+               nothing and the game runs as the original).  The new code
+               lives in unused game RAM ($75728-$77EC0), which Gamex's F9
+               key saves and restores.
+  NEBLEVEL.OVL The campaign and level store (8192 bytes, all zero when new).
+               START.TOS reads it to RAM $BC000, outside the game's RAM (F9
+               overwrites it there, see README.TXT); the editor's "Save to
+               disk" overwrites the file in place.  The game never creates or
+               grows it.
+
+Changes in this release (address = RAM address in the running game;
+"orig -> new" are the bytes replaced):
+
+cr_credit
+  Release credit. On the title page with the frog on a plinth the game's own
+  title printer writes "v1.0 enhanced by dad_prg" on the empty line between
+  "(c)1987,8 Hewson" and "Mission #n" (same font and colour scheme as the
+  other lines). The High Scorers and Options pages are not touched; the rest
+  of the title page is pixel-identical to the original (compared in Hatari).
+    $03d698  33fcfffe00038212 -> 4eb900077a004e71
+    $077a00  64 bytes of new code in free RAM (zero before)
+
+ed_overlay
+  Level editor and campaign manager. F10 on the title page opens the manager
+  (original game, campaigns, levels, save); the editor draws its own screen,
+  takes the joystick, plays your tower in the real game (Playtest) and writes
+  campaigns and levels into NEBLEVEL.OVL next to START.TOS. Seven hooks: the
+  tower decoder, the initial time, the tower name, the tower-complete step
+  (campaign progress), the title poll, the frame flip (F10 in a playtest) and
+  the enemy start direction. With no or an empty NEBLEVEL.OVL the game plays
+  as the original.
+    $0377a2  41f9000327f0 -> 4ef900075740
+    $037a90  20090480000327f0 -> 4eb9000757464e71
+    $03d6c4  6100ae744a79000338f0 -> 4eb90007574c4e714e71
+    $03adb4  d040303b00e6 -> 4eb900075752
+    $03d110  e549d0c12050 -> 4eb900075758
+    $03e352  303900033a34 -> 4ef90007575e
+    $03dfd6  4eb90003868a -> 4eb900075764
+    $075740  5066 bytes of code/data in free RAM
+    $076d40  1390 bytes of code/data in free RAM
+    $077300  1510 bytes of code/data in free RAM
+
+ni_jump
+  Fire jump (walking jump). The game polls the fire button once per game loop
+  and the jump's first step used to run one loop later (2 screen refreshes =
+  40 ms). The jump entry now runs that first step at once. The sequence of
+  positions and poses is exactly the original's, one game loop earlier.
+    $039ffa  4e75 -> 602a
+
+ni_latch
+  Fire latch. The game stores only the LAST byte the keyboard processor sent
+  and reads it once per game loop (every 40 ms), so a fire tap shorter than a
+  loop could be released before it was read and was lost. A press now sets a
+  latch that the next poll consumes once (joystick fire path only); keyboard-
+  key handling and a held fire button are as before.
+    $038514  13c000038498 -> 4ef900076d04
+    $03855a  33c1000338f0 -> 4eb900076d22
+    $076d00  60 bytes of new code in free RAM (zero before)
+
+ni_shoot
+  Shoot. Fire while standing used to show the shot two loops after the poll;
+  the shot handler now runs in the same loop (about 40 ms sooner, shot
+  sequence unchanged).
+    $03a332  4e75 -> 4e71
+
+nt_trainers
+  Trainers. In a tower (not on the title or other screens) press T to freeze
+  the level timer and T again to let it run; press E to remove all enemies
+  (creatures already on screen vanish, none spawn) and E again to bring them
+  back. Each key toggles; both start OFF, so the game plays exactly as the
+  original until you press one. They stay as set across lives and towers. Not
+  game keys: T and E do nothing in the original. (The game's own cheat code,
+  HELLOIAMJMP on the title, is described in NEBCHEAT.TXT.) Three hooks: the
+  frame loop's key poll, the timer tick and the enemy spawn.
+    $03dcf4  4eb90003853a -> 4eb900076c08
+    $03b0a4  4a7900033938 -> 4eb900076c40
+    $03792c  303900033a20 -> 4eb900076c58
+    $076c00  118 bytes of new code in free RAM (zero before)
+
+Nothing else of the game is changed.  Tested in Hatari only (STE TOS 1.62
+1 MB, Mega STE TOS 2.06 4 MB, ST TOS 1.04 1 MB); see README.TXT.

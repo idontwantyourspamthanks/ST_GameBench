@@ -1,0 +1,12 @@
+False miss 0 N=3530 press/release stamps ['3531', '168', '3532', '232'] LOST
+False miss 1 N=3958 press/release stamps ['3959', '180', '3960', '124'] LOST
+False miss 2 N=4386 press/release stamps ['4387', '172', '4388', '136'] LOST
+RESULT latch=False phase=miss [False, False, False]
+True miss 0 N=3590 press/release stamps ['3591', '148', '3592', '140'] registered
+True miss 1 N=4018 press/release stamps ['4019', '160', '4020', '124'] registered
+True miss 2 N=4446 press/release stamps ['4447', '152', '4448', '136'] registered
+RESULT latch=True phase=miss [True, True, True]
+True cover 0 N=3591 press/release stamps ['3592', '140', '3593', '136'] registered
+True cover 1 N=4019 press/release stamps ['4020', '124', '4021', '196'] registered
+True cover 2 N=4447 press/release stamps ['4448', '136', '4449', '128'] registered
+RESULT latch=True phase=cover [True, True, True]

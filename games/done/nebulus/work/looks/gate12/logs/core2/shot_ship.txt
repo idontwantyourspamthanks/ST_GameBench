@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/tmp/ng12hd/nb/work/core/shot/hat_g.py", line 17, in <module>
+    d = json.load(open(S0 + 'shotmiss/attempts.json')); ats0 = d['random'] + d['targeted_miss']
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/ng12hd/nb/work/shotmiss/attempts.json'

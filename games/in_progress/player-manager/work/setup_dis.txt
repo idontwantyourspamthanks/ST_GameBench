@@ -1,0 +1,648 @@
+=== outer_setup (0149a0..014de2) ===
+  0149a0:         beq.b      $149a6
+  0149a2:         add.w      d1, -$2d94(a4)
+  0149a6:         btst.b     #$7, $1a(a2)
+  0149ac:         bne.b      $149b8
+  0149ae:         move.b     #$80, $1a(a2)
+  0149b4:         jsr        $12dd8(pc)
+  0149b8:         move.l     a5, d0
+  0149ba:         sub.l      -$2e80(a4), d0
+  0149be:         divu.w     #$2a, d0
+  0149c2:         lea.l      $2c(a3), a0
+  0149c6:         cmp.w      (a0)+, d0
+  0149c8:         bne.b      $149c6
+  0149ca:         move.w     (a0), -$2(a0)
+  0149ce:         bmi.b      $149d4
+  0149d0:         addq.l     #$2, a0
+  0149d2:         bra.b      $149ca
+  0149d4:         movem.l    (a7)+, d0-d7/a0-a3/a5-a6
+  0149d8:         rts        
+  0149da:         jsr        $14a8c(pc)
+  0149de:         movea.l    -$2e94(a4), a0
+  0149e2:         moveq      #$2b, d7
+  0149e4:         clr.w      $18(a0)
+  0149e8:         clr.w      $1a(a0)
+  0149ec:         clr.w      $1c(a0)
+  0149f0:         clr.w      $1e(a0)
+  0149f4:         clr.w      $20(a0)
+  0149f8:         clr.w      $22(a0)
+  0149fc:         clr.w      $26(a0)
+  014a00:         moveq      #$19, d0
+  014a02:         movea.l    a0, a2
+  014a04:         jsr        $1476a(pc)
+  014a08:         lea.l      $2c(a0), a2
+  014a0c:         move.w     (a2)+, d0
+  014a0e:         bmi.b      $14a24
+  014a10:         mulu.w     #$2a, d0
+  014a14:         add.l      -$2e80(a4), d0
+  014a18:         movea.l    d0, a3
+  014a1a:         move.w     $16(a0), d0
+  014a1e:         move.b     d0, $6(a3)
+  014a22:         bra.b      $14a0c
+  014a24:         tst.w      $28(a0)
+  014a28:         beq.b      $14a3c
+  014a2a:         move.l     a0, -$2e78(a4)
+  014a2e:         move.l     a0, d0
+  014a30:         sub.l      -$2e94(a4), d0
+  014a34:         divu.w     #$64, d0
+  014a38:         move.w     d0, -$2e42(a4)
+  014a3c:         adda.l     #$64, a0
+  014a42:         dbra       d7, $149e4
+  014a46:         rts        
+  014a48:         movem.l    d0-d7/a0-a3/a5-a6, -(a7)
+  014a4c:         jsr        $15164(pc)
+  014a50:         jsr        $155f2(pc)
+  014a54:         moveq      #$0, d0
+  014a56:         move.b     $5(a5), d0
+  014a5a:         subq.w     #$1, d0
+  014a5c:         lsl.w      #$1, d0
+  014a5e:         lea.l      -$35ee(a4), a3
+  014a62:         cmpi.w     #$64, (a3, d0.w)
+  014a68:         blt.b      $14a4c
+  014a6a:         move.b     #$ff, $7(a5)
+  014a70:         clr.b      $17(a5)
+  014a74:         clr.b      $16(a5)
+  014a78:         clr.b      $18(a5)
+  014a7c:         move.b     #$80, $1a(a5)
+  014a82:         jsr        $12dd8(pc)
+  014a86:         movem.l    (a7)+, d0-d7/a0-a3/a5-a6
+  014a8a:         rts        
+  014a8c:         movem.l    d0-d7/a0-a3/a5-a6, -(a7)
+  014a90:         lea.l      -$2e94(a4), a2
+  014a94:         moveq      #$2, d7
+  014a96:         moveq      #$1, d6
+  014a98:         bsr.b      $14ae4
+  014a9a:         move.l     a3, $14abe.l
+  014aa0:         lea.l      $101c2.l, a3
+  014aa6:         move.w     d5, $14ace.l
+  014aac:         lea.l      $25f0(a3), a3
+  014ab0:         clr.w      d5
+  014ab2:         sub.w      (a3)+, d5
+  014ab4:         cmpa.l     #$129ba, a3
+  014aba:         bne.b      $14ab2
+  014abc:         movea.l    #$0, a3
+  014ac2:         cmp.w      #$28d3, d5
+  014ac6:         beq.b      $14acc
+  014ac8:         lea.l      $12(a7), a7
+  014acc:         move.w     #$0, d5
+  014ad0:         bra.w      $14ad6
+  014ad4:         ori.b      #$ce, (a6)
+  014ad8:         dc.w       $ffc0
+  014ada:         dbra       d7, $14a96
+  014ade:         movem.l    (a7)+, d0-d7/a0-a3/a5-a6
+  014ae2:         rts        
+  014ae4:         movem.l    d0-d7/a0-a3/a5-a6, -(a7)
+  014ae8:         move.w     d7, d0
+  014aea:         move.w     d0, d1
+  014aec:         lsl.w      #$2, d0
+  014aee:         lsl.w      #$1, d1
+  014af0:         lea.l      -$2e94(a4), a2
+  014af4:         lea.l      -$70b2(a4), a3
+  014af8:         movea.l    (a2, d0.w), a0
+  014afc:         move.w     (a3, d1.w), d2
+  014b00:         subq.w     #$1, d2
+  014b02:         sub.w      d6, d2
+  014b04:         jsr        $14ba4(pc)
+  014b08:         movea.l    a0, a1
+  014b0a:         move.w     d6, d2
+  014b0c:         movea.l    $4(a2, d0.w), a0
+  014b10:         jsr        $14ba4(pc)
+  014b14:         moveq      #$ce, d0
+  014b16:         movea.l    a1, a2
+  014b18:         jsr        $1476a(pc)
+  014b1c:         tst.w      $28(a2)
+  014b20:         beq.b      $14b38
+  014b22:         move.w     #$15e, d0
+  014b26:         jsr        -$7f4a(a4)
+  014b2a:         move.w     #$8d, d0
+  014b2e:         jsr        -$7fc2(a4)
+  014b32:         moveq      #$f6, d0
+  014b34:         jsr        $1474c(pc)
+  014b38:         moveq      #$32, d0
+  014b3a:         movea.l    a0, a2
+  014b3c:         jsr        $1476a(pc)
+  014b40:         tst.w      $28(a2)
+  014b44:         beq.b      $14b64
+  014b46:         move.w     #$15f, d0
+  014b4a:         jsr        -$7f4a(a4)
+  014b4e:         move.w     #$8d, d0
+  014b52:         jsr        -$7fc2(a4)
+  014b56:         moveq      #$a, d0
+  014b58:         tst.w      $24(a0)
+  014b5c:         beq.b      $14b60
+  014b5e:         moveq      #$7, d0
+  014b60:         jsr        $1474c(pc)
+  014b64:         bsr.b      $14bb4
+  014b66:         tst.w      $28(a0)
+  014b6a:         bne.b      $14b74
+  014b6c:         tst.w      $28(a1)
+  014b70:         beq.b      $14b9e
+  014b72:         movea.l    a1, a0
+  014b74:         jsr        $172bc(pc)
+  014b78:         tst.w      d1
+  014b7a:         blt.b      $14b9e
+  014b7c:         sub.w      $5e(a0), d1
+  014b80:         move.w     #$be, d0
+  014b84:         clr.b      -$2f94(a4)
+  014b88:         jsr        -$7f9e(a4)
+  014b8c:         move.w     d1, d0
+  014b8e:         jsr        -$7f98(a4)
+  014b92:         lea.l      -$2f94(a4), a2
+  014b96:         move.w     #$ba, d0
+  014b9a:         jsr        -$7fc2(a4)
+  014b9e:         movem.l    (a7)+, d0-d7/a0-a3/a5-a6
+  014ba2:         rts        
+  014ba4:         cmp.w      $24(a0), d2
+  014ba8:         beq.b      $14bb2
+  014baa:         adda.l     #$64, a0
+  014bb0:         bra.b      $14ba4
+  014bb2:         rts        
+  014bb4:         movea.l    a1, a2
+  014bb6:         lea.l      -$3852(a4), a3
+  014bba:         bsr.b      $14c2c
+  014bbc:         movea.l    a0, a2
+  014bbe:         movea.l    a1, a3
+  014bc0:         bsr.b      $14c2c
+  014bc2:         lea.l      -$3852(a4), a2
+  014bc6:         movea.l    a0, a3
+  014bc8:         bsr.b      $14c2c
+  014bca:         move.w     $16(a0), d0
+  014bce:         move.w     $16(a1), $16(a0)
+  014bd4:         move.w     d0, $16(a1)
+  014bd8:         move.w     $24(a0), d0
+  014bdc:         move.w     $24(a1), $24(a0)
+  014be2:         move.w     d0, $24(a1)
+  014be6:         move.l     a0, d2
+  014be8:         sub.l      -$2e94(a4), d2
+  014bec:         divu.w     #$64, d2
+  014bf0:         move.l     a1, d3
+  014bf2:         sub.l      -$2e94(a4), d3
+  014bf6:         divu.w     #$64, d3
+  014bfa:         lea.l      $2c(a0), a2
+  014bfe:         lea.l      $2c(a1), a3
+  014c02:         move.w     (a2)+, d0
+  014c04:         bmi.b      $14c16
+  014c06:         mulu.w     #$2a, d0
+  014c0a:         add.l      -$2e80(a4), d0
+  014c0e:         movea.l    d0, a5
+  014c10:         move.b     d2, $7(a5)
+  014c14:         bra.b      $14c02
+  014c16:         move.w     (a3)+, d0
+  014c18:         bmi.b      $14c2a
+  014c1a:         mulu.w     #$2a, d0
+  014c1e:         add.l      -$2e80(a4), d0
+  014c22:         movea.l    d0, a5
+  014c24:         move.b     d3, $7(a5)
+  014c28:         bra.b      $14c16
+  014c2a:         rts        
+  014c2c:         moveq      #$63, d5
+  014c2e:         move.b     (a2)+, (a3)+
+  014c30:         dbra       d5, $14c2e
+  014c34:         rts        
+  014c36:         movea.l    -$2e80(a4), a0
+  014c3a:         move.w     #$f617, d1
+  014c3e:         clr.b      (a0)+
+  014c40:         dbra       d1, $14c3e
+  014c44:         movea.l    -$2e80(a4), a0
+  014c48:         move.w     #$5db, d1
+  014c4c:         move.b     #$ff, $7(a0)
+  014c52:         adda.l     #$2a, a0
+  014c58:         dbra       d1, $14c4c
+  014c5c:         rts        
+  014c5e:  0.00%  movea.l    -$2e80(a4), a5
+  014c62:  0.00%  move.w     #$5db, d0
+  014c66:  0.00%  suba.l     #$2a, a5
+  014c6c:  0.05%  adda.l     #$2a, a5
+  014c72:  0.04%  tst.b      $4(a5)
+  014c76:  0.04%  dbeq       d0, $14c6c
+  014c7a:  0.00%  tst.b      $4(a5)
+  014c7e:  0.00%  beq.b      $14c86
+  014c80:         movea.l    #$0, a5
+  014c86:  0.00%  rts        
+  014c88:         jsr        $15164(pc)
+  014c8c:         clr.w      -$35da(a4)
+  014c90:         bra.b      $14c9a
+  014c92:  0.00%  move.w     d6, -$35da(a4)
+  014c96:  0.00%  jsr        $1515a(pc)
+  014c9a:  0.00%  jsr        -$7f08(a4)
+  014c9e:  0.00%  move.w     -$38da(a4), d2
+  014ca2:  0.00%  andi.l     #$ffff, d2
+  014ca8:  0.01%  divu.w     #$14, d2
+  014cac:  0.00%  swap       d2
+  014cae:  0.00%  addi.w     #$12, d2
+  014cb2:  0.01%  cmp.b      $4(a5), d2
+  014cb6:  0.01%  bne.b      $14cbe
+  014cb8:  0.00%  tst.b      $6(a5)
+  014cbc:  0.00%  bne.b      $14cca
+  014cbe:  0.02%  jsr        $1526c(pc)
+  014cc2:  0.01%  beq.b      $14cb2
+  014cc4:  0.00%  clr.b      $4(a5)
+  014cc8:  0.00%  bra.b      $14c96
+  014cca:  0.00%  moveq      #$0, d2
+  014ccc:  0.00%  move.b     $6(a5), d2
+  014cd0:  0.00%  subq.w     #$1, d2
+  014cd2:  0.00%  lsl.w      #$2, d2
+  014cd4:  0.00%  add.b      $5(a5), d2
+  014cd8:  0.00%  subq.w     #$1, d2
+  014cda:  0.00%  move.w     -$35da(a4), d3
+  014cde:  0.00%  btst.l     d2, d3
+  014ce0:  0.00%  bne.b      $14cc4
+  014ce2:  0.00%  movem.w    d0-d2, -(a7)
+  014ce6:  0.00%  moveq      #$2, d0
+  014ce8:  0.00%  moveq      #$b, d1
+  014cea:  0.00%  jsr        -$7fb0(a4)
+  014cee:  0.00%  subi.w     #$a, d2
+  014cf2:  0.00%  move.b     d2, $18(a5)
+  014cf6:  0.00%  movem.w    (a7)+, d0-d2
+  014cfa:  0.00%  move.b     #$ff, $7(a5)
+  014d00:  0.00%  rts        
+  014d02:         jsr        $1515a(pc)
+  014d06:         move.l     a5, -$2e74(a4)
+  014d0a:         moveq      #$1d, d2
+  014d0c:         jsr        $1526c(pc)
+  014d10:         bne.b      $14d32
+  014d12:         cmp.b      $4(a5), d2
+  014d16:         bne.b      $14d0c
+  014d18:         cmpi.b     #$1, $6(a5)
+  014d1e:         bne.b      $14d32
+  014d20:         cmpi.b     #$2, $5(a5)
+  014d26:         blt.b      $14d32
+  014d28:         cmpi.b     #$5, $28(a5)
+  014d2e:         blt.b      $14d32
+  014d30:         bra.b      $14d38
+  014d32:         clr.b      $4(a5)
+  014d36:         bra.b      $14d02
+  014d38:         clr.l      (a5)
+  014d3a:         rts        
+  014d3c:         jsr        -$7f08(a4)
+  014d40:         move.w     -$38da(a4), d0
+  014d44:         andi.l     #$ffff, d0
+  014d4a:         divu.w     #$64, d0
+  014d4e:         swap       d0
+  014d50:         cmpi.w     #$a, d0
+  014d54:         blt.b      $14d64
+  014d56:         cmpi.w     #$28, d0
+  014d5a:         blt.b      $14d60
+  014d5c:         moveq      #$4, d7
+  014d5e:         bra.b      $14d66
+  014d60:         moveq      #$3, d7
+  014d62:         bra.b      $14d66
+  014d64:         moveq      #$2, d7
+  014d66:         movea.l    -$2e80(a4), a5
+  014d6a:         tst.b      $4(a5)
+  014d6e:         ble.b      $14da0
+  014d70:         cmp.b      $5(a5), d7
+  014d74:         bne.b      $14d98
+  014d76:         cmpi.b     #$1, $6(a5)
+  014d7c:         bne.b      $14d98
+  014d7e:         cmpi.b     #$5, $28(a5)
+  014d84:         blt.b      $14d98
+  014d86:         cmpi.b     #$1c, $4(a5)
+  014d8c:         blt.b      $14d98
+  014d8e:         cmpi.b     #$1d, $4(a5)
+  014d94:         bgt.b      $14d98
+  014d96:         bra.b      $14da4
+  014d98:         adda.l     #$2a, a5
+  014d9e:         bra.b      $14d6a
+  014da0:         bra.w      $14d02
+  014da4:         move.l     a5, -$2e74(a4)
+  014da8:         clr.l      (a5)
+  014daa:         rts        
+  014dac:         movem.l    d0-d7/a0-a2, -(a7)
+  014db0:         move.l     (a5), d0
+  014db2:         beq.b      $14dd0
+  014db4:         jsr        -$7f02(a4)
+  014db8:         moveq      #$13, d0
+  014dba:         jsr        -$7f08(a4)
+  014dbe:         dbra       d0, $14dba
+  014dc2:         jsr        $15104(pc)
+  014dc6:         lea.l      -$37ee(a4), a3
+  014dca:         jsr        -$7efc(a4)
+  014dce:         bra.b      $14ddc
+  014dd0:         lea.l      -$2e58(a4), a2
+  014dd4:         lea.l      -$37ee(a4), a3
+  014dd8:         jsr        -$7f7a(a4)
+  014ddc:         movem.l    (a7)+, d0-d7/a0-a2
+  014de0:         rts        
+=== create_player (01515a..01526c) ===
+  01515a:  0.01%  movem.l    d0-d7/a0-a3/a6, -(a7)
+  01515e:  0.00%  jsr        $14c5e(pc)
+  015162:  0.00%  bra.b      $15168
+  015164:         movem.l    d0-d7/a0-a3/a6, -(a7)
+  015168:  0.00%  movea.l    a5, a2
+  01516a:  0.00%  moveq      #$0, d0
+  01516c:  0.08%  clr.b      (a5, d0.w)
+  015170:  0.02%  addq.w     #$1, d0
+  015172:  0.03%  cmpi.w     #$2a, d0
+  015176:  0.05%  blt.b      $1516c
+  015178:  0.00%  move.b     #$ff, $7(a5)
+  01517e:  0.00%  jsr        -$7f08(a4)
+  015182:  0.00%  move.l     -$38da(a4), (a2)
+  015186:  0.00%  move.w     #$15e, d0
+  01518a:  0.00%  moveq      #$2, d1
+  01518c:  0.00%  jsr        -$7fb0(a4)
+  015190:  0.00%  cmpi.w     #$fa, d2
+  015194:  0.00%  bgt.b      $15186
+  015196:  0.00%  cmpi.w     #$96, d2
+  01519a:  0.00%  blt.b      $15186
+  01519c:  0.00%  move.b     d2, $8(a2)
+  0151a0:  0.00%  move.w     #$8c, d0
+  0151a4:  0.00%  moveq      #$2, d1
+  0151a6:  0.00%  jsr        -$7fb0(a4)
+  0151aa:  0.00%  moveq      #$0, d0
+  0151ac:  0.00%  move.b     $8(a2), d0
+  0151b0:  0.00%  subi.w     #$af, d0
+  0151b4:  0.00%  muls.w     #$64, d0
+  0151b8:  0.01%  divs.w     #$50, d0
+  0151bc:  0.00%  add.w      d0, d2
+  0151be:  0.00%  cmpi.w     #$64, d2
+  0151c2:  0.00%  bgt.b      $15186
+  0151c4:  0.00%  cmpi.w     #$28, d2
+  0151c8:  0.00%  blt.b      $15186
+  0151ca:  0.00%  move.b     d2, $9(a2)
+  0151ce:  0.00%  move.b     #$10, $4(a2)
+  0151d4:  0.00%  moveq      #$4, d0
+  0151d6:  0.00%  moveq      #$6, d1
+  0151d8:  0.00%  jsr        -$7fb0(a4)
+  0151dc:  0.00%  mulu.w     #$a, d2
+  0151e0:  0.00%  move.b     d2, $c(a2)
+  0151e4:  0.00%  moveq      #$4, d0
+  0151e6:  0.00%  moveq      #$6, d1
+  0151e8:  0.00%  jsr        -$7fb0(a4)
+  0151ec:  0.00%  mulu.w     #$a, d2
+  0151f0:  0.00%  move.b     d2, $d(a2)
+  0151f4:  0.00%  moveq      #$4, d0
+  0151f6:  0.00%  moveq      #$6, d1
+  0151f8:  0.00%  jsr        -$7fb0(a4)
+  0151fc:  0.00%  mulu.w     #$a, d2
+  015200:  0.00%  move.b     d2, $a(a2)
+  015204:  0.00%  moveq      #$4, d0
+  015206:  0.00%  moveq      #$6, d1
+  015208:  0.00%  jsr        -$7fb0(a4)
+  01520c:  0.00%  mulu.w     #$a, d2
+  015210:  0.00%  move.b     d2, $b(a2)
+  015214:  0.00%  moveq      #$4, d0
+  015216:  0.00%  moveq      #$6, d1
+  015218:  0.00%  jsr        -$7fb0(a4)
+  01521c:  0.00%  mulu.w     #$a, d2
+  015220:  0.00%  move.b     d2, $e(a2)
+  015224:  0.00%  clr.b      $10(a2)
+  015228:  0.00%  clr.b      $11(a2)
+  01522c:  0.00%  clr.b      $12(a2)
+  015230:  0.00%  clr.b      $13(a2)
+  015234:  0.00%  clr.b      $5(a2)
+  015238:  0.00%  clr.b      $6(a2)
+  01523c:  0.00%  moveq      #$7, d6
+  01523e:  0.01%  jsr        $15830(pc)
+  015242:  0.01%  dbra       d6, $1523e
+  015246:  0.00%  moveq      #$7, d6
+  015248:  0.01%  jsr        $156f2(pc)
+  01524c:  0.01%  move.b     d1, $5(a2)
+  015250:  0.01%  jsr        $15830(pc)
+  015254:  0.01%  dbra       d6, $15248
+  015258:  0.00%  bsr.b      $1526c
+  01525a:  0.00%  bsr.b      $1526c
+  01525c:  0.00%  jsr        $150a8(pc)
+  015260:  0.00%  move.b     #$3, $29(a5)
+  015266:  0.01%  movem.l    (a7)+, d0-d7/a0-a3/a6
+  01526a:  0.00%  rts        
+=== calc_skills_and_pos (0154ee..0156c8) ===
+  0154ee:  0.00%  movea.l    a5, a2
+  0154f0:  0.01%  lea.l      -$35ee(a4), a3
+  0154f4:  0.01%  move.w     $8(a3), d0
+  0154f8:  0.01%  lsl.w      #$1, d0
+  0154fa:  0.00%  moveq      #$0, d1
+  0154fc:  0.02%  move.w     (a3, d0.w), d1
+  015500:  0.01%  cmpi.w     #$3e8, d1
+  015504:  0.01%  blt.b      $15528
+  015506:         moveq      #$5, d2
+  015508:         jsr        -$7f08(a4)
+  01550c:         move.w     -$38da(a4), d0
+  015510:         andi.l     #$ffff, d0
+  015516:         divu.w     #$c80, d0
+  01551a:         swap       d0
+  01551c:         cmp.w      d1, d0
+  01551e:         bge.b      $15524
+  015520:         addq.b     #$1, $28(a2)
+  015524:         dbra       d2, $15508
+  015528:  0.01%  cmpi.w     #$258, d1
+  01552c:  0.01%  blt.b      $1554e
+  01552e:  0.00%  cmpi.b     #$1, $6(a2)
+  015534:  0.00%  bne.b      $1553c
+  015536:  0.00%  tst.b      $29(a2)
+  01553a:  0.00%  bgt.b      $15542
+  01553c:  0.00%  move.b     #$3, $29(a2)
+  015542:  0.00%  move.b     #$1, $6(a2)
+  015548:  0.00%  addq.b     #$1, $24(a2)
+  01554c:  0.00%  bra.b      $155cc
+  01554e:  0.01%  cmpi.w     #$1a9, d1
+  015552:  0.01%  blt.b      $15574
+  015554:  0.00%  cmpi.b     #$2, $6(a2)
+  01555a:  0.00%  bne.b      $15562
+  01555c:  0.00%  tst.b      $29(a2)
+  015560:  0.00%  bgt.b      $15568
+  015562:  0.00%  move.b     #$3, $29(a2)
+  015568:  0.00%  move.b     #$2, $6(a2)
+  01556e:  0.00%  addq.b     #$1, $25(a2)
+  015572:  0.00%  bra.b      $155cc
+  015574:  0.01%  cmpi.w     #$12c, d1
+  015578:  0.01%  blt.b      $1559a
+  01557a:  0.00%  cmpi.b     #$3, $6(a2)
+  015580:  0.00%  bne.b      $15588
+  015582:  0.00%  tst.b      $29(a2)
+  015586:  0.00%  bgt.b      $1558e
+  015588:  0.00%  move.b     #$3, $29(a2)
+  01558e:  0.00%  move.b     #$3, $6(a2)
+  015594:  0.00%  addq.b     #$1, $26(a2)
+  015598:  0.00%  bra.b      $155cc
+  01559a:  0.01%  cmpi.w     #$e1, d1
+  01559e:  0.01%  blt.b      $155c0
+  0155a0:  0.00%  cmpi.b     #$4, $6(a2)
+  0155a6:  0.00%  bne.b      $155ae
+  0155a8:  0.00%  tst.b      $29(a2)
+  0155ac:  0.00%  bgt.b      $155b4
+  0155ae:  0.00%  move.b     #$3, $29(a2)
+  0155b4:  0.00%  move.b     #$4, $6(a2)
+  0155ba:  0.00%  addq.b     #$1, $27(a2)
+  0155be:  0.00%  bra.b      $155cc
+  0155c0:  0.01%  move.b     #$0, $6(a2)
+  0155c6:  0.01%  move.b     #$0, $29(a5)
+  0155cc:  0.02%  rts        
+  0155ce:  0.02%  moveq      #$14, d0
+  0155d0:  0.02%  moveq      #$2, d1
+  0155d2:  0.09%  jsr        -$7fb0(a4)
+  0155d6:  0.04%  subi.w     #$a, d2
+  0155da:  0.05%  move.b     $4(a2), d0
+  0155de:  0.02%  ext.w      d0
+  0155e0:  0.04%  subi.w     #$10, d0
+  0155e4:  0.04%  lea.l      -$7a79(a4), a0
+  0155e8:  0.07%  move.b     (a0, d0.w), d1
+  0155ec:  0.02%  ext.w      d1
+  0155ee:  0.02%  add.w      d1, d2
+  0155f0:  0.07%  rts        
+  0155f2:  0.01%  movea.l    a5, a2
+  0155f4:  0.02%  lea.l      -$35ee(a4), a3
+  0155f8:  0.01%  moveq      #$0, d1
+  0155fa:  0.01%  moveq      #$1, d0
+  0155fc:  0.03%  move.b     $c(a2), d1
+  015600:  0.13%  mulu.w     d1, d0
+  015602:  0.04%  move.b     $d(a2), d1
+  015606:  0.13%  mulu.w     d1, d0
+  015608:  0.39%  divu.w     #$64, d0
+  01560c:  0.03%  move.b     $a(a2), d1
+  015610:  0.13%  mulu.w     d1, d0
+  015612:  0.39%  divu.w     #$64, d0
+  015616:  0.03%  move.b     $b(a2), d1
+  01561a:  0.13%  mulu.w     d1, d0
+  01561c:  0.39%  divu.w     #$64, d0
+  015620:  0.01%  move.w     d0, d3
+  015622:  0.01%  moveq      #$0, d1
+  015624:  0.01%  moveq      #$0, d0
+  015626:  0.03%  move.b     $11(a2), d0
+  01562a:  0.03%  lsl.w      #$2, d0
+  01562c:  0.02%  add.w      d0, d1
+  01562e:  0.01%  moveq      #$0, d0
+  015630:  0.03%  move.b     $10(a2), d0
+  015634:  0.02%  lsl.w      #$1, d0
+  015636:  0.01%  add.w      d0, d1
+  015638:  0.01%  moveq      #$0, d0
+  01563a:  0.03%  move.b     $c(a2), d0
+  01563e:  0.01%  add.w      d0, d1
+  015640:  0.01%  ext.l      d1
+  015642:  0.39%  divu.w     #$7, d1
+  015646:  0.13%  mulu.w     d3, d1
+  015648:  0.39%  divu.w     #$64, d1
+  01564c:  0.03%  move.w     d1, $6(a3)
+  015650:  0.01%  moveq      #$0, d1
+  015652:  0.01%  moveq      #$0, d0
+  015654:  0.03%  move.b     $10(a2), d0
+  015658:  0.03%  lsl.w      #$2, d0
+  01565a:  0.02%  add.w      d0, d1
+  01565c:  0.01%  moveq      #$0, d0
+  01565e:  0.03%  move.b     $12(a2), d0
+  015662:  0.02%  lsl.w      #$1, d0
+  015664:  0.01%  add.w      d0, d1
+  015666:  0.01%  moveq      #$0, d0
+  015668:  0.03%  move.b     $11(a2), d0
+  01566c:  0.01%  add.w      d0, d1
+  01566e:  0.03%  move.b     $c(a2), d0
+  015672:  0.01%  add.w      d0, d1
+  015674:  0.03%  move.b     $a(a2), d0
+  015678:  0.01%  add.w      d0, d1
+  01567a:  0.01%  ext.l      d1
+  01567c:  0.39%  divu.w     #$9, d1
+  015680:  0.13%  mulu.w     d3, d1
+  015682:  0.39%  divu.w     #$64, d1
+  015686:  0.03%  move.w     d1, $4(a3)
+  01568a:  0.01%  moveq      #$0, d1
+  01568c:  0.01%  moveq      #$0, d0
+  01568e:  0.03%  move.b     $12(a2), d0
+  015692:  0.03%  lsl.w      #$2, d0
+  015694:  0.02%  add.w      d0, d1
+  015696:  0.01%  moveq      #$0, d0
+  015698:  0.03%  move.b     $10(a2), d0
+  01569c:  0.02%  lsl.w      #$1, d0
+  01569e:  0.01%  add.w      d0, d1
+  0156a0:  0.01%  moveq      #$0, d0
+  0156a2:  0.03%  move.b     $b(a2), d0
+  0156a6:  0.01%  add.w      d0, d1
+  0156a8:  0.03%  move.b     $9(a2), d0
+  0156ac:  0.16%  mulu.w     #$535, d0
+  0156b0:  0.39%  divu.w     #$3e8, d0
+  0156b4:  0.01%  add.w      d0, d1
+  0156b6:  0.01%  ext.l      d1
+  0156b8:  0.39%  divu.w     #$8, d1
+  0156bc:  0.13%  mulu.w     d3, d1
+  0156be:  0.39%  divu.w     #$64, d1
+  0156c2:  0.03%  move.w     d1, $2(a3)
+  0156c6:  0.01%  moveq      #$0, d1
+=== age_and_train (0157a0..015960) ===
+  0157a0:  0.00%  movea.l    a5, a2
+  0157a2:  0.02%  addq.b     #$1, $4(a2)
+  0157a6:  0.00%  moveq      #$8, d0
+  0157a8:  0.00%  moveq      #$2, d1
+  0157aa:  0.02%  jsr        -$7fb0(a4)
+  0157ae:  0.00%  subq.w     #$3, d2
+  0157b0:  0.01%  asr.w      #$1, d2
+  0157b2:  0.01%  lea.l      $9(a2), a0
+  0157b6:  0.02%  jsr        $1508e(pc)
+  0157ba:  0.00%  neg.w      d2
+  0157bc:  0.01%  lea.l      $d(a2), a0
+  0157c0:  0.02%  jsr        $1508e(pc)
+  0157c4:  0.01%  lea.l      $c(a2), a0
+  0157c8:  0.02%  jsr        $1508e(pc)
+  0157cc:  0.01%  lea.l      $a(a2), a0
+  0157d0:  0.02%  jsr        $1508e(pc)
+  0157d4:  0.02%  jsr        $155ce(pc)
+  0157d8:  0.01%  lea.l      $a(a2), a0
+  0157dc:  0.02%  jsr        $1508e(pc)
+  0157e0:  0.02%  jsr        $155ce(pc)
+  0157e4:  0.01%  lea.l      $b(a2), a0
+  0157e8:  0.02%  jsr        $1508e(pc)
+  0157ec:  0.02%  jsr        $155ce(pc)
+  0157f0:  0.01%  lea.l      $c(a2), a0
+  0157f4:  0.02%  jsr        $1508e(pc)
+  0157f8:  0.00%  moveq      #$2, d0
+  0157fa:  0.00%  moveq      #$15, d1
+  0157fc:  0.02%  jsr        -$7fb0(a4)
+  015800:  0.01%  subi.w     #$14, d2
+  015804:  0.01%  lea.l      $e(a2), a0
+  015808:  0.02%  jsr        $1508e(pc)
+  01580c:  0.00%  moveq      #$2, d0
+  01580e:  0.00%  moveq      #$15, d1
+  015810:  0.02%  jsr        -$7fb0(a4)
+  015814:  0.01%  subi.w     #$14, d2
+  015818:  0.01%  lea.l      $f(a2), a0
+  01581c:  0.02%  jsr        $1508e(pc)
+  015820:  0.02%  jsr        $155ce(pc)
+  015824:  0.01%  asr.w      #$1, d2
+  015826:  0.01%  lea.l      $d(a2), a0
+  01582a:  0.02%  jsr        $1508e(pc)
+  01582e:  0.02%  rts        
+  015830:  0.01%  movea.l    a5, a2
+  015832:  0.01%  moveq      #$0, d0
+  015834:  0.03%  move.b     $5(a2), d0
+  015838:  0.02%  beq.b      $1587e
+  01583a:  0.01%  subq.w     #$1, d0
+  01583c:  0.02%  lsl.w      #$3, d0
+  01583e:  0.01%  moveq      #$1, d1
+  015840:  0.02%  move.b     $6(a2), d1
+  015844:  0.02%  lsl.w      #$5, d1
+  015846:  0.01%  add.w      d1, d0
+  015848:  0.01%  lea.l      -$7a1a(a4), a3
+  01584c:  0.01%  adda.l     d0, a3
+  01584e:  0.01%  lea.l      $11(a2), a0
+  015852:  0.02%  move.w     $6(a3), d1
+  015856:  0.03%  jsr        $15758(pc)
+  01585a:  0.01%  lea.l      $10(a2), a0
+  01585e:  0.02%  move.w     $4(a3), d1
+  015862:  0.03%  jsr        $15758(pc)
+  015866:  0.01%  lea.l      $12(a2), a0
+  01586a:  0.02%  move.w     $2(a3), d1
+  01586e:  0.03%  jsr        $15758(pc)
+  015872:  0.01%  lea.l      $13(a2), a0
+  015876:  0.01%  move.w     (a3), d1
+  015878:  0.03%  jsr        $15758(pc)
+  01587c:  0.02%  bra.b      $158a6
+  01587e:  0.01%  lea.l      $13(a2), a0
+  015882:  0.00%  moveq      #$58, d1
+  015884:  0.02%  jsr        $15758(pc)
+  015888:  0.01%  lea.l      $10(a2), a0
+  01588c:  0.00%  moveq      #$75, d1
+  01588e:  0.02%  jsr        $15758(pc)
+  015892:  0.01%  lea.l      $11(a2), a0
+  015896:  0.00%  moveq      #$57, d1
+  015898:  0.02%  jsr        $15758(pc)
+  01589c:  0.01%  lea.l      $12(a2), a0
+  0158a0:  0.00%  moveq      #$6d, d1
+  0158a2:  0.02%  jsr        $15758(pc)
+  0158a6:  0.04%  rts        
+  0158a8:         pea.l      $158c2(pc)
+  0158ac:         move.w     #$9, -(a7)
+  0158b0:         trap       #$1
+  0158b2:         addq.l     #$6, a7
+  0158b4:         move.w     #$1, -(a7)
+  0158b8:         trap       #$1
+  0158ba:         addq.l     #$2, a7
+  0158bc:         move.w     #$0, -(a7)
+  0158c0:         trap       #$1

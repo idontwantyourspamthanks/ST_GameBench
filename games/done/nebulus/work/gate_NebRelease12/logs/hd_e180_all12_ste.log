@@ -1,0 +1,30 @@
+PASS all12.ovl: ovl.py validate: []
+== all12.ovl: 12 levels, sizes [159, 160, 159, 160, 159, 160, 159, 160, 159, 160, 159, 160], 1 campaigns [('ALL12', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])]
+PASS all12.ovl: store in RAM == file: True
+PASS all12.ovl: F10 opens the manager: True
+PASS all12.ovl: level list shows all levels: ['K0', 'K1', 'K2', 'K3', 'K4', 'K5', 'K6', 'K7', 'K8', 'K9', 'K10', 'K11']
+PASS all12.ovl level 1 (record size 160) Play: tower started: True
+PASS all12.ovl level 1 (record size 160) Play: grid == decoded record (K1): []
+PASS all12.ovl level 1 (record size 160) Play: rows/mission/tower: (48, 2, 3)
+PASS all12.ovl level 1 (record size 160) Play: initial time 500 s (remaining 486): True
+PASS all12.ovl level 1 (record size 160) Play: tower name hook A0=$bc1b7 text: b'K1\x00'
+      record 1: size 160, name A0 $bc1b7 (odd address)
+PASS all12.ovl level 1 (record size 160): F10 opens the manager again (= back at the title after Q): True
+PASS all12.ovl level 11 (record size 160) Play: tower started: True
+PASS all12.ovl level 11 (record size 160) Play: grid == decoded record (K11): []
+PASS all12.ovl level 11 (record size 160) Play: rows/mission/tower: (48, 2, 1)
+PASS all12.ovl level 11 (record size 160) Play: initial time 500 s (remaining 486): True
+PASS all12.ovl level 11 (record size 160) Play: tower name hook A0=$bc7f2 text: b'K11\x00'
+      record 11: size 160, name A0 $bc7f2 (even address)
+PASS all12.ovl level 11 (record size 160): F10 opens the manager again (= back at the title after Q): True
+PASS all12.ovl: campaign list shows all campaigns: ['ALL12']
+PASS all12.ovl campaign 0 ALL12 entry 0: tower started: True
+PASS all12.ovl campaign 0 ALL12 entry 0: grid == decoded record (K0): []
+PASS all12.ovl campaign 0 ALL12 entry 0: rows/mission/tower: (48, 1, 0)
+PASS all12.ovl campaign 0 ALL12 entry 0: initial time 500 s (remaining 486): True
+PASS all12.ovl campaign 0 ALL12 entry 0: tower name hook A0=$bc118 text: b'K0\x00'
+      record 0: size 159, name A0 $bc118 (even address)
+PASS all12.ovl campaign 0 ALL12: F10 opens the manager again (= back at the title after Q): True
+PASS all12.ovl: game alive (VBL runs): True
+PASS all12.ovl: no Address/Bus Error/exception in the Hatari log: []
+FAILS []

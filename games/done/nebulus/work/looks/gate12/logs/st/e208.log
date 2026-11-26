@@ -1,0 +1,54 @@
+PASS F10 opens the manager: True
+PASS play PLAIN: True
+PASS open manager again: True
+PASS play CONVLOOK: True
+PASS CONVLOOK grid row 1 in RAM: [129, 177, 177, 177, 129, 129, 129, 129, 129, 129, 129, 129, 129, 161, 161, 161]
+PASS start screenshot crop (sky, skyline, tower, ledge ring, frog) of CONVLOOK == PLAIN: the game draws a conveyor exactly like a ledge: None
+PASS open manager again: True
+PASS cell menu: 15 items, Conveyor left / right after Crumble ledge, Leave editor last: (15, ['Crumble ledge', 'Conveyor left  N', 'Conveyor right  M'], (0, 161), (0, 177), 'Leave editor')
+PASS cell menu: the 13 old items are unchanged and in the old order: ['Empty  C', 'Ledge  L', 'Crumble ledge', 'Pillar  P', 'Blue block (shoot) B', 'Lift >', 'Door opening  D', 'Exit door  X', 'Enemy >', 'Level >', 'Playtest', 'Save to campaign disk', 'Leave editor']
+PASS back in the map view: (0, 1)
+PASS menu item Conveyor left at (5,6) writes $a1: 161
+PASS menu item Conveyor right at (6,6) writes $b1: 177
+PASS row 6 cols 5..9 = conveyor left, conveyor right, crumble, ledge, pillar: [161, 177, 145, 129, 128]
+PASS keys: N at (5,8) = $a1, M at (6,8) = $b1, Return / Space repeat the last tile: [161, 177, 177, 177]
+PASS C / Delete clear a conveyor cell: [161, 177, 0, 0]
+PASS door pair placed at columns 3 / 11 rows 12-14: ([131, 131, 131], [131, 131, 131])
+PASS a conveyor over a door cell clears the partner door cell (same rule as every other tile): ([131, 161, 0], [131, 0, 177])
+PASS editor screen RAM: the $a1 cell == tile 19 of ed_editor.s (conveyor left): True
+PASS editor screen RAM: the $b1 cell == tile 20 of ed_editor.s (conveyor right): True
+PASS editor screen RAM: the $91 cell == tile 3 of ed_editor.s (crumble): True
+PASS editor screen RAM: the $81 cell == tile 2 of ed_editor.s (ledge): True
+PASS editor screen RAM: the $80 cell == tile 4 of ed_editor.s (pillar): True
+PASS the four ledge kinds are four different pictures: 4
+   $a1 tile rows (plane 1 words): 0000001100000000 0000111100000000 0011111111111100 0000111100000000 0000001100000000
+   $b1 tile rows (plane 1 words): 0000000011000000 0000000011110000 0011111111111100 0000000011110000 0000000011000000
+PASS status line under the cursor on $a1 shows "Conveyor left" (the same glyphs as the menu item, then a blank): (True, False)
+PASS status line under the cursor on $b1 shows "Conveyor right" (the same glyphs as the menu item, then a blank): (True, False)
+PASS status line under the cursor on $91 shows "Crumble ledge" (the same glyphs as the menu item, then a blank): (True, False)
+PASS status line under the cursor on $81 shows "Ledge" (the same glyphs as the menu item, then a blank): (True, False)
+PASS status line under the cursor on $80 shows "Pillar" (the same glyphs as the menu item, then a blank): (True, False)
+PASS row 1: $b1 at columns 1-5, $91 at 7-8, $a1 at 10-14, plain ledge elsewhere: [129, 177, 177, 177, 177, 177, 129, 145, 145, 129, 161, 161, 161, 161, 161, 129]
+PASS Level > Time +50: 450 -> 500 (BCD): (1104, 1280)
+PASS Leave editor: the store validates (ovl.validate, the PC twin of ov_check): []
+PASS stored record: time 0500, row 1 as built, conveyors at (5,6) (6,6) (5,8) (6,8) (3,13) (11,14): (1280, [129, 177, 177, 177, 177, 177, 129, 145, 145, 129, 161, 161, 161, 161, 161, 129], 161, 177, 161, 177, 161, 177)
+PASS stored grid == the editor grid: [[0, 129, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 177, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 177, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 177, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 131, 161, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 129, 0, 0, 0, 0], [0, 177, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 129, 195, 195, 195, 0], [0, 177, 0, 0, 0, 0, 161, 0, 161, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 129, 0, 0, 0, 0], [0, 129, 0, 0, 0, 0, 177, 0, 177, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 145, 0, 0, 0, 0, 145, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 145, 0, 0, 0, 0, 129, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 129, 0, 0, 0, 0, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 161, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 161, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 131, 0, 177, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 161, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 161, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 161, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 129, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+PASS in-game validator (ov_check, re-run) keeps the magic; Copy made level n+1 with the same grid: (b'NCMP', 4, True)
+PASS Delete removed the copy; the store still validates: (3, [])
+PASS Edit loads the conveyors back into the grid: True
+PASS playtest running: True
+PASS playtest grid row 1 (RAM): [129, 177, 177, 177, 177, 177, 129, 145, 145, 129, 161, 161, 161, 161, 161, 129]
+PASS E trainer on (no enemies): True
+PASS at the start (plain ledge, column 0) the frog stands still without input: x 4, no x change in 1.5 s: (4, [])
+   conveyor right: Right held until {'x': 15, 'y': 8, 'st': 0}; every x change (x, joystick dx): [(5, 1), (6, 1), (7, 1), (8, 1), (9, 1), (10, 1), (11, 1), (12, 1), (13, 1), (14, 1), (15, 1), (16, 1), (17, 1), (18, 1), (19, 1), (20, 1), (21, 1), (22, 1), (23, 1), (24, 1), (25, 1), (26, 1), (27, 1), (28, 0), (29, 0), (30, 0), (31, 0), (32, 0), (33, 0), (34, 0), (35, 0), (36, 0), (37, 0), (38, 0), (39, 0), (40, 0), (41, 0), (42, 0), (43, 0), (44, 0), (45, 0), (46, 0), (47, 0), (48, 0)]
+   changes without input: 21 (x 27 -> 48)
+PASS on $b1 with NO input (dx 0) the frog is carried right: >= 8 changes, every one exactly +1, up to x 48 = the first pixel past the run (column 6), then it stands: (True, True, 48, (48, 0))
+   conveyor left: Left held (over the $b1 cells and round the tower) until {'x': 115, 'y': 8, 'st': 0}; every x change (x, joystick dx): [(47, 65535), (46, 65535), (45, 65535), (44, 65535), (43, 65535), (42, 65535), (41, 65535), (40, 65535), (39, 65535), (38, 65535), (37, 65535), (36, 65535), (35, 65535), (34, 65535), (33, 65535), (32, 65535), (31, 65535), (30, 65535), (29, 65535), (28, 65535), (27, 65535), (26, 65535), (25, 65535), (24, 65535), (23, 65535), (22, 65535), (21, 65535), (20, 65535), (19, 65535), (18, 65535), (17, 65535), (16, 65535), (15, 65535), (14, 65535), (13, 65535), (12, 65535), (11, 65535), (10, 65535), (9, 65535), (8, 65535), (7, 65535), (6, 65535), (5, 65535), (4, 65535), (3, 65535), (2, 65535), (1, 65535), (0, 65535), (127, 65535), (126, 65535), (125, 65535), (124, 65535), (123, 65535), (122, 65535), (121, 65535), (120, 65535), (119, 65535), (118, 65535), (117, 65535), (116, 65535), (115, 65535), (114, 65535), (113, 65535), (112, 65535), (111, 65535), (110, 65535), (109, 65535), (108, 65535), (107, 65535), (106, 65535), (105, 65535), (104, 65535), (103, 65535), (102, 0), (101, 0), (100, 0), (99, 0), (98, 0), (97, 0), (96, 0), (95, 0), (94, 0), (93, 0), (92, 0), (91, 0), (90, 0), (89, 0), (88, 0), (87, 0), (86, 0), (85, 0), (84, 0), (83, 0), (82, 0), (81, 0), (80, 0), (79, 0)]
+PASS walking Left over the $b1 cells with input is a normal walk (every change with dx != 0 is -1): True
+   changes without input: 24 (x 103 -> 79)
+PASS on $a1 with NO input the frog is carried left: >= 8 changes, every one exactly -1, down to x 79 = the last pixel before the run (column 9), then it stands: (True, True, 79, (79, 0))
+PASS the conveyor cells are still there after the rides (not consumed): [129, 177, 177, 177, 177, 177, 129, 145, 145, 129, 161, 161, 161, 161, 161, 129]
+   crumble: walking Left from column 9: (1, [145, 0], {'x': 67, 'y': 0, 'st': 8})
+PASS crumble unaffected: the $91 cell (8,1) under the frog is cleared: True
+PASS no Address/Bus Error/exception in the Hatari log: []
+FAILS []

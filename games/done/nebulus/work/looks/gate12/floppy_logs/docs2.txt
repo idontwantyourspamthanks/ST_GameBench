@@ -1,0 +1,12 @@
+floppy title True
+campaigns list: ['<new campaign>', '< back']
+after <new campaign>: ['<add entry>', '< back']
+campaign menu: ['01 O 1-1', '<add entry>', '< back']
+Traceback (most recent call last):
+  File "/tmp/ng12fl/s/docs2.py", line 12, in <module>
+    pick('Edit entries', 1.5); P('entries list: %r' % names()); pick(0, 1.2); P('entry menu: %r' % names()); h.shot(OUT + 'entry_menu.png')
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 36, in pick
+IndexError: list index out of range
+FAIL exception in the script: "IndexError('list index out of range')"  (expected 'none')
+FAILS ['exception in the script']

@@ -1,0 +1,123 @@
+--- a/README.md
++++ b/README.md
+@@ -244,7 +244,8 @@
+ **Special ledges.** Cell codes are not validated by the parser or the game's loader (any byte is a cell). `$91` is a crumbling ledge: the
+ game draws it exactly like `$81` but clears it when the frog stands on it (the editor draws it dotted, the legend calls it `crumble`);
+ `$a1` / `$b1` are conveyor ledges that push the frog one step left / right while it stands without input; the game draws them like a plain
+-ledge too (legend kind `ledge`, the label says what they do).
++ledge too. The v1.2 editor places them (cell menu *Conveyor left* / *Conveyor right*, keys N / M) and draws a ledge with an arrow; the
++legend has the same two glyphs (tiles 19 / 20, kinds `conveyor_left` / `conveyor_right`), so the level map and the thumbnails show the arrows.
+ 
+ ## Security notes
+ 
+--- a/api/app/services/hub/ncmp/legend.rb
++++ b/api/app/services/hub/ncmp/legend.rb
+@@ -26,7 +26,9 @@
+         [ [ 0x00, 0x7e, 0xff, 0xdb, 0xdb, 0xff, 0x7e, 0x00 ], 5 ],
+         [ [ 0x00, 0x24, 0x3c, 0x7e, 0x5a, 0x7e, 0x24, 0x00 ], 6 ],
+         [ [ 0x18, 0x3c, 0x7e, 0x18, 0x18, 0x18, 0x18, 0x00 ], 7 ],
+-        [ [ 0x18, 0x3c, 0x7e, 0x00, 0x7e, 0x00, 0x7e, 0x00 ], 7 ]
++        [ [ 0x18, 0x3c, 0x7e, 0x00, 0x7e, 0x00, 0x7e, 0x00 ], 7 ],
++        [ [ 0x10, 0x30, 0x7e, 0x30, 0x10, 0xff, 0xff, 0x00 ], 2 ],
++        [ [ 0x08, 0x0c, 0x7e, 0x0c, 0x08, 0xff, 0xff, 0x00 ], 2 ]
+       ].freeze
+ 
+       PALETTE = [ [ 0, 0, 0 ], [ 68, 68, 68 ], [ 0, 170, 0 ], [ 85, 170, 34 ], [ 102, 102, 102 ], [ 51, 85, 255 ], [ 255, 238, 170 ], [ 255, 68, 0 ] ].freeze
+@@ -34,7 +36,7 @@
+       TILE_KINDS = %w[
+         empty marker ledge crumble pillar blue_block pale_block door exit
+         enemy_stone enemy_red enemy_red_wait enemy_eye_v_slow enemy_eye_v_fast enemy_eye_h_slow enemy_eye_h_fast
+-        frog_start lift_end lift_stop
++        frog_start lift_end lift_stop conveyor_left conveyor_right
+       ].freeze
+ 
+       FROG_TILE = 16
+@@ -44,6 +46,8 @@
+       CRUMBLE = 0x91
+       CONVEYOR_LEFT = 0xa1
+       CONVEYOR_RIGHT = 0xb1
++      # bits 4-6 of a ledge cell ($x1): crumbling, conveyor left, conveyor right; anything else is a plain ledge
++      LEDGE_TILES = { 0x10 => 3, 0x20 => 19, 0x30 => 20 }.freeze
+ 
+       ENEMY_NAMES = {
+         1 => "Stone ball", 2 => "Red ball", 3 => "Red ball (waits)",
+@@ -70,8 +74,7 @@
+         when 2 then 5
+         else
+           if v & 0x0c != 0 then 6
+-          elsif v & 0x70 == 0x10 then 3
+-          else 2
++          else LEDGE_TILES.fetch(v & 0x70, 2)
+           end
+         end
+       end
+@@ -95,8 +98,8 @@
+         return "Lift start slab (#{hex})" if v == LIFT_START
+         return "Lift end marker (#{hex})" if v == LIFT_END
+         return "Lift stop marker (#{hex})" if v == LIFT_STOP
+-        return "Conveyor ledge, pushes the frog left (#{hex}; the game draws it like a plain ledge)" if v == CONVEYOR_LEFT
+-        return "Conveyor ledge, pushes the frog right (#{hex}; the game draws it like a plain ledge)" if v == CONVEYOR_RIGHT
++        return "Conveyor ledge, pushes the frog left (#{hex}; the game draws it like a plain ledge, the editor adds the arrow)" if v == CONVEYOR_LEFT
++        return "Conveyor ledge, pushes the frog right (#{hex}; the game draws it like a plain ledge, the editor adds the arrow)" if v == CONVEYOR_RIGHT
+ 
+         tile = tile_for(v)
+         if enemy?(v)
+--- a/api/test/controllers/api/hub_browse_test.rb
++++ b/api/test/controllers/api/hub_browse_test.rb
+@@ -28,7 +28,8 @@
+     get "/api/games/nebulus", headers: @h
+     assert_equal 3, response.parsed_body["levels_count"]
+     assert_equal 2, response.parsed_body["contributors_count"]
+-    assert_equal 19, response.parsed_body["legend"].size
++    assert_equal 21, response.parsed_body["legend"].size
++    assert_equal %w[conveyor_left conveyor_right], response.parsed_body["legend"].last(2).map { |t| t["kind"] }
+     assert_equal 8, response.parsed_body["legend"].first["rows"].size
+     get "/api/games/moonshine-racers", headers: @h
+     assert_equal false, response.parsed_body["extraction_available"]
+@@ -55,7 +56,7 @@
+     assert_equal [ [ 0, 0 ], [ 0, 0 ] ], response.parsed_body["levels"].map { |l| l.values_at("colours", "enemy_set") }
+   end
+ 
+-  test "levels expose the colour scheme and eye design the game plays (nibble, else base tower) and the legend names the crumbling ledge" do
++  test "levels expose the colour scheme and eye design the game plays (nibble, else base tower) and the legend names the crumbling and conveyor ledges" do
+     camp = make_campaign(@member, "Special ledges", "crumble and conveyor", ovl: fixture_bytes("crumble.ovl"))
+     get "/api/campaigns/#{camp.id}", headers: @h
+     assert_response :success
+@@ -65,7 +66,9 @@
+     body = response.parsed_body
+     assert_equal [ 5, 3 ], [ body["colour_scheme"], body["eye_design"] ]
+     legend = body["legend"]["cells"]
+-    assert_equal %w[crumble ledge ledge], [ "145", "161", "177" ].map { |code| legend.fetch(code)["kind"] }
++    assert_equal %w[crumble conveyor_left conveyor_right], [ "145", "161", "177" ].map { |code| legend.fetch(code)["kind"] }
++    assert_equal [ 19, 20 ], [ "161", "177" ].map { |code| legend.fetch(code)["tile"] }
++    assert_equal [ 0x0f00, 0x00f0 ], [ "161", "177" ].map { |code| legend.fetch(code)["rows"][1] }, "the arrow heads of the two conveyor glyphs the map draws"
+     assert_match(/Crumbling ledge/, legend["145"]["label"])
+     assert_match(/pushes the frog right/, legend["177"]["label"])
+   end
+--- a/api/test/services/hub/ncmp_test.rb
++++ b/api/test/services/hub/ncmp_test.rb
+@@ -106,15 +106,21 @@
+     {
+       0 => 0, 0x81 => 2, 0x91 => 3, 0x80 => 4, 0x82 => 5, 0x85 => 6, 0x83 => 7, 0xc3 => 8,
+       0x10 => 9, 0x20 => 10, 0x30 => 11, 0x40 => 12, 0x51 => 13, 0x60 => 14, 0x70 => 15,
+-      0x08 => 17, 0x0c => 18, 0x01 => 1
++      0x08 => 17, 0x0c => 18, 0x01 => 1, 0xa1 => 19, 0xb1 => 20, 0xc1 => 2, 0xa5 => 6
+     }.each { |code, tile| assert_equal tile, Hub::Ncmp::Legend.tile_for(code), format("$%02x", code) }
+     assert_equal 8, Hub::Ncmp::Legend.glyph_rows(0x81).size
+     assert_includes Hub::Ncmp::Legend.label(0x41), "starts down"
+     assert_includes Hub::Ncmp::Legend.label(0x60), "starts right"
+     assert_includes Hub::Ncmp::Legend.label(0x61), "starts left"
+-    assert_equal %w[crumble ledge ledge ledge], [ 0x91, 0x81, 0xa1, 0xb1 ].map { |v| Hub::Ncmp::Legend::TILE_KINDS[Hub::Ncmp::Legend.tile_for(v)] }, "only $91 is a special tile; the conveyors are drawn by the game like a ledge"
++    assert_equal %w[crumble ledge conveyor_left conveyor_right], [ 0x91, 0x81, 0xa1, 0xb1 ].map { |v| Hub::Ncmp::Legend::TILE_KINDS[Hub::Ncmp::Legend.tile_for(v)] }, "the editor's special ledges; the game draws all of them like a ledge"
++    assert_equal Hub::Ncmp::Legend::TILES.size, Hub::Ncmp::Legend::TILE_KINDS.size
+     refute_equal Hub::Ncmp::Legend.glyph_rows(0x81), Hub::Ncmp::Legend.glyph_rows(0x91), "the editor draws the crumbling ledge differently from a ledge (in the game it looks the same)"
+-    assert_equal Hub::Ncmp::Legend.glyph_rows(0x81), Hub::Ncmp::Legend.glyph_rows(0xa1)
++    ledge, left, right = [ 0x81, 0xa1, 0xb1 ].map { |v| Hub::Ncmp::Legend.glyph_rows(v) }
++    assert_equal ledge[5..], left[5..], "a conveyor is the ledge bar ..."
++    assert_equal ledge[5..], right[5..]
++    assert_equal [ 0x0300, 0x0f00, 0x3ffc, 0x0f00, 0x0300 ], left[0..4], "... with an arrow above it: head on the left for $a1"
++    assert_equal [ 0x00c0, 0x00f0, 0x3ffc, 0x00f0, 0x00c0 ], right[0..4], "... head on the right for $b1"
++    assert_equal Hub::Ncmp::Legend.color(0x81), Hub::Ncmp::Legend.color(0xa1)
+     assert_includes Hub::Ncmp::Legend.label(0x91), "Crumbling ledge"
+     assert_includes Hub::Ncmp::Legend.label(0xa1), "pushes the frog left"
+     assert_includes Hub::Ncmp::Legend.label(0xb1), "pushes the frog right"

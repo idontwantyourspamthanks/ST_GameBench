@@ -1,0 +1,16 @@
+F9 and the editor / campaigns (Gamex)
+-------------------------------------
+  F9 (press it again if it does not answer) leaves the game to the desktop;
+  tried from a tower and from the editor manager. F9 copies the game's RAM
+  aside, and in doing so it overwrites the memory where the game keeps the
+  levels and campaigns it read from NEBLEVEL.OVL. So after F9 your custom
+  levels and campaigns are switched off for as long as that game stays in
+  memory: the Levels list is empty, the original game plays normally, F10 on
+  the title does not crash (tried with the memory of a saved store overwritten
+  the way F9 does it). Nothing is lost on disk: after a reboot the file is
+  read again. Save to disk BEFORE you press F9, and do not press F9 while
+  editing (an unsaved level is gone).
+  NOT tried: starting START.TOS again from the desktop after F9 (it should
+  read the file again), and PP's GXUT270.PRG ("PLAY GAME IN RAM", saved game
+  states). Whatever GXUT270 restores, the levels are not part of it, so expect
+  custom levels to stay off until the game is started afresh.

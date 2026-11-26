@@ -1,0 +1,38 @@
+PASS odd2.ovl: ovl.py validate: []
+== odd2.ovl: 2 levels, sizes [115, 165], 2 campaigns [('ODD2', [128, 0, 130, 1]), ('ODD2 REV', [1, 0])]
+title 68.66137933731079
+PASS odd2.ovl: F10 opens the manager: True
+PASS odd2.ovl: Load from campaign disk (nebcampaign.py new --ovl): 'Loaded 2 levels / 2 campaigns'
+PASS odd2.ovl: store in RAM == file: True
+PASS odd2.ovl: level list shows all levels: ['ODD ONE', 'ODD TWO']
+PASS odd2.ovl level 1 (record size 165) Play: tower started: True
+PASS odd2.ovl level 1 (record size 165) Play: grid == decoded record (ODD TWO): []
+PASS odd2.ovl level 1 (record size 165) Play: rows/mission/tower: (40, 2, 5)
+PASS odd2.ovl level 1 (record size 165) Play: initial time 480 s (remaining 467): True
+PASS odd2.ovl level 1 (record size 165) Play: tower name hook A0=$bc18b text: b'ODD TWO\x00'
+      record 1: size 165, name A0 $bc18b (odd address)
+PASS odd2.ovl level 1 (record size 165): F10 opens the manager again (= back at the title after Q): True
+FAIL odd2.ovl: campaign list shows all campaigns: []  (expected ['ODD2', 'ODD2 REV'])
+PASS odd2.ovl campaign 1 ODD2 REV entry 0: tower started: True
+PASS odd2.ovl campaign 1 ODD2 REV entry 0: grid == decoded record (ODD TWO): []
+PASS odd2.ovl campaign 1 ODD2 REV entry 0: rows/mission/tower: (40, 2, 5)
+PASS odd2.ovl campaign 1 ODD2 REV entry 0: initial time 480 s (remaining 467): True
+PASS odd2.ovl campaign 1 ODD2 REV entry 0: tower name hook A0=$bc18b text: b'ODD TWO\x00'
+      record 1: size 165, name A0 $bc18b (odd address)
+PASS odd2.ovl campaign 1 ODD2 REV: F10 opens the manager again (= back at the title after Q): True
+PASS odd2.ovl campaign 0 ODD2 entry 0: tower started: True
+PASS odd2.ovl campaign 0 ODD2 entry 0: original M1 T1 grid: []
+FAIL odd2.ovl campaign 0 ODD2 entry 0: original rows/mission/tower: (0, 1, 0)  (expected (47, 1, 0))
+PASS odd2.ovl campaign 0 ODD2: F10 opens the manager again (= back at the title after Q): True
+PASS odd2.ovl: game alive (VBL runs): True
+PASS odd2.ovl: no Address/Bus Error/exception in the Hatari log: []
+PASS looks.ovl: ovl.py validate: []
+== looks.ovl: 10 levels, sizes [159, 159, 159, 159, 159, 159, 159, 159, 159, 159], 1 campaigns [('LOOKS', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])]
+title 68.55284309387207
+PASS looks.ovl: F10 opens the manager: True
+Traceback (most recent call last):
+  File "e180_floppy", line 131, in run_file
+  File "e180_floppy", line 49, in pick
+IndexError: list index out of range
+FAIL looks.ovl: exception in the script: "IndexError('list index out of range')"  (expected 'none')
+FAILS ['odd2.ovl: campaign list shows all campaigns', 'odd2.ovl campaign 0 ODD2 entry 0: original rows/mission/tower', 'looks.ovl: exception in the script']

@@ -1,0 +1,25 @@
+files ['GXUT270.PRG', 'NEBCHEAT.TXT', 'NEBEXE.FIC', 'NEBLEVEL.OVL', 'NEBULTIT.FIC', 'NEBULUS.PCH', 'NEPATCH.BIN', 'Nebulus_campaign_disk.st', 'PATCHES.TXT', 'README.TXT', 'START.TOS'] ovl zero True
+title True 14s
+/home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/release/final_cell.py:28: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  p = shot(h, n); im = Image.open(p).convert('RGB').crop(PIC).crop(box); return sum(1 for q in im.getdata() if q != (0,0,0))
+credit band lit px (4 shots) 3188
+store before:  0000000000000000 (zero file => no magic)
+/home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/release/final_cell.py:28: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  p = shot(h, n); im = Image.open(p).convert('RGB').crop(PIC).crop(box); return sum(1 for q in im.getdata() if q != (0,0,0))
+manager open: title text rows lit px = 0 (0 = title gone), menu text px = 5780
+after Save: store RAM 4e434d5000010001
+tower: timer word 0x0 timer (0, 0, 0) tower 0
+marker 0x4e45504f sites 27 | $39ffa 0x602a $38514 0x4ef9 0x76d04 $3dcf4 0x4eb9 0x76c08 $3d698 0x4eb9 0x77a00 $3a332 0x4e71 $377a2 0x4ef9 0x75740
+E: noen 0x0 states (0, 0, 0, 0)
+E on timer counts (0, 0, 0) (0, 0, 0) False
+T: frz 0x0 (0, 0, 0) (0, 0, 0) (0, 0, 0) frozen True
+T again running (0, 0, 0) (0, 0, 0) False
+20 s drive: 14 rounds, vbl +1043, tower 0, timer (0, 0, 0)
+crash lines in Hatari log: 0
+file read back from the image after Hatari exit: size 8192 head 000000000000000000000000 NO MAGIC nlevels 0
+reboot title True
+store loaded at boot 0000000000000000
+/home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/release/final_cell.py:23: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  im = Image.open(path).convert('RGB').crop(box); return sum(1 for p in im.getdata() if p != (0,0,0))
+level list third line (y 125..145) lit px 0 (>0 = a level is listed)
+Play: timer (0, 0, 0) tower 0 RS 0000000000000001

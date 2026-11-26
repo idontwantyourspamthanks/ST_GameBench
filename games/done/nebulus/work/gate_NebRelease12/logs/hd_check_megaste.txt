@@ -1,0 +1,33 @@
+lvl  b  c  e | pal ras sky | eye | grid | rsCol rsEye tower | expected colour tower / eye tower
+  0 T3  1  2 | True  | True  [1, 5] | True  | rsCol 0 rsEye 1 tower 2 True  | colour 1 eye 2  PASS
+  1 T3  2  2 | True  | True  [1, 5] | True  | rsCol 1 rsEye 1 tower 2 True  | colour 2 eye 2  PASS
+  2 T3  3  2 | True  | True  [1, 5] | True  | rsCol 2 rsEye 1 tower 2 True  | colour 3 eye 2  PASS
+  3 T3  4  2 | True  | True  [1, 5] | True  | rsCol 3 rsEye 1 tower 2 True  | colour 4 eye 2  PASS
+  4 T3  5  2 | True  | True  [1, 5] | True  | rsCol 4 rsEye 1 tower 2 True  | colour 5 eye 2  PASS
+  5 T3  6  2 | True  | True  [1, 5] | True  | rsCol 5 rsEye 1 tower 2 True  | colour 6 eye 2  PASS
+  6 T3  7  2 | True  | True  [1, 5] | True  | rsCol 6 rsEye 1 tower 2 True  | colour 7 eye 2  PASS
+  7 T3  8  2 | True  | True  [1, 5] | True  | rsCol 7 rsEye 1 tower 2 True  | colour 8 eye 2  PASS
+  8 T1  3  1 | True  | True  [0, 4] | True  | rsCol 2 rsEye 0 tower 0 True  | colour 3 eye 1  PASS
+  9 T1  3  2 | True  | True  [1, 5] | True  | rsCol 2 rsEye 1 tower 0 True  | colour 3 eye 2  PASS
+ 10 T1  3  3 | True  | True  [2, 6] | True  | rsCol 2 rsEye 2 tower 0 True  | colour 3 eye 3  PASS
+ 11 T1  3  4 | True  | True  [3, 7] | True  | rsCol 2 rsEye 3 tower 0 True  | colour 3 eye 4  PASS
+ 12 T6  0  0 | True  | True  [1, 5] | True  | rsCol 5 rsEye 1 tower 5 True  | colour 6 eye 6  PASS
+ 13 T2  0  3 | True  | True  [2, 6] | True  | rsCol 1 rsEye 2 tower 1 True  | colour 2 eye 3  PASS
+ 14 T7  4  0 | True  | True  [2, 6] | True  | rsCol 3 rsEye 2 tower 6 True  | colour 4 eye 7  PASS
+screenshot crop equality (colours c of the cell == stock tower c, flags 0):
+  cell 0 (b=T3 c=1 e=2) vs stock T1: equal
+  cell 1 (b=T3 c=2 e=2) vs stock T2: equal
+  cell 2 (b=T3 c=3 e=2) vs stock T3: equal
+  cell 3 (b=T3 c=4 e=2) vs stock T4: equal
+  cell 4 (b=T3 c=5 e=2) vs stock T5: equal
+  cell 5 (b=T3 c=6 e=2) vs stock T6: equal
+  cell 6 (b=T3 c=7 e=2) vs stock T7: equal
+  cell 7 (b=T3 c=8 e=2) vs stock T8: equal
+  cell 8 (b=T1 c=3 e=1) vs stock T3: equal
+  cell 9 (b=T1 c=3 e=2) vs stock T3: equal
+  cell 10 (b=T1 c=3 e=3) vs stock T3: equal
+  cell 11 (b=T1 c=3 e=4) vs stock T3: equal
+  cell 12 (b=T6 c=0 e=0) vs stock T6: equal
+  cell 13 (b=T2 c=0 e=3) vs stock T2: equal
+  cell 14 (b=T7 c=4 e=0) vs stock T4: equal
+FAILS 0

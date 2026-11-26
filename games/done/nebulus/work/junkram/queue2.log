@@ -1,0 +1,42 @@
+Traceback (most recent call last):
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/junkram/dumpcmp.py", line 13, in <module>
+    ok = wait_title(h, ste, 100 if ste else 330); time.sleep(4)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/junkram/relaunch.py", line 23, in wait_title
+    if h._marker_present():
+       ^^^^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/tools/nebulus.py", line 104, in _marker_present
+    out = self.debug("m $3d00f 4", 0.4)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/tools/stharness.py", line 208, in debug
+    self.cmd(f"hatari-debug {s}")
+  File "/home/ryan/Code/AtariST/gamebench/tools/stharness.py", line 202, in cmd
+    fd = os.open(self.fifo, os.O_WRONLY | os.O_NONBLOCK)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/strun-jr-ste/fifo'
+Traceback (most recent call last):
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/junkram/dumpcmp.py", line 11, in <module>
+    h = Nebulus(game=path, workdir=f'/tmp/strun-jr-{machine}', **kw)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/tools/nebulus.py", line 96, in __init__
+    super().__init__(game_dir=game, snapshot=snapshot, workdir=str(R), machine=machine, tos=tos,
+  File "/home/ryan/Code/AtariST/gamebench/tools/stharness.py", line 186, in __init__
+    raise RuntimeError(f"Hatari did not start; see {self.logpath}:\n{self._logtext()[-2000:]}")
+RuntimeError: Hatari did not start; see /tmp/strun-jr-ste/log.txt:
+
+Error while parsing argument "/tmp/strun-jr-ste/C" for option "--harddrive":
+  Given directory doesn't exist or permissions prevent access to it!
+
+Option usage:
+
+Hatari v2.6.1 - the Atari ST, STE, TT and Falcon emulator.
+
+Hatari is free software licensed under the GNU General Public License.
+
+Usage:
+ hatari [options] [disk image name]
+
+Try option "-h" or "--help" to display more information.
+  --harddrive <dir> Emulate harddrive partition(s) with <dir> contents
+    or -d <dir>
+

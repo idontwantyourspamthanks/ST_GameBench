@@ -1,0 +1,9 @@
+fdc enable drive=1 on
+fdc set nbr heads drive=1 2
+fdc insert drive=1
+fdc init index drive=1 side=0 counter=0 ip_time=532123116 VBL=3329 HBL=12
+fdc type I restore spinup=on verify=off steprate_ms=3 drive=0 tr=0x0 head_track=0x0 VBL=3452 video_cyc=7428 260@14 pc=cf92
+fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x0 head_track=0x0 side=0 drive=0 dmasector=1 addr=0x68000 VBL=3452 video_cyc=12936 136@25 pc=cf92
+fdc read sector addr=0x68000 drive=0 track=0 sect=1 side=0 VBL=3455 video_cyc=106132 148@207 pc=cc5a
+fdc type II read sector with multi sector=0x2 track=0x0 side=0 drive=0 addr=0x68200 VBL=3456 video_cyc=78492 156@153 pc=cfa6
+fdc type IV force int 0xd0 irq=0 index=0 VBL=3456 video_cyc=78824 488@153 pc=cf92

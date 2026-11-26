@@ -1,0 +1,18 @@
+sb_ste162_8_d2: ste TOS 162 1024 KB, 8 MHz, 2 drive(s), disks /tmp/mw2f/ship
+insert-graphics prompt after 91 s wall
+M/J/K screen after 5 presses; MWPO 000B2FF8: 4d 57 50 4f                                      MWPO
+security-check site $2c574: 0002C574: 60 02                                            `.
+hall; personnel click tries 1
+use-this-agent click tries 0
+control-door click tries 0
+EXC RuntimeError('never reached the boss screen')
+Traceback (most recent call last):
+  File "/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/floppy16/cell16.py", line 163, in <module>
+    raise RuntimeError('never reached the boss screen')
+RuntimeError: never reached the boss screen
+
+trace: frame 313 lines = 50.1 Hz
+first game restore: tr=0x0 head_track=0x0 -> complete after 1.074 s
+game type I commands: 122, cut by the game's force interrupt: 0
+longest completed game type I commands (s): 1.76 restore, 1.78 restore, 1.83 restore, 1.83 restore
+CELL sb_ste162_8_d2: FAIL

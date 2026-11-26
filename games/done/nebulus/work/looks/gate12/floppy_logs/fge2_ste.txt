@@ -1,0 +1,35 @@
+title 62.633183002471924
+   (5.3 s) 'Loaded 1 levels / 1 campaigns'
+PASS U1 game disk out, campaign A in, Load: 'Loaded 1 levels / 1 campaigns'
+PASS   store == A: True
+   (5.3 s) 'Loaded 3 levels / 2 campaigns'
+PASS U2 A out, B in, Load: 'Loaded 3 levels / 2 campaigns'
+PASS   store == B (not A): True
+   (7.2 s) 'Saved'
+PASS U3 Save (store B) onto B: 'Saved'
+PASS   image B NEBLEVEL.OVL == RAM store: (True, True)
+PASS   image B differs from the original only in the file data/dir entry: []
+   (5.3 s) 'Loaded 1 levels / 1 campaigns'
+PASS U4 insert A2, Load: 'Loaded 1 levels / 1 campaigns'
+PASS   store == A: True
+   (7.2 s) 'Saved'
+PASS U5 insert B2 (3 levels), Save (store = A content): 'Saved'
+PASS   image B2 NEBLEVEL.OVL == store (A content, B2 old content gone): (True, True)
+   (5.3 s) 'Loaded 1 levels / 1 campaigns'
+PASS U6 reload B2: 'Loaded 1 levels / 1 campaigns'
+   (7.3 s) 'No disk'
+PASS U7 empty drive, fire: 'No disk'
+   (5.3 s) 'Loaded 3 levels / 2 campaigns'
+PASS U8 insert B, fire again: 'Loaded 3 levels / 2 campaigns'
+PASS   store == B: True
+   (7.3 s) 'No disk'
+PASS U9 empty again, fire: 'No disk'
+   (5.3 s) 'Loaded 1 levels / 1 campaigns'
+PASS U10 insert A, fire: 'Loaded 1 levels / 1 campaigns'
+PASS   store == A: True
+   (4.3 s) 'Not a campaign disk'
+PASS U11 game disk back, Load: 'Not a campaign disk'
+   (5.3 s) 'Loaded 3 levels / 2 campaigns'
+PASS U12 B in over game disk (no eject): 'Loaded 3 levels / 2 campaigns'
+PASS alive: True
+FAILS []

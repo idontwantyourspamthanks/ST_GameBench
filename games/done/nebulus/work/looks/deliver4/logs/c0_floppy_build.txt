@@ -1,0 +1,46 @@
+  cr_credit    PP $03d698 -> floppy $03d690  33fcfffe00038212 -> 4eb9000779fa4e71
+  ed_overlay   PP $0377a2 -> floppy $0377a2  41f9000327f0 -> 4ef900075810
+  ed_overlay   PP $037a90 -> floppy $037a90  20090480000327f0 -> 4eb9000758544e71
+  ed_overlay   PP $03d6c4 -> floppy $03d6bc  6100ae7c4a79000338f0 -> 4eb9000759c64e714e71
+  ed_overlay   PP $03adb4 -> floppy $03ad90  d040303b00e6 -> 4eb900075868
+  ed_overlay   PP $03d110 -> floppy $03d108  e549d0c12050 -> 4eb90007588a
+  ed_overlay   PP $03e352 -> floppy $03e34a  303900033a34 -> 4ef9000758aa
+  ed_overlay   PP $03dfd6 -> floppy $03dfce  4eb90003868a -> 4eb90007596e
+  ed_overlay   PP $03851a -> floppy $03851a  301f08b80006 -> 4ef90007782c
+  ed_overlay   PP $03d662 -> floppy $03d65a  6100dce060000030 -> 4ef9000778644e71
+  ed_overlay   PP $03dbf0 -> floppy $03dbe8  4eb90003636e -> 4eb9000757ce
+  ed_overlay   PP $03522e -> floppy $03522e  30390003390c -> 303900077cbe
+  ed_overlay   PP $03dc1e -> floppy $03dc16  30390003390c -> 303900077cbe
+  ed_overlay   PP $0366de -> floppy $0366de  30390003390c -> 303900077cbe
+  ed_overlay   PP $036b68 -> floppy $036b68  30390003390c -> 303900077cbe
+  ed_overlay   PP $0363a4 -> floppy $0363a4  30390003390c -> 303900077cb2
+  ni_ikbd      PP $038486 -> floppy $038486  46fc23006100b9f8 -> 4ef900077f004e71
+  ni_ikbd      PP $03853a -> floppy $03853a  48e7c080103aff58 -> 4ef900077f284e71
+  ni_jump      PP $039ffa -> floppy $039fd6  4e75 -> 602a
+  ni_latch     PP $038514 -> floppy $038514  13c000038498 -> 4ef900076d04
+  ni_latch     PP $03855a -> floppy $03855a  33c1000338f0 -> 4eb900076d22
+  ni_shoot     PP $03a332 -> floppy $03a30e  4e75 -> 4e71
+  ni_turn      PP $039e2c -> floppy $039e08  4e75 -> 4e71
+  np_lift      PP $037d5a -> floppy $037d5a  4240102310350000b03c002864000022 -> 424010236a2a10350000b03c00286420
+  np_lift      PP $037d0c -> floppy $037d0c  4240102310350000b03c00286400002c -> 424010236a3410350000b03c0028642a
+  np_lift      PP $037d90 -> floppy $037d90  4240102310350000b03c00286400001c -> 424010236a2410350000b03c0028641a
+  np_lift      PP $037c74 -> floppy $037c74  424010230c35002800006600000e -> 424010236a140c3500280000660c
+  np_lift      PP $037c42 -> floppy $037c42  424010230c35002800006600001a -> 424010236a200c35002800006618
+  np_lift      PP $037c96 -> floppy $037c96  424010230c350028000066000010 -> 424010236a160c3500280000660e
+  np_shot      PP $03b87a -> floppy $03b856  66000008 -> 66084880
+  nt_trainers  PP $03dcf4 -> floppy $03dcec  4eb90003853a -> 4eb900076c08
+  nt_trainers  PP $03b0a4 -> floppy $03b080  4a7900033938 -> 4eb900076c40
+  nt_trainers  PP $03792c -> floppy $03792c  303900033a20 -> 4eb900076c58
+  cr_credit    block $0779fa 64 B
+  ed_overlay   block $075740 5276 B
+  ed_overlay   block $076c76 136 B
+  ed_overlay   block $076d40 1216 B
+  ed_overlay   block $0772da 34 B
+  ed_overlay   block $077300 1696 B
+  ed_overlay   block $077a40 542 B
+  ed_overlay   block $077dc0 252 B
+  ed_overlay   block $077200 110 B
+  ni_ikbd      block $077f00 90 B
+  ni_latch     block $076d00 60 B
+  nt_trainers  block $076c00 118 B
+wrote /tmp/nlcv/x/fl_chk.st 419840 B md5 7a3b6341c59a3d53ae7506596347e35f

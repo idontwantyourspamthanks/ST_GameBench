@@ -1,0 +1,121 @@
+sub_00e406:
+00e406:  2a781008             movea.l  $1008.w, a5
+00e40a:  41f829c8             lea.l    $29c8.w, a0
+00e40e:  323c02a0             move.w   #$2a0, d1
+00e412:  343c02d8             move.w   #$2d8, d2
+00e416:  363c0310             move.w   #$310, d3
+00e41a:  383c0348             move.w   #$348, d4
+00e41e:  3a3c0380             move.w   #$380, d5
+00e422:  4841                 swap     d1
+00e424:  4842                 swap     d2
+00e426:  4843                 swap     d3
+00e428:  4844                 swap     d4
+00e42a:  4845                 swap     d5
+00e42c:  322802c0             move.w   $2c0(a0), d1
+00e430:  342802f8             move.w   $2f8(a0), d2
+00e434:  36280330             move.w   $330(a0), d3
+00e438:  38280368             move.w   $368(a0), d4
+00e43c:  3a2803a0             move.w   $3a0(a0), d5
+00e440:  ba42                 cmp.w    d2, d5
+00e442:  6d02                 blt.b    $e446
+00e444:  c545                 exg.l    d2, d5
+00e446:  b841                 cmp.w    d1, d4
+00e448:  6d02                 blt.b    $e44c
+00e44a:  c344                 exg.l    d1, d4
+00e44c:  ba43                 cmp.w    d3, d5
+00e44e:  6d02                 blt.b    $e452
+00e450:  c745                 exg.l    d3, d5
+00e452:  b842                 cmp.w    d2, d4
+00e454:  6d02                 blt.b    $e458
+00e456:  c544                 exg.l    d2, d4
+00e458:  b641                 cmp.w    d1, d3
+00e45a:  6d02                 blt.b    $e45e
+00e45c:  c343                 exg.l    d1, d3
+00e45e:  ba44                 cmp.w    d4, d5
+00e460:  6d02                 blt.b    $e464
+00e462:  c945                 exg.l    d4, d5
+00e464:  b843                 cmp.w    d3, d4
+00e466:  6d02                 blt.b    $e46a
+00e468:  c744                 exg.l    d3, d4
+00e46a:  b642                 cmp.w    d2, d3
+00e46c:  6d02                 blt.b    $e470
+00e46e:  c543                 exg.l    d2, d3
+00e470:  b441                 cmp.w    d1, d2
+00e472:  6d02                 blt.b    $e476
+00e474:  c342                 exg.l    d1, d2
+00e476:  41f83732             lea.l    $3732.w, a0
+00e47a:  48d0003e             movem.l  d1-d5, (a0)
+00e47e:  43f829c8             lea.l    $29c8.w, a1
+00e482:  45f836e8             lea.l    $36e8.w, a2
+00e486:  30383746             move.w   $3746.w, d0
+00e48a:  e748                 lsl.w    #$3, d0
+00e48c:  3200                 move.w   d0, d1
+00e48e:  e748                 lsl.w    #$3, d0
+00e490:  9041                 sub.w    d1, d0
+00e492:  064003b8             addi.w   #$3b8, d0
+00e496:  7e1f                 moveq    #$1f, d7
+00e498:  7404                 moveq    #$4, d2
+00e49a:  2218                 move.l   (a0)+, d1
+00e49c:  4a42                 tst.w    d2
+00e49e:  6b10                 bmi.b    $e4b0
+00e4a0:  b2710020             cmp.w    $20(a1, d0.w), d1
+00e4a4:  6f0a                 ble.b    $e4b0
+00e4a6:  5342                 subq.w   #$1, d2
+00e4a8:  4841                 swap     d1
+00e4aa:  34c1                 move.w   d1, (a2)+
+00e4ac:  2218                 move.l   (a0)+, d1
+00e4ae:  60ec                 bra.b    $e49c
+00e4b0:  34c0                 move.w   d0, (a2)+
+00e4b2:  06400038             addi.w   #$38, d0
+00e4b6:  0c400ab8             cmpi.w   #$ab8, d0
+00e4ba:  54cfffe0             dbcc     d7, $e49c
+00e4be:  6508                 bcs.b    $e4c8
+00e4c0:  303c03b8             move.w   #$3b8, d0
+00e4c4:  51cfffd6             dbra     d7, $e49c
+00e4c8:  4a42                 tst.w    d2
+00e4ca:  6b0a                 bmi.b    $e4d6
+00e4cc:  4841                 swap     d1
+00e4ce:  34c1                 move.w   d1, (a2)+
+00e4d0:  2218                 move.l   (a0)+, d1
+00e4d2:  51cafff8             dbra     d2, $e4cc
+00e4d6:  41f836e8             lea.l    $36e8.w, a0
+00e4da:  7e24                 moveq    #$24, d7
+00e4dc:  3f07                 move.w   d7, -(a7)
+00e4de:  4df829c8             lea.l    $29c8.w, a6
+00e4e2:  3018                 move.w   (a0)+, d0
+00e4e4:  2f08                 move.l   a0, -(a7)
+00e4e6:  0c4002a0             cmpi.w   #$2a0, d0
+00e4ea:  6712                 beq.b    $e4fe
+00e4ec:  45f60000             lea.l    (a6, d0.w), a2
+00e4f0:  610000a6             bsr.w    $e598  ; sub_00e598
+00e4f4:  205f                 movea.l  (a7)+, a0
+00e4f6:  3e1f                 move.w   (a7)+, d7
+00e4f8:  51cfffe2             dbra     d7, $e4dc
+00e4fc:  4e75                 rts      
+00e4fe:  45f83480             lea.l    $3480.w, a2
+00e502:  61000064             bsr.w    $e568  ; sub_00e568
+00e506:  45f835d0             lea.l    $35d0.w, a2
+00e50a:  6100005c             bsr.w    $e568  ; sub_00e568
+00e50e:  45f83560             lea.l    $3560.w, a2
+00e512:  082a00050004         btst.b   #$5, $4(a2)
+00e518:  6604                 bne.b    $e51e
+00e51a:  6100004c             bsr.w    $e568  ; sub_00e568
+00e51e:  45f82c68             lea.l    $2c68.w, a2
+00e522:  61000044             bsr.w    $e568  ; sub_00e568
+00e526:  45f834b8             lea.l    $34b8.w, a2
+00e52a:  6100003c             bsr.w    $e568  ; sub_00e568
+00e52e:  45f834f0             lea.l    $34f0.w, a2
+00e532:  61000034             bsr.w    $e568  ; sub_00e568
+00e536:  45f83528             lea.l    $3528.w, a2
+00e53a:  6100002c             bsr.w    $e568  ; sub_00e568
+00e53e:  45f83560             lea.l    $3560.w, a2
+00e542:  082a00050004         btst.b   #$5, $4(a2)
+00e548:  6704                 beq.b    $e54e
+00e54a:  6100001c             bsr.w    $e568  ; sub_00e568
+00e54e:  45f83640             lea.l    $3640.w, a2
+00e552:  61000014             bsr.w    $e568  ; sub_00e568
+00e556:  45f83678             lea.l    $3678.w, a2
+00e55a:  6100000c             bsr.w    $e568  ; sub_00e568
+00e55e:  45f836b0             lea.l    $36b0.w, a2
+00e562:  61000004             bsr.w    $e568  ; sub_00e568
+00e566:  608c                 bra.b    $e4f4

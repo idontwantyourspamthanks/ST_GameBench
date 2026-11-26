@@ -1,0 +1,163 @@
+Sections:
+00: "org0001:c0000" (C0000-C01B4)
+
+
+Source: "bltest.s"
+                            	     1: ; Blitter vs CPU row copy/shift cost test.  Load at $C0000, entered by jmp from the race loop ($7b74), runs with SR $27
+                            	     2: ; Each test is bracketed by labels t<n>_s / t<n>_e (breakpoints read FrameCycles there).  Source rows: SRC ($C8000, 25 
+                            	     3: SRC     equ     $C8000
+                            	     4: DST     equ     $CC000
+                            	     5: BLT     equ     $FF8A00
+                            	     6:         org     $C0000
+00:000C0000 48E7FFFE        	     7: test:   movem.l d0-d7/a0-a6,-(a7)
+00:000C0004 40E7            	     8:         move    sr,-(a7)
+00:000C0006 46FC2700        	     9:         move.w  #$2700,sr
+                            	    10:         ; fill SRC with a pattern
+00:000C000A 41FA7FF4        	    11:         lea     SRC,a0
+00:000C000E 3E3C0419        	    12:         move.w  #(168*25)/4-1,d7
+00:000C0012 203CA5C3F00F    	    13:         move.l  #$a5c3f00f,d0
+00:000C0018 20C0            	    14: .f:     move.l  d0,(a0)+
+00:000C001A E798            	    15:         rol.l   #3,d0
+00:000C001C 51CFFFFA        	    16:         dbra    d7,.f
+                            	    17:         ; ---- T0: empty loop overhead (80 rows)
+00:000C0020 7E4F            	    18: t0_s:   moveq   #79,d7
+00:000C0022 4E71            	    19: .l:     nop
+00:000C0024 51CFFFFC        	    20:         dbra    d7,.l
+00:000C0028 4E71            	    21: t0_e:   nop
+                            	    22:         ; ---- T1: CPU aligned copy 80 rows x 160 B, movem.l (13 regs: 3 x 52 + 4)
+00:000C002A 43F9000CC000    	    23: t1_s:   lea     DST,a1
+00:000C0030 7E4F            	    24:         moveq   #79,d7
+00:000C0032 41FA7FCC        	    25: .r:     lea     SRC,a0
+00:000C0036 4CD87C7F        	    26:         movem.l (a0)+,d0-d6/a2-a6       ; 48 B  (12 regs)
+00:000C003A 48D17C7F        	    27:         movem.l d0-d6/a2-a6,(a1)
+00:000C003E 4CD87C7F        	    28:         movem.l (a0)+,d0-d6/a2-a6
+00:000C0042 48E97C7F0030    	    29:         movem.l d0-d6/a2-a6,48(a1)
+00:000C0048 4CD87C7F        	    30:         movem.l (a0)+,d0-d6/a2-a6
+00:000C004C 48E97C7F0060    	    31:         movem.l d0-d6/a2-a6,96(a1)
+00:000C0052 4CD8000F        	    32:         movem.l (a0)+,d0-d3             ; 16 B
+00:000C0056 48E9000F0090    	    33:         movem.l d0-d3,144(a1)
+00:000C005C 43E900A0        	    34:         lea     160(a1),a1
+00:000C0060 51CFFFD0        	    35:         dbra    d7,.r
+00:000C0064 4E71            	    36: t1_e:   nop
+                            	    37:         ; ---- T2: CPU shifted copy, 80 rows x 160 B (80 words), shift s = row & 15 (1..15; 0 handled as copy), 32-bit 
+00:000C0066 43F9000CC000    	    38: t2_s:   lea     DST,a1
+00:000C006C 7E4F            	    39:         moveq   #79,d7
+00:000C006E 3A07            	    40: .r2:    move.w  d7,d5
+00:000C0070 CA7C000F        	    41:         and.w   #15,d5                  ; s
+00:000C0074 41FA7F8A        	    42:         lea     SRC,a0
+00:000C0078 7C03            	    43:         moveq   #3,d6                   ; 4 planes
+00:000C007A 2448            	    44: .p:     movea.l a0,a2
+00:000C007C 2649            	    45:         movea.l a1,a3
+00:000C007E 7000            	    46:         moveq   #0,d0                   ; prev word (low) in d0
+00:000C0080 7813            	    47:         moveq   #19,d4                  ; 20 groups
+00:000C0082 3212            	    48: .g:     move.w  (a2),d1                 ; cur
+00:000C0084 4840            	    49:         swap    d0                      ; [prev:xx] -> shift register [prev:cur]
+00:000C0086 3001            	    50:         move.w  d1,d0                   ; d0 = prev:cur
+00:000C0088 EAA8            	    51:         lsr.l   d5,d0                   ; low word = out
+00:000C008A 3680            	    52:         move.w  d0,(a3)
+00:000C008C 4840            	    53:         swap    d0
+00:000C008E 3001            	    54:         move.w  d1,d0                   ; keep cur as next prev (low word)  (d0 = x:cur)
+00:000C0090 508A            	    55:         lea     8(a2),a2
+00:000C0092 508B            	    56:         lea     8(a3),a3
+00:000C0094 51CCFFEC        	    57:         dbra    d4,.g
+00:000C0098 5488            	    58:         addq.l  #2,a0
+00:000C009A 5489            	    59:         addq.l  #2,a1
+00:000C009C 51CEFFDC        	    60:         dbra    d6,.p
+00:000C00A0 43E90098        	    61:         lea     160-8(a1),a1
+00:000C00A4 51CFFFC8        	    62:         dbra    d7,.r2
+00:000C00A8 4E71            	    63: t2_e:   nop
+                            	    64:         ; ---- T3: blitter aligned copy (HOG), 80 rows, one blit per row: 4 plane-lines x 20 words
+00:000C00AA 45F900FF8A00    	    65:         lea     BLT,a2
+00:000C00B0 357C00080020    	    66:         move.w  #8,$20(a2)              ; src xinc
+00:000C00B6 357CFF6A0022    	    67:         move.w  #-150,$22(a2)           ; src yinc (xcount 20: back to +2)
+00:000C00BC 357CFFFF0028    	    68:         move.w  #$ffff,$28(a2)
+00:000C00C2 357CFFFF002A    	    69:         move.w  #$ffff,$2a(a2)
+00:000C00C8 357CFFFF002C    	    70:         move.w  #$ffff,$2c(a2)
+00:000C00CE 357C0008002E    	    71:         move.w  #8,$2e(a2)              ; dst xinc
+00:000C00D4 357CFF6A0030    	    72:         move.w  #-150,$30(a2)           ; dst yinc
+00:000C00DA 357C00140036    	    73:         move.w  #20,$36(a2)             ; xcount
+00:000C00E0 357C0203003A    	    74:         move.w  #$0203,$3a(a2)          ; HOP 2 (source), OP 3 (S)
+00:000C00E6 43F9000CC000    	    75: t3_s:   lea     DST,a1
+00:000C00EC 41FA7F12        	    76:         lea     SRC,a0
+00:000C00F0 7E4F            	    77:         moveq   #79,d7
+00:000C00F2 25480024        	    78: .r3:    move.l  a0,$24(a2)              ; src addr
+00:000C00F6 25490032        	    79:         move.l  a1,$32(a2)              ; dst addr
+00:000C00FA 357C00040038    	    80:         move.w  #4,$38(a2)              ; ycount = 4 planes
+00:000C0100 157C0000003D    	    81:         move.b  #0,$3d(a2)              ; skew 0
+00:000C0106 157C00C0003C    	    82:         move.b  #$c0,$3c(a2)            ; go, HOG
+00:000C010C 43E900A0        	    83:         lea     160(a1),a1
+00:000C0110 51CFFFE0        	    84:         dbra    d7,.r3
+00:000C0114 4E71            	    85: t3_e:   nop
+                            	    86:         ; ---- T4: blitter shifted copy: skew s = row & 15, FXSR set, xcount 21 (extra word)
+00:000C0116 357CFF620022    	    87:         move.w  #-158,$22(a2)           ; xcount 21: yinc = 2 - 20*8
+00:000C011C 357CFF620030    	    88:         move.w  #-158,$30(a2)
+00:000C0122 357C00150036    	    89:         move.w  #21,$36(a2)
+00:000C0128 43F9000CC000    	    90: t4_s:   lea     DST,a1
+00:000C012E 41FA7ED0        	    91:         lea     SRC,a0
+00:000C0132 7E4F            	    92:         moveq   #79,d7
+00:000C0134 3007            	    93: .r4:    move.w  d7,d0
+00:000C0136 C07C000F        	    94:         and.w   #15,d0
+00:000C013A 807C0040        	    95:         or.w    #$40,d0                 ; FXSR
+00:000C013E 25480024        	    96:         move.l  a0,$24(a2)
+00:000C0142 25490032        	    97:         move.l  a1,$32(a2)
+00:000C0146 357C00040038    	    98:         move.w  #4,$38(a2)
+00:000C014C 1540003D        	    99:         move.b  d0,$3d(a2)
+00:000C0150 157C00C0003C    	   100:         move.b  #$c0,$3c(a2)
+00:000C0156 43E900A0        	   101:         lea     160(a1),a1
+00:000C015A 51CFFFD8        	   102:         dbra    d7,.r4
+00:000C015E 4E71            	   103: t4_e:   nop
+                            	   104:         ; ---- T5: blitter, one blit for the whole 80 rows (ycount 320): pure data-move cost, aligned
+00:000C0160 357CFF6A0022    	   105:         move.w  #-150,$22(a2)
+00:000C0166 357CFF6A0030    	   106:         move.w  #-150,$30(a2)
+00:000C016C 357C00140036    	   107:         move.w  #20,$36(a2)
+00:000C0172 43F9000CC000    	   108: t5_s:   lea     DST,a1
+00:000C0178 41FA7E86        	   109:         lea     SRC,a0
+00:000C017C 25480024        	   110:         move.l  a0,$24(a2)
+00:000C0180 25490032        	   111:         move.l  a1,$32(a2)
+00:000C0184 357C01400038    	   112:         move.w  #320,$38(a2)
+00:000C018A 157C0000003D    	   113:         move.b  #0,$3d(a2)
+00:000C0190 157C00C0003C    	   114:         move.b  #$c0,$3c(a2)
+00:000C0196 4E71            	   115: t5_e:   nop
+00:000C0198 33FC4A4A000C4000	   116:         move.w  #$4a4a,$C4000           ; marker
+00:000C01A0 33FC4E4F000C4002	   117:         move.w  #$4e4f,$C4002
+00:000C01A8 46DF            	   118:         move    (a7)+,sr
+00:000C01AA 4CDF7FFF        	   119:         movem.l (a7)+,d0-d7/a0-a6
+00:000C01AE 4EF90000D1E4    	   120:         jmp     $d1e4.l
+                            	   121: 
+
+
+Symbols by name:
+BLT                              E:00FF8A00
+DST                              E:000CC000
+SRC                              E:000C8000
+t0_e                             A:000C0028
+t0_s                             A:000C0020
+t1_e                             A:000C0064
+t1_s                             A:000C002A
+t2_e                             A:000C00A8
+t2_s                             A:000C0066
+t3_e                             A:000C0114
+t3_s                             A:000C00E6
+t4_e                             A:000C015E
+t4_s                             A:000C0128
+t5_e                             A:000C0196
+t5_s                             A:000C0172
+test                             A:000C0000
+
+Symbols by value:
+000C0000 test
+000C0020 t0_s
+000C0028 t0_e
+000C002A t1_s
+000C0064 t1_e
+000C0066 t2_s
+000C00A8 t2_e
+000C00E6 t3_s
+000C0114 t3_e
+000C0128 t4_s
+000C015E t4_e
+000C0172 t5_s
+000C0196 t5_e
+000C8000 SRC
+000CC000 DST
+00FF8A00 BLT

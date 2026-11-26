@@ -1,0 +1,98 @@
+sub_012392:
+012392:  0c400000             cmpi.w   #$0, d0
+012396:  6e02                 bgt.b    $1239a
+012398:  4e75                 rts      
+01239a:  0c400140             cmpi.w   #$140, d0
+01239e:  6d02                 blt.b    $123a2
+0123a0:  4e75                 rts      
+0123a2:  3641                 movea.w  d1, a3
+0123a4:  3a01                 move.w   d1, d5
+0123a6:  d241                 add.w    d1, d1
+0123a8:  d241                 add.w    d1, d1
+0123aa:  d245                 add.w    d5, d1
+0123ac:  eb49                 lsl.w    #$5, d1
+0123ae:  7af0                 moveq    #$f0, d5
+0123b0:  ca40                 and.w    d0, d5
+0123b2:  e245                 asr.w    #$1, d5
+0123b4:  da41                 add.w    d1, d5
+0123b6:  320b                 move.w   a3, d1
+0123b8:  47f55000             lea.l    (a5, d5.w), a3
+0123bc:  33c50000100c         move.w   d5, $100c.l
+0123c2:  4a47                 tst.w    d7
+0123c4:  6e02                 bgt.b    $123c8
+0123c6:  4e75                 rts      
+0123c8:  0642000f             addi.w   #$f, d2
+0123cc:  0242fff0             andi.w   #$fff0, d2
+0123d0:  6006                 bra.b    $123d8
+
+sub_0123d2:
+0123d2:  7420                 moveq    #$20, d2
+0123d4:  6002                 bra.b    $123d8
+0123d6:  7430                 moveq    #$30, d2
+0123d8:  e84a                 lsr.w    #$4, d2
+0123da:  3a02                 move.w   d2, d5
+0123dc:  5347                 subq.w   #$1, d7
+0123de:  08060000             btst.b   #$0, d6
+0123e2:  56c1                 sne.b    d1
+0123e4:  4881                 ext.w    d1
+0123e6:  08060001             btst.b   #$1, d6
+0123ea:  56c2                 sne.b    d2
+0123ec:  4882                 ext.w    d2
+0123ee:  08060002             btst.b   #$2, d6
+0123f2:  56c3                 sne.b    d3
+0123f4:  4883                 ext.w    d3
+0123f6:  08060003             btst.b   #$3, d6
+0123fa:  56c4                 sne.b    d4
+0123fc:  4884                 ext.w    d4
+0123fe:  5345                 subq.w   #$1, d5
+012400:  3245                 movea.w  d5, a1
+012402:  204b                 movea.l  a3, a0
+012404:  3a09                 move.w   a1, d5
+012406:  4890001e             movem.w  d1-d4, (a0)
+01240a:  5088                 addq.l   #$8, a0
+01240c:  51cdfff8             dbra     d5, $12406
+012410:  47eb00a0             lea.l    $a0(a3), a3
+012414:  51cfffec             dbra     d7, $12402
+012418:  4e75                 rts      
+01241a:  0245fff0             andi.w   #$fff0, d5
+01241e:  b045                 cmp.w    d5, d0
+012420:  6e02                 bgt.b    $12424
+012422:  4e75                 rts      
+012424:  0c400140             cmpi.w   #$140, d0
+012428:  6d02                 blt.b    $1242c  ; sub_01242c
+01242a:  4e75                 rts      
+
+sub_01242c:
+01242c:  3641                 movea.w  d1, a3
+01242e:  3401                 move.w   d1, d2
+012430:  d241                 add.w    d1, d1
+012432:  d241                 add.w    d1, d1
+012434:  d242                 add.w    d2, d1
+012436:  eb49                 lsl.w    #$5, d1
+012438:  74f0                 moveq    #$f0, d2
+01243a:  c440                 and.w    d0, d2
+01243c:  e242                 asr.w    #$1, d2
+01243e:  d441                 add.w    d1, d2
+012440:  320b                 move.w   a3, d1
+012442:  47f52000             lea.l    (a5, d2.w), a3
+012446:  33c20000100c         move.w   d2, $100c.l
+01244c:  e44a                 lsr.w    #$2, d2
+01244e:  0242fffe             andi.w   #$fffe, d2
+012452:  49f62000             lea.l    (a6, d2.w), a4
+012456:  4a47                 tst.w    d7
+012458:  6e02                 bgt.b    $1245c
+01245a:  4e75                 rts      
+01245c:  e84d                 lsr.w    #$4, d5
+01245e:  5347                 subq.w   #$1, d7
+012460:  5345                 subq.w   #$1, d5
+012462:  3245                 movea.w  d5, a1
+012464:  08060000             btst.b   #$0, d6
+012468:  56c1                 sne.b    d1
+01246a:  4881                 ext.w    d1
+01246c:  08060001             btst.b   #$1, d6
+012470:  56c2                 sne.b    d2
+012472:  4882                 ext.w    d2
+012474:  08060002             btst.b   #$2, d6
+012478:  56c3                 sne.b    d3
+01247a:  4883                 ext.w    d3
+01247c:  08060003             btst.b   #$3, d6

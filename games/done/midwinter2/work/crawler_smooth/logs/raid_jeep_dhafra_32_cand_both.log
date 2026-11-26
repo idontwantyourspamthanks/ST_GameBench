@@ -1,0 +1,2939 @@
+> e VBL
+= %100101101000101100 (bin), #154156 (dec), $25a2c (hex)
+> b pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $26e98
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-zksjyz82/hit.txt' file on hit.
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101001010110 (bin), #154198 (dec), $25a56 (hex)
+> m $66e6 8
+000066E6: 00 00 66 f0 00 00 63 92                          ..f≡..cÆ
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 06 48 00 00 00 04 00 00 00 01 00 00 00 00  ...H............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff 92 00 71                                .q¯Æ.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 12                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 2 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101001011001 (bin), #154201 (dec), $25a59 (hex)
+> m $66e6 8
+000066E6: 00 00 66 f8 00 00 63 90                          ..f°..cÉ
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 06 60 00 00 00 01 00 01 00 00 00 00 00 00  ...`............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 00                                      ....
+> m $34936 6
+00034936: 00 71 ff 9a 00 71                                .q¯Ü.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 11                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 3 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101001011011 (bin), #154203 (dec), $25a5b (hex)
+> m $66e6 8
+000066E6: 00 00 66 fb 00 00 63 90                          ..f√..cÉ
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 06 6c 00 00 00 02 00 00 00 01 00 00 00 00  ...l............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff 9a 00 71                                .q¯Ü.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 11                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+> b VBL > 154356 :trace :once
+CPU condition breakpoint 2 with 1 condition(s) added:
+	VBL > 154356
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+1. CPU breakpoint condition(s) matched 4 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101001011110 (bin), #154206 (dec), $25a5e (hex)
+> m $66e6 8
+000066E6: 00 00 66 ff 00 00 63 8f                          ..f¯..cÅ
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 06 7e 00 06 00 03 00 00 00 01 00 00 00 00  ...~............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff 9a 00 71                                .q¯Ü.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 12                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 5 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101001100000 (bin), #154208 (dec), $25a60 (hex)
+> m $66e6 8
+000066E6: 00 00 67 02 00 00 63 8e                          ..g...cÄ
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 06 8a 00 06 00 04 00 00 00 01 00 00 00 00  ...è............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff 9a 00 71                                .q¯Ü.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 12                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 6 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101001100011 (bin), #154211 (dec), $25a63 (hex)
+> m $66e6 8
+000066E6: 00 00 67 06 00 00 63 8d                          ..g...cì
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 06 96 00 06 00 05 00 00 00 01 00 00 00 00  ...û............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff 9a 00 71                                .q¯Ü.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 0c                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 7 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101001100101 (bin), #154213 (dec), $25a65 (hex)
+> m $66e6 8
+000066E6: 00 00 67 0a 00 00 63 8c                          ..g...cî
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 06 a8 00 0c 00 01 00 01 00 00 00 00 00 00  ...¿............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 00                                      ....
+> m $34936 6
+00034936: 00 71 ff a7 00 71                                .q¯º.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 11                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 8 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101001101000 (bin), #154216 (dec), $25a68 (hex)
+> m $66e6 8
+000066E6: 00 00 67 11 00 00 63 8b                          ..g...cï
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 06 b4 00 00 00 03 00 00 00 01 00 00 00 00  ...œ............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff a7 00 71                                .q¯º.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 11                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 9 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101001101010 (bin), #154218 (dec), $25a6a (hex)
+> m $66e6 8
+000066E6: 00 00 67 14 00 00 63 8a                          ..g...cè
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 06 c6 00 06 00 04 00 00 00 01 00 00 00 00  ...ה............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff a7 00 71                                .q¯º.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 12                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 10 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101001101101 (bin), #154221 (dec), $25a6d (hex)
+> m $66e6 8
+000066E6: 00 00 67 1c 00 00 63 88                          ..g...cê
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 06 d8 00 00 00 01 00 01 00 00 00 00 00 00  ...ן............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 00                                      ....
+> m $34936 6
+00034936: 00 71 ff b7 00 71                                .q¯Ã.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 11                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 11 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101001101111 (bin), #154223 (dec), $25a6f (hex)
+> m $66e6 8
+000066E6: 00 00 67 1f 00 00 63 88                          ..g...cê
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 06 e4 00 00 00 02 00 00 00 01 00 00 00 00  ...Σ............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff b7 00 71                                .q¯Ã.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 11                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 12 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101001110010 (bin), #154226 (dec), $25a72 (hex)
+> m $66e6 8
+000066E6: 00 00 67 23 00 00 63 87                          ..g#..cç
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 06 f0 00 00 00 03 00 00 00 01 00 00 00 00  ...≡............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff b7 00 71                                .q¯Ã.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 0c                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 13 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101001110100 (bin), #154228 (dec), $25a74 (hex)
+> m $66e6 8
+000066E6: 00 00 67 26 00 00 63 86                          ..g&..cå
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 07 02 00 06 00 04 00 00 00 01 00 00 00 00  ................
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff b7 00 71                                .q¯Ã.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 12                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 14 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101001110111 (bin), #154231 (dec), $25a77 (hex)
+> m $66e6 8
+000066E6: 00 00 67 2e 00 00 63 84                          ..g...cä
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 07 14 00 00 00 01 00 01 00 00 00 00 00 00  ................
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 00                                      ....
+> m $34936 6
+00034936: 00 71 ff c8 00 71                                .q¯ז.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 11                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 15 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101001111001 (bin), #154233 (dec), $25a79 (hex)
+> m $66e6 8
+000066E6: 00 00 67 31 00 00 63 84                          ..g1..cä
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 07 20 00 00 00 02 00 00 00 01 00 00 00 00  ... ............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff c8 00 71                                .q¯ז.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 11                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 16 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101001111100 (bin), #154236 (dec), $25a7c (hex)
+> m $66e6 8
+000066E6: 00 00 67 35 00 00 63 83                          ..g5..câ
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 07 2c 00 00 00 03 00 00 00 01 00 00 00 00  ...,............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff c8 00 71                                .q¯ז.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 0c                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 17 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101001111110 (bin), #154238 (dec), $25a7e (hex)
+> m $66e6 8
+000066E6: 00 00 67 38 00 00 63 82                          ..g8..cé
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 07 3e 00 06 00 04 00 00 00 01 00 00 00 00  ...>............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff c8 00 71                                .q¯ז.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 12                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 18 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101010000001 (bin), #154241 (dec), $25a81 (hex)
+> m $66e6 8
+000066E6: 00 00 67 40 00 00 63 80                          ..g@..cÇ
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 07 50 00 00 00 01 00 01 00 00 00 00 00 00  ...P............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 00                                      ....
+> m $34936 6
+00034936: 00 71 ff d7 00 71                                .q¯ת.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 11                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 19 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101010000011 (bin), #154243 (dec), $25a83 (hex)
+> m $66e6 8
+000066E6: 00 00 67 43 00 00 63 80                          ..gC..cÇ
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 07 5c 00 00 00 02 00 00 00 01 00 00 00 00  ...\............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff d7 00 71                                .q¯ת.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 11                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 20 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101010000110 (bin), #154246 (dec), $25a86 (hex)
+> m $66e6 8
+000066E6: 00 00 67 47 00 00 63 7f                          ..gG..c.
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 07 68 00 00 00 03 00 00 00 01 00 00 00 00  ...h............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff d7 00 71                                .q¯ת.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 0c                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 21 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101010001000 (bin), #154248 (dec), $25a88 (hex)
+> m $66e6 8
+000066E6: 00 00 67 4a 00 00 63 7e                          ..gJ..c~
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 07 7a 00 06 00 04 00 00 00 01 00 00 00 00  ...z............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff d7 00 71                                .q¯ת.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 12                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 22 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101010001011 (bin), #154251 (dec), $25a8b (hex)
+> m $66e6 8
+000066E6: 00 00 67 52 00 00 63 7c                          ..gR..c|
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 07 8c 00 00 00 01 00 01 00 00 00 00 00 00  ...î............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 00                                      ....
+> m $34936 6
+00034936: 00 71 ff e1 00 71                                .q¯β.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 11                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 23 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101010001101 (bin), #154253 (dec), $25a8d (hex)
+> m $66e6 8
+000066E6: 00 00 67 55 00 00 63 7c                          ..gU..c|
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 07 98 00 00 00 02 00 00 00 01 00 00 00 00  ...ÿ............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff e1 00 71                                .q¯β.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 11                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 24 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101010010000 (bin), #154256 (dec), $25a90 (hex)
+> m $66e6 8
+000066E6: 00 00 67 59 00 00 63 7b                          ..gY..c{
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 07 a4 00 00 00 03 00 00 00 01 00 00 00 00  ...ñ............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff e1 00 71                                .q¯β.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 0c                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 25 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101010010010 (bin), #154258 (dec), $25a92 (hex)
+> m $66e6 8
+000066E6: 00 00 67 5c 00 00 63 7a                          ..g\..cz
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 07 b6 00 06 00 04 00 00 00 01 00 00 00 00  ...À............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff e1 00 71                                .q¯β.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 12                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 26 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101010010101 (bin), #154261 (dec), $25a95 (hex)
+> m $66e6 8
+000066E6: 00 00 67 64 00 00 63 78                          ..gd..cx
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 07 c8 00 00 00 01 00 01 00 00 00 00 00 00  ...ז............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 00                                      ....
+> m $34936 6
+00034936: 00 71 ff e6 00 71                                .q¯µ.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 11                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 27 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101010010111 (bin), #154263 (dec), $25a97 (hex)
+> m $66e6 8
+000066E6: 00 00 67 67 00 00 63 78                          ..gg..cx
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 07 d4 00 00 00 02 00 00 00 01 00 00 00 00  ...ק............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff e6 00 71                                .q¯µ.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 11                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 28 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101010011010 (bin), #154266 (dec), $25a9a (hex)
+> m $66e6 8
+000066E6: 00 00 67 6b 00 00 63 77                          ..gk..cw
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 07 e0 00 00 00 03 00 00 00 01 00 00 00 00  ...α............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff e6 00 71                                .q¯µ.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 0c                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 29 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101010011100 (bin), #154268 (dec), $25a9c (hex)
+> m $66e6 8
+000066E6: 00 00 67 6e 00 00 63 76                          ..gn..cv
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 07 f2 00 06 00 04 00 00 00 01 00 00 00 00  ...≥............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff e6 00 71                                .q¯µ.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 12                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 30 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101010011111 (bin), #154271 (dec), $25a9f (hex)
+> m $66e6 8
+000066E6: 00 00 67 76 00 00 63 74                          ..gv..ct
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 08 04 00 00 00 01 00 01 00 00 00 00 00 00  ................
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 00                                      ....
+> m $34936 6
+00034936: 00 71 ff e4 00 71                                .q¯Σ.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 11                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 31 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101010100001 (bin), #154273 (dec), $25aa1 (hex)
+> m $66e6 8
+000066E6: 00 00 67 79 00 00 63 74                          ..gy..ct
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 08 10 00 00 00 02 00 00 00 01 00 00 00 00  ................
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff e4 00 71                                .q¯Σ.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 11                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 32 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101010100100 (bin), #154276 (dec), $25aa4 (hex)
+> m $66e6 8
+000066E6: 00 00 67 7d 00 00 63 73                          ..g}..cs
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 08 1c 00 00 00 03 00 00 00 01 00 00 00 00  ................
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff e4 00 71                                .q¯Σ.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 0c                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 33 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101010100110 (bin), #154278 (dec), $25aa6 (hex)
+> m $66e6 8
+000066E6: 00 00 67 80 00 00 63 72                          ..gÇ..cr
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 08 2e 00 06 00 04 00 00 00 01 00 00 00 00  ................
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff e4 00 71                                .q¯Σ.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 12                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 34 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101010101001 (bin), #154281 (dec), $25aa9 (hex)
+> m $66e6 8
+000066E6: 00 00 67 88 00 00 63 70                          ..gê..cp
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 08 40 00 00 00 01 00 01 00 00 00 00 00 00  ...@............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 00                                      ....
+> m $34936 6
+00034936: 00 71 ff dc 00 71                                .q¯ץ.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 11                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 35 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101010101011 (bin), #154283 (dec), $25aab (hex)
+> m $66e6 8
+000066E6: 00 00 67 8b 00 00 63 70                          ..gï..cp
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 08 4c 00 00 00 02 00 00 00 01 00 00 00 00  ...L............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff dc 00 71                                .q¯ץ.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 11                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 36 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101010101110 (bin), #154286 (dec), $25aae (hex)
+> m $66e6 8
+000066E6: 00 00 67 8f 00 00 63 6f                          ..gÅ..co
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 08 58 00 00 00 03 00 00 00 01 00 00 00 00  ...X............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff dc 00 71                                .q¯ץ.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 0c                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 37 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101010110000 (bin), #154288 (dec), $25ab0 (hex)
+> m $66e6 8
+000066E6: 00 00 67 92 00 00 63 6e                          ..gÆ..cn
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 08 6a 00 06 00 04 00 00 00 01 00 00 00 00  ...j............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff dc 00 71                                .q¯ץ.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 12                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 38 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101010110011 (bin), #154291 (dec), $25ab3 (hex)
+> m $66e6 8
+000066E6: 00 00 67 9a 00 00 63 6c                          ..gÜ..cl
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 08 7c 00 00 00 01 00 01 00 00 00 00 00 00  ...|............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 00                                      ....
+> m $34936 6
+00034936: 00 71 ff d0 00 71                                .q¯ס.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 11                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 39 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101010110101 (bin), #154293 (dec), $25ab5 (hex)
+> m $66e6 8
+000066E6: 00 00 67 9d 00 00 63 6c                          ..g¥..cl
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 08 88 00 00 00 02 00 00 00 01 00 00 00 00  ...ê............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff d0 00 71                                .q¯ס.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 11                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 40 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101010111000 (bin), #154296 (dec), $25ab8 (hex)
+> m $66e6 8
+000066E6: 00 00 67 a1 00 00 63 6b                          ..gí..ck
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 08 94 00 00 00 03 00 00 00 01 00 00 00 00  ...ö............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff d0 00 71                                .q¯ס.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 0c                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 41 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101010111010 (bin), #154298 (dec), $25aba (hex)
+> m $66e6 8
+000066E6: 00 00 67 a4 00 00 63 6a                          ..gñ..cj
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 08 a6 00 06 00 04 00 00 00 01 00 00 00 00  ...ª............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff d0 00 71                                .q¯ס.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 12                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 42 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101010111101 (bin), #154301 (dec), $25abd (hex)
+> m $66e6 8
+000066E6: 00 00 67 ac 00 00 63 68                          ..g¼..ch
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 08 b8 00 00 00 01 00 01 00 00 00 00 00 00  ...Õ............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 00                                      ....
+> m $34936 6
+00034936: 00 71 ff c2 00 71                                .q¯א.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 11                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 43 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101010111111 (bin), #154303 (dec), $25abf (hex)
+> m $66e6 8
+000066E6: 00 00 67 af 00 00 63 68                          ..g»..ch
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 08 c4 00 00 00 02 00 00 00 01 00 00 00 00  ...ג............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff c2 00 71                                .q¯א.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 11                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 44 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101011000001 (bin), #154305 (dec), $25ac1 (hex)
+> m $66e6 8
+000066E6: 00 00 67 b3 00 00 63 67                          ..gø..cg
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 08 d0 00 00 00 03 00 00 00 01 00 00 00 00  ...ס............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff c2 00 71                                .q¯א.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 0c                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 45 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101011000100 (bin), #154308 (dec), $25ac4 (hex)
+> m $66e6 8
+000066E6: 00 00 67 b6 00 00 63 66                          ..gÀ..cf
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 08 dc 00 00 00 04 00 00 00 01 00 00 00 00  ...ץ............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff c2 00 71                                .q¯א.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 0c                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 46 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101011000111 (bin), #154311 (dec), $25ac7 (hex)
+> m $66e6 8
+000066E6: 00 00 67 be 00 00 63 64                          ..g®..cd
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 08 f4 00 00 00 01 00 01 00 00 00 00 00 00  ...⌠............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 00                                      ....
+> m $34936 6
+00034936: 00 71 ff b4 00 71                                .q¯œ.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 11                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 47 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101011001001 (bin), #154313 (dec), $25ac9 (hex)
+> m $66e6 8
+000066E6: 00 00 67 c1 00 00 63 64                          ..gĲ..cd
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 09 00 00 00 00 02 00 00 00 01 00 00 00 00  ................
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff b4 00 71                                .q¯œ.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 11                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 48 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101011001011 (bin), #154315 (dec), $25acb (hex)
+> m $66e6 8
+000066E6: 00 00 67 c5 00 00 63 63                          ..gד..cc
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 09 0c 00 00 00 03 00 00 00 01 00 00 00 00  ................
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff b4 00 71                                .q¯œ.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 12                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 49 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101011001110 (bin), #154318 (dec), $25ace (hex)
+> m $66e6 8
+000066E6: 00 00 67 c8 00 00 63 62                          ..gז..cb
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 09 18 00 00 00 04 00 00 00 01 00 00 00 00  ................
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff b4 00 71                                .q¯œ.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 0c                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 50 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101011010001 (bin), #154321 (dec), $25ad1 (hex)
+> m $66e6 8
+000066E6: 00 00 67 d0 00 00 63 60                          ..gס..c`
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 09 30 00 00 00 01 00 01 00 00 00 00 00 00  ...0............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 00                                      ....
+> m $34936 6
+00034936: 00 71 ff a8 00 71                                .q¯¿.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 11                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 51 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101011010011 (bin), #154323 (dec), $25ad3 (hex)
+> m $66e6 8
+000066E6: 00 00 67 d3 00 00 63 60                          ..gצ..c`
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 09 3c 00 00 00 02 00 00 00 01 00 00 00 00  ...<............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff a8 00 71                                .q¯¿.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 11                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 52 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101011010101 (bin), #154325 (dec), $25ad5 (hex)
+> m $66e6 8
+000066E6: 00 00 67 d7 00 00 63 5f                          ..gת..c_
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 09 48 00 00 00 03 00 00 00 01 00 00 00 00  ...H............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff a8 00 71                                .q¯¿.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 12                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 53 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101011010111 (bin), #154327 (dec), $25ad7 (hex)
+> m $66e6 8
+000066E6: 00 00 67 da 00 00 63 5e                          ..gם..c^
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 09 54 00 00 00 04 00 00 00 01 00 00 00 00  ...T............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff a8 00 71                                .q¯¿.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 0c                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 54 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101011011010 (bin), #154330 (dec), $25ada (hex)
+> m $66e6 8
+000066E6: 00 00 67 de 00 00 63 5d                          ..g∧..c]
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 09 60 00 00 00 05 00 00 00 01 00 00 00 00  ...`............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff a8 00 71                                .q¯¿.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 0c                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 55 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101011011100 (bin), #154332 (dec), $25adc (hex)
+> m $66e6 8
+000066E6: 00 00 67 e2 00 00 63 5c                          ..gΓ..c\
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 09 72 00 06 00 01 00 01 00 00 00 00 00 00  ...r............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 00                                      ....
+> m $34936 6
+00034936: 00 71 ff a1 00 71                                .q¯í.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 11                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 56 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101011011110 (bin), #154334 (dec), $25ade (hex)
+> m $66e6 8
+000066E6: 00 00 67 e5 00 00 63 5c                          ..gσ..c\
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 09 7e 00 06 00 02 00 00 00 01 00 00 00 00  ...~............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff a1 00 71                                .q¯í.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 11                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 57 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101011100000 (bin), #154336 (dec), $25ae0 (hex)
+> m $66e6 8
+000066E6: 00 00 67 e9 00 00 63 5b                          ..gΘ..c[
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 09 8a 00 06 00 03 00 00 00 01 00 00 00 00  ...è............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff a1 00 71                                .q¯í.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 12                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 58 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101011100010 (bin), #154338 (dec), $25ae2 (hex)
+> m $66e6 8
+000066E6: 00 00 67 ec 00 00 63 5a                          ..g∮..cZ
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 09 96 00 06 00 04 00 00 00 01 00 00 00 00  ...û............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff a1 00 71                                .q¯í.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 0c                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 59 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101011100101 (bin), #154341 (dec), $25ae5 (hex)
+> m $66e6 8
+000066E6: 00 00 67 f0 00 00 63 59                          ..g≡..cY
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 09 a2 00 06 00 05 00 00 00 01 00 00 00 00  ...ó............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff a1 00 71                                .q¯í.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 0c                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 60 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101011100111 (bin), #154343 (dec), $25ae7 (hex)
+> m $66e6 8
+000066E6: 00 00 67 f4 00 00 63 58                          ..g⌠..cX
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 09 b4 00 0c 00 01 00 01 00 00 00 00 00 00  ...œ............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 00                                      ....
+> m $34936 6
+00034936: 00 71 ff 9f 00 71                                .q¯ƒ.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 11                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 61 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101011101001 (bin), #154345 (dec), $25ae9 (hex)
+> m $66e6 8
+000066E6: 00 00 67 fb 00 00 63 57                          ..g√..cW
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 09 c0 00 00 00 03 00 00 00 01 00 00 00 00  ...ĳ............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff 9f 00 71                                .q¯ƒ.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 11                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 62 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101011101011 (bin), #154347 (dec), $25aeb (hex)
+> m $66e6 8
+000066E6: 00 00 67 fe 00 00 63 56                          ..g³..cV
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 09 cc 00 00 00 04 00 00 00 01 00 00 00 00  ...כ............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff 9f 00 71                                .q¯ƒ.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 12                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 63 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101011101101 (bin), #154349 (dec), $25aed (hex)
+> m $66e6 8
+000066E6: 00 00 68 02 00 00 63 55                          ..h...cU
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b7                                            .Ã
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 09 d8 00 00 00 05 00 00 00 01 00 00 00 00  ...ן............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 71 ff 9f 00 71                                .q¯ƒ.q
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 0c                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 64 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101011101111 (bin), #154351 (dec), $25aef (hex)
+> m $66e6 8
+000066E6: 00 00 68 06 00 00 63 54                          ..h...cT
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b9                                            .¨
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 09 e4 00 00 00 01 00 01 00 00 00 00 00 00  ...Σ............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 00                                      ....
+> m $34936 6
+00034936: 00 73 ff a2 00 73                                .s¯ó.s
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 0b                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 65 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101011110001 (bin), #154353 (dec), $25af1 (hex)
+> m $66e6 8
+000066E6: 00 00 68 09 00 00 63 54                          ..h...cT
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b9                                            .¨
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 09 f0 00 00 00 02 00 00 00 01 00 00 00 00  ...≡............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 73 ff a2 00 73                                .s¯ó.s
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 0b                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 66 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101011110100 (bin), #154356 (dec), $25af4 (hex)
+> m $66e6 8
+000066E6: 00 00 68 0d 00 00 63 53                          ..h...cS
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 b9                                            .¨
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 09 fc 00 00 00 03 00 00 00 01 00 00 00 00  ...ⁿ............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 73 ff a2 00 73                                .s¯ó.s
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 0c                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+2. CPU breakpoint condition(s) matched 1 times.
+	VBL > 154356 :once :trace
+Removed CPU breakpoint 2:
+	VBL > 154356 :once :trace
+1. CPU breakpoint condition(s) matched 67 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101011110110 (bin), #154358 (dec), $25af6 (hex)
+> m $66e6 8
+000066E6: 00 00 68 10 00 00 63 52                          ..h...cR
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 ba                                            .´
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 0a 0e 00 06 00 04 00 00 00 01 00 00 00 00  ................
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 73 ff a2 00 73                                .s¯ó.s
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 12                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 68 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101011111001 (bin), #154361 (dec), $25af9 (hex)
+> m $66e6 8
+000066E6: 00 00 68 18 00 00 63 50                          ..h...cP
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 bc                                            .¶
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 0a 20 00 00 00 01 00 01 00 00 00 00 00 00  ... ............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 00                                      ....
+> m $34936 6
+00034936: 00 76 ff a6 00 76                                .v¯ª.v
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 11                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 69 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101011111011 (bin), #154363 (dec), $25afb (hex)
+> m $66e6 8
+000066E6: 00 00 68 1b 00 00 63 50                          ..h...cP
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 bc                                            .¶
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 0a 2c 00 00 00 02 00 00 00 01 00 00 00 00  ...,............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 76 ff a6 00 76                                .v¯ª.v
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 11                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 70 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101011111101 (bin), #154365 (dec), $25afd (hex)
+> m $66e6 8
+000066E6: 00 00 68 1f 00 00 63 4f                          ..h...cO
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 bd                                            .©
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 0a 38 00 00 00 03 00 00 00 01 00 00 00 00  ...8............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 76 ff a6 00 76                                .v¯ª.v
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 0c                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 71 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101011111111 (bin), #154367 (dec), $25aff (hex)
+> m $66e6 8
+000066E6: 00 00 68 22 00 00 63 4e                          ..h"..cN
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 bd                                            .©
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 0a 44 00 00 00 04 00 00 00 01 00 00 00 00  ...D............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 76 ff a6 00 76                                .v¯ª.v
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 0c                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 72 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101100000010 (bin), #154370 (dec), $25b02 (hex)
+> m $66e6 8
+000066E6: 00 00 68 26 00 00 63 4d                          ..h&..cM
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 be                                            .®
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 0a 50 00 00 00 05 00 00 00 01 00 00 00 00  ...P............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 76 ff a6 00 76                                .v¯ª.v
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 0c                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 73 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101100000100 (bin), #154372 (dec), $25b04 (hex)
+> m $66e6 8
+000066E6: 00 00 68 2a 00 00 63 4c                          ..h*..cL
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 c0                                            .ĳ
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 0a 62 00 06 00 01 00 01 00 00 00 00 00 00  ...b............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 00                                      ....
+> m $34936 6
+00034936: 00 7a ff ae 00 7a                                .z¯«.z
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 11                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 74 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101100000110 (bin), #154374 (dec), $25b06 (hex)
+> m $66e6 8
+000066E6: 00 00 68 2d 00 00 63 4c                          ..h-..cL
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 c0                                            .ĳ
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 0a 6e 00 06 00 02 00 00 00 01 00 00 00 00  ...n............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 7a ff ae 00 7a                                .z¯«.z
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 11                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 75 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101100001000 (bin), #154376 (dec), $25b08 (hex)
+> m $66e6 8
+000066E6: 00 00 68 31 00 00 63 4b                          ..h1..cK
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 c1                                            .Ĳ
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 0a 7a 00 06 00 03 00 00 00 01 00 00 00 00  ...z............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 7a ff ae 00 7a                                .z¯«.z
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 12                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 76 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101100001010 (bin), #154378 (dec), $25b0a (hex)
+> m $66e6 8
+000066E6: 00 00 68 34 00 00 63 4a                          ..h4..cJ
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 c2                                            .א
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 0a 86 00 06 00 04 00 00 00 01 00 00 00 00  ...å............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 7a ff ae 00 7a                                .z¯«.z
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 0c                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 77 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101100001100 (bin), #154380 (dec), $25b0c (hex)
+> m $66e6 8
+000066E6: 00 00 68 38 00 00 63 49                          ..h8..cI
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 c3                                            .ב
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 0a 92 00 06 00 05 00 00 00 01 00 00 00 00  ...Æ............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 7a ff ae 00 7a                                .z¯«.z
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 0c                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 78 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101100001110 (bin), #154382 (dec), $25b0e (hex)
+> m $66e6 8
+000066E6: 00 00 68 3c 00 00 63 48                          ..h<..cH
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 c3                                            .ב
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 0a 9e 00 06 00 01 00 01 00 00 00 00 00 00  ...ß............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 00                                      ....
+> m $34936 6
+00034936: 00 7d ff b6 00 7d                                .}¯À.}
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 0b                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+1. CPU breakpoint condition(s) matched 79 times.
+	pc = $26e98 :trace :file /tmp/mw2run-zksjyz82/hit.txt
+Reading debugger commands from '/tmp/mw2run-zksjyz82/hit.txt'...
+Changed to input file dir '/tmp/mw2run-zksjyz82'.
+> e VBL
+= %100101101100010000 (bin), #154384 (dec), $25b10 (hex)
+> m $66e6 8
+000066E6: 00 00 68 3f 00 00 63 48                          ..h?..cH
+> m $6742 2
+00006742: 01 1c                                            ..
+> m $764c 2
+0000764C: 00 c3                                            .ב
+> m $676e 2
+0000676E: 00 00                                            ..
+> m $767e 2
+0000767E: 00 00                                            ..
+> m $6772 2
+00006772: 00 4b                                            .K
+> m $6220 2
+00006220: 00 01                                            ..
+> m $b42e0 16
+000B42E0: 00 00 0a aa 00 06 00 02 00 00 00 01 00 00 00 00  ...¬............
+> m $b8f20 4
+000B8F20: 00 01 00 01                                      ....
+> m $b8f28 4
+000B8F28: 00 00 00 01                                      ....
+> m $34936 6
+00034936: 00 7d ff b6 00 7d                                .}¯À.}
+> m $6746 2
+00006746: 00 00                                            ..
+> m $674a 2
+0000674A: 00 00                                            ..
+> m $674e 2
+0000674E: 00 00                                            ..
+> m $b8fae 2
+000B8FAE: 00 0b                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.

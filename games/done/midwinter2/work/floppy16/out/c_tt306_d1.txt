@@ -1,0 +1,20 @@
+c_tt306_d1: tt TOS 306 4096 KB, 8 MHz, 1 drive(s), disks /tmp/mw2f/b16
+insert-graphics prompt after 246 s wall
+M/J/K screen after 6 presses; MWPO 000B2FF8: 4d 57 50 4f                                      MWPO
+security-check site $2c574: 0002C574: 60 02                                            `.
+hall; personnel click tries 2
+use-this-agent click tries 0
+swap served: game asks for 'camp' -> disk_camp.st
+swap served: game asks for 'camp' -> disk_camp.st
+swap served: game asks for 'camp' -> disk_camp.st
+swap served: game asks for 'graf' -> disk_gfx.st
+control-door click tries 0
+EXC RuntimeError('never reached the boss screen')
+Traceback (most recent call last):
+  File "/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/floppy16/cell16.py", line 160, in <module>
+    raise RuntimeError('never reached the boss screen')
+RuntimeError: never reached the boss screen
+
+trace: frame 261 lines = 60.0 Hz
+game type I commands: 0, cut by the game's force interrupt: 0
+CELL c_tt306_d1: FAIL

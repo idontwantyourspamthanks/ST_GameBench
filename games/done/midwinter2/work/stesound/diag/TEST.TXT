@@ -1,0 +1,25 @@
+Midwinter 2 v1.6 DIAGNOSTIC set "no Amiga sound"  (2026-11-20)
+==============================================================
+
+What it is
+  The published v1.6 floppy set with ONE change: the Amiga sound/music
+  patches (asn_*) are left out. The game plays its original YM2149 sound
+  and music on every machine, also on the STE / Mega STE. Everything else
+  (head parking on track 0, longer FDC time-out, single-drive probe patch,
+  all speed patches) is byte-identical to v1.6. FFB, FFC and FFD are
+  byte-identical to the published v1.6 disks; only FFA differs.
+  The logo screen still says "v1.6".
+
+Files
+  FFA_boot.st/.msa   FFB_graphics.st/.msa   FFC_missions.st/.msa   FFD_campaign_blank.st/.msa
+
+How to test (STE / Mega STE, the machines where v1.6 shows "music but no disk activity")
+  1. Write FFA, FFB (and FFC, FFD if you want to continue) as for v1.6.
+  2. Boot FFA on the STE. The logo/title appears with the YM tune.
+  3. When the game asks for the graphics disk, swap FFA for FFB in drive A
+     and press a key (as with v1.6).
+  4. Report: does the drive read FFB now (disk activity, then the
+     Mission/Jeep/Kamikaze (M/J/K) screen), or is it silent again?
+  A: it works      -> the Amiga sound patches cause the failure on real hardware.
+  B: it still fails -> the Amiga sound is not the cause (then please say what you
+     see/hear: tune playing? screen? drive light/noise?).

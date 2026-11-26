@@ -1,0 +1,19 @@
+files ['GXUT270.PRG', 'NEBCHEAT.TXT', 'NEBEXE.FIC', 'NEBLEVEL.OVL', 'NEBULTIT.FIC', 'NEBULUS.PCH', 'NEPATCH.BIN', 'PATCHES.TXT', 'README.TXT', 'START.TOS'] ovl zero True
+title True 14s
+credit band lit px (4 shots) 3284
+store before:  0000000000000000 (zero file => no magic)
+manager open: title text rows lit px = 0 (0 = title gone), menu text px = 5784
+after Save: store RAM 4e434d5000010001
+tower: timer word 0x18 timer (24, 72, 47) tower 0
+marker 0x4e45504f sites 18 | $39ffa 0x602a $38514 0x4ef9 0x76d04 $3dcf4 0x4eb9 0x76c08 $3d698 0x4eb9 0x77a00 $3a332 0x4e71 $377a2 0x4ef9 0x75740
+E: noen 0xffff states (0, 0, 0, 0)
+E on timer counts (24, 72, 64) (24, 71, 79) True
+T: frz 0xffff (24, 64, 63) (24, 64, 63) (24, 64, 63) frozen True
+T again running (24, 64, 25) (24, 56, 15) True
+20 s drive: 14 rounds, vbl +1044, tower 0, timer (24, 72, 22)
+crash lines in Hatari log: 0
+file read back from the image after Hatari exit: size 8192 head 4e434d500001000100000000 NCMP nlevels 1
+reboot title True
+store loaded at boot 4e434d5000010001
+level list third line (y 125..145) lit px 752 (>0 = a level is listed)
+Play: timer (32, 40, 0) tower 0 RS 0000000000010000

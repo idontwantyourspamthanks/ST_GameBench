@@ -1,0 +1,15 @@
+PASS ui: F10 opens the manager: True
+PASS ui: new level starts with flags 0: 0
+Traceback (most recent call last):
+  File "/tmp/ng12hd/nb/work/editor/e190.py", line 290, in run_ui
+    tower_menu(h, 'Colours: next'); seq.append(flag_byte(h) >> 4)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/ng12hd/nb/work/editor/e190.py", line 275, in tower_menu
+    pick(h, 'Tower >', 1.0); pick(h, label, gap)
+    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/ng12hd/nb/work/editor/e190.py", line 49, in pick
+    idx = what if isinstance(what, int) else [i for i, (a, p, t) in enumerate(items) if t.startswith(what)][0]
+                                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
+IndexError: list index out of range
+FAIL ui: exception in the script: "IndexError('list index out of range')"  (expected 'none')
+FAILS ['ui: exception in the script']

@@ -1,0 +1,41 @@
+# only the e206 content edit is a real script change; all other diffs are path rewrites (/tmp/nlg, /tmp/ne, /home/ryan/.../nebulus/work/* -> /tmp/ng12hd/*)
+## e206.py (content change)
+92c92
+<     chk('no Address/Bus Error/exception', errors(h), [])
+---
+>     chk('no Address/Bus Error/exception (boot-time I/O-space probe warnings of TOS/HDDRIVER, address $ffxxxxxx, are not game errors)', [e for e in errors(h) if not re.search(r'Bus Error reading at address \$ff[0-9a-f]{6}', e)], [])
+## sitecustomize.py (scratch-only monkeypatch of Hatari.savemem to the private HOME)
+# scratch-only: make Hatari.savemem use the PRIVATE HOME's hatari.sav instead of the shared /tmp/hatari.sav
+import sys, os
+sys.path.insert(0, '/home/ryan/Code/AtariST/gamebench/tools')
+try:
+    import stharness, time, shutil
+    from pathlib import Path
+    def savemem(self, out):
+        tmp = Path(os.environ['HOME']) / '.config/hatari/hatari.sav'
+        tmp.parent.mkdir(parents=True, exist_ok=True)
+        if tmp.exists(): tmp.unlink()
+        self.cmd("hatari-shortcut savemem")
+        for _ in range(100):
+            if tmp.exists() and tmp.stat().st_size > 0: break
+            time.sleep(0.1)
+        time.sleep(1.5)
+        shutil.copy(tmp, out)
+    stharness.Hatari.savemem = savemem
+except Exception as e:
+    print('sitecustomize failed', e, file=sys.stderr)
+## path-only diffs, file list
+e150: 1 changed lines
+e170: 0 changed lines
+e180: 12 changed lines
+e190: 12 changed lines
+e200: 5 changed lines
+e201: 2 changed lines
+e202: 2 changed lines
+e203: 2 changed lines
+e204: 3 changed lines
+e205: 2 changed lines
+e208: 2 changed lines
+ed: 1 changed lines
+ulib_ui: 4 changed lines
+## e98_g/jrg/ikg/cell_g/etc: copied from untracked work/gate_NebOddGateCore with path rewrites; workdirs shortened to /tmp/ng12hd/q (snapshot path field is 23 bytes)

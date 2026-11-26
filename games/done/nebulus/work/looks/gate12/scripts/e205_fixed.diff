@@ -1,0 +1,17 @@
+7c7
+< sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); sys.path.insert(0, '/home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/editor')
+---
+12c12
+< SNAP = f'/tmp/nlg/x/title_{MACH}_new.sav'; OUT = f'{WD}_out/'; os.makedirs(OUT, exist_ok=True)
+---
+60c60,67
+<             h.key('q', hold=0.3); time.sleep(3.0); chk('open manager', open_manager(h))
+---
+>             P(f'  STATE before q: st={W(h,0x33a20):#x} run={W(h,0x33938):#x} v70={struct.unpack('>L',grab(h,0x70,4,'v'))[0]:#x} frog={frog(h)}'); h.shot(OUT + f'before_q_{nm}.png')
+>             if True:   # wait until the game loop runs again (the frog is still dying/respawning after the fall: F10/Q are not polled then)
+>                 t1 = time.time()
+>                 while time.time() - t1 < 45 and not (W(h,0x33a20) == 0 and W(h,0x33938) == 1): time.sleep(0.7)
+>                 P(f'  PACED: waited {time.time()-t1:.1f}s until running: st={W(h,0x33a20):#x} run={W(h,0x33938):#x}'); time.sleep(2.0)
+>             h.key('q', hold=0.3); time.sleep(3.0); om = open_manager(h)
+>             P(f'  STATE after q+F10: v70={struct.unpack('>L',grab(h,0x70,4,'v'))[0]:#x} st={W(h,0x33a20):#x} run={W(h,0x33938):#x} rs={struct.unpack(">32H",grab(h,RS,64,"rs"))[:6]}'); h.shot(OUT + f'after_q_{nm}.png')
+>             chk('open manager', om)

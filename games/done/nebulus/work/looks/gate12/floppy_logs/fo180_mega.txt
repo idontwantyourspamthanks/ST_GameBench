@@ -1,0 +1,426 @@
+PASS flags35.ovl: ovl.py validate: []
+== flags35.ovl: 3 levels, sizes [139, 103, 149], 1 campaigns [('FLAGS', [0, 1, 2])]
+title 68.64659214019775
+PASS flags35.ovl: F10 opens the manager: True
+PASS flags35.ovl: Load from campaign disk (nebcampaign.py new --ovl): 'Loaded 3 levels / 1 campaigns'
+PASS flags35.ovl: store in RAM == file: True
+PASS flags35.ovl: level list shows all levels: ['FLAGS 0', 'FLAGS 1', 'FLAGS 2']
+PASS flags35.ovl level 1 (record size 103) Play: tower started: True
+PASS flags35.ovl level 1 (record size 103) Play: grid == decoded record (FLAGS 1): []
+PASS flags35.ovl level 1 (record size 103) Play: rows/mission/tower: (21, 2, 1)
+PASS flags35.ovl level 1 (record size 103) Play: initial time 600 s (remaining 587): True
+PASS flags35.ovl level 1 (record size 103) Play: tower name hook A0=$bc1a3 text: b'FLAGS 1\x00'
+      record 1: size 103, name A0 $bc1a3 (odd address)
+PASS flags35.ovl level 1 (record size 103): F10 opens the manager again (= back at the title after Q): True
+PASS flags35.ovl level 2 (record size 149) Play: tower started: True
+PASS flags35.ovl level 2 (record size 149) Play: grid == decoded record (FLAGS 2): []
+PASS flags35.ovl level 2 (record size 149) Play: rows/mission/tower: (20, 1, 2)
+PASS flags35.ovl level 2 (record size 149) Play: initial time 600 s (remaining 587): True
+PASS flags35.ovl level 2 (record size 149) Play: tower name hook A0=$bc20a text: b'FLAGS 2\x00'
+      record 2: size 149, name A0 $bc20a (even address)
+PASS flags35.ovl level 2 (record size 149): F10 opens the manager again (= back at the title after Q): True
+PASS flags35.ovl: campaign list shows all campaigns: ['FLAGS']
+PASS flags35.ovl campaign 0 FLAGS entry 0: tower started: True
+PASS flags35.ovl campaign 0 FLAGS entry 0: grid == decoded record (FLAGS 0): []
+PASS flags35.ovl campaign 0 FLAGS entry 0: rows/mission/tower: (33, 1, 0)
+PASS flags35.ovl campaign 0 FLAGS entry 0: initial time 600 s (remaining 587): True
+PASS flags35.ovl campaign 0 FLAGS entry 0: tower name hook A0=$bc118 text: b'FLAGS 0\x00'
+      record 0: size 139, name A0 $bc118 (even address)
+PASS flags35.ovl campaign 0 FLAGS: F10 opens the manager again (= back at the title after Q): True
+PASS flags35.ovl: game alive (VBL runs): True
+PASS flags35.ovl: no Address/Bus Error/exception in the Hatari log: []
+PASS looks.ovl: ovl.py validate: []
+== looks.ovl: 10 levels, sizes [159, 159, 159, 159, 159, 159, 159, 159, 159, 159], 1 campaigns [('LOOKS', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])]
+title 68.55291652679443
+PASS looks.ovl: F10 opens the manager: True
+PASS looks.ovl: Load from campaign disk (nebcampaign.py new --ovl): 'Loaded 10 levels / 1 campaigns'
+PASS looks.ovl: store in RAM == file: True
+PASS looks.ovl: level list shows all levels: ['M1T1', 'M1T2', 'M1T3', 'M1T4', 'M1T5', 'M1T6', 'M1T7', 'M1T8', 'M2T1', 'M2T4']
+PASS looks.ovl level 1 (record size 159) Play: tower started: True
+PASS looks.ovl level 1 (record size 159) Play: grid == decoded record (M1T2): []
+PASS looks.ovl level 1 (record size 159) Play: rows/mission/tower: (48, 1, 1)
+PASS looks.ovl level 1 (record size 159) Play: initial time 600 s (remaining 587): True
+PASS looks.ovl level 1 (record size 159) Play: tower name hook A0=$bc1b7 text: b'M1T2\x00'
+      record 1: size 159, name A0 $bc1b7 (odd address)
+PASS looks.ovl level 1 (record size 159): F10 opens the manager again (= back at the title after Q): True
+PASS looks.ovl level 9 (record size 159) Play: tower started: True
+PASS looks.ovl level 9 (record size 159) Play: grid == decoded record (M2T4): []
+PASS looks.ovl level 9 (record size 159) Play: rows/mission/tower: (48, 2, 3)
+PASS looks.ovl level 9 (record size 159) Play: initial time 600 s (remaining 587): True
+PASS looks.ovl level 9 (record size 159) Play: tower name hook A0=$bc6af text: b'M2T4\x00'
+      record 9: size 159, name A0 $bc6af (odd address)
+PASS looks.ovl level 9 (record size 159): F10 opens the manager again (= back at the title after Q): True
+PASS looks.ovl: campaign list shows all campaigns: ['LOOKS']
+PASS looks.ovl campaign 0 LOOKS entry 0: tower started: True
+PASS looks.ovl campaign 0 LOOKS entry 0: grid == decoded record (M1T1): []
+PASS looks.ovl campaign 0 LOOKS entry 0: rows/mission/tower: (48, 1, 0)
+PASS looks.ovl campaign 0 LOOKS entry 0: initial time 600 s (remaining 587): True
+PASS looks.ovl campaign 0 LOOKS entry 0: tower name hook A0=$bc118 text: b'M1T1\x00'
+      record 0: size 159, name A0 $bc118 (even address)
+PASS looks.ovl campaign 0 LOOKS: F10 opens the manager again (= back at the title after Q): True
+PASS looks.ovl: game alive (VBL runs): True
+PASS looks.ovl: no Address/Bus Error/exception in the Hatari log: []
+PASS odd2.ovl: ovl.py validate: []
+== odd2.ovl: 2 levels, sizes [115, 165], 2 campaigns [('ODD2', [128, 0, 130, 1]), ('ODD2 REV', [1, 0])]
+title 68.55685901641846
+PASS odd2.ovl: F10 opens the manager: True
+PASS odd2.ovl: Load from campaign disk (nebcampaign.py new --ovl): 'Loaded 2 levels / 2 campaigns'
+PASS odd2.ovl: store in RAM == file: True
+PASS odd2.ovl: level list shows all levels: ['ODD ONE', 'ODD TWO']
+PASS odd2.ovl level 1 (record size 165) Play: tower started: True
+PASS odd2.ovl level 1 (record size 165) Play: grid == decoded record (ODD TWO): []
+PASS odd2.ovl level 1 (record size 165) Play: rows/mission/tower: (40, 2, 5)
+PASS odd2.ovl level 1 (record size 165) Play: initial time 480 s (remaining 467): True
+PASS odd2.ovl level 1 (record size 165) Play: tower name hook A0=$bc18b text: b'ODD TWO\x00'
+      record 1: size 165, name A0 $bc18b (odd address)
+PASS odd2.ovl level 1 (record size 165): F10 opens the manager again (= back at the title after Q): True
+PASS odd2.ovl: campaign list shows all campaigns: ['ODD2', 'ODD2 REV']
+PASS odd2.ovl campaign 1 ODD2 REV entry 0: tower started: True
+PASS odd2.ovl campaign 1 ODD2 REV entry 0: grid == decoded record (ODD TWO): []
+PASS odd2.ovl campaign 1 ODD2 REV entry 0: rows/mission/tower: (40, 2, 5)
+PASS odd2.ovl campaign 1 ODD2 REV entry 0: initial time 480 s (remaining 467): True
+PASS odd2.ovl campaign 1 ODD2 REV entry 0: tower name hook A0=$bc18b text: b'ODD TWO\x00'
+      record 1: size 165, name A0 $bc18b (odd address)
+PASS odd2.ovl campaign 1 ODD2 REV: F10 opens the manager again (= back at the title after Q): True
+PASS odd2.ovl campaign 0 ODD2 entry 0: tower started: True
+PASS odd2.ovl campaign 0 ODD2 entry 0: original M1 T1 grid: []
+PASS odd2.ovl campaign 0 ODD2 entry 0: original rows/mission/tower: (47, 1, 0)
+PASS odd2.ovl campaign 0 ODD2: F10 opens the manager again (= back at the title after Q): True
+PASS odd2.ovl: game alive (VBL runs): True
+PASS odd2.ovl: no Address/Bus Error/exception in the Hatari log: []
+PASS stress01.ovl: ovl.py validate: []
+== stress01.ovl: 1 levels, sizes [159], 1 campaigns [('CAMP1', [139, 128])]
+title 68.55748081207275
+PASS stress01.ovl: F10 opens the manager: True
+PASS stress01.ovl: Load from campaign disk (nebcampaign.py new --ovl): 'Loaded 1 levels / 1 campaigns'
+PASS stress01.ovl: store in RAM == file: True
+PASS stress01.ovl: level list shows all levels: ['795N236BSP']
+PASS stress01.ovl level 0 (record size 159) Play: tower started: True
+PASS stress01.ovl level 0 (record size 159) Play: grid == decoded record (795N236BSP): []
+PASS stress01.ovl level 0 (record size 159) Play: rows/mission/tower: (38, 2, 6)
+PASS stress01.ovl level 0 (record size 159) Play: initial time 480 s (remaining 467): True
+PASS stress01.ovl level 0 (record size 159) Play: tower name hook A0=$bc118 text: b'795N236BSP\x00'
+      record 0: size 159, name A0 $bc118 (even address)
+PASS stress01.ovl level 0 (record size 159): F10 opens the manager again (= back at the title after Q): True
+PASS stress01.ovl: campaign list shows all campaigns: ['CAMP1']
+PASS stress01.ovl campaign 0 CAMP1 entry 0: tower started: True
+PASS stress01.ovl campaign 0 CAMP1 entry 0: original M2 T4 grid: []
+PASS stress01.ovl campaign 0 CAMP1 entry 0: original rows/mission/tower: (64, 2, 3)
+PASS stress01.ovl campaign 0 CAMP1: F10 opens the manager again (= back at the title after Q): True
+PASS stress01.ovl: game alive (VBL runs): True
+PASS stress01.ovl: no Address/Bus Error/exception in the Hatari log: []
+PASS stress02.ovl: ovl.py validate: []
+== stress02.ovl: 5 levels, sizes [109, 141, 189, 93, 113], 3 campaigns [('CAMP1', [2, 139, 129, 1, 3]), ('CAMP2', [134, 3]), ('CAMP3', [130, 143, 0, 137])]
+title 68.54662728309631
+PASS stress02.ovl: F10 opens the manager: True
+PASS stress02.ovl: Load from campaign disk (nebcampaign.py new --ovl): 'Loaded 5 levels / 3 campaigns'
+PASS stress02.ovl: store in RAM == file: True
+PASS stress02.ovl: level list shows all levels: ['FFZ39LL', '430BLKS2', 'P', 'CU76X0', '8XLCP0']
+PASS stress02.ovl level 1 (record size 141) Play: tower started: True
+PASS stress02.ovl level 1 (record size 141) Play: grid == decoded record (430BLKS2): []
+PASS stress02.ovl level 1 (record size 141) Play: rows/mission/tower: (26, 2, 2)
+PASS stress02.ovl level 1 (record size 141) Play: initial time 500 s (remaining 487): True
+PASS stress02.ovl level 1 (record size 141) Play: tower name hook A0=$bc185 text: b'430BLKS2\x00'
+      record 1: size 141, name A0 $bc185 (odd address)
+PASS stress02.ovl level 1 (record size 141): F10 opens the manager again (= back at the title after Q): True
+PASS stress02.ovl level 4 (record size 113) Play: tower started: True
+PASS stress02.ovl level 4 (record size 113) Play: grid == decoded record (8XLCP0): []
+PASS stress02.ovl level 4 (record size 113) Play: rows/mission/tower: (24, 2, 6)
+PASS stress02.ovl level 4 (record size 113) Play: initial time 200 s (remaining 187): True
+PASS stress02.ovl level 4 (record size 113) Play: tower name hook A0=$bc32c text: b'8XLCP0\x00'
+      record 4: size 113, name A0 $bc32c (even address)
+PASS stress02.ovl level 4 (record size 113): F10 opens the manager again (= back at the title after Q): True
+PASS stress02.ovl: campaign list shows all campaigns: ['CAMP1', 'CAMP2', 'CAMP3']
+PASS stress02.ovl campaign 0 CAMP1 entry 0: tower started: True
+PASS stress02.ovl campaign 0 CAMP1 entry 0: grid == decoded record (P): []
+PASS stress02.ovl campaign 0 CAMP1 entry 0: rows/mission/tower: (38, 2, 7)
+PASS stress02.ovl campaign 0 CAMP1 entry 0: initial time 480 s (remaining 467): True
+PASS stress02.ovl campaign 0 CAMP1 entry 0: tower name hook A0=$bc212 text: b'P\x00'
+      record 2: size 189, name A0 $bc212 (even address)
+PASS stress02.ovl campaign 0 CAMP1: F10 opens the manager again (= back at the title after Q): True
+PASS stress02.ovl: game alive (VBL runs): True
+PASS stress02.ovl: no Address/Bus Error/exception in the Hatari log: []
+PASS stress03.ovl: ovl.py validate: []
+== stress03.ovl: 6 levels, sizes [182, 114, 129, 105, 145, 162], 2 campaigns [('CAMP1', [4, 4]), ('CAMP2', [0, 130, 0, 0])]
+title 68.55029034614563
+PASS stress03.ovl: F10 opens the manager: True
+PASS stress03.ovl: Load from campaign disk (nebcampaign.py new --ovl): 'Loaded 6 levels / 2 campaigns'
+PASS stress03.ovl: store in RAM == file: True
+PASS stress03.ovl: level list shows all levels: ['4', 'MN18FWAEKXW', 'U4J9LC', 'JA60K', 'MYUYVCM1', '10SV7921A8']
+PASS stress03.ovl level 3 (record size 105) Play: tower started: True
+PASS stress03.ovl level 3 (record size 105) Play: grid == decoded record (JA60K): []
+PASS stress03.ovl level 3 (record size 105) Play: rows/mission/tower: (31, 1, 5)
+PASS stress03.ovl level 3 (record size 105) Play: initial time 200 s (remaining 187): True
+PASS stress03.ovl level 3 (record size 105) Play: tower name hook A0=$bc2c1 text: b'JA60K\x00'
+      record 3: size 105, name A0 $bc2c1 (odd address)
+PASS stress03.ovl level 3 (record size 105): F10 opens the manager again (= back at the title after Q): True
+PASS stress03.ovl level 5 (record size 162) Play: tower started: True
+PASS stress03.ovl level 5 (record size 162) Play: grid == decoded record (10SV7921A8): []
+PASS stress03.ovl level 5 (record size 162) Play: rows/mission/tower: (33, 2, 0)
+PASS stress03.ovl level 5 (record size 162) Play: initial time 480 s (remaining 467): True
+PASS stress03.ovl level 5 (record size 162) Play: tower name hook A0=$bc3bb text: b'10SV7921A8\x00'
+      record 5: size 162, name A0 $bc3bb (odd address)
+PASS stress03.ovl level 5 (record size 162): F10 opens the manager again (= back at the title after Q): True
+PASS stress03.ovl: campaign list shows all campaigns: ['CAMP1', 'CAMP2']
+PASS stress03.ovl campaign 0 CAMP1 entry 0: tower started: True
+PASS stress03.ovl campaign 0 CAMP1 entry 0: grid == decoded record (MYUYVCM1): []
+PASS stress03.ovl campaign 0 CAMP1 entry 0: rows/mission/tower: (18, 1, 5)
+PASS stress03.ovl campaign 0 CAMP1 entry 0: initial time 200 s (remaining 187): True
+PASS stress03.ovl campaign 0 CAMP1 entry 0: tower name hook A0=$bc32a text: b'MYUYVCM1\x00'
+      record 4: size 145, name A0 $bc32a (even address)
+PASS stress03.ovl campaign 0 CAMP1: F10 opens the manager again (= back at the title after Q): True
+PASS stress03.ovl: game alive (VBL runs): True
+PASS stress03.ovl: no Address/Bus Error/exception in the Hatari log: []
+PASS stress04.ovl: ovl.py validate: []
+== stress04.ovl: 2 levels, sizes [127, 104], 1 campaigns [('CAMP1', [129, 1, 1, 131, 0])]
+title 68.54962587356567
+PASS stress04.ovl: F10 opens the manager: True
+PASS stress04.ovl: Load from campaign disk (nebcampaign.py new --ovl): 'Loaded 2 levels / 1 campaigns'
+PASS stress04.ovl: store in RAM == file: True
+PASS stress04.ovl: level list shows all levels: ['K', 'MX9CBP']
+PASS stress04.ovl level 1 (record size 104) Play: tower started: True
+PASS stress04.ovl level 1 (record size 104) Play: grid == decoded record (MX9CBP): []
+PASS stress04.ovl level 1 (record size 104) Play: rows/mission/tower: (28, 2, 0)
+PASS stress04.ovl level 1 (record size 104) Play: initial time 400 s (remaining 387): True
+PASS stress04.ovl level 1 (record size 104) Play: tower name hook A0=$bc197 text: b'MX9CBP\x00'
+      record 1: size 104, name A0 $bc197 (odd address)
+PASS stress04.ovl level 1 (record size 104): F10 opens the manager again (= back at the title after Q): True
+PASS stress04.ovl: campaign list shows all campaigns: ['CAMP1']
+PASS stress04.ovl campaign 0 CAMP1 entry 0: tower started: True
+PASS stress04.ovl campaign 0 CAMP1 entry 0: original M1 T2 grid: []
+PASS stress04.ovl campaign 0 CAMP1 entry 0: original rows/mission/tower: (71, 1, 1)
+PASS stress04.ovl campaign 0 CAMP1: F10 opens the manager again (= back at the title after Q): True
+PASS stress04.ovl: game alive (VBL runs): True
+PASS stress04.ovl: no Address/Bus Error/exception in the Hatari log: []
+PASS stress05.ovl: ovl.py validate: []
+== stress05.ovl: 4 levels, sizes [141, 171, 135, 129], 2 campaigns [('CAMP1', [2, 3, 3, 2]), ('CAMP2', [141, 140, 0, 136, 133])]
+title 68.55262804031372
+PASS stress05.ovl: F10 opens the manager: True
+PASS stress05.ovl: Load from campaign disk (nebcampaign.py new --ovl): 'Loaded 4 levels / 2 campaigns'
+PASS stress05.ovl: store in RAM == file: True
+PASS stress05.ovl: level list shows all levels: ['5W7', 'KUGFR1A0ER', '1ABUAU5J', '3J86']
+PASS stress05.ovl level 1 (record size 171) Play: tower started: True
+PASS stress05.ovl level 1 (record size 171) Play: grid == decoded record (KUGFR1A0ER): []
+PASS stress05.ovl level 1 (record size 171) Play: rows/mission/tower: (40, 1, 5)
+PASS stress05.ovl level 1 (record size 171) Play: initial time 650 s (remaining 637): True
+PASS stress05.ovl level 1 (record size 171) Play: tower name hook A0=$bc1a5 text: b'KUGFR1A0ER\x00'
+      record 1: size 171, name A0 $bc1a5 (odd address)
+PASS stress05.ovl level 1 (record size 171): F10 opens the manager again (= back at the title after Q): True
+PASS stress05.ovl level 3 (record size 129) Play: tower started: True
+PASS stress05.ovl level 3 (record size 129) Play: grid == decoded record (3J86): []
+PASS stress05.ovl level 3 (record size 129) Play: rows/mission/tower: (30, 1, 5)
+PASS stress05.ovl level 3 (record size 129) Play: initial time 650 s (remaining 637): True
+PASS stress05.ovl level 3 (record size 129) Play: tower name hook A0=$bc2d7 text: b'3J86\x00'
+      record 3: size 129, name A0 $bc2d7 (odd address)
+PASS stress05.ovl level 3 (record size 129): F10 opens the manager again (= back at the title after Q): True
+PASS stress05.ovl: campaign list shows all campaigns: ['CAMP1', 'CAMP2']
+PASS stress05.ovl campaign 0 CAMP1 entry 0: tower started: True
+PASS stress05.ovl campaign 0 CAMP1 entry 0: grid == decoded record (1ABUAU5J): []
+PASS stress05.ovl campaign 0 CAMP1 entry 0: rows/mission/tower: (40, 1, 5)
+PASS stress05.ovl campaign 0 CAMP1 entry 0: initial time 650 s (remaining 637): True
+PASS stress05.ovl campaign 0 CAMP1 entry 0: tower name hook A0=$bc250 text: b'1ABUAU5J\x00'
+      record 2: size 135, name A0 $bc250 (even address)
+PASS stress05.ovl campaign 0 CAMP1: F10 opens the manager again (= back at the title after Q): True
+PASS stress05.ovl: game alive (VBL runs): True
+PASS stress05.ovl: no Address/Bus Error/exception in the Hatari log: []
+PASS stress06.ovl: ovl.py validate: []
+== stress06.ovl: 3 levels, sizes [98, 186, 158], 1 campaigns [('CAMP1', [2, 137, 138, 134])]
+title 68.55431032180786
+PASS stress06.ovl: F10 opens the manager: True
+PASS stress06.ovl: Load from campaign disk (nebcampaign.py new --ovl): 'Loaded 3 levels / 1 campaigns'
+PASS stress06.ovl: store in RAM == file: True
+PASS stress06.ovl: level list shows all levels: ['JAUJ', '13T3V70', '8DLPDX']
+PASS stress06.ovl level 2 (record size 158) Play: tower started: True
+PASS stress06.ovl level 2 (record size 158) Play: grid == decoded record (8DLPDX): []
+PASS stress06.ovl level 2 (record size 158) Play: rows/mission/tower: (30, 2, 0)
+PASS stress06.ovl level 2 (record size 158) Play: initial time 480 s (remaining 467): True
+PASS stress06.ovl level 2 (record size 158) Play: tower name hook A0=$bc234 text: b'8DLPDX\x00'
+      record 2: size 158, name A0 $bc234 (even address)
+PASS stress06.ovl level 2 (record size 158): F10 opens the manager again (= back at the title after Q): True
+PASS stress06.ovl: campaign list shows all campaigns: ['CAMP1']
+PASS stress06.ovl campaign 0 CAMP1 entry 0: tower started: True
+PASS stress06.ovl campaign 0 CAMP1 entry 0: grid == decoded record (8DLPDX): []
+PASS stress06.ovl campaign 0 CAMP1 entry 0: rows/mission/tower: (30, 2, 0)
+PASS stress06.ovl campaign 0 CAMP1 entry 0: initial time 480 s (remaining 467): True
+PASS stress06.ovl campaign 0 CAMP1 entry 0: tower name hook A0=$bc234 text: b'8DLPDX\x00'
+      record 2: size 158, name A0 $bc234 (even address)
+PASS stress06.ovl campaign 0 CAMP1: F10 opens the manager again (= back at the title after Q): True
+PASS stress06.ovl: game alive (VBL runs): True
+PASS stress06.ovl: no Address/Bus Error/exception in the Hatari log: []
+PASS stress07.ovl: ovl.py validate: []
+== stress07.ovl: 5 levels, sizes [155, 122, 161, 142, 169], 1 campaigns [('CAMP1', [2, 129])]
+title 68.55864381790161
+PASS stress07.ovl: F10 opens the manager: True
+PASS stress07.ovl: Load from campaign disk (nebcampaign.py new --ovl): 'Loaded 5 levels / 1 campaigns'
+PASS stress07.ovl: store in RAM == file: True
+PASS stress07.ovl: level list shows all levels: ['JLAULA19', '0V832PD3', 'VLKP9CLDDV2', 'RNSYK4', 'LUH5BYB4HK']
+PASS stress07.ovl level 1 (record size 122) Play: tower started: True
+PASS stress07.ovl level 1 (record size 122) Play: grid == decoded record (0V832PD3): []
+PASS stress07.ovl level 1 (record size 122) Play: rows/mission/tower: (32, 1, 3)
+PASS stress07.ovl level 1 (record size 122) Play: initial time 200 s (remaining 187): True
+PASS stress07.ovl level 1 (record size 122) Play: tower name hook A0=$bc1b3 text: b'0V832PD3\x00'
+      record 1: size 122, name A0 $bc1b3 (odd address)
+PASS stress07.ovl level 1 (record size 122): F10 opens the manager again (= back at the title after Q): True
+PASS stress07.ovl level 4 (record size 169) Play: tower started: True
+PASS stress07.ovl level 4 (record size 169) Play: grid == decoded record (LUH5BYB4HK): []
+PASS stress07.ovl level 4 (record size 169) Play: rows/mission/tower: (31, 2, 6)
+PASS stress07.ovl level 4 (record size 169) Play: initial time 200 s (remaining 187): True
+PASS stress07.ovl level 4 (record size 169) Play: tower name hook A0=$bc35c text: b'LUH5BYB4HK\x00'
+      record 4: size 169, name A0 $bc35c (even address)
+PASS stress07.ovl level 4 (record size 169): F10 opens the manager again (= back at the title after Q): True
+PASS stress07.ovl: campaign list shows all campaigns: ['CAMP1']
+PASS stress07.ovl campaign 0 CAMP1 entry 0: tower started: True
+PASS stress07.ovl campaign 0 CAMP1 entry 0: grid == decoded record (VLKP9CLDDV2): []
+PASS stress07.ovl campaign 0 CAMP1 entry 0: rows/mission/tower: (39, 2, 1)
+PASS stress07.ovl campaign 0 CAMP1 entry 0: initial time 200 s (remaining 187): True
+PASS stress07.ovl campaign 0 CAMP1 entry 0: tower name hook A0=$bc22d text: b'VLKP9CLDDV2\x00'
+      record 2: size 161, name A0 $bc22d (odd address)
+PASS stress07.ovl campaign 0 CAMP1: F10 opens the manager again (= back at the title after Q): True
+PASS stress07.ovl: game alive (VBL runs): True
+PASS stress07.ovl: no Address/Bus Error/exception in the Hatari log: []
+PASS stress08.ovl: ovl.py validate: []
+== stress08.ovl: 3 levels, sizes [157, 157, 159], 1 campaigns [('CAMP1', [2, 138, 133, 134, 1])]
+title 68.55493640899658
+PASS stress08.ovl: F10 opens the manager: True
+PASS stress08.ovl: Load from campaign disk (nebcampaign.py new --ovl): 'Loaded 3 levels / 1 campaigns'
+PASS stress08.ovl: store in RAM == file: True
+PASS stress08.ovl: level list shows all levels: ['MS0VMU52', 'X6FD0J', 'UKEH']
+PASS stress08.ovl level 1 (record size 157) Play: tower started: True
+PASS stress08.ovl level 1 (record size 157) Play: grid == decoded record (X6FD0J): []
+PASS stress08.ovl level 1 (record size 157) Play: rows/mission/tower: (37, 1, 1)
+PASS stress08.ovl level 1 (record size 157) Play: initial time 450 s (remaining 437): True
+PASS stress08.ovl level 1 (record size 157) Play: tower name hook A0=$bc1b5 text: b'X6FD0J\x00'
+      record 1: size 157, name A0 $bc1b5 (odd address)
+PASS stress08.ovl level 1 (record size 157): F10 opens the manager again (= back at the title after Q): True
+PASS stress08.ovl level 2 (record size 159) Play: tower started: True
+PASS stress08.ovl level 2 (record size 159) Play: grid == decoded record (UKEH): []
+PASS stress08.ovl level 2 (record size 159) Play: rows/mission/tower: (36, 2, 7)
+PASS stress08.ovl level 2 (record size 159) Play: initial time 480 s (remaining 467): True
+PASS stress08.ovl level 2 (record size 159) Play: tower name hook A0=$bc252 text: b'UKEH\x00'
+      record 2: size 159, name A0 $bc252 (even address)
+PASS stress08.ovl level 2 (record size 159): F10 opens the manager again (= back at the title after Q): True
+PASS stress08.ovl: campaign list shows all campaigns: ['CAMP1']
+PASS stress08.ovl campaign 0 CAMP1 entry 0: tower started: True
+PASS stress08.ovl campaign 0 CAMP1 entry 0: grid == decoded record (UKEH): []
+PASS stress08.ovl campaign 0 CAMP1 entry 0: rows/mission/tower: (36, 2, 7)
+PASS stress08.ovl campaign 0 CAMP1 entry 0: initial time 480 s (remaining 467): True
+PASS stress08.ovl campaign 0 CAMP1 entry 0: tower name hook A0=$bc252 text: b'UKEH\x00'
+      record 2: size 159, name A0 $bc252 (even address)
+PASS stress08.ovl campaign 0 CAMP1: F10 opens the manager again (= back at the title after Q): True
+PASS stress08.ovl: game alive (VBL runs): True
+PASS stress08.ovl: no Address/Bus Error/exception in the Hatari log: []
+PASS stress09.ovl: ovl.py validate: []
+== stress09.ovl: 3 levels, sizes [169, 135, 183], 3 campaigns [('CAMP1', [2, 138]), ('CAMP2', [0, 131]), ('CAMP3', [128, 1])]
+title 68.55936908721924
+PASS stress09.ovl: F10 opens the manager: True
+PASS stress09.ovl: Load from campaign disk (nebcampaign.py new --ovl): 'Loaded 3 levels / 3 campaigns'
+PASS stress09.ovl: store in RAM == file: True
+PASS stress09.ovl: level list shows all levels: ['K', '12U1DYB', 'WDBJZW56U']
+PASS stress09.ovl level 1 (record size 135) Play: tower started: True
+PASS stress09.ovl level 1 (record size 135) Play: grid == decoded record (12U1DYB): []
+PASS stress09.ovl level 1 (record size 135) Play: rows/mission/tower: (38, 2, 7)
+PASS stress09.ovl level 1 (record size 135) Play: initial time 750 s (remaining 737): True
+PASS stress09.ovl level 1 (record size 135) Play: tower name hook A0=$bc1c1 text: b'12U1DYB\x00'
+      record 1: size 135, name A0 $bc1c1 (odd address)
+PASS stress09.ovl level 1 (record size 135): F10 opens the manager again (= back at the title after Q): True
+PASS stress09.ovl level 2 (record size 183) Play: tower started: True
+PASS stress09.ovl level 2 (record size 183) Play: grid == decoded record (WDBJZW56U): []
+PASS stress09.ovl level 2 (record size 183) Play: rows/mission/tower: (35, 1, 1)
+PASS stress09.ovl level 2 (record size 183) Play: initial time 350 s (remaining 337): True
+PASS stress09.ovl level 2 (record size 183) Play: tower name hook A0=$bc248 text: b'WDBJZW56U\x00'
+      record 2: size 183, name A0 $bc248 (even address)
+PASS stress09.ovl level 2 (record size 183): F10 opens the manager again (= back at the title after Q): True
+PASS stress09.ovl: campaign list shows all campaigns: ['CAMP1', 'CAMP2', 'CAMP3']
+PASS stress09.ovl campaign 0 CAMP1 entry 0: tower started: True
+PASS stress09.ovl campaign 0 CAMP1 entry 0: grid == decoded record (WDBJZW56U): []
+PASS stress09.ovl campaign 0 CAMP1 entry 0: rows/mission/tower: (35, 1, 1)
+PASS stress09.ovl campaign 0 CAMP1 entry 0: initial time 350 s (remaining 337): True
+PASS stress09.ovl campaign 0 CAMP1 entry 0: tower name hook A0=$bc248 text: b'WDBJZW56U\x00'
+      record 2: size 183, name A0 $bc248 (even address)
+PASS stress09.ovl campaign 0 CAMP1: F10 opens the manager again (= back at the title after Q): True
+PASS stress09.ovl: game alive (VBL runs): True
+PASS stress09.ovl: no Address/Bus Error/exception in the Hatari log: []
+PASS stress10.ovl: ovl.py validate: []
+== stress10.ovl: 1 levels, sizes [153], 2 campaigns [('CAMP1', [130, 0, 0, 0, 132]), ('CAMP2', [128, 0, 0, 142, 0])]
+title 68.54917407035828
+PASS stress10.ovl: F10 opens the manager: True
+PASS stress10.ovl: Load from campaign disk (nebcampaign.py new --ovl): 'Loaded 1 levels / 2 campaigns'
+PASS stress10.ovl: store in RAM == file: True
+PASS stress10.ovl: level list shows all levels: ['7NZKKHCK9']
+PASS stress10.ovl level 0 (record size 153) Play: tower started: True
+PASS stress10.ovl level 0 (record size 153) Play: grid == decoded record (7NZKKHCK9): []
+PASS stress10.ovl level 0 (record size 153) Play: rows/mission/tower: (35, 2, 5)
+PASS stress10.ovl level 0 (record size 153) Play: initial time 600 s (remaining 587): True
+PASS stress10.ovl level 0 (record size 153) Play: tower name hook A0=$bc118 text: b'7NZKKHCK9\x00'
+      record 0: size 153, name A0 $bc118 (even address)
+PASS stress10.ovl level 0 (record size 153): F10 opens the manager again (= back at the title after Q): True
+PASS stress10.ovl: campaign list shows all campaigns: ['CAMP1', 'CAMP2']
+PASS stress10.ovl campaign 0 CAMP1 entry 0: tower started: True
+PASS stress10.ovl campaign 0 CAMP1 entry 0: original M1 T3 grid: []
+PASS stress10.ovl campaign 0 CAMP1 entry 0: original rows/mission/tower: (49, 1, 2)
+PASS stress10.ovl campaign 0 CAMP1: F10 opens the manager again (= back at the title after Q): True
+PASS stress10.ovl: game alive (VBL runs): True
+PASS stress10.ovl: no Address/Bus Error/exception in the Hatari log: []
+PASS stress11.ovl: ovl.py validate: []
+== stress11.ovl: 3 levels, sizes [141, 113, 123], 1 campaigns [('CAMP1', [1, 2])]
+title 68.53843975067139
+PASS stress11.ovl: F10 opens the manager: True
+PASS stress11.ovl: Load from campaign disk (nebcampaign.py new --ovl): 'Loaded 3 levels / 1 campaigns'
+PASS stress11.ovl: store in RAM == file: True
+PASS stress11.ovl: level list shows all levels: ['DWF5F66C', '1GRBLA9W3W', 'EAW']
+PASS stress11.ovl level 1 (record size 113) Play: tower started: True
+PASS stress11.ovl level 1 (record size 113) Play: grid == decoded record (1GRBLA9W3W): []
+PASS stress11.ovl level 1 (record size 113) Play: rows/mission/tower: (19, 1, 4)
+PASS stress11.ovl level 1 (record size 113) Play: initial time 200 s (remaining 187): True
+PASS stress11.ovl level 1 (record size 113) Play: tower name hook A0=$bc1a5 text: b'1GRBLA9W3W\x00'
+      record 1: size 113, name A0 $bc1a5 (odd address)
+PASS stress11.ovl level 1 (record size 113): F10 opens the manager again (= back at the title after Q): True
+PASS stress11.ovl level 2 (record size 123) Play: tower started: True
+PASS stress11.ovl level 2 (record size 123) Play: grid == decoded record (EAW): []
+PASS stress11.ovl level 2 (record size 123) Play: rows/mission/tower: (22, 1, 4)
+PASS stress11.ovl level 2 (record size 123) Play: initial time 600 s (remaining 587): True
+PASS stress11.ovl level 2 (record size 123) Play: tower name hook A0=$bc216 text: b'EAW\x00'
+      record 2: size 123, name A0 $bc216 (even address)
+PASS stress11.ovl level 2 (record size 123): F10 opens the manager again (= back at the title after Q): True
+PASS stress11.ovl: campaign list shows all campaigns: ['CAMP1']
+PASS stress11.ovl campaign 0 CAMP1 entry 0: tower started: True
+PASS stress11.ovl campaign 0 CAMP1 entry 0: grid == decoded record (1GRBLA9W3W): []
+PASS stress11.ovl campaign 0 CAMP1 entry 0: rows/mission/tower: (19, 1, 4)
+PASS stress11.ovl campaign 0 CAMP1 entry 0: initial time 200 s (remaining 187): True
+PASS stress11.ovl campaign 0 CAMP1 entry 0: tower name hook A0=$bc1a5 text: b'1GRBLA9W3W\x00'
+      record 1: size 113, name A0 $bc1a5 (odd address)
+PASS stress11.ovl campaign 0 CAMP1: F10 opens the manager again (= back at the title after Q): True
+PASS stress11.ovl: game alive (VBL runs): True
+PASS stress11.ovl: no Address/Bus Error/exception in the Hatari log: []
+PASS stress12.ovl: ovl.py validate: []
+== stress12.ovl: 4 levels, sizes [134, 123, 192, 122], 3 campaigns [('CAMP1', [1, 1, 3]), ('CAMP2', [139, 1, 135, 141, 2]), ('CAMP3', [131, 3, 3])]
+title 68.55776929855347
+PASS stress12.ovl: F10 opens the manager: True
+PASS stress12.ovl: Load from campaign disk (nebcampaign.py new --ovl): 'Loaded 4 levels / 3 campaigns'
+PASS stress12.ovl: store in RAM == file: True
+PASS stress12.ovl: level list shows all levels: ['0XTMX9BL', '361L91B', 'TZ3HMFWBWV', 'FA7U7EF4LJ']
+PASS stress12.ovl level 2 (record size 192) Play: tower started: True
+PASS stress12.ovl level 2 (record size 192) Play: grid == decoded record (TZ3HMFWBWV): []
+PASS stress12.ovl level 2 (record size 192) Play: rows/mission/tower: (39, 1, 4)
+PASS stress12.ovl level 2 (record size 192) Play: initial time 600 s (remaining 587): True
+PASS stress12.ovl level 2 (record size 192) Play: tower name hook A0=$bc219 text: b'TZ3HMFWBWV\x00'
+      record 2: size 192, name A0 $bc219 (odd address)
+PASS stress12.ovl level 2 (record size 192): F10 opens the manager again (= back at the title after Q): True
+PASS stress12.ovl level 3 (record size 122) Play: tower started: True
+PASS stress12.ovl level 3 (record size 122) Play: grid == decoded record (FA7U7EF4LJ): []
+PASS stress12.ovl level 3 (record size 122) Play: rows/mission/tower: (22, 1, 1)
+PASS stress12.ovl level 3 (record size 122) Play: initial time 350 s (remaining 337): True
+PASS stress12.ovl level 3 (record size 122) Play: tower name hook A0=$bc2d9 text: b'FA7U7EF4LJ\x00'
+      record 3: size 122, name A0 $bc2d9 (odd address)
+PASS stress12.ovl level 3 (record size 122): F10 opens the manager again (= back at the title after Q): True
+PASS stress12.ovl: campaign list shows all campaigns: ['CAMP1', 'CAMP2', 'CAMP3']
+PASS stress12.ovl campaign 0 CAMP1 entry 0: tower started: True
+PASS stress12.ovl campaign 0 CAMP1 entry 0: grid == decoded record (361L91B): []
+PASS stress12.ovl campaign 0 CAMP1 entry 0: rows/mission/tower: (16, 1, 1)
+PASS stress12.ovl campaign 0 CAMP1 entry 0: initial time 480 s (remaining 467): True
+PASS stress12.ovl campaign 0 CAMP1 entry 0: tower name hook A0=$bc19e text: b'361L91B\x00'
+      record 1: size 123, name A0 $bc19e (even address)
+PASS stress12.ovl campaign 0 CAMP1: F10 opens the manager again (= back at the title after Q): True
+PASS stress12.ovl: game alive (VBL runs): True
+PASS stress12.ovl: no Address/Bus Error/exception in the Hatari log: []
+FAILS []

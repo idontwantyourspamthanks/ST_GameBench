@@ -1,0 +1,91 @@
+cell def_insB_ste_drive insB ste 1024 1.62 disks work/fdb/build_def/disk_a.st work/fdb/build_def/disk_b.st  realfdc
+disk-2 prompt True t 60 vbl 3150
+prompt shot /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/fdb/out/def_insB_ste_drive_prompt.png
+marker $b2700: 000B2700: 4d 53 50 4f 00 00 00 00                          MSPO....
+mode action done: insB
+t+   9s vbl 3986 $1021/$100e (2, 0)
+t+  20s vbl 4569 $1021/$100e (2, 91)
+t+  33s vbl 5257 $1021/$100e (2, 214)
+race advancing ($100e 292 -> 374, mode 2, prompt gone True): True
+race shot /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/fdb/out/def_insB_ste_drive_race.png
+drive: up held 30 s, $100e 808 shot /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/fdb/out/def_insB_ste_drive_drive.png
+marker $b2700: 000B2700: 4d 53 50 4f 00 00 00 00                          MSPO....
+tick clock $b8f00: 000B8F00: 00 00 98 d0 00 00 98 e2                          ..ÿס..ÿΓ
+driveb vars (unit, pref[0], pref[1]) @$b8e9e: 000B8E9E: 00 01 00 00 00 01                                ......
+drive B selected (PSG change drive ->1) 9 time(s) in the whole run
+fdc read sectors whole run: per drive {'0': 1237, '1': 100}
+  drive=1 reads whole run: 100; first/last: fdc read sector addr=0x68000 drive=1 track=0 sect=1 side=0 VBL=3538 video_cyc=142950 102@279 pc=cc74 | fdc read sector addr=0x62400 drive=1 track=22 sect=3 side=0 VBL=3776 video_cyc=68034 450@132 pc=cc74
+fdc read sectors after the insert: per drive {'0': 1, '1': 100}
+  drive=1 reads after the insert: 100; first/last: fdc read sector addr=0x68000 drive=1 track=0 sect=1 side=0 VBL=3538 video_cyc=142950 102@279 pc=cc74 | fdc read sector addr=0x62400 drive=1 track=22 sect=3 side=0 VBL=3776 video_cyc=68034 450@132 pc=cc74
+RESULT def_insB_ste_drive OK
+cell def_startB_ste_drive startB ste 1024 1.62 disks work/fdb/build_def/disk_a.st work/fdb/build_def/disk_b.st  realfdc
+startB: race reached WITHOUT the disk-2 prompt: $100e 47 -> 106 vbl 3301 t 66
+disk-2 prompt False t 66 vbl 3449
+prompt shot /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/fdb/out/def_startB_ste_drive_prompt.png
+marker $b2700: 000B2700: 4d 53 50 4f 00 00 00 00                          MSPO....
+mode action done: startB
+t+   8s vbl 4193 $1021/$100e (2, 251)
+t+  19s vbl 4736 $1021/$100e (2, 360)
+t+  30s vbl 5280 $1021/$100e (2, 468)
+race advancing ($100e 508 -> 576, mode 2, prompt gone True): True
+race shot /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/fdb/out/def_startB_ste_drive_race.png
+drive: up held 30 s, $100e 960 shot /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/fdb/out/def_startB_ste_drive_drive.png
+marker $b2700: 000B2700: 4d 53 50 4f 00 00 00 00                          MSPO....
+tick clock $b8f00: 000B8F00: 00 00 8b da 00 00 8b e0                          ..ïם..ïα
+driveb vars (unit, pref[0], pref[1]) @$b8e9e: 000B8E9E: 00 01 00 00 00 01                                ......
+drive B selected (PSG change drive ->1) 8 time(s) in the whole run
+fdc read sectors whole run: per drive {'0': 1236, '1': 100}
+  drive=1 reads whole run: 100; first/last: fdc read sector addr=0x68000 drive=1 track=0 sect=1 side=0 VBL=2378 video_cyc=98856 40@193 pc=cc58 | fdc read sector addr=0x62400 drive=1 track=22 sect=3 side=0 VBL=2626 video_cyc=157608 424@307 pc=cc6a
+fdc read sectors after the insert: per drive {'0': 1236, '1': 100}
+  drive=1 reads after the insert: 100; first/last: fdc read sector addr=0x68000 drive=1 track=0 sect=1 side=0 VBL=2378 video_cyc=98856 40@193 pc=cc58 | fdc read sector addr=0x62400 drive=1 track=22 sect=3 side=0 VBL=2626 video_cyc=157608 424@307 pc=cc6a
+RESULT def_startB_ste_drive OK
+cell def_none_nob_ste none ste 1024 1.62 disks work/fdb/build_def/disk_a.st work/fdb/build_def/disk_b.st nob realfdc
+disk-2 prompt True t 68 vbl 3573
+prompt shot /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/fdb/out/def_none_nob_ste_prompt.png
+marker $b2700: 000B2700: 4d 53 50 4f 00 00 00 00                          MSPO....
+mode action done: none
+none: vbl 4325 prompt still shown False
+none: vbl 4755 prompt still shown True
+none: vbl 5194 prompt still shown False
+none: vbl 5635 prompt still shown True
+none: vbl 6090 prompt still shown False
+none: vbl 6586 prompt still shown True
+none: vbl 7062 prompt still shown False
+marker $b2700: 000B2700: 4d 53 50 4f 00 00 00 00                          MSPO....
+tick clock $b8f00: 000B8F00: 00 00 78 54 00 00 00 00                          ..xT....
+driveb vars (unit, pref[0], pref[1]) @$b8e9e: 000B8E9E: 00 00 00 00 00 00                                ......
+drive B selected (PSG change drive ->1) 6 time(s) in the whole run
+fdc read sectors whole run: per drive {'0': 1240}
+  drive=1 reads whole run: 0; first/last: - | -
+fdc read sectors after the insert: per drive {'0': 4}
+  drive=1 reads after the insert: 0; first/last: - | -
+RESULT def_none_nob_ste n/a
+cell def_insB_mste4m insB megaste 4096 2.06 disks work/fdb/build_def/disk_a.st work/fdb/build_def/disk_b.st  realfdc
+Traceback (most recent call last):
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/fdb/fdb.py", line 171, in <module>
+    main()
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/fdb/fdb.py", line 83, in main
+    v = h.vbl()
+        ^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/tools/stharness.py", line 213, in vbl
+    return int(re.findall(r"#(\d+) \(dec\)", self.debug("e VBL"))[-1])
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^
+IndexError: list index out of range
+Traceback (most recent call last):
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/fdb/fdb.py", line 171, in <module>
+    main()
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/fdb/fdb.py", line 70, in main
+    h = Hatari(game_dir=GAME / "originals" / "floppy", machine=a.machine, memsize_kb=a.mem, tos=TOS[a.tos] if a.tos else None,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/tools/stharness.py", line 134, in __init__
+    shutil.copy(src, drive / name)
+  File "/home/ryan/.pyenv/versions/3.12.12/lib/python3.12/shutil.py", line 435, in copy
+    copyfile(src, dst, follow_symlinks=follow_symlinks)
+  File "/home/ryan/.pyenv/versions/3.12.12/lib/python3.12/shutil.py", line 273, in copyfile
+    _fastcopy_sendfile(fsrc, fdst)
+  File "/home/ryan/.pyenv/versions/3.12.12/lib/python3.12/shutil.py", line 164, in _fastcopy_sendfile
+    raise err from None
+  File "/home/ryan/.pyenv/versions/3.12.12/lib/python3.12/shutil.py", line 150, in _fastcopy_sendfile
+    sent = os.sendfile(outfd, infd, offset, blocksize)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 28] No space left on device: '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/originals/floppy/moonshine_racers_millennium_a.stx' -> '/tmp/strun-30iy1w0x/C/moonshine_racers_millennium_a.stx'

@@ -1,0 +1,347 @@
+diff --git a/README.md b/README.md
+index 33c73e4..22bcf8d 100644
+--- a/README.md
++++ b/README.md
+@@ -180,7 +180,7 @@ there is no cart id in the API, every route works on the signed-in user's own ca
+   non-executable boot sector, serial = first 3 bytes of md5 of the OVL, fixed dates) and re-extracts the OVL from that disk; the `.msa`
+   (`Hub::Msa.encode`, run-length coded tracks, stored raw when RLE is not strictly shorter) is decoded and compared with the `.st`.
+   Everything is in memory and bounded by a 5 s timeout. Same cart = same bytes = same sha256.
+-* **Warnings** (never block): a lift without an end marker, a level without an exit door, unnamed or equally named campaigns, empty
++* **Warnings** (never block): a lift without an end marker, a door without its opposite (`unpaired_door`: a tunnel door brings the frog out 8 columns away on the same row, `Hub::Ncmp::Doors`), a level without an exit door, unnamed or equally named campaigns, empty
+   slots in between.
+ * **Downloads** are limited to 20 an hour per user (all three kinds count; the in-process store, see the deploy notes) and every one
+   writes a `Download` row (user, kind, sha256, size, time; newest 200 kept per user). The dry run (`POST /api/cart/build`) is limited to
+@@ -224,9 +224,9 @@ It also retries uploads that were stored without a campaign and reports campaign
+ ### Level maps
+ 
+ `GET /api/levels/:id` returns the parsed layout (16 columns x rows grid of cell codes, enemies with start direction, lifts with
+-start/end/stops, doors/exit cells, mission/base tower, time, `colours` and `enemy_set`) plus a legend: for every cell code used, its label, colour and the 16x8
++start/end/stops, doors/exit cells (`doors` per cell with `paired`, `door_runs` per door with its opposite column and `unpaired_door` warnings, `door_warnings`), mission/base tower, time, `colours` and `enemy_set`) plus a legend: for every cell code used, its label, colour and the 16x8
+ glyph bitmap. `Hub::Ncmp::Legend` is the one place that maps cell codes to glyphs; the PNG thumbnails and `LevelMap.vue` (canvas, zoom,
+-scroll, hover tooltip, ring wrap hint, row numbers) both draw those bitmaps. Rows (16..120), columns (16) and canvas size (4096 px) are
++scroll, hover tooltip, ring wrap hint, row numbers) both draw those bitmaps; the map draws each door as the game does (one dark arched opening) with a dashed tunnel line to the opposite door (magenta `?` when there is none). Rows (16..120), columns (16) and canvas size (4096 px) are
+ clamped on both sides.
+ 
+ **Look of a level.** What the game plays a level with is its base tower byte (record byte 1: palette, sky colours, skyline, tower texture,
+diff --git a/api/app/controllers/concerns/hub_serializers.rb b/api/app/controllers/concerns/hub_serializers.rb
+index 02088c5..b3e16bc 100644
+--- a/api/app/controllers/concerns/hub_serializers.rb
++++ b/api/app/controllers/concerns/hub_serializers.rb
+@@ -205,11 +205,14 @@ module HubSerializers
+ 						speed: [ 5, 7 ].include?((v >> 4) & 7) ? "fast" : "slow"
+ 					}
+ 				elsif (7..8).cover?(Hub::Ncmp::Legend.tile_for(v))
+-					doors << { col: c, row: r, code: v, exit: Hub::Ncmp::Legend.tile_for(v) == 8 }
++					exit = Hub::Ncmp::Legend.tile_for(v) == 8
++					# paired = a door opening has its opposite (column + 8) on the same row; the exit door needs none (nil)
++					doors << { col: c, row: r, code: v, exit: exit, paired: exit ? nil : Hub::Ncmp::Doors.door?(grid[Hub::Ncmp::Doors.opposite(c)][r]) }
+ 				end
+ 			end
+ 		end
+ 		lifts = Hub::Ncmp::Lifts.report(grid, level.rows)
++		door_runs = Hub::Ncmp::Doors.report(grid, level.rows)
+ 		campaign = level.campaign
+ 		level_summary(level).except(:preview_url).merge(
+ 			campaign_id: level.campaign_id,
+@@ -231,6 +234,8 @@ module HubSerializers
+ 			grid: grid,
+ 			enemies: enemies,
+ 			doors: doors,
++			door_runs: door_runs,
++			door_warnings: door_runs.count { |run| !run[:paired] },
+ 			lifts: lifts,
+ 			legend: { cells: Hub::Ncmp::Legend.cells_for(grid), frog_start: Hub::Ncmp::Legend.frog_info.merge(col: 0, row: 2) },
+ 			preview_url: "/levels/#{level.id}/preview"
+diff --git a/api/app/services/hub/cart_build.rb b/api/app/services/hub/cart_build.rb
+index b7efbbd..8e2eff8 100644
+--- a/api/app/services/hub/cart_build.rb
++++ b/api/app/services/hub/cart_build.rb
+@@ -189,6 +189,7 @@ module Hub
+         lifts.each do |lift|
+           lift[:warnings].first(2).each { |text| out << "lift in column #{lift[:col]}: #{text}" }
+         end
++        Ncmp::Doors.report(grid, level.rows).reject { |door| door[:paired] }.each { |door| out << Ncmp::Doors.message(door) }
+         has_exit = grid.any? { |col| col.any? { |v| Ncmp::Legend.tile_for(v) == 8 } }
+         out << "no exit door, the level cannot be finished" unless has_exit
+         out
+diff --git a/api/test/controllers/api/carts_test.rb b/api/test/controllers/api/carts_test.rb
+index 6118157..1f02ae1 100644
+--- a/api/test/controllers/api/carts_test.rb
++++ b/api/test/controllers/api/carts_test.rb
+@@ -373,6 +373,21 @@ class Api::CartsTest < ActionDispatch::IntegrationTest
+     assert_response :success
+   end
+ 
++  test "problems: a door without its opposite is an unpaired_door warning, a pair (column + 8, same rows) is not" do
++    grid = Array.new(16) { Array.new(16, 0) }
++    16.times { |c| grid[c][1] = 0x81 }
++    [ 2, 3, 4 ].each { |r| grid[3][r] = 0x83 }
++    [ 2, 3, 4 ].each { |r| grid[0][r] = 0x83; grid[8][r] = 0x83 }
++    [ 13, 14, 15 ].each { |r| grid[6][r] = 0xc3 }
++    camp = hub_campaign(@member, "Lonely door", ovl_with(level_record(grid, 16, name: "DOORS"), name: "DOORS"))
++    add(level_id: camp.levels.first.id)
++    assert_response :created
++    warnings = cart["warnings"].join("\n")
++    assert_match(/“DOORS” \(slot 1, entry 1\): door in column 3, rows 2-4: no door opposite in column 11 \(unpaired_door\)/, warnings)
++    assert_no_match(/column 0|column 8/, warnings)
++    assert_no_match(/no exit door/, warnings)
++  end
++
+   test "warnings for unnamed and equally named campaigns" do
+     add_original(1, 1, slot: 1)
+     add_original(1, 2, slot: 2)
+diff --git a/api/test/controllers/api/hub_browse_test.rb b/api/test/controllers/api/hub_browse_test.rb
+index 59e27ad..75d13ae 100644
+--- a/api/test/controllers/api/hub_browse_test.rb
++++ b/api/test/controllers/api/hub_browse_test.rb
+@@ -203,6 +203,11 @@ class Api::HubBrowseTest < ActionDispatch::IntegrationTest
+     assert_equal [ [ 1, 6, "horizontal", -1 ], [ 7, 2, "vertical", -1 ], [ 10, 2, "horizontal", 1 ] ],
+       enemies.map { |e| e.values_at("col", "row", "axis", "dir") }
+     assert_equal [ 3, 3 ], [ body["doors"].count { |d| d["exit"] }, body["doors"].count { |d| !d["exit"] } ]
++    # the fixture's one door (column 14, rows 12-14) has no opposite door in column 6: unpaired_door; the exit door needs none
++    assert_equal [ [ 14, 12, 14, 6, false, [ 12, 13, 14 ], [ "unpaired_door" ] ] ],
++      body["door_runs"].map { |d| d.values_at("col", "bottom", "top", "partner_col", "paired", "missing", "warnings") }
++    assert_equal 1, body["door_warnings"]
++    assert_equal [ [ false ] * 3, [ nil ] * 3 ], [ body["doors"].reject { |d| d["exit"] }.map { |d| d["paired"] }, body["doors"].select { |d| d["exit"] }.map { |d| d["paired"] } ]
+   end
+ 
+   test "legend covers every code used and each glyph is eight 16-bit rows" do
+diff --git a/api/test/services/hub/ncmp_test.rb b/api/test/services/hub/ncmp_test.rb
+index 2834d67..b42b275 100644
+--- a/api/test/services/hub/ncmp_test.rb
++++ b/api/test/services/hub/ncmp_test.rb
+@@ -130,6 +130,39 @@ class Hub::NcmpTest < ActiveSupport::TestCase
+     assert_equal [ { col: 6, bottom: 2, top: 8, top_kind: "end", stops: [ 5 ], warnings: [] } ], lifts
+   end
+ 
++  test "doors: a door opening is paired with the one 8 columns away on the same row, otherwise unpaired_door" do
++    grid = Array.new(16) { Array.new(20, 0) }
++    [ 2, 3, 4 ].each { |r| grid[3][r] = 0x83; grid[11][r] = 0x83 } # a pair (column 3 <-> 11)
++    [ 6, 7, 8 ].each { |r| grid[14][r] = 0x83 }                    # alone: the opposite is column 6
++    [ 10, 11 ].each { |r| grid[1][r] = 0x83 }                      # half paired: only row 10 has a door in column 9
++    grid[9][10] = 0x87
++    [ 17, 18, 19 ].each { |r| grid[5][r] = 0xc3 }                  # the exit door is the goal, not a tunnel
++    report = Hub::Ncmp::Doors.report(grid, 20)
++    assert_equal [ [ 1, 10, 11 ], [ 3, 2, 4 ], [ 9, 10, 10 ], [ 11, 2, 4 ], [ 14, 6, 8 ] ], report.map { |d| d.values_at(:col, :bottom, :top) }
++    by = report.to_h { |d| [ [ d[:col], d[:bottom] ], d ] }
++    assert_equal [ true, [], [] ], [ by[[ 3, 2 ]][:paired], by[[ 3, 2 ]][:missing], by[[ 3, 2 ]][:warnings] ]
++    assert_equal [ 11, true ], [ by[[ 3, 2 ]][:partner_col], by[[ 11, 2 ]][:paired] ]
++    assert_equal [ false, [ 6, 7, 8 ], [ "unpaired_door" ], 6 ], by[[ 14, 6 ]].values_at(:paired, :missing, :warnings, :partner_col)
++    assert_equal [ false, [ 11 ] ], by[[ 1, 10 ]].values_at(:paired, :missing)
++    assert_equal 0, Hub::Ncmp::Doors.opposite(8)
++    assert_equal 15, Hub::Ncmp::Doors.opposite(7)
++    assert_includes Hub::Ncmp::Doors.message(by[[ 14, 6 ]]), "column 14, rows 6-8: no door opposite in column 6 (unpaired_door)"
++    assert_includes Hub::Ncmp::Doors.message(by[[ 1, 10 ]]), "column 1, rows 10-11"
++  end
++
++  test "doors: an exit door opposite counts (tower 8 of mission 1 has its tunnel door at column 2, rows 92-94, opposite the exit door at column 10)" do
++    grid = Array.new(16) { Array.new(96, 0) }
++    [ 92, 93, 94 ].each { |r| grid[2][r] = 0x83; grid[10][r] = 0xc3 }
++    report = Hub::Ncmp::Doors.report(grid, 96)
++    assert_equal [ [ 2, true ] ], report.map { |d| d.values_at(:col, :paired) }, "the exit door is not a tunnel door, so only column 2 is reported, and it is paired"
++  end
++
++  test "doors: a pair like the original towers' (column 0 / 8, rows 39-41 of tower 1) is clean" do
++    grid = Array.new(16) { Array.new(47, 0) }
++    [ 39, 40, 41 ].each { |r| grid[0][r] = 0x83; grid[8][r] = 0x83 }
++    assert(Hub::Ncmp::Doors.report(grid, 47).all? { |d| d[:paired] })
++  end
++
+   test "reads the look of every level: colours = high nibble, enemies = low nibble of the record's flags byte" do
+     levels = Hub::Ncmp::Parser.parse(fixture_bytes("looks.ovl")).levels
+     assert_equal [ [ 0, 0 ], [ 5, 0 ], [ 0, 3 ], [ 8, 4 ], [ 1, 1 ] ], levels.map { |l| [ l.colours, l.enemy_set ] }
+diff --git a/front/src/components/LevelMap.vue b/front/src/components/LevelMap.vue
+index 23e3165..bac67f5 100644
+--- a/front/src/components/LevelMap.vue
++++ b/front/src/components/LevelMap.vue
+@@ -125,6 +125,46 @@ function draw() {
+ 		ctx.fillStyle = '#cbbba0'
+ 	}
+ 
++	// 4a. doors as the game draws them: ONE dark opening per door (the three cells together, arched), and the tunnel
++	// to the opposite door (column + 8, same row) as a dashed line across the map; a door without its opposite is magenta
++	for (const run of props.level.door_runs) {
++		if (run.col < 0 || run.col >= cols.value) continue
++		const x = gx + run.col * cellW.value
++		const yTop = HEADER + (rows.value - 1 - run.top) * cellH.value
++		const w = cellW.value
++		const h = (run.top - run.bottom + 1) * cellH.value
++		const r = Math.min(w / 2, h / 2)
++		const bad = !run.paired
++		ctx.beginPath()
++		ctx.moveTo(x + 1, yTop + h - 1)
++		ctx.lineTo(x + 1, yTop + r)
++		ctx.arcTo(x + 1, yTop + 1, x + 1 + r, yTop + 1, r)
++		ctx.arcTo(x + w - 1, yTop + 1, x + w - 1, yTop + 1 + r, r)
++		ctx.lineTo(x + w - 1, yTop + h - 1)
++		ctx.closePath()
++		ctx.fillStyle = '#000'
++		ctx.fill()
++		ctx.lineWidth = Math.max(1, zz - 1)
++		ctx.strokeStyle = bad ? '#ff00ff' : '#ff4400'
++		ctx.stroke()
++		if (!run.paired) {
++			ctx.fillStyle = '#ff00ff'
++			ctx.textAlign = 'center'
++			ctx.fillText('?', x + w / 2, yTop + h / 2)
++		} else if (run.col < run.partner_col) {
++			const y = Math.round(yTop + h / 2) + 0.5
++			ctx.save()
++			ctx.setLineDash([3, 5])
++			ctx.globalAlpha = 0.45
++			ctx.beginPath()
++			ctx.moveTo(x + w, y)
++			ctx.lineTo(gx + run.partner_col * cellW.value, y)
++			ctx.stroke()
++			ctx.restore()
++		}
++		ctx.lineWidth = 1
++	}
++
+ 	// 4. lifts: arrowed line from the slab to the end marker, rings at the stops
+ 	for (const lift of props.level.lifts) {
+ 		if (lift.col < 0 || lift.col >= cols.value) continue
+@@ -154,6 +194,10 @@ function draw() {
+ 	}
+ }
+ 
++function doorAt(col: number, row: number) {
++	return props.level.door_runs.find(d => d.col === col && row >= d.bottom && row <= d.top)
++}
++
+ function liftAt(col: number, row: number) {
+ 	return props.level.lifts.find(l => l.col === col && row >= l.bottom && row <= (l.top ?? l.bottom))
+ }
+@@ -186,6 +230,8 @@ const tooltip = computed(() => {
+ 	lines.push(`column ${h.col}, row ${h.row}${h.ghost ? ' (wraps round the tower)' : ''}`)
+ 	lines.push(`code ${hexCode(code(h.col, h.row))} (${code(h.col, h.row)})`)
+ 	if (lift) lines.push(`lift: rows ${lift.bottom} to ${lift.top ?? '?'}`)
++	const door = doorAt(h.col, h.row)
++	if (door) lines.push(door.paired ? `tunnel: the frog comes out at column ${door.partner_col}, same row` : `no door opposite in column ${door.partner_col}: the frog comes out there anyway`)
+ 	return lines
+ })
+ 
+@@ -250,7 +296,7 @@ const legendRows = computed(() => {
+ 
+ const summary = computed(() => {
+ 	const l = props.level
+-	return `Level “${l.name}”: ${l.rows} rows by ${l.columns} columns, ${l.enemies.length} enemies, ${l.lifts.length} lifts, ${l.doors.filter(d => d.exit).length ? 'an exit door' : 'no exit door'}.`
++	return `Level “${l.name}”: ${l.rows} rows by ${l.columns} columns, ${l.enemies.length} enemies, ${l.lifts.length} lifts, ${l.door_runs.length} tunnel doors, ${l.doors.filter(d => d.exit).length ? 'an exit door' : 'no exit door'}.`
+ })
+ </script>
+ 
+@@ -327,9 +373,14 @@ const summary = computed(() => {
+ 			<section v-if="level.doors.length" aria-labelledby="doors-h">
+ 				<h4 id="doors-h">Doors</h4>
+ 				<p>
+-					{{ level.doors.filter(d => !d.exit).length }} door-opening cells,
+-					{{ level.doors.filter(d => d.exit).length }} exit-door cells.
++					{{ level.door_runs.length }} tunnel doors ({{ level.doors.filter(d => !d.exit).length }} cells),
++					{{ level.doors.filter(d => d.exit).length }} exit-door cells. A tunnel door brings the frog out half the tower away (8 columns, same row).
+ 				</p>
++				<ul v-if="level.door_warnings">
++					<li v-for="run in level.door_runs.filter(d => !d.paired)" :key="`${run.col}-${run.bottom}`" class="warn">
++						Column {{ run.col }}, row {{ run.bottom }}<template v-if="run.top > run.bottom"> to {{ run.top }}</template>: no door opposite in column {{ run.partner_col }}
++					</li>
++				</ul>
+ 			</section>
+ 		</div>
+ 	</div>
+diff --git a/front/src/types/hub.ts b/front/src/types/hub.ts
+index b182ee2..13b1fa7 100644
+--- a/front/src/types/hub.ts
++++ b/front/src/types/hub.ts
+@@ -160,6 +160,19 @@ export interface LevelDoor {
+ 	row: number
+ 	code: number
+ 	exit: boolean
++	/** door opening: has its opposite (column + 8 mod 16, same row); null for the exit door, which needs none */
++	paired: boolean | null
++}
++
++/** a run of vertically adjacent door-opening cells in one column (the game's tunnel door) */
++export interface LevelDoorRun {
++	col: number
++	bottom: number
++	top: number
++	partner_col: number
++	paired: boolean
++	missing: number[]
++	warnings: string[]
+ }
+ 
+ export interface LevelData extends Omit<LevelSummary, 'preview_url'> {
+@@ -183,6 +196,8 @@ export interface LevelData extends Omit<LevelSummary, 'preview_url'> {
+ 	grid: number[][]
+ 	enemies: LevelEnemy[]
+ 	doors: LevelDoor[]
++	door_runs: LevelDoorRun[]
++	door_warnings: number
+ 	lifts: LevelLift[]
+ 	legend: {
+ 		cells: Record<string, CellInfo>
+diff --git a/api/app/services/hub/ncmp/doors.rb b/api/app/services/hub/ncmp/doors.rb
+new file mode 100644
+index 0000000..34ca8d4
+--- /dev/null
++++ b/api/app/services/hub/ncmp/doors.rb
+@@ -0,0 +1,59 @@
++module Hub
++  module Ncmp
++    # Door openings ($83, drawn by the game as a dark gap) are the tunnel doors. The frog pressing Up in one walks through
++    # the tower and comes out half the ring away: x + 64 of 128, i.e. column + 8 (mod 16), SAME row, whether or not a door
++    # is there (the game never looks at the destination before it moves the frog; work/looks/deliver3/doors_notes.md).
++    # So a door is "paired" when the cell 8 columns away on the same row is a door opening too; the original towers (176
++    # of 178 door runs; the other two have the tower's exit door opposite) and the in-game editor (it places the opposite
++    # door itself) always pair them. A door opening without a door (opening or exit) opposite is the warning
++    # `unpaired_door`. The exit door ($c3, the finish) is not a tunnel and needs no partner.
++    module Doors
++      UNPAIRED = "unpaired_door".freeze
++
++      module_function
++
++      def opposite(col)
++        (col + Parser::ANGLES / 2) % Parser::ANGLES
++      end
++
++      def opening?(v)
++        Legend.tile_for(v) == 7
++      end
++
++      # a door of either kind is somewhere the frog can come out "in a door"
++      def door?(v)
++        (7..8).cover?(Legend.tile_for(v))
++      end
++
++      # -> [{col:, bottom:, top:, partner_col:, paired:, missing: [rows without an opposite door], warnings: ["unpaired_door"]}]
++      # one entry per run of vertically adjacent door-opening cells in a column
++      def report(grid, rows)
++        out = []
++        Parser::ANGLES.times do |c|
++          cl = grid[c]
++          p = opposite(c)
++          r = 0
++          while r < rows
++            unless opening?(cl[r])
++              r += 1
++              next
++            end
++
++            top = r
++            top += 1 while top + 1 < rows && opening?(cl[top + 1])
++            missing = (r..top).reject { |row| door?(grid[p][row]) }
++            out << { col: c, bottom: r, top: top, partner_col: p, paired: missing.empty?, missing: missing,
++                     warnings: missing.empty? ? [] : [ UNPAIRED ] }
++            r = top + 1
++          end
++        end
++        out
++      end
++
++      def message(door)
++        rows = door[:bottom] == door[:top] ? "row #{door[:bottom]}" : "rows #{door[:bottom]}-#{door[:top]}"
++        "door in column #{door[:col]}, #{rows}: no door opposite in column #{door[:partner_col]} (#{UNPAIRED}); the frog comes out of the tunnel there all the same"
++      end
++    end
++  end
++end

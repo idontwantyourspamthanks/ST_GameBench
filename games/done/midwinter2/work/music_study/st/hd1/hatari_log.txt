@@ -1,0 +1,1460 @@
+INFO : Hatari v2.6.1, compiled on:  Feb  8 2026, 19:50:12
+INFO : GEMDOS HDD emulation, C: <-> /tmp/mw2run-nufiybcr/C.
+> b pc = $c6c :trace :file /tmp/mw2run-nufiybcr/bp_ym_start_c6c.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $c6c
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-nufiybcr/bp_ym_start_c6c.txt' file on hit.
+> b pc = $c4c :trace :file /tmp/mw2run-nufiybcr/bp_ym_stop_c4c.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $c4c
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-nufiybcr/bp_ym_stop_c4c.txt' file on hit.
+> b pc = $33870 :trace :file /tmp/mw2run-nufiybcr/bp_stop_5032.txt
+CPU condition breakpoint 3 with 1 condition(s) added:
+	pc = $33870
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-nufiybcr/bp_stop_5032.txt' file on hit.
+> b pc = $338c2 :trace :file /tmp/mw2run-nufiybcr/bp_stop_restore_502c.txt
+CPU condition breakpoint 4 with 1 condition(s) added:
+	pc = $338c2
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-nufiybcr/bp_stop_restore_502c.txt' file on hit.
+> b pc = $321fe :trace :file /tmp/mw2run-nufiybcr/bp_start_tune.txt
+CPU condition breakpoint 5 with 1 condition(s) added:
+	pc = $321fe
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-nufiybcr/bp_start_tune.txt' file on hit.
+> b pc = $3225c :trace :file /tmp/mw2run-nufiybcr/bp_setvec_3225c.txt
+CPU condition breakpoint 6 with 1 condition(s) added:
+	pc = $3225c
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-nufiybcr/bp_setvec_3225c.txt' file on hit.
+> b pc = $32288 :trace :file /tmp/mw2run-nufiybcr/bp_setvec_32288.txt
+CPU condition breakpoint 7 with 1 condition(s) added:
+	pc = $32288
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-nufiybcr/bp_setvec_32288.txt' file on hit.
+> b pc = $32322 :trace :file /tmp/mw2run-nufiybcr/bp_setvec_32322.txt
+CPU condition breakpoint 8 with 1 condition(s) added:
+	pc = $32322
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-nufiybcr/bp_setvec_32322.txt' file on hit.
+> b pc = $3238e :trace :file /tmp/mw2run-nufiybcr/bp_fade_start_3238e.txt
+CPU condition breakpoint 9 with 1 condition(s) added:
+	pc = $3238e
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-nufiybcr/bp_fade_start_3238e.txt' file on hit.
+> b pc = $322d6 :trace :file /tmp/mw2run-nufiybcr/bp_fadeout_322d6.txt
+CPU condition breakpoint 10 with 1 condition(s) added:
+	pc = $322d6
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-nufiybcr/bp_fadeout_322d6.txt' file on hit.
+> b pc = $18e32 :trace :file /tmp/mw2run-nufiybcr/bp_sfx_init_18e32.txt
+CPU condition breakpoint 11 with 1 condition(s) added:
+	pc = $18e32
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-nufiybcr/bp_sfx_init_18e32.txt' file on hit.
+> b pc = $338c6 :trace :file /tmp/mw2run-nufiybcr/bp_tick_restore_338c6.txt
+CPU condition breakpoint 12 with 1 condition(s) added:
+	pc = $338c6
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-nufiybcr/bp_tick_restore_338c6.txt' file on hit.
+> b pc = $e78 :trace :file /tmp/mw2run-nufiybcr/bp_once_end_e78.txt
+CPU condition breakpoint 13 with 1 condition(s) added:
+	pc = $e78
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-nufiybcr/bp_once_end_e78.txt' file on hit.
+> b pc = $32186 :trace :file /tmp/mw2run-nufiybcr/bp_tune9_32186.txt
+CPU condition breakpoint 14 with 1 condition(s) added:
+	pc = $32186
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-nufiybcr/bp_tune9_32186.txt' file on hit.
+> b pc = $3234a :trace :file /tmp/mw2run-nufiybcr/bp_tune_deferred_3234a.txt
+CPU condition breakpoint 15 with 1 condition(s) added:
+	pc = $3234a
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-nufiybcr/bp_tune_deferred_3234a.txt' file on hit.
+> b pc = $26376 :trace :file /tmp/mw2run-nufiybcr/bp_mute_toggle_26376.txt
+CPU condition breakpoint 16 with 1 condition(s) added:
+	pc = $26376
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-nufiybcr/bp_mute_toggle_26376.txt' file on hit.
+> e VBL
+= %100000110 (bin), #262 (dec), $106 (hex)
+> m $5138 8
+00005138: 00 00 00 00 00 00 00 00                          ........
+WARN : No GEMDOS dir '/tmp/mw2run-nufiybcr/C/AUTO'
+WARN : Bus Error reading at address $ffff8e21, PC=$13a7a addr_e3=13a7a op_e3=1238
+WARN : No GEMDOS dir '/tmp/mw2run-nufiybcr/C/GAMEX'
+> e VBL
+= %101011011 (bin), #347 (dec), $15b (hex)
+> m $5138 8
+00005138: 00 00 00 00 00 00 00 00                          ........
+> e VBL
+= %110110000 (bin), #432 (dec), $1b0 (hex)
+> m $5138 8
+00005138: 00 00 00 00 00 00 00 00                          ........
+> e VBL
+= %1000000101 (bin), #517 (dec), $205 (hex)
+> m $5138 8
+00005138: 00 00 00 00 00 00 00 00                          ........
+> e VBL
+= %1001011011 (bin), #603 (dec), $25b (hex)
+> m $5138 8
+00005138: 00 00 00 00 00 00 00 00                          ........
+> e VBL
+= %1010110000 (bin), #688 (dec), $2b0 (hex)
+> m $5138 8
+00005138: 00 00 00 00 00 00 00 00                          ........
+> e VBL
+= %1100000101 (bin), #773 (dec), $305 (hex)
+> m $5138 8
+00005138: 00 00 00 00 00 00 00 00                          ........
+> e VBL
+= %1101011010 (bin), #858 (dec), $35a (hex)
+> m $5138 8
+00005138: 00 00 00 00 00 00 00 00                          ........
+WARN : PNG screen dump saved to: /tmp/mw2run-nufiybcr/shots/grab0001.png
+> e VBL
+= %1110110100 (bin), #948 (dec), $3b4 (hex)
+> m $5138 8
+00005138: 00 00 00 00 00 00 00 00                          ........
+> e VBL
+= %10000001001 (bin), #1033 (dec), $409 (hex)
+> m $5138 8
+00005138: 00 00 00 00 00 00 00 00                          ........
+> e VBL
+= %10001011110 (bin), #1118 (dec), $45e (hex)
+> m $5138 8
+00005138: 00 00 00 00 00 00 00 00                          ........
+> e VBL
+= %10010110011 (bin), #1203 (dec), $4b3 (hex)
+> m $5138 8
+00005138: 00 00 00 00 00 00 00 00                          ........
+> e VBL
+= %10100001000 (bin), #1288 (dec), $508 (hex)
+> m $5138 8
+00005138: 00 00 00 00 00 00 00 00                          ........
+> e VBL
+= %10101011110 (bin), #1374 (dec), $55e (hex)
+> m $5138 8
+00005138: 00 00 00 00 00 00 00 00                          ........
+> e VBL
+= %10110110011 (bin), #1459 (dec), $5b3 (hex)
+> m $5138 8
+00005138: 00 00 00 00 00 00 00 00                          ........
+> e VBL
+= %11000001000 (bin), #1544 (dec), $608 (hex)
+> m $5138 8
+00005138: 00 00 00 00 00 00 00 00                          ........
+WARN : PNG screen dump saved to: /tmp/mw2run-nufiybcr/shots/grab0002.png
+> e VBL
+= %11001100010 (bin), #1634 (dec), $662 (hex)
+> m $5138 8
+00005138: 00 00 00 00 00 00 00 00                          ........
+> e VBL
+= %11010110111 (bin), #1719 (dec), $6b7 (hex)
+> m $5138 8
+00005138: 00 00 00 00 00 00 00 00                          ........
+WARN : PNG screen dump saved to: /tmp/mw2run-nufiybcr/shots/grab0003.png
+> e VBL
+= %11100001100 (bin), #1804 (dec), $70c (hex)
+> m $5138 8
+00005138: 00 00 00 00 00 00 00 00                          ........
+> e VBL
+= %11101100001 (bin), #1889 (dec), $761 (hex)
+> m $5138 8
+00005138: 00 00 00 00 00 00 00 00                          ........
+> e VBL
+= %11110110110 (bin), #1974 (dec), $7b6 (hex)
+> m $5138 8
+00005138: 00 00 00 00 00 00 00 00                          ........
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $c6c :trace :file /tmp/mw2run-nufiybcr/bp_ym_start_c6c.txt
+Reading debugger commands from '/tmp/mw2run-nufiybcr/bp_ym_start_c6c.txt'...
+Changed to input file dir '/tmp/mw2run-nufiybcr'.
+> e VBL
+= %11111100000 (bin), #2016 (dec), $7e0 (hex)
+> r
+  D0 00000001   D1 00005857   D2 00000903   D3 00000000 
+  D4 000000CC   D5 00070007   D6 00070050   D7 00080140 
+  A0 00000806   A1 00000C6C   A2 00072EBE   A3 000B1F44 
+  A4 0004EC00   A5 0000FB48   A6 0004E9D8   A7 000783DC 
+USP  000B1F40 ISP  000783DC 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 31fc (MOVE) 0001 (OR) Chip latch 00000000
+00000c6c 31fc 0001 0c44           move.w #$0001,$00000c44.w [0000]
+Next PC: 00000c72
+> m a7 16
+000783DC: 00 04 da e4 00 04 da b6 00 04 da 58 3e c6 3e c6  ..םΣ..םÀ..םX>ה>ה
+> m $7626 2
+00007626: 00 00                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $757c 2
+0000757C: 00 00                                            ..
+> m $700a 2
+0000700A: 00 00                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 1 times.
+	pc = $c4c :trace :file /tmp/mw2run-nufiybcr/bp_ym_stop_c4c.txt
+Reading debugger commands from '/tmp/mw2run-nufiybcr/bp_ym_stop_c4c.txt'...
+Changed to input file dir '/tmp/mw2run-nufiybcr'.
+> e VBL
+= %11111100000 (bin), #2016 (dec), $7e0 (hex)
+> r
+  D0 00000001   D1 00005857   D2 00000903   D3 00000000 
+  D4 000000CC   D5 00070007   D6 00070050   D7 00080140 
+  A0 00000806   A1 00000C6C   A2 00072EBE   A3 000B1F44 
+  A4 0004EC00   A5 0000FB48   A6 0004E9D8   A7 000783D8 
+USP  000B1F40 ISP  000783D8 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch 303c (MOVE) 000d (ILLEGAL) Chip latch 00000000
+00000c4c 303c 000d                move.w #$000d,d0
+Next PC: 00000c50
+> m a7 16
+000783D8: 00 00 0c 76 00 04 da e4 00 04 da b6 00 04 da 58  ...v..םΣ..םÀ..םX
+> m $7626 2
+00007626: 00 00                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $757c 2
+0000757C: 00 00                                            ..
+> m $700a 2
+0000700A: 00 00                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+WARN : PNG screen dump saved to: /tmp/mw2run-nufiybcr/shots/grab0004.png
+> e VBL
+= %100000001011 (bin), #2059 (dec), $80b (hex)
+> m $5138 8
+00005138: 00 03 38 6e 00 03 38 6e                          ..8n..8n
+> e VBL
+= %100001100001 (bin), #2145 (dec), $861 (hex)
+> m $5138 8
+00005138: 00 03 38 6e 00 03 38 6e                          ..8n..8n
+> e VBL
+= %100010110110 (bin), #2230 (dec), $8b6 (hex)
+> m $5138 8
+00005138: 00 03 38 6e 00 03 38 6e                          ..8n..8n
+3. CPU breakpoint condition(s) matched 1 times.
+	pc = $33870 :trace :file /tmp/mw2run-nufiybcr/bp_stop_5032.txt
+Reading debugger commands from '/tmp/mw2run-nufiybcr/bp_stop_5032.txt'...
+Changed to input file dir '/tmp/mw2run-nufiybcr'.
+> e VBL
+= %100011010110 (bin), #2262 (dec), $8d6 (hex)
+> r
+  D0 0000DAB9   D1 0000DABA   D2 00004E75   D3 00000000 
+  D4 00000000   D5 00070000   D6 00070050   D7 0000FFFF 
+  A0 00000140   A1 0003DB10   A2 00072EBE   A3 000B1F44 
+  A4 0004EC00   A5 0000FB48   A6 0000770E   A7 00008028 
+USP  000B1F40 ISP  00008028 
+SR=2700 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=7 STP=0
+Prefetch 48e7 (MVMLE) fffe (ILLEGAL) Chip latch 00000000
+00033870 48e7 fffe                movem.l d0-d7/a0-a6,-(a7) == $00008024
+Next PC: 00033874
+> m a7 16
+00008028: 00 02 66 5a 23 00 00 03 13 38 00 03 12 b8 00 00  ..fZ#....8...Õ..
+> m $7626 2
+00007626: 00 00                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $757c 2
+0000757C: 00 00                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+WARN : PNG screen dump saved to: /tmp/mw2run-nufiybcr/shots/grab0005.png
+WARN : PNG screen dump saved to: /tmp/mw2run-nufiybcr/shots/grab0006.png
+> e VBL
+= %100100010000 (bin), #2320 (dec), $910 (hex)
+> m $5138 8
+00005138: 00 03 38 6e 00 03 38 6e                          ..8n..8n
+5. CPU breakpoint condition(s) matched 1 times.
+	pc = $321fe :trace :file /tmp/mw2run-nufiybcr/bp_start_tune.txt
+Reading debugger commands from '/tmp/mw2run-nufiybcr/bp_start_tune.txt'...
+Changed to input file dir '/tmp/mw2run-nufiybcr'.
+> e VBL
+= %100100101001 (bin), #2345 (dec), $929 (hex)
+> r
+  D0 00000001   D1 0000DABA   D2 00004E75   D3 00000000 
+  D4 00000000   D5 00070000   D6 00070050   D7 0000FFFF 
+  A0 00000140   A1 0003DB10   A2 00072EBE   A3 000B1F44 
+  A4 0004EC00   A5 0000FB48   A6 0000770E   A7 0000802E 
+USP  000B1F40 ISP  0000802E 
+SR=2000 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=0 STP=0
+Prefetch b078 (CMP) 7626 (MOVE) Chip latch 00000000
+000321fe b078 7626                cmp.w $00007626.w [ffff],d0
+Next PC: 00032202
+> m a7 16
+0000802E: 00 03 21 38 00 03 12 c4 00 00 00 00 00 00 00 00  ..!8...ג........
+> m $7626 2
+00007626: ff ff                                            ¯¯
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $757c 2
+0000757C: 00 00                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 2 times.
+	pc = $c6c :trace :file /tmp/mw2run-nufiybcr/bp_ym_start_c6c.txt
+Reading debugger commands from '/tmp/mw2run-nufiybcr/bp_ym_start_c6c.txt'...
+Changed to input file dir '/tmp/mw2run-nufiybcr'.
+> e VBL
+= %100100101001 (bin), #2345 (dec), $929 (hex)
+> r
+  D0 00000001   D1 0000DABA   D2 00004E75   D3 00000000 
+  D4 00000000   D5 00070000   D6 00070050   D7 0000FFFF 
+  A0 00000806   A1 00000C6C   A2 00072EBE   A3 000B1F44 
+  A4 0004EC00   A5 0000FB48   A6 0000770E   A7 00007FEE 
+USP  000B1F40 ISP  00007FEE 
+SR=2004 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=0 STP=0
+Prefetch 31fc (MOVE) 0001 (OR) Chip latch 00000000
+00000c6c 31fc 0001 0c44           move.w #$0001,$00000c44.w [0000]
+Next PC: 00000c72
+> m a7 16
+00007FEE: 00 03 22 2e 00 00 00 01 00 00 da ba 00 00 4e 75  ..".......ם´..Nu
+> m $7626 2
+00007626: 00 01                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $757c 2
+0000757C: 00 00                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 2 times.
+	pc = $c4c :trace :file /tmp/mw2run-nufiybcr/bp_ym_stop_c4c.txt
+Reading debugger commands from '/tmp/mw2run-nufiybcr/bp_ym_stop_c4c.txt'...
+Changed to input file dir '/tmp/mw2run-nufiybcr'.
+> e VBL
+= %100100101001 (bin), #2345 (dec), $929 (hex)
+> r
+  D0 00000001   D1 0000DABA   D2 00004E75   D3 00000000 
+  D4 00000000   D5 00070000   D6 00070050   D7 0000FFFF 
+  A0 00000806   A1 00000C6C   A2 00072EBE   A3 000B1F44 
+  A4 0004EC00   A5 0000FB48   A6 0000770E   A7 00007FEA 
+USP  000B1F40 ISP  00007FEA 
+SR=2000 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=0 STP=0
+Prefetch 303c (MOVE) 000d (ILLEGAL) Chip latch 00000000
+00000c4c 303c 000d                move.w #$000d,d0
+Next PC: 00000c50
+> m a7 16
+00007FEA: 00 00 0c 76 00 03 22 2e 00 00 00 01 00 00 da ba  ...v..".......ם´
+> m $7626 2
+00007626: 00 01                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $757c 2
+0000757C: 00 00                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+3. CPU breakpoint condition(s) matched 2 times.
+	pc = $33870 :trace :file /tmp/mw2run-nufiybcr/bp_stop_5032.txt
+Reading debugger commands from '/tmp/mw2run-nufiybcr/bp_stop_5032.txt'...
+Changed to input file dir '/tmp/mw2run-nufiybcr'.
+> e VBL
+= %100100101001 (bin), #2345 (dec), $929 (hex)
+> r
+  D0 0000000C   D1 0000DABA   D2 00004E75   D3 00000000 
+  D4 00000000   D5 00070000   D6 00070050   D7 0000FFFF 
+  A0 000012D4   A1 00001440   A2 00072EBE   A3 000B1F44 
+  A4 0004EC00   A5 0000FB48   A6 0000770E   A7 00007FEE 
+USP  000B1F40 ISP  00007FEE 
+SR=2009 T=00 S=1 M=0 X=0 N=1 Z=0 V=0 C=1 IM=0 STP=0
+Prefetch 48e7 (MVMLE) fffe (ILLEGAL) Chip latch 00000000
+00033870 48e7 fffe                movem.l d0-d7/a0-a6,-(a7) == $00007fea
+Next PC: 00033874
+> m a7 16
+00007FEE: 00 03 22 40 00 00 00 01 00 00 da ba 00 00 4e 75  .."@......ם´..Nu
+> m $7626 2
+00007626: 00 01                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $757c 2
+0000757C: 00 00                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+6. CPU breakpoint condition(s) matched 1 times.
+	pc = $3225c :trace :file /tmp/mw2run-nufiybcr/bp_setvec_3225c.txt
+Reading debugger commands from '/tmp/mw2run-nufiybcr/bp_setvec_3225c.txt'...
+Changed to input file dir '/tmp/mw2run-nufiybcr'.
+> e VBL
+= %100100101001 (bin), #2345 (dec), $929 (hex)
+> r
+  D0 0000000C   D1 0000DABA   D2 00004E75   D3 00000000 
+  D4 00000000   D5 00070000   D6 00070050   D7 0000FFFF 
+  A0 00000806   A1 00000B9A   A2 00072EBE   A3 000B1F44 
+  A4 0004EC00   A5 0000FB48   A6 0000770E   A7 00007FF2 
+USP  000B1F40 ISP  00007FF2 
+SR=2000 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=0 STP=0
+Prefetch 21d0 (MOVE) 5138 (SUB) Chip latch 00000000
+0003225c 21d0 5138                move.l (a0) == $00000806 [00000d0e],$00005138.w [0003386e]
+Next PC: 00032260
+> m a7 16
+00007FF2: 00 00 00 01 00 00 da ba 00 00 4e 75 00 00 00 00  ......ם´..Nu....
+> m $7626 2
+00007626: 00 01                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $757c 2
+0000757C: 00 00                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+> e VBL
+= %100101100101 (bin), #2405 (dec), $965 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %100110111010 (bin), #2490 (dec), $9ba (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+WARN : PNG screen dump saved to: /tmp/mw2run-nufiybcr/shots/grab0007.png
+> e VBL
+= %101000001111 (bin), #2575 (dec), $a0f (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %101001100100 (bin), #2660 (dec), $a64 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %101010111001 (bin), #2745 (dec), $ab9 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+WARN : PNG screen dump saved to: /tmp/mw2run-nufiybcr/shots/grab0008.png
+> e VBL
+= %101100001111 (bin), #2831 (dec), $b0f (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %101101100100 (bin), #2916 (dec), $b64 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+WARN : PNG screen dump saved to: /tmp/mw2run-nufiybcr/shots/grab0009.png
+> e VBL
+= %101110111110 (bin), #3006 (dec), $bbe (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+WARN : PNG screen dump saved to: /tmp/mw2run-nufiybcr/shots/grab0010.png
+> e VBL
+= %110000010011 (bin), #3091 (dec), $c13 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %110001101000 (bin), #3176 (dec), $c68 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %110010111101 (bin), #3261 (dec), $cbd (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+WARN : PNG screen dump saved to: /tmp/mw2run-nufiybcr/shots/grab0011.png
+> e VBL
+= %110100010010 (bin), #3346 (dec), $d12 (hex)
+> m $5138 8
+00005138: 00 00 00 00 00 00 00 00                          ........
+> e VBL
+= %110101100111 (bin), #3431 (dec), $d67 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %110110111101 (bin), #3517 (dec), $dbd (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+WARN : PNG screen dump saved to: /tmp/mw2run-nufiybcr/shots/grab0012.png
+> e VBL
+= %111000010010 (bin), #3602 (dec), $e12 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+WARN : PNG screen dump saved to: /tmp/mw2run-nufiybcr/shots/grab0013.png
+> e VBL
+= %111001101100 (bin), #3692 (dec), $e6c (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %111011000001 (bin), #3777 (dec), $ec1 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+9. CPU breakpoint condition(s) matched 1 times.
+	pc = $3238e :trace :file /tmp/mw2run-nufiybcr/bp_fade_start_3238e.txt
+Reading debugger commands from '/tmp/mw2run-nufiybcr/bp_fade_start_3238e.txt'...
+Changed to input file dir '/tmp/mw2run-nufiybcr'.
+> e VBL
+= %111100000010 (bin), #3842 (dec), $f02 (hex)
+> r
+  D0 0000004D   D1 FFFFFFFF   D2 00000000   D3 00000000 
+  D4 00000000   D5 00070000   D6 00070050   D7 0000FFFF 
+  A0 0000EF25   A1 000146B9   A2 000045A4   A3 000B1F44 
+  A4 0004EC00   A5 0000FB48   A6 0000770E   A7 00008032 
+USP  000B1F40 ISP  00008032 
+SR=2000 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=0 STP=0
+Prefetch 31fc (MOVE) 0014 (OR) Chip latch 00000000
+0003238e 31fc 0014 7636           move.w #$0014,$00007636.w [0000]
+Next PC: 00032394
+> m a7 16
+00008032: 00 02 c5 c0 00 00 00 00 00 00 00 00 00 00 00 00  ..דĳ............
+> m $7626 2
+00007626: 00 01                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $757c 2
+0000757C: 00 00                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+> e VBL
+= %111100010110 (bin), #3862 (dec), $f16 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %111101101011 (bin), #3947 (dec), $f6b (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+WARN : PNG screen dump saved to: /tmp/mw2run-nufiybcr/shots/grab0014.png
+> e VBL
+= %111111000000 (bin), #4032 (dec), $fc0 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %1000000010101 (bin), #4117 (dec), $1015 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+10. CPU breakpoint condition(s) matched 1 times.
+	pc = $322d6 :trace :file /tmp/mw2run-nufiybcr/bp_fadeout_322d6.txt
+Reading debugger commands from '/tmp/mw2run-nufiybcr/bp_fadeout_322d6.txt'...
+Changed to input file dir '/tmp/mw2run-nufiybcr'.
+> e VBL
+= %1000000011010 (bin), #4122 (dec), $101a (hex)
+> r
+  D0 00000010   D1 FFFF0000   D2 00000000   D3 00000000 
+  D4 00000000   D5 00000000   D6 00000000   D7 0000FFFF 
+  A0 00009A86   A1 00FF825C   A2 00006528   A3 00000090 
+  A4 FFFFFFFF   A5 0000FB48   A6 00006306   A7 00007FE0 
+USP  000B1F40 ISP  00007FE0 
+SR=2408 T=00 S=1 M=0 X=0 N=1 Z=0 V=0 C=0 IM=4 STP=0
+Prefetch 48e7 (MVMLE) fffe (ILLEGAL) Chip latch 00000000
+000322d6 48e7 fffe                movem.l d0-d7/a0-a6,-(a7) == $00007fdc
+Next PC: 000322da
+> m a7 16
+00007FE0: 00 02 63 40 00 02 62 ec 00 00 00 02 ff ff ff ff  ..c@..b∮....¯¯¯¯
+> m $7626 2
+00007626: 00 01                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $757c 2
+0000757C: 00 00                                            ..
+> m $700a 2
+0000700A: 00 00                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 3 times.
+	pc = $c4c :trace :file /tmp/mw2run-nufiybcr/bp_ym_stop_c4c.txt
+Reading debugger commands from '/tmp/mw2run-nufiybcr/bp_ym_stop_c4c.txt'...
+Changed to input file dir '/tmp/mw2run-nufiybcr'.
+> e VBL
+= %1000000011010 (bin), #4122 (dec), $101a (hex)
+> r
+  D0 00000010   D1 FFFF0000   D2 00000000   D3 00000000 
+  D4 00000000   D5 00000000   D6 00000000   D7 0000FFFF 
+  A0 00000C4C   A1 00000B9A   A2 00006528   A3 00000090 
+  A4 FFFFFFFF   A5 0000FB48   A6 00006306   A7 00007FA0 
+USP  000B1F40 ISP  00007FA0 
+SR=2400 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=4 STP=0
+Prefetch 303c (MOVE) 000d (ILLEGAL) Chip latch 00000000
+00000c4c 303c 000d                move.w #$000d,d0
+Next PC: 00000c50
+> m a7 16
+00007FA0: 00 03 22 ec 00 00 00 10 ff ff 00 00 00 00 00 00  .."∮....¯¯......
+> m $7626 2
+00007626: 00 01                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $757c 2
+0000757C: 00 00                                            ..
+> m $700a 2
+0000700A: 00 00                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+> e VBL
+= %1000001101010 (bin), #4202 (dec), $106a (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+5. CPU breakpoint condition(s) matched 2 times.
+	pc = $321fe :trace :file /tmp/mw2run-nufiybcr/bp_start_tune.txt
+Reading debugger commands from '/tmp/mw2run-nufiybcr/bp_start_tune.txt'...
+Changed to input file dir '/tmp/mw2run-nufiybcr'.
+> e VBL
+= %1000010110100 (bin), #4276 (dec), $10b4 (hex)
+> r
+  D0 00000001   D1 FFFF0530   D2 000000E4   D3 00000017 
+  D4 0000001F   D5 00070000   D6 00070009   D7 00000000 
+  A0 00010AC0   A1 00010168   A2 0002CCDC   A3 000B1F44 
+  A4 0004EC00   A5 0000FB48   A6 0000770E   A7 00007FEA 
+USP  000B1F40 ISP  00007FEA 
+SR=2000 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=0 STP=0
+Prefetch b078 (CMP) 7626 (MOVE) Chip latch 00000000
+000321fe b078 7626                cmp.w $00007626.w [ffff],d0
+Next PC: 00032202
+> m a7 16
+00007FEA: 00 03 21 38 00 01 ce e8 00 00 00 00 ff ff 05 30  ..!8..מΦ....¯¯.0
+> m $7626 2
+00007626: ff ff                                            ¯¯
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $757c 2
+0000757C: 00 00                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 3 times.
+	pc = $c6c :trace :file /tmp/mw2run-nufiybcr/bp_ym_start_c6c.txt
+Reading debugger commands from '/tmp/mw2run-nufiybcr/bp_ym_start_c6c.txt'...
+Changed to input file dir '/tmp/mw2run-nufiybcr'.
+> e VBL
+= %1000010110100 (bin), #4276 (dec), $10b4 (hex)
+> r
+  D0 00000001   D1 FFFF0530   D2 000000E4   D3 00000017 
+  D4 0000001F   D5 00070000   D6 00070009   D7 00000000 
+  A0 00000806   A1 00000C6C   A2 0002CCDC   A3 000B1F44 
+  A4 0004EC00   A5 0000FB48   A6 0000770E   A7 00007FAA 
+USP  000B1F40 ISP  00007FAA 
+SR=2004 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=0 STP=0
+Prefetch 31fc (MOVE) 0001 (OR) Chip latch 00000000
+00000c6c 31fc 0001 0c44           move.w #$0001,$00000c44.w [0000]
+Next PC: 00000c72
+> m a7 16
+00007FAA: 00 03 22 2e 00 00 00 01 ff ff 05 30 00 00 00 e4  ..".....¯¯.0...Σ
+> m $7626 2
+00007626: 00 01                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $757c 2
+0000757C: 00 00                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 4 times.
+	pc = $c4c :trace :file /tmp/mw2run-nufiybcr/bp_ym_stop_c4c.txt
+Reading debugger commands from '/tmp/mw2run-nufiybcr/bp_ym_stop_c4c.txt'...
+Changed to input file dir '/tmp/mw2run-nufiybcr'.
+> e VBL
+= %1000010110100 (bin), #4276 (dec), $10b4 (hex)
+> r
+  D0 00000001   D1 FFFF0530   D2 000000E4   D3 00000017 
+  D4 0000001F   D5 00070000   D6 00070009   D7 00000000 
+  A0 00000806   A1 00000C6C   A2 0002CCDC   A3 000B1F44 
+  A4 0004EC00   A5 0000FB48   A6 0000770E   A7 00007FA6 
+USP  000B1F40 ISP  00007FA6 
+SR=2000 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=0 STP=0
+Prefetch 303c (MOVE) 000d (ILLEGAL) Chip latch 00000000
+00000c4c 303c 000d                move.w #$000d,d0
+Next PC: 00000c50
+> m a7 16
+00007FA6: 00 00 0c 76 00 03 22 2e 00 00 00 01 ff ff 05 30  ...v..".....¯¯.0
+> m $7626 2
+00007626: 00 01                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $757c 2
+0000757C: 00 00                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+3. CPU breakpoint condition(s) matched 3 times.
+	pc = $33870 :trace :file /tmp/mw2run-nufiybcr/bp_stop_5032.txt
+Reading debugger commands from '/tmp/mw2run-nufiybcr/bp_stop_5032.txt'...
+Changed to input file dir '/tmp/mw2run-nufiybcr'.
+> e VBL
+= %1000010110100 (bin), #4276 (dec), $10b4 (hex)
+> r
+  D0 0000000C   D1 FFFF0530   D2 000000E4   D3 00000017 
+  D4 0000001F   D5 00070000   D6 00070009   D7 00000000 
+  A0 000012D4   A1 00001440   A2 0002CCDC   A3 000B1F44 
+  A4 0004EC00   A5 0000FB48   A6 0000770E   A7 00007FAA 
+USP  000B1F40 ISP  00007FAA 
+SR=2009 T=00 S=1 M=0 X=0 N=1 Z=0 V=0 C=1 IM=0 STP=0
+Prefetch 48e7 (MVMLE) fffe (ILLEGAL) Chip latch 00000000
+00033870 48e7 fffe                movem.l d0-d7/a0-a6,-(a7) == $00007fa6
+Next PC: 00033874
+> m a7 16
+00007FAA: 00 03 22 40 00 00 00 01 ff ff 05 30 00 00 00 e4  .."@....¯¯.0...Σ
+> m $7626 2
+00007626: 00 01                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $757c 2
+0000757C: 00 00                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+6. CPU breakpoint condition(s) matched 2 times.
+	pc = $3225c :trace :file /tmp/mw2run-nufiybcr/bp_setvec_3225c.txt
+Reading debugger commands from '/tmp/mw2run-nufiybcr/bp_setvec_3225c.txt'...
+Changed to input file dir '/tmp/mw2run-nufiybcr'.
+> e VBL
+= %1000010110100 (bin), #4276 (dec), $10b4 (hex)
+> r
+  D0 0000000C   D1 FFFF0530   D2 000000E4   D3 00000017 
+  D4 0000001F   D5 00070000   D6 00070009   D7 00000000 
+  A0 00000806   A1 00000B9A   A2 0002CCDC   A3 000B1F44 
+  A4 0004EC00   A5 0000FB48   A6 0000770E   A7 00007FAE 
+USP  000B1F40 ISP  00007FAE 
+SR=2000 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=0 STP=0
+Prefetch 21d0 (MOVE) 5138 (SUB) Chip latch 00000000
+0003225c 21d0 5138                move.l (a0) == $00000806 [00000d0e],$00005138.w [0003386e]
+Next PC: 00032260
+> m a7 16
+00007FAE: 00 00 00 01 ff ff 05 30 00 00 00 e4 00 00 00 17  ....¯¯.0...Σ....
+> m $7626 2
+00007626: 00 01                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $757c 2
+0000757C: 00 00                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+> e VBL
+= %1000010111111 (bin), #4287 (dec), $10bf (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+WARN : PNG screen dump saved to: /tmp/mw2run-nufiybcr/shots/grab0015.png
+> e VBL
+= %1000100011010 (bin), #4378 (dec), $111a (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %1000101101111 (bin), #4463 (dec), $116f (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %1000111000100 (bin), #4548 (dec), $11c4 (hex)
+> m $5138 8
+00005138: 00 00 00 00 00 00 00 00                          ........
+> e VBL
+= %1001000011001 (bin), #4633 (dec), $1219 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %1001001101110 (bin), #4718 (dec), $126e (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %1001011000011 (bin), #4803 (dec), $12c3 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %1001100011000 (bin), #4888 (dec), $1318 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %1001101101101 (bin), #4973 (dec), $136d (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+WARN : PNG screen dump saved to: /tmp/mw2run-nufiybcr/shots/grab0016.png
+> e VBL
+= %1001111001000 (bin), #5064 (dec), $13c8 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %1010000011101 (bin), #5149 (dec), $141d (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %1010001110010 (bin), #5234 (dec), $1472 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+9. CPU breakpoint condition(s) matched 2 times.
+	pc = $3238e :trace :file /tmp/mw2run-nufiybcr/bp_fade_start_3238e.txt
+Reading debugger commands from '/tmp/mw2run-nufiybcr/bp_fade_start_3238e.txt'...
+Changed to input file dir '/tmp/mw2run-nufiybcr'.
+> e VBL
+= %1010010010111 (bin), #5271 (dec), $1497 (hex)
+> r
+  D0 00000000   D1 FFFF0530   D2 000000E4   D3 00000017 
+  D4 0000001F   D5 00070000   D6 00070009   D7 00000000 
+  A0 00010AC0   A1 00010168   A2 0002CCDC   A3 000B1F44 
+  A4 0004EC00   A5 0000FB48   A6 0000770E   A7 00008032 
+USP  000B1F40 ISP  00008032 
+SR=2000 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=0 STP=0
+Prefetch 31fc (MOVE) 0014 (OR) Chip latch 00000000
+0003238e 31fc 0014 7636           move.w #$0014,$00007636.w [0014]
+Next PC: 00032394
+> m a7 16
+00008032: 00 02 c5 c0 00 00 00 00 00 00 00 00 00 00 00 00  ..דĳ............
+> m $7626 2
+00007626: 00 01                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $757c 2
+0000757C: 00 00                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+> e VBL
+= %1010011000111 (bin), #5319 (dec), $14c7 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %1010100011100 (bin), #5404 (dec), $151c (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %1010101110001 (bin), #5489 (dec), $1571 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+10. CPU breakpoint condition(s) matched 2 times.
+	pc = $322d6 :trace :file /tmp/mw2run-nufiybcr/bp_fadeout_322d6.txt
+Reading debugger commands from '/tmp/mw2run-nufiybcr/bp_fadeout_322d6.txt'...
+Changed to input file dir '/tmp/mw2run-nufiybcr'.
+> e VBL
+= %1010110101111 (bin), #5551 (dec), $15af (hex)
+> r
+  D0 00000010   D1 FFFF0000   D2 00000001   D3 00000000 
+  D4 00000000   D5 00000000   D6 00000000   D7 0000FFFF 
+  A0 00009A86   A1 00FF825C   A2 00006528   A3 00000090 
+  A4 0004EC00   A5 0000FB48   A6 00006306   A7 00007FE0 
+USP  000B1F40 ISP  00007FE0 
+SR=2408 T=00 S=1 M=0 X=0 N=1 Z=0 V=0 C=0 IM=4 STP=0
+Prefetch 48e7 (MVMLE) fffe (ILLEGAL) Chip latch 00000000
+000322d6 48e7 fffe                movem.l d0-d7/a0-a6,-(a7) == $00007fdc
+Next PC: 000322da
+> m a7 16
+00007FE0: 00 02 63 40 00 02 62 ec 00 00 00 02 ff ff 05 30  ..c@..b∮....¯¯.0
+> m $7626 2
+00007626: 00 01                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $757c 2
+0000757C: 00 00                                            ..
+> m $700a 2
+0000700A: 00 00                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 5 times.
+	pc = $c4c :trace :file /tmp/mw2run-nufiybcr/bp_ym_stop_c4c.txt
+Reading debugger commands from '/tmp/mw2run-nufiybcr/bp_ym_stop_c4c.txt'...
+Changed to input file dir '/tmp/mw2run-nufiybcr'.
+> e VBL
+= %1010110101111 (bin), #5551 (dec), $15af (hex)
+> r
+  D0 00000010   D1 FFFF0000   D2 00000001   D3 00000000 
+  D4 00000000   D5 00000000   D6 00000000   D7 0000FFFF 
+  A0 00000C4C   A1 00000B9A   A2 00006528   A3 00000090 
+  A4 0004EC00   A5 0000FB48   A6 00006306   A7 00007FA0 
+USP  000B1F40 ISP  00007FA0 
+SR=2400 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=4 STP=0
+Prefetch 303c (MOVE) 000d (ILLEGAL) Chip latch 00000000
+00000c4c 303c 000d                move.w #$000d,d0
+Next PC: 00000c50
+> m a7 16
+00007FA0: 00 03 22 ec 00 00 00 10 ff ff 00 00 00 00 00 01  .."∮....¯¯......
+> m $7626 2
+00007626: 00 01                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $757c 2
+0000757C: 00 00                                            ..
+> m $700a 2
+0000700A: 00 00                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+> e VBL
+= %1010111000110 (bin), #5574 (dec), $15c6 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %1011000011011 (bin), #5659 (dec), $161b (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+WARN : PNG screen dump saved to: /tmp/mw2run-nufiybcr/shots/grab0017.png
+> e VBL
+= %1011001110110 (bin), #5750 (dec), $1676 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %1011011001011 (bin), #5835 (dec), $16cb (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+5. CPU breakpoint condition(s) matched 3 times.
+	pc = $321fe :trace :file /tmp/mw2run-nufiybcr/bp_start_tune.txt
+Reading debugger commands from '/tmp/mw2run-nufiybcr/bp_start_tune.txt'...
+Changed to input file dir '/tmp/mw2run-nufiybcr'.
+> e VBL
+= %1011011011010 (bin), #5850 (dec), $16da (hex)
+> r
+  D0 00000001   D1 FFFF04F0   D2 0000009E   D3 0000003F 
+  D4 00000042   D5 00070000   D6 00070005   D7 00000004 
+  A0 00010AA8   A1 00010168   A2 0002C6C0   A3 000B1F44 
+  A4 0004EC00   A5 0000FB48   A6 0000770E   A7 00008026 
+USP  000B1F40 ISP  00008026 
+SR=2000 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=0 STP=0
+Prefetch b078 (CMP) 7626 (MOVE) Chip latch 00000000
+000321fe b078 7626                cmp.w $00007626.w [ffff],d0
+Next PC: 00032202
+> m a7 16
+00008026: 00 03 21 38 00 02 c6 da 00 02 c6 cc 00 02 c6 1a  ..!8..הם..הכ..ה.
+> m $7626 2
+00007626: ff ff                                            ¯¯
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $757c 2
+0000757C: 00 00                                            ..
+> m $700a 2
+0000700A: 00 00                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 4 times.
+	pc = $c6c :trace :file /tmp/mw2run-nufiybcr/bp_ym_start_c6c.txt
+Reading debugger commands from '/tmp/mw2run-nufiybcr/bp_ym_start_c6c.txt'...
+Changed to input file dir '/tmp/mw2run-nufiybcr'.
+> e VBL
+= %1011011011010 (bin), #5850 (dec), $16da (hex)
+> r
+  D0 00000001   D1 FFFF04F0   D2 0000009E   D3 0000003F 
+  D4 00000042   D5 00070000   D6 00070005   D7 00000004 
+  A0 00000806   A1 00000C6C   A2 0002C6C0   A3 000B1F44 
+  A4 0004EC00   A5 0000FB48   A6 0000770E   A7 00007FE6 
+USP  000B1F40 ISP  00007FE6 
+SR=2004 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=0 STP=0
+Prefetch 31fc (MOVE) 0001 (OR) Chip latch 00000000
+00000c6c 31fc 0001 0c44           move.w #$0001,$00000c44.w [0000]
+Next PC: 00000c72
+> m a7 16
+00007FE6: 00 03 22 2e 00 00 00 01 ff ff 04 f0 00 00 00 9e  ..".....¯¯.≡...ß
+> m $7626 2
+00007626: 00 01                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $757c 2
+0000757C: 00 00                                            ..
+> m $700a 2
+0000700A: 00 00                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 6 times.
+	pc = $c4c :trace :file /tmp/mw2run-nufiybcr/bp_ym_stop_c4c.txt
+Reading debugger commands from '/tmp/mw2run-nufiybcr/bp_ym_stop_c4c.txt'...
+Changed to input file dir '/tmp/mw2run-nufiybcr'.
+> e VBL
+= %1011011011010 (bin), #5850 (dec), $16da (hex)
+> r
+  D0 00000001   D1 FFFF04F0   D2 0000009E   D3 0000003F 
+  D4 00000042   D5 00070000   D6 00070005   D7 00000004 
+  A0 00000806   A1 00000C6C   A2 0002C6C0   A3 000B1F44 
+  A4 0004EC00   A5 0000FB48   A6 0000770E   A7 00007FE2 
+USP  000B1F40 ISP  00007FE2 
+SR=2000 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=0 STP=0
+Prefetch 303c (MOVE) 000d (ILLEGAL) Chip latch 00000000
+00000c4c 303c 000d                move.w #$000d,d0
+Next PC: 00000c50
+> m a7 16
+00007FE2: 00 00 0c 76 00 03 22 2e 00 00 00 01 ff ff 04 f0  ...v..".....¯¯.≡
+> m $7626 2
+00007626: 00 01                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $757c 2
+0000757C: 00 00                                            ..
+> m $700a 2
+0000700A: 00 00                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+3. CPU breakpoint condition(s) matched 4 times.
+	pc = $33870 :trace :file /tmp/mw2run-nufiybcr/bp_stop_5032.txt
+Reading debugger commands from '/tmp/mw2run-nufiybcr/bp_stop_5032.txt'...
+Changed to input file dir '/tmp/mw2run-nufiybcr'.
+> e VBL
+= %1011011011010 (bin), #5850 (dec), $16da (hex)
+> r
+  D0 0000000C   D1 FFFF04F0   D2 0000009E   D3 0000003F 
+  D4 00000042   D5 00070000   D6 00070005   D7 00000004 
+  A0 000012D4   A1 00001440   A2 0002C6C0   A3 000B1F44 
+  A4 0004EC00   A5 0000FB48   A6 0000770E   A7 00007FE6 
+USP  000B1F40 ISP  00007FE6 
+SR=2009 T=00 S=1 M=0 X=0 N=1 Z=0 V=0 C=1 IM=0 STP=0
+Prefetch 48e7 (MVMLE) fffe (ILLEGAL) Chip latch 00000000
+00033870 48e7 fffe                movem.l d0-d7/a0-a6,-(a7) == $00007fe2
+Next PC: 00033874
+> m a7 16
+00007FE6: 00 03 22 40 00 00 00 01 ff ff 04 f0 00 00 00 9e  .."@....¯¯.≡...ß
+> m $7626 2
+00007626: 00 01                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $757c 2
+0000757C: 00 00                                            ..
+> m $700a 2
+0000700A: 00 00                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+6. CPU breakpoint condition(s) matched 3 times.
+	pc = $3225c :trace :file /tmp/mw2run-nufiybcr/bp_setvec_3225c.txt
+Reading debugger commands from '/tmp/mw2run-nufiybcr/bp_setvec_3225c.txt'...
+Changed to input file dir '/tmp/mw2run-nufiybcr'.
+> e VBL
+= %1011011011010 (bin), #5850 (dec), $16da (hex)
+> r
+  D0 0000000C   D1 FFFF04F0   D2 0000009E   D3 0000003F 
+  D4 00000042   D5 00070000   D6 00070005   D7 00000004 
+  A0 00000806   A1 00000B9A   A2 0002C6C0   A3 000B1F44 
+  A4 0004EC00   A5 0000FB48   A6 0000770E   A7 00007FEA 
+USP  000B1F40 ISP  00007FEA 
+SR=2000 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=0 STP=0
+Prefetch 21d0 (MOVE) 5138 (SUB) Chip latch 00000000
+0003225c 21d0 5138                move.l (a0) == $00000806 [00000d0e],$00005138.w [0003386e]
+Next PC: 00032260
+> m a7 16
+00007FEA: 00 00 00 01 ff ff 04 f0 00 00 00 9e 00 00 00 3f  ....¯¯.≡...ß...?
+> m $7626 2
+00007626: 00 01                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $757c 2
+0000757C: 00 00                                            ..
+> m $700a 2
+0000700A: 00 00                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+> e VBL
+= %1011100100000 (bin), #5920 (dec), $1720 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %1011101110101 (bin), #6005 (dec), $1775 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %1011111001010 (bin), #6090 (dec), $17ca (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %1100000011111 (bin), #6175 (dec), $181f (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %1100001110100 (bin), #6260 (dec), $1874 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %1100011001001 (bin), #6345 (dec), $18c9 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+WARN : PNG screen dump saved to: /tmp/mw2run-nufiybcr/shots/grab0018.png
+> e VBL
+= %1100100100100 (bin), #6436 (dec), $1924 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %1100101111001 (bin), #6521 (dec), $1979 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %1100111001110 (bin), #6606 (dec), $19ce (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %1101000100011 (bin), #6691 (dec), $1a23 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %1101001111000 (bin), #6776 (dec), $1a78 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %1101011001101 (bin), #6861 (dec), $1acd (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %1101100100010 (bin), #6946 (dec), $1b22 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %1101101110111 (bin), #7031 (dec), $1b77 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+WARN : PNG screen dump saved to: /tmp/mw2run-nufiybcr/shots/grab0019.png
+> e VBL
+= %1101111010010 (bin), #7122 (dec), $1bd2 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %1110000100111 (bin), #7207 (dec), $1c27 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %1110001111100 (bin), #7292 (dec), $1c7c (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %1110011010001 (bin), #7377 (dec), $1cd1 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %1110100100110 (bin), #7462 (dec), $1d26 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %1110101111011 (bin), #7547 (dec), $1d7b (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %1110111010000 (bin), #7632 (dec), $1dd0 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %1111000100101 (bin), #7717 (dec), $1e25 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+WARN : PNG screen dump saved to: /tmp/mw2run-nufiybcr/shots/grab0020.png
+> e VBL
+= %1111010000000 (bin), #7808 (dec), $1e80 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %1111011010101 (bin), #7893 (dec), $1ed5 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %1111100101010 (bin), #7978 (dec), $1f2a (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %1111101111111 (bin), #8063 (dec), $1f7f (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %1111111010100 (bin), #8148 (dec), $1fd4 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %10000000101001 (bin), #8233 (dec), $2029 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %10000001111110 (bin), #8318 (dec), $207e (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %10000011010100 (bin), #8404 (dec), $20d4 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+WARN : PNG screen dump saved to: /tmp/mw2run-nufiybcr/shots/grab0021.png
+> e VBL
+= %10000100101110 (bin), #8494 (dec), $212e (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %10000110000011 (bin), #8579 (dec), $2183 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %10000111011000 (bin), #8664 (dec), $21d8 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %10001000101101 (bin), #8749 (dec), $222d (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %10001010000010 (bin), #8834 (dec), $2282 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %10001011010111 (bin), #8919 (dec), $22d7 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %10001100101101 (bin), #9005 (dec), $232d (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %10001110000010 (bin), #9090 (dec), $2382 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+WARN : PNG screen dump saved to: /tmp/mw2run-nufiybcr/shots/grab0022.png
+> e VBL
+= %10001111011100 (bin), #9180 (dec), $23dc (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %10010000110001 (bin), #9265 (dec), $2431 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %10010010000110 (bin), #9350 (dec), $2486 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %10010011011011 (bin), #9435 (dec), $24db (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+WARN : PNG screen dump saved to: /tmp/mw2run-nufiybcr/shots/grab0023.png
+> e VBL
+= %10010100110000 (bin), #9520 (dec), $2530 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %10010110000101 (bin), #9605 (dec), $2585 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %10010111011010 (bin), #9690 (dec), $25da (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %10011000110000 (bin), #9776 (dec), $2630 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+WARN : PNG screen dump saved to: /tmp/mw2run-nufiybcr/shots/grab0024.png
+> e VBL
+= %10011010001010 (bin), #9866 (dec), $268a (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %10011011011111 (bin), #9951 (dec), $26df (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %10011100110100 (bin), #10036 (dec), $2734 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %10011110001001 (bin), #10121 (dec), $2789 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %10011111011110 (bin), #10206 (dec), $27de (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %10100000110011 (bin), #10291 (dec), $2833 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %10100010001000 (bin), #10376 (dec), $2888 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %10100011011101 (bin), #10461 (dec), $28dd (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+WARN : PNG screen dump saved to: /tmp/mw2run-nufiybcr/shots/grab0025.png
+> e VBL
+= %10100100111000 (bin), #10552 (dec), $2938 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %10100110001101 (bin), #10637 (dec), $298d (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %10100111100010 (bin), #10722 (dec), $29e2 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+5. CPU breakpoint condition(s) matched 4 times.
+	pc = $321fe :trace :file /tmp/mw2run-nufiybcr/bp_start_tune.txt
+Reading debugger commands from '/tmp/mw2run-nufiybcr/bp_start_tune.txt'...
+Changed to input file dir '/tmp/mw2run-nufiybcr'.
+> e VBL
+= %10101000000100 (bin), #10756 (dec), $2a04 (hex)
+> r
+  D0 00000001   D1 00000009   D2 FE4CE61D   D3 FAEC0032 
+  D4 00000022   D5 00070000   D6 00070007   D7 00000001 
+  A0 0000D54E   A1 0000D0AC   A2 0002D126   A3 00067DE8 
+  A4 0004EC00   A5 0000FB48   A6 0000770E   A7 00008026 
+USP  000B1F40 ISP  00008026 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch b078 (CMP) 7626 (MOVE) Chip latch 00000000
+000321fe b078 7626                cmp.w $00007626.w [0001],d0
+Next PC: 00032202
+> m a7 16
+00008026: 00 03 21 38 00 03 13 ec 00 02 c6 cc 00 02 c6 1a  ..!8...∮..הכ..ה.
+> m $7626 2
+00007626: 00 01                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $757c 2
+0000757C: 00 00                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+> e VBL
+= %10101000110111 (bin), #10807 (dec), $2a37 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+> e VBL
+= %10101010001100 (bin), #10892 (dec), $2a8c (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 03 38 6e                          ......8n
+11. CPU breakpoint condition(s) matched 1 times.
+	pc = $18e32 :trace :file /tmp/mw2run-nufiybcr/bp_sfx_init_18e32.txt
+Reading debugger commands from '/tmp/mw2run-nufiybcr/bp_sfx_init_18e32.txt'...
+Changed to input file dir '/tmp/mw2run-nufiybcr'.
+> e VBL
+= %10101010101101 (bin), #10925 (dec), $2aad (hex)
+> r
+  D0 0000FFFF   D1 00000009   D2 FE4CE61D   D3 FAEC0032 
+  D4 00000022   D5 00070000   D6 00070007   D7 00000001 
+  A0 00007384   A1 00019F54   A2 0002D126   A3 00067DE8 
+  A4 0004EC00   A5 0000FB48   A6 0000770E   A7 00007FE6 
+USP  000B1F40 ISP  00007FE6 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch 21fc (MOVE) 0001 (OR) Chip latch 00000000
+00018e32 21fc 0001 8f92 513c      move.l #$00018f92,$0000513c.w [0003386e]
+Next PC: 00018e3a
+> m a7 16
+00007FE6: 00 02 7e d8 00 00 01 38 00 00 00 09 fe 4c e6 1d  ..~ן...8....³Lµ.
+> m $7626 2
+00007626: 00 01                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $757c 2
+0000757C: 00 00                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+> e VBL
+= %10101011100001 (bin), #10977 (dec), $2ae1 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 01 8f 92                          ......ÅÆ
+> e VBL
+= %10101100110110 (bin), #11062 (dec), $2b36 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 01 8f 92                          ......ÅÆ
+> e VBL
+= %10101110001011 (bin), #11147 (dec), $2b8b (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 01 8f 92                          ......ÅÆ
+WARN : PNG screen dump saved to: /tmp/mw2run-nufiybcr/shots/grab0026.png
+> e VBL
+= %10101111100110 (bin), #11238 (dec), $2be6 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 01 8f 92                          ......ÅÆ
+> e VBL
+= %10110000111011 (bin), #11323 (dec), $2c3b (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 01 8f 92                          ......ÅÆ
+> e VBL
+= %10110010010000 (bin), #11408 (dec), $2c90 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 01 8f 92                          ......ÅÆ
+> e VBL
+= %10110011100101 (bin), #11493 (dec), $2ce5 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 01 8f 92                          ......ÅÆ
+> e VBL
+= %10110100111010 (bin), #11578 (dec), $2d3a (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 01 8f 92                          ......ÅÆ
+> m $6220 2
+00006220: 00 0d                                            ..
+> e VBL
+= %10110110010100 (bin), #11668 (dec), $2d94 (hex)
+> m $5138 8
+00005138: 00 00 0d 0e 00 01 8f 92                          ......ÅÆ
+> m $700a 2
+0000700A: 00 02                                            ..
+4. CPU breakpoint condition(s) matched 1 times.
+	pc = $338c2 :trace :file /tmp/mw2run-nufiybcr/bp_stop_restore_502c.txt
+Reading debugger commands from '/tmp/mw2run-nufiybcr/bp_stop_restore_502c.txt'...
+Changed to input file dir '/tmp/mw2run-nufiybcr'.
+> e VBL
+= %10110111010000 (bin), #11728 (dec), $2dd0 (hex)
+> r
+  D0 FFFF0000   D1 FFFF0000   D2 FFFFFFDC   D3 FFFFFFB9 
+  D4 00000424   D5 000A0000   D6 00000008   D7 00000000 
+  A0 0001857C   A1 0007CFE0   A2 00079F42   A3 0007CF38 
+  A4 0007C718   A5 0007BE0E   A6 0007D1B0   A7 00008026 
+USP  000B1F40 ISP  00008026 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4eb8 (JSR) 5032 (ADD) Chip latch 00000000
+000338c2 4eb8 5032                jsr $00005032.w
+Next PC: 000338c6
+> m a7 16
+00008026: 00 03 24 8c 00 03 14 80 00 02 c6 cc 00 02 c6 1a  ..$î...Ç..הכ..ה.
+> m $7626 2
+00007626: 00 01                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $757c 2
+0000757C: 00 00                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+3. CPU breakpoint condition(s) matched 5 times.
+	pc = $33870 :trace :file /tmp/mw2run-nufiybcr/bp_stop_5032.txt
+Reading debugger commands from '/tmp/mw2run-nufiybcr/bp_stop_5032.txt'...
+Changed to input file dir '/tmp/mw2run-nufiybcr'.
+> e VBL
+= %10110111010000 (bin), #11728 (dec), $2dd0 (hex)
+> r
+  D0 FFFF0000   D1 FFFF0000   D2 FFFFFFDC   D3 FFFFFFB9 
+  D4 00000424   D5 000A0000   D6 00000008   D7 00000000 
+  A0 0001857C   A1 0007CFE0   A2 00079F42   A3 0007CF38 
+  A4 0007C718   A5 0007BE0E   A6 0007D1B0   A7 00008022 
+USP  000B1F40 ISP  00008022 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 48e7 (MVMLE) fffe (ILLEGAL) Chip latch 00000000
+00033870 48e7 fffe                movem.l d0-d7/a0-a6,-(a7) == $0000801e
+Next PC: 00033874
+> m a7 16
+00008022: 00 03 38 c6 00 03 24 8c 00 03 14 80 00 02 c6 cc  ..8ה..$î...Ç..הכ
+> m $7626 2
+00007626: 00 01                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $757c 2
+0000757C: 00 00                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+12. CPU breakpoint condition(s) matched 1 times.
+	pc = $338c6 :trace :file /tmp/mw2run-nufiybcr/bp_tick_restore_338c6.txt
+Reading debugger commands from '/tmp/mw2run-nufiybcr/bp_tick_restore_338c6.txt'...
+Changed to input file dir '/tmp/mw2run-nufiybcr'.
+> e VBL
+= %10110111010000 (bin), #11728 (dec), $2dd0 (hex)
+> r
+  D0 FFFF0000   D1 FFFF0000   D2 FFFFFFDC   D3 FFFFFFB9 
+  D4 00000424   D5 000A0000   D6 00000008   D7 00000000 
+  A0 0001857C   A1 0007CFE0   A2 00079F42   A3 0007CF38 
+  A4 0007C718   A5 0007BE0E   A6 0007D1B0   A7 00008026 
+USP  000B1F40 ISP  00008026 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch 21f8 (MOVE) 513c (ILLEGAL) Chip latch 00000000
+000338c6 21f8 513c 5138           move.l $0000513c.w [00018f92],$00005138.w [0003386e]
+Next PC: 000338cc
+> m a7 16
+00008026: 00 03 24 8c 00 03 14 80 00 02 c6 cc 00 02 c6 1a  ..$î...Ç..הכ..ה.
+> m $7626 2
+00007626: 00 01                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $757c 2
+0000757C: 00 00                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+> e VBL
+= %10110111101110 (bin), #11758 (dec), $2dee (hex)
+> m $5138 8
+00005138: 00 01 8f 92 00 01 8f 92                          ..ÅÆ..ÅÆ
+WARN : PNG screen dump saved to: /tmp/mw2run-nufiybcr/shots/grab0027.png
+> e VBL
+= %10111001000011 (bin), #11843 (dec), $2e43 (hex)
+> m $5138 8
+00005138: 00 01 8f 92 00 01 8f 92                          ..ÅÆ..ÅÆ
+WARN : PNG screen dump saved to: /tmp/mw2run-nufiybcr/shots/grab0028.png
+> e VBL
+= %10111010011110 (bin), #11934 (dec), $2e9e (hex)
+> m $5138 8
+00005138: 00 01 8f 92 00 01 8f 92                          ..ÅÆ..ÅÆ
+> e VBL
+= %10111011110011 (bin), #12019 (dec), $2ef3 (hex)
+> m $5138 8
+00005138: 00 01 8f 92 00 01 8f 92                          ..ÅÆ..ÅÆ
+> e VBL
+= %10111101001000 (bin), #12104 (dec), $2f48 (hex)
+> m $5138 8
+00005138: 00 01 8f 92 00 01 8f 92                          ..ÅÆ..ÅÆ
+> e VBL
+= %10111110011101 (bin), #12189 (dec), $2f9d (hex)
+> m $5138 8
+00005138: 00 01 8f 92 00 01 8f 92                          ..ÅÆ..ÅÆ

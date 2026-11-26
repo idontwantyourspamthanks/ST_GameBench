@@ -1,0 +1,39 @@
+000 manager main menu |  | ['Original game', 'Campaigns >', 'Levels >', 'Load from campaign disk']
+001 full store: levels list |  | ['DENSE0', 'DENSE1', 'DENSE2', '<new level>']
+002 copy: Overlay full (the level menu stays) | Overlay full! | ['Play', 'Edit', 'Copy', 'Delete']
+003 dense level in the editor |  | []
+004 dense level scrolled |  | []
+005 dense level top |  | []
+006 dense level committed (smaller) |  | ['DENSE0', 'DENSE1', 'DENSE2', '<new level>']
+007 FULL entries |  | ['01 L DENSE0', '02 L DENSE1', '03 L DENSE2', '<add entry>']
+008 validator: good |  | ['DENSE0', 'DENSE1', 'DENSE2', '<new level>']
+  validator ('good', True, True)
+009 validator: version 2 |  | ['<new level>', '< back']
+  validator ('version 2', False, False)
+010 validator: nlevels 200 |  | ['<new level>', '< back']
+  validator ('nlevels 200', False, False)
+011 validator: ncamps 9 |  | ['<new level>', '< back']
+  validator ('ncamps 9', False, False)
+012 validator: campaign count 17 |  | ['<new level>', '< back']
+  validator ('campaign count 17', False, False)
+013 validator: mission 3 |  | ['<new level>', '< back']
+  validator ('mission 3', False, False)
+014 validator: mission 0 |  | ['<new level>', '< back']
+  validator ('mission 0', False, False)
+015 validator: tower 8 |  | ['<new level>', '< back']
+  validator ('tower 8', False, False)
+016 validator: rows 15 |  | ['<new level>', '< back']
+  validator ('rows 15', False, False)
+017 validator: rows 121 |  | ['<new level>', '< back']
+  validator ('rows 121', False, False)
+018 validator: len < 2*rows |  | ['<new level>', '< back']
+  validator ('len < 2*rows', False, False)
+019 validator: len 65535 |  | ['<new level>', '< back']
+  validator ('len 65535', False, False)
+020 validator: mask bit flipped |  | ['<new level>', '< back']
+  validator ('mask bit flipped', False, False)
+021 validator: nlevels 4 (4th record missing) |  | ['<new level>', '< back']
+  validator ('nlevels 4 (4th record missing)', False, False)
+PARITY ok
+title vbl 0x382d8 errors []
+checkpoints 25

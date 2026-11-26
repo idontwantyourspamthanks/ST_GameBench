@@ -1,0 +1,13 @@
+captured $70000 vs earlier stock buffers at the same pass (differing bytes of 32000):
+  drv shots_race_start_stock/s70 0
+  drvsp shots_race_start_stock/sa0 0
+  gsp shots_race_grid_stock/se60 0
+  gno shots_race_grid_stock/se30 0
+sky check: index values in rows 0-64 outside the stock HUD boxes, text box and face box:
+  gno {15: 4268, 14: 772}
+  drv {14: 806, 15: 4234}
+palette switch row per frame:
+  drv 74
+  drvsp 74
+  gsp 74
+  gno 74

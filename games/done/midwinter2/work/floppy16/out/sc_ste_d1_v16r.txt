@@ -1,0 +1,6 @@
+sc_ste_d1_v16r: orange prompt after 91 s wall; machine ste 8 MHz 1 drive(s)
+_nflops ($4a6): 000004A6: 00 01                                            .. | drive-select toggle site $28b44: 00028B44: 0a 79 00 00 00 02 7d 34                          .y....}4
+--- scenario A
+SWAP A sc_ste_d1_v16r: black prompt UP (wall 1.2 s since the key); FDC burst 1.98 s emulated (first cmd to last event), 5 cmds, 0 force-ints (VBL 5223, 50 Hz)
+--- scenario B
+SWAP B sc_ste_d1_v16r: FFB inserted at the prompt, key -> M/J/K screen REACHED (wall 31 s); FDC burst 9.05 s emulated, 0 force-ints

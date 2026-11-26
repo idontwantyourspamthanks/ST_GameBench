@@ -1255,8 +1255,15 @@ run:    move.l  (a7)+,V_RET(a5)
         beq.s   .k2
         tst.b   $fffffc02.l
         bra.s   .k
-.k2:    clr.b   $6102.l                 ; Moonshine's IKBD parser ($cfb4) back to idle
+.k2:    lea     $5ffe.w,a0              ; clear held-key table ($5ffe..$607d), last make, joystick bytes and parser state
+        moveq   #31,d0
+.kz:    clr.l   (a0)+
+        dbra    d0,.kz
+        clr.b   $60ff.w
+        clr.b   $6102.l                 ; Moonshine's IKBD parser ($cfb4) back to idle
         clr.b   $6103.l
+        clr.b   $6104.l
+        clr.b   $6105.l
         clr.b   $610e.l
         movea.l V_RET(a5),a0
         move.w  V_SR(a5),sr

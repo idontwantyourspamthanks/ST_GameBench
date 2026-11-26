@@ -1,0 +1,23 @@
+e VBL
+w $38498 $80
+w $333ff $00
+w $33400 $00
+w $3398e $00 $00
+w $33990 $00 $00
+w $33992 $00 $00
+w $33944 $00 $55
+w $33950 $00 $3c
+w $3395c $00 $00
+w $33980 $00 $05
+w $3398c $00 $01
+w $33998 $00 $00
+w $339b0 $00 $01
+w $339a4 $00 $00
+w $33994 $00 $00
+w $33988 $ff $ff
+w $33a16 $00 $65
+w $33a18 $00 $3c
+w $33a20 $00 $00
+w $33a1e $00 $00
+w $33a1c $00 $00
+b pc = $3dcf4 && ($3ad98).w = $38 && ($3ad9a).w = $48 && ($3ad9c).w = $6 :once :trace :file /home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/gate_NebOddGateCore/shot/sc/g_ship/ev_129.txt

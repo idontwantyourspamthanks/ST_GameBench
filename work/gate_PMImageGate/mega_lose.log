@@ -1,0 +1,23 @@
+CELL img megaste TOS 2.06 4096 KB LOSE
+image: game screen after 114 s
+[   35s vbl 9027] name prompt
+[   41s vbl 9411] option screen
+[   60s vbl 10570] territory chart
+[   71s vbl 11194] protection removed (flag $14e4e = $2c), no question expected
+[   85s vbl 12077] 3D map view
+RESULT boot: 201 s, in_game True, MARKER b'PMPO', resource cache cursor $b74f4, RAM above the cursor's limit $b8000
+games/in_progress/powermonger/tools/pmretire.py:50: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  px = list(c.getdata())
+RESULT round 1 retire: {'game_btn': (48, 66), 'retire_btn': (31, 54), 'cursor_before': 750836, 'picture_s': 8.945305824279785, 'shown': True, 'still_shown': True, 'frac': 0.817953125, 'colours': 16, 'cursor_after': 750836}
+RESULT round 1: picture on screen (non-black 0.82, 16 colours): yes
+RESULT round 1: option screen again: True
+RESULT round 1: territory chart: True
+RESULT round 1: map view of the next level: True (cache cursor $b74f4)
+games/in_progress/powermonger/tools/pmretire.py:50: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  px = list(c.getdata())
+RESULT round 2 retire: {'game_btn': (48, 66), 'retire_btn': (31, 54), 'cursor_before': 750836, 'picture_s': 8.877824544906616, 'shown': True, 'still_shown': True, 'frac': 0.817953125, 'colours': 16, 'cursor_after': 750836}
+RESULT round 2: picture on screen (non-black 0.82, 16 colours): yes
+RESULT round 2: option screen again: True
+RESULT round 2: territory chart: True
+RESULT round 2: map view of the next level: True (cache cursor $b74f4)
+CELL DONE img megaste TOS 2.06 4096 KB LOSE: OK

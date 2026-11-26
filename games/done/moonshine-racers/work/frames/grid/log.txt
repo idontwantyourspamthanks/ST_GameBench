@@ -1,0 +1,371 @@
+> b pc = $d1ca :trace :once :file /tmp/strun-45g4cvwh/fr_0.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $d1ca
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-45g4cvwh/fr_0.txt' file on hit.
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $d1ca :once :trace :file /tmp/strun-45g4cvwh/fr_0.txt
+Reading debugger commands from '/tmp/strun-45g4cvwh/fr_0.txt'...
+Changed to input file dir '/tmp/strun-45g4cvwh'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/frames/grid/f00_70.bin $70000 $7d00
+  Wrote 0x7d00 bytes.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/frames/grid/f00_78.bin $78000 $7d00
+  Wrote 0x7d00 bytes.
+> m $1008 4
+00001008: 00 07 80 00                                      ..Ç.
+> b pc = $7b7a :trace :once :file /tmp/strun-45g4cvwh/fr_w0.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $7b7a
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-45g4cvwh/fr_w0.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers' dir.
+Removed CPU breakpoint 1:
+	pc = $d1ca :once :trace :file /tmp/strun-45g4cvwh/fr_0.txt
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $7b7a :once :trace :file /tmp/strun-45g4cvwh/fr_w0.txt
+Reading debugger commands from '/tmp/strun-45g4cvwh/fr_w0.txt'...
+Changed to input file dir '/tmp/strun-45g4cvwh'.
+> b pc = $d1ca :trace :once :file /tmp/strun-45g4cvwh/fr_1.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $d1ca
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-45g4cvwh/fr_1.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers' dir.
+Removed CPU breakpoint 1:
+	pc = $7b7a :once :trace :file /tmp/strun-45g4cvwh/fr_w0.txt
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $d1ca :once :trace :file /tmp/strun-45g4cvwh/fr_1.txt
+Reading debugger commands from '/tmp/strun-45g4cvwh/fr_1.txt'...
+Changed to input file dir '/tmp/strun-45g4cvwh'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/frames/grid/f01_70.bin $70000 $7d00
+  Wrote 0x7d00 bytes.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/frames/grid/f01_78.bin $78000 $7d00
+  Wrote 0x7d00 bytes.
+> m $1008 4
+00001008: 00 07 00 00                                      ....
+> b pc = $7b7a :trace :once :file /tmp/strun-45g4cvwh/fr_w1.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $7b7a
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-45g4cvwh/fr_w1.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers' dir.
+Removed CPU breakpoint 1:
+	pc = $d1ca :once :trace :file /tmp/strun-45g4cvwh/fr_1.txt
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $7b7a :once :trace :file /tmp/strun-45g4cvwh/fr_w1.txt
+Reading debugger commands from '/tmp/strun-45g4cvwh/fr_w1.txt'...
+Changed to input file dir '/tmp/strun-45g4cvwh'.
+> b pc = $d1ca :trace :once :file /tmp/strun-45g4cvwh/fr_2.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $d1ca
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-45g4cvwh/fr_2.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers' dir.
+Removed CPU breakpoint 1:
+	pc = $7b7a :once :trace :file /tmp/strun-45g4cvwh/fr_w1.txt
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $d1ca :once :trace :file /tmp/strun-45g4cvwh/fr_2.txt
+Reading debugger commands from '/tmp/strun-45g4cvwh/fr_2.txt'...
+Changed to input file dir '/tmp/strun-45g4cvwh'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/frames/grid/f02_70.bin $70000 $7d00
+  Wrote 0x7d00 bytes.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/frames/grid/f02_78.bin $78000 $7d00
+  Wrote 0x7d00 bytes.
+> m $1008 4
+00001008: 00 07 80 00                                      ..Ç.
+> b pc = $7b7a :trace :once :file /tmp/strun-45g4cvwh/fr_w2.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $7b7a
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-45g4cvwh/fr_w2.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers' dir.
+Removed CPU breakpoint 1:
+	pc = $d1ca :once :trace :file /tmp/strun-45g4cvwh/fr_2.txt
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $7b7a :once :trace :file /tmp/strun-45g4cvwh/fr_w2.txt
+Reading debugger commands from '/tmp/strun-45g4cvwh/fr_w2.txt'...
+Changed to input file dir '/tmp/strun-45g4cvwh'.
+> b pc = $d1ca :trace :once :file /tmp/strun-45g4cvwh/fr_3.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $d1ca
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-45g4cvwh/fr_3.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers' dir.
+Removed CPU breakpoint 1:
+	pc = $7b7a :once :trace :file /tmp/strun-45g4cvwh/fr_w2.txt
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $d1ca :once :trace :file /tmp/strun-45g4cvwh/fr_3.txt
+Reading debugger commands from '/tmp/strun-45g4cvwh/fr_3.txt'...
+Changed to input file dir '/tmp/strun-45g4cvwh'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/frames/grid/f03_70.bin $70000 $7d00
+  Wrote 0x7d00 bytes.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/frames/grid/f03_78.bin $78000 $7d00
+  Wrote 0x7d00 bytes.
+> m $1008 4
+00001008: 00 07 00 00                                      ....
+> b pc = $7b7a :trace :once :file /tmp/strun-45g4cvwh/fr_w3.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $7b7a
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-45g4cvwh/fr_w3.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers' dir.
+Removed CPU breakpoint 1:
+	pc = $d1ca :once :trace :file /tmp/strun-45g4cvwh/fr_3.txt
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $7b7a :once :trace :file /tmp/strun-45g4cvwh/fr_w3.txt
+Reading debugger commands from '/tmp/strun-45g4cvwh/fr_w3.txt'...
+Changed to input file dir '/tmp/strun-45g4cvwh'.
+> b pc = $d1ca :trace :once :file /tmp/strun-45g4cvwh/fr_4.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $d1ca
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-45g4cvwh/fr_4.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers' dir.
+Removed CPU breakpoint 1:
+	pc = $7b7a :once :trace :file /tmp/strun-45g4cvwh/fr_w3.txt
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $d1ca :once :trace :file /tmp/strun-45g4cvwh/fr_4.txt
+Reading debugger commands from '/tmp/strun-45g4cvwh/fr_4.txt'...
+Changed to input file dir '/tmp/strun-45g4cvwh'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/frames/grid/f04_70.bin $70000 $7d00
+  Wrote 0x7d00 bytes.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/frames/grid/f04_78.bin $78000 $7d00
+  Wrote 0x7d00 bytes.
+> m $1008 4
+00001008: 00 07 80 00                                      ..Ç.
+> b pc = $7b7a :trace :once :file /tmp/strun-45g4cvwh/fr_w4.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $7b7a
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-45g4cvwh/fr_w4.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers' dir.
+Removed CPU breakpoint 1:
+	pc = $d1ca :once :trace :file /tmp/strun-45g4cvwh/fr_4.txt
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $7b7a :once :trace :file /tmp/strun-45g4cvwh/fr_w4.txt
+Reading debugger commands from '/tmp/strun-45g4cvwh/fr_w4.txt'...
+Changed to input file dir '/tmp/strun-45g4cvwh'.
+> b pc = $d1ca :trace :once :file /tmp/strun-45g4cvwh/fr_5.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $d1ca
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-45g4cvwh/fr_5.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers' dir.
+Removed CPU breakpoint 1:
+	pc = $7b7a :once :trace :file /tmp/strun-45g4cvwh/fr_w4.txt
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $d1ca :once :trace :file /tmp/strun-45g4cvwh/fr_5.txt
+Reading debugger commands from '/tmp/strun-45g4cvwh/fr_5.txt'...
+Changed to input file dir '/tmp/strun-45g4cvwh'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/frames/grid/f05_70.bin $70000 $7d00
+  Wrote 0x7d00 bytes.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/frames/grid/f05_78.bin $78000 $7d00
+  Wrote 0x7d00 bytes.
+> m $1008 4
+00001008: 00 07 00 00                                      ....
+> b pc = $7b7a :trace :once :file /tmp/strun-45g4cvwh/fr_w5.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $7b7a
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-45g4cvwh/fr_w5.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers' dir.
+Removed CPU breakpoint 1:
+	pc = $d1ca :once :trace :file /tmp/strun-45g4cvwh/fr_5.txt
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $7b7a :once :trace :file /tmp/strun-45g4cvwh/fr_w5.txt
+Reading debugger commands from '/tmp/strun-45g4cvwh/fr_w5.txt'...
+Changed to input file dir '/tmp/strun-45g4cvwh'.
+> b pc = $d1ca :trace :once :file /tmp/strun-45g4cvwh/fr_6.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $d1ca
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-45g4cvwh/fr_6.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers' dir.
+Removed CPU breakpoint 1:
+	pc = $7b7a :once :trace :file /tmp/strun-45g4cvwh/fr_w5.txt
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $d1ca :once :trace :file /tmp/strun-45g4cvwh/fr_6.txt
+Reading debugger commands from '/tmp/strun-45g4cvwh/fr_6.txt'...
+Changed to input file dir '/tmp/strun-45g4cvwh'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/frames/grid/f06_70.bin $70000 $7d00
+  Wrote 0x7d00 bytes.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/frames/grid/f06_78.bin $78000 $7d00
+  Wrote 0x7d00 bytes.
+> m $1008 4
+00001008: 00 07 80 00                                      ..Ç.
+> b pc = $7b7a :trace :once :file /tmp/strun-45g4cvwh/fr_w6.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $7b7a
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-45g4cvwh/fr_w6.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers' dir.
+Removed CPU breakpoint 1:
+	pc = $d1ca :once :trace :file /tmp/strun-45g4cvwh/fr_6.txt
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $7b7a :once :trace :file /tmp/strun-45g4cvwh/fr_w6.txt
+Reading debugger commands from '/tmp/strun-45g4cvwh/fr_w6.txt'...
+Changed to input file dir '/tmp/strun-45g4cvwh'.
+> b pc = $d1ca :trace :once :file /tmp/strun-45g4cvwh/fr_7.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $d1ca
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-45g4cvwh/fr_7.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers' dir.
+Removed CPU breakpoint 1:
+	pc = $7b7a :once :trace :file /tmp/strun-45g4cvwh/fr_w6.txt
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $d1ca :once :trace :file /tmp/strun-45g4cvwh/fr_7.txt
+Reading debugger commands from '/tmp/strun-45g4cvwh/fr_7.txt'...
+Changed to input file dir '/tmp/strun-45g4cvwh'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/frames/grid/f07_70.bin $70000 $7d00
+  Wrote 0x7d00 bytes.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/frames/grid/f07_78.bin $78000 $7d00
+  Wrote 0x7d00 bytes.
+> m $1008 4
+00001008: 00 07 00 00                                      ....
+> b pc = $7b7a :trace :once :file /tmp/strun-45g4cvwh/fr_w7.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $7b7a
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-45g4cvwh/fr_w7.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers' dir.
+Removed CPU breakpoint 1:
+	pc = $d1ca :once :trace :file /tmp/strun-45g4cvwh/fr_7.txt
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $7b7a :once :trace :file /tmp/strun-45g4cvwh/fr_w7.txt
+Reading debugger commands from '/tmp/strun-45g4cvwh/fr_w7.txt'...
+Changed to input file dir '/tmp/strun-45g4cvwh'.
+> b pc = $d1ca :trace :once :file /tmp/strun-45g4cvwh/fr_8.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $d1ca
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-45g4cvwh/fr_8.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers' dir.
+Removed CPU breakpoint 1:
+	pc = $7b7a :once :trace :file /tmp/strun-45g4cvwh/fr_w7.txt
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $d1ca :once :trace :file /tmp/strun-45g4cvwh/fr_8.txt
+Reading debugger commands from '/tmp/strun-45g4cvwh/fr_8.txt'...
+Changed to input file dir '/tmp/strun-45g4cvwh'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/frames/grid/f08_70.bin $70000 $7d00
+  Wrote 0x7d00 bytes.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/frames/grid/f08_78.bin $78000 $7d00
+  Wrote 0x7d00 bytes.
+> m $1008 4
+00001008: 00 07 80 00                                      ..Ç.
+> b pc = $7b7a :trace :once :file /tmp/strun-45g4cvwh/fr_w8.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $7b7a
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-45g4cvwh/fr_w8.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers' dir.
+Removed CPU breakpoint 1:
+	pc = $d1ca :once :trace :file /tmp/strun-45g4cvwh/fr_8.txt
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $7b7a :once :trace :file /tmp/strun-45g4cvwh/fr_w8.txt
+Reading debugger commands from '/tmp/strun-45g4cvwh/fr_w8.txt'...
+Changed to input file dir '/tmp/strun-45g4cvwh'.
+> b pc = $d1ca :trace :once :file /tmp/strun-45g4cvwh/fr_9.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $d1ca
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-45g4cvwh/fr_9.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers' dir.
+Removed CPU breakpoint 1:
+	pc = $7b7a :once :trace :file /tmp/strun-45g4cvwh/fr_w8.txt
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $d1ca :once :trace :file /tmp/strun-45g4cvwh/fr_9.txt
+Reading debugger commands from '/tmp/strun-45g4cvwh/fr_9.txt'...
+Changed to input file dir '/tmp/strun-45g4cvwh'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/frames/grid/f09_70.bin $70000 $7d00
+  Wrote 0x7d00 bytes.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/frames/grid/f09_78.bin $78000 $7d00
+  Wrote 0x7d00 bytes.
+> m $1008 4
+00001008: 00 07 00 00                                      ....
+> b pc = $7b7a :trace :once :file /tmp/strun-45g4cvwh/fr_w9.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $7b7a
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-45g4cvwh/fr_w9.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers' dir.
+Removed CPU breakpoint 1:
+	pc = $d1ca :once :trace :file /tmp/strun-45g4cvwh/fr_9.txt
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $7b7a :once :trace :file /tmp/strun-45g4cvwh/fr_w9.txt
+Reading debugger commands from '/tmp/strun-45g4cvwh/fr_w9.txt'...
+Changed to input file dir '/tmp/strun-45g4cvwh'.
+> b pc = $d1ca :trace :once :file /tmp/strun-45g4cvwh/fr_10.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $d1ca
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-45g4cvwh/fr_10.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers' dir.
+Removed CPU breakpoint 1:
+	pc = $7b7a :once :trace :file /tmp/strun-45g4cvwh/fr_w9.txt
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $d1ca :once :trace :file /tmp/strun-45g4cvwh/fr_10.txt
+Reading debugger commands from '/tmp/strun-45g4cvwh/fr_10.txt'...
+Changed to input file dir '/tmp/strun-45g4cvwh'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/frames/grid/f10_70.bin $70000 $7d00
+  Wrote 0x7d00 bytes.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/frames/grid/f10_78.bin $78000 $7d00
+  Wrote 0x7d00 bytes.
+> m $1008 4
+00001008: 00 07 80 00                                      ..Ç.
+> b pc = $7b7a :trace :once :file /tmp/strun-45g4cvwh/fr_w10.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $7b7a
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-45g4cvwh/fr_w10.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers' dir.
+Removed CPU breakpoint 1:
+	pc = $d1ca :once :trace :file /tmp/strun-45g4cvwh/fr_10.txt
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $7b7a :once :trace :file /tmp/strun-45g4cvwh/fr_w10.txt
+Reading debugger commands from '/tmp/strun-45g4cvwh/fr_w10.txt'...
+Changed to input file dir '/tmp/strun-45g4cvwh'.
+> b pc = $d1ca :trace :once :file /tmp/strun-45g4cvwh/fr_11.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $d1ca
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-45g4cvwh/fr_11.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers' dir.
+Removed CPU breakpoint 1:
+	pc = $7b7a :once :trace :file /tmp/strun-45g4cvwh/fr_w10.txt
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $d1ca :once :trace :file /tmp/strun-45g4cvwh/fr_11.txt
+Reading debugger commands from '/tmp/strun-45g4cvwh/fr_11.txt'...
+Changed to input file dir '/tmp/strun-45g4cvwh'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/frames/grid/f11_70.bin $70000 $7d00
+  Wrote 0x7d00 bytes.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/frames/grid/f11_78.bin $78000 $7d00
+  Wrote 0x7d00 bytes.
+> m $1008 4
+00001008: 00 07 00 00                                      ....
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers' dir.
+Removed CPU breakpoint 1:
+	pc = $d1ca :once :trace :file /tmp/strun-45g4cvwh/fr_11.txt

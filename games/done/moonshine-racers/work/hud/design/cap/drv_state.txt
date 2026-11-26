@@ -1,0 +1,44 @@
+> b pc = $7b86 && ($100e).w = $70 :trace :once :file /tmp/mhd_drv/cap.txt
+CPU condition breakpoint 1 with 2 condition(s) added:
+	pc = $7b86 && ( $100e ) . w = $70
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mhd_drv/cap.txt' file on hit.
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $7b86 && ( $100e ) . w = $70 :once :trace :file /tmp/mhd_drv/cap.txt
+Reading debugger commands from '/tmp/mhd_drv/cap.txt'...
+Changed to input file dir '/tmp/mhd_drv'.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/hud/design/cap/drv_70000.bin $70000 $7d00
+  Wrote 0x7d00 bytes.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/hud/design/cap/drv_78000.bin $78000 $7d00
+  Wrote 0x7d00 bytes.
+> savebin /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/hud/design/cap/drv_pal.bin $3cc4 $4c
+  Wrote 0x4c bytes.
+> m $1004 8
+00001004: 00 07 00 00 00 07 80 00                          ......Ç.
+> m $1008 4
+00001008: 00 07 80 00                                      ..Ç.
+> m $ff8200 16
+00FF8200: 00 07 00 00 00 07 00 0f 00 00 fe 00 00 00 00 00  ..........³.....
+> m $ff8240 32
+00FF8240: 00 00 01 11 00 00 07 54 03 33 03 30 06 64 06 66  .......T.3.0.d.f
+00FF8250: 02 21 04 32 05 43 07 65 04 10 05 50 06 67 02 56  .!.2.C.e...P.g.V
+> m $100e 2
+0000100E: 00 70                                            .p
+> m $11ab 8
+000011AB: 00 00 01 00 21 00 00 00                          ....!...
+> m $10ba 2
+000010BA: 00 00                                            ..
+> m $10c0 2
+000010C0: 00 1c                                            ..
+> m $10ca 2
+000010CA: 00 06                                            ..
+> m $10d8 4
+000010D8: 00 5c db 43                                      .\ףC
+> m $11d9 1
+000011D9: 00                                               .
+> m $11c2 2
+000011C2: 00 c2                                            .א
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers' dir.
+Removed CPU breakpoint 1:
+	pc = $7b86 && ( $100e ) . w = $70 :once :trace :file /tmp/mhd_drv/cap.txt

@@ -1,0 +1,6 @@
+A $3d16e       bitmaps 280  source data   65802 B   one pre-shifted variant (mask+planes, c+1 columns)  186000 B
+B $5a402       bitmaps  64  source data   23634 B   one pre-shifted variant (mask+planes, c+1 columns)   65040 B
+cars $306c4    bitmaps  96  source data   50536 B   one pre-shifted variant (mask+planes, c+1 columns)  121128 B
+player $2156a  bitmaps  45  source data   14244 B   one pre-shifted variant (mask+planes, c+1 columns)   40524 B
+total source 154216 B; ONE shift variant of every bitmap 412692 B; all 15 shifts 6190380 B (6045 KB) vs 215 KB free at 1 MB
+shift variants of the whole set that fit in 215 KB: 0.53

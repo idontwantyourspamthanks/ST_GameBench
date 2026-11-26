@@ -1,0 +1,15 @@
+lvl  b  c  e | pal ras sky | eye | grid | rsCol rsEye tower | expected colour tower / eye tower
+  0 T3  1  2 | True  | True  [1, 5] | True  | rsCol 0 rsEye 1 tower 2 True  | colour 1 eye 2  PASS
+  1 T3  8  2 | True  | True  [1, 5] | True  | rsCol 7 rsEye 1 tower 2 True  | colour 8 eye 2  PASS
+  2 T1  3  1 | True  | True  [0, 4] | True  | rsCol 2 rsEye 0 tower 0 True  | colour 3 eye 1  PASS
+  3 T1  3  4 | True  | True  [3, 7] | True  | rsCol 2 rsEye 3 tower 0 True  | colour 3 eye 4  PASS
+  4 T6  0  0 | True  | True  [1, 5] | True  | rsCol 5 rsEye 1 tower 5 True  | colour 6 eye 6  PASS
+  5 T2  0  3 | True  | True  [2, 6] | True  | rsCol 1 rsEye 2 tower 1 True  | colour 2 eye 3  PASS
+screenshot crop equality (colours c of the cell == stock tower c, flags 0):
+  cell 0 (b=T3 c=1 e=2) vs stock T1: equal
+  cell 1 (b=T3 c=8 e=2) vs stock T8: equal
+  cell 2 (b=T1 c=3 e=1) vs stock T3: equal
+  cell 3 (b=T1 c=3 e=4) vs stock T3: equal
+  cell 4 (b=T6 c=0 e=0) vs stock T6: equal
+  cell 5 (b=T2 c=0 e=3) vs stock T2: equal
+FAILS 0

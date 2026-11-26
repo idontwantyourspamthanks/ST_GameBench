@@ -1,0 +1,369 @@
+INFO : Hatari v2.6.1, compiled on:  Feb  8 2026, 19:50:12
+INFO : GEMDOS HDD emulation, C: <-> /tmp/mw2run-2nxoaei7/C.
+> b pc = $321fe :trace :file /tmp/mw2run-2nxoaei7/bp_start_tune.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $321fe
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-2nxoaei7/bp_start_tune.txt' file on hit.
+> b pc = $c6c :trace :file /tmp/mw2run-2nxoaei7/bp_ym_start_c6c.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $c6c
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-2nxoaei7/bp_ym_start_c6c.txt' file on hit.
+> b pc = $c4c :trace :file /tmp/mw2run-2nxoaei7/bp_ym_stop_c4c.txt
+CPU condition breakpoint 3 with 1 condition(s) added:
+	pc = $c4c
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-2nxoaei7/bp_ym_stop_c4c.txt' file on hit.
+> b pc = $33870 :trace :file /tmp/mw2run-2nxoaei7/bp_stop_5032.txt
+CPU condition breakpoint 4 with 1 condition(s) added:
+	pc = $33870
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-2nxoaei7/bp_stop_5032.txt' file on hit.
+> b pc = $338c2 :trace :file /tmp/mw2run-2nxoaei7/bp_stop_restore_502c.txt
+CPU condition breakpoint 5 with 1 condition(s) added:
+	pc = $338c2
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-2nxoaei7/bp_stop_restore_502c.txt' file on hit.
+> b pc = $32296 :trace :file /tmp/mw2run-2nxoaei7/bp_fade_32296.txt
+CPU condition breakpoint 6 with 1 condition(s) added:
+	pc = $32296
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-2nxoaei7/bp_fade_32296.txt' file on hit.
+> b pc = $3238e :trace :file /tmp/mw2run-2nxoaei7/bp_fadeout_start_3238e.txt
+CPU condition breakpoint 7 with 1 condition(s) added:
+	pc = $3238e
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-2nxoaei7/bp_fadeout_start_3238e.txt' file on hit.
+> b pc = $322d6 :trace :file /tmp/mw2run-2nxoaei7/bp_fadeout_322d6.txt
+CPU condition breakpoint 8 with 1 condition(s) added:
+	pc = $322d6
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-2nxoaei7/bp_fadeout_322d6.txt' file on hit.
+> b pc = $3225c :trace :file /tmp/mw2run-2nxoaei7/bp_setvec_d0e_3225c.txt
+CPU condition breakpoint 9 with 1 condition(s) added:
+	pc = $3225c
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-2nxoaei7/bp_setvec_d0e_3225c.txt' file on hit.
+> b pc = $32288 :trace :file /tmp/mw2run-2nxoaei7/bp_setvec_32288.txt
+CPU condition breakpoint 10 with 1 condition(s) added:
+	pc = $32288
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-2nxoaei7/bp_setvec_32288.txt' file on hit.
+> b pc = $32322 :trace :file /tmp/mw2run-2nxoaei7/bp_setvec_32322.txt
+CPU condition breakpoint 11 with 1 condition(s) added:
+	pc = $32322
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-2nxoaei7/bp_setvec_32322.txt' file on hit.
+> b pc = $338c6 :trace :file /tmp/mw2run-2nxoaei7/bp_tick_restore_338c6.txt
+CPU condition breakpoint 12 with 1 condition(s) added:
+	pc = $338c6
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-2nxoaei7/bp_tick_restore_338c6.txt' file on hit.
+> b pc = $18e32 :trace :file /tmp/mw2run-2nxoaei7/bp_sfx_init_18e32.txt
+CPU condition breakpoint 13 with 1 condition(s) added:
+	pc = $18e32
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-2nxoaei7/bp_sfx_init_18e32.txt' file on hit.
+WARN : No GEMDOS dir '/tmp/mw2run-2nxoaei7/C/AUTO'
+> m $5138 4
+00005138: 00 00 00 00                                      ....
+WARN : Bus Error reading at address $ffff8e21, PC=$13a7a addr_e3=13a7a op_e3=1238
+WARN : No GEMDOS dir '/tmp/mw2run-2nxoaei7/C/GAMEX'
+> m $5138 4
+00005138: 00 00 00 00                                      ....
+> m $5138 4
+00005138: 00 00 00 00                                      ....
+> m $5138 4
+00005138: 00 00 00 00                                      ....
+> m $5138 4
+00005138: 00 00 00 00                                      ....
+WARN : PNG screen dump saved to: /tmp/mw2run-2nxoaei7/shots/grab0001.png
+> m $5138 4
+00005138: 00 00 00 00                                      ....
+> m $5138 4
+00005138: 00 00 00 00                                      ....
+> m $5138 4
+00005138: 00 00 00 00                                      ....
+> m $5138 4
+00005138: 00 00 00 00                                      ....
+> m $5138 4
+00005138: 00 00 00 00                                      ....
+WARN : PNG screen dump saved to: /tmp/mw2run-2nxoaei7/shots/grab0002.png
+> m $5138 4
+00005138: 00 00 00 00                                      ....
+> m $5138 4
+00005138: 00 00 00 00                                      ....
+> m $5138 4
+00005138: 00 00 00 00                                      ....
+> m $5138 4
+00005138: 00 00 00 00                                      ....
+> m $5138 4
+00005138: 00 00 00 00                                      ....
+WARN : PNG screen dump saved to: /tmp/mw2run-2nxoaei7/shots/grab0003.png
+> m $5138 4
+00005138: 00 00 00 00                                      ....
+> m $5138 4
+00005138: 00 00 00 00                                      ....
+> m $5138 4
+00005138: 00 00 00 00                                      ....
+> m $5138 4
+00005138: 00 00 00 00                                      ....
+> m $5138 4
+00005138: 00 00 00 00                                      ....
+WARN : PNG screen dump saved to: /tmp/mw2run-2nxoaei7/shots/grab0004.png
+> m $5138 4
+00005138: 00 00 00 00                                      ....
+> m $5138 4
+00005138: 00 00 00 00                                      ....
+2. CPU breakpoint condition(s) matched 1 times.
+	pc = $c6c :trace :file /tmp/mw2run-2nxoaei7/bp_ym_start_c6c.txt
+Reading debugger commands from '/tmp/mw2run-2nxoaei7/bp_ym_start_c6c.txt'...
+Changed to input file dir '/tmp/mw2run-2nxoaei7'.
+> e VBL
+= %101011011001 (bin), #2777 (dec), $ad9 (hex)
+> r
+  D0 00000001   D1 00005857   D2 00000903   D3 00000000 
+  D4 000000CC   D5 00070007   D6 00070050   D7 00080140 
+  A0 00000806   A1 00000C6C   A2 00072EBE   A3 000B1F44 
+  A4 0004EC00   A5 0000FB48   A6 0004E9D8   A7 000783DC 
+USP  000B1F40 ISP  000783DC 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 31fc (MOVE) 0001 (OR) Chip latch 00000000
+00000c6c 31fc 0001 0c44           move.w #$0001,$00000c44.w [0000]
+Next PC: 00000c72
+> m a7 16
+000783DC: 00 04 da e4 00 04 da b6 00 04 da 58 3e c6 3e c6  ..םΣ..םÀ..םX>ה>ה
+> m $7626 2
+00007626: 00 00                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $757c 2
+0000757C: 00 00                                            ..
+> m $700a 2
+0000700A: 00 00                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+3. CPU breakpoint condition(s) matched 1 times.
+	pc = $c4c :trace :file /tmp/mw2run-2nxoaei7/bp_ym_stop_c4c.txt
+Reading debugger commands from '/tmp/mw2run-2nxoaei7/bp_ym_stop_c4c.txt'...
+Changed to input file dir '/tmp/mw2run-2nxoaei7'.
+> e VBL
+= %101011011001 (bin), #2777 (dec), $ad9 (hex)
+> r
+  D0 00000001   D1 00005857   D2 00000903   D3 00000000 
+  D4 000000CC   D5 00070007   D6 00070050   D7 00080140 
+  A0 00000806   A1 00000C6C   A2 00072EBE   A3 000B1F44 
+  A4 0004EC00   A5 0000FB48   A6 0004E9D8   A7 000783D8 
+USP  000B1F40 ISP  000783D8 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch 303c (MOVE) 000d (ILLEGAL) Chip latch 00000000
+00000c4c 303c 000d                move.w #$000d,d0
+Next PC: 00000c50
+> m a7 16
+000783D8: 00 00 0c 76 00 04 da e4 00 04 da b6 00 04 da 58  ...v..םΣ..םÀ..םX
+> m $7626 2
+00007626: 00 00                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $757c 2
+0000757C: 00 00                                            ..
+> m $700a 2
+0000700A: 00 00                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+> m $5138 4
+00005138: 00 03 38 6e                                      ..8n
+> m $5138 4
+00005138: 00 03 38 6e                                      ..8n
+4. CPU breakpoint condition(s) matched 1 times.
+	pc = $33870 :trace :file /tmp/mw2run-2nxoaei7/bp_stop_5032.txt
+Reading debugger commands from '/tmp/mw2run-2nxoaei7/bp_stop_5032.txt'...
+Changed to input file dir '/tmp/mw2run-2nxoaei7'.
+> e VBL
+= %101111001111 (bin), #3023 (dec), $bcf (hex)
+> r
+  D0 0000DA02   D1 0000DABA   D2 00004E75   D3 00000000 
+  D4 00000000   D5 00070000   D6 00070050   D7 0000FFFF 
+  A0 00000140   A1 0003DB10   A2 00072EBE   A3 000B1F44 
+  A4 0004EC00   A5 0000FB48   A6 0000770E   A7 00008028 
+USP  000B1F40 ISP  00008028 
+SR=2700 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=7 STP=0
+Prefetch 48e7 (MVMLE) fffe (ILLEGAL) Chip latch 00000000
+00033870 48e7 fffe                movem.l d0-d7/a0-a6,-(a7) == $00008024
+Next PC: 00033874
+> m a7 16
+00008028: 00 02 66 5a 23 00 00 03 13 38 00 03 12 b8 00 00  ..fZ#....8...Õ..
+> m $7626 2
+00007626: 00 00                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $757c 2
+0000757C: 00 00                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $321fe :trace :file /tmp/mw2run-2nxoaei7/bp_start_tune.txt
+Reading debugger commands from '/tmp/mw2run-2nxoaei7/bp_start_tune.txt'...
+Changed to input file dir '/tmp/mw2run-2nxoaei7'.
+> e VBL
+= %110000100010 (bin), #3106 (dec), $c22 (hex)
+> r
+  D0 00000001   D1 0000DABA   D2 00004E75   D3 00000000 
+  D4 00000000   D5 00070000   D6 00070050   D7 0000FFFF 
+  A0 00000140   A1 0003DB10   A2 00072EBE   A3 000B1F44 
+  A4 0004EC00   A5 0000FB48   A6 0000770E   A7 0000802E 
+USP  000B1F40 ISP  0000802E 
+SR=2000 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=0 STP=0
+Prefetch b078 (CMP) 7626 (MOVE) Chip latch 00000000
+000321fe b078 7626                cmp.w $00007626.w [ffff],d0
+Next PC: 00032202
+> m a7 16
+0000802E: 00 03 21 38 00 03 12 c4 00 00 00 00 00 00 00 00  ..!8...ג........
+> m $7626 2
+00007626: ff ff                                            ¯¯
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $757c 2
+0000757C: 00 00                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 2 times.
+	pc = $c6c :trace :file /tmp/mw2run-2nxoaei7/bp_ym_start_c6c.txt
+Reading debugger commands from '/tmp/mw2run-2nxoaei7/bp_ym_start_c6c.txt'...
+Changed to input file dir '/tmp/mw2run-2nxoaei7'.
+> e VBL
+= %110000100010 (bin), #3106 (dec), $c22 (hex)
+> r
+  D0 00000001   D1 0000DABA   D2 00004E75   D3 00000000 
+  D4 00000000   D5 00070000   D6 00070050   D7 0000FFFF 
+  A0 00000806   A1 00000C6C   A2 00072EBE   A3 000B1F44 
+  A4 0004EC00   A5 0000FB48   A6 0000770E   A7 00007FEE 
+USP  000B1F40 ISP  00007FEE 
+SR=2004 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=0 STP=0
+Prefetch 31fc (MOVE) 0001 (OR) Chip latch 00000000
+00000c6c 31fc 0001 0c44           move.w #$0001,$00000c44.w [0000]
+Next PC: 00000c72
+> m a7 16
+00007FEE: 00 03 22 2e 00 00 00 01 00 00 da ba 00 00 4e 75  ..".......ם´..Nu
+> m $7626 2
+00007626: 00 01                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $757c 2
+0000757C: 00 00                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+3. CPU breakpoint condition(s) matched 2 times.
+	pc = $c4c :trace :file /tmp/mw2run-2nxoaei7/bp_ym_stop_c4c.txt
+Reading debugger commands from '/tmp/mw2run-2nxoaei7/bp_ym_stop_c4c.txt'...
+Changed to input file dir '/tmp/mw2run-2nxoaei7'.
+> e VBL
+= %110000100010 (bin), #3106 (dec), $c22 (hex)
+> r
+  D0 00000001   D1 0000DABA   D2 00004E75   D3 00000000 
+  D4 00000000   D5 00070000   D6 00070050   D7 0000FFFF 
+  A0 00000806   A1 00000C6C   A2 00072EBE   A3 000B1F44 
+  A4 0004EC00   A5 0000FB48   A6 0000770E   A7 00007FEA 
+USP  000B1F40 ISP  00007FEA 
+SR=2000 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=0 STP=0
+Prefetch 303c (MOVE) 000d (ILLEGAL) Chip latch 00000000
+00000c4c 303c 000d                move.w #$000d,d0
+Next PC: 00000c50
+> m a7 16
+00007FEA: 00 00 0c 76 00 03 22 2e 00 00 00 01 00 00 da ba  ...v..".......ם´
+> m $7626 2
+00007626: 00 01                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $757c 2
+0000757C: 00 00                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+4. CPU breakpoint condition(s) matched 2 times.
+	pc = $33870 :trace :file /tmp/mw2run-2nxoaei7/bp_stop_5032.txt
+Reading debugger commands from '/tmp/mw2run-2nxoaei7/bp_stop_5032.txt'...
+Changed to input file dir '/tmp/mw2run-2nxoaei7'.
+> e VBL
+= %110000100010 (bin), #3106 (dec), $c22 (hex)
+> r
+  D0 0000000C   D1 0000DABA   D2 00004E75   D3 00000000 
+  D4 00000000   D5 00070000   D6 00070050   D7 0000FFFF 
+  A0 000012D4   A1 00001440   A2 00072EBE   A3 000B1F44 
+  A4 0004EC00   A5 0000FB48   A6 0000770E   A7 00007FEE 
+USP  000B1F40 ISP  00007FEE 
+SR=2009 T=00 S=1 M=0 X=0 N=1 Z=0 V=0 C=1 IM=0 STP=0
+Prefetch 48e7 (MVMLE) fffe (ILLEGAL) Chip latch 00000000
+00033870 48e7 fffe                movem.l d0-d7/a0-a6,-(a7) == $00007fea
+Next PC: 00033874
+> m a7 16
+00007FEE: 00 03 22 40 00 00 00 01 00 00 da ba 00 00 4e 75  .."@......ם´..Nu
+> m $7626 2
+00007626: 00 01                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $757c 2
+0000757C: 00 00                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+9. CPU breakpoint condition(s) matched 1 times.
+	pc = $3225c :trace :file /tmp/mw2run-2nxoaei7/bp_setvec_d0e_3225c.txt
+Reading debugger commands from '/tmp/mw2run-2nxoaei7/bp_setvec_d0e_3225c.txt'...
+Changed to input file dir '/tmp/mw2run-2nxoaei7'.
+> e VBL
+= %110000100010 (bin), #3106 (dec), $c22 (hex)
+> r
+  D0 0000000C   D1 0000DABA   D2 00004E75   D3 00000000 
+  D4 00000000   D5 00070000   D6 00070050   D7 0000FFFF 
+  A0 00000806   A1 00000B9A   A2 00072EBE   A3 000B1F44 
+  A4 0004EC00   A5 0000FB48   A6 0000770E   A7 00007FF2 
+USP  000B1F40 ISP  00007FF2 
+SR=2000 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=0 STP=0
+Prefetch 21d0 (MOVE) 5138 (SUB) Chip latch 00000000
+0003225c 21d0 5138                move.l (a0) == $00000806 [00000d0e],$00005138.w [0003386e]
+Next PC: 00032260
+> m a7 16
+00007FF2: 00 00 00 01 00 00 da ba 00 00 4e 75 00 00 00 00  ......ם´..Nu....
+> m $7626 2
+00007626: 00 01                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $757c 2
+0000757C: 00 00                                            ..
+> m $700a 2
+0000700A: 00 02                                            ..
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+WARN : PNG screen dump saved to: /tmp/mw2run-2nxoaei7/shots/grab0005.png
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+WARN : PNG screen dump saved to: /tmp/mw2run-2nxoaei7/shots/grab0006.png
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+WARN : PNG screen dump saved to: /tmp/mw2run-2nxoaei7/shots/grab0007.png
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....

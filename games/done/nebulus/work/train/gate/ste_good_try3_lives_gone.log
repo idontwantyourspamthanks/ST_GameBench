@@ -1,0 +1,72 @@
+[ste_good] boot_to_game -> True 23s
+[ste_good] marker $B0020: b'NEPO' count $B0024 = 4
+[ste_good] site $3dcf4: 4eb900076c08
+[ste_good] site $3b0a4: 4eb900076c40
+[ste_good] site $3792c: 4eb900076c58
+[ste_good] blob $76c00 (118 B): 00000000000000004eb90003853a2f0841faffee103900038498b01067161080b03c0014660446680002b03c0012660446680004205f4e750000000000000000303affc066084a79000339384e75b0404e75000000000000303affaa671042b90003398c42b900033990588f4e75303900033a204e75
+[ste_good] ready: timer (24, 64, 60) states (8, 2, 0, 0) run 1 player 0 tower 0 | prev=00 frz=0000 noen=0000 | lastkey 00  t=28s
+[ste_good] running: timer (24, 56, 64) states (8, 2, 7, 0) run 1 player 0 tower 0 | prev=00 frz=0000 noen=0000 | lastkey 00  t=31s
+[ste_good] control (no key)0: timer (24, 56, 23) states (8, 2, 7, 0) run 1 player 7 tower 0 | prev=00 frz=0000 noen=0000 | lastkey 00  t=33s
+[ste_good] control (no key)1: timer (24, 56, 23) states (8, 2, 7, 0) run 0 player 8 tower 0 | prev=00 frz=0000 noen=0000 | lastkey 00  t=35s
+[ste_good] control (no key)2: timer (24, 56, 23) states (8, 2, 0, 0) run 0 player 8 tower 0 | prev=00 frz=0000 noen=0000 | lastkey 00  t=36s
+[ste_good] after E: timer (32, 0, 0) states (0, 0, 0, 0) run 0 player 10 tower 0 | prev=92 frz=0000 noen=ffff | lastkey 92  t=39s
+[ste_good] E on +2s: timer (24, 72, 19) states (0, 0, 0, 0) run 1 player 0 tower 0 | prev=92 frz=0000 noen=ffff | lastkey 92  t=43s
+[ste_good] E on, timer still counting0: timer (24, 64, 27) states (0, 0, 0, 0) run 1 player 0 tower 0 | prev=92 frz=0000 noen=ffff | lastkey 92  t=45s
+[ste_good] E on, timer still counting1: timer (24, 56, 37) states (0, 0, 0, 0) run 1 player 0 tower 0 | prev=92 frz=0000 noen=ffff | lastkey 92  t=48s
+[ste_good] E on, timer still counting2: timer (24, 48, 46) states (0, 0, 0, 0) run 1 player 0 tower 0 | prev=92 frz=0000 noen=ffff | lastkey 92  t=51s
+[ste_good] frozen0: timer (24, 48, 16) states (0, 0, 0, 0) run 1 player 0 tower 0 | prev=94 frz=ffff noen=ffff | lastkey 94  t=54s
+[ste_good] frozen1: timer (24, 48, 16) states (0, 0, 0, 0) run 1 player 0 tower 0 | prev=94 frz=ffff noen=ffff | lastkey 94  t=60s
+[ste_good] frozen2: timer (24, 48, 16) states (0, 0, 0, 0) run 1 player 0 tower 0 | prev=94 frz=ffff noen=ffff | lastkey 94  t=67s
+[ste_good] frozen3: timer (24, 48, 16) states (0, 0, 0, 0) run 1 player 0 tower 0 | prev=94 frz=ffff noen=ffff | lastkey 94  t=74s
+[ste_good] frozen4: timer (24, 48, 16) states (0, 0, 0, 0) run 1 player 0 tower 0 | prev=94 frz=ffff noen=ffff | lastkey 94  t=81s
+[ste_good] T off, counting0: timer (24, 40, 60) states (0, 0, 0, 0) run 1 player 0 tower 0 | prev=94 frz=0000 noen=ffff | lastkey 94  t=89s
+[ste_good] T off, counting1: timer (24, 32, 58) states (0, 0, 0, 0) run 1 player 0 tower 0 | prev=94 frz=0000 noen=ffff | lastkey 94  t=92s
+[ste_good] T off, counting2: timer (24, 24, 55) states (0, 0, 0, 0) run 1 player 0 tower 0 | prev=94 frz=0000 noen=ffff | lastkey 94  t=95s
+[ste_good] E off0: timer (24, 16, 19) states (8, 2, 0, 0) run 1 player 0 tower 0 | prev=92 frz=0000 noen=0000 | lastkey 92  t=100s
+[ste_good] paused: timer (24, 8, 66) states (8, 2, 0, 0) run 1 player 0 tower 0 | prev=19 frz=0000 noen=0000 | lastkey 99  t=103s
+[ste_good] paused+2s: timer (24, 8, 66) states (8, 2, 0, 0) run 1 player 0 tower 0 | prev=19 frz=0000 noen=0000 | lastkey 99  t=107s
+[ste_good] paused, after T and E taps: timer (24, 8, 66) states (8, 2, 0, 0) run 1 player 0 tower 0 | prev=19 frz=0000 noen=0000 | lastkey 92  t=110s
+[ste_good] unpaused (fire ends the pause loop $38614: it waits for $338f0): timer (24, 8, 13) states (8, 2, 0, 0) run 1 player 0 tower 0 | prev=00 frz=0000 noen=0000 | lastkey 00  t=114s
+[ste_good] unpaused+2s: timer (24, 0, 10) states (8, 2, 7, 0) run 1 player 7 tower 0 | prev=00 frz=0000 noen=0000 | lastkey 00  t=118s
+[ste_good] T+E on: timer (32, 0, 0) states (8, 2, 0, 0) run 0 player 8 tower 0 | prev=92 frz=ffff noen=0000 | lastkey 92  t=121s
+[ste_good] death0: timer (32, 0, 0) states (0, 0, 0, 0) run 0 player 8 tower 0 | prev=92 frz=ffff noen=0000 | lastkey 92  t=126s
+[ste_good] death1: timer (32, 0, 0) states (0, 0, 0, 0) run 0 player 8 tower 0 | prev=92 frz=ffff noen=0000 | lastkey 92  t=129s
+[ste_good] death2: timer (32, 0, 0) states (0, 0, 0, 0) run 0 player 8 tower 0 | prev=92 frz=ffff noen=0000 | lastkey 92  t=132s
+[ste_good] death3: timer (32, 0, 0) states (0, 0, 0, 0) run 0 player 8 tower 0 | prev=92 frz=ffff noen=0000 | lastkey 92  t=136s
+[ste_good] death4: timer (32, 0, 0) states (0, 0, 0, 0) run 0 player 8 tower 0 | prev=92 frz=ffff noen=0000 | lastkey 92  t=139s
+[ste_good] death5: timer (32, 0, 0) states (0, 0, 0, 0) run 0 player 8 tower 0 | prev=92 frz=ffff noen=0000 | lastkey 92  t=142s
+[ste_good] death6: timer (32, 0, 0) states (0, 0, 0, 0) run 0 player 8 tower 0 | prev=92 frz=ffff noen=0000 | lastkey 92  t=146s
+[ste_good] death7: timer (32, 0, 0) states (0, 0, 0, 0) run 0 player 8 tower 0 | prev=92 frz=ffff noen=0000 | lastkey 92  t=149s
+[ste_good] death8: timer (32, 0, 0) states (0, 0, 0, 0) run 0 player 8 tower 0 | prev=92 frz=ffff noen=0000 | lastkey 92  t=152s
+[ste_good] death9: timer (32, 0, 0) states (0, 0, 0, 0) run 0 player 8 tower 0 | prev=92 frz=ffff noen=0000 | lastkey 92  t=155s
+[ste_good] death10: timer (32, 0, 0) states (0, 0, 0, 0) run 0 player 8 tower 0 | prev=92 frz=ffff noen=0000 | lastkey 92  t=159s
+[ste_good] death11: timer (32, 0, 0) states (0, 0, 0, 0) run 0 player 8 tower 0 | prev=92 frz=ffff noen=0000 | lastkey 92  t=162s
+[ste_good] death12: timer (32, 0, 0) states (0, 0, 0, 0) run 0 player 8 tower 0 | prev=92 frz=ffff noen=0000 | lastkey 92  t=165s
+[ste_good] death13: timer (32, 0, 0) states (0, 0, 0, 0) run 0 player 8 tower 0 | prev=92 frz=ffff noen=0000 | lastkey 92  t=169s
+[ste_good] door0: timer (32, 0, 0) states (0, 0, 0, 0) run 0 player 4 tower 0 | prev=92 frz=ffff noen=0000 | lastkey 92  t=173s
+[ste_good] door1: timer (32, 0, 0) states (0, 0, 0, 0) run 0 player 4 tower 0 | prev=92 frz=ffff noen=0000 | lastkey 92  t=176s
+[ste_good] door2: timer (32, 0, 0) states (0, 0, 0, 0) run 0 player 4 tower 0 | prev=92 frz=ffff noen=0000 | lastkey 92  t=180s
+[ste_good] door3: timer (32, 0, 0) states (0, 0, 0, 0) run 0 player 4 tower 0 | prev=92 frz=ffff noen=0000 | lastkey 92  t=183s
+[ste_good] door4: timer (32, 0, 0) states (0, 0, 0, 0) run 0 player 4 tower 0 | prev=92 frz=ffff noen=0000 | lastkey 92  t=186s
+[ste_good] door5: timer (32, 0, 0) states (0, 0, 0, 0) run 0 player 4 tower 0 | prev=92 frz=ffff noen=0000 | lastkey 92  t=190s
+[ste_good] door6: timer (32, 0, 0) states (0, 0, 0, 0) run 0 player 4 tower 0 | prev=92 frz=ffff noen=0000 | lastkey 92  t=193s
+[ste_good] door7: timer (32, 0, 0) states (0, 0, 0, 0) run 0 player 4 tower 0 | prev=92 frz=ffff noen=0000 | lastkey 92  t=196s
+[ste_good] door8: timer (32, 0, 0) states (0, 0, 0, 0) run 0 player 4 tower 0 | prev=92 frz=ffff noen=0000 | lastkey 92  t=199s
+[ste_good] door9: timer (32, 0, 0) states (0, 0, 0, 0) run 0 player 4 tower 0 | prev=92 frz=ffff noen=0000 | lastkey 92  t=203s
+[ste_good] door10: timer (32, 0, 0) states (0, 0, 0, 0) run 0 player 4 tower 0 | prev=92 frz=ffff noen=0000 | lastkey 92  t=206s
+[ste_good] door11: timer (32, 0, 0) states (0, 0, 0, 0) run 0 player 4 tower 0 | prev=92 frz=ffff noen=0000 | lastkey 92  t=209s
+[ste_good] door12: timer (32, 0, 0) states (0, 0, 0, 0) run 0 player 4 tower 0 | prev=92 frz=ffff noen=0000 | lastkey 92  t=213s
+[ste_good] door13: timer (32, 0, 0) states (0, 0, 0, 0) run 0 player 4 tower 0 | prev=92 frz=ffff noen=0000 | lastkey 92  t=216s
+[ste_good] door14: timer (32, 0, 0) states (0, 0, 0, 0) run 0 player 4 tower 0 | prev=92 frz=ffff noen=0000 | lastkey 92  t=219s
+[ste_good] door15: timer (32, 0, 0) states (0, 0, 0, 0) run 0 player 4 tower 0 | prev=92 frz=ffff noen=0000 | lastkey 92  t=223s
+[ste_good] tower2 frozen0: timer (32, 0, 0) states (0, 0, 0, 0) run 0 player 4 tower 0 | prev=92 frz=ffff noen=0000 | lastkey 92  t=224s
+[ste_good] tower2 frozen1: timer (32, 0, 0) states (0, 0, 0, 0) run 0 player 4 tower 0 | prev=92 frz=ffff noen=0000 | lastkey 92  t=231s
+[ste_good] tower2 frozen2: timer (32, 0, 0) states (0, 0, 0, 0) run 0 player 4 tower 0 | prev=92 frz=ffff noen=0000 | lastkey 92  t=238s
+[ste_good] tower2 E off0: timer (32, 0, 0) states (0, 0, 0, 0) run 0 player 4 tower 0 | prev=92 frz=ffff noen=0000 | lastkey 92  t=246s
+[ste_good] tower2 E off1: timer (32, 0, 0) states (0, 0, 0, 0) run 0 player 4 tower 0 | prev=92 frz=ffff noen=0000 | lastkey 92  t=250s
+[ste_good] tower2 E off2: timer (32, 0, 0) states (0, 0, 0, 0) run 0 player 4 tower 0 | prev=92 frz=ffff noen=0000 | lastkey 92  t=254s
+[ste_good] tower2 E off3: timer (32, 0, 0) states (0, 0, 0, 0) run 0 player 4 tower 0 | prev=92 frz=ffff noen=0000 | lastkey 92  t=258s
+[ste_good] tower2 E off4: timer (32, 0, 0) states (0, 0, 0, 0) run 0 player 4 tower 0 | prev=92 frz=ffff noen=0000 | lastkey 92  t=261s
+[ste_good] tower2 E off5: timer (32, 0, 0) states (0, 0, 0, 0) run 0 player 4 tower 0 | prev=92 frz=ffff noen=0000 | lastkey 92  t=265s
+[ste_good] tower2 E off6: timer (32, 0, 0) states (0, 0, 0, 0) run 0 player 4 tower 0 | prev=92 frz=ffff noen=0000 | lastkey 92  t=269s
+[ste_good] tower2 E off7: timer (32, 0, 0) states (0, 0, 0, 0) run 0 player 4 tower 0 | prev=92 frz=ffff noen=0000 | lastkey 92  t=273s

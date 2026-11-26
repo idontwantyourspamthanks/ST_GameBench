@@ -1,0 +1,28 @@
+000 manager main menu |  | ['Original game', 'Campaigns >', 'Levels >', 'Load from campaign disk']
+001 full store: levels list |  | ['DENSE0', 'DENSE1', 'DENSE2', '<new level>']
+002 copy: Overlay full (the level menu stays) | Overlay full! | ['Play', 'Edit', 'Copy', 'Delete']
+003 dense level in the editor |  | []
+004 dense level scrolled |  | []
+005 dense level top |  | []
+006 dense level committed (smaller) |  | ['DENSE0', 'DENSE1', 'DENSE2', '<new level>']
+007 FULL entries |  | ['01 L DENSE0', '02 L DENSE1', '03 L DENSE2', '<add entry>']
+008 validator: good |  | ['DENSE0', 'DENSE1', 'DENSE2', '<new level>']
+  validator ('good', True, True)
+009 validator: version 2 |  | ['\x02à\x0c¢\x03à\x0c¢\x04à\x0c¢', '\x02à\x0c¢\x03à\x0c¢\x04à\x0c¢', '\x02à\x0c¢\x03à\x0c¢\x04à\x0c¢', '<new level>']
+  validator ('version 2', False, False)
+Traceback (most recent call last):
+  File "/tmp/nlcv/games/in_progress/nebulus/work/editor/e208_ab.py", line 203, in <module>
+    run()
+  File "/tmp/nlcv/games/in_progress/nebulus/work/editor/e208_ab.py", line 114, in run
+    if os.environ.get('PART') == '2': tail(h); return
+                                      ^^^^^^^
+  File "/tmp/nlcv/games/in_progress/nebulus/work/editor/e208_ab.py", line 98, in tail
+    pick(h, 'Levels'); cp(h, 'validator: ' + nm); magic = grab(h, 0xBC000, 4, 'mg'); pick(h, '< back')
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/nlcv/games/in_progress/nebulus/work/editor/e208_ab.py", line 54, in cp
+    items, sel = (menu(h) if mode == 1 else ([], 0))
+                  ^^^^^^^
+  File "/tmp/nlcv/games/in_progress/nebulus/work/editor/ui.py", line 7, in menu
+    while d[j]: j+=1
+          ~^^^
+IndexError: index out of range

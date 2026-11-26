@@ -1,0 +1,24 @@
+the game started tune 1 (its tick pointer $5138 = 000bf81e) about 60.5 s after the capture start (wall 61 s)
+[logo       ] t=  62.21s mode 2 session 2 dma 255 tune  1 rate 1 tick   146 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=000bf81e $ff8901=03 $ff8921=81
+MWPO: 000B2FF8: 4d 57 50 4f                                      MWPO
+vector table $806: 000bf81e000bf82400000c4c (asn_mus: 000bf81e 000bf824 00000c4c)
+[intro1     ] t=  71.42s mode 2 session 2 dma 255 tune  1 rate 1 tick   607 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=00000000 $ff8901=03 $ff8921=81
+[intro2     ] t=  79.14s mode 2 session 2 dma 255 tune  1 rate 1 tick   960 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=000bf81e $ff8901=03 $ff8921=81
+[intro3     ] t=  86.93s mode 2 session 2 dma 255 tune  1 rate 1 tick  1350 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=000bf81e $ff8901=03 $ff8921=81
+[intro4     ] t=  94.64s mode 2 session 2 dma 255 tune  1 rate 1 tick  1736 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=000bf81e $ff8901=03 $ff8921=81
+[intro5     ] t= 102.35s mode 2 session 2 dma 255 tune  1 rate 1 tick  2121 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=000bf81e $ff8901=03 $ff8921=81
+[intro6     ] t= 110.04s mode 2 session 2 dma 255 tune  1 rate 1 tick  2507 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=000bf81e $ff8901=03 $ff8921=81
+[intro7     ] t= 117.86s mode 2 session 2 dma 255 tune  1 rate 1 tick  2898 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=000bf81e $ff8901=03 $ff8921=81
+[intro8     ] t= 125.55s mode 2 session 2 dma 255 tune  1 rate 1 tick  3283 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=000bf81e $ff8901=03 $ff8921=81
+[intro9     ] t= 133.26s mode 2 session 2 dma 255 tune  1 rate 1 tick  3669 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=000bf81e $ff8901=03 $ff8921=81
+[intro10    ] t= 140.95s mode 2 session 2 dma 255 tune  1 rate 1 tick  4054 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=000bf81e $ff8901=03 $ff8921=81
+[intro11    ] t= 148.76s mode 2 session 2 dma 255 tune  1 rate 1 tick  4445 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=000bf81e $ff8901=03 $ff8921=81
+[intro12    ] t= 156.47s mode 2 session 2 dma 255 tune  1 rate 1 tick  4831 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=000bf81e $ff8901=03 $ff8921=81
+[intro13    ] t= 164.17s mode 2 session 2 dma 255 tune  1 rate 1 tick  5216 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=000bf81e $ff8901=03 $ff8921=81
+[intro14    ] t= 171.88s mode 2 session 2 dma 255 tune  1 rate 1 tick  5602 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=000bf81e $ff8901=03 $ff8921=81
+[intro15    ] t= 179.57s mode 2 session 2 dma 255 tune  1 rate 1 tick  5987 $b96=00000001 $b9a= 2 $ba2=0000 $7626=0001 $5138=000bf81e $ff8901=03 $ff8921=81
+[intro      ] profile 250 VBL: blob 44728 cycles/VBL = 27.9 % of a 50 Hz frame; YM driver 0/VBL; everything profiled 141393/VBL
+[intro      ] bank $bb000-$e61b2 in RAM vs build/asn_bank.bin: 2901 bytes differ outside state/records/ring (first ['0xbf80b', '0xbf811', '0xbf817', '0xbf81d', '0xbf823', '0xbf829'])
+wav /home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/asn_cold/mus_cmp_v16l.wav: 192.5 s; rms before the game's tune (boot stub) 4695, first 30 s of the tune 2436
+DMA machine: mode 2 at every stage True; music stages with a DMA tune 16/16, session 2 16/16, $5138 = music tick 15/16
+bank checks: {'intro': 2901}

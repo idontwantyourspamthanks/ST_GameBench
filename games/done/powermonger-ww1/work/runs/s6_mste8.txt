@@ -1,0 +1,103 @@
+  [mste8] [   23s vbl 1502] name prompt
+  [mste8] [   29s vbl 1834] option screen (typing attempt 1)
+GATE mste8/megaste-2.06-4096K marker PASS $727f8 = b'PMPO' (want b'PMPO')
+GATE mste8/megaste-2.06-4096K site fal_ym PASS $1bcb8 = 03c88df101888df1 (want 03c88df101888df1 = original: Falcon-only site, this is not a Falcon)
+GATE mste8/megaste-2.06-4096K site p3b_delta PASS $13e3c = 4eb900073e00 (want 4eb900073e00)
+GATE mste8/megaste-2.06-4096K site p3b_interp PASS $13e1e = 4eb900073c00 (want 4eb900073c00)
+GATE mste8/megaste-2.06-4096K site p4_clamp PASS $ed6 = 4eb900075c004e714e71 (want 4eb900075c004e714e71)
+GATE mste8/megaste-2.06-4096K site p4_ptr_a PASS $87e = 4ef900075c40 (want 4ef900075c40)
+GATE mste8/megaste-2.06-4096K site p4_ptr_b PASS $9b8 = 4ef900075d20 (want 4ef900075d20)
+GATE mste8/megaste-2.06-4096K site p4_spr PASS $1325e = 4ef900075f20 (want 4ef900075f20)
+GATE mste8/megaste-2.06-4096K site p6_cpy PASS $13a94 = 4ef900077000 (want 4ef900077000)
+GATE mste8/megaste-2.06-4096K site p6_tri PASS $f342 = 4ef900076812 (want 4ef900076812)
+GATE mste8/megaste-2.06-4096K site p7_triple_flip PASS $145e2 = 4eb900077240 (want 4eb900077240)
+GATE mste8/megaste-2.06-4096K site p7_triple_tail PASS $e2c = 4eb9000773004e71 (want 4eb9000773004e71)
+GATE mste8/megaste-2.06-4096K site p7_triple_wait PASS $13e04 = 4eb900077200 (want 4eb900077200)
+GATE mste8/megaste-2.06-4096K site pm_cachecap PASS $e3f2 = 4eb900075800 (want 4eb900075800)
+GATE mste8/megaste-2.06-4096K site pm_credit PASS $14baa = 4eb900072800 (want 4eb900072800)
+GATE mste8/megaste-2.06-4096K site pm_nokeydisk PASS $13cec = 4e714e714e71 (want 4e714e714e71)
+GATE mste8/megaste-2.06-4096K site pm_noprot PASS $15998 = 0000002c (want 0000002c)
+GATE mste8/megaste-2.06-4096K site pm_noprot_box PASS $bbd2 = 4e754e714e71 (want 4e754e714e71)
+GATE mste8/megaste-2.06-4096K site pm_tooltip PASS $13e18 = 4eb900073400 (want 4eb900073400)
+GATE mste8/megaste-2.06-4096K site qol_hover PASS $13e2a = 4eb900074b00 (want 4eb900074b00)
+GATE mste8/megaste-2.06-4096K site qol_hover2 PASS $12ee0 = 4eb900073940 (want 4eb900073940)
+GATE mste8/megaste-2.06-4096K site qol_keys PASS $13e70 = 4eb900072c00 (want 4eb900072c00)
+GATE mste8/megaste-2.06-4096K site qol_keys2 PASS $f30 = 4eb900073100 (want 4eb900073100)
+GATE mste8/megaste-2.06-4096K site snd_core PASS $1c4de = 4eb900076400 (want 4eb900076400)
+GATE mste8/megaste-2.06-4096K site snd_setup PASS $6de = 4eb90007640c4e714e71 (want 4eb90007640c4e714e71)
+GATE mste8/megaste-2.06-4096K site snd_start PASS $1bbbc = 4ef900076404 (want 4ef900076404)
+GATE mste8/megaste-2.06-4096K site snd_stop PASS $1bb96 = 4ef9000764084e714e71 (want 4ef9000764084e714e71)
+GATE mste8/megaste-2.06-4096K site tick_click PASS $7e6 = 00072aa0 (want 00072aa0)
+GATE mste8/megaste-2.06-4096K site tick_click2 PASS $842 = 00072aa0 (want 00072aa0)
+GATE mste8/megaste-2.06-4096K site tick_click3 PASS $144b4 = 00072aa0 (want 00072aa0)
+GATE mste8/megaste-2.06-4096K site tick_head PASS $13da0 = 4eb900072900 (want 4eb900072900)
+GATE mste8/megaste-2.06-4096K site tick_men PASS $13e36 = 4eb900072a60 (want 4eb900072a60)
+GATE mste8/megaste-2.06-4096K site tick_pass PASS $13de8 = 4eb900072a004e71 (want 4eb900072a004e71)
+GATE mste8/megaste-2.06-4096K site tick_rain PASS $13e24 = 4eb900072ac0 (want 4eb900072ac0)
+GATE mste8/megaste-2.06-4096K site tt_ptr PASS $e20 = 4eb900075a40 (want 4eb900075a40)
+GATE mste8/megaste-2.06-4096K payload@options PASS unchanged
+GATE mste8/megaste-2.06-4096K hi@options PASS pattern / constants: 0 of 209664 bytes changed in $b7d00-$b7fff, $c1c00-$defff, $ee400-$f6fff, $f7000-$fffff
+GATE mste8/megaste-2.06-4096K cache cursor@options PASS [$2cfda] = $80000 (limit $b0000, 0 = no cache)
+GATE mste8/megaste-2.06-4096K credit visible PASS rows 194-199: 780 px of colours [(102, 102, 68)]
+GATE mste8/megaste-2.06-4096K boot PASS 51s
+GATE mste8/megaste-2.06-4096K noprot flag PASS $15998 = $0000002c (want $0000002c) before the first land
+  [mste8] [   34s vbl 5455] no disk requester
+  [mste8] [   37s vbl 5623] chart expected
+  [mste8] [   61s vbl 7046] island clicked
+  [mste8] [   67s vbl 7400] 3D map view, world counter ticking
+GATE mste8/megaste-2.06-4096K noprot: the check never ran PASS hits $acc4:0, $ae20:0, $b232:0, $b39c:0
+GATE mste8/megaste-2.06-4096K noprot: 'Please wait' box skipped (stub reached) PASS $bbd2 reached 1x (an `rts` stub)
+GATE mste8/megaste-2.06-4096K nokeydisk: the key-disk routine never ran, the flow went on PASS $1cf7c hit 0x, next instruction $13cf2 hit 1x; the Powermonger disk was never inserted
+GATE mste8/megaste-2.06-4096K map view PASS counter 65, flag $15998 = $0000002c
+GATE mste8/megaste-2.06-4096K payload@map PASS unchanged
+GATE mste8/megaste-2.06-4096K hi@map PASS pattern / constants: 0 of 209664 bytes changed in $b7d00-$b7fff, $c1c00-$defff, $ee400-$f6fff, $f7000-$fffff
+GATE mste8/megaste-2.06-4096K cache cursor@map PASS [$2cfda] = $9fc58 (limit $b0000, 0 = no cache)
+GATE mste8/megaste-2.06-4096K pm_mste: speed / cache register $ff8e21 PASS $03 (want $03: Mega STE 16 MHz + cache, STE unmapped, ST nothing)
+GATE mste8/megaste-2.06-4096K tt_ptr: LIVE flag PASS $00
+GATE mste8/megaste-2.06-4096K core: FALCON flag ($727f4, _MCH cookie high word 3) PASS $00 on megaste
+GATE mste8/megaste-2.06-4096K snd_core: FLAGS (DMA sound probe) PASS $3 (STE-class 3, plain ST 6)
+GATE mste8/megaste-2.06-4096K snd_core: the DMA plays a chunk (play bit $ff8901.0 seen in 60 s) PASS bit seen True, SV busy ff, sequencer active 01, chunk busy ff
+GATE mste8/megaste-2.06-4096K p4_spr: sprite path chosen (BLT word $df004) PASS $b17e0001 (want $b17e0001: blitter on STE / Mega STE, pre-shifted cache on ST / TT / Falcon)
+GATE mste8/megaste-2.06-4096K p7_triple: the three buffers rotate ($1d500 / $25200 / $b0000 all seen as shown or drawing) PASS seen $1d500 $25200 $b0000
+RATE mste8/megaste 8 MHz cold boot map view 60 Hz: 801 VBL = 13.35 s emulated, 133546 cycles/VBL, world clock +53 = 3.970/s; tick passes 53, R passes 25, S passes 0
+GATE mste8/megaste-2.06-4096K rate PASS mste8/megaste 8 MHz cold boot map view 60 Hz: 801 VBL = 13.35 s emulated, 133546 cycles/VBL, world clock +53 = 3.970/s; tick passes 53, R passes 25, S passes 0
+GATE mste8/megaste-2.06-4096K world rate = 4.00/s (+-5 %) PASS 3.970 world steps per emulated second
+  [mste8] requester: insert the save game disk
+GATE mste8/megaste-2.06-4096K save/load: loaded state == saved state PASS 101376 B: 0 differ
+GATE mste8/megaste-2.06-4096K save/load: the world moved between save and load PASS saved vs the state just before the load: 298 differ
+GATE mste8/megaste-2.06-4096K save/load: save disk slot A == saved state PASS sectors 1-198 equal: True, slot flag $ff, image 409600 B
+GATE mste8/megaste-2.06-4096K save/load: the game runs on after the load PASS 
+GATE mste8/megaste-2.06-4096K payload@saveload PASS unchanged
+GATE mste8/megaste-2.06-4096K hi@saveload PASS pattern / constants: 0 of 209664 bytes changed in $b7d00-$b7fff, $c1c00-$defff, $ee400-$f6fff, $f7000-$fffff
+GATE mste8/megaste-2.06-4096K cache cursor@saveload PASS [$2cfda] = $9fc58 (limit $b0000, 0 = no cache)
+GATE mste8/megaste-2.06-4096K lose picture PASS non-black 0.69, 16 colours, seen stable x3; cache cursor $9fc58 -> $a7958
+GATE mste8/megaste-2.06-4096K lose picture still there after 8 s PASS non-black 0.69, 16 colours
+GATE mste8/megaste-2.06-4096K payload@lose PASS unchanged
+GATE mste8/megaste-2.06-4096K hi@lose PASS pattern / constants: 0 of 209664 bytes changed in $b7d00-$b7fff, $c1c00-$defff, $ee400-$f6fff, $f7000-$fffff
+GATE mste8/megaste-2.06-4096K cache cursor@lose PASS [$2cfda] = $a7958 (limit $b0000, 0 = no cache)
+GATE mste8/megaste-2.06-4096K back to option screen PASS 
+  [mste8] [   23s vbl 24649] island clicked
+  [mste8] [   29s vbl 25003] 3D map view, world counter ticking
+GATE mste8/megaste-2.06-4096K map view (2nd land) PASS counter 63
+GATE mste8/megaste-2.06-4096K win picture PASS non-black 0.99, 15 colours, seen stable x3; cache cursor $af658
+GATE mste8/megaste-2.06-4096K win picture still there after 8 s PASS non-black 0.99, 15 colours
+GATE mste8/megaste-2.06-4096K payload@win PASS unchanged
+GATE mste8/megaste-2.06-4096K hi@win PASS pattern / constants: 0 of 209664 bytes changed in $b7d00-$b7fff, $c1c00-$defff, $ee400-$f6fff, $f7000-$fffff
+GATE mste8/megaste-2.06-4096K cache cursor@win PASS [$2cfda] = $af658 (limit $b0000, 0 = no cache)
+GATE mste8/megaste-2.06-4096K back to option screen (after win) PASS 
+  [mste8] confirm dialog after START NEW CONQUEST on a won land: True ('WWI, are                you sure you want to    delete all o')
+  [mste8] [   23s vbl 32171] island clicked
+  [mste8] [   29s vbl 32526] 3D map view, world counter ticking
+GATE mste8/megaste-2.06-4096K map view (3rd land) PASS counter 62
+GATE mste8/megaste-2.06-4096K payload@round3 PASS unchanged
+GATE mste8/megaste-2.06-4096K hi@round3 PASS pattern / constants: 0 of 209664 bytes changed in $b7d00-$b7fff, $c1c00-$defff, $ee400-$f6fff, $f7000-$fffff
+GATE mste8/megaste-2.06-4096K cache cursor@round3 PASS [$2cfda] = $af658 (limit $b0000, 0 = no cache)
+LOADER 9:D423 0:D97 2:D71 3:D95 4:D86 5:D115 16:D+227 10:D+216 11:D217 1:D+105 8:D+92 1:c11 8:c11 1:c11 8:c10 14:D+198 16:c0 10:c22 11:D209 1:c11 8:c11 15:D+154 16:c0 10:c22 11:D224 1:c11 8:c11
+LOADER legend: n:D = loaded from the disk, n:c = from the cache; + = cached (cursor store), S = cap skip; number = VBLs call to return
+GATE mste8/megaste-2.06-4096K loader: every cacheable resource (1 8 10 14 15 16) came from the disk at most once PASS disk loads per resource {1: 1, 8: 1, 10: 1, 14: 1, 15: 1, 16: 1}
+GATE mste8/megaste-2.06-4096K loader: cache hits are fast (<= 40 VBL) PASS 12 cache hits, slow []
+GATE mste8/megaste-2.06-4096K cap normal: no skip (M3a) PASS 0 skip(s)
+CELL DONE mste8/megaste-2.06-4096K: OK (548s)
+  line 13: reg 7 bits 6/7 $00 -> $c0 (reg 7 := $c0) at pc=e00086
+PSGCHECK mste8: PASS (violations 0, warnings 0; reg-7 writes 2, reg-14 writes 475, FDC commands 1099, selects 490, data writes 487, frames 2647, frames with reg 7 bits 6/7 not both set 0 (longest run 0), final reg 7 = $ff)
+GATE mste8/megaste-2.06-4096K PSG gate (strict Hatari, sound on): no FDC command / reg-14 write with reg 7 bit 6 = 0, frames start with bits 6/7 set PASS violations 0, warnings 0: PSGCHECK mste8: PASS (violations 0, warnings 0; reg-7 writes 2, reg-14 writes 475, FDC commands 1099, selects 490, data writes 487, frames 2647, frames with reg 7 bits 6/7 not both set 0 (longest run 0), final reg 7 = $ff)

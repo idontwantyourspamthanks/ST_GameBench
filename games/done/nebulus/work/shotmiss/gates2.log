@@ -1,0 +1,60 @@
+GATE /tmp/shotmiss_build2 ste: in tower True after 23s
+marker $b0020  : 4e 45 50 4f (4e 45 50 4f = NEPO, 4e 45 50 46 = NEPF)
+site count $b0024: 00 1b
+$38514: 4e f9 00 07 6d 04
+$3855a: 4e b9 00 07 6d 22
+$39ffa: 60 2a
+$3a024: 4e 75
+$3a332: 4e 71
+$39e2c: 4e 71
+$3b87a: 66 08 48 80
+$3dcf4: 4e b9 00 07 6c 08
+$76c00: 00 00 00 00 00 00 00 00 4e b9 00 03
+$76d00: 00 00 00 00 13 c0 00 03 84 98 02 00
+timer $3ad98: 00 18 00 38 00 34  state $33a20: 00 07
+GATE /tmp/shotmiss_build2 megaste: in tower True after 49s
+marker $b0020  : 4e 45 50 4f (4e 45 50 4f = NEPO, 4e 45 50 46 = NEPF)
+site count $b0024: 00 1b
+$38514: 4e f9 00 07 6d 04
+$3855a: 4e b9 00 07 6d 22
+$39ffa: 60 2a
+$3a024: 4e 75
+$3a332: 4e 71
+$39e2c: 4e 71
+$3b87a: 66 08 48 80
+$3dcf4: 4e b9 00 07 6c 08
+$76c00: 00 00 00 00 00 00 00 00 4e b9 00 03
+$76d00: 00 00 00 00 13 c0 00 03 84 98 02 00
+timer $3ad98: 00 18 00 40 00 16  state $33a20: 00 00
+title True
+marker/count b'NEPO' 27 | $37c42 424010236a200c35002800006618
+PASS marker NEPO: b'NEPO'
+PASS hook $3851a -> jmp: '4ef9'
+PASS hook $3d662 -> jmp: '4ef9'
+PASS CODE1 jump table $75740: '4ef9'
+PASS np_shot site $3b87a: '66084880'
+PASS trainer blob $76c08: '4eb9'
+PASS VBL vector normal: '0x382d8'
+PASS F10 (100 ms) opens the manager (VBL vector leaves $382d8): True
+PASS F10 (100 ms) leaves again: 230104
+PASS D (100 ms) opens the manager: True
+PASS F10 leaves the D-opened manager: 230104
+PASS F10 re-enters: True
+PASS and leaves again: 230104
+FAILS []
+title True
+marker/count b'NEPO' 27 | $37c42 424010236a200c35002800006618
+PASS marker NEPO: b'NEPO'
+PASS hook $3851a -> jmp: '4ef9'
+PASS hook $3d662 -> jmp: '4ef9'
+PASS CODE1 jump table $75740: '4ef9'
+PASS np_shot site $3b87a: '66084880'
+PASS trainer blob $76c08: '4eb9'
+PASS VBL vector normal: '0x382d8'
+PASS F10 (100 ms) opens the manager (VBL vector leaves $382d8): True
+PASS F10 (100 ms) leaves again: 230104
+PASS D (100 ms) opens the manager: True
+PASS F10 leaves the D-opened manager: 230104
+PASS F10 re-enters: True
+PASS and leaves again: 230104
+FAILS []

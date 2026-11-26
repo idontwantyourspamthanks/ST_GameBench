@@ -1,0 +1,60 @@
+== old1~old2 (noise, un-hooked)
+  level 0: strict regions 0 B differ | vars 6 B | timer 1 B | max |delta| 1  vars@$33947 $33951 $3396b $33977 $33981 $339bd  timer@$3ad9d
+  level 1: strict regions 0 B differ | vars 5 B | timer 0 B | max |delta| 1  vars@$33947 $33951 $3396b $33977 $33981
+  level 2: strict regions 0 B differ | vars 5 B | timer 0 B | max |delta| 1  vars@$33947 $33951 $3396b $33977 $33981
+  level 3: strict regions 0 B differ | vars 5 B | timer 1 B | max |delta| 1  vars@$33947 $33951 $3396b $33977 $33981  timer@$3ad9d
+  level 4: strict regions 0 B differ | vars 5 B | timer 0 B | max |delta| 1  vars@$33947 $33951 $3396b $33977 $33981
+  level 5: strict regions 0 B differ | vars 5 B | timer 0 B | max |delta| 1  vars@$33947 $33951 $3396b $33977 $33981
+  level 6: strict regions 0 B differ | vars 5 B | timer 0 B | max |delta| 1  vars@$33947 $33951 $3396b $33977 $33981
+  level 7: strict regions 0 B differ | vars 5 B | timer 0 B | max |delta| 1  vars@$33947 $33951 $3396b $33977 $33981
+  TOTAL strict 0 B, soft 43 B over 8 levels, max |delta| 1, distinct soft addresses 7
+== new1~new2 (noise, hooked)
+  level 0: strict regions 0 B differ | vars 7 B | timer 2 B | max |delta| 58  vars@$33947 $33951 $3395d $3396b $33977 $33981 $339bd  timer@$3ad9b $3ad9d
+  level 1: strict regions 0 B differ | vars 7 B | timer 1 B | max |delta| 58  vars@$33927 $33947 $33951 $3395d $3396b $33977 $33981  timer@$3ad9d
+  level 2: strict regions 0 B differ | vars 7 B | timer 0 B | max |delta| 58  vars@$33927 $33947 $33951 $3395d $3396b $33977 $33981
+  level 3: strict regions 0 B differ | vars 7 B | timer 0 B | max |delta| 58  vars@$33927 $33947 $33951 $3395d $3396b $33977 $33981
+  level 4: strict regions 0 B differ | vars 7 B | timer 0 B | max |delta| 58  vars@$33927 $33947 $33951 $3395d $3396b $33977 $33981
+  level 5: strict regions 0 B differ | vars 7 B | timer 1 B | max |delta| 58  vars@$33927 $33947 $33951 $3395d $3396b $33977 $33981  timer@$3ad9d
+  level 6: strict regions 0 B differ | vars 7 B | timer 0 B | max |delta| 58  vars@$33927 $33947 $33951 $3395d $3396b $33977 $33981
+  level 7: strict regions 0 B differ | vars 7 B | timer 0 B | max |delta| 58  vars@$33927 $33947 $33951 $3395d $3396b $33977 $33981
+  TOTAL strict 0 B, soft 60 B over 8 levels, max |delta| 58, distinct soft addresses 10
+== old1~new1
+  level 0: strict regions 0 B differ | vars 7 B | timer 2 B | max |delta| 58  vars@$33947 $33951 $3395d $3396b $33977 $33981 $339bd  timer@$3ad9b $3ad9d
+  level 1: strict regions 0 B differ | vars 7 B | timer 1 B | max |delta| 58  vars@$33927 $33947 $33951 $3395d $3396b $33977 $33981  timer@$3ad9d
+  level 2: strict regions 0 B differ | vars 7 B | timer 0 B | max |delta| 58  vars@$33927 $33947 $33951 $3395d $3396b $33977 $33981
+  level 3: strict regions 0 B differ | vars 7 B | timer 1 B | max |delta| 58  vars@$33927 $33947 $33951 $3395d $3396b $33977 $33981  timer@$3ad9d
+  level 4: strict regions 0 B differ | vars 7 B | timer 0 B | max |delta| 58  vars@$33927 $33947 $33951 $3395d $3396b $33977 $33981
+  level 5: strict regions 0 B differ | vars 7 B | timer 0 B | max |delta| 58  vars@$33927 $33947 $33951 $3395d $3396b $33977 $33981
+  level 6: strict regions 0 B differ | vars 7 B | timer 0 B | max |delta| 58  vars@$33927 $33947 $33951 $3395d $3396b $33977 $33981
+  level 7: strict regions 0 B differ | vars 7 B | timer 0 B | max |delta| 58  vars@$33927 $33947 $33951 $3395d $3396b $33977 $33981
+  TOTAL strict 0 B, soft 60 B over 8 levels, max |delta| 58, distinct soft addresses 10
+== old2~new2
+  level 0: strict regions 0 B differ | vars 6 B | timer 1 B | max |delta| 1  vars@$33947 $33951 $3396b $33977 $33981 $339bd  timer@$3ad9d
+  level 1: strict regions 0 B differ | vars 5 B | timer 0 B | max |delta| 1  vars@$33947 $33951 $3396b $33977 $33981
+  level 2: strict regions 0 B differ | vars 5 B | timer 0 B | max |delta| 1  vars@$33947 $33951 $3396b $33977 $33981
+  level 3: strict regions 0 B differ | vars 5 B | timer 0 B | max |delta| 1  vars@$33947 $33951 $3396b $33977 $33981
+  level 4: strict regions 0 B differ | vars 5 B | timer 0 B | max |delta| 1  vars@$33947 $33951 $3396b $33977 $33981
+  level 5: strict regions 0 B differ | vars 5 B | timer 1 B | max |delta| 1  vars@$33947 $33951 $3396b $33977 $33981  timer@$3ad9d
+  level 6: strict regions 0 B differ | vars 5 B | timer 0 B | max |delta| 1  vars@$33947 $33951 $3396b $33977 $33981
+  level 7: strict regions 0 B differ | vars 5 B | timer 0 B | max |delta| 1  vars@$33947 $33951 $3396b $33977 $33981
+  TOTAL strict 0 B, soft 43 B over 8 levels, max |delta| 1, distinct soft addresses 7
+== old1~new2
+  level 0: strict regions 0 B differ | vars 0 B | timer 0 B | max |delta| 0
+  level 1: strict regions 0 B differ | vars 0 B | timer 0 B | max |delta| 0
+  level 2: strict regions 0 B differ | vars 0 B | timer 0 B | max |delta| 0
+  level 3: strict regions 0 B differ | vars 0 B | timer 1 B | max |delta| 1  timer@$3ad9d
+  level 4: strict regions 0 B differ | vars 0 B | timer 0 B | max |delta| 0
+  level 5: strict regions 0 B differ | vars 0 B | timer 1 B | max |delta| 1  timer@$3ad9d
+  level 6: strict regions 0 B differ | vars 0 B | timer 0 B | max |delta| 0
+  level 7: strict regions 0 B differ | vars 0 B | timer 0 B | max |delta| 0
+  TOTAL strict 0 B, soft 2 B over 8 levels, max |delta| 1, distinct soft addresses 1
+== old2~new1
+  level 0: strict regions 0 B differ | vars 7 B | timer 2 B | max |delta| 59  vars@$33947 $33951 $3395d $3396b $33977 $33981 $339bd  timer@$3ad9b $3ad9d
+  level 1: strict regions 0 B differ | vars 7 B | timer 1 B | max |delta| 59  vars@$33927 $33947 $33951 $3395d $3396b $33977 $33981  timer@$3ad9d
+  level 2: strict regions 0 B differ | vars 7 B | timer 0 B | max |delta| 59  vars@$33927 $33947 $33951 $3395d $3396b $33977 $33981
+  level 3: strict regions 0 B differ | vars 7 B | timer 0 B | max |delta| 59  vars@$33927 $33947 $33951 $3395d $3396b $33977 $33981
+  level 4: strict regions 0 B differ | vars 7 B | timer 0 B | max |delta| 59  vars@$33927 $33947 $33951 $3395d $3396b $33977 $33981
+  level 5: strict regions 0 B differ | vars 7 B | timer 0 B | max |delta| 59  vars@$33927 $33947 $33951 $3395d $3396b $33977 $33981
+  level 6: strict regions 0 B differ | vars 7 B | timer 0 B | max |delta| 59  vars@$33927 $33947 $33951 $3395d $3396b $33977 $33981
+  level 7: strict regions 0 B differ | vars 7 B | timer 0 B | max |delta| 59  vars@$33927 $33947 $33951 $3395d $3396b $33977 $33981
+  TOTAL strict 0 B, soft 59 B over 8 levels, max |delta| 59, distinct soft addresses 10

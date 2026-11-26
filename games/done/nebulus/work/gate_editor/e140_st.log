@@ -1,0 +1,26 @@
+title True
+cursor22       rsEd 1 rsTest 0 cx 2 cy 2 vLift 0 | col2 00 81 00 00 00 00 00 00 00 00 00 00 00 00
+menu_lift      rsEd 1 rsTest 0 cx 2 cy 2 vLift 0 | col2 00 81 00 00 00 00 00 00 00 00 00 00 00 00
+submenu        rsEd 1 rsTest 0 cx 2 cy 2 vLift 0 | col2 00 81 00 00 00 00 00 00 00 00 00 00 00 00
+from_here      rsEd 1 rsTest 0 cx 2 cy 2 vLift 3 | col2 00 81 85 00 00 00 00 00 00 00 00 00 00 00
+picking        rsEd 1 rsTest 0 cx 2 cy 10 vLift 3 | col2 00 81 85 00 00 00 00 00 00 00 00 00 00 00
+lift_set       rsEd 1 rsTest 0 cx 2 cy 10 vLift 0 | col2 00 81 85 00 00 00 00 00 00 00 08 00 00 00
+playtest_item  rsEd 1 rsTest 0 cx 2 cy 10 vLift 0 | col2 00 81 85 00 00 00 00 00 00 00 08 00 00 00
+frog before ride x 0x13 y 0xc st 0
+ride 0: x 0x14 y 0x29 st 0 col2 00 81 84 80 80 80 80 80 80 80 89 00 00 00
+ride 1: x 0x14 y 0x2c st 0 col2 00 81 84 80 80 80 80 80 80 80 89 00 00 00
+ride 2: x 0x14 y 0x29 st 6 col2 00 81 84 80 80 00 00 00 00 00 08 00 00 00
+ride 3: x 0x14 y 0x2c st 0 col2 00 81 84 80 80 80 80 80 80 80 89 00 00 00
+ride 4: x 0x14 y 0x2c st 0 col2 00 81 84 80 80 80 80 80 80 80 89 00 00 00
+ride 5: x 0x14 y 0xc st 0 col2 00 81 85 00 00 00 00 00 00 00 08 00 00 00
+ride 6: x 0x14 y 0xc st 0 col2 00 81 85 00 00 00 00 00 00 00 08 00 00 00
+after ride: x 0x14 y 0xc st 0 col2 00 81 85 00 00 00 00 00 00 00 08 00 00 00
+back_in_editor rsEd 1 rsTest 0 cx 2 cy 10 vLift 0 | col2 00 81 85 00 00 00 00 00 00 00 08 00 00 00
+level_list     rsEd 0 rsTest 0 cx 2 cy 10 vLift 0 | col2 00 81 85 00 00 00 00 00 00 00 08 00 00 00
+saved_to_disk  rsEd 0 rsTest 0 cx 2 cy 10 vLift 0 | col2 00 81 85 00 00 00 00 00 00 00 08 00 00 00
+extracted 8192 B -> /tmp/e140_st.ovl (NEBLEVEL.OVL valid: 1 levels / 0 campaigns)
+OK
+level 0 'NEW LEVEL  ' mission 1 base tower 0 rows 48 time 0450 size 140 cells 24
+  lifts 1
+  lift col 2 rows 2..10 stops []
+    note no ledge beside the end: nothing to step onto

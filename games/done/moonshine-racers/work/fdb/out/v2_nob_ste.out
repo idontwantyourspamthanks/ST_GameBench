@@ -1,0 +1,58 @@
+cell v2_nob_ste swapA ste 1024 1.62 disks work/fdb/build_v2/disk_a.st work/fdb/build_v2/disk_b.st nob realfdc
+disk-2 prompt True t 52 vbl 2650
+prompt shot /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/fdb/out/v2_nob_ste_prompt.png
+marker $b2700: 000B2700: 4d 53 50 4f 00 00 00 00                          MSPO....
+failed-check key press 1 at about vbl 3641
+failed-check key press 2 at about vbl 4475
+failed-check key press 3 at about vbl 5298
+mode action done: swapA
+t+   8s vbl 6682 $1021/$100e (2, 39)
+t+  17s vbl 7164 $1021/$100e (2, 68)
+t+  27s vbl 7643 $1021/$100e (2, 161)
+t+  37s vbl 8172 $1021/$100e (2, 264)
+race advancing ($100e 304 -> 370, mode 2, prompt gone True): True
+race shot /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/fdb/out/v2_nob_ste_race.png
+marker $b2700: 000B2700: 4d 53 50 4f 00 00 00 00                          MSPO....
+tick clock $b8f00: 000B8F00: 00 00 9e 70 00 00 9e 7c                          ..ßp..ß|
+driveb vars (unit, pref[0], pref[1]) @$bb52e: 000BB52E: 00 00 00 00 00 00                                ......
+drive B selected (PSG change drive ->1) 5 time(s) in the whole run
+fdc read sectors whole run: per drive {'0': 1340}
+  drive=1 reads whole run: 0; first/last: - | -
+fdc read sectors after the insert: per drive {'0': 103}
+  drive=1 reads after the insert: 0; first/last: - | -
+FDC bursts after the prompt (VBL at 50 Hz = emulated time; one burst = one disk check, the last one also holds the race load):
+  burst 1: vbl 3721 -> 3764  =  0.86 s;  reads drive0 1 drive1 0;  B selected 1x;  forced interrupts (type IV) 1;  type I/II commands 5
+      + 0.00s fdc change drive/side io_porta_old=0x7 io_porta_new=0x5 side 0->0 drive -1->0
+      + 0.00s fdc type I restore spinup=on verify=off steprate_ms=3 drive=0 tr=0x0 head_track=0x0
+      + 0.00s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x0 head_track=0x0 side=0 drive=0 dmasecto
+      + 0.08s fdc read sector addr=0x68000 drive=0 track=0 sect=1 side=0
+      + 0.10s fdc type II read sector with multi sector=0x2 track=0x0 side=0 drive=0 addr=0x68200
+      + 0.10s fdc type IV force int 0xd0 irq=0 index=0
+      + 0.10s fdc change drive/side io_porta_old=0x5 io_porta_new=0x7 side 0->0 drive 0->-1
+      + 0.10s fdc change drive/side io_porta_old=0x7 io_porta_new=0x3 side 0->0 drive -1->1
+      + 0.10s fdc type I restore spinup=off verify=off steprate_ms=3 drive=1 tr=0x0 head_track=0x0
+      + 0.86s fdc change drive/side io_porta_old=0x3 io_porta_new=0x7 side 0->0 drive 1->-1
+  burst 2: vbl 4553 -> 4598  =  0.90 s;  reads drive0 1 drive1 0;  B selected 1x;  forced interrupts (type IV) 1;  type I/II commands 5
+      + 0.00s fdc change drive/side io_porta_old=0x7 io_porta_new=0x5 side 0->0 drive -1->0
+      + 0.00s fdc type I restore spinup=on verify=off steprate_ms=3 drive=0 tr=0x0 head_track=0x0
+      + 0.00s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x0 head_track=0x0 side=0 drive=0 dmasecto
+      + 0.12s fdc read sector addr=0x68000 drive=0 track=0 sect=1 side=0
+      + 0.14s fdc type II read sector with multi sector=0x2 track=0x0 side=0 drive=0 addr=0x68200
+      + 0.14s fdc type IV force int 0xd0 irq=0 index=0
+      + 0.14s fdc change drive/side io_porta_old=0x5 io_porta_new=0x7 side 0->0 drive 0->-1
+      + 0.14s fdc change drive/side io_porta_old=0x7 io_porta_new=0x3 side 0->0 drive -1->1
+      + 0.14s fdc type I restore spinup=off verify=off steprate_ms=3 drive=1 tr=0x0 head_track=0x0
+      + 0.90s fdc change drive/side io_porta_old=0x3 io_porta_new=0x7 side 0->0 drive 1->-1
+  burst 3: vbl 5375 -> 5421  =  0.92 s;  reads drive0 1 drive1 0;  B selected 1x;  forced interrupts (type IV) 1;  type I/II commands 5
+      + 0.00s fdc change drive/side io_porta_old=0x7 io_porta_new=0x5 side 0->0 drive -1->0
+      + 0.00s fdc type I restore spinup=on verify=off steprate_ms=3 drive=0 tr=0x0 head_track=0x0
+      + 0.00s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x0 head_track=0x0 side=0 drive=0 dmasecto
+      + 0.14s fdc read sector addr=0x68000 drive=0 track=0 sect=1 side=0
+      + 0.14s fdc type II read sector with multi sector=0x2 track=0x0 side=0 drive=0 addr=0x68200
+      + 0.14s fdc type IV force int 0xd0 irq=0 index=0
+      + 0.16s fdc change drive/side io_porta_old=0x5 io_porta_new=0x7 side 0->0 drive 0->-1
+      + 0.16s fdc change drive/side io_porta_old=0x7 io_porta_new=0x3 side 0->0 drive -1->1
+      + 0.16s fdc type I restore spinup=off verify=off steprate_ms=3 drive=1 tr=0x0 head_track=0x0
+      + 0.92s fdc change drive/side io_porta_old=0x3 io_porta_new=0x7 side 0->0 drive 1->-1
+  burst 4: vbl 6300 -> 6638  =  6.76 s;  reads drive0 100 drive1 0;  B selected 0x;  forced interrupts (type IV) 17;  type I/II commands 151
+RESULT v2_nob_ste OK

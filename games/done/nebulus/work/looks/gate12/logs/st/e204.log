@@ -1,0 +1,26 @@
+PASS F10 opens the manager: True
+PASS Copy tower #1 (M1 T1): mission/tower/flags, rows, grid == original decode, nothing beyond the rows: (1, 0, 0, 47, True, False)
+PASS Copy tower #2 (M1 T2): mission/tower/flags, rows, grid == original decode, nothing beyond the rows: (1, 1, 0, 71, True, False)
+PASS Copy tower #3 (M1 T3): mission/tower/flags, rows, grid == original decode, nothing beyond the rows: (1, 2, 0, 49, True, False)
+PASS Copy tower #4 (M1 T4): mission/tower/flags, rows, grid == original decode, nothing beyond the rows: (1, 3, 0, 66, True, False)
+PASS Copy tower #5 (M1 T5): mission/tower/flags, rows, grid == original decode, nothing beyond the rows: (1, 4, 0, 96, True, False)
+PASS Copy tower #6 (M1 T6): mission/tower/flags, rows, grid == original decode, nothing beyond the rows: (1, 5, 0, 64, True, False)
+PASS Copy tower #7 (M1 T7): mission/tower/flags, rows, grid == original decode, nothing beyond the rows: (1, 6, 0, 80, True, False)
+PASS Copy tower #8 (M1 T8): mission/tower/flags, rows, grid == original decode, nothing beyond the rows: (1, 7, 0, 96, True, False)
+PASS Copy tower #9 (M2 T1): mission/tower/flags, rows, grid == original decode, nothing beyond the rows: (2, 0, 0, 54, True, False)
+PASS Copy tower #10 (M2 T2): mission/tower/flags, rows, grid == original decode, nothing beyond the rows: (2, 1, 0, 56, True, False)
+PASS Copy tower #11 (M2 T3): mission/tower/flags, rows, grid == original decode, nothing beyond the rows: (2, 2, 0, 54, True, False)
+PASS Copy tower #12 (M2 T4): mission/tower/flags, rows, grid == original decode, nothing beyond the rows: (2, 3, 0, 64, True, False)
+PASS Copy tower #13 (M2 T5): mission/tower/flags, rows, grid == original decode, nothing beyond the rows: (2, 4, 0, 56, True, False)
+PASS Copy tower #14 (M2 T6): mission/tower/flags, rows, grid == original decode, nothing beyond the rows: (2, 5, 0, 94, True, False)
+PASS Copy tower #15 (M2 T7): mission/tower/flags, rows, grid == original decode, nothing beyond the rows: (2, 6, 0, 80, True, False)
+PASS Copy tower #16 (M2 T8): mission/tower/flags, rows, grid == original decode, nothing beyond the rows: (2, 7, 0, 96, True, False)
+PASS Blank grid: rows 48, ring row 1 + ledge + exit door, rest empty (== the new-level grid), mission/flags untouched: (48, True, 2, 0)
+PASS Time +50 twice (+50 each), then -50 three times (net -50 vs start; BCD seconds): (50, 50, -50)
+time words 0450 0500 0550 0400
+name before b'NEW LEVEL  \x00' after b'PDW LEVEL  \x00'
+PASS Name...: the name bytes changed by the entry keys (first letter and second letter), menu closed: (True, True, True)
+committed level name 'PDW LEVEL  ' time 0400
+PASS committed record carries the new name and time: (True, True)
+PASS no Address/Bus Error/exception in the Hatari log: []
+FAILS []

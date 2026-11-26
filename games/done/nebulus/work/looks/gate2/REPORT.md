@@ -1,0 +1,1 @@
+Gate2 (combined deliver2+deliver3 build), scratch copy /tmp/nlg. See final message of NebLooksUIGate for the table. logs/ = combined build; logs_deliver2build/ = superseded deliver2-only runs (e200 STE/Mega/ST all FAILS []). merge/ + merge_list.txt = full files; scripts carry /tmp/nlg/x scratch paths.

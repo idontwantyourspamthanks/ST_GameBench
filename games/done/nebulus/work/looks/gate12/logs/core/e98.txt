@@ -1,0 +1,16 @@
+patches: cr_credit, ed_overlay, ni_ikbd, ni_jump, ni_latch, ni_shoot, ni_turn, np_lift, np_shot, nt_trainers
+Traceback (most recent call last):
+  File "/tmp/ng12hd/nb/work/core/e98_g.py", line 41, in <module>
+    ref,_=m.run('gc98_ref',[],duration=10)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "scripted3", line 63, in run
+  File "/tmp/ng12hd/nb/work/core/e98_g.py", line 23, in <lambda>
+    m.Nebulus=lambda **kw: orig(**{**kw,'workdir':'/tmp/ng12hd/x/oddcore/eq98'})
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/tools/nebulus.py", line 96, in __init__
+    super().__init__(game_dir=game, snapshot=snapshot, workdir=str(R), machine=machine, tos=tos,
+  File "/home/ryan/Code/AtariST/gamebench/tools/stharness.py", line 165, in __init__
+    retarget_snapshot(snapshot, self.state, self.R)
+  File "/home/ryan/Code/AtariST/gamebench/tools/stharness.py", line 99, in retarget_snapshot
+    raise ValueError(f"new path longer than the {f - s}-byte field at {s:#x}")
+ValueError: new path longer than the 23-byte field at 0x8019

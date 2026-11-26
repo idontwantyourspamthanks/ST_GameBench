@@ -201,10 +201,7 @@ take:   move.b  $ffff8201.w,vScr(a5)
         moveq   #15,d0
 .p:     move.w  (a0)+,(a1)+
         dbra    d0,.p
-        move.w  sr,-(a7)                ; the key queue: our IKBD hook in front of the game's handler
-        ori.w   #$700,sr
-        clr.l   vKqH(a5)
-        move.w  (a7)+,sr
+        bsr     kb_clear                ; clear stale IKBD held keys / joystick bytes and our key queue
         bsr     kb_hook
         rts
 
@@ -264,6 +261,26 @@ kb_hook:                                ; the hook is the IKBD vector (again: th
         move.l  a0,$118.w
         move.w  (a7)+,sr
 .x:     movea.l (a7)+,a0
+        rts
+; kb_clear: reset the game's IKBD held-key table ($5ffe..$607d), last make ($60ff), parser state ($6102/$6103/$610e), joystick bytes ($6104/$6105) and our key queue.
+; Called on editor entry and after every HAGA/TOS swap (rd_stock, do_save, test_drive) so a key-break or joystick-release eaten by TOS cannot leave a direction stuck.
+kb_clear:
+        movem.l d0/a0,-(a7)
+        move.w  sr,-(a7)
+        ori.w   #$700,sr
+        lea     $5ffe.w,a0
+        moveq   #31,d0
+.z:     clr.l   (a0)+
+        dbra    d0,.z
+        clr.b   $60ff.w
+        clr.b   $6102.w
+        clr.b   $6103.w
+        clr.b   $6104.w
+        clr.b   $6105.w
+        clr.b   $610e.w
+        clr.l   vKqH(a5)
+        move.w  (a7)+,sr
+        movem.l (a7)+,d0/a0
         rts
 kq_empty:                               ; Z set = no key waiting (trashes d0)
         move.w  vKqH(a5),d0
@@ -495,6 +512,7 @@ rd_stock:
         lea     BLK.l,a0
         jsr     $d6fa.l
         movem.l (a7)+,d0-d7/a1-a5
+        bsr     kb_clear
         bsr     kb_hook
         lea     BLK.l,a0
         moveq   #0,d0
@@ -2155,6 +2173,7 @@ obj_mv_seg:
 in_reset:
         clr.b   $60ff.w
         move.w  #$f,vPDir(a5)
+        move.w  #14,vRep(a5)
         clr.w   vFire(a5)
 .f:     jsr     $d206.l
         btst    #7,$6105.w
@@ -2594,7 +2613,7 @@ pd_poll:
         tst.w   d0
         beq   .none
         subq.w  #1,vRep(a5)
-        bne   .none
+        bgt   .none
         move.w  #3,vRep(a5)
         move.w  d0,d2
         rts
@@ -5578,11 +5597,7 @@ do_save:
         lea     CPSTORE.l,a1
         bsr     trk_write
         move.l  d0,d6
-        move.w  sr,-(a7)                ; clear key queue and re-install the editor's IKBD hook
-        ori.w   #$700,sr
-        clr.l   vKqH(a5)
-        clr.b   $60ff.w
-        move.w  (a7)+,sr
+        bsr     kb_clear
         bsr     kb_hook
         jsr     $d206.l                 ; re-assert the editor's screen and palette
         move.b  #SCR>>16,$ffff8201.w
@@ -6066,10 +6081,7 @@ c_td:   movem.l d1-d7/a0-a6,-(a7)
         moveq   #15,d0
 .p:     move.w  (a0)+,(a1)+
         dbra    d0,.p
-        move.w  sr,-(a7)
-        ori.w   #$700,sr
-        clr.l   vKqH(a5)                ; vKqH / vKqT: nothing typed during the race is kept
-        move.w  (a7)+,sr
+        bsr     kb_clear                ; nothing typed during the race is kept, and clear any stale held keys
         bsr     kb_hook
         bsr     in_reset
         move.w  #1,vRedraw(a5)

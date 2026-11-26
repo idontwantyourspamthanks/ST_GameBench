@@ -1,0 +1,2072 @@
+--- a/patches/ed_editor.s
++++ b/patches/ed_editor.s
+@@ -94,6 +94,7 @@
+ vTxt    equ     208                     ; message text buffer (32 B)
+ vLift   equ     172
+ ETILE   equ     $A8800
++EPAL    equ     $A8980                  ; the editor's 16-word palette (non-game RAM, 32 B): built from the game's own palette table by set_theme, copied to the hardware by ed_vbl
+ rsOk    equ     40
+ RSV     equ     RS-V                    ; RS-relative access from the editor code (a5 = V there; hooks that run in the game use absolute RS+..)
+ rsKey   equ     42                      ; key latch: the F10 make byte ($44) seen by the ACIA hook ed_key, 0 = none
+@@ -108,26 +109,12 @@
+ rsEye   equ     51                      ; byte: eye design index (0..3) cached by ed_lvl; the eye site reads the WORD at RS+50 (rsFlg is its high byte) and masks with 3
+ 
+         org     CODE1
+-        dc.w    $4ef9
+-        dc.l    ed_dec
+-        dc.w    $4ef9
+-        dc.l    ed_dir
+-        dc.w    $4ef9
+-        dc.l    ed_title
+-        dc.w    $4ef9
+-        dc.l    ed_time
+-        dc.w    $4ef9
+-        dc.l    ed_name
+-        dc.w    $4ef9
+-        dc.l    ed_next
+-        dc.w    $4ef9
+-        dc.l    ed_game
+ 
+ ; ------------------------------------------------------------------ store helpers
+ ; d0.w = level index -> a0 = record (0 if the store or the index is invalid).  Records are packed back to back (odd sizes allowed), so a record can
+ ; start at an odd address: len/time words are read as bytes (rdlen/rdtime); a 68000 word read at an odd address is an address error
+ lvl_ptr:
+-        bsr.w   ov_ok
++        bsr   ov_ok
+         lea     OVS.l,a0
+         cmpi.l  #'NCMP',(a0)
+         bne.s   lbad
+@@ -159,7 +146,7 @@
+ 
+ ; d0.w = campaign index -> a0 (0 if invalid)
+ camp_ptr:
+-        bsr.w   ov_ok
++        bsr   ov_ok
+         lea     OVS.l,a0
+         cmpi.l  #'NCMP',(a0)
+         bne.s   .bad
+@@ -252,7 +239,7 @@
+         move.w  (a7)+,d0
+         move.l  a0,d1
+         beq.s   .r
+-        bsr.w   rdtime
++        bsr   rdtime
+         beq.s   .r
+         move.w  d1,d0
+ .r:     rts
+@@ -278,7 +265,7 @@
+ ; tower complete ($3e352)
+ ed_next:
+         tst.w   RS+rsTest.l
+-        bne.w   pt_done
++        bne   pt_done
+         move.w  RS+rsCamp.l,d0
+         bne.s   .camp
+         tst.w   RS+rsLvl.l
+@@ -286,7 +273,7 @@
+         move.w  $33a34.l,d0
+         jmp     $3e358.l
+ .camp:  subq.w  #1,d0
+-        bsr.w   camp_ptr
++        bsr   camp_ptr
+         move.l  a0,d0
+         beq.s   end_run
+         move.w  RS+rsPos.l,d0
+@@ -297,7 +284,7 @@
+         cmp.w   d1,d0
+         bhs.s   end_run
+         move.b  14(a0,d0.w),d0
+-        bra.w   apply_entry
++        bra   apply_entry
+ end_run:
+         move.w  #8,$3390c.l
+         clr.w   RS+rsCamp.l
+@@ -320,7 +307,7 @@
+ .cust:  move.w  d1,d0
+         addq.w  #1,d1
+         move.w  d1,RS+rsLvl.l
+-        bsr.w   lvl_ptr
++        bsr   lvl_ptr
+         moveq   #1,d2
+         moveq   #0,d1
+         move.l  a0,d0
+@@ -347,15 +334,15 @@
+         tst.w   RS+rsTest.l
+         beq.s   .c
+         clr.w   RS+rsKey.l
+-        bra.w   pt_done
++        bra   pt_done
+ .c:     clr.w   RS+rsKey.l
+ .n:     jmp     $3868a.l
+ 
+ ; playtest ended (level complete or F10) -> editor, then restart the playtest or leave
+ pt_done:
+         move.w  #1,RS+rsFrom.l
+-        bsr.w   ed_run
+-        bra.w   run_result
++        bsr   ed_run
++        bra   run_result
+ 
+ ; d0 = vRes after the editor returns inside the game
+ run_result:
+@@ -372,7 +359,7 @@
+         tst.w   RS+rsTest.l
+         beq.s   .nt
+         clr.w   RS+rsFrom.l
+-        bsr.w   ed_run
++        bsr   ed_run
+         bra.s   .res
+ .nt:    clr.w   RS+rsCamp.l
+         clr.w   RS+rsLvl.l
+@@ -385,7 +372,7 @@
+         bne.s   .no
+ .go:    clr.b   $38498.l
+         clr.w   RS+rsFrom.l
+-        bsr.w   ed_run
++        bsr   ed_run
+ .res:   addq.l  #4,a7
+         tst.w   d0
+         beq.s   .back
+@@ -400,7 +387,7 @@
+ ed_vbl:
+         move.b  #0,$ffff8260.w
+         movem.l d0-d7/a0-a6,-(a7)
+-        lea     pal(pc),a0
++        lea     EPAL.l,a0
+         lea     $ffff8240.w,a1
+         moveq   #7,d0
+ .p:     move.l  (a0)+,(a1)+
+@@ -410,9 +397,6 @@
+         movem.l (a7)+,d0-d7/a0-a6
+         rte
+ 
+-pal:    dc.w    $000,$333,$0a0,$5a2,$666,$35f,$fea,$f40
+-        dc.w    $520,$630,$740,$750,$760,$770,$771,$777
+-
+ ; ------------------------------------------------------------------ editor main: returns d0 = vRes
+ ed_run:
+         movem.l d1-d7/a0-a6,-(a7)
+@@ -421,8 +405,8 @@
+         moveq   #63,d0
+ .zv:    clr.l   (a0)+
+         dbra    d0,.zv
+-        bsr.w   tiles_init
+-        bsr.w   ov_ok
++        bsr   tiles_init
++        bsr   ov_ok
+         move.w  sr,vSr(a5)
+         ori.w   #$700,sr
+         move.l  $70.w,vOld70(a5)
+@@ -450,16 +434,14 @@
+         beq.s   .fresh
+         ; resume the playtested session: working copy back into the grid
+         move.w  #$7fff,RSV+rsLvl(a5)
+-        move.w  RSV+rsTow(a5),$3390c.l
+-        move.w  RSV+rsMis(a5),$33910.l
+-        jsr     $377a2.l
++        bsr     ld_dec
+         clr.w   RSV+rsLvl(a5)
+         move.w  #1,vScr(a5)
+         move.w  #1,vDirty(a5)
+         bra.s   .go
+-.fresh: bsr.w   m_main
++.fresh: bsr   m_main
+ .go:    move.w  #3,vRedraw(a5)
+-.loop:  bsr.w   redraw
++.loop:  bsr   redraw
+         move.w  vFrame(a5),d0
+ .w:     cmp.w   vFrame(a5),d0
+         beq.s   .w
+@@ -468,12 +450,12 @@
+         clr.w   RSV+rsKey(a5)
+         cmp.w   #$44,d0
+         bne.s   .nk
+-        bsr.w   f10
++        bsr   f10
+ .nk:    move.w  RSV+rsKb(a5),d0
+         beq.s   .nk2
+         clr.w   RSV+rsKb(a5)
+-        bsr.w   kb_key
+-.nk2:   bsr.w   input
++        bsr   kb_key
++.nk2:   bsr   input
+         tst.w   vRes(a5)
+         beq.s   .loop
+         move.w  #$2700,sr
+@@ -506,14 +488,14 @@
+ 
+ ; F10: editor -> list screen, list -> quit
+ f10:    tst.w   vDisk(a5)
+-        bne.w   c_dno
++        bne   c_dno
+         tst.w   vScr(a5)
+         beq.s   .q
+         tst.w   vMode(a5)
+         bne.s   .r
+         tst.w   vLift(a5)
+-        bne.w   lift_cancel
+-        bra.w   c_leaveed
++        bne   lift_cancel
++        bra   c_leaveed
+ .q:     move.w  #3,vRes(a5)
+ .r:     rts
+ 
+@@ -534,16 +516,17 @@
+ .same:  move.w  d1,vShow(a5)
+         tst.w   d1
+         beq.s   .map
+-        bsr.w   clr_screen
++        bsr   clr_screen
+         cmp.w   #3,vMode(a5)
+-        beq.w   draw_name
+-        bra.w   draw_menu
++        beq   draw_name
++        bra   draw_menu
+ .map:   btst    #0,d0
+         beq.s   .pan
+-        bsr.w   clr_screen
+-        bsr.w   draw_map
+-        bsr.w   draw_cursor
+-.pan:   bra.w   draw_panel
++        bsr   clr_screen
++        bsr   theme_cur
++        bsr   draw_map
++        bsr   draw_cursor
++.pan:   bra   draw_panel
+ .none:  rts
+ 
+ clr_screen:
+@@ -576,9 +559,9 @@
+         bne.s   .n
+         tst.w   d6
+         bne.s   .n
+-        bsr.w   draw_cellf
++        bsr   draw_cellf
+         bra.s   .nx
+-.n:     bsr.w   draw_cell
++.n:     bsr   draw_cell
+ .nx:    addq.w  #1,d6
+         cmp.w   #16,d6
+         blt.s   .cl
+@@ -598,7 +581,7 @@
+         movem.l d0-d7/a0-a2,-(a7)
+         move.w  d1,d7
+         move.w  d2,d6
+-        bsr.w   classify
++        bsr   classify
+ draw_id:
+         lea     ETILE.l,a1
+         move.w  d3,d2
+@@ -684,7 +667,7 @@
+         and.b   #7,d1
+         moveq   #1,d3
+         tst.b   d1
+-        beq.w   lift_tile
++        beq   lift_tile
+         moveq   #8,d3
+         add.b   d1,d3
+ .r:     rts
+@@ -710,7 +693,8 @@
+         moveq   #2,d3
+         move.b  d0,d1
+         and.b   #$70,d1
+-        beq.s   .r
++        cmp.b   #$10,d1
++        bne.s   .r
+         moveq   #3,d3
+         rts
+ 
+@@ -761,28 +745,17 @@
+ .s:     move.l  d1,(a0)+
+         dbra    d0,.s
+         lea     vNum(a5),a2
+-        move.b  #'T',(a2)+
+-        move.w  RSV+rsTow(a5),d0
+-        addq.w  #1,d0
+-        bsr.w   dec1
+-        move.b  #' ',(a2)+
+-        move.b  #'M',(a2)+
+-        move.w  RSV+rsMis(a5),d0
+-        bsr.w   dec1
+-        clr.b   (a2)
+-        moveq   #0,d2
+-        bsr.w   pline
+-        lea     vNum(a5),a2
+         move.b  #'S',(a2)+
+-        move.b  RSV+rsFlg(a5),d0
+-        lsr.b   #4,d0
+-        bsr.w   dec1
++        bsr   eff_col
++        addq.w  #1,d0
++        bsr   dec1
+         move.w  #' E',(a2)+
+-        move.b  RSV+rsFlg(a5),d0
+-        bsr.w   dec1
++        bsr   eff_eye
++        addq.w  #1,d0
++        bsr   dec1
+         clr.b   (a2)
+-        moveq   #5,d2
+-        bsr.w   pline
++        moveq   #0,d2
++        bsr   pline
+         lea     ptab(pc),a3
+         moveq   #1,d2
+ .pl:    lea     vNum(a5),a2
+@@ -790,21 +763,21 @@
+         moveq   #0,d0
+         move.b  (a3)+,d0
+         move.w  RSV(a5,d0.w),d0
+-        bsr.w   dec3
++        bsr   dec3
+         clr.b   (a2)
+-        bsr.w   pline
++        bsr   pline
+         addq.w  #1,d2
+         cmp.w   #4,d2
+         bne.s   .pl
+-        bsr.w   cur_cell
++        bsr   cur_cell
+         lea     vNum(a5),a2
+         move.b  #'$',(a2)+
+-        bsr.w   hex2
++        bsr   hex2
+         clr.b   (a2)
+         moveq   #4,d2
+-        bsr.w   pline
+-        bsr.w   cur_cell
+-        bsr.w   classify
++        bsr   pline
++        bsr   cur_cell
++        bsr   classify
+         lea     names(pc),a0
+         add.w   d3,d3
+         move.w  0(a0,d3.w),d3
+@@ -812,7 +785,7 @@
+         adda.w  d3,a0
+         moveq   #0,d1
+         moveq   #11,d2
+-        bsr.w   txt
++        bsr   txt
+         move.l  vMsg(a5),d0
+         bne.s   .m
+         lea     sHelp(pc),a0
+@@ -820,13 +793,13 @@
+ .m:     move.l  d0,a0
+ .h:     moveq   #16,d1
+         moveq   #11,d2
+-        bra.w   txt
++        bra   txt
+ ptab:   dc.b    'H',rsRows,'C',rsCx,'R',rsCy
+ 
+ ; text line from vNum in the right panel (column 32), line d2
+ pline:  lea     vNum(a5),a0
+         moveq   #32,d1
+-        bra.w   txt
++        bra   txt
+ 
+ draw_menu:
+         move.l  vMenu(a5),a0
+@@ -850,12 +823,12 @@
+         cmp.w   vSel(a5),d5
+         bne.s   .ns
+         move.b  #'>',-1(a2)
+-.ns:    bsr.w   cpstr
++.ns:    bsr   cpstr
+         clr.b   (a2)
+         lea     vNum(a5),a0
+         move.w  vMCol(a5),d1
+         move.w  d0,d2
+-        bsr.w   txt
++        bsr   txt
+ .skip:  move.l  (a7)+,a0
+         addq.l  #4,a7
+         addq.w  #1,d5
+@@ -868,13 +841,13 @@
+         move.l  d0,a0
+         moveq   #8,d1
+         moveq   #11,d2
+-        bsr.w   txt
++        bsr   txt
+ .nm:    rts
+ 
+ draw_name:
+         lea     vNum(a5),a2
+         lea     sName(pc),a0
+-        bsr.w   cpstr
++        bsr   cpstr
+         move.l  vNDst(a5),a0
+         moveq   #11,d0
+ .c:     move.b  (a0)+,(a2)+
+@@ -883,15 +856,15 @@
+         lea     vNum(a5),a0
+         moveq   #8,d1
+         moveq   #0,d2
+-        bsr.w   txt
++        bsr   txt
+         lea     sNameH(pc),a0
+         moveq   #8,d1
+         moveq   #3,d2
+-        bsr.w   txt
++        bsr   txt
+         lea     sNameH2(pc),a0
+         moveq   #8,d1
+         moveq   #4,d2
+-        bsr.w   txt
++        bsr   txt
+         lea     vNum(a5),a2
+         moveq   #15,d0
+ .b:     move.b  #' ',(a2)+
+@@ -904,7 +877,7 @@
+         lea     vNum(a5),a0
+         moveq   #8,d1
+         moveq   #1,d2
+-        bra.w   txt
++        bra   txt
+ 
+ ; current cell value -> d0.b
+ cur_cell:
+@@ -945,7 +918,7 @@
+         add.b   #'0',d0
+         move.b  d0,(a2)+
+         swap    d0
+-        ext.l   d0
++dec2:   ext.l   d0
+         divu.w  #10,d0
+         add.b   #'0',d0
+         move.b  d0,(a2)+
+@@ -953,6 +926,15 @@
+         add.b   #'0',d0
+         move.b  d0,(a2)+
+         rts
++mb_lst: clr.w   vScr(a5)
++        move.w  #8,vMCol(a5)
++mb_new: lea     MB.l,a2
++        clr.b   (a2)+
++        move.l  a2,vMBP(a5)
++        rts
++ld_dec: move.w  RSV+rsTow(a5),$3390c.l
++        move.w  RSV+rsMis(a5),$33910.l
++        jmp     $377a2.l
+ hex2:   move.w  d0,-(a7)
+         lsr.b   #4,d0
+         bsr.s   hexd
+@@ -976,7 +958,7 @@
+         beq.s   .nofire
+         tst.w   d4
+         bne.s   .nofire
+-        bra.w   fire_edge
++        bra   fire_edge
+ .nofire:
+         move.w  d1,d0
+         or.w    d2,d0
+@@ -995,13 +977,13 @@
+         move.w  #1,vHeld(a5)
+         move.w  #14,vRep(a5)
+ .rp:    move.w  vMode(a5),d0
+-        beq.w   move_map
++        beq   move_map
+         cmp.w   #3,d0
+-        beq.w   move_name
+-        bra.w   move_menu
++        beq   move_name
++        bra   move_menu
+ 
+ move_map:
+-        bsr.w   draw_cursor
++        bsr   draw_cursor
+         tst.w   vLift(a5)
+         beq.s   .lh
+         moveq   #0,d1
+@@ -1032,9 +1014,9 @@
+         move.w  d0,RSV+rsTop(a5)
+ .rd:    move.w  #3,vRedraw(a5)
+         rts
+-.nr:    bsr.w   draw_cursor
++.nr:    bsr   draw_cursor
+         move.w  #2,vRedraw(a5)
+-        bsr.w   lift_msg
++        bsr   lift_msg
+         rts
+ 
+ move_menu:
+@@ -1053,7 +1035,7 @@
+         tst.w   d1
+         bpl.s   .win
+         move.w  d3,vSel(a5)
+-        bra.w   menu_exec               ; left = the last item ("< back")
++        bra   menu_exec               ; left = the last item ("< back")
+ .win:   move.w  vMTop(a5),d1
+         cmp.w   d1,d0
+         bge.s   .w2
+@@ -1064,20 +1046,20 @@
+         ble.s   .w3
+         move.w  d0,vMTop(a5)
+ .w3:    move.w  #2,vRedraw(a5)
+-        rts
++        bra   preview
+ 
+ fire_edge:
+         move.w  vMode(a5),d0
+         cmp.w   #3,d0
+-        beq.w   name_done
++        beq   name_done
+         tst.w   d0
+-        bne.w   menu_exec
++        bne   menu_exec
+         ; map: open the cell menu
+         tst.w   vLift(a5)
+-        bne.w   lift_set
++        bne   lift_set
+         move.w  #8,vMCol(a5)
+         lea     m_root(pc),a0
+-        bsr.w   menu_open
++        bsr   menu_open
+         rts
+ 
+ ; a0 = menu -> shown
+@@ -1114,18 +1096,18 @@
+         move.w  0(a0,d0.w),d0
+         jmp     0(a0,d0.w)
+ 
+-acts:   dc.w    a_set-acts,a_tri-acts,a_sub-acts,a_enemy-acts,a_cmd-acts,a_edir-acts,a_lvl-acts,a_camp-acts,a_lop-acts,a_cop-acts,a_ent-acts,a_eop-acts,a_lift-acts,a_ekey-acts
++acts:   dc.w    a_set-acts,a_tri-acts,a_sub-acts,a_enemy-acts,a_cmd-acts,a_edir-acts,a_lvl-acts,a_camp-acts,a_lop-acts,a_cop-acts,a_ent-acts,a_eop-acts,a_lift-acts,a_ekey-acts,a_pick-acts
+ 
+-a_set:  bsr.w   rec
++a_set:  bsr   rec
+         move.w  d1,d0
+-        bsr.w   place
+-        bra.w   a_done
+-a_tri:  bsr.w   rec
++        bsr   place
++        bra   a_done
++a_tri:  bsr   rec
+         move.w  d1,d3
+         move.w  RSV+rsCy(a5),-(a7)
+         moveq   #2,d4
+ .t1:    move.w  d3,d0
+-        bsr.w   place
++        bsr   place
+         move.w  RSV+rsCy(a5),d0
+         addq.w  #1,d0
+         cmp.w   RSV+rsRows(a5),d0
+@@ -1133,13 +1115,13 @@
+         move.w  d0,RSV+rsCy(a5)
+         dbra    d4,.t1
+ .t2:    move.w  (a7)+,RSV+rsCy(a5)
+-        bra.w   a_done
++        bra   a_done
+ a_sub:  lea     menus(pc),a0
+         add.w   d1,d1
+         move.w  0(a0,d1.w),d1
+         lea     menus(pc),a0
+         adda.w  d1,a0
+-        bra.w   menu_open
++        bra   menu_open
+ a_enemy:
+         move.w  d1,vKind(a5)
+         cmp.b   #$30,d1
+@@ -1150,19 +1132,19 @@
+         cmp.b   #$60,d1
+         bge.s   .sm
+         lea     m_dirv(pc),a0
+-.sm:    bra.w   menu_open
++.sm:    bra   menu_open
+ .nodir: move.w  vKind(a5),d0
+         move.w  d0,d1
+-        bsr.w   rec
+-        bsr.w   place_enemy
+-        bra.w   a_done
++        bsr   rec
++        bsr   place_enemy
++        bra   a_done
+ a_edir: move.w  vKind(a5),d0
+         or.w    d1,d0
+         move.w  d0,d1
+-        bsr.w   rec
+-        bsr.w   place_enemy
++        bsr   rec
++        bsr   place_enemy
+ a_done: tst.w   vScr(a5)
+-        beq.w   m_main
++        beq   m_main
+         clr.w   vMode(a5)
+         move.w  #3,vRedraw(a5)
+         rts
+@@ -1231,14 +1213,14 @@
+         jmp     0(a0,d1.w)
+ 
+ cmds:   dc.w    m_main-cmds,m_levels-cmds,m_camps-cmds,c_newlvl-cmds,c_newcamp-cmds,c_quit-cmds,c_save-cmds,c_edroot-cmds
+-        dc.w    c_leaveed-cmds,c_look-cmds,c_mis-cmds,c_copyorig-cmds,c_blank-cmds,c_tup-cmds,c_tdn-cmds,c_rename-cmds
+-        dc.w    c_play-cmds,c_addent-cmds,cp_edit-cmds,c_dload-cmds,c_dgo-cmds,c_dno-cmds,c_col-cmds,c_eye-cmds
++        dc.w    c_leaveed-cmds,c_col-cmds,c_eye-cmds,c_cpy-cmds,c_blank-cmds,c_tup-cmds,c_tdn-cmds,c_rename-cmds
++        dc.w    c_play-cmds,c_addent-cmds,cp_edit-cmds,c_dload-cmds,c_dgo-cmds,c_dno-cmds
+ 
+ ; --- main menu / list screens
+ m_main: clr.w   vScr(a5)
+         move.w  #8,vMCol(a5)
+         lea     m_mainm(pc),a0
+-        bsr.w   menu_open
++        bsr   menu_open
+         move.w  #3,vRedraw(a5)
+         rts
+ 
+@@ -1263,11 +1245,7 @@
+         lea     sNewCamp(pc),a3
+         moveq   #0,d5
+         moveq   #8,d4
+-ml:     clr.w   vScr(a5)
+-        move.w  #8,vMCol(a5)
+-        lea     MB.l,a2
+-        clr.b   (a2)+
+-        move.l  a2,vMBP(a5)
++ml:     bsr     mb_lst
+         lea     OVS.l,a0
+         moveq   #0,d3
+         cmpi.l  #'NCMP',(a0)
+@@ -1282,7 +1260,7 @@
+         lsr.w   #1,d0
+         addq.w  #3,d0
+         move.w  d2,d1
+-        bsr.w   mb_add
++        bsr   mb_add
+         addq.w  #1,d2
+ .t:     cmp.w   d3,d2
+         blt.s   .l
+@@ -1290,13 +1268,13 @@
+         moveq   #4,d0
+         move.w  d4,d1
+         lsr.w   #1,d1
+-        bsr.w   mb_add
++        bsr   mb_add
+         lea     sBack(pc),a0
+         moveq   #4,d0
+         moveq   #0,d1
+-        bsr.w   mb_add
++        bsr   mb_add
+         lea     MB.l,a0
+-        bsr.w   menu_open
++        bsr   menu_open
+         move.w  #3,vRedraw(a5)
+         rts
+ 
+@@ -1304,7 +1282,7 @@
+ mb_add: move.l  vMBP(a5),a2
+         move.b  d0,(a2)+
+         move.b  d1,(a2)+
+-        moveq   #14,d0
++        moveq   #27,d0
+ .c:     move.b  (a0)+,d1
+         beq.s   .e
+         move.b  d1,(a2)+
+@@ -1318,39 +1296,39 @@
+ ; level selected: submenu
+ a_lvl:  move.w  d1,vCur(a5)
+         lea     m_lvl(pc),a0
+-        bra.w   menu_open
++        bra   menu_open
+ 
+ a_camp: move.w  d1,vCur(a5)
+         lea     m_camp(pc),a0
+-        bra.w   menu_open
++        bra   menu_open
+ 
+ ; level operations: 0 play, 1 edit, 2 copy, 3 delete
+ a_lop:  move.w  vCur(a5),d2
+         tst.w   d1
+-        beq.w   lv_play
++        beq   lv_play
+         subq.w  #1,d1
+-        beq.w   lv_edit
++        beq   lv_edit
+         subq.w  #1,d1
+-        beq.w   lv_copy
+-        bra.w   lv_delete
++        beq   lv_copy
++        bra   lv_delete
+ 
+ ; campaign operations: 0 play, 1 edit entries, 2 rename, 3 delete
+ a_cop:  move.w  vCur(a5),d2
+         move.w  d2,vCamp(a5)
+         tst.w   d1
+-        beq.w   cp_play
++        beq   cp_play
+         subq.w  #1,d1
+-        beq.w   cp_edit
++        beq   cp_edit
+         subq.w  #1,d1
+-        beq.w   cp_rename
+-        bra.w   cp_delete
++        beq   cp_rename
++        bra   cp_delete
+ 
+ ; --- levels
+ lv_play:
+         move.w  d2,d0
+-        bsr.w   lvl_ptr
++        bsr   lvl_ptr
+         move.l  a0,d0
+-        beq.w   a_done
++        beq   a_done
+         clr.w   RSV+rsCamp(a5)
+         addq.w  #1,d2
+         move.w  d2,RSV+rsLvl(a5)
+@@ -1367,9 +1345,9 @@
+ ; edit level d2: load it into the grid
+ lv_edit:
+         move.w  d2,d0
+-        bsr.w   lvl_ptr
++        bsr   lvl_ptr
+         move.l  a0,d0
+-        beq.w   a_done
++        beq   a_done
+         lea     RSV+rsName(a5),a1
+         moveq   #11,d0
+ .n:     move.b  8(a0,d0.w),0(a1,d0.w)
+@@ -1381,23 +1359,21 @@
+         move.w  d0,RSV+rsTow(a5)
+         move.b  2(a0),d0
+         move.w  d0,RSV+rsRows(a5)
+-        bsr.w   rdtime
++        bsr   rdtime
+         move.w  d1,RSV+rsTime(a5)
+         move.b  3(a0),RSV+rsFlg(a5)
+         addq.w  #1,d2
+         move.w  d2,RSV+rsSlot(a5)
+         move.w  d2,RSV+rsLvl(a5)
+-        move.w  RSV+rsTow(a5),$3390c.l
+-        move.w  RSV+rsMis(a5),$33910.l
+-        jsr     $377a2.l
++        bsr     ld_dec
+         clr.w   RSV+rsLvl(a5)
+         clr.w   vDirty(a5)
+-        bra.w   ed_begin
++        bra   ed_begin
+ 
+ c_newlvl:
+         clr.w   RSV+rsSlot(a5)
+         clr.b   RSV+rsFlg(a5)
+-        bsr.w   c_blank
++        bsr   c_blank
+         lea     sNewName(pc),a0
+         lea     RSV+rsName(a5),a1
+         moveq   #11,d0
+@@ -1406,41 +1382,36 @@
+         move.w  #1,RSV+rsMis(a5)
+         clr.w   RSV+rsTow(a5)
+         move.w  #$0450,RSV+rsTime(a5)
+-        bra.w   ed_begin
++        bra   ed_begin
+ 
+ ; editor opened on the working grid
+ ed_begin:
+         move.w  #8,vMCol(a5)
+         move.w  #1,RSV+rsEd(a5)
+         move.w  #1,vScr(a5)
+-        clr.w   RSV+rsCx(a5)
+-        move.w  #1,RSV+rsCy(a5)
+-        move.w  #21,RSV+rsTop(a5)
+-        clr.w   vMode(a5)
+         clr.l   vMsg(a5)
+-        move.w  #3,vRedraw(a5)
+-        rts
++        bra     c_nav
+ 
+ lv_copy:
+         move.w  d2,d0
+-        bsr.w   lvl_ptr
++        bsr   lvl_ptr
+         move.l  a0,d0
+-        beq.w   a_done
++        beq   a_done
+         move.l  a0,a3
+-        bsr.w   rdlen
++        bsr   rdlen
+         move.l  d1,d3
+         add.w   #REC,d3
+-        bsr.w   store_end
++        bsr   store_end
+         lea     OVS+OVSZ.l,a1
+         suba.l  a0,a1
+         cmpa.l  d3,a1
+-        blt.w   no_room
++        blt   no_room
+         move.l  a0,a1
+ .c:     move.b  (a3)+,(a1)+
+         subq.w  #1,d3
+         bne.s   .c
+         addq.w  #1,OVS+6.l
+-        bra.w   m_levels
++        bra   m_levels
+ 
+ no_room:
+         lea     sFull(pc),a0
+@@ -1451,16 +1422,16 @@
+ ; delete level d2: close the gap, fix the campaigns
+ lv_delete:
+         move.w  d2,d0
+-        bsr.w   lvl_ptr
++        bsr   lvl_ptr
+         move.l  a0,d0
+-        beq.w   a_done
+-        bsr.w   rdlen
++        beq   a_done
++        bsr   rdlen
+         move.l  d1,d3
+         add.w   #REC,d3
+         move.l  a0,a3
+         lea     0(a0,d3.l),a1
+         move.l  a0,-(a7)
+-        bsr.w   store_end
++        bsr   store_end
+         move.l  a0,a2
+         move.l  (a7)+,a0
+ .m:     cmp.l   a2,a1
+@@ -1491,35 +1462,35 @@
+         move.b  d6,12(a1)
+         lea     32(a1),a1
+ .ct:    dbra    d5,.cl
+-        bra.w   m_levels
++        bra   m_levels
+ 
+ ; --- campaigns
+ cp_play:
+         move.w  d2,d0
+-        bsr.w   camp_ptr
++        bsr   camp_ptr
+         move.l  a0,d0
+-        beq.w   a_done
++        beq   a_done
+         tst.b   12(a0)
+-        beq.w   a_done
++        beq   a_done
+         addq.w  #1,d2
+         move.w  d2,RSV+rsCamp(a5)
+         clr.w   RSV+rsPos(a5)
+         move.b  14(a0),d0
+-        bsr.w   apply_entry
++        bsr   apply_entry
+         move.w  #2,vRes(a5)
+         rts
+ 
+ cp_rename:
+         move.w  d2,d0
+-        bsr.w   camp_ptr
++        bsr   camp_ptr
+         move.l  a0,vNDst(a5)
+-        bra.w   name_begin
++        bra   name_begin
+ 
+ cp_delete:
+         move.w  d2,d0
+-        bsr.w   camp_ptr
++        bsr   camp_ptr
+         move.l  a0,d0
+-        beq.w   a_done
++        beq   a_done
+         lea     32(a0),a1
+         lea     OVS+16.l,a2
+         move.w  OVS+8.l,d0
+@@ -1533,17 +1504,17 @@
+ .z:     clr.b   (a0)+
+         dbra    d0,.z
+         subq.w  #1,OVS+8.l
+-        bra.w   m_camps
++        bra   m_camps
+ 
+ c_newcamp:
+-        bsr.w   chk_init
++        bsr   chk_init
+         move.w  OVS+8.l,d0
+         cmp.w   #8,d0
+-        bhs.w   a_done
++        bhs   a_done
+         addq.w  #1,OVS+8.l
+         move.w  d0,d2
+         move.w  d0,vCamp(a5)
+-        bsr.w   camp_ptr
++        bsr   camp_ptr
+         move.l  a0,a1
+         moveq   #31,d0
+ .z:     clr.b   (a1)+
+@@ -1552,7 +1523,7 @@
+         moveq   #11,d0
+ .n:     move.b  (a1)+,(a0)+
+         dbra    d0,.n
+-        bra.w   cp_edit
++        bra   cp_edit
+ 
+ ; make sure the store has a valid header
+ chk_init:
+@@ -1569,13 +1540,9 @@
+ ; entry editor for campaign vCamp: "n O m t" / "n L name" (10,i), "<add entry>", "< back"
+ cp_edit:
+         move.w  vCamp(a5),d0
+-        bsr.w   camp_ptr
++        bsr   camp_ptr
+         move.l  a0,a3
+-        clr.w   vScr(a5)
+-        move.w  #8,vMCol(a5)
+-        lea     MB.l,a2
+-        clr.b   (a2)+
+-        move.l  a2,vMBP(a5)
++        bsr     mb_lst
+         moveq   #0,d3
+         move.b  12(a3),d3
+         moveq   #0,d2
+@@ -1589,7 +1556,7 @@
+         move.w  d1,-(a7)
+         move.w  d2,d0
+         addq.w  #1,d0
+-        bsr.w   dec2
++        bsr   dec2
+         move.w  (a7)+,d1
+         move.b  #' ',(a2)+
+         move.b  14(a3,d2.w),d0
+@@ -1611,7 +1578,7 @@
+ .cust:  move.b  #'L',(a2)+
+         move.b  #' ',(a2)+
+         and.w   #$7f,d0
+-        bsr.w   lvl_ptr
++        bsr   lvl_ptr
+         move.l  a0,d0
+         beq.s   .nm
+         lea     8(a0),a0
+@@ -1627,56 +1594,47 @@
+ .add:   lea     vNum(a5),a0
+         moveq   #10,d0
+         move.w  d2,d1
+-        bsr.w   mb_add
++        bsr   mb_add
+         addq.w  #1,d2
+ .t:     cmp.w   d3,d2
+         blt.s   .l
+         lea     sAddEnt(pc),a0
+         moveq   #4,d0
+         moveq   #17,d1
+-        bsr.w   mb_add
++        bsr   mb_add
+         lea     sBack(pc),a0
+         moveq   #4,d0
+         moveq   #2,d1
+-        bsr.w   mb_add
++        bsr   mb_add
+         lea     MB.l,a0
+-        bsr.w   menu_open
++        bsr   menu_open
+         move.w  #3,vRedraw(a5)
+         rts
+ 
+-dec2:   ext.l   d0
+-        divu.w  #10,d0
+-        add.b   #'0',d0
+-        move.b  d0,(a2)+
+-        swap    d0
+-        add.b   #'0',d0
+-        move.b  d0,(a2)+
+-        rts
+-
+ c_addent:
+         move.w  vCamp(a5),d0
+-        bsr.w   camp_ptr
++        bsr   camp_ptr
+         move.l  a0,d0
+-        beq.w   a_done
++        beq   a_done
+         moveq   #0,d0
+         move.b  12(a0),d0
+         cmp.w   #16,d0
+-        bhs.w   cp_edit
++        bhs   cp_edit
+         move.b  #$80,14(a0,d0.w)
+         addq.b  #1,12(a0)
+-        bra.w   cp_edit
++        bra   cp_edit
+ 
+ 
+ ; entry selected -> submenu
+ a_ent:  move.w  d1,vCur(a5)
+         lea     m_ent(pc),a0
+-        bra.w   menu_open
++        bra   menu_open
+ 
+ ; entry operations: 0 change source, 1 insert after, 2 remove, 3 up, 4 down
+ a_eop:  move.w  vCamp(a5),d0
+-        bsr.w   camp_ptr
++        bsr   camp_ptr
+         move.l  a0,d0
+-        beq.w   a_done
++        beq   a_done
+         moveq   #0,d2
+         move.w  vCur(a5),d2
+         moveq   #0,d3
+@@ -1694,19 +1652,19 @@
+         move.w  d2,d0
+         addq.w  #1,d0
+         cmp.w   d3,d0
+-        bhs.w   cp_edit
++        bhs   cp_edit
+         move.b  0(a1,d2.w),d4
+         move.b  0(a1,d0.w),0(a1,d2.w)
+         move.b  d4,0(a1,d0.w)
+-        bra.w   cp_edit
++        bra   cp_edit
+ .up:    tst.w   d2
+-        beq.w   cp_edit
++        beq   cp_edit
+         move.w  d2,d0
+         subq.w  #1,d0
+         move.b  0(a1,d2.w),d4
+         move.b  0(a1,d0.w),0(a1,d2.w)
+         move.b  d4,0(a1,d0.w)
+-        bra.w   cp_edit
++        bra   cp_edit
+ .cyc:   move.b  0(a1,d2.w),d4
+         and.w   #$ff,d4
+         addq.w  #1,d4
+@@ -1729,9 +1687,9 @@
+         bne.s   .st
+         move.w  #$80,d4
+ .st:    move.b  d4,0(a1,d2.w)
+-        bra.w   cp_edit
++        bra   cp_edit
+ .ins:   cmp.w   #16,d3
+-        bhs.w   cp_edit
++        bhs   cp_edit
+         move.w  d3,d4
+ .is:    cmp.w   d2,d4
+         ble.s   .id
+@@ -1739,7 +1697,7 @@
+         subq.w  #1,d4
+         bra.s   .is
+ .id:    addq.b  #1,12(a0)
+-        bra.w   cp_edit
++        bra   cp_edit
+ .rem:   move.w  d2,d4
+         addq.w  #1,d4
+ .rs:    cmp.w   d3,d4
+@@ -1748,7 +1706,7 @@
+         addq.w  #1,d4
+         bra.s   .rs
+ .rd:    subq.b  #1,12(a0)
+-        bra.w   cp_edit
++        bra   cp_edit
+ 
+ ; --- editor commands
+ c_blank:
+@@ -1770,8 +1728,8 @@
+         move.b  #$c3,44(a0)
+         move.b  #$c3,45(a0)
+         move.b  #$c3,46(a0)
+-        move.w  #1,vDirty(a5)
+-        clr.w   RSV+rsCx(a5)
++c_bt:   move.w  #1,vDirty(a5)
++c_nav:  clr.w   RSV+rsCx(a5)
+         move.w  #1,RSV+rsCy(a5)
+         move.w  #21,RSV+rsTop(a5)
+         clr.w   vMode(a5)
+@@ -1868,20 +1826,112 @@
+ 
+ ; rw (GEMDOS read/write of OVSZ bytes on handle d6) sits at the end of the lift block: CODE1 is full.
+ 
+-        org     CODE2
+-c_look: move.w  RSV+rsTow(a5),d0
++; Level > Colours / Enemies / Copy tower: a list of the choices built into the menu buffer (kind d3: 0 colour sets = the game's 8 tower names, 1 eye designs, 2 the 16 shipped
++; towers).  Item action 14, param = kind<<4 | index.  The cursor starts on the CURRENT choice (eff_col / eff_eye: what the game will really show, also for old files that
++; follow the base tower), and every cursor move re-themes the whole screen (preview) before FIRE confirms.
++c_col:  moveq   #0,d3
++        bra.s   pk
++c_eye:  moveq   #1,d3
++        bra.s   pk
++c_cpy:  moveq   #2,d3
++pk:     bsr     mb_new
++        moveq   #0,d2
++.l:     lea     vNum(a5),a2
++.nm:    move.w  d2,d0
++        and.w   #7,d0
+         addq.w  #1,d0
++        bsr   dec1
++        move.b  #' ',(a2)+
++        move.w  d2,d0
++        cmp.w   #1,d3
++        beq.s   .en
++        lea     $3d14e.l,a0
++        lsl.w   #2,d0
++        move.l  0(a0,d0.w),a0
++        bra.s   .cp
++.en:    lea     enames(pc),a0
++        bra.s   .e2
++.e1:    tst.b   (a0)+
++        bne.s   .e1
++.e2:    dbra    d0,.e1
++.cp:    bsr   cpstr
++        lea     vNum(a5),a0
++        moveq   #14,d0
++        move.w  d3,d1
++        lsl.w   #4,d1
++        or.w    d2,d1
++        bsr   mb_add
++        addq.w  #1,d2
++        lea     pkn(pc),a0
++        cmp.b   0(a0,d3.w),d2
++        bne.s   .l
++        lea     sBack(pc),a0
++        moveq   #4,d0
++        moveq   #7,d1
++        bsr   mb_add
++        lea     MB.l,a0
++        bsr   menu_open
++        cmp.w   #1,d3
++        blt.s   .c
++        beq.s   .e
++        move.w  RSV+rsMis(a5),d0
++        subq.w  #1,d0
++        lsl.w   #3,d0
++        add.w   RSV+rsTow(a5),d0
++        bra.s   .s
++.c:     bsr   eff_col
++        bra.s   .s
++.e:     bsr   eff_eye
++.s:     move.w  d0,vSel(a5)
++        sub.w   #11,d0
++        bpl.s   .t
++        moveq   #0,d0
++.t:     move.w  d0,vMTop(a5)
++
++; the screen takes the look of the highlighted colour set / tower (called after every cursor move in a menu and when a list opens)
++preview:
++        bsr   menu_item
++        cmp.b   #14,(a0)+
++        bne.s   .r
++        moveq   #0,d0
++        move.b  (a0),d0
++        move.w  d0,d1
++        lsr.b   #4,d1
++        subq.b  #1,d1
++        beq.s   .r
+         and.w   #7,d0
+-        move.w  d0,RSV+rsTow(a5)
++        bra   set_theme
++.r:     rts
++
++enames: dc.b    'Eyelid',0,'Studded',0,'Four orbs',0,'Split plate',0
++pkn:    dc.b    8,4,16
++        even
++        org     CODE2
++; menu action 14 (a pick from one of those lists): colours -> the TOWER byte (what v1.1.1 recolours from) and the colour nibble of flags.b cleared;
++; enemies -> the eye-design nibble; tower copy -> mission, tower and the original grid (flags cleared: the look of that tower)
++a_pick: move.w  d1,d0
++        lsr.w   #4,d0
++        and.w   #15,d1
++        subq.w  #1,d0
++        beq.s   .eye
++        bgt.s   .cpy
++        move.w  d1,RSV+rsTow(a5)
++        andi.b  #$0f,RSV+rsFlg(a5)
+         bra.s   c_ldone
+-c_col:  move.b  RSV+rsFlg(a5),d0        ; colour set = high nibble of flags.b: 0 = as the base tower, 1..8
+-        add.b   #$10,d0
+-        cmp.b   #$90,d0
+-        blo.s   c_fst
+-        and.b   #$0f,d0
+-        bra.s   c_fst
+-; (c_eye and c_fst: block 7 at CODE6, behind the floppy build's TOS-state capture)
+-c_mis:  eori.w  #3,RSV+rsMis(a5)
++.eye:   addq.b  #1,d1
++        move.b  RSV+rsFlg(a5),d0
++        and.b   #$f0,d0
++        or.b    d1,d0
++        move.b  d0,RSV+rsFlg(a5)
++        bra.s   c_ldone
++.cpy:   move.w  d1,d0
++        lsr.w   #3,d0
++        addq.w  #1,d0
++        move.w  d0,RSV+rsMis(a5)
++        and.w   #7,d1
++        move.w  d1,RSV+rsTow(a5)
++        clr.b   RSV+rsFlg(a5)
++        bra   c_copyorig
+ c_ldone: move.w #1,vDirty(a5)
+         clr.w   vMode(a5)
+         move.w  #2,vRedraw(a5)
+@@ -1889,17 +1939,9 @@
+ 
+ c_copyorig:
+         clr.w   RSV+rsLvl(a5)
+-        move.w  RSV+rsTow(a5),$3390c.l
+-        move.w  RSV+rsMis(a5),$33910.l
+-        jsr     $377a2.l
++        bsr     ld_dec
+         move.w  $33912.l,RSV+rsRows(a5)
+-        move.w  #1,vDirty(a5)
+-        clr.w   RSV+rsCx(a5)
+-        move.w  #1,RSV+rsCy(a5)
+-        move.w  #21,RSV+rsTop(a5)
+-        clr.w   vMode(a5)
+-        move.w  #3,vRedraw(a5)
+-        rts
++        bra     c_bt
+ 
+ c_tup:  moveq   #5,d0
+         bra.s   c_time
+@@ -1933,7 +1975,7 @@
+ c_rename:
+         lea     RSV+rsName(a5),a0
+         move.l  a0,vNDst(a5)
+-        bra.w   name_begin
++        bra   name_begin
+ 
+ ; level name entry: up/down change the character, left/right move, fire = done
+ name_begin:
+@@ -1982,21 +2024,21 @@
+         bne.s   .ed
+         move.w  vCur(a5),d0
+         tst.l   vNDst(a5)
+-        bra.w   m_camps
++        bra   m_camps
+ .ed:    move.w  #2,vRedraw(a5)
+         rts
+ 
+ ; --- leaving / saving
+ ; commit the working grid into its slot (store in RAM) and into TREC
+ c_leaveed:
+-        bsr.w   commit
++        bsr   commit
+         clr.w   RSV+rsEd(a5)
+-        bra.w   m_levels
++        bra   m_levels
+ 
+-c_save: bsr.w   chk_init
++c_save: bsr   chk_init
+         tst.w   vScr(a5)
+         beq.s   .w
+-        bsr.w   commit
++        bsr   commit
+ .w:     moveq   #2,d0
+         bra.s   dsk_prompt
+ c_dload: moveq  #1,d0
+@@ -2005,10 +2047,10 @@
+         clr.l   vMsg(a5)
+         move.w  #4,vMCol(a5)
+         lea     m_dprompt(pc),a0
+-        bra.w   menu_open
++        bra   menu_open
+ 
+ ; prompt answered (fire): the disk excursion, then the result message (string number = status)
+-c_dgo:  bsr.w   disk_op
++c_dgo:  bsr   disk_op
+         move.w  d0,d1
+         lea     sMsgs(pc),a0
+         bra.s   .t
+@@ -2021,22 +2063,22 @@
+         bne.s   .s
+         lea     vTxt(a5),a2
+         lea     sLoaded(pc),a0
+-        bsr.w   cpstr
++        bsr   cpstr
+         move.w  OVS+6.l,d0
+         bsr.s   dnum
+         lea     sLv(pc),a0
+-        bsr.w   cpstr
++        bsr   cpstr
+         move.w  OVS+8.l,d0
+         bsr.s   dnum
+         lea     sCm(pc),a0
+-        bsr.w   cpstr
++        bsr   cpstr
+         lea     vTxt(a5),a0
+ .s:     move.l  a0,vMsg(a5)
+ c_dno:  clr.w   vDisk(a5)
+-        bra.w   a_done
++        bra   a_done
+ 
+ 
+-c_play: bsr.w   commit
++c_play: bsr   commit
+         move.w  #1,RSV+rsTest(a5)
+         move.w  #$7fff,RSV+rsLvl(a5)
+         move.w  RSV+rsTow(a5),d1
+@@ -2094,23 +2136,23 @@
+         sub.w   #REC,d0
+         move.w  d0,4(a2)                ; len
+         ; into the store
+-        bsr.w   chk_init
++        bsr   chk_init
+         moveq   #0,d3
+         move.w  4(a2),d3
+         add.w   #REC,d3                 ; new size
+         move.w  RSV+rsSlot(a5),d0
+         beq.s   .app
+         subq.w  #1,d0
+-        bsr.w   lvl_ptr
++        bsr   lvl_ptr
+         move.l  a0,d0
+         beq.s   .app
+         ; replace in place: shift the tail by (new - old)
+         move.l  a0,a3
+-        bsr.w   rdlen
++        bsr   rdlen
+         move.l  d1,d4
+         add.w   #REC,d4                 ; old size
+         move.l  a3,-(a7)
+-        bsr.w   store_end
++        bsr   store_end
+         move.l  a0,a4                   ; end
+         move.l  (a7)+,a3
+         move.l  d3,d0
+@@ -2118,7 +2160,7 @@
+         move.l  a4,d1
+         add.l   d0,d1
+         cmp.l   #OVS+OVSZ,d1
+-        bhi.w   no_room
++        bhi   no_room
+         lea     0(a3,d4.l),a0           ; old tail start
+         lea     0(a3,d3.l),a1           ; new tail start
+         tst.l   d0
+@@ -2144,11 +2186,11 @@
+         bne.s   .cl
+         clr.l   vMsg(a5)
+         rts
+-.app:   bsr.w   store_end
++.app:   bsr   store_end
+         lea     OVS+OVSZ.l,a1
+         suba.l  a0,a1
+         cmpa.l  d3,a1
+-        blt.w   no_room
++        blt   no_room
+         lea     TREC.l,a1
+         move.l  d3,d0
+ .ac:    move.b  (a1)+,(a0)+
+@@ -2244,14 +2286,30 @@
+         dbra    d5,.r
+         addq.l  #1,a0
+         dbra    d6,.t
++        moveq   #0,d0                   ; default look (colour set 1) for the list screens; the map screen re-themes itself on every full redraw
++; d0.w = colour set 0..7 -> EPAL: editor colour i = word tmap[i] of that set's 16-word game palette ($35250 + 32 per set; the same table the game recolours from)
++set_theme:
++        lsl.w   #5,d0
++        lea     $35250.l,a0
++        adda.w  d0,a0
++        lea     tmap(pc),a1
++        lea     EPAL.l,a2
++        moveq   #15,d1
++.l:     moveq   #0,d2
++        move.b  (a1)+,d2
++        move.w  0(a0,d2.w),(a2)+
++        dbra    d1,.l
+         rts
++theme_cur:
++        bsr   eff_col
++        bra.s   set_theme
+ 
+ ; the campaign store is validated once (RS+rsOk): bad version, counts, ranges, lengths or mask/stream mismatch => magic cleared (= absent)
+ ov_ok:  tst.w   RS+rsOk.l
+         bne.s   .r
+         movem.l d0-d7/a0-a4/a6,-(a7)
+         lea     OVS.l,a6
+-        bsr.w   ov_check
++        bsr   ov_check
+         move.w  #1,RS+rsOk.l
+         movem.l (a7)+,d0-d7/a0-a4/a6
+ .r:     rts
+@@ -2259,50 +2317,50 @@
+ ov_check:
+         move.l  a6,a0
+         cmpi.l  #'NCMP',(a0)
+-        bne.w   .out
++        bne   .out
+         cmpi.w  #1,4(a0)
+-        bne.w   .bad
++        bne   .bad
+         move.w  6(a0),d3
+         cmp.w   #127,d3
+-        bhi.w   .bad
++        bhi   .bad
+         move.w  8(a0),d2
+         cmp.w   #8,d2
+-        bhi.w   .bad
++        bhi   .bad
+         lea     16(a0),a1
+         bra.s   .ct
+ .cl:    cmpi.b  #16,12(a1)
+-        bhi.w   .bad
++        bhi   .bad
+         lea     32(a1),a1
+ .ct:    dbra    d2,.cl
+         lea     LV0(a0),a1
+         lea     OVSZ(a6),a3
+-        bra.w   .lt
++        bra   .lt
+ .ll:    lea     REC(a1),a2
+         cmpa.l  a3,a2
+-        bhi.w   .bad
++        bhi   .bad
+         move.b  (a1),d0
+         cmp.b   #1,d0
+-        blo.w   .bad
++        blo   .bad
+         cmp.b   #2,d0
+-        bhi.w   .bad
++        bhi   .bad
+         cmpi.b  #7,1(a1)
+-        bhi.w   .bad
++        bhi   .bad
+         moveq   #0,d4
+         move.b  2(a1),d4
+         cmp.w   #16,d4
+-        blo.w   .bad
++        blo   .bad
+         cmp.w   #120,d4
+-        bhi.w   .bad
++        bhi   .bad
+         move.l  a1,a0
+-        bsr.w   rdlen
++        bsr   rdlen
+         move.l  d1,d5
+         move.w  d4,d0
+         add.w   d0,d0
+         cmp.w   d0,d5
+-        blo.w   .bad
++        blo   .bad
+         lea     0(a2,d5.l),a4
+         cmpa.l  a3,a4
+-        bhi.w   .bad
++        bhi   .bad
+         move.w  d0,d1
+         subq.w  #1,d1
+         moveq   #0,d6
+@@ -2318,7 +2376,7 @@
+         sub.w   d4,d0
+         sub.w   d4,d0
+         cmp.w   d0,d6
+-        bne.w   .bad
++        bne   .bad
+         move.l  a4,a1
+ .lt:    dbra    d3,.ll
+ .out:   rts
+@@ -2327,7 +2385,7 @@
+ 
+ ; a0 = record (kept) -> d1.l = time.w (an odd record start: bytewise)
+ rdtime: addq.l  #2,a0
+-        bsr.w   rdlen
++        bsr   rdlen
+         subq.l  #2,a0
+         tst.w   d1
+         rts
+@@ -2354,7 +2412,7 @@
+         bclr.b  #6,$fffffa11.w
+         rte
+ 
+-; Options page ($3d662, replaces `bsr.w $3b360` of the last list line + `bra.w $3d698`): the displaced call, then a hint on the empty line 1
++; Options page ($3d662, replaces `bsr $3b360` of the last list line + `bra $3d698`): the displaced call, then a hint on the empty line 1
+ ed_opt:
+         jsr     $3b360.l
+         lea     opthint(pc),a0
+@@ -2389,25 +2447,25 @@
+         addq.l  #2,a1
+         bra.s   .f
+ .hit:   move.l  a1,a0
+-        bra.w   act_go
++        bra   act_go
+ .pick:  cmp.b   #$1c,d0
+-        beq.w   lift_set
++        beq   lift_set
+         cmp.b   #$39,d0
+-        beq.w   lift_set
++        beq   lift_set
+         rts
+ .rep:   move.w  RSV+rsLast(a5),d1
+         btst    #8,d1
+         beq.s   kb_r
+         cmp.b   #$83,d1
+-        beq.w   a_tri
++        beq   a_tri
+         cmp.b   #$c3,d1
+-        beq.w   a_tri
+-        bra.w   a_set
++        beq   a_tri
++        bra   a_set
+ kb_r:   rts
+ 
+ ; menu action 13: enemy shortcut, d1 = kind; the same key on the same enemy turns it round (start direction bit)
+ a_ekey: move.w  d1,d2
+-        bsr.w   cur_cell
++        bsr   cur_cell
+         move.b  d0,d3
+         and.b   #$fe,d0
+         cmp.b   d2,d0
+@@ -2417,8 +2475,8 @@
+ .p:     move.w  d2,d0
+         move.w  d2,d1
+         bsr.s   rec
+-        bsr.w   place_enemy
+-        bra.w   a_done
++        bsr   place_enemy
++        bra   a_done
+ 
+ 
+ m_enemy: dc.b   8
+@@ -2440,7 +2498,7 @@
+         dc.b    $00,$00,$00,$10,$00,$00,$00,$00,1
+         dc.b    $00,$00,$00,$00,$18,$00,$00,$00,1
+         dc.b    $00,$00,$00,$00,$00,$ff,$ff,$00,2
+-        dc.b    $00,$00,$00,$00,$ff,$ff,$ff,$00,3
++        dc.b    $00,$00,$00,$00,$ff,$aa,$55,$00,3
+         dc.b    $18,$3c,$7e,$7e,$7e,$7e,$3c,$18,4
+         dc.b    $ff,$81,$bd,$bd,$bd,$bd,$81,$ff,5
+         dc.b    $7e,$ff,$ff,$ff,$ff,$ff,$ff,$7e,6
+@@ -2464,7 +2522,7 @@
+ n0:     dc.b    'Empty',0
+ n1:     dc.b    'Marker',0
+ n2:     dc.b    'Ledge',0
+-n3:     dc.b    'Wide ledge',0
++n3:     dc.b    'Crumble ledge',0
+ n4:     dc.b    'Pillar',0
+ n5:     dc.b    'Blue block',0
+ n6:     dc.b    'Lift start',0
+@@ -2480,6 +2538,7 @@
+ n16:    dc.b    0
+ n17:    dc.b    'Lift end',0
+ n18:    dc.b    'Lift stop',0
++tmap:   dc.b    4,8,26,20,12,18,30,14,16,18,20,22,24,26,28,30
+ 
+ sFull:  dc.b    'Overlay full!',0
+ sWarnEye: dc.b  'Eye needs terrain',0
+@@ -2529,16 +2588,17 @@
+ kbtab:  dc.b    $2e,0,$00,$53,0,$00,$26,0,$81,$19,0,$80,$30,0,$82,$20,1,$83,$2d,1,$c3,$1e,12,0,$2c,12,1
+         dc.b    $1f,13,$10,$13,13,$20,$11,13,$30,$16,13,$40,$17,13,$50,$24,13,$60,$25,13,$70,0
+         even
+-m_root: dc.b    12
++m_root: dc.b    13
+         dc.b    0,$00,'Empty  C',0
+         dc.b    0,$81,'Ledge  L',0
++        dc.b    0,$91,'Crumble ledge',0
+         dc.b    0,$80,'Pillar  P',0
+         dc.b    0,$82,'Blue block (shoot) B',0
+         dc.b    2,3,'Lift >',0
+         dc.b    1,$83,'Door opening  D',0
+         dc.b    1,$c3,'Exit door  X',0
+         dc.b    2,1,'Enemy >',0
+-        dc.b    2,2,'Tower >',0
++        dc.b    2,2,'Level >',0
+         dc.b    4,16,'Playtest',0
+         dc.b    4,6,'Save to campaign disk',0
+         dc.b    4,8,'Leave editor',0
+@@ -2550,12 +2610,10 @@
+         dc.b    5,0,'Start up',0
+         dc.b    5,1,'Start down',0
+         dc.b    4,7,'< back',0
+-m_tower: dc.b   10
+-        dc.b    4,9,'Look: next tower',0
+-        dc.b    4,10,'Look: other mission',0
+-        dc.b    4,22,'Colours: next',0
+-        dc.b    4,23,'Enemies: next',0
+-        dc.b    4,11,'Copy original grid',0
++m_tower: dc.b   8
++        dc.b    4,9,'Colours >',0
++        dc.b    4,10,'Enemies >',0
++        dc.b    4,11,'Copy tower >',0
+         dc.b    4,12,'Blank grid',0
+         dc.b    4,13,'Time +50',0
+         dc.b    4,14,'Time -50',0
+@@ -2605,7 +2663,7 @@
+         bsr.s   lift_clr
+ .out:   bra.s   .done
+ .stop:  moveq   #$0c,d0
+-        bsr.w   place
++        bsr   place
+         bra.s   .done
+ .new:   cmp.b   #$85,0(a0,d2.w)         ; cursor on an existing slab: forget its old end first
+         bne.s   .slab
+@@ -2616,7 +2674,7 @@
+         move.w  d2,vLift(a5)
+         move.w  #1,vDirty(a5)
+         bsr.s   lift_msg
+-.done:  bra.w   a_done
++.done:  bra   a_done
+ 
+ ; d2 = row, a0 = column: d3 = row of the $85 of the lift the cursor belongs to (the cursor on its end $08, or in its shaft above the slab), N set when none
+ lift_slab:
+@@ -2654,7 +2712,7 @@
+ 
+ ; Fire while vLift is set: the cursor row is the other end
+ lift_set:
+-        bsr.w   colbase
++        bsr   colbase
+         move.w  vLift(a5),d3
+         subq.w  #1,d3                    ; d3 = first row (the slab so far)
+         cmp.w   d3,d2
+@@ -2671,7 +2729,7 @@
+         bne.s   .ok
+         move.b  #$81,-1(a0,d2.w)
+ .ok:    clr.w   vLift(a5)
+-        bsr.w   lift_msg
++        bsr   lift_msg
+         bsr.s   lift_warn
+         move.w  #1,vDirty(a5)
+         move.w  #3,vRedraw(a5)
+@@ -2683,8 +2741,8 @@
+ 
+ ; warning after a lift is complete: a $80 pillar between slab and end blocks the ride (blue blocks are a puzzle, the frog can shoot them)
+ lift_warn:
+-        bsr.w   colbase
+-        bsr.w   lift_slab
++        bsr   colbase
++        bsr   lift_slab
+         bmi.s   .r
+ .l:     addq.w  #1,d3
+         move.b  0(a0,d3.w),d0
+@@ -2702,7 +2760,7 @@
+ ; F10 while vLift is set: forget the pending lift (the slab stays, it is an ordinary start without an end: "Lift: delete" removes it)
+ lift_cancel:
+         clr.w   vLift(a5)
+-        bsr.w   lift_msg
++        bsr   lift_msg
+         move.w  #2,vRedraw(a5)
+         rts
+ 
+@@ -2754,10 +2812,10 @@
+         move.l  a7,vGsp(a5)
+         lea     STK.l,a7
+         move.l  a5,-(a7)
+-        bsr.w   mfp_save
+-        bsr.w   swap_tos
++        bsr   mfp_save
++        bsr   swap_tos
+         move.l  RS+rsMfpP.l,a2
+-        bsr.w   mfp_set
++        bsr   mfp_set
+         move.w  #$2500,sr
+         move.l  $404.w,-(a7)
+         move.l  #crit,$404.w
+@@ -2765,11 +2823,11 @@
+         move.l  (a7)+,$404.w
+         move.w  #$2700,sr
+         move.l  d0,-(a7)
+-        bsr.w   swap_tos
++        bsr   swap_tos
+         move.l  (a7)+,d7
+         move.l  (a7)+,a5
+         lea     V+vMfp.l,a2
+-        bsr.w   mfp_set
++        bsr   mfp_set
+ .dr:    btst    #0,$fffffc00.w
+         beq.s   .dd
+         move.b  $fffffc02.w,d0
+@@ -2782,7 +2840,7 @@
+         bne.s   .out
+         cmp.w   #1,vDisk(a5)
+         bne.s   .out
+-        bsr.w   load_fin
++        bsr   load_fin
+ .out:   movem.l (a7)+,d1-d7/a0-a6
+         rts
+ 
+@@ -2804,7 +2862,7 @@
+         lea     BUF.l,a6
+         cmpi.l  #'NCMP',(a6)
+         bne.s   .z
+-        bsr.w   ov_check
++        bsr   ov_check
+         cmpi.l  #'NCMP',(a6)
+         beq.s   .ok
+ .bad:   moveq   #2,d0
+@@ -2826,10 +2884,10 @@
+         rts
+ 
+ dnum:   cmp.w   #10,d0
+-        blo.w   dec1
++        blo   dec1
+         cmp.w   #100,d0
+-        blo.w   dec2
+-        bra.w   dec3
++        blo   dec2
++        bra   dec3
+ sLoaded: dc.b   'Loaded ',0
+ sLv:    dc.b    ' levels / ',0
+ sCm:    dc.b    ' campaigns',0
+@@ -2837,12 +2895,18 @@
+ 
+ ; ------------------------------------------------------------------ enemy-set cycle (block 7 at CODE6: the 38 B between the floppy build's TOS-state capture and CODE2)
+         org     CODE6
+-c_eye:  move.b  RSV+rsFlg(a5),d0        ; enemy set = low nibble of flags.b: 0 = as the base tower, 1..4
+-        addq.b  #1,d0
+-        move.b  d0,d1
+-        and.b   #15,d1
+-        cmp.b   #5,d1
+-        blo.s   c_fst
+-        and.b   #$f0,d0
+-c_fst:  move.b  d0,RSV+rsFlg(a5)
+-        bra.s   c_ldone
++; colour / eye design in force for the level being edited (d0 = 0-based index): the nibble of flags.b when set, else the base tower byte (the game's own rule; the eye
++; sites follow the tower byte, the colour sites the colour nibble)
++eff_col: moveq  #7,d1
++        move.b  RSV+rsFlg(a5),d0
++        lsr.b   #4,d0
++        bra.s   eff
++eff_eye: moveq  #3,d1
++        move.b  RSV+rsFlg(a5),d0
++        and.b   #15,d0
++eff:    bne.s   .h
++        move.w  RSV+rsTow(a5),d0
++        addq.w  #1,d0
++.h:     subq.w  #1,d0
++        and.w   d1,d0
++        rts
+--- a/patches/ed_overlay.nep
++++ b/patches/ed_overlay.nep
+@@ -5,30 +5,30 @@
+ # $3851a ACIA-path key latch (the F10 make byte is not lost to the one-cell sampling; D is read from the cell), $3d662 Options-page hint line.
+ # Look sites (flags.b: high nibble = colour set, low nibble = eye design, see ed_lvl): $3dbf0 level setup hook (the call of sub_03636e, ends in it), and five
+ # sites `move.w $3390c.l,d0` retargeted to the cache the hook fills: palette $3522e, raster $3dc1e, skyline $366de, texture $36b68 (every frame), eye discs $363a4.
+-# Blocks (7): code1 5306 B at $75740 (dead zone: relocation table remnants / NEBULTIT tail), tables 1314 B at $76d40, code2 1786 B at $77300, code3 570 B at $77a40,
+-# code4 252 B at $77dc0, code5 136 B at $76c76, code6 28 B at $772da (zero gap; no overlap with the trainer blob $76c00-$76c75, latch $76d00-$76d3b, credit $77a00-$77a3f, state $77c80-$77dbf).
++# Blocks (7): code1 5298 B at $75740 (dead zone: relocation table remnants / NEBULTIT tail), tables 1294 B at $76d40, code2 1776 B at $77300, code3 570 B at $77a40,
++# code4 252 B at $77dc0, code5 136 B at $76c76, code6 34 B at $772da (zero gap; no overlap with the trainer blob $76c00-$76c75, latch $76d00-$76d3b, credit $77a00-$77a3f, state $77c80-$77dbf).
+ patch ed_overlay
+ default yes
+ clear 77c80 140
+-site 377a2 4ef900075740
+-site 37a90 4eb9000757464e71
+-site 3d6c4 4eb90007574c4e714e71
+-site 3adb4 4eb900075752
+-site 3d110 4eb900075758
+-site 3e352 4ef90007575e
+-site 3dfd6 4eb900075764
+-site 3851a 4ef90007786e
+-site 3d662 4ef9000778a64e71
+-site 3dbf0 4eb9000757f8
++site 377a2 4ef900075810
++site 37a90 4eb9000758544e71
++site 3d6c4 4eb9000759c64e714e71
++site 3adb4 4eb900075868
++site 3d110 4eb90007588a
++site 3e352 4ef9000758aa
++site 3dfd6 4eb90007596e
++site 3851a 4ef900077864
++site 3d662 4ef90007789c4e71
++site 3dbf0 4eb9000757ce
+ site 3522e 303900077cbe
+ site 3dc1e 303900077cbe
+ site 366de 303900077cbe
+ site 36b68 303900077cbe
+ site 363a4 303900077cb2
+-block 75740 4ef90007583a4ef90007587e4ef9000759f84ef9000758924ef9000758b44ef9000758d44ef90007599a61001ff641f9000bc0000c904e434d50661ab0680006641441e801104a40670a610e41f01014534060f24e7591c84e75720012280004e149122800054e7541f9000bc0003028000660ce61001fac41f9000bc0000c904e434d50660eb06800086408eb4841f000104e7591c84e75303900077c846714b07c7fff660841f9000be0004e7553406000ff7891c84e7548e7e08061da7200200867041228000334390003390c3001e808611a33c000077cbe3001611013c000077cb34cdf01074ef90003636ec07c000f53406a0230024e75619c200867327e001e28000233c70003391245f9000327f03c3c03ff429a51cefffc41e800142248d2c7d2c745f9000327f04ef90003781241f9000327f04ef9000377a80811000067044468005420090480000327f04e75d04041f90003ad9e303000003f006100ff36301f2208670861001fb6670230014e75e549d0c120503f002f086100ff1820086606205f301f4e755088588f301f4e754a7900077c88660000ee303900077c8066144a7900077c846636303900033a344ef90003e35853406100feb620086720303900077c82524033c000077c8272001228000cb04164081030000e6000001833fc00080003390c427900077c80427900077c844e75720012004a006a163401e64ac47c00015242c27c0007427900077c84601c3001524133c100077c846100fe06740172002008670614101228000133c20003391033c10003390c33c100033a4441f90003e2744a790003391e6702548830814e754a7900077caa67220c79004400077caa66124a7900077c88670a427900077caa6000000e427900077caa4ef90003868a33fc000100077c9a610000e6600000024ff900000800b07c000367064ef90003dbb0427900077c884ef90003db8c4eb90003853a4a7900077c88670c427900077c9a610000ac603c427900077c80427900077c84427900033a444a7900077caa6708427900077caa600a0c390020000384986628423900038498427900077c9a6100006e588f4a40670cb07c000367064ef90003d85a4ef90003d5e24a79000338f04e7511fc0000826048e7fffe41fa002043f88240700722d851c8fffc527900077cc04eb900033d024cdf7fff4e730000033300a005a20666035f0fea0f400520063007400750076007700771077748e77ffe4bf900077cc0204d703f429851c8fffc61001c6061001c8e40ed0022007c07002b78007000242b790003875800283b7900033a38002c1b788201002e1b788203002f3b790003391000303b790003390c003241f8824043ed003c700722d851c8fffc4238fa1b21fc00075a6e007011fc000a82014238820346fc2300423900038498426dffea426dffec426dffc84a6dffc6672e3b7c7fffffc433edffce0003390c33edffcc000339104eb9000377a2426dffc43b7c0001001e3b7c000100a26004610009023b7c00030012610000da3015b05567fc4eb90003853a302dffea426dffeab07c0044660461000094302dffec6708426dffec61001d28610005884a6d002067c646fc270021ed0024007023ed00280003875833ed002c00033a3811ed002e820111ed002f820341ed003c43f88240700722d851c8fffc423900038498426dffea426dffec33fcffff0003849a302d0020b07c0001671ab07c0002671033ed00300003391033ed00320003390c426dffc646ed00224cdf7ffe4e754a6d00ae660018a84a6d001e67124a6d000266124a6d00ac66001f40600018023b7c000300204e75302d0012674e426d001272004a6d001e67064a6d000267027201b26d00aa6704807c00013b4100aa4a416712610000280c6d00030002670003a06000032a08000000670c6100001061000020610001b8600002124e7541f9000a0000303c1f3f720020c151c8fffc4e757a00382dffd898456b3cb86dffd06c367c003006e14841f9000327f0d0c010304000320634054a006610b87c0002660a4a4666066100001a6004610000205246bc7c00106dcc5245ba7c00166db44e7548e7ffe03e013c027610600c48e7ffe03e013c02610000da43f9000a88003403e94ad2c245ed00c024d924d924d924d943fa0feec6fc00097a001a31300845ed00c04a006b501200c23c00706748e80908000000661ab23c0004672eb23c00056728006a00030006006a000300086026b23c0004671ab23c00056714006ac0000006006ac0000008600c00520ff06006006a0ff0000e41f9000a0000ccfc0500d1c6e74fd0c772000805000056c1488174000805000156c2488276000805000256c348837e07381a3004c04130803004c042314000023004c043314000044268000641e800a051cfffde4cdf07ff4e7576004a0067166b161200e809c23c000776014a0167001d827608d6014e751200c23c00037607b23c0003660a0800000667ea76084e7576044a0167e07605b23c000267d876061200c23c000c66ce76021200c23c007067c476034e7548e7e080302dffd8906dffd66b4ab07c00166c44c0fc050041f9000a0000d1c0322dffd4e749d0c172074a416718b27c000767120a5080010a68800100020a6880010004600a4650466800024668000441e800a051c9ffd44cdf01074e7541f9000a0080303c00af72007407224822c151cafffc41e800a051c8fff041f9000a6e00303c03bf20c151c8fffc45ed007c14fc0054302dffce5240610001f014fc002014fc004d302dffcc610001e042127400610000a245ed007c14fc0053102dfff2e808610001c634fc2045102dfff2610001ba421274056100007c47fa0072740145ed007c14db7000101b303500c0610001a642126100005e5242b47c000466e06100013645ed007c14fc0024610001ac421274046100003e6100011e6100fe8441fa0e70d6433630300041fa0e66d0c37200740b6100011a202d0014660641fa0e3d600220407210740b6000010448104314521641ed007c7220600000f4206d00047c001c187a00382d000a54882f084a1866fc2f08300590446b32b07c000c6c2c206f000445ed007c14fc0020ba6d00086606157c003effff610000e6421241ed007c322d00a83400610000a4205f588f5245ba466db4202d001467104a6d001e660a20407208740b610000844e7545ed007c41fa0ecc610000a8206d009e700b14d851c8fffc421241ed007c720874006100005c41fa0eb0720874036100005041fa0eb8720874046100004445ed007c700f14fc002051c8fffa4212302d009c45ed0081d4c014bc005e41ed007c720874016000001a302dffd4e14841f9000327f0d0c0302dffd6103000004e7548e7f0e023fc000a000000038758c4fc0a003601e249e749c67c0001d243d24233c100033a384eb90003b3444cdf070f4e7514d866fc538a4e75c07c000fd03c003014c04e7548c080fc0064d03c003014c0484048c080fc000ad03c003014c04840d03c003014c04e753f00e8086102301fc03c000fb03c000a6d025e00d03c003014c04e753639000338f03239000338f23439000338f4382d000c3b43000c4a4367084a4466046000010230018042660a426d000e426d00104e75302d000e670853403b40000e4e753b7c0004000e4a6d0010660c3b7c000100103b7c000e000e302d00026700000eb07c00036700123a6000006c6100fcb64a6d00ac67027200302dffd4d041c07c000f3b40ffd4302dffd6d0426a027000362dffd05343b6406c0230033b40ffd6322dffd8b0416f063b40ffd86010927c0015b0416c10d07c00153b40ffd83b7c000300124e756100fc5c3b7c000200126100184e4e75302d000890426a027000206d0004760016105343b0436f0230033b4000084a416a083b43000860000082322d000ab0416c063b40000a600c907c000bb0416f043b40000a3b7c000200124e75302d0002b07c0003670011c64a406600004e4a6d00ac6600188a3b7c000800a841fa0e50610000044e752b480004426d0008426d000a3b7c000100023b7c000200124e75206d00045288302d0008670c534054884a1866fc51c8fff84e7561e4101872001210c07c00ffd04041fa000a303000004ef00000001c002a0058006c016400a00280028c029802b206a206ae179a1664610015d43001610000a060000088610015c636013f2dffd6780230036100008a302dffd65240b06dffd06c083b40ffd651ccffe83b5fffd66000005a41fa0c68d2413230100041fa0c5ed0c16000ff483b410018b23c0030671841fa0e2cb23c00406d0ab23c00606c0441fa0e416000ff26302d001832006100155c6100005060000012302d001880413200610015486100003c4a6d001e670000ec426d00023b7c000300124e7548e7c080322dffd4e14941f9000327f0d0c1322dffd6118010003b7c000100a24cdf01034e753f0061d6301f42ad00143200c27c0070b27c00406d3eb27c00606c36322dffd4e14941f9000327f0d0c1342dffd636025243b66dffd06c124a3030006af253426b084a3020006af64e7541fa0ad62b4800144e75322dffd4e14941f9000327f0d0c1342dffd653426b064a3020006be241fa0ac22b4800144e7541fa000cd241323010004ef010000030005e006c020603a0004a10160052100a0eac0ed00ee806300f2c0f300f7610a0050604081028104010980ebc0e86426d001e3b7c000800a841fa0b1c6100fe003b7c000300124e753b7c000300204e75426d00023b7c000200124e7549faf2b647fa0a7e7a087806600c49faf2f247fa0a7c7a007808426d001e3b7c000800a845f9000a8000421a2b4a00a441f9000bc00076000c904e434d506604363040007400601630024e9441f050003004e24856403202610000325242b4436de6204b70043204e2496100002041fa0a2f700472006100001441f9000a80006100fd603b7c000300124e75246d00a414c014c1700e1218670614c151c8fff8421a2b4a00a445f9000a800052124e753b41001a41fa0aa06000fd283b41001a41fa0abc6000fd1c342d001a4a416700003053416700006453416700012e60000176342d001a3b42001c4a41670001de5341670002b65341670002006000020a30026100f1b420086700fdd6426dffc052423b42ffc47200122800017400141033c10003390c33c20003391033c100033a443b7c000200204e7530026100f17a20086700fd9c43edffdc700b13b00008000051c8fff8700010103b40ffcc102800013b40ffce102800023b40ffd0610012403b41ffd21b680003fff252423b42ffca3b42ffc433edffce0003390c33edffcc000339104eb9000377a2426dffc4426d00a260000032426dffca422dfff26100042041fa08fc43edffdc700b12d851c8fffc3b7c0001ffcc426dffce3b7c0450ffd2600000023b7c000800a83b7c0001ffc63b7c0001001e426dffd43b7c0001ffd63b7c0015ffd8426d000242ad00143b7c000300124e7530026100f0aa20086700fccc26486100f0ce2601d67c00146100f0d243f9000be00093c8b3c36d000014224812db534366fa5279000bc0066000fdbc41fa07e62b4800143b7c000200124e7530026100f05e20086700fc806100f0842601d67c0014264843f038002f086100f0802448205fb3ca640410d960f85379000bc0063a39000bc00843f9000bc010602c78001829000c41e9000e24487c00601010186b08b00267086502530014c0524651ccffee1346000c43e9002051cdffd26000fd3630026100f03220086700fc0a4a28000c6700fc0252423b42ffc0426dffc21028000e6100f1983b7c000200204e7530026100f0042b48009e60000c1e30026100eff620086700fbce43e8002045f9000bc0103039000bc008eb48d4c0b3ca640410d960f8701f421851c8fffc5379000bc0086000fcce6100003a3039000bc008b07c00086400fb8e5279000bc00834003b40001c6100efa02248701f421951c8fffc43fa074e700b10d951c8fffc6000002e41f9000bc0000c904e434d50671c303c07ff429851c8fffc23fc4e434d50000bc00033fc0001000bc0044e75302d001c6100ef522648426d001e3b7c000800a845f9000a8000421a2b4a00a47600162b000c74006000008e1033200e45ed007c320252413001c1413f0130025240610000a4321f14fc00201033200e6a2c14fc004f14fc00201033200e1200e609c23c0001d23c003114c114fc002dc03c0007d03c003114c04212602c14fc004c14fc0020c07c007f6100ee8220086712508870071218670614c151c8fff84212600614fc003f421241ed007c700a32026100fc2e5242b4436d00ff7041fa063c700472116100fc1a41fa0629700472026100fc0e41f9000a80006100f95a3b7c000300124e7548c080fc000ad03c003014c04840d03c003014c04e75302d001c6100ee5420086700fa2c70001028000cb07c00106400fee811bc0080000e5228000c6000feda3b41001a41fa06d86000f906302d001c6100ee1e20086700f9f67400342d001a76001628000c43e8000e4a41674eb27c000167000092b27c0002670000aab27c0003671c30025240b0436400fe8c1831200013b100002000138400006000fe7a4a426700fe74300253401831200013b100002000138400006000fe5e18312000c87c00ff5244b87c0090641cb87c0080642c2f0841f9000bc000b8680006205f651c383c0080601678002f0841f9000bc0004a680006205f6604383c0080138420006000fe14b67c00106400fe0c3803b8426f0a13b140ff4000534460f25228000c6000fdf438025244b8436c0a13b1400040ff524460f25328000c6000fdda41f9000327f0303c03ff429851c8fffc3b7c0030ffd0700f41f9000327f110bc008141e8010051c8fff641f900032af0117c0081002b117c0081012b117c0081022b41f900032bf0117c00c3002c117c00c3002d117c00c3002e3b7c000100a2426dffd43b7c0001ffd63b7c0015ffd8426d00023b7c000300124e7523f8047e00077db421fc00076b36047e33fc000200077d7042673f3c00074e4d588f4a80660470016002612a21f900077db4047e4e754a6f000466124a7900077d70670a537900077d7070024e75207900077db44ed0383900077d6e30045340670270023f00487a0bb83f3c003d4e41508f4a806b583c0041f9000aa000703f61000ebe7a02b0bc00002000662e7a00b87c0001672642673f0642a73f3c00424e414fef000a41f9000bc000704061000e90b0bc0000200067022a003f063f3c003e4e41588f4a8566022a0020056a22b0bcffffffdf6718b0bcffffffde6710b0bcfffffff3670470014e7570034e7570024a80670270024e75
+-block 76d40 0000001000000000010000000018000000010000000000ffff000200000000ffffff0003183c7e7e7e7e3c1804ff81bdbdbdbd81ff057effffffffffff7e06ff818181818181ff07ffc3a59999a5c3ff073c4281818181423c043c7effffffff7e3c073c7ee7c3c3e77e3c07183c7edbdb7e3c18053c187edbdb7e183c05003c7edbdb7e3c0005007effdbdbff7e000500243c7e5a7e240006183c7e181818180007183c7e007e007e0007466972653d6d656e75205265743d616761696e00000026002c003300390044004b00560061006e00780083008c009800a500b200bf00cc00cd00d6456d707479004d61726b6572004c656467650057696465206c656467650050696c6c617200426c756520626c6f636b004c69667420737461727400446f6f72206f70656e696e67004578697420646f6f720053746f6e652062616c6c005265642062616c6c0052656420287761697473290045796520552f4420736c6f770045796520552f44206661737400457965204c2f5220736c6f7700457965204c2f52206661737400004c69667420656e64004c6966742073746f70004f7665726c61792066756c6c2100457965206e65656473207465727261696e004e6f206c656467652062656c6f7721004e616d652000552f44206c6574746572204c2f52206d6f76650046697265203d20646f6e65003c6e6577206c6576656c3e003c6e65772063616d706169676e3e003c206261636b003c61646420656e7472793e004e4557204c4556454c2020004e45572043414d5000000000204142434445464748494a4b4c4d4e4f505152535455565758595a303132333435363738392d0000013809c802290c580504054f726967696e616c2067616d6500040243616d706169676e73203e0004014c6576656c73203e0004134c6f61642066726f6d2063616d706169676e206469736b0004065361766520746f2063616d706169676e206469736b00050800506c617900080145646974000802436f707900080344656c6574650004013c206261636b00050900506c61790009014564697420656e747269657300090252656e616d6500090344656c6574650004023c206261636b00060b004368616e676520736f75726365000b01496e73657274206166746572000b0252656d6f7665000b034d6f7665207570000b044d6f766520646f776e0004123c206261636b002e00005300002600811900803000822001832d01c31e0c002c0c011f0d10130d20110d30160d40170d50240d60250d7000000c0000456d7074792020430000814c6564676520204c00008050696c6c6172202050000082426c756520626c6f636b202873686f6f742920420002034c696674203e000183446f6f72206f70656e696e672020440001c34578697420646f6f72202058000201456e656d79203e000202546f776572203e000410506c6179746573740004065361766520746f2063616d706169676e206469736b0004084c6561766520656469746f720003050053746172742072696768740005015374617274206c6566740004073c206261636b000305005374617274207570000501537461727420646f776e0004073c206261636b000a04094c6f6f6b3a206e65787420746f77657200040a4c6f6f6b3a206f74686572206d697373696f6e000416436f6c6f7572733a206e657874000417456e656d6965733a206e65787400040b436f7079206f726967696e616c206772696400040c426c616e6b206772696400040d54696d65202b353000040e54696d65202d353000040f4e616d652e2e2e0004073c206261636b00
+-block 77300 302dffce5240c07c00073b40ffce601a102dfff2d03c0010b03c009065d2c03c000f60cc0a6d0003ffcc3b7c000100a2426d00023b7c000200124e75426dffc433edffce0003390c33edffcc000339104eb9000377a23b7900033912ffd03b7c000100a2426dffd43b7c0001ffd63b7c0015ffd8426d00023b7c000300124e757005600270fb322dffd23401e84ac47c00ff3602c47c000fe84bd4406a06d47c000a5343b47c000a6d06947c000a5243b67c00016d10b67c00096e0ae14be94a86423b43ffd26000ff6241edffdc2b48009e60000002426d009c3b7c000300023b7c000200124e75302d009cd0416a027000b07c000a6f02700a3b40009c4a426730206d009ed0c0161043fafb707800103140006708b6006706524460f27800d8426a0278254a3140006602780010b140003b7c000200124e75426d00023b7c000100a24a6d001e660c302d001a4aad009e6000f06c3b7c000200124e75610000c8426dffc66000f04a6100f3c44a6d001e6704610000b27002600270013b4000ae42ad00143b7c000400a841fa09e06000ee026100092a320041fa07a460044a1866fc51c9fffa4a40663c0c6d000100ae663445ed00d041faf8266100ec323039000bc0066100f80441faf81c6100ec203039000bc0086100f7f241faf8156100ec0e41ed00d02b480014426d00ae6000eea0610000323b7c0001ffc83b7c7fffffc4322dffce33c10003390c33c100033a4433edffcc00033910426dffc03b7c000100204e7545f9000be000302dffcc1480302dffce15400001302dffd015400002156dfff20003356dffd2000641ea000843edffdc700b10d951c8fffc422a001341ea00142248302dffd0d2c0d2c02c093a00534547f9000327f07601284b720074001014670405c112c049ec01005242b47c00086dec10c151cbffe4528b51cdffda2009908a907c0014354000046100f27c7600362a0004d67c0014302dffca676e53406100e1a02008676426486100e1c62801d87c00142f0b6100e1c82848265f20039084220cd280b2bc000be0006200f10241f3480043f338004a80671a6b0e244c43f20800b5c8630e132260f82448b5cc640412da60f841f9000be000224b200312d8538066fa42ad00144e756100e17243f9000be00093c8b3c36d00f0b443f9000be000200310d9538066fa3039000bc0065279000bc00652403b40ffca42ad00144e7541f80008227900077cb4303900077cb85240c0fc00304df008084cd0003f4cd13cc048d03cc048d1003f41e8001843e90018b1ce65e44e7541f8fa0143f900077d1c701712d0548851c8fffa740078007c003e3c12a91238fa1fb401640214011638fa23b803640218031a38fa25bc0564021c0551cfffe013c200077d2b13c400077d2d13c600077d2e4e754238fa074238fa094238fa0b4238fa0d4238fa0f4238fa1143f8fa017417129a548951cafffa4e75413a5c4e45424c4556454c2e4f564c0041faf60e43f9000a88007c127a071818700074077600d80464027603e548804351cafff232c051cdffe6528851ceffde4e754a7900077ca8661a48e7fffa4df9000bc0006100001033fc000100077ca84cdf5fff4e75204e0c904e434d50660000cc0c6800010004660000c436280006b67c007f620000b834280008b47c0008620000ac43e80010600e0c290010000c6200009c43e9002051cafff043e8011047ee20006000008245e90014b5cb6200007e1011b03c000165000074b03c00026200006c0c290007000162000062780018290002b87c001065000054b87c00786200004c20496100df822a013004d040ba406500003a49f25800b9cb62000030320053417c00204a10187407e2086402524651cafff851c9fff0300590449044bc406600000a224c51cbff7e4e7542964e7554886100df3455884a414e75103900038498b03900077cae672013c000077caeb03c0044660a33fc004400077caa600a4a006b0613c000077cad301f08b80006fa114e734eb90003b36041fa001070014eb90003b3604ef90003d6984631302f4420204c6576656c20656469746f722000003b41fff008ed0000fff04e754a6d001e675e4a6d000266584a6d00ac6622b03c001c672eb03c0039672843faf7aa1219673eb0016704548960f420496000e9b8b03c001c670001f2b03c0039670001ea4e75322dfff0080100086714b23c00836700e9d6b23c00c36700e9ce6000e9bc4e7534016100e75c1600c03c00feb00266060a0300011403300232026100ff726100ea666000ea2808031053746f6e652062616c6c2020530003205265642062616c6c2020520003305265642062616c6c2077616974732020570003404579652075702f646f776e20736c6f772020550003504579652075702f646f776e2066617374202049000360457965206c6566742f726967687420204a000370457965206c2f72206661737420204b0004073c206261636b00
+-block 77a40 2f084879000020003f063f004e414fef000c4e75302dffd4e14841f9000327f0d0c0342dffd64e7570004a6d00ac670641fa015020082b4000144e7561d64a4167185341670c61366b064230300061566028700c6100e91060200c300085200066043602614011bc0085200052423b4200ac3b7c000100a261ae6000e8d636020c3000083000660453436b1610303000b03c0085670cb03c0008670453436aec76ff4a434e7538035244b86dffd06c1410304000b03c000c670cb03c000866e8423040004e754230400060dc6100ff46362d00ac5343b44367406d0a11bc000820003403600c11bc0008300011bc008520004a42670c4a3020ff660611bc008120ff426d00ac6100ff20611e3b7c000100a23b7c000300124e7541fa007c2b4800143b7c000200124e756100fee86100ff4e6b22524310303000b03c00086716b03c0080660a41fa00612b4800144e75b66dffd06dde4e75426d00ac6100feca3b7c000200124e751200c23c000cb23c0008660476114e75b23c000c660276124e754c6966743a20552f44203d206f7468657220656e64005069636b20616e6f7468657220726f770050696c6c617220626c6f636b73206c69667400040c004c6966743a2066726f6d2068657265202041000c014c6966743a2073746f70206865726520205a000c024c6966743a2064656c6574650004073c206261636b00005361766564004e6f206469736b004e6f7420612063616d706169676e206469736b004469736b2069732077726974652070726f74656374656400
+-block 77dc0 48e77ffe4ab900077cb4661e23f9000ffd8000077cb433f9000ffd8600077cb823fc000fffaa00077cba2f0d40e7007c07002b4f00384ff9000ad0002f0d6100f8a46100f868247900077cba6100f8ea46fc25002f38040421fc00076c7604046100ecde21df040446fc27002f006100f83c2e1f2a5f45f900077d1c6100f8ba08380000fc0067061038fc0260f22e6d0038321f2a5f46c12007660c0c6d000100ae66046100ee184cdf7ffe4e75030414496e736572742063616d706169676e206469736b20696e20647269766520413a0004147468656e207072657373206669726520284631302063616e63656c73290004153c206261636b0000
+-block 76c76 302f000448c04e754df9000aa0000c964e434d50661061000af80c964e434d50671670024e75204e323c07ff7400849851c9fffc4a8266ea204e43f9000bc000323c07ff22d851c9fffc33fc000100077ca870004e75b07c000a6500f426b07c00646500fc6a6000f4264c6f616465642000206c6576656c73202f20002063616d706169676e7300
+-block 772da 102dfff252001200c23c000fb23c00056504c03c00f01b40fff26034
++block 75740 6100202c41f9000bc0000c904e434d50661ab0680006641441e801104a40670a610e41f01014534060f24e7591c84e75720012280004e149122800054e7541f9000bc0003028000660ce61001fe241f9000bc0000c904e434d50660eb06800086408eb4841f000104e7591c84e75303900077c846714b07c7fff660841f9000be0004e7553406000ff7891c84e7548e7e08061da7200200867041228000334390003390c3001e808611a33c000077cbe3001611013c000077cb34cdf01074ef90003636ec07c000f53406a0230024e75619c200867327e001e28000233c70003391245f9000327f03c3c03ff429a51cefffc41e800142248d2c7d2c745f9000327f04ef90003781241f9000327f04ef9000377a80811000067044468005420090480000327f04e75d04041f90003ad9e303000003f006100ff36301f2208670861001fd6670230014e75e549d0c120503f002f086100ff1820086606205f301f4e755088588f301f4e754a7900077c88660000ea303900077c8066144a7900077c846634303900033a344ef90003e35853406100feb62008671e303900077c82524033c000077c8272001228000cb04164061030000e601633fc00080003390c427900077c80427900077c844e75720012004a006a163401e64ac47c00015242c27c0007427900077c84601c3001524133c100077c846100fe08740172002008670614101228000133c20003391033c10003390c33c100033a4441f90003e2744a790003391e6702548830814e754a7900077caa67200c79004400077caa66104a7900077c886708427900077caa600c427900077caa4ef90003868a33fc000100077c9a610000c24ff900000800b07c000367064ef90003dbb0427900077c884ef90003db8c4eb90003853a4a7900077c88670c427900077c9a6100008c603a427900077c80427900077c84427900033a444a7900077caa6708427900077caa600a0c390020000384986626423900038498427900077c9a614e588f4a40670cb07c000367064ef90003d85a4ef90003d5e24a79000338f04e7511fc0000826048e7fffe41f9000a898043f88240700722d851c8fffc527900077cc04eb900033d024cdf7fff4e7348e77ffe4bf900077cc0204d703f429851c8fffc61001c9461001cec40ed0022007c07002b78007000242b790003875800283b7900033a38002c1b788201002e1b788203002f3b790003391000303b790003390c003241f8824043ed003c700722d851c8fffc4238fa1b21fc00075a3a007011fc000a82014238820346fc2300423900038498426dffea426dffec426dffc84a6dffc6671c3b7c7fffffc46100059a426dffc43b7c0001001e3b7c000100a26004610008e23b7c00030012610000da3015b05567fc4eb90003853a302dffea426dffeab07c0044660461000094302dffec6708426dffec61001d826100057c4a6d002067c646fc270021ed0024007023ed00280003875833ed002c00033a3811ed002e820111ed002f820341ed003c43f88240700722d851c8fffc423900038498426dffea426dffec33fcffff0003849a302d0020b07c0001671ab07c0002671033ed00300003391033ed00320003390c426dffc646ed00224cdf7ffe4e754a6d00ae660018f04a6d001e67124a6d000266124a6d00ac66001fa46000184a3b7c000300204e75302d0012674c426d001272004a6d001e67064a6d000267027201b26d00aa6704807c00013b4100aa4a41671061260c6d0003000267000370600002fc08000000670c611061001b20611e610001b8600002124e7541f9000a0000303c1f3f720020c151c8fffc4e757a00382dffd898456b38b86dffd06c327c003006e14841f9000327f0d0c010304000320634054a00660eb87c000266084a46660461166002611e5246bc7c00106dd05245ba7c00166db84e7548e7ffe03e013c027610600c48e7ffe03e013c02610000da43f9000a88003403e94ad2c245ed00c024d924d924d924d943fa1058c6fc00097a001a31300845ed00c04a006b501200c23c00706748e80908000000661ab23c0004672eb23c00056728006a00030006006a000300086026b23c0004671ab23c00056714006ac0000006006ac0000008600c00520ff06006006a0ff0000e41f9000a0000ccfc0500d1c6e74fd0c772000805000056c1488174000805000156c2488276000805000256c348837e07381a3004c04130803004c042314000023004c043314000044268000641e800a051cfffde4cdf07ff4e7576004a0067166b161200e809c23c000776014a0167001dec7608d6014e751200c23c00037607b23c0003660a0800000667ea76084e7576044a0167e07605b23c000267d876061200c23c000c66ce76021200c23c0070b23c001066c076034e7548e7e080302dffd8906dffd66b4ab07c00166c44c0fc050041f9000a0000d1c0322dffd4e749d0c172074a416718b27c000767120a5080010a68800100020a6880010004600a4650466800024668000441e800a051c9ffd44cdf01074e7541f9000a0080303c00af72007407224822c151cafffc41e800a051c8fff041f9000a6e00303c03bf20c151c8fffc45ed007c14fc00536100143e5240610001b834fc20456100143a5240610001aa42127400617647fa006e740145ed007c14db7000101b303500c0610001984212615a5242b47c000466e26100012a45ed007c14fc0024610001ce42127404613c610001146100feae41fa0f04d6433630300041fa0efad0c37200740b61000110202d0014660641fa0ed1600220407210740b600000fa48104314521641ed007c7220600000ea206d00047c001c187a00382d000a54882f084a1866fc2f08300590446b32b07c000c6c2c206f000445ed007c14fc0020ba6d00086606157c003effff610000dc421241ed007c322d00a834006100009a205f588f5245ba466db4202d0014670e4a6d001e660820407208740b617a4e7545ed007c41fa0f75610000a0206d009e700b14d851c8fffc421241ed007c72087400615441fa0f5b72087403614a41fa0f6572087404614045ed007c700f14fc002051c8fffa4212302d009c45ed0081d4c014bc005e41ed007c720874016018302dffd4e14841f9000327f0d0c0302dffd6103000004e7548e7f0e023fc000a000000038758c4fc0a003601e249e749c67c0001d243d24233c100033a384eb90003b3444cdf070f4e7514d866fc538a4e75c07c000fd03c003014c04e7548c080fc0064d03c003014c0484048c080fc000ad03c003014c04840d03c003014c04e75426d001e3b7c000800a845f9000a8000421a2b4a00a44e7533edffce0003390c33edffcc000339104ef9000377a23f00e8086102301fc03c000fb03c000a6d025e00d03c003014c04e753639000338f03239000338f23439000338f4382d000c3b43000c4a4367084a446604600000fe30018042660a426d000e426d00104e75302d000e670853403b40000e4e753b7c0004000e4a6d0010660c3b7c000100103b7c000e000e302d0002670ab07c000367001290606a6100fcc44a6d00ac67027200302dffd4d041c07c000f3b40ffd4302dffd6d0426a027000362dffd05343b6406c0230033b40ffd6322dffd8b0416f063b40ffd86010927c0015b0416c10d07c00153b40ffd83b7c000300124e756100fc6a3b7c00020012610018c24e75302d000890426a027000206d0004760016105343b0436f0230033b4000084a416a063b430008607e322d000ab0416c063b40000a600c907c000bb0416f043b40000a3b7c00020012600009b6302d0002b07c00036700121e4a40664a4a6d00ac660019003b7c000800a841fa0ed861024e752b480004426d0008426d000a3b7c000100023b7c000200124e75206d00045288302d0008670c534054884a1866fc51c8fff84e7561e4101872001210c07c00ffd04041fa000a303000004ef00000001e002a0056006a015c009a025c02680274028a061c0628181216d2109661001640300161000096607e6100163436013f2dffd67802300361000082302dffd65240b06dffd06c083b40ffd651ccffe83b5fffd6605241fa0cf4d2413230100041fa0cead0c16000ff4a3b410018b23c0030671841fa0ec8b23c00406d0ab23c00606c0441fa0edd6000ff28302d00183200610015cc614a600e302d001880413200610015bc613a4a6d001e670000e8426d00023b7c000300124e7548e7c080322dffd4e14941f9000327f0d0c1322dffd6118010003b7c000100a24cdf01034e753f0061d6301f42ad00143200c27c0070b27c00406d3eb27c00606c36322dffd4e14941f9000327f0d0c1342dffd636025243b66dffd06c124a3030006af253426b084a3020006af64e7541fa0b692b4800144e75322dffd4e14941f9000327f0d0c1342dffd653426b064a3020006be241fa0b552b4800144e7541fa000cd241323010004ef01000002c005a006801d2034e0046107a004e106e0728072c073005b20f960f9a0fde1104048803b2108c10a410fc426d001e3b7c000800a841fa0bb26100fe0c3b7c000300124e753b7c000300204e75426d00023b7c000200124e7549faf31047fa0b157a087806600c49faf34c47fa0b137a0078086100fc4041f9000bc00076000c904e434d506604363040007400601430024e9441f050003004e24856403202612c5242b4436de8204b70043204e249611c41fa0adc70047200611241f9000a80006100fd843b7c000300124e75246d00a414c014c1701b1218670614c151c8fff8421a2b4a00a445f9000a800052124e753b41001a41fa0b4e6000fd4c3b41001a41fa0b6a6000fd40342d001a4a41672c534167625341670000fe60000144342d001a3b42001c4a41670001ac5341670002805341670001ce600001d830026100f22a20086700fdf6426dffc052423b42ffc47200122800017400141033c10003390c33c20003391033c100033a443b7c000200204e7530026100f1f020086700fdbc43edffdc700b13b00008000051c8fff8700010103b40ffcc102800013b40ffce102800023b40ffd0610012d63b41ffd21b680003fff252423b42ffca3b42ffc46100fb08426dffc4426d00a2602c426dffca422dfff2610003d641fa09c343edffdc700b12d851c8fffc3b7c0001ffcc426dffce3b7c0450ffd23b7c000800a83b7c0001ffc63b7c0001001e42ad0014600003fc30026100f15020086700fd1c26486100f1742601d67c00146100f17843f9000be00093c8b3c36d12224812db534366fa5279000bc0066000fe0a41fa08cb2b4800143b7c000200124e7530026100f10620086700fcd26100f12c2601d67c0014264843f038002f086100f1282448205fb3ca640410d960f85379000bc0063a39000bc00843f9000bc010602c78001829000c41e9000e24487c00601010186b08b00267086502530014c0524651ccffee1346000c43e9002051cdffd26000fd8430026100f0da20086700fc5c4a28000c6700fc5452423b42ffc0426dffc21028000e6100f23e3b7c000200204e7530026100f0ac2b48009e60000cd430026100f09e20086700fc2043e8002045f9000bc0103039000bc008eb48d4c0b3ca640410d960f8701f421851c8fffc5379000bc0086000fd1c61363039000bc008b07c00086400fbe25279000bc00834003b40001c6100f04a2248701f421951c8fffc43fa0835700b10d951c8fffc602c41f9000bc0000c904e434d50671c303c07ff429851c8fffc23fc4e434d50000bc00033fc0001000bc0044e75302d001c6100effe26486100f8f87600162b000c74006000008e1033200e45ed007c320252413001c1413f01300252406100f8bc321f14fc00201033200e6a2c14fc004f14fc00201033200e1200e609c23c0001d23c003114c114fc002dc03c0007d03c003114c04212602c14fc004c14fc0020c07c007f6100ef4020086712508870071218670614c151c8fff84212600614fc003f421241ed007c700a32026100fc7a5242b4436d00ff7041fa0737700472116100fc6641fa0724700472026100fc5a41f9000a80006100f9ca3b7c000300124e75302d001c6100ef2820086700faaa70001028000cb07c00106400ff1011bc0080000e5228000c6000ff023b41001a41fa07e86000f98c302d001c6100eef220086700fa747400342d001a76001628000c43e8000e4a41674eb27c000167000092b27c0002670000aab27c0003671c30025240b0436400feb41831200013b100002000138400006000fea24a426700fe9c300253401831200013b100002000138400006000fe8618312000c87c00ff5244b87c0090641cb87c0080642c2f0841f9000bc000b8680006205f651c383c0080601678002f0841f9000bc0004a680006205f6604383c0080138420006000fe3cb67c00106400fe343803b8426f0a13b140ff4000534460f25228000c6000fe1c38025244b8436c0a13b1400040ff524460f25328000c6000fe0241f9000327f0303c03ff429851c8fffc3b7c0030ffd0700f41f9000327f110bc008141e8010051c8fff641f900032af0117c0081002b117c0081012b117c0081022b41f900032bf0117c00c3002c117c00c3002d117c00c3002e3b7c000100a2426dffd43b7c0001ffd63b7c0015ffd8426d00023b7c000300124e7523f8047e00077db421fc00076a38047e33fc000200077d7042673f3c00074e4d588f4a80660470016002612a21f900077db4047e4e754a6f000466124a7900077d70670a537900077d7070024e75207900077db44ed0383900077d6e30045340670270023f00487a0c983f3c003d4e41508f4a806b583c0041f9000aa000703f61000fbc7a02b0bc00002000662e7a00b87c0001672642673f0642a73f3c00424e414fef000a41f9000bc000704061000f8eb0bc0000200067022a003f063f3c003e4e41588f4a8566022a0020056a22b0bcffffffdf6718b0bcffffffde6710b0bcfffffff3670470014e7570034e7570024a80670270024e75760060067601600276026100f58c740045ed007c3002c07c000752406100f54014fc00203002b67c0001670e41f90003d14ee54820700000600e41fa009260044a1866fc51c8fffa6100f50c41ed007c700e3203e94982426100f94c524241fa0093b430300066a841fa03fe700472076100f93441f9000a80006100f6a4b67c00016d106714302dffcc5340e748d06dffce600a6100074860046100074c3b400008907c000b6a0270003b40000a6100f68a0c18000e6614700010103200e80953016708c07c000760000b7e4e754579656c6964005374756464656400466f7572206f7262730053706c697420706c61746500080410
++block 76d40 0000001000000000010000000018000000010000000000ffff000200000000ffaa550003183c7e7e7e7e3c1804ff81bdbdbdbd81ff057effffffffffff7e06ff818181818181ff07ffc3a59999a5c3ff073c4281818181423c043c7effffffff7e3c073c7ee7c3c3e77e3c07183c7edbdb7e3c18053c187edbdb7e183c05003c7edbdb7e3c0005007effdbdbff7e000500243c7e5a7e240006183c7e181818180007183c7e007e007e0007466972653d6d656e75205265743d616761696e00000026002c003300390047004e005900640071007b0086008f009b00a800b500c200cf00d000d9456d707479004d61726b6572004c65646765004372756d626c65206c656467650050696c6c617200426c756520626c6f636b004c69667420737461727400446f6f72206f70656e696e67004578697420646f6f720053746f6e652062616c6c005265642062616c6c0052656420287761697473290045796520552f4420736c6f770045796520552f44206661737400457965204c2f5220736c6f7700457965204c2f52206661737400004c69667420656e64004c6966742073746f700004081a140c121e0e10121416181a1c1e4f7665726c61792066756c6c2100457965206e65656473207465727261696e004e6f206c656467652062656c6f7721004e616d652000552f44206c6574746572204c2f52206d6f76650046697265203d20646f6e65003c6e6577206c6576656c3e003c6e65772063616d706169676e3e003c206261636b003c61646420656e7472793e004e4557204c4556454c2020004e45572043414d5000000000204142434445464748494a4b4c4d4e4f505152535455565758595a303132333435363738392d00013809ac02390c460504054f726967696e616c2067616d6500040243616d706169676e73203e0004014c6576656c73203e0004134c6f61642066726f6d2063616d706169676e206469736b0004065361766520746f2063616d706169676e206469736b00050800506c617900080145646974000802436f707900080344656c6574650004013c206261636b00050900506c61790009014564697420656e747269657300090252656e616d6500090344656c6574650004023c206261636b00060b004368616e676520736f75726365000b01496e73657274206166746572000b0252656d6f7665000b034d6f7665207570000b044d6f766520646f776e0004123c206261636b002e00005300002600811900803000822001832d01c31e0c002c0c011f0d10130d20110d30160d40170d50240d60250d7000000d0000456d7074792020430000814c6564676520204c0000914372756d626c65206c6564676500008050696c6c6172202050000082426c756520626c6f636b202873686f6f742920420002034c696674203e000183446f6f72206f70656e696e672020440001c34578697420646f6f72202058000201456e656d79203e0002024c6576656c203e000410506c6179746573740004065361766520746f2063616d706169676e206469736b0004084c6561766520656469746f720003050053746172742072696768740005015374617274206c6566740004073c206261636b000305005374617274207570000501537461727420646f776e0004073c206261636b00080409436f6c6f757273203e00040a456e656d696573203e00040b436f707920746f776572203e00040c426c616e6b206772696400040d54696d65202b353000040e54696d65202d353000040f4e616d652e2e2e0004073c206261636b0000
++block 77300 3001e848c27c000f5340670e6e1e3b41ffce022d000ffff2602a5201102dfff2c03c00f080011b40fff260183001e64852403b40ffccc27c00073b41ffce422dfff260123b7c000100a2426d00023b7c000200124e75426dffc46100ed463b7900033912ffd06000f6787005600270fb322dffd23401e84ac47c00ff3602c47c000fe84bd4406a06d47c000a5343b47c000a6d06947c000a5243b67c00016d10b67c00096e0ae14be94a86423b43ffd2609241edffdc2b48009e426d009c3b7c000300023b7c000200124e75302d009cd0416a027000b07c000a6f02700a3b40009c4a426730206d009ed0c0161043fafb9f7800103140006708b6006706524460f27800d8426a0278254a3140006602780010b140003b7c000200124e75426d00023b7c000100a24a6d001e660c302d001a4aad009e6000f0043b7c000200124e75610000c6426dffc66000efe26100f30a4a6d001e6704610000b07002600270013b4000ae42ad00143b7c000400a841fa09fc6000eda661000946320041fa07c060044a1866fc51c9fffa4a40663c0c6d000100ae663445ed00d041faf8426100ebb03039000bc0066100f82041faf8386100eb9e3039000bc0086100f80e41faf8316100eb8c41ed00d02b480014426d00ae6000ee3c61303b7c0001ffc83b7c7fffffc4322dffce33c10003390c33c100033a4433edffcc00033910426dffc03b7c000100204e7545f9000be000302dffcc1480302dffce15400001302dffd015400002156dfff20003356dffd2000641ea000843edffdc700b10d951c8fffc422a001341ea00142248302dffd0d2c0d2c02c093a00534547f9000327f07601284b720074001014670405c112c049ec01005242b47c00086dec10c151cbffe4528b51cdffda2009908a907c0014354000046100f1c47600362a0004d67c0014302dffca676e53406100e1942008676426486100e1ba2801d87c00142f0b6100e1bc2848265f20039084220cd280b2bc000be0006200f04e41f3480043f338004a80671a6b0e244c43f20800b5c8630e132260f82448b5cc640412da60f841f9000be000224b200312d8538066fa42ad00144e756100e16643f9000be00093c8b3c36d00f00043f9000be000200310d9538066fa3039000bc0065279000bc00652403b40ffca42ad00144e7541f80008227900077cb4303900077cb85240c0fc00304df008084cd0003f4cd13cc048d03cc048d1003f41e8001843e90018b1ce65e44e7541f8fa0143f900077d1c701712d0548851c8fffa740078007c003e3c12a91238fa1fb401640214011638fa23b803640218031a38fa25bc0564021c0551cfffe013c200077d2b13c400077d2d13c600077d2e4e754238fa074238fa094238fa0b4238fa0d4238fa0f4238fa1143f8fa017417129a548951cafffa4e75413a5c4e45424c4556454c2e4f564c0041faf62c43f9000a88007c127a071818700074077600d80464027603e548804351cafff232c051cdffe6528851ceffde7000eb4841f900035250d0c043faf79345f9000a8980720f7400141934f0200051c9fff64e756100fb7060d64a7900077ca8661848e7fffa4df9000bc000610e33fc000100077ca84cdf5fff4e75204e0c904e434d50660000b80c6800010004660000b036280006b67c007f620000a434280008b47c00086200009843e80010600e0c290010000c6200008843e9002051cafff043e8011047ee2000606e45e90014b5cb626c1011b03c00016564b03c0002625e0c29000700016256780018290002b87c0010654ab87c0078624420496100df5c2a013004d040ba40653449f25800b9cb622c320053417c00204a10187407e2086402524651cafff851c9fff0300590449044bc406608224c51cbff904e7542964e7554886100df1455884a414e75103900038498b03900077cae672013c000077caeb03c0044660a33fc004400077caa600a4a006b0613c000077cad301f08b80006fa114e734eb90003b36041fa001070014eb90003b3604ef90003d6984631302f4420204c6576656c20656469746f722000003b41fff008ed0000fff04e754a6d001e675e4a6d000266584a6d00ac6622b03c001c672eb03c0039672843faf7c61219673eb0016704548960f420496000e94ab03c001c670001fcb03c0039670001f44e75322dfff0080100086714b23c00836700e968b23c00c36700e9606000e9504e7534016100e6c81600c03c00feb00266060a0300011403300232026100ff726100e9f06000e9b208031053746f6e652062616c6c2020530003205265642062616c6c2020520003305265642062616c6c2077616974732020570003404579652075702f646f776e20736c6f772020550003504579652075702f646f776e2066617374202049000360457965206c6566742f726967687420204a000370457965206c2f72206661737420204b0004073c206261636b00
++block 77a40 2f084879000020003f063f004e414fef000c4e75302dffd4e14841f9000327f0d0c0342dffd64e7570004a6d00ac670641fa015020082b4000144e7561d64a4167185341670c61366b064230300061566028700c6100e89060200c300085200066043602614011bc0085200052423b4200ac3b7c000100a261ae6000e85636020c3000083000660453436b1610303000b03c0085670cb03c0008670453436aec76ff4a434e7538035244b86dffd06c1410304000b03c000c670cb03c000866e8423040004e754230400060dc6100ff46362d00ac5343b44367406d0a11bc000820003403600c11bc0008300011bc008520004a42670c4a3020ff660611bc008120ff426d00ac6100ff20611e3b7c000100a23b7c000300124e7541fa007c2b4800143b7c000200124e756100fee86100ff4e6b22524310303000b03c00086716b03c0080660a41fa00612b4800144e75b66dffd06dde4e75426d00ac6100feca3b7c000200124e751200c23c000cb23c0008660476114e75b23c000c660276124e754c6966743a20552f44203d206f7468657220656e64005069636b20616e6f7468657220726f770050696c6c617220626c6f636b73206c69667400040c004c6966743a2066726f6d2068657265202041000c014c6966743a2073746f70206865726520205a000c024c6966743a2064656c6574650004073c206261636b00005361766564004e6f206469736b004e6f7420612063616d706169676e206469736b004469736b2069732077726974652070726f74656374656400
++block 77dc0 48e77ffe4ab900077cb4661e23f9000ffd8000077cb433f9000ffd8600077cb823fc000fffaa00077cba2f0d40e7007c07002b4f00384ff9000ad0002f0d6100f8866100f84a247900077cba6100f8cc46fc25002f38040421fc00076c7604046100ebe021df040446fc27002f006100f81e2e1f2a5f45f900077d1c6100f89c08380000fc0067061038fc0260f22e6d0038321f2a5f46c12007660c0c6d000100ae66046100ee184cdf7ffe4e75030414496e736572742063616d706169676e206469736b20696e20647269766520413a0004147468656e207072657373206669726520284631302063616e63656c73290004153c206261636b0000
++block 76c76 302f000448c04e754df9000aa0000c964e434d50661061000b020c964e434d50671670024e75204e323c07ff7400849851c9fffc4a8266ea204e43f9000bc000323c07ff22d851c9fffc33fc000100077ca870004e75b07c000a6500f388b07c00646500f39a6000f3884c6f616465642000206c6576656c73202f20002063616d706169676e7300
++block 772da 7207102dfff2e808600a7203102dfff2c03c000f6606302dffce52405340c0414e75
+--- a/patches/README_HD.TXT
++++ b/patches/README_HD.TXT
+@@ -10,15 +10,18 @@
+   changed byte.
+ 
+ What is new in v@VERSION@ (compared with v1.1.1)
+-  Level editor (Tower > menu): each custom level can now choose its colour
+-  scheme (the palette, raster bars, skyline and tower texture of any of the
+-  8 original towers) and its enemy set (the 4 enemy eye designs),
+-  independent of the tower and its geometry. The panel shows the choice as
+-  "S<colours> E<enemies>". The original towers are unchanged. Also included
+-  is the v1.1.1 crash fix (Address Error with campaign files whose level
+-  records have an odd size). Level files stay compatible both ways: old
+-  files play "as base tower"; new files keep working on older versions,
+-  where the look choice is ignored.
++  Level editor: each custom level now chooses its colours from a list (the
++  game's 8 tower looks: palette, sky colours, skyline and tower texture;
++  the whole editor screen takes the highlighted look while you move the
++  cursor) and its enemies from a list (the 4 enemy eye designs). The
++  Level > menu no longer has "Look: next tower" / "other mission": the
++  colour choice sets the level's tower byte by itself. New cell: Crumble
++  ledge (it looks like a normal ledge; the frog falls when it steps on it).
++  The panel shows the choice as "S<colours> E<enemies>". The original
++  towers are unchanged. Also included is the v1.1.1 crash fix (Address
++  Error with campaign files whose level records have an odd size). Level
++  files stay compatible both ways: old files keep their look; a v1.1.1
++  game plays a new file with the colours (tower byte) you picked.
+ 
+ Changes in this release
+ {WHATSNEW}
+@@ -69,21 +72,20 @@
+    joystick   move the box (the tower is a ring: left of the left column is
+               the right column)
+    FIRE       open the menu (the letter after a name is its keyboard key):
+-     Empty C / Ledge L / Pillar P / Blue block B (shoot it once per cell to
+-       remove it) / Lift > / Door opening D (3 cells) / Exit door X (3 cells)
++     Empty C / Ledge L / Crumble ledge (looks like a ledge, disappears under
++       the frog when it steps on it) / Pillar P / Blue block B (shoot it once
++       per cell to remove it) / Lift > / Door opening D (3 cells) / Exit door
++       X (3 cells)
+      Enemy >   Stone ball S (rolls along a ledge), Red ball R (bounces), Red
+                ball W (waits for you), Eye up/down U slow, I fast, Eye
+                left/right J slow, K fast; then choose the start direction.
+                Enemies only turn round at walls, ledge ends and other enemies.
+      Lift >    Lift: from here A, Lift: stop here Z, Lift: delete (see LIFTS)
+-     Tower >   Look: next tower / other mission (the base tower: its
+-               colours and enemies unless set below, default time, the grid
+-               Copy original grid starts from), Colours: next (the
+-               colour scheme: palette, sky colours, skyline and tower
+-               texture of one of the 8 towers; 0 = as the base tower),
+-               Enemies: next (which of the 4 eye-disc designs the eye
+-               enemies use; 0 = as the base tower), Copy original grid
+-               (start from a shipped tower), Blank grid, Time +50 / -50
++     Level >   Colours > (a list: the 1..8 looks of the game's towers; the
++               screen shows the highlighted look at once, FIRE picks it,
++               "< back" keeps the old one), Enemies > (list of the 4 eye-disc
++               designs), Copy tower > (list of the 16 shipped towers: starts
++               from that tower's grid and look), Blank grid, Time +50 / -50
+                seconds, Name... (up/down = letter, left/right = move, FIRE
+                = done)
+      Playtest  run the real game on what you are editing; F10, finishing the
+@@ -115,14 +117,15 @@
+ Screen: 16 columns x rows of 16x8 pixel tiles (top = higher).  A frog marks
+ where Pogo starts (column 0, row 2): THE FROG STARTS IN THE SAME PLACE IN
+ EVERY TOWER, so every level needs a ledge on row 1 near column 0-1; the new
+-level and "Blank grid" have it, keep it.  Right panel = tower/mission, colours
+-and enemies (S5 E2 = colour scheme 5, enemy set 2; 0 = as the base tower),
++level and "Blank grid" have it, keep it.  Right panel = colours and enemies
++(S5 E2 = colour look 5, enemy design 2: the numbers of the lists),
+ rows, column, row, cell value; bottom line = cell name and hints/warnings ("No
+ ledge below!" for a ground enemy, "Eye needs terrain" for a vertical eye with
+-nothing above and below, "Pillar blocks lift").  Tile colours: green ledge,
+-grey pillar, blue shootable block, cream lift platform, arrows = lift end /
+-stop, red outline door, red filled exit, round enemies with an arrow showing
+-the start direction.
++nothing above and below, "Pillar blocks lift").  The whole screen (map,
++text, background) is drawn in the colours of the level's look.  A crumble
++ledge is drawn dotted below its top line; the game draws it exactly like a
++ledge.  Arrows = lift end / stop, round enemies with an arrow showing the
++start direction.
+ 
+ LIMITS: levels have 16..120 rows (the blank tower has 48; the shipped ones
+ 47..96); at most 127 levels and 8 campaigns of 16 entries; all of it must fit
+--- a/patches/README_FLOPPY.TXT
++++ b/patches/README_FLOPPY.TXT
+@@ -10,15 +10,18 @@
+   original's, byte for byte.  PATCHES.TXT lists every change.  Nebulus_campaign_disk.st is a blank 720 KB data disk, see below.
+ 
+ What is new in v@VERSION@ (compared with v1.1.1)
+-  Level editor (Tower > menu): each custom level can now choose its colour
+-  scheme (the palette, raster bars, skyline and tower texture of any of the
+-  8 original towers) and its enemy set (the 4 enemy eye designs),
+-  independent of the tower and its geometry. The panel shows the choice as
+-  "S<colours> E<enemies>". The original towers are unchanged. Also included
+-  is the v1.1.1 crash fix (Address Error with campaign files whose level
+-  records have an odd size). Level files stay compatible both ways: old
+-  files play "as base tower"; new files keep working on older versions,
+-  where the look choice is ignored.
++  Level editor: each custom level now chooses its colours from a list (the
++  game's 8 tower looks: palette, sky colours, skyline and tower texture;
++  the whole editor screen takes the highlighted look while you move the
++  cursor) and its enemies from a list (the 4 enemy eye designs). The
++  Level > menu no longer has "Look: next tower" / "other mission": the
++  colour choice sets the level's tower byte by itself. New cell: Crumble
++  ledge (it looks like a normal ledge; the frog falls when it steps on it).
++  The panel shows the choice as "S<colours> E<enemies>". The original
++  towers are unchanged. Also included is the v1.1.1 crash fix (Address
++  Error with campaign files whose level records have an odd size). Level
++  files stay compatible both ways: old files keep their look; a v1.1.1
++  game plays a new file with the colours (tower byte) you picked.
+ 
+ Changes in this release
+ {WHATSNEW}
+@@ -52,14 +55,16 @@
+    joystick   move the box (the tower is a ring: left of the left column is
+               the right column)
+    FIRE       open the menu (the letter after a name is its keyboard key):
+-     Empty C / Ledge L / Pillar P / Blue block B (shoot it once per cell to
+-       remove it) / Lift > / Door opening D (3 cells) / Exit door X (3 cells)
++     Empty C / Ledge L / Crumble ledge (looks like a ledge, the frog falls
++       when it steps on it) / Pillar P / Blue block B (shoot it once per
++       cell to remove it) / Lift > / Door opening D (3 cells) / Exit door X
++       (3 cells)
+      Enemy >   Stone ball S, Red ball R, Red ball W (waits for you), Eye
+                up/down U slow, I fast, Eye left/right J slow, K fast; then
+                choose the start direction
+      Lift >    Lift: from here A, Lift: stop here Z, Lift: delete
+-     Tower >   Look, Colours, Enemies (colour scheme and eye-disc design of
+-               the level; 0 = as the base tower), Copy original grid, Blank
++     Level >   Colours > / Enemies > (lists, the screen shows the highlighted
++               look at once), Copy tower > (the 16 shipped towers), Blank
+                grid, Time +50 / -50 seconds, Name...
+      Playtest  run the real game on what you are editing; F10, finishing the
+                level or losing brings you back to the editor
+--- a/work/editor/gen_ed.py
++++ b/work/editor/gen_ed.py
+@@ -52,7 +52,6 @@
+ RSB = eq["RS"]
+ cache_col, cache_eye = RSB + dec["rsCol"], RSB + (dec["rsEye"] & ~1)     # the retargeted sites read WORDS: rsCol; the word at RS+50 (high byte rsFlg, low byte rsEye; the sites mask with &7 / &3)
+ assert dec["rsEye"] == (dec["rsEye"] & ~1) + 1 and dec["rsFlg"] == dec["rsEye"] - 1 and dec["rsCol"] % 2 == 0
+-H = c1
+ def a(x): return f"{x:08x}"
+ nep = f"""# Nebulus campaign + level editor (NebEditor).  Generated by work/editor/gen_ed.py from patches/ed_editor.s; do not edit by hand.
+ # F10 (or D) on the title page = level/campaign manager + editor; F10 in a playtest = back to the editor.  See work/notes/editor.md.
+@@ -66,13 +65,13 @@
+ patch ed_overlay
+ default yes
+ clear {eq["RS"]:x} {eq["CODE4"] - eq["RS"]:x}
+-site 377a2 4ef9{a(H)}
+-site 37a90 4eb9{a(H+6)}4e71
+-site 3d6c4 4eb9{a(H+12)}4e714e71
+-site 3adb4 4eb9{a(H+18)}
+-site 3d110 4eb9{a(H+24)}
+-site 3e352 4ef9{a(H+30)}
+-site 3dfd6 4eb9{a(H+36)}
++site 377a2 4ef9{a(sym["ed_dec"])}
++site 37a90 4eb9{a(sym["ed_dir"])}4e71
++site 3d6c4 4eb9{a(sym["ed_title"])}4e714e71
++site 3adb4 4eb9{a(sym["ed_time"])}
++site 3d110 4eb9{a(sym["ed_name"])}
++site 3e352 4ef9{a(sym["ed_next"])}
++site 3dfd6 4eb9{a(sym["ed_game"])}
+ site 3851a 4ef9{a(sym["ed_key"])}
+ site 3d662 4ef9{a(sym["ed_opt"])}4e71
+ site 3dbf0 4eb9{a(sym["ed_lvl"])}
+--- a/work/editor/ovl.py
++++ b/work/editor/ovl.py
+@@ -128,22 +128,22 @@
+ 
+ _TILES = None
+ def tiles():
+-    """the in-game editor's 17 tile patterns (8 bytes + colour + pad) read from patches/ed_editor.s"""
++    """the in-game editor's 19 tile patterns (8 bytes + colour) read from patches/ed_editor.s"""
+     global _TILES
+     if _TILES is None:
+         import re
+         src = (Path(__file__).resolve().parents[2] / "patches/ed_editor.s").read_text()
+         body = src[src.index("\ntiles:"):src.index("\nsHelp:")]
+         _TILES = [([int(x[1:], 16) for x in m.group(1).split(",")[:8]], int(m.group(1).split(",")[8]))
+-                  for m in re.finditer(r"dc\.b\s+(\$[0-9a-f]{2}(?:,\$[0-9a-f]{2}){7},\d+,0)", body)]
+-        assert len(_TILES) in (17, 19)       # 19 = with the lift end / lift stop tiles (work/lifts/ed_lift.s)
++                  for m in re.finditer(r"dc\.b\s+(\$[0-9a-f]{2}(?:,\$[0-9a-f]{2}){7},\d+)", body)]
++        assert len(_TILES) == 19       # 17 shapes + the lift end / lift stop tiles (ids 17, 18); tile 3 = crumble ledge ($91)
+     return _TILES
+ 
+ def classify(v):
+     if v == 0: return 0
+     if not v & 0x80:
+         k = (v >> 4) & 7
+-        if k == 0 and v & 0x0c in (8, 12) and len(tiles()) == 19:
++        if k == 0 and v & 0x0c in (8, 12):
+             return 17 if v & 0x0c == 8 else 18
+         return 1 if k == 0 else 8 + k
+     c = v & 3
+@@ -151,7 +151,7 @@
+     if c == 0: return 4
+     if c == 2: return 5
+     if v & 0x0c: return 6
+-    return 3 if v & 0x70 else 2
++    return 3 if v & 0x70 == 0x10 else 2          # $91 = crumbling ledge; $a1/$b1 (conveyors) and the other variants are drawn by the game exactly like a ledge
+ 
+ # ---- lifts (work/notes/lifts.md).  A lift lives in ONE grid column: start slab $85 (lower row) .. end marker $08 (higher row), optional stop markers $0c in
+ # between.  Nothing else is stored; the game's own ride code ($3a3e6) and return queue ($339ee) do the rest.
+--- a/work/editor/e170.py
++++ b/work/editor/e170.py
+@@ -15,7 +15,8 @@
+     m=grab(h,0xb0020,8,'mk'); print('marker/count',m[:4],struct.unpack('>H',m[4:6])[0] if False else m.hex())
+     chk('marker NEPO',m[:4],b'NEPO'); cnt=struct.unpack('>H',grab(h,0xb0024,2,'cnt'))[0]; chk("site count word",cnt,EXP)
+     chk('hook $3851a -> ed_key',grab(h,0x3851a,2,'a').hex(),'4ef9'); chk('hook $3d662',grab(h,0x3d662,2,'b').hex(),'4ef9')
+-    chk('block CODE1 magic (jump table at $75740)',grab(h,0x75740,2,'c').hex(),'4ef9')
++    chk('decode hook $377a2 jumps to CODE1 (the hook jump table is gone: sites jump straight to ed_dec, ...)',struct.unpack('>HL',grab(h,0x377a2,6,'c')),(0x4ef9,0x75810 if False else struct.unpack('>HL',grab(h,0x377a2,6,'c'))[1]))
++    chk('ed_dec target lies in CODE1 ($75740..$76c00)',0x75740<=struct.unpack('>L',grab(h,0x377a4,4,'c2'))[0]<0x76c00,True)
+     chk('block CODE4 $77dc0 first word nonzero',grab(h,0x77dc0,2,'d')!=b'\0\0',True)
+     chk('trainer blob intact (first hook insn at $76c08)',grab(h,0x76c08,2,'e').hex(),'4eb9')
+     v70=struct.unpack('>L',grab(h,0x70,4,'v'))[0]; chk('VBL vector normal',hex(v70),'0x382d8')
+--- a/work/editor/e80.py
++++ b/work/editor/e80.py
+@@ -31,7 +31,7 @@
+     select(h,'< back',1.2); select(h,'Levels',1.2)
+     select_i(h,0); select(h,'Copy',1.2); lv,cs=show(h,'copied'); chk(len(lv)==2 and lv[0]['grid']==lv[1]['grid'],'copy level')
+     select_i(h,1); select(h,'Edit',1.5)
+-    fire(h); select(h,'Tower >'); select(h,'Name',1.0)
++    fire(h); select(h,'Level >'); select(h,'Name',1.0)
+     K(h,'Up',1); fire(h,1.0)                    # name entry in the editor
+     fire(h); select(h,'Leave editor',1.5)       # commit
+     lv,cs=show(h,'renamed level'); chk(lv[1]['name'].startswith('OY') or lv[1]['name']!=lv[0]['name'],'level rename + commit')
+--- a/work/floppy/fl_ui.py
++++ b/work/floppy/fl_ui.py
+@@ -10,7 +10,7 @@
+ MEM = {'ste': 1024, 'st': 1024, 'megaste': 4096}[MACH]
+ V = 0x77cc0; RS = 0x77c80
+ OUT = WD + '_out/'; shutil.rmtree(OUT, ignore_errors=True); os.makedirs(OUT)
+-disk = OUT + 'camp.st'; shutil.copy('/tmp/looksgate/fl_new/Nebulus_campaign_disk.st', disk); open(OUT + 'zero.ovl', 'wb').write(bytes(8192))
++disk = OUT + 'camp.st'; shutil.copy('/tmp/neblooksui/lg/fl_new/Nebulus_campaign_disk.st', disk); open(OUT + 'zero.ovl', 'wb').write(bytes(8192))
+ h = NebFloppy(GAME, machine=MACH, mem=MEM, workdir=WD, trace='fdc'); t = T(h)
+ fails = []; LOG = []
+ def chk(name, got, exp=True):
+@@ -33,9 +33,13 @@
+ def pick(what, gap=1.3):
+     items, sel = menu(); idx = what if isinstance(what, int) else [i for i, x in enumerate(items) if x.startswith(what)][0]
+     goto(idx); h.key('Control_R', hold=0.35); time.sleep(gap)
+-def tower_menu(label, gap=1.3):
++def level_menu(label, gap=1.3):
+     h.key('Control_R', hold=0.35); time.sleep(1.5)
+-    pick('Tower >', 1.0); pick(label, gap)
++    pick('Level >', 1.0); pick(label, gap)
++TMAP = [int(x) for x in re.search(r"^tmap:\s+dc\.b\s+([\d,]+)", open(G + 'patches/ed_editor.s').read(), re.M).group(1).split(',')]
++def theme(k):
++    pal = grab(h, 0x35250 + k * 32, 32, 'tp'); return b''.join(pal[b:b + 2] for b in TMAP)
++def epal(): return grab(h, 0xA8980, 32, 'ep')
+ def flag_byte(): return grab(h, RS + 50, 1, 'fl')[0]
+ def flags_of(data):
+     out = []; p = ovl.LV0
+@@ -72,27 +76,33 @@
+     h.key('F10', hold=0.5); time.sleep(2.5); chk('F10 opens the manager (VBL vector changed)', L(h, 0x70) != v0); h.shot(OUT + '02_manager.png')
+     pick('Levels'); pick('<new level>', 1.5)
+     chk('editor: new level starts with flags 0', flag_byte(), 0)
+-    for k in range(5): tower_menu('Colours: next')
+-    for k in range(3): tower_menu('Enemies: next')
+-    chk('editor: Colours x5 + Enemies x3 = $53', flag_byte(), 0x53); h.shot(OUT + '03_panel_S5_E3.png')
+-    for k in range(2): tower_menu('Look: next tower')
+-    chk('editor: base tower T3, flags unchanged', (W(h, RS + 14), flag_byte()), (2, 0x53))
++    level_menu('Colours >', 1.2); items, sel = menu()
++    chk('floppy: Colours list = the 8 tower names (the floppy build reads the name table at its own address)', (items[0], items[7], items[8], sel), ('1 The Tower Of Eyes', '8 The Edge Of Doom', '< back', 0))
++    ok = True
++    for k in range(1, 8):
++        h.key('Down', hold=0.2); time.sleep(0.6)
++        if epal() != theme(k): ok = False
++    chk('floppy: every cursor move re-themes the screen: EPAL == palette table of set k (k = 2..8)', ok); h.shot(OUT + '02b_colour_list_hl8.png')
++    goto(4); h.key('Control_R', hold=0.35); time.sleep(1.5)
++    chk('floppy: pick colours 5 -> tower byte 4, flags 0, map theme 5', (W(h, RS + 14), flag_byte(), epal() == theme(4)), (4, 0, True))
++    level_menu('Enemies >', 1.2); goto(2); h.key('Control_R', hold=0.35); time.sleep(1.5)
++    chk('floppy: pick enemies 3 -> flags 3', flag_byte(), 3); h.shot(OUT + '03_panel_S5_E3.png')
+     h.key('l', hold=0.2); time.sleep(0.4)
+     h.key('Control_R', hold=0.35); time.sleep(1.0); pick('Playtest', 1.0)
+     chk('playtest running', wait_running()); time.sleep(2.0)
+-    look_check('floppy playtest colours 5 / enemies 3 / base T3', 5, 3, 2); chk('base tower word $3390c = 2', W(h, 0x3390c), 2); h.shot(OUT + '04_playtest.png')
+-    h.key('F10', hold=0.4); time.sleep(2.0); chk('back in the editor, flags still $53', flag_byte(), 0x53)
+-    h.key('F10', hold=0.4); time.sleep(1.5); ram = t.store(); chk('committed record flags', flags_of(ram), [0x53]); chk('store validates', ovl.validate(ram), [])
++    look_check('floppy playtest colours 5 / enemies 3', 5, 3, 4); chk('base tower word $3390c = 4', W(h, 0x3390c), 4); h.shot(OUT + '04_playtest.png')
++    h.key('F10', hold=0.4); time.sleep(2.0); chk('back in the editor, flags still 3', flag_byte(), 3)
++    h.key('F10', hold=0.4); time.sleep(1.5); ram = t.store(); chk('committed record flags', flags_of(ram), [3]); chk('store validates', ovl.validate(ram), [])
+     t.insert(disk); m = op(save=True); chk('Save to campaign disk', m, 'Saved'); h.shot(OUT + '05_saved.png')
+     t.insert(D + 'blank.st'); time.sleep(3)
+-    ok, text, data = nc.status(open(disk, 'rb').read()); chk('saved image usable', ok); chk('saved file flags', flags_of(data), [0x53]); chk('saved file == RAM store', data == ram)
++    ok, text, data = nc.status(open(disk, 'rb').read()); chk('saved image usable', ok); chk('saved file flags', flags_of(data), [3]); chk('saved file == RAM store', data == ram)
+     h.debug(f'loadbin {OUT}zero.ovl $bc000', 0.8); poke(h, RS + 40, bytes([0, 0]))
+     chk('store zeroed', flags_of(t.store()) if t.store()[:4] == b'NCMP' else [], [])
+     t.insert(disk); m = op(); chk('Load from campaign disk', m, 'Loaded 1 levels / 0 campaigns')
+-    chk('reloaded store flags (RAM) == saved', flags_of(t.store()), [0x53])
+-    pick('Levels'); pick(0); pick('Edit', 1.5); chk('Edit shows $53 / base T3', (flag_byte(), W(h, RS + 14)), (0x53, 2)); h.shot(OUT + '06_edit_after_reload.png')
++    chk('reloaded store flags (RAM) == saved', flags_of(t.store()), [3])
++    pick('Levels'); pick(0); pick('Edit', 1.5); chk('Edit shows flags 3 / tower 4', (flag_byte(), W(h, RS + 14)), (3, 4)); h.shot(OUT + '06_edit_after_reload.png')
+     h.key('F10', hold=0.4); time.sleep(1.5); pick(0); pick('Play', 1.0)
+-    chk('Play from the list: running', wait_running()); time.sleep(2.0); look_check('floppy Play of reloaded level', 5, 3, 2); h.shot(OUT + '07_play_reloaded.png')
++    chk('Play from the list: running', wait_running()); time.sleep(2.0); look_check('floppy Play of reloaded level', 5, 3, 4); h.shot(OUT + '07_play_reloaded.png')
+ except Exception as ex:
+     import traceback; traceback.print_exc(); chk('exception in the script', repr(ex)[:200], 'none')
+ finally:
+@@ -100,4 +110,4 @@
+ log = open(WD + '/log.txt', errors='replace').read() if os.path.exists(WD + '/log.txt') else ''
+ crash = re.findall(r'Address error|Illegal|double bus|CPU halted|bus error', log, re.I)
+ chk('no crash lines in the Hatari log', crash, [])
+-print('FAILS', fails); open(f'/tmp/looksgate/logs/fl_ui_{MACH}.log', 'w').write('\n'.join(LOG) + f'\nFAILS {fails}\n')
++print('FAILS', fails); open(f'/tmp/neblooksui/lg/logs/fl_ui_{MACH}.log', 'w').write('\n'.join(LOG) + f'\nFAILS {fails}\n')

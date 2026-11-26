@@ -1,0 +1,103 @@
+INFO : Hatari v2.6.1, compiled on:  Feb  8 2026, 19:50:12
+INFO : Mounting ACSI HD image '/home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/release/fin_ste/wd1/hd.img'
+INFO : GEMDOS HDD emulation, D: <-> /home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/release/fin_ste/wd1/C.
+> m $3d00f 4
+0003D00F: 00 00 00 00                                      ....
+> m $3d00f 4
+0003D00F: 00 00 00 00                                      ....
+WARN : Bus Error reading at address $fff00039, PC=$d51c addr_e3=d51c op_e3=4a13
+WARN : Bus Error reading at address $fff00079, PC=$d51c addr_e3=d51c op_e3=4a13
+WARN : Bus Error reading at address $fff000b9, PC=$d51c addr_e3=d51c op_e3=4a13
+WARN : Bus Error reading at address $fff000f9, PC=$d51c addr_e3=d51c op_e3=4a13
+WARN : Bus Error reading at address $ffff8781, PC=$bbc2 addr_e3=bbc2 op_e3=1038
+WARN : Bus Error reading at address $ffff8e21, PC=$1b5ec addr_e3=1b5ec op_e3=1238
+> m $3d00f 4
+0003D00F: 00 00 00 00                                      ....
+> m $3d00f 4
+0003D00F: 00 b3 e7 b0                                      .øτã
+> m $3d00f 4
+0003D00F: 00 b3 e7 b0                                      .øτã
+> m $3d00f 4
+0003D00F: 48 69 67 68                                      High
+WARN : PNG screen dump saved to: /home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/release/fin_ste/wd1/shots/grab0001.png
+WARN : PNG screen dump saved to: /home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/release/fin_ste/wd1/shots/grab0002.png
+WARN : PNG screen dump saved to: /home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/release/fin_ste/wd1/shots/grab0003.png
+WARN : PNG screen dump saved to: /home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/release/fin_ste/wd1/shots/grab0004.png
+> m $bc000 8
+000BC000: 00 00 00 00 00 00 00 00                          ........
+WARN : PNG screen dump saved to: /home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/release/fin_ste/wd1/shots/grab0005.png
+WARN : PNG screen dump saved to: /home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/release/fin_ste/wd1/shots/grab0006.png
+WARN : PNG screen dump saved to: /home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/release/fin_ste/wd1/shots/grab0007.png
+WARN : PNG screen dump saved to: /home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/release/fin_ste/wd1/shots/grab0008.png
+WARN : PNG screen dump saved to: /home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/release/fin_ste/wd1/shots/grab0009.png
+WARN : PNG screen dump saved to: /home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/release/fin_ste/wd1/shots/grab0010.png
+> m $bc000 8
+000BC000: 4e 43 4d 50 00 01 00 01                          NCMP....
+WARN : PNG screen dump saved to: /home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/release/fin_ste/wd1/shots/grab0011.png
+WARN : PNG screen dump saved to: /home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/release/fin_ste/wd1/shots/grab0012.png
+WARN : PNG screen dump saved to: /home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/release/fin_ste/wd1/shots/grab0013.png
+> m $3ad98 2
+0003AD98: 00 18                                            ..
+> m $3ad98 6
+0003AD98: 00 18 00 48 00 2f                                ...H./
+> m $3390c 2
+0003390C: 00 00                                            ..
+> m $b0020 4
+000B0020: 4e 45 50 4f                                      NEPO
+> m $b0024 2
+000B0024: 00 12                                            ..
+> m $39ffa 2
+00039FFA: 60 2a                                            `*
+> m $38514 2
+00038514: 4e f9                                            N∙
+> m $38516 4
+00038516: 00 07 6d 04                                      ..m.
+> m $3dcf4 2
+0003DCF4: 4e b9                                            N¨
+> m $3dcf6 4
+0003DCF6: 00 07 6c 08                                      ..l.
+> m $3d698 2
+0003D698: 4e b9                                            N¨
+> m $3d69a 4
+0003D69A: 00 07 7a 00                                      ..z.
+> m $3a332 2
+0003A332: 4e 71                                            Nq
+> m $377a2 2
+000377A2: 4e f9                                            N∙
+> m $377a4 4
+000377A4: 00 07 57 40                                      ..W@
+> m $76c04 2
+00076C04: ff ff                                            ¯¯
+> m $3398c 2
+0003398C: 00 00                                            ..
+> m $3398e 2
+0003398E: 00 00                                            ..
+> m $33990 2
+00033990: 00 00                                            ..
+> m $33992 2
+00033992: 00 00                                            ..
+> m $3ad98 6
+0003AD98: 00 18 00 48 00 40                                ...H.@
+> m $3ad98 6
+0003AD98: 00 18 00 47 00 4f                                ...G.O
+> m $3ad98 6
+0003AD98: 00 18 00 40 00 3f                                ...@.?
+> m $3ad98 6
+0003AD98: 00 18 00 40 00 3f                                ...@.?
+> m $3ad98 6
+0003AD98: 00 18 00 40 00 3f                                ...@.?
+> m $76c02 2
+00076C02: ff ff                                            ¯¯
+> m $3ad98 6
+0003AD98: 00 18 00 40 00 19                                ...@..
+> m $3ad98 6
+0003AD98: 00 18 00 38 00 0f                                ...8..
+> e VBL
+= %1010001101010 (bin), #5226 (dec), $146a (hex)
+WARN : PNG screen dump saved to: /home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/release/fin_ste/wd1/shots/grab0014.png
+> e VBL
+= %1100001111110 (bin), #6270 (dec), $187e (hex)
+> m $3390c 2
+0003390C: 00 00                                            ..
+> m $3ad98 6
+0003AD98: 00 18 00 48 00 16                                ...H..

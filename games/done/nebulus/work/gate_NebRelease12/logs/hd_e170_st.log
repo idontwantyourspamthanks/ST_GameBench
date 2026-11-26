@@ -1,0 +1,14 @@
+title True
+marker/count b'NEPO' 4e45504f00210000
+PASS marker NEPO: b'NEPO'
+PASS site count word: 33
+PASS hook $3851a -> ed_key: '4ef9'
+PASS hook $3d662: '4ef9'
+PASS block CODE1 magic (jump table at $75740): '4ef9'
+PASS block CODE4 $77dc0 first word nonzero: True
+PASS trainer blob intact (first hook insn at $76c08): '4eb9'
+PASS VBL vector normal: '0x382d8'
+PASS F10 (100 ms tap) opens the manager (VBL = editor): True
+PASS F10 leaves again: 230104
+PASS D opens the manager: True
+FAILS []

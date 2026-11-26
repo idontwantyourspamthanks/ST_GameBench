@@ -1,0 +1,42 @@
+cell def_insB_mste4m insB megaste 4096 2.06 disks work/fdb/build_def/disk_a.st work/fdb/build_def/disk_b.st  realfdc
+disk-2 prompt True t 61 vbl 3873
+prompt shot /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/fdb/out/def_insB_mste4m_prompt.png
+marker $b2700: 000B2700: 4d 53 50 4f 00 00 00 00                          MSPO....
+mode action done: insB
+t+  10s vbl 5068 $1021/$100e (2, 0)
+t+  23s vbl 5835 $1021/$100e (2, 115)
+t+  37s vbl 6694 $1021/$100e (2, 246)
+race advancing ($100e 321 -> 406, mode 2, prompt gone True): True
+race shot /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/fdb/out/def_insB_mste4m_race.png
+drive: up held 30 s, $100e 839 shot /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/fdb/out/def_insB_mste4m_drive.png
+marker $b2700: 000B2700: 4d 53 50 4f 00 00 00 00                          MSPO....
+tick clock $b8f00: 000B8F00: 00 00 a0 4b 00 00 a0 64                          ..áK..ád
+driveb vars (unit, pref[0], pref[1]) @$b8e9e: 000B8E9E: 00 01 00 00 00 01                                ......
+drive B selected (PSG change drive ->1) 9 time(s) in the whole run
+fdc read sectors whole run: per drive {'0': 1237, '1': 100}
+  drive=1 reads whole run: 100; first/last: fdc read sector addr=0x68000 drive=1 track=0 sect=1 side=0 VBL=4441 video_cyc=27912 480@54 pc=cc64 | fdc read sector addr=0x62400 drive=1 track=22 sect=3 side=0 VBL=4730 video_cyc=132686 98@261 pc=cc74
+fdc read sectors after the insert: per drive {'0': 1, '1': 100}
+  drive=1 reads after the insert: 100; first/last: fdc read sector addr=0x68000 drive=1 track=0 sect=1 side=0 VBL=4441 video_cyc=27912 480@54 pc=cc64 | fdc read sector addr=0x62400 drive=1 track=22 sect=3 side=0 VBL=4730 video_cyc=132686 98@261 pc=cc74
+RESULT def_insB_mste4m OK
+cell def_startB_st104 startB st 1024 1.04 disks work/fdb/build_def/disk_a.st work/fdb/build_def/disk_b.st  realfdc
+startB: race reached WITHOUT the disk-2 prompt: $100e 55 -> 116 vbl 3383 t 68
+disk-2 prompt False t 68 vbl 3535
+prompt shot /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/fdb/out/def_startB_st104_prompt.png
+marker $b2700: 000B2700: 4d 53 50 4f 00 00 00 00                          MSPO....
+mode action done: startB
+t+   8s vbl 4278 $1021/$100e (2, 265)
+t+  17s vbl 4763 $1021/$100e (2, 359)
+t+  27s vbl 5266 $1021/$100e (2, 457)
+t+  38s vbl 5831 $1021/$100e (2, 570)
+race advancing ($100e 615 -> 685, mode 2, prompt gone True): True
+race shot /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/fdb/out/def_startB_st104_race.png
+drive: up held 30 s, $100e 1070 shot /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/fdb/out/def_startB_st104_drive.png
+marker $b2700: 000B2700: 4d 53 50 4f 00 00 00 00                          MSPO....
+tick clock $b8f00: 000B8F00: 00 00 99 66 00 00 99 7e                          ..Öf..Ö~
+driveb vars (unit, pref[0], pref[1]) @$b8e9e: 000B8E9E: 00 01 00 00 00 01                                ......
+drive B selected (PSG change drive ->1) 8 time(s) in the whole run
+fdc read sectors whole run: per drive {'0': 1236, '1': 100}
+  drive=1 reads whole run: 100; first/last: fdc read sector addr=0x68000 drive=1 track=0 sect=1 side=0 VBL=2411 video_cyc=27468 332@53 pc=cc6a | fdc read sector addr=0x62400 drive=1 track=22 sect=3 side=0 VBL=2662 video_cyc=29236 52@57 pc=cc64
+fdc read sectors after the insert: per drive {'0': 1236, '1': 100}
+  drive=1 reads after the insert: 100; first/last: fdc read sector addr=0x68000 drive=1 track=0 sect=1 side=0 VBL=2411 video_cyc=27468 332@53 pc=cc6a | fdc read sector addr=0x62400 drive=1 track=22 sect=3 side=0 VBL=2662 video_cyc=29236 52@57 pc=cc64
+RESULT def_startB_st104 OK

@@ -1,0 +1,45 @@
+22 files
+rsOk at start (no poke): 0000
+('random0', 'validate:bad magic (the game treats the file as absent)', 'magic after:h¯&\x17', [], 'vbl', 1035, 'errors', 0)
+rsOk at start (no poke): 0000
+('random1', 'validate:bad magic (the game treats the file as absent)', 'magic after:Þ»0¾', [], 'vbl', 1034, 'errors', 0)
+rsOk at start (no poke): 0000
+('random2', 'validate:bad magic (the game treats the file as absent)', 'magic after:\x17çqi', [], 'vbl', 1035, 'errors', 0)
+rsOk at start (no poke): 0000
+('random3', 'validate:bad magic (the game treats the file as absent)', 'magic after:¿ìPY', [], 'vbl', 1035, 'errors', 0)
+rsOk at start (no poke): 0000
+('random4', 'validate:bad magic (the game treats the file as absent)', 'magic after:è\x88ý%', [], 'vbl', 1035, 'errors', 0)
+rsOk at start (no poke): 0000
+('magic+random', 'validate:unknown version 2573', 'magic after:\x00\x00\x00\x00', [], 'vbl', 1034, 'errors', 0)
+rsOk at start (no poke): 0000
+('flip1', 'validate:ok', 'magic after:NCMP', ['edit-ok', 'play'], 'vbl', 2442, 'errors', 0)
+rsOk at start (no poke): 0000
+('flip2', 'validate:level 0: stream 140 != mask popcount 143', 'magic after:\x00\x00\x00\x00', [], 'vbl', 1036, 'errors', 0)
+rsOk at start (no poke): 0000
+('flip3', 'validate:ok', 'magic after:NCMP', ['edit-ok', 'play'], 'vbl', 2440, 'errors', 0)
+rsOk at start (no poke): 0000
+('flip5', 'validate:ok', 'magic after:NCMP', ['edit-ok', 'play'], 'vbl', 2441, 'errors', 0)
+rsOk at start (no poke): 0000
+('flip8', 'validate:ok', 'magic after:NCMP', ['edit-ok', 'play'], 'vbl', 2440, 'errors', 0)
+rsOk at start (no poke): 0000
+('flip12', 'validate:level 0: stream 140 != mask popcount 151', 'magic after:\x00\x00\x00\x00', [], 'vbl', 1034, 'errors', 0)
+rsOk at start (no poke): 0000
+('truncated300', 'validate:level 0: stream 140 != mask popcount 16', 'magic after:\x00\x00\x00\x00', [], 'vbl', 1035, 'errors', 0)
+rsOk at start (no poke): 0000
+('version2', 'validate:unknown version 2', 'magic after:\x00\x00\x00\x00', [], 'vbl', 1034, 'errors', 0)
+rsOk at start (no poke): 0000
+('nlev127', 'validate:level 1: mission 0', 'magic after:\x00\x00\x00\x00', [], 'vbl', 1035, 'errors', 0)
+rsOk at start (no poke): 0000
+('ncamp200', 'validate:ncamps 200 > 8', 'magic after:\x00\x00\x00\x00', [], 'vbl', 1035, 'errors', 0)
+rsOk at start (no poke): 0000
+('rows0', 'validate:level 0: rows 0', 'magic after:\x00\x00\x00\x00', [], 'vbl', 1036, 'errors', 0)
+rsOk at start (no poke): 0000
+('rows255', 'validate:level 0: rows 255', 'magic after:\x00\x00\x00\x00', [], 'vbl', 1036, 'errors', 0)
+rsOk at start (no poke): 0000
+('len65535', 'validate:level 0: length 65535 invalid', 'magic after:\x00\x00\x00\x00', [], 'vbl', 1034, 'errors', 0)
+rsOk at start (no poke): 0000
+('camp255', 'validate:campaign 0: count 255 > 16', 'magic after:\x00\x00\x00\x00', [], 'vbl', 1035, 'errors', 0)
+rsOk at start (no poke): 0000
+('badentries', 'validate:ok', 'magic after:NCMP', ['edit-ok', 'play'], 'vbl', 2440, 'errors', 0)
+rsOk at start (no poke): 0000
+('valid', 'validate:ok', 'magic after:NCMP', ['edit-ok', 'play'], 'vbl', 2441, 'errors', 0)

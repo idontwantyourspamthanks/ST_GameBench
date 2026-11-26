@@ -1,0 +1,19 @@
+Moonshine Racers (Millennium, 1991) - PP's HAGA hard-disk conversion, enhanced release v1.0 (dad_prg)
+==========================================================================================================
+
+This folder is PP's Atari ST hard-disk conversion of Moonshine Racers (README.TXT / LOG.TXT are his) with the changes below applied
+to RUNME.TOS (patch loader: the changed game code is applied in RAM at start-up, the game files in FILES\ are PP's, unchanged) and to
+HAGA (PP's loader service).  Start RUNME.TOS from the desktop or a hard-disk AUTO folder exactly as PP's version.
+
+Changes in this release:
+- mr_digit: Faster HUD score-digit glyph kernel $14d98 (pixel-identical): the two colours the game uses ($cd, $c7) get straight-line row code instead of 8 ...
+- mr_edge: Faster road edge-colour routine (pixel-identical): the 16 tst/or tests of $1058a become one of 8 generated straight-line code slots per frame.
+- mr_map: Faster minimap bitmap draw $12690 (pixel-identical): the per-plane btst/branch of the inner loop is resolved once per call by a jump into one of 16 ...
+- mt_clock: Fixed real-time game tick, part 1 of 3 (needs mt_sync and mt_pre): a 1/300 s clock advanced by the VBL handler (+6 at 50 Hz, +5 at 60 Hz).
+- mt_pre: Fixed real-time game tick, part 3 of 3: a latch guard before the first write into the back buffer (the flipped buffer must be on screen first).
+- mt_sync: Fixed real-time game tick, part 2 of 3: the race pass's pacer replaces the 2-VBL floor and the post-flip wait with a fixed schedule of TICK/300 s per ...
+- pp_bigram_cache: PP's loader keeps its chunked disk cache at 4 MB or more on ST/STE/Mega ST/STE (no whole-image reads over the patch area).
+
+Machines: 1 MB or more.  Booted to the first race with this patch set plus a test marker patch: STE (TOS 1.62, 1 MB and 4 MB), Mega STE
+(TOS 2.06, 1 MB and 4 MB), ST (TOS 1.04, 1 MB) and TT (TOS 3.06, 4 MB).  The Falcon runs the same code path (not tested here).
+Hard-disk set only: PP's conversion has no floppy version.  The patch mechanism and its address map: patches/README.md

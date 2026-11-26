@@ -1,0 +1,28 @@
+checkpoints: 25 / 25
+same 000 manager main menu 
+same 001 full store: levels list 
+same 002 copy: Overlay full (the level menu stays) 
+same 003 dense level in the editor 
+same 004 dense level scrolled 
+same 005 dense level top 
+same 006 dense level committed (smaller) 
+same 007 FULL entries 
+same 008 validator: good 
+same 009 validator: version 2 
+same 010 validator: nlevels 200 
+same 011 validator: ncamps 9 
+same 012 validator: campaign count 17 
+same 013 validator: mission 3 
+same 014 validator: mission 0 
+same 015 validator: tower 8 
+same 016 validator: rows 15 
+same 017 validator: rows 121 
+same 018 validator: len < 2*rows 
+same 019 validator: len 65535 
+same 020 validator: mask bit flipped 
+same 021 validator: nlevels 4 (4th record missing) 
+same 021 validator parity with ovl.validate (name, game keeps the magic, ovl.py accepts) 
+same 023 Original game: back on the title 
+same 023 Hatari log error lines 
+bytes compared per part: {'es': 736004, 'pal': 740, 'grid': 102400, 'ovs': 204800, 'rs': 1300}
+RESULT: 25 of 25 checkpoints identical, 0 differ

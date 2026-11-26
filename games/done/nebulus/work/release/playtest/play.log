@@ -1,0 +1,25 @@
+patched set: cr_credit ed_overlay ni_jump ni_latch ni_shoot nt_trainers
+campaign file in: /home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/release/playtest/home/NEBLEVEL.OVL
+Nebulus (patched) on ste, 1024 KiB, 8 MHz, TOS TOS_1_62.img; image /home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/build/play-patched.img
+INFO : Hatari v2.6.1, compiled on:  Feb  8 2026, 19:50:12
+INFO : Mounting ACSI HD image '/home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/build/play-patched.img'
+INFO : NVRAM not found at '/home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/release/playtest/home/.config/hatari/hatari.nvram'
+> m $3d00f 4
+0003D00F: 00 00 00 00                                      ....
+> m $3d00f 4
+0003D00F: 00 00 00 00                                      ....
+WARN : Bus Error reading at address $fff00039, PC=$d51c addr_e3=d51c op_e3=4a13
+WARN : Bus Error reading at address $fff00079, PC=$d51c addr_e3=d51c op_e3=4a13
+WARN : Bus Error reading at address $fff000b9, PC=$d51c addr_e3=d51c op_e3=4a13
+WARN : Bus Error reading at address $fff000f9, PC=$d51c addr_e3=d51c op_e3=4a13
+WARN : Bus Error reading at address $ffff8781, PC=$bbc2 addr_e3=bbc2 op_e3=1038
+> m $3d00f 4
+0003D00F: 00 00 00 00                                      ....
+WARN : Bus Error reading at address $ffff8e21, PC=$1b5ec addr_e3=1b5ec op_e3=1238
+> m $3d00f 4
+0003D00F: 00 b3 e7 b0                                      .øτã
+> m $3d00f 4
+0003D00F: 00 b3 e7 b0                                      .øτã
+> m $3d00f 4
+0003D00F: 48 69 67 68                                      High
+campaign file saved: /home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/release/playtest/home/NEBLEVEL.OVL

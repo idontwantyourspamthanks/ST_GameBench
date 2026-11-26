@@ -1,0 +1,32 @@
+PASS open manager: True
+PASS play CRUMBL: True
+CRUMBL: start frog (4, 8, 0); row1 cols2..9 [145, 145, 129, 129, 129, 129, 129, 129] row0 [129, 129, 0, 0, 0, 0, 0, 0]
+  t=1.35s frog(x,y,st)=(5, 8, 0) row1[2..9]=[0, 145, 129, 129, 129, 129, 129, 129] row0[2..9]=[129, 129, 0, 0, 0, 0, 0, 0]
+  t=2.70s frog(x,y,st)=(26, 4, 0) row1[2..9]=[0, 0, 129, 129, 129, 129, 129, 129] row0[2..9]=[129, 129, 0, 0, 0, 0, 0, 0]
+  t=4.06s frog(x,y,st)=(57, 8, 0) row1[2..9]=[0, 0, 129, 129, 129, 129, 129, 129] row0[2..9]=[129, 129, 0, 0, 0, 0, 0, 0]
+  2 s after releasing: frog (82, 0, 8)
+  STATE before q: st=0x8 run=0x0 v70=0x382d8 frog=(4, 0, 10)
+  PACED: waited 3.2s until running: st=0x0 run=0x1
+  STATE after q+F10: v70=0x75a3a st=0x0 run=0x1 rs=(0, 0, 0, 0, 0, 0)
+PASS open manager: True
+PASS play LOWWALK: True
+LOWWALK: start frog (4, 8, 0); row1 cols2..9 [129, 129, 129, 129, 145, 145, 129, 129] row0 [0, 0, 0, 0, 129, 129, 129, 129]
+  t=1.35s frog(x,y,st)=(4, 8, 0) row1[2..9]=[129, 129, 129, 129, 145, 145, 129, 129] row0[2..9]=[0, 0, 0, 0, 129, 129, 129, 129]
+  t=2.70s frog(x,y,st)=(38, 8, 0) row1[2..9]=[129, 129, 129, 129, 0, 145, 129, 129] row0[2..9]=[0, 0, 0, 0, 129, 129, 129, 129]
+  t=4.06s frog(x,y,st)=(60, 4, 0) row1[2..9]=[129, 129, 129, 129, 0, 0, 129, 129] row0[2..9]=[0, 0, 0, 0, 129, 129, 129, 129]
+  2 s after releasing: frog (81, 0, 8)
+  STATE before q: st=0x8 run=0x0 v70=0x382d8 frog=(4, 0, 10)
+  PACED: waited 3.2s until running: st=0x0 run=0x1
+  STATE after q+F10: v70=0x75a3a st=0x0 run=0x1 rs=(0, 0, 0, 0, 0, 0)
+PASS open manager: True
+PASS play CRUMB: True
+CRUMB: start frog (4, 8, 0); row1 cols2..9 [145, 145, 129, 129, 129, 129, 129, 129] row0 [0, 0, 0, 0, 0, 0, 0, 0]
+  t=1.35s frog(x,y,st)=(5, 8, 0) row1[2..9]=[0, 145, 129, 129, 129, 129, 129, 129] row0[2..9]=[0, 0, 0, 0, 0, 0, 0, 0]
+  t=2.71s frog(x,y,st)=(21, 0, 8) row1[2..9]=[0, 145, 129, 129, 129, 129, 129, 129] row0[2..9]=[0, 0, 0, 0, 0, 0, 0, 0]
+  2 s after releasing: frog (4, 0, 10)
+  STATE before q: st=0xa run=0x0 v70=0x382d8 frog=(4, 8, 0)
+  PACED: waited 0.9s until running: st=0x0 run=0x1
+  STATE after q+F10: v70=0x75a3a st=0x0 run=0x1 rs=(0, 0, 0, 0, 0, 0)
+PASS open manager: True
+PASS no Address/Bus Error/exception: []
+FAILS []

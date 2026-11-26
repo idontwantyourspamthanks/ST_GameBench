@@ -1,0 +1,16 @@
+GATE first-restore g_mste8_v16: COMPLETED | fdc type I restore spinup=on verify=on steprate_ms=12 drive=0 tr=0x0 head_track=0x0 | ends: complete after 0.022 s (VBL 4421 -> 4422, x1 CPU)
+game type I commands cut by the force interrupt, whole run: 0 of 15
+GATE first-restore g_mste16_v16: COMPLETED | fdc type I restore spinup=on verify=on steprate_ms=12 drive=0 tr=0x0 head_track=0x0 | ends: complete after 0.058 s (VBL 3721 -> 3724, x2 CPU)
+game type I commands cut by the force interrupt, whole run: 0 of 15
+GATE first-restore g_ste8_v14: COMPLETED | fdc type I restore spinup=on verify=on steprate_ms=12 drive=0 tr=0x4f head_track=0x4f | ends: complete after 2.133 s (VBL 2421 -> 2527, x1 CPU)
+game type I commands cut by the force interrupt, whole run: 0 of 15
+GATE first-restore g_mste16_v14: COMPLETED | fdc type I restore spinup=on verify=on steprate_ms=12 drive=0 tr=0x4f head_track=0x4f | ends: complete after 0.980 s (VBL 2810 -> 2868, x2 CPU)
+game type I commands cut by the force interrupt, whole run: 1 of 15
+GATE first-restore g_mste16_nowait: COMPLETED | fdc type I restore spinup=on verify=on steprate_ms=12 drive=0 tr=0x0 head_track=0x0 | ends: complete after 0.059 s (VBL 3728 -> 3731, x2 CPU)
+game type I commands cut by the force interrupt, whole run: 1 of 15
+GATE first-restore g_ste8_v15: COMPLETED | fdc type I restore spinup=on verify=on steprate_ms=12 drive=0 tr=0x2e head_track=0x2e | ends: complete after 1.635 s (VBL 3262 -> 3343, x1 CPU)
+game type I commands cut by the force interrupt, whole run: 0 of 15
+  CUT: fdc type I seek dest_track=0x1 spinup=on verify=on steprate_ms=12 drive=1 tr=0x93 head_track=0x0 | ends: FORCE-INT after 1.288 s (VBL 3871 -> 3948, x2 CPU)
+GATE first-restore g_mste16_v15: FAIL (parked=False completed=False margin<=75%=False cuts=3)
+game type I commands cut by the force interrupt, whole run: 0 of 15
+GATE first-restore g_mste16_nopark: FAIL (parked=False completed=True margin<=75%=False cuts=0)

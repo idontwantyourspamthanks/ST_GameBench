@@ -1,0 +1,11 @@
+PASS e1.ovl NEW LEVEL   rows=48 tower=2 flags=0x02 size=155 ruby(tower=2 flags=0x02 colour_scheme=3 eye_design=2) grid_equal=True semantics=True {'0x81': 7, '0x83': 12, '0x91': 2, '0xa1': 6, '0xb1': 6
+  campaigns [] | ruby []
+PASS t1.ovl CONVEY rows=48 tower=2 flags=0x03 size=134 ruby(tower=2 flags=0x03 colour_scheme=3 eye_design=3) grid_equal=True semantics=True {'0x81': 11, '0x91': 2, '0xa1': 3, '0xb1': 2}
+  campaigns [('C1', [0])] | ruby [('C1', 1)]
+PASS t2.ovl DOORS rows=40 tower=5 flags=0x04 size=123 ruby(tower=5 flags=0x04 colour_scheme=6 eye_design=4) grid_equal=True semantics=True {'0x81': 16, '0x83': 4, '0xc3': 3}
+PASS t2.ovl ODDLEN rows=33 tower=7 flags=0x01 size=105 ruby(tower=7 flags=0x01 colour_scheme=8 eye_design=1) grid_equal=True semantics=True {'0x81': 16, '0x91': 2, '0xa1': 1}
+  campaigns [('C2', [0, 1, 131])] | ruby [('C2', 3)]
+PASS t3.ovl MIXED rows=120 tower=0 flags=0x62 size=391 ruby(tower=0 flags=0x62 colour_scheme=6 eye_design=2) grid_equal=True semantics=True {'0x8': 7, '0x10': 9, '0x20': 9, '0x40': 9, '0x70': 8, '0x80
+PASS t3.ovl TINY rows=16 tower=3 flags=0x80 size=69 ruby(tower=3 flags=0x80 colour_scheme=8 eye_design=4) grid_equal=True semantics=True {'0x81': 16, '0xb1': 1}
+  campaigns [('C3', [0, 1])] | ruby [('C3', 2)]
+FAILS 0

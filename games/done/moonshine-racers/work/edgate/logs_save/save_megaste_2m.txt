@@ -1,0 +1,45 @@
+== save_megaste_2m: HD Mega STE 2 MB, build /tmp/msr_save/hd, campaign none
+GEMDOS drive dir: /tmp/msr_save/run/run_save_megaste_2m/C
+title reached: True
+CHECK title reached: PASS 
+CHECK editor overlay loaded (V_EDOK): PASS 
+CHECK top_list without campaign has 3 items (no Save yet): PASS 
+CHECK NEW TRACK opened: PASS 
+CHECK editor idle after bend: PASS 
+CHECK returned to top_list with campaign kept in RAM: PASS 
+CHECK top_list with 1 track has 5 items (1 track + Copy + New + Save + Back): PASS 
+CPSTORE size = 1678 B
+CHECK CPSTORE passes validate_campaign: PASS 
+CHECK select SAVE CAMPAIGN... >: PASS 
+CHECK save_menu opened (3 items): PASS 
+CHECK HD item selected: PASS 
+CHECK HD save returned to top_list: PASS 
+HD save msg: 'SAVED TO FILES\\MSTRACKS.TRK'
+CHECK HD save message says SAVED TO FILES\MSTRACKS.TRK: PASS 
+CHECK FILES/MSTRACKS.TRK exists on host drive: PASS 
+CHECK FILES/MSTRACKS.TRK byte-exact (1678 == 1678): PASS 
+CHECK FILES/MSTRACKS.TRK passes validate_campaign: PASS 
+CHECK select SAVE CAMPAIGN... > again: PASS 
+CHECK save_menu opened: PASS 
+CHECK select FLOPPY item (1): PASS 
+Inserting write-protected floppy...
+WP floppy msg: 'DISK IS WRITE PROTECTED'
+CHECK write-protected floppy reports DISK IS WRITE PROTECTED: PASS 
+CHECK write-protected floppy stayed on floppy prompt: PASS 
+Inserting unformatted floppy...
+Unformatted floppy msg: 'NO FORMATTED DISK IN DRIVE A'
+CHECK unformatted floppy reports NO FORMATTED DISK IN DRIVE A: PASS 
+CHECK unformatted floppy stayed on floppy prompt: PASS 
+Inserting blank formatted campaign disk...
+Floppy save msg: 'SAVED TO A:\\MSTRACKS.TRK'
+CHECK floppy save succeeded and returned to top_list: PASS 
+CHECK A:\MSTRACKS.TRK on floppy byte-exact (1678 == 1678): PASS 
+CHECK A:\MSTRACKS.TRK passes validate_campaign: PASS 
+CHECK select < BACK TO THE CAMPAIGN MENU (item 4): PASS 
+CHECK F10 menu: LOAD CAMPAIGN FROM HARD DISK: PASS 
+CHECK reloaded saved campaign from Hard Disk: PASS 
+CHECK reloaded HD CPSTORE byte-exact: PASS 
+CHECK F10 menu: LOAD CAMPAIGN FROM DRIVE A: PASS 
+CHECK reloaded saved campaign from Drive A: PASS 
+CHECK reloaded Drive A CPSTORE byte-exact: PASS 
+CHECK zero unexpected Bus/Address errors after boot (0): PASS 

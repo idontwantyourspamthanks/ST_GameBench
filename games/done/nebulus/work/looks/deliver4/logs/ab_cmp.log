@@ -1,0 +1,119 @@
+checkpoints: 116 / 116
+same 000 manager main menu 
+same 001 levels list (empty) 
+same 002 new level map 
+same 003 key l at (1,10) 
+same 004 key p at (2,10) 
+same 005 key b at (3,10) 
+same 006 key s at (4,10) 
+same 007 key r at (5,10) 
+same 008 key w at (6,10) 
+same 009 key u at (7,10) 
+same 010 key i at (8,10) 
+same 011 key j at (9,10) 
+same 012 key k at (10,10) 
+same 013 key s again on the stone ball (turn round) 
+same 014 key j again on the eye (turn round) 
+same 015 key x exit door 
+same 016 key d door + opposite 
+same 017 cursor on the opposite door 
+same 018 menu: enemy direction (horizontal) 
+same 019 menu: stone ball start left 
+same 020 menu: red ball waits (no direction) 
+same 021 menu: enemy direction (vertical) 
+same 022 menu: eye start down 
+same 023 menu: eye l/r fast start right 
+same 024 menu: enemy back 
+same 025 menu: pillar 
+same 026 menu: crumble ledge 
+same 027 Return repeats the crumble ledge 
+same 028 Space repeats 
+same 029 menu: exit door 
+same 030 menu: door opening 
+same 031 Return repeats the door (3 cells + opposite) 
+same 032 ledge over a door cell clears the partner 
+same 033 c / Delete clear 
+same 034 cursor on the frog start 
+same 035 cursor bottom row 
+same 036 cursor top row (scrolled) 
+same 037 scrolled back 
+same 038 unmapped letters do nothing 
+same 039 lift: from here (pick mode) 
+same 040 lift pick: left/right/letters ignored 
+same 041 lift pick: same row = Pick another row 
+same 042 lift pick: cursor up 4 
+same 043 lift set (end above) 
+same 044 lift stop 
+same 045 cursor on the lift end 
+same 046 cursor on the lift start 
+same 047 lift set by FIRE through a pillar: warning 
+same 048 lift pick cancelled by F10 
+same 049 menu: Lift > 
+same 050 menu: lift delete 
+same 051 lift set (end below, by Space) 
+same 052 menu: lift stop here 
+same 053 menu: lift delete from the shaft 
+same 054 menu: Level > 
+same 055 colour list 
+same 056 colour list preview +2 
+same 057 colour list preview -1 
+same 058 colours 5 picked (map) 
+same 059 enemy list 
+same 060 enemies 3 picked 
+same 061 colour list reopened on the current 
+same 062 colour list: left = back 
+same 063 time +50 twice 
+same 064 time -50 
+same 065 name entry 
+same 066 name entry edited 
+same 067 name entry done (map) 
+same 068 Level > back 
+same 069 F10 = leave editor: levels list 
+same 070 level menu 
+same 071 level copied: list 
+same 072 edit the copy 
+same 073 tower list 
+same 074 tower list scrolled (preview) 
+same 075 tower M2 T5 copied (map) 
+same 076 map of the copied tower, scrolled 
+same 077 blank grid 
+same 078 Leave editor: levels list 
+same 079 copy deleted 
+same 080 level menu back 
+same 081 main menu again 
+same 082 campaign list (empty) 
+same 083 new campaign: entry editor 
+same 084 3 entries 
+same 085 entry menu 
+same 086 entry 1 changed 
+same 087 insert after 2 
+same 088 move down 
+same 089 move up 
+same 090 remove 4 
+same 091 entry 3 cycled to the custom level 
+same 092 entry 3 cycled once more (wrap) 
+same 093 entry 2 = the custom level 
+same 094 entry menu back 
+same 095 campaign list 
+same 096 campaign menu 
+same 097 campaign rename 
+same 098 campaign rename edited 
+same 099 campaign renamed: list 
+same 100 entries again 
+same 101 main menu 
+same 102 level 1 deleted: the campaign lost / renumbered its entry 
+same 103 entries after the level delete 
+same 104 two campaigns 
+same 105 campaign 1 deleted 
+same 106 main 
+same 107 disk prompt 
+same 108 disk prompt cancelled by F10 
+same 109 save without a disk 
+same 110 saved to the campaign disk 
+same 111 level deleted in RAM 
+same 112 loaded from the campaign disk 
+same 113 full store: levels list 
+same 114 copy: Overlay full 
+FAIL 115 dense level in the editor es: 3134 bytes differ, first at +0x1e2e; menu: [[0, 0, 'Empty  C'], [0, 129, 'Ledge  L'], [0, 145, 'Crumble ledge'], [0, 128, 'Pillar  P'], [0, 130, 'Blue block (shoot) B'], [2, 3, 'Lift >'], [1, 131, 'Door opening  D'], [1, 195, 'Exit door  X'], [2, 1, 'Enemy >'], [2, 2, 'Level >'], [4, 16, 'Playtest'], [4, 6, 'Save to campaign disk'], [4, 8, 'Leave editor']] != [[0, 0, 'Empty  C'], [0, 129, 'Ledge  L'], [0, 145, 'Crumble ledge'], [0, 161, 'Conveyor left  N'], [0, 177, 'Conveyor right  M'], [0, 128, 'Pillar  P'], [0, 130, 'Blue block (shoot) B'], [2, 3, 'Lift >'], [1, 131, 'Door opening  D'], [1, 195, 'Exit door  X'], [2, 1, 'Enemy >'], [2, 2, 'Level >'], [4, 16, 'Playtest'], [4, 6, 'Save to campaign disk'], [4, 8, 'Leave editor']]
+bytes compared per part: {'es': 3712000, 'pal': 3712, 'grid': 475136, 'ovs': 950272, 'rs': 6032}
+RESULT: 115 of 116 checkpoints identical, 1 differ

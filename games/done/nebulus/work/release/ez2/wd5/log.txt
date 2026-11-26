@@ -1,0 +1,52 @@
+INFO : Hatari v2.6.1, compiled on:  Feb  8 2026, 19:50:12
+INFO : Mounting ACSI HD image '/home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/release/ez2/wd5/hd.img'
+INFO : GEMDOS HDD emulation, D: <-> /home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/release/ez2/wd5/C.
+> m $3d00f 4
+0003D00F: 00 00 00 00                                      ....
+> m $3d00f 4
+0003D00F: 00 00 00 00                                      ....
+WARN : Bus Error reading at address $fff00039, PC=$d51c addr_e3=d51c op_e3=4a13
+WARN : Bus Error reading at address $fff00079, PC=$d51c addr_e3=d51c op_e3=4a13
+WARN : Bus Error reading at address $fff000b9, PC=$d51c addr_e3=d51c op_e3=4a13
+WARN : Bus Error reading at address $fff000f9, PC=$d51c addr_e3=d51c op_e3=4a13
+WARN : Bus Error reading at address $ffff8781, PC=$bbc2 addr_e3=bbc2 op_e3=1038
+WARN : Bus Error reading at address $ffff8e21, PC=$1b5ec addr_e3=1b5ec op_e3=1238
+> m $3d00f 4
+0003D00F: 00 00 00 00                                      ....
+> m $3d00f 4
+0003D00F: 00 b3 e7 b0                                      .øτã
+> m $3d00f 4
+0003D00F: 00 b3 e7 b0                                      .øτã
+> m $3d00f 4
+0003D00F: 48 69 67 68                                      High
+> m $bc000 8
+000BC000: 4e 43 4d 50 00 01 00 01                          NCMP....
+> loadbin /home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/release/ez2/f9store.bin $bc000
+  Read 0x2000 bytes.
+> m $bc000 8
+000BC000: 00 10 66 00 00 06 32 3c                          ..f...2<
+WARN : PNG screen dump saved to: /home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/release/ez2/wd5/shots/grab0001.png
+WARN : PNG screen dump saved to: /home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/release/ez2/wd5/shots/grab0002.png
+> e VBL
+= %10111110110 (bin), #1526 (dec), $5f6 (hex)
+> e VBL
+= %11001010000 (bin), #1616 (dec), $650 (hex)
+> m $bc000 4
+000BC000: 00 10 66 00                                      ..f.
+> m $3ad98 2
+0003AD98: 00 20                                            . 
+> m $3ad9a 2
+0003AD9A: 00 48                                            .H
+> m $3ad9c 2
+0003AD9C: 00 39                                            .9
+> m $3ad98 2
+0003AD98: 00 18                                            ..
+> m $3ad9a 2
+0003AD9A: 00 40                                            .@
+> m $3ad9c 2
+0003AD9C: 00 11                                            ..
+> m $3390c 2
+0003390C: 00 00                                            ..
+> m $77c80 8
+00077C80: 00 00 00 00 00 00 00 00                          ........
+WARN : PNG screen dump saved to: /home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/release/ez2/wd5/shots/grab0003.png

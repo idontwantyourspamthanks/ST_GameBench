@@ -1,0 +1,13 @@
+prompt NOT seen (trace idle) after 107 s, trace 5836354 B
+frame 261 lines = 60.0 Hz
+  game type I: fdc type I restore spinup=on verify=on steprate_ms=12 drive=0 tr=0x2e head_track=0x2e | ends: FORCE-INT after 1.119 s (VBL 3690 -> 3757, x2 CPU)
+  game type I: fdc type I seek dest_track=0x1 spinup=on verify=on steprate_ms=12 drive=0 tr=0xfa head_track=0x29 | ends: complete after 0.508 s (VBL 3757 -> 3787, x2 CPU)
+  game type I: fdc type I restore spinup=on verify=on steprate_ms=12 drive=1 tr=0x0 head_track=0x0 | ends: FORCE-INT after 1.292 s (VBL 3793 -> 3871, x2 CPU)
+  game type I: fdc type I seek dest_track=0x1 spinup=on verify=on steprate_ms=12 drive=1 tr=0x93 head_track=0x0 | ends: FORCE-INT after 1.288 s (VBL 3871 -> 3948, x2 CPU)
+first game restore starts at tr=0x2e head_track=0x2e (not parked); ends FORCE-INT after 1.119 s = 51 % of the 2.18 s time-out in effect (v1.6 wait, CPU x2)
+game type I commands cut by the force interrupt, whole run: 3 of 4
+  CUT: fdc type I restore spinup=on verify=on steprate_ms=12 drive=0 tr=0x2e head_track=0x2e | ends: FORCE-INT after 1.119 s (VBL 3690 -> 3757, x2 CPU)
+  CUT: fdc type I restore spinup=on verify=on steprate_ms=12 drive=1 tr=0x0 head_track=0x0 | ends: FORCE-INT after 1.292 s (VBL 3793 -> 3871, x2 CPU)
+  CUT: fdc type I seek dest_track=0x1 spinup=on verify=on steprate_ms=12 drive=1 tr=0x93 head_track=0x0 | ends: FORCE-INT after 1.288 s (VBL 3871 -> 3948, x2 CPU)
+GATE first-restore g_mste16_v15: FAIL (parked=False completed=False margin<=75%=False cuts=3)
+VERDICT g_mste16_v15 (expected any): OK

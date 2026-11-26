@@ -1,0 +1,21 @@
+c_ste162_8_d2: ste TOS 162 1024 KB, 8 MHz, 2 drive(s), disks /tmp/mw2f/b16
+insert-graphics prompt after 95 s wall
+M/J/K screen after 4 presses; MWPO 000B2FF8: 4d 57 50 4f                                      MWPO
+security-check site $2c574: 0002C574: 60 02                                            `.
+hall; personnel click tries 1
+use-this-agent click tries 0
+control-door click tries 0
+3D view shot /home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/floppy16/out/c_ste162_8_d2_3d.png
+$6220=d $700a=2 MWPO 000B2FF8: 4d 57 50 4f                                      MWPO
+world_rate {'vbls': 500, 'flips': 25, 'fps': 2.5, 'vbls_per_frame': 20.0, 'units_per_sec': -84.22256097560975}
+heading series ['0x300', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6']
+soak  37 s: fps 25.0 flips 125  $6220=5 $700a=2 heading 0
+soak  76 s: fps 5.2 flips 26  $6220=5 $700a=2 heading 0
+soak 115 s: fps 25.0 flips 125  $6220=5 $700a=2 heading 0
+soak 154 s: fps 5.2 flips 26  $6220=5 $700a=2 heading 0
+REACHED 3D VIEW and played 120 s
+trace: frame 313 lines = 50.1 Hz
+first game restore: tr=0x0 head_track=0x0 -> complete after 1.023 s
+game type I commands: 216, cut by the game's force interrupt: 0
+longest completed game type I commands (s): 1.83 restore, 1.89 restore, 1.95 restore, 2.05 restore
+CELL c_ste162_8_d2: PASS

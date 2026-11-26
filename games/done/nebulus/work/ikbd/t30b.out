@@ -1,0 +1,19 @@
+title up after 124 s; $70 = 0x0 NEPO marker None
+manager did not close; try again
+manager did not close; try again
+Traceback (most recent call last):
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/ikbd/t30.py", line 29, in <module>
+    while page() != target and time.time() - tw < 40: pass
+          ^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/ikbd/t30.py", line 13, in page
+    b = rd(h, 0x3d5b6, 2, 0.35); return int.from_bytes(b, 'big') if b else None
+        ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/ikbd/lib.py", line 25, in rd
+    out = h.debug(f'm ${a:x} {n}', wait)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/tools/stharness.py", line 208, in debug
+    self.cmd(f"hatari-debug {s}")
+  File "/home/ryan/Code/AtariST/gamebench/tools/stharness.py", line 202, in cmd
+    fd = os.open(self.fifo, os.O_WRONLY | os.O_NONBLOCK)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/strun-ikbd-t30b/fifo'

@@ -8,6 +8,10 @@ What it is
   new top-bar HUD, and no manual copy-protection question.  disk_b.st is the original disk 2, unchanged.  PATCHES.TXT lists
   every change.
 
+v1.4.1
+  Version bump matching the HD v1.4.1 release (fixes a stuck Down key / joystick direction in the HD Track Editor after
+  HAGA/TOS disk swaps; `trk_read` now also clears the held-key table and joystick bytes on return from TOS).
+
 v1.4
   New: 8 MHz STE Blitter & 68000 rendering speedups (100% pixel-identical; ~18-23 fps while driving on 8 MHz STE,
   up from ~16 fps in v1.3 and ~4-8 fps in the original game; plain ST and Mega STE also benefit from the 68000 paths):

@@ -1,0 +1,64 @@
+ec8adc69186454a002e2865eebd5b882  FFA_boot.msa
+25ce70a8b5be671b15818395ecf89c57  FFA_boot.st
+c96a86572136cca4bdf71174a89bed4b  FFB_graphics.msa
+9d4ea2ddfcfe5fa7fdf7b54f26168ed3  FFB_graphics.st
+ec235f89ad4d7ae4d6c8a85994fce037  FFC_missions.msa
+252d0ad0674db02ba5d104891db12e29  FFC_missions.st
+6c5917ae319c3906012eb6bd44bf0c83  FFD_campaign_blank.msa
+5e034299f50432eb6fe5e7048a5d2ccc  FFD_campaign_blank.st
+0b0a41ddd7e2194ce7a97a1c6b8f9593  README.TXT
+4c605643e7f636eb9596695416c4e52a  WRITING_DISKS.TXT
+shipped .msa == shipped .st (independent MSA reader): 4/4
+game type I commands cut by the force interrupt, whole run: 0 of 15
+GATE first-restore sg_ste8_v16: PASS (parked=True completed=True margin<=75%=True cuts=0)
+game type I commands cut by the force interrupt, whole run: 0 of 15
+GATE first-restore sg_mste8_v16: PASS (parked=True completed=True margin<=75%=True cuts=0)
+game type I commands cut by the force interrupt, whole run: 0 of 15
+GATE first-restore sg_mste16_v16: PASS (parked=True completed=True margin<=75%=True cuts=0)
+SWAP A sc_ste_d1_v16: black prompt UP (wall 2.4 s since the key); FDC burst 1.58 s emulated (first cmd to last event), 5 cmds, 0 force-ints (VBL 5616, 50 Hz)
+SWAP B sc_ste_d1_v16: FFB inserted at the prompt, key -> M/J/K screen REACHED (wall 31 s); FDC burst 8.49 s emulated, 0 force-ints
+SWAP C sc_ste_d1_v16c: black prompt NOT up (wall - s since the key); FDC burst -1.00 s emulated (first cmd to last event), -1 cmds, -1 force-ints (VBL 5563, 0 Hz)
+SWAP CB sc_ste_d1_v16c: FFB inserted at the prompt, key -> M/J/K screen REACHED (wall 31 s); FDC burst 10.00 s emulated, 0 force-ints
+SWAP A sc_ste_d2_v16: black prompt UP (wall 3.0 s since the key); FDC burst 2.20 s emulated (first cmd to last event), 10 cmds, 0 force-ints (VBL 5419, 50 Hz)
+SWAP B sc_ste_d2_v16: FFB inserted at the prompt, key -> M/J/K screen REACHED (wall 36 s); FDC burst 8.42 s emulated, 0 force-ints
+SWAP D sc_ste_d2f_v16: M/J/K screen REACHED after 36 s (wall)
+EXC RuntimeError('never reached the boss screen')
+first game restore: tr=0x0 head_track=0x0 -> complete after 1.074 s
+game type I commands: 122, cut by the game's force interrupt: 0
+longest completed game type I commands (s): 1.76 restore, 1.78 restore, 1.83 restore, 1.83 restore
+CELL sb_ste162_8_d2: FAIL
+REACHED 3D VIEW and played 0 s
+first game restore: tr=0x0 head_track=0x0 -> complete after 1.205 s
+game type I commands: 218, cut by the game's force interrupt: 0
+longest completed game type I commands (s): 1.84 restore, 1.89 restore, 1.95 restore, 2.13 restore
+CELL sb_ste162_8_d1: PASS
+EXC RuntimeError('never reached the boss screen')
+first game restore: tr=0x0 head_track=0x0 -> complete after 0.037 s
+game type I commands: 124, cut by the game's force interrupt: 0
+longest completed game type I commands (s): 1.80 restore, 1.81 restore, 1.96 restore, 2.01 restore
+CELL sb_mste206_8_d1: FAIL
+REACHED 3D VIEW and played 120 s
+first game restore: tr=0x0 head_track=0x0 -> complete after 0.016 s
+game type I commands: 222, cut by the game's force interrupt: 0
+longest completed game type I commands (s): 1.87 restore, 1.89 restore, 1.90 restore, 2.10 restore
+CELL sb_mste206_16_d1: PASS
+REACHED 3D VIEW and played 0 s
+first game restore: tr=0x0 head_track=0x0 -> complete after 0.053 s
+game type I commands: 212, cut by the game's force interrupt: 0
+longest completed game type I commands (s): 1.78 restore, 1.89 restore, 1.95 restore, 1.98 restore
+CELL sb_mste206_16_d2: PASS
+REACHED 3D VIEW and played 0 s
+first game restore: tr=0x0 head_track=0x0 -> complete after 1.157 s
+game type I commands: 218, cut by the game's force interrupt: 0
+longest completed game type I commands (s): 1.84 restore, 1.85 restore, 1.88 restore, 2.14 restore
+CELL sb_st104_8_d1: PASS
+REACHED 3D VIEW and played 0 s
+first game restore: tr=0x0 head_track=0x0 -> complete after 0.028 s
+game type I commands: 218, cut by the game's force interrupt: 0
+longest completed game type I commands (s): 1.86 restore, 1.86 restore, 1.92 restore, 2.15 restore
+CELL sb_tt306_d1: PASS
+REACHED 3D VIEW and played 0 s
+first game restore: tr=0x0 head_track=0x0 -> complete after 1.071 s
+game type I commands: 218, cut by the game's force interrupt: 0
+longest completed game type I commands (s): 1.83 restore, 1.84 restore, 1.84 restore, 2.06 restore
+CELL sb_ste162_8_d1_msa: PASS

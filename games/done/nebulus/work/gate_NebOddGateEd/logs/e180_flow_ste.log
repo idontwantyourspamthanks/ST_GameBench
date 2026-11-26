@@ -1,0 +1,32 @@
+PASS flow: F10 opens the manager: True
+PASS flow level 0: new level has an odd number of non-zero cells: 1
+PASS flow level 1: new level has an odd number of non-zero cells: 1
+   list after editing: ['NEW LEVEL  ', 'NEW LEVEL  ', '<new level>', '< back']
+PASS flow: two levels in the list: 2
+PASS flow: RAM store has 2 levels, both records odd, second starts at an odd offset: ([1, 1], [1])
+PASS flow: RAM store validates (ovl.py rules): []
+PASS flow: Save to campaign disk: 'Saved'
+   (save 7.6 s)
+PASS flow: saved image is a usable campaign disk: True
+    NEBLEVEL.OVL valid: 2 levels / 0 campaigns
+PASS flow: saved NEBLEVEL.OVL == RAM store: True
+PASS flow: ovl.py validate of the saved file: []
+PASS flow: Load from campaign disk: 'Loaded 2 levels / 0 campaigns'
+PASS flow: store == saved file: True
+PASS flow: list after reload shows both: 2
+PASS flow level 0 (record size 141) Play: tower started: True
+PASS flow level 0 (record size 141) Play: grid == decoded record (NEW LEVEL  ): []
+PASS flow level 0 (record size 141) Play: rows/mission/tower: (48, 1, 0)
+PASS flow level 0 (record size 141) Play: initial time 450 s (remaining 436): True
+PASS flow level 0 (record size 141) Play: tower name hook A0=$bc118 text: b'NEW LEVEL  \x00'
+      record 0: size 141, name A0 $bc118 (even address)
+PASS flow level 0 (record size 141): F10 opens the manager again (= back at the title after Q): True
+PASS flow level 1 (record size 143) Play: tower started: True
+PASS flow level 1 (record size 143) Play: grid == decoded record (NEW LEVEL  ): []
+PASS flow level 1 (record size 143) Play: rows/mission/tower: (48, 1, 0)
+PASS flow level 1 (record size 143) Play: initial time 450 s (remaining 436): True
+PASS flow level 1 (record size 143) Play: tower name hook A0=$bc1a5 text: b'NEW LEVEL  \x00'
+      record 1: size 143, name A0 $bc1a5 (odd address)
+PASS flow level 1 (record size 143): F10 opens the manager again (= back at the title after Q): True
+PASS flow: no Address/Bus Error/exception in the Hatari log: []
+FAILS []

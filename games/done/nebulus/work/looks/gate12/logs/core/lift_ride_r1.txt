@@ -1,0 +1,21 @@
+Traceback (most recent call last):
+  File "/tmp/ng12hd/nb/work/core/lift/ride2.py", line 14, in <module>
+    h = mk(game=game, workdir='/tmp/ng12hd/q/lp/w_' + TAG, machine=machine, snapshot=SNAP)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/ng12hd/nb/work/core/lift/lp.py", line 11, in mk
+    return Nebulus(game=Path(game), workdir=workdir, snapshot=snapshot, **kw)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/tools/nebulus.py", line 96, in __init__
+    super().__init__(game_dir=game, snapshot=snapshot, workdir=str(R), machine=machine, tos=tos,
+  File "/home/ryan/Code/AtariST/gamebench/tools/stharness.py", line 165, in __init__
+    retarget_snapshot(snapshot, self.state, self.R)
+  File "/home/ryan/Code/AtariST/gamebench/tools/stharness.py", line 83, in retarget_snapshot
+    raw = gzip.decompress(Path(src).read_bytes())
+                          ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ryan/.pyenv/versions/3.12.12/lib/python3.12/pathlib.py", line 1019, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/home/ryan/.pyenv/versions/3.12.12/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/ng12hd/x/oddcore/lp/ste_ship_t6.sav'

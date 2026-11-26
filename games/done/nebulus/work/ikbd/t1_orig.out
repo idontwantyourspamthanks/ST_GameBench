@@ -1,0 +1,142 @@
+8
+WARN : Bus Error reading at address $ffff8e21, PC=$1b5ec addr_e3=1b5ec op_e3=1238
+> m $3d00f 4
+0003D00F: 00 00 00 00                                      ....
+> m $3d00f 4
+0003D00F: 00 00 00 00                                      ....
+> m $3d00f 4
+0003D00F: 00 00 00 00                                      ....
+> m $3d00f 4
+0003D00F: 00 00 00 00                                      ....
+> m $3d00f 4
+0003D00F: 00 00 00 00                                      ....
+> m $3d00f 4
+0003D00F: 00 00 00 00                                      ....
+> m $3d00f 4
+0003D00F: 00 00 00 00                                      ....
+> m $3d00f 4
+0003D00F: 00 00 00 00                                      ....
+> m $3d00f 4
+0003D00F: 00 00 00 00                                      ....
+> m $3d00f 4
+0003D00F: 00 00 00 00                                      ....
+> m $3d00f 4
+0003D00F: 00 b3 e7 b0                                      .øτã
+> m $3d00f 4
+0003D00F: 00 b3 e7 b0                                      .øτã
+> m $3d00f 4
+0003D00F: 00 b3 e7 b0                                      .øτã
+> m $3d00f 4
+0003D00F: 00 b3 e7 b0                                      .øτã
+> m $3d00f 4
+0003D00F: 00 b3 e7 b0                                      .øτã
+> m $3d00f 4
+0003D00F: 00 b3 e7 b0                                      .øτã
+> m $3d00f 4
+0003D00F: 00 b3 e7 b0                                      .øτã
+> m $3d00f 4
+0003D00F: 00 b3 e7 b0                                      .øτã
+2. CPU breakpoint condition(s) matched 1 times.
+	pc = $1b172 :trace :file /tmp/strun-ikbd-t1-orig/ev.txt
+Reading debugger commands from '/tmp/strun-ikbd-t1-orig/ev.txt'...
+Changed to input file dir '/tmp/strun-ikbd-t1-orig'.
+> e VBL
+= %100111110101 (bin), #2549 (dec), $9f5 (hex)
+> m $fffc00 2
+00FFFC00: 02 00                                            ..
+> m $fa11 2
+0000FA11: 58 e0                                            Xα
+> m $fa13 4
+0000FA13: 59 e0 5a e0                                      YαZα
+> m $fa07 4
+0000FA07: 12 e1 a9 20                                      .β⌐ 
+> r
+  D0 000009E4   D1 B818000D   D2 B8E8FFFF   D3 0001B076 
+  D4 00000006   D5 0000003F   D6 01160116   D7 0116FFFF 
+  A0 00E00918   A1 0000093A   A2 00078A1E   A3 01160116 
+  A4 0007FD00   A5 0001B968   A6 000DBA68   A7 0001B944 
+USP  0001B8E0 ISP  0001B944 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch 46fc (MV2SR) 2700 (MOVE) Chip latch 00000000
+0001b172 46fc 2700                move.w #$2700,sr
+Next PC: 0001b176
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus' dir.
+> m $3d00f 4
+0003D00F: 48 69 67 68                                      High
+4. CPU breakpoint condition(s) matched 1 times.
+	pc = $38624 :trace :file /tmp/strun-ikbd-t1-orig/ev.txt
+Reading debugger commands from '/tmp/strun-ikbd-t1-orig/ev.txt'...
+Changed to input file dir '/tmp/strun-ikbd-t1-orig'.
+> e VBL
+= %101000101101 (bin), #2605 (dec), $a2d (hex)
+> m $fffc00 2
+00FFFC00: 02 00                                            ..
+> m $fa11 2
+0000FA11: 58 e0                                            Xα
+> m $fa13 4
+0000FA13: 59 e0 5a e0                                      YαZα
+> m $fa07 4
+0000FA07: 12 e1 a9 20                                      .β⌐ 
+> r
+  D0 00041C08   D1 00000000   D2 00033B1C   D3 0001B076 
+  D4 00000006   D5 0000003F   D6 01160116   D7 0116FFFF 
+  A0 00033B1C   A1 000760E9   A2 00033B00   A3 00000200 
+  A4 000760E9   A5 0001B968   A6 000DBA68   A7 0001B944 
+USP  0001B8E0 ISP  0001B944 
+SR=2704 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=7 STP=0
+Prefetch 4ff9 (LEA) 0000 (OR) Chip latch 00000000
+00038624 4ff9 0000 0800           lea.l $00000800,a7
+Next PC: 0003862a
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus' dir.
+  $118 = $384fc
+1. CPU breakpoint condition(s) matched 1 times.
+	( $118 ) . l ! ( $118 ) . l :trace :file /tmp/strun-ikbd-t1-orig/ev.txt
+Reading debugger commands from '/tmp/strun-ikbd-t1-orig/ev.txt'...
+Changed to input file dir '/tmp/strun-ikbd-t1-orig'.
+> e VBL
+= %101000110110 (bin), #2614 (dec), $a36 (hex)
+> m $fffc00 2
+00FFFC00: 02 00                                            ..
+> m $fa11 2
+0000FA11: 00 00                                            ..
+> m $fa13 4
+0000FA13: 00 00 00 00                                      ....
+> m $fa07 4
+0000FA07: 00 00 00 00                                      ....
+> r
+  D0 00038490   D1 00000000   D2 00033B1C   D3 0001B076 
+  D4 00000006   D5 0000003F   D6 01160116   D7 0116FFFF 
+  A0 FFFFFA01   A1 000760E9   A2 00033B00   A3 00000200 
+  A4 000760E9   A5 0001B968   A6 000DBA68   A7 000007F8 
+USP  0001B8E0 ISP  000007F8 
+SR=2700 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=7 STP=0
+Prefetch 23fc (MOVE) 0003 (OR) Chip latch 00000000
+0003845a 23fc 0003 82d8 0000 0070 move.l #$000382d8,$00000070 [00e00802]
+Next PC: 00038464
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus' dir.
+3. CPU breakpoint condition(s) matched 1 times.
+	pc = $38486 :trace :file /tmp/strun-ikbd-t1-orig/ev.txt
+Reading debugger commands from '/tmp/strun-ikbd-t1-orig/ev.txt'...
+Changed to input file dir '/tmp/strun-ikbd-t1-orig'.
+> e VBL
+= %101000110110 (bin), #2614 (dec), $a36 (hex)
+> m $fffc00 2
+00FFFC00: 02 00                                            ..
+> m $fa11 2
+0000FA11: 00 00                                            ..
+> m $fa13 4
+0000FA13: 00 00 00 00                                      ....
+> m $fa07 4
+0000FA07: 00 00 00 00                                      ....
+> r
+  D0 00038490   D1 00000000   D2 00033B1C   D3 0001B076 
+  D4 00000006   D5 0000003F   D6 01160116   D7 0116FFFF 
+  A0 FFFFFA01   A1 000760E9   A2 00033B00   A3 00000200 
+  A4 000760E9   A5 0001B968   A6 000DBA68   A7 000007F8 
+USP  0001B8E0 ISP  000007F8 
+SR=2704 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=7 STP=0
+Prefetch 46fc (MV2SR) 2300 (MOVE) Chip latch 00000000
+00038486 46fc 2300                move.w #$2300,sr
+Next PC: 0003848a
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus' dir.
+

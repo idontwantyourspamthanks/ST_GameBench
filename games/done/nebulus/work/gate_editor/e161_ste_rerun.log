@@ -1,0 +1,41 @@
+title True
+   (6.1 s)
+PASS empty drive: 'No disk'
+   (5.1 s)
+PASS disk without NEBLEVEL.OVL: 'Not a campaign disk'
+   (5.1 s)
+PASS NEBLEVEL.OVL 4096 B: 'Not a campaign disk'
+   (5.1 s)
+PASS 8192 B text file: 'Not a campaign disk'
+   (5.1 s)
+PASS blank campaign disk (all zero file): 'Loaded 0 levels / 0 campaigns'
+PASS   store is zero (blank loaded): True
+   (5.1 s)
+PASS valid campaign disk: 'Loaded 1 levels / 1 campaigns'
+PASS   store == file: True
+   (5.1 s)
+PASS write-protected disk, load: 'Loaded 1 levels / 1 campaigns'
+   (5.1 s)
+PASS write-protected disk, SAVE: 'Disk is write protected'
+PASS game still alive after the disk operations: True
+   (5.1 s)
+FAIL Save from the editor root menu: None  (expected 'Saved')
+PASS   RAM store has 2 levels now: 2
+PASS image after save: usable campaign disk: True
+   NEBLEVEL.OVL valid: 2 levels / 1 campaigns
+PASS image NEBLEVEL.OVL == RAM store: True
+  bytes differing from the original image outside the file data: []
+PASS   boot sector + FATs untouched: []
+PASS   directory differs only in the entry (date/time): []
+   (4.2 s)
+PASS Save to a disk without NEBLEVEL.OVL: 'Not a campaign disk'
+PASS   that image is unchanged: True
+   (5.1 s)
+PASS Save to a write-protected campaign disk: 'Disk is write protected'
+PASS   that image is unchanged: True
+   (5.1 s)
+PASS Load the disk saved above: 'Loaded 2 levels / 1 campaigns'
+PASS   store == saved file: True
+PASS tower after all disk operations: timer runs: True
+PASS   frog answers the joystick (x changed): True
+FAILS ['Save from the editor root menu']

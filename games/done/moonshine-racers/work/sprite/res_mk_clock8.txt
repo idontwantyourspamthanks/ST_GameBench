@@ -1,0 +1,25 @@
+c1 s0 rows10           stock                        1692
+c1 s0 rows10           (a) premasked aligned        1416  ratio  0.84  IDENTICAL
+c2 s0 rows16           stock                        4472
+c4 s0 rows16           stock                        8368
+c1 s4 rows10           stock                        3520
+c1 s4 rows10           (a) premasked shifted        3384  ratio  0.96  IDENTICAL
+c1 s4 rows10           (c) generated+zeroskip       3496  ratio  0.99  IDENTICAL
+c2 s4 rows16           stock                        9204
+c2 s4 rows16           (b) preshifted               5796  ratio  0.63  IDENTICAL
+c4 s4 rows16           stock                       15804
+c4 s4 rows16           (b) preshifted               9376  ratio  0.59  IDENTICAL
+c1 s8 rows10           stock                        3760
+c1 s8 rows10           (a) premasked shifted        3704  ratio  0.99  IDENTICAL
+c1 s8 rows10           (c) generated+zeroskip       3940  ratio  1.05  IDENTICAL
+c2 s8 rows16           stock                        9204
+c2 s8 rows16           (b) preshifted               5796  ratio  0.63  IDENTICAL
+c4 s8 rows16           stock                       16572
+c4 s8 rows16           (b) preshifted               9376  ratio  0.57  IDENTICAL
+c1 s12 rows10          stock                        4000
+c1 s12 rows10          (a) premasked shifted        4024  ratio  1.01  IDENTICAL
+c1 s12 rows10          (c) generated+zeroskip       3700  ratio  0.93  IDENTICAL
+c2 s12 rows16          stock                        9204
+c2 s12 rows16          (b) preshifted               5796  ratio  0.63  IDENTICAL
+c4 s12 rows16          stock                       17340
+c4 s12 rows16          (b) preshifted               9376  ratio  0.54  IDENTICAL

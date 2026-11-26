@@ -1,0 +1,118 @@
+Nebulus / Tower Toppler (Hewson / US Gold, 1988) - enhanced floppy release
+v1.0 (dad_prg)
+build: git 613b9f6 + uncommitted changes
+==============================================================================
+
+Nebulus_game_disk.st is the user's original floppy image (the Atari Legend
+release of the US Gold "Tower Toppler": 2005 intro and crack) with ONE file
+changed and one moved:
+
+  TOPPLER.JMP  the game, 271,839 -> 279,552 bytes.  It is the game's GEMDOS
+               program image, which the disk's own loader (AUTO\TOWERTOP.PRG)
+               reads to RAM $33B00 and starts.  The file is now stored already
+               RELOCATED for that address (the loader never runs it anywhere
+               else); the absolute flag in its header is set, so the game's
+               own relocation code just jumps on, and its relocation table
+               (2,495 bytes) is gone.  The changes below are written into it.
+               The new code and data take the place of the dropped table and
+               of the empty RAM behind it, $75720..$77F00 (10,208 bytes,
+               stored in the file; the file grows by 7,713 bytes), and the
+               game's final jump goes to a short stub there that jumps on to
+               the game's start ($38624).
+  TOPPLER.NEO  the title picture: moved to other sectors (the file before it
+               grew); contents unchanged.
+  Everything else is byte for byte the original: boot sector (checksum
+  $1234), AUTO\TOWERTOP.PRG, AUTO\BOOTDISK.PRG, BOOTDISK.PRG, PLANE.NEO, the
+  hidden 448-byte program in the free area at track 69 sector 7 (the sector
+  after the old end of the files, which the loader reads), names and dates.
+
+The patch sites are the same pieces of game code as in the hard-disk release
+(the floppy's game is the same program, built a little differently: always
+60 Hz, a few routines shorter).  Addresses below are RAM addresses in the
+running game.  Code after text offset $4C46 sits 36 bytes lower than in PP's
+Gamex build, after $8406 24, after $8436 12 and after $850A 8 bytes lower
+(the HD build's address is given where it differs).  The original bytes of
+every site were compared with the HD build's, instruction by instruction,
+before anything was written.
+
+Changes in this release:
+cr_credit
+  Release credit. On the title page with the frog on a plinth the game's own
+  title printer writes "v1.0 enhanced by dad_prg" on the empty line between
+  "(c)1987,8 Hewson" and "Mission #n" (same font and colour scheme as the
+  other lines). The High Scorers and Options pages are not touched; the rest
+  of the title page is pixel-identical to the original (compared in Hatari).
+    $03d690  33fcfffe00038212 -> 4eb900077a004e71   (the HD build's address
+    $03d698)
+    $077a00  64 bytes of code/data (zero before; part of TOPPLER.JMP now)
+
+ed_overlay
+  Level editor and campaign manager. F10 on the title page opens the manager
+  (original game, campaigns, levels); the editor draws its own screen, takes
+  the joystick and plays your tower in the real game (Playtest). Seven hooks
+  (tower decoder, initial time, tower name, tower-complete step, title poll,
+  frame flip, enemy start direction), the keyboard interrupt hook for F10 / D,
+  and the Options-page hint line. The disk save of the hard-disk build (a TOS
+  excursion that needs PP's Gamex memory image) does not exist on the floppy:
+  'Save to disk' keeps the level in RAM and says so; levels are lost at reset.
+  Hooks only react to the editor's own state, so with nothing created the game
+  plays as the original. On a 512 KB machine the stub takes the title hook out
+  again (the editor needs RAM above 512 KB).
+    $0377a2  41f9000327f0 -> 4ef900075740
+    $037a90  20090480000327f0 -> 4eb9000757464e71
+    $03d6bc  6100ae7c4a79000338f0 -> 4eb90007574c4e714e71   (the HD build's
+    address $03d6c4)
+    $03ad90  d040303b00e6 -> 4eb900075752   (the HD build's address $03adb4)
+    $03d108  e549d0c12050 -> 4eb900075758   (the HD build's address $03d110)
+    $03e34a  303900033a34 -> 4ef90007575e   (the HD build's address $03e352)
+    $03dfce  4eb90003868a -> 4eb900075764   (the HD build's address $03dfd6)
+    $03851a  301f08b80006 -> 4ef900077844
+    $03d65a  6100dce060000030 -> 4ef9000778624e71   (the HD build's address
+    $03d662)
+    $075740  5110 bytes of code/data (zero before; part of TOPPLER.JMP now)
+    $076d40  1390 bytes of code/data (zero before; part of TOPPLER.JMP now)
+    $077300  1424 bytes of code/data (zero before; part of TOPPLER.JMP now)
+
+ni_jump
+  Fire jump (walking jump). The game polls the fire button once per game loop
+  and the jump's first step used to run one loop later (2 screen refreshes =
+  40 ms). The jump entry now runs that first step at once. The sequence of
+  positions and poses is exactly the original's, one game loop earlier.
+    $039fd6  4e75 -> 602a   (the HD build's address $039ffa)
+
+ni_latch
+  Fire latch. The game stores only the LAST byte the keyboard processor sent
+  and reads it once per game loop (every 40 ms), so a fire tap shorter than a
+  loop could be released before it was read and was lost. A press now sets a
+  latch that the next poll consumes once (joystick fire path only); keyboard-
+  key handling and a held fire button are as before.
+    $038514  13c000038498 -> 4ef900076d04
+    $03855a  33c1000338f0 -> 4eb900076d22
+    $076d00  60 bytes of code/data (zero before; part of TOPPLER.JMP now)
+
+ni_shoot
+  Shoot. Fire while standing used to show the shot two loops after the poll;
+  the shot handler now runs in the same loop (about 40 ms sooner, shot
+  sequence unchanged).
+    $03a30e  4e75 -> 4e71   (the HD build's address $03a332)
+
+nt_trainers
+  Trainers. In a tower (not on the title or other screens) press T to freeze
+  the level timer and T again to let it run; press E to remove all enemies
+  (creatures already on screen vanish, none spawn) and E again to bring them
+  back. Each key toggles; both start OFF, so the game plays exactly as the
+  original until you press one. They stay as set across lives and towers. Not
+  game keys: T and E do nothing in the original. Three hooks: the frame loop's
+  key poll, the timer tick and the enemy spawn.
+    $03dcec  4eb90003853a -> 4eb900076c08   (the HD build's address $03dcf4)
+    $03b080  4a7900033938 -> 4eb900076c40   (the HD build's address $03b0a4)
+    $03792c  303900033a20 -> 4eb900076c58
+    $076c00  118 bytes of code/data (zero before; part of TOPPLER.JMP now)
+
+Nebulus_campaign_disk.st: a blank 720 KB disk (FAT12, 9 sectors, 2 sides) that
+carries one file, NEBLEVEL.OVL (8192 bytes, all zero) = an empty campaign and
+level file in the format of the hard-disk release.  Nothing on the game disk
+reads or writes it: this build does not talk to the drive after the game has
+started (the editor keeps its levels in RAM).
+
+Nothing else of the game is changed.  Tested in Hatari only; see README.TXT.

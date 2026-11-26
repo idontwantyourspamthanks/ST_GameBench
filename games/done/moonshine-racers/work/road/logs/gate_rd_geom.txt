@@ -1,0 +1,6 @@
+rd_geom (final v3: standing reuse + loop 1/2 tuning), msrabtest --only rd_geom --flips 10 40 --state 120:
+race_grid  flips 10/40 IDENTICAL (81dfec87 d5a188cf / 7481e0c7 7481e0c7)  STATE common 120 differing bytes 0
+race_start flips 10/40 IDENTICAL (3da506a7 c54efba9 / 90858e13 4858b4b8)  STATE common 120 differing bytes 0
+race_up    flips 10/40 IDENTICAL (64f19a1d d9cdbe0a / 58491371 19ced56f)  STATE common 120 differing bytes 0
+race_drive flips 10/40 IDENTICAL (d67d147e ed8944f1 / 3d3df84c 3d3df84c)  STATE common 120 differing bytes 0
+RESULT: ALL IDENTICAL   (first version, v1 = loop 3 only: also ALL IDENTICAL, common passes 120/121/121/119)

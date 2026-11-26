@@ -1,0 +1,583 @@
+INFO : Hatari v2.6.1, compiled on:  Feb  8 2026, 19:50:12
+INFO : Inserted disk '/tmp/fl/music_fl/A.st' to drive A:.
+WARN : Disk in drive B: maybe suffers from the Pacifist/Makedisk bug.
+If it does not work, please repair the disk first!
+INFO : Inserted disk '/tmp/fl/music_fl/D.st' to drive B:.
+INFO : GEMDOS HDD emulation, C: <-> /tmp/mw2run-_fzp84no/C.
+> b pc = $c6c :trace :file /tmp/mw2run-_fzp84no/bp_ym_start_c6c.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $c6c
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-_fzp84no/bp_ym_start_c6c.txt' file on hit.
+> b pc = $c4c :trace :file /tmp/mw2run-_fzp84no/bp_ym_stop_c4c.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $c4c
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-_fzp84no/bp_ym_stop_c4c.txt' file on hit.
+> b pc = $33870 :trace :file /tmp/mw2run-_fzp84no/bp_stop_5032.txt
+CPU condition breakpoint 3 with 1 condition(s) added:
+	pc = $33870
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-_fzp84no/bp_stop_5032.txt' file on hit.
+> b pc = $338c2 :trace :file /tmp/mw2run-_fzp84no/bp_stop_restore_502c.txt
+CPU condition breakpoint 4 with 1 condition(s) added:
+	pc = $338c2
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-_fzp84no/bp_stop_restore_502c.txt' file on hit.
+> b pc = $321fe :trace :file /tmp/mw2run-_fzp84no/bp_start_tune.txt
+CPU condition breakpoint 5 with 1 condition(s) added:
+	pc = $321fe
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-_fzp84no/bp_start_tune.txt' file on hit.
+> b pc = $3225c :trace :file /tmp/mw2run-_fzp84no/bp_setvec_3225c.txt
+CPU condition breakpoint 6 with 1 condition(s) added:
+	pc = $3225c
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-_fzp84no/bp_setvec_3225c.txt' file on hit.
+> b pc = $322d6 :trace :file /tmp/mw2run-_fzp84no/bp_fadeout_322d6.txt
+CPU condition breakpoint 7 with 1 condition(s) added:
+	pc = $322d6
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-_fzp84no/bp_fadeout_322d6.txt' file on hit.
+> b pc = $4dac8 :trace :file /tmp/mw2run-_fzp84no/bp_stub_tune_4dac8.txt
+CPU condition breakpoint 8 with 1 condition(s) added:
+	pc = $4dac8
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-_fzp84no/bp_stub_tune_4dac8.txt' file on hit.
+> b pc = $4daa0 :trace :file /tmp/mw2run-_fzp84no/bp_stub_jmp_4daa0.txt
+CPU condition breakpoint 9 with 1 condition(s) added:
+	pc = $4daa0
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-_fzp84no/bp_stub_jmp_4daa0.txt' file on hit.
+> b pc = $3104 :trace :file /tmp/mw2run-_fzp84no/bp_game_entry_3104.txt
+CPU condition breakpoint 10 with 1 condition(s) added:
+	pc = $3104
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-_fzp84no/bp_game_entry_3104.txt' file on hit.
+> e VBL
+= %110010100 (bin), #404 (dec), $194 (hex)
+> m $5138 4
+00005138: 00 00 00 00                                      ....
+8. CPU breakpoint condition(s) matched 1 times.
+	pc = $4dac8 :trace :file /tmp/mw2run-_fzp84no/bp_stub_tune_4dac8.txt
+Reading debugger commands from '/tmp/mw2run-_fzp84no/bp_stub_tune_4dac8.txt'...
+Changed to input file dir '/tmp/mw2run-_fzp84no'.
+> e VBL
+= %1010001111 (bin), #655 (dec), $28f (hex)
+> r
+  D0 00000001   D1 00005857   D2 00000903   D3 00000000 
+  D4 000000CC   D5 0010FFFF   D6 00000050   D7 00000140 
+  A0 00000806   A1 00000B9A   A2 00072EBE   A3 00E0385C 
+  A4 00002B16   A5 00000000   A6 0004E9D8   A7 000783E0 
+USP  00000000 ISP  000783E0 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch 41f8 (LEA) 0806 (BTST) Chip latch 00000000
+0004dac8 41f8 0806                lea.l $00000806.w,a0
+Next PC: 0004dacc
+> m a7 16
+000783E0: 00 04 da b6 00 04 da 58 00 00 00 00 00 00 00 00  ..םÀ..םX........
+> m $7626 2
+00007626: 00 00                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $5138 4
+00005138: 00 00 00 00                                      ....
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $c6c :trace :file /tmp/mw2run-_fzp84no/bp_ym_start_c6c.txt
+Reading debugger commands from '/tmp/mw2run-_fzp84no/bp_ym_start_c6c.txt'...
+Changed to input file dir '/tmp/mw2run-_fzp84no'.
+> e VBL
+= %1010001111 (bin), #655 (dec), $28f (hex)
+> r
+  D0 00000001   D1 00005857   D2 00000903   D3 00000000 
+  D4 000000CC   D5 0010FFFF   D6 00000050   D7 00000140 
+  A0 00000806   A1 00000C6C   A2 00072EBE   A3 00E0385C 
+  A4 00002B16   A5 00000000   A6 0004E9D8   A7 000783DC 
+USP  00000000 ISP  000783DC 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 31fc (MOVE) 0001 (OR) Chip latch 00000000
+00000c6c 31fc 0001 0c44           move.w #$0001,$00000c44.w [0000]
+Next PC: 00000c72
+> m a7 16
+000783DC: 00 04 da e4 00 04 da b6 00 04 da 58 00 00 00 00  ..םΣ..םÀ..םX....
+> m $7626 2
+00007626: 00 00                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $5138 4
+00005138: 00 00 00 00                                      ....
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 1 times.
+	pc = $c4c :trace :file /tmp/mw2run-_fzp84no/bp_ym_stop_c4c.txt
+Reading debugger commands from '/tmp/mw2run-_fzp84no/bp_ym_stop_c4c.txt'...
+Changed to input file dir '/tmp/mw2run-_fzp84no'.
+> e VBL
+= %1010001111 (bin), #655 (dec), $28f (hex)
+> r
+  D0 00000001   D1 00005857   D2 00000903   D3 00000000 
+  D4 000000CC   D5 0010FFFF   D6 00000050   D7 00000140 
+  A0 00000806   A1 00000C6C   A2 00072EBE   A3 00E0385C 
+  A4 00002B16   A5 00000000   A6 0004E9D8   A7 000783D8 
+USP  00000000 ISP  000783D8 
+SR=2300 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=3 STP=0
+Prefetch 303c (MOVE) 000d (ILLEGAL) Chip latch 00000000
+00000c4c 303c 000d                move.w #$000d,d0
+Next PC: 00000c50
+> m a7 16
+000783D8: 00 00 0c 76 00 04 da e4 00 04 da b6 00 04 da 58  ...v..םΣ..םÀ..םX
+> m $7626 2
+00007626: 00 00                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $5138 4
+00005138: 00 00 00 00                                      ....
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+> e VBL
+= %1010100111 (bin), #679 (dec), $2a7 (hex)
+> m $5138 4
+00005138: 00 00 00 00                                      ....
+> e VBL
+= %1110111010 (bin), #954 (dec), $3ba (hex)
+> m $5138 4
+00005138: 00 03 38 6e                                      ..8n
+> e VBL
+= %10011001110 (bin), #1230 (dec), $4ce (hex)
+> m $5138 4
+00005138: 00 03 38 6e                                      ..8n
+> e VBL
+= %10111100001 (bin), #1505 (dec), $5e1 (hex)
+> m $5138 4
+00005138: 00 03 38 6e                                      ..8n
+WARN : PNG screen dump saved to: /tmp/mw2run-_fzp84no/shots/grab0001.png
+> e VBL
+= %11011111001 (bin), #1785 (dec), $6f9 (hex)
+> m $5138 4
+00005138: 00 03 38 6e                                      ..8n
+> e VBL
+= %100000001101 (bin), #2061 (dec), $80d (hex)
+> m $5138 4
+00005138: 00 03 38 6e                                      ..8n
+9. CPU breakpoint condition(s) matched 1 times.
+	pc = $4daa0 :trace :file /tmp/mw2run-_fzp84no/bp_stub_jmp_4daa0.txt
+Reading debugger commands from '/tmp/mw2run-_fzp84no/bp_stub_jmp_4daa0.txt'...
+Changed to input file dir '/tmp/mw2run-_fzp84no'.
+> e VBL
+= %100000010111 (bin), #2071 (dec), $817 (hex)
+> r
+  D0 0000DABA   D1 0000DABA   D2 00004E75   D3 00000000 
+  D4 00000000   D5 00100000   D6 00000050   D7 0000FFFF 
+  A0 0004EF98   A1 0003DB10   A2 00072EBE   A3 00E0385C 
+  A4 00002B16   A5 00000000   A6 0004E9D8   A7 000783E8 
+USP  00000000 ISP  000783E8 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4ef8 (JMP) 3104 (MOVE) Chip latch 00000000
+0004daa0 4ef8 3104                jmp $00003104.w
+Next PC: 0004daa4
+> m a7 16
+000783E8: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+> m $7626 2
+00007626: 00 00                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $5138 4
+00005138: 00 03 38 6e                                      ..8n
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+10. CPU breakpoint condition(s) matched 1 times.
+	pc = $3104 :trace :file /tmp/mw2run-_fzp84no/bp_game_entry_3104.txt
+Reading debugger commands from '/tmp/mw2run-_fzp84no/bp_game_entry_3104.txt'...
+Changed to input file dir '/tmp/mw2run-_fzp84no'.
+> e VBL
+= %100000010111 (bin), #2071 (dec), $817 (hex)
+> r
+  D0 0000DABA   D1 0000DABA   D2 00004E75   D3 00000000 
+  D4 00000000   D5 00100000   D6 00000050   D7 0000FFFF 
+  A0 0004EF98   A1 0003DB10   A2 00072EBE   A3 00E0385C 
+  A4 00002B16   A5 00000000   A6 0004E9D8   A7 000783E8 
+USP  00000000 ISP  000783E8 
+SR=2304 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=3 STP=0
+Prefetch 4ef9 (JMP) 0003 (OR) Chip latch 00000000
+00003104 4ef9 0003 12a8           jmp $000312a8
+Next PC: 0000310a
+> m a7 16
+000783E8: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+> m $7626 2
+00007626: 00 00                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $5138 4
+00005138: 00 03 38 6e                                      ..8n
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+3. CPU breakpoint condition(s) matched 1 times.
+	pc = $33870 :trace :file /tmp/mw2run-_fzp84no/bp_stop_5032.txt
+Reading debugger commands from '/tmp/mw2run-_fzp84no/bp_stop_5032.txt'...
+Changed to input file dir '/tmp/mw2run-_fzp84no'.
+> e VBL
+= %100000010111 (bin), #2071 (dec), $817 (hex)
+> r
+  D0 0000DA02   D1 0000DABA   D2 00004E75   D3 00000000 
+  D4 00000000   D5 00100000   D6 00000050   D7 0000FFFF 
+  A0 00000140   A1 0003DB10   A2 00072EBE   A3 00E0385C 
+  A4 00002B16   A5 00000000   A6 0000770E   A7 00008028 
+USP  00000000 ISP  00008028 
+SR=2700 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=7 STP=0
+Prefetch 48e7 (MVMLE) fffe (ILLEGAL) Chip latch 00000000
+00033870 48e7 fffe                movem.l d0-d7/a0-a6,-(a7) == $00008024
+Next PC: 00033874
+> m a7 16
+00008028: 00 02 66 5a 23 04 00 03 13 38 00 03 12 b8 00 00  ..fZ#....8...Õ..
+> m $7626 2
+00007626: 00 00                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $5138 4
+00005138: 00 03 38 6e                                      ..8n
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+5. CPU breakpoint condition(s) matched 1 times.
+	pc = $321fe :trace :file /tmp/mw2run-_fzp84no/bp_start_tune.txt
+Reading debugger commands from '/tmp/mw2run-_fzp84no/bp_start_tune.txt'...
+Changed to input file dir '/tmp/mw2run-_fzp84no'.
+> e VBL
+= %100001101010 (bin), #2154 (dec), $86a (hex)
+> r
+  D0 00000001   D1 0000DABA   D2 00004E75   D3 00000000 
+  D4 00000000   D5 00100000   D6 00000050   D7 0000FFFF 
+  A0 00000140   A1 0003DB10   A2 00072EBE   A3 00E0385C 
+  A4 00002B16   A5 00000000   A6 0000770E   A7 0000802E 
+USP  00000000 ISP  0000802E 
+SR=2000 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=0 STP=0
+Prefetch b078 (CMP) 7626 (MOVE) Chip latch 00000000
+000321fe b078 7626                cmp.w $00007626.w [ffff],d0
+Next PC: 00032202
+> m a7 16
+0000802E: 00 03 21 38 00 03 12 c4 00 00 00 00 00 00 00 00  ..!8...ג........
+> m $7626 2
+00007626: ff ff                                            ¯¯
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $5138 4
+00005138: 00 03 38 6e                                      ..8n
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+1. CPU breakpoint condition(s) matched 2 times.
+	pc = $c6c :trace :file /tmp/mw2run-_fzp84no/bp_ym_start_c6c.txt
+Reading debugger commands from '/tmp/mw2run-_fzp84no/bp_ym_start_c6c.txt'...
+Changed to input file dir '/tmp/mw2run-_fzp84no'.
+> e VBL
+= %100001101010 (bin), #2154 (dec), $86a (hex)
+> r
+  D0 00000001   D1 0000DABA   D2 00004E75   D3 00000000 
+  D4 00000000   D5 00100000   D6 00000050   D7 0000FFFF 
+  A0 00000806   A1 00000C6C   A2 00072EBE   A3 00E0385C 
+  A4 00002B16   A5 00000000   A6 0000770E   A7 00007FEE 
+USP  00000000 ISP  00007FEE 
+SR=2004 T=00 S=1 M=0 X=0 N=0 Z=1 V=0 C=0 IM=0 STP=0
+Prefetch 31fc (MOVE) 0001 (OR) Chip latch 00000000
+00000c6c 31fc 0001 0c44           move.w #$0001,$00000c44.w [0000]
+Next PC: 00000c72
+> m a7 16
+00007FEE: 00 03 22 2e 00 00 00 01 00 00 da ba 00 00 4e 75  ..".......ם´..Nu
+> m $7626 2
+00007626: 00 01                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $5138 4
+00005138: 00 03 38 6e                                      ..8n
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+2. CPU breakpoint condition(s) matched 2 times.
+	pc = $c4c :trace :file /tmp/mw2run-_fzp84no/bp_ym_stop_c4c.txt
+Reading debugger commands from '/tmp/mw2run-_fzp84no/bp_ym_stop_c4c.txt'...
+Changed to input file dir '/tmp/mw2run-_fzp84no'.
+> e VBL
+= %100001101010 (bin), #2154 (dec), $86a (hex)
+> r
+  D0 00000001   D1 0000DABA   D2 00004E75   D3 00000000 
+  D4 00000000   D5 00100000   D6 00000050   D7 0000FFFF 
+  A0 00000806   A1 00000C6C   A2 00072EBE   A3 00E0385C 
+  A4 00002B16   A5 00000000   A6 0000770E   A7 00007FEA 
+USP  00000000 ISP  00007FEA 
+SR=2000 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=0 STP=0
+Prefetch 303c (MOVE) 000d (ILLEGAL) Chip latch 00000000
+00000c4c 303c 000d                move.w #$000d,d0
+Next PC: 00000c50
+> m a7 16
+00007FEA: 00 00 0c 76 00 03 22 2e 00 00 00 01 00 00 da ba  ...v..".......ם´
+> m $7626 2
+00007626: 00 01                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $5138 4
+00005138: 00 03 38 6e                                      ..8n
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+3. CPU breakpoint condition(s) matched 2 times.
+	pc = $33870 :trace :file /tmp/mw2run-_fzp84no/bp_stop_5032.txt
+Reading debugger commands from '/tmp/mw2run-_fzp84no/bp_stop_5032.txt'...
+Changed to input file dir '/tmp/mw2run-_fzp84no'.
+> e VBL
+= %100001101010 (bin), #2154 (dec), $86a (hex)
+> r
+  D0 0000000C   D1 0000DABA   D2 00004E75   D3 00000000 
+  D4 00000000   D5 00100000   D6 00000050   D7 0000FFFF 
+  A0 000012D4   A1 00001440   A2 00072EBE   A3 00E0385C 
+  A4 00002B16   A5 00000000   A6 0000770E   A7 00007FEE 
+USP  00000000 ISP  00007FEE 
+SR=2009 T=00 S=1 M=0 X=0 N=1 Z=0 V=0 C=1 IM=0 STP=0
+Prefetch 48e7 (MVMLE) fffe (ILLEGAL) Chip latch 00000000
+00033870 48e7 fffe                movem.l d0-d7/a0-a6,-(a7) == $00007fea
+Next PC: 00033874
+> m a7 16
+00007FEE: 00 03 22 40 00 00 00 01 00 00 da ba 00 00 4e 75  .."@......ם´..Nu
+> m $7626 2
+00007626: 00 01                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $5138 4
+00005138: 00 03 38 6e                                      ..8n
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+6. CPU breakpoint condition(s) matched 1 times.
+	pc = $3225c :trace :file /tmp/mw2run-_fzp84no/bp_setvec_3225c.txt
+Reading debugger commands from '/tmp/mw2run-_fzp84no/bp_setvec_3225c.txt'...
+Changed to input file dir '/tmp/mw2run-_fzp84no'.
+> e VBL
+= %100001101010 (bin), #2154 (dec), $86a (hex)
+> r
+  D0 0000000C   D1 0000DABA   D2 00004E75   D3 00000000 
+  D4 00000000   D5 00100000   D6 00000050   D7 0000FFFF 
+  A0 00000806   A1 00000B9A   A2 00072EBE   A3 00E0385C 
+  A4 00002B16   A5 00000000   A6 0000770E   A7 00007FF2 
+USP  00000000 ISP  00007FF2 
+SR=2000 T=00 S=1 M=0 X=0 N=0 Z=0 V=0 C=0 IM=0 STP=0
+Prefetch 21d0 (MOVE) 5138 (SUB) Chip latch 00000000
+0003225c 21d0 5138                move.l (a0) == $00000806 [00000d0e],$00005138.w [0003386e]
+Next PC: 00032260
+> m a7 16
+00007FF2: 00 00 00 01 00 00 da ba 00 00 4e 75 00 00 00 00  ......ם´..Nu....
+> m $7626 2
+00007626: 00 01                                            ..
+> m $b96 4
+00000B96: 00 00 00 01                                      ....
+> m $5138 4
+00005138: 00 03 38 6e                                      ..8n
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2' dir.
+> e VBL
+= %100100100000 (bin), #2336 (dec), $920 (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> e VBL
+= %101000110011 (bin), #2611 (dec), $a33 (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> e VBL
+= %101101000111 (bin), #2887 (dec), $b47 (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+WARN : PNG screen dump saved to: /tmp/mw2run-_fzp84no/shots/grab0002.png
+> e VBL
+= %110001011111 (bin), #3167 (dec), $c5f (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> e VBL
+= %110101110010 (bin), #3442 (dec), $d72 (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> e VBL
+= %111010000110 (bin), #3718 (dec), $e86 (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> e VBL
+= %111110011001 (bin), #3993 (dec), $f99 (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> e VBL
+= %1000010101100 (bin), #4268 (dec), $10ac (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+WARN : PNG screen dump saved to: /tmp/mw2run-_fzp84no/shots/grab0003.png
+> e VBL
+= %1000111000100 (bin), #4548 (dec), $11c4 (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> e VBL
+= %1001011011000 (bin), #4824 (dec), $12d8 (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> e VBL
+= %1001111101011 (bin), #5099 (dec), $13eb (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> e VBL
+= %1010011111110 (bin), #5374 (dec), $14fe (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> e VBL
+= %1011000010010 (bin), #5650 (dec), $1612 (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+WARN : PNG screen dump saved to: /tmp/mw2run-_fzp84no/shots/grab0004.png
+> e VBL
+= %1011100101010 (bin), #5930 (dec), $172a (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> e VBL
+= %1100000111101 (bin), #6205 (dec), $183d (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> e VBL
+= %1100101010001 (bin), #6481 (dec), $1951 (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> e VBL
+= %1101001100100 (bin), #6756 (dec), $1a64 (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> e VBL
+= %1101101110111 (bin), #7031 (dec), $1b77 (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+WARN : PNG screen dump saved to: /tmp/mw2run-_fzp84no/shots/grab0005.png
+> e VBL
+= %1110010010000 (bin), #7312 (dec), $1c90 (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> e VBL
+= %1110110100011 (bin), #7587 (dec), $1da3 (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> e VBL
+= %1111010110110 (bin), #7862 (dec), $1eb6 (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> e VBL
+= %1111111001010 (bin), #8138 (dec), $1fca (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> e VBL
+= %10000011011101 (bin), #8413 (dec), $20dd (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+WARN : PNG screen dump saved to: /tmp/mw2run-_fzp84no/shots/grab0006.png
+> e VBL
+= %10000111110101 (bin), #8693 (dec), $21f5 (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> e VBL
+= %10001100001001 (bin), #8969 (dec), $2309 (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> e VBL
+= %10010000011100 (bin), #9244 (dec), $241c (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> e VBL
+= %10010100101111 (bin), #9519 (dec), $252f (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> e VBL
+= %10011001000011 (bin), #9795 (dec), $2643 (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+WARN : PNG screen dump saved to: /tmp/mw2run-_fzp84no/shots/grab0007.png
+> e VBL
+= %10011101011011 (bin), #10075 (dec), $275b (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> e VBL
+= %10100001101110 (bin), #10350 (dec), $286e (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> e VBL
+= %10100110000010 (bin), #10626 (dec), $2982 (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> e VBL
+= %10101010010101 (bin), #10901 (dec), $2a95 (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> e VBL
+= %10101110101000 (bin), #11176 (dec), $2ba8 (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+WARN : PNG screen dump saved to: /tmp/mw2run-_fzp84no/shots/grab0008.png
+> e VBL
+= %10110011000001 (bin), #11457 (dec), $2cc1 (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> e VBL
+= %10110111010100 (bin), #11732 (dec), $2dd4 (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> e VBL
+= %10111011100111 (bin), #12007 (dec), $2ee7 (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> e VBL
+= %10111111111010 (bin), #12282 (dec), $2ffa (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> e VBL
+= %11000100001110 (bin), #12558 (dec), $310e (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+WARN : PNG screen dump saved to: /tmp/mw2run-_fzp84no/shots/grab0009.png
+> e VBL
+= %11001000100110 (bin), #12838 (dec), $3226 (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> e VBL
+= %11001100111001 (bin), #13113 (dec), $3339 (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> e VBL
+= %11010001001101 (bin), #13389 (dec), $344d (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> e VBL
+= %11010101100000 (bin), #13664 (dec), $3560 (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> e VBL
+= %11011001110011 (bin), #13939 (dec), $3673 (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+WARN : PNG screen dump saved to: /tmp/mw2run-_fzp84no/shots/grab0010.png
+> e VBL
+= %11011110001100 (bin), #14220 (dec), $378c (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> e VBL
+= %11100010011111 (bin), #14495 (dec), $389f (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> e VBL
+= %11100110110010 (bin), #14770 (dec), $39b2 (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> e VBL
+= %11101011000110 (bin), #15046 (dec), $3ac6 (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> e VBL
+= %11101111011001 (bin), #15321 (dec), $3bd9 (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+WARN : PNG screen dump saved to: /tmp/mw2run-_fzp84no/shots/grab0011.png
+> e VBL
+= %11110011110001 (bin), #15601 (dec), $3cf1 (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> e VBL
+= %11111000000101 (bin), #15877 (dec), $3e05 (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> e VBL
+= %11111100011000 (bin), #16152 (dec), $3f18 (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> e VBL
+= %100000000101011 (bin), #16427 (dec), $402b (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+> e VBL
+= %100000100111111 (bin), #16703 (dec), $413f (hex)
+> m $5138 4
+00005138: 00 00 0d 0e                                      ....
+WARN : PNG screen dump saved to: /tmp/mw2run-_fzp84no/shots/grab0012.png

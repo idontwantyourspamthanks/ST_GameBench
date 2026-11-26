@@ -1,0 +1,7 @@
+loops 1175 1175
+== iq_hook vs iq_stock: 1119 / 1120 loops after timer start (compare first 1117)
+loops where the non-player block (creatures, timer, flags, energy, ...) differs at the SAME index: [] (0)
+loops where the player vars differ at the same index: [] (0)
+  of those, patched[j] == stock[j+1] (exactly one loop earlier): 0 of 0  not explained: []
+creature/timer/energy simulation state differs at the same loop index in 0 of 1117 loops []
+framebuffer event 1 differing bytes, rows: (0, None)

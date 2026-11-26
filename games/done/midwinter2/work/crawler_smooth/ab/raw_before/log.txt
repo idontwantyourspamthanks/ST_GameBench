@@ -1,0 +1,524 @@
+INFO : Hatari v2.6.1-devel (Nov 13 2026), compiled on:  Nov 13 2026, 20:20:35
+ERROR: SDL_GetDesktopDisplayMode failed: Invalid display
+INFO : GEMDOS HDD emulation, C: <-> /tmp/mw2run-6e3tti_9/C.
+CPU breakpoints: 0
+DSP breakpoints: 0
+INFO : Memory state file restored: /tmp/mw2run-6e3tti_9/state.sav
+> e VBL
+= %11010101010101 (bin), #13653 (dec), $3555 (hex)
+> b all
+CPU breakpoints: 0
+> b VBL > 13713 && pc = $26e98 :trace :once :file /tmp/mw2run-6e3tti_9/atflip.txt
+CPU condition breakpoint 1 with 2 condition(s) added:
+	VBL > 13713 && pc = $26e98
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-6e3tti_9/atflip.txt' file on hit.
+1. CPU breakpoint condition(s) matched 1 times.
+	VBL > 13713 && pc = $26e98 :once :trace :file /tmp/mw2run-6e3tti_9/atflip.txt
+Reading debugger commands from '/tmp/mw2run-6e3tti_9/atflip.txt'...
+Changed to input file dir '/tmp/mw2run-6e3tti_9'.
+> w $6fba $01 $d2 $00 $00
+Wrote 4 'b' values starting from 0x6fba.
+> w $66e6 $00 $00 $2a $94
+Wrote 4 'b' values starting from 0x66e6.
+> w $6742 $01 $00
+Wrote 2 'b' values starting from 0x6742.
+> w $6294 $01 $00
+Wrote 2 'b' values starting from 0x6294.
+> w $764a $01 $00
+Wrote 2 'b' values starting from 0x764a.
+> b pc = $26e98 :2 :trace :once :file /tmp/mw2run-6e3tti_9/chain0.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $26e98
+-> Break only on every 2 hit.
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-6e3tti_9/chain0.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+Debugger re-init.
+Removed CPU breakpoint 1:
+	VBL > 13713 && pc = $26e98 :once :trace :file /tmp/mw2run-6e3tti_9/atflip.txt
+1. CPU breakpoint condition(s) matched 2 times.
+	pc = $26e98 :2 :once :trace :file /tmp/mw2run-6e3tti_9/chain0.txt
+Reading debugger commands from '/tmp/mw2run-6e3tti_9/chain0.txt'...
+Changed to input file dir '/tmp/mw2run-6e3tti_9'.
+> e VBL
+= %11010110011010 (bin), #13722 (dec), $359a (hex)
+> m $66e6 8
+000066E6: 00 00 2a 94 00 00 64 00                          ..*...d.
+> m $764c 2
+0000764C: fb 06                                            ..
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+> m $67a6 8
+000067A6: 00 06 00 00 00 07 00 00                          ........
+> m $ff8240 32
+00FF8240: 00 00 00 31 00 52 00 73 00 14 00 36 00 57 04 21  ...1.R.s...6.W.!
+00FF8250: 05 32 07 54 03 33 05 55 07 77 05 00 07 40 07 70  .2.T.3.U.w...@.p
+> m $ff8400 32
+00FF8400: 00 00 00 62 00 a4 00 e6 00 28 00 6c 00 ae 08 42  ...b.....(.l...B
+00FF8410: 0a 64 0e a8 06 66 0a aa 0e ee 0a 00 0e 80 0e e0  .d...f..........
+> savebin /home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth/ab/raw_before/b60000_00.bin $60000 $8000
+  Wrote 0x8000 bytes.
+> savebin /home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth/ab/raw_before/b70000_00.bin $70000 $8000
+  Wrote 0x8000 bytes.
+> b pc = $26e98 :2 :trace :once :file /tmp/mw2run-6e3tti_9/chain1.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $26e98
+-> Break only on every 2 hit.
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-6e3tti_9/chain1.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+Debugger re-init.
+Removed CPU breakpoint 1:
+	pc = $26e98 :2 :once :trace :file /tmp/mw2run-6e3tti_9/chain0.txt
+1. CPU breakpoint condition(s) matched 2 times.
+	pc = $26e98 :2 :once :trace :file /tmp/mw2run-6e3tti_9/chain1.txt
+Reading debugger commands from '/tmp/mw2run-6e3tti_9/chain1.txt'...
+Changed to input file dir '/tmp/mw2run-6e3tti_9'.
+> e VBL
+= %11010110011101 (bin), #13725 (dec), $359d (hex)
+> m $66e6 8
+000066E6: 00 00 2a ef 00 00 64 00                          ..*...d.
+> m $764c 2
+0000764C: 01 1a                                            ..
+> m $b42e6 2
+000B42E6: 00 01                                            ..
+> m $67a6 8
+000067A6: 00 07 00 00 00 06 00 00                          ........
+> m $ff8240 32
+00FF8240: 00 00 00 30 04 30 00 40 00 25 04 11 05 40 00 50  ...0.0.@.%...@.P
+00FF8250: 03 33 04 44 07 30 07 77 00 36 05 22 06 50 03 21  .3.D.0.w.6.".P.!
+> m $ff8400 32
+00FF8400: 00 00 00 60 08 60 00 80 00 4a 08 22 0a 80 00 a0  ...`.`...J."....
+00FF8410: 06 66 08 88 0e 60 0e ee 00 6c 0a 44 0c a0 06 42  .f...`...l.D...B
+> savebin /home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth/ab/raw_before/b60000_01.bin $60000 $8000
+  Wrote 0x8000 bytes.
+> savebin /home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth/ab/raw_before/b70000_01.bin $70000 $8000
+  Wrote 0x8000 bytes.
+> b pc = $26e98 :2 :trace :once :file /tmp/mw2run-6e3tti_9/chain2.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $26e98
+-> Break only on every 2 hit.
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-6e3tti_9/chain2.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+Debugger re-init.
+Removed CPU breakpoint 1:
+	pc = $26e98 :2 :once :trace :file /tmp/mw2run-6e3tti_9/chain1.txt
+1. CPU breakpoint condition(s) matched 2 times.
+	pc = $26e98 :2 :once :trace :file /tmp/mw2run-6e3tti_9/chain2.txt
+Reading debugger commands from '/tmp/mw2run-6e3tti_9/chain2.txt'...
+Changed to input file dir '/tmp/mw2run-6e3tti_9'.
+> e VBL
+= %11010110100001 (bin), #13729 (dec), $35a1 (hex)
+> m $66e6 8
+000066E6: 00 00 2b 01 00 00 64 00                          ..+...d.
+> m $764c 2
+0000764C: 02 51                                            .Q
+> m $b42e6 2
+000B42E6: 00 02                                            ..
+> m $67a6 8
+000067A6: 00 06 00 00 00 07 00 00                          ........
+> m $ff8240 32
+00FF8240: 00 00 00 31 00 52 00 73 00 14 00 36 00 57 04 21  ...1.R.s...6.W.!
+00FF8250: 05 32 07 54 03 33 05 55 07 77 05 00 07 40 07 70  .2.T.3.U.w...@.p
+> m $ff8400 32
+00FF8400: 00 00 00 62 00 a4 00 e6 00 28 00 6c 00 ae 08 42  ...b.....(.l...B
+00FF8410: 0a 64 0e a8 06 66 0a aa 0e ee 0a 00 0e 80 0e e0  .d...f..........
+> savebin /home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth/ab/raw_before/b60000_02.bin $60000 $8000
+  Wrote 0x8000 bytes.
+> savebin /home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth/ab/raw_before/b70000_02.bin $70000 $8000
+  Wrote 0x8000 bytes.
+> b pc = $26e98 :2 :trace :once :file /tmp/mw2run-6e3tti_9/chain3.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $26e98
+-> Break only on every 2 hit.
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-6e3tti_9/chain3.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+Debugger re-init.
+Removed CPU breakpoint 1:
+	pc = $26e98 :2 :once :trace :file /tmp/mw2run-6e3tti_9/chain2.txt
+1. CPU breakpoint condition(s) matched 2 times.
+	pc = $26e98 :2 :once :trace :file /tmp/mw2run-6e3tti_9/chain3.txt
+Reading debugger commands from '/tmp/mw2run-6e3tti_9/chain3.txt'...
+Changed to input file dir '/tmp/mw2run-6e3tti_9'.
+> e VBL
+= %11010110100100 (bin), #13732 (dec), $35a4 (hex)
+> m $66e6 8
+000066E6: 00 00 2b 13 00 00 64 00                          ..+...d.
+> m $764c 2
+0000764C: 03 88                                            ..
+> m $b42e6 2
+000B42E6: 00 03                                            ..
+> m $67a6 8
+000067A6: 00 07 00 00 00 06 00 00                          ........
+> m $ff8240 32
+00FF8240: 00 00 00 00 00 00 00 10 00 01 01 00 01 10 00 20  ............... 
+00FF8250: 01 11 02 22 07 20 07 77 00 02 02 00 02 20 00 03  ...". .w..... ..
+> m $ff8400 32
+00FF8400: 00 00 00 00 00 00 00 20 00 02 02 00 02 20 00 40  ....... ..... .@
+00FF8410: 02 22 04 44 0e 40 0e ee 00 04 04 00 04 40 00 06  .".D.@.......@..
+> savebin /home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth/ab/raw_before/b60000_03.bin $60000 $8000
+  Wrote 0x8000 bytes.
+> savebin /home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth/ab/raw_before/b70000_03.bin $70000 $8000
+  Wrote 0x8000 bytes.
+> b pc = $26e98 :2 :trace :once :file /tmp/mw2run-6e3tti_9/chain4.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $26e98
+-> Break only on every 2 hit.
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-6e3tti_9/chain4.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+Debugger re-init.
+Removed CPU breakpoint 1:
+	pc = $26e98 :2 :once :trace :file /tmp/mw2run-6e3tti_9/chain3.txt
+1. CPU breakpoint condition(s) matched 2 times.
+	pc = $26e98 :2 :once :trace :file /tmp/mw2run-6e3tti_9/chain4.txt
+Reading debugger commands from '/tmp/mw2run-6e3tti_9/chain4.txt'...
+Changed to input file dir '/tmp/mw2run-6e3tti_9'.
+> e VBL
+= %11010110100111 (bin), #13735 (dec), $35a7 (hex)
+> m $66e6 8
+000066E6: 00 00 2b 25 00 00 64 00                          ..+%..d.
+> m $764c 2
+0000764C: 04 bf                                            ..
+> m $b42e6 2
+000B42E6: 00 04                                            ..
+> m $67a6 8
+000067A6: 00 06 00 00 00 07 00 00                          ........
+> m $ff8240 32
+00FF8240: 00 00 00 00 00 00 00 10 00 01 01 00 01 10 00 20  ............... 
+00FF8250: 01 11 02 22 07 50 07 77 00 02 02 00 02 20 00 03  ...".P.w..... ..
+> m $ff8400 32
+00FF8400: 00 00 00 00 00 00 00 20 00 02 02 00 02 20 00 40  ....... ..... .@
+00FF8410: 02 22 04 44 0e a0 0e ee 00 04 04 00 04 40 00 06  .".D.........@..
+> savebin /home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth/ab/raw_before/b60000_04.bin $60000 $8000
+  Wrote 0x8000 bytes.
+> savebin /home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth/ab/raw_before/b70000_04.bin $70000 $8000
+  Wrote 0x8000 bytes.
+> b pc = $26e98 :2 :trace :once :file /tmp/mw2run-6e3tti_9/chain5.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $26e98
+-> Break only on every 2 hit.
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-6e3tti_9/chain5.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+Debugger re-init.
+Removed CPU breakpoint 1:
+	pc = $26e98 :2 :once :trace :file /tmp/mw2run-6e3tti_9/chain4.txt
+1. CPU breakpoint condition(s) matched 2 times.
+	pc = $26e98 :2 :once :trace :file /tmp/mw2run-6e3tti_9/chain5.txt
+Reading debugger commands from '/tmp/mw2run-6e3tti_9/chain5.txt'...
+Changed to input file dir '/tmp/mw2run-6e3tti_9'.
+> e VBL
+= %11010110101010 (bin), #13738 (dec), $35aa (hex)
+> m $66e6 8
+000066E6: 00 00 2b 4a 00 00 64 00                          ..+J..d.
+> m $764c 2
+0000764C: 01 0b                                            ..
+> m $b42e6 2
+000B42E6: 00 01                                            ..
+> m $67a6 8
+000067A6: 00 07 00 00 00 06 00 00                          ........
+> m $ff8240 32
+00FF8240: 00 00 00 31 00 52 00 73 00 14 00 36 00 57 04 21  ...1.R.s...6.W.!
+00FF8250: 05 32 07 54 03 33 05 55 07 77 05 00 07 40 07 70  .2.T.3.U.w...@.p
+> m $ff8400 32
+00FF8400: 00 00 00 62 00 a4 00 e6 00 28 00 6c 00 ae 08 42  ...b.....(.l...B
+00FF8410: 0a 64 0e a8 06 66 0a aa 0e ee 0a 00 0e 80 0e e0  .d...f..........
+> savebin /home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth/ab/raw_before/b60000_05.bin $60000 $8000
+  Wrote 0x8000 bytes.
+> savebin /home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth/ab/raw_before/b70000_05.bin $70000 $8000
+  Wrote 0x8000 bytes.
+> b pc = $26e98 :2 :trace :once :file /tmp/mw2run-6e3tti_9/chain6.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $26e98
+-> Break only on every 2 hit.
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-6e3tti_9/chain6.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+Debugger re-init.
+Removed CPU breakpoint 1:
+	pc = $26e98 :2 :once :trace :file /tmp/mw2run-6e3tti_9/chain5.txt
+1. CPU breakpoint condition(s) matched 2 times.
+	pc = $26e98 :2 :once :trace :file /tmp/mw2run-6e3tti_9/chain6.txt
+Reading debugger commands from '/tmp/mw2run-6e3tti_9/chain6.txt'...
+Changed to input file dir '/tmp/mw2run-6e3tti_9'.
+> e VBL
+= %11010110101100 (bin), #13740 (dec), $35ac (hex)
+> m $66e6 8
+000066E6: 00 00 2b 5c 00 00 64 00                          ..+\..d.
+> m $764c 2
+0000764C: 01 0b                                            ..
+> m $b42e6 2
+000B42E6: 00 02                                            ..
+> m $67a6 8
+000067A6: 00 06 00 00 00 07 00 00                          ........
+> m $ff8240 32
+00FF8240: 00 00 00 00 00 00 00 10 00 01 01 00 01 10 00 20  ............... 
+00FF8250: 01 11 02 22 07 20 07 77 00 02 02 00 02 20 00 03  ...". .w..... ..
+> m $ff8400 32
+00FF8400: 00 00 00 00 00 00 00 20 00 02 02 00 02 20 00 40  ....... ..... .@
+00FF8410: 02 22 04 44 0e 40 0e ee 00 04 04 00 04 40 00 06  .".D.@.......@..
+> savebin /home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth/ab/raw_before/b60000_06.bin $60000 $8000
+  Wrote 0x8000 bytes.
+> savebin /home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth/ab/raw_before/b70000_06.bin $70000 $8000
+  Wrote 0x8000 bytes.
+> b pc = $26e98 :2 :trace :once :file /tmp/mw2run-6e3tti_9/chain7.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $26e98
+-> Break only on every 2 hit.
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-6e3tti_9/chain7.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+Debugger re-init.
+Removed CPU breakpoint 1:
+	pc = $26e98 :2 :once :trace :file /tmp/mw2run-6e3tti_9/chain6.txt
+1. CPU breakpoint condition(s) matched 2 times.
+	pc = $26e98 :2 :once :trace :file /tmp/mw2run-6e3tti_9/chain7.txt
+Reading debugger commands from '/tmp/mw2run-6e3tti_9/chain7.txt'...
+Changed to input file dir '/tmp/mw2run-6e3tti_9'.
+> e VBL
+= %11010110101111 (bin), #13743 (dec), $35af (hex)
+> m $66e6 8
+000066E6: 00 00 2b 6e 00 00 64 00                          ..+n..d.
+> m $764c 2
+0000764C: 01 0b                                            ..
+> m $b42e6 2
+000B42E6: 00 03                                            ..
+> m $67a6 8
+000067A6: 00 07 00 00 00 06 00 00                          ........
+> m $ff8240 32
+00FF8240: 00 00 00 00 00 00 00 10 00 01 01 00 01 10 00 20  ............... 
+00FF8250: 01 11 02 22 07 50 07 77 00 02 02 00 02 20 00 03  ...".P.w..... ..
+> m $ff8400 32
+00FF8400: 00 00 00 00 00 00 00 20 00 02 02 00 02 20 00 40  ....... ..... .@
+00FF8410: 02 22 04 44 0e a0 0e ee 00 04 04 00 04 40 00 06  .".D.........@..
+> savebin /home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth/ab/raw_before/b60000_07.bin $60000 $8000
+  Wrote 0x8000 bytes.
+> savebin /home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth/ab/raw_before/b70000_07.bin $70000 $8000
+  Wrote 0x8000 bytes.
+> b pc = $26e98 :2 :trace :once :file /tmp/mw2run-6e3tti_9/chain8.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $26e98
+-> Break only on every 2 hit.
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-6e3tti_9/chain8.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+Debugger re-init.
+Removed CPU breakpoint 1:
+	pc = $26e98 :2 :once :trace :file /tmp/mw2run-6e3tti_9/chain7.txt
+1. CPU breakpoint condition(s) matched 2 times.
+	pc = $26e98 :2 :once :trace :file /tmp/mw2run-6e3tti_9/chain8.txt
+Reading debugger commands from '/tmp/mw2run-6e3tti_9/chain8.txt'...
+Changed to input file dir '/tmp/mw2run-6e3tti_9'.
+> e VBL
+= %11010110110010 (bin), #13746 (dec), $35b2 (hex)
+> m $66e6 8
+000066E6: 00 00 2b 80 00 00 64 00                          ..+...d.
+> m $764c 2
+0000764C: 01 0b                                            ..
+> m $b42e6 2
+000B42E6: 00 04                                            ..
+> m $67a6 8
+000067A6: 00 06 00 00 00 07 00 00                          ........
+> m $ff8240 32
+00FF8240: 00 00 00 31 00 52 00 73 00 14 00 36 00 57 04 21  ...1.R.s...6.W.!
+00FF8250: 05 32 07 54 03 33 05 55 07 77 05 00 07 40 07 70  .2.T.3.U.w...@.p
+> m $ff8400 32
+00FF8400: 00 00 00 62 00 a4 00 e6 00 28 00 6c 00 ae 08 42  ...b.....(.l...B
+00FF8410: 0a 64 0e a8 06 66 0a aa 0e ee 0a 00 0e 80 0e e0  .d...f..........
+> savebin /home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth/ab/raw_before/b60000_08.bin $60000 $8000
+  Wrote 0x8000 bytes.
+> savebin /home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth/ab/raw_before/b70000_08.bin $70000 $8000
+  Wrote 0x8000 bytes.
+> b pc = $26e98 :2 :trace :once :file /tmp/mw2run-6e3tti_9/chain9.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $26e98
+-> Break only on every 2 hit.
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-6e3tti_9/chain9.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+Debugger re-init.
+Removed CPU breakpoint 1:
+	pc = $26e98 :2 :once :trace :file /tmp/mw2run-6e3tti_9/chain8.txt
+1. CPU breakpoint condition(s) matched 2 times.
+	pc = $26e98 :2 :once :trace :file /tmp/mw2run-6e3tti_9/chain9.txt
+Reading debugger commands from '/tmp/mw2run-6e3tti_9/chain9.txt'...
+Changed to input file dir '/tmp/mw2run-6e3tti_9'.
+> e VBL
+= %11010110110101 (bin), #13749 (dec), $35b5 (hex)
+> m $66e6 8
+000066E6: 00 00 2b a5 00 00 64 00                          ..+...d.
+> m $764c 2
+0000764C: 00 fb                                            ..
+> m $b42e6 2
+000B42E6: 00 01                                            ..
+> m $67a6 8
+000067A6: 00 07 00 00 00 06 00 00                          ........
+> m $ff8240 32
+00FF8240: 00 00 00 00 00 00 00 10 00 01 01 00 01 10 00 20  ............... 
+00FF8250: 01 11 02 22 07 30 07 77 00 02 02 00 02 20 00 03  ...".0.w..... ..
+> m $ff8400 32
+00FF8400: 00 00 00 00 00 00 00 20 00 02 02 00 02 20 00 40  ....... ..... .@
+00FF8410: 02 22 04 44 0e 60 0e ee 00 04 04 00 04 40 00 06  .".D.`.......@..
+> savebin /home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth/ab/raw_before/b60000_09.bin $60000 $8000
+  Wrote 0x8000 bytes.
+> savebin /home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth/ab/raw_before/b70000_09.bin $70000 $8000
+  Wrote 0x8000 bytes.
+> b pc = $26e98 :2 :trace :once :file /tmp/mw2run-6e3tti_9/chain10.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $26e98
+-> Break only on every 2 hit.
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-6e3tti_9/chain10.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+Debugger re-init.
+Removed CPU breakpoint 1:
+	pc = $26e98 :2 :once :trace :file /tmp/mw2run-6e3tti_9/chain9.txt
+1. CPU breakpoint condition(s) matched 2 times.
+	pc = $26e98 :2 :once :trace :file /tmp/mw2run-6e3tti_9/chain10.txt
+Reading debugger commands from '/tmp/mw2run-6e3tti_9/chain10.txt'...
+Changed to input file dir '/tmp/mw2run-6e3tti_9'.
+> e VBL
+= %11010110111000 (bin), #13752 (dec), $35b8 (hex)
+> m $66e6 8
+000066E6: 00 00 2b b7 00 00 64 00                          ..+...d.
+> m $764c 2
+0000764C: 00 fb                                            ..
+> m $b42e6 2
+000B42E6: 00 02                                            ..
+> m $67a6 8
+000067A6: 00 06 00 00 00 07 00 00                          ........
+> m $ff8240 32
+00FF8240: 00 00 00 00 00 00 00 10 00 01 01 00 01 10 00 20  ............... 
+00FF8250: 01 11 02 22 07 60 07 77 00 02 02 00 02 20 00 03  ...".`.w..... ..
+> m $ff8400 32
+00FF8400: 00 00 00 00 00 00 00 20 00 02 02 00 02 20 00 40  ....... ..... .@
+00FF8410: 02 22 04 44 0e c0 0e ee 00 04 04 00 04 40 00 06  .".D.........@..
+> savebin /home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth/ab/raw_before/b60000_10.bin $60000 $8000
+  Wrote 0x8000 bytes.
+> savebin /home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth/ab/raw_before/b70000_10.bin $70000 $8000
+  Wrote 0x8000 bytes.
+> b pc = $26e98 :2 :trace :once :file /tmp/mw2run-6e3tti_9/chain11.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $26e98
+-> Break only on every 2 hit.
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-6e3tti_9/chain11.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+Debugger re-init.
+Removed CPU breakpoint 1:
+	pc = $26e98 :2 :once :trace :file /tmp/mw2run-6e3tti_9/chain10.txt
+1. CPU breakpoint condition(s) matched 2 times.
+	pc = $26e98 :2 :once :trace :file /tmp/mw2run-6e3tti_9/chain11.txt
+Reading debugger commands from '/tmp/mw2run-6e3tti_9/chain11.txt'...
+Changed to input file dir '/tmp/mw2run-6e3tti_9'.
+> e VBL
+= %11010110111010 (bin), #13754 (dec), $35ba (hex)
+> m $66e6 8
+000066E6: 00 00 2b c9 00 00 64 00                          ..+...d.
+> m $764c 2
+0000764C: 00 fb                                            ..
+> m $b42e6 2
+000B42E6: 00 03                                            ..
+> m $67a6 8
+000067A6: 00 07 00 00 00 06 00 00                          ........
+> m $ff8240 32
+00FF8240: 00 00 00 00 00 00 00 10 00 01 01 00 01 10 00 20  ............... 
+00FF8250: 01 11 02 22 07 40 07 77 00 02 02 00 02 20 00 03  ...".@.w..... ..
+> m $ff8400 32
+00FF8400: 00 00 00 00 00 00 00 20 00 02 02 00 02 20 00 40  ....... ..... .@
+00FF8410: 02 22 04 44 0e 80 0e ee 00 04 04 00 04 40 00 06  .".D.........@..
+> savebin /home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth/ab/raw_before/b60000_11.bin $60000 $8000
+  Wrote 0x8000 bytes.
+> savebin /home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth/ab/raw_before/b70000_11.bin $70000 $8000
+  Wrote 0x8000 bytes.
+> b pc = $26e98 :2 :trace :once :file /tmp/mw2run-6e3tti_9/chain12.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $26e98
+-> Break only on every 2 hit.
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-6e3tti_9/chain12.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+Debugger re-init.
+Removed CPU breakpoint 1:
+	pc = $26e98 :2 :once :trace :file /tmp/mw2run-6e3tti_9/chain11.txt
+1. CPU breakpoint condition(s) matched 2 times.
+	pc = $26e98 :2 :once :trace :file /tmp/mw2run-6e3tti_9/chain12.txt
+Reading debugger commands from '/tmp/mw2run-6e3tti_9/chain12.txt'...
+Changed to input file dir '/tmp/mw2run-6e3tti_9'.
+> e VBL
+= %11010110111101 (bin), #13757 (dec), $35bd (hex)
+> m $66e6 8
+000066E6: 00 00 2b db 00 00 64 00                          ..+...d.
+> m $764c 2
+0000764C: 00 fb                                            ..
+> m $b42e6 2
+000B42E6: 00 04                                            ..
+> m $67a6 8
+000067A6: 00 06 00 00 00 07 00 00                          ........
+> m $ff8240 32
+00FF8240: 00 00 00 31 00 52 00 73 00 14 00 36 00 57 04 21  ...1.R.s...6.W.!
+00FF8250: 05 32 07 54 03 33 05 55 07 77 05 00 07 40 07 70  .2.T.3.U.w...@.p
+> m $ff8400 32
+00FF8400: 00 00 00 62 00 a4 00 e6 00 28 00 6c 00 ae 08 42  ...b.....(.l...B
+00FF8410: 0a 64 0e a8 06 66 0a aa 0e ee 0a 00 0e 80 0e e0  .d...f..........
+> savebin /home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth/ab/raw_before/b60000_12.bin $60000 $8000
+  Wrote 0x8000 bytes.
+> savebin /home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth/ab/raw_before/b70000_12.bin $70000 $8000
+  Wrote 0x8000 bytes.
+> b pc = $26e98 :2 :trace :once :file /tmp/mw2run-6e3tti_9/chain13.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $26e98
+-> Break only on every 2 hit.
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/mw2run-6e3tti_9/chain13.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+Debugger re-init.
+Removed CPU breakpoint 1:
+	pc = $26e98 :2 :once :trace :file /tmp/mw2run-6e3tti_9/chain12.txt
+1. CPU breakpoint condition(s) matched 2 times.
+	pc = $26e98 :2 :once :trace :file /tmp/mw2run-6e3tti_9/chain13.txt
+Reading debugger commands from '/tmp/mw2run-6e3tti_9/chain13.txt'...
+Changed to input file dir '/tmp/mw2run-6e3tti_9'.
+> e VBL
+= %11010110111111 (bin), #13759 (dec), $35bf (hex)
+> m $66e6 8
+000066E6: 00 00 2b ed 00 00 64 00                          ..+...d.
+> m $764c 2
+0000764C: 00 fb                                            ..
+> m $b42e6 2
+000B42E6: 00 05                                            ..
+> m $67a6 8
+000067A6: 00 07 00 00 00 06 00 00                          ........
+> m $ff8240 32
+00FF8240: 00 00 00 00 00 00 00 10 00 01 01 00 01 10 00 20  ............... 
+00FF8250: 01 11 02 22 07 50 07 77 00 02 02 00 02 20 00 03  ...".P.w..... ..
+> m $ff8400 32
+00FF8400: 00 00 00 00 00 00 00 20 00 02 02 00 02 20 00 40  ....... ..... .@
+00FF8410: 02 22 04 44 0e a0 0e ee 00 04 04 00 04 40 00 06  .".D.........@..
+> savebin /home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth/ab/raw_before/b60000_13.bin $60000 $8000
+  Wrote 0x8000 bytes.
+> savebin /home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth/ab/raw_before/b70000_13.bin $70000 $8000
+  Wrote 0x8000 bytes.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/crawler_smooth' dir.
+Debugger re-init.
+Removed CPU breakpoint 1:
+	pc = $26e98 :2 :once :trace :file /tmp/mw2run-6e3tti_9/chain13.txt

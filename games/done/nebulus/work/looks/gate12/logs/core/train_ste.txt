@@ -1,0 +1,9 @@
+boot_to_game True timer (24, 72, 72) marker b'NEPO'
+before: frz 0x0 noen 0x0 states [8, 2, 0, 0] timer (24, 64, 6)
+after E: noen 0xffff frz 0x0 states [0, 0, 0, 0]
+E on, timer over 6 s (alive, no input): [(24, 46, 78), (24, 40, 13), (24, 32, 28), (24, 24, 42)] advancing True
+after T: frz 0xffff noen 0xffff
+T on, timer over 6 s: [(24, 24, 27), (24, 24, 27), (24, 24, 27), (24, 24, 27)] FROZEN
+T again: frz 0x0
+T off, timer [(24, 16, 42), (24, 8, 44)] running
+E again: noen 0x0

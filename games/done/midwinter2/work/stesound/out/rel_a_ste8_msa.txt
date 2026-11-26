@@ -1,0 +1,21 @@
+prompt seen after 99 s, trace 12336578 B
+frame 313 lines = 50.1 Hz
+  game type I: fdc type I restore spinup=on verify=on steprate_ms=12 drive=0 tr=0x0 head_track=0x0 | ends: complete after 1.081 s (VBL 3372 -> 3426, x1 CPU)
+  game type I: fdc type I seek dest_track=0x1 spinup=on verify=on steprate_ms=12 drive=0 tr=0x0 head_track=0x0 | ends: complete after 0.038 s (VBL 3426 -> 3428, x1 CPU)
+  game type I: fdc type I seek dest_track=0x7 spinup=on verify=on steprate_ms=12 drive=0 tr=0x1 head_track=0x1 | ends: complete after 0.088 s (VBL 3458 -> 3463, x1 CPU)
+  game type I: fdc type I step in spinup=on verify=on steprate_ms=12 drive=0 tr=0x7 head_track=0x7 | ends: complete after 0.035 s (VBL 3535 -> 3537, x1 CPU)
+  game type I: fdc type I restore spinup=on verify=on steprate_ms=12 drive=0 tr=0x8 head_track=0x8 | ends: complete after 1.289 s (VBL 3710 -> 3774, x1 CPU)
+  game type I: fdc type I seek dest_track=0x1 spinup=on verify=on steprate_ms=12 drive=0 tr=0x0 head_track=0x0 | ends: complete after 0.038 s (VBL 3774 -> 3776, x1 CPU)
+  game type I: fdc type I seek dest_track=0x8 spinup=on verify=on steprate_ms=12 drive=0 tr=0x1 head_track=0x1 | ends: complete after 0.142 s (VBL 3781 -> 3789, x1 CPU)
+  game type I: fdc type I step in spinup=on verify=on steprate_ms=12 drive=0 tr=0x8 head_track=0x8 | ends: complete after 0.028 s (VBL 3818 -> 3820, x1 CPU)
+first game restore starts at tr=0x0 head_track=0x0 (PARKED); ends complete after 1.081 s = 25 % of the 4.35 s time-out in effect (v1.6 wait, CPU x1)
+game type I commands cut by the force interrupt, whole run: 0 of 15
+GATE first-restore rel_a_ste8_msa: PASS (parked=True completed=True margin<=75%=True cuts=0)
+reg-7 writes 9491, reg-14 (port A) writes 144, game FDC commands 120, frames 1450
+  line 8958: reg 7 bits 6+7 $c0 -> $00 (reg 7 := $00) at pc=c54
+  line 8990: reg 7 bits 6+7 $00 -> $c0 (reg 7 := $ff) at pc=c64
+  line 164052: reg 7 bits 6+7 $c0 -> $00 (reg 7 := $00) at pc=c54
+  line 164084: reg 7 bits 6+7 $00 -> $c0 (reg 7 := $ff) at pc=c64
+  FRAMES with reg 7 bits 6/7 not both set at the frame start: 0 of 1450 (longest run 0)
+PSGCHECK rel_a_ste8_msa: PASS (reg-14 writes with port A/B input: 0, game FDC commands with port A/B input: 0, bad frames 0/1450, final reg 7 = $ff)
+VERDICT rel_a_ste8_msa (expected pass): OK

@@ -1,0 +1,5 @@
+fdc type I restore spinup=on verify=off steprate_ms=3 drive=0 tr=0x0 head_track=0x0 VBL=2757 video_cyc=7568 400@14 pc=cf92
+fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x0 head_track=0x0 side=0 drive=0 dmasector=1 addr=0x68000 VBL=2757 video_cyc=13076 276@25 pc=cf92
+fdc read sector addr=0x68000 drive=0 track=0 sect=1 side=0 VBL=2757 video_cyc=26424 312@51 pc=cc5e
+fdc type II read sector with multi sector=0x2 track=0x0 side=0 drive=0 addr=0x68200 VBL=2757 video_cyc=159036 316@310 pc=cfa6
+fdc type IV force int 0xd0 irq=0 index=0 VBL=2757 video_cyc=159368 136@311 pc=cf92

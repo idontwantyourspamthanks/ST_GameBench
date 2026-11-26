@@ -1,0 +1,1440 @@
+diff --git a/patches/README_FLOPPY.TXT b/patches/README_FLOPPY.TXT
+index b025895..d7a2779 100644
+--- a/patches/README_FLOPPY.TXT
++++ b/patches/README_FLOPPY.TXT
+@@ -9,13 +9,6 @@ What it is
+   one moved (TOPPLER.NEO, the title picture); boot sector, the Atari Legend intro (AUTO\TOWERTOP.PRG) and the loader are the
+   original's, byte for byte.  PATCHES.TXT lists every change.  Nebulus_campaign_disk.st is a blank 720 KB data disk, see below.
+ 
+-What is new in v@VERSION@ (compared with v1.1)
+-  Fixed a crash (Address Error, bombs on screen) when the level manager or
+-  the editor opened a campaign whose level records have an odd size in bytes
+-  (the editor's own saves could produce such files). The level flags byte is
+-  now also kept when you edit and save. Nothing else is changed. Campaign
+-  and level files are the same format and work with both v1.1 and v@VERSION@.
+-
+ Changes in this release
+ {WHATSNEW}
+ 
+@@ -54,8 +47,9 @@ row 1 and a ledge + exit door at the top):
+                up/down U slow, I fast, Eye left/right J slow, K fast; then
+                choose the start direction
+      Lift >    Lift: from here A, Lift: stop here Z, Lift: delete
+-     Tower >   Look, Copy original grid, Blank grid, Time +50 / -50 seconds,
+-               Name...
++     Tower >   Look, Colours, Enemies (colour scheme and eye-disc design of
++               the level; 0 = as the base tower), Copy original grid, Blank
++               grid, Time +50 / -50 seconds, Name...
+      Playtest  run the real game on what you are editing; F10, finishing the
+                level or losing brings you back to the editor
+      Save to campaign disk, Leave editor (keeps the level in the level list)
+diff --git a/patches/README_HD.TXT b/patches/README_HD.TXT
+index 48ee04c..5e3ab58 100644
+--- a/patches/README_HD.TXT
++++ b/patches/README_HD.TXT
+@@ -9,13 +9,6 @@ What it is
+   is replaced by a copy that also reads NEPATCH.BIN. PATCHES.TXT lists every
+   changed byte.
+ 
+-What is new in v@VERSION@ (compared with v1.1)
+-  Fixed a crash (Address Error, bombs on screen) when the level manager or
+-  the editor opened a campaign whose level records have an odd size in bytes
+-  (the editor's own saves could produce such files). The level flags byte is
+-  now also kept when you edit and save. Nothing else is changed. Campaign
+-  and level files are the same format and work with both v1.1 and v@VERSION@.
+-
+ Changes in this release
+ {WHATSNEW}
+ 
+@@ -72,10 +65,16 @@ row 1 and a ledge + exit door at the top):
+                left/right J slow, K fast; then choose the start direction.
+                Enemies only turn round at walls, ledge ends and other enemies.
+      Lift >    Lift: from here A, Lift: stop here Z, Lift: delete (see LIFTS)
+-     Tower >   Look: next tower / other mission (palette, backdrop, default
+-               time), Copy original grid (start from a shipped tower), Blank
+-               grid, Time +50 / -50 seconds, Name... (up/down = letter,
+-               left/right = move, FIRE = done)
++     Tower >   Look: next tower / other mission (the base tower: its
++               colours and enemies unless set below, default time, the grid
++               Copy original grid starts from), Colours: next (the
++               colour scheme: palette, sky colours, skyline and tower
++               texture of one of the 8 towers; 0 = as the base tower),
++               Enemies: next (which of the 4 eye-disc designs the eye
++               enemies use; 0 = as the base tower), Copy original grid
++               (start from a shipped tower), Blank grid, Time +50 / -50
++               seconds, Name... (up/down = letter, left/right = move, FIRE
++               = done)
+      Playtest  run the real game on what you are editing; F10, finishing the
+                level or losing brings you back to the editor, level intact
+      Save to campaign disk, Leave editor (keeps the level in the level list)
+@@ -105,8 +104,9 @@ end is not a block: it is a lift start and hurts the frog.
+ Screen: 16 columns x rows of 16x8 pixel tiles (top = higher).  A frog marks
+ where Pogo starts (column 0, row 2): THE FROG STARTS IN THE SAME PLACE IN
+ EVERY TOWER, so every level needs a ledge on row 1 near column 0-1; the new
+-level and "Blank grid" have it, keep it.  Right panel = tower/mission, rows,
+-column, row, cell value; bottom line = cell name and hints/warnings ("No
++level and "Blank grid" have it, keep it.  Right panel = tower/mission, colours
++and enemies (S5 E2 = colour scheme 5, enemy set 2; 0 = as the base tower),
++rows, column, row, cell value; bottom line = cell name and hints/warnings ("No
+ ledge below!" for a ground enemy, "Eye needs terrain" for a vertical eye with
+ nothing above and below, "Pillar blocks lift").  Tile colours: green ledge,
+ grey pillar, blue shootable block, cream lift platform, arrows = lift end /
+diff --git a/patches/ed_editor.s b/patches/ed_editor.s
+index d43442c..d442f0b 100644
+--- a/patches/ed_editor.s
++++ b/patches/ed_editor.s
+@@ -24,6 +24,7 @@ V       equ     $77cc0
+ STK     equ     $AD000                  ; private stack of the TOS excursion (non-game RAM, 4 KB below)
+ CODE4   equ     $77dc0
+ CODE5   equ     $76c76
++CODE6   equ     $772da                  ; 38 B between the floppy build's TOS-state capture ($7726c..$772da) and CODE2; the HD build leaves the whole gap $772c6..$77300 free
+ OVS     equ     $BC000
+ OVSZ    equ     $2000
+ BUF     equ     $AA000                  ; campaign disk read buffer (8 KB), validated before it replaces OVS
+@@ -103,6 +104,8 @@ rsTosN  equ     56                      ; word: (bytes of the copy / 48) - 1
+ rsMfpP  equ     58                      ; long: the TOS-world MFP block (24 B, same layout as V+vMfp): START's at $fffaa; the floppy stub's
+ rsFlg   equ     50                      ; byte: flags.b of the level being edited (reserved field: readers ignore it, the editor preserves all 8 bits; new level = 0)
+ rsLast  equ     48                      ; word: last tile placed ($100 | cell value or enemy marker), 0 = none yet (repeat key)
++rsCol   equ     62                      ; word: colour set index (0..7, 8 = victory) of the level being set up (written by ed_lvl, read by the retargeted palette/raster/skyline/texture sites)
++rsEye   equ     51                      ; byte: eye design index (0..3) cached by ed_lvl; the eye site reads the WORD at RS+50 (rsFlg is its high byte) and masks with 3
+ 
+         org     CODE1
+         dc.w    $4ef9
+@@ -181,6 +184,33 @@ cur_rec:
+ .none:  suba.l  a0,a0
+         rts
+ 
++; level setup hook ($3dbf0: the `jsr $3636e`, the first read of the base tower at a level start).  The look of the level that is about to start comes from
++; the record's flags.b: high nibble = colour set, low nibble = eye design, 0 = the base tower ($3390c), n = n-1 (colour set = tower n's palette, raster
++; colours, skyline and texture; eye design = tower n's disc sprites).  The two indices are cached in rsCol/rsEye; the 5 sites that read the base tower
++; (palette $3522e, raster $3dc1e, skyline $366de, texture $36b68 every frame, eyes $363a4) were retargeted to read the cache (same 6-byte instruction).
++; Original towers (rsLvl = 0) and flags 0: cache = $3390c, the stock behaviour.  All registers kept; ends in the original call.
++ed_lvl: movem.l d0-d2/a0,-(a7)
++        bsr.s   cur_rec
++        moveq   #0,d1
++        move.l  a0,d0
++        beq.s   .f
++        move.b  3(a0),d1
++.f:     move.w  $3390c.l,d2
++        move.w  d1,d0
++        lsr.b   #4,d0
++        bsr.s   look_pk
++        move.w  d0,RS+rsCol.l
++        move.w  d1,d0
++        bsr.s   look_pk
++        move.b  d0,RS+rsEye.l
++        movem.l (a7)+,d0-d2/a0
++        jmp     $3636e.l
++look_pk: and.w  #15,d0                  ; nibble 0 = the base tower (d2), n = n-1
++        subq.w  #1,d0
++        bpl.s   .r
++        move.w  d2,d0
++.r:     rts
++
+ ; ------------------------------------------------------------------ game hooks
+ ; decode hook ($377a2): custom level -> the game's own decode loop ($37812: d7 = rows, a0 = mask, a1 = stream, a2 = grid)
+ ed_dec:
+@@ -580,7 +610,7 @@ draw_id:
+         move.l  (a1)+,(a2)+
+         move.l  (a1)+,(a2)+
+         lea     tiles(pc),a1
+-        mulu.w  #10,d3
++        mulu.w  #9,d3
+         moveq   #0,d5
+         move.b  8(a1,d3.w),d5
+         lea     vTile(a5),a2
+@@ -743,26 +773,29 @@ draw_panel:
+         moveq   #0,d2
+         bsr.w   pline
+         lea     vNum(a5),a2
+-        move.b  #'H',(a2)+
+-        move.w  RSV+rsRows(a5),d0
+-        bsr.w   dec3
+-        clr.b   (a2)
+-        moveq   #1,d2
+-        bsr.w   pline
+-        lea     vNum(a5),a2
+-        move.b  #'C',(a2)+
+-        move.w  RSV+rsCx(a5),d0
+-        bsr.w   dec3
++        move.b  #'S',(a2)+
++        move.b  RSV+rsFlg(a5),d0
++        lsr.b   #4,d0
++        bsr.w   dec1
++        move.w  #' E',(a2)+
++        move.b  RSV+rsFlg(a5),d0
++        bsr.w   dec1
+         clr.b   (a2)
+-        moveq   #2,d2
++        moveq   #5,d2
+         bsr.w   pline
+-        lea     vNum(a5),a2
+-        move.b  #'R',(a2)+
+-        move.w  RSV+rsCy(a5),d0
++        lea     ptab(pc),a3
++        moveq   #1,d2
++.pl:    lea     vNum(a5),a2
++        move.b  (a3)+,(a2)+
++        moveq   #0,d0
++        move.b  (a3)+,d0
++        move.w  RSV(a5,d0.w),d0
+         bsr.w   dec3
+         clr.b   (a2)
+-        moveq   #3,d2
+         bsr.w   pline
++        addq.w  #1,d2
++        cmp.w   #4,d2
++        bne.s   .pl
+         bsr.w   cur_cell
+         lea     vNum(a5),a2
+         move.b  #'$',(a2)+
+@@ -788,6 +821,7 @@ draw_panel:
+ .h:     moveq   #16,d1
+         moveq   #11,d2
+         bra.w   txt
++ptab:   dc.b    'H',rsRows,'C',rsCx,'R',rsCy
+ 
+ ; text line from vNum in the right panel (column 32), line d2
+ pline:  lea     vNum(a5),a0
+@@ -1198,7 +1232,7 @@ a_cmd:  lea     cmds(pc),a0
+ 
+ cmds:   dc.w    m_main-cmds,m_levels-cmds,m_camps-cmds,c_newlvl-cmds,c_newcamp-cmds,c_quit-cmds,c_save-cmds,c_edroot-cmds
+         dc.w    c_leaveed-cmds,c_look-cmds,c_mis-cmds,c_copyorig-cmds,c_blank-cmds,c_tup-cmds,c_tdn-cmds,c_rename-cmds
+-        dc.w    c_play-cmds,c_addent-cmds,cp_edit-cmds,c_dload-cmds,c_dgo-cmds,c_dno-cmds
++        dc.w    c_play-cmds,c_addent-cmds,cp_edit-cmds,c_dload-cmds,c_dgo-cmds,c_dno-cmds,c_col-cmds,c_eye-cmds
+ 
+ ; --- main menu / list screens
+ m_main: clr.w   vScr(a5)
+@@ -1216,45 +1250,20 @@ c_edroot:
+         move.w  #2,vRedraw(a5)
+         rts
+ 
+-; level list (dynamic): "name" (6,i), "<new level>", "< back"
++; level / campaign list (dynamic): "name" (6|7,i), "<new level>" | "<new campaign>", "< back".  d4 = header offset of the count (6 levels, 8 campaigns);
++; d4/2 = the "new" item's parameter (3 / 4), +3 = the name items' action (6 / 7); d5 = offset of the name in the record (8 / 0); a4 = pointer routine
+ m_levels:
+-        clr.w   vScr(a5)
+-        move.w  #8,vMCol(a5)
+-        lea     MB.l,a2
+-        clr.b   (a2)+
+-        move.l  a2,vMBP(a5)
+-        lea     OVS.l,a0
+-        moveq   #0,d3
+-        cmpi.l  #'NCMP',(a0)
+-        bne.s   .nl
+-        move.w  6(a0),d3
+-.nl:    moveq   #0,d2
+-        bra.s   .t
+-.l:     move.w  d2,d0
+-        bsr.w   lvl_ptr
+-        lea     8(a0),a0
+-        moveq   #6,d0
+-        move.w  d2,d1
+-        bsr.w   mb_add
+-        addq.w  #1,d2
+-.t:     cmp.w   d3,d2
+-        blt.s   .l
+-        lea     sNewLvl(pc),a0
+-        moveq   #4,d0
+-        moveq   #3,d1
+-        bsr.w   mb_add
+-        lea     sBack(pc),a0
+-        moveq   #4,d0
+-        moveq   #0,d1
+-        bsr.w   mb_add
+-        lea     MB.l,a0
+-        bsr.w   menu_open
+-        move.w  #3,vRedraw(a5)
+-        rts
+-
+-; campaign list (dynamic): "name" (7,i), "<new campaign>", "< back"
++        lea     lvl_ptr(pc),a4
++        lea     sNewLvl(pc),a3
++        moveq   #8,d5
++        moveq   #6,d4
++        bra.s   ml
+ m_camps:
+-        clr.w   vScr(a5)
++        lea     camp_ptr(pc),a4
++        lea     sNewCamp(pc),a3
++        moveq   #0,d5
++        moveq   #8,d4
++ml:     clr.w   vScr(a5)
+         move.w  #8,vMCol(a5)
+         lea     MB.l,a2
+         clr.b   (a2)+
+@@ -1263,20 +1272,24 @@ m_camps:
+         moveq   #0,d3
+         cmpi.l  #'NCMP',(a0)
+         bne.s   .nl
+-        move.w  8(a0),d3
++        move.w  0(a0,d4.w),d3
+ .nl:    moveq   #0,d2
+         bra.s   .t
+ .l:     move.w  d2,d0
+-        bsr.w   camp_ptr
+-        moveq   #7,d0
++        jsr     (a4)
++        lea     0(a0,d5.w),a0
++        move.w  d4,d0
++        lsr.w   #1,d0
++        addq.w  #3,d0
+         move.w  d2,d1
+         bsr.w   mb_add
+         addq.w  #1,d2
+ .t:     cmp.w   d3,d2
+         blt.s   .l
+-        lea     sNewCamp(pc),a0
++        move.l  a3,a0
+         moveq   #4,d0
+-        moveq   #4,d1
++        move.w  d4,d1
++        lsr.w   #1,d1
+         bsr.w   mb_add
+         lea     sBack(pc),a0
+         moveq   #4,d0
+@@ -1315,9 +1328,9 @@ a_camp: move.w  d1,vCur(a5)
+ a_lop:  move.w  vCur(a5),d2
+         tst.w   d1
+         beq.w   lv_play
+-        cmp.w   #1,d1
++        subq.w  #1,d1
+         beq.w   lv_edit
+-        cmp.w   #2,d1
++        subq.w  #1,d1
+         beq.w   lv_copy
+         bra.w   lv_delete
+ 
+@@ -1326,9 +1339,9 @@ a_cop:  move.w  vCur(a5),d2
+         move.w  d2,vCamp(a5)
+         tst.w   d1
+         beq.w   cp_play
+-        cmp.w   #1,d1
++        subq.w  #1,d1
+         beq.w   cp_edit
+-        cmp.w   #2,d1
++        subq.w  #1,d1
+         beq.w   cp_rename
+         bra.w   cp_delete
+ 
+@@ -1861,6 +1874,13 @@ c_look: move.w  RSV+rsTow(a5),d0
+         and.w   #7,d0
+         move.w  d0,RSV+rsTow(a5)
+         bra.s   c_ldone
++c_col:  move.b  RSV+rsFlg(a5),d0        ; colour set = high nibble of flags.b: 0 = as the base tower, 1..8
++        add.b   #$10,d0
++        cmp.b   #$90,d0
++        blo.s   c_fst
++        and.b   #$0f,d0
++        bra.s   c_fst
++; (c_eye and c_fst: block 7 at CODE6, behind the floppy build's TOS-state capture)
+ c_mis:  eori.w  #3,RSV+rsMis(a5)
+ c_ldone: move.w #1,vDirty(a5)
+         clr.w   vMode(a5)
+@@ -1908,10 +1928,7 @@ c_time: move.w  RSV+rsTime(a5),d1
+         lsl.w   #4,d2
+         or.w    d2,d3
+         move.w  d3,RSV+rsTime(a5)
+-.done:  move.w  #1,vDirty(a5)
+-        clr.w   vMode(a5)
+-        move.w  #2,vRedraw(a5)
+-        rts
++.done:  bra.s   c_ldone
+ 
+ c_rename:
+         lea     RSV+rsName(a5),a0
+@@ -2031,8 +2048,7 @@ c_play: bsr.w   commit
+         rts
+ 
+ ; encode the working grid + meta into TREC, then into the slot (replacing or appending)
+-commit: tst.w   vDirty(a5)
+-        beq.s   .enc
++commit:
+ .enc:   lea     TREC.l,a2
+         move.w  RSV+rsMis(a5),d0
+         move.b  d0,(a2)
+@@ -2226,7 +2242,7 @@ tiles_init:
+         dbra    d2,.b
+         move.w  d0,(a1)+
+         dbra    d5,.r
+-        addq.l  #2,a0
++        addq.l  #1,a0
+         dbra    d6,.t
+         rts
+ 
+@@ -2417,38 +2433,38 @@ m_enemy: dc.b   8
+ 
+ ; ------------------------------------------------------------------ data (second block)
+         org     DATA
+-; tiles: 8 pattern bytes, colour (plane mask), pad.  ids: 0 empty, 1 inert marker, 2 ledge, 3 wide ledge, 4 pillar, 5 blue block, 6 lift slab,
++; tiles: 8 pattern bytes, colour (plane mask).  ids: 0 empty, 1 inert marker, 2 ledge, 3 wide ledge, 4 pillar, 5 blue block, 6 lift slab,
+ ; 7 door, 8 exit, 9 stone ball, 10 red ball, 11 red ball (waits), 12/13 eye vertical slow/fast, 14/15 eye horizontal slow/fast, 16 frog marker,
+ ; 17 lift end ($08), 18 lift stop ($0c); tile 6 = the lift slab $85 (a lone $85 is a lift start, never a plain block)
+ tiles:
+-        dc.b    $00,$00,$00,$10,$00,$00,$00,$00,1,0
+-        dc.b    $00,$00,$00,$00,$18,$00,$00,$00,1,0
+-        dc.b    $00,$00,$00,$00,$00,$ff,$ff,$00,2,0
+-        dc.b    $00,$00,$00,$00,$ff,$ff,$ff,$00,3,0
+-        dc.b    $18,$3c,$7e,$7e,$7e,$7e,$3c,$18,4,0
+-        dc.b    $ff,$81,$bd,$bd,$bd,$bd,$81,$ff,5,0
+-        dc.b    $7e,$ff,$ff,$ff,$ff,$ff,$ff,$7e,6,0
+-        dc.b    $ff,$81,$81,$81,$81,$81,$81,$ff,7,0
+-        dc.b    $ff,$c3,$a5,$99,$99,$a5,$c3,$ff,7,0
+-        dc.b    $3c,$42,$81,$81,$81,$81,$42,$3c,4,0
+-        dc.b    $3c,$7e,$ff,$ff,$ff,$ff,$7e,$3c,7,0
+-        dc.b    $3c,$7e,$e7,$c3,$c3,$e7,$7e,$3c,7,0
+-        dc.b    $18,$3c,$7e,$db,$db,$7e,$3c,$18,5,0
+-        dc.b    $3c,$18,$7e,$db,$db,$7e,$18,$3c,5,0
+-        dc.b    $00,$3c,$7e,$db,$db,$7e,$3c,$00,5,0
+-        dc.b    $00,$7e,$ff,$db,$db,$ff,$7e,$00,5,0
+-        dc.b    $00,$24,$3c,$7e,$5a,$7e,$24,$00,6,0
+-        dc.b    $18,$3c,$7e,$18,$18,$18,$18,$00,7,0
+-        dc.b    $18,$3c,$7e,$00,$7e,$00,$7e,$00,7,0
++        dc.b    $00,$00,$00,$10,$00,$00,$00,$00,1
++        dc.b    $00,$00,$00,$00,$18,$00,$00,$00,1
++        dc.b    $00,$00,$00,$00,$00,$ff,$ff,$00,2
++        dc.b    $00,$00,$00,$00,$ff,$ff,$ff,$00,3
++        dc.b    $18,$3c,$7e,$7e,$7e,$7e,$3c,$18,4
++        dc.b    $ff,$81,$bd,$bd,$bd,$bd,$81,$ff,5
++        dc.b    $7e,$ff,$ff,$ff,$ff,$ff,$ff,$7e,6
++        dc.b    $ff,$81,$81,$81,$81,$81,$81,$ff,7
++        dc.b    $ff,$c3,$a5,$99,$99,$a5,$c3,$ff,7
++        dc.b    $3c,$42,$81,$81,$81,$81,$42,$3c,4
++        dc.b    $3c,$7e,$ff,$ff,$ff,$ff,$7e,$3c,7
++        dc.b    $3c,$7e,$e7,$c3,$c3,$e7,$7e,$3c,7
++        dc.b    $18,$3c,$7e,$db,$db,$7e,$3c,$18,5
++        dc.b    $3c,$18,$7e,$db,$db,$7e,$18,$3c,5
++        dc.b    $00,$3c,$7e,$db,$db,$7e,$3c,$00,5
++        dc.b    $00,$7e,$ff,$db,$db,$ff,$7e,$00,5
++        dc.b    $00,$24,$3c,$7e,$5a,$7e,$24,$00,6
++        dc.b    $18,$3c,$7e,$18,$18,$18,$18,$00,7
++        dc.b    $18,$3c,$7e,$00,$7e,$00,$7e,$00,7
+ sHelp:  dc.b    'Fire=menu Ret=again',0
+         even
+ 
+ names:  dc.w    n0-names,n1-names,n2-names,n3-names,n4-names,n5-names,n6-names,n7-names,n8-names
+         dc.w    n9-names,n10-names,n11-names,n12-names,n13-names,n14-names,n15-names,n16-names,n17-names,n18-names
+ n0:     dc.b    'Empty',0
+-n1:     dc.b    'Marker (inert)',0
++n1:     dc.b    'Marker',0
+ n2:     dc.b    'Ledge',0
+-n3:     dc.b    'Ledge (wide)',0
++n3:     dc.b    'Wide ledge',0
+ n4:     dc.b    'Pillar',0
+ n5:     dc.b    'Blue block',0
+ n6:     dc.b    'Lift start',0
+@@ -2456,11 +2472,11 @@ n7:     dc.b    'Door opening',0
+ n8:     dc.b    'Exit door',0
+ n9:     dc.b    'Stone ball',0
+ n10:    dc.b    'Red ball',0
+-n11:    dc.b    'Red ball (waits)',0
+-n12:    dc.b    'Eye up/down slow',0
+-n13:    dc.b    'Eye up/down fast',0
+-n14:    dc.b    'Eye left/right',0
+-n15:    dc.b    'Eye l/r fast',0
++n11:    dc.b    'Red (waits)',0
++n12:    dc.b    'Eye U/D slow',0
++n13:    dc.b    'Eye U/D fast',0
++n14:    dc.b    'Eye L/R slow',0
++n15:    dc.b    'Eye L/R fast',0
+ n16:    dc.b    0
+ n17:    dc.b    'Lift end',0
+ n18:    dc.b    'Lift stop',0
+@@ -2534,9 +2550,11 @@ m_dirv: dc.b    3
+         dc.b    5,0,'Start up',0
+         dc.b    5,1,'Start down',0
+         dc.b    4,7,'< back',0
+-m_tower: dc.b   8
++m_tower: dc.b   10
+         dc.b    4,9,'Look: next tower',0
+         dc.b    4,10,'Look: other mission',0
++        dc.b    4,22,'Colours: next',0
++        dc.b    4,23,'Enemies: next',0
+         dc.b    4,11,'Copy original grid',0
+         dc.b    4,12,'Blank grid',0
+         dc.b    4,13,'Time +50',0
+@@ -2816,3 +2834,15 @@ sLoaded: dc.b   'Loaded ',0
+ sLv:    dc.b    ' levels / ',0
+ sCm:    dc.b    ' campaigns',0
+         even
++
++; ------------------------------------------------------------------ enemy-set cycle (block 7 at CODE6: the 38 B between the floppy build's TOS-state capture and CODE2)
++        org     CODE6
++c_eye:  move.b  RSV+rsFlg(a5),d0        ; enemy set = low nibble of flags.b: 0 = as the base tower, 1..4
++        addq.b  #1,d0
++        move.b  d0,d1
++        and.b   #15,d1
++        cmp.b   #5,d1
++        blo.s   c_fst
++        and.b   #$f0,d0
++c_fst:  move.b  d0,RSV+rsFlg(a5)
++        bra.s   c_ldone
+diff --git a/patches/ed_overlay.nep b/patches/ed_overlay.nep
+index 1ebf6d8..1a83c61 100644
+--- a/patches/ed_overlay.nep
++++ b/patches/ed_overlay.nep
+@@ -3,8 +3,10 @@
+ # Sites: $377a2 decode hook, $37a90 spawn direction, $3d6c4 title poll, $3adb4 initial time, $3d110 tower name, $3e352 tower complete, $3dfd6 frame flip,
+ # clear: runtime state RS+V ($77c80..$77dbf, 320 B) is zeroed by the loader at every start (RAM is not zero on a MiSTer / after a warm reset; work/notes/junkram.md).
+ # $3851a ACIA-path key latch (the F10 make byte is not lost to the one-cell sampling; D is read from the cell), $3d662 Options-page hint line.
+-# Blocks (6): code1 5312 B at $75740 (dead zone: relocation table remnants / NEBULTIT tail), tables 1324 B at $76d40, code2 1784 B at $77300, code3 570 B at $77a40,
+-# code4 252 B at $77dc0, code5 136 B at $76c76 (zero gap; no overlap with the trainer blob $76c00-$76c75, latch $76d00-$76d3b, credit $77a00-$77a3f, state $77c80-$77dbf).
++# Look sites (flags.b: high nibble = colour set, low nibble = eye design, see ed_lvl): $3dbf0 level setup hook (the call of sub_03636e, ends in it), and five
++# sites `move.w $3390c.l,d0` retargeted to the cache the hook fills: palette $3522e, raster $3dc1e, skyline $366de, texture $36b68 (every frame), eye discs $363a4.
++# Blocks (7): code1 5306 B at $75740 (dead zone: relocation table remnants / NEBULTIT tail), tables 1314 B at $76d40, code2 1786 B at $77300, code3 570 B at $77a40,
++# code4 252 B at $77dc0, code5 136 B at $76c76, code6 28 B at $772da (zero gap; no overlap with the trainer blob $76c00-$76c75, latch $76d00-$76d3b, credit $77a00-$77a3f, state $77c80-$77dbf).
+ patch ed_overlay
+ default yes
+ clear 77c80 140
+@@ -15,11 +17,18 @@ site 3adb4 4eb900075752
+ site 3d110 4eb900075758
+ site 3e352 4ef90007575e
+ site 3dfd6 4eb900075764
+-site 3851a 4ef90007786c
+-site 3d662 4ef9000778a44e71
+-block 75740 4ef9000757f84ef90007583c4ef9000759b64ef9000758504ef9000758724ef9000758924ef90007595861001ff441f9000bc0000c904e434d50661ab0680006641441e801104a40670a610e41f01014534060f24e7591c84e75720012280004e149122800054e7541f9000bc0003028000660ce61001faa41f9000bc0000c904e434d50660eb06800086408eb4841f000104e7591c84e75303900077c846714b07c7fff660841f9000be0004e7553406000ff7891c84e7561de200867327e001e28000233c70003391245f9000327f03c3c03ff429a51cefffc41e800142248d2c7d2c745f9000327f04ef90003781241f9000327f04ef9000377a80811000067044468005420090480000327f04e75d04041f90003ad9e303000003f006100ff78301f2208670861001ff6670230014e75e549d0c120503f002f086100ff5a20086606205f301f4e755088588f301f4e754a7900077c88660000ee303900077c8066144a7900077c846636303900033a344ef90003e35853406100fef820086720303900077c82524033c000077c8272001228000cb04164081030000e6000001833fc00080003390c427900077c80427900077c844e75720012004a006a163401e64ac47c00015242c27c0007427900077c84601c3001524133c100077c846100fe48740172002008670614101228000133c20003391033c10003390c33c100033a4441f90003e2744a790003391e6702548830814e754a7900077caa67220c79004400077caa66124a7900077c88670a427900077caa6000000e427900077caa4ef90003868a33fc000100077c9a610000e6600000024ff900000800b07c000367064ef90003dbb0427900077c884ef90003db8c4eb90003853a4a7900077c88670c427900077c9a610000ac603c427900077c80427900077c84427900033a444a7900077caa6708427900077caa600a0c390020000384986628423900038498427900077c9a6100006e588f4a40670cb07c000367064ef90003d85a4ef90003d5e24a79000338f04e7511fc0000826048e7fffe41fa002043f88240700722d851c8fffc527900077cc04eb900033d024cdf7fff4e730000033300a005a20666035f0fea0f400520063007400750076007700771077748e77ffe4bf900077cc0204d703f429851c8fffc61001ca061001cce40ed0022007c07002b78007000242b790003875800283b7900033a38002c1b788201002e1b788203002f3b790003391000303b790003390c003241f8824043ed003c700722d851c8fffc4238fa1b21fc00075a2c007011fc000a82014238820346fc2300423900038498426dffea426dffec426dffc84a6dffc6672e3b7c7fffffc433edffce0003390c33edffcc000339104eb9000377a2426dffc43b7c0001001e3b7c000100a26004610008f43b7c00030012610000da3015b05567fc4eb90003853a302dffea426dffeab07c0044660461000094302dffec6708426dffec61001d686100057e4a6d002067c646fc270021ed0024007023ed00280003875833ed002c00033a3811ed002e820111ed002f820341ed003c43f88240700722d851c8fffc423900038498426dffea426dffec33fcffff0003849a302d0020b07c0001671ab07c0002671033ed00300003391033ed00320003390c426dffc646ed00224cdf7ffe4e754a6d00ae660018e44a6d001e67124a6d000266124a6d00ac66001f826000183e3b7c000300204e75302d0012674e426d001272004a6d001e67064a6d000267027201b26d00aa6704807c00013b4100aa4a416712610000280c6d00030002670003966000032008000000670c6100001061000020610001b8600002124e7541f9000a0000303c1f3f720020c151c8fffc4e757a00382dffd898456b3cb86dffd06c367c003006e14841f9000327f0d0c010304000320634054a006610b87c0002660a4a4666066100001a6004610000205246bc7c00106dcc5245ba7c00166db44e7548e7ffe03e013c027610600c48e7ffe03e013c02610000da43f9000a88003403e94ad2c245ed00c024d924d924d924d943fa1030c6fc000a7a001a31300845ed00c04a006b501200c23c00706748e80908000000661ab23c0004672eb23c00056728006a00030006006a000300086026b23c0004671ab23c00056714006ac0000006006ac0000008600c00520ff06006006a0ff0000e41f9000a0000ccfc0500d1c6e74fd0c772000805000056c1488174000805000156c2488276000805000256c348837e07381a3004c04130803004c042314000023004c043314000044268000641e800a051cfffde4cdf07ff4e7576004a0067166b161200e809c23c000776014a0167001dc47608d6014e751200c23c00037607b23c0003660a0800000667ea76084e7576044a0167e07605b23c000267d876061200c23c000c66ce76021200c23c007067c476034e7548e7e080302dffd8906dffd66b4ab07c00166c44c0fc050041f9000a0000d1c0322dffd4e749d0c172074a416718b27c000767120a5080010a68800100020a6880010004600a4650466800024668000441e800a051c9ffd44cdf01074e7541f9000a0080303c00af72007407224822c151cafffc41e800a051c8fff041f9000a6e00303c03bf20c151c8fffc45ed007c14fc0054302dffce5240610001e614fc002014fc004d302dffcc610001d6421274006100009845ed007c14fc0048302dffd0610001ca421274016100008045ed007c14fc0043302dffd4610001b2421274026100006845ed007c14fc0052302dffd66100019a42127403610000506100013045ed007c14fc0024610001a64212740461000038610001186100fe8841fa0ec8d6433630300041fa0ebed0c37200740b61000114202d0014660641fa0e96600220407210740b600000fe41ed007c7220600000f4206d00047c001c187a00382d000a54882f084a1866fc2f08300590446b32b07c000c6c2c206f000445ed007c14fc0020ba6d00086606157c003effff610000e6421241ed007c322d00a83400610000a4205f588f5245ba466db4202d001467104a6d001e660a20407208740b610000844e7545ed007c41fa0f43610000a8206d009e700b14d851c8fffc421241ed007c720874006100005c41fa0f27720874036100005041fa0f2f720874046100004445ed007c700f14fc002051c8fffa4212302d009c45ed0081d4c014bc005e41ed007c720874016000001a302dffd4e14841f9000327f0d0c0302dffd6103000004e7548e7f0e023fc000a000000038758c4fc0a003601e249e749c67c0001d243d24233c100033a384eb90003b3444cdf070f4e7514d866fc538a4e75c07c000fd03c003014c04e7548c080fc0064d03c003014c0484048c080fc000ad03c003014c04840d03c003014c04e753f00e8086102301fc03c000fb03c000a6d025e00d03c003014c04e753639000338f03239000338f23439000338f4382d000c3b43000c4a4367084a4466046000010230018042660a426d000e426d00104e75302d000e670853403b40000e4e753b7c0004000e4a6d0010660c3b7c000100103b7c000e000e302d00026700000eb07c0003670012806000006c6100fcc04a6d00ac67027200302dffd4d041c07c000f3b40ffd4302dffd6d0426a027000362dffd05343b6406c0230033b40ffd6322dffd8b0416f063b40ffd86010927c0015b0416c10d07c00153b40ffd83b7c000300124e756100fc663b7c000200126100189a4e75302d000890426a027000206d0004760016105343b0436f0230033b4000084a416a083b43000860000082322d000ab0416c063b40000a600c907c000bb0416f043b40000a3b7c000200124e75302d0002b07c00036700120c4a406600004e4a6d00ac660018d63b7c000800a841fa0ec6610000044e752b480004426d0008426d000a3b7c000100023b7c000200124e75206d00045288302d0008670c534054884a1866fc51c8fff84e7561e4101872001210c07c00ffd04041fa000a303000004ef00000001c002a0058006c016400a002ca02d602e2030006f4070017e616ae6100161e3001610000a0600000886100161036013f2dffd6780230036100008a302dffd65240b06dffd06c083b40ffd651ccffe83b5fffd66000005a41fa0cded2413230100041fa0cd4d0c16000ff483b410018b23c0030671841fa0ea2b23c00406d0ab23c00606c0441fa0eb76000ff26302d00183200610015a66100005060000012302d001880413200610015926100003c4a6d001e670000e8426d00023b7c000300124e7548e7c080322dffd4e14941f9000327f0d0c1322dffd6118010003b7c000100a24cdf01034e753f0061d6301f42ad00143200c27c0070b27c00406d3eb27c00606c36322dffd4e14941f9000327f0d0c1342dffd636025243b66dffd06c124a3030006af253426b084a3020006af64e7541fa0b4d2b4800144e75322dffd4e14941f9000327f0d0c1342dffd653426b064a3020006be241fa0b392b4800144e7541fa000cd241323010004ef01000002c005a00c8025803f20046105c004e10500ef80f080f2006820f640f680fbc10e60558045a106e108610de426d001e3b7c000800a841fa0b966100fe043b7c000300124e753b7c000300204e75426d00023b7c000200124e75426d001e3b7c000800a845f9000a8000421a2b4a00a441f9000bc00076000c904e434d506604362800067400601230026100f2d65088700632026100009e5242b4436dea41fa0ab9700472036100008c41fa0ac8700472006100008041f9000a80006100fd823b7c000300124e75426d001e3b7c000800a845f9000a8000421a2b4a00a441f9000bc00076000c904e434d506604362800087400601030026100f2b270073202610000325242b4436dec41fa0a59700472046100002041fa0a5c700472006100001441f9000a80006100fd163b7c000300124e75246d00a414c014c1700e1218670614c151c8fff8421a2b4a00a445f9000a800052124e753b41001a41fa0acc6000fcde3b41001a41fa0ae86000fcd2342d001a4a4167000038b27c00016700006ab27c0002670001326000017a342d001a3b42001c4a41670001e2b27c0001670002b8b27c0002670002006000020a30026100f1ae20086700fd84426dffc052423b42ffc47200122800017400141033c10003390c33c20003391033c100033a443b7c000200204e7530026100f17420086700fd4a43edffdc700b13b00008000051c8fff8700010103b40ffcc102800013b40ffce102800023b40ffd0610012383b41ffd21b680003fff252423b42ffca3b42ffc433edffce0003390c33edffcc000339104eb9000377a2426dffc4426d00a260000032426dffca422dfff26100042041fa092143edffdc700b12d851c8fffc3b7c0001ffcc426dffce3b7c0450ffd2600000023b7c000800a83b7c0001ffc63b7c0001001e426dffd43b7c0001ffd63b7c0015ffd8426d000242ad00143b7c000300124e7530026100f0a420086700fc7a26486100f0c82601d67c00146100f0cc43f9000be00093c8b3c36d000014224812db534366fa5279000bc0066000fd6641fa080b2b4800143b7c000200124e7530026100f05820086700fc2e6100f07e2601d67c0014264843f038002f086100f07a2448205fb3ca640410d960f85379000bc0063a39000bc00843f9000bc010602c78001829000c41e9000e24487c00601010186b08b00267086502530014c0524651ccffee1346000c43e9002051cdffd26000fce030026100f02c20086700fbb84a28000c6700fbb052423b42ffc0426dffc21028000e6100f1503b7c000200204e7530026100effe2b48009e60000c1230026100eff020086700fb7c43e8002045f9000bc0103039000bc008eb48d4c0b3ca640410d960f8701f421851c8fffc5379000bc0086000fcd86100003a3039000bc008b07c00086400fb3c5279000bc00834003b40001c6100ef9a2248701f421951c8fffc43fa0773700b10d951c8fffc6000002e41f9000bc0000c904e434d50671c303c07ff429851c8fffc23fc4e434d50000bc00033fc0001000bc0044e75302d001c6100ef4c2648426d001e3b7c000800a845f9000a8000421a2b4a00a47600162b000c74006000008e1033200e45ed007c320252413001c1413f0130025240610000a4321f14fc00201033200e6a2c14fc004f14fc00201033200e1200e609c23c0001d23c003114c114fc002dc03c0007d03c003114c04212602c14fc004c14fc0020c07c007f6100ee7c20086712508870071218670614c151c8fff84212600614fc003f421241ed007c700a32026100fc265242b4436d00ff7041fa0661700472116100fc1241fa064e700472026100fc0641f9000a80006100f9083b7c000300124e7548c080fc000ad03c003014c04840d03c003014c04e75302d001c6100ee4e20086700f9da70001028000cb07c00106400fee811bc0080000e5228000c6000feda3b41001a41fa06fc6000f8b4302d001c6100ee1820086700f9a47400342d001a76001628000c43e8000e4a41674eb27c000167000092b27c0002670000aab27c0003671c30025240b0436400fe8c1831200013b100002000138400006000fe7a4a426700fe74300253401831200013b100002000138400006000fe5e18312000c87c00ff5244b87c0090641cb87c0080642c2f0841f9000bc000b8680006205f651c383c0080601678002f0841f9000bc0004a680006205f6604383c0080138420006000fe14b67c00106400fe0c3803b8426f0a13b140ff4000534460f25228000c6000fdf438025244b8436c0a13b1400040ff524460f25328000c6000fdda41f9000327f0303c03ff429851c8fffc3b7c0030ffd0700f41f9000327f110bc008141e8010051c8fff641f900032af0117c0081002b117c0081012b117c0081022b41f900032bf0117c00c3002c117c00c3002d117c00c3002e3b7c000100a2426dffd43b7c0001ffd63b7c0015ffd8426d00023b7c000300124e7523f8047e00077db421fc00076b3c047e33fc000200077d7042673f3c00074e4d588f4a80660470016002612a21f900077db4047e4e754a6f000466124a7900077d70670a537900077d7070024e75207900077db44ed0383900077d6e30045340670270023f00487a0bb03f3c003d4e41508f4a806b583c0041f9000aa000703f61000eb87a02b0bc00002000662e7a00b87c0001672642673f0642a73f3c00424e414fef000a41f9000bc000704061000e8ab0bc0000200067022a003f063f3c003e4e41588f4a8566022a0020056a22b0bcffffffdf6718b0bcffffffde6710b0bcfffffff3670470014e7570034e7570024a80670270024e75
+-block 76d40 00000010000000000100000000001800000001000000000000ffff00020000000000ffffff000300183c7e7e7e7e3c180400ff81bdbdbdbd81ff05007effffffffffff7e0600ff818181818181ff0700ffc3a59999a5c3ff07003c4281818181423c04003c7effffffff7e3c07003c7ee7c3c3e77e3c0700183c7edbdb7e3c1805003c187edbdb7e183c0500003c7edbdb7e3c000500007effdbdbff7e00050000243c7e5a7e24000600183c7e18181818000700183c7e007e007e000700466972653d6d656e75205265743d616761696e000026002c003b0041004e00550060006b00780082008d009600a700b800c900d800e500e600ef456d707479004d61726b65722028696e65727429004c65646765004c65646765202877696465290050696c6c617200426c756520626c6f636b004c69667420737461727400446f6f72206f70656e696e67004578697420646f6f720053746f6e652062616c6c005265642062616c6c005265642062616c6c2028776169747329004579652075702f646f776e20736c6f77004579652075702f646f776e206661737400457965206c6566742f726967687400457965206c2f72206661737400004c69667420656e64004c6966742073746f70004f7665726c61792066756c6c2100457965206e65656473207465727261696e004e6f206c656467652062656c6f7721004e616d652000552f44206c6574746572204c2f52206d6f76650046697265203d20646f6e65003c6e6577206c6576656c3e003c6e65772063616d706169676e3e003c206261636b003c61646420656e7472793e004e4557204c4556454c2020004e45572043414d5000000000204142434445464748494a4b4c4d4e4f505152535455565758595a303132333435363738392d000138099c02290c2e0504054f726967696e616c2067616d6500040243616d706169676e73203e0004014c6576656c73203e0004134c6f61642066726f6d2063616d706169676e206469736b0004065361766520746f2063616d706169676e206469736b00050800506c617900080145646974000802436f707900080344656c6574650004013c206261636b00050900506c61790009014564697420656e747269657300090252656e616d6500090344656c6574650004023c206261636b00060b004368616e676520736f75726365000b01496e73657274206166746572000b0252656d6f7665000b034d6f7665207570000b044d6f766520646f776e0004123c206261636b002e00005300002600811900803000822001832d01c31e0c002c0c011f0d10130d20110d30160d40170d50240d60250d7000000c0000456d7074792020430000814c6564676520204c00008050696c6c6172202050000082426c756520626c6f636b202873686f6f742920420002034c696674203e000183446f6f72206f70656e696e672020440001c34578697420646f6f72202058000201456e656d79203e000202546f776572203e000410506c6179746573740004065361766520746f2063616d706169676e206469736b0004084c6561766520656469746f720003050053746172742072696768740005015374617274206c6566740004073c206261636b000305005374617274207570000501537461727420646f776e0004073c206261636b000804094c6f6f6b3a206e65787420746f77657200040a4c6f6f6b3a206f74686572206d697373696f6e00040b436f7079206f726967696e616c206772696400040c426c616e6b206772696400040d54696d65202b353000040e54696d65202d353000040f4e616d652e2e2e0004073c206261636b00
+-block 77300 302dffce5240c07c00073b40ffce60060a6d0003ffcc3b7c000100a2426d00023b7c000200124e75426dffc433edffce0003390c33edffcc000339104eb9000377a23b7900033912ffd03b7c000100a2426dffd43b7c0001ffd63b7c0015ffd8426d00023b7c000300124e757005600270fb322dffd23401e84ac47c00ff3602c47c000fe84bd4406a06d47c000a5343b47c000a6d06947c000a5243b67c00016d10b67c00096e0ae14be94a86423b43ffd23b7c000100a2426d00023b7c000200124e7541edffdc2b48009e60000002426d009c3b7c000300023b7c000200124e75302d009cd0416a027000b07c000a6f02700a3b40009c4a426730206d009ed0c0161043fafba17800103140006708b6006706524460f27800d8426a0278254a3140006602780010b140003b7c000200124e75426d00023b7c000100a24a6d001e660c302d001a4aad009e6000f0823b7c000200124e75610000c8426dffc66000f0006100f3d04a6d001e6704610000b27002600270013b4000ae42ad00143b7c000400a841fa09e66000edbc61000930320041fa07aa60044a1866fc51c9fffa4a40663c0c6d000100ae663445ed00d041faf82c6100ebec3039000bc0066100f80a41faf8226100ebda3039000bc0086100f7f841faf81b6100ebc841ed00d02b480014426d00ae6000ee5a610000323b7c0001ffc83b7c7fffffc4322dffce33c10003390c33c100033a4433edffcc00033910426dffc03b7c000100204e754a6d00a245f9000be000302dffcc1480302dffce15400001302dffd015400002156dfff20003356dffd2000641ea000843edffdc700b10d951c8fffc422a001341ea00142248302dffd0d2c0d2c02c093a00534547f9000327f07601284b720074001014670405c112c049ec01005242b47c00086dec10c151cbffe4528b51cdffda2009908a907c0014354000046100f2847600362a0004d67c0014302dffca676e53406100e1a22008676426486100e1c82801d87c00142f0b6100e1ca2848265f20039084220cd280b2bc000be0006200f10a41f3480043f338004a80671a6b0e244c43f20800b5c8630e132260f82448b5cc640412da60f841f9000be000224b200312d8538066fa42ad00144e756100e17443f9000be00093c8b3c36d00f0bc43f9000be000200310d9538066fa3039000bc0065279000bc00652403b40ffca42ad00144e7541f80008227900077cb4303900077cb85240c0fc00304df008084cd0003f4cd13cc048d03cc048d1003f41e8001843e90018b1ce65e44e7541f8fa0143f900077d1c701712d0548851c8fffa740078007c003e3c12a91238fa1fb401640214011638fa23b803640218031a38fa25bc0564021c0551cfffe013c200077d2b13c400077d2d13c600077d2e4e754238fa074238fa094238fa0b4238fa0d4238fa0f4238fa1143f8fa017417129a548951cafffa4e75413a5c4e45424c4556454c2e4f564c0041faf61043f9000a88007c127a071818700074077600d80464027603e548804351cafff232c051cdffe6548851ceffde4e754a7900077ca8661a48e7fffa4df9000bc0006100001033fc000100077ca84cdf5fff4e75204e0c904e434d50660000cc0c6800010004660000c436280006b67c007f620000b834280008b47c0008620000ac43e80010600e0c290010000c6200009c43e9002051cafff043e8011047ee20006000008245e90014b5cb6200007e1011b03c000165000074b03c00026200006c0c290007000162000062780018290002b87c001065000054b87c00786200004c20496100df842a013004d040ba406500003a49f25800b9cb62000030320053417c00204a10187407e2086402524651cafff851c9fff0300590449044bc406600000a224c51cbff7e4e7542964e7554886100df3655884a414e75103900038498b03900077cae672013c000077caeb03c0044660a33fc004400077caa600a4a006b0613c000077cad301f08b80006fa114e734eb90003b36041fa001070014eb90003b3604ef90003d6984631302f4420204c6576656c20656469746f722000003b41fff008ed0000fff04e754a6d001e675e4a6d000266584a6d00ac6622b03c001c672eb03c0039672843faf7d61219673eb0016704548960f420496000e96eb03c001c670001f4b03c0039670001ec4e75322dfff0080100086714b23c00836700e98cb23c00c36700e9846000e9724e7534016100e7121600c03c00feb00266060a0300011403300232026100ff726100ea1c6000e9de08031053746f6e652062616c6c2020530003205265642062616c6c2020520003305265642062616c6c2077616974732020570003404579652075702f646f776e20736c6f772020550003504579652075702f646f776e2066617374202049000360457965206c6566742f726967687420204a000370457965206c2f72206661737420204b0004073c206261636b00
+-block 77a40 2f084879000020003f063f004e414fef000c4e75302dffd4e14841f9000327f0d0c0342dffd64e7570004a6d00ac670641fa015020082b4000144e7561d64a4167185341670c61366b064230300061566028700c6100e8c460200c300085200066043602614011bc0085200052423b4200ac3b7c000100a261ae6000e88a36020c3000083000660453436b1610303000b03c0085670cb03c0008670453436aec76ff4a434e7538035244b86dffd06c1410304000b03c000c670cb03c000866e8423040004e754230400060dc6100ff46362d00ac5343b44367406d0a11bc000820003403600c11bc0008300011bc008520004a42670c4a3020ff660611bc008120ff426d00ac6100ff20611e3b7c000100a23b7c000300124e7541fa007c2b4800143b7c000200124e756100fee86100ff4e6b22524310303000b03c00086716b03c0080660a41fa00612b4800144e75b66dffd06dde4e75426d00ac6100feca3b7c000200124e751200c23c000cb23c0008660476114e75b23c000c660276124e754c6966743a20552f44203d206f7468657220656e64005069636b20616e6f7468657220726f770050696c6c617220626c6f636b73206c69667400040c004c6966743a2066726f6d2068657265202041000c014c6966743a2073746f70206865726520205a000c024c6966743a2064656c6574650004073c206261636b00005361766564004e6f206469736b004e6f7420612063616d706169676e206469736b004469736b2069732077726974652070726f74656374656400
+-block 77dc0 48e77ffe4ab900077cb4661e23f9000ffd8000077cb433f9000ffd8600077cb823fc000fffaa00077cba2f0d40e7007c07002b4f00384ff9000ad0002f0d6100f8a26100f866247900077cba6100f8e846fc25002f38040421fc00076c7604046100ece421df040446fc27002f006100f83a2e1f2a5f45f900077d1c6100f8b808380000fc0067061038fc0260f22e6d0038321f2a5f46c12007660c0c6d000100ae66046100ee184cdf7ffe4e75030414496e736572742063616d706169676e206469736b20696e20647269766520413a0004147468656e207072657373206669726520284631302063616e63656c73290004153c206261636b0000
+-block 76c76 302f000448c04e754df9000aa0000c964e434d50661061000af60c964e434d50671670024e75204e323c07ff7400849851c9fffc4a8266ea204e43f9000bc000323c07ff22d851c9fffc33fc000100077ca870004e75b07c000a6500f3dab07c00646500fc706000f3da4c6f616465642000206c6576656c73202f20002063616d706169676e7300
++site 3851a 4ef90007786e
++site 3d662 4ef9000778a64e71
++site 3dbf0 4eb9000757f8
++site 3522e 303900077cbe
++site 3dc1e 303900077cbe
++site 366de 303900077cbe
++site 36b68 303900077cbe
++site 363a4 303900077cb2
++block 75740 4ef90007583a4ef90007587e4ef9000759f84ef9000758924ef9000758b44ef9000758d44ef90007599a61001ff641f9000bc0000c904e434d50661ab0680006641441e801104a40670a610e41f01014534060f24e7591c84e75720012280004e149122800054e7541f9000bc0003028000660ce61001fac41f9000bc0000c904e434d50660eb06800086408eb4841f000104e7591c84e75303900077c846714b07c7fff660841f9000be0004e7553406000ff7891c84e7548e7e08061da7200200867041228000334390003390c3001e808611a33c000077cbe3001611013c000077cb34cdf01074ef90003636ec07c000f53406a0230024e75619c200867327e001e28000233c70003391245f9000327f03c3c03ff429a51cefffc41e800142248d2c7d2c745f9000327f04ef90003781241f9000327f04ef9000377a80811000067044468005420090480000327f04e75d04041f90003ad9e303000003f006100ff36301f2208670861001fb6670230014e75e549d0c120503f002f086100ff1820086606205f301f4e755088588f301f4e754a7900077c88660000ee303900077c8066144a7900077c846636303900033a344ef90003e35853406100feb620086720303900077c82524033c000077c8272001228000cb04164081030000e6000001833fc00080003390c427900077c80427900077c844e75720012004a006a163401e64ac47c00015242c27c0007427900077c84601c3001524133c100077c846100fe06740172002008670614101228000133c20003391033c10003390c33c100033a4441f90003e2744a790003391e6702548830814e754a7900077caa67220c79004400077caa66124a7900077c88670a427900077caa6000000e427900077caa4ef90003868a33fc000100077c9a610000e6600000024ff900000800b07c000367064ef90003dbb0427900077c884ef90003db8c4eb90003853a4a7900077c88670c427900077c9a610000ac603c427900077c80427900077c84427900033a444a7900077caa6708427900077caa600a0c390020000384986628423900038498427900077c9a6100006e588f4a40670cb07c000367064ef90003d85a4ef90003d5e24a79000338f04e7511fc0000826048e7fffe41fa002043f88240700722d851c8fffc527900077cc04eb900033d024cdf7fff4e730000033300a005a20666035f0fea0f400520063007400750076007700771077748e77ffe4bf900077cc0204d703f429851c8fffc61001c6061001c8e40ed0022007c07002b78007000242b790003875800283b7900033a38002c1b788201002e1b788203002f3b790003391000303b790003390c003241f8824043ed003c700722d851c8fffc4238fa1b21fc00075a6e007011fc000a82014238820346fc2300423900038498426dffea426dffec426dffc84a6dffc6672e3b7c7fffffc433edffce0003390c33edffcc000339104eb9000377a2426dffc43b7c0001001e3b7c000100a26004610009023b7c00030012610000da3015b05567fc4eb90003853a302dffea426dffeab07c0044660461000094302dffec6708426dffec61001d28610005884a6d002067c646fc270021ed0024007023ed00280003875833ed002c00033a3811ed002e820111ed002f820341ed003c43f88240700722d851c8fffc423900038498426dffea426dffec33fcffff0003849a302d0020b07c0001671ab07c0002671033ed00300003391033ed00320003390c426dffc646ed00224cdf7ffe4e754a6d00ae660018a84a6d001e67124a6d000266124a6d00ac66001f40600018023b7c000300204e75302d0012674e426d001272004a6d001e67064a6d000267027201b26d00aa6704807c00013b4100aa4a416712610000280c6d00030002670003a06000032a08000000670c6100001061000020610001b8600002124e7541f9000a0000303c1f3f720020c151c8fffc4e757a00382dffd898456b3cb86dffd06c367c003006e14841f9000327f0d0c010304000320634054a006610b87c0002660a4a4666066100001a6004610000205246bc7c00106dcc5245ba7c00166db44e7548e7ffe03e013c027610600c48e7ffe03e013c02610000da43f9000a88003403e94ad2c245ed00c024d924d924d924d943fa0feec6fc00097a001a31300845ed00c04a006b501200c23c00706748e80908000000661ab23c0004672eb23c00056728006a00030006006a000300086026b23c0004671ab23c00056714006ac0000006006ac0000008600c00520ff06006006a0ff0000e41f9000a0000ccfc0500d1c6e74fd0c772000805000056c1488174000805000156c2488276000805000256c348837e07381a3004c04130803004c042314000023004c043314000044268000641e800a051cfffde4cdf07ff4e7576004a0067166b161200e809c23c000776014a0167001d827608d6014e751200c23c00037607b23c0003660a0800000667ea76084e7576044a0167e07605b23c000267d876061200c23c000c66ce76021200c23c007067c476034e7548e7e080302dffd8906dffd66b4ab07c00166c44c0fc050041f9000a0000d1c0322dffd4e749d0c172074a416718b27c000767120a5080010a68800100020a6880010004600a4650466800024668000441e800a051c9ffd44cdf01074e7541f9000a0080303c00af72007407224822c151cafffc41e800a051c8fff041f9000a6e00303c03bf20c151c8fffc45ed007c14fc0054302dffce5240610001f014fc002014fc004d302dffcc610001e042127400610000a245ed007c14fc0053102dfff2e808610001c634fc2045102dfff2610001ba421274056100007c47fa0072740145ed007c14db7000101b303500c0610001a642126100005e5242b47c000466e06100013645ed007c14fc0024610001ac421274046100003e6100011e6100fe8441fa0e70d6433630300041fa0e66d0c37200740b6100011a202d0014660641fa0e3d600220407210740b6000010448104314521641ed007c7220600000f4206d00047c001c187a00382d000a54882f084a1866fc2f08300590446b32b07c000c6c2c206f000445ed007c14fc0020ba6d00086606157c003effff610000e6421241ed007c322d00a83400610000a4205f588f5245ba466db4202d001467104a6d001e660a20407208740b610000844e7545ed007c41fa0ecc610000a8206d009e700b14d851c8fffc421241ed007c720874006100005c41fa0eb0720874036100005041fa0eb8720874046100004445ed007c700f14fc002051c8fffa4212302d009c45ed0081d4c014bc005e41ed007c720874016000001a302dffd4e14841f9000327f0d0c0302dffd6103000004e7548e7f0e023fc000a000000038758c4fc0a003601e249e749c67c0001d243d24233c100033a384eb90003b3444cdf070f4e7514d866fc538a4e75c07c000fd03c003014c04e7548c080fc0064d03c003014c0484048c080fc000ad03c003014c04840d03c003014c04e753f00e8086102301fc03c000fb03c000a6d025e00d03c003014c04e753639000338f03239000338f23439000338f4382d000c3b43000c4a4367084a4466046000010230018042660a426d000e426d00104e75302d000e670853403b40000e4e753b7c0004000e4a6d0010660c3b7c000100103b7c000e000e302d00026700000eb07c00036700123a6000006c6100fcb64a6d00ac67027200302dffd4d041c07c000f3b40ffd4302dffd6d0426a027000362dffd05343b6406c0230033b40ffd6322dffd8b0416f063b40ffd86010927c0015b0416c10d07c00153b40ffd83b7c000300124e756100fc5c3b7c000200126100184e4e75302d000890426a027000206d0004760016105343b0436f0230033b4000084a416a083b43000860000082322d000ab0416c063b40000a600c907c000bb0416f043b40000a3b7c000200124e75302d0002b07c0003670011c64a406600004e4a6d00ac6600188a3b7c000800a841fa0e50610000044e752b480004426d0008426d000a3b7c000100023b7c000200124e75206d00045288302d0008670c534054884a1866fc51c8fff84e7561e4101872001210c07c00ffd04041fa000a303000004ef00000001c002a0058006c016400a00280028c029802b206a206ae179a1664610015d43001610000a060000088610015c636013f2dffd6780230036100008a302dffd65240b06dffd06c083b40ffd651ccffe83b5fffd66000005a41fa0c68d2413230100041fa0c5ed0c16000ff483b410018b23c0030671841fa0e2cb23c00406d0ab23c00606c0441fa0e416000ff26302d001832006100155c6100005060000012302d001880413200610015486100003c4a6d001e670000ec426d00023b7c000300124e7548e7c080322dffd4e14941f9000327f0d0c1322dffd6118010003b7c000100a24cdf01034e753f0061d6301f42ad00143200c27c0070b27c00406d3eb27c00606c36322dffd4e14941f9000327f0d0c1342dffd636025243b66dffd06c124a3030006af253426b084a3020006af64e7541fa0ad62b4800144e75322dffd4e14941f9000327f0d0c1342dffd653426b064a3020006be241fa0ac22b4800144e7541fa000cd241323010004ef010000030005e006c020603a0004a10160052100a0eac0ed00ee806300f2c0f300f7610a0050604081028104010980ebc0e86426d001e3b7c000800a841fa0b1c6100fe003b7c000300124e753b7c000300204e75426d00023b7c000200124e7549faf2b647fa0a7e7a087806600c49faf2f247fa0a7c7a007808426d001e3b7c000800a845f9000a8000421a2b4a00a441f9000bc00076000c904e434d506604363040007400601630024e9441f050003004e24856403202610000325242b4436de6204b70043204e2496100002041fa0a2f700472006100001441f9000a80006100fd603b7c000300124e75246d00a414c014c1700e1218670614c151c8fff8421a2b4a00a445f9000a800052124e753b41001a41fa0aa06000fd283b41001a41fa0abc6000fd1c342d001a4a416700003053416700006453416700012e60000176342d001a3b42001c4a41670001de5341670002b65341670002006000020a30026100f1b420086700fdd6426dffc052423b42ffc47200122800017400141033c10003390c33c20003391033c100033a443b7c000200204e7530026100f17a20086700fd9c43edffdc700b13b00008000051c8fff8700010103b40ffcc102800013b40ffce102800023b40ffd0610012403b41ffd21b680003fff252423b42ffca3b42ffc433edffce0003390c33edffcc000339104eb9000377a2426dffc4426d00a260000032426dffca422dfff26100042041fa08fc43edffdc700b12d851c8fffc3b7c0001ffcc426dffce3b7c0450ffd2600000023b7c000800a83b7c0001ffc63b7c0001001e426dffd43b7c0001ffd63b7c0015ffd8426d000242ad00143b7c000300124e7530026100f0aa20086700fccc26486100f0ce2601d67c00146100f0d243f9000be00093c8b3c36d000014224812db534366fa5279000bc0066000fdbc41fa07e62b4800143b7c000200124e7530026100f05e20086700fc806100f0842601d67c0014264843f038002f086100f0802448205fb3ca640410d960f85379000bc0063a39000bc00843f9000bc010602c78001829000c41e9000e24487c00601010186b08b00267086502530014c0524651ccffee1346000c43e9002051cdffd26000fd3630026100f03220086700fc0a4a28000c6700fc0252423b42ffc0426dffc21028000e6100f1983b7c000200204e7530026100f0042b48009e60000c1e30026100eff620086700fbce43e8002045f9000bc0103039000bc008eb48d4c0b3ca640410d960f8701f421851c8fffc5379000bc0086000fcce6100003a3039000bc008b07c00086400fb8e5279000bc00834003b40001c6100efa02248701f421951c8fffc43fa074e700b10d951c8fffc6000002e41f9000bc0000c904e434d50671c303c07ff429851c8fffc23fc4e434d50000bc00033fc0001000bc0044e75302d001c6100ef522648426d001e3b7c000800a845f9000a8000421a2b4a00a47600162b000c74006000008e1033200e45ed007c320252413001c1413f0130025240610000a4321f14fc00201033200e6a2c14fc004f14fc00201033200e1200e609c23c0001d23c003114c114fc002dc03c0007d03c003114c04212602c14fc004c14fc0020c07c007f6100ee8220086712508870071218670614c151c8fff84212600614fc003f421241ed007c700a32026100fc2e5242b4436d00ff7041fa063c700472116100fc1a41fa0629700472026100fc0e41f9000a80006100f95a3b7c000300124e7548c080fc000ad03c003014c04840d03c003014c04e75302d001c6100ee5420086700fa2c70001028000cb07c00106400fee811bc0080000e5228000c6000feda3b41001a41fa06d86000f906302d001c6100ee1e20086700f9f67400342d001a76001628000c43e8000e4a41674eb27c000167000092b27c0002670000aab27c0003671c30025240b0436400fe8c1831200013b100002000138400006000fe7a4a426700fe74300253401831200013b100002000138400006000fe5e18312000c87c00ff5244b87c0090641cb87c0080642c2f0841f9000bc000b8680006205f651c383c0080601678002f0841f9000bc0004a680006205f6604383c0080138420006000fe14b67c00106400fe0c3803b8426f0a13b140ff4000534460f25228000c6000fdf438025244b8436c0a13b1400040ff524460f25328000c6000fdda41f9000327f0303c03ff429851c8fffc3b7c0030ffd0700f41f9000327f110bc008141e8010051c8fff641f900032af0117c0081002b117c0081012b117c0081022b41f900032bf0117c00c3002c117c00c3002d117c00c3002e3b7c000100a2426dffd43b7c0001ffd63b7c0015ffd8426d00023b7c000300124e7523f8047e00077db421fc00076b36047e33fc000200077d7042673f3c00074e4d588f4a80660470016002612a21f900077db4047e4e754a6f000466124a7900077d70670a537900077d7070024e75207900077db44ed0383900077d6e30045340670270023f00487a0bb83f3c003d4e41508f4a806b583c0041f9000aa000703f61000ebe7a02b0bc00002000662e7a00b87c0001672642673f0642a73f3c00424e414fef000a41f9000bc000704061000e90b0bc0000200067022a003f063f3c003e4e41588f4a8566022a0020056a22b0bcffffffdf6718b0bcffffffde6710b0bcfffffff3670470014e7570034e7570024a80670270024e75
++block 76d40 0000001000000000010000000018000000010000000000ffff000200000000ffffff0003183c7e7e7e7e3c1804ff81bdbdbdbd81ff057effffffffffff7e06ff818181818181ff07ffc3a59999a5c3ff073c4281818181423c043c7effffffff7e3c073c7ee7c3c3e77e3c07183c7edbdb7e3c18053c187edbdb7e183c05003c7edbdb7e3c0005007effdbdbff7e000500243c7e5a7e240006183c7e181818180007183c7e007e007e0007466972653d6d656e75205265743d616761696e00000026002c003300390044004b00560061006e00780083008c009800a500b200bf00cc00cd00d6456d707479004d61726b6572004c656467650057696465206c656467650050696c6c617200426c756520626c6f636b004c69667420737461727400446f6f72206f70656e696e67004578697420646f6f720053746f6e652062616c6c005265642062616c6c0052656420287761697473290045796520552f4420736c6f770045796520552f44206661737400457965204c2f5220736c6f7700457965204c2f52206661737400004c69667420656e64004c6966742073746f70004f7665726c61792066756c6c2100457965206e65656473207465727261696e004e6f206c656467652062656c6f7721004e616d652000552f44206c6574746572204c2f52206d6f76650046697265203d20646f6e65003c6e6577206c6576656c3e003c6e65772063616d706169676e3e003c206261636b003c61646420656e7472793e004e4557204c4556454c2020004e45572043414d5000000000204142434445464748494a4b4c4d4e4f505152535455565758595a303132333435363738392d0000013809c802290c580504054f726967696e616c2067616d6500040243616d706169676e73203e0004014c6576656c73203e0004134c6f61642066726f6d2063616d706169676e206469736b0004065361766520746f2063616d706169676e206469736b00050800506c617900080145646974000802436f707900080344656c6574650004013c206261636b00050900506c61790009014564697420656e747269657300090252656e616d6500090344656c6574650004023c206261636b00060b004368616e676520736f75726365000b01496e73657274206166746572000b0252656d6f7665000b034d6f7665207570000b044d6f766520646f776e0004123c206261636b002e00005300002600811900803000822001832d01c31e0c002c0c011f0d10130d20110d30160d40170d50240d60250d7000000c0000456d7074792020430000814c6564676520204c00008050696c6c6172202050000082426c756520626c6f636b202873686f6f742920420002034c696674203e000183446f6f72206f70656e696e672020440001c34578697420646f6f72202058000201456e656d79203e000202546f776572203e000410506c6179746573740004065361766520746f2063616d706169676e206469736b0004084c6561766520656469746f720003050053746172742072696768740005015374617274206c6566740004073c206261636b000305005374617274207570000501537461727420646f776e0004073c206261636b000a04094c6f6f6b3a206e65787420746f77657200040a4c6f6f6b3a206f74686572206d697373696f6e000416436f6c6f7572733a206e657874000417456e656d6965733a206e65787400040b436f7079206f726967696e616c206772696400040c426c616e6b206772696400040d54696d65202b353000040e54696d65202d353000040f4e616d652e2e2e0004073c206261636b00
++block 77300 302dffce5240c07c00073b40ffce601a102dfff2d03c0010b03c009065d2c03c000f60cc0a6d0003ffcc3b7c000100a2426d00023b7c000200124e75426dffc433edffce0003390c33edffcc000339104eb9000377a23b7900033912ffd03b7c000100a2426dffd43b7c0001ffd63b7c0015ffd8426d00023b7c000300124e757005600270fb322dffd23401e84ac47c00ff3602c47c000fe84bd4406a06d47c000a5343b47c000a6d06947c000a5243b67c00016d10b67c00096e0ae14be94a86423b43ffd26000ff6241edffdc2b48009e60000002426d009c3b7c000300023b7c000200124e75302d009cd0416a027000b07c000a6f02700a3b40009c4a426730206d009ed0c0161043fafb707800103140006708b6006706524460f27800d8426a0278254a3140006602780010b140003b7c000200124e75426d00023b7c000100a24a6d001e660c302d001a4aad009e6000f06c3b7c000200124e75610000c8426dffc66000f04a6100f3c44a6d001e6704610000b27002600270013b4000ae42ad00143b7c000400a841fa09e06000ee026100092a320041fa07a460044a1866fc51c9fffa4a40663c0c6d000100ae663445ed00d041faf8266100ec323039000bc0066100f80441faf81c6100ec203039000bc0086100f7f241faf8156100ec0e41ed00d02b480014426d00ae6000eea0610000323b7c0001ffc83b7c7fffffc4322dffce33c10003390c33c100033a4433edffcc00033910426dffc03b7c000100204e7545f9000be000302dffcc1480302dffce15400001302dffd015400002156dfff20003356dffd2000641ea000843edffdc700b10d951c8fffc422a001341ea00142248302dffd0d2c0d2c02c093a00534547f9000327f07601284b720074001014670405c112c049ec01005242b47c00086dec10c151cbffe4528b51cdffda2009908a907c0014354000046100f27c7600362a0004d67c0014302dffca676e53406100e1a02008676426486100e1c62801d87c00142f0b6100e1c82848265f20039084220cd280b2bc000be0006200f10241f3480043f338004a80671a6b0e244c43f20800b5c8630e132260f82448b5cc640412da60f841f9000be000224b200312d8538066fa42ad00144e756100e17243f9000be00093c8b3c36d00f0b443f9000be000200310d9538066fa3039000bc0065279000bc00652403b40ffca42ad00144e7541f80008227900077cb4303900077cb85240c0fc00304df008084cd0003f4cd13cc048d03cc048d1003f41e8001843e90018b1ce65e44e7541f8fa0143f900077d1c701712d0548851c8fffa740078007c003e3c12a91238fa1fb401640214011638fa23b803640218031a38fa25bc0564021c0551cfffe013c200077d2b13c400077d2d13c600077d2e4e754238fa074238fa094238fa0b4238fa0d4238fa0f4238fa1143f8fa017417129a548951cafffa4e75413a5c4e45424c4556454c2e4f564c0041faf60e43f9000a88007c127a071818700074077600d80464027603e548804351cafff232c051cdffe6528851ceffde4e754a7900077ca8661a48e7fffa4df9000bc0006100001033fc000100077ca84cdf5fff4e75204e0c904e434d50660000cc0c6800010004660000c436280006b67c007f620000b834280008b47c0008620000ac43e80010600e0c290010000c6200009c43e9002051cafff043e8011047ee20006000008245e90014b5cb6200007e1011b03c000165000074b03c00026200006c0c290007000162000062780018290002b87c001065000054b87c00786200004c20496100df822a013004d040ba406500003a49f25800b9cb62000030320053417c00204a10187407e2086402524651cafff851c9fff0300590449044bc406600000a224c51cbff7e4e7542964e7554886100df3455884a414e75103900038498b03900077cae672013c000077caeb03c0044660a33fc004400077caa600a4a006b0613c000077cad301f08b80006fa114e734eb90003b36041fa001070014eb90003b3604ef90003d6984631302f4420204c6576656c20656469746f722000003b41fff008ed0000fff04e754a6d001e675e4a6d000266584a6d00ac6622b03c001c672eb03c0039672843faf7aa1219673eb0016704548960f420496000e9b8b03c001c670001f2b03c0039670001ea4e75322dfff0080100086714b23c00836700e9d6b23c00c36700e9ce6000e9bc4e7534016100e75c1600c03c00feb00266060a0300011403300232026100ff726100ea666000ea2808031053746f6e652062616c6c2020530003205265642062616c6c2020520003305265642062616c6c2077616974732020570003404579652075702f646f776e20736c6f772020550003504579652075702f646f776e2066617374202049000360457965206c6566742f726967687420204a000370457965206c2f72206661737420204b0004073c206261636b00
++block 77a40 2f084879000020003f063f004e414fef000c4e75302dffd4e14841f9000327f0d0c0342dffd64e7570004a6d00ac670641fa015020082b4000144e7561d64a4167185341670c61366b064230300061566028700c6100e91060200c300085200066043602614011bc0085200052423b4200ac3b7c000100a261ae6000e8d636020c3000083000660453436b1610303000b03c0085670cb03c0008670453436aec76ff4a434e7538035244b86dffd06c1410304000b03c000c670cb03c000866e8423040004e754230400060dc6100ff46362d00ac5343b44367406d0a11bc000820003403600c11bc0008300011bc008520004a42670c4a3020ff660611bc008120ff426d00ac6100ff20611e3b7c000100a23b7c000300124e7541fa007c2b4800143b7c000200124e756100fee86100ff4e6b22524310303000b03c00086716b03c0080660a41fa00612b4800144e75b66dffd06dde4e75426d00ac6100feca3b7c000200124e751200c23c000cb23c0008660476114e75b23c000c660276124e754c6966743a20552f44203d206f7468657220656e64005069636b20616e6f7468657220726f770050696c6c617220626c6f636b73206c69667400040c004c6966743a2066726f6d2068657265202041000c014c6966743a2073746f70206865726520205a000c024c6966743a2064656c6574650004073c206261636b00005361766564004e6f206469736b004e6f7420612063616d706169676e206469736b004469736b2069732077726974652070726f74656374656400
++block 77dc0 48e77ffe4ab900077cb4661e23f9000ffd8000077cb433f9000ffd8600077cb823fc000fffaa00077cba2f0d40e7007c07002b4f00384ff9000ad0002f0d6100f8a46100f868247900077cba6100f8ea46fc25002f38040421fc00076c7604046100ecde21df040446fc27002f006100f83c2e1f2a5f45f900077d1c6100f8ba08380000fc0067061038fc0260f22e6d0038321f2a5f46c12007660c0c6d000100ae66046100ee184cdf7ffe4e75030414496e736572742063616d706169676e206469736b20696e20647269766520413a0004147468656e207072657373206669726520284631302063616e63656c73290004153c206261636b0000
++block 76c76 302f000448c04e754df9000aa0000c964e434d50661061000af80c964e434d50671670024e75204e323c07ff7400849851c9fffc4a8266ea204e43f9000bc000323c07ff22d851c9fffc33fc000100077ca870004e75b07c000a6500f426b07c00646500fc6a6000f4264c6f616465642000206c6576656c73202f20002063616d706169676e7300
++block 772da 102dfff252001200c23c000fb23c00056504c03c00f01b40fff26034
+diff --git a/tools/nebrelease.py b/tools/nebrelease.py
+index 5198eae..07b50ce 100644
+--- a/tools/nebrelease.py
++++ b/tools/nebrelease.py
+@@ -18,7 +18,7 @@ from pathlib import Path
+ 
+ HERE = Path(__file__).resolve().parent
+ GAME = HERE.parent
+-BENCH = GAME.parent.parent.parent
++BENCH = Path('/home/ryan/Code/AtariST/gamebench')
+ sys.path.insert(0, str(HERE))
+ import nepatch  # noqa: E402
+ 
+@@ -26,7 +26,7 @@ PATCHES = GAME / "patches"
+ ORIG = GAME / "originals/NEBULGX"
+ DIST = GAME / "dist"
+ FOLDER = "NEBULUS"                     # folder name inside the zip (8.3)
+-CREDIT_ADDR = 0x779FA                  # blob: the gap between editor CODE2 end $779f8 and CODE3 $77a40 (the 66-byte v1.1.1 blob no longer fits at $77a00); clear of trainers $76c00, latch $76d00, ikbd $7726c
++CREDIT_ADDR = 0x77A00                  # blob: inside the zero gap, clear of trainers $76c00, latch $76d00, editor $75740..$7779f/$77c80
+ 
+ 
+ def version() -> str:
+@@ -61,7 +61,7 @@ def gen_credit() -> Path:
+         f"# Prints \"{text}\" with the game's own title printer on the frog-on-a-plinth title page only (not High Scorers, not the options page).\n"
+         f"# Hook: $3d698 `move.w #$fffe,$38212.l` (8 bytes, after the title page is drawn) -> jsr ${CREDIT_ADDR:x} / nop; the blob redoes the move, then\n"
+         "# prints line 3 (screen row 144, the empty line between the copyright and \"Mission #n\") when the page word $3d5b6 is 0.\n"
+-        f"# Blob ({len(blob)} bytes at ${CREDIT_ADDR:x}, in the verified-zero gap between editor CODE2 and CODE3).\n"
++        f"# Blob ({len(blob)} bytes at ${CREDIT_ADDR:x}, inside the verified-zero gap $76b10..$77ec0).\n"
+         "patch cr_credit\ndefault yes\n"
+         f"site 3d698 {hook.hex()}\n"
+         f"site {CREDIT_ADDR:x} {blob.hex()}\n")
+@@ -126,8 +126,8 @@ DOCS = {
+         "  \"(c)1987,8 Hewson\" and \"Mission #n\" (same font and colour scheme as the other lines).  The High Scorers and Options pages are not touched; the rest of the\n"
+         "  title page is pixel-identical to the original (compared in Hatari)."),
+     "ed_overlay": (
+-        "Level editor and campaign manager: F10 (or D) on the title page opens a menu to build your own towers and campaigns (original and own towers mixed), try them in a playtest, add lifts, use keyboard shortcuts for the tiles and load/save them on a separate campaign disk in drive A: (see LEVEL EDITOR below).  The Options page shows the key (\"F10/D  Level editor\").",
+-        "Level editor and campaign manager.  F10 (or D) on the title page opens the manager (original game, campaigns, levels, load/save campaign disk); the editor draws its own screen, takes the joystick and tile keys, plays your tower in the real game (Playtest) and loads/saves campaigns and levels as NEBLEVEL.OVL on a campaign disk in drive A: (never on the game disk).  Nine hooks: the tower decoder, the initial time, the tower name, the tower-complete step (campaign progress), the title poll, the frame flip (F10 in a playtest), the enemy start direction, the keyboard interrupt path (latches the F10 key-down byte so a short tap cannot be overwritten by its key-up byte before the game's next key poll; every other byte is passed on unchanged) and the Options page (draws the line \"F10/D  Level editor\" on its empty second line, in the game's font).  With no or an empty NEBLEVEL.OVL the game plays as the original."),
++        "Level editor and campaign manager: F10 (or D) on the title page opens a menu to build your own towers and campaigns (original and own towers mixed), try them in a playtest, add lifts, choose each level's colours and enemies, use keyboard shortcuts for the tiles and load/save them on a separate campaign disk in drive A: (see LEVEL EDITOR below).  The Options page shows the key (\"F10/D  Level editor\").",
++        "Level editor and campaign manager.  F10 (or D) on the title page opens the manager (original game, campaigns, levels, load/save campaign disk); the editor draws its own screen, takes the joystick and tile keys, plays your tower in the real game (Playtest) and loads/saves campaigns and levels as NEBLEVEL.OVL on a campaign disk in drive A: (never on the game disk).  Nine hooks: the tower decoder, the initial time, the tower name, the tower-complete step (campaign progress), the title poll, the frame flip (F10 in a playtest), the enemy start direction, the keyboard interrupt path (latches the F10 key-down byte so a short tap cannot be overwritten by its key-up byte before the game's next key poll; every other byte is passed on unchanged) and the Options page (draws the line \"F10/D  Level editor\" on its empty second line, in the game's font).  Colours and enemies of a level (Tower > Colours / Enemies): a hook at the level set-up picks the palette, raster colours, skyline, tower texture and eye-disc design from the level's record, and the five game instructions that read the tower number for them read its result instead (six more sites; original towers are unchanged).  With no or an empty NEBLEVEL.OVL the game plays as the original."),
+     "nt_freeze_static": ("Timer frozen from boot (static variant).", "Timer frozen from boot, no key (alternative to nt_trainers)."),
+     "nt_noenemy_static": ("No enemies from boot (static variant).", "No enemies from boot, no key (alternative to nt_trainers)."),
+ }
+@@ -231,8 +231,8 @@ FLOPPY_DOCS["ni_ikbd"] = (DOCS["ni_ikbd"][0],
+ FLOPPY_DOCS["nt_trainers"] = (DOCS["nt_trainers"][0], DOCS["nt_trainers"][1].replace(
+     "  (The game's own cheat code, HELLOIAMJMP on the title, is described in NEBCHEAT.TXT.)  Three hooks", "  Three hooks"))
+ FLOPPY_DOCS["ed_overlay"] = (
+-    "Level editor and campaign manager: F10 (or D) on the title page opens a menu to build your own towers and campaigns (original and own towers mixed), try them in a playtest, add lifts and load/save them on a separate campaign disk in drive A: (see LEVEL EDITOR below).  The Options page shows the key (\"F10/D  Level editor\").",
+-    "Level editor and campaign manager.  F10 (or D) on the title page opens the manager (original game, campaigns, levels, load/save campaign disk); the editor draws its own screen, takes the joystick and tile keys, plays your tower in the real game (Playtest) and loads/saves campaigns and levels as NEBLEVEL.OVL on a campaign disk in drive A: (never on the game disk).  Nine hooks: the tower decoder, the initial time, the tower name, the tower-complete step (campaign progress), the title poll, the frame flip (F10 in a playtest), the enemy start direction, the keyboard interrupt path (F10/D and the tile keys) and the Options-page hint line.  The game's entry stub also copies TOS's own low RAM and MFP state to $C0108 at start-up: the floppy has no Gamex, and the editor's campaign-disk Load/Save needs that copy for its excursion into TOS.  Hooks only react to the editor's own state, so with nothing created the game plays as the original.  On a 512 KB machine the stub takes the title hook out again (the editor needs RAM above 512 KB).")
++    "Level editor and campaign manager: F10 (or D) on the title page opens a menu to build your own towers and campaigns (original and own towers mixed), try them in a playtest, add lifts, choose each level's colours and enemies, and load/save them on a separate campaign disk in drive A: (see LEVEL EDITOR below).  The Options page shows the key (\"F10/D  Level editor\").",
++    "Level editor and campaign manager.  F10 (or D) on the title page opens the manager (original game, campaigns, levels, load/save campaign disk); the editor draws its own screen, takes the joystick and tile keys, plays your tower in the real game (Playtest) and loads/saves campaigns and levels as NEBLEVEL.OVL on a campaign disk in drive A: (never on the game disk).  Nine hooks: the tower decoder, the initial time, the tower name, the tower-complete step (campaign progress), the title poll, the frame flip (F10 in a playtest), the enemy start direction, the keyboard interrupt path (F10/D and the tile keys) and the Options-page hint line.  The game's entry stub also copies TOS's own low RAM and MFP state to $C0108 at start-up: the floppy has no Gamex, and the editor's campaign-disk Load/Save needs that copy for its excursion into TOS.  Colours and enemies of a level (Tower > Colours / Enemies): a hook at the level set-up picks the palette, raster colours, skyline, tower texture and eye-disc design from the level's record, and the five game instructions that read the tower number for them read its result instead (six sites; original towers are unchanged).  Hooks only react to the editor's own state, so with nothing created the game plays as the original.  On a 512 KB machine the stub takes the title hook out again (the editor needs RAM above 512 KB).")
+ 
+ 
+ def floppy_render(text, sel, rep, blocks, stamp):
+diff --git a/tools/nefloppy.py b/tools/nefloppy.py
+index 1564124..30e63b5 100644
+--- a/tools/nefloppy.py
++++ b/tools/nefloppy.py
+@@ -46,7 +46,7 @@ FL_TEXT, FL_DATA = 0xA85E, 0x373A6
+ # floppy text offset = PP text offset - delta for PP text offsets in [lo, hi)   (hi of the last = end of text; the data segment is shifted by 8)
+ SEG = [(0, 0x4C46, 0), (0x4C78, 0x8406, 36), (0x8406, 0x8436, 24), (0x8436, 0x850A, 12), (0x850A, PP_TEXT, 8)]
+ TITLE_SITE = 0x3D6C4      # ed_overlay's title-poll site (PP address): restored by the stub on a 512 KB machine
+-CREDIT_ADDR = 0x779FA      # = tools/nebrelease.py CREDIT_ADDR
++CREDIT_ADDR = 0x77A00
+ NT_ADDR = 0x76C00
+ NEO_CLUSTER = 342         # TOPPLER.NEO moves here (was 309): JMP grows to 43..315 and cluster 341 stays untouched (its first sector, log. 696 = track 69 sector 7,
+                           # holds a hidden 448-byte program that the loader's GEMDOS calls read; the new NEO position must not overwrite it)
+@@ -239,7 +239,7 @@ def _asm_editor(txt: str):
+         else:
+             segs.append((ad, bytearray([mem[ad]])))
+     segs = [(ad, bytes(v)) for ad, v in segs]
+-    order = ["CODE1", "DATA", "CODE2", "CODE3", "CODE4", "CODE5"]          # gen_ed.py's six blocks
++    order = ["CODE1", "DATA", "CODE2", "CODE3", "CODE4", "CODE5", "CODE6"]          # gen_ed.py's seven blocks
+     assert sorted(ad for ad, _ in segs) == sorted(eq[n] for n in order), [(hex(ad), len(v)) for ad, v in segs]
+     segs.sort()
+     sym = {m.group(1): int(m.group(2), 16) for m in re.finditer(r"^(\w+)\s+A:([0-9A-Fa-f]+)", lst, re.M)}
+@@ -262,11 +262,11 @@ def gen_editor(remap: bool):
+                 raise SystemExit(f"ed_editor.s: symbols at ${ad:x} map to different floppy addresses")
+             symmap[ad] = fsym[name]
+     eq = {m.group(1): int(m.group(2), 16) for m in re.finditer(r"^(\w+)\s+equ\s+\$([0-9a-f]+)", txt, re.M)}
+-    c2_ad = eq["CODE2"]
++    c2_ad = eq["CODE6"]                       # the capture must end before the next block ($772da: the 38 B gap before CODE2 is CODE6)
+     d_ad, d_b = next((ad, b) for ad, b in fsegs if ad == eq["DATA"])
+     cap_ad = (d_ad + len(d_b) + 1) & ~1
+     cap = nepatch.asm(cap_ad, f"mfp_save equ ${fsym['mfp_save']:x}\n" + (PATCHES / "ed_floppy_capture.s").read_text())
+-    assert cap_ad + len(cap) <= c2_ad, f"ed_floppy_capture ${cap_ad:x}+{len(cap)} does not fit before CODE2 ${c2_ad:x}"
++    assert cap_ad + len(cap) <= c2_ad, f"ed_floppy_capture ${cap_ad:x}+{len(cap)} does not fit before CODE6 ${c2_ad:x}"
+     return fsegs + [(cap_ad, cap)], symmap
+ 
+ 
+@@ -353,7 +353,7 @@ def translate_new(new: bytes, symmap: dict) -> bytes:
+ 
+ 
+ def check_new_bytes(name, a, new):
+-    """New bytes of a site may only be: jmp/jsr abs.l into the patch zone, nop(s), or a short bra whose source and target shift equally."""
++    """New bytes of a site may only be: jmp/jsr abs.l into the patch zone, `move.w <patch zone address>.l,d0` (the look-cache reads), nop(s), or a short bra whose source and target shift equally."""
+     i = 0
+     while i < len(new):
+         w = new[i:i + 2]
+@@ -364,6 +364,8 @@ def check_new_bytes(name, a, new):
+             i += 6
+         elif w == b"\x4e\x71":
+             i += 2
++        elif w == b"\x30\x39" and i + 6 <= len(new) and ZONE_LO <= struct.unpack(">L", new[i + 2:i + 6])[0] < ZONE_HI:
++            i += 6                              # `move.w abs.l,d0` with the operand in the patch zone (the look cache words RS+..: same address on both builds)
+         elif w[0] == 0x60 and w[1] not in (0, 0xFF):
+             tgt = a + i + 2 + (w[1] - 256 if w[1] > 127 else w[1])
+             if map_addr(tgt) - map_addr(a + i) != tgt - (a + i):
+diff --git b/work/editor/e190.py b/work/editor/e190.py
+new file mode 100644
+index 0000000..438a242
+--- /dev/null
++++ b/work/editor/e190.py
+@@ -0,0 +1,351 @@
++"""(NebLooksBuild: header of e180, the looks UI gate e190 follows below.)  Odd-aligned level records gate (NebOddFix, work/notes/editor.md 13.10).  Records are packed back to back, so a level with an odd number of
++non-zero cells makes the next record start at an odd address; every reader must cope (68000: a word read at an odd address = address error).
++For every file: loadbin it over the store $BC000 (rsOk = 0 forces the validation again), F10 opens the manager, the level list shows every level,
++every level is started with Levels > n > Play (name at the tower intro via a breakpoint at $3d116 = the A0 the ed_name hook returns, grid vs the
++decoded record, rows, mission/tower, initial time), Q back to the title, then every campaign: Play, first entry checked, entries forced one after the
++other (door entry poked as in e33.py) with the same checks, until the game's own victory flow.  No Address/Bus Error/Illegal/Double fault in the log.
++usage: e180.py GAMEDIR WORKDIR [ste|megaste|st] [file.ovl ...] [--snap FILE] [--nowalk] [--flow = the editor flow (c) instead of files] [--flags = the flags.b preservation gate] [--quick = start only the last and the first odd-start level of each file] [--disk = get each file into the store with Load from campaign disk (tools/nebcampaign.py new --ovl) instead of loadbin]   (default files: /tmp/ne/odd/*.ovl from mk_odd.py)"""
++from ui import *
++import ovl, glob, re, subprocess
++gd = __import__('pathlib').Path
++args = [a for a in sys.argv[1:]]
++SNAP = None; WALK = True
++if '--snap' in args: i = args.index('--snap'); SNAP = args[i + 1]; del args[i:i + 2]
++if '--nowalk' in args: args.remove('--nowalk'); WALK = False
++if '--flow' in args: args.remove('--flow')
++if '--flags' in args: args.remove('--flags')
++QUICK = '--quick' in args
++if QUICK: args.remove("--quick"); WALK = False
++DISK = '--disk' in args
++if DISK: args.remove('--disk')
++GAMEDIR, WD = args[0], args[1]; MACH = args[2] if len(args) > 2 and args[2] in ('ste', 'megaste', 'st') else 'ste'
++FILES = [a for a in args[2:] if a.endswith('.ovl')] or sorted(glob.glob('/tmp/ne/odd/*.ovl'))
++SNAP = SNAP or f'/tmp/oddfix/title_{MACH}.sav'
++fails = []; LOG = []
++def chk(name, got, exp=True):
++    ok = (got == exp); line = f"{'PASS' if ok else 'FAIL'} {name}: {got!r}" + ('' if ok else f"  (expected {exp!r})"); print(line, flush=True); LOG.append(line)
++    if not ok: fails.append(name)
++    return ok
++def kw():
++    import stharness
++    if MACH == 'megaste': return dict(machine='megaste', tos=stharness.TOS['2.06'], memsize_kb=4096)
++    if MACH == 'st': return dict(machine='st', tos=stharness.TOS['1.04'])
++    return {}
++if not os.path.exists(SNAP):
++    os.makedirs(os.path.dirname(SNAP), exist_ok=True)
++    h = Nebulus(workdir=WD + '_snap', game=gd(GAMEDIR), **kw()); print('snapshot boot', h.boot_to_title(timeout=240), flush=True); time.sleep(3); h.savemem(SNAP); h.close(); time.sleep(1)
++BP = '/tmp/oddfix/bp_name.txt'; os.makedirs('/tmp/oddfix', exist_ok=True); open(BP, 'w').write("m a0 16\n")
++
++def goto(h, idx, tries=40):
++    for _ in range(tries):
++        items, sel = menu(h)
++        if sel == idx: return items
++        h.key('Down' if idx > sel else 'Up', hold=0.2); time.sleep(0.45)
++    raise RuntimeError(f'goto {idx} failed')
++def pick(h, what, gap=1.3):
++    items, sel = menu(h)
++    idx = what if isinstance(what, int) else [i for i, (a, p, t) in enumerate(items) if t.startswith(what)][0]
++    goto(h, idx); h.key('Control_R', hold=0.35); time.sleep(gap)
++def open_manager(h):
++    for _ in range(4):
++        h.key('F10', hold=0.4); time.sleep(2.0)
++        if L(h, 0x70) != 0x382d8: return True
++    return False
++def timer(h):
++    w = struct.unpack('>3H', grab(h, 0x3ad98, 6, 'tm')); return (w[0] // 8) * 100 + (w[1] // 8) * 10 + (w[2] // 8)
++def bcd(x): return ((x >> 8) & 15) * 100 + ((x >> 4) & 15) * 10 + (x & 15)
++def wait_running(h, tmo=60):
++    t0 = time.time()
++    while time.time() - t0 < tmo:
++        time.sleep(0.7)
++        if W(h, 0x33a20) == 0 and W(h, 0x33938) == 1: time.sleep(0.8); return True
++    return False
++def name_hits(h, n0):
++    log = open(h.R / 'log.txt', errors='replace').read()[n0:]
++    return [(int(a, 16), bytes(int(x, 16) for x in b.split())) for a, b in re.findall(r"^([0-9A-F]{8}): ((?:[0-9a-f]{2} ){16})", log, re.M)]
++def expect_grid(lv):
++    e = bytearray(4096)
++    for a in range(16):
++        for r in range(lv['rows']): e[a * 256 + r] = lv['grid'][a][r]
++    return bytes(e)
++def check_start(h, tag, ent, lvs, n0):
++    """ent = ('c', idx) or ('o', mission, tower); the tower must be running now"""
++    ok = wait_running(h); chk(f'{tag}: tower started', ok)
++    if not ok: return
++    ttab = struct.unpack('>8H', grab(h, 0x3ad9e, 16, 'tt'))
++    g = grab(h, 0x327f0, 4096, 'g'); rows = W(h, 0x33912); tw = W(h, 0x3390c); ms = W(h, 0x33910); rem = timer(h)
++    hits = name_hits(h, n0)
++    if ent[0] == 'c':
++        lv = lvs[ent[1]]; exp = expect_grid(lv)
++        d = [(i // 256, i % 256) for i in range(4096) if g[i] != exp[i]]
++        chk(f'{tag}: grid == decoded record ({lv["name"]})', d[:6], [])
++        chk(f'{tag}: rows/mission/tower', (rows, ms, tw), (lv['rows'], lv['mission'], lv['tower']))
++        t = bcd(lv['time']) if lv['time'] else bcd(ttab[lv['tower']])
++        chk(f'{tag}: initial time {t} s (remaining {rem})', t - 45 <= rem <= t, True)
++        nm = lv['name'].encode() + b'\0'
++        hit = hits[-1] if hits else None
++        chk(f'{tag}: tower name hook A0=${hit[0]:x} text' if hit else f'{tag}: tower name hook fired', (hit[1][:len(nm)] if hit else None), nm)
++        print(f'      record {ent[1]}: size {lv["size"]}, name A0 ${hit[0]:x} ({"odd" if hit[0] & 1 else "even"} address)' if hit else '', flush=True)
++    else:
++        og, orows = ovl.original(ent[1], ent[2])
++        d = [(a, r) for a in range(16) for r in range(orows) if g[a * 256 + r] != og[a][r]]
++        chk(f'{tag}: original M{ent[1]} T{ent[2] + 1} grid', d[:6], []); chk(f'{tag}: original rows/mission/tower', (rows, ms, tw), (orows, ent[1], ent[2]))
++def wait_title(h, tmo=25):
++    t0 = time.time()
++    while time.time() - t0 < tmo:
++        time.sleep(0.7)
++        if W(h, 0x33938) == 9 and L(h, 0x70) == 0x382d8: time.sleep(1.5); return True
++    return False
++def force(h):
++    poke(h, 0x33a46, bytes([0, 1])); poke(h, 0x33a20, bytes([0, 4])); poke(h, 0x33a1e, bytes([0, 0]))
++def wait_pos(h, pos, tmo=90):
++    t0 = time.time()
++    while time.time() - t0 < tmo:
++        time.sleep(1.0)
++        if pos < 0:
++            if W(h, 0x3390c) == 8: return True
++        elif rs(h)[1] == pos and W(h, 0x33a20) == 0 and W(h, 0x33938) == 1: time.sleep(0.8); return True
++    return False
++def errors(h):
++    log = open(h.R / 'log.txt', errors='replace').read()
++    return [l for l in log.splitlines() if re.search(r'Address Error|Bus Error|Illegal|Double|exception', l)]
++
++def run_file(path):
++    data = open(path, 'rb').read(); name = os.path.basename(path)
++    pr = ovl.validate(data); chk(f'{name}: ovl.py validate', pr, [])
++    lvs, cs = ovl.parse(data)
++    print(f'== {name}: {len(lvs)} levels, sizes {[l["size"] for l in lvs]}, {len(cs)} campaigns {cs}', flush=True)
++    h = Nebulus(snapshot=SNAP, workdir=f'{WD}_{os.path.splitext(name)[0]}', game=gd(GAMEDIR), **kw())
++    try:
++        time.sleep(2)
++        if DISK:
++            zero = '/tmp/oddfix/zero8k.ovl'; open(zero, 'wb').write(bytes(8192)); h.debug(f'loadbin {zero} $bc000', 0.8); poke(h, RS + 40, bytes([0, 0]))
++            img = f'/tmp/oddfix/disk_{MACH}_{name[:-4]}.st'
++            subprocess.run([sys.executable, G + 'tools/nebcampaign.py', 'new', img, '--ovl', path], check=True, capture_output=True)
++            h.debug('b all', 0.3); h.cmd(f"hatari-debug b pc = $3d116 :trace :file {BP}"); time.sleep(0.3)
++            chk(f'{name}: F10 opens the manager', open_manager(h))
++            h.cmd(f'hatari-option --disk-a {img}'); time.sleep(2.0)
++            pick(h, 'Load from campaign disk', 1.2); h.key('Control_R', hold=0.35); m = None
++            for _ in range(80):
++                time.sleep(0.5)
++                if W(h, V + 174) == 0:
++                    a = L(h, V + 20)
++                    if a: m = grab(h, a, 48, 'ms').split(b'\0')[0].decode('latin1'); break
++            chk(f'{name}: Load from campaign disk (nebcampaign.py new --ovl)', m, f'Loaded {len(lvs)} levels / {len(cs)} campaigns')
++        else:
++            h.debug(f'loadbin {path} $bc000', 0.8); poke(h, RS + 40, bytes([0, 0]))
++            h.debug('b all', 0.3); h.cmd(f"hatari-debug b pc = $3d116 :trace :file {BP}"); time.sleep(0.3)
++        chk(f'{name}: store in RAM == file', grab(h, 0xBC000, 8192, 'st') == data)
++        if not DISK: chk(f'{name}: F10 opens the manager', open_manager(h))
++        pick(h, 'Levels'); items, sel = menu(h)
++        chk(f'{name}: level list shows all levels', [t for a, p, t in items if a == 6], [l['name'] for l in lvs])
++        h.key('Left', hold=0.2); time.sleep(1.0)
++        odd = ovl.odd_starts(data)
++        for i, lv in enumerate(lvs):
++            if QUICK and i not in ([len(lvs) - 1] + odd[:1]): continue          # --quick: every level is validated/listed, only the last and the first odd-start level are started
++            tag = f'{name} level {i} (record size {lv["size"]})'
++            n0 = len(open(h.R / 'log.txt', errors='replace').read())
++            pick(h, 'Levels'); pick(h, i); pick(h, 'Play', 1.0)
++            check_start(h, tag + ' Play', ('c', i), lvs, n0)
++            h.key('q', hold=0.3); wait_title(h, 12)
++            if not chk(f'{tag}: F10 opens the manager again (= back at the title after Q)', open_manager(h)): break
++        full = name in ('odd2.ovl', 'looks.ovl')
++        pick(h, 'Campaigns'); items, sel = menu(h)
++        chk(f'{name}: campaign list shows all campaigns', [t for a, p, t in items if a == 7], [n for n, e in cs]); h.key('Left', hold=0.2); time.sleep(1.0)
++        order = [c for c in range(len(cs)) if c] + [0] if cs else []     # campaign 0 last: its walk ends in the game's victory flow
++        for c in order:
++            cn, ents = cs[c]; tag = f'{name} campaign {c} {cn}'
++            dec = lambda e: ('o', ((e >> 3) & 1) + 1, e & 7) if e & 0x80 else ('c', e)
++            if c and not full: continue                                     # stress files: campaigns other than the first are listed only
++            pick(h, 'Campaigns'); pick(h, c); n0 = len(open(h.R / 'log.txt', errors='replace').read()); pick(h, 'Play', 1.0)
++            check_start(h, tag + ' entry 0', dec(ents[0]), lvs, n0)
++            if c == 0 and WALK and len(ents) > 1:
++                h.key('e', hold=0.3); time.sleep(0.5)
++                last = len(ents) if full else min(2, len(ents) - 1)         # stress files: the first campaign's first 2 transitions only (a transition takes ~25 s)
++                for k in range(1, last + 1):
++                    n0 = len(open(h.R / 'log.txt', errors='replace').read()); force(h)
++                    if k < len(ents):
++                        chk(f'{tag}: entry {k} reached', wait_pos(h, k))
++                        check_start(h, f'{tag} entry {k}', dec(ents[k]), lvs, n0)
++                    else:
++                        chk(f'{tag}: victory flow after the last entry (game ends the campaign: $3390c = 8)', wait_pos(h, -1))
++            else:
++                h.key('q', hold=0.3)
++                wait_title(h, 12)
++                if not chk(f'{tag}: F10 opens the manager again (= back at the title after Q)', open_manager(h)): break
++        v0 = h.vbl(); time.sleep(1.0); chk(f'{name}: game alive (VBL runs)', h.vbl() - v0 > 20)
++        e = errors(h); chk(f'{name}: no Address/Bus Error/exception in the Hatari log', e, [])
++    except Exception as ex:
++        import traceback; traceback.print_exc(); chk(f'{name}: exception in the script', repr(ex)[:200], 'none')
++    finally:
++        h.close(); time.sleep(1)
++def cells(h):
++    g = grab(h, 0x327f0, 4096, 'gc'); rows = W(h, RS + 16)
++    return sum(1 for a in range(16) for r in range(rows) if g[a * 256 + r])
++def make_odd_level(h, tag, extra):
++    """editor open on a new level: paint `extra` ledges on row 3, then fix the parity: the number of non-zero cells must be odd (the record is odd)"""
++    h.key('Up', hold=0.2); time.sleep(0.4)
++    for i in range(extra): h.key('l', hold=0.2); time.sleep(0.35); h.key('Right', hold=0.2); time.sleep(0.35)
++    n = cells(h)
++    if n % 2 == 0: h.key('l', hold=0.2); time.sleep(0.4); n2 = cells(h); n = n2 if n2 % 2 else (h.key('Right', hold=0.2), time.sleep(0.4), h.key('l', hold=0.2), time.sleep(0.4), cells(h))[-1]
++    chk(f'{tag}: new level has an odd number of non-zero cells', n % 2, 1)
++    return n
++def run_flow():
++    """(c) editor flow: two new levels with odd cell counts, Save to a campaign disk, Load it again, list, play both, validate the file"""
++    import shutil, nebcampaign as nc
++    D = '/tmp/oddfix/flow/'; shutil.rmtree(D, ignore_errors=True); os.makedirs(D); disk = D + 'camp.st'; shutil.copy('/tmp/ne/d/blank.st', disk)
++    open(D + 'zero.ovl', 'wb').write(bytes(8192))
++    h = Nebulus(snapshot=SNAP, workdir=f'{WD}_flow', game=gd(GAMEDIR), **kw())
++    try:
++        time.sleep(2); h.debug(f'loadbin {D}zero.ovl $bc000', 0.8); poke(h, RS + 40, bytes([0, 0]))
++        h.debug('b all', 0.3); h.cmd(f"hatari-debug b pc = $3d116 :trace :file {BP}"); time.sleep(0.3)
++        chk('flow: F10 opens the manager', open_manager(h))
++        sizes = []
++        for k in range(2):
++            pick(h, 'Levels'); pick(h, '<new level>', 1.5)
++            n = make_odd_level(h, f'flow level {k}', 3 + 2 * k); sizes.append(n)
++            h.key('F10', hold=0.4); time.sleep(1.5)               # leave the editor: commit -> level list
++            h.key('Left', hold=0.2); time.sleep(1.2)              # < back to the manager
++        pick(h, 'Levels'); items, sel = menu(h); print('   list after editing:', [t for a, p, t in items], flush=True)
++        chk('flow: two levels in the list', len([1 for a, p, t in items if a == 6]), 2)
++        h.key('Left', hold=0.2); time.sleep(1.0)
++        ram = grab(h, 0xBC000, 8192, 'fl'); lvs, cs = ovl.parse(ram)
++        chk('flow: RAM store has 2 levels, both records odd, second starts at an odd offset', ([l['size'] % 2 for l in lvs], ovl.odd_starts(ram)), ([1, 1], [1]))
++        chk('flow: RAM store validates (ovl.py rules)', ovl.validate(ram), [])
++        h.cmd(f'hatari-option --disk-a {disk}'); time.sleep(2.0)
++        pick(h, 'Save to campaign disk', 1.2); h.key('Control_R', hold=0.35); t0 = time.time(); m = None
++        for _ in range(60):
++            time.sleep(0.5)
++            if W(h, V + 174) == 0:
++                a = L(h, V + 20)
++                if a: m = grab(h, a, 48, 'ms').split(b'\0')[0].decode('latin1'); break
++        chk('flow: Save to campaign disk', m, 'Saved'); print('   (save %.1f s)' % (time.time() - t0), flush=True)
++        h.cmd('hatari-option --disk-a /tmp/ne/d/blank.st'); time.sleep(3.0)           # inserting another image makes Hatari write the saved one back (e161.py); h.cmd(f'hatari-option --disk-a {D}x.st') if False else None
++        ok, text, data = nc.status(open(disk, 'rb').read())
++        chk('flow: saved image is a usable campaign disk', ok); print('   ', text, flush=True)
++        chk('flow: saved NEBLEVEL.OVL == RAM store', data == ram)
++        open(D + 'saved.ovl', 'wb').write(data); chk('flow: ovl.py validate of the saved file', ovl.validate(data), [])
++        # Load it back over a zeroed store
++        h.debug(f'loadbin {D}zero.ovl $bc000', 0.8); poke(h, RS + 40, bytes([0, 0]))
++        h.cmd(f'hatari-option --disk-a {disk}'); time.sleep(2.0)
++        pick(h, 'Load from campaign disk', 1.2); h.key('Control_R', hold=0.35); m = None
++        for _ in range(60):
++            time.sleep(0.5)
++            if W(h, V + 174) == 0:
++                a = L(h, V + 20)
++                if a: m = grab(h, a, 48, 'ms').split(b'\0')[0].decode('latin1'); break
++        chk('flow: Load from campaign disk', m, 'Loaded 2 levels / 0 campaigns'); chk('flow: store == saved file', grab(h, 0xBC000, 8192, 'fl') == data)
++        pick(h, 'Levels'); items, sel = menu(h); chk('flow: list after reload shows both', len([1 for a, p, t in items if a == 6]), 2)
++        h.key('Left', hold=0.2); time.sleep(1.0)
++        for i, lv in enumerate(lvs):
++            tag = f'flow level {i} (record size {lv["size"]})'; n0 = len(open(h.R / 'log.txt', errors='replace').read())
++            pick(h, 'Levels'); pick(h, i); pick(h, 'Play', 1.0); check_start(h, tag + ' Play', ('c', i), lvs, n0)
++            h.key('q', hold=0.3); wait_title(h, 12)
++            if not chk(f'{tag}: F10 opens the manager again (= back at the title after Q)', open_manager(h)): break
++        e = errors(h); chk('flow: no Address/Bus Error/exception in the Hatari log', e, [])
++    except Exception as ex:
++        import traceback; traceback.print_exc(); chk('flow: exception in the script', repr(ex)[:200], 'none')
++    finally:
++        h.close(); time.sleep(1)
++def flags_of(data):
++    out = []; p = ovl.LV0
++    for i in range(struct.unpack('>H', data[6:8])[0]): out.append(data[p + 3]); p += 20 + struct.unpack('>H', data[p + 4:p + 6])[0]
++    return out
++def save_load_disk(h, disk, what):
++    m = None
++    pick(h, what, 1.2); h.key('Control_R', hold=0.35)
++    for _ in range(80):
++        time.sleep(0.5)
++        if W(h, V + 174) == 0:
++            a = L(h, V + 20)
++            if a: m = grab(h, a, 48, 'ms').split(b'\0')[0].decode('latin1'); break
++    return m
++
++REFDIR = os.environ.get('REFDIR', '/tmp/looksbuild/r_base8')      # run_look.py base8 dumps (T1..T8, flags 0) = the stock values of palette/raster/skyline/eyes
++def rdref(t, a, n): return open(f'{REFDIR}/lvl{t}.bin', 'rb').read()[a:a + n]
++def flag_byte(h): return grab(h, RS + 50, 1, 'fl')[0]
++def tower_menu(h, label, gap=1.3):
++    h.key('Control_R', hold=0.35); time.sleep(1.5)               # FIRE in the map: cell menu
++    menu(h)
++    pick(h, 'Tower >', 1.0); pick(h, label, gap)
++def run_ui():
++    """Looks UI gate: new level -> Tower > Colours / Enemies cycling (wrap), playtest shows the chosen palette + eyes, leave (commit), Save to disk,
++    Load, Edit shows the flags again, Copy keeps them, Delete keeps the others, a new level starts with 0.  Then a playtest of the saved level."""
++    import shutil, nebcampaign as nc
++    D = '/tmp/looksbuild/ui/'; shutil.rmtree(D, ignore_errors=True); os.makedirs(D); disk = D + 'camp.st'; shutil.copy('/tmp/ne/d/blank.st', disk)
++    open(D + 'zero.ovl', 'wb').write(bytes(8192))
++    h = Nebulus(snapshot=SNAP, workdir=f'{WD}_ui', game=gd(GAMEDIR), **kw())
++    try:
++        time.sleep(2); h.debug(f'loadbin {D}zero.ovl $bc000', 0.8); poke(h, RS + 40, bytes([0, 0]))
++        chk('ui: F10 opens the manager', open_manager(h))
++        pick(h, 'Levels'); pick(h, '<new level>', 1.5)
++        chk('ui: new level starts with flags 0', flag_byte(h), 0)
++        seq = []
++        for k in range(10):
++            tower_menu(h, 'Colours: next'); seq.append(flag_byte(h) >> 4)
++        chk('ui: Colours: next cycles 1..8 then wraps to 0 and 1 (10 presses)', seq, [1, 2, 3, 4, 5, 6, 7, 8, 0, 1])
++        seq = []
++        for k in range(6):
++            tower_menu(h, 'Enemies: next'); seq.append(flag_byte(h) & 15)
++        chk('ui: Enemies: next cycles 1..4 then wraps to 0 and 1 (6 presses), colours untouched', (seq, flag_byte(h) >> 4), ([1, 2, 3, 4, 0, 1], 1))
++        for k in range(4): tower_menu(h, 'Colours: next')           # colours 1 -> 5
++        for k in range(2): tower_menu(h, 'Enemies: next')           # enemies 1 -> 3
++        chk('ui: flags = colours 5 / enemies 3 = $53', flag_byte(h), 0x53)
++        h.shot(f'{D}02_panel_S5_E3.png')
++        # a base tower of T3 (index 2) and a recognisable name: Look next x2
++        for k in range(2):
++            tower_menu(h, 'Look: next tower')
++        chk('ui: base tower T3 (rsTow 2), flags unchanged', (W(h, RS + 14), flag_byte(h)), (2, 0x53))
++        h.key('l', hold=0.2); time.sleep(0.4)
++        # playtest
++        h.key('Control_R', hold=0.35); time.sleep(1.0); pick(h, 'Playtest', 1.0)
++        chk('ui: playtest running', wait_running(h, 90))
++        time.sleep(2.0)
++        pal = grab(h, 0x351ac, 32, 'p'); ras = grab(h, 0x40398, 8, 'r')
++        chk('ui: playtest palette == stock tower 5 palette (colours 5)', pal, rdref(4, 0x351ac, 32))
++        chk('ui: playtest raster == stock tower 5 raster', ras, rdref(4, 0x40398, 8))
++        chk('ui: playtest skyline buffer == stock tower 5', grab(h, 0x100e0, 4096, 's'), rdref(4, 0x100e0, 4096))
++        chk('ui: playtest eye frames == stock tower 3 eye design (enemies 3 -> design 2)', grab(h, 0x24be0, 0xaf00, 'e'), rdref(2, 0x24be0, 0xaf00))
++        chk('ui: playtest base tower word $3390c = 2 (geometry/time/title follow the base tower)', W(h, 0x3390c), 2)
++        h.shot(f'{D}03_playtest_colours5_enemies3_base3.png')
++        h.key('F10', hold=0.4); time.sleep(2.0)                      # back to the editor
++        chk('ui: back in the editor, flags still $53', (flag_byte(h), W(h, RS + 6)), (0x53, 1))
++        h.key('F10', hold=0.4); time.sleep(1.5)                      # leave: commit
++        ram = grab(h, 0xBC000, 8192, 'fl'); chk('ui: committed record flags', flags_of(ram), [0x53])
++        chk('ui: store validates', ovl.validate(ram), [])
++        h.key('Left', hold=0.2); time.sleep(1.2)
++        h.cmd(f'hatari-option --disk-a {disk}'); time.sleep(2.0)
++        chk('ui: Save to campaign disk', save_load_disk(h, disk, 'Save to campaign disk'), 'Saved')
++        h.cmd('hatari-option --disk-a /tmp/ne/d/blank.st'); time.sleep(3.0)
++        ok, text, data = nc.status(open(disk, 'rb').read()); chk('ui: saved disk usable', ok)
++        chk('ui: saved file flags', flags_of(data), [0x53]); chk('ui: saved file == RAM store', data == ram)
++        open(D + 'saved.ovl', 'wb').write(data)
++        h.debug(f'loadbin {D}zero.ovl $bc000', 0.8); poke(h, RS + 40, bytes([0, 0])); h.cmd(f'hatari-option --disk-a {disk}'); time.sleep(2.0)
++        chk('ui: Load from campaign disk', save_load_disk(h, disk, 'Load from campaign disk'), 'Loaded 1 levels / 0 campaigns')
++        chk('ui: reloaded flags', flags_of(grab(h, 0xBC000, 8192, 'fl')), [0x53])
++        pick(h, 'Levels'); pick(h, 0); pick(h, 'Edit', 1.5)
++        chk('ui: Edit shows the reloaded flags $53 (RS+50), base tower 2', (flag_byte(h), W(h, RS + 14)), (0x53, 2))
++        h.shot(f'{D}04_edit_after_reload.png')
++        h.key('F10', hold=0.4); time.sleep(1.5)
++        pick(h, 0); pick(h, 'Copy', 1.5)
++        chk('ui: Copy keeps the flags', flags_of(grab(h, 0xBC000, 8192, 'fl')), [0x53, 0x53])
++        pick(h, '<new level>', 1.5); h.key('l', hold=0.2); time.sleep(0.4)
++        chk('ui: new level starts with flags 0 again', flag_byte(h), 0)
++        tower_menu(h, 'Enemies: next'); tower_menu(h, 'Enemies: next'); tower_menu(h, 'Enemies: next'); tower_menu(h, 'Enemies: next'); tower_menu(h, 'Enemies: next')
++        tower_menu(h, 'Colours: next')
++        chk('ui: third level: 5 Enemies presses wrap 0,1,2,3,4,0 and 1 Colours press = $10', flag_byte(h), 0x10)
++        h.key('F10', hold=0.4); time.sleep(1.5)
++        chk('ui: three records', flags_of(grab(h, 0xBC000, 8192, 'fl')), [0x53, 0x53, 0x10])
++        pick(h, 0); pick(h, 'Delete', 1.5)
++        chk('ui: Delete level 0 keeps the others', flags_of(grab(h, 0xBC000, 8192, 'fl')), [0x53, 0x10])
++        h.key('Left', hold=0.2); time.sleep(1.2)
++        pick(h, 'Levels'); pick(h, 1); pick(h, 'Play', 1.0)
++        chk('ui: Play of the $11 level: tower running', wait_running(h, 90)); time.sleep(2.0)
++        chk('ui: $10 (base T1, colours 1, enemies as base T1) = stock tower 1 palette + eyes', (grab(h, 0x351ac, 32, 'p'), grab(h, 0x24be0, 0xaf00, 'e')), (rdref(0, 0x351ac, 32), rdref(0, 0x24be0, 0xaf00)))
++        chk('ui: no Address/Bus Error/exception in the Hatari log', errors(h), [])
++    except Exception as ex:
++        import traceback; traceback.print_exc(); chk('ui: exception in the script', repr(ex)[:200], 'none')
++    finally:
++        h.close(); time.sleep(1)
++run_ui()
++print('FAILS', fails); open(f'/tmp/e190_{MACH}.log', 'w').write('\n'.join(LOG) + f'\nFAILS {fails}\n')
+diff --git a/work/editor/gen_ed.py b/work/editor/gen_ed.py
+index 437fc90..eee4e46 100644
+--- a/work/editor/gen_ed.py
++++ b/work/editor/gen_ed.py
+@@ -1,8 +1,8 @@
+ #!/usr/bin/env python3
+ """Build step: assemble patches/ed_editor.s with vasm (branches written `.s` in the source are unsized here so vasm picks the size, with
+ optimisation on) and write patches/ed_overlay.nep (house format; original bytes are derived by nepatch).
+-Hook sites (replaced bytes are re-created at the start of each hook):
+-  $377a2 decode (6B, jmp)   $37a90 spawn dir (8B)   $3d6c4 title poll (10B)   $3adb4 time (6B)   $3d110 name (6B)   $3e352 tower complete (6B, jmp)   $3dfd6 flip (6B)   $3851a ACIA key latch (6B jmp)   $3d662 Options hint (8B)
++Hook sites (replaced bytes are re-created at the start of each hook; the five look sites are plain `move.w abs.l,d0` retargets, see ed_lvl):
++  $377a2 decode (6B, jmp)   $37a90 spawn dir (8B)   $3d6c4 title poll (10B)   $3adb4 time (6B)   $3d110 name (6B)   $3e352 tower complete (6B, jmp)   $3dfd6 flip (6B)   $3dbf0 look setup (6B)   $3522e/$3dc1e/$366de/$36b68/$363a4 look cache reads (6B each)   $3851a ACIA key latch (6B jmp)   $3d662 Options hint (8B)
+ Blocks (`block ADDR HEX`, unverified copy by core2) = the S-record segments of the assembly: code $75740.. (dead zone), tables $76d40..,
+ code $77300.., the lift block $77a40.., the disk block $77dc0.. and $76c76.. (zero gap; the code blocks stay clear of the trainers $76c00-$76c75, latch $76d00-$76d3b, credit $77a00-$77a3f
+ and the runtime state RS $77c80)."""
+@@ -35,8 +35,8 @@ for a in addrs:
+ segs = [(a, bytes(b)) for a, b in segs]
+ sym = {m.group(1): int(m.group(2), 16) for m in re.finditer(r"^(\w+)\s+A:([0-9A-Fa-f]+)", lst, re.M)}
+ # segment table: name -> (start equ, limit).  CODE1 ends before the trainer blob; CODE5 sits in the gap behind it; DATA ends before the ni_ikbd blob $7726c..$772c5, CODE2 before the credit blob; CODE3 before RS; CODE4 before $77ec0
+-LIM = {"CODE1": 0x76C00, "CODE5": 0x76D00, "DATA": 0x7726C, "CODE2": 0x77A00, "CODE3": eq["RS"], "CODE4": 0x77EC0}
+-order = ["CODE1", "DATA", "CODE2", "CODE3", "CODE4", "CODE5"]
++LIM = {"CODE1": 0x76C00, "CODE5": 0x76D00, "DATA": 0x7726C, "CODE2": 0x77A00, "CODE3": eq["RS"], "CODE4": 0x77EC0, "CODE6": eq["CODE2"]}
++order = ["CODE1", "DATA", "CODE2", "CODE3", "CODE4", "CODE5", "CODE6"]
+ assert sorted(a for a, _ in segs) == sorted(eq[n] for n in order), [(hex(a), len(b)) for a, b in segs]
+ seg = {n: next(b for a, b in segs if a == eq[n]) for n in order}
+ for n in order:
+@@ -44,10 +44,14 @@ for n in order:
+ # non-overlap with the other default blobs: trainers $76c00-$76c75, latch $76d00-$76d3b, credit $77a00-$77a3f, state RS/V $77c80-$77dbf (private stack: $AD000, non-game)
+ for n in order:
+     lo, hi = eq[n], eq[n] + len(seg[n])
+-    for blo, bhi, bw in ((0x76C00, 0x76C76, "trainers"), (0x76D00, 0x76D3C, "latch"), (0x77A00, 0x77A40, "credit"), (0x7726C, 0x772C6, "ni_ikbd blob"), (eq["RS"], 0x77DC0, "state RS/V")):
++    for blo, bhi, bw in ((0x76C00, 0x76C76, "trainers"), (0x76D00, 0x76D3C, "latch"), (0x77A00, 0x77A40, "credit"), (0x7726C, 0x772DA, "ni_ikbd blob / floppy TOS-state capture"), (eq["RS"], 0x77DC0, "state RS/V")):
+         assert hi <= blo or lo >= bhi, f"{n} ${lo:x}..${hi:x} overlaps {bw}"
+ free = {n: LIM[n] - eq[n] - len(seg[n]) for n in order}
+-(c1, d1), (c2, d2), (c3, d3), (c4, d4), (c5, d5), (c6, d6) = [(eq[n], seg[n]) for n in ("CODE1", "DATA", "CODE2", "CODE3", "CODE4", "CODE5")]
++(c1, d1), (c2, d2), (c3, d3), (c4, d4), (c5, d5), (c6, d6), (c7, d7) = [(eq[n], seg[n]) for n in ("CODE1", "DATA", "CODE2", "CODE3", "CODE4", "CODE5", "CODE6")]
++dec = {m.group(1): int(m.group(2)) for m in re.finditer(r"^(rs\w+)\s+equ\s+(\d+)", txt, re.M)}
++RSB = eq["RS"]
++cache_col, cache_eye = RSB + dec["rsCol"], RSB + (dec["rsEye"] & ~1)     # the retargeted sites read WORDS: rsCol; the word at RS+50 (high byte rsFlg, low byte rsEye; the sites mask with &7 / &3)
++assert dec["rsEye"] == (dec["rsEye"] & ~1) + 1 and dec["rsFlg"] == dec["rsEye"] - 1 and dec["rsCol"] % 2 == 0
+ H = c1
+ def a(x): return f"{x:08x}"
+ nep = f"""# Nebulus campaign + level editor (NebEditor).  Generated by work/editor/gen_ed.py from patches/ed_editor.s; do not edit by hand.
+@@ -55,8 +59,10 @@ nep = f"""# Nebulus campaign + level editor (NebEditor).  Generated by work/edit
+ # Sites: $377a2 decode hook, $37a90 spawn direction, $3d6c4 title poll, $3adb4 initial time, $3d110 tower name, $3e352 tower complete, $3dfd6 frame flip,
+ # clear: runtime state RS+V ($77c80..$77dbf, 320 B) is zeroed by the loader at every start (RAM is not zero on a MiSTer / after a warm reset; work/notes/junkram.md).
+ # $3851a ACIA-path key latch (the F10 make byte is not lost to the one-cell sampling; D is read from the cell), $3d662 Options-page hint line.
+-# Blocks (6): code1 {len(d1)} B at ${c1:x} (dead zone: relocation table remnants / NEBULTIT tail), tables {len(d2)} B at ${c2:x}, code2 {len(d3)} B at ${c3:x}, code3 {len(d4)} B at ${c4:x},
+-# code4 {len(d5)} B at ${c5:x}, code5 {len(d6)} B at ${c6:x} (zero gap; no overlap with the trainer blob $76c00-$76c75, latch $76d00-$76d3b, credit $77a00-$77a3f, state $77c80-$77dbf).
++# Look sites (flags.b: high nibble = colour set, low nibble = eye design, see ed_lvl): $3dbf0 level setup hook (the call of sub_03636e, ends in it), and five
++# sites `move.w $3390c.l,d0` retargeted to the cache the hook fills: palette $3522e, raster $3dc1e, skyline $366de, texture $36b68 (every frame), eye discs $363a4.
++# Blocks (7): code1 {len(d1)} B at ${c1:x} (dead zone: relocation table remnants / NEBULTIT tail), tables {len(d2)} B at ${c2:x}, code2 {len(d3)} B at ${c3:x}, code3 {len(d4)} B at ${c4:x},
++# code4 {len(d5)} B at ${c5:x}, code5 {len(d6)} B at ${c6:x}, code6 {len(d7)} B at ${c7:x} (zero gap; no overlap with the trainer blob $76c00-$76c75, latch $76d00-$76d3b, credit $77a00-$77a3f, state $77c80-$77dbf).
+ patch ed_overlay
+ default yes
+ clear {eq["RS"]:x} {eq["CODE4"] - eq["RS"]:x}
+@@ -69,12 +75,19 @@ site 3e352 4ef9{a(H+30)}
+ site 3dfd6 4eb9{a(H+36)}
+ site 3851a 4ef9{a(sym["ed_key"])}
+ site 3d662 4ef9{a(sym["ed_opt"])}4e71
++site 3dbf0 4eb9{a(sym["ed_lvl"])}
++site 3522e 3039{a(cache_col)}
++site 3dc1e 3039{a(cache_col)}
++site 366de 3039{a(cache_col)}
++site 36b68 3039{a(cache_col)}
++site 363a4 3039{a(cache_eye)}
+ block {c1:x} {d1.hex()}
+ block {c2:x} {d2.hex()}
+ block {c3:x} {d3.hex()}
+ block {c4:x} {d4.hex()}
+ block {c5:x} {d5.hex()}
+ block {c6:x} {d6.hex()}
++block {c7:x} {d7.hex()}
+ """
+ (Path(sys.argv[2]) if len(sys.argv) > 2 else G / "patches/ed_overlay.nep").write_text(nep)
+ print("blocks: " + "; ".join(f"{n} ${eq[n]:x}..${eq[n]+len(seg[n]):x} {len(seg[n])} B (free {free[n]})" for n in order), f"| total {sum(len(seg[n]) for n in order)} B")
+diff --git a/work/editor/ovl.py b/work/editor/ovl.py
+index 7467305..91b1948 100644
+--- a/work/editor/ovl.py
++++ b/work/editor/ovl.py
+@@ -4,7 +4,7 @@
+   8 campaign records x 32 B at offset 16: name[12] (NUL terminated, <= 11 chars) | count.b | pad.b | entry[16] | pad[2]
+       entry byte: bit7 set = original tower  $80 | (mission-1)<<3 | tower(0..7);  bit7 clear = custom level index
+   level records from offset 272, back to back (variable length), nlevels of them:
+-      mission.b (1|2) | tower.b (0..7: base tower = palette, backdrop, default time) | rows.b (= the game's $33912, rows decoded) | flags.b (0)
++      mission.b (1|2) | tower.b (0..7: base tower = palette, backdrop, default time) | rows.b (= the game's $33912, rows decoded) | flags.b (high nibble = colour set 0..8, low nibble = enemy set 0..4; 0 = as the base tower)
+       len.w | time.w (BCD, 0 = the base tower's) | name[12] (NUL terminated) | mask[rows*2] | stream[...]
+   mask/stream = the game's own tower encoding (decoder $377a2/$37822): per row two mask bytes (bit n = angle n, 8+n), then the non-zero cells in
+   (row, angle) order.  The game's decode loop is fed the record unchanged (hook ed_dec)."""
+@@ -29,10 +29,13 @@ def encode(grid, rows):
+             mask.append(m)
+     return bytes(mask + stream)
+ 
+-def level(mission, tower, rows, grid, time=0, name="LEVEL"):
++def level(mission, tower, rows, grid, time=0, name="LEVEL", colours=0, enemies=0):
++    """colours (0..8) / enemies (0..4) -> flags.b: high nibble = colour set (0 = as the base tower, n = tower n's palette, raster, skyline, texture),
++    low nibble = enemy set (0 = as the base tower, n = tower n's eye-disc design (n-1) & 3)."""
++    assert 0 <= colours <= 8 and 0 <= enemies <= 4, (colours, enemies)
+     body = encode(grid, rows)
+     nm = name.encode("ascii")[:11].ljust(12, b"\0")
+-    return struct.pack(">BBBBHH", mission, tower, rows, 0, len(body), time) + nm + body
++    return struct.pack(">BBBBHH", mission, tower, rows, colours << 4 | enemies, len(body), time) + nm + body
+ 
+ def camp(name, entries):
+     assert len(entries) <= 16
+@@ -104,6 +107,15 @@ def validate(data):
+         p += REC + ln
+     return pr
+ 
++def bad_looks(data):
++    """Levels whose flags.b is outside the defined nibbles (colours > 8 or enemies > 4).  The game accepts any value (it masks the indices); the site parser rejects them."""
++    out = []; p = LV0
++    for i in range(struct.unpack(">H", data[6:8])[0]):
++        fl = data[p + 3]
++        if fl >> 4 > 8 or fl & 15 > 4: out.append(i)
++        p += REC + struct.unpack(">H", data[p + 4:p + 6])[0]
++    return out
++
+ def odd_starts(data):
+     """Level indices whose record starts at an odd file offset (= an odd RAM address in the game: the store is at an even address).  Legal and common
+     (records are packed back to back, any level with an odd number of non-zero cells makes the next record start odd); loaders must read len/time/mask
+@@ -268,7 +280,7 @@ if __name__ == "__main__":
+         lv, cs = parse(Path(sys.argv[2]).read_bytes())
+         off = [LV0 + sum(x["size"] for x in lv[:i]) for i in range(len(lv))]
+         for i, l in enumerate(lv):
+-            print(f"level {i} {l['name']!r} @{off[i]}{' (odd offset)' if off[i] & 1 else ''} mission {l['mission']} base tower {l['tower']} rows {l['rows']} time {l['time']:04x} size {l['size']} cells {sum(1 for c in l['grid'] for v in c if v)}")
++            print(f"level {i} {l['name']!r} @{off[i]}{' (odd offset)' if off[i] & 1 else ''} mission {l['mission']} base tower {l['tower']} rows {l['rows']} colours {l['flags'] >> 4} enemies {l['flags'] & 15} time {l['time']:04x} size {l['size']} cells {sum(1 for c in l['grid'] for v in c if v)}")
+             print_lifts(l["grid"], l["rows"])
+         for i, (n, e) in enumerate(cs):
+             print(f"campaign {i} {n!r}: " + ", ".join(f"orig M{((x>>3)&1)+1} T{(x&7)+1}" if x & 0x80 else f"custom {x}" for x in e))
+diff --git b/work/floppy/fl_look.py b/work/floppy/fl_look.py
+new file mode 100644
+index 0000000..fb8d12a
+--- /dev/null
++++ b/work/floppy/fl_look.py
+@@ -0,0 +1,80 @@
++"""Floppy build look gate (NebLooksBuild): boot the floppy build (STE TOS 1.62 1 MB), load the 15-cell look file over the store ($BC000, as e180: loadbin + rsOk=0),
++play looks cells from the level list, and compare the level-start RAM with the HD run of the same cells.  The floppy game is at PP's addresses -8 after the text:
++palette $351ac and the buffers below $33b1c are identical, the raster colours are at $40390.
++usage: fl_look.py DISK.st OUTDIR LOOKS.ovl REFDIR(run_look dump dir of the HD base8) [cells e.g. 0,4,9]"""
++import sys, time, re, struct, os
++from pathlib import Path
++sys.path.insert(0, str(Path(__file__).resolve().parent))
++from nebfloppy import NebFloppy
++disk, out, ovlf, REFDIR = sys.argv[1], Path(sys.argv[2]), sys.argv[3], sys.argv[4]
++CELLS = [int(x) for x in (sys.argv[5] if len(sys.argv) > 5 else '0,4,9').split(',')]
++SPEC = [(2, c, 2) for c in range(1, 9)] + [(0, 3, e) for e in range(1, 5)] + [(5, 0, 0), (1, 0, 3), (6, 4, 0)]
++out.mkdir(parents=True, exist_ok=True)
++h = NebFloppy(disk, machine='ste', mem=1024, workdir=str(out / 'wd'), trace='fdc')
++def words(a, n):
++    o = h.debug(f"m ${a:x} {n}", 0.6)
++    b = bytes(int(x, 16) for l in o.splitlines() if re.match(r'^[0-9a-f]{8}:', l, re.I) for x in re.findall(r'(?<=\s)[0-9a-f]{2}(?=\s)', l.split(':', 1)[1][:48]))
++    return b[:n]
++def W(a): return int.from_bytes(words(a, 2), 'big')
++def grab(a, n):
++    p = f'/tmp/fl_{os.getpid()}.bin'
++    for _ in range(5):
++        if os.path.exists(p): os.remove(p)
++        h.debug(f"savebin {p} ${a:x} ${n:x}", 0.4)
++        for _ in range(30):
++            if os.path.exists(p) and os.path.getsize(p) == n: time.sleep(0.05); d = open(p, 'rb').read(); os.remove(p); return d
++            time.sleep(0.1)
++    raise RuntimeError('grab')
++def K(k, hold=0.2, gap=0.5): h.key(k, hold=hold); time.sleep(gap)
++V = 0x77cc0; RS = 0x77c80
++def menu():
++    p = int.from_bytes(grab(V + 4, 4), 'big'); d = grab(p, 700); n = d[0]; items = []; i = 1
++    for _ in range(n):
++        j = i + 2
++        while d[j]: j += 1
++        items.append(d[i + 2:j].decode('latin1')); i = j + 1
++    return items, W(V + 8)
++def pick(what, gap=1.3):
++    items, sel = menu(); idx = what if isinstance(what, int) else [i for i, t in enumerate(items) if t.startswith(what)][0]
++    for _ in range(40):
++        items, sel = menu()
++        if sel == idx: break
++        K('Down' if idx > sel else 'Up', 0.2, 0.5)
++    K('Control_R', 0.35, gap)
++fails = 0
++def chk(n, g, e=True):
++    global fails
++    ok = g == e; print(('PASS ' if ok else 'FAIL ') + n + ': ' + repr(g) + ('' if ok else ' expected ' + repr(e)), flush=True); fails += not ok
++try:
++    t = h.boot_to_title(timeout=400, space_at=20); print('floppy title', bool(t), flush=True)
++    time.sleep(2)
++    print('hook bytes: $3dbf0 floppy site', hex(W(0x3dbf0)), flush=True)
++    h.debug(f'loadbin {ovlf} $bc000', 0.8); h.debug(f'w ${RS + 40:x} $00 $00', 0.3)
++    K('F10', 0.6, 2.5)
++    print('manager open (VBL vec != game):', hex(int.from_bytes(grab(0x70, 4), 'big')), flush=True)
++    for cell in CELLS:
++        b, c, e = SPEC[cell]
++        pick('Levels', 1.3); pick(cell, 1.0); pick('Play', 1.5)
++        for _ in range(120):
++            time.sleep(1.0)
++            if W(0x33a20) == 0 and W(0x33938) == 1: break
++        time.sleep(2.5)
++        ct = c - 1 if c else b; et = e - 1 if e else b
++        ref = open(f'{REFDIR}/lvl{ct}.bin', 'rb').read(); refe = open(f'{REFDIR}/lvl{et}.bin', 'rb').read()
++        pal = grab(0x351ac, 32); ras = grab(0x40390, 8); sky = grab(0x100e0, 4096); eye = grab(0x24be0, 0xaf00)
++        chk(f'floppy cell {cell} (b=T{b+1} c={c} e={e}): palette == stock tower {ct+1}', pal, ref[0x351ac:0x351ac + 32])
++        chk(f'floppy cell {cell}: raster colours == stock tower {ct+1}', ras, ref[0x40398:0x40398 + 8])
++        chk(f'floppy cell {cell}: skyline buffer == stock tower {ct+1}', sky, ref[0x100e0:0x100e0 + 4096])
++        chk(f'floppy cell {cell}: eye frames == stock tower {et+1} design', eye, refe[0x24be0:0x24be0 + 0xaf00])
++        chk(f'floppy cell {cell}: caches rsCol/rsEye, tower word = base', (W(RS + 62), W(RS + 50) & 3, W(0x3390c)), (ct, et & 3, b))
++        h.shot(str(out / f'floppy_cell{cell}.png'))
++        K('q', 0.3, 2.0)
++        for _ in range(40):
++            time.sleep(1.0)
++            if W(0x33938) == 9: break
++        time.sleep(1.5); K('F10', 0.6, 2.5)
++finally:
++    h.close()
++log = (out / 'wd' / 'log.txt').read_text(errors='replace')
++print('crash lines in Hatari log:', len(re.findall(r'Address error|Illegal|double bus|CPU halted|bus error', log, re.I)))
++print('FAILS', fails)
+diff --git b/work/looks/check_equiv.py b/work/looks/check_equiv.py
+new file mode 100644
+index 0000000..2f6edd0
+--- /dev/null
++++ b/work/looks/check_equiv.py
+@@ -0,0 +1,22 @@
++"""flags-0 / original-tower equivalence: level-start dumps of the SAME stock sequence on the un-hooked build (OLD, HEAD patch set) and the hooked build (NEW).
++usage: check_equiv.py OLDDIR NEWDIR N   -> per level, per region: equal?  (regions of run_look.py: palette, raster, skyline buffer, sprite buffers incl. eye frames, grid, game variables)"""
++import sys, struct
++OLD, NEW, N = sys.argv[1], sys.argv[2], int(sys.argv[3])
++REG = [('palette', 0x351ac, 0x20), ('raster', 0x40398, 8), ('skyline buf', 0x100e0, 0x1000), ('eye frames', 0x24be0, 0x2fae0 - 0x24be0), ('ball frames (sample)', 0x14560, 0x400),
++       ('grid', 0x327f0, 0x1000), ('game vars $33900..', 0x33900, 0x180), ('timer', 0x3ad90, 0x20)]
++bad = 0
++for i in range(N):
++    a = open(f'{OLD}/lvl{i}.bin', 'rb').read(); b = open(f'{NEW}/lvl{i}.bin', 'rb').read()
++    tw = struct.unpack('>H', b[0x3390c:0x3390e])[0], struct.unpack('>H', b[0x33910:0x33912])[0]
++    line = []
++    for n, ad, ln in REG:
++        eq = a[ad:ad + ln] == b[ad:ad + ln]
++        if not eq:
++            diffs = [ad + k for k in range(ln) if a[ad + k] != b[ad + k]]
++            line.append(f'{n}: DIFF {len(diffs)} B first ${diffs[0]:x}' if n not in ('game vars $33900..', 'timer') else f'{n}: {len(diffs)} B differ at ' + ' '.join(f'${d:x}' for d in diffs[:6]))
++            if n not in ('game vars $33900..', 'timer'): bad += 1
++        else: line.append(f'{n}: equal')
++    rc = struct.unpack('>H', b[0x77c80 + 62:0x77c80 + 64])[0]; re_ = struct.unpack('>H', b[0x77c80 + 50:0x77c80 + 52])[0] & 3
++    print(f'level {i} tower {tw[0]} mission {tw[1]} | ' + ' | '.join(line) + f' | NEW cache rsCol {rc} rsEye {re_} (must be tower {tw[0]} / {tw[0] & 3})')
++    if rc != tw[0] or re_ != tw[0] & 3: bad += 1
++print('FAILS', bad)
+diff --git b/work/looks/check_look.py b/work/looks/check_look.py
+new file mode 100644
+index 0000000..08e9d2a
+--- /dev/null
++++ b/work/looks/check_look.py
+@@ -0,0 +1,49 @@
++"""Look gate: compare level-start dumps of a looks campaign with the per-tower reference (a flags-0 base8 run on the same build).
++usage: check_look.py REFDIR LOOKDIR [cells=looks15|all12]   (REFDIR = run_look.py of base8, 8 levels = towers T1..T8, flags 0; LOOKDIR = the cells)
++For every cell (b,c,e): palette $351ac, raster $40398, skyline buffer $100e0 == ref[c'] ; eye frames $24be0 == ref[e'] (e' & 3 only matters) ; rsCol = c' ; rsEye&3 = e'&3 ;
++tower word $3390c = b ; rows/grid/timer/title follow the record (grid md5 equal to the reference grid)."""
++import sys, struct, hashlib
++sys.path.insert(0, 'work/looks')
++REF, DIR = sys.argv[1], sys.argv[2]
++CELLS = sys.argv[3] if len(sys.argv) > 3 else 'looks15'
++sys.path.insert(0, 'work/editor')
++import importlib.util
++ns = {}; exec(compile(open('work/looks/mk_looks2.py').read().split("d = sys.argv[1]")[0], 'mk', 'exec'), ns)
++CELL = ns['CELLS'] if CELLS == 'looks15' else None
++def rd(d, i): return open(f'{d}/lvl{i}.bin', 'rb').read()
++ref = [rd(REF, t) for t in range(8)]
++def reg(x, a, n): return x[a:a + n]
++def sig(x):
++    return dict(pal=reg(x, 0x351ac, 0x20), ras=reg(x, 0x40398, 8), sky=hashlib.md5(reg(x, 0x100e0, 0x1000)).hexdigest()[:8],
++                eye=hashlib.md5(reg(x, 0x24be0, 0xaf00)).hexdigest()[:8], balls=hashlib.md5(reg(x, 0x14560, 0x400)).hexdigest()[:8],
++                grid=hashlib.md5(reg(x, 0x327f0, 0x1000)).hexdigest()[:8])
++S = [sig(x) for x in ref]
++fails = 0
++print(f"{'lvl':>3} {'b':>2} {'c':>2} {'e':>2} | pal ras sky | eye | grid | rsCol rsEye tower | expected colour tower / eye tower")
++for i, (b, c, e) in enumerate(CELL):
++    x = rd(DIR, i); s = sig(x)
++    ct = c - 1 if c else b; et = e - 1 if e else b
++    ok_c = s['pal'] == S[ct]['pal'] and s['ras'] == S[ct]['ras'] and s['sky'] == S[ct]['sky']
++    ok_e = s['eye'] == S[et]['eye']
++    ok_g = s['grid'] == S[0]['grid'] and s['balls'] == S[0]['balls']
++    rc = struct.unpack('>H', reg(x, 0x77c80 + 62, 2))[0]; re_ = struct.unpack('>H', reg(x, 0x77c80 + 50, 2))[0] & 3
++    tw = struct.unpack('>H', reg(x, 0x3390c, 2))[0]
++    ok_r = rc == ct and re_ == et & 3 and tw == b
++    # also: the eye buffer must NOT equal another tower's eye design unless the designs coincide (t&3)
++    others = [t for t in range(8) if S[t]['eye'] == s['eye']]
++    good = ok_c and ok_e and ok_g and ok_r
++    fails += not good
++    print(f"{i:3d} T{b+1} {c:2d} {e:2d} | {ok_c!s:5} | {ok_e!s:5} {others} | {ok_g!s:5} | rsCol {rc} rsEye {re_} tower {tw} {ok_r!s:5} | colour {ct+1} eye {et+1}  {'PASS' if good else 'FAIL'}")
++# screenshot cross-check (palette + raster + skyline + tower TEXTURE together): the tower body / sky / skyline of a level with colours c must look exactly like the stock tower c
++# (same grid, same position); compared on a crop that excludes the HUD, the frog and the enemies
++from PIL import Image, ImageChops
++def crop(p, box): return Image.open(p).convert('RGB').crop(box)
++BOX = (96, 110, 736, 290)          # y 110..290 of the 832x588 screenshot: sky, skyline, tower body above the frog row; no HUD
++print('screenshot crop equality (colours c of the cell == stock tower c, flags 0):')
++for i, (b, c, e) in enumerate(CELL):
++    ct = c - 1 if c else b
++    d = ImageChops.difference(crop(f'{DIR}/lvl{i}.png', BOX), crop(f'{REF}/lvl{ct}.png', BOX)).getbbox()
++    mark = 'equal' if d is None else f'DIFF bbox {d}'
++    fails += d is not None
++    print(f'  cell {i} (b=T{b+1} c={c} e={e}) vs stock T{ct+1}: {mark}')
++print('FAILS', fails)
+diff --git b/work/looks/mk_looks2.py b/work/looks/mk_looks2.py
+new file mode 100644
+index 0000000..c915060
+--- /dev/null
++++ b/work/looks/mk_looks2.py
+@@ -0,0 +1,28 @@
++#!/usr/bin/env python3
++"""Fixtures for the per-level look gate (NebLooksBuild).  All grids identical (mk_looks.grid); levels differ in base tower / colours / enemies only.
++usage: mk_looks2.py DIR   -> DIR/looks15.ovl (15 levels, campaign LOOKS), DIR/base8.ovl (levels T1..T8 flags 0, campaign BASE), DIR/orig16.ovl (campaign ORIG: 16 original towers),
++                              DIR/all12.ovl (12 levels: every nibble extreme + odd/even records)
++looks15 cells (b = base tower index 0..7, c = colours 0..8, e = enemies 0..4):  A: b=2 e=2 c=1..8 | B: b=0 c=3 e=1..4 | C: (5,0,0) (1,0,3) (6,4,0)"""
++import sys, importlib.util
++sys.path.insert(0, 'work/editor')
++import ovl
++spec = importlib.util.spec_from_file_location('mk_looks', 'work/looks/mk_looks.py')
++src = open('work/looks/mk_looks.py').read().replace("main(sys.argv[1], len(sys.argv)>2 and sys.argv[2]=='even')", "")
++ns = {}; exec(compile(src, 'mk_looks.py', 'exec'), ns)
++grid, ROWS = ns['grid'], ns['ROWS']
++CELLS = [(2, c, 2) for c in range(1, 9)] + [(0, 3, e) for e in range(1, 5)] + [(5, 0, 0), (1, 0, 3), (6, 4, 0)]
++def mk(out, cells, cname, even=False, order=None):
++    lv = [ovl.level(1, b, ROWS, grid(even), time=0x0600, name="LOOK", colours=c, enemies=e) for b, c, e in cells]
++    open(out, 'wb').write(ovl.build(lv, [ovl.camp(cname, list(range(len(lv))))]))
++d = sys.argv[1]
++mk(f'{d}/looks15.ovl', CELLS, 'LOOKS')
++mk(f'{d}/base8.ovl', [(t, 0, 0) for t in range(8)], 'BASE')
++open(f'{d}/orig16.ovl', 'wb').write(ovl.build([], [ovl.camp('ORIG', [ovl.orig(m, t) for m in (1, 2) for t in range(8)])]))
++# all12: every nibble extreme, alternating odd/even record sizes, base towers cycling
++c12 = [((i * 3) % 8, (0, 8, 1, 7, 4, 2, 8, 0, 5, 3, 6, 8)[i], (0, 4, 4, 0, 1, 2, 3, 4, 2, 1, 3, 0)[i]) for i in range(12)]
++lv = [ovl.level(1 + (i & 1), c12[i][0], ROWS, grid(i & 1), time=0x0500, name=f"K{i}", colours=c12[i][1], enemies=c12[i][2]) for i in range(12)]
++open(f'{d}/all12.ovl', 'wb').write(ovl.build(lv, [ovl.camp('ALL12', list(range(12)))]))
++# eyes4: base tower T1, colours 0, enemies 0..4 (same grid with two vertical eyes next to the frog: play WITHOUT the enemies-off trainer to see the discs)
++mk(f'{d}/eyes5.ovl', [(0, 0, e) for e in range(5)], 'EYES')
++for f in ('looks15', 'base8', 'orig16', 'all12', 'eyes5'):
++    raw = open(f'{d}/{f}.ovl', 'rb').read(); print(f, ovl.validate(raw) or 'valid', 'odd starts', ovl.odd_starts(raw))
+diff --git b/work/looks/montage.py b/work/looks/montage.py
+new file mode 100644
+index 0000000..10d07e7
+--- /dev/null
++++ b/work/looks/montage.py
+@@ -0,0 +1,18 @@
++"""Montage of the look-gate screenshots with the cell labels: montage.py DIR OUT.png [cols]  (labels from mk_looks2.CELLS order)"""
++import sys
++from PIL import Image, ImageDraw
++d, out = sys.argv[1], sys.argv[2]; cols = int(sys.argv[3]) if len(sys.argv) > 3 else 4
++CELLS = [(2, c, 2) for c in range(1, 9)] + [(0, 3, e) for e in range(1, 5)] + [(5, 0, 0), (1, 0, 3), (6, 4, 0)]
++import os
++files = sorted(f for f in os.listdir(d) if f.startswith('lvl') and f.endswith('.png') and 'b' not in f[3:-4])
++files.sort(key=lambda f: int(f[3:-4]))
++tiles = []
++for f in files:
++    i = int(f[3:-4]); b, c, e = CELLS[i] if i < len(CELLS) else (0, 0, 0)
++    im = Image.open(f'{d}/{f}').convert('RGB').crop((96, 58, 736, 458)).resize((320, 200))
++    ImageDraw.Draw(im).rectangle((0, 0, 190, 12), fill=(0, 0, 0)); ImageDraw.Draw(im).text((2, 1), f'cell {i}: base T{b+1} colours {c} enemies {e}', fill=(255, 255, 255))
++    tiles.append(im)
++rows = (len(tiles) + cols - 1) // cols
++M = Image.new('RGB', (cols * 320, rows * 200))
++for k, t in enumerate(tiles): M.paste(t, ((k % cols) * 320, (k // cols) * 200))
++M.save(out); print(out, len(tiles))
+diff --git b/work/looks/run_look.py b/work/looks/run_look.py
+new file mode 100644
+index 0000000..e4b014b
+--- /dev/null
++++ b/work/looks/run_look.py
+@@ -0,0 +1,65 @@
++"""Level-start RAM dumps (512 KB + screenshots + RS words) of a campaign (rsPos = level k) or of the stock "Original game" sequence.
++usage: run_look.py BUILD_DIR OUT_DIR N [camp|stock] [ste|megaste|st]
++camp:  F10 -> Campaigns > -> first campaign -> Play; forced door between levels.   stock: F10 -> Original game; forced door.
++The trainer E (enemies off) is poked at the first level so the frog survives; every dump is taken 2.5 s after the level is running."""
++import sys,time,struct,os
++sys.path.insert(0,'/home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/editor')
++from ed import *
++from pathlib import Path
++import ed as _ed
++_W0=_ed.W
++def W(h,a):
++    for _ in range(6):
++        try: return _W0(h,a)
++        except Exception: time.sleep(0.3)
++    raise RuntimeError('W failed')
++build=Path(sys.argv[1]); out=Path(sys.argv[2]); out.mkdir(parents=True,exist_ok=True)
++N=int(sys.argv[3]); MODE=sys.argv[4] if len(sys.argv)>4 else 'camp'; MACH=sys.argv[5] if len(sys.argv)>5 else 'ste'
++import stharness
++kw={}
++if MACH=='megaste': kw=dict(machine='megaste',tos=stharness.TOS['2.06'],memsize_kb=4096)
++if MACH=='st': kw=dict(machine='st',tos=stharness.TOS['1.04'])
++RS=0x77c80
++# regions dumped when FULL is not set: sprite buffers (balls + eye frames), skyline buffer, palette, raster colours, grid + game variables, timer, RS (everything the look gate compares)
++REG=[(0x14560,0x400),(0x24be0,0x2fae0-0x24be0),(0x100e0,0x1000),(0x351ac,0x20),(0x40380,0x80),(0x327f0,0x1000),(0x33900,0x180),(0x3ad90,0x20),(0x77c80,0x80)]
++h=Nebulus(workdir=f'/tmp/looks/wd_{os.getpid()}',game=build,**kw)
++def K(k,n=1,hold=0.2,gap=0.35):
++    for _ in range(n): h.key(k,hold=hold); time.sleep(gap)
++def rs(): return struct.unpack('>32H',grab(h,RS,64,'rs'))
++def force():
++    poke(h,0x33a46,bytes([0,1])); poke(h,0x33a20,bytes([0,4])); poke(h,0x33a1e,bytes([0,0]))
++def running(): return W(h,0x33a20)==0 and W(h,0x33938)==1
++def wait_level(i,last,timeout=150):
++    t0=time.time()
++    while time.time()-t0<timeout:
++        time.sleep(1.0)
++        if MODE=='camp':
++            if rs()[1]==i and running(): return True
++        else:
++            key=(W(h,0x3390c),W(h,0x33910))
++            if running() and (i==0 or key!=last): return True
++    return False
++last=None
++try:
++    print('title',h.boot_to_title(timeout=240),flush=True); time.sleep(3)
++    h.key('F10',hold=0.5); time.sleep(2)
++    if MODE=='camp':
++        K('Down'); K('Control_R',hold=0.4,gap=1.0); K('Control_R',hold=0.4,gap=1.0); K('Control_R',hold=0.4,gap=0.5)
++    else:
++        K('Control_R',hold=0.4,gap=3.0)          # Original game -> back at the title
++        h.key('Right',hold=0.5); time.sleep(0.5); h.key('Control_R',hold=1.0)      # start the game as the plain harness does (boot_to_game)
++    for i in range(N):
++        ok=wait_level(i,last)
++        if i==0 and not os.environ.get('NOE'): poke(h,0x76c04,bytes([0xff,0xff]))
++        time.sleep(float(os.environ.get('DELAY','2.5')))
++        w=rs(); last=(W(h,0x3390c),W(h,0x33910))
++        print(f"level {i} ok={ok} rsPos {w[1]} rsLvl {w[2]} tower {last[0]} mission {last[1]} rows {W(h,0x33912)} rsCol {w[31]} rsEye(word@+50) {w[25]:04x} st {W(h,0x33a20)} timer {grab(h,0x3ad98,6,'t').hex()}",flush=True)
++        h.shot(str(out/f'lvl{i}.png'))
++        if os.environ.get('FULL'):
++            d=grab(h,0,0x80000,'big')
++        else:
++            d=bytearray(0x80000)
++            for a,n in REG: d[a:a+n]=grab(h,a,n,'reg')
++        open(out/f'lvl{i}.bin','wb').write(bytes(d))
++        force()
++finally: h.close()
+diff --git a/work/notes/editor.md b/work/notes/editor.md
+index b96ca9f..4ee6165 100644
+--- a/work/notes/editor.md
++++ b/work/notes/editor.md
+@@ -43,7 +43,7 @@ One file, exactly **8192 bytes**, named `NEBLEVEL.OVL`, in the root of the game
+ 
+ Campaign record (32 B): `name[12]` ASCII, NUL terminated (<= 11 chars) | `count.b` (0..16) | pad.b | `entry[16]` | 2 pad. Entry byte: **bit 7 set = original tower** `0x80 | (mission-1)<<3 | tower` (mission 1..2, tower 0..7 = "tower 1..8"); **bit 7 clear = custom level index** (0..nlevels-1, position in the level list). A campaign plays its entries in order; after the last one the game's own victory screen follows.
+ 
+-Level record: `mission.b` (1|2: which tower set supplies graphics) | `tower.b` (0..7: base tower: palette, backdrop, default time and title) | `rows.b` (16..120; the number of rows the game decodes, = its variable `$33912`; shipped towers 47..96) | `flags.b` (0, reserved) | `len.w` (= 2*rows + number of stream bytes) | `time.w` (BCD, e.g. `0300` = 300 s; 0 = the base tower's time) | `name[12]` (ASCII NUL terminated, <= 11 chars; shown as the level title) | `mask[2*rows]` | `stream[len-2*rows]`. Record size = 20 + len; the next record starts right after.
++Level record: `mission.b` (1|2: which tower set supplies graphics) | `tower.b` (0..7: base tower: palette, backdrop, default time and title) | `rows.b` (16..120; the number of rows the game decodes, = its variable `$33912`; shipped towers 47..96) | `flags.b` (the level's look: high nibble = colour set 0..8, low nibble = enemy set 0..4, 0 = as the base tower; section 14) | `len.w` (= 2*rows + number of stream bytes) | `time.w` (BCD, e.g. `0300` = 300 s; 0 = the base tower's time) | `name[12]` (ASCII NUL terminated, <= 11 chars; shown as the level title) | `mask[2*rows]` | `stream[len-2*rows]`. Record size = 20 + len; the next record starts right after.
+ 
+ ### 3.2 Grid encoding (decode without the game)
+ A level is a grid `cell[angle 0..15][row 0..rows-1]` of bytes (angle = column around the tower, wraps; row 0 = bottom). Unlisted cells are 0. Pseudo-code:
+@@ -365,7 +365,7 @@ HD: Gamex's MFP block is at `$fffaa`, not behind its copy, so the HD gates are u
+ ### 13.10 Odd-aligned records (NebOddFix, critical fix after NebLooks' report)
+ **Written invariants of the record layout (section 3; the format is unchanged, `version` stays 1, old files keep working):**
+ (1) level records are packed **back to back, unpadded**: `record size = 20 + len`, so any level with an odd number of non-zero cells makes the next record start at an **odd** offset, hence at an odd RAM address in the game (the store `OVS` is at the even `$BC000`, the first record at `+272`).  **Every reader must be alignment-safe** (read `len`/`time`, and anything else wider than a byte, as bytes): a 68000 word/long access at an odd address is an address error (bombs/lockup on real hardware, a spinning TOS in Hatari).
+-(2) `flags.b` (record offset 3) is **reserved**: readers ignore it (`ov_check`, the decode hook and the game side never read it), **writers preserve all 8 bits** (editor Edit/commit, Copy, Delete, Save/Load and every campaign operation); a new level starts with 0.  Its meaning is not defined here (the NebLooks design uses the low nibble for the enemy eye design and the high nibble for the colours: not yet defined, not interpreted by this code; the editor round owns the semantics and the site parser change).
++(2) `flags.b` (record offset 3) was **reserved** when this was written (section 14 now defines it: the level's look; readers other than the look hooks still ignore it, `ov_check`, the decode hook and the game side never read it), **writers preserve all 8 bits** (editor Edit/commit, Copy, Delete, Save/Load and every campaign operation); a new level starts with 0.  Its meaning is not defined here (the NebLooks design uses the low nibble for the enemy eye design and the high nibble for the colours: not yet defined, not interpreted by this code; the editor round owns the semantics and the site parser change).
+ 
+ **Bug** [obs, build before the fix, `NebLooks`' `looks.ovl` = ten 159-byte levels, STE 1 MB / TOS 1.62, title, F10]:
+ ```
+@@ -412,3 +412,10 @@ python3 tools/nepatch.py verify: 27 verified sites, 3 clear ranges (332 B), 10 b
+ ```
+ **Open items** (not finished in this session; scripts exist, nothing in the fix depends on them being run other than as confirmation): the forced-door campaign walk over the REAL original towers of `looks.ovl` flakes in the harness (the frog meets enemies; odd2's walk passes: it is the harness, not the loader; the 10 levels themselves start); stress05..12 STE and Mega STE (`e180.py ... megaste`, snapshot boot 130 s), ST TOS 1.04, `--disk` (Load from a `nebcampaign.py new --ovl` disk, 3 machines), `--flow` (create two odd levels in the editor, Save, Load, play), the `--flags` rerun after the image read-back fix, e161 (22 fuzz disks), `work/junkram/gates/e91_jr.py`, e150, e140, e170, e97/e98 equivalence, floppy `fge.py` cells.  [INFERENCE] equivalence of normal play is unaffected: the changes only touch the custom-record readers (no hook on an original tower reads a record: `cur_rec` returns 0), but this is not measured.
+ **For the PC tool / site**: nothing to change in the format or in `ovl.py validate`; `ovl.py` now warns (stderr note, `dump` shows `(odd offset)`) when a record starts at an odd offset because a pre-fix v1.1 game crashes on such a file (a site that must keep working with v1.1 builds can only pad by adding/removing one non-zero cell per odd level so that every record size is even); the site's cart builder should ship the fixed game build, preserve `flags.b` when it rewrites levels, and read records bytewise if it parses them in a language with alignment rules.
++
++## 14. Per-level colours and enemy set (NebLooksBuild; study and proofs: `work/notes/looks.md`, gates `work/looks/`, `work/editor/e190.py`)
++**Format (version stays 1).** `flags.b` (record byte 3): **low nibble = enemy set**: 0 = as the base tower (old files), 1..4 = eye-disc design 1..4 (the game has four, `tower & 3`); **high nibble = colour set**: 0 = as the base tower, 1..8 = the palette, the 4 raster colours, the skyline and the tower texture of tower 1..8.  `mission.b`/`tower.b` keep their meaning (geometry, default time and title come from the base tower byte; it is also the fallback for a 0 nibble).  Old files and every original tower: flags 0 = unchanged look.  A foreign writer must keep values within 0..8 / 0..4 (the game masks the indices, so other values do not crash: colour `v & 7`, eyes `(v-1) & 3`; the site parser rejects them).  Original-tower campaign entries have no look field (one byte `$80 | (mission-1)<<3 | tower`).
++**Editor.** `Tower >` has `Colours: next` and `Enemies: next` (same key/handling as `Look: next tower`: FIRE; cycle 0,1..8 and 0,1..4, wrap to 0 = as the base tower); the panel shows `S<colours> E<enemies>` under `T<tower> M<mission>`.  `rsFlg` (RS+50) already carried flags.b through Edit/commit/Copy/Delete/Save/Load.
++**Game side** (`ed_lvl` in `ed_editor.s`).  One hook at `$3dbf0` (the `jsr $3636e` that starts the sprite/skyline setup of every level) reads the current record (`cur_rec`: custom level, playtest copy, or none = original tower), works out the two indices (nibble 0 = `$3390c`, else nibble-1), caches them (`RS+62` word = colour index, `RS+51` byte = eye index) and continues into `$3636e`.  The five game instructions that read the base tower for looks, `move.w $3390c.l,d0` at `$3522e` (palette), `$3dc1e` (raster), `$366de` (skyline), `$36b68` (tower texture, every frame) and `$363a4` (eye discs), became `move.w RS+62.l,d0` (the eye site reads the word at RS+50, high byte = rsFlg, and its `andi.w #3` ignores it): same 6 bytes, no code, no per-frame cost.  The tower body is never drawn before `$3dbf0` in a level start (the frame loop `$3dcf4` follows the setup), so the cache is always fresh; `$3390c` itself is unchanged (geometry, time, title, `$3e352`).
++**Bytes.** The new code (hook 60 B, cycle 46 B, panel line 38 B, menu items 34 B, cmds 4 B) was paid for by removing duplicated code: `m_levels`/`m_camps` merged (-68 B), `draw_panel` H/C/R lines as a table loop (-28 B), the tile table's pad byte (-19 B), `commit`'s dead `tst/beq` (-6 B), `c_time`'s duplicated tail (-12 B), shorter cell names (-25 B), `a_lop`/`a_cop` dispatch (-8 B); a seventh block CODE6 `$772da..$77300` (38 B, behind the floppy build's TOS-state capture `$7726c..$772da`) holds `c_eye`.  `gen_ed.py` now writes 7 blocks and 6 more sites; `nefloppy.py` accepts the retargeted `move.w abs.l,d0` site form.
++

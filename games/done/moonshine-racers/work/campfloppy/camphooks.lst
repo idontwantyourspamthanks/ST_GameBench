@@ -1,0 +1,84 @@
+Sections:
+00: "org0001:100800" (100800-100848)
+01: "org0002:100900" (100900-100958)
+02: "org0003:100a00" (100A00-100A14)
+
+
+Source: "/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/campfloppy/camphooks.s"
+                            	     1: ; camphooks.s -- SCRATCH PROTOTYPE (MSRCampFloppy): the redirect sites A-D of work/notes/trackloader.md (pointer varian
+                            	     2: ; store at STORE = $110000 (the file as camp_read left it).  VARS = campread.s `vars` (v_act at +$28, v_count at +$26),
+                            	     3: STORE   equ     $110000
+                            	     4: V_ACT   equ     VARS+$28
+                            	     5: COUNT   equ     VARS+$26
+                            	     6: V_POS   equ     $100f02
+                            	     7: PTR     equ     $100f10
+                            	     8: SIGOK   equ     $c0008
+                            	     9:         org     $100800
+00:00100800 4A390010059C    	    10: hookA:  tst.b   V_ACT.l
+00:00100806 671E            	    11:         beq.s   .stk
+00:00100808 3038102C        	    12:         move.w  $102c.w,d0
+00:0010080C 0240000F        	    13:         andi.w  #$f,d0
+00:00100810 33C000100F02    	    14:         move.w  d0,V_POS.l                  ; the campaign position
+00:00100816 C0FC0028        	    15:         mulu.w  #40,d0
+00:0010081A 41F900110010    	    16:         lea     STORE+16.l,a0
+00:00100820 31F00818102C    	    17:         move.w  24(a0,d0.l),$102c.w         ; entry.base: every per-level table of the game now reads the BASE level
+00:00100826 4EB9000076F4    	    18: .stk:   jsr     $76f4.l                     ; race setup + race + exit
+00:0010082C 4A390010059C    	    19:         tst.b   V_ACT.l
+00:00100832 6712            	    20:         beq.s   .x
+00:00100834 3038102C        	    21:         move.w  $102c.w,d0
+00:00100838 02408080        	    22:         andi.w  #$8080,d0                   ; flags the race set (time-out replay $80, game over $8000)
+00:0010083C 807900100F02    	    23:         or.w    V_POS.l,d0
+00:00100842 31C0102C        	    24:         move.w  d0,$102c.w                  ; back to position | flags for the campaign loop at $7306
+00:00100846 4E75            	    25: .x:     rts
+                            	    26: 
+                            	    27:         org     $100900
+01:00100900 4A390010059C    	    28: hookB:  tst.b   V_ACT.l
+01:00100906 6734            	    29:         beq.s   .stock
+01:00100908 48E7C080        	    30:         movem.l d0-d1/a0,-(a7)
+01:0010090C 303900100F02    	    31:         move.w  V_POS.l,d0
+01:00100912 C0FC0028        	    32:         mulu.w  #40,d0
+01:00100916 41F900110010    	    33:         lea     STORE+16.l,a0
+01:0010091C 2230081C        	    34:         move.l  28(a0,d0.l),d1              ; entry.offset
+01:00100920 068100110000    	    35:         addi.l  #STORE,d1
+01:00100926 23C100100F10    	    36:         move.l  d1,PTR.l                    ; the block is parsed in place inside the store (site C)
+01:0010092C 4239000C0008    	    37:         clr.b   SIGOK.l                     ; rd_geom standing-frame reuse must not survive a different block
+01:00100932 4CDF0103        	    38:         movem.l (a7)+,d0-d1/a0
+01:00100936 4EF9000077E6    	    39:         jmp     $77e6.l
+01:0010093C 23FC00058C000010	    40: .stock: move.l  #$58c00,PTR.l
+01:00100944 0F10
+01:00100946 41F900058C00    	    41:         lea     $58c00.l,a0
+01:0010094C 4EB90000D6FA    	    42:         jsr     $d6fa.l
+01:00100952 4EF9000077E6    	    43:         jmp     $77e6.l
+                            	    44: 
+                            	    45:         org     $100a00
+02:00100A00 B0790010059A    	    46: hookD:  cmp.w   COUNT.l,d0                  ; d0 = position + 1
+02:00100A06 6406            	    47:         bcc.s   .end
+02:00100A08 4EF900007324    	    48:         jmp     $7324.l
+02:00100A0E 4EF90000732C    	    49: .end:   jmp     $732c.l
+                            	    50: 
+                            	    51: 
+
+
+Symbols by name:
+COUNT                            E:0010059A
+PTR                              E:00100F10
+SIGOK                            E:000C0008
+STORE                            E:00110000
+VARS                             E:00100574
+V_ACT                            E:0010059C
+V_POS                            E:00100F02
+hookA                            A:00100800
+hookB                            A:00100900
+hookD                            A:00100A00
+
+Symbols by value:
+000C0008 SIGOK
+00100574 VARS
+0010059A COUNT
+0010059C V_ACT
+00100800 hookA
+00100900 hookB
+00100A00 hookD
+00100F02 V_POS
+00100F10 PTR
+00110000 STORE

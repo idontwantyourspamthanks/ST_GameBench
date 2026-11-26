@@ -1,0 +1,27 @@
+c_mste206_16_d1: megaste TOS 206 1024 KB, 16 MHz, 1 drive(s), disks /tmp/mw2f/b16
+insert-graphics prompt after 78 s wall
+M/J/K screen after 4 presses; MWPO 000B2FF8: 4d 57 50 4f                                      MWPO
+security-check site $2c574: 0002C574: 60 02                                            `.
+hall; personnel click tries 1
+use-this-agent click tries 0
+swap served: game asks for 'camp' -> disk_camp.st
+swap served: game asks for 'graf' -> disk_gfx.st
+control-door click tries 0
+swap served: game asks for 'camp' -> disk_camp.st
+swap served: game asks for 'graf' -> disk_gfx.st
+swap served: game asks for 'graf' -> disk_gfx.st
+swap served: game asks for 'graf' -> disk_gfx.st
+3D view shot /home/ryan/Code/AtariST/gamebench/games/done/midwinter2/work/floppy16/out/c_mste206_16_d1_3d.png
+$6220=d $700a=2 MWPO 000B2FF8: 4d 57 50 4f                                      MWPO
+world_rate {'vbls': 500, 'flips': 79, 'fps': 7.9, 'vbls_per_frame': 6.329113924050633, 'units_per_sec': 22.23816355810617}
+heading series ['0x300', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6', '0x2c6']
+soak  36 s: fps 12.0 flips 60  $6220=5 $700a=2 heading 0
+soak  74 s: fps 20.0 flips 100  $6220=5 $700a=2 heading 0
+soak 112 s: fps 20.0 flips 100  $6220=5 $700a=2 heading 0
+soak 150 s: fps 10.0 flips 50  $6220=5 $700a=2 heading 0
+REACHED 3D VIEW and played 120 s
+trace: frame 261 lines = 60.0 Hz
+first game restore: tr=0x0 head_track=0x0 -> complete after 0.054 s
+game type I commands: 222, cut by the game's force interrupt: 0
+longest completed game type I commands (s): 1.85 restore, 1.87 restore, 1.89 restore, 2.03 restore
+CELL c_mste206_16_d1: PASS

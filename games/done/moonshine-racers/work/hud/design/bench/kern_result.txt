@@ -1,0 +1,202 @@
+m_k1a                  2577368180  +
+m_k1b                  2577425792  +57612
+m_k2a                  2577425796  +4
+m_k2b                  2577461808  +36012
+m_k3a                  2577461812  +4
+m_k3b                  2577558624  +96812
+m_k4a                  2577558628  +4
+m_k4b                  2577642640  +84012
+m_k5a                  2577642644  +4
+m_k5b                  2577735856  +93212
+m_k6a                  2577735860  +4
+m_k6b                  2577754152  +18292
+m_k7a                  2577754156  +4
+m_k7b                  2577763752  +9596
+> b pc = $7a88 :trace :once :file /tmp/strun-sp9_6hgf/apply.txt
+CPU condition breakpoint 1 with 1 condition(s) added:
+	pc = $7a88
+-> Break only once, and delete breakpoint afterwards.
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-sp9_6hgf/apply.txt' file on hit.
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $7a88 :once :trace :file /tmp/strun-sp9_6hgf/apply.txt
+Reading debugger commands from '/tmp/strun-sp9_6hgf/apply.txt'...
+Changed to input file dir '/tmp/strun-sp9_6hgf'.
+> loadbin /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/hud/design/bench/kern.bin $c0000
+  Read 0x370 bytes.
+> w $7b74 $4e $b9 $00 $0c $00 $00
+Wrote 6 'b' values starting from 0x7b74.
+> b pc = $c003c :trace :file /tmp/strun-sp9_6hgf/mk_c003c.txt
+CPU condition breakpoint 2 with 1 condition(s) added:
+	pc = $c003c
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-sp9_6hgf/mk_c003c.txt' file on hit.
+> b pc = $c0056 :trace :file /tmp/strun-sp9_6hgf/mk_c0056.txt
+CPU condition breakpoint 3 with 1 condition(s) added:
+	pc = $c0056
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-sp9_6hgf/mk_c0056.txt' file on hit.
+> b pc = $c0058 :trace :file /tmp/strun-sp9_6hgf/mk_c0058.txt
+CPU condition breakpoint 4 with 1 condition(s) added:
+	pc = $c0058
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-sp9_6hgf/mk_c0058.txt' file on hit.
+> b pc = $c0072 :trace :file /tmp/strun-sp9_6hgf/mk_c0072.txt
+CPU condition breakpoint 5 with 1 condition(s) added:
+	pc = $c0072
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-sp9_6hgf/mk_c0072.txt' file on hit.
+> b pc = $c0074 :trace :file /tmp/strun-sp9_6hgf/mk_c0074.txt
+CPU condition breakpoint 6 with 1 condition(s) added:
+	pc = $c0074
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-sp9_6hgf/mk_c0074.txt' file on hit.
+> b pc = $c008e :trace :file /tmp/strun-sp9_6hgf/mk_c008e.txt
+CPU condition breakpoint 7 with 1 condition(s) added:
+	pc = $c008e
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-sp9_6hgf/mk_c008e.txt' file on hit.
+> b pc = $c0090 :trace :file /tmp/strun-sp9_6hgf/mk_c0090.txt
+CPU condition breakpoint 8 with 1 condition(s) added:
+	pc = $c0090
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-sp9_6hgf/mk_c0090.txt' file on hit.
+> b pc = $c00aa :trace :file /tmp/strun-sp9_6hgf/mk_c00aa.txt
+CPU condition breakpoint 9 with 1 condition(s) added:
+	pc = $c00aa
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-sp9_6hgf/mk_c00aa.txt' file on hit.
+> b pc = $c00ac :trace :file /tmp/strun-sp9_6hgf/mk_c00ac.txt
+CPU condition breakpoint 10 with 1 condition(s) added:
+	pc = $c00ac
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-sp9_6hgf/mk_c00ac.txt' file on hit.
+> b pc = $c00c4 :trace :file /tmp/strun-sp9_6hgf/mk_c00c4.txt
+CPU condition breakpoint 11 with 1 condition(s) added:
+	pc = $c00c4
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-sp9_6hgf/mk_c00c4.txt' file on hit.
+> b pc = $c00c6 :trace :file /tmp/strun-sp9_6hgf/mk_c00c6.txt
+CPU condition breakpoint 12 with 1 condition(s) added:
+	pc = $c00c6
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-sp9_6hgf/mk_c00c6.txt' file on hit.
+> b pc = $c00ce :trace :file /tmp/strun-sp9_6hgf/mk_c00ce.txt
+CPU condition breakpoint 13 with 1 condition(s) added:
+	pc = $c00ce
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-sp9_6hgf/mk_c00ce.txt' file on hit.
+> b pc = $c00d0 :trace :file /tmp/strun-sp9_6hgf/mk_c00d0.txt
+CPU condition breakpoint 14 with 1 condition(s) added:
+	pc = $c00d0
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-sp9_6hgf/mk_c00d0.txt' file on hit.
+> b pc = $c00d8 :trace :file /tmp/strun-sp9_6hgf/mk_c00d8.txt
+CPU condition breakpoint 15 with 1 condition(s) added:
+	pc = $c00d8
+-> Trace (just show breakpoint info, instead of dropping to debugger).
+-> Execute debugger commands from '/tmp/strun-sp9_6hgf/mk_c00d8.txt' file on hit.
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers' dir.
+Removed CPU breakpoint 1:
+	pc = $7a88 :once :trace :file /tmp/strun-sp9_6hgf/apply.txt
+1. CPU breakpoint condition(s) matched 1 times.
+	pc = $c003c :trace :file /tmp/strun-sp9_6hgf/mk_c003c.txt
+Reading debugger commands from '/tmp/strun-sp9_6hgf/mk_c003c.txt'...
+Changed to input file dir '/tmp/strun-sp9_6hgf'.
+> e CycleCounter
+= %10011001100111111000010001110100 (bin), #2577368180/-1717599116 (dec), $999f8474 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers' dir.
+2. CPU breakpoint condition(s) matched 1 times.
+	pc = $c0056 :trace :file /tmp/strun-sp9_6hgf/mk_c0056.txt
+Reading debugger commands from '/tmp/strun-sp9_6hgf/mk_c0056.txt'...
+Changed to input file dir '/tmp/strun-sp9_6hgf'.
+> e CycleCounter
+= %10011001101000000110010110000000 (bin), #2577425792/-1717541504 (dec), $99a06580 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers' dir.
+3. CPU breakpoint condition(s) matched 1 times.
+	pc = $c0058 :trace :file /tmp/strun-sp9_6hgf/mk_c0058.txt
+Reading debugger commands from '/tmp/strun-sp9_6hgf/mk_c0058.txt'...
+Changed to input file dir '/tmp/strun-sp9_6hgf'.
+> e CycleCounter
+= %10011001101000000110010110000100 (bin), #2577425796/-1717541500 (dec), $99a06584 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers' dir.
+4. CPU breakpoint condition(s) matched 1 times.
+	pc = $c0072 :trace :file /tmp/strun-sp9_6hgf/mk_c0072.txt
+Reading debugger commands from '/tmp/strun-sp9_6hgf/mk_c0072.txt'...
+Changed to input file dir '/tmp/strun-sp9_6hgf'.
+> e CycleCounter
+= %10011001101000001111001000110000 (bin), #2577461808/-1717505488 (dec), $99a0f230 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers' dir.
+5. CPU breakpoint condition(s) matched 1 times.
+	pc = $c0074 :trace :file /tmp/strun-sp9_6hgf/mk_c0074.txt
+Reading debugger commands from '/tmp/strun-sp9_6hgf/mk_c0074.txt'...
+Changed to input file dir '/tmp/strun-sp9_6hgf'.
+> e CycleCounter
+= %10011001101000001111001000110100 (bin), #2577461812/-1717505484 (dec), $99a0f234 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers' dir.
+6. CPU breakpoint condition(s) matched 1 times.
+	pc = $c008e :trace :file /tmp/strun-sp9_6hgf/mk_c008e.txt
+Reading debugger commands from '/tmp/strun-sp9_6hgf/mk_c008e.txt'...
+Changed to input file dir '/tmp/strun-sp9_6hgf'.
+> e CycleCounter
+= %10011001101000100110110001100000 (bin), #2577558624/-1717408672 (dec), $99a26c60 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers' dir.
+7. CPU breakpoint condition(s) matched 1 times.
+	pc = $c0090 :trace :file /tmp/strun-sp9_6hgf/mk_c0090.txt
+Reading debugger commands from '/tmp/strun-sp9_6hgf/mk_c0090.txt'...
+Changed to input file dir '/tmp/strun-sp9_6hgf'.
+> e CycleCounter
+= %10011001101000100110110001100100 (bin), #2577558628/-1717408668 (dec), $99a26c64 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers' dir.
+8. CPU breakpoint condition(s) matched 1 times.
+	pc = $c00aa :trace :file /tmp/strun-sp9_6hgf/mk_c00aa.txt
+Reading debugger commands from '/tmp/strun-sp9_6hgf/mk_c00aa.txt'...
+Changed to input file dir '/tmp/strun-sp9_6hgf'.
+> e CycleCounter
+= %10011001101000111011010010010000 (bin), #2577642640/-1717324656 (dec), $99a3b490 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers' dir.
+9. CPU breakpoint condition(s) matched 1 times.
+	pc = $c00ac :trace :file /tmp/strun-sp9_6hgf/mk_c00ac.txt
+Reading debugger commands from '/tmp/strun-sp9_6hgf/mk_c00ac.txt'...
+Changed to input file dir '/tmp/strun-sp9_6hgf'.
+> e CycleCounter
+= %10011001101000111011010010010100 (bin), #2577642644/-1717324652 (dec), $99a3b494 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers' dir.
+10. CPU breakpoint condition(s) matched 1 times.
+	pc = $c00c4 :trace :file /tmp/strun-sp9_6hgf/mk_c00c4.txt
+Reading debugger commands from '/tmp/strun-sp9_6hgf/mk_c00c4.txt'...
+Changed to input file dir '/tmp/strun-sp9_6hgf'.
+> e CycleCounter
+= %10011001101001010010000010110000 (bin), #2577735856/-1717231440 (dec), $99a520b0 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers' dir.
+11. CPU breakpoint condition(s) matched 1 times.
+	pc = $c00c6 :trace :file /tmp/strun-sp9_6hgf/mk_c00c6.txt
+Reading debugger commands from '/tmp/strun-sp9_6hgf/mk_c00c6.txt'...
+Changed to input file dir '/tmp/strun-sp9_6hgf'.
+> e CycleCounter
+= %10011001101001010010000010110100 (bin), #2577735860/-1717231436 (dec), $99a520b4 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers' dir.
+12. CPU breakpoint condition(s) matched 1 times.
+	pc = $c00ce :trace :file /tmp/strun-sp9_6hgf/mk_c00ce.txt
+Reading debugger commands from '/tmp/strun-sp9_6hgf/mk_c00ce.txt'...
+Changed to input file dir '/tmp/strun-sp9_6hgf'.
+> e CycleCounter
+= %10011001101001010110100000101000 (bin), #2577754152/-1717213144 (dec), $99a56828 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers' dir.
+13. CPU breakpoint condition(s) matched 1 times.
+	pc = $c00d0 :trace :file /tmp/strun-sp9_6hgf/mk_c00d0.txt
+Reading debugger commands from '/tmp/strun-sp9_6hgf/mk_c00d0.txt'...
+Changed to input file dir '/tmp/strun-sp9_6hgf'.
+> e CycleCounter
+= %10011001101001010110100000101100 (bin), #2577754156/-1717213140 (dec), $99a5682c (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers' dir.
+14. CPU breakpoint condition(s) matched 1 times.
+	pc = $c00d8 :trace :file /tmp/strun-sp9_6hgf/mk_c00d8.txt
+Reading debugger commands from '/tmp/strun-sp9_6hgf/mk_c00d8.txt'...
+Changed to input file dir '/tmp/strun-sp9_6hgf'.
+> e CycleCounter
+= %10011001101001011000110110101000 (bin), #2577763752/-1717203544 (dec), $99a58da8 (hex)
+Changed back to '/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers' dir.
+> m $c0ff0 4
+000C0FF0: 44 4f 4e 45                                      DONE
+

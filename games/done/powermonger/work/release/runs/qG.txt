@@ -1,0 +1,13 @@
+sh_ste_fl tools/pmload.py --disk work/release/ship/fl/Powermonger_patched.st --manifest build/dist_build/floppy.json --machine ste --tos 1.62 --mem 1024 --seq lose,win,lose --fill --idle 60 --shots work/release/runs/shots_sh_ste_fl
+sh_st_fl tools/pmload.py --disk work/release/ship/fl/Powermonger_patched.st --manifest build/dist_build/floppy.json --machine st --tos 1.04 --mem 1024 --seq lose,win --idle 30 --shots work/release/runs/shots_sh_st_fl
+sh_mste_fl tools/pmload.py --disk work/release/ship/fl/Powermonger_patched.st --manifest build/dist_build/floppy.json --machine megaste --tos 2.06 --mem 4096 --seq lose,win,lose,lose --fill --idle 60 --shots work/release/runs/shots_sh_mste_fl
+sh_ste_hd tools/pmload.py --hd work/release/ship/hd/POWERMONGER --acsi --manifest build/dist_build/hd.json --machine ste --tos 1.62 --mem 1024 --seq lose,win,lose --idle 60 --shots work/release/runs/shots_sh_ste_hd
+sh_mste_hd tools/pmload.py --hd work/release/ship/hd/POWERMONGER --acsi --manifest build/dist_build/hd.json --machine megaste --tos 2.06 --mem 4096 --seq lose,win,lose --idle 60 --shots work/release/runs/shots_sh_mste_hd
+sh_tt_fl tools/pmload.py --disk work/release/ship/fl/Powermonger_patched.st --manifest build/dist_build/floppy.json --machine tt --tos 3.06 --mem 4096 --hopts "--cpuclock 32 --monitor vga" --seq lose,win --shots work/release/runs/shots_sh_tt_fl
+sh_fal_fl tools/pmload.py --disk work/release/ship/fl/Powermonger_patched.st --manifest build/dist_build/floppy.json --machine falcon --tos 4.04 --mem 4096 --hopts "--borders false" --seq lose,win --shots work/release/runs/shots_sh_fal_fl
+sh_fin_ste_fl tools/pmload.py --disk work/release/ship/fl/Powermonger_patched.st --manifest build/dist_build/floppy.json --machine ste --tos 1.62 --mem 1024 --seq final --fill --shots work/release/runs/shots_sh_fin_ste
+sh_fin_mste_hd tools/pmload.py --hd work/release/ship/hd/POWERMONGER --acsi --manifest build/dist_build/hd.json --machine megaste --tos 2.06 --mem 4096 --seq final --shots work/release/runs/shots_sh_fin_mste_hd
+sh_pmretire_mste tools/pmretire.py --disk work/release/ship/fl/Powermonger_patched.st --manifest build/dist_build/floppy.json --machine megaste --tos 2.06 --mem 4096 --shots work/release/runs/shots_sh_pmr_mste
+sh_pmretire_win tools/pmretire.py --disk work/release/ship/fl/Powermonger_patched.st --manifest build/dist_build/floppy.json --win --machine ste --tos 1.62 --mem 1024 --shots work/release/runs/shots_sh_pmr_win
+sh_cb_ste_fl tools/pmcombined.py --disk work/release/ship/fl/Powermonger_patched.st --machine ste --tos 1.62 --mem 1024
+sh_cb_ste_hd tools/pmcombined.py --hd work/release/ship/hd/POWERMONGER --acsi --saveload --machine ste --tos 1.62 --mem 1024

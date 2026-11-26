@@ -1,0 +1,63 @@
+title 62.64685368537903
+  rsTosP c0108 rsMfpP ca980 MFP block b1 04 00 1e 64 00 20 00 00 1e 64 48 00 00 57 00 50 c0 64 00 88 01 81 00
+PASS MFP block intact at the title (IERB $64 TCDCR $57): (100, 87)
+   (5.3 s) 'Loaded 1 levels / 1 campaigns'
+PASS S1 game disk -> t3 swap, no eject: 'Loaded 1 levels / 1 campaigns'
+PASS   store == file: True
+   (4.3 s) 'Not a campaign disk'
+PASS S2 campaign -> game disk back, Load: 'Not a campaign disk'
+PASS   store unchanged by the failed load: True
+   (7.2 s) 'No disk'
+PASS E1 eject (none), 5 s, fire: 'No disk'
+   (6.3 s) 'No disk'
+PASS E2 still empty, fire again: 'No disk'
+   (5.3 s) 'Loaded 1 levels / 1 campaigns'
+PASS E3 no disk -> insert -> fire: 'Loaded 1 levels / 1 campaigns'
+   (4.3 s) 'Not a campaign disk'
+PASS E4 eject, 4 s, insert nofile, fire: 'Not a campaign disk'
+   (5.3 s) 'Not a campaign disk'
+PASS E4 eject, 4 s, insert short, fire: 'Not a campaign disk'
+   (5.3 s) 'Not a campaign disk'
+PASS E4 eject, 4 s, insert big, fire: 'Not a campaign disk'
+   (5.3 s) 'Loaded 0 levels / 0 campaigns'
+PASS E4 eject, 4 s, insert blank, fire: 'Loaded 0 levels / 0 campaigns'
+PASS   store zero: True
+   (5.3 s) 'Loaded 1 levels / 1 campaigns'
+PASS E4 eject, 4 s, insert t3, fire: 'Loaded 1 levels / 1 campaigns'
+PASS   store == file: True
+   (4.3 s) 'Not a campaign disk'
+PASS E5 eject, game disk back, Load: 'Not a campaign disk'
+   (5.3 s) 'Loaded 1 levels / 1 campaigns'
+PASS E6 game disk -> t3 swap again: 'Loaded 1 levels / 1 campaigns'
+   (5.3 s) 'Loaded 1 levels / 1 campaigns'
+PASS W1 write-protected, load: 'Loaded 1 levels / 1 campaigns'
+   (5.3 s) 'Disk is write protected'
+PASS W2 write-protected, SAVE: 'Disk is write protected'
+   (5.3 s) 'Disk is write protected'
+PASS W3 eject + reinsert protected, SAVE: 'Disk is write protected'
+PASS game alive after the cells: True
+   (7.2 s) 'Saved'
+PASS V1 eject + insert, SAVE: 'Saved'
+PASS   saved image is a usable campaign disk: True
+PASS   its NEBLEVEL.OVL == RAM store: True
+PASS   image changed only inside file data/dir entry: []
+   (5.3 s) 'Loaded 1 levels / 1 campaigns'
+PASS V2 reload the saved disk: 'Loaded 1 levels / 1 campaigns'
+   (5.3 s) 'Not a campaign disk'
+PASS fuzz fz_00_random0: ('Not a campaign disk', 'store ok')
+   (5.3 s) 'Not a campaign disk'
+PASS fuzz fz_05_magic_random: ('Not a campaign disk', 'store ok')
+   (5.3 s) 'Loaded 1 levels / 1 campaigns'
+PASS fuzz fz_06_flip1: ('Loaded 1 levels / 1 campaigns', 'store ok')
+   (5.3 s) 'Not a campaign disk'
+PASS fuzz fz_13_version2: ('Not a campaign disk', 'store ok')
+   (5.3 s) 'Loaded 1 levels / 1 campaigns'
+PASS fuzz fz_20_badentries: ('Loaded 1 levels / 1 campaigns', 'store ok')
+   (5.3 s) 'Loaded 1 levels / 1 campaigns'
+PASS fuzz fz_21_valid: ('Loaded 1 levels / 1 campaigns', 'store ok')
+PASS alive after all: True
+PASS tower after all disk operations: timer runs: True
+PASS   frog answers the joystick: True
+PASS   FDC type II commands during 15 s of play: 0
+  (control: FDC type II commands in the whole log: 1145 )
+FAILS []

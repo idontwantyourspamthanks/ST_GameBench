@@ -1,0 +1,9 @@
+   E trainer (enemies off) word 0xffff
+== STUCK: door (0,2-4), pillars (8,2-4): arrive inside the wall, then Right / Left / Up  running=True  start: {'x': 4, 'y': 8, 'dirn': 128, 'st': 0, 'anim': 0}
+   Up: state 4 (4 = tunnel) x=4
+   arrived: x=68 (col 8, entered at x=4 col 0; difference 64) y=8 state 0
+   3 s later, no input: {'x': 68, 'y': 8, 'dirn': 128, 'st': 0, 'anim': 0}
+   Right 0.8 s inside the wall: x 68 -> 68, y 8, state 1
+   Left 0.8 s inside the wall: x 68 -> 68, y 8, state 1
+   Up: {'x': 68, 'y': 8, 'dirn': 0, 'st': 0, 'anim': 0} -> {'x': 68, 'y': 8, 'dirn': 0, 'st': 0, 'anim': 0}
+errors: []

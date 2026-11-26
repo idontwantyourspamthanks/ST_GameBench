@@ -1,0 +1,22 @@
+PASS open manager: True
+PASS play NORMAL: True
+PASS open manager again: True
+PASS play CRUMB: True
+PASS CRUMB grid has $91 at (3,1),(4,1),(9,1),(10,1) and $81 below the last two: [145, 145, 145, 145, 129, 129]
+PASS start screenshot crop (sky, skyline, tower, ledge ring, frog) of CRUMB == NORMAL (a crumble ledge is drawn exactly like a ledge): None
+before: frog (x,y,state)=(4, 8, 0) row1 cols2..5=[129, 145, 145, 129]
+t1: cell (3,1) cleared: frog (29, 0, 8) row1 cols2..5=[129, 0, 145, 129]
+t3: frog (4, 0, 10) row1 [129, 145, 145, 129]
+PASS the $91 cell was cleared when the frog walked onto it: True
+frog after: ((4, 0, 10), [129, 145, 145, 129])
+lower platform: cell(9,1)/(10,1) cleared, frog now None
+FAIL cleared and the frog stands on the row 0 ledge (y=4 = row 1 floor... see log) or died: False  (expected True)
+PASS open manager: True
+PASS play CONVR: True
+CONVR: frog x without input over 2 s: [24, 24, 24, 24, 24, 24]
+PASS open manager: True
+PASS play CONVL: True
+CONVL: frog x without input over 2 s: [111, 111, 111, 111, 111, 111]
+PASS open manager: True
+PASS no Address/Bus Error/exception in the Hatari log: []
+FAILS ['cleared and the frog stands on the row 0 ledge (y=4 = row 1 floor... see log) or died']

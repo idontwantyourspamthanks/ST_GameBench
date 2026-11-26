@@ -1,0 +1,23 @@
+cell v1_nob_ste swapA ste 1024 1.62 disks work/fdb/build_v1/disk_a.st work/fdb/build_v1/disk_b.st nob realfdc
+disk-2 prompt True t 67 vbl 3435
+prompt shot /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/fdb/out/v1_nob_ste_prompt.png
+marker $b2700: 000B2700: 4d 53 50 4f 00 00 00 00                          MSPO....
+failed-check key press 1 at about vbl 4480
+failed-check key press 2 at about vbl 5327
+failed-check key press 3 at about vbl 6205
+mode action done: swapA
+t+  10s vbl 7845 $1021/$100e (2, 0)
+t+  24s vbl 8509 $1021/$100e (2, 124)
+t+  37s vbl 9170 $1021/$100e (2, 257)
+race advancing ($100e 312 -> 388, mode 2, prompt gone True): True
+race shot /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/fdb/out/v1_nob_ste_race.png
+marker $b2700: 000B2700: 4d 53 50 4f 00 00 00 00                          MSPO....
+tick clock $b8f00: 000B8F00: 00 00 c0 8a 00 00 c0 a8                          ..ĳè..ĳ¿
+drive B selected (PSG change drive ->1) 5 time(s) in the whole run
+fdc read sectors whole run: per drive {'0': 1339}
+  drive=1 reads whole run: 0; first/last: - | -
+fdc read sectors after the insert: per drive {'0': 103}
+  drive=1 reads after the insert: 0; first/last: - | -
+FDC bursts after the prompt (VBL at 50 Hz = emulated time; one burst = one disk check, the last one also holds the race load):
+  burst 1: vbl 4566 -> 7638  = 61.44 s;  reads drive0 103 drive1 0;  B selected 3x;  forced interrupts (type IV) 29;  type I/II commands 184
+RESULT v1_nob_ste OK

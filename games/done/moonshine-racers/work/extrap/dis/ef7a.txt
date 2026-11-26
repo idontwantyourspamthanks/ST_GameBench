@@ -1,0 +1,19 @@
+sub_00ef7a:
+00ef7a:  2a781008             movea.l  $1008.w, a5
+00ef7e:  4eb90000de1c         jsr      $de1c.l  ; sub_00de1c
+00ef84:  6100023a             bsr.w    $f1c0  ; sub_00f1c0
+00ef88:  6100003c             bsr.w    $efc6  ; sub_00efc6
+00ef8c:  61000286             bsr.w    $f214  ; sub_00f214
+00ef90:  2a781008             movea.l  $1008.w, a5
+00ef94:  61000420             bsr.w    $f3b6  ; sub_00f3b6
+00ef98:  61000496             bsr.w    $f430  ; sub_00f430
+00ef9c:  6100059e             bsr.w    $f53c  ; sub_00f53c
+00efa0:  4eb900011ef0         jsr      $11ef0.l  ; sub_011ef0
+00efa6:  61000964             bsr.w    $f90c  ; sub_00f90c
+00efaa:  61000674             bsr.w    $f620  ; sub_00f620
+00efae:  610007ba             bsr.w    $f76a  ; sub_00f76a
+00efb2:  6100083c             bsr.w    $f7f0  ; sub_00f7f0
+00efb6:  4eb90000de6c         jsr      $de6c.l  ; sub_00de6c
+00efbc:  6100026e             bsr.w    $f22c  ; sub_00f22c
+00efc0:  61000172             bsr.w    $f134  ; sub_00f134
+00efc4:  4e75                 rts      

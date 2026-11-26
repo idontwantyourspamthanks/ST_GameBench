@@ -1,0 +1,271 @@
+fdc type I restore spinup=on verify=off steprate_ms=3 drive=0 tr=0x0 head_track=0x0 VBL=3491 video_cyc=6960 304@13 pc=cf92
+fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x0 head_track=0x0 side=0 drive=0 dmasector=1 addr=0x68000 VBL=3491 video_cyc=12468 180@24 pc=cf92
+fdc read sector addr=0x68000 drive=0 track=0 sect=1 side=0 VBL=3499 video_cyc=159444 212@311 pc=cc64
+fdc type II read sector with multi sector=0x2 track=0x0 side=0 drive=0 addr=0x68200 VBL=3500 video_cyc=131792 208@257 pc=cfa8
+fdc type IV force int 0xd0 irq=0 index=0 VBL=3500 video_cyc=132016 432@257 pc=cf92
+fdc type I restore spinup=off verify=off steprate_ms=3 drive=1 tr=0x0 head_track=0x0 VBL=3500 video_cyc=137048 344@267 pc=cf92
+fdc type I restore spinup=on verify=off steprate_ms=3 drive=0 tr=0x0 head_track=0x0 VBL=4314 video_cyc=6976 320@13 pc=cf92
+fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x0 head_track=0x0 side=0 drive=0 dmasector=1 addr=0x68000 VBL=4314 video_cyc=12484 196@24 pc=cf92
+fdc read sector addr=0x68000 drive=0 track=0 sect=1 side=0 VBL=4320 video_cyc=109016 472@212 pc=cc5a
+fdc type II read sector with multi sector=0x2 track=0x0 side=0 drive=0 addr=0x68200 VBL=4321 video_cyc=81364 468@158 pc=cfa8
+fdc type IV force int 0xd0 irq=0 index=0 VBL=4321 video_cyc=81628 220@159 pc=cf92
+fdc type I restore spinup=off verify=off steprate_ms=3 drive=1 tr=0x0 head_track=0x0 VBL=4321 video_cyc=86660 132@169 pc=cf92
+fdc type I restore spinup=on verify=off steprate_ms=3 drive=0 tr=0x0 head_track=0x0 VBL=5137 video_cyc=6968 312@13 pc=cf92
+fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x0 head_track=0x0 side=0 drive=0 dmasector=1 addr=0x68000 VBL=5137 video_cyc=12476 188@24 pc=cf92
+fdc read sector addr=0x68000 drive=0 track=0 sect=1 side=0 VBL=5140 video_cyc=112328 200@219 pc=cc52
+fdc type II read sector with multi sector=0x2 track=0x0 side=0 drive=0 addr=0x68200 VBL=5141 video_cyc=84688 208@165 pc=cfa8
+fdc type IV force int 0xd0 irq=0 index=0 VBL=5141 video_cyc=84972 492@165 pc=cf92
+fdc type I restore spinup=off verify=off steprate_ms=3 drive=1 tr=0x0 head_track=0x0 VBL=5141 video_cyc=90004 404@175 pc=cf92
+fdc enable drive=1 on
+fdc set nbr heads drive=1 2
+fdc type I restore spinup=on verify=off steprate_ms=3 drive=0 tr=0x0 head_track=0x0 VBL=6064 video_cyc=6976 320@13 pc=cf92
+fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x0 head_track=0x0 side=0 drive=0 dmasector=1 addr=0x68000 VBL=6064 video_cyc=12484 196@24 pc=cf92
+fdc read sector addr=0x68000 drive=0 track=0 sect=1 side=0 VBL=6066 video_cyc=53976 216@105 pc=cc70
+fdc type II read sector with multi sector=0x2 track=0x0 side=0 drive=0 addr=0x68200 VBL=6067 video_cyc=26332 220@51 pc=cfa6
+fdc type IV force int 0xd0 irq=0 index=0 VBL=6067 video_cyc=26644 20@52 pc=cf92
+fdc type I seek dest_track=0xc spinup=on verify=off steprate_ms=3 drive=0 tr=0x0 head_track=0x0 VBL=6067 video_cyc=35888 48@70 pc=cf92
+fdc type II read sector sector=0x5 multi=on spinup=on settle=off tr=0xc head_track=0xc side=0 drive=0 dmasector=6 addr=0x70000 VBL=6069 video_cyc=8864 160@17 pc=cf92
+fdc read sector addr=0x70000 drive=0 track=12 sect=5 side=0 VBL=6077 video_cyc=16820 436@32 pc=cc5e
+fdc type II read sector with multi sector=0x6 track=0xc side=0 drive=0 addr=0x70200 VBL=6077 video_cyc=149424 432@291 pc=cc58
+fdc read sector addr=0x70200 drive=0 track=12 sect=6 side=0 VBL=6078 video_cyc=13760 448@26 pc=cc64
+fdc type II read sector with multi sector=0x7 track=0xc side=0 drive=0 addr=0x70400 VBL=6078 video_cyc=146352 432@285 pc=cc5a
+fdc read sector addr=0x70400 drive=0 track=12 sect=7 side=0 VBL=6079 video_cyc=10692 452@20 pc=cc64
+fdc type II read sector with multi sector=0x8 track=0xc side=0 drive=0 addr=0x70600 VBL=6079 video_cyc=143292 444@279 pc=cc5c
+fdc read sector addr=0x70600 drive=0 track=12 sect=8 side=0 VBL=6080 video_cyc=7612 444@14 pc=cc64
+fdc type II read sector with multi sector=0x9 track=0xc side=0 drive=0 addr=0x70800 VBL=6080 video_cyc=140220 444@273 pc=cc5e
+fdc read sector addr=0x70800 drive=0 track=12 sect=9 side=0 VBL=6081 video_cyc=4552 456@8 pc=cc6a
+fdc type II read sector with multi sector=0xa track=0xc side=0 drive=0 addr=0x70a00 VBL=6081 video_cyc=137160 456@267 pc=cc64
+fdc read sector addr=0x70a00 drive=0 track=12 sect=10 side=0 VBL=6082 video_cyc=1468 444@2 pc=8c5a
+fdc type II read sector with multi sector=0xb track=0xc side=0 drive=0 addr=0x70c00 VBL=6082 video_cyc=134076 444@261 pc=cfa8
+fdc type IV force int 0xd0 irq=0 index=0 VBL=6082 video_cyc=134420 276@262 pc=cf92
+fdc type I seek dest_track=0xd spinup=on verify=off steprate_ms=3 drive=0 tr=0xc head_track=0xc VBL=6082 video_cyc=140620 332@274 pc=cf92
+fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0xd head_track=0xd side=0 drive=0 dmasector=10 addr=0x70c00 VBL=6083 video_cyc=9832 104@19 pc=cf92
+fdc read sector addr=0x70c00 drive=0 track=13 sect=1 side=0 VBL=6083 video_cyc=30856 136@60 pc=cc64
+fdc type II read sector with multi sector=0x2 track=0xd side=0 drive=0 addr=0x70e00 VBL=6084 video_cyc=3192 120@6 pc=cc5a
+fdc read sector addr=0x70e00 drive=0 track=13 sect=2 side=0 VBL=6084 video_cyc=27780 132@54 pc=cc64
+fdc type II read sector with multi sector=0x3 track=0xd side=0 drive=0 addr=0x71000 VBL=6085 video_cyc=132 132@0 pc=d11e
+fdc read sector addr=0x71000 drive=0 track=13 sect=3 side=0 VBL=6085 video_cyc=24700 124@48 pc=cc64
+fdc type II read sector with multi sector=0x4 track=0xd side=0 drive=0 addr=0x71200 VBL=6085 video_cyc=157308 124@307 pc=cc5e
+fdc read sector addr=0x71200 drive=0 track=13 sect=4 side=0 VBL=6086 video_cyc=21636 132@42 pc=cc6a
+fdc type II read sector with multi sector=0x5 track=0xd side=0 drive=0 addr=0x71400 VBL=6086 video_cyc=154244 132@301 pc=cc64
+fdc read sector addr=0x71400 drive=0 track=13 sect=5 side=0 VBL=6087 video_cyc=18560 128@36 pc=cc6a
+fdc type II read sector with multi sector=0x6 track=0xd side=0 drive=0 addr=0x71600 VBL=6087 video_cyc=151168 128@295 pc=cc64
+fdc read sector addr=0x71600 drive=0 track=13 sect=6 side=0 VBL=6088 video_cyc=15480 120@30 pc=cc6a
+fdc type II read sector with multi sector=0x7 track=0xd side=0 drive=0 addr=0x71800 VBL=6088 video_cyc=148088 120@289 pc=cc64
+fdc read sector addr=0x71800 drive=0 track=13 sect=7 side=0 VBL=6089 video_cyc=12416 128@24 pc=cc70
+fdc type II read sector with multi sector=0x8 track=0xd side=0 drive=0 addr=0x71a00 VBL=6089 video_cyc=145024 128@283 pc=cc6a
+fdc read sector addr=0x71a00 drive=0 track=13 sect=8 side=0 VBL=6090 video_cyc=9350 134@18 pc=cc74
+fdc type II read sector with multi sector=0x9 track=0xd side=0 drive=0 addr=0x71c00 VBL=6090 video_cyc=141960 136@277 pc=cc70
+fdc read sector addr=0x71c00 drive=0 track=13 sect=9 side=0 VBL=6091 video_cyc=6270 126@12 pc=cc74
+fdc type II read sector with multi sector=0xa track=0xd side=0 drive=0 addr=0x71e00 VBL=6091 video_cyc=138880 128@271 pc=cc70
+fdc read sector addr=0x71e00 drive=0 track=13 sect=10 side=0 VBL=6092 video_cyc=3200 128@6 pc=cc52
+fdc type II read sector with multi sector=0xb track=0xd side=0 drive=0 addr=0x72000 VBL=6092 video_cyc=135808 128@265 pc=cfa6
+fdc type IV force int 0xd0 irq=0 index=0 VBL=6092 video_cyc=136100 420@265 pc=cf92
+fdc type I seek dest_track=0xe spinup=on verify=off steprate_ms=3 drive=0 tr=0xd head_track=0xd VBL=6092 video_cyc=142300 476@277 pc=cf92
+fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0xe head_track=0xe side=0 drive=0 dmasector=10 addr=0x72000 VBL=6093 video_cyc=11512 248@22 pc=cf92
+fdc read sector addr=0x72000 drive=0 track=14 sect=1 side=0 VBL=6093 video_cyc=32536 280@63 pc=cc64
+fdc type II read sector with multi sector=0x2 track=0xe side=0 drive=0 addr=0x72200 VBL=6094 video_cyc=4872 264@9 pc=cc5c
+fdc read sector addr=0x72200 drive=0 track=14 sect=2 side=0 VBL=6094 video_cyc=29452 268@57 pc=cc64
+fdc type II read sector with multi sector=0x3 track=0xe side=0 drive=0 addr=0x72400 VBL=6095 video_cyc=1812 276@3 pc=8dc0
+fdc read sector addr=0x72400 drive=0 track=14 sect=3 side=0 VBL=6095 video_cyc=26392 280@51 pc=cc6a
+fdc type II read sector with multi sector=0x4 track=0xe side=0 drive=0 addr=0x72600 VBL=6095 video_cyc=159000 280@310 pc=cc64
+fdc read sector addr=0x72600 drive=0 track=14 sect=4 side=0 VBL=6096 video_cyc=23308 268@45 pc=cc6a
+fdc type II read sector with multi sector=0x5 track=0xe side=0 drive=0 addr=0x72800 VBL=6096 video_cyc=155916 268@304 pc=cc64
+fdc read sector addr=0x72800 drive=0 track=14 sect=5 side=0 VBL=6097 video_cyc=20248 280@39 pc=cc70
+fdc type II read sector with multi sector=0x6 track=0xe side=0 drive=0 addr=0x72a00 VBL=6097 video_cyc=152856 280@298 pc=cc6a
+fdc read sector addr=0x72a00 drive=0 track=14 sect=6 side=0 VBL=6098 video_cyc=17168 272@33 pc=cc70
+fdc type II read sector with multi sector=0x7 track=0xe side=0 drive=0 addr=0x72c00 VBL=6098 video_cyc=149776 272@292 pc=cc6a
+fdc read sector addr=0x72c00 drive=0 track=14 sect=7 side=0 VBL=6099 video_cyc=14088 264@27 pc=cc70
+fdc type II read sector with multi sector=0x8 track=0xe side=0 drive=0 addr=0x72e00 VBL=6099 video_cyc=146696 264@286 pc=cc6a
+fdc read sector addr=0x72e00 drive=0 track=14 sect=8 side=0 VBL=6100 video_cyc=11030 278@21 pc=cc74
+fdc type II read sector with multi sector=0x9 track=0xe side=0 drive=0 addr=0x73000 VBL=6100 video_cyc=143640 280@280 pc=cc70
+fdc read sector addr=0x73000 drive=0 track=14 sect=9 side=0 VBL=6101 video_cyc=7946 266@15 pc=cc74
+fdc type II read sector with multi sector=0xa track=0xe side=0 drive=0 addr=0x73200 VBL=6101 video_cyc=140556 268@274 pc=cc70
+fdc read sector addr=0x73200 drive=0 track=14 sect=10 side=0 VBL=6102 video_cyc=4880 272@9 pc=cc52
+fdc type II read sector with multi sector=0xb track=0xe side=0 drive=0 addr=0x73400 VBL=6102 video_cyc=137488 272@268 pc=cfa6
+fdc type IV force int 0xd0 irq=0 index=0 VBL=6102 video_cyc=137780 52@269 pc=cf92
+fdc type I seek dest_track=0xf spinup=on verify=off steprate_ms=3 drive=0 tr=0xe head_track=0xe VBL=6102 video_cyc=143988 116@281 pc=cf92
+fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0xf head_track=0xf side=0 drive=0 dmasector=5 addr=0x73400 VBL=6103 video_cyc=13200 400@25 pc=cf92
+fdc read sector addr=0x73400 drive=0 track=15 sect=1 side=0 VBL=6103 video_cyc=34224 432@66 pc=cc64
+fdc type II read sector with multi sector=0x2 track=0xf side=0 drive=0 addr=0x73600 VBL=6104 video_cyc=6560 416@12 pc=cc5c
+fdc read sector addr=0x73600 drive=0 track=15 sect=2 side=0 VBL=6104 video_cyc=31140 420@60 pc=cc64
+fdc type II read sector with multi sector=0x3 track=0xf side=0 drive=0 addr=0x73800 VBL=6105 video_cyc=3504 432@6 pc=cc64
+fdc read sector addr=0x73800 drive=0 track=15 sect=3 side=0 VBL=6105 video_cyc=28076 428@54 pc=cc6a
+fdc type II read sector with multi sector=0x4 track=0xf side=0 drive=0 addr=0x73a00 VBL=6106 video_cyc=416 416@0 pc=b8020
+fdc read sector addr=0x73a00 drive=0 track=15 sect=4 side=0 VBL=6106 video_cyc=24992 416@48 pc=cc6a
+fdc type II read sector with multi sector=0x5 track=0xf side=0 drive=0 addr=0x73c00 VBL=6106 video_cyc=157600 416@307 pc=cc64
+fdc read sector addr=0x73c00 drive=0 track=15 sect=5 side=0 VBL=6107 video_cyc=21944 440@42 pc=cc70
+fdc type II read sector with multi sector=0x6 track=0xf side=0 drive=0 addr=0x73e00 VBL=6107 video_cyc=154540 428@301 pc=cfa6
+fdc type IV force int 0xd0 irq=0 index=0 VBL=6107 video_cyc=154872 248@302 pc=cf92
+fdc type I seek dest_track=0xf spinup=on verify=off steprate_ms=3 drive=0 tr=0xf head_track=0xf VBL=6182 video_cyc=108156 124@211 pc=cf92
+fdc type II read sector sector=0x6 multi=on spinup=on settle=off tr=0xf head_track=0xf side=0 drive=0 dmasector=1 addr=0x57890 VBL=6182 video_cyc=113636 484@221 pc=cf92
+fdc read sector addr=0x57890 drive=0 track=15 sect=6 side=0 VBL=6183 video_cyc=77816 504@151 pc=cc6a
+fdc type II read sector with multi sector=0x7 track=0xf side=0 drive=0 addr=0x57a90 VBL=6184 video_cyc=50180 4@98 pc=cfa8
+fdc type IV force int 0xd0 irq=0 index=0 VBL=6184 video_cyc=50464 288@98 pc=cf92
+fdc type I seek dest_track=0xf spinup=on verify=off steprate_ms=3 drive=0 tr=0xf head_track=0xf VBL=6184 video_cyc=59480 88@116 pc=cf92
+fdc type II read sector sector=0x7 multi=on spinup=on settle=off tr=0xf head_track=0xf side=0 drive=0 dmasector=4 addr=0x57ad0 VBL=6184 video_cyc=64960 448@126 pc=cf92
+fdc read sector addr=0x57ad0 drive=0 track=15 sect=7 side=0 VBL=6188 video_cyc=67804 220@132 pc=cc52
+fdc type II read sector with multi sector=0x8 track=0xf side=0 drive=0 addr=0x57cd0 VBL=6189 video_cyc=40172 236@78 pc=cc6a
+fdc read sector addr=0x57cd0 drive=0 track=15 sect=8 side=0 VBL=6189 video_cyc=64744 232@126 pc=cc70
+fdc type II read sector with multi sector=0x9 track=0xf side=0 drive=0 addr=0x57ed0 VBL=6190 video_cyc=37084 220@72 pc=cc5a
+fdc read sector addr=0x57ed0 drive=0 track=15 sect=9 side=0 VBL=6190 video_cyc=61672 232@120 pc=cc64
+fdc type II read sector with multi sector=0xa track=0xf side=0 drive=0 addr=0x580d0 VBL=6191 video_cyc=34016 224@66 pc=cc5c
+fdc read sector addr=0x580d0 drive=0 track=15 sect=10 side=0 VBL=6191 video_cyc=58596 228@114 pc=cc64
+fdc type II read sector with multi sector=0xb track=0xf side=0 drive=0 addr=0x582d0 VBL=6192 video_cyc=30940 220@60 pc=cfa6
+fdc type IV force int 0xd0 irq=0 index=0 VBL=6192 video_cyc=31232 0@61 pc=cf92
+fdc type I seek dest_track=0x10 spinup=on verify=off steprate_ms=3 drive=0 tr=0xf head_track=0xf VBL=6192 video_cyc=37440 64@73 pc=cf92
+fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x10 head_track=0x10 side=0 drive=0 dmasector=3 addr=0x582d0 VBL=6192 video_cyc=66920 360@130 pc=cf92
+fdc read sector addr=0x582d0 drive=0 track=16 sect=1 side=0 VBL=6192 video_cyc=87944 392@171 pc=cc64
+fdc type II read sector with multi sector=0x2 track=0x10 side=0 drive=0 addr=0x584d0 VBL=6193 video_cyc=60284 380@117 pc=cc5a
+fdc read sector addr=0x584d0 drive=0 track=16 sect=2 side=0 VBL=6193 video_cyc=84872 392@165 pc=cc64
+fdc type II read sector with multi sector=0x3 track=0x10 side=0 drive=0 addr=0x586d0 VBL=6194 video_cyc=57208 376@111 pc=cc5a
+fdc read sector addr=0x586d0 drive=0 track=16 sect=3 side=0 VBL=6194 video_cyc=81796 388@159 pc=cc64
+fdc type II read sector with multi sector=0x4 track=0x10 side=0 drive=0 addr=0x588d0 VBL=6195 video_cyc=54140 380@105 pc=cfa6
+fdc type IV force int 0xd0 irq=0 index=0 VBL=6195 video_cyc=54352 80@106 pc=cf92
+fdc type I seek dest_track=0x10 spinup=on verify=off steprate_ms=3 drive=0 tr=0x10 head_track=0x10 VBL=6195 video_cyc=63372 396@123 pc=cf92
+fdc type II read sector sector=0x4 multi=on spinup=on settle=off tr=0x10 head_track=0x10 side=0 drive=0 dmasector=7 addr=0x58c00 VBL=6195 video_cyc=68852 244@134 pc=cf92
+fdc read sector addr=0x58c00 drive=0 track=16 sect=4 side=0 VBL=6198 video_cyc=106252 268@207 pc=cc6a
+fdc type II read sector with multi sector=0x5 track=0x10 side=0 drive=0 addr=0x58e00 VBL=6199 video_cyc=78618 282@153 pc=cc74
+fdc read sector addr=0x58e00 drive=0 track=16 sect=5 side=0 VBL=6199 video_cyc=103180 268@201 pc=cc52
+fdc type II read sector with multi sector=0x6 track=0x10 side=0 drive=0 addr=0x59000 VBL=6200 video_cyc=75536 272@147 pc=cc5c
+fdc read sector addr=0x59000 drive=0 track=16 sect=6 side=0 VBL=6200 video_cyc=100116 276@195 pc=cc64
+fdc type II read sector with multi sector=0x7 track=0x10 side=0 drive=0 addr=0x59200 VBL=6201 video_cyc=72468 276@141 pc=cc52
+fdc read sector addr=0x59200 drive=0 track=16 sect=7 side=0 VBL=6201 video_cyc=97040 272@189 pc=cc58
+fdc type II read sector with multi sector=0x8 track=0x10 side=0 drive=0 addr=0x59400 VBL=6202 video_cyc=69408 288@135 pc=cc70
+fdc read sector addr=0x59400 drive=0 track=16 sect=8 side=0 VBL=6202 video_cyc=93978 282@183 pc=cc74
+fdc type II read sector with multi sector=0x9 track=0x10 side=0 drive=0 addr=0x59600 VBL=6203 video_cyc=66336 288@129 pc=cc70
+fdc read sector addr=0x59600 drive=0 track=16 sect=9 side=0 VBL=6203 video_cyc=90906 282@177 pc=cc74
+fdc type II read sector with multi sector=0xa track=0x10 side=0 drive=0 addr=0x59800 VBL=6204 video_cyc=63252 276@123 pc=cc64
+fdc read sector addr=0x59800 drive=0 track=16 sect=10 side=0 VBL=6204 video_cyc=87824 272@171 pc=cc6a
+fdc type II read sector with multi sector=0xb track=0x10 side=0 drive=0 addr=0x59a00 VBL=6205 video_cyc=60184 280@117 pc=cfa6
+fdc type IV force int 0xd0 irq=0 index=0 VBL=6205 video_cyc=60516 100@118 pc=cf92
+fdc type I seek dest_track=0x11 spinup=on verify=off steprate_ms=3 drive=0 tr=0x10 head_track=0x10 VBL=6205 video_cyc=66724 164@130 pc=cf92
+fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x11 head_track=0x11 side=0 drive=0 dmasector=5 addr=0x59a00 VBL=6205 video_cyc=96204 460@187 pc=cf92
+fdc read sector addr=0x59a00 drive=0 track=17 sect=1 side=0 VBL=6205 video_cyc=116964 228@228 pc=cc64
+fdc type II read sector with multi sector=0x2 track=0x11 side=0 drive=0 addr=0x59c00 VBL=6206 video_cyc=89312 224@174 pc=cc5e
+fdc read sector addr=0x59c00 drive=0 track=17 sect=2 side=0 VBL=6206 video_cyc=113884 220@222 pc=cc64
+fdc type II read sector with multi sector=0x3 track=0x11 side=0 drive=0 addr=0x59e00 VBL=6207 video_cyc=86248 232@168 pc=cc70
+fdc read sector addr=0x59e00 drive=0 track=17 sect=3 side=0 VBL=6207 video_cyc=110818 226@216 pc=cc74
+fdc type II read sector with multi sector=0x4 track=0x11 side=0 drive=0 addr=0x5a000 VBL=6208 video_cyc=83164 220@162 pc=cc5e
+fdc read sector addr=0x5a000 drive=0 track=17 sect=4 side=0 VBL=6208 video_cyc=107756 236@210 pc=cc6a
+fdc type II read sector with multi sector=0x5 track=0x11 side=0 drive=0 addr=0x5a200 VBL=6209 video_cyc=80092 220@156 pc=cc70
+fdc read sector addr=0x5a200 drive=0 track=17 sect=5 side=0 VBL=6209 video_cyc=104672 224@204 pc=cc52
+fdc type II read sector with multi sector=0x6 track=0x11 side=0 drive=0 addr=0x5a400 VBL=6210 video_cyc=77024 224@150 pc=cfa8
+fdc type IV force int 0xd0 irq=0 index=0 VBL=6210 video_cyc=77268 468@150 pc=cf92
+fdc type I seek dest_track=0x11 spinup=on verify=off steprate_ms=3 drive=0 tr=0x11 head_track=0x11 VBL=6210 video_cyc=86288 272@168 pc=cf92
+fdc type II read sector sector=0x6 multi=on spinup=on settle=off tr=0x11 head_track=0x11 side=0 drive=0 dmasector=5 addr=0x5a400 VBL=6210 video_cyc=91768 120@179 pc=cf92
+fdc read sector addr=0x5a400 drive=0 track=17 sect=6 side=0 VBL=6220 video_cyc=85652 148@167 pc=cc64
+fdc type II read sector with multi sector=0x7 track=0x11 side=0 drive=0 addr=0x5a600 VBL=6221 video_cyc=58008 152@113 pc=cc70
+fdc read sector addr=0x5a600 drive=0 track=17 sect=7 side=0 VBL=6221 video_cyc=82588 156@161 pc=cc52
+fdc type II read sector with multi sector=0x8 track=0x11 side=0 drive=0 addr=0x5a800 VBL=6222 video_cyc=54936 152@107 pc=cc58
+fdc read sector addr=0x5a800 drive=0 track=17 sect=8 side=0 VBL=6222 video_cyc=79512 152@155 pc=cc5e
+fdc type II read sector with multi sector=0x9 track=0x11 side=0 drive=0 addr=0x5aa00 VBL=6223 video_cyc=51860 148@101 pc=cc64
+fdc read sector addr=0x5aa00 drive=0 track=17 sect=9 side=0 VBL=6223 video_cyc=76452 164@149 pc=cc70
+fdc type II read sector with multi sector=0xa track=0x11 side=0 drive=0 addr=0x5ac00 VBL=6224 video_cyc=48798 158@95 pc=cc74
+fdc read sector addr=0x5ac00 drive=0 track=17 sect=10 side=0 VBL=6224 video_cyc=73360 144@143 pc=cc52
+fdc type II read sector with multi sector=0xb track=0x11 side=0 drive=0 addr=0x5ae00 VBL=6225 video_cyc=45720 152@89 pc=cfa8
+fdc type IV force int 0xd0 irq=0 index=0 VBL=6225 video_cyc=46024 456@89 pc=cf92
+fdc type I seek dest_track=0x12 spinup=on verify=off steprate_ms=3 drive=0 tr=0x11 head_track=0x11 VBL=6225 video_cyc=52224 0@102 pc=cf92
+fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x12 head_track=0x12 side=0 drive=0 dmasector=10 addr=0x5ae00 VBL=6225 video_cyc=81704 296@159 pc=cf92
+fdc read sector addr=0x5ae00 drive=0 track=18 sect=1 side=0 VBL=6225 video_cyc=102728 328@200 pc=cc64
+fdc type II read sector with multi sector=0x2 track=0x12 side=0 drive=0 addr=0x5b000 VBL=6226 video_cyc=75074 322@146 pc=cc74
+fdc read sector addr=0x5b000 drive=0 track=18 sect=2 side=0 VBL=6226 video_cyc=99636 308@194 pc=cc52
+fdc type II read sector with multi sector=0x3 track=0x12 side=0 drive=0 addr=0x5b200 VBL=6227 video_cyc=72006 326@140 pc=cc74
+fdc read sector addr=0x5b200 drive=0 track=18 sect=3 side=0 VBL=6227 video_cyc=96568 312@188 pc=cc52
+fdc type II read sector with multi sector=0x4 track=0x12 side=0 drive=0 addr=0x5b400 VBL=6228 video_cyc=68920 312@134 pc=cc70
+fdc read sector addr=0x5b400 drive=0 track=18 sect=4 side=0 VBL=6228 video_cyc=93500 316@182 pc=cc52
+fdc type II read sector with multi sector=0x5 track=0x12 side=0 drive=0 addr=0x5b600 VBL=6229 video_cyc=65862 326@128 pc=cc74
+fdc read sector addr=0x5b600 drive=0 track=18 sect=5 side=0 VBL=6229 video_cyc=90424 312@176 pc=cc52
+fdc type II read sector with multi sector=0x6 track=0x12 side=0 drive=0 addr=0x5b800 VBL=6230 video_cyc=62790 326@122 pc=cc74
+fdc read sector addr=0x5b800 drive=0 track=18 sect=6 side=0 VBL=6230 video_cyc=87352 312@170 pc=cc52
+fdc type II read sector with multi sector=0x7 track=0x12 side=0 drive=0 addr=0x5ba00 VBL=6231 video_cyc=59708 316@116 pc=cc5c
+fdc read sector addr=0x5ba00 drive=0 track=18 sect=7 side=0 VBL=6231 video_cyc=84288 320@164 pc=cc64
+fdc type II read sector with multi sector=0x8 track=0x12 side=0 drive=0 addr=0x5bc00 VBL=6232 video_cyc=56634 314@110 pc=cc74
+fdc read sector addr=0x5bc00 drive=0 track=18 sect=8 side=0 VBL=6232 video_cyc=81196 300@158 pc=cc52
+fdc type II read sector with multi sector=0x9 track=0x12 side=0 drive=0 addr=0x5be00 VBL=6233 video_cyc=53560 312@104 pc=cc5e
+fdc read sector addr=0x5be00 drive=0 track=18 sect=9 side=0 VBL=6233 video_cyc=78152 328@152 pc=cc6a
+fdc type II read sector with multi sector=0xa track=0x12 side=0 drive=0 addr=0x5c000 VBL=6234 video_cyc=50496 320@98 pc=cc70
+fdc read sector addr=0x5c000 drive=0 track=18 sect=10 side=0 VBL=6234 video_cyc=75066 314@146 pc=cc74
+fdc type II read sector with multi sector=0xb track=0x12 side=0 drive=0 addr=0x5c200 VBL=6235 video_cyc=47424 320@92 pc=cfa6
+fdc type IV force int 0xd0 irq=0 index=0 VBL=6235 video_cyc=47676 60@93 pc=cf92
+fdc type I seek dest_track=0x13 spinup=on verify=off steprate_ms=3 drive=0 tr=0x12 head_track=0x12 VBL=6235 video_cyc=53876 116@105 pc=cf92
+fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x13 head_track=0x13 side=0 drive=0 dmasector=10 addr=0x5c200 VBL=6235 video_cyc=83356 412@162 pc=cf92
+fdc read sector addr=0x5c200 drive=0 track=19 sect=1 side=0 VBL=6235 video_cyc=104380 444@203 pc=cc64
+fdc type II read sector with multi sector=0x2 track=0x13 side=0 drive=0 addr=0x5c400 VBL=6236 video_cyc=76724 436@149 pc=cc6a
+fdc read sector addr=0x5c400 drive=0 track=19 sect=2 side=0 VBL=6236 video_cyc=101296 432@197 pc=cc70
+fdc type II read sector with multi sector=0x3 track=0x13 side=0 drive=0 addr=0x5c600 VBL=6237 video_cyc=73644 428@143 pc=cc64
+fdc read sector addr=0x5c600 drive=0 track=19 sect=3 side=0 VBL=6237 video_cyc=98236 444@191 pc=cc70
+fdc type II read sector with multi sector=0x4 track=0x13 side=0 drive=0 addr=0x5c800 VBL=6238 video_cyc=70560 416@137 pc=cc52
+fdc read sector addr=0x5c800 drive=0 track=19 sect=4 side=0 VBL=6238 video_cyc=95148 428@185 pc=cc5c
+fdc type II read sector with multi sector=0x5 track=0x13 side=0 drive=0 addr=0x5ca00 VBL=6239 video_cyc=67492 420@131 pc=cc52
+fdc read sector addr=0x5ca00 drive=0 track=19 sect=5 side=0 VBL=6239 video_cyc=92080 432@179 pc=cc5c
+fdc type II read sector with multi sector=0x6 track=0x13 side=0 drive=0 addr=0x5cc00 VBL=6240 video_cyc=64416 416@125 pc=cc52
+fdc read sector addr=0x5cc00 drive=0 track=19 sect=6 side=0 VBL=6240 video_cyc=89004 428@173 pc=cc5c
+fdc type II read sector with multi sector=0x7 track=0x13 side=0 drive=0 addr=0x5ce00 VBL=6241 video_cyc=61360 432@119 pc=cc58
+fdc read sector addr=0x5ce00 drive=0 track=19 sect=7 side=0 VBL=6241 video_cyc=85936 432@167 pc=cc5e
+fdc type II read sector with multi sector=0x8 track=0x13 side=0 drive=0 addr=0x5d000 VBL=6242 video_cyc=58288 432@113 pc=cc58
+fdc read sector addr=0x5d000 drive=0 track=19 sect=8 side=0 VBL=6242 video_cyc=82864 432@161 pc=cc5e
+fdc type II read sector with multi sector=0x9 track=0x13 side=0 drive=0 addr=0x5d200 VBL=6243 video_cyc=55224 440@107 pc=cc6a
+fdc read sector addr=0x5d200 drive=0 track=19 sect=9 side=0 VBL=6243 video_cyc=79796 436@155 pc=cc70
+fdc type II read sector with multi sector=0xa track=0x13 side=0 drive=0 addr=0x5d400 VBL=6244 video_cyc=52140 428@101 pc=cc5a
+fdc read sector addr=0x5d400 drive=0 track=19 sect=10 side=0 VBL=6244 video_cyc=76728 440@149 pc=cc64
+fdc type II read sector with multi sector=0xb track=0x13 side=0 drive=0 addr=0x5d600 VBL=6245 video_cyc=49076 436@95 pc=cfa6
+fdc type IV force int 0xd0 irq=0 index=0 VBL=6245 video_cyc=49388 236@96 pc=cf92
+fdc type I seek dest_track=0x14 spinup=on verify=off steprate_ms=3 drive=0 tr=0x13 head_track=0x13 VBL=6245 video_cyc=55596 300@108 pc=cf92
+fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x14 head_track=0x14 side=0 drive=0 dmasector=8 addr=0x5d600 VBL=6245 video_cyc=85076 84@166 pc=cf92
+fdc read sector addr=0x5d600 drive=0 track=20 sect=1 side=0 VBL=6245 video_cyc=106100 116@207 pc=cc64
+fdc type II read sector with multi sector=0x2 track=0x14 side=0 drive=0 addr=0x5d800 VBL=6246 video_cyc=78452 116@153 pc=cc6a
+fdc read sector addr=0x5d800 drive=0 track=20 sect=2 side=0 VBL=6246 video_cyc=103024 112@201 pc=cc70
+fdc type II read sector with multi sector=0x3 track=0x14 side=0 drive=0 addr=0x5da00 VBL=6247 video_cyc=75376 112@147 pc=cc52
+fdc read sector addr=0x5da00 drive=0 track=20 sect=3 side=0 VBL=6247 video_cyc=99956 116@195 pc=cc5a
+fdc type II read sector with multi sector=0x4 track=0x14 side=0 drive=0 addr=0x5dc00 VBL=6248 video_cyc=72316 124@141 pc=cc64
+fdc read sector addr=0x5dc00 drive=0 track=20 sect=4 side=0 VBL=6248 video_cyc=96888 120@189 pc=cc6a
+fdc type II read sector with multi sector=0x5 track=0x14 side=0 drive=0 addr=0x5de00 VBL=6249 video_cyc=69236 116@135 pc=cc5e
+fdc read sector addr=0x5de00 drive=0 track=20 sect=5 side=0 VBL=6249 video_cyc=93808 112@183 pc=cc64
+fdc type II read sector with multi sector=0x6 track=0x14 side=0 drive=0 addr=0x5e000 VBL=6250 video_cyc=66162 114@129 pc=cc74
+fdc read sector addr=0x5e000 drive=0 track=20 sect=6 side=0 VBL=6250 video_cyc=90724 100@177 pc=cc52
+fdc type II read sector with multi sector=0x7 track=0x14 side=0 drive=0 addr=0x5e200 VBL=6251 video_cyc=63094 118@123 pc=cc74
+fdc read sector addr=0x5e200 drive=0 track=20 sect=7 side=0 VBL=6251 video_cyc=87656 104@171 pc=cc52
+fdc type II read sector with multi sector=0x8 track=0x14 side=0 drive=0 addr=0x5e400 VBL=6252 video_cyc=60018 114@117 pc=cc74
+fdc read sector addr=0x5e400 drive=0 track=20 sect=8 side=0 VBL=6252 video_cyc=84580 100@165 pc=cc52
+fdc type II read sector with multi sector=0x9 track=0x14 side=0 drive=0 addr=0x5e600 VBL=6253 video_cyc=56952 120@111 pc=cfa6
+fdc type IV force int 0xd0 irq=0 index=0 VBL=6253 video_cyc=57224 392@111 pc=cf92
+fdc type I seek dest_track=0x14 spinup=on verify=off steprate_ms=3 drive=0 tr=0x14 head_track=0x14 VBL=6289 video_cyc=81676 268@159 pc=cf92
+fdc type II read sector sector=0x9 multi=on spinup=on settle=off tr=0x14 head_track=0x14 side=0 drive=0 dmasector=2 addr=0x60800 VBL=6289 video_cyc=87156 116@170 pc=cf92
+fdc read sector addr=0x60800 drive=0 track=20 sect=9 side=0 VBL=6293 video_cyc=88712 136@173 pc=cc6a
+fdc type II read sector with multi sector=0xa track=0x14 side=0 drive=0 addr=0x60a00 VBL=6294 video_cyc=61074 146@119 pc=cc74
+fdc read sector addr=0x60a00 drive=0 track=20 sect=10 side=0 VBL=6294 video_cyc=85636 132@167 pc=cc52
+fdc type II read sector with multi sector=0xb track=0x14 side=0 drive=0 addr=0x60c00 VBL=6295 video_cyc=57996 140@113 pc=cfa6
+fdc type IV force int 0xd0 irq=0 index=0 VBL=6295 video_cyc=58228 372@113 pc=cf92
+fdc type I seek dest_track=0x15 spinup=on verify=off steprate_ms=3 drive=0 tr=0x14 head_track=0x14 VBL=6295 video_cyc=64428 428@125 pc=cf92
+fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x15 head_track=0x15 side=0 drive=0 dmasector=10 addr=0x60c00 VBL=6295 video_cyc=93908 212@183 pc=cf92
+fdc read sector addr=0x60c00 drive=0 track=21 sect=1 side=0 VBL=6295 video_cyc=115176 488@224 pc=cc5e
+fdc type II read sector with multi sector=0x2 track=0x15 side=0 drive=0 addr=0x60e00 VBL=6296 video_cyc=87536 496@170 pc=cc6a
+fdc read sector addr=0x60e00 drive=0 track=21 sect=2 side=0 VBL=6296 video_cyc=111844 228@218 pc=cc70
+fdc type II read sector with multi sector=0x3 track=0x15 side=0 drive=0 addr=0x61000 VBL=6297 video_cyc=84212 244@164 pc=cc6a
+fdc read sector addr=0x61000 drive=0 track=21 sect=3 side=0 VBL=6297 video_cyc=108784 240@212 pc=cc70
+fdc type II read sector with multi sector=0x4 track=0x15 side=0 drive=0 addr=0x61200 VBL=6298 video_cyc=81124 228@158 pc=cc58
+fdc read sector addr=0x61200 drive=0 track=21 sect=4 side=0 VBL=6298 video_cyc=105956 484@206 pc=cc5c
+fdc type II read sector with multi sector=0x5 track=0x15 side=0 drive=0 addr=0x61400 VBL=6299 video_cyc=78296 472@152 pc=cc52
+fdc read sector addr=0x61400 drive=0 track=21 sect=5 side=0 VBL=6299 video_cyc=102884 484@200 pc=cc5c
+fdc type II read sector with multi sector=0x6 track=0x15 side=0 drive=0 addr=0x61600 VBL=6300 video_cyc=75224 472@146 pc=cc52
+fdc read sector addr=0x61600 drive=0 track=21 sect=6 side=0 VBL=6300 video_cyc=99812 484@194 pc=cc5c
+fdc type II read sector with multi sector=0x7 track=0x15 side=0 drive=0 addr=0x61800 VBL=6301 video_cyc=72168 488@140 pc=cc58
+fdc read sector addr=0x61800 drive=0 track=21 sect=7 side=0 VBL=6301 video_cyc=96744 488@188 pc=cc5e
+fdc type II read sector with multi sector=0x8 track=0x15 side=0 drive=0 addr=0x61a00 VBL=6302 video_cyc=69096 488@134 pc=cc58
+fdc read sector addr=0x61a00 drive=0 track=21 sect=8 side=0 VBL=6302 video_cyc=93672 488@182 pc=cc5e
+fdc type II read sector with multi sector=0x9 track=0x15 side=0 drive=0 addr=0x61c00 VBL=6303 video_cyc=66032 496@128 pc=cc6a
+fdc read sector addr=0x61c00 drive=0 track=21 sect=9 side=0 VBL=6303 video_cyc=90340 228@176 pc=cc70
+fdc type II read sector with multi sector=0xa track=0x15 side=0 drive=0 addr=0x61e00 VBL=6304 video_cyc=62704 240@122 pc=cc5c
+fdc read sector addr=0x61e00 drive=0 track=21 sect=10 side=0 VBL=6304 video_cyc=87548 508@170 pc=cc64
+fdc type II read sector with multi sector=0xb track=0x15 side=0 drive=0 addr=0x62000 VBL=6305 video_cyc=59896 504@116 pc=cfa6
+fdc type IV force int 0xd0 irq=0 index=0 VBL=6305 video_cyc=60208 304@117 pc=cf92
+fdc type I seek dest_track=0x16 spinup=on verify=off steprate_ms=3 drive=0 tr=0x15 head_track=0x15 VBL=6305 video_cyc=66416 368@129 pc=cf92
+fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x16 head_track=0x16 side=0 drive=0 dmasector=3 addr=0x62000 VBL=6305 video_cyc=95896 152@187 pc=cf92
+fdc read sector addr=0x62000 drive=0 track=22 sect=1 side=0 VBL=6305 video_cyc=116656 432@227 pc=cc64
+fdc type II read sector with multi sector=0x2 track=0x16 side=0 drive=0 addr=0x62200 VBL=6306 video_cyc=89000 424@173 pc=cc6a
+fdc read sector addr=0x62200 drive=0 track=22 sect=2 side=0 VBL=6306 video_cyc=113590 438@221 pc=cc74
+fdc type II read sector with multi sector=0x3 track=0x16 side=0 drive=0 addr=0x62400 VBL=6307 video_cyc=85928 424@167 pc=cc52
+fdc read sector addr=0x62400 drive=0 track=22 sect=3 side=0 VBL=6307 video_cyc=110508 428@215 pc=cc5a
+fdc type II read sector with multi sector=0x4 track=0x16 side=0 drive=0 addr=0x62600 VBL=6308 video_cyc=82856 424@161 pc=cfa6
+fdc type IV force int 0xd0 irq=0 index=0 VBL=6308 video_cyc=83208 264@162 pc=cf92

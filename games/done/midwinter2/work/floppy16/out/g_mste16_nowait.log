@@ -1,0 +1,14 @@
+prompt seen after 78 s, trace 6489008 B
+frame 261 lines = 60.0 Hz
+  game type I: fdc type I restore spinup=on verify=on steprate_ms=12 drive=0 tr=0x0 head_track=0x0 | ends: complete after 0.059 s (VBL 3728 -> 3731, x2 CPU)
+  game type I: fdc type I seek dest_track=0x1 spinup=on verify=on steprate_ms=12 drive=0 tr=0x0 head_track=0x0 | ends: complete after 0.039 s (VBL 3731 -> 3734, x2 CPU)
+  game type I: fdc type I seek dest_track=0x7 spinup=on verify=on steprate_ms=12 drive=0 tr=0x1 head_track=0x1 | ends: complete after 0.095 s (VBL 3747 -> 3753, x2 CPU)
+  game type I: fdc type I step in spinup=on verify=on steprate_ms=12 drive=0 tr=0x7 head_track=0x7 | ends: complete after 0.037 s (VBL 3766 -> 3768, x2 CPU)
+  game type I: fdc type I restore spinup=on verify=on steprate_ms=12 drive=0 tr=0x8 head_track=0x8 | ends: FORCE-INT after 1.296 s (VBL 3887 -> 3965, x2 CPU)
+  game type I: fdc type I seek dest_track=0x1 spinup=on verify=on steprate_ms=12 drive=0 tr=0x0 head_track=0x0 | ends: complete after 0.039 s (VBL 3965 -> 3967, x2 CPU)
+  game type I: fdc type I seek dest_track=0x8 spinup=on verify=on steprate_ms=12 drive=0 tr=0x1 head_track=0x1 | ends: complete after 0.140 s (VBL 3975 -> 3983, x2 CPU)
+  game type I: fdc type I step in spinup=on verify=on steprate_ms=12 drive=0 tr=0x8 head_track=0x8 | ends: complete after 0.035 s (VBL 4018 -> 4020, x2 CPU)
+first game restore starts at tr=0x0 head_track=0x0
+GATE first-restore g_mste16_nowait: COMPLETED | fdc type I restore spinup=on verify=on steprate_ms=12 drive=0 tr=0x0 head_track=0x0 | ends: complete after 0.059 s (VBL 3728 -> 3731, x2 CPU)
+game type I commands cut by the force interrupt, whole run: 1 of 15
+VERDICT g_mste16_nowait (expected fail): UNEXPECTED

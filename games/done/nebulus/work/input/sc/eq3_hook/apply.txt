@@ -1,0 +1,15 @@
+loadbin /tmp/edblk0.bin $75740
+loadbin /tmp/edblk1.bin $76d40
+loadbin /tmp/edblk2.bin $77300
+loadbin /tmp/edblk3.bin $77a40
+loadbin /tmp/edblk4.bin $77dc0
+loadbin /tmp/edblk5.bin $76c76
+w $377a2 $4e $f9 $00 $07 $57 $40
+w $37a90 $4e $b9 $00 $07 $57 $46 $4e $71
+w $3851a $4e $f9 $00 $07 $78 $5c
+w $3adb4 $4e $b9 $00 $07 $57 $52
+w $3d110 $4e $b9 $00 $07 $57 $58
+w $3d662 $4e $f9 $00 $07 $78 $94 $4e $71
+w $3d6c4 $4e $b9 $00 $07 $57 $4c $4e $71 $4e $71
+w $3dfd6 $4e $b9 $00 $07 $57 $64
+w $3e352 $4e $f9 $00 $07 $57 $5e

@@ -1,0 +1,5 @@
+boot_to_game (timer non-zero) True
+marker $b0020 00000000 (not 4e45504f = unpatched)  $39ffa 4e75 $3dcf4 4eb90003853a
+timer words over play ['00180048001b', '001800400041', '001800400041', '002000000000', '001c004c004c', '001800480022', '001800480022'] tower 0000 frog x,y,state 0004 0000 000a
+vbl advancing True
+crash lines 0

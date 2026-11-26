@@ -1,0 +1,43 @@
+Moonshine Racers (Millennium, 1991) - PP's HAGA hard-disk conversion, enhanced release v@VERSION@ (dad_prg)
+==========================================================================================================
+
+This folder is PP's Atari ST hard-disk conversion of Moonshine Racers (README.TXT / LOG.TXT are his) with the changes below applied
+to RUNME.TOS (patch loader: the changed game code is applied in RAM at start-up, the game files in FILES\ are PP's, unchanged) and to
+HAGA (PP's loader service).  Start RUNME.TOS from the desktop or a hard-disk AUTO folder exactly as PP's version.
+
+Changes in this release:
+{PATCHES}
+
+New HUD (a visible change): the instruments are now one black bar across the top of the screen, drawn once and updated only when a value changes, instead of the old minimap, speedometer,
+gear lever, thermometer, turbo cup, big stopwatch and score panel scattered over the picture (those and the drifting clouds are gone; the sky is plain, the radio messages and the talking face stay where they were).
+From left to right the bar shows: the SCORE (the big game digits, as before), the race clock (a small stopwatch whose hand moves once the clock has advanced one 32nd of the race time; the race is over when it has gone round),
+your race position (# 1-99), the SPEED (the game's own speed value, 0-92, 128 with turbo; MPH), the GEAR (G 1 or 2), the engine temperature (T 0-35; the digits turn reddish from 28 up: the game then warns that the engine is on fire, at 35 it burns)
+and the TURBO fuel (small cup and a 28-step bar, one step per unit of the game's turbo counter 0-28; it empties while SPACE is held and during the end-of-race bonus count). Text is white; the end-of-race score count is shown in yellow.
+
+Faster game (the "tightening" patches: the picture and the game's own state are the same as without them): the talking
+face, the radio message box, the message letters and the sound-chip writes are cheaper (ta_*), the logic stage (road record clear, object projection and
+sorting, collision scans) is cheaper (tc_*), and the player's car and its shadow layer are drawn by code that the game generates once per car picture
+and reuses (tb_car, tb_carph; ST and STE with a plain 68000 only: the Mega STE, TT and Falcon always keep the original car drawing, because generated code
+is never run where a CPU cache exists).  Also cheaper: the Timer B raster list (ta_rb, ta_rb0: broadcasts that only rewrite the sky colour already on
+screen are dropped; the same colour on every scanline), the mouse interrogation during the race (ta_nomouse: the joystick and keyboard are unaffected,
+the menus keep the mouse) and, on an STE, the biggest shifted sprites (tb_blit*: drawn by the blitter only between two raster interrupts, never close to
+one; other machines always use the original kernels).  Visible change: the talking face is drawn once per message, so its mouth no longer moves (ta_facestat).
+Together these take about 0.14 of a 50-Hz frame off each game step on an 8 MHz STE (driving 2.80 -> 2.66 frames without a message, 2.90 -> 2.76 with one;
+standing 2.97 -> 2.81) and about the same off every extra picture.  Each of these can be switched off for a comparison: see the options in patches/README.md
+and tools/play.sh (--no-rb, --no-nomouse, --no-blit, --no-facestat).  A faster but not state-exact road clear (tc_clrx) stays an option.
+
+Game speed: the game now runs at a fixed speed of 10 logic steps per second on every machine and CPU clock (at 50 and at 60 Hz). On an 8 MHz machine that is 20 % faster
+than the original release, which ran at 8.3 steps per second at 8 MHz and about twice that on a 16 MHz machine.
+
+Extra frames: on a machine with spare time the game draws additional in-between pictures of each logic step, so the picture is smoother at the SAME
+game speed.  The extra pictures are now drawn before the collision/debris stage of the step, which is much cheaper: an 8 MHz STE shows one extra picture in
+63 % of the racing steps (16 pictures per second instead of 12.7 with the previous extra-frame code, the original game shows 8.3), a 16 MHz machine about
+2 extra pictures per step (28.8 pictures per second) and a 32 MHz machine about 4 (47.9).  None while the car stands or the race is being set up.  The
+extra pictures themselves differ from the previous ones in two small ways: they show the top bar of their own step (formerly the bar was one step ahead,
+e.g. the turbo gauge after a crash) and in a collision bounce they still show the car before the bounce.  At the default setting the frame spacing is a
+little more uneven (8.5 % of the steps at 8 MHz take more than one frame); building with `--set SAFE=3` (or tools/play.sh --safex 3) is smoother: about 15
+pictures per second with 1.5 % such steps.
+
+Machines: 1 MB or more. Cold-booted into the first race with this patch set (Hatari): STE (TOS 1.62, 1 MB and 4 MB), Mega STE (TOS 2.06, 1, 2 and 4 MB), ST (TOS 1.04, 1 MB) and
+TT (TOS 3.06, 4 MB) and Falcon (TOS 4.04, 4 MB); also at 60 Hz (Mega STE 2.06 and TT 3.06 boot at 60 Hz: 10 steps per second, the same speed as at 50 Hz). Not tested: a real machine. The road code uses the free RAM $C0000-$D7FFF, the player-car code cache $D8000-$E2BFF (top of the free memory on a 1 MB Mega STE with TOS 2.06).
+Hard-disk set only: PP's conversion has no floppy version.  The patch mechanism and its address map: patches/README.md

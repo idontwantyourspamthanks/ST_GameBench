@@ -1,0 +1,11 @@
+(e203_study2.py, ONLY=RET,STUCK, STE, build b_base = deliver2; the third level of that run, WRAP, failed on a menu error after the death in STUCK and was rerun alone: study2_wrap_ste.log)
+== RET: doors (0,2-4)+(8,2-4): Up, then Up again at the other door  running=True  start: {'x': 4, 'y': 8, 'dirn': 128, 'st': 0, 'anim': 0}
+   Up: state 4 (4 = tunnel) x=4
+   arrived: x=68 (col 8, entered at x=4 col 0; difference 64) y=8 state 0
+   Up again at the opposite door: x=4 (col 0) y=8 state 0
+== STUCK: door (0,2-4), pillars (8,2-4): arrive inside the wall, then Right / Left / Up  running=True  start: {'x': 4, 'y': 8, 'dirn': 128, 'st': 0, 'anim': 0}
+   Up: state 4 (4 = tunnel) x=4
+   arrived: x=68 (col 8, entered at x=4 col 0; difference 64) y=8 state 0
+   Right 0.8 s inside the wall: x 68 -> 68, y 16, state 7
+   Left 0.8 s inside the wall: x 68 -> 68, y 0, state 8
+   Up: {'x': 68, 'y': 0, 'dirn': 128, 'st': 8, 'anim': 48} -> {'x': 68, 'y': 0, 'dirn': 128, 'st': 8, 'anim': 56}

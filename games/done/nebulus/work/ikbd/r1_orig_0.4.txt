@@ -1,0 +1,3 @@
+window start VBL 2549
+ACIA status $fffc00: 0x83  cell $38498: 0000 IPRB/ISRB $fa0d-$fa11: 000000000000
+after holding a: cell during hold 0000 (expect 001e/1e), after release 0000 (expect 9e), ACIA status 0x83

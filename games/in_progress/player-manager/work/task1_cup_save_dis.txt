@@ -1,0 +1,865 @@
+=== Cup & Season Routines (013800..013f00) (013800..013f00) ===
+  013800: jsr        $17f3a(pc)
+  013804: move.w     -$3a28(a4), d1
+  013808: sub.w      $a(a2), d1
+  01380c: ext.l      d1
+  01380e: divu.w     #$6, d1
+  013812: move.w     d1, d7
+  013814: lsl.w      #$1, d1
+  013816: moveq      #$fe, d0
+  013818: addq.w     #$2, d0
+  01381a: tst.w      $2c(a0, d0.w)
+  01381e: bmi.b      $13834
+  013820: cmp.w      d1, d0
+  013822: blt.b      $13818
+  013824: move.w     $2c(a0, d1.w), d0
+  013828: mulu.w     #$2a, d0
+  01382c: add.l      -$2e80(a4), d0
+  013830: movea.l    d0, a5
+  013832: bra.b      $13836
+  013834: moveq      #$ff, d7
+  013836: rts        
+  013838: movem.l    d0-d2, -(a7)
+  01383c: move.w     d0, d2
+  01383e: cmpi.w     #$4, d2
+  013842: bgt.b      $13862
+  013844: jsr        -$7f98(a4)
+  013848: cmpi.w     #$1, d2
+  01384c: bne.b      $13858
+  01384e: move.w     #$a9, d0
+  013852: jsr        -$7f9e(a4)
+  013856: bra.b      $13882
+  013858: move.w     #$aa, d0
+  01385c: jsr        -$7f9e(a4)
+  013860: bra.b      $13882
+  013862: lsr.w      #$2, d2
+  013864: move.w     d2, d0
+  013866: jsr        -$7f98(a4)
+  01386a: cmpi.w     #$1, d2
+  01386e: bne.b      $1387a
+  013870: move.w     #$ab, d0
+  013874: jsr        -$7f9e(a4)
+  013878: bra.b      $13882
+  01387a: move.w     #$ac, d0
+  01387e: jsr        -$7f9e(a4)
+  013882: movem.l    (a7)+, d0-d2
+  013886: rts        
+  013888: clr.b      -$2f94(a4)
+  01388c: moveq      #$0, d0
+  01388e: tst.b      $16(a5)
+  013892: beq.b      $138fe
+  013894: tst.b      $19(a5)
+  013898: beq.b      $138b0
+  01389a: move.w     #$b2, d0
+  01389e: jsr        -$7f9e(a4)
+  0138a2: moveq      #$0, d0
+  0138a4: move.b     $19(a5), d0
+  0138a8: bsr.b      $13838
+  0138aa: jsr        -$7f92(a4)
+  0138ae: bra.b      $138b8
+  0138b0: move.w     #$b3, d0
+  0138b4: jsr        -$7f9e(a4)
+  0138b8: move.b     $16(a5), d0
+  0138bc: ext.w      d0
+  0138be: bmi.b      $138f6
+  0138c0: cmpi.w     #$64, d0
+  0138c4: bgt.b      $138ec
+  0138c6: cmpi.w     #$1, d0
+  0138ca: beq.b      $138e2
+  0138cc: move.w     d0, d1
+  0138ce: move.w     #$b4, d0
+  0138d2: jsr        -$7f9e(a4)
+  0138d6: move.w     d1, d0
+  0138d8: jsr        $13838(pc)
+  0138dc: jsr        -$7f92(a4)
+  0138e0: bra.b      $138fe
+  0138e2: move.w     #$b5, d0
+  0138e6: jsr        -$7f9e(a4)
+  0138ea: bra.b      $138fe
+  0138ec: move.w     #$b6, d0
+  0138f0: jsr        -$7f9e(a4)
+  0138f4: bra.b      $138fe
+  0138f6: move.w     #$b7, d0
+  0138fa: jsr        -$7f9e(a4)
+  0138fe: moveq      #$34, d0
+  013900: jsr        $17f3a(pc)
+  013904: lea.l      -$2f94(a4), a3
+  013908: jsr        $17b14(pc)
+  01390c: rts        
+  01390e: clr.b      -$2f94(a4)
+  013912: moveq      #$0, d2
+  013914: move.b     $17(a5), d2
+  013918: lsr.w      #$2, d2
+  01391a: beq.b      $13932
+  01391c: move.w     #$ae, d0
+  013920: jsr        -$7f9e(a4)
+  013924: move.w     d2, d0
+  013926: jsr        -$7f98(a4)
+  01392a: move.w     #$af, d0
+  01392e: jsr        -$7f9e(a4)
+  013932: moveq      #$0, d2
+  013934: move.b     $17(a5), d2
+  013938: andi.w     #$3, d2
+  01393c: beq.b      $1394c
+  01393e: move.w     d2, d0
+  013940: jsr        -$7f98(a4)
+  013944: move.w     #$b0, d0
+  013948: jsr        -$7f9e(a4)
+  01394c: moveq      #$35, d0
+  01394e: jsr        $17f3a(pc)
+  013952: lea.l      -$2f94(a4), a3
+  013956: jsr        $17b14(pc)
+  01395a: rts        
+  01395c: clr.b      -$2f94(a4)
+  013960: moveq      #$0, d2
+  013962: move.b     $1a(a5), d2
+  013966: lsr.w      #$6, d2
+  013968: tst.w      d2
+  01396a: beq.b      $139c6
+  01396c: cmpi.w     #$1, d2
+  013970: beq.b      $139a0
+  013972: moveq      #$0, d2
+  013974: move.b     $1a(a5), d2
+  013978: andi.w     #$3f, d2
+  01397c: cmpi.w     #$2, d2
+  013980: blt.b      $13996
+  013982: move.w     #$cf, d0
+  013986: jsr        -$7f9e(a4)
+  01398a: move.w     d2, d0
+  01398c: jsr        $13838(pc)
+  013990: jsr        -$7f92(a4)
+  013994: bra.b      $139c6
+  013996: move.w     #$cd, d0
+  01399a: jsr        -$7f9e(a4)
+  01399e: bra.b      $139c6
+  0139a0: move.w     #$cc, d0
+  0139a4: jsr        -$7f9e(a4)
+  0139a8: moveq      #$0, d2
+  0139aa: move.b     $1a(a5), d2
+  0139ae: andi.w     #$3f, d2
+  0139b2: cmpi.w     #$2, d2
+  0139b6: blt.b      $139c6
+  0139b8: move.w     #$ce, d0
+  0139bc: jsr        -$7f9e(a4)
+  0139c0: move.w     d2, d0
+  0139c2: jsr        $13838(pc)
+  0139c6: moveq      #$36, d0
+  0139c8: jsr        $17f3a(pc)
+  0139cc: lea.l      -$2f94(a4), a3
+  0139d0: jsr        $17b14(pc)
+  0139d4: rts        
+  0139d6: lea.l      -$7d05(a4), a2
+  0139da: jsr        $17d0c(pc)
+  0139de: move.w     -$2e40(a4), d7
+  0139e2: moveq      #$3, d0
+  0139e4: move.w     d7, d1
+  0139e6: lea.l      -$7cc7(a4), a3
+  0139ea: jsr        $17b9c(pc)
+  0139ee: lea.l      -$7c9a(a4), a0
+  0139f2: moveq      #$ff, d0
+  0139f4: addq.w     #$1, d0
+  0139f6: cmp.b      (a0)+, d7
+  0139f8: blt.b      $139f4
+  0139fa: addi.w     #$c2, d0
+  0139fe: moveq      #$2, d1
+  013a00: jsr        $17af2(pc)
+  013a04: jsr        -$7ff8(a4)
+  013a08: beq.b      $13a04
+  013a0a: cmpi.w     #$1, d0
+  013a0e: beq.b      $13a3a
+  013a10: cmpi.w     #$a, d0
+  013a14: beq.b      $13a18
+  013a16: bra.b      $13a04
+  013a18: move.w     #$161, d0
+  013a1c: clr.b      -$2f94(a4)
+  013a20: jsr        -$7f9e(a4)
+  013a24: movea.l    -$2e78(a4), a2
+  013a28: lea.l      (a2), a2
+  013a2a: jsr        -$7faa(a4)
+  013a2e: jsr        -$7f92(a4)
+  013a32: jsr        -$7fbc(a4)
+  013a36: beq.b      $139d6
+  013a38: bra.b      $13a3c
+  013a3a: moveq      #$0, d0
+  013a3c: rts        
+  013a3e: lea.l      -$2d72(a4), a6
+  013a42: moveq      #$0, d7
+  013a44: move.b     (a6), d0
+  013a46: ext.w      d0
+  013a48: bmi.b      $13a78
+  013a4a: mulu.w     #$64, d0
+  013a4e: add.l      -$2e94(a4), d0
+  013a52: movea.l    d0, a5
+  013a54: lea.l      (a5), a3
+  013a56: move.w     d7, d0
+  013a58: addq.w     #$1, d0
+  013a5a: jsr        $17f3a(pc)
+  013a5e: jsr        $17b14(pc)
+  013a62: move.b     $1(a6), d1
+  013a66: ext.w      d1
+  013a68: bmi.b      $13a78
+  013a6a: move.w     d7, d0
+  013a6c: addi.w     #$64, d0
+  013a70: lea.l      -$7cba(a4), a3
+  013a74: jsr        $17b9c(pc)
+  013a78: addq.l     #$2, a6
+  013a7a: addq.w     #$1, d7
+  013a7c: cmpi.w     #$38, d7
+  013a80: blt.b      $13a44
+  013a82: jsr        -$7ff8(a4)
+  013a86: beq.b      $13a82
+  013a88: rts        
+  013a8a: lea.l      -$2d02(a4), a6
+  013a8e: moveq      #$0, d7
+  013a90: move.b     (a6), d0
+  013a92: ext.w      d0
+  013a94: bmi.b      $13ac4
+  013a96: mulu.w     #$64, d0
+  013a9a: add.l      -$2e94(a4), d0
+  013a9e: movea.l    d0, a5
+  013aa0: lea.l      (a5), a3
+  013aa2: move.w     d7, d0
+  013aa4: addq.w     #$1, d0
+  013aa6: jsr        $17f3a(pc)
+  013aaa: jsr        $17b14(pc)
+  013aae: move.b     $1(a6), d1
+  013ab2: ext.w      d1
+  013ab4: bmi.b      $13ac4
+  013ab6: move.w     d7, d0
+  013ab8: addi.w     #$64, d0
+  013abc: lea.l      -$7cba(a4), a3
+  013ac0: jsr        $17b9c(pc)
+  013ac4: addq.l     #$2, a6
+  013ac6: addq.w     #$1, d7
+  013ac8: cmpi.w     #$1e, d7
+  013acc: blt.b      $13a90
+  013ace: jsr        -$7ff8(a4)
+  013ad2: beq.b      $13ace
+  013ad4: rts        
+  013ad6: move.w     -$2d74(a4), d0
+  013ada: cmpi.w     #$0, d0
+  013ade: beq.b      $13b36
+  013ae0: cmpi.w     #$1, d0
+  013ae4: beq.w      $13b92
+  013ae8: cmpi.w     #$2, d0
+  013aec: beq.w      $13c04
+  013af0: cmpi.w     #$3, d0
+  013af4: beq.w      $13c60
+  013af8: cmpi.w     #$4, d0
+  013afc: beq.w      $13cbc
+  013b00: cmpi.w     #$5, d0
+  013b04: beq.w      $13d18
+  013b08: movem.l    d0-d2/a0-a2, -(a7)
+  013b0c: pea.l      $13b28(pc)
+  013b10: move.w     #$9, -(a7)
+  013b14: trap       #$1
+  013b16: addq.l     #$6, a7
+  013b18: move.w     #$1, -(a7)
+  013b1c: trap       #$1
+  013b1e: addq.l     #$2, a7
+  013b20: cmpi.w     #$2, d0
+  013b24: bne.b      $13b2e
+  013b26: bra.b      $13b2e
+  013b28: dc.w       
+  013b2a: dc.w       
+  013b2c: btst.l     d6, d0
+  013b2e: movem.l    (a7)+, d0-d2/a0-a2
+  013b32: jmp        -$7f38(a4)
+  013b36: lea.l      -$2d72(a4), a2
+  013b3a: moveq      #$55, d7
+  013b3c: move.w     #$ffff, (a2)+
+  013b40: dbra       d7, $13b3c
+  013b44: moveq      #$14, d5
+  013b46: lea.l      -$2d72(a4), a6
+  013b4a: move.b     d5, (a6)+
+  013b4c: move.b     #$ff, (a6)+
+  013b50: adda.l     #$64, a5
+  013b56: addq.w     #$1, d5
+  013b58: cmpi.w     #$2c, d5
+  013b5c: blt.b      $13b4a
+  013b5e: lea.l      -$2d72(a4), a6
+  013b62: moveq      #$17, d6
+  013b64: jsr        -$7f08(a4)
+  013b68: move.w     -$38da(a4), d5
+  013b6c: andi.l     #$ffff, d5
+  013b72: divu.w     #$18, d5
+  013b76: swap       d5
+  013b78: move.w     d6, d4
+  013b7a: lsl.w      #$1, d4
+  013b7c: move.b     (a6, d4.w), d0
+  013b80: lsl.w      #$1, d5
+  013b82: move.b     (a6, d5.w), (a6, d4.w)
+  013b88: move.b     d0, (a6, d5.w)
+  013b8c: dbra       d6, $13b64
+  013b90: rts        
+  013b92: moveq      #$0, d5
+  013b94: lea.l      -$2d42(a4), a6
+  013b98: move.b     d5, (a6)+
+  013b9a: move.b     #$ff, (a6)+
+  013b9e: adda.l     #$64, a5
+  013ba4: addq.w     #$1, d5
+  013ba6: cmpi.w     #$14, d5
+  013baa: blt.b      $13b98
+  013bac: lea.l      -$2d72(a4), a5
+  013bb0: moveq      #$b, d5
+  013bb2: move.b     $1(a5), d0
+  013bb6: cmp.b      $3(a5), d0
+  013bba: blt.b      $13bc0
+  013bbc: move.b     (a5), d1
+  013bbe: bra.b      $13bc4
+  013bc0: move.b     $2(a5), d1
+  013bc4: move.b     d1, (a6)+
+  013bc6: move.b     #$ff, (a6)+
+  013bca: addq.l     #$4, a5
+  013bcc: dbra       d5, $13bb2
+  013bd0: lea.l      -$2d42(a4), a6
+  013bd4: moveq      #$1f, d6
+  013bd6: jsr        -$7f08(a4)
+  013bda: move.w     -$38da(a4), d5
+  013bde: andi.l     #$ffff, d5
+  013be4: divu.w     #$20, d5
+  013be8: swap       d5
+  013bea: move.w     d6, d4
+  013bec: lsl.w      #$1, d4
+  013bee: move.b     (a6, d4.w), d0
+  013bf2: lsl.w      #$1, d5
+  013bf4: move.b     (a6, d5.w), (a6, d4.w)
+  013bfa: move.b     d0, (a6, d5.w)
+  013bfe: dbra       d6, $13bd6
+  013c02: rts        
+  013c04: lea.l      -$2d42(a4), a5
+  013c08: lea.l      -$2d02(a4), a6
+  013c0c: moveq      #$f, d5
+  013c0e: move.b     $1(a5), d0
+  013c12: cmp.b      $3(a5), d0
+  013c16: blt.b      $13c1c
+  013c18: move.b     (a5), d1
+  013c1a: bra.b      $13c20
+  013c1c: move.b     $2(a5), d1
+  013c20: move.b     d1, (a6)+
+  013c22: move.b     #$ff, (a6)+
+  013c26: addq.l     #$4, a5
+  013c28: dbra       d5, $13c0e
+  013c2c: lea.l      -$2d02(a4), a6
+  013c30: moveq      #$f, d6
+  013c32: jsr        -$7f08(a4)
+  013c36: move.w     -$38da(a4), d5
+  013c3a: andi.l     #$ffff, d5
+  013c40: divu.w     #$10, d5
+  013c44: swap       d5
+  013c46: move.w     d6, d4
+  013c48: lsl.w      #$1, d4
+  013c4a: move.b     (a6, d4.w), d0
+  013c4e: lsl.w      #$1, d5
+  013c50: move.b     (a6, d5.w), (a6, d4.w)
+  013c56: move.b     d0, (a6, d5.w)
+  013c5a: dbra       d6, $13c32
+  013c5e: rts        
+  013c60: lea.l      -$2d02(a4), a5
+  013c64: lea.l      -$2ce2(a4), a6
+  013c68: moveq      #$7, d5
+  013c6a: move.b     $1(a5), d0
+  013c6e: cmp.b      $3(a5), d0
+  013c72: blt.b      $13c78
+  013c74: move.b     (a5), d1
+  013c76: bra.b      $13c7c
+  013c78: move.b     $2(a5), d1
+  013c7c: move.b     d1, (a6)+
+  013c7e: move.b     #$ff, (a6)+
+  013c82: addq.l     #$4, a5
+  013c84: dbra       d5, $13c6a
+  013c88: lea.l      -$2ce2(a4), a6
+  013c8c: moveq      #$7, d6
+  013c8e: jsr        -$7f08(a4)
+  013c92: move.w     -$38da(a4), d5
+  013c96: andi.l     #$ffff, d5
+  013c9c: divu.w     #$8, d5
+  013ca0: swap       d5
+  013ca2: move.w     d6, d4
+  013ca4: lsl.w      #$1, d4
+  013ca6: move.b     (a6, d4.w), d0
+  013caa: lsl.w      #$1, d5
+  013cac: move.b     (a6, d5.w), (a6, d4.w)
+  013cb2: move.b     d0, (a6, d5.w)
+  013cb6: dbra       d6, $13c8e
+  013cba: rts        
+  013cbc: lea.l      -$2ce2(a4), a5
+  013cc0: lea.l      -$2cd2(a4), a6
+  013cc4: moveq      #$3, d5
+  013cc6: move.b     $1(a5), d0
+  013cca: cmp.b      $3(a5), d0
+  013cce: blt.b      $13cd4
+  013cd0: move.b     (a5), d1
+  013cd2: bra.b      $13cd8
+  013cd4: move.b     $2(a5), d1
+  013cd8: move.b     d1, (a6)+
+  013cda: move.b     #$ff, (a6)+
+  013cde: addq.l     #$4, a5
+  013ce0: dbra       d5, $13cc6
+  013ce4: lea.l      -$2cd2(a4), a6
+  013ce8: moveq      #$3, d6
+  013cea: jsr        -$7f08(a4)
+  013cee: move.w     -$38da(a4), d5
+  013cf2: andi.l     #$ffff, d5
+  013cf8: divu.w     #$4, d5
+  013cfc: swap       d5
+  013cfe: move.w     d6, d4
+  013d00: lsl.w      #$1, d4
+  013d02: move.b     (a6, d4.w), d0
+  013d06: lsl.w      #$1, d5
+  013d08: move.b     (a6, d5.w), (a6, d4.w)
+  013d0e: move.b     d0, (a6, d5.w)
+  013d12: dbra       d6, $13cea
+  013d16: rts        
+  013d18: lea.l      -$2cd2(a4), a5
+  013d1c: lea.l      -$2cca(a4), a6
+  013d20: moveq      #$1, d5
+  013d22: move.b     $1(a5), d0
+  013d26: cmp.b      $3(a5), d0
+  013d2a: blt.b      $13d30
+  013d2c: move.b     (a5), d1
+  013d2e: bra.b      $13d34
+  013d30: move.b     $2(a5), d1
+  013d34: move.b     d1, (a6)+
+  013d36: move.b     #$ff, (a6)+
+  013d3a: addq.l     #$4, a5
+  013d3c: dbra       d5, $13d22
+  013d40: lea.l      -$2cca(a4), a6
+  013d44: moveq      #$1, d6
+  013d46: jsr        -$7f08(a4)
+  013d4a: move.w     -$38da(a4), d5
+  013d4e: andi.l     #$ffff, d5
+  013d54: divu.w     #$2, d5
+  013d58: swap       d5
+  013d5a: move.w     d6, d4
+  013d5c: lsl.w      #$1, d4
+  013d5e: move.b     (a6, d4.w), d0
+  013d62: lsl.w      #$1, d5
+  013d64: move.b     (a6, d5.w), (a6, d4.w)
+  013d6a: move.b     d0, (a6, d5.w)
+  013d6e: dbra       d6, $13d46
+  013d72: rts        
+  013d74: movem.l    d0-d7/a0-a3/a5-a6, -(a7)
+  013d78: tst.w      $28(a0)
+  013d7c: beq.b      $13d94
+  013d7e: move.l     a1, d0
+  013d80: beq.b      $13d8a
+  013d82: tst.w      $28(a1)
+  013d86: bne.w      $13f04
+  013d8a: lea.l      -$7ce7(a4), a2
+  013d8e: jsr        $17d0c(pc)
+  013d92: bra.b      $13de2
+  013d94: move.l     a1, d0
+  013d96: beq.b      $13df8
+  013d98: tst.w      $28(a1)
+  013d9c: beq.b      $13df8
+  013d9e: clr.b      -$2f94(a4)
+  013da2: lea.l      (a0), a2
+  013da4: jsr        -$7faa(a4)
+  013da8: move.w     #$134, d0
+  013dac: jsr        -$7f9e(a4)
+  013db0: jsr        $14dac(pc)
+  013db4: movea.l    a3, a2
+  013db6: jsr        -$7faa(a4)
+  013dba: jsr        -$7f92(a4)
+  013dbe: lea.l      -$2f94(a4), a2
+  013dc2: moveq      #$16, d0
+  013dc4: jsr        -$7fc2(a4)
+  013dc8: lea.l      -$7cdd(a4), a2
+  013dcc: jsr        $17d0c(pc)
+  013dd0: jsr        $15052(pc)
+  013dd4: lea.l      (a0), a3
+  013dd6: moveq      #$36, d0
+  013dd8: jsr        $17f3a(pc)
+  013ddc: jsr        $17b14(pc)
+  013de0: bra.b      $13df8
+  013de2: jsr        $172bc(pc)
+  013de6: moveq      #$3c, d0
+  013de8: lea.l      -$7cba(a4), a3
+  013dec: jsr        $17b9c(pc)
+  013df0: jsr        $12ed6(pc)
+  013df4: jsr        $15052(pc)
+  013df8: move.l     a1, -(a7)
+  013dfa: jsr        $12e58(pc)
+  013dfe: movea.l    a1, a2
+  013e00: movea.l    (a7)+, a1
+  013e02: move.w     (a2), d7
+  013e04: tst.w      $28(a0)
+  013e08: bne.b      $13e4c
+  013e0a: jsr        $14de2(pc)
+  013e0e: move.w     d1, d2
+  013e10: jsr        $14e36(pc)
+  013e14: cmp.w      d2, d1
+  013e16: blt.b      $13e1a
+  013e18: move.w     d2, d1
+  013e1a: cmp.w      d7, d1
+  013e1c: ble.b      $13e20
+  013e1e: move.w     d7, d1
+  013e20: move.w     d1, d2
+  013e22: jsr        -$7f08(a4)
+  013e26: move.w     -$38da(a4), d0
+  013e2a: andi.l     #$ffff, d0
+  013e30: divu.w     #$33, d0
+  013e34: swap       d0
+  013e36: addi.w     #$99, d0
+  013e3a: mulu.w     d0, d2
+  013e3c: lsr.l      #$8, d2
+  013e3e: move.w     d2, d6
+  013e40: move.w     #$ffff, -$3856(a4)
+  013e46: move.w     d1, -$385a(a4)
+  013e4a: bra.b      $13e4e
+  013e4c: move.w     d7, d6
+  013e4e: jsr        $172bc(pc)
+  013e52: cmp.w      d1, d6
+  013e54: ble.b      $13e58
+  013e56: move.w     d1, d6
+  013e58: cmp.w      -$385a(a4), d1
+  013e5c: bge.b      $13e62
+  013e5e: move.w     d1, -$385a(a4)
+  013e62: jsr        $14e36(pc)
+  013e66: move.w     d1, d0
+  013e68: mulu.w     #$46, d0
+  013e6c: divu.w     #$64, d0
+  013e70: cmp.w      d7, d0
+  013e72: blt.b      $13e76
+  013e74: move.w     d7, d0
+  013e76: move.w     d0, -$385c(a4)
+  013e7a: mulu.w     #$46, d0
+  013e7e: divu.w     #$64, d0
+  013e82: move.w     d0, -$3858(a4)
+  013e86: jsr        $13f8c(pc)
+  013e8a: cmp.w      d7, d6
+  013e8c: bne.b      $13e92
+  013e8e: tst.w      d7
+  013e90: bpl.b      $13e9e
+  013e92: jsr        $14112(pc)
+  013e96: cmp.w      d7, d6
+  013e98: bne.b      $13e86
+  013e9a: tst.w      d7
+  013e9c: bmi.b      $13f04
+  013e9e: tst.w      $28(a0)
+  013ea2: bne.b      $13eae
+  013ea4: move.l     a1, d0
+  013ea6: beq.b      $13f02
+  013ea8: tst.w      $28(a1)
+  013eac: beq.b      $13f02
+  013eae: jsr        $172bc(pc)
+  013eb2: move.w     d7, d0
+  013eb4: mulu.w     #$64, d0
+  013eb8: tst.w      d1
+  013eba: beq.b      $13eda
+  013ebc: divu.w     d1, d0
+  013ebe: jsr        -$7f08(a4)
+  013ec2: move.w     -$38da(a4), d1
+  013ec6: andi.l     #$ffff, d1
+  013ecc: divu.w     #$14, d1
+  013ed0: swap       d1
+  013ed2: addi.w     #$46, d1
+  013ed6: cmp.w      d1, d0
+  013ed8: blt.b      $13ef2
+  013eda: move.w     #$157, d0
+  013ede: jsr        -$7f4a(a4)
+  013ee2: move.w     #$8d, d0
+  013ee6: jsr        -$7fc2(a4)
+  013eea: moveq      #$fb, d0
+  013eec: jsr        $1474c(pc)
+  013ef0: bra.b      $13f04
+  013ef2: move.w     #$fef6, d0
+  013ef6: moveq      #$34, d1
+  013ef8: jsr        $17af2(pc)
+  013efc: moveq      #$64, d0
+  013efe: jsr        -$5556(a4)
+=== Save / Load (0143b0..014740) (0143b0..014740) ===
+  0143b0: movea.l    a2, a3
+  0143b2: lea.l      -$7cd3(a4), a2
+  0143b6: jsr        -$7fe6(a4)
+  0143ba: tst.b      (a2)
+  0143bc: beq.b      $143fc
+  0143be: move.w     #$0, -(a7)
+  0143c2: move.l     a2, -(a7)
+  0143c4: move.w     #$3c, -(a7)
+  0143c8: trap       #$1
+  0143ca: addq.l     #$8, a7
+  0143cc: tst.w      d0
+  0143ce: bmi.b      $1440e
+  0143d0: move.w     d0, -$3866(a4)
+  0143d4: jsr        $1462a(pc)
+  0143d8: bmi.b      $14400
+  0143da: bgt.b      $14414
+  0143dc: jsr        $14654(pc)
+  0143e0: bmi.b      $14400
+  0143e2: bgt.b      $14414
+  0143e4: jsr        $146f8(pc)
+  0143e8: bmi.b      $14400
+  0143ea: bgt.b      $14414
+  0143ec: move.w     -$3866(a4), -(a7)
+  0143f0: move.w     #$3e, -(a7)
+  0143f4: trap       #$1
+  0143f6: addq.l     #$4, a7
+  0143f8: moveq      #$ff, d0
+  0143fa: rts        
+  0143fc: moveq      #$0, d0
+  0143fe: rts        
+  014400: move.w     -$3866(a4), -(a7)
+  014404: move.w     #$3e, -(a7)
+  014408: trap       #$1
+  01440a: addq.l     #$4, a7
+  01440c: bsr.b      $14428
+  01440e: jsr        -$7fce(a4)
+  014412: bra.b      $143fc
+  014414: move.w     -$3866(a4), -(a7)
+  014418: move.w     #$3e, -(a7)
+  01441c: trap       #$1
+  01441e: addq.l     #$4, a7
+  014420: bsr.b      $14428
+  014422: jsr        -$7fda(a4)
+  014426: bra.b      $143fc
+  014428: move.l     a2, -(a7)
+  01442a: move.w     #$41, -(a7)
+  01442e: trap       #$1
+  014430: addq.l     #$6, a7
+  014432: rts        
+  014434: moveq      #$51, d0
+  014436: jsr        -$7f4a(a4)
+  01443a: movea.l    a2, a3
+  01443c: lea.l      -$7ccd(a4), a2
+  014440: jsr        -$7fe0(a4)
+  014444: tst.b      (a2)
+  014446: beq.b      $1448e
+  014448: move.w     #$0, -(a7)
+  01444c: move.l     a2, -(a7)
+  01444e: move.w     #$3d, -(a7)
+  014452: trap       #$1
+  014454: addq.l     #$8, a7
+  014456: tst.w      d0
+  014458: bmi.b      $144a4
+  01445a: move.w     d0, -$3866(a4)
+  01445e: movea.l    -$2e94(a4), a5
+  014462: moveq      #$2b, d7
+  014464: pea.l      (a5)
+  014466: move.l     #$14, -(a7)
+  01446c: move.w     -$3866(a4), -(a7)
+  014470: move.w     #$3f, -(a7)
+  014474: trap       #$1
+  014476: adda.l     #$c, a7
+  01447c: tst.l      d0
+  01447e: bmi.b      $14492
+  014480: adda.l     #$64, a5
+  014486: dbra       d7, $14464
+  01448a: moveq      #$ff, d0
+  01448c: rts        
+  01448e: moveq      #$0, d0
+  014490: rts        
+  014492: move.w     -$3866(a4), -(a7)
+  014496: move.w     #$3e, -(a7)
+  01449a: trap       #$1
+  01449c: addq.l     #$4, a7
+  01449e: jsr        -$7fce(a4)
+  0144a2: bra.b      $1448e
+  0144a4: jsr        -$7fd4(a4)
+  0144a8: bra.b      $1448e
+  0144aa: move.w     #$103, d0
+  0144ae: jsr        -$7f4a(a4)
+  0144b2: movea.l    a2, a3
+  0144b4: lea.l      -$7ccd(a4), a2
+  0144b8: jsr        -$7fe6(a4)
+  0144bc: tst.b      (a2)
+  0144be: beq.b      $1450e
+  0144c0: move.w     #$0, -(a7)
+  0144c4: move.l     a2, -(a7)
+  0144c6: move.w     #$3c, -(a7)
+  0144ca: trap       #$1
+  0144cc: addq.l     #$8, a7
+  0144ce: tst.w      d0
+  0144d0: bmi.b      $1451e
+  0144d2: move.w     d0, -$3866(a4)
+  0144d6: movea.l    -$2e94(a4), a5
+  0144da: moveq      #$2b, d7
+  0144dc: pea.l      (a5)
+  0144de: move.l     #$14, -(a7)
+  0144e4: move.w     -$3866(a4), -(a7)
+  0144e8: move.w     #$40, -(a7)
+  0144ec: trap       #$1
+  0144ee: adda.l     #$c, a7
+  0144f4: cmpi.l     #$14, d0
+  0144fa: blt.b      $14524
+  0144fc: tst.l      d0
+  0144fe: bmi.b      $14512
+  014500: adda.l     #$64, a5
+  014506: dbra       d7, $144dc
+  01450a: moveq      #$ff, d0
+  01450c: rts        
+  01450e: moveq      #$0, d0
+  014510: rts        
+  014512: move.w     -$3866(a4), -(a7)
+  014516: move.w     #$3e, -(a7)
+  01451a: trap       #$1
+  01451c: addq.l     #$4, a7
+  01451e: jsr        -$7fce(a4)
+  014522: bra.b      $1450e
+  014524: move.w     -$3866(a4), -(a7)
+  014528: move.w     #$3e, -(a7)
+  01452c: trap       #$1
+  01452e: addq.l     #$4, a7
+  014530: jsr        -$7fda(a4)
+  014534: bra.b      $1450e
+  014536: moveq      #$58, d0
+  014538: move.w     #$ffff, -$3854(a4)
+  01453e: jsr        -$7f4a(a4)
+  014542: movea.l    a2, a3
+  014544: lea.l      -$7cd3(a4), a2
+  014548: jsr        -$7fe0(a4)
+  01454c: tst.b      (a2)
+  01454e: beq.w      $14626
+  014552: bra.b      $14558
+  014554: clr.w      -$3854(a4)
+  014558: move.w     #$2, -(a7)
+  01455c: move.l     a2, -(a7)
+  01455e: move.w     #$3d, -(a7)
+  014562: trap       #$1
+  014564: addq.l     #$8, a7
+  014566: tst.w      d0
+  014568: bmi.w      $14622
+  01456c: move.w     d0, -$3866(a4)
+  014570: jsr        $1467e(pc)
+  014574: bne.w      $14610
+  014578: jsr        $146a8(pc)
+  01457c: bne.w      $14610
+  014580: move.w     #$1, -(a7)
+  014584: move.w     -$3866(a4), -(a7)
+  014588: move.l     #$0, -(a7)
+  01458e: move.w     #$42, -(a7)
+  014592: trap       #$1
+  014594: adda.l     #$a, a7
+  01459a: move.l     d0, d2
+  01459c: jsr        $146d2(pc)
+  0145a0: bne.b      $14610
+  0145a2: tst.w      -$3854(a4)
+  0145a6: beq.b      $145ce
+  0145a8: addq.b     #$1, -$2e70(a4)
+  0145ac: move.b     #$ff, -$2e6f(a4)
+  0145b2: move.w     #$0, -(a7)
+  0145b6: move.w     -$3866(a4), -(a7)
+  0145ba: move.l     d2, -(a7)
+  0145bc: move.w     #$42, -(a7)
+  0145c0: trap       #$1
+  0145c2: adda.l     #$a, a7
+  0145c8: jsr        $146f8(pc)
+  0145cc: bmi.b      $14610
+  0145ce: move.w     -$3866(a4), -(a7)
+  0145d2: move.w     #$3e, -(a7)
+  0145d6: trap       #$1
+  0145d8: addq.l     #$4, a7
+  0145da: movea.l    -$2e80(a4), a2
+  0145de: tst.b      $4(a2)
+  0145e2: bne.b      $145e8
+  0145e4: suba.l     a2, a2
+  0145e6: bra.b      $145f4
+  0145e8: tst.l      (a2)
+  0145ea: beq.b      $145f4
+  0145ec: adda.l     #$2a, a2
+  0145f2: bra.b      $145de
+  0145f4: move.l     a2, -$2e74(a4)
+  0145f8: movea.l    -$2e94(a4), a2
+  0145fc: tst.w      $28(a2)
+  014600: bne.b      $14608
+  014602: lea.l      $64(a2), a2
+  014606: bra.b      $145fc
+  014608: move.l     a2, -$2e78(a4)
+  01460c: moveq      #$ff, d0
+  01460e: rts        
+  014610: move.w     -$3866(a4), -(a7)
+  014614: move.w     #$3e, -(a7)
+  014618: trap       #$1
+  01461a: addq.l     #$4, a7
+  01461c: jsr        -$7fce(a4)
+  014620: bra.b      $14626
+  014622: jsr        -$7fd4(a4)
+  014626: moveq      #$0, d0
+  014628: rts        
+  01462a: move.l     -$2e94(a4), -(a7)
+  01462e: move.l     #$1130, -(a7)
+  014634: move.w     -$3866(a4), -(a7)
+  014638: move.w     #$40, -(a7)
+  01463c: trap       #$1
+  01463e: adda.l     #$c, a7
+  014644: tst.l      d0
+  014646: bmi.b      $14652
+  014648: subi.l     #$1130, d0
+  01464e: neg.l      d0
+  014650: tst.l      d0
+  014652: rts        
+  014654: move.l     -$2e80(a4), -(a7)
+  014658: move.l     #$f618, -(a7)
+  01465e: move.w     -$3866(a4), -(a7)
+  014662: move.w     #$40, -(a7)
+  014666: trap       #$1
+  014668: adda.l     #$c, a7
+  01466e: tst.l      d0
+  014670: bmi.b      $1467c
+  014672: subi.l     #$f618, d0
+  014678: neg.l      d0
+  01467a: tst.l      d0
+  01467c: rts        
+  01467e: move.l     -$2e94(a4), -(a7)
+  014682: move.l     #$1130, -(a7)
+  014688: move.w     -$3866(a4), -(a7)
+  01468c: move.w     #$3f, -(a7)
+  014690: trap       #$1
+  014692: adda.l     #$c, a7
+  014698: tst.l      d0
+  01469a: bmi.b      $146a6
+  01469c: subi.l     #$1130, d0
+  0146a2: neg.l      d0
+  0146a4: tst.l      d0
+  0146a6: rts        
+  0146a8: move.l     -$2e80(a4), -(a7)
+  0146ac: move.l     #$f618, -(a7)
+  0146b2: move.w     -$3866(a4), -(a7)
+  0146b6: move.w     #$3f, -(a7)
+  0146ba: trap       #$1
+  0146bc: adda.l     #$c, a7
+  0146c2: tst.l      d0
+  0146c4: bmi.b      $146d0
+  0146c6: subi.l     #$f618, d0
+  0146cc: neg.l      d0
+  0146ce: tst.l      d0
+  0146d0: rts        
+  0146d2: lea.l      -$2e70(a4), a0
+  0146d6: lea.l      -$2480(a4), a1
+  0146da: suba.l     a0, a1
+  0146dc: move.l     a0, -(a7)
+  0146de: move.l     a1, -(a7)
+  0146e0: move.w     -$3866(a4), -(a7)
+  0146e4: move.w     #$3f, -(a7)
+  0146e8: trap       #$1
+  0146ea: adda.l     #$c, a7
+  0146f0: tst.l      d0
+  0146f2: bmi.b      $146f6
+  0146f4: cmpa.l     d0, a1
+  0146f6: rts        
+  0146f8: lea.l      -$2e70(a4), a0
+  0146fc: lea.l      -$2480(a4), a1
+  014700: suba.l     a0, a1
+  014702: move.l     a0, -(a7)
+  014704: move.l     a1, -(a7)
+  014706: move.w     -$3866(a4), -(a7)
+  01470a: move.w     #$40, -(a7)
+  01470e: trap       #$1
+  014710: adda.l     #$c, a7
+  014716: tst.l      d0
+  014718: bmi.b      $1471c
+  01471a: cmpa.l     d0, a1
+  01471c: rts        
+  01471e: movem.l    d0-d2/a0-a2, -(a7)
+  014722: pea.l      $1473e(pc)
+  014726: move.w     #$9, -(a7)
+  01472a: trap       #$1
+  01472c: addq.l     #$6, a7
+  01472e: move.w     #$1, -(a7)
+  014732: trap       #$1
+  014734: addq.l     #$2, a7
+  014736: cmpi.w     #$2, d0
+  01473a: bne.b      $14744
+  01473c: bra.b      $14744
+  01473e: addq.w     #$2, a4

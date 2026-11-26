@@ -1,0 +1,8 @@
+Hatari 2.6.1 STE 8 MHz, harness blob (SR $2700), e CycleCounter at markers (raw timeline, deltas in cycles):
+m_a0 -> m_a1  +25212   100 x register set-up sequence of one blit (14 instructions + dbra, no start)           = 252 per iteration (242 without dbra)
+m_b0 -> m_b1  +60808   100 x HOG blit D &= ~S, xcount 3, ycount 16 (48 words), skew 5, + 3 register writes + start + dbra = 608
+m_c0 -> m_c1  +188808  100 x same, xcount 5, ycount 32 (160 words)                                              = 1,888   -> (1888-608)/(160-48) = 11.4 cycles per word
+m_d0 -> m_d1  +41608   100 x LOP 3 (S only), xcount 3, ycount 16 (48 words)                                      = 416     -> 7.4 per word
+m_e0 -> m_e1  +26168   20 x non-HOG blit (48 words) + CPU polling BUSY (addq.l/btst/bne loop, 34 cycles per iteration): 1,308 per blit, 380 polling iterations in total (19 per blit = ~650 CPU cycles) -> the blit takes ~2.2x its HOG time, the CPU keeps ~50 %
+m_f0 -> m_f1  +36008   1000 x the same polling loop without a blit = 36 per iteration (calibration)
+probe: $ff8a28 written $5aa5 reads back $5aa5, $ff8a3c reads 0 (blitter present)

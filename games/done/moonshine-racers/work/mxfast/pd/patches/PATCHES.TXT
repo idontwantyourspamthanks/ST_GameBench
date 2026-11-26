@@ -1,0 +1,34 @@
+Moonshine Racers (Millennium, 1991) - PP's HAGA hard-disk conversion, enhanced release v@VERSION@ (dad_prg)
+==========================================================================================================
+
+This folder is PP's Atari ST hard-disk conversion of Moonshine Racers (README.TXT / LOG.TXT are his) with the changes below applied
+to RUNME.TOS (patch loader: the changed game code is applied in RAM at start-up, the game files in FILES\ are PP's, unchanged) and to
+HAGA (PP's loader service).  Start RUNME.TOS from the desktop or a hard-disk AUTO folder exactly as PP's version.
+
+Changes in this release:
+{PATCHES}
+
+New HUD (a visible change): the instruments are now one black bar across the top of the screen, drawn once and updated only when a value changes, instead of the old minimap, speedometer,
+gear lever, thermometer, turbo cup, big stopwatch and score panel scattered over the picture (those and the drifting clouds are gone; the sky is plain, the radio messages and the talking face stay where they were).
+From left to right the bar shows: the SCORE (the big game digits, as before), the race clock (a small stopwatch whose hand moves once the clock has advanced one 32nd of the race time; the race is over when it has gone round),
+your race position (# 1-99), the SPEED (the game's own speed value, 0-92, 128 with turbo; MPH), the GEAR (G 1 or 2), the engine temperature (T 0-35; the digits turn reddish from 28 up: the game then warns that the engine is on fire, at 35 it burns)
+and the TURBO fuel (small cup and a 28-step bar, one step per unit of the game's turbo counter 0-28; it empties while SPACE is held and during the end-of-race bonus count). Text is white; the end-of-race score count is shown in yellow.
+
+Faster game (the "tightening" patches, all pixel-identical: the picture and the game's own state are the same as without them): the talking
+face, the radio message box, the message letters and the sound-chip writes are cheaper (ta_*), the logic stage (road record clear, object projection and
+sorting, collision scans) is cheaper (tc_*), and the player's car and its shadow layer are drawn by code that the game generates once per car picture
+and reuses (tb_car, tb_carph; ST and STE with a plain 68000 only: the Mega STE, TT and Falcon always keep the original car drawing, because generated code
+is never run where a CPU cache exists).  Together they take about 0.3 of a 50-Hz frame off each game step on an 8 MHz STE (driving 3.07 -> 2.77 frames, standing 2.59 -> 2.26)
+and about the same amount off every extra picture.  Not included on purpose (separate options in patches/README.md): the raster-list trimming (ta_rb, ta_rb0: not verified on a real machine),
+the removal of the mouse query (ta_nomouse), the frozen mouth of the talking face (ta_facestat, visible), the blitter sprites (tb_blit*) and a faster, not state-exact road clear (tc_clrx).
+
+Game speed: the game now runs at a fixed speed of 10 logic steps per second on every machine and CPU clock (at 50 and at 60 Hz). On an 8 MHz machine that is 20 % faster
+than the original release, which ran at 8.3 steps per second at 8 MHz and about twice that on a 16 MHz machine.
+
+Extra frames: on a machine with spare time (16 MHz Mega STE or accelerated STE, 32 MHz TT/Falcon-class) the game now draws additional in-between pictures of each logic step,
+so the picture is smoother (about 2 pictures per step at 16 MHz, 3-4 at 32 MHz) at the SAME game speed. An 8 MHz STE/ST has time for one extra picture in about one step of three or four (measured: 29 % of the steps in a driving race with steering, none while the car is standing or the race is being set up), so it shows about 12-13 pictures per second instead of 10; the game speed is unchanged.  A 16 MHz machine gets about 1.8 extra pictures per step (27 pictures per second), a 32 MHz machine about 4 (49 per second).
+The normal pictures are the same as the original game's apart from the new top bar and the missing clouds (next paragraph).
+
+Machines: 1 MB or more. Cold-booted into the first race with this patch set (Hatari): STE (TOS 1.62, 1 MB and 4 MB), Mega STE (TOS 2.06, 1, 2 and 4 MB), ST (TOS 1.04, 1 MB) and
+TT (TOS 3.06, 4 MB) and Falcon (TOS 4.04, 4 MB); also at 60 Hz (Mega STE 2.06 and TT 3.06 boot at 60 Hz: 10 steps per second, the same speed as at 50 Hz). Not tested: a real machine. The road code uses the free RAM $C0000-$D7FFF, the player-car code cache $D8000-$E2BFF (top of the free memory on a 1 MB Mega STE with TOS 2.06).
+Hard-disk set only: PP's conversion has no floppy version.  The patch mechanism and its address map: patches/README.md

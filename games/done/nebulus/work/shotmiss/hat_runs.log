@@ -1,0 +1,12 @@
+stock loops matched sim==Hatari 2339 differ 0 None
+stock random 60 {'HIT': 53, 'MISS': 7} sim==hatari in 60 / 60
+stock targeted-miss 30 {'MISS': 30} sim==hatari in 30 / 30
+shoot loops matched sim==Hatari 2339 differ 0 None
+shoot random 60 {'HIT': 49, 'MISS': 11} sim==hatari in 60 / 60
+shoot targeted-miss 30 {'HIT': 19, 'MISS': 11} sim==hatari in 30 / 30
+fix loops matched sim==Hatari 2339 differ 0 None
+fix random 60 {'HIT': 60} sim==hatari in 60 / 60
+fix targeted-miss 30 {'HIT': 30} sim==hatari in 30 / 30
+shootfix loops matched sim==Hatari 2339 differ 0 None
+shootfix random 60 {'HIT': 59, 'MISS': 1} sim==hatari in 60 / 60
+shootfix targeted-miss 30 {'HIT': 30} sim==hatari in 30 / 30

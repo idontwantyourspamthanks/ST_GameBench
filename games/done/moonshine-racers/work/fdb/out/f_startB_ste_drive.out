@@ -1,0 +1,1629 @@
+cell f_startB_ste_drive startB ste 1024 1.62 disks work/fdb/build_def2/disk_a.st work/fdb/build_def2/disk_b.st  realfdc
+startB: race reached WITHOUT the disk-2 prompt: $100e 45 -> 103 vbl 3292 t 66
+disk-2 prompt False t 67 vbl 3434
+prompt shot /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/fdb/out/f_startB_ste_drive_prompt.png
+marker $b2700: 000B2700: 4d 53 50 4f 00 00 00 00                          MSPO....
+mode action done: startB
+t+   8s vbl 4163 $1021/$100e (2, 244)
+t+  18s vbl 4694 $1021/$100e (2, 351)
+t+  29s vbl 5224 $1021/$100e (2, 457)
+race advancing ($100e 495 -> 563, mode 2, prompt gone True): True
+race shot /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/fdb/out/f_startB_ste_drive_race.png
+drive: up held 30 s, $100e 944 shot /home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/fdb/out/f_startB_ste_drive_drive.png
+marker $b2700: 000B2700: 4d 53 50 4f 00 00 00 00                          MSPO....
+tick clock $b8f00: 000B8F00: 00 00 89 a0 00 00 89 ac                          ..ëá..ë¼
+driveb vars (unit, pref[0], pref[1]) @$bb52e: 000BB52E: 00 01 00 00 00 01                                ......
+drive B selected (PSG change drive ->1) 9 time(s) in the whole run
+fdc read sectors whole run: per drive {'0': 1237, '1': 100}
+  drive=1 reads whole run: 100; first/last: fdc read sector addr=0x68000 drive=1 track=0 sect=1 side=0 VBL=2381 video_cyc=134938 282@263 pc=cc74 | fdc read sector addr=0x62400 drive=1 track=22 sect=3 side=0 VBL=2629 video_cyc=128632 120@251 pc=cc64
+fdc read sectors after the insert: per drive {'0': 1237, '1': 100}
+  drive=1 reads after the insert: 100; first/last: fdc read sector addr=0x68000 drive=1 track=0 sect=1 side=0 VBL=2381 video_cyc=134938 282@263 pc=cc74 | fdc read sector addr=0x62400 drive=1 track=22 sect=3 side=0 VBL=2629 video_cyc=128632 120@251 pc=cc64
+FDC bursts after the prompt (VBL at 50 Hz = emulated time; one burst = one disk check, the last one also holds the race load):
+  burst 1: vbl 17 -> 1885  = 37.36 s;  reads drive0 1236 drive1 0;  B selected 1x;  forced interrupts (type IV) 107;  type I/II commands 1599
+      + 0.00s fdc change drive/side io_porta_old=0x7 io_porta_new=0x5 side 0->0 drive 0->0
+      + 0.00s fdc type I restore spinup=on verify=off steprate_ms=3 drive=0 tr=0x0 head_track=0x0
+      + 1.12s fdc type I seek dest_track=0x0 spinup=on verify=off steprate_ms=3 drive=0 tr=0x0 head_track=0x0
+      + 1.12s fdc change drive/side io_porta_old=0x5 io_porta_new=0x3 side 0->0 drive 0->1
+      + 1.12s fdc type I restore spinup=on verify=off steprate_ms=3 drive=1 tr=0x0 head_track=0x0
+      + 1.12s fdc type I seek dest_track=0x0 spinup=on verify=off steprate_ms=3 drive=1 tr=0x0 head_track=0x0
+      + 1.12s fdc change drive/side io_porta_old=0x3 io_porta_new=0x5 side 0->0 drive 1->0
+      + 1.12s fdc type I seek dest_track=0x0 spinup=on verify=on steprate_ms=3 drive=0 tr=0x0 head_track=0x0
+      + 1.14s fdc type II read sector sector=0x1 multi=off spinup=on settle=off tr=0x0 head_track=0x0 side=0 drive=0 dmasect
+      + 1.28s fdc type I seek dest_track=0x0 spinup=on verify=off steprate_ms=3 drive=0 tr=0x0 head_track=0x0
+      + 1.28s fdc type I seek dest_track=0x0 spinup=on verify=on steprate_ms=3 drive=0 tr=0x0 head_track=0x0
+      + 1.30s fdc type II read sector sector=0x2 multi=off spinup=on settle=off tr=0x0 head_track=0x0 side=0 drive=0 dmasect
+      + 1.50s fdc type II read sector sector=0x3 multi=off spinup=on settle=off tr=0x0 head_track=0x0 side=0 drive=0 dmasect
+      + 1.52s fdc type II read sector sector=0x4 multi=off spinup=on settle=off tr=0x0 head_track=0x0 side=0 drive=0 dmasect
+      + 1.54s fdc type II read sector sector=0x5 multi=off spinup=on settle=off tr=0x0 head_track=0x0 side=0 drive=0 dmasect
+      + 1.56s fdc type II read sector sector=0x6 multi=off spinup=on settle=off tr=0x0 head_track=0x0 side=0 drive=0 dmasect
+      + 1.58s fdc type II read sector sector=0x7 multi=off spinup=on settle=off tr=0x0 head_track=0x0 side=0 drive=0 dmasect
+      + 1.60s fdc type II read sector sector=0x8 multi=off spinup=on settle=off tr=0x0 head_track=0x0 side=0 drive=0 dmasect
+      + 1.62s fdc type II read sector sector=0x9 multi=off spinup=on settle=off tr=0x0 head_track=0x0 side=0 drive=0 dmasect
+      + 1.64s fdc type II read sector sector=0xa multi=off spinup=on settle=off tr=0x0 head_track=0x0 side=0 drive=0 dmasect
+      + 1.66s fdc type I seek dest_track=0x0 spinup=on verify=off steprate_ms=3 drive=0 tr=0x0 head_track=0x0
+      + 1.66s fdc type I seek dest_track=0x32 spinup=on verify=on steprate_ms=3 drive=0 tr=0x0 head_track=0x0
+      + 1.84s fdc type II read sector sector=0x1 multi=off spinup=on settle=off tr=0x32 head_track=0x32 side=0 drive=0 dmase
+      + 1.88s fdc type II read sector sector=0x2 multi=off spinup=on settle=off tr=0x32 head_track=0x32 side=0 drive=0 dmase
+      + 1.90s fdc type II read sector sector=0x3 multi=off spinup=on settle=off tr=0x32 head_track=0x32 side=0 drive=0 dmase
+      + 1.92s fdc type II read sector sector=0x4 multi=off spinup=on settle=off tr=0x32 head_track=0x32 side=0 drive=0 dmase
+      + 1.94s fdc type II read sector sector=0x5 multi=off spinup=on settle=off tr=0x32 head_track=0x32 side=0 drive=0 dmase
+      + 1.96s fdc type II read sector sector=0x6 multi=off spinup=on settle=off tr=0x32 head_track=0x32 side=0 drive=0 dmase
+      + 1.98s fdc type II read sector sector=0x7 multi=off spinup=on settle=off tr=0x32 head_track=0x32 side=0 drive=0 dmase
+      + 2.00s fdc type II read sector sector=0x8 multi=off spinup=on settle=off tr=0x32 head_track=0x32 side=0 drive=0 dmase
+      + 2.02s fdc type II read sector sector=0x9 multi=off spinup=on settle=off tr=0x32 head_track=0x32 side=0 drive=0 dmase
+      + 2.04s fdc type II read sector sector=0xa multi=off spinup=on settle=off tr=0x32 head_track=0x32 side=0 drive=0 dmase
+      + 2.06s fdc type I seek dest_track=0x32 spinup=on verify=off steprate_ms=3 drive=0 tr=0x32 head_track=0x32
+      + 2.06s fdc type I seek dest_track=0x33 spinup=on verify=on steprate_ms=3 drive=0 tr=0x32 head_track=0x32
+      + 2.08s fdc type II read sector sector=0x1 multi=off spinup=on settle=off tr=0x33 head_track=0x33 side=0 drive=0 dmase
+      + 2.28s fdc type II read sector sector=0x2 multi=off spinup=on settle=off tr=0x33 head_track=0x33 side=0 drive=0 dmase
+      + 2.30s fdc type II read sector sector=0x3 multi=off spinup=on settle=off tr=0x33 head_track=0x33 side=0 drive=0 dmase
+      + 2.32s fdc type II read sector sector=0x4 multi=off spinup=on settle=off tr=0x33 head_track=0x33 side=0 drive=0 dmase
+      + 2.34s fdc type II read sector sector=0x5 multi=off spinup=on settle=off tr=0x33 head_track=0x33 side=0 drive=0 dmase
+      + 2.36s fdc type II read sector sector=0x6 multi=off spinup=on settle=off tr=0x33 head_track=0x33 side=0 drive=0 dmase
+      + 2.38s fdc type II read sector sector=0x7 multi=off spinup=on settle=off tr=0x33 head_track=0x33 side=0 drive=0 dmase
+      + 2.40s fdc type II read sector sector=0x8 multi=off spinup=on settle=off tr=0x33 head_track=0x33 side=0 drive=0 dmase
+      + 2.42s fdc type II read sector sector=0x9 multi=off spinup=on settle=off tr=0x33 head_track=0x33 side=0 drive=0 dmase
+      + 2.44s fdc type II read sector sector=0xa multi=off spinup=on settle=off tr=0x33 head_track=0x33 side=0 drive=0 dmase
+      + 2.46s fdc type I seek dest_track=0x33 spinup=on verify=off steprate_ms=3 drive=0 tr=0x33 head_track=0x33
+      + 2.46s fdc type I seek dest_track=0x34 spinup=on verify=on steprate_ms=3 drive=0 tr=0x33 head_track=0x33
+      + 2.48s fdc type II read sector sector=0x1 multi=off spinup=on settle=off tr=0x34 head_track=0x34 side=0 drive=0 dmase
+      + 2.68s fdc type II read sector sector=0x2 multi=off spinup=on settle=off tr=0x34 head_track=0x34 side=0 drive=0 dmase
+      + 2.70s fdc type II read sector sector=0x3 multi=off spinup=on settle=off tr=0x34 head_track=0x34 side=0 drive=0 dmase
+      + 2.72s fdc type II read sector sector=0x4 multi=off spinup=on settle=off tr=0x34 head_track=0x34 side=0 drive=0 dmase
+      + 2.74s fdc type II read sector sector=0x5 multi=off spinup=on settle=off tr=0x34 head_track=0x34 side=0 drive=0 dmase
+      + 2.76s fdc type II read sector sector=0x6 multi=off spinup=on settle=off tr=0x34 head_track=0x34 side=0 drive=0 dmase
+      + 2.78s fdc type II read sector sector=0x7 multi=off spinup=on settle=off tr=0x34 head_track=0x34 side=0 drive=0 dmase
+      + 2.80s fdc type II read sector sector=0x8 multi=off spinup=on settle=off tr=0x34 head_track=0x34 side=0 drive=0 dmase
+      + 2.82s fdc type II read sector sector=0x9 multi=off spinup=on settle=off tr=0x34 head_track=0x34 side=0 drive=0 dmase
+      + 2.84s fdc type II read sector sector=0xa multi=off spinup=on settle=off tr=0x34 head_track=0x34 side=0 drive=0 dmase
+      + 2.86s fdc type I seek dest_track=0x34 spinup=on verify=off steprate_ms=3 drive=0 tr=0x34 head_track=0x34
+      + 2.86s fdc type I seek dest_track=0x35 spinup=on verify=on steprate_ms=3 drive=0 tr=0x34 head_track=0x34
+      + 2.88s fdc type II read sector sector=0x1 multi=off spinup=on settle=off tr=0x35 head_track=0x35 side=0 drive=0 dmase
+      + 3.08s fdc type II read sector sector=0x2 multi=off spinup=on settle=off tr=0x35 head_track=0x35 side=0 drive=0 dmase
+      + 3.10s fdc type II read sector sector=0x3 multi=off spinup=on settle=off tr=0x35 head_track=0x35 side=0 drive=0 dmase
+      + 3.12s fdc type II read sector sector=0x4 multi=off spinup=on settle=off tr=0x35 head_track=0x35 side=0 drive=0 dmase
+      + 3.14s fdc type II read sector sector=0x5 multi=off spinup=on settle=off tr=0x35 head_track=0x35 side=0 drive=0 dmase
+      + 3.16s fdc type II read sector sector=0x6 multi=off spinup=on settle=off tr=0x35 head_track=0x35 side=0 drive=0 dmase
+      + 3.18s fdc type II read sector sector=0x7 multi=off spinup=on settle=off tr=0x35 head_track=0x35 side=0 drive=0 dmase
+      + 3.20s fdc type II read sector sector=0x8 multi=off spinup=on settle=off tr=0x35 head_track=0x35 side=0 drive=0 dmase
+      + 3.22s fdc type II read sector sector=0x9 multi=off spinup=on settle=off tr=0x35 head_track=0x35 side=0 drive=0 dmase
+      + 3.24s fdc type II read sector sector=0xa multi=off spinup=on settle=off tr=0x35 head_track=0x35 side=0 drive=0 dmase
+      + 3.26s fdc type I seek dest_track=0x35 spinup=on verify=off steprate_ms=3 drive=0 tr=0x35 head_track=0x35
+      + 3.26s fdc type I seek dest_track=0x36 spinup=on verify=on steprate_ms=3 drive=0 tr=0x35 head_track=0x35
+      + 3.28s fdc type II read sector sector=0x1 multi=off spinup=on settle=off tr=0x36 head_track=0x36 side=0 drive=0 dmase
+      + 3.48s fdc type II read sector sector=0x2 multi=off spinup=on settle=off tr=0x36 head_track=0x36 side=0 drive=0 dmase
+      + 3.50s fdc type II read sector sector=0x3 multi=off spinup=on settle=off tr=0x36 head_track=0x36 side=0 drive=0 dmase
+      + 3.52s fdc type II read sector sector=0x4 multi=off spinup=on settle=off tr=0x36 head_track=0x36 side=0 drive=0 dmase
+      + 3.54s fdc type II read sector sector=0x5 multi=off spinup=on settle=off tr=0x36 head_track=0x36 side=0 drive=0 dmase
+      + 3.56s fdc type II read sector sector=0x6 multi=off spinup=on settle=off tr=0x36 head_track=0x36 side=0 drive=0 dmase
+      + 3.58s fdc type II read sector sector=0x7 multi=off spinup=on settle=off tr=0x36 head_track=0x36 side=0 drive=0 dmase
+      + 3.60s fdc type II read sector sector=0x8 multi=off spinup=on settle=off tr=0x36 head_track=0x36 side=0 drive=0 dmase
+      + 3.62s fdc type II read sector sector=0x9 multi=off spinup=on settle=off tr=0x36 head_track=0x36 side=0 drive=0 dmase
+      + 3.64s fdc type II read sector sector=0xa multi=off spinup=on settle=off tr=0x36 head_track=0x36 side=0 drive=0 dmase
+      + 3.66s fdc type I seek dest_track=0x36 spinup=on verify=off steprate_ms=3 drive=0 tr=0x36 head_track=0x36
+      + 3.66s fdc type I seek dest_track=0x37 spinup=on verify=on steprate_ms=3 drive=0 tr=0x36 head_track=0x36
+      + 3.68s fdc type II read sector sector=0x1 multi=off spinup=on settle=off tr=0x37 head_track=0x37 side=0 drive=0 dmase
+      + 3.88s fdc type II read sector sector=0x2 multi=off spinup=on settle=off tr=0x37 head_track=0x37 side=0 drive=0 dmase
+      + 3.90s fdc type II read sector sector=0x3 multi=off spinup=on settle=off tr=0x37 head_track=0x37 side=0 drive=0 dmase
+      + 3.92s fdc type II read sector sector=0x4 multi=off spinup=on settle=off tr=0x37 head_track=0x37 side=0 drive=0 dmase
+      + 3.94s fdc type II read sector sector=0x5 multi=off spinup=on settle=off tr=0x37 head_track=0x37 side=0 drive=0 dmase
+      + 3.96s fdc type II read sector sector=0x6 multi=off spinup=on settle=off tr=0x37 head_track=0x37 side=0 drive=0 dmase
+      + 3.98s fdc type II read sector sector=0x7 multi=off spinup=on settle=off tr=0x37 head_track=0x37 side=0 drive=0 dmase
+      + 4.00s fdc type II read sector sector=0x8 multi=off spinup=on settle=off tr=0x37 head_track=0x37 side=0 drive=0 dmase
+      + 4.02s fdc type II read sector sector=0x9 multi=off spinup=on settle=off tr=0x37 head_track=0x37 side=0 drive=0 dmase
+      + 4.04s fdc type II read sector sector=0xa multi=off spinup=on settle=off tr=0x37 head_track=0x37 side=0 drive=0 dmase
+      + 4.06s fdc type I seek dest_track=0x37 spinup=on verify=off steprate_ms=3 drive=0 tr=0x37 head_track=0x37
+      + 4.06s fdc type I seek dest_track=0x38 spinup=on verify=on steprate_ms=3 drive=0 tr=0x37 head_track=0x37
+      + 4.08s fdc type II read sector sector=0x1 multi=off spinup=on settle=off tr=0x38 head_track=0x38 side=0 drive=0 dmase
+      + 4.28s fdc type II read sector sector=0x2 multi=off spinup=on settle=off tr=0x38 head_track=0x38 side=0 drive=0 dmase
+      + 4.30s fdc type II read sector sector=0x3 multi=off spinup=on settle=off tr=0x38 head_track=0x38 side=0 drive=0 dmase
+      + 4.32s fdc type II read sector sector=0x4 multi=off spinup=on settle=off tr=0x38 head_track=0x38 side=0 drive=0 dmase
+      + 4.34s fdc type II read sector sector=0x5 multi=off spinup=on settle=off tr=0x38 head_track=0x38 side=0 drive=0 dmase
+      + 4.36s fdc type II read sector sector=0x6 multi=off spinup=on settle=off tr=0x38 head_track=0x38 side=0 drive=0 dmase
+      + 4.38s fdc type II read sector sector=0x7 multi=off spinup=on settle=off tr=0x38 head_track=0x38 side=0 drive=0 dmase
+      + 4.40s fdc type II read sector sector=0x8 multi=off spinup=on settle=off tr=0x38 head_track=0x38 side=0 drive=0 dmase
+      + 4.42s fdc type II read sector sector=0x9 multi=off spinup=on settle=off tr=0x38 head_track=0x38 side=0 drive=0 dmase
+      + 4.44s fdc type II read sector sector=0xa multi=off spinup=on settle=off tr=0x38 head_track=0x38 side=0 drive=0 dmase
+      + 4.46s fdc type I seek dest_track=0x38 spinup=on verify=off steprate_ms=3 drive=0 tr=0x38 head_track=0x38
+      + 4.46s fdc type I seek dest_track=0x39 spinup=on verify=on steprate_ms=3 drive=0 tr=0x38 head_track=0x38
+      + 4.48s fdc type II read sector sector=0x1 multi=off spinup=on settle=off tr=0x39 head_track=0x39 side=0 drive=0 dmase
+      + 4.68s fdc type II read sector sector=0x2 multi=off spinup=on settle=off tr=0x39 head_track=0x39 side=0 drive=0 dmase
+      + 4.70s fdc type II read sector sector=0x3 multi=off spinup=on settle=off tr=0x39 head_track=0x39 side=0 drive=0 dmase
+      + 4.72s fdc type II read sector sector=0x4 multi=off spinup=on settle=off tr=0x39 head_track=0x39 side=0 drive=0 dmase
+      + 4.74s fdc type II read sector sector=0x5 multi=off spinup=on settle=off tr=0x39 head_track=0x39 side=0 drive=0 dmase
+      + 4.76s fdc type II read sector sector=0x6 multi=off spinup=on settle=off tr=0x39 head_track=0x39 side=0 drive=0 dmase
+      + 4.78s fdc type II read sector sector=0x7 multi=off spinup=on settle=off tr=0x39 head_track=0x39 side=0 drive=0 dmase
+      + 4.80s fdc type II read sector sector=0x8 multi=off spinup=on settle=off tr=0x39 head_track=0x39 side=0 drive=0 dmase
+      + 4.82s fdc type II read sector sector=0x9 multi=off spinup=on settle=off tr=0x39 head_track=0x39 side=0 drive=0 dmase
+      + 4.84s fdc type II read sector sector=0xa multi=off spinup=on settle=off tr=0x39 head_track=0x39 side=0 drive=0 dmase
+      + 4.86s fdc type I seek dest_track=0x39 spinup=on verify=off steprate_ms=3 drive=0 tr=0x39 head_track=0x39
+      + 4.86s fdc type I seek dest_track=0x3a spinup=on verify=on steprate_ms=3 drive=0 tr=0x39 head_track=0x39
+      + 4.88s fdc type II read sector sector=0x1 multi=off spinup=on settle=off tr=0x3a head_track=0x3a side=0 drive=0 dmase
+      + 5.08s fdc type II read sector sector=0x2 multi=off spinup=on settle=off tr=0x3a head_track=0x3a side=0 drive=0 dmase
+      + 5.10s fdc type II read sector sector=0x3 multi=off spinup=on settle=off tr=0x3a head_track=0x3a side=0 drive=0 dmase
+      + 5.12s fdc type II read sector sector=0x4 multi=off spinup=on settle=off tr=0x3a head_track=0x3a side=0 drive=0 dmase
+      + 5.14s fdc type II read sector sector=0x5 multi=off spinup=on settle=off tr=0x3a head_track=0x3a side=0 drive=0 dmase
+      + 5.16s fdc type II read sector sector=0x6 multi=off spinup=on settle=off tr=0x3a head_track=0x3a side=0 drive=0 dmase
+      + 5.18s fdc type II read sector sector=0x7 multi=off spinup=on settle=off tr=0x3a head_track=0x3a side=0 drive=0 dmase
+      + 5.20s fdc type II read sector sector=0x8 multi=off spinup=on settle=off tr=0x3a head_track=0x3a side=0 drive=0 dmase
+      + 5.22s fdc type II read sector sector=0x9 multi=off spinup=on settle=off tr=0x3a head_track=0x3a side=0 drive=0 dmase
+      + 5.24s fdc type II read sector sector=0xa multi=off spinup=on settle=off tr=0x3a head_track=0x3a side=0 drive=0 dmase
+      + 5.26s fdc type I seek dest_track=0x3a spinup=on verify=off steprate_ms=3 drive=0 tr=0x3a head_track=0x3a
+      + 5.26s fdc type I seek dest_track=0x3b spinup=on verify=on steprate_ms=3 drive=0 tr=0x3a head_track=0x3a
+      + 5.28s fdc type II read sector sector=0x1 multi=off spinup=on settle=off tr=0x3b head_track=0x3b side=0 drive=0 dmase
+      + 5.48s fdc type II read sector sector=0x2 multi=off spinup=on settle=off tr=0x3b head_track=0x3b side=0 drive=0 dmase
+      + 5.50s fdc type II read sector sector=0x3 multi=off spinup=on settle=off tr=0x3b head_track=0x3b side=0 drive=0 dmase
+      + 5.52s fdc type II read sector sector=0x4 multi=off spinup=on settle=off tr=0x3b head_track=0x3b side=0 drive=0 dmase
+      + 5.54s fdc type II read sector sector=0x5 multi=off spinup=on settle=off tr=0x3b head_track=0x3b side=0 drive=0 dmase
+      + 5.56s fdc type II read sector sector=0x6 multi=off spinup=on settle=off tr=0x3b head_track=0x3b side=0 drive=0 dmase
+      + 5.58s fdc type II read sector sector=0x7 multi=off spinup=on settle=off tr=0x3b head_track=0x3b side=0 drive=0 dmase
+      + 5.60s fdc type II read sector sector=0x8 multi=off spinup=on settle=off tr=0x3b head_track=0x3b side=0 drive=0 dmase
+      + 5.62s fdc type II read sector sector=0x9 multi=off spinup=on settle=off tr=0x3b head_track=0x3b side=0 drive=0 dmase
+      + 5.64s fdc type II read sector sector=0xa multi=off spinup=on settle=off tr=0x3b head_track=0x3b side=0 drive=0 dmase
+      + 5.66s fdc type I seek dest_track=0x3b spinup=on verify=off steprate_ms=3 drive=0 tr=0x3b head_track=0x3b
+      + 5.66s fdc type I seek dest_track=0x1 spinup=on verify=on steprate_ms=3 drive=0 tr=0x3b head_track=0x3b
+      + 5.86s fdc type II read sector sector=0x1 multi=off spinup=on settle=off tr=0x1 head_track=0x1 side=0 drive=0 dmasect
+      + 6.08s fdc type II read sector sector=0x2 multi=off spinup=on settle=off tr=0x1 head_track=0x1 side=0 drive=0 dmasect
+      + 6.10s fdc type II read sector sector=0x3 multi=off spinup=on settle=off tr=0x1 head_track=0x1 side=0 drive=0 dmasect
+      + 6.12s fdc type II read sector sector=0x4 multi=off spinup=on settle=off tr=0x1 head_track=0x1 side=0 drive=0 dmasect
+      + 6.14s fdc type II read sector sector=0x5 multi=off spinup=on settle=off tr=0x1 head_track=0x1 side=0 drive=0 dmasect
+      + 6.16s fdc type II read sector sector=0x6 multi=off spinup=on settle=off tr=0x1 head_track=0x1 side=0 drive=0 dmasect
+      + 6.18s fdc type II read sector sector=0x7 multi=off spinup=on settle=off tr=0x1 head_track=0x1 side=0 drive=0 dmasect
+      + 6.20s fdc type II read sector sector=0x8 multi=off spinup=on settle=off tr=0x1 head_track=0x1 side=0 drive=0 dmasect
+      + 6.22s fdc type II read sector sector=0x9 multi=off spinup=on settle=off tr=0x1 head_track=0x1 side=0 drive=0 dmasect
+      + 6.24s fdc type II read sector sector=0xa multi=off spinup=on settle=off tr=0x1 head_track=0x1 side=0 drive=0 dmasect
+      + 6.26s fdc type I seek dest_track=0x1 spinup=on verify=off steprate_ms=3 drive=0 tr=0x1 head_track=0x1
+      + 6.26s fdc type I seek dest_track=0x2 spinup=on verify=on steprate_ms=3 drive=0 tr=0x1 head_track=0x1
+      + 6.28s fdc type II read sector sector=0x1 multi=off spinup=on settle=off tr=0x2 head_track=0x2 side=0 drive=0 dmasect
+      + 6.48s fdc type II read sector sector=0x2 multi=off spinup=on settle=off tr=0x2 head_track=0x2 side=0 drive=0 dmasect
+      + 6.50s fdc type II read sector sector=0x3 multi=off spinup=on settle=off tr=0x2 head_track=0x2 side=0 drive=0 dmasect
+      + 6.52s fdc type II read sector sector=0x4 multi=off spinup=on settle=off tr=0x2 head_track=0x2 side=0 drive=0 dmasect
+      + 6.54s fdc type II read sector sector=0x5 multi=off spinup=on settle=off tr=0x2 head_track=0x2 side=0 drive=0 dmasect
+      + 6.56s fdc type II read sector sector=0x6 multi=off spinup=on settle=off tr=0x2 head_track=0x2 side=0 drive=0 dmasect
+      + 6.58s fdc type II read sector sector=0x7 multi=off spinup=on settle=off tr=0x2 head_track=0x2 side=0 drive=0 dmasect
+      + 6.60s fdc type II read sector sector=0x8 multi=off spinup=on settle=off tr=0x2 head_track=0x2 side=0 drive=0 dmasect
+      + 6.62s fdc type II read sector sector=0x9 multi=off spinup=on settle=off tr=0x2 head_track=0x2 side=0 drive=0 dmasect
+      + 6.64s fdc type II read sector sector=0xa multi=off spinup=on settle=off tr=0x2 head_track=0x2 side=0 drive=0 dmasect
+      + 6.66s fdc type I seek dest_track=0x2 spinup=on verify=off steprate_ms=3 drive=0 tr=0x2 head_track=0x2
+      + 6.66s fdc type I seek dest_track=0x3 spinup=on verify=on steprate_ms=3 drive=0 tr=0x2 head_track=0x2
+      + 6.68s fdc type II read sector sector=0x1 multi=off spinup=on settle=off tr=0x3 head_track=0x3 side=0 drive=0 dmasect
+      + 6.88s fdc type II read sector sector=0x2 multi=off spinup=on settle=off tr=0x3 head_track=0x3 side=0 drive=0 dmasect
+      + 6.90s fdc type II read sector sector=0x3 multi=off spinup=on settle=off tr=0x3 head_track=0x3 side=0 drive=0 dmasect
+      + 6.92s fdc type II read sector sector=0x4 multi=off spinup=on settle=off tr=0x3 head_track=0x3 side=0 drive=0 dmasect
+      + 6.94s fdc type II read sector sector=0x5 multi=off spinup=on settle=off tr=0x3 head_track=0x3 side=0 drive=0 dmasect
+      + 6.96s fdc type II read sector sector=0x6 multi=off spinup=on settle=off tr=0x3 head_track=0x3 side=0 drive=0 dmasect
+      + 6.98s fdc type II read sector sector=0x7 multi=off spinup=on settle=off tr=0x3 head_track=0x3 side=0 drive=0 dmasect
+      + 7.00s fdc type II read sector sector=0x8 multi=off spinup=on settle=off tr=0x3 head_track=0x3 side=0 drive=0 dmasect
+      + 7.02s fdc type II read sector sector=0x9 multi=off spinup=on settle=off tr=0x3 head_track=0x3 side=0 drive=0 dmasect
+      + 7.04s fdc type II read sector sector=0xa multi=off spinup=on settle=off tr=0x3 head_track=0x3 side=0 drive=0 dmasect
+      + 7.06s fdc type I seek dest_track=0x3 spinup=on verify=off steprate_ms=3 drive=0 tr=0x3 head_track=0x3
+      + 7.06s fdc type I seek dest_track=0x4 spinup=on verify=on steprate_ms=3 drive=0 tr=0x3 head_track=0x3
+      + 7.08s fdc type II read sector sector=0x1 multi=off spinup=on settle=off tr=0x4 head_track=0x4 side=0 drive=0 dmasect
+      + 7.28s fdc type II read sector sector=0x2 multi=off spinup=on settle=off tr=0x4 head_track=0x4 side=0 drive=0 dmasect
+      + 7.30s fdc type II read sector sector=0x3 multi=off spinup=on settle=off tr=0x4 head_track=0x4 side=0 drive=0 dmasect
+      + 7.32s fdc type II read sector sector=0x4 multi=off spinup=on settle=off tr=0x4 head_track=0x4 side=0 drive=0 dmasect
+      + 7.34s fdc type II read sector sector=0x5 multi=off spinup=on settle=off tr=0x4 head_track=0x4 side=0 drive=0 dmasect
+      + 7.36s fdc type II read sector sector=0x6 multi=off spinup=on settle=off tr=0x4 head_track=0x4 side=0 drive=0 dmasect
+      + 7.38s fdc type II read sector sector=0x7 multi=off spinup=on settle=off tr=0x4 head_track=0x4 side=0 drive=0 dmasect
+      + 7.40s fdc type II read sector sector=0x8 multi=off spinup=on settle=off tr=0x4 head_track=0x4 side=0 drive=0 dmasect
+      + 7.42s fdc type II read sector sector=0x9 multi=off spinup=on settle=off tr=0x4 head_track=0x4 side=0 drive=0 dmasect
+      + 7.44s fdc type II read sector sector=0xa multi=off spinup=on settle=off tr=0x4 head_track=0x4 side=0 drive=0 dmasect
+      + 7.46s fdc type I seek dest_track=0x4 spinup=on verify=off steprate_ms=3 drive=0 tr=0x4 head_track=0x4
+      + 7.46s fdc type I seek dest_track=0x5 spinup=on verify=on steprate_ms=3 drive=0 tr=0x4 head_track=0x4
+      + 7.50s fdc type II read sector sector=0x1 multi=off spinup=on settle=off tr=0x5 head_track=0x5 side=0 drive=0 dmasect
+      + 7.68s fdc type II read sector sector=0x2 multi=off spinup=on settle=off tr=0x5 head_track=0x5 side=0 drive=0 dmasect
+      + 7.70s fdc type II read sector sector=0x3 multi=off spinup=on settle=off tr=0x5 head_track=0x5 side=0 drive=0 dmasect
+      + 7.72s fdc type II read sector sector=0x4 multi=off spinup=on settle=off tr=0x5 head_track=0x5 side=0 drive=0 dmasect
+      + 7.74s fdc type II read sector sector=0x5 multi=off spinup=on settle=off tr=0x5 head_track=0x5 side=0 drive=0 dmasect
+      + 7.76s fdc type II read sector sector=0x6 multi=off spinup=on settle=off tr=0x5 head_track=0x5 side=0 drive=0 dmasect
+      + 7.78s fdc type II read sector sector=0x7 multi=off spinup=on settle=off tr=0x5 head_track=0x5 side=0 drive=0 dmasect
+      + 7.80s fdc type II read sector sector=0x8 multi=off spinup=on settle=off tr=0x5 head_track=0x5 side=0 drive=0 dmasect
+      + 7.82s fdc type II read sector sector=0x9 multi=off spinup=on settle=off tr=0x5 head_track=0x5 side=0 drive=0 dmasect
+      + 7.84s fdc type II read sector sector=0xa multi=off spinup=on settle=off tr=0x5 head_track=0x5 side=0 drive=0 dmasect
+      + 7.86s fdc type I seek dest_track=0x5 spinup=on verify=off steprate_ms=3 drive=0 tr=0x5 head_track=0x5
+      + 7.86s fdc type I seek dest_track=0x6 spinup=on verify=on steprate_ms=3 drive=0 tr=0x5 head_track=0x5
+      + 7.90s fdc type II read sector sector=0x1 multi=off spinup=on settle=off tr=0x6 head_track=0x6 side=0 drive=0 dmasect
+      + 8.08s fdc type II read sector sector=0x2 multi=off spinup=on settle=off tr=0x6 head_track=0x6 side=0 drive=0 dmasect
+      + 8.10s fdc type II read sector sector=0x3 multi=off spinup=on settle=off tr=0x6 head_track=0x6 side=0 drive=0 dmasect
+      + 8.12s fdc type II read sector sector=0x4 multi=off spinup=on settle=off tr=0x6 head_track=0x6 side=0 drive=0 dmasect
+      + 8.14s fdc type II read sector sector=0x5 multi=off spinup=on settle=off tr=0x6 head_track=0x6 side=0 drive=0 dmasect
+      + 8.16s fdc type II read sector sector=0x6 multi=off spinup=on settle=off tr=0x6 head_track=0x6 side=0 drive=0 dmasect
+      + 8.18s fdc type II read sector sector=0x7 multi=off spinup=on settle=off tr=0x6 head_track=0x6 side=0 drive=0 dmasect
+      + 8.20s fdc type II read sector sector=0x8 multi=off spinup=on settle=off tr=0x6 head_track=0x6 side=0 drive=0 dmasect
+      + 8.22s fdc type II read sector sector=0x9 multi=off spinup=on settle=off tr=0x6 head_track=0x6 side=0 drive=0 dmasect
+      + 8.24s fdc type II read sector sector=0xa multi=off spinup=on settle=off tr=0x6 head_track=0x6 side=0 drive=0 dmasect
+      + 8.26s fdc type I seek dest_track=0x6 spinup=on verify=off steprate_ms=3 drive=0 tr=0x6 head_track=0x6
+      + 8.62s fdc type I restore spinup=on verify=off steprate_ms=3 drive=0 tr=0xff head_track=0x6
+      + 8.62s fdc type I seek dest_track=0x5 spinup=on verify=off steprate_ms=3 drive=0 tr=0x0 head_track=0x0
+      + 8.64s fdc type II read sector sector=0x4 multi=on spinup=on settle=off tr=0x5 head_track=0x5 side=0 drive=0 dmasecto
+      + 8.74s fdc type II read sector with multi sector=0x5 track=0x5 side=0 drive=0 addr=0x1200
+      + 8.76s fdc type II read sector with multi sector=0x6 track=0x5 side=0 drive=0 addr=0x1400
+      + 8.78s fdc type II read sector with multi sector=0x7 track=0x5 side=0 drive=0 addr=0x1600
+      + 8.80s fdc type II read sector with multi sector=0x8 track=0x5 side=0 drive=0 addr=0x1800
+      + 8.82s fdc type II read sector with multi sector=0x9 track=0x5 side=0 drive=0 addr=0x1a00
+      + 8.84s fdc type II read sector with multi sector=0xa track=0x5 side=0 drive=0 addr=0x1c00
+      + 8.86s fdc type II read sector with multi sector=0xb track=0x5 side=0 drive=0 addr=0x1e00
+      + 8.86s fdc type IV force int 0xd0 irq=0 index=0
+      + 8.86s fdc type I seek dest_track=0x6 spinup=on verify=off steprate_ms=3 drive=0 tr=0x5 head_track=0x5
+      + 8.88s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x6 head_track=0x6 side=0 drive=0 dmasecto
+      + 8.88s fdc type II read sector with multi sector=0x2 track=0x6 side=0 drive=0 addr=0x2000
+      + 8.90s fdc type II read sector with multi sector=0x3 track=0x6 side=0 drive=0 addr=0x2200
+      + 8.92s fdc type II read sector with multi sector=0x4 track=0x6 side=0 drive=0 addr=0x2400
+      + 8.94s fdc type II read sector with multi sector=0x5 track=0x6 side=0 drive=0 addr=0x2600
+      + 8.96s fdc type II read sector with multi sector=0x6 track=0x6 side=0 drive=0 addr=0x2800
+      + 8.98s fdc type II read sector with multi sector=0x7 track=0x6 side=0 drive=0 addr=0x2a00
+      + 9.00s fdc type II read sector with multi sector=0x8 track=0x6 side=0 drive=0 addr=0x2c00
+      + 9.02s fdc type II read sector with multi sector=0x9 track=0x6 side=0 drive=0 addr=0x2e00
+      + 9.04s fdc type II read sector with multi sector=0xa track=0x6 side=0 drive=0 addr=0x3000
+      + 9.06s fdc type II read sector with multi sector=0xb track=0x6 side=0 drive=0 addr=0x3200
+      + 9.06s fdc type IV force int 0xd0 irq=0 index=0
+      + 9.06s fdc type I seek dest_track=0x7 spinup=on verify=off steprate_ms=3 drive=0 tr=0x6 head_track=0x6
+      + 9.08s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x7 head_track=0x7 side=0 drive=0 dmasecto
+      + 9.08s fdc type II read sector with multi sector=0x2 track=0x7 side=0 drive=0 addr=0x3400
+      + 9.10s fdc type II read sector with multi sector=0x3 track=0x7 side=0 drive=0 addr=0x3600
+      + 9.12s fdc type II read sector with multi sector=0x4 track=0x7 side=0 drive=0 addr=0x3800
+      + 9.14s fdc type II read sector with multi sector=0x5 track=0x7 side=0 drive=0 addr=0x3a00
+      + 9.16s fdc type II read sector with multi sector=0x6 track=0x7 side=0 drive=0 addr=0x3c00
+      + 9.18s fdc type II read sector with multi sector=0x7 track=0x7 side=0 drive=0 addr=0x3e00
+      + 9.20s fdc type II read sector with multi sector=0x8 track=0x7 side=0 drive=0 addr=0x4000
+      + 9.22s fdc type II read sector with multi sector=0x9 track=0x7 side=0 drive=0 addr=0x4200
+      + 9.24s fdc type II read sector with multi sector=0xa track=0x7 side=0 drive=0 addr=0x4400
+      + 9.26s fdc type II read sector with multi sector=0xb track=0x7 side=0 drive=0 addr=0x4600
+      + 9.26s fdc type IV force int 0xd0 irq=0 index=0
+      + 9.26s fdc type I seek dest_track=0x8 spinup=on verify=off steprate_ms=3 drive=0 tr=0x7 head_track=0x7
+      + 9.28s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x8 head_track=0x8 side=0 drive=0 dmasecto
+      + 9.28s fdc type II read sector with multi sector=0x2 track=0x8 side=0 drive=0 addr=0x4800
+      + 9.30s fdc type II read sector with multi sector=0x3 track=0x8 side=0 drive=0 addr=0x4a00
+      + 9.32s fdc type II read sector with multi sector=0x4 track=0x8 side=0 drive=0 addr=0x4c00
+      + 9.34s fdc type II read sector with multi sector=0x5 track=0x8 side=0 drive=0 addr=0x4e00
+      + 9.36s fdc type II read sector with multi sector=0x6 track=0x8 side=0 drive=0 addr=0x5000
+      + 9.38s fdc type II read sector with multi sector=0x7 track=0x8 side=0 drive=0 addr=0x5200
+      + 9.40s fdc type II read sector with multi sector=0x8 track=0x8 side=0 drive=0 addr=0x5400
+      + 9.42s fdc type II read sector with multi sector=0x9 track=0x8 side=0 drive=0 addr=0x5600
+      + 9.44s fdc type II read sector with multi sector=0xa track=0x8 side=0 drive=0 addr=0x5800
+      + 9.46s fdc type II read sector with multi sector=0xb track=0x8 side=0 drive=0 addr=0x5a00
+      + 9.46s fdc type IV force int 0xd0 irq=0 index=0
+      + 9.46s fdc type I seek dest_track=0x9 spinup=on verify=off steprate_ms=3 drive=0 tr=0x8 head_track=0x8
+      + 9.48s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x9 head_track=0x9 side=0 drive=0 dmasecto
+      + 9.50s fdc type II read sector with multi sector=0x2 track=0x9 side=0 drive=0 addr=0x5c00
+      + 9.50s fdc type II read sector with multi sector=0x3 track=0x9 side=0 drive=0 addr=0x5e00
+      + 9.52s fdc type II read sector with multi sector=0x4 track=0x9 side=0 drive=0 addr=0x6000
+      + 9.54s fdc type II read sector with multi sector=0x5 track=0x9 side=0 drive=0 addr=0x6200
+      + 9.56s fdc type II read sector with multi sector=0x6 track=0x9 side=0 drive=0 addr=0x6400
+      + 9.58s fdc type II read sector with multi sector=0x7 track=0x9 side=0 drive=0 addr=0x6600
+      + 9.60s fdc type II read sector with multi sector=0x8 track=0x9 side=0 drive=0 addr=0x6800
+      + 9.62s fdc type II read sector with multi sector=0x9 track=0x9 side=0 drive=0 addr=0x6a00
+      + 9.64s fdc type II read sector with multi sector=0xa track=0x9 side=0 drive=0 addr=0x6c00
+      + 9.66s fdc type II read sector with multi sector=0xb track=0x9 side=0 drive=0 addr=0x6e00
+      + 9.66s fdc type IV force int 0xd0 irq=0 index=0
+      + 9.66s fdc type I seek dest_track=0xa spinup=on verify=off steprate_ms=3 drive=0 tr=0x9 head_track=0x9
+      + 9.68s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0xa head_track=0xa side=0 drive=0 dmasecto
+      + 9.70s fdc type II read sector with multi sector=0x2 track=0xa side=0 drive=0 addr=0x7000
+      + 9.70s fdc type II read sector with multi sector=0x3 track=0xa side=0 drive=0 addr=0x7200
+      + 9.72s fdc type II read sector with multi sector=0x4 track=0xa side=0 drive=0 addr=0x7400
+      + 9.74s fdc type II read sector with multi sector=0x5 track=0xa side=0 drive=0 addr=0x7600
+      + 9.76s fdc type II read sector with multi sector=0x6 track=0xa side=0 drive=0 addr=0x7800
+      + 9.78s fdc type II read sector with multi sector=0x7 track=0xa side=0 drive=0 addr=0x7a00
+      + 9.80s fdc type II read sector with multi sector=0x8 track=0xa side=0 drive=0 addr=0x7c00
+      + 9.82s fdc type II read sector with multi sector=0x9 track=0xa side=0 drive=0 addr=0x7e00
+      + 9.84s fdc type II read sector with multi sector=0xa track=0xa side=0 drive=0 addr=0x8000
+      + 9.86s fdc type II read sector with multi sector=0xb track=0xa side=0 drive=0 addr=0x8200
+      + 9.86s fdc type IV force int 0xd0 irq=0 index=0
+      + 9.86s fdc type I seek dest_track=0xb spinup=on verify=off steprate_ms=3 drive=0 tr=0xa head_track=0xa
+      + 9.88s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0xb head_track=0xb side=0 drive=0 dmasecto
+      + 9.90s fdc type II read sector with multi sector=0x2 track=0xb side=0 drive=0 addr=0x8400
+      + 9.92s fdc type II read sector with multi sector=0x3 track=0xb side=0 drive=0 addr=0x8600
+      + 9.92s fdc type II read sector with multi sector=0x4 track=0xb side=0 drive=0 addr=0x8800
+      + 9.94s fdc type II read sector with multi sector=0x5 track=0xb side=0 drive=0 addr=0x8a00
+      + 9.96s fdc type II read sector with multi sector=0x6 track=0xb side=0 drive=0 addr=0x8c00
+      + 9.98s fdc type II read sector with multi sector=0x7 track=0xb side=0 drive=0 addr=0x8e00
+      +10.00s fdc type II read sector with multi sector=0x8 track=0xb side=0 drive=0 addr=0x9000
+      +10.02s fdc type II read sector with multi sector=0x9 track=0xb side=0 drive=0 addr=0x9200
+      +10.04s fdc type II read sector with multi sector=0xa track=0xb side=0 drive=0 addr=0x9400
+      +10.06s fdc type II read sector with multi sector=0xb track=0xb side=0 drive=0 addr=0x9600
+      +10.06s fdc type IV force int 0xd0 irq=0 index=0
+      +10.06s fdc type I seek dest_track=0xc spinup=on verify=off steprate_ms=3 drive=0 tr=0xb head_track=0xb
+      +10.08s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0xc head_track=0xc side=0 drive=0 dmasecto
+      +10.10s fdc type II read sector with multi sector=0x2 track=0xc side=0 drive=0 addr=0x9800
+      +10.12s fdc type II read sector with multi sector=0x3 track=0xc side=0 drive=0 addr=0x9a00
+      +10.14s fdc type II read sector with multi sector=0x4 track=0xc side=0 drive=0 addr=0x9c00
+      +10.14s fdc type II read sector with multi sector=0x5 track=0xc side=0 drive=0 addr=0x9e00
+      +10.16s fdc type II read sector with multi sector=0x6 track=0xc side=0 drive=0 addr=0xa000
+      +10.18s fdc type II read sector with multi sector=0x7 track=0xc side=0 drive=0 addr=0xa200
+      +10.20s fdc type II read sector with multi sector=0x8 track=0xc side=0 drive=0 addr=0xa400
+      +10.22s fdc type II read sector with multi sector=0x9 track=0xc side=0 drive=0 addr=0xa600
+      +10.24s fdc type II read sector with multi sector=0xa track=0xc side=0 drive=0 addr=0xa800
+      +10.26s fdc type II read sector with multi sector=0xb track=0xc side=0 drive=0 addr=0xaa00
+      +10.26s fdc type IV force int 0xd0 irq=0 index=0
+      +10.26s fdc type I seek dest_track=0xd spinup=on verify=off steprate_ms=3 drive=0 tr=0xc head_track=0xc
+      +10.28s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0xd head_track=0xd side=0 drive=0 dmasecto
+      +10.30s fdc type II read sector with multi sector=0x2 track=0xd side=0 drive=0 addr=0xac00
+      +10.32s fdc type II read sector with multi sector=0x3 track=0xd side=0 drive=0 addr=0xae00
+      +10.34s fdc type II read sector with multi sector=0x4 track=0xd side=0 drive=0 addr=0xb000
+      +10.34s fdc type II read sector with multi sector=0x5 track=0xd side=0 drive=0 addr=0xb200
+      +10.36s fdc type II read sector with multi sector=0x6 track=0xd side=0 drive=0 addr=0xb400
+      +10.38s fdc type II read sector with multi sector=0x7 track=0xd side=0 drive=0 addr=0xb600
+      +10.40s fdc type II read sector with multi sector=0x8 track=0xd side=0 drive=0 addr=0xb800
+      +10.42s fdc type II read sector with multi sector=0x9 track=0xd side=0 drive=0 addr=0xba00
+      +10.44s fdc type II read sector with multi sector=0xa track=0xd side=0 drive=0 addr=0xbc00
+      +10.46s fdc type II read sector with multi sector=0xb track=0xd side=0 drive=0 addr=0xbe00
+      +10.46s fdc type IV force int 0xd0 irq=0 index=0
+      +10.46s fdc type I seek dest_track=0xe spinup=on verify=off steprate_ms=3 drive=0 tr=0xd head_track=0xd
+      +10.48s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0xe head_track=0xe side=0 drive=0 dmasecto
+      +10.50s fdc type II read sector with multi sector=0x2 track=0xe side=0 drive=0 addr=0xc000
+      +10.52s fdc type II read sector with multi sector=0x3 track=0xe side=0 drive=0 addr=0xc200
+      +10.54s fdc type II read sector with multi sector=0x4 track=0xe side=0 drive=0 addr=0xc400
+      +10.56s fdc type II read sector with multi sector=0x5 track=0xe side=0 drive=0 addr=0xc600
+      +10.56s fdc type II read sector with multi sector=0x6 track=0xe side=0 drive=0 addr=0xc800
+      +10.58s fdc type II read sector with multi sector=0x7 track=0xe side=0 drive=0 addr=0xca00
+      +10.60s fdc type II read sector with multi sector=0x8 track=0xe side=0 drive=0 addr=0xcc00
+      +10.62s fdc type II read sector with multi sector=0x9 track=0xe side=0 drive=0 addr=0xce00
+      +10.64s fdc type II read sector with multi sector=0xa track=0xe side=0 drive=0 addr=0xd000
+      +10.66s fdc type II read sector with multi sector=0xb track=0xe side=0 drive=0 addr=0xd200
+      +10.66s fdc type IV force int 0xd0 irq=0 index=0
+      +10.66s fdc type I seek dest_track=0xf spinup=on verify=off steprate_ms=3 drive=0 tr=0xe head_track=0xe
+      +10.68s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0xf head_track=0xf side=0 drive=0 dmasecto
+      +10.70s fdc type II read sector with multi sector=0x2 track=0xf side=0 drive=0 addr=0xd400
+      +10.72s fdc type II read sector with multi sector=0x3 track=0xf side=0 drive=0 addr=0xd600
+      +10.74s fdc type II read sector with multi sector=0x4 track=0xf side=0 drive=0 addr=0xd800
+      +10.76s fdc type II read sector with multi sector=0x5 track=0xf side=0 drive=0 addr=0xda00
+      +10.76s fdc type II read sector with multi sector=0x6 track=0xf side=0 drive=0 addr=0xdc00
+      +10.78s fdc type II read sector with multi sector=0x7 track=0xf side=0 drive=0 addr=0xde00
+      +10.80s fdc type II read sector with multi sector=0x8 track=0xf side=0 drive=0 addr=0xe000
+      +10.82s fdc type II read sector with multi sector=0x9 track=0xf side=0 drive=0 addr=0xe200
+      +10.84s fdc type II read sector with multi sector=0xa track=0xf side=0 drive=0 addr=0xe400
+      +10.86s fdc type II read sector with multi sector=0xb track=0xf side=0 drive=0 addr=0xe600
+      +10.86s fdc type IV force int 0xd0 irq=0 index=0
+      +10.86s fdc type I seek dest_track=0x10 spinup=on verify=off steprate_ms=3 drive=0 tr=0xf head_track=0xf
+      +10.88s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x10 head_track=0x10 side=0 drive=0 dmasec
+      +10.90s fdc type II read sector with multi sector=0x2 track=0x10 side=0 drive=0 addr=0xe800
+      +10.92s fdc type II read sector with multi sector=0x3 track=0x10 side=0 drive=0 addr=0xea00
+      +10.94s fdc type II read sector with multi sector=0x4 track=0x10 side=0 drive=0 addr=0xec00
+      +10.96s fdc type II read sector with multi sector=0x5 track=0x10 side=0 drive=0 addr=0xee00
+      +10.98s fdc type II read sector with multi sector=0x6 track=0x10 side=0 drive=0 addr=0xf000
+      +10.98s fdc type II read sector with multi sector=0x7 track=0x10 side=0 drive=0 addr=0xf200
+      +11.00s fdc type II read sector with multi sector=0x8 track=0x10 side=0 drive=0 addr=0xf400
+      +11.02s fdc type II read sector with multi sector=0x9 track=0x10 side=0 drive=0 addr=0xf600
+      +11.04s fdc type II read sector with multi sector=0xa track=0x10 side=0 drive=0 addr=0xf800
+      +11.06s fdc type II read sector with multi sector=0xb track=0x10 side=0 drive=0 addr=0xfa00
+      +11.06s fdc type IV force int 0xd0 irq=0 index=0
+      +11.06s fdc type I seek dest_track=0x11 spinup=on verify=off steprate_ms=3 drive=0 tr=0x10 head_track=0x10
+      +11.08s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x11 head_track=0x11 side=0 drive=0 dmasec
+      +11.10s fdc type II read sector with multi sector=0x2 track=0x11 side=0 drive=0 addr=0xfc00
+      +11.12s fdc type II read sector with multi sector=0x3 track=0x11 side=0 drive=0 addr=0xfe00
+      +11.14s fdc type II read sector with multi sector=0x4 track=0x11 side=0 drive=0 addr=0x10000
+      +11.16s fdc type II read sector with multi sector=0x5 track=0x11 side=0 drive=0 addr=0x10200
+      +11.18s fdc type II read sector with multi sector=0x6 track=0x11 side=0 drive=0 addr=0x10400
+      +11.20s fdc type II read sector with multi sector=0x7 track=0x11 side=0 drive=0 addr=0x10600
+      +11.20s fdc type II read sector with multi sector=0x8 track=0x11 side=0 drive=0 addr=0x10800
+      +11.22s fdc type II read sector with multi sector=0x9 track=0x11 side=0 drive=0 addr=0x10a00
+      +11.24s fdc type II read sector with multi sector=0xa track=0x11 side=0 drive=0 addr=0x10c00
+      +11.26s fdc type II read sector with multi sector=0xb track=0x11 side=0 drive=0 addr=0x10e00
+      +11.26s fdc type IV force int 0xd0 irq=0 index=0
+      +11.26s fdc type I seek dest_track=0x12 spinup=on verify=off steprate_ms=3 drive=0 tr=0x11 head_track=0x11
+      +11.28s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x12 head_track=0x12 side=0 drive=0 dmasec
+      +11.30s fdc type II read sector with multi sector=0x2 track=0x12 side=0 drive=0 addr=0x11000
+      +11.32s fdc type II read sector with multi sector=0x3 track=0x12 side=0 drive=0 addr=0x11200
+      +11.34s fdc type II read sector with multi sector=0x4 track=0x12 side=0 drive=0 addr=0x11400
+      +11.36s fdc type II read sector with multi sector=0x5 track=0x12 side=0 drive=0 addr=0x11600
+      +11.38s fdc type II read sector with multi sector=0x6 track=0x12 side=0 drive=0 addr=0x11800
+      +11.40s fdc type II read sector with multi sector=0x7 track=0x12 side=0 drive=0 addr=0x11a00
+      +11.40s fdc type II read sector with multi sector=0x8 track=0x12 side=0 drive=0 addr=0x11c00
+      +11.42s fdc type II read sector with multi sector=0x9 track=0x12 side=0 drive=0 addr=0x11e00
+      +11.44s fdc type II read sector with multi sector=0xa track=0x12 side=0 drive=0 addr=0x12000
+      +11.46s fdc type II read sector with multi sector=0xb track=0x12 side=0 drive=0 addr=0x12200
+      +11.46s fdc type IV force int 0xd0 irq=0 index=0
+      +11.46s fdc type I seek dest_track=0x13 spinup=on verify=off steprate_ms=3 drive=0 tr=0x12 head_track=0x12
+      +11.48s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x13 head_track=0x13 side=0 drive=0 dmasec
+      +11.50s fdc type II read sector with multi sector=0x2 track=0x13 side=0 drive=0 addr=0x12400
+      +11.52s fdc type II read sector with multi sector=0x3 track=0x13 side=0 drive=0 addr=0x12600
+      +11.54s fdc type II read sector with multi sector=0x4 track=0x13 side=0 drive=0 addr=0x12800
+      +11.56s fdc type II read sector with multi sector=0x5 track=0x13 side=0 drive=0 addr=0x12a00
+      +11.58s fdc type II read sector with multi sector=0x6 track=0x13 side=0 drive=0 addr=0x12c00
+      +11.60s fdc type II read sector with multi sector=0x7 track=0x13 side=0 drive=0 addr=0x12e00
+      +11.62s fdc type II read sector with multi sector=0x8 track=0x13 side=0 drive=0 addr=0x13000
+      +11.62s fdc type II read sector with multi sector=0x9 track=0x13 side=0 drive=0 addr=0x13200
+      +11.64s fdc type II read sector with multi sector=0xa track=0x13 side=0 drive=0 addr=0x13400
+      +11.66s fdc type II read sector with multi sector=0xb track=0x13 side=0 drive=0 addr=0x13600
+      +11.66s fdc type IV force int 0xd0 irq=0 index=0
+      +11.66s fdc type I seek dest_track=0x14 spinup=on verify=off steprate_ms=3 drive=0 tr=0x13 head_track=0x13
+      +11.68s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x14 head_track=0x14 side=0 drive=0 dmasec
+      +11.70s fdc type II read sector with multi sector=0x2 track=0x14 side=0 drive=0 addr=0x13800
+      +11.72s fdc type II read sector with multi sector=0x3 track=0x14 side=0 drive=0 addr=0x13a00
+      +11.74s fdc type II read sector with multi sector=0x4 track=0x14 side=0 drive=0 addr=0x13c00
+      +11.76s fdc type II read sector with multi sector=0x5 track=0x14 side=0 drive=0 addr=0x13e00
+      +11.78s fdc type II read sector with multi sector=0x6 track=0x14 side=0 drive=0 addr=0x14000
+      +11.80s fdc type II read sector with multi sector=0x7 track=0x14 side=0 drive=0 addr=0x14200
+      +11.82s fdc type II read sector with multi sector=0x8 track=0x14 side=0 drive=0 addr=0x14400
+      +11.82s fdc type II read sector with multi sector=0x9 track=0x14 side=0 drive=0 addr=0x14600
+      +11.84s fdc type II read sector with multi sector=0xa track=0x14 side=0 drive=0 addr=0x14800
+      +11.86s fdc type II read sector with multi sector=0xb track=0x14 side=0 drive=0 addr=0x14a00
+      +11.86s fdc type IV force int 0xd0 irq=0 index=0
+      +11.88s fdc type I seek dest_track=0x15 spinup=on verify=off steprate_ms=3 drive=0 tr=0x14 head_track=0x14
+      +11.88s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x15 head_track=0x15 side=0 drive=0 dmasec
+      +11.90s fdc type II read sector with multi sector=0x2 track=0x15 side=0 drive=0 addr=0x14c00
+      +11.92s fdc type II read sector with multi sector=0x3 track=0x15 side=0 drive=0 addr=0x14e00
+      +11.94s fdc type II read sector with multi sector=0x4 track=0x15 side=0 drive=0 addr=0x15000
+      +11.96s fdc type II read sector with multi sector=0x5 track=0x15 side=0 drive=0 addr=0x15200
+      +11.98s fdc type II read sector with multi sector=0x6 track=0x15 side=0 drive=0 addr=0x15400
+      +12.00s fdc type II read sector with multi sector=0x7 track=0x15 side=0 drive=0 addr=0x15600
+      +12.02s fdc type II read sector with multi sector=0x8 track=0x15 side=0 drive=0 addr=0x15800
+      +12.04s fdc type II read sector with multi sector=0x9 track=0x15 side=0 drive=0 addr=0x15a00
+      +12.04s fdc type II read sector with multi sector=0xa track=0x15 side=0 drive=0 addr=0x15c00
+      +12.06s fdc type II read sector with multi sector=0xb track=0x15 side=0 drive=0 addr=0x15e00
+      +12.06s fdc type IV force int 0xd0 irq=0 index=0
+      +12.08s fdc type I seek dest_track=0x16 spinup=on verify=off steprate_ms=3 drive=0 tr=0x15 head_track=0x15
+      +12.08s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x16 head_track=0x16 side=0 drive=0 dmasec
+      +12.10s fdc type II read sector with multi sector=0x2 track=0x16 side=0 drive=0 addr=0x16000
+      +12.12s fdc type II read sector with multi sector=0x3 track=0x16 side=0 drive=0 addr=0x16200
+      +12.14s fdc type II read sector with multi sector=0x4 track=0x16 side=0 drive=0 addr=0x16400
+      +12.16s fdc type II read sector with multi sector=0x5 track=0x16 side=0 drive=0 addr=0x16600
+      +12.18s fdc type II read sector with multi sector=0x6 track=0x16 side=0 drive=0 addr=0x16800
+      +12.20s fdc type II read sector with multi sector=0x7 track=0x16 side=0 drive=0 addr=0x16a00
+      +12.22s fdc type II read sector with multi sector=0x8 track=0x16 side=0 drive=0 addr=0x16c00
+      +12.24s fdc type II read sector with multi sector=0x9 track=0x16 side=0 drive=0 addr=0x16e00
+      +12.26s fdc type II read sector with multi sector=0xa track=0x16 side=0 drive=0 addr=0x17000
+      +12.26s fdc type II read sector with multi sector=0xb track=0x16 side=0 drive=0 addr=0x17200
+      +12.26s fdc type IV force int 0xd0 irq=0 index=0
+      +12.28s fdc type I seek dest_track=0x17 spinup=on verify=off steprate_ms=3 drive=0 tr=0x16 head_track=0x16
+      +12.28s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x17 head_track=0x17 side=0 drive=0 dmasec
+      +12.30s fdc type II read sector with multi sector=0x2 track=0x17 side=0 drive=0 addr=0x17400
+      +12.32s fdc type II read sector with multi sector=0x3 track=0x17 side=0 drive=0 addr=0x17600
+      +12.34s fdc type II read sector with multi sector=0x4 track=0x17 side=0 drive=0 addr=0x17800
+      +12.36s fdc type II read sector with multi sector=0x5 track=0x17 side=0 drive=0 addr=0x17a00
+      +12.38s fdc type II read sector with multi sector=0x6 track=0x17 side=0 drive=0 addr=0x17c00
+      +12.40s fdc type II read sector with multi sector=0x7 track=0x17 side=0 drive=0 addr=0x17e00
+      +12.42s fdc type II read sector with multi sector=0x8 track=0x17 side=0 drive=0 addr=0x18000
+      +12.44s fdc type II read sector with multi sector=0x9 track=0x17 side=0 drive=0 addr=0x18200
+      +12.46s fdc type II read sector with multi sector=0xa track=0x17 side=0 drive=0 addr=0x18400
+      +12.46s fdc type II read sector with multi sector=0xb track=0x17 side=0 drive=0 addr=0x18600
+      +12.46s fdc type IV force int 0xd0 irq=0 index=0
+      +12.48s fdc type I seek dest_track=0x18 spinup=on verify=off steprate_ms=3 drive=0 tr=0x17 head_track=0x17
+      +12.48s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x18 head_track=0x18 side=0 drive=0 dmasec
+      +12.50s fdc type II read sector with multi sector=0x2 track=0x18 side=0 drive=0 addr=0x18800
+      +12.52s fdc type II read sector with multi sector=0x3 track=0x18 side=0 drive=0 addr=0x18a00
+      +12.54s fdc type II read sector with multi sector=0x4 track=0x18 side=0 drive=0 addr=0x18c00
+      +12.56s fdc type II read sector with multi sector=0x5 track=0x18 side=0 drive=0 addr=0x18e00
+      +12.58s fdc type II read sector with multi sector=0x6 track=0x18 side=0 drive=0 addr=0x19000
+      +12.60s fdc type II read sector with multi sector=0x7 track=0x18 side=0 drive=0 addr=0x19200
+      +12.62s fdc type II read sector with multi sector=0x8 track=0x18 side=0 drive=0 addr=0x19400
+      +12.64s fdc type II read sector with multi sector=0x9 track=0x18 side=0 drive=0 addr=0x19600
+      +12.66s fdc type II read sector with multi sector=0xa track=0x18 side=0 drive=0 addr=0x19800
+      +12.68s fdc type II read sector with multi sector=0xb track=0x18 side=0 drive=0 addr=0x19a00
+      +12.68s fdc type IV force int 0xd0 irq=0 index=0
+      +12.68s fdc type I seek dest_track=0x19 spinup=on verify=off steprate_ms=3 drive=0 tr=0x18 head_track=0x18
+      +12.68s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x19 head_track=0x19 side=0 drive=0 dmasec
+      +12.70s fdc type II read sector with multi sector=0x2 track=0x19 side=0 drive=0 addr=0x19c00
+      +12.72s fdc type II read sector with multi sector=0x3 track=0x19 side=0 drive=0 addr=0x19e00
+      +12.74s fdc type II read sector with multi sector=0x4 track=0x19 side=0 drive=0 addr=0x1a000
+      +12.76s fdc type II read sector with multi sector=0x5 track=0x19 side=0 drive=0 addr=0x1a200
+      +12.78s fdc type II read sector with multi sector=0x6 track=0x19 side=0 drive=0 addr=0x1a400
+      +12.80s fdc type II read sector with multi sector=0x7 track=0x19 side=0 drive=0 addr=0x1a600
+      +12.82s fdc type II read sector with multi sector=0x8 track=0x19 side=0 drive=0 addr=0x1a800
+      +12.84s fdc type II read sector with multi sector=0x9 track=0x19 side=0 drive=0 addr=0x1aa00
+      +12.86s fdc type II read sector with multi sector=0xa track=0x19 side=0 drive=0 addr=0x1ac00
+      +12.88s fdc type II read sector with multi sector=0xb track=0x19 side=0 drive=0 addr=0x1ae00
+      +12.88s fdc type IV force int 0xd0 irq=0 index=0
+      +12.88s fdc type I seek dest_track=0x1a spinup=on verify=off steprate_ms=3 drive=0 tr=0x19 head_track=0x19
+      +12.88s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x1a head_track=0x1a side=0 drive=0 dmasec
+      +12.90s fdc type II read sector with multi sector=0x2 track=0x1a side=0 drive=0 addr=0x1b000
+      +12.92s fdc type II read sector with multi sector=0x3 track=0x1a side=0 drive=0 addr=0x1b200
+      +12.94s fdc type II read sector with multi sector=0x4 track=0x1a side=0 drive=0 addr=0x1b400
+      +12.96s fdc type II read sector with multi sector=0x5 track=0x1a side=0 drive=0 addr=0x1b600
+      +12.98s fdc type II read sector with multi sector=0x6 track=0x1a side=0 drive=0 addr=0x1b800
+      +13.00s fdc type II read sector with multi sector=0x7 track=0x1a side=0 drive=0 addr=0x1ba00
+      +13.02s fdc type II read sector with multi sector=0x8 track=0x1a side=0 drive=0 addr=0x1bc00
+      +13.04s fdc type II read sector with multi sector=0x9 track=0x1a side=0 drive=0 addr=0x1be00
+      +13.06s fdc type II read sector with multi sector=0xa track=0x1a side=0 drive=0 addr=0x1c000
+      +13.08s fdc type II read sector with multi sector=0xb track=0x1a side=0 drive=0 addr=0x1c200
+      +13.08s fdc type IV force int 0xd0 irq=0 index=0
+      +13.08s fdc type I seek dest_track=0x1b spinup=on verify=off steprate_ms=3 drive=0 tr=0x1a head_track=0x1a
+      +13.08s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x1b head_track=0x1b side=0 drive=0 dmasec
+      +13.10s fdc type II read sector with multi sector=0x2 track=0x1b side=0 drive=0 addr=0x1c400
+      +13.12s fdc type II read sector with multi sector=0x3 track=0x1b side=0 drive=0 addr=0x1c600
+      +13.14s fdc type II read sector with multi sector=0x4 track=0x1b side=0 drive=0 addr=0x1c800
+      +13.16s fdc type II read sector with multi sector=0x5 track=0x1b side=0 drive=0 addr=0x1ca00
+      +13.18s fdc type II read sector with multi sector=0x6 track=0x1b side=0 drive=0 addr=0x1cc00
+      +13.20s fdc type II read sector with multi sector=0x7 track=0x1b side=0 drive=0 addr=0x1ce00
+      +13.22s fdc type II read sector with multi sector=0x8 track=0x1b side=0 drive=0 addr=0x1d000
+      +13.24s fdc type II read sector with multi sector=0x9 track=0x1b side=0 drive=0 addr=0x1d200
+      +13.26s fdc type II read sector with multi sector=0xa track=0x1b side=0 drive=0 addr=0x1d400
+      +13.28s fdc type II read sector with multi sector=0xb track=0x1b side=0 drive=0 addr=0x1d600
+      +13.28s fdc type IV force int 0xd0 irq=0 index=0
+      +13.28s fdc type I seek dest_track=0x1c spinup=on verify=off steprate_ms=3 drive=0 tr=0x1b head_track=0x1b
+      +13.28s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x1c head_track=0x1c side=0 drive=0 dmasec
+      +13.30s fdc type II read sector with multi sector=0x2 track=0x1c side=0 drive=0 addr=0x1d800
+      +13.32s fdc type II read sector with multi sector=0x3 track=0x1c side=0 drive=0 addr=0x1da00
+      +13.34s fdc type II read sector with multi sector=0x4 track=0x1c side=0 drive=0 addr=0x1dc00
+      +13.36s fdc type II read sector with multi sector=0x5 track=0x1c side=0 drive=0 addr=0x1de00
+      +13.38s fdc type II read sector with multi sector=0x6 track=0x1c side=0 drive=0 addr=0x1e000
+      +13.40s fdc type II read sector with multi sector=0x7 track=0x1c side=0 drive=0 addr=0x1e200
+      +13.42s fdc type II read sector with multi sector=0x8 track=0x1c side=0 drive=0 addr=0x1e400
+      +13.44s fdc type II read sector with multi sector=0x9 track=0x1c side=0 drive=0 addr=0x1e600
+      +13.46s fdc type II read sector with multi sector=0xa track=0x1c side=0 drive=0 addr=0x1e800
+      +13.48s fdc type II read sector with multi sector=0xb track=0x1c side=0 drive=0 addr=0x1ea00
+      +13.48s fdc type IV force int 0xd0 irq=0 index=0
+      +13.48s fdc type I seek dest_track=0x1d spinup=on verify=off steprate_ms=3 drive=0 tr=0x1c head_track=0x1c
+      +13.48s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x1d head_track=0x1d side=0 drive=0 dmasec
+      +13.50s fdc type II read sector with multi sector=0x2 track=0x1d side=0 drive=0 addr=0x1ec00
+      +13.52s fdc type II read sector with multi sector=0x3 track=0x1d side=0 drive=0 addr=0x1ee00
+      +13.54s fdc type II read sector with multi sector=0x4 track=0x1d side=0 drive=0 addr=0x1f000
+      +13.56s fdc type II read sector with multi sector=0x5 track=0x1d side=0 drive=0 addr=0x1f200
+      +13.58s fdc type II read sector with multi sector=0x6 track=0x1d side=0 drive=0 addr=0x1f400
+      +13.60s fdc type II read sector with multi sector=0x7 track=0x1d side=0 drive=0 addr=0x1f600
+      +13.62s fdc type II read sector with multi sector=0x8 track=0x1d side=0 drive=0 addr=0x1f800
+      +13.64s fdc type II read sector with multi sector=0x9 track=0x1d side=0 drive=0 addr=0x1fa00
+      +13.66s fdc type II read sector with multi sector=0xa track=0x1d side=0 drive=0 addr=0x1fc00
+      +13.68s fdc type II read sector with multi sector=0xb track=0x1d side=0 drive=0 addr=0x1fe00
+      +13.68s fdc type IV force int 0xd0 irq=0 index=0
+      +13.68s fdc type I seek dest_track=0x1e spinup=on verify=off steprate_ms=3 drive=0 tr=0x1d head_track=0x1d
+      +13.68s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x1e head_track=0x1e side=0 drive=0 dmasec
+      +13.70s fdc type II read sector with multi sector=0x2 track=0x1e side=0 drive=0 addr=0x20000
+      +13.72s fdc type II read sector with multi sector=0x3 track=0x1e side=0 drive=0 addr=0x20200
+      +13.74s fdc type II read sector with multi sector=0x4 track=0x1e side=0 drive=0 addr=0x20400
+      +13.76s fdc type II read sector with multi sector=0x5 track=0x1e side=0 drive=0 addr=0x20600
+      +13.78s fdc type II read sector with multi sector=0x6 track=0x1e side=0 drive=0 addr=0x20800
+      +13.80s fdc type II read sector with multi sector=0x7 track=0x1e side=0 drive=0 addr=0x20a00
+      +13.82s fdc type II read sector with multi sector=0x8 track=0x1e side=0 drive=0 addr=0x20c00
+      +13.84s fdc type II read sector with multi sector=0x9 track=0x1e side=0 drive=0 addr=0x20e00
+      +13.86s fdc type II read sector with multi sector=0xa track=0x1e side=0 drive=0 addr=0x21000
+      +13.88s fdc type II read sector with multi sector=0xb track=0x1e side=0 drive=0 addr=0x21200
+      +13.88s fdc type IV force int 0xd0 irq=0 index=0
+      +13.88s fdc type I seek dest_track=0x1f spinup=on verify=off steprate_ms=3 drive=0 tr=0x1e head_track=0x1e
+      +13.88s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x1f head_track=0x1f side=0 drive=0 dmasec
+      +13.90s fdc type II read sector with multi sector=0x2 track=0x1f side=0 drive=0 addr=0x21400
+      +13.92s fdc type II read sector with multi sector=0x3 track=0x1f side=0 drive=0 addr=0x21600
+      +13.94s fdc type II read sector with multi sector=0x4 track=0x1f side=0 drive=0 addr=0x21800
+      +13.96s fdc type II read sector with multi sector=0x5 track=0x1f side=0 drive=0 addr=0x21a00
+      +13.98s fdc type II read sector with multi sector=0x6 track=0x1f side=0 drive=0 addr=0x21c00
+      +14.00s fdc type II read sector with multi sector=0x7 track=0x1f side=0 drive=0 addr=0x21e00
+      +14.02s fdc type II read sector with multi sector=0x8 track=0x1f side=0 drive=0 addr=0x22000
+      +14.04s fdc type II read sector with multi sector=0x9 track=0x1f side=0 drive=0 addr=0x22200
+      +14.06s fdc type II read sector with multi sector=0xa track=0x1f side=0 drive=0 addr=0x22400
+      +14.08s fdc type II read sector with multi sector=0xb track=0x1f side=0 drive=0 addr=0x22600
+      +14.08s fdc type IV force int 0xd0 irq=0 index=0
+      +14.08s fdc type I seek dest_track=0x20 spinup=on verify=off steprate_ms=3 drive=0 tr=0x1f head_track=0x1f
+      +14.08s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x20 head_track=0x20 side=0 drive=0 dmasec
+      +14.10s fdc type II read sector with multi sector=0x2 track=0x20 side=0 drive=0 addr=0x22800
+      +14.12s fdc type II read sector with multi sector=0x3 track=0x20 side=0 drive=0 addr=0x22a00
+      +14.14s fdc type II read sector with multi sector=0x4 track=0x20 side=0 drive=0 addr=0x22c00
+      +14.16s fdc type II read sector with multi sector=0x5 track=0x20 side=0 drive=0 addr=0x22e00
+      +14.18s fdc type II read sector with multi sector=0x6 track=0x20 side=0 drive=0 addr=0x23000
+      +14.20s fdc type II read sector with multi sector=0x7 track=0x20 side=0 drive=0 addr=0x23200
+      +14.22s fdc type II read sector with multi sector=0x8 track=0x20 side=0 drive=0 addr=0x23400
+      +14.24s fdc type II read sector with multi sector=0x9 track=0x20 side=0 drive=0 addr=0x23600
+      +14.26s fdc type II read sector with multi sector=0xa track=0x20 side=0 drive=0 addr=0x23800
+      +14.28s fdc type II read sector with multi sector=0xb track=0x20 side=0 drive=0 addr=0x23a00
+      +14.28s fdc type IV force int 0xd0 irq=0 index=0
+      +14.28s fdc type I seek dest_track=0x21 spinup=on verify=off steprate_ms=3 drive=0 tr=0x20 head_track=0x20
+      +14.28s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x21 head_track=0x21 side=0 drive=0 dmasec
+      +14.30s fdc type II read sector with multi sector=0x2 track=0x21 side=0 drive=0 addr=0x23c00
+      +14.32s fdc type II read sector with multi sector=0x3 track=0x21 side=0 drive=0 addr=0x23e00
+      +14.34s fdc type II read sector with multi sector=0x4 track=0x21 side=0 drive=0 addr=0x24000
+      +14.36s fdc type II read sector with multi sector=0x5 track=0x21 side=0 drive=0 addr=0x24200
+      +14.38s fdc type II read sector with multi sector=0x6 track=0x21 side=0 drive=0 addr=0x24400
+      +14.40s fdc type II read sector with multi sector=0x7 track=0x21 side=0 drive=0 addr=0x24600
+      +14.42s fdc type II read sector with multi sector=0x8 track=0x21 side=0 drive=0 addr=0x24800
+      +14.44s fdc type II read sector with multi sector=0x9 track=0x21 side=0 drive=0 addr=0x24a00
+      +14.46s fdc type II read sector with multi sector=0xa track=0x21 side=0 drive=0 addr=0x24c00
+      +14.48s fdc type II read sector with multi sector=0xb track=0x21 side=0 drive=0 addr=0x24e00
+      +14.48s fdc type IV force int 0xd0 irq=0 index=0
+      +14.48s fdc type I seek dest_track=0x22 spinup=on verify=off steprate_ms=3 drive=0 tr=0x21 head_track=0x21
+      +14.48s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x22 head_track=0x22 side=0 drive=0 dmasec
+      +14.50s fdc type II read sector with multi sector=0x2 track=0x22 side=0 drive=0 addr=0x25000
+      +14.52s fdc type II read sector with multi sector=0x3 track=0x22 side=0 drive=0 addr=0x25200
+      +14.54s fdc type II read sector with multi sector=0x4 track=0x22 side=0 drive=0 addr=0x25400
+      +14.56s fdc type II read sector with multi sector=0x5 track=0x22 side=0 drive=0 addr=0x25600
+      +14.58s fdc type II read sector with multi sector=0x6 track=0x22 side=0 drive=0 addr=0x25800
+      +14.60s fdc type II read sector with multi sector=0x7 track=0x22 side=0 drive=0 addr=0x25a00
+      +14.62s fdc type II read sector with multi sector=0x8 track=0x22 side=0 drive=0 addr=0x25c00
+      +14.64s fdc type II read sector with multi sector=0x9 track=0x22 side=0 drive=0 addr=0x25e00
+      +14.66s fdc type II read sector with multi sector=0xa track=0x22 side=0 drive=0 addr=0x26000
+      +14.68s fdc type II read sector with multi sector=0xb track=0x22 side=0 drive=0 addr=0x26200
+      +14.68s fdc type IV force int 0xd0 irq=0 index=0
+      +14.68s fdc type I seek dest_track=0x23 spinup=on verify=off steprate_ms=3 drive=0 tr=0x22 head_track=0x22
+      +14.68s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x23 head_track=0x23 side=0 drive=0 dmasec
+      +14.70s fdc type II read sector with multi sector=0x2 track=0x23 side=0 drive=0 addr=0x26400
+      +14.72s fdc type II read sector with multi sector=0x3 track=0x23 side=0 drive=0 addr=0x26600
+      +14.74s fdc type II read sector with multi sector=0x4 track=0x23 side=0 drive=0 addr=0x26800
+      +14.76s fdc type II read sector with multi sector=0x5 track=0x23 side=0 drive=0 addr=0x26a00
+      +14.78s fdc type II read sector with multi sector=0x6 track=0x23 side=0 drive=0 addr=0x26c00
+      +14.80s fdc type II read sector with multi sector=0x7 track=0x23 side=0 drive=0 addr=0x26e00
+      +14.82s fdc type II read sector with multi sector=0x8 track=0x23 side=0 drive=0 addr=0x27000
+      +14.84s fdc type II read sector with multi sector=0x9 track=0x23 side=0 drive=0 addr=0x27200
+      +14.86s fdc type II read sector with multi sector=0xa track=0x23 side=0 drive=0 addr=0x27400
+      +14.88s fdc type II read sector with multi sector=0xb track=0x23 side=0 drive=0 addr=0x27600
+      +14.88s fdc type IV force int 0xd0 irq=0 index=0
+      +14.88s fdc type I seek dest_track=0x24 spinup=on verify=off steprate_ms=3 drive=0 tr=0x23 head_track=0x23
+      +14.88s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x24 head_track=0x24 side=0 drive=0 dmasec
+      +14.90s fdc type II read sector with multi sector=0x2 track=0x24 side=0 drive=0 addr=0x27800
+      +14.92s fdc type II read sector with multi sector=0x3 track=0x24 side=0 drive=0 addr=0x27a00
+      +14.94s fdc type II read sector with multi sector=0x4 track=0x24 side=0 drive=0 addr=0x27c00
+      +14.96s fdc type II read sector with multi sector=0x5 track=0x24 side=0 drive=0 addr=0x27e00
+      +14.98s fdc type II read sector with multi sector=0x6 track=0x24 side=0 drive=0 addr=0x28000
+      +15.00s fdc type II read sector with multi sector=0x7 track=0x24 side=0 drive=0 addr=0x28200
+      +15.02s fdc type II read sector with multi sector=0x8 track=0x24 side=0 drive=0 addr=0x28400
+      +15.04s fdc type II read sector with multi sector=0x9 track=0x24 side=0 drive=0 addr=0x28600
+      +15.06s fdc type II read sector with multi sector=0xa track=0x24 side=0 drive=0 addr=0x28800
+      +15.08s fdc type II read sector with multi sector=0xb track=0x24 side=0 drive=0 addr=0x28a00
+      +15.08s fdc type IV force int 0xd0 irq=0 index=0
+      +15.08s fdc type I seek dest_track=0x25 spinup=on verify=off steprate_ms=3 drive=0 tr=0x24 head_track=0x24
+      +15.08s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x25 head_track=0x25 side=0 drive=0 dmasec
+      +15.10s fdc type II read sector with multi sector=0x2 track=0x25 side=0 drive=0 addr=0x28c00
+      +15.12s fdc type II read sector with multi sector=0x3 track=0x25 side=0 drive=0 addr=0x28e00
+      +15.14s fdc type II read sector with multi sector=0x4 track=0x25 side=0 drive=0 addr=0x29000
+      +15.16s fdc type II read sector with multi sector=0x5 track=0x25 side=0 drive=0 addr=0x29200
+      +15.18s fdc type II read sector with multi sector=0x6 track=0x25 side=0 drive=0 addr=0x29400
+      +15.20s fdc type II read sector with multi sector=0x7 track=0x25 side=0 drive=0 addr=0x29600
+      +15.22s fdc type II read sector with multi sector=0x8 track=0x25 side=0 drive=0 addr=0x29800
+      +15.24s fdc type II read sector with multi sector=0x9 track=0x25 side=0 drive=0 addr=0x29a00
+      +15.26s fdc type II read sector with multi sector=0xa track=0x25 side=0 drive=0 addr=0x29c00
+      +15.28s fdc type II read sector with multi sector=0xb track=0x25 side=0 drive=0 addr=0x29e00
+      +15.28s fdc type IV force int 0xd0 irq=0 index=0
+      +15.28s fdc type I seek dest_track=0x26 spinup=on verify=off steprate_ms=3 drive=0 tr=0x25 head_track=0x25
+      +15.28s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x26 head_track=0x26 side=0 drive=0 dmasec
+      +15.30s fdc type II read sector with multi sector=0x2 track=0x26 side=0 drive=0 addr=0x2a000
+      +15.32s fdc type II read sector with multi sector=0x3 track=0x26 side=0 drive=0 addr=0x2a200
+      +15.34s fdc type II read sector with multi sector=0x4 track=0x26 side=0 drive=0 addr=0x2a400
+      +15.36s fdc type II read sector with multi sector=0x5 track=0x26 side=0 drive=0 addr=0x2a600
+      +15.38s fdc type II read sector with multi sector=0x6 track=0x26 side=0 drive=0 addr=0x2a800
+      +15.40s fdc type II read sector with multi sector=0x7 track=0x26 side=0 drive=0 addr=0x2aa00
+      +15.42s fdc type II read sector with multi sector=0x8 track=0x26 side=0 drive=0 addr=0x2ac00
+      +15.44s fdc type II read sector with multi sector=0x9 track=0x26 side=0 drive=0 addr=0x2ae00
+      +15.46s fdc type II read sector with multi sector=0xa track=0x26 side=0 drive=0 addr=0x2b000
+      +15.48s fdc type II read sector with multi sector=0xb track=0x26 side=0 drive=0 addr=0x2b200
+      +15.48s fdc type IV force int 0xd0 irq=0 index=0
+      +15.48s fdc type I seek dest_track=0x27 spinup=on verify=off steprate_ms=3 drive=0 tr=0x26 head_track=0x26
+      +15.48s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x27 head_track=0x27 side=0 drive=0 dmasec
+      +15.50s fdc type II read sector with multi sector=0x2 track=0x27 side=0 drive=0 addr=0x2b400
+      +15.52s fdc type II read sector with multi sector=0x3 track=0x27 side=0 drive=0 addr=0x2b600
+      +15.54s fdc type II read sector with multi sector=0x4 track=0x27 side=0 drive=0 addr=0x2b800
+      +15.56s fdc type II read sector with multi sector=0x5 track=0x27 side=0 drive=0 addr=0x2ba00
+      +15.58s fdc type II read sector with multi sector=0x6 track=0x27 side=0 drive=0 addr=0x2bc00
+      +15.60s fdc type II read sector with multi sector=0x7 track=0x27 side=0 drive=0 addr=0x2be00
+      +15.62s fdc type II read sector with multi sector=0x8 track=0x27 side=0 drive=0 addr=0x2c000
+      +15.64s fdc type II read sector with multi sector=0x9 track=0x27 side=0 drive=0 addr=0x2c200
+      +15.66s fdc type II read sector with multi sector=0xa track=0x27 side=0 drive=0 addr=0x2c400
+      +15.68s fdc type II read sector with multi sector=0xb track=0x27 side=0 drive=0 addr=0x2c600
+      +15.68s fdc type IV force int 0xd0 irq=0 index=0
+      +15.68s fdc type I seek dest_track=0x28 spinup=on verify=off steprate_ms=3 drive=0 tr=0x27 head_track=0x27
+      +15.68s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x28 head_track=0x28 side=0 drive=0 dmasec
+      +15.70s fdc type II read sector with multi sector=0x2 track=0x28 side=0 drive=0 addr=0x2c800
+      +15.72s fdc type II read sector with multi sector=0x3 track=0x28 side=0 drive=0 addr=0x2ca00
+      +15.74s fdc type II read sector with multi sector=0x4 track=0x28 side=0 drive=0 addr=0x2cc00
+      +15.76s fdc type II read sector with multi sector=0x5 track=0x28 side=0 drive=0 addr=0x2ce00
+      +15.78s fdc type II read sector with multi sector=0x6 track=0x28 side=0 drive=0 addr=0x2d000
+      +15.80s fdc type II read sector with multi sector=0x7 track=0x28 side=0 drive=0 addr=0x2d200
+      +15.82s fdc type II read sector with multi sector=0x8 track=0x28 side=0 drive=0 addr=0x2d400
+      +15.84s fdc type II read sector with multi sector=0x9 track=0x28 side=0 drive=0 addr=0x2d600
+      +15.86s fdc type II read sector with multi sector=0xa track=0x28 side=0 drive=0 addr=0x2d800
+      +15.88s fdc type II read sector with multi sector=0xb track=0x28 side=0 drive=0 addr=0x2da00
+      +15.88s fdc type IV force int 0xd0 irq=0 index=0
+      +15.88s fdc type I seek dest_track=0x29 spinup=on verify=off steprate_ms=3 drive=0 tr=0x28 head_track=0x28
+      +15.88s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x29 head_track=0x29 side=0 drive=0 dmasec
+      +15.90s fdc type II read sector with multi sector=0x2 track=0x29 side=0 drive=0 addr=0x2dc00
+      +15.92s fdc type II read sector with multi sector=0x3 track=0x29 side=0 drive=0 addr=0x2de00
+      +15.94s fdc type II read sector with multi sector=0x4 track=0x29 side=0 drive=0 addr=0x2e000
+      +15.96s fdc type II read sector with multi sector=0x5 track=0x29 side=0 drive=0 addr=0x2e200
+      +15.98s fdc type II read sector with multi sector=0x6 track=0x29 side=0 drive=0 addr=0x2e400
+      +16.00s fdc type II read sector with multi sector=0x7 track=0x29 side=0 drive=0 addr=0x2e600
+      +16.02s fdc type II read sector with multi sector=0x8 track=0x29 side=0 drive=0 addr=0x2e800
+      +16.04s fdc type II read sector with multi sector=0x9 track=0x29 side=0 drive=0 addr=0x2ea00
+      +16.06s fdc type II read sector with multi sector=0xa track=0x29 side=0 drive=0 addr=0x2ec00
+      +16.08s fdc type II read sector with multi sector=0xb track=0x29 side=0 drive=0 addr=0x2ee00
+      +16.08s fdc type IV force int 0xd0 irq=0 index=0
+      +16.08s fdc type I seek dest_track=0x2a spinup=on verify=off steprate_ms=3 drive=0 tr=0x29 head_track=0x29
+      +16.08s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x2a head_track=0x2a side=0 drive=0 dmasec
+      +16.10s fdc type II read sector with multi sector=0x2 track=0x2a side=0 drive=0 addr=0x2f000
+      +16.12s fdc type II read sector with multi sector=0x3 track=0x2a side=0 drive=0 addr=0x2f200
+      +16.14s fdc type II read sector with multi sector=0x4 track=0x2a side=0 drive=0 addr=0x2f400
+      +16.16s fdc type II read sector with multi sector=0x5 track=0x2a side=0 drive=0 addr=0x2f600
+      +16.18s fdc type II read sector with multi sector=0x6 track=0x2a side=0 drive=0 addr=0x2f800
+      +16.20s fdc type II read sector with multi sector=0x7 track=0x2a side=0 drive=0 addr=0x2fa00
+      +16.22s fdc type II read sector with multi sector=0x8 track=0x2a side=0 drive=0 addr=0x2fc00
+      +16.24s fdc type II read sector with multi sector=0x9 track=0x2a side=0 drive=0 addr=0x2fe00
+      +16.26s fdc type II read sector with multi sector=0xa track=0x2a side=0 drive=0 addr=0x30000
+      +16.28s fdc type II read sector with multi sector=0xb track=0x2a side=0 drive=0 addr=0x30200
+      +16.28s fdc type IV force int 0xd0 irq=0 index=0
+      +16.28s fdc type I seek dest_track=0x2b spinup=on verify=off steprate_ms=3 drive=0 tr=0x2a head_track=0x2a
+      +16.28s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x2b head_track=0x2b side=0 drive=0 dmasec
+      +16.30s fdc type II read sector with multi sector=0x2 track=0x2b side=0 drive=0 addr=0x30400
+      +16.32s fdc type II read sector with multi sector=0x3 track=0x2b side=0 drive=0 addr=0x30600
+      +16.34s fdc type II read sector with multi sector=0x4 track=0x2b side=0 drive=0 addr=0x30800
+      +16.36s fdc type II read sector with multi sector=0x5 track=0x2b side=0 drive=0 addr=0x30a00
+      +16.38s fdc type II read sector with multi sector=0x6 track=0x2b side=0 drive=0 addr=0x30c00
+      +16.40s fdc type II read sector with multi sector=0x7 track=0x2b side=0 drive=0 addr=0x30e00
+      +16.42s fdc type II read sector with multi sector=0x8 track=0x2b side=0 drive=0 addr=0x31000
+      +16.44s fdc type II read sector with multi sector=0x9 track=0x2b side=0 drive=0 addr=0x31200
+      +16.46s fdc type II read sector with multi sector=0xa track=0x2b side=0 drive=0 addr=0x31400
+      +16.48s fdc type II read sector with multi sector=0xb track=0x2b side=0 drive=0 addr=0x31600
+      +16.48s fdc type IV force int 0xd0 irq=0 index=0
+      +16.48s fdc type I seek dest_track=0x2c spinup=on verify=off steprate_ms=3 drive=0 tr=0x2b head_track=0x2b
+      +16.48s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x2c head_track=0x2c side=0 drive=0 dmasec
+      +16.50s fdc type II read sector with multi sector=0x2 track=0x2c side=0 drive=0 addr=0x31800
+      +16.52s fdc type II read sector with multi sector=0x3 track=0x2c side=0 drive=0 addr=0x31a00
+      +16.54s fdc type II read sector with multi sector=0x4 track=0x2c side=0 drive=0 addr=0x31c00
+      +16.56s fdc type II read sector with multi sector=0x5 track=0x2c side=0 drive=0 addr=0x31e00
+      +16.58s fdc type II read sector with multi sector=0x6 track=0x2c side=0 drive=0 addr=0x32000
+      +16.60s fdc type II read sector with multi sector=0x7 track=0x2c side=0 drive=0 addr=0x32200
+      +16.62s fdc type II read sector with multi sector=0x8 track=0x2c side=0 drive=0 addr=0x32400
+      +16.64s fdc type II read sector with multi sector=0x9 track=0x2c side=0 drive=0 addr=0x32600
+      +16.66s fdc type II read sector with multi sector=0xa track=0x2c side=0 drive=0 addr=0x32800
+      +16.68s fdc type II read sector with multi sector=0xb track=0x2c side=0 drive=0 addr=0x32a00
+      +16.68s fdc type IV force int 0xd0 irq=0 index=0
+      +16.68s fdc type I seek dest_track=0x2d spinup=on verify=off steprate_ms=3 drive=0 tr=0x2c head_track=0x2c
+      +16.68s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x2d head_track=0x2d side=0 drive=0 dmasec
+      +16.70s fdc type II read sector with multi sector=0x2 track=0x2d side=0 drive=0 addr=0x32c00
+      +16.72s fdc type II read sector with multi sector=0x3 track=0x2d side=0 drive=0 addr=0x32e00
+      +16.74s fdc type II read sector with multi sector=0x4 track=0x2d side=0 drive=0 addr=0x33000
+      +16.76s fdc type II read sector with multi sector=0x5 track=0x2d side=0 drive=0 addr=0x33200
+      +16.78s fdc type II read sector with multi sector=0x6 track=0x2d side=0 drive=0 addr=0x33400
+      +16.80s fdc type II read sector with multi sector=0x7 track=0x2d side=0 drive=0 addr=0x33600
+      +16.82s fdc type II read sector with multi sector=0x8 track=0x2d side=0 drive=0 addr=0x33800
+      +16.84s fdc type II read sector with multi sector=0x9 track=0x2d side=0 drive=0 addr=0x33a00
+      +16.86s fdc type II read sector with multi sector=0xa track=0x2d side=0 drive=0 addr=0x33c00
+      +16.88s fdc type II read sector with multi sector=0xb track=0x2d side=0 drive=0 addr=0x33e00
+      +16.88s fdc type IV force int 0xd0 irq=0 index=0
+      +16.88s fdc type I seek dest_track=0x2e spinup=on verify=off steprate_ms=3 drive=0 tr=0x2d head_track=0x2d
+      +16.88s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x2e head_track=0x2e side=0 drive=0 dmasec
+      +16.90s fdc type II read sector with multi sector=0x2 track=0x2e side=0 drive=0 addr=0x34000
+      +16.92s fdc type II read sector with multi sector=0x3 track=0x2e side=0 drive=0 addr=0x34200
+      +16.94s fdc type II read sector with multi sector=0x4 track=0x2e side=0 drive=0 addr=0x34400
+      +16.96s fdc type II read sector with multi sector=0x5 track=0x2e side=0 drive=0 addr=0x34600
+      +16.98s fdc type II read sector with multi sector=0x6 track=0x2e side=0 drive=0 addr=0x34800
+      +17.00s fdc type II read sector with multi sector=0x7 track=0x2e side=0 drive=0 addr=0x34a00
+      +17.02s fdc type II read sector with multi sector=0x8 track=0x2e side=0 drive=0 addr=0x34c00
+      +17.04s fdc type II read sector with multi sector=0x9 track=0x2e side=0 drive=0 addr=0x34e00
+      +17.06s fdc type II read sector with multi sector=0xa track=0x2e side=0 drive=0 addr=0x35000
+      +17.08s fdc type II read sector with multi sector=0xb track=0x2e side=0 drive=0 addr=0x35200
+      +17.08s fdc type IV force int 0xd0 irq=0 index=0
+      +17.08s fdc type I seek dest_track=0x2f spinup=on verify=off steprate_ms=3 drive=0 tr=0x2e head_track=0x2e
+      +17.08s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x2f head_track=0x2f side=0 drive=0 dmasec
+      +17.10s fdc type II read sector with multi sector=0x2 track=0x2f side=0 drive=0 addr=0x35400
+      +17.12s fdc type II read sector with multi sector=0x3 track=0x2f side=0 drive=0 addr=0x35600
+      +17.14s fdc type II read sector with multi sector=0x4 track=0x2f side=0 drive=0 addr=0x35800
+      +17.16s fdc type II read sector with multi sector=0x5 track=0x2f side=0 drive=0 addr=0x35a00
+      +17.18s fdc type II read sector with multi sector=0x6 track=0x2f side=0 drive=0 addr=0x35c00
+      +17.20s fdc type II read sector with multi sector=0x7 track=0x2f side=0 drive=0 addr=0x35e00
+      +17.22s fdc type II read sector with multi sector=0x8 track=0x2f side=0 drive=0 addr=0x36000
+      +17.24s fdc type II read sector with multi sector=0x9 track=0x2f side=0 drive=0 addr=0x36200
+      +17.26s fdc type II read sector with multi sector=0xa track=0x2f side=0 drive=0 addr=0x36400
+      +17.28s fdc type II read sector with multi sector=0xb track=0x2f side=0 drive=0 addr=0x36600
+      +17.28s fdc type IV force int 0xd0 irq=0 index=0
+      +17.28s fdc type I seek dest_track=0x30 spinup=on verify=off steprate_ms=3 drive=0 tr=0x2f head_track=0x2f
+      +17.28s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x30 head_track=0x30 side=0 drive=0 dmasec
+      +17.30s fdc type II read sector with multi sector=0x2 track=0x30 side=0 drive=0 addr=0x36800
+      +17.32s fdc type II read sector with multi sector=0x3 track=0x30 side=0 drive=0 addr=0x36a00
+      +17.34s fdc type II read sector with multi sector=0x4 track=0x30 side=0 drive=0 addr=0x36c00
+      +17.36s fdc type II read sector with multi sector=0x5 track=0x30 side=0 drive=0 addr=0x36e00
+      +17.38s fdc type II read sector with multi sector=0x6 track=0x30 side=0 drive=0 addr=0x37000
+      +17.40s fdc type II read sector with multi sector=0x7 track=0x30 side=0 drive=0 addr=0x37200
+      +17.42s fdc type II read sector with multi sector=0x8 track=0x30 side=0 drive=0 addr=0x37400
+      +17.44s fdc type II read sector with multi sector=0x9 track=0x30 side=0 drive=0 addr=0x37600
+      +17.46s fdc type II read sector with multi sector=0xa track=0x30 side=0 drive=0 addr=0x37800
+      +17.48s fdc type II read sector with multi sector=0xb track=0x30 side=0 drive=0 addr=0x37a00
+      +17.48s fdc type IV force int 0xd0 irq=0 index=0
+      +17.48s fdc type I seek dest_track=0x31 spinup=on verify=off steprate_ms=3 drive=0 tr=0x30 head_track=0x30
+      +17.48s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x31 head_track=0x31 side=0 drive=0 dmasec
+      +17.50s fdc type II read sector with multi sector=0x2 track=0x31 side=0 drive=0 addr=0x37c00
+      +17.52s fdc type II read sector with multi sector=0x3 track=0x31 side=0 drive=0 addr=0x37e00
+      +17.54s fdc type II read sector with multi sector=0x4 track=0x31 side=0 drive=0 addr=0x38000
+      +17.56s fdc type II read sector with multi sector=0x5 track=0x31 side=0 drive=0 addr=0x38200
+      +17.58s fdc type II read sector with multi sector=0x6 track=0x31 side=0 drive=0 addr=0x38400
+      +17.60s fdc type II read sector with multi sector=0x7 track=0x31 side=0 drive=0 addr=0x38600
+      +17.62s fdc type II read sector with multi sector=0x8 track=0x31 side=0 drive=0 addr=0x38800
+      +17.64s fdc type II read sector with multi sector=0x9 track=0x31 side=0 drive=0 addr=0x38a00
+      +17.66s fdc type II read sector with multi sector=0xa track=0x31 side=0 drive=0 addr=0x38c00
+      +17.66s fdc type IV force int 0xd0 irq=0 index=0
+      +19.66s fdc change drive/side io_porta_old=0x5 io_porta_new=0x7 side 0->0 drive 0->-1
+      +21.68s fdc change drive/side io_porta_old=0x7 io_porta_new=0x4 side 0->1 drive -1->0
+      +21.68s fdc type I restore spinup=on verify=off steprate_ms=3 drive=0 tr=0xff head_track=0x31
+      +22.84s fdc type I restore spinup=on verify=off steprate_ms=3 drive=0 tr=0x0 head_track=0x0
+      +22.84s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x0 head_track=0x0 side=1 drive=0 dmasecto
+      +22.92s fdc type II read sector with multi sector=0x2 track=0x0 side=1 drive=0 addr=0x1200
+      +22.92s fdc type II read sector with multi sector=0x3 track=0x0 side=1 drive=0 addr=0x1400
+      +22.94s fdc type II read sector with multi sector=0x4 track=0x0 side=1 drive=0 addr=0x1600
+      +22.96s fdc type II read sector with multi sector=0x5 track=0x0 side=1 drive=0 addr=0x1800
+      +22.98s fdc type II read sector with multi sector=0x6 track=0x0 side=1 drive=0 addr=0x1a00
+      +23.00s fdc type II read sector with multi sector=0x7 track=0x0 side=1 drive=0 addr=0x1c00
+      +23.02s fdc type II read sector with multi sector=0x8 track=0x0 side=1 drive=0 addr=0x1e00
+      +23.04s fdc type II read sector with multi sector=0x9 track=0x0 side=1 drive=0 addr=0x2000
+      +23.06s fdc type II read sector with multi sector=0xa track=0x0 side=1 drive=0 addr=0x2200
+      +23.08s fdc type II read sector with multi sector=0xb track=0x0 side=1 drive=0 addr=0x2400
+      +23.08s fdc type IV force int 0xd0 irq=0 index=0
+      +23.08s fdc type I seek dest_track=0x1 spinup=on verify=off steprate_ms=3 drive=0 tr=0x0 head_track=0x0
+      +23.10s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x1 head_track=0x1 side=1 drive=0 dmasecto
+      +23.10s fdc type II read sector with multi sector=0x2 track=0x1 side=1 drive=0 addr=0x2600
+      +23.12s fdc type II read sector with multi sector=0x3 track=0x1 side=1 drive=0 addr=0x2800
+      +23.14s fdc type II read sector with multi sector=0x4 track=0x1 side=1 drive=0 addr=0x2a00
+      +23.16s fdc type II read sector with multi sector=0x5 track=0x1 side=1 drive=0 addr=0x2c00
+      +23.18s fdc type II read sector with multi sector=0x6 track=0x1 side=1 drive=0 addr=0x2e00
+      +23.20s fdc type II read sector with multi sector=0x7 track=0x1 side=1 drive=0 addr=0x3000
+      +23.22s fdc type II read sector with multi sector=0x8 track=0x1 side=1 drive=0 addr=0x3200
+      +23.24s fdc type II read sector with multi sector=0x9 track=0x1 side=1 drive=0 addr=0x3400
+      +23.26s fdc type II read sector with multi sector=0xa track=0x1 side=1 drive=0 addr=0x3600
+      +23.28s fdc type II read sector with multi sector=0xb track=0x1 side=1 drive=0 addr=0x3800
+      +23.28s fdc type IV force int 0xd0 irq=0 index=0
+      +23.28s fdc type I seek dest_track=0x2 spinup=on verify=off steprate_ms=3 drive=0 tr=0x1 head_track=0x1
+      +23.30s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x2 head_track=0x2 side=1 drive=0 dmasecto
+      +23.32s fdc type II read sector with multi sector=0x2 track=0x2 side=1 drive=0 addr=0x3a00
+      +23.32s fdc type II read sector with multi sector=0x3 track=0x2 side=1 drive=0 addr=0x3c00
+      +23.34s fdc type II read sector with multi sector=0x4 track=0x2 side=1 drive=0 addr=0x3e00
+      +23.36s fdc type II read sector with multi sector=0x5 track=0x2 side=1 drive=0 addr=0x4000
+      +23.38s fdc type II read sector with multi sector=0x6 track=0x2 side=1 drive=0 addr=0x4200
+      +23.40s fdc type II read sector with multi sector=0x7 track=0x2 side=1 drive=0 addr=0x4400
+      +23.42s fdc type II read sector with multi sector=0x8 track=0x2 side=1 drive=0 addr=0x4600
+      +23.44s fdc type II read sector with multi sector=0x9 track=0x2 side=1 drive=0 addr=0x4800
+      +23.46s fdc type II read sector with multi sector=0xa track=0x2 side=1 drive=0 addr=0x4a00
+      +23.48s fdc type II read sector with multi sector=0xb track=0x2 side=1 drive=0 addr=0x4c00
+      +23.48s fdc type IV force int 0xd0 irq=0 index=0
+      +23.48s fdc type I seek dest_track=0x3 spinup=on verify=off steprate_ms=3 drive=0 tr=0x2 head_track=0x2
+      +23.50s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x3 head_track=0x3 side=1 drive=0 dmasecto
+      +23.52s fdc type II read sector with multi sector=0x2 track=0x3 side=1 drive=0 addr=0x4e00
+      +23.52s fdc type II read sector with multi sector=0x3 track=0x3 side=1 drive=0 addr=0x5000
+      +23.54s fdc type II read sector with multi sector=0x4 track=0x3 side=1 drive=0 addr=0x5200
+      +23.56s fdc type II read sector with multi sector=0x5 track=0x3 side=1 drive=0 addr=0x5400
+      +23.58s fdc type II read sector with multi sector=0x6 track=0x3 side=1 drive=0 addr=0x5600
+      +23.60s fdc type II read sector with multi sector=0x7 track=0x3 side=1 drive=0 addr=0x5800
+      +23.62s fdc type II read sector with multi sector=0x8 track=0x3 side=1 drive=0 addr=0x5a00
+      +23.64s fdc type II read sector with multi sector=0x9 track=0x3 side=1 drive=0 addr=0x5c00
+      +23.66s fdc type II read sector with multi sector=0xa track=0x3 side=1 drive=0 addr=0x5e00
+      +23.68s fdc type II read sector with multi sector=0xb track=0x3 side=1 drive=0 addr=0x6000
+      +23.68s fdc type IV force int 0xd0 irq=0 index=0
+      +23.68s fdc type I seek dest_track=0x4 spinup=on verify=off steprate_ms=3 drive=0 tr=0x3 head_track=0x3
+      +23.70s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x4 head_track=0x4 side=1 drive=0 dmasecto
+      +23.72s fdc type II read sector with multi sector=0x2 track=0x4 side=1 drive=0 addr=0x6200
+      +23.74s fdc type II read sector with multi sector=0x3 track=0x4 side=1 drive=0 addr=0x6400
+      +23.74s fdc type II read sector with multi sector=0x4 track=0x4 side=1 drive=0 addr=0x6600
+      +23.76s fdc type II read sector with multi sector=0x5 track=0x4 side=1 drive=0 addr=0x6800
+      +23.78s fdc type II read sector with multi sector=0x6 track=0x4 side=1 drive=0 addr=0x6a00
+      +23.80s fdc type II read sector with multi sector=0x7 track=0x4 side=1 drive=0 addr=0x6c00
+      +23.82s fdc type II read sector with multi sector=0x8 track=0x4 side=1 drive=0 addr=0x6e00
+      +23.84s fdc type II read sector with multi sector=0x9 track=0x4 side=1 drive=0 addr=0x7000
+      +23.86s fdc type II read sector with multi sector=0xa track=0x4 side=1 drive=0 addr=0x7200
+      +23.88s fdc type II read sector with multi sector=0xb track=0x4 side=1 drive=0 addr=0x7400
+      +23.88s fdc type IV force int 0xd0 irq=0 index=0
+      +23.88s fdc type I seek dest_track=0x5 spinup=on verify=off steprate_ms=3 drive=0 tr=0x4 head_track=0x4
+      +23.90s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x5 head_track=0x5 side=1 drive=0 dmasecto
+      +23.92s fdc type II read sector with multi sector=0x2 track=0x5 side=1 drive=0 addr=0x7600
+      +23.94s fdc type II read sector with multi sector=0x3 track=0x5 side=1 drive=0 addr=0x7800
+      +23.96s fdc type II read sector with multi sector=0x4 track=0x5 side=1 drive=0 addr=0x7a00
+      +23.96s fdc type II read sector with multi sector=0x5 track=0x5 side=1 drive=0 addr=0x7c00
+      +23.98s fdc type II read sector with multi sector=0x6 track=0x5 side=1 drive=0 addr=0x7e00
+      +24.00s fdc type II read sector with multi sector=0x7 track=0x5 side=1 drive=0 addr=0x8000
+      +24.02s fdc type II read sector with multi sector=0x8 track=0x5 side=1 drive=0 addr=0x8200
+      +24.04s fdc type II read sector with multi sector=0x9 track=0x5 side=1 drive=0 addr=0x8400
+      +24.06s fdc type II read sector with multi sector=0xa track=0x5 side=1 drive=0 addr=0x8600
+      +24.08s fdc type II read sector with multi sector=0xb track=0x5 side=1 drive=0 addr=0x8800
+      +24.08s fdc type IV force int 0xd0 irq=0 index=0
+      +24.08s fdc type I seek dest_track=0x6 spinup=on verify=off steprate_ms=3 drive=0 tr=0x5 head_track=0x5
+      +24.10s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x6 head_track=0x6 side=1 drive=0 dmasecto
+      +24.12s fdc type II read sector with multi sector=0x2 track=0x6 side=1 drive=0 addr=0x8a00
+      +24.14s fdc type II read sector with multi sector=0x3 track=0x6 side=1 drive=0 addr=0x8c00
+      +24.16s fdc type II read sector with multi sector=0x4 track=0x6 side=1 drive=0 addr=0x8e00
+      +24.16s fdc type II read sector with multi sector=0x5 track=0x6 side=1 drive=0 addr=0x9000
+      +24.18s fdc type II read sector with multi sector=0x6 track=0x6 side=1 drive=0 addr=0x9200
+      +24.20s fdc type II read sector with multi sector=0x7 track=0x6 side=1 drive=0 addr=0x9400
+      +24.22s fdc type II read sector with multi sector=0x8 track=0x6 side=1 drive=0 addr=0x9600
+      +24.24s fdc type II read sector with multi sector=0x9 track=0x6 side=1 drive=0 addr=0x9800
+      +24.26s fdc type II read sector with multi sector=0xa track=0x6 side=1 drive=0 addr=0x9a00
+      +24.28s fdc type II read sector with multi sector=0xb track=0x6 side=1 drive=0 addr=0x9c00
+      +24.28s fdc type IV force int 0xd0 irq=0 index=0
+      +24.28s fdc type I seek dest_track=0x7 spinup=on verify=off steprate_ms=3 drive=0 tr=0x6 head_track=0x6
+      +24.30s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x7 head_track=0x7 side=1 drive=0 dmasecto
+      +24.32s fdc type II read sector with multi sector=0x2 track=0x7 side=1 drive=0 addr=0x9e00
+      +24.34s fdc type II read sector with multi sector=0x3 track=0x7 side=1 drive=0 addr=0xa000
+      +24.36s fdc type II read sector with multi sector=0x4 track=0x7 side=1 drive=0 addr=0xa200
+      +24.38s fdc type II read sector with multi sector=0x5 track=0x7 side=1 drive=0 addr=0xa400
+      +24.38s fdc type II read sector with multi sector=0x6 track=0x7 side=1 drive=0 addr=0xa600
+      +24.40s fdc type II read sector with multi sector=0x7 track=0x7 side=1 drive=0 addr=0xa800
+      +24.42s fdc type II read sector with multi sector=0x8 track=0x7 side=1 drive=0 addr=0xaa00
+      +24.44s fdc type II read sector with multi sector=0x9 track=0x7 side=1 drive=0 addr=0xac00
+      +24.46s fdc type II read sector with multi sector=0xa track=0x7 side=1 drive=0 addr=0xae00
+      +24.48s fdc type II read sector with multi sector=0xb track=0x7 side=1 drive=0 addr=0xb000
+      +24.48s fdc type IV force int 0xd0 irq=0 index=0
+      +24.48s fdc type I seek dest_track=0x8 spinup=on verify=off steprate_ms=3 drive=0 tr=0x7 head_track=0x7
+      +24.50s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x8 head_track=0x8 side=1 drive=0 dmasecto
+      +24.52s fdc type II read sector with multi sector=0x2 track=0x8 side=1 drive=0 addr=0xb200
+      +24.54s fdc type II read sector with multi sector=0x3 track=0x8 side=1 drive=0 addr=0xb400
+      +24.56s fdc type II read sector with multi sector=0x4 track=0x8 side=1 drive=0 addr=0xb600
+      +24.58s fdc type II read sector with multi sector=0x5 track=0x8 side=1 drive=0 addr=0xb800
+      +24.58s fdc type II read sector with multi sector=0x6 track=0x8 side=1 drive=0 addr=0xba00
+      +24.60s fdc type II read sector with multi sector=0x7 track=0x8 side=1 drive=0 addr=0xbc00
+      +24.62s fdc type II read sector with multi sector=0x8 track=0x8 side=1 drive=0 addr=0xbe00
+      +24.64s fdc type II read sector with multi sector=0x9 track=0x8 side=1 drive=0 addr=0xc000
+      +24.66s fdc type II read sector with multi sector=0xa track=0x8 side=1 drive=0 addr=0xc200
+      +24.68s fdc type II read sector with multi sector=0xb track=0x8 side=1 drive=0 addr=0xc400
+      +24.68s fdc type IV force int 0xd0 irq=0 index=0
+      +24.68s fdc type I seek dest_track=0x9 spinup=on verify=off steprate_ms=3 drive=0 tr=0x8 head_track=0x8
+      +24.70s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x9 head_track=0x9 side=1 drive=0 dmasecto
+      +24.72s fdc type II read sector with multi sector=0x2 track=0x9 side=1 drive=0 addr=0xc600
+      +24.74s fdc type II read sector with multi sector=0x3 track=0x9 side=1 drive=0 addr=0xc800
+      +24.76s fdc type II read sector with multi sector=0x4 track=0x9 side=1 drive=0 addr=0xca00
+      +24.78s fdc type II read sector with multi sector=0x5 track=0x9 side=1 drive=0 addr=0xcc00
+      +24.80s fdc type II read sector with multi sector=0x6 track=0x9 side=1 drive=0 addr=0xce00
+      +24.80s fdc type II read sector with multi sector=0x7 track=0x9 side=1 drive=0 addr=0xd000
+      +24.82s fdc type II read sector with multi sector=0x8 track=0x9 side=1 drive=0 addr=0xd200
+      +24.84s fdc type II read sector with multi sector=0x9 track=0x9 side=1 drive=0 addr=0xd400
+      +24.86s fdc type II read sector with multi sector=0xa track=0x9 side=1 drive=0 addr=0xd600
+      +24.88s fdc type II read sector with multi sector=0xb track=0x9 side=1 drive=0 addr=0xd800
+      +24.88s fdc type IV force int 0xd0 irq=0 index=0
+      +24.88s fdc type I seek dest_track=0xa spinup=on verify=off steprate_ms=3 drive=0 tr=0x9 head_track=0x9
+      +24.90s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0xa head_track=0xa side=1 drive=0 dmasecto
+      +24.92s fdc type II read sector with multi sector=0x2 track=0xa side=1 drive=0 addr=0xda00
+      +24.94s fdc type II read sector with multi sector=0x3 track=0xa side=1 drive=0 addr=0xdc00
+      +24.96s fdc type II read sector with multi sector=0x4 track=0xa side=1 drive=0 addr=0xde00
+      +24.98s fdc type II read sector with multi sector=0x5 track=0xa side=1 drive=0 addr=0xe000
+      +25.00s fdc type II read sector with multi sector=0x6 track=0xa side=1 drive=0 addr=0xe200
+      +25.02s fdc type II read sector with multi sector=0x7 track=0xa side=1 drive=0 addr=0xe400
+      +25.02s fdc type II read sector with multi sector=0x8 track=0xa side=1 drive=0 addr=0xe600
+      +25.04s fdc type II read sector with multi sector=0x9 track=0xa side=1 drive=0 addr=0xe800
+      +25.06s fdc type II read sector with multi sector=0xa track=0xa side=1 drive=0 addr=0xea00
+      +25.08s fdc type II read sector with multi sector=0xb track=0xa side=1 drive=0 addr=0xec00
+      +25.08s fdc type IV force int 0xd0 irq=0 index=0
+      +25.08s fdc type I seek dest_track=0xb spinup=on verify=off steprate_ms=3 drive=0 tr=0xa head_track=0xa
+      +25.10s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0xb head_track=0xb side=1 drive=0 dmasecto
+      +25.12s fdc type II read sector with multi sector=0x2 track=0xb side=1 drive=0 addr=0xee00
+      +25.14s fdc type II read sector with multi sector=0x3 track=0xb side=1 drive=0 addr=0xf000
+      +25.16s fdc type II read sector with multi sector=0x4 track=0xb side=1 drive=0 addr=0xf200
+      +25.18s fdc type II read sector with multi sector=0x5 track=0xb side=1 drive=0 addr=0xf400
+      +25.20s fdc type II read sector with multi sector=0x6 track=0xb side=1 drive=0 addr=0xf600
+      +25.22s fdc type II read sector with multi sector=0x7 track=0xb side=1 drive=0 addr=0xf800
+      +25.22s fdc type II read sector with multi sector=0x8 track=0xb side=1 drive=0 addr=0xfa00
+      +25.24s fdc type II read sector with multi sector=0x9 track=0xb side=1 drive=0 addr=0xfc00
+      +25.26s fdc type II read sector with multi sector=0xa track=0xb side=1 drive=0 addr=0xfe00
+      +25.28s fdc type II read sector with multi sector=0xb track=0xb side=1 drive=0 addr=0x10000
+      +25.28s fdc type IV force int 0xd0 irq=0 index=0
+      +25.28s fdc type I seek dest_track=0xc spinup=on verify=off steprate_ms=3 drive=0 tr=0xb head_track=0xb
+      +25.30s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0xc head_track=0xc side=1 drive=0 dmasecto
+      +25.32s fdc type II read sector with multi sector=0x2 track=0xc side=1 drive=0 addr=0x10200
+      +25.34s fdc type II read sector with multi sector=0x3 track=0xc side=1 drive=0 addr=0x10400
+      +25.36s fdc type II read sector with multi sector=0x4 track=0xc side=1 drive=0 addr=0x10600
+      +25.38s fdc type II read sector with multi sector=0x5 track=0xc side=1 drive=0 addr=0x10800
+      +25.40s fdc type II read sector with multi sector=0x6 track=0xc side=1 drive=0 addr=0x10a00
+      +25.42s fdc type II read sector with multi sector=0x7 track=0xc side=1 drive=0 addr=0x10c00
+      +25.44s fdc type II read sector with multi sector=0x8 track=0xc side=1 drive=0 addr=0x10e00
+      +25.44s fdc type II read sector with multi sector=0x9 track=0xc side=1 drive=0 addr=0x11000
+      +25.46s fdc type II read sector with multi sector=0xa track=0xc side=1 drive=0 addr=0x11200
+      +25.48s fdc type II read sector with multi sector=0xb track=0xc side=1 drive=0 addr=0x11400
+      +25.48s fdc type IV force int 0xd0 irq=0 index=0
+      +25.48s fdc type I seek dest_track=0xd spinup=on verify=off steprate_ms=3 drive=0 tr=0xc head_track=0xc
+      +25.50s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0xd head_track=0xd side=1 drive=0 dmasecto
+      +25.52s fdc type II read sector with multi sector=0x2 track=0xd side=1 drive=0 addr=0x11600
+      +25.54s fdc type II read sector with multi sector=0x3 track=0xd side=1 drive=0 addr=0x11800
+      +25.56s fdc type II read sector with multi sector=0x4 track=0xd side=1 drive=0 addr=0x11a00
+      +25.58s fdc type II read sector with multi sector=0x5 track=0xd side=1 drive=0 addr=0x11c00
+      +25.60s fdc type II read sector with multi sector=0x6 track=0xd side=1 drive=0 addr=0x11e00
+      +25.62s fdc type II read sector with multi sector=0x7 track=0xd side=1 drive=0 addr=0x12000
+      +25.64s fdc type II read sector with multi sector=0x8 track=0xd side=1 drive=0 addr=0x12200
+      +25.64s fdc type II read sector with multi sector=0x9 track=0xd side=1 drive=0 addr=0x12400
+      +25.66s fdc type II read sector with multi sector=0xa track=0xd side=1 drive=0 addr=0x12600
+      +25.68s fdc type II read sector with multi sector=0xb track=0xd side=1 drive=0 addr=0x12800
+      +25.68s fdc type IV force int 0xd0 irq=0 index=0
+      +25.70s fdc type I seek dest_track=0xe spinup=on verify=off steprate_ms=3 drive=0 tr=0xd head_track=0xd
+      +25.70s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0xe head_track=0xe side=1 drive=0 dmasecto
+      +25.72s fdc type II read sector with multi sector=0x2 track=0xe side=1 drive=0 addr=0x12a00
+      +25.74s fdc type II read sector with multi sector=0x3 track=0xe side=1 drive=0 addr=0x12c00
+      +25.76s fdc type II read sector with multi sector=0x4 track=0xe side=1 drive=0 addr=0x12e00
+      +25.78s fdc type II read sector with multi sector=0x5 track=0xe side=1 drive=0 addr=0x13000
+      +25.80s fdc type II read sector with multi sector=0x6 track=0xe side=1 drive=0 addr=0x13200
+      +25.82s fdc type II read sector with multi sector=0x7 track=0xe side=1 drive=0 addr=0x13400
+      +25.84s fdc type II read sector with multi sector=0x8 track=0xe side=1 drive=0 addr=0x13600
+      +25.86s fdc type II read sector with multi sector=0x9 track=0xe side=1 drive=0 addr=0x13800
+      +25.86s fdc type II read sector with multi sector=0xa track=0xe side=1 drive=0 addr=0x13a00
+      +25.88s fdc type II read sector with multi sector=0xb track=0xe side=1 drive=0 addr=0x13c00
+      +25.88s fdc type IV force int 0xd0 irq=0 index=0
+      +25.90s fdc type I seek dest_track=0xf spinup=on verify=off steprate_ms=3 drive=0 tr=0xe head_track=0xe
+      +25.90s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0xf head_track=0xf side=1 drive=0 dmasecto
+      +25.92s fdc type II read sector with multi sector=0x2 track=0xf side=1 drive=0 addr=0x13e00
+      +25.94s fdc type II read sector with multi sector=0x3 track=0xf side=1 drive=0 addr=0x14000
+      +25.96s fdc type II read sector with multi sector=0x4 track=0xf side=1 drive=0 addr=0x14200
+      +25.98s fdc type II read sector with multi sector=0x5 track=0xf side=1 drive=0 addr=0x14400
+      +26.00s fdc type II read sector with multi sector=0x6 track=0xf side=1 drive=0 addr=0x14600
+      +26.02s fdc type II read sector with multi sector=0x7 track=0xf side=1 drive=0 addr=0x14800
+      +26.04s fdc type II read sector with multi sector=0x8 track=0xf side=1 drive=0 addr=0x14a00
+      +26.06s fdc type II read sector with multi sector=0x9 track=0xf side=1 drive=0 addr=0x14c00
+      +26.08s fdc type II read sector with multi sector=0xa track=0xf side=1 drive=0 addr=0x14e00
+      +26.08s fdc type II read sector with multi sector=0xb track=0xf side=1 drive=0 addr=0x15000
+      +26.08s fdc type IV force int 0xd0 irq=0 index=0
+      +26.10s fdc type I seek dest_track=0x10 spinup=on verify=off steprate_ms=3 drive=0 tr=0xf head_track=0xf
+      +26.10s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x10 head_track=0x10 side=1 drive=0 dmasec
+      +26.12s fdc type II read sector with multi sector=0x2 track=0x10 side=1 drive=0 addr=0x15200
+      +26.14s fdc type II read sector with multi sector=0x3 track=0x10 side=1 drive=0 addr=0x15400
+      +26.16s fdc type II read sector with multi sector=0x4 track=0x10 side=1 drive=0 addr=0x15600
+      +26.18s fdc type II read sector with multi sector=0x5 track=0x10 side=1 drive=0 addr=0x15800
+      +26.20s fdc type II read sector with multi sector=0x6 track=0x10 side=1 drive=0 addr=0x15a00
+      +26.22s fdc type II read sector with multi sector=0x7 track=0x10 side=1 drive=0 addr=0x15c00
+      +26.24s fdc type II read sector with multi sector=0x8 track=0x10 side=1 drive=0 addr=0x15e00
+      +26.26s fdc type II read sector with multi sector=0x9 track=0x10 side=1 drive=0 addr=0x16000
+      +26.28s fdc type II read sector with multi sector=0xa track=0x10 side=1 drive=0 addr=0x16200
+      +26.28s fdc type II read sector with multi sector=0xb track=0x10 side=1 drive=0 addr=0x16400
+      +26.28s fdc type IV force int 0xd0 irq=0 index=0
+      +26.30s fdc type I seek dest_track=0x11 spinup=on verify=off steprate_ms=3 drive=0 tr=0x10 head_track=0x10
+      +26.30s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x11 head_track=0x11 side=1 drive=0 dmasec
+      +26.32s fdc type II read sector with multi sector=0x2 track=0x11 side=1 drive=0 addr=0x16600
+      +26.34s fdc type II read sector with multi sector=0x3 track=0x11 side=1 drive=0 addr=0x16800
+      +26.36s fdc type II read sector with multi sector=0x4 track=0x11 side=1 drive=0 addr=0x16a00
+      +26.38s fdc type II read sector with multi sector=0x5 track=0x11 side=1 drive=0 addr=0x16c00
+      +26.40s fdc type II read sector with multi sector=0x6 track=0x11 side=1 drive=0 addr=0x16e00
+      +26.42s fdc type II read sector with multi sector=0x7 track=0x11 side=1 drive=0 addr=0x17000
+      +26.44s fdc type II read sector with multi sector=0x8 track=0x11 side=1 drive=0 addr=0x17200
+      +26.46s fdc type II read sector with multi sector=0x9 track=0x11 side=1 drive=0 addr=0x17400
+      +26.48s fdc type II read sector with multi sector=0xa track=0x11 side=1 drive=0 addr=0x17600
+      +26.50s fdc type II read sector with multi sector=0xb track=0x11 side=1 drive=0 addr=0x17800
+      +26.50s fdc type IV force int 0xd0 irq=0 index=0
+      +26.50s fdc type I seek dest_track=0x12 spinup=on verify=off steprate_ms=3 drive=0 tr=0x11 head_track=0x11
+      +26.50s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x12 head_track=0x12 side=1 drive=0 dmasec
+      +26.52s fdc type II read sector with multi sector=0x2 track=0x12 side=1 drive=0 addr=0x17a00
+      +26.54s fdc type II read sector with multi sector=0x3 track=0x12 side=1 drive=0 addr=0x17c00
+      +26.56s fdc type II read sector with multi sector=0x4 track=0x12 side=1 drive=0 addr=0x17e00
+      +26.58s fdc type II read sector with multi sector=0x5 track=0x12 side=1 drive=0 addr=0x18000
+      +26.60s fdc type II read sector with multi sector=0x6 track=0x12 side=1 drive=0 addr=0x18200
+      +26.62s fdc type II read sector with multi sector=0x7 track=0x12 side=1 drive=0 addr=0x18400
+      +26.64s fdc type II read sector with multi sector=0x8 track=0x12 side=1 drive=0 addr=0x18600
+      +26.66s fdc type II read sector with multi sector=0x9 track=0x12 side=1 drive=0 addr=0x18800
+      +26.68s fdc type II read sector with multi sector=0xa track=0x12 side=1 drive=0 addr=0x18a00
+      +26.70s fdc type II read sector with multi sector=0xb track=0x12 side=1 drive=0 addr=0x18c00
+      +26.70s fdc type IV force int 0xd0 irq=0 index=0
+      +26.70s fdc type I seek dest_track=0x13 spinup=on verify=off steprate_ms=3 drive=0 tr=0x12 head_track=0x12
+      +26.70s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x13 head_track=0x13 side=1 drive=0 dmasec
+      +26.72s fdc type II read sector with multi sector=0x2 track=0x13 side=1 drive=0 addr=0x18e00
+      +26.74s fdc type II read sector with multi sector=0x3 track=0x13 side=1 drive=0 addr=0x19000
+      +26.76s fdc type II read sector with multi sector=0x4 track=0x13 side=1 drive=0 addr=0x19200
+      +26.78s fdc type II read sector with multi sector=0x5 track=0x13 side=1 drive=0 addr=0x19400
+      +26.80s fdc type II read sector with multi sector=0x6 track=0x13 side=1 drive=0 addr=0x19600
+      +26.82s fdc type II read sector with multi sector=0x7 track=0x13 side=1 drive=0 addr=0x19800
+      +26.84s fdc type II read sector with multi sector=0x8 track=0x13 side=1 drive=0 addr=0x19a00
+      +26.86s fdc type II read sector with multi sector=0x9 track=0x13 side=1 drive=0 addr=0x19c00
+      +26.88s fdc type II read sector with multi sector=0xa track=0x13 side=1 drive=0 addr=0x19e00
+      +26.90s fdc type II read sector with multi sector=0xb track=0x13 side=1 drive=0 addr=0x1a000
+      +26.90s fdc type IV force int 0xd0 irq=0 index=0
+      +26.90s fdc type I seek dest_track=0x14 spinup=on verify=off steprate_ms=3 drive=0 tr=0x13 head_track=0x13
+      +26.90s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x14 head_track=0x14 side=1 drive=0 dmasec
+      +26.92s fdc type II read sector with multi sector=0x2 track=0x14 side=1 drive=0 addr=0x1a200
+      +26.94s fdc type II read sector with multi sector=0x3 track=0x14 side=1 drive=0 addr=0x1a400
+      +26.96s fdc type II read sector with multi sector=0x4 track=0x14 side=1 drive=0 addr=0x1a600
+      +26.98s fdc type II read sector with multi sector=0x5 track=0x14 side=1 drive=0 addr=0x1a800
+      +27.00s fdc type II read sector with multi sector=0x6 track=0x14 side=1 drive=0 addr=0x1aa00
+      +27.02s fdc type II read sector with multi sector=0x7 track=0x14 side=1 drive=0 addr=0x1ac00
+      +27.04s fdc type II read sector with multi sector=0x8 track=0x14 side=1 drive=0 addr=0x1ae00
+      +27.06s fdc type II read sector with multi sector=0x9 track=0x14 side=1 drive=0 addr=0x1b000
+      +27.08s fdc type II read sector with multi sector=0xa track=0x14 side=1 drive=0 addr=0x1b200
+      +27.10s fdc type II read sector with multi sector=0xb track=0x14 side=1 drive=0 addr=0x1b400
+      +27.10s fdc type IV force int 0xd0 irq=0 index=0
+      +27.10s fdc type I seek dest_track=0x15 spinup=on verify=off steprate_ms=3 drive=0 tr=0x14 head_track=0x14
+      +27.10s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x15 head_track=0x15 side=1 drive=0 dmasec
+      +27.12s fdc type II read sector with multi sector=0x2 track=0x15 side=1 drive=0 addr=0x1b600
+      +27.14s fdc type II read sector with multi sector=0x3 track=0x15 side=1 drive=0 addr=0x1b800
+      +27.16s fdc type II read sector with multi sector=0x4 track=0x15 side=1 drive=0 addr=0x1ba00
+      +27.18s fdc type II read sector with multi sector=0x5 track=0x15 side=1 drive=0 addr=0x1bc00
+      +27.20s fdc type II read sector with multi sector=0x6 track=0x15 side=1 drive=0 addr=0x1be00
+      +27.22s fdc type II read sector with multi sector=0x7 track=0x15 side=1 drive=0 addr=0x1c000
+      +27.24s fdc type II read sector with multi sector=0x8 track=0x15 side=1 drive=0 addr=0x1c200
+      +27.26s fdc type II read sector with multi sector=0x9 track=0x15 side=1 drive=0 addr=0x1c400
+      +27.28s fdc type II read sector with multi sector=0xa track=0x15 side=1 drive=0 addr=0x1c600
+      +27.30s fdc type II read sector with multi sector=0xb track=0x15 side=1 drive=0 addr=0x1c800
+      +27.30s fdc type IV force int 0xd0 irq=0 index=0
+      +27.30s fdc type I seek dest_track=0x16 spinup=on verify=off steprate_ms=3 drive=0 tr=0x15 head_track=0x15
+      +27.30s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x16 head_track=0x16 side=1 drive=0 dmasec
+      +27.32s fdc type II read sector with multi sector=0x2 track=0x16 side=1 drive=0 addr=0x1ca00
+      +27.34s fdc type II read sector with multi sector=0x3 track=0x16 side=1 drive=0 addr=0x1cc00
+      +27.36s fdc type II read sector with multi sector=0x4 track=0x16 side=1 drive=0 addr=0x1ce00
+      +27.38s fdc type II read sector with multi sector=0x5 track=0x16 side=1 drive=0 addr=0x1d000
+      +27.40s fdc type II read sector with multi sector=0x6 track=0x16 side=1 drive=0 addr=0x1d200
+      +27.42s fdc type II read sector with multi sector=0x7 track=0x16 side=1 drive=0 addr=0x1d400
+      +27.44s fdc type II read sector with multi sector=0x8 track=0x16 side=1 drive=0 addr=0x1d600
+      +27.46s fdc type II read sector with multi sector=0x9 track=0x16 side=1 drive=0 addr=0x1d800
+      +27.48s fdc type II read sector with multi sector=0xa track=0x16 side=1 drive=0 addr=0x1da00
+      +27.50s fdc type II read sector with multi sector=0xb track=0x16 side=1 drive=0 addr=0x1dc00
+      +27.50s fdc type IV force int 0xd0 irq=0 index=0
+      +27.50s fdc type I seek dest_track=0x17 spinup=on verify=off steprate_ms=3 drive=0 tr=0x16 head_track=0x16
+      +27.50s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x17 head_track=0x17 side=1 drive=0 dmasec
+      +27.52s fdc type II read sector with multi sector=0x2 track=0x17 side=1 drive=0 addr=0x1de00
+      +27.54s fdc type II read sector with multi sector=0x3 track=0x17 side=1 drive=0 addr=0x1e000
+      +27.56s fdc type II read sector with multi sector=0x4 track=0x17 side=1 drive=0 addr=0x1e200
+      +27.58s fdc type II read sector with multi sector=0x5 track=0x17 side=1 drive=0 addr=0x1e400
+      +27.60s fdc type II read sector with multi sector=0x6 track=0x17 side=1 drive=0 addr=0x1e600
+      +27.62s fdc type II read sector with multi sector=0x7 track=0x17 side=1 drive=0 addr=0x1e800
+      +27.64s fdc type II read sector with multi sector=0x8 track=0x17 side=1 drive=0 addr=0x1ea00
+      +27.66s fdc type II read sector with multi sector=0x9 track=0x17 side=1 drive=0 addr=0x1ec00
+      +27.68s fdc type II read sector with multi sector=0xa track=0x17 side=1 drive=0 addr=0x1ee00
+      +27.70s fdc type II read sector with multi sector=0xb track=0x17 side=1 drive=0 addr=0x1f000
+      +27.70s fdc type IV force int 0xd0 irq=0 index=0
+      +27.70s fdc type I seek dest_track=0x18 spinup=on verify=off steprate_ms=3 drive=0 tr=0x17 head_track=0x17
+      +27.70s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x18 head_track=0x18 side=1 drive=0 dmasec
+      +27.72s fdc type II read sector with multi sector=0x2 track=0x18 side=1 drive=0 addr=0x1f200
+      +27.74s fdc type II read sector with multi sector=0x3 track=0x18 side=1 drive=0 addr=0x1f400
+      +27.76s fdc type II read sector with multi sector=0x4 track=0x18 side=1 drive=0 addr=0x1f600
+      +27.78s fdc type II read sector with multi sector=0x5 track=0x18 side=1 drive=0 addr=0x1f800
+      +27.80s fdc type II read sector with multi sector=0x6 track=0x18 side=1 drive=0 addr=0x1fa00
+      +27.82s fdc type II read sector with multi sector=0x7 track=0x18 side=1 drive=0 addr=0x1fc00
+      +27.84s fdc type II read sector with multi sector=0x8 track=0x18 side=1 drive=0 addr=0x1fe00
+      +27.86s fdc type II read sector with multi sector=0x9 track=0x18 side=1 drive=0 addr=0x20000
+      +27.88s fdc type II read sector with multi sector=0xa track=0x18 side=1 drive=0 addr=0x20200
+      +27.90s fdc type II read sector with multi sector=0xb track=0x18 side=1 drive=0 addr=0x20400
+      +27.90s fdc type IV force int 0xd0 irq=0 index=0
+      +27.90s fdc type I seek dest_track=0x19 spinup=on verify=off steprate_ms=3 drive=0 tr=0x18 head_track=0x18
+      +27.90s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x19 head_track=0x19 side=1 drive=0 dmasec
+      +27.92s fdc type II read sector with multi sector=0x2 track=0x19 side=1 drive=0 addr=0x20600
+      +27.94s fdc type II read sector with multi sector=0x3 track=0x19 side=1 drive=0 addr=0x20800
+      +27.96s fdc type II read sector with multi sector=0x4 track=0x19 side=1 drive=0 addr=0x20a00
+      +27.98s fdc type II read sector with multi sector=0x5 track=0x19 side=1 drive=0 addr=0x20c00
+      +28.00s fdc type II read sector with multi sector=0x6 track=0x19 side=1 drive=0 addr=0x20e00
+      +28.02s fdc type II read sector with multi sector=0x7 track=0x19 side=1 drive=0 addr=0x21000
+      +28.04s fdc type II read sector with multi sector=0x8 track=0x19 side=1 drive=0 addr=0x21200
+      +28.06s fdc type II read sector with multi sector=0x9 track=0x19 side=1 drive=0 addr=0x21400
+      +28.08s fdc type II read sector with multi sector=0xa track=0x19 side=1 drive=0 addr=0x21600
+      +28.10s fdc type II read sector with multi sector=0xb track=0x19 side=1 drive=0 addr=0x21800
+      +28.10s fdc type IV force int 0xd0 irq=0 index=0
+      +28.10s fdc type I seek dest_track=0x1a spinup=on verify=off steprate_ms=3 drive=0 tr=0x19 head_track=0x19
+      +28.10s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x1a head_track=0x1a side=1 drive=0 dmasec
+      +28.12s fdc type II read sector with multi sector=0x2 track=0x1a side=1 drive=0 addr=0x21a00
+      +28.14s fdc type II read sector with multi sector=0x3 track=0x1a side=1 drive=0 addr=0x21c00
+      +28.16s fdc type II read sector with multi sector=0x4 track=0x1a side=1 drive=0 addr=0x21e00
+      +28.18s fdc type II read sector with multi sector=0x5 track=0x1a side=1 drive=0 addr=0x22000
+      +28.20s fdc type II read sector with multi sector=0x6 track=0x1a side=1 drive=0 addr=0x22200
+      +28.22s fdc type II read sector with multi sector=0x7 track=0x1a side=1 drive=0 addr=0x22400
+      +28.24s fdc type II read sector with multi sector=0x8 track=0x1a side=1 drive=0 addr=0x22600
+      +28.26s fdc type II read sector with multi sector=0x9 track=0x1a side=1 drive=0 addr=0x22800
+      +28.28s fdc type II read sector with multi sector=0xa track=0x1a side=1 drive=0 addr=0x22a00
+      +28.30s fdc type II read sector with multi sector=0xb track=0x1a side=1 drive=0 addr=0x22c00
+      +28.30s fdc type IV force int 0xd0 irq=0 index=0
+      +28.30s fdc type I seek dest_track=0x1b spinup=on verify=off steprate_ms=3 drive=0 tr=0x1a head_track=0x1a
+      +28.30s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x1b head_track=0x1b side=1 drive=0 dmasec
+      +28.32s fdc type II read sector with multi sector=0x2 track=0x1b side=1 drive=0 addr=0x22e00
+      +28.34s fdc type II read sector with multi sector=0x3 track=0x1b side=1 drive=0 addr=0x23000
+      +28.36s fdc type II read sector with multi sector=0x4 track=0x1b side=1 drive=0 addr=0x23200
+      +28.38s fdc type II read sector with multi sector=0x5 track=0x1b side=1 drive=0 addr=0x23400
+      +28.40s fdc type II read sector with multi sector=0x6 track=0x1b side=1 drive=0 addr=0x23600
+      +28.42s fdc type II read sector with multi sector=0x7 track=0x1b side=1 drive=0 addr=0x23800
+      +28.44s fdc type II read sector with multi sector=0x8 track=0x1b side=1 drive=0 addr=0x23a00
+      +28.46s fdc type II read sector with multi sector=0x9 track=0x1b side=1 drive=0 addr=0x23c00
+      +28.48s fdc type II read sector with multi sector=0xa track=0x1b side=1 drive=0 addr=0x23e00
+      +28.50s fdc type II read sector with multi sector=0xb track=0x1b side=1 drive=0 addr=0x24000
+      +28.50s fdc type IV force int 0xd0 irq=0 index=0
+      +28.50s fdc type I seek dest_track=0x1c spinup=on verify=off steprate_ms=3 drive=0 tr=0x1b head_track=0x1b
+      +28.50s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x1c head_track=0x1c side=1 drive=0 dmasec
+      +28.52s fdc type II read sector with multi sector=0x2 track=0x1c side=1 drive=0 addr=0x24200
+      +28.54s fdc type II read sector with multi sector=0x3 track=0x1c side=1 drive=0 addr=0x24400
+      +28.56s fdc type II read sector with multi sector=0x4 track=0x1c side=1 drive=0 addr=0x24600
+      +28.58s fdc type II read sector with multi sector=0x5 track=0x1c side=1 drive=0 addr=0x24800
+      +28.60s fdc type II read sector with multi sector=0x6 track=0x1c side=1 drive=0 addr=0x24a00
+      +28.62s fdc type II read sector with multi sector=0x7 track=0x1c side=1 drive=0 addr=0x24c00
+      +28.64s fdc type II read sector with multi sector=0x8 track=0x1c side=1 drive=0 addr=0x24e00
+      +28.66s fdc type II read sector with multi sector=0x9 track=0x1c side=1 drive=0 addr=0x25000
+      +28.68s fdc type II read sector with multi sector=0xa track=0x1c side=1 drive=0 addr=0x25200
+      +28.70s fdc type II read sector with multi sector=0xb track=0x1c side=1 drive=0 addr=0x25400
+      +28.70s fdc type IV force int 0xd0 irq=0 index=0
+      +28.70s fdc type I seek dest_track=0x1d spinup=on verify=off steprate_ms=3 drive=0 tr=0x1c head_track=0x1c
+      +28.70s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x1d head_track=0x1d side=1 drive=0 dmasec
+      +28.72s fdc type II read sector with multi sector=0x2 track=0x1d side=1 drive=0 addr=0x25600
+      +28.74s fdc type II read sector with multi sector=0x3 track=0x1d side=1 drive=0 addr=0x25800
+      +28.76s fdc type II read sector with multi sector=0x4 track=0x1d side=1 drive=0 addr=0x25a00
+      +28.78s fdc type II read sector with multi sector=0x5 track=0x1d side=1 drive=0 addr=0x25c00
+      +28.80s fdc type II read sector with multi sector=0x6 track=0x1d side=1 drive=0 addr=0x25e00
+      +28.82s fdc type II read sector with multi sector=0x7 track=0x1d side=1 drive=0 addr=0x26000
+      +28.84s fdc type II read sector with multi sector=0x8 track=0x1d side=1 drive=0 addr=0x26200
+      +28.86s fdc type II read sector with multi sector=0x9 track=0x1d side=1 drive=0 addr=0x26400
+      +28.88s fdc type II read sector with multi sector=0xa track=0x1d side=1 drive=0 addr=0x26600
+      +28.90s fdc type II read sector with multi sector=0xb track=0x1d side=1 drive=0 addr=0x26800
+      +28.90s fdc type IV force int 0xd0 irq=0 index=0
+      +28.90s fdc type I seek dest_track=0x1e spinup=on verify=off steprate_ms=3 drive=0 tr=0x1d head_track=0x1d
+      +28.90s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x1e head_track=0x1e side=1 drive=0 dmasec
+      +28.92s fdc type II read sector with multi sector=0x2 track=0x1e side=1 drive=0 addr=0x26a00
+      +28.94s fdc type II read sector with multi sector=0x3 track=0x1e side=1 drive=0 addr=0x26c00
+      +28.96s fdc type II read sector with multi sector=0x4 track=0x1e side=1 drive=0 addr=0x26e00
+      +28.98s fdc type II read sector with multi sector=0x5 track=0x1e side=1 drive=0 addr=0x27000
+      +29.00s fdc type II read sector with multi sector=0x6 track=0x1e side=1 drive=0 addr=0x27200
+      +29.02s fdc type II read sector with multi sector=0x7 track=0x1e side=1 drive=0 addr=0x27400
+      +29.04s fdc type II read sector with multi sector=0x8 track=0x1e side=1 drive=0 addr=0x27600
+      +29.06s fdc type II read sector with multi sector=0x9 track=0x1e side=1 drive=0 addr=0x27800
+      +29.08s fdc type II read sector with multi sector=0xa track=0x1e side=1 drive=0 addr=0x27a00
+      +29.10s fdc type II read sector with multi sector=0xb track=0x1e side=1 drive=0 addr=0x27c00
+      +29.10s fdc type IV force int 0xd0 irq=0 index=0
+      +29.10s fdc type I seek dest_track=0x1f spinup=on verify=off steprate_ms=3 drive=0 tr=0x1e head_track=0x1e
+      +29.10s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x1f head_track=0x1f side=1 drive=0 dmasec
+      +29.12s fdc type II read sector with multi sector=0x2 track=0x1f side=1 drive=0 addr=0x27e00
+      +29.14s fdc type II read sector with multi sector=0x3 track=0x1f side=1 drive=0 addr=0x28000
+      +29.16s fdc type II read sector with multi sector=0x4 track=0x1f side=1 drive=0 addr=0x28200
+      +29.18s fdc type II read sector with multi sector=0x5 track=0x1f side=1 drive=0 addr=0x28400
+      +29.20s fdc type II read sector with multi sector=0x6 track=0x1f side=1 drive=0 addr=0x28600
+      +29.22s fdc type II read sector with multi sector=0x7 track=0x1f side=1 drive=0 addr=0x28800
+      +29.24s fdc type II read sector with multi sector=0x8 track=0x1f side=1 drive=0 addr=0x28a00
+      +29.26s fdc type II read sector with multi sector=0x9 track=0x1f side=1 drive=0 addr=0x28c00
+      +29.28s fdc type II read sector with multi sector=0xa track=0x1f side=1 drive=0 addr=0x28e00
+      +29.30s fdc type II read sector with multi sector=0xb track=0x1f side=1 drive=0 addr=0x29000
+      +29.30s fdc type IV force int 0xd0 irq=0 index=0
+      +29.30s fdc type I seek dest_track=0x20 spinup=on verify=off steprate_ms=3 drive=0 tr=0x1f head_track=0x1f
+      +29.30s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x20 head_track=0x20 side=1 drive=0 dmasec
+      +29.32s fdc type II read sector with multi sector=0x2 track=0x20 side=1 drive=0 addr=0x29200
+      +29.34s fdc type II read sector with multi sector=0x3 track=0x20 side=1 drive=0 addr=0x29400
+      +29.36s fdc type II read sector with multi sector=0x4 track=0x20 side=1 drive=0 addr=0x29600
+      +29.38s fdc type II read sector with multi sector=0x5 track=0x20 side=1 drive=0 addr=0x29800
+      +29.40s fdc type II read sector with multi sector=0x6 track=0x20 side=1 drive=0 addr=0x29a00
+      +29.42s fdc type II read sector with multi sector=0x7 track=0x20 side=1 drive=0 addr=0x29c00
+      +29.44s fdc type II read sector with multi sector=0x8 track=0x20 side=1 drive=0 addr=0x29e00
+      +29.46s fdc type II read sector with multi sector=0x9 track=0x20 side=1 drive=0 addr=0x2a000
+      +29.48s fdc type II read sector with multi sector=0xa track=0x20 side=1 drive=0 addr=0x2a200
+      +29.50s fdc type II read sector with multi sector=0xb track=0x20 side=1 drive=0 addr=0x2a400
+      +29.50s fdc type IV force int 0xd0 irq=0 index=0
+      +29.50s fdc type I seek dest_track=0x21 spinup=on verify=off steprate_ms=3 drive=0 tr=0x20 head_track=0x20
+      +29.50s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x21 head_track=0x21 side=1 drive=0 dmasec
+      +29.52s fdc type II read sector with multi sector=0x2 track=0x21 side=1 drive=0 addr=0x2a600
+      +29.54s fdc type II read sector with multi sector=0x3 track=0x21 side=1 drive=0 addr=0x2a800
+      +29.56s fdc type II read sector with multi sector=0x4 track=0x21 side=1 drive=0 addr=0x2aa00
+      +29.58s fdc type II read sector with multi sector=0x5 track=0x21 side=1 drive=0 addr=0x2ac00
+      +29.60s fdc type II read sector with multi sector=0x6 track=0x21 side=1 drive=0 addr=0x2ae00
+      +29.62s fdc type II read sector with multi sector=0x7 track=0x21 side=1 drive=0 addr=0x2b000
+      +29.64s fdc type II read sector with multi sector=0x8 track=0x21 side=1 drive=0 addr=0x2b200
+      +29.66s fdc type II read sector with multi sector=0x9 track=0x21 side=1 drive=0 addr=0x2b400
+      +29.68s fdc type II read sector with multi sector=0xa track=0x21 side=1 drive=0 addr=0x2b600
+      +29.70s fdc type II read sector with multi sector=0xb track=0x21 side=1 drive=0 addr=0x2b800
+      +29.70s fdc type IV force int 0xd0 irq=0 index=0
+      +29.70s fdc type I seek dest_track=0x22 spinup=on verify=off steprate_ms=3 drive=0 tr=0x21 head_track=0x21
+      +29.70s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x22 head_track=0x22 side=1 drive=0 dmasec
+      +29.72s fdc type II read sector with multi sector=0x2 track=0x22 side=1 drive=0 addr=0x2ba00
+      +29.74s fdc type II read sector with multi sector=0x3 track=0x22 side=1 drive=0 addr=0x2bc00
+      +29.76s fdc type II read sector with multi sector=0x4 track=0x22 side=1 drive=0 addr=0x2be00
+      +29.78s fdc type II read sector with multi sector=0x5 track=0x22 side=1 drive=0 addr=0x2c000
+      +29.80s fdc type II read sector with multi sector=0x6 track=0x22 side=1 drive=0 addr=0x2c200
+      +29.82s fdc type II read sector with multi sector=0x7 track=0x22 side=1 drive=0 addr=0x2c400
+      +29.84s fdc type II read sector with multi sector=0x8 track=0x22 side=1 drive=0 addr=0x2c600
+      +29.86s fdc type II read sector with multi sector=0x9 track=0x22 side=1 drive=0 addr=0x2c800
+      +29.88s fdc type II read sector with multi sector=0xa track=0x22 side=1 drive=0 addr=0x2ca00
+      +29.90s fdc type II read sector with multi sector=0xb track=0x22 side=1 drive=0 addr=0x2cc00
+      +29.90s fdc type IV force int 0xd0 irq=0 index=0
+      +29.90s fdc type I seek dest_track=0x23 spinup=on verify=off steprate_ms=3 drive=0 tr=0x22 head_track=0x22
+      +29.90s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x23 head_track=0x23 side=1 drive=0 dmasec
+      +29.92s fdc type II read sector with multi sector=0x2 track=0x23 side=1 drive=0 addr=0x2ce00
+      +29.94s fdc type II read sector with multi sector=0x3 track=0x23 side=1 drive=0 addr=0x2d000
+      +29.96s fdc type II read sector with multi sector=0x4 track=0x23 side=1 drive=0 addr=0x2d200
+      +29.98s fdc type II read sector with multi sector=0x5 track=0x23 side=1 drive=0 addr=0x2d400
+      +30.00s fdc type II read sector with multi sector=0x6 track=0x23 side=1 drive=0 addr=0x2d600
+      +30.02s fdc type II read sector with multi sector=0x7 track=0x23 side=1 drive=0 addr=0x2d800
+      +30.04s fdc type II read sector with multi sector=0x8 track=0x23 side=1 drive=0 addr=0x2da00
+      +30.06s fdc type II read sector with multi sector=0x9 track=0x23 side=1 drive=0 addr=0x2dc00
+      +30.08s fdc type II read sector with multi sector=0xa track=0x23 side=1 drive=0 addr=0x2de00
+      +30.10s fdc type II read sector with multi sector=0xb track=0x23 side=1 drive=0 addr=0x2e000
+      +30.10s fdc type IV force int 0xd0 irq=0 index=0
+      +30.10s fdc type I seek dest_track=0x24 spinup=on verify=off steprate_ms=3 drive=0 tr=0x23 head_track=0x23
+      +30.10s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x24 head_track=0x24 side=1 drive=0 dmasec
+      +30.12s fdc type II read sector with multi sector=0x2 track=0x24 side=1 drive=0 addr=0x2e200
+      +30.14s fdc type II read sector with multi sector=0x3 track=0x24 side=1 drive=0 addr=0x2e400
+      +30.16s fdc type II read sector with multi sector=0x4 track=0x24 side=1 drive=0 addr=0x2e600
+      +30.18s fdc type II read sector with multi sector=0x5 track=0x24 side=1 drive=0 addr=0x2e800
+      +30.20s fdc type II read sector with multi sector=0x6 track=0x24 side=1 drive=0 addr=0x2ea00
+      +30.22s fdc type II read sector with multi sector=0x7 track=0x24 side=1 drive=0 addr=0x2ec00
+      +30.24s fdc type II read sector with multi sector=0x8 track=0x24 side=1 drive=0 addr=0x2ee00
+      +30.26s fdc type II read sector with multi sector=0x9 track=0x24 side=1 drive=0 addr=0x2f000
+      +30.28s fdc type II read sector with multi sector=0xa track=0x24 side=1 drive=0 addr=0x2f200
+      +30.30s fdc type II read sector with multi sector=0xb track=0x24 side=1 drive=0 addr=0x2f400
+      +30.30s fdc type IV force int 0xd0 irq=0 index=0
+      +30.30s fdc type I seek dest_track=0x25 spinup=on verify=off steprate_ms=3 drive=0 tr=0x24 head_track=0x24
+      +30.30s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x25 head_track=0x25 side=1 drive=0 dmasec
+      +30.32s fdc type II read sector with multi sector=0x2 track=0x25 side=1 drive=0 addr=0x2f600
+      +30.34s fdc type II read sector with multi sector=0x3 track=0x25 side=1 drive=0 addr=0x2f800
+      +30.36s fdc type II read sector with multi sector=0x4 track=0x25 side=1 drive=0 addr=0x2fa00
+      +30.38s fdc type II read sector with multi sector=0x5 track=0x25 side=1 drive=0 addr=0x2fc00
+      +30.40s fdc type II read sector with multi sector=0x6 track=0x25 side=1 drive=0 addr=0x2fe00
+      +30.42s fdc type II read sector with multi sector=0x7 track=0x25 side=1 drive=0 addr=0x30000
+      +30.44s fdc type II read sector with multi sector=0x8 track=0x25 side=1 drive=0 addr=0x30200
+      +30.46s fdc type II read sector with multi sector=0x9 track=0x25 side=1 drive=0 addr=0x30400
+      +30.48s fdc type II read sector with multi sector=0xa track=0x25 side=1 drive=0 addr=0x30600
+      +30.50s fdc type II read sector with multi sector=0xb track=0x25 side=1 drive=0 addr=0x30800
+      +30.50s fdc type IV force int 0xd0 irq=0 index=0
+      +30.50s fdc type I seek dest_track=0x26 spinup=on verify=off steprate_ms=3 drive=0 tr=0x25 head_track=0x25
+      +30.50s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x26 head_track=0x26 side=1 drive=0 dmasec
+      +30.52s fdc type II read sector with multi sector=0x2 track=0x26 side=1 drive=0 addr=0x30a00
+      +30.54s fdc type II read sector with multi sector=0x3 track=0x26 side=1 drive=0 addr=0x30c00
+      +30.56s fdc type II read sector with multi sector=0x4 track=0x26 side=1 drive=0 addr=0x30e00
+      +30.58s fdc type II read sector with multi sector=0x5 track=0x26 side=1 drive=0 addr=0x31000
+      +30.60s fdc type II read sector with multi sector=0x6 track=0x26 side=1 drive=0 addr=0x31200
+      +30.62s fdc type II read sector with multi sector=0x7 track=0x26 side=1 drive=0 addr=0x31400
+      +30.64s fdc type II read sector with multi sector=0x8 track=0x26 side=1 drive=0 addr=0x31600
+      +30.66s fdc type II read sector with multi sector=0x9 track=0x26 side=1 drive=0 addr=0x31800
+      +30.68s fdc type II read sector with multi sector=0xa track=0x26 side=1 drive=0 addr=0x31a00
+      +30.70s fdc type II read sector with multi sector=0xb track=0x26 side=1 drive=0 addr=0x31c00
+      +30.70s fdc type IV force int 0xd0 irq=0 index=0
+      +30.70s fdc type I seek dest_track=0x27 spinup=on verify=off steprate_ms=3 drive=0 tr=0x26 head_track=0x26
+      +30.70s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x27 head_track=0x27 side=1 drive=0 dmasec
+      +30.72s fdc type II read sector with multi sector=0x2 track=0x27 side=1 drive=0 addr=0x31e00
+      +30.74s fdc type II read sector with multi sector=0x3 track=0x27 side=1 drive=0 addr=0x32000
+      +30.76s fdc type II read sector with multi sector=0x4 track=0x27 side=1 drive=0 addr=0x32200
+      +30.78s fdc type II read sector with multi sector=0x5 track=0x27 side=1 drive=0 addr=0x32400
+      +30.80s fdc type II read sector with multi sector=0x6 track=0x27 side=1 drive=0 addr=0x32600
+      +30.82s fdc type II read sector with multi sector=0x7 track=0x27 side=1 drive=0 addr=0x32800
+      +30.84s fdc type II read sector with multi sector=0x8 track=0x27 side=1 drive=0 addr=0x32a00
+      +30.86s fdc type II read sector with multi sector=0x9 track=0x27 side=1 drive=0 addr=0x32c00
+      +30.88s fdc type II read sector with multi sector=0xa track=0x27 side=1 drive=0 addr=0x32e00
+      +30.90s fdc type II read sector with multi sector=0xb track=0x27 side=1 drive=0 addr=0x33000
+      +30.90s fdc type IV force int 0xd0 irq=0 index=0
+      +30.90s fdc type I seek dest_track=0x28 spinup=on verify=off steprate_ms=3 drive=0 tr=0x27 head_track=0x27
+      +30.90s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x28 head_track=0x28 side=1 drive=0 dmasec
+      +30.92s fdc type II read sector with multi sector=0x2 track=0x28 side=1 drive=0 addr=0x33200
+      +30.94s fdc type II read sector with multi sector=0x3 track=0x28 side=1 drive=0 addr=0x33400
+      +30.96s fdc type II read sector with multi sector=0x4 track=0x28 side=1 drive=0 addr=0x33600
+      +30.98s fdc type II read sector with multi sector=0x5 track=0x28 side=1 drive=0 addr=0x33800
+      +31.00s fdc type II read sector with multi sector=0x6 track=0x28 side=1 drive=0 addr=0x33a00
+      +31.02s fdc type II read sector with multi sector=0x7 track=0x28 side=1 drive=0 addr=0x33c00
+      +31.04s fdc type II read sector with multi sector=0x8 track=0x28 side=1 drive=0 addr=0x33e00
+      +31.06s fdc type II read sector with multi sector=0x9 track=0x28 side=1 drive=0 addr=0x34000
+      +31.08s fdc type II read sector with multi sector=0xa track=0x28 side=1 drive=0 addr=0x34200
+      +31.10s fdc type II read sector with multi sector=0xb track=0x28 side=1 drive=0 addr=0x34400
+      +31.10s fdc type IV force int 0xd0 irq=0 index=0
+      +31.10s fdc type I seek dest_track=0x29 spinup=on verify=off steprate_ms=3 drive=0 tr=0x28 head_track=0x28
+      +31.10s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x29 head_track=0x29 side=1 drive=0 dmasec
+      +31.12s fdc type II read sector with multi sector=0x2 track=0x29 side=1 drive=0 addr=0x34600
+      +31.14s fdc type II read sector with multi sector=0x3 track=0x29 side=1 drive=0 addr=0x34800
+      +31.16s fdc type II read sector with multi sector=0x4 track=0x29 side=1 drive=0 addr=0x34a00
+      +31.18s fdc type II read sector with multi sector=0x5 track=0x29 side=1 drive=0 addr=0x34c00
+      +31.20s fdc type II read sector with multi sector=0x6 track=0x29 side=1 drive=0 addr=0x34e00
+      +31.22s fdc type II read sector with multi sector=0x7 track=0x29 side=1 drive=0 addr=0x35000
+      +31.24s fdc type II read sector with multi sector=0x8 track=0x29 side=1 drive=0 addr=0x35200
+      +31.26s fdc type II read sector with multi sector=0x9 track=0x29 side=1 drive=0 addr=0x35400
+      +31.28s fdc type II read sector with multi sector=0xa track=0x29 side=1 drive=0 addr=0x35600
+      +31.30s fdc type II read sector with multi sector=0xb track=0x29 side=1 drive=0 addr=0x35800
+      +31.30s fdc type IV force int 0xd0 irq=0 index=0
+      +31.30s fdc type I seek dest_track=0x2a spinup=on verify=off steprate_ms=3 drive=0 tr=0x29 head_track=0x29
+      +31.30s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x2a head_track=0x2a side=1 drive=0 dmasec
+      +31.32s fdc type II read sector with multi sector=0x2 track=0x2a side=1 drive=0 addr=0x35a00
+      +31.34s fdc type II read sector with multi sector=0x3 track=0x2a side=1 drive=0 addr=0x35c00
+      +31.36s fdc type II read sector with multi sector=0x4 track=0x2a side=1 drive=0 addr=0x35e00
+      +31.38s fdc type II read sector with multi sector=0x5 track=0x2a side=1 drive=0 addr=0x36000
+      +31.40s fdc type II read sector with multi sector=0x6 track=0x2a side=1 drive=0 addr=0x36200
+      +31.42s fdc type II read sector with multi sector=0x7 track=0x2a side=1 drive=0 addr=0x36400
+      +31.44s fdc type II read sector with multi sector=0x8 track=0x2a side=1 drive=0 addr=0x36600
+      +31.46s fdc type II read sector with multi sector=0x9 track=0x2a side=1 drive=0 addr=0x36800
+      +31.48s fdc type II read sector with multi sector=0xa track=0x2a side=1 drive=0 addr=0x36a00
+      +31.50s fdc type II read sector with multi sector=0xb track=0x2a side=1 drive=0 addr=0x36c00
+      +31.50s fdc type IV force int 0xd0 irq=0 index=0
+      +31.50s fdc type I seek dest_track=0x2b spinup=on verify=off steprate_ms=3 drive=0 tr=0x2a head_track=0x2a
+      +31.50s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x2b head_track=0x2b side=1 drive=0 dmasec
+      +31.52s fdc type II read sector with multi sector=0x2 track=0x2b side=1 drive=0 addr=0x36e00
+      +31.54s fdc type II read sector with multi sector=0x3 track=0x2b side=1 drive=0 addr=0x37000
+      +31.56s fdc type II read sector with multi sector=0x4 track=0x2b side=1 drive=0 addr=0x37200
+      +31.58s fdc type II read sector with multi sector=0x5 track=0x2b side=1 drive=0 addr=0x37400
+      +31.60s fdc type II read sector with multi sector=0x6 track=0x2b side=1 drive=0 addr=0x37600
+      +31.62s fdc type II read sector with multi sector=0x7 track=0x2b side=1 drive=0 addr=0x37800
+      +31.64s fdc type II read sector with multi sector=0x8 track=0x2b side=1 drive=0 addr=0x37a00
+      +31.66s fdc type II read sector with multi sector=0x9 track=0x2b side=1 drive=0 addr=0x37c00
+      +31.68s fdc type II read sector with multi sector=0xa track=0x2b side=1 drive=0 addr=0x37e00
+      +31.70s fdc type II read sector with multi sector=0xb track=0x2b side=1 drive=0 addr=0x38000
+      +31.70s fdc type IV force int 0xd0 irq=0 index=0
+      +31.70s fdc type I seek dest_track=0x2c spinup=on verify=off steprate_ms=3 drive=0 tr=0x2b head_track=0x2b
+      +31.70s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x2c head_track=0x2c side=1 drive=0 dmasec
+      +31.72s fdc type II read sector with multi sector=0x2 track=0x2c side=1 drive=0 addr=0x38200
+      +31.74s fdc type II read sector with multi sector=0x3 track=0x2c side=1 drive=0 addr=0x38400
+      +31.76s fdc type II read sector with multi sector=0x4 track=0x2c side=1 drive=0 addr=0x38600
+      +31.78s fdc type II read sector with multi sector=0x5 track=0x2c side=1 drive=0 addr=0x38800
+      +31.80s fdc type II read sector with multi sector=0x6 track=0x2c side=1 drive=0 addr=0x38a00
+      +31.82s fdc type II read sector with multi sector=0x7 track=0x2c side=1 drive=0 addr=0x38c00
+      +31.84s fdc type II read sector with multi sector=0x8 track=0x2c side=1 drive=0 addr=0x38e00
+      +31.86s fdc type II read sector with multi sector=0x9 track=0x2c side=1 drive=0 addr=0x39000
+      +31.88s fdc type II read sector with multi sector=0xa track=0x2c side=1 drive=0 addr=0x39200
+      +31.90s fdc type II read sector with multi sector=0xb track=0x2c side=1 drive=0 addr=0x39400
+      +31.90s fdc type IV force int 0xd0 irq=0 index=0
+      +31.90s fdc type I seek dest_track=0x2d spinup=on verify=off steprate_ms=3 drive=0 tr=0x2c head_track=0x2c
+      +31.90s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x2d head_track=0x2d side=1 drive=0 dmasec
+      +31.92s fdc type II read sector with multi sector=0x2 track=0x2d side=1 drive=0 addr=0x39600
+      +31.94s fdc type II read sector with multi sector=0x3 track=0x2d side=1 drive=0 addr=0x39800
+      +31.96s fdc type II read sector with multi sector=0x4 track=0x2d side=1 drive=0 addr=0x39a00
+      +31.98s fdc type II read sector with multi sector=0x5 track=0x2d side=1 drive=0 addr=0x39c00
+      +32.00s fdc type II read sector with multi sector=0x6 track=0x2d side=1 drive=0 addr=0x39e00
+      +32.02s fdc type II read sector with multi sector=0x7 track=0x2d side=1 drive=0 addr=0x3a000
+      +32.04s fdc type II read sector with multi sector=0x8 track=0x2d side=1 drive=0 addr=0x3a200
+      +32.06s fdc type II read sector with multi sector=0x9 track=0x2d side=1 drive=0 addr=0x3a400
+      +32.08s fdc type II read sector with multi sector=0xa track=0x2d side=1 drive=0 addr=0x3a600
+      +32.10s fdc type II read sector with multi sector=0xb track=0x2d side=1 drive=0 addr=0x3a800
+      +32.10s fdc type IV force int 0xd0 irq=0 index=0
+      +32.10s fdc type I seek dest_track=0x2e spinup=on verify=off steprate_ms=3 drive=0 tr=0x2d head_track=0x2d
+      +32.10s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x2e head_track=0x2e side=1 drive=0 dmasec
+      +32.12s fdc type II read sector with multi sector=0x2 track=0x2e side=1 drive=0 addr=0x3aa00
+      +32.14s fdc type II read sector with multi sector=0x3 track=0x2e side=1 drive=0 addr=0x3ac00
+      +32.16s fdc type II read sector with multi sector=0x4 track=0x2e side=1 drive=0 addr=0x3ae00
+      +32.18s fdc type II read sector with multi sector=0x5 track=0x2e side=1 drive=0 addr=0x3b000
+      +32.20s fdc type II read sector with multi sector=0x6 track=0x2e side=1 drive=0 addr=0x3b200
+      +32.22s fdc type II read sector with multi sector=0x7 track=0x2e side=1 drive=0 addr=0x3b400
+      +32.24s fdc type II read sector with multi sector=0x8 track=0x2e side=1 drive=0 addr=0x3b600
+      +32.26s fdc type II read sector with multi sector=0x9 track=0x2e side=1 drive=0 addr=0x3b800
+      +32.28s fdc type II read sector with multi sector=0xa track=0x2e side=1 drive=0 addr=0x3ba00
+      +32.30s fdc type II read sector with multi sector=0xb track=0x2e side=1 drive=0 addr=0x3bc00
+      +32.30s fdc type IV force int 0xd0 irq=0 index=0
+      +32.30s fdc type I seek dest_track=0x2f spinup=on verify=off steprate_ms=3 drive=0 tr=0x2e head_track=0x2e
+      +32.30s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x2f head_track=0x2f side=1 drive=0 dmasec
+      +32.32s fdc type II read sector with multi sector=0x2 track=0x2f side=1 drive=0 addr=0x3be00
+      +32.34s fdc type II read sector with multi sector=0x3 track=0x2f side=1 drive=0 addr=0x3c000
+      +32.36s fdc type II read sector with multi sector=0x4 track=0x2f side=1 drive=0 addr=0x3c200
+      +32.38s fdc type II read sector with multi sector=0x5 track=0x2f side=1 drive=0 addr=0x3c400
+      +32.40s fdc type II read sector with multi sector=0x6 track=0x2f side=1 drive=0 addr=0x3c600
+      +32.42s fdc type II read sector with multi sector=0x7 track=0x2f side=1 drive=0 addr=0x3c800
+      +32.44s fdc type II read sector with multi sector=0x8 track=0x2f side=1 drive=0 addr=0x3ca00
+      +32.46s fdc type II read sector with multi sector=0x9 track=0x2f side=1 drive=0 addr=0x3cc00
+      +32.48s fdc type II read sector with multi sector=0xa track=0x2f side=1 drive=0 addr=0x3ce00
+      +32.50s fdc type II read sector with multi sector=0xb track=0x2f side=1 drive=0 addr=0x3d000
+      +32.50s fdc type IV force int 0xd0 irq=0 index=0
+      +32.50s fdc type I seek dest_track=0x30 spinup=on verify=off steprate_ms=3 drive=0 tr=0x2f head_track=0x2f
+      +32.50s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x30 head_track=0x30 side=1 drive=0 dmasec
+      +32.52s fdc type II read sector with multi sector=0x2 track=0x30 side=1 drive=0 addr=0x3d200
+      +32.54s fdc type II read sector with multi sector=0x3 track=0x30 side=1 drive=0 addr=0x3d400
+      +32.56s fdc type II read sector with multi sector=0x4 track=0x30 side=1 drive=0 addr=0x3d600
+      +32.58s fdc type II read sector with multi sector=0x5 track=0x30 side=1 drive=0 addr=0x3d800
+      +32.60s fdc type II read sector with multi sector=0x6 track=0x30 side=1 drive=0 addr=0x3da00
+      +32.62s fdc type II read sector with multi sector=0x7 track=0x30 side=1 drive=0 addr=0x3dc00
+      +32.64s fdc type II read sector with multi sector=0x8 track=0x30 side=1 drive=0 addr=0x3de00
+      +32.66s fdc type II read sector with multi sector=0x9 track=0x30 side=1 drive=0 addr=0x3e000
+      +32.68s fdc type II read sector with multi sector=0xa track=0x30 side=1 drive=0 addr=0x3e200
+      +32.70s fdc type II read sector with multi sector=0xb track=0x30 side=1 drive=0 addr=0x3e400
+      +32.70s fdc type IV force int 0xd0 irq=0 index=0
+      +32.70s fdc type I seek dest_track=0x31 spinup=on verify=off steprate_ms=3 drive=0 tr=0x30 head_track=0x30
+      +32.70s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x31 head_track=0x31 side=1 drive=0 dmasec
+      +32.72s fdc type II read sector with multi sector=0x2 track=0x31 side=1 drive=0 addr=0x3e600
+      +32.74s fdc type II read sector with multi sector=0x3 track=0x31 side=1 drive=0 addr=0x3e800
+      +32.76s fdc type II read sector with multi sector=0x4 track=0x31 side=1 drive=0 addr=0x3ea00
+      +32.78s fdc type II read sector with multi sector=0x5 track=0x31 side=1 drive=0 addr=0x3ec00
+      +32.80s fdc type II read sector with multi sector=0x6 track=0x31 side=1 drive=0 addr=0x3ee00
+      +32.82s fdc type II read sector with multi sector=0x7 track=0x31 side=1 drive=0 addr=0x3f000
+      +32.84s fdc type II read sector with multi sector=0x8 track=0x31 side=1 drive=0 addr=0x3f200
+      +32.86s fdc type II read sector with multi sector=0x9 track=0x31 side=1 drive=0 addr=0x3f400
+      +32.88s fdc type II read sector with multi sector=0xa track=0x31 side=1 drive=0 addr=0x3f600
+      +32.90s fdc type II read sector with multi sector=0xb track=0x31 side=1 drive=0 addr=0x3f800
+      +32.90s fdc type IV force int 0xd0 irq=0 index=0
+      +32.90s fdc type I seek dest_track=0x32 spinup=on verify=off steprate_ms=3 drive=0 tr=0x31 head_track=0x31
+      +32.90s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x32 head_track=0x32 side=1 drive=0 dmasec
+      +32.92s fdc type II read sector with multi sector=0x2 track=0x32 side=1 drive=0 addr=0x3fa00
+      +32.94s fdc type II read sector with multi sector=0x3 track=0x32 side=1 drive=0 addr=0x3fc00
+      +32.96s fdc type II read sector with multi sector=0x4 track=0x32 side=1 drive=0 addr=0x3fe00
+      +32.98s fdc type II read sector with multi sector=0x5 track=0x32 side=1 drive=0 addr=0x40000
+      +33.00s fdc type II read sector with multi sector=0x6 track=0x32 side=1 drive=0 addr=0x40200
+      +33.02s fdc type II read sector with multi sector=0x7 track=0x32 side=1 drive=0 addr=0x40400
+      +33.04s fdc type II read sector with multi sector=0x8 track=0x32 side=1 drive=0 addr=0x40600
+      +33.06s fdc type II read sector with multi sector=0x9 track=0x32 side=1 drive=0 addr=0x40800
+      +33.08s fdc type II read sector with multi sector=0xa track=0x32 side=1 drive=0 addr=0x40a00
+      +33.10s fdc type II read sector with multi sector=0xb track=0x32 side=1 drive=0 addr=0x40c00
+      +33.10s fdc type IV force int 0xd0 irq=0 index=0
+      +33.10s fdc type I seek dest_track=0x33 spinup=on verify=off steprate_ms=3 drive=0 tr=0x32 head_track=0x32
+      +33.10s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x33 head_track=0x33 side=1 drive=0 dmasec
+      +33.12s fdc type II read sector with multi sector=0x2 track=0x33 side=1 drive=0 addr=0x40e00
+      +33.14s fdc type II read sector with multi sector=0x3 track=0x33 side=1 drive=0 addr=0x41000
+      +33.16s fdc type II read sector with multi sector=0x4 track=0x33 side=1 drive=0 addr=0x41200
+      +33.18s fdc type II read sector with multi sector=0x5 track=0x33 side=1 drive=0 addr=0x41400
+      +33.20s fdc type II read sector with multi sector=0x6 track=0x33 side=1 drive=0 addr=0x41600
+      +33.22s fdc type II read sector with multi sector=0x7 track=0x33 side=1 drive=0 addr=0x41800
+      +33.24s fdc type II read sector with multi sector=0x8 track=0x33 side=1 drive=0 addr=0x41a00
+      +33.26s fdc type II read sector with multi sector=0x9 track=0x33 side=1 drive=0 addr=0x41c00
+      +33.28s fdc type II read sector with multi sector=0xa track=0x33 side=1 drive=0 addr=0x41e00
+      +33.30s fdc type II read sector with multi sector=0xb track=0x33 side=1 drive=0 addr=0x42000
+      +33.30s fdc type IV force int 0xd0 irq=0 index=0
+      +33.30s fdc type I seek dest_track=0x34 spinup=on verify=off steprate_ms=3 drive=0 tr=0x33 head_track=0x33
+      +33.30s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x34 head_track=0x34 side=1 drive=0 dmasec
+      +33.32s fdc type II read sector with multi sector=0x2 track=0x34 side=1 drive=0 addr=0x42200
+      +33.34s fdc type II read sector with multi sector=0x3 track=0x34 side=1 drive=0 addr=0x42400
+      +33.36s fdc type II read sector with multi sector=0x4 track=0x34 side=1 drive=0 addr=0x42600
+      +33.38s fdc type II read sector with multi sector=0x5 track=0x34 side=1 drive=0 addr=0x42800
+      +33.40s fdc type II read sector with multi sector=0x6 track=0x34 side=1 drive=0 addr=0x42a00
+      +33.42s fdc type II read sector with multi sector=0x7 track=0x34 side=1 drive=0 addr=0x42c00
+      +33.44s fdc type II read sector with multi sector=0x8 track=0x34 side=1 drive=0 addr=0x42e00
+      +33.46s fdc type II read sector with multi sector=0x9 track=0x34 side=1 drive=0 addr=0x43000
+      +33.48s fdc type II read sector with multi sector=0xa track=0x34 side=1 drive=0 addr=0x43200
+      +33.50s fdc type II read sector with multi sector=0xb track=0x34 side=1 drive=0 addr=0x43400
+      +33.50s fdc type IV force int 0xd0 irq=0 index=0
+      +33.50s fdc type I seek dest_track=0x35 spinup=on verify=off steprate_ms=3 drive=0 tr=0x34 head_track=0x34
+      +33.50s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x35 head_track=0x35 side=1 drive=0 dmasec
+      +33.52s fdc type II read sector with multi sector=0x2 track=0x35 side=1 drive=0 addr=0x43600
+      +33.54s fdc type II read sector with multi sector=0x3 track=0x35 side=1 drive=0 addr=0x43800
+      +33.56s fdc type II read sector with multi sector=0x4 track=0x35 side=1 drive=0 addr=0x43a00
+      +33.58s fdc type II read sector with multi sector=0x5 track=0x35 side=1 drive=0 addr=0x43c00
+      +33.60s fdc type II read sector with multi sector=0x6 track=0x35 side=1 drive=0 addr=0x43e00
+      +33.62s fdc type II read sector with multi sector=0x7 track=0x35 side=1 drive=0 addr=0x44000
+      +33.64s fdc type II read sector with multi sector=0x8 track=0x35 side=1 drive=0 addr=0x44200
+      +33.66s fdc type II read sector with multi sector=0x9 track=0x35 side=1 drive=0 addr=0x44400
+      +33.68s fdc type II read sector with multi sector=0xa track=0x35 side=1 drive=0 addr=0x44600
+      +33.70s fdc type II read sector with multi sector=0xb track=0x35 side=1 drive=0 addr=0x44800
+      +33.70s fdc type IV force int 0xd0 irq=0 index=0
+      +33.70s fdc type I seek dest_track=0x36 spinup=on verify=off steprate_ms=3 drive=0 tr=0x35 head_track=0x35
+      +33.70s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x36 head_track=0x36 side=1 drive=0 dmasec
+      +33.72s fdc type II read sector with multi sector=0x2 track=0x36 side=1 drive=0 addr=0x44a00
+      +33.74s fdc type II read sector with multi sector=0x3 track=0x36 side=1 drive=0 addr=0x44c00
+      +33.76s fdc type II read sector with multi sector=0x4 track=0x36 side=1 drive=0 addr=0x44e00
+      +33.78s fdc type II read sector with multi sector=0x5 track=0x36 side=1 drive=0 addr=0x45000
+      +33.80s fdc type II read sector with multi sector=0x6 track=0x36 side=1 drive=0 addr=0x45200
+      +33.82s fdc type II read sector with multi sector=0x7 track=0x36 side=1 drive=0 addr=0x45400
+      +33.84s fdc type II read sector with multi sector=0x8 track=0x36 side=1 drive=0 addr=0x45600
+      +33.86s fdc type II read sector with multi sector=0x9 track=0x36 side=1 drive=0 addr=0x45800
+      +33.88s fdc type II read sector with multi sector=0xa track=0x36 side=1 drive=0 addr=0x45a00
+      +33.90s fdc type II read sector with multi sector=0xb track=0x36 side=1 drive=0 addr=0x45c00
+      +33.90s fdc type IV force int 0xd0 irq=0 index=0
+      +33.90s fdc type I seek dest_track=0x37 spinup=on verify=off steprate_ms=3 drive=0 tr=0x36 head_track=0x36
+      +33.90s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x37 head_track=0x37 side=1 drive=0 dmasec
+      +33.92s fdc type II read sector with multi sector=0x2 track=0x37 side=1 drive=0 addr=0x45e00
+      +33.94s fdc type II read sector with multi sector=0x3 track=0x37 side=1 drive=0 addr=0x46000
+      +33.96s fdc type II read sector with multi sector=0x4 track=0x37 side=1 drive=0 addr=0x46200
+      +33.98s fdc type II read sector with multi sector=0x5 track=0x37 side=1 drive=0 addr=0x46400
+      +34.00s fdc type II read sector with multi sector=0x6 track=0x37 side=1 drive=0 addr=0x46600
+      +34.02s fdc type II read sector with multi sector=0x7 track=0x37 side=1 drive=0 addr=0x46800
+      +34.04s fdc type II read sector with multi sector=0x8 track=0x37 side=1 drive=0 addr=0x46a00
+      +34.06s fdc type II read sector with multi sector=0x9 track=0x37 side=1 drive=0 addr=0x46c00
+      +34.08s fdc type II read sector with multi sector=0xa track=0x37 side=1 drive=0 addr=0x46e00
+      +34.10s fdc type II read sector with multi sector=0xb track=0x37 side=1 drive=0 addr=0x47000
+      +34.10s fdc type IV force int 0xd0 irq=0 index=0
+      +34.10s fdc type I seek dest_track=0x38 spinup=on verify=off steprate_ms=3 drive=0 tr=0x37 head_track=0x37
+      +34.10s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x38 head_track=0x38 side=1 drive=0 dmasec
+      +34.12s fdc type II read sector with multi sector=0x2 track=0x38 side=1 drive=0 addr=0x47200
+      +34.14s fdc type II read sector with multi sector=0x3 track=0x38 side=1 drive=0 addr=0x47400
+      +34.16s fdc type II read sector with multi sector=0x4 track=0x38 side=1 drive=0 addr=0x47600
+      +34.18s fdc type II read sector with multi sector=0x5 track=0x38 side=1 drive=0 addr=0x47800
+      +34.20s fdc type II read sector with multi sector=0x6 track=0x38 side=1 drive=0 addr=0x47a00
+      +34.22s fdc type II read sector with multi sector=0x7 track=0x38 side=1 drive=0 addr=0x47c00
+      +34.24s fdc type II read sector with multi sector=0x8 track=0x38 side=1 drive=0 addr=0x47e00
+      +34.26s fdc type II read sector with multi sector=0x9 track=0x38 side=1 drive=0 addr=0x48000
+      +34.28s fdc type II read sector with multi sector=0xa track=0x38 side=1 drive=0 addr=0x48200
+      +34.30s fdc type II read sector with multi sector=0xb track=0x38 side=1 drive=0 addr=0x48400
+      +34.30s fdc type IV force int 0xd0 irq=0 index=0
+      +34.30s fdc type I seek dest_track=0x39 spinup=on verify=off steprate_ms=3 drive=0 tr=0x38 head_track=0x38
+      +34.30s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x39 head_track=0x39 side=1 drive=0 dmasec
+      +34.32s fdc type II read sector with multi sector=0x2 track=0x39 side=1 drive=0 addr=0x48600
+      +34.34s fdc type II read sector with multi sector=0x3 track=0x39 side=1 drive=0 addr=0x48800
+      +34.36s fdc type II read sector with multi sector=0x4 track=0x39 side=1 drive=0 addr=0x48a00
+      +34.38s fdc type II read sector with multi sector=0x5 track=0x39 side=1 drive=0 addr=0x48c00
+      +34.40s fdc type II read sector with multi sector=0x6 track=0x39 side=1 drive=0 addr=0x48e00
+      +34.42s fdc type II read sector with multi sector=0x7 track=0x39 side=1 drive=0 addr=0x49000
+      +34.44s fdc type II read sector with multi sector=0x8 track=0x39 side=1 drive=0 addr=0x49200
+      +34.46s fdc type II read sector with multi sector=0x9 track=0x39 side=1 drive=0 addr=0x49400
+      +34.48s fdc type II read sector with multi sector=0xa track=0x39 side=1 drive=0 addr=0x49600
+      +34.50s fdc type II read sector with multi sector=0xb track=0x39 side=1 drive=0 addr=0x49800
+      +34.50s fdc type IV force int 0xd0 irq=0 index=0
+      +34.50s fdc type I seek dest_track=0x3a spinup=on verify=off steprate_ms=3 drive=0 tr=0x39 head_track=0x39
+      +34.50s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x3a head_track=0x3a side=1 drive=0 dmasec
+      +34.52s fdc type II read sector with multi sector=0x2 track=0x3a side=1 drive=0 addr=0x49a00
+      +34.54s fdc type II read sector with multi sector=0x3 track=0x3a side=1 drive=0 addr=0x49c00
+      +34.56s fdc type II read sector with multi sector=0x4 track=0x3a side=1 drive=0 addr=0x49e00
+      +34.58s fdc type II read sector with multi sector=0x5 track=0x3a side=1 drive=0 addr=0x4a000
+      +34.60s fdc type II read sector with multi sector=0x6 track=0x3a side=1 drive=0 addr=0x4a200
+      +34.62s fdc type II read sector with multi sector=0x7 track=0x3a side=1 drive=0 addr=0x4a400
+      +34.64s fdc type II read sector with multi sector=0x8 track=0x3a side=1 drive=0 addr=0x4a600
+      +34.66s fdc type II read sector with multi sector=0x9 track=0x3a side=1 drive=0 addr=0x4a800
+      +34.68s fdc type II read sector with multi sector=0xa track=0x3a side=1 drive=0 addr=0x4aa00
+      +34.70s fdc type II read sector with multi sector=0xb track=0x3a side=1 drive=0 addr=0x4ac00
+      +34.70s fdc type IV force int 0xd0 irq=0 index=0
+      +34.70s fdc type I seek dest_track=0x3b spinup=on verify=off steprate_ms=3 drive=0 tr=0x3a head_track=0x3a
+      +34.70s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x3b head_track=0x3b side=1 drive=0 dmasec
+      +34.72s fdc type II read sector with multi sector=0x2 track=0x3b side=1 drive=0 addr=0x4ae00
+      +34.74s fdc type II read sector with multi sector=0x3 track=0x3b side=1 drive=0 addr=0x4b000
+      +34.76s fdc type II read sector with multi sector=0x4 track=0x3b side=1 drive=0 addr=0x4b200
+      +34.78s fdc type II read sector with multi sector=0x5 track=0x3b side=1 drive=0 addr=0x4b400
+      +34.80s fdc type II read sector with multi sector=0x6 track=0x3b side=1 drive=0 addr=0x4b600
+      +34.82s fdc type II read sector with multi sector=0x7 track=0x3b side=1 drive=0 addr=0x4b800
+      +34.84s fdc type II read sector with multi sector=0x8 track=0x3b side=1 drive=0 addr=0x4ba00
+      +34.86s fdc type II read sector with multi sector=0x9 track=0x3b side=1 drive=0 addr=0x4bc00
+      +34.88s fdc type II read sector with multi sector=0xa track=0x3b side=1 drive=0 addr=0x4be00
+      +34.90s fdc type II read sector with multi sector=0xb track=0x3b side=1 drive=0 addr=0x4c000
+      +34.90s fdc type IV force int 0xd0 irq=0 index=0
+      +34.90s fdc type I seek dest_track=0x3c spinup=on verify=off steprate_ms=3 drive=0 tr=0x3b head_track=0x3b
+      +34.90s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x3c head_track=0x3c side=1 drive=0 dmasec
+      +34.92s fdc type II read sector with multi sector=0x2 track=0x3c side=1 drive=0 addr=0x4c200
+      +34.94s fdc type II read sector with multi sector=0x3 track=0x3c side=1 drive=0 addr=0x4c400
+      +34.96s fdc type II read sector with multi sector=0x4 track=0x3c side=1 drive=0 addr=0x4c600
+      +34.98s fdc type II read sector with multi sector=0x5 track=0x3c side=1 drive=0 addr=0x4c800
+      +35.00s fdc type II read sector with multi sector=0x6 track=0x3c side=1 drive=0 addr=0x4ca00
+      +35.02s fdc type II read sector with multi sector=0x7 track=0x3c side=1 drive=0 addr=0x4cc00
+      +35.04s fdc type II read sector with multi sector=0x8 track=0x3c side=1 drive=0 addr=0x4ce00
+      +35.06s fdc type II read sector with multi sector=0x9 track=0x3c side=1 drive=0 addr=0x4d000
+      +35.08s fdc type II read sector with multi sector=0xa track=0x3c side=1 drive=0 addr=0x4d200
+      +35.10s fdc type II read sector with multi sector=0xb track=0x3c side=1 drive=0 addr=0x4d400
+      +35.10s fdc type IV force int 0xd0 irq=0 index=0
+      +35.10s fdc type I seek dest_track=0x3d spinup=on verify=off steprate_ms=3 drive=0 tr=0x3c head_track=0x3c
+      +35.10s fdc type II read sector sector=0x1 multi=on spinup=on settle=off tr=0x3d head_track=0x3d side=1 drive=0 dmasec
+      +35.12s fdc type II read sector with multi sector=0x2 track=0x3d side=1 drive=0 addr=0x4d600
+      +35.14s fdc type II read sector with multi sector=0x3 track=0x3d side=1 drive=0 addr=0x4d800
+      +35.16s fdc type II read sector with multi sector=0x4 track=0x3d side=1 drive=0 addr=0x4da00
+      +35.18s fdc type II read sector with multi sector=0x5 track=0x3d side=1 drive=0 addr=0x4dc00
+      +35.20s fdc type II read sector with multi sector=0x6 track=0x3d side=1 drive=0 addr=0x4de00
+      +35.22s fdc type II read sector with multi sector=0x7 track=0x3d side=1 drive=0 addr=0x4e000
+      +35.24s fdc type II read sector with multi sector=0x8 track=0x3d side=1 drive=0 addr=0x4e200
+      +35.26s fdc type II read sector with multi sector=0x9 track=0x3d side=1 drive=0 addr=0x4e400
+      +35.28s fdc type II read sector with multi sector=0xa track=0x3d side=1 drive=0 addr=0x4e600
+      +35.30s fdc type II read sector with multi sector=0xb track=0x3d side=1 drive=0 addr=0x4e800
+      +35.30s fdc type IV force int 0xd0 irq=0 index=0
+      +37.36s fdc change drive/side io_porta_old=0x4 io_porta_new=0x7 side 1->0 drive 0->-1
+  burst 2: vbl 2299 -> 2732  =  8.66 s;  reads drive0 1 drive1 100;  B selected 8x;  forced interrupts (type IV) 18;  type I/II commands 158
+RESULT f_startB_ste_drive OK

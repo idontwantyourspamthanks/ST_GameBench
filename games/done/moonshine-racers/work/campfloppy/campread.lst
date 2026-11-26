@@ -1,0 +1,547 @@
+Sections:
+00: "org0001:100000" (100000-10059E)
+
+
+Source: "/home/ryan/Code/AtariST/gamebench/games/in_progress/moonshine-racers/work/campfloppy/campread.s"
+                            	     1: ; campread.s -- SCRATCH PROTOTYPE (MSRCampFloppy): read MSTRACKS.TRK from a FAT12 floppy with the floppy game's OWN FDC
+                            	     2: ; swap prompts.  Assembled at ORG = $100000 and loaded into a running game with the Hatari debugger (work/campfloppy/*.
+                            	     3: ;
+                            	     4: ; camp_read   in:  d0.w = unit (0 = drive A, 1 = drive B), a0 = destination (even, DMA range < $400000), d1.l = max fil
+                            	     5: ;             out: d0.w = status, d1.l = file size
+                            	     6: ;   0 ok | 1 no disk in the drive (no index pulse) | 2 read error | 3 not a FAT floppy this driver reads | 4 no MSTRACK
+                            	     7: ;   5 file larger than max | 6 not a campaign file (magic 'MSTK', count 1..15, header length = file size)
+                            	     8: ; The geometry comes from the disk's BPB (sectors per track 9..11): the game's driver takes the track length from the H
+                            	     9: ; 720 KB TOS disk that msrtrack.py makes is read as it is.  FAT chain is NOT followed: the file must be contiguous (the
+                            	    10: ORG     equ     $100000
+                            	    11:         org     ORG
+                            	    12: 
+00:00100000 4EFA000A        	    13: ep:     jmp     camp_read(pc)
+00:00100004 4EFA03BC        	    14:         jmp     hook_title(pc)
+00:00100008 4EFA0324        	    15:         jmp     camp_ui(pc)
+                            	    16: 
+                            	    17: camp_read:
+00:0010000C 48E73F3E        	    18:         movem.l d2-d7/a2-a6,-(sp)
+00:00100010 4BFA0562        	    19:         lea     vars(pc),a5
+00:00100014 3A80            	    20:         move.w  d0,v_unit(a5)
+00:00100016 2B480008        	    21:         move.l  a0,v_dest(a5)
+00:0010001A 2B41000C        	    22:         move.l  d1,v_max(a5)
+00:0010001E 42AD0010        	    23:         clr.l   v_size(a5)
+00:00100022 3B7C00090002    	    24:         move.w  #9,v_spt(a5)
+00:00100028 7E01            	    25:         moveq   #1,d7                   ; status: no disk
+00:0010002A 61000212        	    26:         bsr     dpres
+00:0010002E 4A40            	    27:         tst.w   d0
+00:00100030 66000182        	    28:         bne     .out
+00:00100034 7E02            	    29:         moveq   #2,d7                   ; status: read error
+00:00100036 7000            	    30:         moveq   #0,d0                   ; boot sector
+00:00100038 7201            	    31:         moveq   #1,d1
+00:0010003A 206D0008        	    32:         movea.l v_dest(a5),a0
+00:0010003E 61000180        	    33:         bsr     rdsec
+00:00100042 66000170        	    34:         bne     .out
+00:00100046 7E03            	    35:         moveq   #3,d7                   ; status: not a FAT floppy
+00:00100048 226D0008        	    36:         movea.l v_dest(a5),a1
+00:0010004C 4A29000B        	    37:         tst.b   11(a1)                  ; bytes per sector = $0200 (little endian)
+00:00100050 66000162        	    38:         bne     .out
+00:00100054 0C290002000C    	    39:         cmpi.b  #2,12(a1)
+00:0010005A 66000158        	    40:         bne     .out
+00:0010005E 7000            	    41:         moveq   #0,d0
+00:00100060 10290019        	    42:         move.b  25(a1),d0
+00:00100064 E148            	    43:         lsl.w   #8,d0
+00:00100066 10290018        	    44:         move.b  24(a1),d0               ; sectors per track
+00:0010006A 0C400009        	    45:         cmpi.w  #9,d0
+00:0010006E 6D000144        	    46:         blt     .out
+00:00100072 0C40000B        	    47:         cmpi.w  #11,d0
+00:00100076 6E00013C        	    48:         bgt     .out
+00:0010007A 3B400002        	    49:         move.w  d0,v_spt(a5)
+00:0010007E 7400            	    50:         moveq   #0,d2
+00:00100080 1429000D        	    51:         move.b  13(a1),d2               ; sectors per cluster
+00:00100084 6700012E        	    52:         beq     .out
+00:00100088 3B420004        	    53:         move.w  d2,v_spc(a5)
+00:0010008C 7600            	    54:         moveq   #0,d3
+00:0010008E 1629000F        	    55:         move.b  15(a1),d3
+00:00100092 E14B            	    56:         lsl.w   #8,d3
+00:00100094 1629000E        	    57:         move.b  14(a1),d3               ; reserved sectors
+00:00100098 7800            	    58:         moveq   #0,d4
+00:0010009A 18290010        	    59:         move.b  16(a1),d4               ; FATs
+00:0010009E 67000114        	    60:         beq     .out
+00:001000A2 7A00            	    61:         moveq   #0,d5
+00:001000A4 1A290017        	    62:         move.b  23(a1),d5
+00:001000A8 E14D            	    63:         lsl.w   #8,d5
+00:001000AA 1A290016        	    64:         move.b  22(a1),d5               ; sectors per FAT
+00:001000AE C8C5            	    65:         mulu.w  d5,d4
+00:001000B0 D684            	    66:         add.l   d4,d3                   ; root directory LBA
+00:001000B2 2B430014        	    67:         move.l  d3,v_root(a5)
+00:001000B6 7C00            	    68:         moveq   #0,d6
+00:001000B8 1C290012        	    69:         move.b  18(a1),d6
+00:001000BC E14E            	    70:         lsl.w   #8,d6
+00:001000BE 1C290011        	    71:         move.b  17(a1),d6               ; root entries
+00:001000C2 DC7C000F        	    72:         add.w   #15,d6
+00:001000C6 E84E            	    73:         lsr.w   #4,d6                   ; root directory sectors
+00:001000C8 3B460006        	    74:         move.w  d6,v_nroot(a5)
+00:001000CC D686            	    75:         add.l   d6,d3
+00:001000CE 2B430018        	    76:         move.l  d3,v_data0(a5)          ; first data sector (cluster 2)
+00:001000D2 7E04            	    77:         moveq   #4,d7                   ; status: file not found
+00:001000D4 2A2D0014        	    78:         move.l  v_root(a5),d5
+00:001000D8 3C2D0006        	    79:         move.w  v_nroot(a5),d6
+00:001000DC 670000D6        	    80:         beq     .out
+00:001000E0 5346            	    81:         subq.w  #1,d6
+00:001000E2 2005            	    82: .rs:    move.l  d5,d0
+00:001000E4 7201            	    83:         moveq   #1,d1
+00:001000E6 206D0008        	    84:         movea.l v_dest(a5),a0
+00:001000EA 610000D4        	    85:         bsr     rdsec
+00:001000EE 6706            	    86:         beq.s   .rok
+00:001000F0 7E02            	    87:         moveq   #2,d7
+00:001000F2 600000C0        	    88:         bra     .out
+00:001000F6 226D0008        	    89: .rok:   movea.l v_dest(a5),a1
+00:001000FA 740F            	    90:         moveq   #15,d2
+00:001000FC 4A11            	    91: .re:    tst.b   (a1)
+00:001000FE 672E            	    92:         beq     .nf                     ; end of the directory
+00:00100100 0C1100E5        	    93:         cmpi.b  #$e5,(a1)
+00:00100104 671A            	    94:         beq.s   .nx
+00:00100106 1029000B        	    95:         move.b  11(a1),d0
+00:0010010A 02000018        	    96:         andi.b  #$18,d0                 ; volume label / directory
+00:0010010E 6610            	    97:         bne.s   .nx
+00:00100110 45FA02D2        	    98:         lea     fname(pc),a2
+00:00100114 2649            	    99:         movea.l a1,a3
+00:00100116 720A            	   100:         moveq   #10,d1
+00:00100118 B70A            	   101: .cm:    cmpm.b  (a2)+,(a3)+
+00:0010011A 56C9FFFC        	   102:         dbne    d1,.cm
+00:0010011E 6714            	   103:         beq.s   .found
+00:00100120 43E90020        	   104: .nx:    lea     32(a1),a1
+00:00100124 51CAFFD6        	   105:         dbra    d2,.re
+00:00100128 5285            	   106:         addq.l  #1,d5
+00:0010012A 51CEFFB6        	   107:         dbra    d6,.rs
+00:0010012E 7E04            	   108: .nf:    moveq   #4,d7
+00:00100130 60000082        	   109:         bra     .out
+00:00100134 7000            	   110: .found: moveq   #0,d0
+00:00100136 1029001B        	   111:         move.b  27(a1),d0
+00:0010013A E148            	   112:         lsl.w   #8,d0
+00:0010013C 1029001A        	   113:         move.b  26(a1),d0               ; first cluster
+00:00100140 7200            	   114:         moveq   #0,d1
+00:00100142 1229001F        	   115:         move.b  31(a1),d1
+00:00100146 E189            	   116:         lsl.l   #8,d1
+00:00100148 1229001E        	   117:         move.b  30(a1),d1
+00:0010014C E189            	   118:         lsl.l   #8,d1
+00:0010014E 1229001D        	   119:         move.b  29(a1),d1
+00:00100152 E189            	   120:         lsl.l   #8,d1
+00:00100154 1229001C        	   121:         move.b  28(a1),d1               ; size
+00:00100158 7E05            	   122:         moveq   #5,d7
+00:0010015A B2AD000C        	   123:         cmp.l   v_max(a5),d1
+00:0010015E 6254            	   124:         bhi     .out
+00:00100160 7E04            	   125:         moveq   #4,d7
+00:00100162 0C8100000010    	   126:         cmpi.l  #16,d1
+00:00100168 654A            	   127:         bcs     .out
+00:0010016A 5540            	   128:         subq.w  #2,d0
+00:0010016C 6546            	   129:         bcs     .out
+00:0010016E 2B410010        	   130:         move.l  d1,v_size(a5)
+00:00100172 C0ED0004        	   131:         mulu.w  v_spc(a5),d0
+00:00100176 D0AD0018        	   132:         add.l   v_data0(a5),d0          ; file LBA
+00:0010017A 0681000001FF    	   133:         addi.l  #511,d1
+00:00100180 E089            	   134:         lsr.l   #8,d1
+00:00100182 E289            	   135:         lsr.l   #1,d1                   ; sectors
+00:00100184 206D0008        	   136:         movea.l v_dest(a5),a0
+00:00100188 7E02            	   137:         moveq   #2,d7
+00:0010018A 6134            	   138:         bsr     rdsec
+00:0010018C 6626            	   139:         bne     .out
+00:0010018E 206D0008        	   140:         movea.l v_dest(a5),a0
+00:00100192 7E06            	   141:         moveq   #6,d7
+00:00100194 0C904D53544B    	   142:         cmpi.l  #'MSTK',(a0)
+00:0010019A 6618            	   143:         bne     .out
+00:0010019C 30280006        	   144:         move.w  6(a0),d0
+00:001001A0 6712            	   145:         beq     .out
+00:001001A2 0C40000F        	   146:         cmpi.w  #15,d0
+00:001001A6 620C            	   147:         bhi     .out
+00:001001A8 20280008        	   148:         move.l  8(a0),d0
+00:001001AC B0AD0010        	   149:         cmp.l   v_size(a5),d0
+00:001001B0 6602            	   150:         bne     .out
+00:001001B2 7E00            	   151:         moveq   #0,d7
+                            	   152: .out:
+00:001001B4 3007            	   153: cr_exit: move.w d7,d0
+00:001001B6 222D0010        	   154:         move.l  v_size(a5),d1
+00:001001BA 4CDF7CFC        	   155:         movem.l (sp)+,d2-d7/a2-a6
+00:001001BE 4E75            	   156:         rts
+                            	   157: 
+                            	   158: ; rdsec: d0.l = LBA (TOS order: track*sides*spt + side*spt + sector), d1.l = sector count, a0 = buffer -> d0 = 0 ok / n
+00:001001C0 48E77FE0        	   159: rdsec:  movem.l d1-d7/a0-a2,-(sp)
+00:001001C4 45FA03AE        	   160:         lea     vars(pc),a2
+00:001001C8 2A00            	   161:         move.l  d0,d5
+00:001001CA 2C01            	   162:         move.l  d1,d6
+00:001001CC 2005            	   163: .l:     move.l  d5,d0
+00:001001CE 80EA0002        	   164:         divu.w  v_spt(a2),d0            ; low = track*2+side, high = sector in the track
+00:001001D2 2400            	   165:         move.l  d0,d2
+00:001001D4 4842            	   166:         swap    d2
+00:001001D6 02820000FFFF    	   167:         andi.l  #$ffff,d2               ; sector (0-based)
+00:001001DC 02800000FFFF    	   168:         andi.l  #$ffff,d0               ; track*2+side
+00:001001E2 382A0002        	   169:         move.w  v_spt(a2),d4
+00:001001E6 9842            	   170:         sub.w   d2,d4                   ; sectors left on this track side
+00:001001E8 B886            	   171:         cmp.l   d6,d4
+00:001001EA 6302            	   172:         bls.s   .c
+00:001001EC 2806            	   173:         move.l  d6,d4
+00:001001EE 3600            	   174: .c:     move.w  d0,d3
+00:001001F0 E24B            	   175:         lsr.w   #1,d3                   ; track
+00:001001F2 C6EA0002        	   176:         mulu.w  v_spt(a2),d3
+00:001001F6 D642            	   177:         add.w   d2,d3                   ; the driver's linear sector on this side (track*spt + sector)
+00:001001F8 02400001        	   178:         andi.w  #1,d0
+00:001001FC E548            	   179:         lsl.w   #2,d0
+00:001001FE 8052            	   180:         or.w    v_unit(a2),d0           ; bit 2 = side 1, bit 0 = unit
+00:00100200 7200            	   181:         moveq   #0,d1
+00:00100202 322A0002        	   182:         move.w  v_spt(a2),d1
+00:00100206 4841            	   183:         swap    d1
+00:00100208 8081            	   184:         or.l    d1,d0                   ; high word = sectors per track
+00:0010020A 7200            	   185:         moveq   #0,d1
+00:0010020C 3203            	   186:         move.w  d3,d1
+00:0010020E 7400            	   187:         moveq   #0,d2
+00:00100210 3404            	   188:         move.w  d4,d2
+00:00100212 7600            	   189:         moveq   #0,d3                   ; command: read
+00:00100214 48E70E20        	   190:         movem.l d4-d6/a2,-(sp)
+00:00100218 4EB90000CAC0    	   191:         jsr     $cac0.l                 ; the game's FDC driver (the one sole entry sub_00d6fa jumps to)
+00:0010021E 4CDF0470        	   192:         movem.l (sp)+,d4-d6/a2
+00:00100222 4A80            	   193:         tst.l   d0
+00:00100224 6610            	   194:         bne.s   .x
+00:00100226 2004            	   195:         move.l  d4,d0
+00:00100228 E188            	   196:         lsl.l   #8,d0
+00:0010022A D080            	   197:         add.l   d0,d0
+00:0010022C D1C0            	   198:         adda.l  d0,a0
+00:0010022E DA84            	   199:         add.l   d4,d5
+00:00100230 9C84            	   200:         sub.l   d4,d6
+00:00100232 6698            	   201:         bne.s   .l
+00:00100234 7000            	   202:         moveq   #0,d0
+00:00100236 4CDF07FE        	   203: .x:     movem.l (sp)+,d1-d7/a0-a2
+00:0010023A 4A80            	   204:         tst.l   d0
+00:0010023C 4E75            	   205:         rts
+                            	   206: 
+                            	   207: ; dpres: is there a disk spinning in drive `v_unit`?  (the logic of fl_driveb's bpres, for either drive)  d0.w = 0 yes,
+                            	   208: ; within ~1.2 s, 2: an INDEX pulse shows within ~1.5 s.  Without it a drive with no disk would sit in the game's own wa
+00:0010023E 2F01            	   209: dpres:  move.l  d1,-(sp)
+00:00100240 3F38043E        	   210:         move.w  $43e.w,-(sp)
+00:00100244 50F8043E        	   211:         st.b    $43e.w
+00:00100248 7005            	   212:         moveq   #5,d0                   ; PSG port A: drive A, side 0 (active low)
+00:0010024A 41FA0328        	   213:         lea     vars(pc),a0
+00:0010024E 4A50            	   214:         tst.w   v_unit(a0)
+00:00100250 6702            	   215:         beq.s   .a
+00:00100252 7003            	   216:         moveq   #3,d0                   ; drive B, side 0
+00:00100254 4EB90000CF0E    	   217: .a:     jsr     $cf0e.l
+00:0010025A 33FC008000FF8606	   218:         move.w  #$80,$ff8606.l
+00:00100262 700B            	   219:         moveq   #$0b,d0                 ; restore, h=1, V=0, 3 ms
+00:00100264 4EB90000CF8E    	   220:         jsr     $cf8e.l
+00:0010026A 223C00038000    	   221:         move.l  #$38000,d1
+00:00100270 08380005FA01    	   222: .w:     btst.b  #5,$fffffa01.w          ; GPIP bit 5 low = FDC interrupt
+00:00100276 670E            	   223:         beq.s   .d
+00:00100278 5381            	   224:         subq.l  #1,d1
+00:0010027A 66F4            	   225:         bne.s   .w
+00:0010027C 4EB90000CF5A    	   226:         jsr     $cf5a.l
+00:00100282 7001            	   227:         moveq   #1,d0
+00:00100284 6030            	   228:         bra.s   .o
+00:00100286 4EB90000CF78    	   229: .d:     jsr     $cf78.l
+00:0010028C 08000004        	   230:         btst    #4,d0                   ; seek error
+00:00100290 6622            	   231:         bne.s   .no
+00:00100292 08000002        	   232:         btst    #2,d0                   ; TR00
+00:00100296 671C            	   233:         beq.s   .no
+00:00100298 223C00002D00    	   234:         move.l  #$2d00,d1
+00:0010029E 4EB90000CF78    	   235: .ix:    jsr     $cf78.l
+00:001002A4 08000001        	   236:         btst    #1,d0                   ; index pulse
+00:001002A8 6606            	   237:         bne.s   .y
+00:001002AA 5381            	   238:         subq.l  #1,d1
+00:001002AC 66F0            	   239:         bne.s   .ix
+00:001002AE 6004            	   240:         bra.s   .no
+00:001002B0 7000            	   241: .y:     moveq   #0,d0
+00:001002B2 6002            	   242:         bra.s   .o
+00:001002B4 7001            	   243: .no:    moveq   #1,d0
+00:001002B6 2F00            	   244: .o:     move.l  d0,-(sp)
+00:001002B8 7007            	   245:         moveq   #7,d0                   ; deselect
+00:001002BA 4EB90000CF0E    	   246:         jsr     $cf0e.l
+00:001002C0 201F            	   247:         move.l  (sp)+,d0
+00:001002C2 31DF043E        	   248:         move.w  (sp)+,$43e.w
+00:001002C6 221F            	   249:         move.l  (sp)+,d1
+00:001002C8 4E75            	   250:         rts
+                            	   251: 
+                            	   252: ; ------------------------------------------------------------------------------------------------------- swap prompts 
+                            	   253: ; showtext: the body of the game's own sub_00735a (fade out, clear, text at the usual place, present, fade in)
+                            	   254: showtext:
+00:001002CA 48E7FFFE        	   255:         movem.l d0-d7/a0-a6,-(sp)       ; the game's routines trash everything (a5 included)
+00:001002CE 2F08            	   256:         move.l  a0,-(sp)
+00:001002D0 4EB90000D866    	   257:         jsr     $d866.l
+00:001002D6 4A783A88        	   258: .f:     tst.w   $3a88.w
+00:001002DA 66FA            	   259:         bne.s   .f
+00:001002DC 4EB90000D8E0    	   260:         jsr     $d8e0.l
+00:001002E2 205F            	   261:         movea.l (sp)+,a0
+00:001002E4 2A781008        	   262:         movea.l $1008.w,a5
+00:001002E8 47ED3E91        	   263:         lea     $3e91(a5),a3
+00:001002EC 383C0078        	   264:         move.w  #$78,d4
+00:001002F0 4EB9000122A2    	   265:         jsr     $122a2.l
+00:001002F6 4EB90000D1FE    	   266:         jsr     $d1fe.l
+00:001002FC 4EB90000D84E    	   267:         jsr     $d84e.l
+00:00100302 4CDF7FFF        	   268:         movem.l (sp)+,d0-d7/a0-a6
+00:00100306 4E75            	   269:         rts
+                            	   270: ; waitkey -> d0.b = scancode ($60ff), the key is consumed
+                            	   271: waitkey:
+00:00100308 423860FF        	   272:         clr.b   $60ff.w
+00:0010030C 103860FF        	   273: .k:     move.b  $60ff.w,d0
+00:00100310 67FA            	   274:         beq.s   .k
+00:00100312 423860FF        	   275:         clr.b   $60ff.w
+00:00100316 4E75            	   276:         rts
+                            	   277: ; fadeout: leave the screen the way sub_00735a does
+                            	   278: fadeout:
+00:00100318 48E7FFFE        	   279:         movem.l d0-d7/a0-a6,-(sp)
+00:0010031C 4EB90000D866    	   280:         jsr     $d866.l
+00:00100322 4A783A88        	   281: .f:     tst.w   $3a88.w
+00:00100326 66FA            	   282:         bne.s   .f
+00:00100328 4CDF7FFF        	   283:         movem.l (sp)+,d0-d7/a0-a6
+00:0010032C 4E75            	   284:         rts
+                            	   285: 
+                            	   286: ; camp_ui: F10 at the title.  Prompt, read, report.  Returns d0.w = 0 loaded / -1 cancelled.  Leaves the screen faded o
+                            	   287: camp_ui:
+00:0010032E 48E77FFE        	   288:         movem.l d1-d7/a0-a6,-(sp)
+00:00100332 4BFA0240        	   289:         lea     vars(pc),a5
+00:00100336 41FA00B7        	   290: .ask:   lea     t_ask(pc),a0
+00:0010033A 618E            	   291:         bsr     showtext
+00:0010033C 61CA            	   292: .ak:    bsr     waitkey
+00:0010033E 0C000001        	   293:         cmpi.b  #$01,d0
+00:00100342 6772            	   294:         beq     .cancel
+00:00100344 7400            	   295:         moveq   #0,d2
+00:00100346 0C00001E        	   296:         cmpi.b  #$1e,d0                 ; A
+00:0010034A 6708            	   297:         beq.s   .go
+00:0010034C 7401            	   298:         moveq   #1,d2
+00:0010034E 0C000030        	   299:         cmpi.b  #$30,d0                 ; B
+00:00100352 66E8            	   300:         bne.s   .ak
+00:00100354 3C02            	   301: .go:    move.w  d2,d6
+00:00100356 41FA00FA        	   302:         lea     t_load(pc),a0
+00:0010035A 6100FF6E        	   303:         bsr     showtext
+00:0010035E 3006            	   304:         move.w  d6,d0
+00:00100360 206D001C        	   305:         movea.l v_cdest(a5),a0
+00:00100364 222D0020        	   306:         move.l  v_cmax(a5),d1
+00:00100368 6100FCA2        	   307:         bsr     camp_read
+00:0010036C 3B400024        	   308:         move.w  d0,v_status(a5)
+00:00100370 4A40            	   309:         tst.w   d0
+00:00100372 671A            	   310:         beq.s   .ok
+00:00100374 D040            	   311:         add.w   d0,d0
+00:00100376 41FA01F0        	   312:         lea     errtab(pc),a0
+00:0010037A 303000FE        	   313:         move.w  -2(a0,d0.w),d0          ; status 1..6 -> text offset
+00:0010037E 41FA01E8        	   314:         lea     errtab(pc),a0
+00:00100382 D0C0            	   315:         adda.w  d0,a0
+00:00100384 6100FF44        	   316:         bsr     showtext
+00:00100388 6100FF7E        	   317:         bsr     waitkey
+00:0010038C 60A8            	   318:         bra     .ask
+00:0010038E 422D0028        	   319: .ok:    clr.b   v_act(a5)
+00:00100392 1B7C00010028    	   320:         move.b  #1,v_act(a5)
+00:00100398 206D001C        	   321:         movea.l v_cdest(a5),a0
+00:0010039C 3B6800060026    	   322:         move.w  6(a0),v_count(a5)
+00:001003A2 41FA00C2        	   323:         lea     t_done(pc),a0
+00:001003A6 6100FF22        	   324:         bsr     showtext
+00:001003AA 6100FF5C        	   325:         bsr     waitkey
+00:001003AE 6100FF68        	   326:         bsr     fadeout
+00:001003B2 7000            	   327:         moveq   #0,d0
+00:001003B4 6006            	   328:         bra.s   .x
+00:001003B6 6100FF60        	   329: .cancel: bsr    fadeout
+00:001003BA 70FF            	   330:         moveq   #-1,d0
+00:001003BC 4CDF7FFE        	   331: .x:     movem.l (sp)+,d1-d7/a0-a6
+00:001003C0 4E75            	   332:         rts
+                            	   333: 
+                            	   334: ; F10 hook for the title: replaces the `jsr $73b8` at $7252 (start of a game).  F10 = scancode $44 left in $60ff by the
+                            	   335: hook_title:
+00:001003C2 0C38004460FF    	   336:         cmpi.b  #$44,$60ff.w
+00:001003C8 6614            	   337:         bne.s   .go
+00:001003CA 48E7FFFE        	   338:         movem.l d0-d7/a0-a6,-(sp)
+00:001003CE 6100FF5E        	   339:         bsr     camp_ui
+00:001003D2 4CDF7FFF        	   340:         movem.l (sp)+,d0-d7/a0-a6
+00:001003D6 588F            	   341:         addq.l  #4,sp                   ; drop the return address into $7258
+00:001003D8 4EF90000723C    	   342:         jmp     $723c.l                 ; the title again
+00:001003DE 4EF9000073B8    	   343: .go:    jmp     $73b8.l
+                            	   344: 
+00:001003E4 4D53545241434B53	   345: fname:  dc.b    "MSTRACKSTRK"
+00:001003EC 54524B
+00:001003EF 4C4F414420412043	   346: t_ask:  dc.b    "LOAD A CAMPAIGN",13,13,"Insert the campaign disk,",13,"then press A for drive A,",13,"B for drive B, E
+00:001003F7 414D504149474E
+00:001003FE 0D
+00:001003FF 0D
+00:00100400 496E736572742074
+00:00100408 68652063616D7061
+00:00100410 69676E206469736B
+00:00100418 2C
+00:00100419 0D
+00:0010041A 7468656E20707265
+00:00100422 7373204120666F72
+00:0010042A 2064726976652041
+00:00100432 2C
+00:00100433 0D
+00:00100434 4220666F72206472
+00:0010043C 69766520422C2045
+00:00100444 534320746F206361
+00:0010044C 6E63656C2E
+00:00100451 00
+00:00100452 4C6F6164696E6720	   347: t_load: dc.b    "Loading campaign...",0
+00:0010045A 63616D706169676E
+00:00100462 2E2E2E
+00:00100465 00
+00:00100466 43616D706169676E	   348: t_done: dc.b    "Campaign loaded.",13,13,"Press a key.",0
+00:0010046E 206C6F616465642E
+00:00100476 0D
+00:00100477 0D
+00:00100478 5072657373206120
+00:00100480 6B65792E
+00:00100484 00
+00:00100485 4E6F206469736B20	   349: t_e1:   dc.b    "No disk in that drive.",13,13,"Press a key.",0
+00:0010048D 696E207468617420
+00:00100495 64726976652E
+00:0010049B 0D
+00:0010049C 0D
+00:0010049D 5072657373206120
+00:001004A5 6B65792E
+00:001004A9 00
+00:001004AA 4469736B20726561	   350: t_e2:   dc.b    "Disk read error.",13,13,"Press a key.",0
+00:001004B2 64206572726F722E
+00:001004BA 0D
+00:001004BB 0D
+00:001004BC 5072657373206120
+00:001004C4 6B65792E
+00:001004C8 00
+00:001004C9 4E6F742061206361	   351: t_e3:   dc.b    "Not a campaign disk.",13,13,"Press a key.",0
+00:001004D1 6D706169676E2064
+00:001004D9 69736B2E
+00:001004DD 0D
+00:001004DE 0D
+00:001004DF 5072657373206120
+00:001004E7 6B65792E
+00:001004EB 00
+00:001004EC 4E6F204D53545241	   352: t_e4:   dc.b    "No MSTRACKS.TRK on the disk.",13,13,"Press a key.",0
+00:001004F4 434B532E54524B20
+00:001004FC 6F6E207468652064
+00:00100504 69736B2E
+00:00100508 0D
+00:00100509 0D
+00:0010050A 5072657373206120
+00:00100512 6B65792E
+00:00100516 00
+00:00100517 43616D706169676E	   353: t_e5:   dc.b    "Campaign file too large.",13,13,"Press a key.",0
+00:0010051F 2066696C6520746F
+00:00100527 6F206C617267652E
+00:0010052F 0D
+00:00100530 0D
+00:00100531 5072657373206120
+00:00100539 6B65792E
+00:0010053D 00
+00:0010053E 4E6F742061207661	   354: t_e6:   dc.b    "Not a valid campaign file.",13,13,"Press a key.",0
+00:00100546 6C69642063616D70
+00:0010054E 6169676E2066696C
+00:00100556 652E
+00:00100558 0D
+00:00100559 0D
+00:0010055A 5072657373206120
+00:00100562 6B65792E
+00:00100566 00
+                            	   355:         even
+                            	   356: ; status 1..6 -> offset of the text from errtab
+00:00100568 FF1D            	   357: errtab: dc.w    t_e1-errtab,t_e2-errtab,t_e3-errtab,t_e4-errtab,t_e5-errtab,t_e6-errtab
+00:0010056A FF42
+00:0010056C FF61
+00:0010056E FF84
+00:00100570 FFAF
+00:00100572 FFD6
+00:00100574 0000            	   358: vars:   dc.w    0               ; v_unit
+00:00100576 0009            	   359:         dc.w    9               ; v_spt
+00:00100578 0002            	   360:         dc.w    2               ; v_spc
+00:0010057A 0007            	   361:         dc.w    7               ; v_nroot
+00:0010057C 00000000        	   362:         dc.l    0               ; v_dest
+00:00100580 00000000        	   363:         dc.l    0               ; v_max
+00:00100584 00000000        	   364:         dc.l    0               ; v_size
+00:00100588 00000000        	   365:         dc.l    0               ; v_root
+00:0010058C 00000000        	   366:         dc.l    0               ; v_data0
+00:00100590 00110000        	   367:         dc.l    $110000         ; v_cdest: where camp_ui puts the file
+00:00100594 00020000        	   368:         dc.l    $20000          ; v_cmax
+00:00100598 0000            	   369:         dc.w    0               ; v_status
+00:0010059A 0000            	   370:         dc.w    0               ; v_count
+00:0010059C 00              	   371:         dc.b    0               ; v_act
+                            	   372:         even
+                            	   373: v_unit equ 0
+                            	   374: v_spt equ 2
+                            	   375: v_spc equ 4
+                            	   376: v_nroot equ 6
+                            	   377: v_dest equ 8
+                            	   378: v_max equ 12
+                            	   379: v_size equ 16
+                            	   380: v_root equ 20
+                            	   381: v_data0 equ 24
+                            	   382: v_cdest equ 28
+                            	   383: v_cmax equ 32
+                            	   384: v_status equ 36
+                            	   385: v_count equ 38
+                            	   386: v_act equ 40
+                            	   387: 
+
+
+Symbols by name:
+ORG                              E:00100000
+camp_read                        A:0010000C
+camp_ui                          A:0010032E
+cr_exit                          A:001001B4
+dpres                            A:0010023E
+ep                               A:00100000
+errtab                           A:00100568
+fadeout                          A:00100318
+fname                            A:001003E4
+hook_title                       A:001003C2
+rdsec                            A:001001C0
+showtext                         A:001002CA
+t_ask                            A:001003EF
+t_done                           A:00100466
+t_e1                             A:00100485
+t_e2                             A:001004AA
+t_e3                             A:001004C9
+t_e4                             A:001004EC
+t_e5                             A:00100517
+t_e6                             A:0010053E
+t_load                           A:00100452
+v_act                            E:00000028
+v_cdest                          E:0000001C
+v_cmax                           E:00000020
+v_count                          E:00000026
+v_data0                          E:00000018
+v_dest                           E:00000008
+v_max                            E:0000000C
+v_nroot                          E:00000006
+v_root                           E:00000014
+v_size                           E:00000010
+v_spc                            E:00000004
+v_spt                            E:00000002
+v_status                         E:00000024
+v_unit                           E:00000000
+vars                             A:00100574
+waitkey                          A:00100308
+
+Symbols by value:
+00000000 v_unit
+00000002 v_spt
+00000004 v_spc
+00000006 v_nroot
+00000008 v_dest
+0000000C v_max
+00000010 v_size
+00000014 v_root
+00000018 v_data0
+0000001C v_cdest
+00000020 v_cmax
+00000024 v_status
+00000026 v_count
+00000028 v_act
+00100000 ORG
+00100000 ep
+0010000C camp_read
+001001B4 cr_exit
+001001C0 rdsec
+0010023E dpres
+001002CA showtext
+00100308 waitkey
+00100318 fadeout
+0010032E camp_ui
+001003C2 hook_title
+001003E4 fname
+001003EF t_ask
+00100452 t_load
+00100466 t_done
+00100485 t_e1
+001004AA t_e2
+001004C9 t_e3
+001004EC t_e4
+00100517 t_e5
+0010053E t_e6
+00100568 errtab
+00100574 vars

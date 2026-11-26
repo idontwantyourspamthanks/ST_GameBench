@@ -1,0 +1,146 @@
+sub_011a3c:
+011a3c:  41f82ca0             lea.l    $2ca0.w, a0
+011a40:  7e03                 moveq    #$3, d7
+011a42:  082800060004         btst.b   #$6, $4(a0)
+011a48:  660a                 bne.b    $11a54
+011a4a:  41e80038             lea.l    $38(a0), a0
+011a4e:  51cffff2             dbra     d7, $11a42
+011a52:  4e75                 rts      
+011a54:  4a3829c6             tst.b    $29c6.w
+011a58:  672a                 beq.b    $11a84
+011a5a:  53280019             subq.b   #$1, $19(a0)
+011a5e:  6720                 beq.b    $11a80
+011a60:  3038102c             move.w   $102c.w, d0
+011a64:  0c400005             cmpi.w   #$5, d0
+011a68:  6404                 bcc.b    $11a6e
+011a6a:  7203                 moveq    #$3, d1
+011a6c:  600c                 bra.b    $11a7a
+011a6e:  0c40000a             cmpi.w   #$a, d0
+011a72:  6404                 bcc.b    $11a78
+011a74:  7204                 moveq    #$4, d1
+011a76:  6002                 bra.b    $11a7a
+011a78:  7205                 moveq    #$5, d1
+011a7a:  b228002c             cmp.b    $2c(a0), d1
+011a7e:  6204                 bhi.b    $11a84
+011a80:  423829c6             clr.b    $29c6.w
+011a84:  08a800000004         bclr.b   #$0, $4(a0)
+011a8a:  3238130c             move.w   $130c.w, d1
+011a8e:  92680022             sub.w    $22(a0), d1
+011a92:  4a3829c6             tst.b    $29c6.w
+011a96:  675c                 beq.b    $11af4
+011a98:  16280017             move.b   $17(a0), d3
+011a9c:  662e                 bne.b    $11acc
+011a9e:  53280018             subq.b   #$1, $18(a0)
+011aa2:  6644                 bne.b    $11ae8
+011aa4:  4eb90000dae4         jsr      $dae4.l  ; sub_00dae4
+011aaa:  0240000f             andi.w   #$f, d0
+011aae:  0c40000c             cmpi.w   #$c, d0
+011ab2:  6408                 bcc.b    $11abc
+011ab4:  117c00010017         move.b   #$1, $17(a0)
+011aba:  6030                 bra.b    $11aec
+011abc:  117c00020017         move.b   #$2, $17(a0)
+011ac2:  6028                 bra.b    $11aec
+011ac4:  117c00030017         move.b   #$3, $17(a0)
+011aca:  601c                 bra.b    $11ae8
+011acc:  0c030001             cmpi.b   #$1, d3
+011ad0:  671a                 beq.b    $11aec
+011ad2:  0c030002             cmpi.b   #$2, d3
+011ad6:  6714                 beq.b    $11aec
+011ad8:  0c030003             cmpi.b   #$3, d3
+011adc:  670a                 beq.b    $11ae8
+011ade:  53280018             subq.b   #$1, $18(a0)
+011ae2:  6604                 bne.b    $11ae8
+011ae4:  61000136             bsr.w    $11c1c  ; sub_011c1c
+011ae8:  7400                 moveq    #$0, d2
+011aea:  6008                 bra.b    $11af4
+011aec:  7429                 moveq    #$29, d2
+011aee:  0642000d             addi.w   #$d, d2
+011af2:  e242                 asr.w    #$1, d2
+011af4:  30280020             move.w   $20(a0), d0
+011af8:  9041                 sub.w    d1, d0
+011afa:  4a3829c6             tst.b    $29c6.w
+011afe:  662e                 bne.b    $11b2e
+011b00:  b042                 cmp.w    d2, d0
+011b02:  6c6e                 bge.b    $11b72
+011b04:  08b90002000176b5     bclr.b   #$2, $176b5.l
+011b0c:  6764                 beq.b    $11b72
+011b0e:  48e7c0c0             movem.l  d0-d1/a0-a1, -(a7)
+011b12:  41f86b0c             lea.l    $6b0c.w, a0
+011b16:  103c00f0             move.b   #$f0, d0
+011b1a:  1218                 move.b   (a0)+, d1
+011b1c:  4eb900011eba         jsr      $11eba.l  ; sub_011eba
+011b22:  4eb90000e168         jsr      $e168.l  ; sub_00e168
+011b28:  4cdf0303             movem.l  (a7)+, d0-d1/a0-a1
+011b2c:  6044                 bra.b    $11b72
+011b2e:  b042                 cmp.w    d2, d0
+011b30:  6d32                 blt.b    $11b64
+011b32:  42680024             clr.w    $24(a0)
+011b36:  08390001000176b5     btst.b   #$1, $176b5.l
+011b3e:  6732                 beq.b    $11b72
+011b40:  4a381218             tst.b    $1218.w
+011b44:  662c                 bne.b    $11b72
+011b46:  50f81218             st.b     $1218.w
+011b4a:  48e7c080             movem.l  d0-d1/a0, -(a7)
+011b4e:  41f86b4d             lea.l    $6b4d.w, a0
+011b52:  103c00e6             move.b   #$e6, d0
+011b56:  1218                 move.b   (a0)+, d1
+011b58:  4eb900011eba         jsr      $11eba.l  ; sub_011eba
+011b5e:  4cdf0103             movem.l  (a7)+, d0-d1/a0
+011b62:  600e                 bra.b    $11b72
+011b64:  3c38102c             move.w   $102c.w, d6
+011b68:  e44e                 lsr.w    #$2, d6
+011b6a:  06460011             addi.w   #$11, d6
+011b6e:  31460024             move.w   d6, $24(a0)
+011b72:  7401                 moveq    #$1, d2
+011b74:  c478100e             and.w    $100e.w, d2
+011b78:  6616                 bne.b    $11b90
+011b7a:  34280022             move.w   $22(a0), d2
+011b7e:  b4680024             cmp.w    $24(a0), d2
+011b82:  6708                 beq.b    $11b8c
+011b84:  6d04                 blt.b    $11b8a
+011b86:  5342                 subq.w   #$1, d2
+011b88:  6002                 bra.b    $11b8c
+011b8a:  5242                 addq.w   #$1, d2
+011b8c:  31420022             move.w   d2, $22(a0)
+011b90:  4a40                 tst.w    d0
+011b92:  6a64                 bpl.b    $11bf8
+011b94:  0c40ff9c             cmpi.w   #$ff9c, d0
+011b98:  6e22                 bgt.b    $11bbc
+011b9a:  4a3829c7             tst.b    $29c7.w
+011b9e:  6716                 beq.b    $11bb6
+011ba0:  423829c7             clr.b    $29c7.w
+011ba4:  48e7fffe             movem.l  d0-d7/a0-a6, -(a7)
+011ba8:  7000                 moveq    #$0, d0
+011baa:  7201                 moveq    #$1, d1
+011bac:  4eb900007bb2         jsr      $7bb2.l  ; sub_007bb2
+011bb2:  4cdf7fff             movem.l  (a7)+, d0-d7/a0-a6
+011bb6:  31400020             move.w   d0, $20(a0)
+011bba:  4e75                 rts      
+011bbc:  4a3829c7             tst.b    $29c7.w
+011bc0:  661c                 bne.b    $11bde
+011bc2:  4a3829c6             tst.b    $29c6.w
+011bc6:  6716                 beq.b    $11bde
+011bc8:  50f829c7             st.b     $29c7.w
+011bcc:  48e7fffe             movem.l  d0-d7/a0-a6, -(a7)
+011bd0:  703c                 moveq    #$3c, d0
+011bd2:  7201                 moveq    #$1, d1
+011bd4:  4eb900007bb2         jsr      $7bb2.l  ; sub_007bb2
+011bda:  4cdf7fff             movem.l  (a7)+, d0-d7/a0-a6
+011bde:  0c2800010017         cmpi.b   #$1, $17(a0)
+011be4:  6774                 beq.b    $11c5a
+011be6:  0c2800020017         cmpi.b   #$2, $17(a0)
+011bec:  6776                 beq.b    $11c64
+011bee:  0c2800030017         cmpi.b   #$3, $17(a0)
+011bf4:  6764                 beq.b    $11c5a
+011bf6:  603c                 bra.b    $11c34
+011bf8:  0c400400             cmpi.w   #$400, d0
+011bfc:  6c9c                 bge.b    $11b9a
+011bfe:  31400020             move.w   d0, $20(a0)
+011c02:  08e800000004         bset.b   #$0, $4(a0)
+011c08:  7414                 moveq    #$14, d2
+011c0a:  d4782c88             add.w    $2c88.w, d2
+011c0e:  b042                 cmp.w    d2, d0
+011c10:  6e04                 bgt.b    $11c16
+011c12:  610000c0             bsr.w    $11cd4  ; sub_011cd4
+011c16:  610000e0             bsr.w    $11cf8  ; sub_011cf8
+011c1a:  4e75                 rts      

@@ -1,0 +1,33 @@
+REACHED 3D VIEW and played 120 s
+first game restore: tr=0x0 head_track=0x0 -> complete after 1.023 s
+game type I commands: 216, cut by the game's force interrupt: 0
+longest completed game type I commands (s): 1.83 restore, 1.89 restore, 1.95 restore, 2.05 restore
+CELL c_ste162_8_d2: PASS
+EXC RuntimeError('click at (414, 185) never produced the expected screen')
+first game restore: tr=0x0 head_track=0x0 -> complete after 1.046 s
+game type I commands: 95, cut by the game's force interrupt: 0
+longest completed game type I commands (s): 1.71 restore, 1.78 restore, 1.81 restore, 1.95 restore
+CELL c_ste162_8_d1: FAIL
+EXC RuntimeError('click at (414, 185) never produced the expected screen')
+first game restore: tr=0x0 head_track=0x0 -> complete after 0.027 s
+game type I commands: 95, cut by the game's force interrupt: 0
+longest completed game type I commands (s): 1.73 restore, 1.74 restore, 1.87 restore, 1.89 restore
+CELL c_mste206_8_d1: FAIL
+REACHED 3D VIEW and played 120 s
+first game restore: tr=0x0 head_track=0x0 -> complete after 0.054 s
+game type I commands: 222, cut by the game's force interrupt: 0
+longest completed game type I commands (s): 1.85 restore, 1.87 restore, 1.89 restore, 2.03 restore
+CELL c_mste206_16_d1: PASS
+EXC RuntimeError('never reached the boss screen')
+first game restore: tr=0x0 head_track=0x0 -> complete after 0.047 s
+game type I commands: 122, cut by the game's force interrupt: 0
+longest completed game type I commands (s): 1.78 restore, 1.81 restore, 1.87 restore, 1.89 restore
+CELL c_mste206_16_d2: FAIL
+REACHED 3D VIEW and played 0 s
+first game restore: tr=0x0 head_track=0x0 -> complete after 1.191 s
+game type I commands: 218, cut by the game's force interrupt: 0
+longest completed game type I commands (s): 1.84 restore, 1.87 restore, 1.92 restore, 2.12 restore
+CELL c_st104_8_d1: PASS
+EXC RuntimeError('never reached the boss screen')
+game type I commands: 0, cut by the game's force interrupt: 0
+CELL c_tt306_d1: FAIL

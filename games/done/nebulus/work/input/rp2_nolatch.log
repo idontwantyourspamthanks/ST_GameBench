@@ -1,0 +1,21 @@
+in tower True
+pulse 0 {'A': None, 'B': None, 'gap_frames': None, 'polls_inside': 0, 'latch_set': 0, 'consumed': 0, 'shoot': 1}
+pulse 1 {'A': None, 'B': None, 'gap_frames': None, 'polls_inside': 0, 'latch_set': 0, 'consumed': 0, 'shoot': 1}
+pulse 2 {'A': None, 'B': None, 'gap_frames': None, 'polls_inside': 0, 'latch_set': 0, 'consumed': 0, 'shoot': 1}
+pulse 3 {'A': None, 'B': None, 'gap_frames': None, 'polls_inside': 0, 'latch_set': 0, 'consumed': 0, 'shoot': 1}
+pulse 4 {'A': None, 'B': None, 'gap_frames': None, 'polls_inside': 0, 'latch_set': 0, 'consumed': 0, 'shoot': 1}
+pulse 5 {'A': None, 'B': None, 'gap_frames': None, 'polls_inside': 0, 'latch_set': 0, 'consumed': 0, 'shoot': 1}
+pulse 6 {'A': None, 'B': None, 'gap_frames': None, 'polls_inside': 0, 'latch_set': 0, 'consumed': 0, 'shoot': 0}
+Traceback (most recent call last):
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/input/realpulse2.py", line 65, in <module>
+    main(sys.argv[1], sys.argv[2], int(sys.argv[3]), int(sys.argv[4]))
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/input/realpulse2.py", line 37, in main
+    wait_idle(); time.sleep(rnd.uniform(0.2, 0.5))
+    ^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/input/realpulse2.py", line 20, in wait_idle
+    if h.peekw(0x33a20) == 0: return
+       ^^^^^^^^^^^^^^^^
+  File "/home/ryan/Code/AtariST/gamebench/tools/stharness.py", line 238, in peekw
+    hi, lo = re.findall(rf"{addr:08x}:\s+([0-9a-f]{{2}}) ([0-9a-f]{{2}})", out, re.I)[-1]
+             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^
+IndexError: list index out of range

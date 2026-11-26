@@ -57,7 +57,7 @@ DEFAULT_SIZE_KB = 32000                                 # one partition, 64000 s
 VOLUME = "GAMES"
 
 # folder on C: -> game; versions/requirements for README.TXT are taken from the builds where possible (see readme_text)
-FOLDERS = ("MIDWINTR", "MW1ORIG", "MIDWINT2", "MW2ORIG", "MOONSHR", "HUNTER", "HUNTORIG", "NEBULUS", "NEBORIG", "POWERMON", "PMWW1",
+FOLDERS = ("MIDWINTR", "MW1ORIG", "MIDWINT2", "MW2ORIG", "MOONSHR", "MOONORIG", "HUNTER", "HUNTORIG", "NEBULUS", "NEBORIG", "POWERMON", "PMWW1",
            "POPULOUS", "POPORIG", "POPS2", "POP2ORIG", "FLOOD", "OVERLAND", "AUTO")
 FLOOD_VERSION = "1.1"                                   # the shipped release zip games/done/flood/dist/Flood_hd_v<this>.zip
 OVERLANDER_VERSION = "1.0"                              # games/*/overlander/dist/Overlander_hd_v<this>.zip
@@ -319,7 +319,9 @@ def build_populous2() -> Path:
     return dst
 
 
-BUILDERS = {"MIDWINTR": build_midwinter, "MOONSHR": build_moonshine, "MW1ORIG": build_midwinter_orig, "MIDWINT2": build_midwinter2, "MW2ORIG": build_midwinter2_orig,
+BUILDERS = {"MIDWINTR": build_midwinter, "MOONSHR": build_moonshine,
+            "MOONORIG": lambda: build_orig(GAMES / "moonshine-racers" / "originals" / "MOONSHR", "MOONORIG"),
+            "MW1ORIG": build_midwinter_orig, "MIDWINT2": build_midwinter2, "MW2ORIG": build_midwinter2_orig,
             "HUNTER": build_hunter, "HUNTORIG": lambda: build_orig(GAMES / "hunter", "HUNTORIG"),
             "NEBULUS": build_nebulus, "NEBORIG": build_nebulus_orig,
             "POWERMON": build_powermonger, "POPULOUS": build_populous,
@@ -369,7 +371,7 @@ def readme_text(vers: dict[str, str], date: str) -> str:
 ==========================================================================
 
 Eight games with dad_prg's patches (speed, sound, fixes) on one bootable
-hard disk image, plus PP's unpatched releases of six of them (the *ORIG
+hard disk image, plus PP's unpatched releases of seven of them (the *ORIG
 folders) for side-by-side comparison:
 HDDRIVER, one 31 MB partition = drive C:.  Nothing starts by itself except
 a 3-second question about Powermonger at boot.
@@ -381,6 +383,7 @@ a 3-second question about Powermonger at boot.
   C:\MIDWINT2  Midwinter 2            double-click RUNME.TOS     {vers['MIDWINT2']}
   C:\MW2ORIG   Midwinter 2 (original) double-click RUNME.TOS     PP's release, unpatched
   C:\MOONSHR   Moonshine Racers       double-click RUNME.TOS     {vers['MOONSHR']}
+  C:\MOONORIG  Moonshine (original)   double-click RUNME.TOS     PP's release, unpatched
   C:\HUNTER    Hunter                 double-click START.TOS     {vers['HUNTER']}
   C:\HUNTORIG  Hunter (original)      double-click START.TOS     PP's release, unpatched
   C:\NEBULUS   Nebulus                double-click START.TOS     {vers['NEBULUS']}
@@ -569,6 +572,7 @@ def layout_text(img: Path, tgt: str, total: int, psz: int, folders: dict[str, Pa
     why = {"MIDWINTR": "Midwinter (HAGA by PP, patched)", "MW1ORIG": "Midwinter (HAGA by PP, unpatched, for comparison)",
            "MIDWINT2": "Midwinter 2 (HAGA by PP, patched)", "MW2ORIG": "Midwinter 2 (HAGA by PP, unpatched, for comparison)",
            "MOONSHR": "Moonshine Racers (HAGA by PP, patched)",
+           "MOONORIG": "Moonshine Racers (HAGA by PP, unpatched, for comparison)",
            "HUNTER": "Hunter (Gamex by PP, patched; FILES\\P = patch code + STE sample bank)",
            "POWERMON": "Powermonger (HD build, patched; start it from the boot prompt, see README.TXT)",
            "POPULOUS": "Populous (HAGA by PP, patched; PATCHED.TXT)", "POPS2": "Populous 2 (HAGA by PP, patched)",

@@ -1,0 +1,75 @@
+PASS odd2.ovl: ovl.py validate: []
+== odd2.ovl: 2 levels, sizes [115, 165], 2 campaigns [('ODD2', [128, 0, 130, 1]), ('ODD2 REV', [1, 0])]
+PASS odd2.ovl: store in RAM == file: True
+PASS odd2.ovl: F10 opens the manager: True
+PASS odd2.ovl: level list shows all levels: ['ODD ONE', 'ODD TWO']
+PASS odd2.ovl level 1 (record size 165) Play: tower started: True
+PASS odd2.ovl level 1 (record size 165) Play: grid == decoded record (ODD TWO): []
+PASS odd2.ovl level 1 (record size 165) Play: rows/mission/tower: (40, 2, 5)
+PASS odd2.ovl level 1 (record size 165) Play: initial time 480 s (remaining 468): True
+PASS odd2.ovl level 1 (record size 165) Play: tower name hook A0=$bc18b text: b'ODD TWO\x00'
+      record 1: size 165, name A0 $bc18b (odd address)
+PASS odd2.ovl level 1 (record size 165): F10 opens the manager again (= back at the title after Q): True
+PASS odd2.ovl: campaign list shows all campaigns: ['ODD2', 'ODD2 REV']
+PASS odd2.ovl campaign 1 ODD2 REV entry 0: tower started: True
+PASS odd2.ovl campaign 1 ODD2 REV entry 0: grid == decoded record (ODD TWO): []
+PASS odd2.ovl campaign 1 ODD2 REV entry 0: rows/mission/tower: (40, 2, 5)
+PASS odd2.ovl campaign 1 ODD2 REV entry 0: initial time 480 s (remaining 468): True
+PASS odd2.ovl campaign 1 ODD2 REV entry 0: tower name hook A0=$bc18b text: b'ODD TWO\x00'
+      record 1: size 165, name A0 $bc18b (odd address)
+PASS odd2.ovl campaign 1 ODD2 REV: F10 opens the manager again (= back at the title after Q): True
+PASS odd2.ovl campaign 0 ODD2 entry 0: tower started: True
+PASS odd2.ovl campaign 0 ODD2 entry 0: original M1 T1 grid: []
+PASS odd2.ovl campaign 0 ODD2 entry 0: original rows/mission/tower: (47, 1, 0)
+PASS odd2.ovl campaign 0 ODD2: F10 opens the manager again (= back at the title after Q): True
+PASS odd2.ovl: game alive (VBL runs): True
+PASS odd2.ovl: no Address/Bus Error/exception in the Hatari log: []
+PASS stress01.ovl: ovl.py validate: []
+== stress01.ovl: 1 levels, sizes [159], 1 campaigns [('CAMP1', [139, 128])]
+PASS stress01.ovl: store in RAM == file: True
+PASS stress01.ovl: F10 opens the manager: True
+PASS stress01.ovl: level list shows all levels: ['795N236BSP']
+PASS stress01.ovl level 0 (record size 159) Play: tower started: True
+PASS stress01.ovl level 0 (record size 159) Play: grid == decoded record (795N236BSP): []
+PASS stress01.ovl level 0 (record size 159) Play: rows/mission/tower: (38, 2, 6)
+PASS stress01.ovl level 0 (record size 159) Play: initial time 480 s (remaining 468): True
+PASS stress01.ovl level 0 (record size 159) Play: tower name hook A0=$bc118 text: b'795N236BSP\x00'
+      record 0: size 159, name A0 $bc118 (even address)
+PASS stress01.ovl level 0 (record size 159): F10 opens the manager again (= back at the title after Q): True
+PASS stress01.ovl: campaign list shows all campaigns: ['CAMP1']
+PASS stress01.ovl campaign 0 CAMP1 entry 0: tower started: True
+PASS stress01.ovl campaign 0 CAMP1 entry 0: original M2 T4 grid: []
+PASS stress01.ovl campaign 0 CAMP1 entry 0: original rows/mission/tower: (64, 2, 3)
+PASS stress01.ovl campaign 0 CAMP1: F10 opens the manager again (= back at the title after Q): True
+PASS stress01.ovl: game alive (VBL runs): True
+PASS stress01.ovl: no Address/Bus Error/exception in the Hatari log: []
+PASS stress05.ovl: ovl.py validate: []
+== stress05.ovl: 4 levels, sizes [141, 171, 135, 129], 2 campaigns [('CAMP1', [2, 3, 3, 2]), ('CAMP2', [141, 140, 0, 136, 133])]
+PASS stress05.ovl: store in RAM == file: True
+PASS stress05.ovl: F10 opens the manager: True
+PASS stress05.ovl: level list shows all levels: ['5W7', 'KUGFR1A0ER', '1ABUAU5J', '3J86']
+PASS stress05.ovl level 1 (record size 171) Play: tower started: True
+PASS stress05.ovl level 1 (record size 171) Play: grid == decoded record (KUGFR1A0ER): []
+PASS stress05.ovl level 1 (record size 171) Play: rows/mission/tower: (40, 1, 5)
+PASS stress05.ovl level 1 (record size 171) Play: initial time 650 s (remaining 638): True
+PASS stress05.ovl level 1 (record size 171) Play: tower name hook A0=$bc1a5 text: b'KUGFR1A0ER\x00'
+      record 1: size 171, name A0 $bc1a5 (odd address)
+PASS stress05.ovl level 1 (record size 171): F10 opens the manager again (= back at the title after Q): True
+PASS stress05.ovl level 3 (record size 129) Play: tower started: True
+PASS stress05.ovl level 3 (record size 129) Play: grid == decoded record (3J86): []
+PASS stress05.ovl level 3 (record size 129) Play: rows/mission/tower: (30, 1, 5)
+PASS stress05.ovl level 3 (record size 129) Play: initial time 650 s (remaining 638): True
+PASS stress05.ovl level 3 (record size 129) Play: tower name hook A0=$bc2d7 text: b'3J86\x00'
+      record 3: size 129, name A0 $bc2d7 (odd address)
+PASS stress05.ovl level 3 (record size 129): F10 opens the manager again (= back at the title after Q): True
+PASS stress05.ovl: campaign list shows all campaigns: ['CAMP1', 'CAMP2']
+PASS stress05.ovl campaign 0 CAMP1 entry 0: tower started: True
+PASS stress05.ovl campaign 0 CAMP1 entry 0: grid == decoded record (1ABUAU5J): []
+PASS stress05.ovl campaign 0 CAMP1 entry 0: rows/mission/tower: (40, 1, 5)
+PASS stress05.ovl campaign 0 CAMP1 entry 0: initial time 650 s (remaining 638): True
+PASS stress05.ovl campaign 0 CAMP1 entry 0: tower name hook A0=$bc250 text: b'1ABUAU5J\x00'
+      record 2: size 135, name A0 $bc250 (even address)
+PASS stress05.ovl campaign 0 CAMP1: F10 opens the manager again (= back at the title after Q): True
+PASS stress05.ovl: game alive (VBL runs): True
+PASS stress05.ovl: no Address/Bus Error/exception in the Hatari log: []
+FAILS []

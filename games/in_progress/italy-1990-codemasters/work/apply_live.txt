@@ -1,0 +1,17 @@
+loadbin /home/ryan/Code/AtariST/gamebench/games/in_progress/italy-1990-codemasters/work/patch.bin $3a000
+w $d278 $4e $b9 $00 $03 $a0 $00
+w $5fc2 $4e $f9 $00 $03 $a0 $04
+w $c250 $4e $f9 $00 $03 $a0 $08
+w $c0e0 $4e $f9 $00 $03 $a0 $0c
+w $39dc $4e $f9 $00 $03 $a0 $10
+w $d46e $4e $f9 $00 $03 $a0 $1c
+w $22d6 $4e $b9 $00 $03 $a0 $20 $4e $71
+w $a5fc $4e $f9 $00 $03 $a0 $24
+w $ca8a $4e $b9 $00 $03 $a0 $28
+w $cd52 $4e $f9 $00 $03 $a0 $2c
+w $d2f0 $4e $b9 $00 $03 $a0 $14 $60 $1e
+w $bccc $4e $b9 $00 $03 $a0 $18 $60 $18
+w $bec2 $60 $16
+w $905a $01 $2b
+w $90c8 $01 $2b
+w $90ec $00 $00

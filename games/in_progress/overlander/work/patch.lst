@@ -1,0 +1,1286 @@
+Sections:
+00: "org0001:0" (0-A54)
+
+
+Source: "games/in_progress/overlander/patches/overlander_patch.s"
+                            	     1: ; Overlander — STE/TT/Falcon Compatibility & Enhancement Patch
+                            	     2: ; Assembled with: vasmm68k_mot -Fbin -spaces -m68000 -o patch.bin overlander_patch.s
+                            	     3: ; Placed immediately at TEXT_END (+0x12e40) of OVERLAND_orig.PRG.
+                            	     4: ; Build script injects exact symbol addresses via header table at offset 0.
+                            	     5: 
+                            	     6:     org     0
+                            	     7: 
+                            	     8: ; ============================================================================
+                            	     9: ; Header / Jump Table (fixed offsets from patch_base)
+                            	    10: ; ============================================================================
+00:00000000 60000082        	    11: patch_entry_init:       bra.w   do_patch_init           ; +0x0000
+00:00000004 600001DA        	    12: patch_entry_tb_wait:    bra.w   do_tb_wait              ; +0x0004
+00:00000008 600001F2        	    13: patch_entry_tb_wake:    bra.w   do_tb_wake              ; +0x0008
+00:0000000C 600001FA        	    14: patch_entry_flip:       bra.w   do_frame_flip           ; +0x000c
+00:00000010 60000A30        	    15: patch_entry_exit:       bra.w   do_patch_exit           ; +0x0010
+00:00000014 6000022C        	    16: patch_entry_scale:      bra.w   do_scale_loop           ; +0x0014
+00:00000018 600002CC        	    17: patch_entry_sky:        bra.w   do_sky_blitter          ; +0x0018
+00:0000001C 60000354        	    18: patch_entry_road:       bra.w   do_road_blitter         ; +0x001c
+00:00000020 600006B2        	    19: patch_entry_gtos_init:  bra.w   do_gtos_init            ; +0x0020
+00:00000024 600006DE        	    20: patch_entry_mtn:        bra.w   do_mtn_blitter          ; +0x0024
+00:00000028 6000078C        	    21: patch_entry_spr_aln:    bra.w   do_spr_aligned_blt      ; +0x0028
+00:0000002C 6000086A        	    22: patch_entry_spr_scl:    bra.w   do_spr_scaled_blt       ; +0x002c
+                            	    23: 
+                            	    24: ; ============================================================================
+                            	    25: ; Relocated Address Table (filled & added to GEMDOS reloc table by build script)
+                            	    26: ; ============================================================================
+                            	    27:                         align   2
+00:00000030 00000000        	    28: ptr_game_base:          dc.l    0                       ; +0x0030 -> base of OVERLAND_orig.PRG (+0x00000)
+00:00000034 00000000        	    29: ptr_orig_start:         dc.l    0                       ; +0x0034 -> +0x0011c (original entry $abb6)
+00:00000038 00000000        	    30: ptr_scr_bufs:           dc.l    0                       ; +0x0038 -> BSS: 3 * 32000 + 256 bytes
+00:0000003C 00000000        	    31: ptr_g_tos_buf:          dc.l    0                       ; +0x003c -> BSS: $3b000 bytes for G.TOS
+00:00000040 00000000        	    32: ptr_lowram_bss:         dc.l    0                       ; +0x0040 -> BSS: $8000 bytes ($0800..$8800)
+00:00000044 00000000        	    33: ptr_orig_sky_cont:      dc.l    0                       ; +0x0044 -> +0x03d46 ($00e7e0)
+00:00000048 00000000        	    34: ptr_orig_sky_done:      dc.l    0                       ; +0x0048 -> +0x03d92 ($00e82c)
+00:0000004C 00000000        	    35: ptr_orig_road_cont:     dc.l    0                       ; +0x004c -> +0x0cd92 ($01782c)
+00:00000050 00000000        	    36: ptr_mask_buf:           dc.l    0                       ; +0x0050 -> BSS: $f000 bytes (60 KB G.TOS masks)
+00:00000054 00000000        	    37: ptr_orig_mtn_cont:      dc.l    0                       ; +0x0054 -> +0x0368e ($00e128)
+00:00000058 00000000        	    38: ptr_orig_spr_aln_cont:  dc.l    0                       ; +0x0058 -> +0x0322e ($00dcc8)
+00:0000005C 00000000        	    39: ptr_orig_spr_scl_cont:  dc.l    0                       ; +0x005c -> +0x03832 ($00e2cc)
+                            	    40: 
+                            	    41: ; ============================================================================
+                            	    42: ; Runtime State Variables (in TEXT, writable on ST/STE/TT/Falcon)
+                            	    43: ; ============================================================================
+00:00000060 00              	    44: has_blitter:            dc.b    0
+00:00000061 00              	    45: has_dma:                dc.b    0
+00:00000062 00              	    46: is_tt:                  dc.b    0
+00:00000063 00              	    47: is_falcon:              dc.b    0
+00:00000064 00              	    48: tb_sync_flag:           dc.b    0
+00:00000065 00              	    49: saved_rez:              dc.b    0
+00:00000066 0002            	    50: pace_vbls:              dc.w    2                       ; 2 VBLs = 25.0 fps (50 Hz) / 30.0 fps (60 Hz)
+00:00000068 00000000        	    51: saved_physbase:         dc.l    0
+00:0000006C 00000000        	    52: saved_logbase:          dc.l    0
+00:00000070 00000000        	    53: scr_addr_0:             dc.l    0
+00:00000074 00000000        	    54: scr_addr_1:             dc.l    0
+00:00000078 00000000        	    55: scr_addr_2:             dc.l    0
+00:0000007C 472E544F53      	    56: str_gtos_chk:           dc.b    'G.TOS',0
+00:00000081 00
+00:00000082 5C              	    57: str_root_dir:           dc.b    '\',0
+00:00000083 00
+                            	    58:                         even
+                            	    59: 
+                            	    60: ; ============================================================================
+                            	    61: ; do_patch_init — called instead of +0x0010e ($aba8) on startup (User mode)
+                            	    62: ; ============================================================================
+                            	    63: do_patch_init:
+                            	    64:     ; 0. If G.TOS is not in CWD (e.g. launched from A:\AUTO\), switch to root "\"
+00:00000084 3F3C0000        	    65:     move.w  #0,-(sp)                    ; read-only
+00:00000088 487AFFF2        	    66:     pea     str_gtos_chk(pc)
+00:0000008C 3F3C003D        	    67:     move.w  #$3d,-(sp)                  ; Fopen("G.TOS", 0)
+00:00000090 4E41            	    68:     trap    #1
+00:00000092 508F            	    69:     addq.l  #8,sp
+00:00000094 4A80            	    70:     tst.l   d0
+00:00000096 6B0C            	    71:     bmi.s   .try_root
+00:00000098 3F00            	    72:     move.w  d0,-(sp)
+00:0000009A 3F3C003E        	    73:     move.w  #$3e,-(sp)                  ; Fclose
+00:0000009E 4E41            	    74:     trap    #1
+00:000000A0 588F            	    75:     addq.l  #4,sp
+00:000000A2 600C            	    76:     bra.s   .cwd_ok
+                            	    77: .try_root:
+00:000000A4 487AFFDC        	    78:     pea     str_root_dir(pc)
+00:000000A8 3F3C003B        	    79:     move.w  #$3b,-(sp)                  ; Dsetpath("\")
+00:000000AC 4E41            	    80:     trap    #1
+00:000000AE 5C8F            	    81:     addq.l  #6,sp
+                            	    82: .cwd_ok:
+                            	    83: 
+                            	    84:     ; 1. Save current video mode & screen bases, switch to ST Low if needed (TT/Med-res)
+00:000000B0 3F3C0004        	    85:     move.w  #4,-(sp)                    ; XBIOS Getrez()
+00:000000B4 4E4E            	    86:     trap    #14
+00:000000B6 548F            	    87:     addq.l  #2,sp
+00:000000B8 41FAFFAB        	    88:     lea     saved_rez(pc),a0
+00:000000BC 1080            	    89:     move.b  d0,(a0)
+                            	    90: 
+00:000000BE 3F3C0002        	    91:     move.w  #2,-(sp)                    ; XBIOS Physbase()
+00:000000C2 4E4E            	    92:     trap    #14
+00:000000C4 548F            	    93:     addq.l  #2,sp
+00:000000C6 41FAFFA0        	    94:     lea     saved_physbase(pc),a0
+00:000000CA 2080            	    95:     move.l  d0,(a0)
+                            	    96: 
+00:000000CC 3F3C0003        	    97:     move.w  #3,-(sp)                    ; XBIOS Logbase()
+00:000000D0 4E4E            	    98:     trap    #14
+00:000000D2 548F            	    99:     addq.l  #2,sp
+00:000000D4 41FAFF96        	   100:     lea     saved_logbase(pc),a0
+00:000000D8 2080            	   101:     move.l  d0,(a0)
+                            	   102: 
+                            	   103:     ; 2. Compute 256-byte aligned triple screen buffers inside ptr_scr_bufs
+00:000000DA 203AFF5C        	   104:     move.l  ptr_scr_bufs(pc),d0
+00:000000DE D0BC000000FF    	   105:     add.l   #255,d0
+00:000000E4 4200            	   106:     clr.b   d0                          ; 256-byte aligned
+00:000000E6 41FAFF88        	   107:     lea     scr_addr_0(pc),a0
+00:000000EA 20C0            	   108:     move.l  d0,(a0)+                    ; scr_addr_0
+00:000000EC D0BC00007D00    	   109:     add.l   #32000,d0
+00:000000F2 20C0            	   110:     move.l  d0,(a0)+                    ; scr_addr_1
+00:000000F4 D0BC00007D00    	   111:     add.l   #32000,d0
+00:000000FA 2080            	   112:     move.l  d0,(a0)                     ; scr_addr_2
+                            	   113: 
+                            	   114:     ; Clear all 3 screen buffers (96,000 bytes = 24,000 longs)
+00:000000FC 207AFF72        	   115:     movea.l scr_addr_0(pc),a0
+00:00000100 323C5DBF        	   116:     move.w  #24000-1,d1
+                            	   117: .clr_scr:
+00:00000104 4298            	   118:     clr.l   (a0)+
+00:00000106 51C9FFFC        	   119:     dbra    d1,.clr_scr
+                            	   120: 
+                            	   121:     ; Store into Overlander header vars (+0x0e=$aaa8, +0x12=$aaac, +0x16=$aab0, +0x1a=$aab4)
+00:0000010A 227AFF24        	   122:     movea.l ptr_game_base(pc),a1
+00:0000010E 237AFF60000E    	   123:     move.l  scr_addr_0(pc),$0e(a1)      ; $aaa8
+00:00000114 237AFF620012    	   124:     move.l  scr_addr_2(pc),$12(a1)      ; $aaac
+00:0000011A 237AFF580016    	   125:     move.l  scr_addr_1(pc),$16(a1)      ; $aab0
+00:00000120 237AFF52001A    	   126:     move.l  scr_addr_1(pc),$1a(a1)      ; $aab4
+                            	   127: 
+                            	   128:     ; 3. Switch to ST Low (rez=0) if not already ST Low (fixes TT VGA & Med-res)
+00:00000126 41FAFF3D        	   129:     lea     saved_rez(pc),a0
+00:0000012A 4A10            	   130:     tst.b   (a0)
+00:0000012C 6716            	   131:     beq.s   .already_low
+00:0000012E 3F3C0000        	   132:     move.w  #0,-(sp)                    ; ST Low
+00:00000132 2F3AFF40        	   133:     move.l  scr_addr_1(pc),-(sp)        ; physloc
+00:00000136 2F3AFF3C        	   134:     move.l  scr_addr_1(pc),-(sp)        ; logloc
+00:0000013A 3F3C0005        	   135:     move.w  #5,-(sp)                    ; XBIOS Setscreen
+00:0000013E 4E4E            	   136:     trap    #14
+00:00000140 4FEF000C        	   137:     lea     12(sp),sp
+                            	   138: .already_low:
+                            	   139: 
+                            	   140:     ; 4. Overlander installs its own IKBD handler ($0129e4) which parses joystick & mouse packets cleanly.
+                            	   141:     ;    Do not send $12 before $0129e4 resets the ACIA.
+                            	   142: 
+                            	   143:     ; 5. Enter Supervisor briefly to inspect cookies (_MCH, _SND) & probe Blitter
+00:00000144 42A7            	   144:     clr.l   -(sp)
+00:00000146 3F3C0020        	   145:     move.w  #$20,-(sp)                  ; GEMDOS Super(0)
+00:0000014A 4E41            	   146:     trap    #1
+00:0000014C 5C8F            	   147:     addq.l  #6,sp
+00:0000014E 2F00            	   148:     move.l  d0,-(sp)                    ; save old SSP
+                            	   149: 
+00:00000150 610E            	   150:     bsr.s   detect_hardware
+                            	   151: 
+00:00000152 3F3C0020        	   152:     move.w  #$20,-(sp)                  ; GEMDOS Super(old_ssp)
+00:00000156 4E41            	   153:     trap    #1
+00:00000158 5C8F            	   154:     addq.l  #6,sp
+                            	   155: 
+                            	   156:     ; 6. Jump to original Overlander startup (+0x0010e)
+00:0000015A 207AFED8        	   157:     movea.l ptr_orig_start(pc),a0
+00:0000015E 4ED0            	   158:     jmp     (a0)
+                            	   159: 
+                            	   160: ; ============================================================================
+                            	   161: ; detect_hardware — Supervisor mode: detect _MCH, _SND, Blitter
+                            	   162: ; ============================================================================
+                            	   163: detect_hardware:
+00:00000160 48E7F0E0        	   164:     movem.l d0-d3/a0-a2,-(sp)
+00:00000164 45FAFEFA        	   165:     lea     has_blitter(pc),a2
+00:00000168 4292            	   166:     clr.l   (a2)                        ; clear has_blitter, has_dma, is_tt, is_falcon
+                            	   167: 
+                            	   168:     ; Read cookie jar ($5a0.w)
+00:0000016A 203805A0        	   169:     move.l  $5a0.w,d0
+00:0000016E 6744            	   170:     beq.s   .no_jar
+00:00000170 2040            	   171:     movea.l d0,a0
+                            	   172: .jar_loop:
+00:00000172 2218            	   173:     move.l  (a0)+,d1
+00:00000174 673E            	   174:     beq.s   .no_jar
+00:00000176 2418            	   175:     move.l  (a0)+,d2
+00:00000178 B2BC5F4D4348    	   176:     cmp.l   #'_MCH',d1
+00:0000017E 661E            	   177:     bne.s   .chk_snd
+00:00000180 4842            	   178:     swap    d2
+00:00000182 B47C0002        	   179:     cmp.w   #2,d2
+00:00000186 6608            	   180:     bne.s   .chk_falc
+00:00000188 157C00010002    	   181:     move.b  #1,2(a2)                    ; is_tt = 1
+00:0000018E 60E2            	   182:     bra.s   .jar_loop
+                            	   183: .chk_falc:
+00:00000190 B47C0003        	   184:     cmp.w   #3,d2
+00:00000194 66DC            	   185:     bne.s   .jar_loop
+00:00000196 157C00010003    	   186:     move.b  #1,3(a2)                    ; is_falcon = 1
+00:0000019C 60D4            	   187:     bra.s   .jar_loop
+                            	   188: .chk_snd:
+00:0000019E B2BC5F534E44    	   189:     cmp.l   #'_SND',d1
+00:000001A4 66CC            	   190:     bne.s   .jar_loop
+00:000001A6 08020001        	   191:     btst    #1,d2                       ; bit 1 = STE/TT/Falcon DMA sound
+00:000001AA 67C6            	   192:     beq.s   .jar_loop
+00:000001AC 157C00010001    	   193:     move.b  #1,1(a2)                    ; has_dma = 1
+00:000001B2 60BE            	   194:     bra.s   .jar_loop
+                            	   195: .no_jar:
+                            	   196: 
+                            	   197:     ; Safe Blitter probe ($ffff8a3c.w) with bus-error trap
+00:000001B4 40E7            	   198:     move.w  sr,-(sp)
+00:000001B6 007C0700        	   199:     ori.w   #$0700,sr
+00:000001BA 22780008        	   200:     move.l  $8.w,a1                     ; save Bus Error vector
+00:000001BE 41FA001E        	   201:     lea     .blt_berr(pc),a0
+00:000001C2 21C80008        	   202:     move.l  a0,$8.w
+00:000001C6 204F            	   203:     movea.l sp,a0                       ; save SP
+00:000001C8 4A388A3C        	   204:     tst.b   $ffff8a3c.w                 ; probe Blitter LINE_NUM/CTRL
+00:000001CC 14BC0001        	   205:     move.b  #1,(a2)                     ; succeeded -> has_blitter = 1
+                            	   206: .blt_done:
+00:000001D0 2E48            	   207:     movea.l a0,sp
+00:000001D2 21C90008        	   208:     move.l  a1,$8.w
+00:000001D6 46DF            	   209:     move.w  (sp)+,sr
+00:000001D8 4CDF070F        	   210:     movem.l (sp)+,d0-d3/a0-a2
+00:000001DC 4E75            	   211:     rts
+                            	   212: .blt_berr:
+00:000001DE 60F0            	   213:     bra.s   .blt_done
+                            	   214: 
+                            	   215: ; ============================================================================
+                            	   216: ; do_tb_wait / do_tb_wake — 68030 I-cache-safe replacement for $b822/$b834/$b840
+                            	   217: ; Replaces: move.w #$60fe, $b834.l ... bra.b $b834 / move.w #$6002, $b834.l
+                            	   218: ; ============================================================================
+                            	   219: do_tb_wait:
+00:000001E0 41FAFE82        	   220:     lea     tb_sync_flag(pc),a0         ; note: caller $b7f0 doesn't rely on a0 across wait
+00:000001E4 4210            	   221:     clr.b   (a0)
+00:000001E6 08B80000FA0F    	   222:     bclr.b  #0,$fffffa0f.w              ; clear Timer B ISR
+00:000001EC 46FC2300        	   223:     move.w  #$2300,sr
+                            	   224: .wait_tb:
+00:000001F0 4A10            	   225:     tst.b   (a0)
+00:000001F2 67FC            	   226:     beq.s   .wait_tb
+00:000001F4 08B80000FA0F    	   227:     bclr.b  #0,$fffffa0f.w
+00:000001FA 4E75            	   228:     rts
+                            	   229: 
+                            	   230: do_tb_wake:
+                            	   231:     ; Called via jsr from $b840 (Timer B ISR) — preserve ALL registers!
+00:000001FC 2F08            	   232:     move.l  a0,-(sp)
+00:000001FE 41FAFE64        	   233:     lea     tb_sync_flag(pc),a0
+00:00000202 50D0            	   234:     st      (a0)
+00:00000204 205F            	   235:     move.l  (sp)+,a0
+00:00000206 4E75            	   236:     rts
+                            	   237: 
+                            	   238: ; ============================================================================
+                            	   239: ; do_frame_flip — replaces sub_00af5a (+0x004c0) with clean VBL pacing
+                            	   240: ; ============================================================================
+                            	   241: do_frame_flip:
+00:00000208 207AFE26        	   242:     movea.l ptr_game_base(pc),a0
+                            	   243: .wait_lock:
+00:0000020C 082800020004    	   244:     btst.b  #2,$04(a0)                  ; $aa9e bit 2
+00:00000212 66F8            	   245:     bne.s   .wait_lock
+                            	   246: .wait_vbl:
+00:00000214 4A680006        	   247:     tst.w   $06(a0)                     ; $aaa0 (decremented every VBL)
+00:00000218 66FA            	   248:     bne.s   .wait_vbl
+                            	   249: 
+                            	   250:     ; Triple-buffer rotation ($aaa8, $aaac, $aab0 -> $aab4)
+00:0000021A 2268000E        	   251:     move.l  $0e(a0),a1                  ; a1 = old $aaa8
+00:0000021E 21680012000E    	   252:     move.l  $12(a0),$0e(a0)             ; $aaa8 = old $aaac
+00:00000224 216800160012    	   253:     move.l  $16(a0),$12(a0)             ; $aaac = old $aab0
+00:0000022A 21490016        	   254:     move.l  a1,$16(a0)                  ; $aab0 = old $aaa8
+00:0000022E 2151001A        	   255:     move.l  (a1),$1a(a0)                ; $aab4 = *(old $aaa8) (screen base)
+00:00000232 317AFE320006    	   256:     move.w  pace_vbls(pc),$06(a0)       ; $aaa0 = 2 VBLs (25.0 fps cap)
+00:00000238 5268000A        	   257:     addq.w  #1,$0a(a0)                  ; $aaa4++ (FPS counter)
+00:0000023C 4E75            	   258:     rts
+                            	   259: 
+                            	   260: ; ============================================================================
+                            	   261: ; do_scale_loop — 68030 I-cache-safe replacement for $00e2e0..$00e31a
+                            	   262: ; Replaces self-modifying `subi.w #imm,d6` / `addi.w #imm,d6`
+                            	   263: ; Inputs: (a0)=orig_h, d2=scaled_h, d3=draw_h-1, a2=src, a3=src_stride, a5=dst, a6=row_fn
+                            	   264: ; ============================================================================
+00:0000023E 0000            	   265: scale_add_val:          dc.w    0
+00:00000240 0000            	   266: scale_sub_val:          dc.w    0
+                            	   267: 
+                            	   268: do_scale_loop:
+00:00000242 3C10            	   269:     move.w  (a0),d6                     ; orig_h
+00:00000244 49FAFFF8        	   270:     lea     scale_add_val(pc),a4
+00:00000248 3886            	   271:     move.w  d6,(a4)                     ; scale_add_val = orig_h
+00:0000024A 3006            	   272:     move.w  d6,d0
+00:0000024C 9042            	   273:     sub.w   d2,d0
+00:0000024E 39400002        	   274:     move.w  d0,2(a4)                    ; scale_sub_val = orig_h - scaled_h
+00:00000252 E246            	   275:     asr.w   #1,d6                       ; d6 = orig_h / 2
+00:00000254 49FA000C        	   276:     lea     .row_ret(pc),a4
+00:00000258 3E03            	   277:     move.w  d3,d7
+00:0000025A 6B1C            	   278:     bmi.s   .scale_done
+                            	   279: .row_loop:
+00:0000025C 204A            	   280:     movea.l a2,a0
+00:0000025E 224D            	   281:     movea.l a5,a1
+00:00000260 4ED6            	   282:     jmp     (a6)                        ; row_fn returns via jmp (a4)
+                            	   283: .row_ret:
+00:00000262 D4CB            	   284:     adda.w  a3,a2
+00:00000264 4BED00A0        	   285:     lea     $a0(a5),a5
+00:00000268 9C7AFFD6        	   286:     sub.w   scale_sub_val(pc),d6
+00:0000026C 6E06            	   287:     bgt.s   .no_skip
+00:0000026E DC7AFFCE        	   288:     add.w   scale_add_val(pc),d6
+00:00000272 D4CB            	   289:     adda.w  a3,a2
+                            	   290: .no_skip:
+00:00000274 51CFFFE6        	   291:     dbra    d7,.row_loop
+                            	   292: .scale_done:
+00:00000278 4E75            	   293:     rts
+                            	   294: 
+                            	   295: ; ============================================================================
+                            	   296: ; STE Blitter Register Offsets (from a6 = $ffff8a00)
+                            	   297: ; ============================================================================
+                            	   298: BLT_SRC_XINC    equ $20
+                            	   299: BLT_SRC_YINC    equ $22
+                            	   300: BLT_SRC_ADDR    equ $24
+                            	   301: BLT_ENDMASK1    equ $28
+                            	   302: BLT_ENDMASK2    equ $2a
+                            	   303: BLT_ENDMASK3    equ $2c
+                            	   304: BLT_DST_XINC    equ $2e
+                            	   305: BLT_DST_YINC    equ $30
+                            	   306: BLT_DST_ADDR    equ $32
+                            	   307: BLT_X_CNT       equ $36
+                            	   308: BLT_Y_CNT       equ $38
+                            	   309: BLT_HOP         equ $3a
+                            	   310: BLT_OP          equ $3b
+                            	   311: BLT_CTRL        equ $3c
+                            	   312: BLT_SKEW        equ $3d
+                            	   313: 
+                            	   314: ; Helper: fill d7 lines at a0 with color 7 ($ffff,$ffff,$ffff,$0000) in 8-line HOG chunks
+                            	   315: ; Clobbers d0-d1/a0-a1; expects a6 = $ffff8a00, ENDMASK1/2/3=$ffff, HOP=0, SKEW=0
+                            	   316: blt_fill_color7_hog:
+00:0000027A 3D7C0002002E    	   317:     move.w  #2,BLT_DST_XINC(a6)
+00:00000280 3D7C00020030    	   318:     move.w  #2,BLT_DST_YINC(a6)
+00:00000286 2D480032        	   319:     move.l  a0,BLT_DST_ADDR(a6)
+00:0000028A 1D7C000F003B    	   320:     move.b  #15,BLT_OP(a6)
+00:00000290 3007            	   321:     move.w  d7,d0
+                            	   322: .f7_p1:
+00:00000292 7208            	   323:     moveq   #8,d1
+00:00000294 B041            	   324:     cmp.w   d1,d0
+00:00000296 6C02            	   325:     bge.s   .f7_p1_go
+00:00000298 3200            	   326:     move.w  d0,d1
+                            	   327: .f7_p1_go:
+00:0000029A 3D7C00500036    	   328:     move.w  #80,BLT_X_CNT(a6)
+00:000002A0 3D410038        	   329:     move.w  d1,BLT_Y_CNT(a6)
+00:000002A4 1D7C00C0003C    	   330:     move.b  #$c0,BLT_CTRL(a6)
+00:000002AA 9041            	   331:     sub.w   d1,d0
+00:000002AC 6EE4            	   332:     bgt.s   .f7_p1
+                            	   333: 
+                            	   334:     ; Pass 2: clear plane 3 (20 words/line * d7 lines, 16-line HOG chunks)
+00:000002AE 3D7C0008002E    	   335:     move.w  #8,BLT_DST_XINC(a6)
+00:000002B4 3D7C00080030    	   336:     move.w  #8,BLT_DST_YINC(a6)
+00:000002BA 43E80006        	   337:     lea     6(a0),a1
+00:000002BE 2D490032        	   338:     move.l  a1,BLT_DST_ADDR(a6)
+00:000002C2 422E003B        	   339:     clr.b   BLT_OP(a6)
+00:000002C6 3007            	   340:     move.w  d7,d0
+                            	   341: .f7_p2:
+00:000002C8 7210            	   342:     moveq   #16,d1
+00:000002CA B041            	   343:     cmp.w   d1,d0
+00:000002CC 6C02            	   344:     bge.s   .f7_p2_go
+00:000002CE 3200            	   345:     move.w  d0,d1
+                            	   346: .f7_p2_go:
+00:000002D0 3D7C00140036    	   347:     move.w  #20,BLT_X_CNT(a6)
+00:000002D6 3D410038        	   348:     move.w  d1,BLT_Y_CNT(a6)
+00:000002DA 1D7C00C0003C    	   349:     move.b  #$c0,BLT_CTRL(a6)
+00:000002E0 9041            	   350:     sub.w   d1,d0
+00:000002E2 6EE4            	   351:     bgt.s   .f7_p2
+00:000002E4 4E75            	   352:     rts
+                            	   353: 
+                            	   354: ; ============================================================================
+                            	   355: ; do_sky_blitter — STE Blitter replacement for sky fill ($00e7da..$00e82c)
+                            	   356: ; Fills horizon_y ($1742c) lines * 160 B with color 7 ($ffff,$ffff,$ffff,$0000)
+                            	   357: ; ============================================================================
+                            	   358: do_sky_blitter:
+00:000002E6 227AFD48        	   359:     movea.l ptr_game_base(pc),a1
+00:000002EA 2069000E        	   360:     movea.l $0e(a1),a0                  ; *$aaa8 -> scanline ptr table
+00:000002EE 2050            	   361:     movea.l (a0),a0                     ; screen base (y = 0)
+00:000002F0 4DFAFD6E        	   362:     lea     has_blitter(pc),a6
+00:000002F4 4A16            	   363:     tst.b   (a6)
+00:000002F6 67000034        	   364:     beq.w   .sky_cpu
+                            	   365: 
+00:000002FA D3FC0000C992    	   366:     adda.l  #$c992,a1                   ; $1742c = horizon_y (lines)
+00:00000300 3E11            	   367:     move.w  (a1),d7
+00:00000302 6F22            	   368:     ble.s   .sky_done
+                            	   369: 
+00:00000304 4DF88A00        	   370:     lea     $ffff8a00.w,a6
+00:00000308 3D7CFFFF0028    	   371:     move.w  #$ffff,BLT_ENDMASK1(a6)
+00:0000030E 3D7CFFFF002A    	   372:     move.w  #$ffff,BLT_ENDMASK2(a6)
+00:00000314 3D7CFFFF002C    	   373:     move.w  #$ffff,BLT_ENDMASK3(a6)
+00:0000031A 422E003D        	   374:     clr.b   BLT_SKEW(a6)
+00:0000031E 422E003A        	   375:     clr.b   BLT_HOP(a6)
+00:00000322 6100FF56        	   376:     bsr.w   blt_fill_color7_hog
+                            	   377: 
+                            	   378: .sky_done:
+00:00000326 207AFD20        	   379:     movea.l ptr_orig_sky_done(pc),a0
+00:0000032A 4ED0            	   380:     jmp     (a0)
+                            	   381: 
+                            	   382: .sky_cpu:
+00:0000032C 227AFD16        	   383:     movea.l ptr_orig_sky_cont(pc),a1
+00:00000330 4ED1            	   384:     jmp     (a1)
+                            	   385: 
+                            	   386: ; ============================================================================
+                            	   387: ; Endmask tables for STE Blitter horizontal spans (pixel 0..15)
+                            	   388: ; ============================================================================
+                            	   389: road_left_mask:
+00:00000332 FFFF            	   390:     dc.w    $ffff,$7fff,$3fff,$1fff,$0fff,$07ff,$03ff,$01ff
+00:00000334 7FFF
+00:00000336 3FFF
+00:00000338 1FFF
+00:0000033A 0FFF
+00:0000033C 07FF
+00:0000033E 03FF
+00:00000340 01FF
+00:00000342 00FF            	   391:     dc.w    $00ff,$007f,$003f,$001f,$000f,$0007,$0003,$0001
+00:00000344 007F
+00:00000346 003F
+00:00000348 001F
+00:0000034A 000F
+00:0000034C 0007
+00:0000034E 0003
+00:00000350 0001
+                            	   392: 
+                            	   393: road_right_mask:
+00:00000352 8000            	   394:     dc.w    $8000,$c000,$e000,$f000,$f800,$fc00,$fe00,$ff00
+00:00000354 C000
+00:00000356 E000
+00:00000358 F000
+00:0000035A F800
+00:0000035C FC00
+00:0000035E FE00
+00:00000360 FF00
+00:00000362 FF80            	   395:     dc.w    $ff80,$ffc0,$ffe0,$fff0,$fff8,$fffc,$fffe,$ffff
+00:00000364 FFC0
+00:00000366 FFE0
+00:00000368 FFF0
+00:0000036A FFF8
+00:0000036C FFFC
+00:0000036E FFFE
+00:00000370 FFFF
+                            	   396: 
+                            	   397: ; ============================================================================
+                            	   398: ; do_road_blitter — STE Blitter replacement for sub_017826 (+0xcd8c)
+                            	   399: ; Input: d0.w = y_start (draws scanlines y_start .. 127)
+                            	   400: ; ============================================================================
+                            	   401: do_road_blitter:
+00:00000372 4DFAFCEC        	   402:     lea     has_blitter(pc),a6
+00:00000376 4A16            	   403:     tst.b   (a6)
+00:00000378 660C            	   404:     bne.s   .road_blt
+                            	   405:     ; Plain ST / TT fallback: run original CPU road renderer
+00:0000037A 3F3C0080        	   406:     move.w  #$80,-(sp)
+00:0000037E 9157            	   407:     sub.w   d0,(sp)
+00:00000380 207AFCCA        	   408:     movea.l ptr_orig_road_cont(pc),a0
+00:00000384 4ED0            	   409:     jmp     (a0)
+                            	   410: 
+                            	   411: .road_blt:
+00:00000386 3E3C0080        	   412:     move.w  #$80,d7
+00:0000038A 9E40            	   413:     sub.w   d0,d7                       ; d7 = line count (128 - y_start)
+00:0000038C 6F00016E        	   414:     ble.w   .road_rts
+                            	   415: 
+                            	   416:     ; Compute a0 = road_table + y_start * 8, a2 = screen_ptrs[y_start]
+00:00000390 207AFCAE        	   417:     movea.l ptr_lowram_bss(pc),a0
+00:00000394 41E847DA        	   418:     adda.l  #($4fda-$0800),a0           ; road table base ($4fda)
+00:00000398 227AFC96        	   419:     movea.l ptr_game_base(pc),a1
+00:0000039C 2469000E        	   420:     movea.l $0e(a1),a2                  ; *$aaa8 -> scanline ptr table
+00:000003A0 3200            	   421:     move.w  d0,d1
+00:000003A2 E541            	   422:     asl.w   #2,d1
+00:000003A4 24721000        	   423:     movea.l (a2,d1.w),a2                ; a2 = screen addr at y_start
+00:000003A8 D241            	   424:     add.w   d1,d1                       ; d1 = y_start * 8
+00:000003AA D0C1            	   425:     adda.w  d1,a0                       ; a0 = &road_table[y_start]
+                            	   426: 
+                            	   427:     ; Step 1: Fill entire road area (d7 lines) with Grass color 7 in 8-line HOG chunks
+00:000003AC 4DF88A00        	   428:     lea     $ffff8a00.w,a6
+00:000003B0 3D7CFFFF0028    	   429:     move.w  #$ffff,BLT_ENDMASK1(a6)
+00:000003B6 3D7CFFFF002A    	   430:     move.w  #$ffff,BLT_ENDMASK2(a6)
+00:000003BC 3D7CFFFF002C    	   431:     move.w  #$ffff,BLT_ENDMASK3(a6)
+00:000003C2 422E003D        	   432:     clr.b   BLT_SKEW(a6)
+00:000003C6 422E003A        	   433:     clr.b   BLT_HOP(a6)
+00:000003CA 2F08            	   434:     move.l  a0,-(sp)
+00:000003CC 204A            	   435:     movea.l a2,a0
+00:000003CE 6100FEAA        	   436:     bsr.w   blt_fill_color7_hog
+00:000003D2 205F            	   437:     movea.l (sp)+,a0
+                            	   438: 
+                            	   439:     ; Step 2: Per-scanline Blitter span loop
+                            	   440:     ; Constant Blitter regs already set: DST_XINC=8, DST_YINC=8, ENDMASK2=$ffff, HOP=0, SKEW=0
+00:000003D4 49FAFF5C        	   441:     lea     road_left_mask(pc),a4
+00:000003D8 4BFAFF78        	   442:     lea     road_right_mask(pc),a5
+00:000003DC 5347            	   443:     subq.w  #1,d7                       ; dbra counter
+                            	   444: 
+                            	   445: .line_loop:
+                            	   446:     ; Check grass band: bit 6 of color_off (6(a0)) -> 0 = Grass 7 (1110), 1 = Grass 11 (1101)
+00:000003DE 3C280006        	   447:     move.w  6(a0),d6
+00:000003E2 08060006        	   448:     btst    #6,d6
+00:000003E6 670000BE        	   449:     beq.w   .grass_is_7
+                            	   450: 
+                            	   451:     ; Grass 11 (1101): flip P2 -> 0 and P3 -> 1 across full 20 words of this line
+00:000003EA 3D7CFFFF0028    	   452:     move.w  #$ffff,BLT_ENDMASK1(a6)
+00:000003F0 3D7CFFFF002C    	   453:     move.w  #$ffff,BLT_ENDMASK3(a6)
+00:000003F6 43EA0004        	   454:     lea     4(a2),a1
+00:000003FA 2D490032        	   455:     move.l  a1,BLT_DST_ADDR(a6)
+00:000003FE 3D7C00140036    	   456:     move.w  #20,BLT_X_CNT(a6)
+00:00000404 3D7C00010038    	   457:     move.w  #1,BLT_Y_CNT(a6)
+00:0000040A 422E003B        	   458:     clr.b   BLT_OP(a6)
+00:0000040E 1D7C00C0003C    	   459:     move.b  #$c0,BLT_CTRL(a6)           ; 1-line 20-word burst (~80 cyc)
+                            	   460: 
+00:00000414 5489            	   461:     addq.l  #2,a1
+00:00000416 2D490032        	   462:     move.l  a1,BLT_DST_ADDR(a6)
+00:0000041A 3D7C00140036    	   463:     move.w  #20,BLT_X_CNT(a6)
+00:00000420 3D7C00010038    	   464:     move.w  #1,BLT_Y_CNT(a6)
+00:00000426 1D7C000F003B    	   465:     move.b  #15,BLT_OP(a6)
+00:0000042C 1D7C00C0003C    	   466:     move.b  #$c0,BLT_CTRL(a6)
+                            	   467: 
+                            	   468:     ; Band 2 ($50) vs Band 3 ($78): test bit 3 ($28 = %00101000 -> bit 3 = 1)
+00:00000432 08060003        	   469:     btst    #3,d6
+00:00000436 6632            	   470:     bne.s   .band3
+                            	   471: 
+                            	   472:     ; --- Band 2: Grass=1101, Kerb=1010, Asphalt=1001 ---
+                            	   473:     ; P1 = 0 on Outer [left_x, right_x + kerb_w)
+00:00000438 3010            	   474:     move.w  (a0),d0                     ; left_x
+00:0000043A 32280002        	   475:     move.w  2(a0),d1                    ; right_x
+00:0000043E D2680004        	   476:     add.w   4(a0),d1                    ; right_x + kerb_w
+00:00000442 47EA0002        	   477:     lea     2(a2),a3                    ; plane 1
+00:00000446 7400            	   478:     moveq   #0,d2                       ; OP = 0
+00:00000448 610000B4        	   479:     bsr.w   blit_hspan
+                            	   480: 
+                            	   481:     ; Left kerb [left_x, left_x + kerb_w): P2 = 1, P3 = 0
+00:0000044C 3010            	   482:     move.w  (a0),d0
+00:0000044E 3200            	   483:     move.w  d0,d1
+00:00000450 D2680004        	   484:     add.w   4(a0),d1
+00:00000454 61000200        	   485:     bsr.w   blit_kerb_p2_1_p3_0
+                            	   486: 
+                            	   487:     ; Right kerb [right_x, right_x + kerb_w): P2 = 1, P3 = 0
+00:00000458 30280002        	   488:     move.w  2(a0),d0
+00:0000045C 3200            	   489:     move.w  d0,d1
+00:0000045E D2680004        	   490:     add.w   4(a0),d1
+00:00000462 610001F2        	   491:     bsr.w   blit_kerb_p2_1_p3_0
+00:00000466 6000008A        	   492:     bra.w   .next_line
+                            	   493: 
+                            	   494: .band3:
+                            	   495:     ; --- Band 3: Grass=1101, Kerb=1111, Asphalt=0101 ---
+                            	   496:     ; P0 = 0 on Inner [left_x + kerb_w, right_x)
+00:0000046A 3010            	   497:     move.w  (a0),d0
+00:0000046C D0680004        	   498:     add.w   4(a0),d0
+00:00000470 32280002        	   499:     move.w  2(a0),d1
+00:00000474 264A            	   500:     movea.l a2,a3                       ; plane 0
+00:00000476 7400            	   501:     moveq   #0,d2                       ; OP = 0
+00:00000478 61000084        	   502:     bsr.w   blit_hspan
+                            	   503: 
+                            	   504:     ; Left kerb [left_x, left_x + kerb_w): P2 = 1
+00:0000047C 3010            	   505:     move.w  (a0),d0
+00:0000047E 3200            	   506:     move.w  d0,d1
+00:00000480 D2680004        	   507:     add.w   4(a0),d1
+00:00000484 47EA0004        	   508:     lea     4(a2),a3                    ; plane 2
+00:00000488 740F            	   509:     moveq   #15,d2
+00:0000048A 61000072        	   510:     bsr.w   blit_hspan
+                            	   511: 
+                            	   512:     ; Right kerb [right_x, right_x + kerb_w): P2 = 1
+00:0000048E 30280002        	   513:     move.w  2(a0),d0
+00:00000492 3200            	   514:     move.w  d0,d1
+00:00000494 D2680004        	   515:     add.w   4(a0),d1
+00:00000498 47EA0004        	   516:     lea     4(a2),a3                    ; plane 2
+00:0000049C 740F            	   517:     moveq   #15,d2
+00:0000049E 6100005E        	   518:     bsr.w   blit_hspan
+00:000004A2 6000004E        	   519:     bra.w   .next_line
+                            	   520: 
+                            	   521: .grass_is_7:
+                            	   522:     ; Test Band 0 ($00) vs Band 1 ($28): bit 3
+00:000004A6 08060003        	   523:     btst    #3,d6
+00:000004AA 6624            	   524:     bne.s   .band1
+                            	   525: 
+                            	   526:     ; --- Band 0: Grass=1110, Kerb=1010, Asphalt=1001 ---
+                            	   527:     ; P1 = 0 on Outer [left_x, right_x + kerb_w)
+00:000004AC 3010            	   528:     move.w  (a0),d0
+00:000004AE 32280002        	   529:     move.w  2(a0),d1
+00:000004B2 D2680004        	   530:     add.w   4(a0),d1
+00:000004B6 47EA0002        	   531:     lea     2(a2),a3                    ; plane 1
+00:000004BA 7400            	   532:     moveq   #0,d2
+00:000004BC 61000040        	   533:     bsr.w   blit_hspan
+                            	   534: 
+                            	   535:     ; Inner [left_x + kerb_w, right_x): P2 = 0 AND P3 = 1 (share span calc!)
+00:000004C0 3010            	   536:     move.w  (a0),d0
+00:000004C2 D0680004        	   537:     add.w   4(a0),d0
+00:000004C6 32280002        	   538:     move.w  2(a0),d1
+00:000004CA 61000094        	   539:     bsr.w   blit_inner_p2_0_p3_1
+00:000004CE 6022            	   540:     bra.s   .next_line
+                            	   541: 
+                            	   542: .band1:
+                            	   543:     ; --- Band 1: Grass=1110, Kerb=1111, Asphalt=0101 ---
+                            	   544:     ; P3 = 1 on Outer [left_x, right_x + kerb_w)
+00:000004D0 3010            	   545:     move.w  (a0),d0
+00:000004D2 32280002        	   546:     move.w  2(a0),d1
+00:000004D6 D2680004        	   547:     add.w   4(a0),d1
+00:000004DA 47EA0006        	   548:     lea     6(a2),a3                    ; plane 3
+00:000004DE 740F            	   549:     moveq   #15,d2
+00:000004E0 6100001C        	   550:     bsr.w   blit_hspan
+                            	   551: 
+                            	   552:     ; Inner [left_x + kerb_w, right_x): P0 = 0 AND P2 = 0 (share span calc!)
+00:000004E4 3010            	   553:     move.w  (a0),d0
+00:000004E6 D0680004        	   554:     add.w   4(a0),d0
+00:000004EA 32280002        	   555:     move.w  2(a0),d1
+00:000004EE 610000EE        	   556:     bsr.w   blit_inner_p0_0_p2_0
+                            	   557: 
+                            	   558: .next_line:
+00:000004F2 5088            	   559:     addq.l  #8,a0
+00:000004F4 45EA00A0        	   560:     lea     160(a2),a2
+00:000004F8 51CFFEE4        	   561:     dbra    d7,.line_loop
+                            	   562: .road_rts:
+00:000004FC 4E75            	   563:     rts
+                            	   564: 
+                            	   565: ; ============================================================================
+                            	   566: ; Span Blitter Helpers (a4=left_mask, a5=right_mask, a6=$ffff8a00)
+                            	   567: ; Input: d0.w = x_start, d1.w = x_end (exclusive), a3 = scanline + plane*2, d2.b = OP
+                            	   568: ; ============================================================================
+                            	   569: blit_hspan:
+00:000004FE 4A40            	   570:     tst.w   d0
+00:00000500 6C02            	   571:     bge.s   .bh_l_ok
+00:00000502 7000            	   572:     moveq   #0,d0
+                            	   573: .bh_l_ok:
+00:00000504 B27C0140        	   574:     cmp.w   #320,d1
+00:00000508 6F04            	   575:     ble.s   .bh_r_ok
+00:0000050A 323C0140        	   576:     move.w  #320,d1
+                            	   577: .bh_r_ok:
+00:0000050E B041            	   578:     cmp.w   d1,d0
+00:00000510 6C4C            	   579:     bge.s   .bh_ret
+00:00000512 5341            	   580:     subq.w  #1,d1                       ; inclusive x_end
+                            	   581: 
+00:00000514 3600            	   582:     move.w  d0,d3
+00:00000516 C67C000F        	   583:     and.w   #15,d3
+00:0000051A D643            	   584:     add.w   d3,d3
+00:0000051C 38343000        	   585:     move.w  (a4,d3.w),d4                ; em1
+                            	   586: 
+00:00000520 3601            	   587:     move.w  d1,d3
+00:00000522 C67C000F        	   588:     and.w   #15,d3
+00:00000526 D643            	   589:     add.w   d3,d3
+00:00000528 3A353000        	   590:     move.w  (a5,d3.w),d5                ; em3
+                            	   591: 
+00:0000052C E848            	   592:     lsr.w   #4,d0                       ; w_start
+00:0000052E E849            	   593:     lsr.w   #4,d1                       ; w_end
+00:00000530 9240            	   594:     sub.w   d0,d1                       ; w_end - w_start
+00:00000532 6602            	   595:     bne.s   .bh_multi
+00:00000534 C845            	   596:     and.w   d5,d4                       ; single word: em1 &= em3
+                            	   597: .bh_multi:
+00:00000536 5241            	   598:     addq.w  #1,d1                       ; x_cnt
+00:00000538 E740            	   599:     asl.w   #3,d0                       ; w_start * 8
+00:0000053A 43F30000        	   600:     lea     (a3,d0.w),a1
+00:0000053E 3D440028        	   601:     move.w  d4,BLT_ENDMASK1(a6)
+00:00000542 3D45002C        	   602:     move.w  d5,BLT_ENDMASK3(a6)
+00:00000546 2D490032        	   603:     move.l  a1,BLT_DST_ADDR(a6)
+00:0000054A 3D410036        	   604:     move.w  d1,BLT_X_CNT(a6)
+00:0000054E 3D7C00010038    	   605:     move.w  #1,BLT_Y_CNT(a6)
+00:00000554 1D42003B        	   606:     move.b  d2,BLT_OP(a6)
+00:00000558 1D7C00C0003C    	   607:     move.b  #$c0,BLT_CTRL(a6)           ; tiny 1-line span (~16-80 cyc)
+                            	   608: .bh_ret:
+00:0000055E 4E75            	   609:     rts
+                            	   610: 
+                            	   611: ; Shared 2-plane inner span helper: P2 = 0, P3 = 1 (Band 0)
+                            	   612: blit_inner_p2_0_p3_1:
+00:00000560 4A40            	   613:     tst.w   d0
+00:00000562 6C02            	   614:     bge.s   .i0_l
+00:00000564 7000            	   615:     moveq   #0,d0
+                            	   616: .i0_l:
+00:00000566 B27C0140        	   617:     cmp.w   #320,d1
+00:0000056A 6F04            	   618:     ble.s   .i0_r
+00:0000056C 323C0140        	   619:     move.w  #320,d1
+                            	   620: .i0_r:
+00:00000570 B041            	   621:     cmp.w   d1,d0
+00:00000572 6C68            	   622:     bge.s   .i0_ret
+00:00000574 5341            	   623:     subq.w  #1,d1
+00:00000576 3600            	   624:     move.w  d0,d3
+00:00000578 C67C000F        	   625:     and.w   #15,d3
+00:0000057C D643            	   626:     add.w   d3,d3
+00:0000057E 38343000        	   627:     move.w  (a4,d3.w),d4
+00:00000582 3601            	   628:     move.w  d1,d3
+00:00000584 C67C000F        	   629:     and.w   #15,d3
+00:00000588 D643            	   630:     add.w   d3,d3
+00:0000058A 3A353000        	   631:     move.w  (a5,d3.w),d5
+00:0000058E E848            	   632:     lsr.w   #4,d0
+00:00000590 E849            	   633:     lsr.w   #4,d1
+00:00000592 9240            	   634:     sub.w   d0,d1
+00:00000594 6602            	   635:     bne.s   .i0_m
+00:00000596 C845            	   636:     and.w   d5,d4
+                            	   637: .i0_m:
+00:00000598 5241            	   638:     addq.w  #1,d1
+00:0000059A E740            	   639:     asl.w   #3,d0
+00:0000059C 43F20004        	   640:     lea     4(a2,d0.w),a1               ; plane 2
+00:000005A0 3D440028        	   641:     move.w  d4,BLT_ENDMASK1(a6)
+00:000005A4 3D45002C        	   642:     move.w  d5,BLT_ENDMASK3(a6)
+00:000005A8 2D490032        	   643:     move.l  a1,BLT_DST_ADDR(a6)
+00:000005AC 3D410036        	   644:     move.w  d1,BLT_X_CNT(a6)
+00:000005B0 3D7C00010038    	   645:     move.w  #1,BLT_Y_CNT(a6)
+00:000005B6 422E003B        	   646:     clr.b   BLT_OP(a6)                  ; P2 = 0
+00:000005BA 1D7C00C0003C    	   647:     move.b  #$c0,BLT_CTRL(a6)
+                            	   648: 
+00:000005C0 5489            	   649:     addq.l  #2,a1                       ; plane 3
+00:000005C2 2D490032        	   650:     move.l  a1,BLT_DST_ADDR(a6)
+00:000005C6 3D410036        	   651:     move.w  d1,BLT_X_CNT(a6)
+00:000005CA 3D7C00010038    	   652:     move.w  #1,BLT_Y_CNT(a6)
+00:000005D0 1D7C000F003B    	   653:     move.b  #15,BLT_OP(a6)              ; P3 = 1
+00:000005D6 1D7C00C0003C    	   654:     move.b  #$c0,BLT_CTRL(a6)
+                            	   655: .i0_ret:
+00:000005DC 4E75            	   656:     rts
+                            	   657: 
+                            	   658: ; Shared 2-plane inner span helper: P0 = 0, P2 = 0 (Band 1)
+                            	   659: blit_inner_p0_0_p2_0:
+00:000005DE 4A40            	   660:     tst.w   d0
+00:000005E0 6C02            	   661:     bge.s   .i1_l
+00:000005E2 7000            	   662:     moveq   #0,d0
+                            	   663: .i1_l:
+00:000005E4 B27C0140        	   664:     cmp.w   #320,d1
+00:000005E8 6F04            	   665:     ble.s   .i1_r
+00:000005EA 323C0140        	   666:     move.w  #320,d1
+                            	   667: .i1_r:
+00:000005EE B041            	   668:     cmp.w   d1,d0
+00:000005F0 6C62            	   669:     bge.s   .i1_ret
+00:000005F2 5341            	   670:     subq.w  #1,d1
+00:000005F4 3600            	   671:     move.w  d0,d3
+00:000005F6 C67C000F        	   672:     and.w   #15,d3
+00:000005FA D643            	   673:     add.w   d3,d3
+00:000005FC 38343000        	   674:     move.w  (a4,d3.w),d4
+00:00000600 3601            	   675:     move.w  d1,d3
+00:00000602 C67C000F        	   676:     and.w   #15,d3
+00:00000606 D643            	   677:     add.w   d3,d3
+00:00000608 3A353000        	   678:     move.w  (a5,d3.w),d5
+00:0000060C E848            	   679:     lsr.w   #4,d0
+00:0000060E E849            	   680:     lsr.w   #4,d1
+00:00000610 9240            	   681:     sub.w   d0,d1
+00:00000612 6602            	   682:     bne.s   .i1_m
+00:00000614 C845            	   683:     and.w   d5,d4
+                            	   684: .i1_m:
+00:00000616 5241            	   685:     addq.w  #1,d1
+00:00000618 E740            	   686:     asl.w   #3,d0
+00:0000061A 43F20000        	   687:     lea     (a2,d0.w),a1                ; plane 0
+00:0000061E 3D440028        	   688:     move.w  d4,BLT_ENDMASK1(a6)
+00:00000622 3D45002C        	   689:     move.w  d5,BLT_ENDMASK3(a6)
+00:00000626 2D490032        	   690:     move.l  a1,BLT_DST_ADDR(a6)
+00:0000062A 3D410036        	   691:     move.w  d1,BLT_X_CNT(a6)
+00:0000062E 3D7C00010038    	   692:     move.w  #1,BLT_Y_CNT(a6)
+00:00000634 422E003B        	   693:     clr.b   BLT_OP(a6)                  ; P0 = 0
+00:00000638 1D7C00C0003C    	   694:     move.b  #$c0,BLT_CTRL(a6)
+                            	   695: 
+00:0000063E 5889            	   696:     addq.l  #4,a1                       ; plane 2
+00:00000640 2D490032        	   697:     move.l  a1,BLT_DST_ADDR(a6)
+00:00000644 3D410036        	   698:     move.w  d1,BLT_X_CNT(a6)
+00:00000648 3D7C00010038    	   699:     move.w  #1,BLT_Y_CNT(a6)
+00:0000064E 1D7C00C0003C    	   700:     move.b  #$c0,BLT_CTRL(a6)
+                            	   701: .i1_ret:
+00:00000654 4E75            	   702:     rts
+                            	   703: 
+                            	   704: ; Shared 2-plane kerb helper: P2 = 1, P3 = 0 (Band 2)
+                            	   705: blit_kerb_p2_1_p3_0:
+00:00000656 4A40            	   706:     tst.w   d0
+00:00000658 6C02            	   707:     bge.s   .k2_l
+00:0000065A 7000            	   708:     moveq   #0,d0
+                            	   709: .k2_l:
+00:0000065C B27C0140        	   710:     cmp.w   #320,d1
+00:00000660 6F04            	   711:     ble.s   .k2_r
+00:00000662 323C0140        	   712:     move.w  #320,d1
+                            	   713: .k2_r:
+00:00000666 B041            	   714:     cmp.w   d1,d0
+00:00000668 6C68            	   715:     bge.s   .k2_ret
+00:0000066A 5341            	   716:     subq.w  #1,d1
+00:0000066C 3600            	   717:     move.w  d0,d3
+00:0000066E C67C000F        	   718:     and.w   #15,d3
+00:00000672 D643            	   719:     add.w   d3,d3
+00:00000674 38343000        	   720:     move.w  (a4,d3.w),d4
+00:00000678 3601            	   721:     move.w  d1,d3
+00:0000067A C67C000F        	   722:     and.w   #15,d3
+00:0000067E D643            	   723:     add.w   d3,d3
+00:00000680 3A353000        	   724:     move.w  (a5,d3.w),d5
+00:00000684 E848            	   725:     lsr.w   #4,d0
+00:00000686 E849            	   726:     lsr.w   #4,d1
+00:00000688 9240            	   727:     sub.w   d0,d1
+00:0000068A 6602            	   728:     bne.s   .k2_m
+00:0000068C C845            	   729:     and.w   d5,d4
+                            	   730: .k2_m:
+00:0000068E 5241            	   731:     addq.w  #1,d1
+00:00000690 E740            	   732:     asl.w   #3,d0
+00:00000692 43F20004        	   733:     lea     4(a2,d0.w),a1               ; plane 2
+00:00000696 3D440028        	   734:     move.w  d4,BLT_ENDMASK1(a6)
+00:0000069A 3D45002C        	   735:     move.w  d5,BLT_ENDMASK3(a6)
+00:0000069E 2D490032        	   736:     move.l  a1,BLT_DST_ADDR(a6)
+00:000006A2 3D410036        	   737:     move.w  d1,BLT_X_CNT(a6)
+00:000006A6 3D7C00010038    	   738:     move.w  #1,BLT_Y_CNT(a6)
+00:000006AC 1D7C000F003B    	   739:     move.b  #15,BLT_OP(a6)              ; P2 = 1
+00:000006B2 1D7C00C0003C    	   740:     move.b  #$c0,BLT_CTRL(a6)
+                            	   741: 
+00:000006B8 5489            	   742:     addq.l  #2,a1                       ; plane 3
+00:000006BA 2D490032        	   743:     move.l  a1,BLT_DST_ADDR(a6)
+00:000006BE 3D410036        	   744:     move.w  d1,BLT_X_CNT(a6)
+00:000006C2 3D7C00010038    	   745:     move.w  #1,BLT_Y_CNT(a6)
+00:000006C8 422E003B        	   746:     clr.b   BLT_OP(a6)                  ; P3 = 0
+00:000006CC 1D7C00C0003C    	   747:     move.b  #$c0,BLT_CTRL(a6)
+                            	   748: .k2_ret:
+00:000006D2 4E75            	   749:     rts
+                            	   750: 
+                            	   751: ; ============================================================================
+                            	   752: ; do_gtos_init — replaces jsr $1c(a0) at +0x02de ($00ad78)
+                            	   753: ; Calls original G.TOS table relocator, then precomputes 60 KB 1-plane masks
+                            	   754: ; for all 4-plane interleaved sprite data in G.TOS ($3b000 / 8 = 30,208 words)
+                            	   755: ; ============================================================================
+                            	   756: do_gtos_init:
+00:000006D4 4EA8001C        	   757:     jsr     $1c(a0)                     ; original G.TOS pointer-table relocator (returns table in a0)
+00:000006D8 48E7C0E0        	   758:     movem.l d0-d1/a0-a2,-(sp)
+00:000006DC 45FAF982        	   759:     lea     has_blitter(pc),a2
+00:000006E0 4A12            	   760:     tst.b   (a2)
+00:000006E2 671A            	   761:     beq.s   .no_masks
+00:000006E4 207AF956        	   762:     movea.l ptr_g_tos_buf(pc),a0
+00:000006E8 227AF966        	   763:     movea.l ptr_mask_buf(pc),a1
+00:000006EC 323C75FF        	   764:     move.w  #(($3b000/8)-1),d1
+                            	   765: .mk_mask:
+00:000006F0 3018            	   766:     move.w  (a0)+,d0
+00:000006F2 8058            	   767:     or.w    (a0)+,d0
+00:000006F4 8058            	   768:     or.w    (a0)+,d0
+00:000006F6 8058            	   769:     or.w    (a0)+,d0
+00:000006F8 32C0            	   770:     move.w  d0,(a1)+
+00:000006FA 51C9FFF4        	   771:     dbra    d1,.mk_mask
+                            	   772: .no_masks:
+00:000006FE 4CDF0703        	   773:     movem.l (sp)+,d0-d1/a0-a2
+00:00000702 4E75            	   774:     rts
+                            	   775: 
+                            	   776: ; ============================================================================
+                            	   777: ; do_mtn_blitter — STE Blitter replacement for parallax mountains ($00e122)
+                            	   778: ; Inputs: d0 = scroll_x, d1 = height-1, d2 = y_start
+                            	   779: ; ============================================================================
+                            	   780: do_mtn_blitter:
+00:00000704 4DFAF95A        	   781:     lea     has_blitter(pc),a6
+00:00000708 4A16            	   782:     tst.b   (a6)
+00:0000070A 6610            	   783:     bne.s   .mtn_blt
+00:0000070C D241            	   784:     add.w   d1,d1
+00:0000070E 2C7AF920        	   785:     movea.l ptr_game_base(pc),a6
+00:00000712 4DEE36D8        	   786:     adda.l  #$36d8,a6                   ; $e172 jump table
+00:00000716 207AF93C        	   787:     movea.l ptr_orig_mtn_cont(pc),a0
+00:0000071A 4ED0            	   788:     jmp     (a0)
+                            	   789: 
+                            	   790: .mtn_blt:
+                            	   791:     ; Compute preshifted buffer ptr a2 = preshift_tbl[d0 & 7] + *$dfd8
+00:0000071C 3600            	   792:     move.w  d0,d3
+00:0000071E C07C0007        	   793:     and.w   #7,d0
+00:00000722 E540            	   794:     asl.w   #2,d0
+00:00000724 207AF90A        	   795:     movea.l ptr_game_base(pc),a0
+00:00000728 45E83542        	   796:     lea     $3542(a0),a2                ; $dfdc (preshift table)
+00:0000072C 24720000        	   797:     movea.l (a2,d0.w),a2
+00:00000730 D5E8353E        	   798:     adda.l  $353e(a0),a2                ; + *$dfd8 (bss_scratch_40k)
+                            	   799: 
+                            	   800:     ; Wrap table ptr a4 = $dffc + (0x50 - ((d3 >> 2) & 0xfe))
+00:00000734 E443            	   801:     asr.w   #2,d3
+00:00000736 C67C00FE        	   802:     and.w   #$fe,d3
+00:0000073A 4443            	   803:     neg.w   d3
+00:0000073C 06430050        	   804:     addi.w  #$50,d3
+00:00000740 49E83562        	   805:     lea     $3562(a0),a4                ; $dffc (wrap table)
+00:00000744 D8C3            	   806:     adda.w  d3,a4
+                            	   807: 
+                            	   808:     ; Screen dest a3 = (*$aaa8)[d2 * 4]
+00:00000746 2668000E        	   809:     movea.l $0e(a0),a3                  ; *$aaa8
+00:0000074A E542            	   810:     asl.w   #2,d2
+00:0000074C 26732000        	   811:     movea.l (a3,d2.w),a3
+                            	   812: 
+                            	   813:     ; Setup Blitter for 20 columns of 4 words x (d1+1) lines
+00:00000750 5241            	   814:     addq.w  #1,d1                       ; height in lines
+00:00000752 4DF88A00        	   815:     lea     $ffff8a00.w,a6
+00:00000756 3D7C00020020    	   816:     move.w  #2,BLT_SRC_XINC(a6)
+00:0000075C 3D7C00020022    	   817:     move.w  #2,BLT_SRC_YINC(a6)
+00:00000762 3D7CFFFF0028    	   818:     move.w  #$ffff,BLT_ENDMASK1(a6)
+00:00000768 3D7CFFFF002A    	   819:     move.w  #$ffff,BLT_ENDMASK2(a6)
+00:0000076E 3D7CFFFF002C    	   820:     move.w  #$ffff,BLT_ENDMASK3(a6)
+00:00000774 3D7C0002002E    	   821:     move.w  #2,BLT_DST_XINC(a6)
+00:0000077A 3D7C009A0030    	   822:     move.w  #154,BLT_DST_YINC(a6)       ; 160 - 3*2 = 154
+00:00000780 1D7C0002003A    	   823:     move.b  #2,BLT_HOP(a6)              ; SRC only
+00:00000786 1D7C0003003B    	   824:     move.b  #3,BLT_OP(a6)               ; replace
+00:0000078C 422E003D        	   825:     clr.b   BLT_SKEW(a6)
+                            	   826: 
+00:00000790 7413            	   827:     moveq   #19,d2                      ; 20 columns
+                            	   828: .mtn_col:
+00:00000792 204A            	   829:     movea.l a2,a0
+00:00000794 D0DC            	   830:     adda.w  (a4)+,a0
+00:00000796 2D480024        	   831:     move.l  a0,BLT_SRC_ADDR(a6)
+00:0000079A 2D4B0032        	   832:     move.l  a3,BLT_DST_ADDR(a6)
+00:0000079E 3D7C00040036    	   833:     move.w  #4,BLT_X_CNT(a6)
+00:000007A4 3D410038        	   834:     move.w  d1,BLT_Y_CNT(a6)
+00:000007A8 1D7C00C0003C    	   835:     move.b  #$c0,BLT_CTRL(a6)           ; 64 words = ~512 cyc
+00:000007AE 508B            	   836:     addq.l  #8,a3
+00:000007B0 51CAFFE0        	   837:     dbra    d2,.mtn_col
+00:000007B4 4E75            	   838:     rts
+                            	   839: 
+                            	   840: ; ============================================================================
+                            	   841: ; do_spr_aligned_blt — STE Blitter replacement for sub_00dcc2 (+0x3228)
+                            	   842: ; Inputs: a0 = src (4-plane contiguous), a1 = dst screen, d6 = width_words-1, d7 = height-1
+                            	   843: ; ============================================================================
+                            	   844: do_spr_aligned_blt:
+00:000007B6 4DFAF8A8        	   845:     lea     has_blitter(pc),a6
+00:000007BA 4A16            	   846:     tst.b   (a6)
+00:000007BC 670000C2        	   847:     beq.w   .sa_cpu
+                            	   848: 
+                            	   849:     ; Check if a0 is inside [ptr_g_tos_buf, ptr_g_tos_buf + $3b000)
+00:000007C0 2008            	   850:     move.l  a0,d0
+00:000007C2 90BAF878        	   851:     sub.l   ptr_g_tos_buf(pc),d0
+00:000007C6 6B0000B8        	   852:     bmi.w   .sa_cpu
+00:000007CA B0BC0003B000    	   853:     cmp.l   #$3b000,d0
+00:000007D0 640000AE        	   854:     bhs.w   .sa_cpu
+                            	   855: 
+                            	   856:     ; Mask address a2 = ptr_mask_buf + (d0 >> 2)
+00:000007D4 E488            	   857:     lsr.l   #2,d0
+00:000007D6 247AF878        	   858:     movea.l ptr_mask_buf(pc),a2
+00:000007DA D5C0            	   859:     adda.l  d0,a2
+                            	   860: 
+00:000007DC 5246            	   861:     addq.w  #1,d6                       ; x_cnt (words)
+00:000007DE 5247            	   862:     addq.w  #1,d7                       ; y_cnt (lines)
+00:000007E0 3206            	   863:     move.w  d6,d1
+00:000007E2 5341            	   864:     subq.w  #1,d1
+00:000007E4 E741            	   865:     asl.w   #3,d1                       ; (x_cnt - 1) * 8
+00:000007E6 343C00A0        	   866:     move.w  #160,d2
+00:000007EA 9441            	   867:     sub.w   d1,d2                       ; dst_yinc = 160 - (x_cnt-1)*8
+                            	   868: 
+00:000007EC 4DF88A00        	   869:     lea     $ffff8a00.w,a6
+00:000007F0 3D7CFFFF0028    	   870:     move.w  #$ffff,BLT_ENDMASK1(a6)
+00:000007F6 3D7CFFFF002A    	   871:     move.w  #$ffff,BLT_ENDMASK2(a6)
+00:000007FC 3D7CFFFF002C    	   872:     move.w  #$ffff,BLT_ENDMASK3(a6)
+00:00000802 3D7C0008002E    	   873:     move.w  #8,BLT_DST_XINC(a6)
+00:00000808 3D420030        	   874:     move.w  d2,BLT_DST_YINC(a6)
+00:0000080C 1D7C0002003A    	   875:     move.b  #2,BLT_HOP(a6)
+00:00000812 422E003D        	   876:     clr.b   BLT_SKEW(a6)
+                            	   877: 
+                            	   878:     ; Pass 1: Mask cut (~SRC & DST, OP=4) across all 4 planes
+00:00000816 3D7C00020020    	   879:     move.w  #2,BLT_SRC_XINC(a6)
+00:0000081C 3D7C00020022    	   880:     move.w  #2,BLT_SRC_YINC(a6)
+00:00000822 1D7C0004003B    	   881:     move.b  #4,BLT_OP(a6)
+00:00000828 2649            	   882:     movea.l a1,a3
+00:0000082A 7603            	   883:     moveq   #3,d3
+                            	   884: .sa_mask_lp:
+00:0000082C 2D4A0024        	   885:     move.l  a2,BLT_SRC_ADDR(a6)
+00:00000830 2D4B0032        	   886:     move.l  a3,BLT_DST_ADDR(a6)
+00:00000834 3D460036        	   887:     move.w  d6,BLT_X_CNT(a6)
+00:00000838 3D470038        	   888:     move.w  d7,BLT_Y_CNT(a6)
+00:0000083C 1D7C00C0003C    	   889:     move.b  #$c0,BLT_CTRL(a6)
+00:00000842 548B            	   890:     addq.l  #2,a3
+00:00000844 51CBFFE6        	   891:     dbra    d3,.sa_mask_lp
+                            	   892: 
+                            	   893:     ; Pass 2: Sprite OR (SRC | DST, OP=7) across all 4 planes
+00:00000848 3D7C00080020    	   894:     move.w  #8,BLT_SRC_XINC(a6)
+00:0000084E 3D7C00080022    	   895:     move.w  #8,BLT_SRC_YINC(a6)
+00:00000854 1D7C0007003B    	   896:     move.b  #7,BLT_OP(a6)
+00:0000085A 2448            	   897:     movea.l a0,a2
+00:0000085C 2649            	   898:     movea.l a1,a3
+00:0000085E 7603            	   899:     moveq   #3,d3
+                            	   900: .sa_or_lp:
+00:00000860 2D4A0024        	   901:     move.l  a2,BLT_SRC_ADDR(a6)
+00:00000864 2D4B0032        	   902:     move.l  a3,BLT_DST_ADDR(a6)
+00:00000868 3D460036        	   903:     move.w  d6,BLT_X_CNT(a6)
+00:0000086C 3D470038        	   904:     move.w  d7,BLT_Y_CNT(a6)
+00:00000870 1D7C00C0003C    	   905:     move.b  #$c0,BLT_CTRL(a6)
+00:00000876 548A            	   906:     addq.l  #2,a2
+00:00000878 548B            	   907:     addq.l  #2,a3
+00:0000087A 51CBFFE4        	   908:     dbra    d3,.sa_or_lp
+00:0000087E 4E75            	   909:     rts
+                            	   910: 
+                            	   911: .sa_cpu:
+00:00000880 267AF7AE        	   912:     movea.l ptr_game_base(pc),a3
+00:00000884 47EB3240        	   913:     adda.l  #$3240,a3                   ; $dcda jump table
+00:00000888 DC46            	   914:     add.w   d6,d6
+00:0000088A 2C7AF7CC        	   915:     movea.l ptr_orig_spr_aln_cont(pc),a6
+00:0000088E 4ED6            	   916:     jmp     (a6)
+                            	   917: 
+                            	   918: ; ============================================================================
+                            	   919: ; do_spr_scaled_blt — STE Blitter replacement for shifted + Y-scaled sprites ($00e2c4)
+                            	   920: ; Inputs:
+                            	   921: ;   a0 = sprite header ((a0) = orig_h)
+                            	   922: ;   a2 = src row ptr (4-plane), a3.w = src_stride (bytes)
+                            	   923: ;   a5 = dst screen ptr
+                            	   924: ;   d0 = width_words - 1 (0..7)
+                            	   925: ;   d2 = scaled_h, d3 = draw_h - 1, d5 = x & 15
+                            	   926: ; ============================================================================
+00:00000890 0000            	   927: scl_x_cnt:      dc.w    0
+00:00000892 0000            	   928: scl_mask_str:   dc.w    0
+00:00000894 0000            	   929: scl_add_h:      dc.w    0
+00:00000896 0000            	   930: scl_sub_h:      dc.w    0
+                            	   931: 
+                            	   932: do_spr_scaled_blt:
+00:00000898 4DFAF7C6        	   933:     lea     has_blitter(pc),a6
+00:0000089C 4A16            	   934:     tst.b   (a6)
+00:0000089E 67000196        	   935:     beq.w   .ss_cpu
+                            	   936: 
+                            	   937:     ; Check draw_h - 1 >= 0
+00:000008A2 4A43            	   938:     tst.w   d3
+00:000008A4 6B00018E        	   939:     bmi.w   .ss_rts
+                            	   940: 
+                            	   941:     ; Check if a2 is inside [ptr_g_tos_buf, ptr_g_tos_buf + $3b000)
+00:000008A8 220A            	   942:     move.l  a2,d1
+00:000008AA 92BAF790        	   943:     sub.l   ptr_g_tos_buf(pc),d1
+00:000008AE 6B000186        	   944:     bmi.w   .ss_cpu
+00:000008B2 B2BC0003B000    	   945:     cmp.l   #$3b000,d1
+00:000008B8 6400017C        	   946:     bhs.w   .ss_cpu
+                            	   947: 
+                            	   948:     ; Compute mask row ptr a1 = ptr_mask_buf + (d1 >> 2)
+00:000008BC E489            	   949:     lsr.l   #2,d1
+00:000008BE 227AF790        	   950:     movea.l ptr_mask_buf(pc),a1
+00:000008C2 D3C1            	   951:     adda.l  d1,a1
+                            	   952: 
+                            	   953:     ; Compute SKEW + FXSR and adjust a2/a1 for shift cases:
+                            	   954:     ;   d5 & 15 == 8: skew = 0 (no FXSR)
+                            	   955:     ;   d5 & 15 >  8: skew = $80 | (d5 - 8), a2 -= 8, a1 -= 2
+                            	   956:     ;   d5 & 15 <  8: skew = $80 | (d5 + 8), a2 unchanged, a1 unchanged
+00:000008C4 CA7C000F        	   957:     and.w   #15,d5
+00:000008C8 5145            	   958:     subq.w  #8,d5
+00:000008CA 6714            	   959:     beq.s   .ss_skew_ok                 ; d5 = 0 -> no FXSR
+00:000008CC 6E0A            	   960:     bgt.s   .ss_ror
+00:000008CE 06450010        	   961:     addi.w  #16,d5                      ; 8..15
+00:000008D2 00450080        	   962:     ori.w   #$80,d5                     ; FXSR | (8..15)
+00:000008D6 6008            	   963:     bra.s   .ss_skew_ok
+                            	   964: .ss_ror:
+00:000008D8 00450080        	   965:     ori.w   #$80,d5                     ; FXSR | (1..7)
+00:000008DC 518A            	   966:     subq.l  #8,a2
+00:000008DE 5589            	   967:     subq.l  #2,a1
+                            	   968: .ss_skew_ok:
+                            	   969: 
+                            	   970:     ; Save width, mask stride, and Bresenham Y-scale steps
+00:000008E0 5240            	   971:     addq.w  #1,d0                       ; x_cnt = d0 + 1
+00:000008E2 49FAFFAC        	   972:     lea     scl_x_cnt(pc),a4
+00:000008E6 38C0            	   973:     move.w  d0,(a4)+                    ; scl_x_cnt
+00:000008E8 380B            	   974:     move.w  a3,d4
+00:000008EA E44C            	   975:     lsr.w   #2,d4                       ; mask_stride = src_stride >> 2
+00:000008EC 38C4            	   976:     move.w  d4,(a4)+                    ; scl_mask_str
+00:000008EE 3C10            	   977:     move.w  (a0),d6                     ; orig_h
+00:000008F0 38C6            	   978:     move.w  d6,(a4)+                    ; scl_add_h
+00:000008F2 3206            	   979:     move.w  d6,d1
+00:000008F4 9242            	   980:     sub.w   d2,d1
+00:000008F6 3881            	   981:     move.w  d1,(a4)                     ; scl_sub_h = orig_h - scaled_h
+00:000008F8 E246            	   982:     asr.w   #1,d6                       ; Bresenham accumulator = orig_h / 2
+                            	   983: 
+                            	   984:     ; Constant Blitter regs for all rows of this sprite
+00:000008FA 4DF88A00        	   985:     lea     $ffff8a00.w,a6
+00:000008FE 3D7CFFFF0028    	   986:     move.w  #$ffff,BLT_ENDMASK1(a6)
+00:00000904 3D7CFFFF002A    	   987:     move.w  #$ffff,BLT_ENDMASK2(a6)
+00:0000090A 3D7CFFFF002C    	   988:     move.w  #$ffff,BLT_ENDMASK3(a6)
+00:00000910 3D7C0008002E    	   989:     move.w  #8,BLT_DST_XINC(a6)
+00:00000916 1D7C0002003A    	   990:     move.b  #2,BLT_HOP(a6)
+00:0000091C 1D45003D        	   991:     move.b  d5,BLT_SKEW(a6)
+                            	   992: 
+00:00000920 3E03            	   993:     move.w  d3,d7                       ; dbra row counter
+00:00000922 303AFF6C        	   994:     move.w  scl_x_cnt(pc),d0            ; keep x_cnt in d0
+00:00000926 383AFF6A        	   995:     move.w  scl_mask_str(pc),d4         ; keep mask_stride in d4
+                            	   996: 
+                            	   997: .ss_row:
+                            	   998:     ; --- Mask cut: 4 planes of ~SRC & DST (OP=4, SRC_XINC=2) ---
+00:0000092A 3D7C00020020    	   999:     move.w  #2,BLT_SRC_XINC(a6)
+00:00000930 1D7C0004003B    	  1000:     move.b  #4,BLT_OP(a6)
+00:00000936 284D            	  1001:     movea.l a5,a4
+00:00000938 2D490024        	  1002:     move.l  a1,BLT_SRC_ADDR(a6)
+00:0000093C 2D4C0032        	  1003:     move.l  a4,BLT_DST_ADDR(a6)
+00:00000940 3D400036        	  1004:     move.w  d0,BLT_X_CNT(a6)
+00:00000944 3D7C00010038    	  1005:     move.w  #1,BLT_Y_CNT(a6)
+00:0000094A 1D7C00C0003C    	  1006:     move.b  #$c0,BLT_CTRL(a6)
+00:00000950 548C            	  1007:     addq.l  #2,a4
+00:00000952 2D490024        	  1008:     move.l  a1,BLT_SRC_ADDR(a6)
+00:00000956 2D4C0032        	  1009:     move.l  a4,BLT_DST_ADDR(a6)
+00:0000095A 3D400036        	  1010:     move.w  d0,BLT_X_CNT(a6)
+00:0000095E 3D7C00010038    	  1011:     move.w  #1,BLT_Y_CNT(a6)
+00:00000964 1D7C00C0003C    	  1012:     move.b  #$c0,BLT_CTRL(a6)
+00:0000096A 548C            	  1013:     addq.l  #2,a4
+00:0000096C 2D490024        	  1014:     move.l  a1,BLT_SRC_ADDR(a6)
+00:00000970 2D4C0032        	  1015:     move.l  a4,BLT_DST_ADDR(a6)
+00:00000974 3D400036        	  1016:     move.w  d0,BLT_X_CNT(a6)
+00:00000978 3D7C00010038    	  1017:     move.w  #1,BLT_Y_CNT(a6)
+00:0000097E 1D7C00C0003C    	  1018:     move.b  #$c0,BLT_CTRL(a6)
+00:00000984 548C            	  1019:     addq.l  #2,a4
+00:00000986 2D490024        	  1020:     move.l  a1,BLT_SRC_ADDR(a6)
+00:0000098A 2D4C0032        	  1021:     move.l  a4,BLT_DST_ADDR(a6)
+00:0000098E 3D400036        	  1022:     move.w  d0,BLT_X_CNT(a6)
+00:00000992 3D7C00010038    	  1023:     move.w  #1,BLT_Y_CNT(a6)
+00:00000998 1D7C00C0003C    	  1024:     move.b  #$c0,BLT_CTRL(a6)
+                            	  1025: 
+                            	  1026:     ; --- Sprite OR: 4 planes of SRC | DST (OP=7, SRC_XINC=8) ---
+00:0000099E 3D7C00080020    	  1027:     move.w  #8,BLT_SRC_XINC(a6)
+00:000009A4 1D7C0007003B    	  1028:     move.b  #7,BLT_OP(a6)
+00:000009AA 204A            	  1029:     movea.l a2,a0
+00:000009AC 284D            	  1030:     movea.l a5,a4
+00:000009AE 2D480024        	  1031:     move.l  a0,BLT_SRC_ADDR(a6)
+00:000009B2 2D4C0032        	  1032:     move.l  a4,BLT_DST_ADDR(a6)
+00:000009B6 3D400036        	  1033:     move.w  d0,BLT_X_CNT(a6)
+00:000009BA 3D7C00010038    	  1034:     move.w  #1,BLT_Y_CNT(a6)
+00:000009C0 1D7C00C0003C    	  1035:     move.b  #$c0,BLT_CTRL(a6)
+00:000009C6 5488            	  1036:     addq.l  #2,a0
+00:000009C8 548C            	  1037:     addq.l  #2,a4
+00:000009CA 2D480024        	  1038:     move.l  a0,BLT_SRC_ADDR(a6)
+00:000009CE 2D4C0032        	  1039:     move.l  a4,BLT_DST_ADDR(a6)
+00:000009D2 3D400036        	  1040:     move.w  d0,BLT_X_CNT(a6)
+00:000009D6 3D7C00010038    	  1041:     move.w  #1,BLT_Y_CNT(a6)
+00:000009DC 1D7C00C0003C    	  1042:     move.b  #$c0,BLT_CTRL(a6)
+00:000009E2 5488            	  1043:     addq.l  #2,a0
+00:000009E4 548C            	  1044:     addq.l  #2,a4
+00:000009E6 2D480024        	  1045:     move.l  a0,BLT_SRC_ADDR(a6)
+00:000009EA 2D4C0032        	  1046:     move.l  a4,BLT_DST_ADDR(a6)
+00:000009EE 3D400036        	  1047:     move.w  d0,BLT_X_CNT(a6)
+00:000009F2 3D7C00010038    	  1048:     move.w  #1,BLT_Y_CNT(a6)
+00:000009F8 1D7C00C0003C    	  1049:     move.b  #$c0,BLT_CTRL(a6)
+00:000009FE 5488            	  1050:     addq.l  #2,a0
+00:00000A00 548C            	  1051:     addq.l  #2,a4
+00:00000A02 2D480024        	  1052:     move.l  a0,BLT_SRC_ADDR(a6)
+00:00000A06 2D4C0032        	  1053:     move.l  a4,BLT_DST_ADDR(a6)
+00:00000A0A 3D400036        	  1054:     move.w  d0,BLT_X_CNT(a6)
+00:00000A0E 3D7C00010038    	  1055:     move.w  #1,BLT_Y_CNT(a6)
+00:00000A14 1D7C00C0003C    	  1056:     move.b  #$c0,BLT_CTRL(a6)
+                            	  1057: 
+                            	  1058:     ; Advance row + Bresenham Y-skip
+00:00000A1A D4CB            	  1059:     adda.w  a3,a2
+00:00000A1C D2C4            	  1060:     adda.w  d4,a1
+00:00000A1E 4BED00A0        	  1061:     lea     160(a5),a5
+00:00000A22 9C7AFE72        	  1062:     sub.w   scl_sub_h(pc),d6
+00:00000A26 6E08            	  1063:     bgt.s   .ss_noskip
+00:00000A28 DC7AFE6A        	  1064:     add.w   scl_add_h(pc),d6
+00:00000A2C D4CB            	  1065:     adda.w  a3,a2
+00:00000A2E D2C4            	  1066:     adda.w  d4,a1
+                            	  1067: .ss_noskip:
+00:00000A30 51CFFEF8        	  1068:     dbra    d7,.ss_row
+                            	  1069: .ss_rts:
+00:00000A34 4E75            	  1070:     rts
+                            	  1071: 
+                            	  1072: .ss_cpu:
+00:00000A36 CA7C000F        	  1073:     and.w   #15,d5
+00:00000A3A 5145            	  1074:     subq.w  #8,d5
+00:00000A3C 2C7AF61E        	  1075:     movea.l ptr_orig_spr_scl_cont(pc),a6
+00:00000A40 4ED6            	  1076:     jmp     (a6)
+                            	  1077: 
+                            	  1078: ; ============================================================================
+                            	  1079: ; do_patch_exit — restore IKBD mouse & video mode (if ever exiting cleanly)
+                            	  1080: ; ============================================================================
+                            	  1081: do_patch_exit:
+00:00000A42 3F3C0008        	  1082:     move.w  #$08,-(sp)                  ; IKBD Relative Mouse
+00:00000A46 3F3C0004        	  1083:     move.w  #4,-(sp)
+00:00000A4A 3F3C0003        	  1084:     move.w  #3,-(sp)
+00:00000A4E 4E4D            	  1085:     trap    #13
+00:00000A50 5C8F            	  1086:     addq.l  #6,sp
+00:00000A52 4E75            	  1087:     rts
+                            	  1088: 
+
+
+Symbols by name:
+BLT_CTRL                         E:0000003C
+BLT_DST_ADDR                     E:00000032
+BLT_DST_XINC                     E:0000002E
+BLT_DST_YINC                     E:00000030
+BLT_ENDMASK1                     E:00000028
+BLT_ENDMASK2                     E:0000002A
+BLT_ENDMASK3                     E:0000002C
+BLT_HOP                          E:0000003A
+BLT_OP                           E:0000003B
+BLT_SKEW                         E:0000003D
+BLT_SRC_ADDR                     E:00000024
+BLT_SRC_XINC                     E:00000020
+BLT_SRC_YINC                     E:00000022
+BLT_X_CNT                        E:00000036
+BLT_Y_CNT                        E:00000038
+blit_hspan                       A:000004FE
+blit_inner_p0_0_p2_0             A:000005DE
+blit_inner_p2_0_p3_1             A:00000560
+blit_kerb_p2_1_p3_0              A:00000656
+blt_fill_color7_hog              A:0000027A
+detect_hardware                  A:00000160
+do_frame_flip                    A:00000208
+do_gtos_init                     A:000006D4
+do_mtn_blitter                   A:00000704
+do_patch_exit                    A:00000A42
+do_patch_init                    A:00000084
+do_road_blitter                  A:00000372
+do_scale_loop                    A:00000242
+do_sky_blitter                   A:000002E6
+do_spr_aligned_blt               A:000007B6
+do_spr_scaled_blt                A:00000898
+do_tb_wait                       A:000001E0
+do_tb_wake                       A:000001FC
+has_blitter                      A:00000060
+has_dma                          A:00000061
+is_falcon                        A:00000063
+is_tt                            A:00000062
+pace_vbls                        A:00000066
+patch_entry_exit                 A:00000010
+patch_entry_flip                 A:0000000C
+patch_entry_gtos_init            A:00000020
+patch_entry_init                 A:00000000
+patch_entry_mtn                  A:00000024
+patch_entry_road                 A:0000001C
+patch_entry_scale                A:00000014
+patch_entry_sky                  A:00000018
+patch_entry_spr_aln              A:00000028
+patch_entry_spr_scl              A:0000002C
+patch_entry_tb_wait              A:00000004
+patch_entry_tb_wake              A:00000008
+ptr_g_tos_buf                    A:0000003C
+ptr_game_base                    A:00000030
+ptr_lowram_bss                   A:00000040
+ptr_mask_buf                     A:00000050
+ptr_orig_mtn_cont                A:00000054
+ptr_orig_road_cont               A:0000004C
+ptr_orig_sky_cont                A:00000044
+ptr_orig_sky_done                A:00000048
+ptr_orig_spr_aln_cont            A:00000058
+ptr_orig_spr_scl_cont            A:0000005C
+ptr_orig_start                   A:00000034
+ptr_scr_bufs                     A:00000038
+road_left_mask                   A:00000332
+road_right_mask                  A:00000352
+saved_logbase                    A:0000006C
+saved_physbase                   A:00000068
+saved_rez                        A:00000065
+scale_add_val                    A:0000023E
+scale_sub_val                    A:00000240
+scl_add_h                        A:00000894
+scl_mask_str                     A:00000892
+scl_sub_h                        A:00000896
+scl_x_cnt                        A:00000890
+scr_addr_0                       A:00000070
+scr_addr_1                       A:00000074
+scr_addr_2                       A:00000078
+str_gtos_chk                     A:0000007C
+str_root_dir                     A:00000082
+tb_sync_flag                     A:00000064
+
+Symbols by value:
+00000000 patch_entry_init
+00000004 patch_entry_tb_wait
+00000008 patch_entry_tb_wake
+0000000C patch_entry_flip
+00000010 patch_entry_exit
+00000014 patch_entry_scale
+00000018 patch_entry_sky
+0000001C patch_entry_road
+00000020 BLT_SRC_XINC
+00000020 patch_entry_gtos_init
+00000022 BLT_SRC_YINC
+00000024 BLT_SRC_ADDR
+00000024 patch_entry_mtn
+00000028 BLT_ENDMASK1
+00000028 patch_entry_spr_aln
+0000002A BLT_ENDMASK2
+0000002C BLT_ENDMASK3
+0000002C patch_entry_spr_scl
+0000002E BLT_DST_XINC
+00000030 BLT_DST_YINC
+00000030 ptr_game_base
+00000032 BLT_DST_ADDR
+00000034 ptr_orig_start
+00000036 BLT_X_CNT
+00000038 BLT_Y_CNT
+00000038 ptr_scr_bufs
+0000003A BLT_HOP
+0000003B BLT_OP
+0000003C BLT_CTRL
+0000003C ptr_g_tos_buf
+0000003D BLT_SKEW
+00000040 ptr_lowram_bss
+00000044 ptr_orig_sky_cont
+00000048 ptr_orig_sky_done
+0000004C ptr_orig_road_cont
+00000050 ptr_mask_buf
+00000054 ptr_orig_mtn_cont
+00000058 ptr_orig_spr_aln_cont
+0000005C ptr_orig_spr_scl_cont
+00000060 has_blitter
+00000061 has_dma
+00000062 is_tt
+00000063 is_falcon
+00000064 tb_sync_flag
+00000065 saved_rez
+00000066 pace_vbls
+00000068 saved_physbase
+0000006C saved_logbase
+00000070 scr_addr_0
+00000074 scr_addr_1
+00000078 scr_addr_2
+0000007C str_gtos_chk
+00000082 str_root_dir
+00000084 do_patch_init
+00000160 detect_hardware
+000001E0 do_tb_wait
+000001FC do_tb_wake
+00000208 do_frame_flip
+0000023E scale_add_val
+00000240 scale_sub_val
+00000242 do_scale_loop
+0000027A blt_fill_color7_hog
+000002E6 do_sky_blitter
+00000332 road_left_mask
+00000352 road_right_mask
+00000372 do_road_blitter
+000004FE blit_hspan
+00000560 blit_inner_p2_0_p3_1
+000005DE blit_inner_p0_0_p2_0
+00000656 blit_kerb_p2_1_p3_0
+000006D4 do_gtos_init
+00000704 do_mtn_blitter
+000007B6 do_spr_aligned_blt
+00000890 scl_x_cnt
+00000892 scl_mask_str
+00000894 scl_add_h
+00000896 scl_sub_h
+00000898 do_spr_scaled_blt
+00000A42 do_patch_exit

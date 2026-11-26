@@ -1,0 +1,2482 @@
+Sections:
+00: "org0001:ae940" (AE940-B02E6)
+
+
+Source: "patches/ko2_ste.s"
+                            	     1: ; ---------------------------------------------------------------------------
+                            	     2: ; Player Manager v1.1 — Atari STE Amiga Audio & Visuals Engine (KO2STE.BIN)
+                            	     3: ;
+                            	     4: ; Loaded at $0ae940..$0affff (5.7 KB, cleanly above KO2_FILES_CR $09d000..$0ae940)
+                            	     5: ; ONLY activated on Atari STE / Mega STE (when BR_IS_STE == 1).
+                            	     6: ; Plain 68000 ST never calls this and runs 100% classic v1.0 ST mode.
+                            	     7: ;
+                            	     8: ; 1 MB STE RAM Layout during live match (after KRD finishes loading!):
+                            	     9: ;   $081000..$08101f : STE 12-bit Amiga pitch palette (colours 0..7)
+                            	    10: ;   $081020..$082e1f : 80x96 Amiga pitch tilemap (7,680 bytes, 0-based)
+                            	    11: ;   $082e20..$088e1f : 256 x (16x16x3bpp) ST-interleaved tiles (24,576 bytes)
+                            	    12: ;   $088f00..$09afff : STE Corkscrew scrolling buffer (424 x 168 = 71.2 KB)
+                            	    13: ;   $09b000..$09cfff : Blitter 4bpp sprite save-under slots (32 x 256 = 8 KB)
+                            	    14: ;
+                            	    15: ; Entry points (fixed header at $0ae940):
+                            	    16: ;   +$00 : bra.w ste_install_hooks  (after KO2ENG.BIN loads, before $01fd92)
+                            	    17: ;   +$04 : bra.w ste_cleanup        (in Supervisor SR=$2700 on KO2 exit)
+                            	    18: ;   +$08 : STE_SND_SIZE.l           (filled by ko2_bridge.s with AMIGASND.BIN size)
+                            	    19: ;   +$0c : bra.w ste_load_pitch     (after $013450, loads AMIGAP0..3.BIN -> $081000)
+                            	    20: ; ---------------------------------------------------------------------------
+                            	    21: 
+                            	    22:         org     $0ae940
+                            	    23: 
+                            	    24: KO2_A4          equ     $0284aa
+                            	    25: BR_TOS_84       equ     $0b5814         ; saved original TOS TRAP #1 vector
+                            	    26: STE_SND_STG     equ     $0c8b00         ; AMIGASND.BIN staging in KO2_REPLAY_BUF
+                            	    27: 
+                            	    28: STE_PIT_PAL     equ     $081000         ; 32 bytes (8 STE 12-bit pitch colours)
+                            	    29: STE_PIT_MAP     equ     $081020         ; 7,680 bytes (80 x 96 tilemap)
+                            	    30: STE_PIT_TILES   equ     $082e20         ; 24,576 bytes (256 x 96 bytes)
+                            	    31: STE_CORK_BUF    equ     $088f00         ; 73,984 bytes (424 x 168 + 480 slack)
+                            	    32: STE_SAVE_UNDER  equ     $09b000         ; 8,192 bytes (32 x 256 byte save-under slots)
+                            	    33: ; STE Blitter HUD/Radar save-under & 1bpp mask buffers (100% inside 1 MB RAM!):
+                            	    34: STE_HUD_MASK    equ     $07fd00         ; 320 bytes (1bpp HUD/Banner mask & 32B sprite mask)
+                            	    35: STE_MASK_BUF    equ     $07fd00         ; 32 bytes (16-line 1bpp sprite mask scratch)
+                            	    36: STE_RADAR_SAVE  equ     $07fe40         ; 4,536 bytes: Blitter radar line save-under pool!
+                            	    37: STE_RAD_POOL    equ     $07fe40         ; line pixel save pool ($07fe40..$080ff8 = 4,536B = 567 cells -> fits scale=8!)
+                            	    38: STE_RAD_POOL_END equ    $080ff8
+                            	    39: STE_RAD_LREC    equ     $09a700         ; line restore records (max 24 x 12B = 288B -> $09a820, free gap > CORK $09a678
+                            	    40: STE_RAD_DREC    equ     $09a820         ; dot restore records (max 56 x 12B = 672B -> $09aac0 < SAVE_UNDER $09b000)
+                            	    41: STE_BHUD_SAVE   equ     $0b2400         ; 1,128 bytes (tight 3-box Bottom HUD) -> $0b2868
+                            	    42: STE_DRAW_STACK  equ     $0b2880         ; 512 bytes (32 x 16B overlap-safe LIFO sprite stack!) -> $0b2a80
+                            	    43: STE_BAN_SAVE    equ     $0b2a80         ; 1,344 bytes (8 lines x 21 cols x 8B) -> $0b2fc0 (< PMOK $0b2ff8!)
+                            	    44: 
+                            	    45: CORK_STRIDE     equ     168             ; 336 pixels = 21 x 16px words (4 planes)
+                            	    46: CORK_RING_H     equ     224             ; 14 tile rows = 224 scanlines
+                            	    47: CORK_RING_BYTES equ     37632           ; 224 * 168
+                            	    48: 
+                            	    49: ; STE Blitter registers (short I/O addresses $ffff8a20..$ffff8a3d -> 4-byte .w saves 300B + cycles!)
+                            	    50: BLT_SRC_XINC    equ     $ffff8a20
+                            	    51: BLT_SRC_YINC    equ     $ffff8a22
+                            	    52: BLT_SRC_ADDR    equ     $ffff8a24
+                            	    53: BLT_ENDMASK1    equ     $ffff8a28
+                            	    54: BLT_ENDMASK2    equ     $ffff8a2a
+                            	    55: BLT_ENDMASK3    equ     $ffff8a2c
+                            	    56: BLT_DST_XINC    equ     $ffff8a2e
+                            	    57: BLT_DST_YINC    equ     $ffff8a30
+                            	    58: BLT_DST_ADDR    equ     $ffff8a32
+                            	    59: BLT_XCOUNT      equ     $ffff8a36
+                            	    60: BLT_YCOUNT      equ     $ffff8a38
+                            	    61: BLT_HOP         equ     $ffff8a3a
+                            	    62: BLT_OP          equ     $ffff8a3b
+                            	    63: BLT_LINE        equ     $ffff8a3c
+                            	    64: BLT_SKEW        equ     $ffff8a3d
+                            	    65: 
+                            	    66: ; Jump table & header at $0ae940
+                            	    67: ste_entry:
+00:000AE940 60000050        	    68:         bra.w   ste_install_hooks       ; +$00
+00:000AE944 600001B6        	    69:         bra.w   ste_cleanup             ; +$04
+00:000AE948 00000000        	    70: STE_SND_SIZE:   dc.l    0               ; +$08 (set by ko2_bridge.s)
+00:000AE94C 600001F0        	    71:         bra.w   ste_load_pitch          ; +$0c
+                            	    72: 
+                            	    73: ; ---------------------------------------------------------------------------
+                            	    74: ; Audio State variables
+                            	    75: ; ---------------------------------------------------------------------------
+00:000AE950 00000000        	    76: STE_SND_BASE:   dc.l    0               ; +$10: base of AMIGASND.BIN in KO2 heap
+00:000AE954 00000000        	    77: STE_SCRIPT_ST:  dc.l    0               ; start of current sound script
+00:000AE958 00000000        	    78: STE_SCRIPT_PTR: dc.l    0               ; current pointer in sound script (0 = idle)
+00:000AE95C 0000            	    79: STE_REPEAT_CNT: dc.w    0               ; repeat counter
+00:000AE95E 00              	    80: STE_SND_PEND:   dc.b    0               ; 1 = new sound requested
+00:000AE95F 00              	    81: STE_SND_STOP:   dc.b    0               ; 1 = stop DMA requested
+00:000AE960 00              	    82: STE_SND_PITCH:  dc.b    0
+00:000AE961 00              	    83: STE_SND_PAD:    dc.b    0
+00:000AE962 0000            	    84: STE_DMA_CNT:    dc.w    0               ; total STE DMA samples triggered
+                            	    85: 
+                            	    86: ; ---------------------------------------------------------------------------
+                            	    87: ; Video / Corkscrew / Blitter State variables
+                            	    88: ; ---------------------------------------------------------------------------
+00:000AE964 0000            	    89: STE_AMIGA_ON:   dc.w    0               ; 1 = Amiga STE Tiled Pitch ON, 0 = Classic ST
+00:000AE966 0000            	    90: STE_PITCH_OK:   dc.w    0               ; 1 = AMIGAPx.BIN loaded successfully
+00:000AE968 FC19            	    91: STE_CUR_TX:     dc.w    -999            ; last top-left tile X in Corkscrew
+00:000AE96A FC19            	    92: STE_CUR_TY:     dc.w    -999            ; last top-left tile Y in Corkscrew
+00:000AE96C 00088F00        	    93: STE_VIEW_BASE:  dc.l    STE_CORK_BUF    ; current display address for VBL
+00:000AE970 0000            	    94: STE_VIEW_HSCR:  dc.w    0               ; current STE fine hscroll (0..15)
+00:000AE972 0000            	    95: STE_SLOT_NEXT:  dc.w    0               ; next free save-under slot (0..31)
+00:000AE974 0000            	    96: STE_ST_PAL:     ds.w    8               ; saved Classic ST palette 0..7
+00:000AE976 *
+00:000AE984 0000            	    97: STE_ST_PAL_OK:  dc.w    0               ; 1 = saved ST palette captured
+00:000AE986 0000            	    98: STE_HUD_ACTIVE: dc.w    0               ; bit0=bhud saved, bit1=banner saved
+00:000AE988 00000000        	    99: STE_HUD_VBASE:  dc.l    0               ; STE_VIEW_BASE where HUD/Radar was drawn
+00:000AE98C 0000            	   100: STE_RAD_LCNT:   dc.w    0               ; active Blitter radar line records (0..24)
+00:000AE98E 0000            	   101: STE_RAD_DCNT:   dc.w    0               ; active radar dot records (0..56)
+00:000AE990 0000            	   102: STE_DRAW_CNT:   dc.w    0               ; number of sprites on LIFO draw stack (0..32)
+                            	   103: 
+                            	   104: ; ---------------------------------------------------------------------------
+                            	   105: ; ste_install_hooks: Patch KO2ENG.BIN at $010000..$024000 for STE hardware
+                            	   106: ; ---------------------------------------------------------------------------
+                            	   107: ste_install_hooks:
+00:000AE992 42B9000AE950    	   108:         clr.l   STE_SND_BASE
+00:000AE998 42B9000AE954    	   109:         clr.l   STE_SCRIPT_ST
+00:000AE99E 42B9000AE958    	   110:         clr.l   STE_SCRIPT_PTR
+00:000AE9A4 4279000AE95C    	   111:         clr.w   STE_REPEAT_CNT
+00:000AE9AA 4239000AE95E    	   112:         clr.b   STE_SND_PEND
+00:000AE9B0 4239000AE95F    	   113:         clr.b   STE_SND_STOP
+00:000AE9B6 4279000AE962    	   114:         clr.w   STE_DMA_CNT
+00:000AE9BC 4279000AE964    	   115:         clr.w   STE_AMIGA_ON
+00:000AE9C2 4279000AE966    	   116:         clr.w   STE_PITCH_OK
+00:000AE9C8 4279000AE984    	   117:         clr.w   STE_ST_PAL_OK
+00:000AE9CE 4279000AE986    	   118:         clr.w   STE_HUD_ACTIVE
+00:000AE9D4 4279000AE98C    	   119:         clr.w   STE_RAD_LCNT
+00:000AE9DA 4279000AE98E    	   120:         clr.w   STE_RAD_DCNT
+00:000AE9E0 4279000AE990    	   121:         clr.w   STE_DRAW_CNT
+00:000AE9E6 4279000AE972    	   122:         clr.w   STE_SLOT_NEXT
+00:000AE9EC 33FCFC19000AE968	   123:         move.w  #-999,STE_CUR_TX
+00:000AE9F4 33FCFC19000AE96A	   124:         move.w  #-999,STE_CUR_TY
+00:000AE9FC 23FC00088F00000A	   125:         move.l  #STE_CORK_BUF,STE_VIEW_BASE
+00:000AEA04 E96C
+00:000AEA06 4279000AE970    	   126:         clr.w   STE_VIEW_HSCR
+                            	   127: 
+                            	   128:         ; Install TRAP #8 ($a0.w) fast Supervisor Blitter dispatcher via Supexec
+00:000AEA0C 487A00E4        	   129:         pea     ste_inst_trap8(pc)
+00:000AEA10 3F3C0026        	   130:         move.w  #$26,-(sp)
+00:000AEA14 4E4E            	   131:         trap    #14
+00:000AEA16 5C8F            	   132:         addq.l  #6,sp
+                            	   133: 
+                            	   134:         ; 1. Audio hooks ($01849e load, $0184fe play low, $018506 play hi, $018598 stop)
+00:000AEA18 33FC4EF90001849E	   135:         move.w  #$4ef9,$01849e.l
+00:000AEA20 23FC000AEB980001	   136:         move.l  #ste_load_samples,$0184a0.l
+00:000AEA28 84A0
+00:000AEA2A 33FC4EF9000184FE	   137:         move.w  #$4ef9,$0184fe.l
+00:000AEA32 23FC000AEBE00001	   138:         move.l  #ste_play_sound,$018500.l
+00:000AEA3A 8500
+00:000AEA3C 33FC4EF900018506	   139:         move.w  #$4ef9,$018506.l
+00:000AEA44 23FC000AEBE60001	   140:         move.l  #ste_play_sound_hi,$018508.l
+00:000AEA4C 8508
+00:000AEA4E 33FC4EF900018598	   141:         move.w  #$4ef9,$018598.l
+00:000AEA56 23FC000AEC1C0001	   142:         move.l  #ste_stop_sound,$01859a.l
+00:000AEA5E 859A
+                            	   143: 
+                            	   144:         ; 2. VBL top ($018d06 Timer B setup) & bottom ($018e0a $ff8240 write + $018e22 end)
+00:000AEA60 33FC4EF900018D06	   145:         move.w  #$4ef9,$018d06.l
+00:000AEA68 23FC000AEC360001	   146:         move.l  #ste_vbl_top,$018d08.l
+00:000AEA70 8D08
+00:000AEA72 33FC4EF900018E0A	   147:         move.w  #$4ef9,$018e0a.l
+00:000AEA7A 23FC000AED3A0001	   148:         move.l  #ste_vbl_end,$018e0c.l
+00:000AEA82 8E0C
+                            	   149: 
+                            	   150:         ; 3. Pitch camera & lines ($01c1d0)
+00:000AEA84 33FC4EF90001C1D0	   151:         move.w  #$4ef9,$01c1d0.l
+00:000AEA8C 23FC000AEF0A0001	   152:         move.l  #ste_pitch_update,$01c1d2.l
+00:000AEA94 C1D2
+                            	   153: 
+                            	   154:         ; 4. Universal sprite draw core ($01a426: mulu.w #$a0,d1 ; ext.l d0) & erase ($01a83e)
+                            	   155:         ;    All 4 KO2 sprite entry points ($01a2fc, $01a346, $01a3bc, $01a412) funnel into $01a426!
+00:000AEA96 33FC4EF90001A426	   156:         move.w  #$4ef9,$01a426.l
+00:000AEA9E 23FC000AF1560001	   157:         move.l  #ste_draw_spr_core_hook,$01a428.l
+00:000AEAA6 A428
+00:000AEAA8 33FC4EF90001A83E	   158:         move.w  #$4ef9,$01a83e.l
+00:000AEAB0 23FC000AF2400001	   159:         move.l  #ste_erase_spr,$01a840.l
+00:000AEAB8 A840
+                            	   160:         ; Also bypass KO2's Timer B raster-beam wait at $01a376 & $01a3cc when Amiga mode is ON!
+00:000AEABA 33FC4EF90001A376	   161:         move.w  #$4ef9,$01a376.l
+00:000AEAC2 23FC000AF0C40001	   162:         move.l  #ste_skip_beam_1,$01a378.l
+00:000AEACA A378
+00:000AEACC 33FC4EF90001A3CC	   163:         move.w  #$4ef9,$01a3cc.l
+00:000AEAD4 23FC000AF0E00001	   164:         move.l  #ste_skip_beam_2,$01a3ce.l
+00:000AEADC A3CE
+                            	   165: 
+                            	   166:         ; 5. In-match key handler ($01b564: cmpi.w #$72,d0 ; bne.b $1b570) -> 'V' view toggle!
+00:000AEADE 33FC4EF90001B564	   167:         move.w  #$4ef9,$01b564.l
+00:000AEAE6 23FC000AEE880001	   168:         move.l  #ste_key_hook,$01b566.l
+00:000AEAEE B566
+                            	   169: 
+00:000AEAF0 4E75            	   170:         rts
+                            	   171: 
+                            	   172: ste_inst_trap8:
+00:000AEAF2 21FC000AFA3600A0	   173:         move.l  #ste_trap8_handler,$a0.w
+00:000AEAFA 4E75            	   174:         rts
+                            	   175: 
+                            	   176: ; ---------------------------------------------------------------------------
+                            	   177: ; ste_cleanup: Called in Supervisor mode (SR=$2700) when exiting KO2 back to PM
+                            	   178: ; ---------------------------------------------------------------------------
+                            	   179: ste_cleanup:
+00:000AEAFC 423900FF8901    	   180:         clr.b   $00ff8901.l             ; stop STE DMA audio
+00:000AEB02 423900FF820F    	   181:         clr.b   $00ff820f.l             ; reset STE line width (extra words = 0)
+00:000AEB08 423900FF8265    	   182:         clr.b   $00ff8265.l             ; reset STE fine hscroll = 0
+00:000AEB0E 13FC000700FF8201	   183:         move.b  #$07,$00ff8201.l        ; restore standard $078000 screen base
+00:000AEB16 13FC008000FF8203	   184:         move.b  #$80,$00ff8203.l
+00:000AEB1E 423900FF820D    	   185:         clr.b   $00ff820d.l
+00:000AEB24 4279000AE964    	   186:         clr.w   STE_AMIGA_ON
+00:000AEB2A 42B9000AE958    	   187:         clr.l   STE_SCRIPT_PTR
+00:000AEB30 4239000AE95E    	   188:         clr.b   STE_SND_PEND
+00:000AEB36 4239000AE95F    	   189:         clr.b   STE_SND_STOP
+00:000AEB3C 4E75            	   190:         rts
+                            	   191: 
+                            	   192: ; ---------------------------------------------------------------------------
+                            	   193: ; ste_load_pitch (ste_init_pitch): Called after ko2_bridge.s loads AMIGAPx.BIN
+                            	   194: ; into $081000..$088e1f. Input: d0.l = bytes read (32288 = success).
+                            	   195: ; ---------------------------------------------------------------------------
+                            	   196: ste_load_pitch:
+00:000AEB3E 0C8000007E20    	   197:         cmpi.l  #32288,d0
+00:000AEB44 6644            	   198:         bne.s   .lp_fail
+00:000AEB46 33FC0001000AE966	   199:         move.w  #1,STE_PITCH_OK
+00:000AEB4E 33FC0001000AE964	   200:         move.w  #1,STE_AMIGA_ON
+00:000AEB56 4279000AE972    	   201:         clr.w   STE_SLOT_NEXT
+00:000AEB5C 4279000AE990    	   202:         clr.w   STE_DRAW_CNT
+00:000AEB62 4279000AE98C    	   203:         clr.w   STE_RAD_LCNT
+00:000AEB68 4279000AE98E    	   204:         clr.w   STE_RAD_DCNT
+00:000AEB6E 4279000AE986    	   205:         clr.w   STE_HUD_ACTIVE
+00:000AEB74 33FCFC19000AE968	   206:         move.w  #-999,STE_CUR_TX
+00:000AEB7C 33FCFC19000AE96A	   207:         move.w  #-999,STE_CUR_TY
+00:000AEB84 7004            	   208:         moveq   #4,d0                   ; cmd 4 = clear_cork via STE Blitter!
+00:000AEB86 4E48            	   209:         trap    #8
+00:000AEB88 4E75            	   210:         rts
+                            	   211: .lp_fail:
+00:000AEB8A 4279000AE966    	   212:         clr.w   STE_PITCH_OK
+00:000AEB90 4279000AE964    	   213:         clr.w   STE_AMIGA_ON
+00:000AEB96 4E75            	   214:         rts
+                            	   215: 
+                            	   216: ; ---------------------------------------------------------------------------
+                            	   217: ; Audio: ste_load_samples / ste_play_sound / ste_play_sound_hi / ste_stop_sound
+                            	   218: ; ---------------------------------------------------------------------------
+                            	   219: ste_load_samples:
+00:000AEB98 48E78080        	   220:         movem.l d0/a0,-(sp)
+00:000AEB9C 203AFDAA        	   221:         move.l  STE_SND_SIZE(pc),d0
+00:000AEBA0 6F2E            	   222:         ble.s   .ls_none
+00:000AEBA2 200D            	   223:         move.l  a5,d0
+00:000AEBA4 5280            	   224:         addq.l  #1,d0
+00:000AEBA6 C0BCFFFFFFFE    	   225:         and.l   #$fffffffe,d0
+00:000AEBAC 2A40            	   226:         movea.l d0,a5
+00:000AEBAE 294DEBAE        	   227:         move.l  a5,-$1452(a4)
+00:000AEBB2 23CD000AE950    	   228:         move.l  a5,STE_SND_BASE
+00:000AEBB8 41F9000C8B00    	   229:         lea     STE_SND_STG.l,a0
+00:000AEBBE 203AFD88        	   230:         move.l  STE_SND_SIZE(pc),d0
+00:000AEBC2 5680            	   231:         addq.l  #3,d0
+00:000AEBC4 E488            	   232:         lsr.l   #2,d0
+00:000AEBC6 5340            	   233:         subq.w  #1,d0
+00:000AEBC8 2AD8            	   234: .cp_s:  move.l  (a0)+,(a5)+
+00:000AEBCA 51C8FFFC        	   235:         dbra    d0,.cp_s
+00:000AEBCE 6006            	   236:         bra.s   .ls_done
+                            	   237: .ls_none:
+00:000AEBD0 42B9000AE950    	   238:         clr.l   STE_SND_BASE
+                            	   239: .ls_done:
+00:000AEBD6 426CEBD6        	   240:         clr.w   -$142a(a4)
+00:000AEBDA 4CDF0101        	   241:         movem.l (sp)+,d0/a0
+00:000AEBDE 4E75            	   242:         rts
+                            	   243: 
+                            	   244: ste_play_sound:
+00:000AEBE0 4A6CEBD6        	   245:         tst.w   -$142a(a4)
+00:000AEBE4 6634            	   246:         bne.s   ste_ps_rts
+                            	   247: ste_play_sound_hi:
+00:000AEBE6 4A6CA114        	   248:         tst.w   -$5eec(a4)
+00:000AEBEA 662E            	   249:         bne.s   ste_ps_rts
+00:000AEBEC 4AB9000AE950    	   250:         tst.l   STE_SND_BASE
+00:000AEBF2 6726            	   251:         beq.s   ste_ps_rts
+00:000AEBF4 23CA000AE954    	   252:         move.l  a2,STE_SCRIPT_ST
+00:000AEBFA 23CA000AE958    	   253:         move.l  a2,STE_SCRIPT_PTR
+00:000AEC00 4279000AE95C    	   254:         clr.w   STE_REPEAT_CNT
+00:000AEC06 397C0001EBD6    	   255:         move.w  #1,-$142a(a4)
+00:000AEC0C 4239000AE95F    	   256:         clr.b   STE_SND_STOP
+00:000AEC12 13FC0001000AE95E	   257:         move.b  #1,STE_SND_PEND
+                            	   258: ste_ps_rts:
+00:000AEC1A 4E75            	   259:         rts
+                            	   260: 
+                            	   261: ste_stop_sound:
+00:000AEC1C 42B9000AE958    	   262:         clr.l   STE_SCRIPT_PTR
+00:000AEC22 4239000AE95E    	   263:         clr.b   STE_SND_PEND
+00:000AEC28 13FC0001000AE95F	   264:         move.b  #1,STE_SND_STOP
+00:000AEC30 426CEBD6        	   265:         clr.w   -$142a(a4)
+00:000AEC34 4E75            	   266:         rts
+                            	   267: 
+                            	   268: ; ---------------------------------------------------------------------------
+                            	   269: ; VBL Top ($018d06) & End ($018e0a): STE Shifter, Palette, & DMA Sound Step
+                            	   270: ; ---------------------------------------------------------------------------
+                            	   271: ste_vbl_top:
+00:000AEC36 48E7C000        	   272:         movem.l d0-d1,-(sp)
+00:000AEC3A 4A79000AE964    	   273:         tst.w   STE_AMIGA_ON
+00:000AEC40 670000CA        	   274:         beq.w   .vt_classic
+00:000AEC44 4A790002356A    	   275:         tst.w   $02356a.l               ; KO2 -$4f40(a4): Half-Time/Full-Time/Stats on $078000?
+00:000AEC4A 66000092        	   276:         bne.w   .vt_stats
+                            	   277: 
+                            	   278:         ; Amiga STE Mode: disable Timer B stripes, program STE Shifter + Palette 0..7!
+00:000AEC4E 423900FFFA1B    	   279:         clr.b   $00fffa1b.l             ; stop Timer B
+                            	   280:         ; Capture Classic ST palette 0..7 once (before we overwrite $ff8240..$ff824e!)
+00:000AEC54 4A79000AE984    	   281:         tst.w   STE_ST_PAL_OK
+00:000AEC5A 6622            	   282:         bne.s   .vt_pal_ok
+00:000AEC5C 48E700C0        	   283:         movem.l a0-a1,-(sp)
+00:000AEC60 41F900FF8240    	   284:         lea     $00ff8240.l,a0
+00:000AEC66 43FAFD0C        	   285:         lea     STE_ST_PAL(pc),a1
+00:000AEC6A 22D8            	   286:         move.l  (a0)+,(a1)+
+00:000AEC6C 22D8            	   287:         move.l  (a0)+,(a1)+
+00:000AEC6E 22D8            	   288:         move.l  (a0)+,(a1)+
+00:000AEC70 22D8            	   289:         move.l  (a0)+,(a1)+
+00:000AEC72 33FC0001000AE984	   290:         move.w  #1,STE_ST_PAL_OK
+00:000AEC7A 4CDF0300        	   291:         movem.l (sp)+,a0-a1
+                            	   292: .vt_pal_ok:
+                            	   293:         ; Load STE 12-bit Amiga pitch palette (0..7)
+00:000AEC7E 48E700C0        	   294:         movem.l a0-a1,-(sp)
+00:000AEC82 41F900081000    	   295:         lea     STE_PIT_PAL.l,a0
+00:000AEC88 43F900FF8240    	   296:         lea     $00ff8240.l,a1
+00:000AEC8E 22D8            	   297:         move.l  (a0)+,(a1)+
+00:000AEC90 22D8            	   298:         move.l  (a0)+,(a1)+
+00:000AEC92 22D8            	   299:         move.l  (a0)+,(a1)+
+00:000AEC94 22D8            	   300:         move.l  (a0)+,(a1)+
+00:000AEC96 4CDF0300        	   301:         movem.l (sp)+,a0-a1
+                            	   302: 
+                            	   303:         ; Program STE Shifter display address ($ff8201 HIGH, $ff8203 MID, $ff820d LOW LAST!)
+                            	   304:         ; NOTE: On Atari STE, writing $ff8201 or $ff8203 resets $ff820d to 0, so $ff820d MUST be last!
+00:000AEC9A 203AFCD0        	   305:         move.l  STE_VIEW_BASE(pc),d0
+00:000AEC9E 2200            	   306:         move.l  d0,d1
+00:000AECA0 4841            	   307:         swap    d1
+00:000AECA2 13C100FF8201    	   308:         move.b  d1,$00ff8201.l          ; high byte
+00:000AECA8 3200            	   309:         move.w  d0,d1
+00:000AECAA E049            	   310:         lsr.w   #8,d1
+00:000AECAC 13C100FF8203    	   311:         move.b  d1,$00ff8203.l          ; mid byte
+00:000AECB2 13C000FF820D    	   312:         move.b  d0,$00ff820d.l          ; low byte LAST!
+00:000AECB8 303AFCB6        	   313:         move.w  STE_VIEW_HSCR(pc),d0
+00:000AECBC 13C000FF8265    	   314:         move.b  d0,$00ff8265.l          ; fine pixel hscroll (0..15)
+00:000AECC2 670C            	   315:         beq.s   .vt_h0
+00:000AECC4 423900FF820F    	   316:         clr.b   $00ff820f.l             ; hscroll != 0 -> STE adds 8 bytes automatically (=168)
+00:000AECCA 4EF900018D6E    	   317:         jmp     $018d6e.l               ; continue KO2 VBL joystick reader!
+                            	   318: .vt_h0:
+00:000AECD0 13FC000400FF820F	   319:         move.b  #4,$00ff820f.l          ; hscroll == 0 -> +4 extra words = +8 bytes (=168)
+00:000AECD8 4EF900018D6E    	   320:         jmp     $018d6e.l
+                            	   321: 
+                            	   322: .vt_stats:
+                            	   323:         ; KO2 Half-Time / Full-Time / Match Stats screen on $078000 (keep KO2 palette!)
+00:000AECDE 423900FFFA1B    	   324:         clr.b   $00fffa1b.l
+00:000AECE4 13FC000700FF8201	   325:         move.b  #$07,$00ff8201.l
+00:000AECEC 13FC008000FF8203	   326:         move.b  #$80,$00ff8203.l
+00:000AECF4 423900FF820D    	   327:         clr.b   $00ff820d.l
+00:000AECFA 423900FF820F    	   328:         clr.b   $00ff820f.l
+00:000AED00 423900FF8265    	   329:         clr.b   $00ff8265.l
+00:000AED06 4EF900018D6E    	   330:         jmp     $018d6e.l
+                            	   331: 
+                            	   332: .vt_classic:
+                            	   333:         ; Classic ST Mode: ensure STE shifter is standard $078000, stride 160, hscroll 0
+00:000AED0C 13FC000700FF8201	   334:         move.b  #$07,$00ff8201.l
+00:000AED14 13FC008000FF8203	   335:         move.b  #$80,$00ff8203.l
+00:000AED1C 423900FF820D    	   336:         clr.b   $00ff820d.l
+00:000AED22 423900FF820F    	   337:         clr.b   $00ff820f.l
+00:000AED28 423900FF8265    	   338:         clr.b   $00ff8265.l
+                            	   339:         ; Execute original $018d0a..$018d5c Timer B grass stripes!
+00:000AED2E 30390002739C    	   340:         move.w  $2739c.l,d0
+00:000AED34 4EF900018D10    	   341:         jmp     $018d10.l
+                            	   342: 
+                            	   343: ; Replaces $018e0a..$018e2a: skip $ff8240 write in Amiga mode, then run STE DMA audio step
+                            	   344: ste_vbl_end:
+00:000AED3A 4A79000AE964    	   345:         tst.w   STE_AMIGA_ON
+00:000AED40 6612            	   346:         bne.s   .ve_skip_col0
+00:000AED42 33F90002718600FF	   347:         move.w  $27186.l,$00ff8240.l
+00:000AED4A 8240
+00:000AED4C 0A79003000027186	   348:         eori.w  #$30,$27186.l
+                            	   349: .ve_skip_col0:
+00:000AED54 42790002718A    	   350:         clr.w   $2718a.l
+00:000AED5A 33FCFFFF00027190	   351:         move.w  #$ffff,$27190.l         ; VBL sync flag!
+                            	   352: 
+                            	   353:         ; STE DMA Audio step
+00:000AED62 4A39000AE95F    	   354:         tst.b   STE_SND_STOP
+00:000AED68 670E            	   355:         beq.s   .chk_pend
+00:000AED6A 4239000AE95F    	   356:         clr.b   STE_SND_STOP
+00:000AED70 423900FF8901    	   357:         clr.b   $00ff8901.l
+00:000AED76 4E75            	   358:         rts
+                            	   359: .chk_pend:
+00:000AED78 4A39000AE95E    	   360:         tst.b   STE_SND_PEND
+00:000AED7E 6616            	   361:         bne.s   .do_step
+00:000AED80 4AB9000AE958    	   362:         tst.l   STE_SCRIPT_PTR
+00:000AED86 670000FE        	   363:         beq.w   .vbl_done
+00:000AED8A 0839000000FF8901	   364:         btst    #0,$00ff8901.l
+00:000AED92 660000F2        	   365:         bne.w   .vbl_done
+                            	   366: .do_step:
+00:000AED96 4239000AE95E    	   367:         clr.b   STE_SND_PEND
+00:000AED9C 48E7F0C0        	   368:         movem.l d0-d3/a0-a1,-(sp)
+00:000AEDA0 227AFBAE        	   369:         movea.l STE_SND_BASE(pc),a1
+00:000AEDA4 2009            	   370:         move.l  a1,d0
+00:000AEDA6 670000C8        	   371:         beq.w   .step_stop
+                            	   372: .next_cmd:
+00:000AEDAA 207AFBAC        	   373:         movea.l STE_SCRIPT_PTR(pc),a0
+00:000AEDAE 2008            	   374:         move.l  a0,d0
+00:000AEDB0 670000BE        	   375:         beq.w   .step_stop
+00:000AEDB4 5279000AE95C    	   376:         addq.w  #1,STE_REPEAT_CNT
+00:000AEDBA 6D06            	   377:         blt.s   .same_cmd
+00:000AEDBC 54B9000AE958    	   378:         addq.l  #2,STE_SCRIPT_PTR
+                            	   379: .same_cmd:
+00:000AEDC2 3010            	   380:         move.w  (a0),d0
+00:000AEDC4 670000AA        	   381:         beq.w   .step_stop
+00:000AEDC8 6D10            	   382:         blt.s   .cmd_neg
+00:000AEDCA 0C4000C8        	   383:         cmpi.w  #$c8,d0
+00:000AEDCE 6C28            	   384:         bge.s   .cmd_pitch
+00:000AEDD0 0C400064        	   385:         cmpi.w  #$64,d0
+00:000AEDD4 6C2E            	   386:         bge.s   .cmd_s100
+00:000AEDD6 5340            	   387:         subq.w  #1,d0
+00:000AEDD8 602E            	   388:         bra.s   .play_idx
+                            	   389: .cmd_neg:
+00:000AEDDA 0C40FFFF        	   390:         cmpi.w  #-1,d0
+00:000AEDDE 6708            	   391:         beq.s   .cmd_loop
+00:000AEDE0 33C0000AE95C    	   392:         move.w  d0,STE_REPEAT_CNT
+00:000AEDE6 60C2            	   393:         bra.s   .next_cmd
+                            	   394: .cmd_loop:
+00:000AEDE8 23FAFB6A000AE958	   395:         move.l  STE_SCRIPT_ST(pc),STE_SCRIPT_PTR
+00:000AEDF0 4279000AE95C    	   396:         clr.w   STE_REPEAT_CNT
+00:000AEDF6 60B2            	   397:         bra.s   .next_cmd
+                            	   398: .cmd_pitch:
+00:000AEDF8 044000C8        	   399:         subi.w  #$c8,d0
+00:000AEDFC 13C0000AE960    	   400:         move.b  d0,STE_SND_PITCH
+00:000AEE02 60A6            	   401:         bra.s   .next_cmd
+                            	   402: .cmd_s100:
+00:000AEE04 04400065        	   403:         subi.w  #$65,d0
+                            	   404: .play_idx:
+00:000AEE08 0C400011        	   405:         cmpi.w  #17,d0
+00:000AEE0C 649C            	   406:         bcc.s   .next_cmd
+00:000AEE0E C0FC000C        	   407:         mulu.w  #12,d0
+00:000AEE12 41F10000        	   408:         lea     0(a1,d0.w),a0
+00:000AEE16 2218            	   409:         move.l  (a0)+,d1
+00:000AEE18 2418            	   410:         move.l  (a0)+,d2
+00:000AEE1A 3618            	   411:         move.w  (a0)+,d3
+00:000AEE1C 0C8200000010    	   412:         cmpi.l  #16,d2
+00:000AEE22 6F4C            	   413:         ble.s   .step_stop              ; empty placeholder sample -> stop script (avoid VBL infinite loop on -1!)
+00:000AEE24 D289            	   414:         add.l   a1,d1
+00:000AEE26 D481            	   415:         add.l   d1,d2
+00:000AEE28 423900FF8901    	   416:         clr.b   $00ff8901.l
+00:000AEE2E 13C100FF8907    	   417:         move.b  d1,$00ff8907.l
+00:000AEE34 E089            	   418:         lsr.l   #8,d1
+00:000AEE36 13C100FF8905    	   419:         move.b  d1,$00ff8905.l
+00:000AEE3C E089            	   420:         lsr.l   #8,d1
+00:000AEE3E 13C100FF8903    	   421:         move.b  d1,$00ff8903.l
+00:000AEE44 13C200FF8913    	   422:         move.b  d2,$00ff8913.l
+00:000AEE4A E08A            	   423:         lsr.l   #8,d2
+00:000AEE4C 13C200FF8911    	   424:         move.b  d2,$00ff8911.l
+00:000AEE52 E08A            	   425:         lsr.l   #8,d2
+00:000AEE54 13C200FF890F    	   426:         move.b  d2,$00ff890f.l
+00:000AEE5A 13C300FF8921    	   427:         move.b  d3,$00ff8921.l
+00:000AEE60 13FC000100FF8901	   428:         move.b  #1,$00ff8901.l
+00:000AEE68 5279000AE962    	   429:         addq.w  #1,STE_DMA_CNT
+00:000AEE6E 6012            	   430:         bra.s   .step_ret
+                            	   431: .step_stop:
+00:000AEE70 423900FF8901    	   432:         clr.b   $00ff8901.l
+00:000AEE76 42B9000AE958    	   433:         clr.l   STE_SCRIPT_PTR
+00:000AEE7C 427900027080    	   434:         clr.w   $0284aa-$142a
+                            	   435: .step_ret:
+00:000AEE82 4CDF030F        	   436:         movem.l (sp)+,d0-d3/a0-a1
+                            	   437: .vbl_done:
+00:000AEE86 4E75            	   438:         rts
+                            	   439: 
+                            	   440: ; ---------------------------------------------------------------------------
+                            	   441: ; ste_key_hook: Replaces $01b564 (in-match key handler) — 'V' toggles view!
+                            	   442: ; ---------------------------------------------------------------------------
+                            	   443: ste_key_hook:
+00:000AEE88 0C400076        	   444:         cmpi.w  #'v',d0
+00:000AEE8C 6706            	   445:         beq.s   .do_toggle
+00:000AEE8E 0C400056        	   446:         cmpi.w  #'V',d0
+00:000AEE92 6650            	   447:         bne.s   .not_v
+                            	   448: .do_toggle:
+00:000AEE94 4A79000AE966    	   449:         tst.w   STE_PITCH_OK
+00:000AEE9A 6742            	   450:         beq.s   .v_done
+00:000AEE9C 61000564        	   451:         bsr.w   ste_erase_all_slots     ; LIFO: restore sprites BEFORE HUD/Radar!
+00:000AEEA0 61000780        	   452:         bsr.w   ste_hud_restore         ; restore HUD/Radar to pristine grass!
+00:000AEEA4 0A790001000AE964	   453:         eori.w  #1,STE_AMIGA_ON
+00:000AEEAC 4A79000AE964    	   454:         tst.w   STE_AMIGA_ON
+00:000AEEB2 6716            	   455:         beq.s   .to_classic
+                            	   456:         ; Switching -> Amiga STE Mode: clear stale Classic ST lines on $078000 & force full redraw!
+00:000AEEB4 33FCFC19000AE968	   457:         move.w  #-999,STE_CUR_TX
+00:000AEEBC 33FCFC19000AE96A	   458:         move.w  #-999,STE_CUR_TY
+00:000AEEC4 7004            	   459:         moveq   #4,d0                   ; cmd 4 = clear_cork + clear $078000!
+00:000AEEC6 4E48            	   460:         trap    #8
+00:000AEEC8 6014            	   461:         bra.s   .v_done
+                            	   462: .to_classic:
+                            	   463:         ; Switching -> Classic ST Mode: restore saved ST palette 0..7 via Supexec!
+00:000AEECA 4A79000AE984    	   464:         tst.w   STE_ST_PAL_OK
+00:000AEED0 670C            	   465:         beq.s   .v_done
+00:000AEED2 487A0022        	   466:         pea     ste_restore_st_pal(pc)
+00:000AEED6 3F3C0026        	   467:         move.w  #$26,-(sp)
+00:000AEEDA 4E4E            	   468:         trap    #14
+00:000AEEDC 5C8F            	   469:         addq.l  #6,sp
+                            	   470: .v_done:
+00:000AEEDE 4EF90001B556    	   471:         jmp     $01b556.l               ; continue key loop
+                            	   472: .not_v:
+00:000AEEE4 0C400072        	   473:         cmpi.w  #$72,d0                 ; original $01b564 instruction!
+00:000AEEE8 6606            	   474:         bne.s   .not_r
+00:000AEEEA 4EF90001B56A    	   475:         jmp     $01b56a.l
+                            	   476: .not_r:
+00:000AEEF0 4EF90001B570    	   477:         jmp     $01b570.l
+                            	   478: 
+                            	   479: ste_restore_st_pal:
+00:000AEEF6 41FAFA7C        	   480:         lea     STE_ST_PAL(pc),a0
+00:000AEEFA 43F900FF8240    	   481:         lea     $00ff8240.l,a1
+00:000AEF00 22D8            	   482:         move.l  (a0)+,(a1)+
+00:000AEF02 22D8            	   483:         move.l  (a0)+,(a1)+
+00:000AEF04 22D8            	   484:         move.l  (a0)+,(a1)+
+00:000AEF06 22D8            	   485:         move.l  (a0)+,(a1)+
+00:000AEF08 4E75            	   486:         rts
+                            	   487: 
+                            	   488: ; ---------------------------------------------------------------------------
+                            	   489: ; ste_pitch_update: Replaces $01c1d0 (pitch lines + camera update)
+                            	   490: ; ---------------------------------------------------------------------------
+                            	   491: ste_pitch_update:
+00:000AEF0A 4A79000AE964    	   492:         tst.w   STE_AMIGA_ON
+00:000AEF10 660A            	   493:         bne.s   .pu_amiga
+                            	   494:         ; Classic ST Mode: run original $01c1d2..$01c40a
+00:000AEF12 43ECADCC        	   495:         lea     -$5234(a4),a1
+00:000AEF16 4EF90001C1D6    	   496:         jmp     $01c1d6.l
+                            	   497: 
+                            	   498: .pu_amiga:
+                            	   499:         ; 1. Exact KO2 smooth camera follow ($01c2b8..$01c2f0)
+00:000AEF1C 206CEEF6        	   500:         movea.l -$110a(a4),a0
+00:000AEF20 2010            	   501:         move.l  (a0),d0
+00:000AEF22 22280004        	   502:         move.l  $4(a0),d1
+00:000AEF26 048000A00000    	   503:         subi.l  #$a00000,d0
+00:000AEF2C 048100640000    	   504:         subi.l  #$640000,d1
+00:000AEF32 90ACEEEE        	   505:         sub.l   -$1112(a4),d0
+00:000AEF36 E680            	   506:         asr.l   #3,d0
+00:000AEF38 D1ACEEEE        	   507:         add.l   d0,-$1112(a4)
+00:000AEF3C 92ACEEF2        	   508:         sub.l   -$110e(a4),d1
+00:000AEF40 E681            	   509:         asr.l   #3,d1
+00:000AEF42 D3ACEEF2        	   510:         add.l   d1,-$110e(a4)
+                            	   511: 
+                            	   512:         ; 2. Restore HUD & Transparent Radar right before updating STE_VIEW_BASE,
+                            	   513:         ;    protecting any 0..2 sprites currently overlapping the Radar/HUD (LIFO!),
+                            	   514:         ;    then IMMEDIATELY redraw HUD & Radar at .upd_done (< 0.5ms absent -> ZERO FLICKER!).
+00:000AEF46 48E7FFF0        	   515:         movem.l d0-d7/a0-a3,-(sp)
+00:000AEF4A 610005EA        	   516:         bsr.w   ste_hud_lift_spr        ; pop only sprites overlapping Radar/HUD (usually 0!)
+00:000AEF4E 610006D2        	   517:         bsr.w   ste_hud_restore
+00:000AEF52 302CEEEE        	   518:         move.w  -$1112(a4),d0           ; camX (integer part)
+00:000AEF56 064000B0        	   519:         addi.w  #176,d0
+00:000AEF5A 6C02            	   520:         bge.s   .wx_lo
+00:000AEF5C 7000            	   521:         moveq   #0,d0
+00:000AEF5E 0C4003C0        	   522: .wx_lo: cmpi.w  #960,d0
+00:000AEF62 6F04            	   523:         ble.s   .wx_ok
+00:000AEF64 303C03C0        	   524:         move.w  #960,d0
+                            	   525: .wx_ok:
+00:000AEF68 322CEEF2        	   526:         move.w  -$110e(a4),d1           ; camY (integer part)
+00:000AEF6C 06410040        	   527:         addi.w  #64,d1
+00:000AEF70 6C02            	   528:         bge.s   .wy_lo
+00:000AEF72 7200            	   529:         moveq   #0,d1
+00:000AEF74 0C410538        	   530: .wy_lo: cmpi.w  #1336,d1
+00:000AEF78 6F04            	   531:         ble.s   .wy_ok
+00:000AEF7A 323C0538        	   532:         move.w  #1336,d1
+                            	   533: .wy_ok:
+                            	   534:         ; d2 = tx = wx >> 4 (0..60), d3 = ty = wy >> 4 (0..83)
+00:000AEF7E 3400            	   535:         move.w  d0,d2
+00:000AEF80 E84A            	   536:         lsr.w   #4,d2
+00:000AEF82 3601            	   537:         move.w  d1,d3
+00:000AEF84 E84B            	   538:         lsr.w   #4,d3
+                            	   539:         ; Save hscroll = wx & 15
+00:000AEF86 3800            	   540:         move.w  d0,d4
+00:000AEF88 0244000F        	   541:         andi.w  #15,d4
+00:000AEF8C 33C4000AE970    	   542:         move.w  d4,STE_VIEW_HSCR
+                            	   543: 
+                            	   544:         ; Compute STE_VIEW_BASE = STE_CORK_BUF + (wy % 224) * 168 + tx * 8
+00:000AEF92 7800            	   545:         moveq   #0,d4
+00:000AEF94 3801            	   546:         move.w  d1,d4
+00:000AEF96 88FC00E0        	   547:         divu.w  #CORK_RING_H,d4
+00:000AEF9A 4844            	   548:         swap    d4                      ; d4.w = wy % 224 (0..223)
+00:000AEF9C C8FC00A8        	   549:         mulu.w  #CORK_STRIDE,d4         ; d4.l = y_wrap * 168
+00:000AEFA0 3A02            	   550:         move.w  d2,d5
+00:000AEFA2 E74D            	   551:         lsl.w   #3,d5                   ; tx * 8
+00:000AEFA4 48C5            	   552:         ext.l   d5
+00:000AEFA6 D885            	   553:         add.l   d5,d4
+00:000AEFA8 068400088F00    	   554:         addi.l  #STE_CORK_BUF,d4
+00:000AEFAE 2A3AF9BC        	   555:         move.l  STE_VIEW_BASE(pc),d5
+00:000AEFB2 23C4000AE96C    	   556:         move.l  d4,STE_VIEW_BASE
+00:000AEFB8 9885            	   557:         sub.l   d5,d4                   ; d4 = new_vb - old_vb
+00:000AEFBA 0C8400004000    	   558:         cmpi.l  #16384,d4
+00:000AEFC0 6E0A            	   559:         bgt.s   .wrap_up                ; wrapped UP (primary -> mirror: +CORK_RING_BYTES)
+00:000AEFC2 0C84FFFFC000    	   560:         cmpi.l  #-16384,d4
+00:000AEFC8 6D0E            	   561:         blt.s   .wrap_dn                ; wrapped DOWN (mirror -> primary: -CORK_RING_BYTES)
+00:000AEFCA 6016            	   562:         bra.s   .wrap_ok
+                            	   563: .wrap_up:
+00:000AEFCC 283C00009300    	   564:         move.l  #CORK_RING_BYTES,d4
+00:000AEFD2 61000454        	   565:         bsr.w   ste_cork_wrap_spr
+00:000AEFD6 600A            	   566:         bra.s   .wrap_ok
+                            	   567: .wrap_dn:
+00:000AEFD8 283CFFFF6D00    	   568:         move.l  #-CORK_RING_BYTES,d4
+00:000AEFDE 61000448        	   569:         bsr.w   ste_cork_wrap_spr
+                            	   570: .wrap_ok:
+                            	   571: 
+                            	   572:         ; Check delta from (STE_CUR_TX, STE_CUR_TY)
+00:000AEFE2 3802            	   573:         move.w  d2,d4
+00:000AEFE4 987AF982        	   574:         sub.w   STE_CUR_TX(pc),d4       ; dtx
+00:000AEFE8 3A03            	   575:         move.w  d3,d5
+00:000AEFEA 9A7AF97E        	   576:         sub.w   STE_CUR_TY(pc),d5       ; dty
+00:000AEFEE 3C04            	   577:         move.w  d4,d6
+00:000AEFF0 6A02            	   578:         bpl.s   .adx
+00:000AEFF2 4446            	   579:         neg.w   d6
+00:000AEFF4 0C460002        	   580: .adx:   cmpi.w  #2,d6
+00:000AEFF8 6E6A            	   581:         bgt.s   .full_fill
+00:000AEFFA 3C05            	   582:         move.w  d5,d6
+00:000AEFFC 6A02            	   583:         bpl.s   .ady
+00:000AEFFE 4446            	   584:         neg.w   d6
+00:000AF000 0C460002        	   585: .ady:   cmpi.w  #2,d6
+00:000AF004 6E5E            	   586:         bgt.s   .full_fill
+                            	   587: 
+                            	   588:         ; Incremental dirty-edge updates (0 tiles on 3 of 4 frames!)
+00:000AF006 4A44            	   589:         tst.w   d4
+00:000AF008 672A            	   590:         beq.s   .chk_y
+00:000AF00A 6E10            	   591:         bgt.s   .scroll_r
+                            	   592:         ; Scrolled left: fill column(s) d2 .. STE_CUR_TX-1
+00:000AF00C 3C02            	   593:         move.w  d2,d6
+00:000AF00E 61000084        	   594: .sl_lp: bsr.w   ste_draw_col            ; d6=tx_col, d3=ty_top
+00:000AF012 5246            	   595:         addq.w  #1,d6
+00:000AF014 BC7AF952        	   596:         cmp.w   STE_CUR_TX(pc),d6
+00:000AF018 6DF4            	   597:         blt.s   .sl_lp
+00:000AF01A 6018            	   598:         bra.s   .chk_y
+                            	   599: .scroll_r:
+                            	   600:         ; Scrolled right: fill column(s) STE_CUR_TX+21 .. d2+20
+00:000AF01C 3C3AF94A        	   601:         move.w  STE_CUR_TX(pc),d6
+00:000AF020 06460015        	   602:         addi.w  #21,d6
+00:000AF024 3E02            	   603:         move.w  d2,d7
+00:000AF026 06470014        	   604:         addi.w  #20,d7
+00:000AF02A 61000068        	   605: .sr_lp: bsr.w   ste_draw_col
+00:000AF02E 5246            	   606:         addq.w  #1,d6
+00:000AF030 BC47            	   607:         cmp.w   d7,d6
+00:000AF032 6FF6            	   608:         ble.s   .sr_lp
+                            	   609: 
+                            	   610: .chk_y:
+00:000AF034 4A45            	   611:         tst.w   d5
+00:000AF036 673E            	   612:         beq.s   .upd_done
+00:000AF038 6E10            	   613:         bgt.s   .scroll_d
+                            	   614:         ; Scrolled up: fill row(s) d3 .. STE_CUR_TY-1
+00:000AF03A 3E03            	   615:         move.w  d3,d7
+00:000AF03C 6100006E        	   616: .su_lp: bsr.w   ste_draw_row            ; d2=tx_left, d7=ty_row
+00:000AF040 5247            	   617:         addq.w  #1,d7
+00:000AF042 BE7AF926        	   618:         cmp.w   STE_CUR_TY(pc),d7
+00:000AF046 6DF4            	   619:         blt.s   .su_lp
+00:000AF048 602C            	   620:         bra.s   .upd_done
+                            	   621: .scroll_d:
+                            	   622:         ; Scrolled down: fill row(s) STE_CUR_TY+14 .. d3+13
+00:000AF04A 3E3AF91E        	   623:         move.w  STE_CUR_TY(pc),d7
+00:000AF04E 0647000E        	   624:         addi.w  #14,d7
+00:000AF052 3C03            	   625:         move.w  d3,d6
+00:000AF054 0646000D        	   626:         addi.w  #13,d6
+00:000AF058 61000052        	   627: .sd_lp: bsr.w   ste_draw_row
+00:000AF05C 5247            	   628:         addq.w  #1,d7
+00:000AF05E BE46            	   629:         cmp.w   d6,d7
+00:000AF060 6FF6            	   630:         ble.s   .sd_lp
+00:000AF062 6012            	   631:         bra.s   .upd_done
+                            	   632: 
+                            	   633: .full_fill:
+                            	   634:         ; Camera jump / kickoff / toggle: erase all sprites first, then fill 21x14 tiles!
+00:000AF064 6100039C        	   635:         bsr.w   ste_erase_all_slots
+00:000AF068 3E03            	   636:         move.w  d3,d7                   ; ty_row = d3 .. d3+13
+00:000AF06A 7A0D            	   637:         moveq   #13,d5
+00:000AF06C 6100003E        	   638: .ff_y:  bsr.w   ste_draw_row            ; draws d2..d2+20 at row d7
+00:000AF070 5247            	   639:         addq.w  #1,d7
+00:000AF072 51CDFFF8        	   640:         dbra    d5,.ff_y
+                            	   641: 
+                            	   642: .upd_done:
+00:000AF076 33C2000AE968    	   643:         move.w  d2,STE_CUR_TX
+00:000AF07C 33C3000AE96A    	   644:         move.w  d3,STE_CUR_TY
+                            	   645:         ; Immediately redraw Transparent Radar & Bottom HUD (< 0.5 ms absent -> ZERO FLICKER!)
+00:000AF082 61000682        	   646:         bsr.w   ste_hud_draw
+00:000AF086 6100052A        	   647:         bsr.w   ste_hud_drop_spr        ; re-draw any 0..2 sprites that were lifted over Radar/HUD
+00:000AF08A 4CDF0FFF        	   648:         movem.l (sp)+,d0-d7/a0-a3
+                            	   649:         ; Still draw KO2's off-screen goal arrow ($01bffa)!
+00:000AF08E 4EF90001BFFA    	   650:         jmp     $01bffa.l
+                            	   651: 
+                            	   652: ; Draw 1 vertical column of 14 tiles: d6 = tx_col, d3 = ty_top
+                            	   653: ; Batched into ONE TRAP #8 (cmd 9) — 3.8x faster than per-tile TRAPs!
+                            	   654: ste_draw_col:
+00:000AF094 0C460050        	   655:         cmpi.w  #80,d6
+00:000AF098 6410            	   656:         bcc.s   .dc_end
+00:000AF09A 48E7F0C0        	   657:         movem.l d0-d3/a0-a1,-(sp)
+00:000AF09E 3206            	   658:         move.w  d6,d1                   ; d1 = tx_col
+00:000AF0A0 3403            	   659:         move.w  d3,d2                   ; d2 = ty_top
+00:000AF0A2 7009            	   660:         moveq   #9,d0                   ; cmd 9 = blit_col(d1=tx, d2=ty_top)
+00:000AF0A4 4E48            	   661:         trap    #8
+00:000AF0A6 4CDF030F        	   662:         movem.l (sp)+,d0-d3/a0-a1
+                            	   663: .dc_end:
+00:000AF0AA 4E75            	   664:         rts
+                            	   665: 
+                            	   666: ; Draw 1 horizontal row of 21 tiles: d2 = tx_left, d7 = ty_row
+                            	   667: ; Batched into ONE TRAP #8 (cmd 8) — 3.8x faster than per-tile TRAPs!
+                            	   668: ste_draw_row:
+00:000AF0AC 0C470060        	   669:         cmpi.w  #96,d7
+00:000AF0B0 6410            	   670:         bcc.s   .dr_end
+00:000AF0B2 48E7F0C0        	   671:         movem.l d0-d3/a0-a1,-(sp)
+00:000AF0B6 3202            	   672:         move.w  d2,d1                   ; d1 = tx_left
+00:000AF0B8 3407            	   673:         move.w  d7,d2                   ; d2 = ty_row
+00:000AF0BA 7008            	   674:         moveq   #8,d0                   ; cmd 8 = blit_row(d1=tx_left, d2=ty_row)
+00:000AF0BC 4E48            	   675:         trap    #8
+00:000AF0BE 4CDF030F        	   676:         movem.l (sp)+,d0-d3/a0-a1
+                            	   677: .dr_end:
+00:000AF0C2 4E75            	   678:         rts
+                            	   679: 
+                            	   680: ; ---------------------------------------------------------------------------
+                            	   681: ; Sprite Draw Core ($01a426) & Erase ($01a83e) — STE Blitter 4bpp Masked!
+                            	   682: ; All 4 KO2 sprite entry points ($01a2fc, $01a346, $01a3bc, $01a412) save
+                            	   683: ; movem.l d0-d2/d4/d7/a0-a1/a3,-(sp) and enter $01a426 with d0=x, d1=y, a1=src, a3=rec!
+                            	   684: ; ---------------------------------------------------------------------------
+                            	   685: ste_skip_beam_1:
+00:000AF0C4 4A79000AE964    	   686:         tst.w   STE_AMIGA_ON
+00:000AF0CA 6708            	   687:         beq.s   .sb1_st
+00:000AF0CC 612E            	   688:         bsr.s   ste_wait_beam           ; Amiga STE: exact 20-line beam-avoidance window (ZERO flicker, 50 FPS!)
+00:000AF0CE 4EF90001A39C    	   689:         jmp     $01a39c.l
+                            	   690: .sb1_st:
+00:000AF0D4 282CECE0        	   691:         move.l  -$1320(a4),d4
+00:000AF0D8 3404            	   692:         move.w  d4,d2
+00:000AF0DA 4EF90001A37C    	   693:         jmp     $01a37c.l
+                            	   694: 
+                            	   695: ste_skip_beam_2:
+00:000AF0E0 4A79000AE964    	   696:         tst.w   STE_AMIGA_ON
+00:000AF0E6 6708            	   697:         beq.s   .sb2_st
+00:000AF0E8 6112            	   698:         bsr.s   ste_wait_beam           ; Amiga STE: exact 20-line beam-avoidance window (ZERO flicker, 50 FPS!)
+00:000AF0EA 4EF90001A3F2    	   699:         jmp     $01a3f2.l
+                            	   700: .sb2_st:
+00:000AF0F0 282CECE0        	   701:         move.l  -$1320(a4),d4
+00:000AF0F4 3404            	   702:         move.w  d4,d2
+00:000AF0F6 4EF90001A3D2    	   703:         jmp     $01a3d2.l
+                            	   704: 
+                            	   705: ; KO2-style STE hardware raster-beam avoidance window:
+                            	   706: ; Waits ONLY if the video beam is inside [sprite_y - 16 .. sprite_y + 18] scanlines!
+                            	   707: ; When beam is in top/bottom border, above sprite-16, or below sprite+18 -> ZERO WAIT!
+                            	   708: ste_wait_beam:
+00:000AF0FC 48E72900        	   709:         movem.l d2/d4/d7,-(sp)
+00:000AF100 3801            	   710:         move.w  d1,d4
+00:000AF102 C8FC00A8        	   711:         mulu.w  #CORK_STRIDE,d4         ; d4.l = sprite_y * 168
+00:000AF106 243AF864        	   712:         move.l  STE_VIEW_BASE(pc),d2
+00:000AF10A D882            	   713:         add.l   d2,d4                   ; d4.l = spr_addr in STE_CORK_BUF
+                            	   714: .wb_poll:
+00:000AF10C 7E00            	   715:         moveq   #0,d7
+00:000AF10E 1E388205        	   716:         move.b  $ffff8205.w,d7
+00:000AF112 4847            	   717:         swap    d7
+00:000AF114 1E388207        	   718:         move.b  $ffff8207.w,d7
+00:000AF118 E14F            	   719:         lsl.w   #8,d7
+00:000AF11A 1E388209        	   720:         move.b  $ffff8209.w,d7
+00:000AF11E 3F07            	   721:         move.w  d7,-(sp)
+00:000AF120 E04F            	   722:         lsr.w   #8,d7
+00:000AF122 BE388207        	   723:         cmp.b   $ffff8207.w,d7
+00:000AF126 6624            	   724:         bne.s   .wb_retry
+00:000AF128 3E1F            	   725:         move.w  (sp)+,d7
+00:000AF12A 9E82            	   726:         sub.l   d2,d7                   ; d7 = beam_off (bytes from STE_VIEW_BASE)
+00:000AF12C 6F22            	   727:         ble.s   .wb_ok                  ; top border -> ZERO WAIT!
+00:000AF12E 0C8700008340    	   728:         cmpi.l  #(200*CORK_STRIDE),d7
+00:000AF134 6C1A            	   729:         bge.s   .wb_ok                  ; bottom border -> ZERO WAIT!
+00:000AF136 DE82            	   730:         add.l   d2,d7
+00:000AF138 9E84            	   731:         sub.l   d4,d7                   ; d7 = beam_addr - spr_addr
+00:000AF13A 0C87FFFFF580    	   732:         cmpi.l  #(-16*CORK_STRIDE),d7
+00:000AF140 6D0E            	   733:         blt.s   .wb_ok                  ; beam > 16 lines ABOVE sprite -> ZERO WAIT!
+00:000AF142 0C8700000BD0    	   734:         cmpi.l  #(18*CORK_STRIDE),d7
+00:000AF148 6E06            	   735:         bgt.s   .wb_ok                  ; beam > 18 lines BELOW sprite -> ZERO WAIT!
+00:000AF14A 60C0            	   736:         bra.s   .wb_poll                ; beam is right on this sprite -> wait ~0.6 ms!
+                            	   737: .wb_retry:
+00:000AF14C 548F            	   738:         addq.l  #2,sp
+00:000AF14E 60BC            	   739:         bra.s   .wb_poll
+                            	   740: .wb_ok:
+00:000AF150 4CDF0094        	   741:         movem.l (sp)+,d2/d4/d7
+00:000AF154 4E75            	   742:         rts
+                            	   743: 
+                            	   744: ste_draw_spr_core_hook:
+00:000AF156 4A79000AE964    	   745:         tst.w   STE_AMIGA_ON
+00:000AF15C 660C            	   746:         bne.s   .dsc_amiga
+                            	   747:         ; Classic ST Mode: run original $01a426 (mulu.w #$a0,d1 ; ext.l d0)
+00:000AF15E C2FC00A0        	   748:         mulu.w  #$a0,d1
+00:000AF162 48C0            	   749:         ext.l   d0
+00:000AF164 4EF90001A42C    	   750:         jmp     $01a42c.l
+                            	   751: 
+                            	   752: .dsc_amiga:
+00:000AF16A 48E71020        	   753:         movem.l d3/a2,-(sp)             ; preserve d3 & a2 (caller's entity struct ptr!)
+00:000AF16E 610A            	   754:         bsr.s   ste_blit_spr_core
+00:000AF170 4CDF0408        	   755:         movem.l (sp)+,d3/a2
+00:000AF174 4CDF0B97        	   756:         movem.l (sp)+,d0-d2/d4/d7/a0-a1/a3
+00:000AF178 4E75            	   757:         rts
+                            	   758: 
+                            	   759: ; Core Amiga STE 4bpp masked sprite draw: d0=x, d1=y, a1=3bpp src, a3=KO2 save record
+                            	   760: ste_blit_spr_core:
+                            	   761:         ; 1. Get or allocate persistent 256-byte save-under slot for a3
+00:000AF17A 0C6B53540008    	   762:         cmpi.w  #$5354,8(a3)            ; magic "ST" already assigned?
+00:000AF180 6726            	   763:         beq.s   .have_slot
+00:000AF182 343AF7EE        	   764:         move.w  STE_SLOT_NEXT(pc),d2
+00:000AF186 0C420020        	   765:         cmpi.w  #32,d2
+00:000AF18A 640000B2        	   766:         bcc.w   .spr_ret                ; safety cap (32 slots)
+00:000AF18E 5279000AE972    	   767:         addq.w  #1,STE_SLOT_NEXT
+                            	   768:         ; Slot address = STE_SAVE_UNDER + d2 * 256
+00:000AF194 E14A            	   769:         lsl.w   #8,d2
+00:000AF196 48C2            	   770:         ext.l   d2
+00:000AF198 06820009B000    	   771:         addi.l  #STE_SAVE_UNDER,d2
+00:000AF19E 27420004        	   772:         move.l  d2,4(a3)
+00:000AF1A2 377C53540008    	   773:         move.w  #$5354,8(a3)
+                            	   774: .have_slot:
+                            	   775:         ; 2. Compute dst inside STE_VIEW_BASE:
+                            	   776:         ;    x_in_view = d0 + STE_VIEW_HSCR
+                            	   777:         ;    dst = STE_VIEW_BASE + d1 * 168 + (x_in_view >> 4) * 8
+                            	   778:         ;    skew = x_in_view & 15
+00:000AF1A8 D07AF7C6        	   779:         add.w   STE_VIEW_HSCR(pc),d0
+00:000AF1AC 3400            	   780:         move.w  d0,d2
+00:000AF1AE 0242000F        	   781:         andi.w  #15,d2                  ; d2 = skew (0..15)
+00:000AF1B2 E848            	   782:         lsr.w   #4,d0
+00:000AF1B4 E748            	   783:         lsl.w   #3,d0                   ; word_col * 8
+00:000AF1B6 C2FC00A8        	   784:         mulu.w  #CORK_STRIDE,d1         ; y * 168
+00:000AF1BA 48C0            	   785:         ext.l   d0
+00:000AF1BC D280            	   786:         add.l   d0,d1
+00:000AF1BE D2BAF7AC        	   787:         add.l   STE_VIEW_BASE(pc),d1
+00:000AF1C2 2041            	   788:         movea.l d1,a0                   ; a0 = dst in STE_CORK_BUF
+00:000AF1C4 2688            	   789:         move.l  a0,(a3)                 ; save dst addr in 0(a3)
+                            	   790: 
+                            	   791:         ; 3. Build 16-word 1bpp mask in STE_MASK_BUF (32 bytes, direct from a1!)
+                            	   792:         ;    KO2 3bpp sprite layout: row y has p0 at (a1), p1 at $28(a1), p2 at $50(a1), stride $78!
+00:000AF1C6 2449            	   793:         movea.l a1,a2                   ; save sprite src ptr in a2
+00:000AF1C8 48E70AC0        	   794:         movem.l d4/d6/a0-a1,-(sp)
+00:000AF1CC 41F90007FD00    	   795:         lea     STE_MASK_BUF.l,a0
+00:000AF1D2 7C0F            	   796:         moveq   #15,d6
+                            	   797: .mk_lp:
+00:000AF1D4 3811            	   798:         move.w  (a1),d4
+00:000AF1D6 88690028        	   799:         or.w    $28(a1),d4
+00:000AF1DA 88690050        	   800:         or.w    $50(a1),d4
+00:000AF1DE 30C4            	   801:         move.w  d4,(a0)+
+00:000AF1E0 43E90078        	   802:         lea     $78(a1),a1
+00:000AF1E4 51CEFFEE        	   803:         dbra    d6,.mk_lp
+00:000AF1E8 4CDF0350        	   804:         movem.l (sp)+,d4/d6/a0-a1
+                            	   805: 
+                            	   806:         ; 4. Combined Save-under + Direct NFSR 4bpp Masked Blitter Draw in ONE TRAP #8!
+                            	   807:         ;    Push 16-byte record: +0=a3.l, +4=dst.l, +8=src.l, +12=skew.b, +13=slot.b, +14=x_col.b, +15=y_px.b
+                            	   808:         ;    (d0.l currently holds x_col*8, d1.w was multiplied by 168 — recover x_col & y_px cleanly!)
+00:000AF1EC 246B0004        	   809:         movea.l 4(a3),a2                ; a2 = save-under slot
+00:000AF1F0 363AF79E        	   810:         move.w  STE_DRAW_CNT(pc),d3
+00:000AF1F4 0C430020        	   811:         cmpi.w  #32,d3
+00:000AF1F8 643E            	   812:         bcc.s   .no_push
+00:000AF1FA 5279000AE990    	   813:         addq.w  #1,STE_DRAW_CNT
+00:000AF200 E94B            	   814:         lsl.w   #4,d3                   ; index * 16
+00:000AF202 48E7C010        	   815:         movem.l d0-d1/a3,-(sp)
+00:000AF206 47F9000B2880    	   816:         lea     STE_DRAW_STACK.l,a3
+00:000AF20C D6C3            	   817:         adda.w  d3,a3
+00:000AF20E 26EF0008        	   818:         move.l  8(sp),(a3)+             ; +0: KO2 a3 ptr
+00:000AF212 26C8            	   819:         move.l  a0,(a3)+                ; +4: dst in STE_CORK_BUF
+00:000AF214 26C9            	   820:         move.l  a1,(a3)+                ; +8: src (KO2 3bpp sprite)
+00:000AF216 16C2            	   821:         move.b  d2,(a3)+                ; +12: skew (0..15)
+00:000AF218 260A            	   822:         move.l  a2,d3
+00:000AF21A 04830009B000    	   823:         subi.l  #STE_SAVE_UNDER,d3
+00:000AF220 E04B            	   824:         lsr.w   #8,d3
+00:000AF222 16C3            	   825:         move.b  d3,(a3)+                ; +13: slot_idx (0..31)
+00:000AF224 E648            	   826:         lsr.w   #3,d0
+00:000AF226 16C0            	   827:         move.b  d0,(a3)+                ; +14: x_col (0..20)
+00:000AF228 2208            	   828:         move.l  a0,d1
+00:000AF22A 92BAF740        	   829:         sub.l   STE_VIEW_BASE(pc),d1
+00:000AF22E 82FC00A8        	   830:         divu.w  #CORK_STRIDE,d1         ; d1.w = y_px (0..199)
+00:000AF232 1681            	   831:         move.b  d1,(a3)                 ; +15: y_px (0..199)
+00:000AF234 4CDF0803        	   832:         movem.l (sp)+,d0-d1/a3
+                            	   833: .no_push:
+00:000AF238 3202            	   834:         move.w  d2,d1                   ; d1 = skew (0..15)
+00:000AF23A 7003            	   835:         moveq   #3,d0                   ; cmd 3 = save_and_draw_sprite
+00:000AF23C 4E48            	   836:         trap    #8
+                            	   837: .spr_ret:
+00:000AF23E 4E75            	   838:         rts
+                            	   839: 
+                            	   840: ; Erase sprite ($01a83e)
+                            	   841: ste_erase_spr:
+00:000AF240 4A79000AE964    	   842:         tst.w   STE_AMIGA_ON
+00:000AF246 6610            	   843:         bne.s   ste_erase_spr_amiga
+                            	   844:         ; Classic ST Mode: run original $01a83e..
+00:000AF248 4A93            	   845:         tst.l   (a3)
+00:000AF24A 6706            	   846:         beq.s   .es_st_z
+00:000AF24C 4EF90001A844    	   847:         jmp     $01a844.l
+                            	   848: .es_st_z:
+00:000AF252 4EF90001AAAA    	   849:         jmp     $01aaaa.l
+                            	   850: 
+                            	   851: ; Overlap-safe LIFO sprite erase for KO2 record a3:
+                            	   852: ; - If no sprite drawn AFTER a3 is within +-2688 bytes (16 scanlines): fast 1-blit restore!
+                            	   853: ; - If any sprite above a3 overlaps it (kickoff walk-out, tackles): LIFO restore from top
+                            	   854: ;   down to a3, remove a3, and re-draw the sprites that were above a3 -> ZERO GHOSTS!
+                            	   855: ste_erase_spr_amiga:
+00:000AF258 4293            	   856:         clr.l   (a3)
+00:000AF25A 48E7FFEC        	   857:         movem.l d0-d7/a0-a2/a4-a5,-(sp)
+00:000AF25E 383AF730        	   858:         move.w  STE_DRAW_CNT(pc),d4
+00:000AF262 67000178        	   859:         beq.w   .es_done
+                            	   860:         ; Search STE_DRAW_STACK backwards for a3
+00:000AF266 3604            	   861:         move.w  d4,d3
+00:000AF268 5343            	   862:         subq.w  #1,d3                   ; d3 = idx (d4-1 down to 0)
+00:000AF26A 3004            	   863:         move.w  d4,d0
+00:000AF26C E948            	   864:         lsl.w   #4,d0
+00:000AF26E 49F9000B2880    	   865:         lea     STE_DRAW_STACK.l,a4
+00:000AF274 D8C0            	   866:         adda.w  d0,a4                   ; a4 = end of stack
+                            	   867: .es_find:
+00:000AF276 49ECFFF0        	   868:         lea     -16(a4),a4
+00:000AF27A B7D4            	   869:         cmpa.l  (a4),a3
+00:000AF27C 6708            	   870:         beq.s   .es_found
+00:000AF27E 51CBFFF6        	   871:         dbra    d3,.es_find
+00:000AF282 60000158        	   872:         bra.w   .es_done                ; not on stack
+                            	   873: .es_found:
+                            	   874:         ; d3 = idx, a4 = &stack[idx], d4 = old STE_DRAW_CNT
+00:000AF286 3A04            	   875:         move.w  d4,d5
+00:000AF288 5345            	   876:         subq.w  #1,d5
+00:000AF28A 9A43            	   877:         sub.w   d3,d5                   ; d5 = count of sprites ABOVE idx (0 if top!)
+00:000AF28C 677C            	   878:         beq.s   .es_fast_one            ; top of stack -> fast 1-blit restore!
+                            	   879: 
+                            	   880:         ; Targeted 2D-overlap LIFO: collect ONLY the sprites above idx that actually
+                            	   881:         ; 2D-overlap idx (expanding bbox for chains), NEVER touching unrelated players!
+                            	   882:         ; Store matching entry pointers in a tiny stack frame (max 8 entries = 32 bytes).
+00:000AF28E 4FEFFFE0        	   883:         lea     -32(sp),sp              ; local ptr array at (sp)
+00:000AF292 224F            	   884:         movea.l sp,a1                   ; a1 = match write cursor
+00:000AF294 7000            	   885:         moveq   #0,d0                   ; d0.w = match count (0..8)
+00:000AF296 7200            	   886:         moveq   #0,d1
+00:000AF298 122C000E        	   887:         move.b  14(a4),d1               ; min_x = target x_col
+00:000AF29C 3601            	   888:         move.w  d1,d3                   ; max_x = target x_col (reuse d3!)
+00:000AF29E 7400            	   889:         moveq   #0,d2
+00:000AF2A0 142C000F        	   890:         move.b  15(a4),d2               ; min_y = target y_px
+00:000AF2A4 3802            	   891:         move.w  d2,d4                   ; max_y = target y_px (reuse d4!)
+00:000AF2A6 4BEC0010        	   892:         lea     16(a4),a5               ; a5 = &stack[idx+1]
+00:000AF2AA 3C05            	   893:         move.w  d5,d6
+00:000AF2AC 5346            	   894:         subq.w  #1,d6
+                            	   895: .es_ovl:
+00:000AF2AE 7E00            	   896:         moveq   #0,d7
+00:000AF2B0 1E2D000E        	   897:         move.b  14(a5),d7               ; j.x_col
+00:000AF2B4 3801            	   898:         move.w  d1,d4
+00:000AF2B6 5344            	   899:         subq.w  #1,d4
+00:000AF2B8 BE44            	   900:         cmp.w   d4,d7                   ; j.x_col < min_x - 1?
+00:000AF2BA 6D3E            	   901:         blt.s   .es_nxt
+00:000AF2BC 3803            	   902:         move.w  d3,d4
+00:000AF2BE 5244            	   903:         addq.w  #1,d4
+00:000AF2C0 BE44            	   904:         cmp.w   d4,d7                   ; j.x_col > max_x + 1?
+00:000AF2C2 6E36            	   905:         bgt.s   .es_nxt
+00:000AF2C4 7E00            	   906:         moveq   #0,d7
+00:000AF2C6 1E2D000F        	   907:         move.b  15(a5),d7               ; j.y_px
+00:000AF2CA 3802            	   908:         move.w  d2,d4
+00:000AF2CC 0444000F        	   909:         subi.w  #15,d4
+00:000AF2D0 BE44            	   910:         cmp.w   d4,d7                   ; j.y_px < min_y - 15?
+00:000AF2D2 6D26            	   911:         blt.s   .es_nxt
+00:000AF2D4 3802            	   912:         move.w  d2,d4
+00:000AF2D6 0644000F        	   913:         addi.w  #15,d4
+00:000AF2DA BE44            	   914:         cmp.w   d4,d7                   ; j.y_px > min_y + 15?
+00:000AF2DC 6E1C            	   915:         bgt.s   .es_nxt
+                            	   916:         ; TRUE 2D overlap! Record pointer a5 (if < 8) and expand x range for chains!
+00:000AF2DE 0C400008        	   917:         cmpi.w  #8,d0
+00:000AF2E2 6416            	   918:         bcc.s   .es_nxt
+00:000AF2E4 22CD            	   919:         move.l  a5,(a1)+
+00:000AF2E6 5240            	   920:         addq.w  #1,d0
+00:000AF2E8 7E00            	   921:         moveq   #0,d7
+00:000AF2EA 1E2D000E        	   922:         move.b  14(a5),d7
+00:000AF2EE BE41            	   923:         cmp.w   d1,d7
+00:000AF2F0 6C02            	   924:         bge.s   .es_nx1
+00:000AF2F2 3207            	   925:         move.w  d7,d1                   ; min_x = j.x_col
+00:000AF2F4 BE43            	   926: .es_nx1: cmp.w  d3,d7
+00:000AF2F6 6F02            	   927:         ble.s   .es_nxt
+00:000AF2F8 3607            	   928:         move.w  d7,d3                   ; max_x = j.x_col
+                            	   929: .es_nxt:
+00:000AF2FA 4BED0010        	   930:         lea     16(a5),a5
+00:000AF2FE 51CEFFAE        	   931:         dbra    d6,.es_ovl
+                            	   932: 
+00:000AF302 4A40            	   933:         tst.w   d0
+00:000AF304 6634            	   934:         bne.s   .es_do_targeted
+00:000AF306 4FEF0020        	   935:         lea     32(sp),sp               ; free local ptr array -> fast path!
+                            	   936: 
+                            	   937: .es_fast_one:
+                            	   938:         ; Fast path: no overlapping sprite above idx!
+                            	   939:         ; Only restore if dst is still inside current visible viewport [STE_VIEW_BASE .. +185*168]
+00:000AF30A 226C0004        	   940:         move.l  4(a4),a1                ; dst
+00:000AF30E 2009            	   941:         move.l  a1,d0
+00:000AF310 90BAF65A        	   942:         sub.l   STE_VIEW_BASE(pc),d0
+00:000AF314 6D1C            	   943:         blt.s   .es_skip_off
+00:000AF316 0C8000007968    	   944:         cmpi.l  #(185*CORK_STRIDE),d0
+00:000AF31C 6E14            	   945:         bgt.s   .es_skip_off
+00:000AF31E 7000            	   946:         moveq   #0,d0
+00:000AF320 102C000D        	   947:         move.b  13(a4),d0               ; slot_idx.b
+00:000AF324 E148            	   948:         lsl.w   #8,d0
+00:000AF326 06800009B000    	   949:         addi.l  #STE_SAVE_UNDER,d0
+00:000AF32C 2040            	   950:         movea.l d0,a0                   ; slot
+00:000AF32E 7001            	   951:         moveq   #1,d0                   ; cmd 1 = restore_one(a0=slot, a1=dst)
+00:000AF330 4E48            	   952:         trap    #8
+                            	   953: .es_skip_off:
+00:000AF332 610000AE        	   954:         bsr.w   .es_compact
+00:000AF336 600000A4        	   955:         bra.w   .es_done
+                            	   956: 
+                            	   957: .es_do_targeted:
+                            	   958:         ; Restore ONLY the d0 (1..8) overlapping sprites in reverse LIFO order!
+00:000AF33A 3C00            	   959:         move.w  d0,d6                   ; save match count in d6
+00:000AF33C 3800            	   960:         move.w  d0,d4
+00:000AF33E 5344            	   961:         subq.w  #1,d4                   ; loop counter
+                            	   962: .es_pop_m:
+00:000AF340 3404            	   963:         move.w  d4,d2
+00:000AF342 E54A            	   964:         lsl.w   #2,d2
+00:000AF344 2A772000        	   965:         movea.l 0(sp,d2.w),a5
+00:000AF348 226D0004        	   966:         movea.l 4(a5),a1                ; dst
+00:000AF34C 7000            	   967:         moveq   #0,d0
+00:000AF34E 102D000D        	   968:         move.b  13(a5),d0
+00:000AF352 E148            	   969:         lsl.w   #8,d0
+00:000AF354 06800009B000    	   970:         addi.l  #STE_SAVE_UNDER,d0
+00:000AF35A 2040            	   971:         movea.l d0,a0                   ; slot
+00:000AF35C 7001            	   972:         moveq   #1,d0                   ; cmd 1 = restore_one
+00:000AF35E 4E48            	   973:         trap    #8
+00:000AF360 51CCFFDE        	   974:         dbra    d4,.es_pop_m
+                            	   975: 
+                            	   976:         ; Restore target sprite idx (a4) itself!
+00:000AF364 226C0004        	   977:         movea.l 4(a4),a1
+00:000AF368 7000            	   978:         moveq   #0,d0
+00:000AF36A 102C000D        	   979:         move.b  13(a4),d0
+00:000AF36E E148            	   980:         lsl.w   #8,d0
+00:000AF370 06800009B000    	   981:         addi.l  #STE_SAVE_UNDER,d0
+00:000AF376 2040            	   982:         movea.l d0,a0
+00:000AF378 7001            	   983:         moveq   #1,d0
+00:000AF37A 4E48            	   984:         trap    #8
+                            	   985: 
+                            	   986:         ; Re-draw ONLY the d6 (1..8) overlapping sprites in forward order!
+                            	   987:         ; NOTE: compact shifts all entries above a4 down by 16 bytes, so subtract 16 from each ptr!
+00:000AF37C 6164            	   988:         bsr.s   .es_compact
+00:000AF37E 7800            	   989:         moveq   #0,d4                   ; i = 0 .. d6-1
+                            	   990: .es_redr_m:
+00:000AF380 3404            	   991:         move.w  d4,d2
+00:000AF382 E54A            	   992:         lsl.w   #2,d2
+00:000AF384 2A772000        	   993:         movea.l 0(sp,d2.w),a5
+00:000AF388 4BEDFFF0        	   994:         lea     -16(a5),a5              ; adjusted ptr after .es_compact!
+00:000AF38C 206D0004        	   995:         movea.l 4(a5),a0                ; dst
+00:000AF390 226D0008        	   996:         movea.l 8(a5),a1                ; src (KO2 3bpp sprite)
+00:000AF394 48E70AC0        	   997:         movem.l d4/d6/a0-a1,-(sp)
+00:000AF398 41F90007FD00    	   998:         lea     STE_MASK_BUF.l,a0
+00:000AF39E 7C0F            	   999:         moveq   #15,d6
+00:000AF3A0 3811            	  1000: .es_mk: move.w  (a1),d4
+00:000AF3A2 88690028        	  1001:         or.w    $28(a1),d4
+00:000AF3A6 88690050        	  1002:         or.w    $50(a1),d4
+00:000AF3AA 30C4            	  1003:         move.w  d4,(a0)+
+00:000AF3AC 43E90078        	  1004:         lea     $78(a1),a1
+00:000AF3B0 51CEFFEE        	  1005:         dbra    d6,.es_mk
+00:000AF3B4 4CDF0350        	  1006:         movem.l (sp)+,d4/d6/a0-a1
+00:000AF3B8 7000            	  1007:         moveq   #0,d0
+00:000AF3BA 102D000D        	  1008:         move.b  13(a5),d0
+00:000AF3BE E148            	  1009:         lsl.w   #8,d0
+00:000AF3C0 06800009B000    	  1010:         addi.l  #STE_SAVE_UNDER,d0
+00:000AF3C6 2440            	  1011:         movea.l d0,a2                   ; slot
+00:000AF3C8 7200            	  1012:         moveq   #0,d1
+00:000AF3CA 122D000C        	  1013:         move.b  12(a5),d1               ; skew
+00:000AF3CE 7003            	  1014:         moveq   #3,d0
+00:000AF3D0 4E48            	  1015:         trap    #8
+00:000AF3D2 5244            	  1016:         addq.w  #1,d4
+00:000AF3D4 B846            	  1017:         cmp.w   d6,d4
+00:000AF3D6 6DA8            	  1018:         blt.s   .es_redr_m
+00:000AF3D8 4FEF0020        	  1019:         lea     32(sp),sp               ; free local ptr array
+                            	  1020: 
+                            	  1021: .es_done:
+00:000AF3DC 4CDF37FF        	  1022:         movem.l (sp)+,d0-d7/a0-a2/a4-a5
+00:000AF3E0 4E75            	  1023:         rts
+                            	  1024: 
+                            	  1025: ; Helper: remove entry at a4 (&stack[idx]), shifting d5 entries above it down by 16 bytes
+                            	  1026: .es_compact:
+00:000AF3E2 5379000AE990    	  1027:         subq.w  #1,STE_DRAW_CNT
+00:000AF3E8 3005            	  1028:         move.w  d5,d0
+00:000AF3EA 6714            	  1029:         beq.s   .ec_ret
+00:000AF3EC 204C            	  1030:         movea.l a4,a0                   ; dst = &stack[idx]
+00:000AF3EE 43EC0010        	  1031:         lea     16(a4),a1               ; src = &stack[idx+1]
+00:000AF3F2 5340            	  1032:         subq.w  #1,d0
+00:000AF3F4 20D9            	  1033: .ec_lp: move.l  (a1)+,(a0)+
+00:000AF3F6 20D9            	  1034:         move.l  (a1)+,(a0)+
+00:000AF3F8 20D9            	  1035:         move.l  (a1)+,(a0)+
+00:000AF3FA 20D9            	  1036:         move.l  (a1)+,(a0)+
+00:000AF3FC 51C8FFF6        	  1037:         dbra    d0,.ec_lp
+                            	  1038: .ec_ret:
+00:000AF400 4E75            	  1039:         rts
+                            	  1040: 
+                            	  1041: ; Erase all active sprites in STRICT REVERSE (LIFO) order via ONE TRAP #8 (cmd 2)!
+                            	  1042: ste_erase_all_slots:
+00:000AF402 48E7C080        	  1043:         movem.l d0-d1/a0,-(sp)
+00:000AF406 323AF588        	  1044:         move.w  STE_DRAW_CNT(pc),d1
+00:000AF40A 6716            	  1045:         beq.s   .eas_done
+00:000AF40C 4279000AE990    	  1046:         clr.w   STE_DRAW_CNT
+00:000AF412 3001            	  1047:         move.w  d1,d0
+00:000AF414 E948            	  1048:         lsl.w   #4,d0
+00:000AF416 41F9000B2880    	  1049:         lea     STE_DRAW_STACK.l,a0
+00:000AF41C D0C0            	  1050:         adda.w  d0,a0                   ; a0 = end of stack
+00:000AF41E 7002            	  1051:         moveq   #2,d0                   ; cmd 2 = restore_lifo_n(a0=end, d1=count)
+00:000AF420 4E48            	  1052:         trap    #8
+                            	  1053: .eas_done:
+00:000AF422 4CDF0103        	  1054:         movem.l (sp)+,d0-d1/a0
+00:000AF426 4E75            	  1055:         rts
+                            	  1056: 
+                            	  1057: ; Corkscrew Primary <-> Mirror wrap sprite transfer: d4.l = +37632 or -37632
+                            	  1058: ; Cleanly restores all sprites from OLD half (zero mirror ghosts!) and redraws
+                            	  1059: ; them on the NEW half (zero missing sprites when crossing wy = 224, 448, 672...)!
+                            	  1060: ste_cork_wrap_spr:
+00:000AF428 4279000AF4B0    	  1061:         clr.w   STE_LIFT_CNT            ; we will redraw all sprites on the new half
+00:000AF42E 323AF560        	  1062:         move.w  STE_DRAW_CNT(pc),d1
+00:000AF432 677A            	  1063:         beq.s   .cws_ret
+00:000AF434 48E7FFF4        	  1064:         movem.l d0-d7/a0-a3/a5,-(sp)
+00:000AF438 3E01            	  1065:         move.w  d1,d7                   ; save count in d7
+00:000AF43A 3001            	  1066:         move.w  d1,d0
+00:000AF43C E948            	  1067:         lsl.w   #4,d0
+00:000AF43E 41F9000B2880    	  1068:         lea     STE_DRAW_STACK.l,a0
+00:000AF444 D0C0            	  1069:         adda.w  d0,a0
+00:000AF446 7002            	  1070:         moveq   #2,d0                   ; cmd 2 = LIFO restore all from OLD half!
+00:000AF448 4E48            	  1071:         trap    #8
+00:000AF44A 4BF9000B2880    	  1072:         lea     STE_DRAW_STACK.l,a5
+00:000AF450 5347            	  1073:         subq.w  #1,d7
+                            	  1074: .cws_lp:
+00:000AF452 D9AD0004        	  1075:         add.l   d4,4(a5)                ; shift dst to NEW half!
+00:000AF456 2055            	  1076:         movea.l (a5),a0                 ; KO2 a3 record
+00:000AF458 20AD0004        	  1077:         move.l  4(a5),(a0)              ; update KO2 record dst
+00:000AF45C 206D0004        	  1078:         movea.l 4(a5),a0                ; dst
+00:000AF460 226D0008        	  1079:         movea.l 8(a5),a1                ; src
+00:000AF464 48E70AC0        	  1080:         movem.l d4/d6/a0-a1,-(sp)
+00:000AF468 41F90007FD00    	  1081:         lea     STE_MASK_BUF.l,a0
+00:000AF46E 7C0F            	  1082:         moveq   #15,d6
+00:000AF470 3811            	  1083: .cws_mk: move.w (a1),d4
+00:000AF472 88690028        	  1084:         or.w    $28(a1),d4
+00:000AF476 88690050        	  1085:         or.w    $50(a1),d4
+00:000AF47A 30C4            	  1086:         move.w  d4,(a0)+
+00:000AF47C 43E90078        	  1087:         lea     $78(a1),a1
+00:000AF480 51CEFFEE        	  1088:         dbra    d6,.cws_mk
+00:000AF484 4CDF0350        	  1089:         movem.l (sp)+,d4/d6/a0-a1
+00:000AF488 7000            	  1090:         moveq   #0,d0
+00:000AF48A 102D000D        	  1091:         move.b  13(a5),d0
+00:000AF48E E148            	  1092:         lsl.w   #8,d0
+00:000AF490 06800009B000    	  1093:         addi.l  #STE_SAVE_UNDER,d0
+00:000AF496 2440            	  1094:         movea.l d0,a2                   ; slot
+00:000AF498 7200            	  1095:         moveq   #0,d1
+00:000AF49A 122D000C        	  1096:         move.b  12(a5),d1               ; skew
+00:000AF49E 7003            	  1097:         moveq   #3,d0
+00:000AF4A0 4E48            	  1098:         trap    #8
+00:000AF4A2 4BED0010        	  1099:         lea     16(a5),a5
+00:000AF4A6 51CFFFAA        	  1100:         dbra    d7,.cws_lp
+00:000AF4AA 4CDF2FFF        	  1101:         movem.l (sp)+,d0-d7/a0-a3/a5
+                            	  1102: .cws_ret:
+00:000AF4AE 4E75            	  1103:         rts
+                            	  1104: 
+                            	  1105: ; ---------------------------------------------------------------------------
+                            	  1106: ; HUD & Transparent Vector Radar Overlay (called back-to-back in ste_pitch_update)
+                            	  1107: ; Lifting only the 0..2 sprites overlapping Radar/HUD preserves strict LIFO
+                            	  1108: ; (ZERO Radar ghosts on X/D!) while keeping Radar absent < 0.5 ms (ZERO FLICKER!)
+                            	  1109: ; ---------------------------------------------------------------------------
+00:000AF4B0 0000            	  1110: STE_LIFT_CNT:   dc.w    0
+00:000AF4B2 0000            	  1111: STE_RAD_MAXC:   dc.w    0               ; exact right word-col of drawn Radar (0 if OFF)
+00:000AF4B4 0000            	  1112: STE_RAD_MAXY:   dc.w    0               ; exact bottom Y of drawn Radar (0 if OFF)
+00:000AF4B6 00000000        	  1113: STE_LIFT_PTRS:  ds.l    32              ; up to 32 sprites overlapping Radar/HUD (NEVER misses walkout!)
+00:000AF4BA *
+                            	  1114: 
+                            	  1115: ste_hud_lift_spr:
+00:000AF536 4279000AF4B0    	  1116:         clr.w   STE_LIFT_CNT
+00:000AF53C 303AF452        	  1117:         move.w  STE_DRAW_CNT(pc),d0
+00:000AF540 676E            	  1118:         beq.s   .hlf_ret
+00:000AF542 48E770E4        	  1119:         movem.l d1-d3/a0-a2/a5,-(sp)
+00:000AF546 4BF9000B2880    	  1120:         lea     STE_DRAW_STACK.l,a5
+00:000AF54C 45FAFF68        	  1121:         lea     STE_LIFT_PTRS(pc),a2
+00:000AF550 7400            	  1122:         moveq   #0,d2                   ; lifted count
+00:000AF552 5340            	  1123:         subq.w  #1,d0
+                            	  1124: .hlf_lp:
+                            	  1125:         ; Check if sprite overlaps Bottom HUD (y_px >= 168) OR active Radar (y_px <= MAXY && x_col <= MAXC)
+00:000AF554 7200            	  1126:         moveq   #0,d1
+00:000AF556 122D000F        	  1127:         move.b  15(a5),d1               ; y_px
+00:000AF55A 0C4100A8        	  1128:         cmpi.w  #168,d1
+00:000AF55E 6C12            	  1129:         bge.s   .hlf_hit
+00:000AF560 B27AFF52        	  1130:         cmp.w   STE_RAD_MAXY(pc),d1
+00:000AF564 6E16            	  1131:         bgt.s   .hlf_nxt
+00:000AF566 7200            	  1132:         moveq   #0,d1
+00:000AF568 122D000E        	  1133:         move.b  14(a5),d1               ; x_col
+00:000AF56C B27AFF44        	  1134:         cmp.w   STE_RAD_MAXC(pc),d1
+00:000AF570 6E0A            	  1135:         bgt.s   .hlf_nxt
+                            	  1136: .hlf_hit:
+00:000AF572 0C420020        	  1137:         cmpi.w  #32,d2
+00:000AF576 6404            	  1138:         bcc.s   .hlf_nxt
+00:000AF578 24CD            	  1139:         move.l  a5,(a2)+
+00:000AF57A 5242            	  1140:         addq.w  #1,d2
+                            	  1141: .hlf_nxt:
+00:000AF57C 4BED0010        	  1142:         lea     16(a5),a5
+00:000AF580 51C8FFD2        	  1143:         dbra    d0,.hlf_lp
+00:000AF584 33C2000AF4B0    	  1144:         move.w  d2,STE_LIFT_CNT
+00:000AF58A 6720            	  1145:         beq.s   .hlf_done
+                            	  1146:         ; Restore lifted sprites in reverse LIFO order!
+00:000AF58C 5342            	  1147:         subq.w  #1,d2
+                            	  1148: .hlf_pop:
+00:000AF58E 2A62            	  1149:         movea.l -(a2),a5
+00:000AF590 226D0004        	  1150:         movea.l 4(a5),a1                ; dst
+00:000AF594 7000            	  1151:         moveq   #0,d0
+00:000AF596 102D000D        	  1152:         move.b  13(a5),d0
+00:000AF59A E148            	  1153:         lsl.w   #8,d0
+00:000AF59C 06800009B000    	  1154:         addi.l  #STE_SAVE_UNDER,d0
+00:000AF5A2 2040            	  1155:         movea.l d0,a0                   ; slot
+00:000AF5A4 7001            	  1156:         moveq   #1,d0                   ; cmd 1 = restore_one
+00:000AF5A6 4E48            	  1157:         trap    #8
+00:000AF5A8 51CAFFE4        	  1158:         dbra    d2,.hlf_pop
+                            	  1159: .hlf_done:
+00:000AF5AC 4CDF270E        	  1160:         movem.l (sp)+,d1-d3/a0-a2/a5
+                            	  1161: .hlf_ret:
+00:000AF5B0 4E75            	  1162:         rts
+                            	  1163: 
+                            	  1164: ste_hud_drop_spr:
+00:000AF5B2 303AFEFC        	  1165:         move.w  STE_LIFT_CNT(pc),d0
+00:000AF5B6 6768            	  1166:         beq.s   .hdr_ret
+00:000AF5B8 4279000AF4B0    	  1167:         clr.w   STE_LIFT_CNT
+00:000AF5BE 48E77EE4        	  1168:         movem.l d1-d6/a0-a2/a5,-(sp)
+00:000AF5C2 45FAFEF2        	  1169:         lea     STE_LIFT_PTRS(pc),a2
+00:000AF5C6 5340            	  1170:         subq.w  #1,d0
+                            	  1171: .hdr_lp:
+00:000AF5C8 2A5A            	  1172:         movea.l (a2)+,a5
+00:000AF5CA 206D0004        	  1173:         movea.l 4(a5),a0                ; dst
+00:000AF5CE 226D0008        	  1174:         movea.l 8(a5),a1                ; src
+00:000AF5D2 48E780E0        	  1175:         movem.l d0/a0-a2,-(sp)
+00:000AF5D6 41F90007FD00    	  1176:         lea     STE_MASK_BUF.l,a0
+00:000AF5DC 7C0F            	  1177:         moveq   #15,d6
+00:000AF5DE 3811            	  1178: .hdr_mk: move.w (a1),d4
+00:000AF5E0 88690028        	  1179:         or.w    $28(a1),d4
+00:000AF5E4 88690050        	  1180:         or.w    $50(a1),d4
+00:000AF5E8 30C4            	  1181:         move.w  d4,(a0)+
+00:000AF5EA 43E90078        	  1182:         lea     $78(a1),a1
+00:000AF5EE 51CEFFEE        	  1183:         dbra    d6,.hdr_mk
+00:000AF5F2 4CDF0701        	  1184:         movem.l (sp)+,d0/a0-a2
+00:000AF5F6 2F0A            	  1185:         move.l  a2,-(sp)
+00:000AF5F8 7200            	  1186:         moveq   #0,d1
+00:000AF5FA 122D000D        	  1187:         move.b  13(a5),d1
+00:000AF5FE E149            	  1188:         lsl.w   #8,d1
+00:000AF600 06810009B000    	  1189:         addi.l  #STE_SAVE_UNDER,d1
+00:000AF606 2441            	  1190:         movea.l d1,a2                   ; slot
+00:000AF608 7200            	  1191:         moveq   #0,d1
+00:000AF60A 122D000C        	  1192:         move.b  12(a5),d1               ; skew
+00:000AF60E 3F00            	  1193:         move.w  d0,-(sp)
+00:000AF610 7003            	  1194:         moveq   #3,d0
+00:000AF612 4E48            	  1195:         trap    #8
+00:000AF614 301F            	  1196:         move.w  (sp)+,d0
+00:000AF616 245F            	  1197:         movea.l (sp)+,a2
+00:000AF618 51C8FFAE        	  1198:         dbra    d0,.hdr_lp
+00:000AF61C 4CDF277E        	  1199:         movem.l (sp)+,d1-d6/a0-a2/a5
+                            	  1200: .hdr_ret:
+00:000AF620 4E75            	  1201:         rts
+                            	  1202: 
+                            	  1203: ste_hud_restore:
+00:000AF622 48E7F0E0        	  1204:         movem.l d0-d3/a0-a2,-(sp)
+                            	  1205:         ; 1a. Reverse-LIFO restore of radar 2x2 dots (12B each: [dst.l, l0.l, l1.l])
+00:000AF626 303AF366        	  1206:         move.w  STE_RAD_DCNT(pc),d0
+00:000AF62A 672A            	  1207:         beq.s   .hr_no_dots
+00:000AF62C 4279000AE98E    	  1208:         clr.w   STE_RAD_DCNT
+00:000AF632 3200            	  1209:         move.w  d0,d1
+00:000AF634 C0FC000C        	  1210:         mulu.w  #12,d0
+00:000AF638 41F90009A820    	  1211:         lea     STE_RAD_DREC.l,a0
+00:000AF63E D1C0            	  1212:         adda.l  d0,a0
+00:000AF640 5341            	  1213:         subq.w  #1,d1
+                            	  1214: .hr_dlp:
+00:000AF642 41E8FFF4        	  1215:         lea     -12(a0),a0
+00:000AF646 2250            	  1216:         movea.l (a0),a1
+00:000AF648 22A80004        	  1217:         move.l  4(a0),(a1)
+00:000AF64C 236800080004    	  1218:         move.l  8(a0),4(a1)
+00:000AF652 51C9FFEE        	  1219:         dbra    d1,.hr_dlp
+                            	  1220: .hr_no_dots:
+                            	  1221:         ; 1b. Reverse-LIFO Blitter restore of transparent radar lines (12B each: [dst.l, save.l, xcnt.w, ycnt.w])
+00:000AF656 363AF334        	  1222:         move.w  STE_RAD_LCNT(pc),d3
+00:000AF65A 6730            	  1223:         beq.s   .hr_no_lines
+00:000AF65C 4279000AE98C    	  1224:         clr.w   STE_RAD_LCNT
+00:000AF662 3003            	  1225:         move.w  d3,d0
+00:000AF664 C0FC000C        	  1226:         mulu.w  #12,d0
+00:000AF668 45F90009A700    	  1227:         lea     STE_RAD_LREC.l,a2
+00:000AF66E D5C0            	  1228:         adda.l  d0,a2
+00:000AF670 5343            	  1229:         subq.w  #1,d3
+                            	  1230: .hr_llp:
+00:000AF672 45EAFFF4        	  1231:         lea     -12(a2),a2
+00:000AF676 2252            	  1232:         movea.l (a2),a1                 ; dst in STE_CORK_BUF
+00:000AF678 206A0004        	  1233:         movea.l 4(a2),a0                ; save pool src
+00:000AF67C 322A0008        	  1234:         move.w  8(a2),d1                ; XCOUNT (words)
+00:000AF680 342A000A        	  1235:         move.w  10(a2),d2               ; YCOUNT (lines)
+00:000AF684 7006            	  1236:         moveq   #6,d0                   ; cmd 6 = hud_rest_band
+00:000AF686 4E48            	  1237:         trap    #8
+00:000AF688 51CBFFE8        	  1238:         dbra    d3,.hr_llp
+                            	  1239: .hr_no_lines:
+00:000AF68C 363AF2F8        	  1240:         move.w  STE_HUD_ACTIVE(pc),d3
+00:000AF690 6700006E        	  1241:         beq.w   .hr_done
+00:000AF694 4279000AE986    	  1242:         clr.w   STE_HUD_ACTIVE
+                            	  1243:         ; 2. Restore Bottom HUD tight 3 boxes:
+                            	  1244:         ;    2a. Player name (y=183..189, 7 lines, x=0..159 -> 11 cols = 44 words)
+00:000AF69A 41F9000B2400    	  1245:         lea     STE_BHUD_SAVE.l,a0
+00:000AF6A0 227AF2E6        	  1246:         movea.l STE_HUD_VBASE(pc),a1
+00:000AF6A4 D3FC00007818    	  1247:         adda.l  #183*CORK_STRIDE,a1
+00:000AF6AA 722C            	  1248:         moveq   #44,d1
+00:000AF6AC 7407            	  1249:         moveq   #7,d2
+00:000AF6AE 7006            	  1250:         moveq   #6,d0
+00:000AF6B0 4E48            	  1251:         trap    #8
+                            	  1252:         ;    2b. Score (y=183..189, 7 lines, x=224..287 -> 5 cols = 20 words)
+00:000AF6B2 41F9000B2680    	  1253:         lea     STE_BHUD_SAVE+640.l,a0
+00:000AF6B8 227AF2CE        	  1254:         movea.l STE_HUD_VBASE(pc),a1
+00:000AF6BC D3FC00007888    	  1255:         adda.l  #183*CORK_STRIDE+112,a1
+00:000AF6C2 7214            	  1256:         moveq   #20,d1
+00:000AF6C4 7407            	  1257:         moveq   #7,d2
+00:000AF6C6 7006            	  1258:         moveq   #6,d0
+00:000AF6C8 4E48            	  1259:         trap    #8
+                            	  1260:         ;    2c. Match clock (y=190..196, 7 lines, x=144..175 -> 3 cols = 12 words)
+00:000AF6CA 41F9000B27C0    	  1261:         lea     STE_BHUD_SAVE+960.l,a0
+00:000AF6D0 227AF2B6        	  1262:         movea.l STE_HUD_VBASE(pc),a1
+00:000AF6D4 D3FC00007CF8    	  1263:         adda.l  #190*CORK_STRIDE+72,a1
+00:000AF6DA 720C            	  1264:         moveq   #12,d1
+00:000AF6DC 7407            	  1265:         moveq   #7,d2
+00:000AF6DE 7006            	  1266:         moveq   #6,d0
+00:000AF6E0 4E48            	  1267:         trap    #8
+                            	  1268:         ; 3. Restore Center Banner if it was drawn (bit 1 of d3)
+00:000AF6E2 08030001        	  1269:         btst    #1,d3
+00:000AF6E6 6718            	  1270:         beq.s   .hr_done
+00:000AF6E8 41F9000B2A80    	  1271:         lea     STE_BAN_SAVE.l,a0
+00:000AF6EE 227AF298        	  1272:         movea.l STE_HUD_VBASE(pc),a1
+00:000AF6F2 D3FC00003F00    	  1273:         adda.l  #96*CORK_STRIDE,a1
+00:000AF6F8 7254            	  1274:         moveq   #84,d1
+00:000AF6FA 7408            	  1275:         moveq   #8,d2
+00:000AF6FC 7006            	  1276:         moveq   #6,d0
+00:000AF6FE 4E48            	  1277:         trap    #8
+                            	  1278: .hr_done:
+00:000AF700 4CDF070F        	  1279:         movem.l (sp)+,d0-d3/a0-a2
+00:000AF704 4E75            	  1280:         rts
+                            	  1281: 
+                            	  1282: ste_hud_draw:
+00:000AF706 4A79000AE986    	  1283:         tst.w   STE_HUD_ACTIVE
+00:000AF70C 6704            	  1284:         beq.s   .hd_go
+00:000AF70E 6100FF12        	  1285:         bsr.w   ste_hud_restore
+                            	  1286: .hd_go:
+00:000AF712 48E7FCE0        	  1287:         movem.l d0-d5/a0-a2,-(sp)
+00:000AF716 23FAF254000AE988	  1288:         move.l  STE_VIEW_BASE(pc),STE_HUD_VBASE
+00:000AF71E 363AF250        	  1289:         move.w  STE_VIEW_HSCR(pc),d3    ; d3 = skew (0..15)
+00:000AF722 7A01            	  1290:         moveq   #1,d5                   ; active flags: bit0=bhud
+                            	  1291: 
+                            	  1292:         ; 1. Transparent, X-Resizable, D-Toggleable Vector Radar (directly from KO2 vars!)
+00:000AF724 610000A6        	  1293:         bsr.w   ste_radar_draw
+                            	  1294: 
+                            	  1295:         ; 2. Bottom HUD tight 3 boxes (2 planes: black + orange, ~12k cycles total!):
+                            	  1296:         ;    2a. Player Name: y=183..189 (7 lines), x=0..159 (W=10 words, offset +0)
+00:000AF728 41F90007F260    	  1297:         lea     $078000+183*160,a0
+00:000AF72E 227AF258        	  1298:         movea.l STE_HUD_VBASE(pc),a1
+00:000AF732 D3FC00007818    	  1299:         adda.l  #183*CORK_STRIDE,a1
+00:000AF738 45F9000B2400    	  1300:         lea     STE_BHUD_SAVE.l,a2
+00:000AF73E 720A            	  1301:         moveq   #10,d1
+00:000AF740 7407            	  1302:         moveq   #7,d2
+00:000AF742 7800            	  1303:         moveq   #0,d4                   ; 2 planes
+00:000AF744 7005            	  1304:         moveq   #5,d0
+00:000AF746 4E48            	  1305:         trap    #8
+                            	  1306:         ;    2b. Score: y=183..189 (7 lines), x=224..287 (W=4 words, offset +112)
+00:000AF748 41F90007F2D0    	  1307:         lea     $078000+183*160+112,a0
+00:000AF74E 227AF238        	  1308:         movea.l STE_HUD_VBASE(pc),a1
+00:000AF752 D3FC00007888    	  1309:         adda.l  #183*CORK_STRIDE+112,a1
+00:000AF758 45F9000B2680    	  1310:         lea     STE_BHUD_SAVE+640.l,a2
+00:000AF75E 7204            	  1311:         moveq   #4,d1
+00:000AF760 7407            	  1312:         moveq   #7,d2
+00:000AF762 7800            	  1313:         moveq   #0,d4
+00:000AF764 7005            	  1314:         moveq   #5,d0
+00:000AF766 4E48            	  1315:         trap    #8
+                            	  1316:         ;    2c. Clock: y=190..196 (7 lines), x=144..175 (W=2 words, offset +72)
+00:000AF768 41F90007F708    	  1317:         lea     $078000+190*160+72,a0
+00:000AF76E 227AF218        	  1318:         movea.l STE_HUD_VBASE(pc),a1
+00:000AF772 D3FC00007CF8    	  1319:         adda.l  #190*CORK_STRIDE+72,a1
+00:000AF778 45F9000B27C0    	  1320:         lea     STE_BHUD_SAVE+960.l,a2
+00:000AF77E 7202            	  1321:         moveq   #2,d1
+00:000AF780 7407            	  1322:         moveq   #7,d2
+00:000AF782 7800            	  1323:         moveq   #0,d4
+00:000AF784 7005            	  1324:         moveq   #5,d0
+00:000AF786 4E48            	  1325:         trap    #8
+                            	  1326: 
+                            	  1327:         ; 3. Center Event Banner (y=96..103, 8 lines): quick non-zero check on y=99 first!
+00:000AF788 41F90007BDE0    	  1328:         lea     $078000+99*160,a0
+00:000AF78E 7027            	  1329:         moveq   #39,d0                  ; 40 longs = 160 bytes
+00:000AF790 7200            	  1330:         moveq   #0,d1
+00:000AF792 8298            	  1331: .chk_b: or.l    (a0)+,d1
+00:000AF794 51C8FFFC        	  1332:         dbra    d0,.chk_b
+00:000AF798 4A81            	  1333:         tst.l   d1
+00:000AF79A 6724            	  1334:         beq.s   .hd_done
+00:000AF79C 00450002        	  1335:         ori.w   #2,d5                   ; bit1 = banner active
+00:000AF7A0 41F90007BC00    	  1336:         lea     $078000+96*160,a0
+00:000AF7A6 227AF1E0        	  1337:         movea.l STE_HUD_VBASE(pc),a1
+00:000AF7AA D3FC00003F00    	  1338:         adda.l  #96*CORK_STRIDE,a1
+00:000AF7B0 45F9000B2A80    	  1339:         lea     STE_BAN_SAVE.l,a2
+00:000AF7B6 7214            	  1340:         moveq   #20,d1
+00:000AF7B8 7408            	  1341:         moveq   #8,d2
+00:000AF7BA 7801            	  1342:         moveq   #1,d4                   ; all 4 planes
+00:000AF7BC 7005            	  1343:         moveq   #5,d0
+00:000AF7BE 4E48            	  1344:         trap    #8
+                            	  1345: 
+                            	  1346: .hd_done:
+00:000AF7C0 33C5000AE986    	  1347:         move.w  d5,STE_HUD_ACTIVE
+00:000AF7C6 4CDF073F        	  1348:         movem.l (sp)+,d0-d5/a0-a2
+00:000AF7CA 4E75            	  1349:         rts
+                            	  1350: 
+                            	  1351: ; ---------------------------------------------------------------------------
+                            	  1352: ; ste_radar_draw: ULTRA-FAST STE BLITTER Transparent, X-Resizable, D-Toggleable Radar!
+                            	  1353: ; Uses TRAP #8 cmd 7 (Blitter ENDMASK transparent line save+draw) for all pitch
+                            	  1354: ; outline lines (~5x faster than 68000!), plus 23 transparent 2x2 dots!
+                            	  1355: ; ---------------------------------------------------------------------------
+                            	  1356: ste_radar_draw:
+00:000AF7CC 4279000AF4B2    	  1357:         clr.w   STE_RAD_MAXC
+00:000AF7D2 4279000AF4B4    	  1358:         clr.w   STE_RAD_MAXY
+00:000AF7D8 4A6CF1F0        	  1359:         tst.w   -$0e10(a4)              ; Radar ON (> 0)?
+00:000AF7DC 6F0000DA        	  1360:         ble.w   .rd_ret
+00:000AF7E0 48E7FFF6        	  1361:         movem.l d0-d7/a0-a3/a5-a6,-(sp)
+00:000AF7E4 2C7AF1A2        	  1362:         movea.l STE_HUD_VBASE(pc),a6    ; a6 = STE_VIEW_BASE
+00:000AF7E8 3C2CF1F6        	  1363:         move.w  -$0e0a(a4),d6           ; d6 = radar scale (8, 12, 16, 20, 24)
+00:000AF7EC 6F0000C6        	  1364:         ble.w   .rd_done
+                            	  1365:         ; Compute exact Radar bbox for ste_hud_lift_spr (max pitch coords ~1024x1408)
+00:000AF7F0 303C0460        	  1366:         move.w  #1120,d0
+00:000AF7F4 48C0            	  1367:         ext.l   d0
+00:000AF7F6 81C6            	  1368:         divs.w  d6,d0
+00:000AF7F8 D06CF1F2        	  1369:         add.w   -$0e0e(a4),d0
+00:000AF7FC D07AF172        	  1370:         add.w   STE_VIEW_HSCR(pc),d0
+00:000AF800 E848            	  1371:         lsr.w   #4,d0
+00:000AF802 5240            	  1372:         addq.w  #1,d0
+00:000AF804 33C0000AF4B2    	  1373:         move.w  d0,STE_RAD_MAXC
+00:000AF80A 303C05C0        	  1374:         move.w  #1472,d0
+00:000AF80E 48C0            	  1375:         ext.l   d0
+00:000AF810 81C6            	  1376:         divs.w  d6,d0
+00:000AF812 D06CF1F4        	  1377:         add.w   -$0e0c(a4),d0
+00:000AF816 33C0000AF4B4    	  1378:         move.w  d0,STE_RAD_MAXY
+00:000AF81C 45F90009A700    	  1379:         lea     STE_RAD_LREC.l,a2       ; a2 = line restore record cursor (max 24)
+00:000AF822 4BF90007FE40    	  1380:         lea     STE_RAD_POOL.l,a5       ; a5 = Blitter save-under pool cursor
+00:000AF828 7E00            	  1381:         moveq   #0,d7                   ; d7 = line record count
+                            	  1382: 
+                            	  1383:         ; --- A. Horizontal pitch outline lines from -$4d78(a4) ---
+00:000AF82A 47ECB288        	  1384:         lea     -$4d78(a4),a3
+                            	  1385: .rd_hlp:
+00:000AF82E 301B            	  1386:         move.w  (a3)+,d0                ; x1
+00:000AF830 6D20            	  1387:         blt.s   .rd_vstart
+00:000AF832 321B            	  1388:         move.w  (a3)+,d1                ; y
+00:000AF834 341B            	  1389:         move.w  (a3)+,d2                ; x2
+00:000AF836 48C0            	  1390:         ext.l   d0
+00:000AF838 81C6            	  1391:         divs.w  d6,d0
+00:000AF83A D06CF1F2        	  1392:         add.w   -$0e0e(a4),d0           ; sx1
+00:000AF83E 48C1            	  1393:         ext.l   d1
+00:000AF840 83C6            	  1394:         divs.w  d6,d1
+00:000AF842 D26CF1F4        	  1395:         add.w   -$0e0c(a4),d1           ; sy
+00:000AF846 48C2            	  1396:         ext.l   d2
+00:000AF848 85C6            	  1397:         divs.w  d6,d2
+00:000AF84A D46CF1F2        	  1398:         add.w   -$0e0e(a4),d2           ; sx2
+00:000AF84E 616A            	  1399:         bsr.s   .rd_hline_blt
+00:000AF850 60DC            	  1400:         bra.s   .rd_hlp
+                            	  1401: 
+                            	  1402:         ; --- B. Vertical pitch outline lines ---
+                            	  1403: .rd_vstart:
+00:000AF852 301B            	  1404:         move.w  (a3)+,d0                ; x
+00:000AF854 6D22            	  1405:         blt.s   .rd_dots
+00:000AF856 321B            	  1406:         move.w  (a3)+,d1                ; y1
+00:000AF858 341B            	  1407:         move.w  (a3)+,d2                ; y2
+00:000AF85A 48C0            	  1408:         ext.l   d0
+00:000AF85C 81C6            	  1409:         divs.w  d6,d0
+00:000AF85E D06CF1F2        	  1410:         add.w   -$0e0e(a4),d0           ; sx
+00:000AF862 48C1            	  1411:         ext.l   d1
+00:000AF864 83C6            	  1412:         divs.w  d6,d1
+00:000AF866 D26CF1F4        	  1413:         add.w   -$0e0c(a4),d1           ; sy1
+00:000AF86A 48C2            	  1414:         ext.l   d2
+00:000AF86C 85C6            	  1415:         divs.w  d6,d2
+00:000AF86E D46CF1F4        	  1416:         add.w   -$0e0c(a4),d2           ; sy2
+00:000AF872 610000C4        	  1417:         bsr.w   .rd_vline_blt
+00:000AF876 60DA            	  1418:         bra.s   .rd_vstart
+                            	  1419: 
+                            	  1420:         ; --- C. 22 Player dots + Ball dot (transparent 2x2, 12B exact 32-bit dst save!) ---
+                            	  1421: .rd_dots:
+00:000AF878 33C7000AE98C    	  1422:         move.w  d7,STE_RAD_LCNT
+00:000AF87E 45F90009A820    	  1423:         lea     STE_RAD_DREC.l,a2       ; a2 = dot restore record cursor (max 56)
+00:000AF884 7E00            	  1424:         moveq   #0,d7                   ; d7 = dot record count
+00:000AF886 2A6CAFEE        	  1425:         movea.l -$5012(a4),a5           ; Home 11 players
+00:000AF88A 7A0A            	  1426:         moveq   #10,d5
+00:000AF88C 7802            	  1427:         moveq   #2,d4                   ; colour 10 ($730 orange)
+00:000AF88E 6100011C        	  1428:         bsr.w   .rd_team
+00:000AF892 2A6CB044        	  1429:         movea.l -$4fbc(a4),a5           ; Away 11 players
+00:000AF896 7A0A            	  1430:         moveq   #10,d5
+00:000AF898 7804            	  1431:         moveq   #4,d4                   ; colour 12 ($500 red)
+00:000AF89A 61000110        	  1432:         bsr.w   .rd_team
+00:000AF89E 302CF1EC        	  1433:         move.w  -$0e14(a4),d0
+00:000AF8A2 6D0A            	  1434:         blt.s   .rd_ddone
+00:000AF8A4 322CF1EE        	  1435:         move.w  -$0e12(a4),d1
+00:000AF8A8 7800            	  1436:         moveq   #0,d4                   ; colour 8 ($777 white ball)
+00:000AF8AA 6100011C        	  1437:         bsr.w   .rd_dot
+                            	  1438: .rd_ddone:
+00:000AF8AE 33C7000AE98E    	  1439:         move.w  d7,STE_RAD_DCNT
+                            	  1440: .rd_done:
+00:000AF8B4 4CDF6FFF        	  1441:         movem.l (sp)+,d0-d7/a0-a3/a5-a6
+                            	  1442: .rd_ret:
+00:000AF8B8 4E75            	  1443:         rts
+                            	  1444: 
+                            	  1445: ; Blitter transparent black horizontal line: d0=sx1, d1=sy, d2=sx2
+                            	  1446: .rd_hline_blt:
+00:000AF8BA 0C4100C8        	  1447:         cmpi.w  #200,d1
+00:000AF8BE 6476            	  1448:         bcc.s   .hlb_ret
+00:000AF8C0 0C470018        	  1449:         cmpi.w  #24,d7
+00:000AF8C4 6470            	  1450:         bcc.s   .hlb_ret
+00:000AF8C6 D07AF0A8        	  1451:         add.w   STE_VIEW_HSCR(pc),d0
+00:000AF8CA D47AF0A4        	  1452:         add.w   STE_VIEW_HSCR(pc),d2
+00:000AF8CE 3600            	  1453:         move.w  d0,d3
+00:000AF8D0 0243000F        	  1454:         andi.w  #15,d3
+00:000AF8D4 383CFFFF        	  1455:         move.w  #$ffff,d4
+00:000AF8D8 E66C            	  1456:         lsr.w   d3,d4                   ; d4 = ENDMASK1 (left clip!)
+00:000AF8DA 3602            	  1457:         move.w  d2,d3
+00:000AF8DC 0243000F        	  1458:         andi.w  #15,d3
+00:000AF8E0 7A0F            	  1459:         moveq   #15,d5
+00:000AF8E2 9A43            	  1460:         sub.w   d3,d5
+00:000AF8E4 363CFFFF        	  1461:         move.w  #$ffff,d3
+00:000AF8E8 EB6B            	  1462:         lsl.w   d5,d3                   ; d3 = ENDMASK3 (right clip!)
+00:000AF8EA E848            	  1463:         lsr.w   #4,d0                   ; w1 = sx1 >> 4
+00:000AF8EC E84A            	  1464:         lsr.w   #4,d2                   ; w2 = sx2 >> 4
+00:000AF8EE 9440            	  1465:         sub.w   d0,d2
+00:000AF8F0 6D44            	  1466:         blt.s   .hlb_ret
+00:000AF8F2 5242            	  1467:         addq.w  #1,d2                   ; d2 = word_cols (1..20)
+00:000AF8F4 0C420001        	  1468:         cmpi.w  #1,d2
+00:000AF8F8 6602            	  1469:         bne.s   .hlb_m2
+00:000AF8FA C843            	  1470:         and.w   d3,d4                   ; single-word hline: combine left & right masks!
+                            	  1471: .hlb_m2:
+                            	  1472:         ; Check pool space: word_cols * 8 bytes
+00:000AF8FC 3A02            	  1473:         move.w  d2,d5
+00:000AF8FE E74D            	  1474:         lsl.w   #3,d5
+00:000AF900 41F55000        	  1475:         lea     0(a5,d5.w),a0
+00:000AF904 B1FC00080FF8    	  1476:         cmpa.l  #STE_RAD_POOL_END,a0
+00:000AF90A 622A            	  1477:         bhi.s   .hlb_ret
+                            	  1478:         ; Compute dst a1 = a6 + sy*168 + w1*8
+00:000AF90C C2FC00A8        	  1479:         mulu.w  #CORK_STRIDE,d1
+00:000AF910 E748            	  1480:         lsl.w   #3,d0
+00:000AF912 48C0            	  1481:         ext.l   d0
+00:000AF914 D280            	  1482:         add.l   d0,d1
+00:000AF916 43F61800        	  1483:         lea     0(a6,d1.l),a1
+                            	  1484:         ; Record restore entry [dst=a1, save=a5, xcnt=word_cols*4, ycnt=1]
+00:000AF91A 24C9            	  1485:         move.l  a1,(a2)+
+00:000AF91C 24CD            	  1486:         move.l  a5,(a2)+
+00:000AF91E 3002            	  1487:         move.w  d2,d0
+00:000AF920 E548            	  1488:         lsl.w   #2,d0                   ; word_cols * 4 planes
+00:000AF922 34C0            	  1489:         move.w  d0,(a2)+
+00:000AF924 34FC0001        	  1490:         move.w  #1,(a2)+
+00:000AF928 5247            	  1491:         addq.w  #1,d7
+                            	  1492:         ; Call TRAP #8 cmd 7: save+draw transparent black box (a1=dst, a0=save, d1=wcols, d2=1, d3=em3, d4=em1)
+00:000AF92A 204D            	  1493:         movea.l a5,a0                   ; save ptr
+00:000AF92C DAC5            	  1494:         adda.w  d5,a5                   ; advance pool
+00:000AF92E 3202            	  1495:         move.w  d2,d1                   ; d1 = word_cols
+00:000AF930 7401            	  1496:         moveq   #1,d2                   ; d2 = 1 line
+00:000AF932 7007            	  1497:         moveq   #7,d0
+00:000AF934 4E48            	  1498:         trap    #8
+                            	  1499: .hlb_ret:
+00:000AF936 4E75            	  1500:         rts
+                            	  1501: 
+                            	  1502: ; Blitter transparent black vertical line: d0=sx, d1=sy1, d2=sy2
+                            	  1503: .rd_vline_blt:
+00:000AF938 0C400140        	  1504:         cmpi.w  #320,d0
+00:000AF93C 646C            	  1505:         bcc.s   .vlb_ret
+00:000AF93E 0C4100C8        	  1506:         cmpi.w  #200,d1
+00:000AF942 6466            	  1507:         bcc.s   .vlb_ret
+00:000AF944 0C470018        	  1508:         cmpi.w  #24,d7
+00:000AF948 6460            	  1509:         bcc.s   .vlb_ret
+00:000AF94A 0C4200C8        	  1510:         cmpi.w  #200,d2
+00:000AF94E 6504            	  1511:         bcs.s   .vlb_yok
+00:000AF950 343C00C7        	  1512:         move.w  #199,d2
+                            	  1513: .vlb_yok:
+00:000AF954 9441            	  1514:         sub.w   d1,d2
+00:000AF956 6D52            	  1515:         blt.s   .vlb_ret
+00:000AF958 5242            	  1516:         addq.w  #1,d2                   ; d2 = height H (1..200)
+                            	  1517:         ; Check pool space: H * 8 bytes (cap H if pool nearly full!)
+00:000AF95A 2A3C00080FF8    	  1518:         move.l  #STE_RAD_POOL_END,d5
+00:000AF960 9A8D            	  1519:         sub.l   a5,d5
+00:000AF962 E68D            	  1520:         lsr.l   #3,d5                   ; max lines remaining in pool
+00:000AF964 6F44            	  1521:         ble.s   .vlb_ret
+00:000AF966 B445            	  1522:         cmp.w   d5,d2
+00:000AF968 6F02            	  1523:         ble.s   .vlb_hok
+00:000AF96A 3405            	  1524:         move.w  d5,d2
+                            	  1525: .vlb_hok:
+00:000AF96C D07AF002        	  1526:         add.w   STE_VIEW_HSCR(pc),d0
+00:000AF970 3600            	  1527:         move.w  d0,d3
+00:000AF972 0243000F        	  1528:         andi.w  #15,d3
+00:000AF976 7A0F            	  1529:         moveq   #15,d5
+00:000AF978 9A43            	  1530:         sub.w   d3,d5
+00:000AF97A 7800            	  1531:         moveq   #0,d4
+00:000AF97C 0BC4            	  1532:         bset    d5,d4                   ; d4 = ENDMASK1 (single pixel bit!)
+00:000AF97E 3604            	  1533:         move.w  d4,d3                   ; d3 = ENDMASK3
+00:000AF980 E848            	  1534:         lsr.w   #4,d0
+00:000AF982 E748            	  1535:         lsl.w   #3,d0
+00:000AF984 C2FC00A8        	  1536:         mulu.w  #CORK_STRIDE,d1
+00:000AF988 48C0            	  1537:         ext.l   d0
+00:000AF98A D280            	  1538:         add.l   d0,d1
+00:000AF98C 43F61800        	  1539:         lea     0(a6,d1.l),a1           ; a1 = dst in STE_VIEW_BASE
+                            	  1540:         ; Record restore entry [dst=a1, save=a5, xcnt=4, ycnt=H]
+00:000AF990 24C9            	  1541:         move.l  a1,(a2)+
+00:000AF992 24CD            	  1542:         move.l  a5,(a2)+
+00:000AF994 34FC0004        	  1543:         move.w  #4,(a2)+                ; 1 col * 4 planes
+00:000AF998 34C2            	  1544:         move.w  d2,(a2)+                ; H lines
+00:000AF99A 5247            	  1545:         addq.w  #1,d7
+00:000AF99C 204D            	  1546:         movea.l a5,a0                   ; save ptr
+00:000AF99E 3A02            	  1547:         move.w  d2,d5
+00:000AF9A0 E74D            	  1548:         lsl.w   #3,d5
+00:000AF9A2 DAC5            	  1549:         adda.w  d5,a5                   ; advance pool by H*8
+00:000AF9A4 7201            	  1550:         moveq   #1,d1                   ; d1 = 1 word_col
+00:000AF9A6 7007            	  1551:         moveq   #7,d0                   ; cmd 7 = blt_trans_line(a1=dst, a0=save, d1=1, d2=H, d3=em3, d4=em1)
+00:000AF9A8 4E48            	  1552:         trap    #8
+                            	  1553: .vlb_ret:
+00:000AF9AA 4E75            	  1554:         rts
+                            	  1555: 
+                            	  1556: ; Draw 11 player dots for team at a5 (stride $186), d5=10, d4=colour (2=orange, 4=red)
+                            	  1557: .rd_team:
+00:000AF9AC 4A6D000C        	  1558:         tst.w   $0c(a5)
+00:000AF9B0 670C            	  1559:         beq.s   .rt_nxt
+00:000AF9B2 302D0020        	  1560:         move.w  $20(a5),d0
+00:000AF9B6 6D06            	  1561:         blt.s   .rt_nxt
+00:000AF9B8 322D0022        	  1562:         move.w  $22(a5),d1
+00:000AF9BC 610A            	  1563:         bsr.s   .rd_dot
+                            	  1564: .rt_nxt:
+00:000AF9BE 4BED0186        	  1565:         lea     $186(a5),a5
+00:000AF9C2 51CDFFE8        	  1566:         dbra    d5,.rd_team
+00:000AF9C6 4E75            	  1567:         rts
+                            	  1568: 
+                            	  1569: ; Plot transparent 2x2 dot at (d0=x, d1=y), d4=colour (0->8 white, 2->10 orange, 4->12 red)
+                            	  1570: ; Saves exact 32-bit dst address (12B: [dst.l, l0.l, l1.l]) -> ZERO offset wrap bugs!
+                            	  1571: .rd_dot:
+00:000AF9C8 0C40013E        	  1572:         cmpi.w  #318,d0
+00:000AF9CC 6466            	  1573:         bcc.s   .dot_ret
+00:000AF9CE 0C4100C6        	  1574:         cmpi.w  #198,d1
+00:000AF9D2 6460            	  1575:         bcc.s   .dot_ret
+00:000AF9D4 D07AEF9A        	  1576:         add.w   STE_VIEW_HSCR(pc),d0
+00:000AF9D8 3400            	  1577:         move.w  d0,d2
+00:000AF9DA 0242000F        	  1578:         andi.w  #15,d2
+00:000AF9DE 363CC000        	  1579:         move.w  #$c000,d3
+00:000AF9E2 E46B            	  1580:         lsr.w   d2,d3
+00:000AF9E4 E848            	  1581:         lsr.w   #4,d0
+00:000AF9E6 E748            	  1582:         lsl.w   #3,d0
+00:000AF9E8 C2FC00A8        	  1583:         mulu.w  #CORK_STRIDE,d1
+00:000AF9EC 48C0            	  1584:         ext.l   d0
+00:000AF9EE D280            	  1585:         add.l   d0,d1
+00:000AF9F0 41F61800        	  1586:         lea     0(a6,d1.l),a0
+00:000AF9F4 7401            	  1587:         moveq   #1,d2                   ; 2 scanlines
+                            	  1588: .dot_lp:
+00:000AF9F6 0C470038        	  1589:         cmpi.w  #56,d7
+00:000AF9FA 6438            	  1590:         bcc.s   .dot_ret
+00:000AF9FC 24C8            	  1591:         move.l  a0,(a2)+
+00:000AF9FE 24D0            	  1592:         move.l  (a0),(a2)+
+00:000AFA00 24E80004        	  1593:         move.l  4(a0),(a2)+
+00:000AFA04 5247            	  1594:         addq.w  #1,d7
+00:000AFA06 3003            	  1595:         move.w  d3,d0
+00:000AFA08 4640            	  1596:         not.w   d0
+00:000AFA0A C150            	  1597:         and.w   d0,(a0)
+00:000AFA0C C1680002        	  1598:         and.w   d0,2(a0)
+00:000AFA10 C1680004        	  1599:         and.w   d0,4(a0)
+00:000AFA14 87680006        	  1600:         or.w    d3,6(a0)
+00:000AFA18 4A44            	  1601:         tst.w   d4
+00:000AFA1A 6710            	  1602:         beq.s   .dot_c_ok
+00:000AFA1C 0C440002        	  1603:         cmpi.w  #2,d4
+00:000AFA20 6606            	  1604:         bne.s   .dot_c4
+00:000AFA22 87680002        	  1605:         or.w    d3,2(a0)
+00:000AFA26 6004            	  1606:         bra.s   .dot_c_ok
+                            	  1607: .dot_c4:
+00:000AFA28 87680004        	  1608:         or.w    d3,4(a0)
+                            	  1609: .dot_c_ok:
+00:000AFA2C D0FC00A8        	  1610:         adda.w  #CORK_STRIDE,a0
+00:000AFA30 51CAFFC4        	  1611:         dbra    d2,.dot_lp
+                            	  1612: .dot_ret:
+00:000AFA34 4E75            	  1613:         rts
+                            	  1614: 
+                            	  1615: ; ---------------------------------------------------------------------------
+                            	  1616: ; TRAP #8 ($a0.w) — Fast Supervisor STE Blitter Dispatcher!
+                            	  1617: ; d0.w = cmd:
+                            	  1618: ;   0 : blit_tile(a0=3bpp src 96B, a1=dst in STE_CORK_BUF)
+                            	  1619: ;   1 : save_under(a0=dst in STE_CORK_BUF, a1=256B slot)
+                            	  1620: ;   2 : restore_under(a0=256B slot, a1=dst in STE_CORK_BUF)
+                            	  1621: ;   3 : draw_sprite(a0=dst in STE_CORK_BUF, d1.w=skew 0..15)
+                            	  1622: ;   4 : clear_cork (zeroes STE_CORK_BUF 73,984 bytes with Blitter)
+                            	  1623: ; ---------------------------------------------------------------------------
+                            	  1624: ste_trap8_handler:
+00:000AFA36 0C400001        	  1625:         cmpi.w  #1,d0
+00:000AFA3A 673C            	  1626:         beq.s   .cmd1_rest_one
+00:000AFA3C 0C400002        	  1627:         cmpi.w  #2,d0
+00:000AFA40 67000086        	  1628:         beq.w   .cmd2_rest_lifo
+00:000AFA44 0C400003        	  1629:         cmpi.w  #3,d0
+00:000AFA48 670000E8        	  1630:         beq.w   .cmd3_spr
+00:000AFA4C 0C400004        	  1631:         cmpi.w  #4,d0
+00:000AFA50 67000248        	  1632:         beq.w   .cmd4_clr
+00:000AFA54 0C400005        	  1633:         cmpi.w  #5,d0
+00:000AFA58 6700029E        	  1634:         beq.w   .cmd5_hud_draw
+00:000AFA5C 0C400006        	  1635:         cmpi.w  #6,d0
+00:000AFA60 670004A4        	  1636:         beq.w   .cmd6_hud_rest
+00:000AFA64 0C400007        	  1637:         cmpi.w  #7,d0
+00:000AFA68 670004F2        	  1638:         beq.w   .cmd7_radar_opaque
+00:000AFA6C 0C400008        	  1639:         cmpi.w  #8,d0
+00:000AFA70 670005C4        	  1640:         beq.w   .cmd8_blit_row
+00:000AFA74 60000732        	  1641:         bra.w   .cmd9_blit_col
+                            	  1642: 
+                            	  1643: ; --- cmd 1: Single sprite restore (a0=slot, a1=dst) ---
+                            	  1644: .cmd1_rest_one:
+00:000AFA78 21C88A24        	  1645:         move.l  a0,BLT_SRC_ADDR.w
+00:000AFA7C 21C98A32        	  1646:         move.l  a1,BLT_DST_ADDR.w
+00:000AFA80 31FC00028A20    	  1647:         move.w  #2,BLT_SRC_XINC.w
+00:000AFA86 31FC00028A22    	  1648:         move.w  #2,BLT_SRC_YINC.w
+00:000AFA8C 31FC00028A2E    	  1649:         move.w  #2,BLT_DST_XINC.w
+00:000AFA92 31FC009A8A30    	  1650:         move.w  #(CORK_STRIDE-14),BLT_DST_YINC.w
+00:000AFA98 31FCFFFF8A28    	  1651:         move.w  #$ffff,BLT_ENDMASK1.w
+00:000AFA9E 31FCFFFF8A2A    	  1652:         move.w  #$ffff,BLT_ENDMASK2.w
+00:000AFAA4 31FCFFFF8A2C    	  1653:         move.w  #$ffff,BLT_ENDMASK3.w
+00:000AFAAA 31FC00088A36    	  1654:         move.w  #8,BLT_XCOUNT.w
+00:000AFAB0 31FC00108A38    	  1655:         move.w  #16,BLT_YCOUNT.w
+00:000AFAB6 31FC02038A3A    	  1656:         move.w  #$0203,BLT_HOP.w
+00:000AFABC 42388A3D        	  1657:         clr.b   BLT_SKEW.w
+00:000AFAC0 11FC00C08A3C    	  1658:         move.b  #$c0,BLT_LINE.w
+00:000AFAC6 4E73            	  1659:         rte
+                            	  1660: 
+                            	  1661: ; --- cmd 2: Batched LIFO reverse-order restore of d1.w 16-byte records ending at a0 ---
+                            	  1662: .cmd2_rest_lifo:
+00:000AFAC8 31FC00028A20    	  1663:         move.w  #2,BLT_SRC_XINC.w
+00:000AFACE 31FC00028A22    	  1664:         move.w  #2,BLT_SRC_YINC.w
+00:000AFAD4 31FC00028A2E    	  1665:         move.w  #2,BLT_DST_XINC.w
+00:000AFADA 31FC009A8A30    	  1666:         move.w  #(CORK_STRIDE-14),BLT_DST_YINC.w
+00:000AFAE0 31FCFFFF8A28    	  1667:         move.w  #$ffff,BLT_ENDMASK1.w
+00:000AFAE6 31FCFFFF8A2A    	  1668:         move.w  #$ffff,BLT_ENDMASK2.w
+00:000AFAEC 31FCFFFF8A2C    	  1669:         move.w  #$ffff,BLT_ENDMASK3.w
+00:000AFAF2 31FC00088A36    	  1670:         move.w  #8,BLT_XCOUNT.w
+00:000AFAF8 31FC02038A3A    	  1671:         move.w  #$0203,BLT_HOP.w
+00:000AFAFE 42388A3D        	  1672:         clr.b   BLT_SKEW.w
+00:000AFB02 5341            	  1673:         subq.w  #1,d1
+                            	  1674: .c2_lp:
+00:000AFB04 41E8FFF0        	  1675:         lea     -16(a0),a0
+00:000AFB08 7000            	  1676:         moveq   #0,d0
+00:000AFB0A 1028000D        	  1677:         move.b  13(a0),d0               ; slot_idx.b (0..31)
+00:000AFB0E E148            	  1678:         lsl.w   #8,d0
+00:000AFB10 06800009B000    	  1679:         addi.l  #STE_SAVE_UNDER,d0
+00:000AFB16 21C08A24        	  1680:         move.l  d0,BLT_SRC_ADDR.w       ; slot_addr
+00:000AFB1A 21E800048A32    	  1681:         move.l  4(a0),BLT_DST_ADDR.w    ; dst_addr
+00:000AFB20 31FC00108A38    	  1682:         move.w  #16,BLT_YCOUNT.w
+00:000AFB26 11FC00C08A3C    	  1683:         move.b  #$c0,BLT_LINE.w
+00:000AFB2C 51C9FFD6        	  1684:         dbra    d1,.c2_lp
+00:000AFB30 4E73            	  1685:         rte
+                            	  1686: 
+                            	  1687: 
+                            	  1688: ; --- cmd 3: Combined Save-under + Direct NFSR Masked 4bpp Sprite Draw ---
+                            	  1689: ; a0 = dst in STE_CORK_BUF, a1 = KO2 3bpp sprite src, a2 = save-under slot, d1.w = skew (0..15)
+                            	  1690: .cmd3_spr:
+00:000AFB32 48E73010        	  1691:         movem.l d2-d3/a3,-(sp)
+                            	  1692:         ; 1. Save-under (a0 -> a2, 16 lines x 8 words = 256 bytes)
+00:000AFB36 21C88A24        	  1693:         move.l  a0,BLT_SRC_ADDR.w
+00:000AFB3A 21CA8A32        	  1694:         move.l  a2,BLT_DST_ADDR.w
+00:000AFB3E 31FC00028A20    	  1695:         move.w  #2,BLT_SRC_XINC.w
+00:000AFB44 31FC009A8A22    	  1696:         move.w  #(CORK_STRIDE-14),BLT_SRC_YINC.w
+00:000AFB4A 31FC00028A2E    	  1697:         move.w  #2,BLT_DST_XINC.w
+00:000AFB50 31FC00028A30    	  1698:         move.w  #2,BLT_DST_YINC.w
+00:000AFB56 31FCFFFF8A28    	  1699:         move.w  #$ffff,BLT_ENDMASK1.w
+00:000AFB5C 31FCFFFF8A2A    	  1700:         move.w  #$ffff,BLT_ENDMASK2.w
+00:000AFB62 31FCFFFF8A2C    	  1701:         move.w  #$ffff,BLT_ENDMASK3.w
+00:000AFB68 31FC00088A36    	  1702:         move.w  #8,BLT_XCOUNT.w
+00:000AFB6E 31FC00108A38    	  1703:         move.w  #16,BLT_YCOUNT.w
+00:000AFB74 31FC02038A3A    	  1704:         move.w  #$0203,BLT_HOP.w
+00:000AFB7A 42388A3D        	  1705:         clr.b   BLT_SKEW.w
+00:000AFB7E 11FC00C08A3C    	  1706:         move.b  #$c0,BLT_LINE.w
+                            	  1707: 
+                            	  1708:         ; 2. Configure skew: skew==0 -> XCOUNT=1 (2x faster!), skew>0 -> XCOUNT=2, NFSR=$40|skew
+00:000AFB84 4A41            	  1709:         tst.w   d1
+00:000AFB86 6616            	  1710:         bne.s   .c3_skew
+00:000AFB88 31FC00018A36    	  1711:         move.w  #1,BLT_XCOUNT.w
+00:000AFB8E 42788A2E        	  1712:         clr.w   BLT_DST_XINC.w
+00:000AFB92 31FC00A88A30    	  1713:         move.w  #CORK_STRIDE,BLT_DST_YINC.w
+00:000AFB98 42388A3D        	  1714:         clr.b   BLT_SKEW.w
+00:000AFB9C 602C            	  1715:         bra.s   .c3_mask
+                            	  1716: .c3_skew:
+00:000AFB9E 343CFFFF        	  1717:         move.w  #$ffff,d2
+00:000AFBA2 E26A            	  1718:         lsr.w   d1,d2
+00:000AFBA4 31C28A28        	  1719:         move.w  d2,BLT_ENDMASK1.w
+00:000AFBA8 4642            	  1720:         not.w   d2
+00:000AFBAA 31C28A2C        	  1721:         move.w  d2,BLT_ENDMASK3.w
+00:000AFBAE 31FC00028A36    	  1722:         move.w  #2,BLT_XCOUNT.w
+00:000AFBB4 31FC00088A2E    	  1723:         move.w  #8,BLT_DST_XINC.w
+00:000AFBBA 31FC00A08A30    	  1724:         move.w  #(CORK_STRIDE-8),BLT_DST_YINC.w
+00:000AFBC0 1401            	  1725:         move.b  d1,d2
+00:000AFBC2 00020040        	  1726:         ori.b   #$40,d2                 ; NFSR = 1 (1 src word -> 2 dst words!)
+00:000AFBC6 11C28A3D        	  1727:         move.b  d2,BLT_SKEW.w
+                            	  1728: 
+                            	  1729: .c3_mask:
+                            	  1730:         ; Pass 1: Clear mask holes in dst planes 0, 1, 2 (OP=4: ~SRC & DST)
+00:000AFBCA 42788A20        	  1731:         clr.w   BLT_SRC_XINC.w
+00:000AFBCE 31FC00028A22    	  1732:         move.w  #2,BLT_SRC_YINC.w       ; STE_MASK_BUF = 1 word/line
+00:000AFBD4 31FC02048A3A    	  1733:         move.w  #$0204,BLT_HOP.w
+00:000AFBDA 47F90007FD00    	  1734:         lea     STE_MASK_BUF.l,a3
+00:000AFBE0 21CB8A24        	  1735:         move.l  a3,BLT_SRC_ADDR.w
+00:000AFBE4 21C88A32        	  1736:         move.l  a0,BLT_DST_ADDR.w
+00:000AFBE8 31FC00108A38    	  1737:         move.w  #16,BLT_YCOUNT.w
+00:000AFBEE 11FC00C08A3C    	  1738:         move.b  #$c0,BLT_LINE.w
+                            	  1739: 
+00:000AFBF4 21CB8A24        	  1740:         move.l  a3,BLT_SRC_ADDR.w
+00:000AFBF8 48680002        	  1741:         pea     2(a0)
+00:000AFBFC 21DF8A32        	  1742:         move.l  (sp)+,BLT_DST_ADDR.w
+00:000AFC00 31FC00108A38    	  1743:         move.w  #16,BLT_YCOUNT.w
+00:000AFC06 11FC00C08A3C    	  1744:         move.b  #$c0,BLT_LINE.w
+                            	  1745: 
+00:000AFC0C 21CB8A24        	  1746:         move.l  a3,BLT_SRC_ADDR.w
+00:000AFC10 48680004        	  1747:         pea     4(a0)
+00:000AFC14 21DF8A32        	  1748:         move.l  (sp)+,BLT_DST_ADDR.w
+00:000AFC18 31FC00108A38    	  1749:         move.w  #16,BLT_YCOUNT.w
+00:000AFC1E 11FC00C08A3C    	  1750:         move.b  #$c0,BLT_LINE.w
+                            	  1751: 
+                            	  1752:         ; Pass 2: OR mask into plane 3 (a0+6 -> sets bit 3 = sprite colours 9..15!)
+00:000AFC24 31FC02078A3A    	  1753:         move.w  #$0207,BLT_HOP.w
+00:000AFC2A 21CB8A24        	  1754:         move.l  a3,BLT_SRC_ADDR.w
+00:000AFC2E 48680006        	  1755:         pea     6(a0)
+00:000AFC32 21DF8A32        	  1756:         move.l  (sp)+,BLT_DST_ADDR.w
+00:000AFC36 31FC00108A38    	  1757:         move.w  #16,BLT_YCOUNT.w
+00:000AFC3C 11FC00C08A3C    	  1758:         move.b  #$c0,BLT_LINE.w
+                            	  1759: 
+                            	  1760:         ; Pass 3: OR sprite planes 0, 1, 2 DIRECTLY from KO2 src a1 (stride $78)!
+00:000AFC42 31FC00788A22    	  1761:         move.w  #$78,BLT_SRC_YINC.w
+00:000AFC48 21C98A24        	  1762:         move.l  a1,BLT_SRC_ADDR.w
+00:000AFC4C 21C88A32        	  1763:         move.l  a0,BLT_DST_ADDR.w
+00:000AFC50 31FC00108A38    	  1764:         move.w  #16,BLT_YCOUNT.w
+00:000AFC56 11FC00C08A3C    	  1765:         move.b  #$c0,BLT_LINE.w
+                            	  1766: 
+00:000AFC5C 48690028        	  1767:         pea     $28(a1)
+00:000AFC60 21DF8A24        	  1768:         move.l  (sp)+,BLT_SRC_ADDR.w
+00:000AFC64 48680002        	  1769:         pea     2(a0)
+00:000AFC68 21DF8A32        	  1770:         move.l  (sp)+,BLT_DST_ADDR.w
+00:000AFC6C 31FC00108A38    	  1771:         move.w  #16,BLT_YCOUNT.w
+00:000AFC72 11FC00C08A3C    	  1772:         move.b  #$c0,BLT_LINE.w
+                            	  1773: 
+00:000AFC78 48690050        	  1774:         pea     $50(a1)
+00:000AFC7C 21DF8A24        	  1775:         move.l  (sp)+,BLT_SRC_ADDR.w
+00:000AFC80 48680004        	  1776:         pea     4(a0)
+00:000AFC84 21DF8A32        	  1777:         move.l  (sp)+,BLT_DST_ADDR.w
+00:000AFC88 31FC00108A38    	  1778:         move.w  #16,BLT_YCOUNT.w
+00:000AFC8E 11FC00C08A3C    	  1779:         move.b  #$c0,BLT_LINE.w
+                            	  1780: 
+00:000AFC94 4CDF080C        	  1781:         movem.l (sp)+,d2-d3/a3
+00:000AFC98 4E73            	  1782:         rte
+                            	  1783: 
+                            	  1784: ; --- cmd 4: Zero STE_CORK_BUF (73,920B) AND $078000 (32,000B stale Classic ST lines!) ---
+                            	  1785: .cmd4_clr:
+00:000AFC9A 21FC00088F008A32	  1786:         move.l  #STE_CORK_BUF,BLT_DST_ADDR.w
+00:000AFCA2 31FC00028A2E    	  1787:         move.w  #2,BLT_DST_XINC.w
+00:000AFCA8 31FC00028A30    	  1788:         move.w  #2,BLT_DST_YINC.w
+00:000AFCAE 31FCFFFF8A28    	  1789:         move.w  #$ffff,BLT_ENDMASK1.w
+00:000AFCB4 31FCFFFF8A2A    	  1790:         move.w  #$ffff,BLT_ENDMASK2.w
+00:000AFCBA 31FCFFFF8A2C    	  1791:         move.w  #$ffff,BLT_ENDMASK3.w
+00:000AFCC0 31FC00548A36    	  1792:         move.w  #84,BLT_XCOUNT.w        ; 168 bytes / 2
+00:000AFCC6 31FC01B88A38    	  1793:         move.w  #440,BLT_YCOUNT.w       ; 440 * 168 = 73,920 bytes
+00:000AFCCC 31FC00008A3A    	  1794:         move.w  #$0000,BLT_HOP.w        ; all zeroes
+00:000AFCD2 42388A3D        	  1795:         clr.b   BLT_SKEW.w
+00:000AFCD6 11FC00C08A3C    	  1796:         move.b  #$c0,BLT_LINE.w
+                            	  1797:         ; Also zero $078000 (32,000 bytes) so no stale Classic ST pitch lines trigger HUD/Banner!
+00:000AFCDC 21FC000780008A32	  1798:         move.l  #$078000,BLT_DST_ADDR.w
+00:000AFCE4 31FC00508A36    	  1799:         move.w  #80,BLT_XCOUNT.w        ; 160 bytes / 2
+00:000AFCEA 31FC00C88A38    	  1800:         move.w  #200,BLT_YCOUNT.w       ; 200 * 160 = 32,000 bytes
+00:000AFCF0 11FC00C08A3C    	  1801:         move.b  #$c0,BLT_LINE.w
+00:000AFCF6 4E73            	  1802:         rte
+                            	  1803: 
+                            	  1804: ; --- cmd 5: Blitter HUD/Radar band draw ---
+                            	  1805: ; a0 = src ($078000+y*160), a1 = dst (STE_VIEW_BASE+y*168), a2 = save_buf
+                            	  1806: ; d1.w = W (4 or 20), d2.w = H (lines), d3.w = skew (0..15), d4.w = 1 (all 4 planes) / 0 (2 planes)
+                            	  1807: .cmd5_hud_draw:
+00:000AFCF8 48E70710        	  1808:         movem.l d5-d7/a3,-(sp)
+                            	  1809:         ; 1. Save-under (a1 -> a2): (W+1)*4 words x H lines
+00:000AFCFC 3A01            	  1810:         move.w  d1,d5
+00:000AFCFE 5245            	  1811:         addq.w  #1,d5
+00:000AFD00 E54D            	  1812:         lsl.w   #2,d5                   ; d5 = (W+1)*4 words
+00:000AFD02 3C05            	  1813:         move.w  d5,d6
+00:000AFD04 5346            	  1814:         subq.w  #1,d6
+00:000AFD06 DC46            	  1815:         add.w   d6,d6                   ; bytes advanced by XINC
+00:000AFD08 3E3C00A8        	  1816:         move.w  #CORK_STRIDE,d7
+00:000AFD0C 9E46            	  1817:         sub.w   d6,d7                   ; SRC_YINC = 168 - ((W+1)*4 - 1)*2
+00:000AFD0E 21C98A24        	  1818:         move.l  a1,BLT_SRC_ADDR.w
+00:000AFD12 21CA8A32        	  1819:         move.l  a2,BLT_DST_ADDR.w
+00:000AFD16 31FC00028A20    	  1820:         move.w  #2,BLT_SRC_XINC.w
+00:000AFD1C 31C78A22        	  1821:         move.w  d7,BLT_SRC_YINC.w
+00:000AFD20 31FC00028A2E    	  1822:         move.w  #2,BLT_DST_XINC.w
+00:000AFD26 31FC00028A30    	  1823:         move.w  #2,BLT_DST_YINC.w
+00:000AFD2C 31FCFFFF8A28    	  1824:         move.w  #$ffff,BLT_ENDMASK1.w
+00:000AFD32 31FCFFFF8A2A    	  1825:         move.w  #$ffff,BLT_ENDMASK2.w
+00:000AFD38 31FCFFFF8A2C    	  1826:         move.w  #$ffff,BLT_ENDMASK3.w
+00:000AFD3E 31C58A36        	  1827:         move.w  d5,BLT_XCOUNT.w
+00:000AFD42 31C28A38        	  1828:         move.w  d2,BLT_YCOUNT.w
+00:000AFD46 31FC02038A3A    	  1829:         move.w  #$0203,BLT_HOP.w
+00:000AFD4C 42388A3D        	  1830:         clr.b   BLT_SKEW.w
+00:000AFD50 11FC00C08A3C    	  1831:         move.b  #$c0,BLT_LINE.w
+                            	  1832: 
+                            	  1833:         ; 2. Build 1bpp mask in STE_HUD_MASK (W words x H lines)
+                            	  1834:         ;    src_yinc = 160 - (W-1)*8
+00:000AFD56 3C01            	  1835:         move.w  d1,d6
+00:000AFD58 5346            	  1836:         subq.w  #1,d6
+00:000AFD5A E74E            	  1837:         lsl.w   #3,d6
+00:000AFD5C 3E3C00A0        	  1838:         move.w  #160,d7
+00:000AFD60 9E46            	  1839:         sub.w   d6,d7                   ; d7 = src_yinc for 4bpp $078000
+00:000AFD62 47F90007FD00    	  1840:         lea     STE_HUD_MASK.l,a3
+00:000AFD68 31FC00088A20    	  1841:         move.w  #8,BLT_SRC_XINC.w
+00:000AFD6E 31C78A22        	  1842:         move.w  d7,BLT_SRC_YINC.w
+00:000AFD72 31FC00028A2E    	  1843:         move.w  #2,BLT_DST_XINC.w
+00:000AFD78 31FC00028A30    	  1844:         move.w  #2,BLT_DST_YINC.w
+00:000AFD7E 31C18A36        	  1845:         move.w  d1,BLT_XCOUNT.w
+                            	  1846:         ; Plane 0 -> copy
+00:000AFD82 21C88A24        	  1847:         move.l  a0,BLT_SRC_ADDR.w
+00:000AFD86 21CB8A32        	  1848:         move.l  a3,BLT_DST_ADDR.w
+00:000AFD8A 31C28A38        	  1849:         move.w  d2,BLT_YCOUNT.w
+00:000AFD8E 31FC02038A3A    	  1850:         move.w  #$0203,BLT_HOP.w
+00:000AFD94 11FC00C08A3C    	  1851:         move.b  #$c0,BLT_LINE.w
+                            	  1852:         ; Plane 1 -> OR
+00:000AFD9A 48680002        	  1853:         pea     2(a0)
+00:000AFD9E 21DF8A24        	  1854:         move.l  (sp)+,BLT_SRC_ADDR.w
+00:000AFDA2 21CB8A32        	  1855:         move.l  a3,BLT_DST_ADDR.w
+00:000AFDA6 31C28A38        	  1856:         move.w  d2,BLT_YCOUNT.w
+00:000AFDAA 31FC02078A3A    	  1857:         move.w  #$0207,BLT_HOP.w
+00:000AFDB0 11FC00C08A3C    	  1858:         move.b  #$c0,BLT_LINE.w
+00:000AFDB6 4A44            	  1859:         tst.w   d4
+00:000AFDB8 672C            	  1860:         beq.s   .c5_mask_ok
+                            	  1861:         ; Plane 2 -> OR
+00:000AFDBA 48680004        	  1862:         pea     4(a0)
+00:000AFDBE 21DF8A24        	  1863:         move.l  (sp)+,BLT_SRC_ADDR.w
+00:000AFDC2 21CB8A32        	  1864:         move.l  a3,BLT_DST_ADDR.w
+00:000AFDC6 31C28A38        	  1865:         move.w  d2,BLT_YCOUNT.w
+00:000AFDCA 11FC00C08A3C    	  1866:         move.b  #$c0,BLT_LINE.w
+                            	  1867:         ; Plane 3 -> OR
+00:000AFDD0 48680006        	  1868:         pea     6(a0)
+00:000AFDD4 21DF8A24        	  1869:         move.l  (sp)+,BLT_SRC_ADDR.w
+00:000AFDD8 21CB8A32        	  1870:         move.l  a3,BLT_DST_ADDR.w
+00:000AFDDC 31C28A38        	  1871:         move.w  d2,BLT_YCOUNT.w
+00:000AFDE0 11FC00C08A3C    	  1872:         move.b  #$c0,BLT_LINE.w
+                            	  1873: 
+                            	  1874: .c5_mask_ok:
+                            	  1875:         ; 3. Configure skew, endmasks, XCOUNT, and DST_YINC for compositing into a1
+00:000AFDE6 4A43            	  1876:         tst.w   d3
+00:000AFDE8 6620            	  1877:         bne.s   .c5_skewed
+                            	  1878:         ; skew == 0: XCOUNT = W, ENDMASK = ffff/ffff/ffff, DST_YINC = 168 - (W-1)*8
+00:000AFDEA 31FCFFFF8A28    	  1879:         move.w  #$ffff,BLT_ENDMASK1.w
+00:000AFDF0 31FCFFFF8A2C    	  1880:         move.w  #$ffff,BLT_ENDMASK3.w
+00:000AFDF6 31C18A36        	  1881:         move.w  d1,BLT_XCOUNT.w
+00:000AFDFA 3A3C00A8        	  1882:         move.w  #CORK_STRIDE,d5
+00:000AFDFE 9A46            	  1883:         sub.w   d6,d5                   ; d6 is still (W-1)*8
+00:000AFE00 31C58A30        	  1884:         move.w  d5,BLT_DST_YINC.w
+00:000AFE04 42388A3D        	  1885:         clr.b   BLT_SKEW.w
+00:000AFE08 6030            	  1886:         bra.s   .c5_comp
+                            	  1887: .c5_skewed:
+                            	  1888:         ; skew > 0: XCOUNT = W+1, NFSR=$40|skew, DST_YINC = 168 - W*8
+00:000AFE0A 3A3CFFFF        	  1889:         move.w  #$ffff,d5
+00:000AFE0E E66D            	  1890:         lsr.w   d3,d5
+00:000AFE10 31C58A28        	  1891:         move.w  d5,BLT_ENDMASK1.w
+00:000AFE14 4645            	  1892:         not.w   d5
+00:000AFE16 31C58A2C        	  1893:         move.w  d5,BLT_ENDMASK3.w
+00:000AFE1A 3A01            	  1894:         move.w  d1,d5
+00:000AFE1C 5245            	  1895:         addq.w  #1,d5
+00:000AFE1E 31C58A36        	  1896:         move.w  d5,BLT_XCOUNT.w
+00:000AFE22 3A01            	  1897:         move.w  d1,d5
+00:000AFE24 E74D            	  1898:         lsl.w   #3,d5                   ; W * 8
+00:000AFE26 4445            	  1899:         neg.w   d5
+00:000AFE28 064500A8        	  1900:         addi.w  #CORK_STRIDE,d5         ; 168 - W*8
+00:000AFE2C 31C58A30        	  1901:         move.w  d5,BLT_DST_YINC.w
+00:000AFE30 1A03            	  1902:         move.b  d3,d5
+00:000AFE32 00050040        	  1903:         ori.b   #$40,d5                 ; NFSR = 1!
+00:000AFE36 11C58A3D        	  1904:         move.b  d5,BLT_SKEW.w
+                            	  1905: 
+                            	  1906: .c5_comp:
+                            	  1907:         ; Clear mask holes in dst planes 0, 1, 2 (OP=4: ~SRC & DST)
+00:000AFE3A 31FC00028A20    	  1908:         move.w  #2,BLT_SRC_XINC.w
+00:000AFE40 31FC00028A22    	  1909:         move.w  #2,BLT_SRC_YINC.w
+00:000AFE46 31FC00088A2E    	  1910:         move.w  #8,BLT_DST_XINC.w
+00:000AFE4C 31FC02048A3A    	  1911:         move.w  #$0204,BLT_HOP.w
+                            	  1912:         ; dst plane 0
+00:000AFE52 21CB8A24        	  1913:         move.l  a3,BLT_SRC_ADDR.w
+00:000AFE56 21C98A32        	  1914:         move.l  a1,BLT_DST_ADDR.w
+00:000AFE5A 31C28A38        	  1915:         move.w  d2,BLT_YCOUNT.w
+00:000AFE5E 11FC00C08A3C    	  1916:         move.b  #$c0,BLT_LINE.w
+                            	  1917:         ; dst plane 1
+00:000AFE64 21CB8A24        	  1918:         move.l  a3,BLT_SRC_ADDR.w
+00:000AFE68 48690002        	  1919:         pea     2(a1)
+00:000AFE6C 21DF8A32        	  1920:         move.l  (sp)+,BLT_DST_ADDR.w
+00:000AFE70 31C28A38        	  1921:         move.w  d2,BLT_YCOUNT.w
+00:000AFE74 11FC00C08A3C    	  1922:         move.b  #$c0,BLT_LINE.w
+                            	  1923:         ; dst plane 2
+00:000AFE7A 21CB8A24        	  1924:         move.l  a3,BLT_SRC_ADDR.w
+00:000AFE7E 48690004        	  1925:         pea     4(a1)
+00:000AFE82 21DF8A32        	  1926:         move.l  (sp)+,BLT_DST_ADDR.w
+00:000AFE86 31C28A38        	  1927:         move.w  d2,BLT_YCOUNT.w
+00:000AFE8A 11FC00C08A3C    	  1928:         move.b  #$c0,BLT_LINE.w
+                            	  1929:         ; Set plane 3 (OP=7: SRC | DST -> maps HUD colours 1..7 -> 9..15, 8 -> 8!)
+00:000AFE90 31FC02078A3A    	  1930:         move.w  #$0207,BLT_HOP.w
+00:000AFE96 21CB8A24        	  1931:         move.l  a3,BLT_SRC_ADDR.w
+00:000AFE9A 48690006        	  1932:         pea     6(a1)
+00:000AFE9E 21DF8A32        	  1933:         move.l  (sp)+,BLT_DST_ADDR.w
+00:000AFEA2 31C28A38        	  1934:         move.w  d2,BLT_YCOUNT.w
+00:000AFEA6 11FC00C08A3C    	  1935:         move.b  #$c0,BLT_LINE.w
+                            	  1936: 
+                            	  1937:         ; 4. OR source planes from $078000 (a0) into dst (a1)
+00:000AFEAC 31FC00088A20    	  1938:         move.w  #8,BLT_SRC_XINC.w
+00:000AFEB2 31C78A22        	  1939:         move.w  d7,BLT_SRC_YINC.w
+                            	  1940:         ; plane 0
+00:000AFEB6 21C88A24        	  1941:         move.l  a0,BLT_SRC_ADDR.w
+00:000AFEBA 21C98A32        	  1942:         move.l  a1,BLT_DST_ADDR.w
+00:000AFEBE 31C28A38        	  1943:         move.w  d2,BLT_YCOUNT.w
+00:000AFEC2 11FC00C08A3C    	  1944:         move.b  #$c0,BLT_LINE.w
+                            	  1945:         ; plane 1
+00:000AFEC8 48680002        	  1946:         pea     2(a0)
+00:000AFECC 21DF8A24        	  1947:         move.l  (sp)+,BLT_SRC_ADDR.w
+00:000AFED0 48690002        	  1948:         pea     2(a1)
+00:000AFED4 21DF8A32        	  1949:         move.l  (sp)+,BLT_DST_ADDR.w
+00:000AFED8 31C28A38        	  1950:         move.w  d2,BLT_YCOUNT.w
+00:000AFEDC 11FC00C08A3C    	  1951:         move.b  #$c0,BLT_LINE.w
+00:000AFEE2 4A44            	  1952:         tst.w   d4
+00:000AFEE4 671A            	  1953:         beq.s   .c5_done
+                            	  1954:         ; plane 2
+00:000AFEE6 48680004        	  1955:         pea     4(a0)
+00:000AFEEA 21DF8A24        	  1956:         move.l  (sp)+,BLT_SRC_ADDR.w
+00:000AFEEE 48690004        	  1957:         pea     4(a1)
+00:000AFEF2 21DF8A32        	  1958:         move.l  (sp)+,BLT_DST_ADDR.w
+00:000AFEF6 31C28A38        	  1959:         move.w  d2,BLT_YCOUNT.w
+00:000AFEFA 11FC00C08A3C    	  1960:         move.b  #$c0,BLT_LINE.w
+                            	  1961: 
+                            	  1962: .c5_done:
+00:000AFF00 4CDF08E0        	  1963:         movem.l (sp)+,d5-d7/a3
+00:000AFF04 4E73            	  1964:         rte
+                            	  1965: 
+                            	  1966: ; --- cmd 6: Blitter HUD/Radar restore-under ---
+                            	  1967: ; a0 = save_buf, a1 = dst (STE_VIEW_BASE+y*168), d1.w = XCOUNT (words), d2.w = YCOUNT (lines)
+                            	  1968: .cmd6_hud_rest:
+00:000AFF06 3001            	  1969:         move.w  d1,d0
+00:000AFF08 5340            	  1970:         subq.w  #1,d0
+00:000AFF0A D040            	  1971:         add.w   d0,d0
+00:000AFF0C 4440            	  1972:         neg.w   d0
+00:000AFF0E 064000A8        	  1973:         addi.w  #CORK_STRIDE,d0         ; DST_YINC = 168 - (XCOUNT-1)*2
+00:000AFF12 21C88A24        	  1974:         move.l  a0,BLT_SRC_ADDR.w
+00:000AFF16 21C98A32        	  1975:         move.l  a1,BLT_DST_ADDR.w
+00:000AFF1A 31FC00028A20    	  1976:         move.w  #2,BLT_SRC_XINC.w
+00:000AFF20 31FC00028A22    	  1977:         move.w  #2,BLT_SRC_YINC.w
+00:000AFF26 31FC00028A2E    	  1978:         move.w  #2,BLT_DST_XINC.w
+00:000AFF2C 31C08A30        	  1979:         move.w  d0,BLT_DST_YINC.w
+00:000AFF30 31FCFFFF8A28    	  1980:         move.w  #$ffff,BLT_ENDMASK1.w
+00:000AFF36 31FCFFFF8A2A    	  1981:         move.w  #$ffff,BLT_ENDMASK2.w
+00:000AFF3C 31FCFFFF8A2C    	  1982:         move.w  #$ffff,BLT_ENDMASK3.w
+00:000AFF42 31C18A36        	  1983:         move.w  d1,BLT_XCOUNT.w
+00:000AFF46 31C28A38        	  1984:         move.w  d2,BLT_YCOUNT.w
+00:000AFF4A 31FC02038A3A    	  1985:         move.w  #$0203,BLT_HOP.w
+00:000AFF50 42388A3D        	  1986:         clr.b   BLT_SKEW.w
+00:000AFF54 11FC00C08A3C    	  1987:         move.b  #$c0,BLT_LINE.w
+00:000AFF5A 4E73            	  1988:         rte
+                            	  1989: 
+                            	  1990: ; --- cmd 7: STE Blitter Transparent Black Line Save + Draw (8x faster than 68000!) ---
+                            	  1991: ; a1 = dst in STE_CORK_BUF, a0 = save pool ptr, d1 = word_cols (1..20), d2 = H (1..200)
+                            	  1992: ; d3 = ENDMASK3, d4 = ENDMASK1
+                            	  1993: .cmd7_radar_opaque:
+00:000AFF5C 48E70600        	  1994:         movem.l d5-d6,-(sp)
+                            	  1995:         ; 1. Save-under (a1 -> a0): (d1*4) words x d2 lines
+00:000AFF60 3A01            	  1996:         move.w  d1,d5
+00:000AFF62 E54D            	  1997:         lsl.w   #2,d5                   ; XCOUNT = word_cols * 4 planes
+00:000AFF64 3C05            	  1998:         move.w  d5,d6
+00:000AFF66 5346            	  1999:         subq.w  #1,d6
+00:000AFF68 DC46            	  2000:         add.w   d6,d6                   ; bytes advanced by XINC
+00:000AFF6A 4446            	  2001:         neg.w   d6
+00:000AFF6C 064600A8        	  2002:         addi.w  #CORK_STRIDE,d6         ; SRC_YINC = 168 - (XCOUNT-1)*2
+00:000AFF70 21C98A24        	  2003:         move.l  a1,BLT_SRC_ADDR.w
+00:000AFF74 21C88A32        	  2004:         move.l  a0,BLT_DST_ADDR.w
+00:000AFF78 31FC00028A20    	  2005:         move.w  #2,BLT_SRC_XINC.w
+00:000AFF7E 31C68A22        	  2006:         move.w  d6,BLT_SRC_YINC.w
+00:000AFF82 31FC00028A2E    	  2007:         move.w  #2,BLT_DST_XINC.w
+00:000AFF88 31FC00028A30    	  2008:         move.w  #2,BLT_DST_YINC.w
+00:000AFF8E 31FCFFFF8A28    	  2009:         move.w  #$ffff,BLT_ENDMASK1.w
+00:000AFF94 31FCFFFF8A2A    	  2010:         move.w  #$ffff,BLT_ENDMASK2.w
+00:000AFF9A 31FCFFFF8A2C    	  2011:         move.w  #$ffff,BLT_ENDMASK3.w
+00:000AFFA0 31C58A36        	  2012:         move.w  d5,BLT_XCOUNT.w
+00:000AFFA4 31C28A38        	  2013:         move.w  d2,BLT_YCOUNT.w
+00:000AFFA8 31FC02038A3A    	  2014:         move.w  #$0203,BLT_HOP.w
+00:000AFFAE 42388A3D        	  2015:         clr.b   BLT_SKEW.w
+00:000AFFB2 11FC00C08A3C    	  2016:         move.b  #$c0,BLT_LINE.w
+                            	  2017: 
+                            	  2018:         ; 2. Draw transparent black line (colour 9 = $000: p0=1, p1=0, p2=0, p3=1) using ENDMASK!
+00:000AFFB8 31C48A28        	  2019:         move.w  d4,BLT_ENDMASK1.w
+00:000AFFBC 31FCFFFF8A2A    	  2020:         move.w  #$ffff,BLT_ENDMASK2.w
+00:000AFFC2 31C38A2C        	  2021:         move.w  d3,BLT_ENDMASK3.w
+00:000AFFC6 31FC00088A2E    	  2022:         move.w  #8,BLT_DST_XINC.w
+00:000AFFCC 3C01            	  2023:         move.w  d1,d6
+00:000AFFCE 5346            	  2024:         subq.w  #1,d6
+00:000AFFD0 E74E            	  2025:         lsl.w   #3,d6
+00:000AFFD2 4446            	  2026:         neg.w   d6
+00:000AFFD4 064600A8        	  2027:         addi.w  #CORK_STRIDE,d6         ; DST_YINC = 168 - (word_cols-1)*8
+00:000AFFD8 31C68A30        	  2028:         move.w  d6,BLT_DST_YINC.w
+00:000AFFDC 31C18A36        	  2029:         move.w  d1,BLT_XCOUNT.w
+                            	  2030:         ; p0 = 1 (OP=15: all ones, clipped by ENDMASK!)
+00:000AFFE0 31FC000F8A3A    	  2031:         move.w  #$000f,BLT_HOP.w
+00:000AFFE6 21C98A32        	  2032:         move.l  a1,BLT_DST_ADDR.w
+00:000AFFEA 31C28A38        	  2033:         move.w  d2,BLT_YCOUNT.w
+00:000AFFEE 11FC00C08A3C    	  2034:         move.b  #$c0,BLT_LINE.w
+                            	  2035:         ; p3 = 1 (OP=15)
+00:000AFFF4 48690006        	  2036:         pea     6(a1)
+00:000AFFF8 21DF8A32        	  2037:         move.l  (sp)+,BLT_DST_ADDR.w
+00:000AFFFC 31C28A38        	  2038:         move.w  d2,BLT_YCOUNT.w
+00:000B0000 11FC00C08A3C    	  2039:         move.b  #$c0,BLT_LINE.w
+                            	  2040:         ; p1 = 0 (OP=0: all zeroes, clipped by ENDMASK!)
+00:000B0006 31FC00008A3A    	  2041:         move.w  #$0000,BLT_HOP.w
+00:000B000C 48690002        	  2042:         pea     2(a1)
+00:000B0010 21DF8A32        	  2043:         move.l  (sp)+,BLT_DST_ADDR.w
+00:000B0014 31C28A38        	  2044:         move.w  d2,BLT_YCOUNT.w
+00:000B0018 11FC00C08A3C    	  2045:         move.b  #$c0,BLT_LINE.w
+                            	  2046:         ; p2 = 0 (OP=0)
+00:000B001E 48690004        	  2047:         pea     4(a1)
+00:000B0022 21DF8A32        	  2048:         move.l  (sp)+,BLT_DST_ADDR.w
+00:000B0026 31C28A38        	  2049:         move.w  d2,BLT_YCOUNT.w
+00:000B002A 11FC00C08A3C    	  2050:         move.b  #$c0,BLT_LINE.w
+                            	  2051: 
+00:000B0030 4CDF0060        	  2052:         movem.l (sp)+,d5-d6
+00:000B0034 4E73            	  2053:         rte
+                            	  2054: 
+                            	  2055: ; --- cmd 8: Batched 21-tile horizontal row blit (d1=tx_left, d2=ty_row) ---
+                            	  2056: ; Sets Blitter regs ONCE, skips redundant plane-3 clear (plane 3 is always 0!),
+                            	  2057: ; and handles primary + mirror in one tight Supervisor loop!
+                            	  2058: .cmd8_blit_row:
+00:000B0036 48E71F38        	  2059:         movem.l d3-d7/a2-a4,-(sp)
+                            	  2060:         ; Configure constant Blitter registers ONCE for all 21 tiles
+00:000B003A 31FC00028A20    	  2061:         move.w  #2,BLT_SRC_XINC.w
+00:000B0040 31FC00028A22    	  2062:         move.w  #2,BLT_SRC_YINC.w
+00:000B0046 31FC00028A2E    	  2063:         move.w  #2,BLT_DST_XINC.w
+00:000B004C 31FC00A48A30    	  2064:         move.w  #(CORK_STRIDE-4),BLT_DST_YINC.w
+00:000B0052 31FCFFFF8A28    	  2065:         move.w  #$ffff,BLT_ENDMASK1.w
+00:000B0058 31FCFFFF8A2A    	  2066:         move.w  #$ffff,BLT_ENDMASK2.w
+00:000B005E 31FCFFFF8A2C    	  2067:         move.w  #$ffff,BLT_ENDMASK3.w
+00:000B0064 31FC00038A36    	  2068:         move.w  #3,BLT_XCOUNT.w
+00:000B006A 31FC02038A3A    	  2069:         move.w  #$0203,BLT_HOP.w        ; HOP=2 (src), OP=3 (copy)
+00:000B0070 42388A3D        	  2070:         clr.b   BLT_SKEW.w
+                            	  2071: 
+                            	  2072:         ; Compute map ptr a2 = STE_PIT_MAP + ty*80 + tx_left
+00:000B0074 3002            	  2073:         move.w  d2,d0
+00:000B0076 C0FC0050        	  2074:         mulu.w  #80,d0
+00:000B007A D041            	  2075:         add.w   d1,d0
+00:000B007C 45F900081020    	  2076:         lea     STE_PIT_MAP.l,a2
+00:000B0082 D5C0            	  2077:         adda.l  d0,a2
+                            	  2078:         ; Compute primary dst a3 = STE_CORK_BUF + (ty%14)*16*168 + tx_left*8
+00:000B0084 7000            	  2079:         moveq   #0,d0
+00:000B0086 3002            	  2080:         move.w  d2,d0
+00:000B0088 80FC000E        	  2081:         divu.w  #14,d0
+00:000B008C 4840            	  2082:         swap    d0                      ; d0 = ty % 14
+00:000B008E 3C00            	  2083:         move.w  d0,d6                   ; d6 = ty % 14 (mirror if <= 12)
+00:000B0090 E948            	  2084:         lsl.w   #4,d0
+00:000B0092 C0FC00A8        	  2085:         mulu.w  #CORK_STRIDE,d0
+00:000B0096 3601            	  2086:         move.w  d1,d3
+00:000B0098 E74B            	  2087:         lsl.w   #3,d3
+00:000B009A 48C3            	  2088:         ext.l   d3
+00:000B009C D083            	  2089:         add.l   d3,d0
+00:000B009E 47F900088F00    	  2090:         lea     STE_CORK_BUF.l,a3
+00:000B00A4 D7C0            	  2091:         adda.l  d0,a3
+00:000B00A6 49F900082E20    	  2092:         lea     STE_PIT_TILES.l,a4
+                            	  2093: 
+                            	  2094:         ; Number of valid tiles = min(21, 80 - tx_left)
+00:000B00AC 7E15            	  2095:         moveq   #21,d7
+00:000B00AE 7050            	  2096:         moveq   #80,d0
+00:000B00B0 9041            	  2097:         sub.w   d1,d0
+00:000B00B2 6F0000EE        	  2098:         ble.w   .c8_done
+00:000B00B6 B047            	  2099:         cmp.w   d7,d0
+00:000B00B8 6C02            	  2100:         bge.s   .c8_cnt
+00:000B00BA 3E00            	  2101:         move.w  d0,d7
+                            	  2102: .c8_cnt:
+                            	  2103:         ; First: clear Plane 3 for the entire tile row in ONE Blitter call (+ mirror)!
+00:000B00BC 3A07            	  2104:         move.w  d7,d5                   ; save tile count (1..21) in d5
+00:000B00BE 3807            	  2105:         move.w  d7,d4
+00:000B00C0 5344            	  2106:         subq.w  #1,d4
+00:000B00C2 E74C            	  2107:         lsl.w   #3,d4
+00:000B00C4 4444            	  2108:         neg.w   d4
+00:000B00C6 064400A8        	  2109:         addi.w  #CORK_STRIDE,d4         ; DST_YINC = 168 - (cnt-1)*8
+00:000B00CA 31FC00088A2E    	  2110:         move.w  #8,BLT_DST_XINC.w
+00:000B00D0 31C48A30        	  2111:         move.w  d4,BLT_DST_YINC.w
+00:000B00D4 31C78A36        	  2112:         move.w  d7,BLT_XCOUNT.w
+00:000B00D8 31FC00008A3A    	  2113:         move.w  #$0000,BLT_HOP.w        ; OP=0 (zero plane 3!)
+00:000B00DE 43EB0006        	  2114:         lea     6(a3),a1
+00:000B00E2 21C98A32        	  2115:         move.l  a1,BLT_DST_ADDR.w
+00:000B00E6 31FC00108A38    	  2116:         move.w  #16,BLT_YCOUNT.w
+00:000B00EC 11FC00C08A3C    	  2117:         move.b  #$c0,BLT_LINE.w
+00:000B00F2 0C46000C        	  2118:         cmpi.w  #12,d6
+00:000B00F6 6E16            	  2119:         bgt.s   .c8_p3_ok
+00:000B00F8 D3FC00009300    	  2120:         adda.l  #CORK_RING_BYTES,a1
+00:000B00FE 21C98A32        	  2121:         move.l  a1,BLT_DST_ADDR.w
+00:000B0102 31FC00108A38    	  2122:         move.w  #16,BLT_YCOUNT.w
+00:000B0108 11FC00C08A3C    	  2123:         move.b  #$c0,BLT_LINE.w
+                            	  2124: .c8_p3_ok:
+                            	  2125:         ; Restore 3bpp tile blit settings
+00:000B010E 31FC00028A2E    	  2126:         move.w  #2,BLT_DST_XINC.w
+00:000B0114 31FC00A48A30    	  2127:         move.w  #(CORK_STRIDE-4),BLT_DST_YINC.w
+00:000B011A 31FC00038A36    	  2128:         move.w  #3,BLT_XCOUNT.w
+00:000B0120 31FC02038A3A    	  2129:         move.w  #$0203,BLT_HOP.w
+00:000B0126 3E05            	  2130:         move.w  d5,d7
+00:000B0128 5347            	  2131:         subq.w  #1,d7
+00:000B012A 0C46000C        	  2132:         cmpi.w  #12,d6
+00:000B012E 6E48            	  2133:         bgt.s   .c8_nomir
+                            	  2134: .c8_mir_lp:
+00:000B0130 7000            	  2135:         moveq   #0,d0
+00:000B0132 101A            	  2136:         move.b  (a2)+,d0
+00:000B0134 3600            	  2137:         move.w  d0,d3
+00:000B0136 ED48            	  2138:         lsl.w   #6,d0                   ; tid * 64
+00:000B0138 EB4B            	  2139:         lsl.w   #5,d3                   ; tid * 32
+00:000B013A D043            	  2140:         add.w   d3,d0                   ; tid * 96
+00:000B013C 41F40000        	  2141:         lea     0(a4,d0.w),a0
+00:000B0140 21C88A24        	  2142:         move.l  a0,BLT_SRC_ADDR.w
+00:000B0144 21CB8A32        	  2143:         move.l  a3,BLT_DST_ADDR.w
+00:000B0148 31FC00108A38    	  2144:         move.w  #16,BLT_YCOUNT.w
+00:000B014E 11FC00C08A3C    	  2145:         move.b  #$c0,BLT_LINE.w
+00:000B0154 21C88A24        	  2146:         move.l  a0,BLT_SRC_ADDR.w
+00:000B0158 224B            	  2147:         movea.l a3,a1
+00:000B015A D3FC00009300    	  2148:         adda.l  #CORK_RING_BYTES,a1
+00:000B0160 21C98A32        	  2149:         move.l  a1,BLT_DST_ADDR.w
+00:000B0164 31FC00108A38    	  2150:         move.w  #16,BLT_YCOUNT.w
+00:000B016A 11FC00C08A3C    	  2151:         move.b  #$c0,BLT_LINE.w
+00:000B0170 508B            	  2152:         addq.l  #8,a3
+00:000B0172 51CFFFBC        	  2153:         dbra    d7,.c8_mir_lp
+00:000B0176 602A            	  2154:         bra.s   .c8_done
+                            	  2155: .c8_nomir:
+00:000B0178 7000            	  2156:         moveq   #0,d0
+00:000B017A 101A            	  2157:         move.b  (a2)+,d0
+00:000B017C 3600            	  2158:         move.w  d0,d3
+00:000B017E ED48            	  2159:         lsl.w   #6,d0
+00:000B0180 EB4B            	  2160:         lsl.w   #5,d3
+00:000B0182 D043            	  2161:         add.w   d3,d0
+00:000B0184 41F40000        	  2162:         lea     0(a4,d0.w),a0
+00:000B0188 21C88A24        	  2163:         move.l  a0,BLT_SRC_ADDR.w
+00:000B018C 21CB8A32        	  2164:         move.l  a3,BLT_DST_ADDR.w
+00:000B0190 31FC00108A38    	  2165:         move.w  #16,BLT_YCOUNT.w
+00:000B0196 11FC00C08A3C    	  2166:         move.b  #$c0,BLT_LINE.w
+00:000B019C 508B            	  2167:         addq.l  #8,a3
+00:000B019E 51CFFFD8        	  2168:         dbra    d7,.c8_nomir
+                            	  2169: .c8_done:
+00:000B01A2 4CDF1CF8        	  2170:         movem.l (sp)+,d3-d7/a2-a4
+00:000B01A6 4E73            	  2171:         rte
+                            	  2172: 
+                            	  2173: ; --- cmd 9: Batched 14-tile vertical column blit (d1=tx_col, d2=ty_top) ---
+                            	  2174: .cmd9_blit_col:
+00:000B01A8 48E71F38        	  2175:         movem.l d3-d7/a2-a4,-(sp)
+00:000B01AC 31FC00028A20    	  2176:         move.w  #2,BLT_SRC_XINC.w
+00:000B01B2 31FC00028A22    	  2177:         move.w  #2,BLT_SRC_YINC.w
+00:000B01B8 31FC00028A2E    	  2178:         move.w  #2,BLT_DST_XINC.w
+00:000B01BE 31FC00A48A30    	  2179:         move.w  #(CORK_STRIDE-4),BLT_DST_YINC.w
+00:000B01C4 31FCFFFF8A28    	  2180:         move.w  #$ffff,BLT_ENDMASK1.w
+00:000B01CA 31FCFFFF8A2A    	  2181:         move.w  #$ffff,BLT_ENDMASK2.w
+00:000B01D0 31FCFFFF8A2C    	  2182:         move.w  #$ffff,BLT_ENDMASK3.w
+00:000B01D6 31FC00038A36    	  2183:         move.w  #3,BLT_XCOUNT.w
+00:000B01DC 31FC02038A3A    	  2184:         move.w  #$0203,BLT_HOP.w
+00:000B01E2 42388A3D        	  2185:         clr.b   BLT_SKEW.w
+                            	  2186: 
+                            	  2187:         ; Map ptr a2 = STE_PIT_MAP + ty_top*80 + tx_col
+00:000B01E6 3002            	  2188:         move.w  d2,d0
+00:000B01E8 C0FC0050        	  2189:         mulu.w  #80,d0
+00:000B01EC D041            	  2190:         add.w   d1,d0
+00:000B01EE 45F900081020    	  2191:         lea     STE_PIT_MAP.l,a2
+00:000B01F4 D5C0            	  2192:         adda.l  d0,a2
+                            	  2193:         ; Initial ty%14 in d6, initial dst a3 in STE_CORK_BUF
+00:000B01F6 7000            	  2194:         moveq   #0,d0
+00:000B01F8 3002            	  2195:         move.w  d2,d0
+00:000B01FA 80FC000E        	  2196:         divu.w  #14,d0
+00:000B01FE 4840            	  2197:         swap    d0
+00:000B0200 3C00            	  2198:         move.w  d0,d6                   ; d6 = cur_row_mod (0..13)
+00:000B0202 E948            	  2199:         lsl.w   #4,d0
+00:000B0204 C0FC00A8        	  2200:         mulu.w  #CORK_STRIDE,d0
+00:000B0208 3601            	  2201:         move.w  d1,d3
+00:000B020A E74B            	  2202:         lsl.w   #3,d3
+00:000B020C 48C3            	  2203:         ext.l   d3
+00:000B020E D083            	  2204:         add.l   d3,d0
+00:000B0210 47F900088F00    	  2205:         lea     STE_CORK_BUF.l,a3
+00:000B0216 D7C0            	  2206:         adda.l  d0,a3
+00:000B0218 49F900082E20    	  2207:         lea     STE_PIT_TILES.l,a4
+                            	  2208: 
+                            	  2209:         ; Number of valid rows = min(14, 96 - ty_top)
+00:000B021E 7E0E            	  2210:         moveq   #14,d7
+00:000B0220 7060            	  2211:         moveq   #96,d0
+00:000B0222 9042            	  2212:         sub.w   d2,d0
+00:000B0224 6F0000BA        	  2213:         ble.w   .c9_done
+00:000B0228 B047            	  2214:         cmp.w   d7,d0
+00:000B022A 6C02            	  2215:         bge.s   .c9_cnt
+00:000B022C 3E00            	  2216:         move.w  d0,d7
+                            	  2217: .c9_cnt:
+                            	  2218:         ; First: clear Plane 3 for the entire vertical column in ONE Blitter call (424 lines)!
+00:000B022E 3001            	  2219:         move.w  d1,d0
+00:000B0230 E748            	  2220:         lsl.w   #3,d0
+00:000B0232 48C0            	  2221:         ext.l   d0
+00:000B0234 43F900088F06    	  2222:         lea     STE_CORK_BUF+6.l,a1
+00:000B023A D3C0            	  2223:         adda.l  d0,a1
+00:000B023C 42788A2E        	  2224:         clr.w   BLT_DST_XINC.w
+00:000B0240 31FC00A88A30    	  2225:         move.w  #CORK_STRIDE,BLT_DST_YINC.w
+00:000B0246 31FC00018A36    	  2226:         move.w  #1,BLT_XCOUNT.w
+00:000B024C 31FC00008A3A    	  2227:         move.w  #$0000,BLT_HOP.w        ; OP=0 (zero plane 3!)
+00:000B0252 21C98A32        	  2228:         move.l  a1,BLT_DST_ADDR.w
+00:000B0256 31FC01A88A38    	  2229:         move.w  #424,BLT_YCOUNT.w       ; entire primary + mirror column in 1 blit!
+00:000B025C 11FC00C08A3C    	  2230:         move.b  #$c0,BLT_LINE.w
+                            	  2231:         ; Restore 3bpp tile blit settings
+00:000B0262 31FC00028A2E    	  2232:         move.w  #2,BLT_DST_XINC.w
+00:000B0268 31FC00A48A30    	  2233:         move.w  #(CORK_STRIDE-4),BLT_DST_YINC.w
+00:000B026E 31FC00038A36    	  2234:         move.w  #3,BLT_XCOUNT.w
+00:000B0274 31FC02038A3A    	  2235:         move.w  #$0203,BLT_HOP.w
+00:000B027A 5347            	  2236:         subq.w  #1,d7
+                            	  2237: .c9_lp:
+00:000B027C 7000            	  2238:         moveq   #0,d0
+00:000B027E 1012            	  2239:         move.b  (a2),d0
+00:000B0280 D4FC0050        	  2240:         adda.w  #80,a2
+00:000B0284 3600            	  2241:         move.w  d0,d3
+00:000B0286 ED48            	  2242:         lsl.w   #6,d0
+00:000B0288 EB4B            	  2243:         lsl.w   #5,d3
+00:000B028A D043            	  2244:         add.w   d3,d0
+00:000B028C 41F40000        	  2245:         lea     0(a4,d0.w),a0
+00:000B0290 21C88A24        	  2246:         move.l  a0,BLT_SRC_ADDR.w
+00:000B0294 21CB8A32        	  2247:         move.l  a3,BLT_DST_ADDR.w
+00:000B0298 31FC00108A38    	  2248:         move.w  #16,BLT_YCOUNT.w
+00:000B029E 11FC00C08A3C    	  2249:         move.b  #$c0,BLT_LINE.w
+00:000B02A4 0C46000C        	  2250:         cmpi.w  #12,d6
+00:000B02A8 6E1C            	  2251:         bgt.s   .c9_nomir
+00:000B02AA 21C88A24        	  2252:         move.l  a0,BLT_SRC_ADDR.w
+00:000B02AE 224B            	  2253:         movea.l a3,a1
+00:000B02B0 D3FC00009300    	  2254:         adda.l  #CORK_RING_BYTES,a1
+00:000B02B6 21C98A32        	  2255:         move.l  a1,BLT_DST_ADDR.w
+00:000B02BA 31FC00108A38    	  2256:         move.w  #16,BLT_YCOUNT.w
+00:000B02C0 11FC00C08A3C    	  2257:         move.b  #$c0,BLT_LINE.w
+                            	  2258: .c9_nomir:
+00:000B02C6 5246            	  2259:         addq.w  #1,d6
+00:000B02C8 0C46000E        	  2260:         cmpi.w  #14,d6
+00:000B02CC 6D0A            	  2261:         blt.s   .c9_step
+00:000B02CE 7C00            	  2262:         moveq   #0,d6
+00:000B02D0 97FC00008880    	  2263:         suba.l  #(CORK_RING_BYTES-16*CORK_STRIDE),a3
+00:000B02D6 6004            	  2264:         bra.s   .c9_next
+                            	  2265: .c9_step:
+00:000B02D8 D6FC0A80        	  2266:         adda.w  #(16*CORK_STRIDE),a3
+                            	  2267: .c9_next:
+00:000B02DC 51CFFF9E        	  2268:         dbra    d7,.c9_lp
+                            	  2269: .c9_done:
+00:000B02E0 4CDF1CF8        	  2270:         movem.l (sp)+,d3-d7/a2-a4
+00:000B02E4 4E73            	  2271:         rte
+                            	  2272: 
+
+
+Symbols by name:
+BLT_DST_ADDR                     E:FFFF8A32
+BLT_DST_XINC                     E:FFFF8A2E
+BLT_DST_YINC                     E:FFFF8A30
+BLT_ENDMASK1                     E:FFFF8A28
+BLT_ENDMASK2                     E:FFFF8A2A
+BLT_ENDMASK3                     E:FFFF8A2C
+BLT_HOP                          E:FFFF8A3A
+BLT_LINE                         E:FFFF8A3C
+BLT_SKEW                         E:FFFF8A3D
+BLT_SRC_ADDR                     E:FFFF8A24
+BLT_SRC_XINC                     E:FFFF8A20
+BLT_SRC_YINC                     E:FFFF8A22
+BLT_XCOUNT                       E:FFFF8A36
+BLT_YCOUNT                       E:FFFF8A38
+CORK_RING_BYTES                  E:00009300
+CORK_RING_H                      E:000000E0
+CORK_STRIDE                      E:000000A8
+STE_AMIGA_ON                     A:000AE964
+STE_BAN_SAVE                     E:000B2A80
+STE_BHUD_SAVE                    E:000B2400
+STE_CORK_BUF                     E:00088F00
+STE_CUR_TX                       A:000AE968
+STE_CUR_TY                       A:000AE96A
+STE_DMA_CNT                      A:000AE962
+STE_DRAW_CNT                     A:000AE990
+STE_DRAW_STACK                   E:000B2880
+STE_HUD_ACTIVE                   A:000AE986
+STE_HUD_MASK                     E:0007FD00
+STE_HUD_VBASE                    A:000AE988
+STE_LIFT_CNT                     A:000AF4B0
+STE_LIFT_PTRS                    A:000AF4B6
+STE_MASK_BUF                     E:0007FD00
+STE_PITCH_OK                     A:000AE966
+STE_PIT_MAP                      E:00081020
+STE_PIT_PAL                      E:00081000
+STE_PIT_TILES                    E:00082E20
+STE_RAD_DCNT                     A:000AE98E
+STE_RAD_DREC                     E:0009A820
+STE_RAD_LCNT                     A:000AE98C
+STE_RAD_LREC                     E:0009A700
+STE_RAD_MAXC                     A:000AF4B2
+STE_RAD_MAXY                     A:000AF4B4
+STE_RAD_POOL                     E:0007FE40
+STE_RAD_POOL_END                 E:00080FF8
+STE_REPEAT_CNT                   A:000AE95C
+STE_SAVE_UNDER                   E:0009B000
+STE_SCRIPT_PTR                   A:000AE958
+STE_SCRIPT_ST                    A:000AE954
+STE_SLOT_NEXT                    A:000AE972
+STE_SND_BASE                     A:000AE950
+STE_SND_PAD                      A:000AE961
+STE_SND_PEND                     A:000AE95E
+STE_SND_PITCH                    A:000AE960
+STE_SND_SIZE                     A:000AE948
+STE_SND_STG                      E:000C8B00
+STE_SND_STOP                     A:000AE95F
+STE_ST_PAL                       A:000AE974
+STE_ST_PAL_OK                    A:000AE984
+STE_VIEW_BASE                    A:000AE96C
+STE_VIEW_HSCR                    A:000AE970
+ste_blit_spr_core                A:000AF17A
+ste_cleanup                      A:000AEAFC
+ste_cork_wrap_spr                A:000AF428
+ste_draw_col                     A:000AF094
+ste_draw_row                     A:000AF0AC
+ste_draw_spr_core_hook           A:000AF156
+ste_entry                        A:000AE940
+ste_erase_all_slots              A:000AF402
+ste_erase_spr                    A:000AF240
+ste_erase_spr_amiga              A:000AF258
+ste_hud_draw                     A:000AF706
+ste_hud_drop_spr                 A:000AF5B2
+ste_hud_lift_spr                 A:000AF536
+ste_hud_restore                  A:000AF622
+ste_inst_trap8                   A:000AEAF2
+ste_install_hooks                A:000AE992
+ste_key_hook                     A:000AEE88
+ste_load_pitch                   A:000AEB3E
+ste_load_samples                 A:000AEB98
+ste_pitch_update                 A:000AEF0A
+ste_play_sound                   A:000AEBE0
+ste_play_sound_hi                A:000AEBE6
+ste_ps_rts                       A:000AEC1A
+ste_radar_draw                   A:000AF7CC
+ste_restore_st_pal               A:000AEEF6
+ste_skip_beam_1                  A:000AF0C4
+ste_skip_beam_2                  A:000AF0E0
+ste_stop_sound                   A:000AEC1C
+ste_trap8_handler                A:000AFA36
+ste_vbl_end                      A:000AED3A
+ste_vbl_top                      A:000AEC36
+ste_wait_beam                    A:000AF0FC
+
+Symbols by value:
+000000A8 CORK_STRIDE
+000000E0 CORK_RING_H
+00009300 CORK_RING_BYTES
+0007FD00 STE_HUD_MASK
+0007FD00 STE_MASK_BUF
+0007FE40 STE_RAD_POOL
+00080FF8 STE_RAD_POOL_END
+00081000 STE_PIT_PAL
+00081020 STE_PIT_MAP
+00082E20 STE_PIT_TILES
+00088F00 STE_CORK_BUF
+0009A700 STE_RAD_LREC
+0009A820 STE_RAD_DREC
+0009B000 STE_SAVE_UNDER
+000AE940 ste_entry
+000AE948 STE_SND_SIZE
+000AE950 STE_SND_BASE
+000AE954 STE_SCRIPT_ST
+000AE958 STE_SCRIPT_PTR
+000AE95C STE_REPEAT_CNT
+000AE95E STE_SND_PEND
+000AE95F STE_SND_STOP
+000AE960 STE_SND_PITCH
+000AE961 STE_SND_PAD
+000AE962 STE_DMA_CNT
+000AE964 STE_AMIGA_ON
+000AE966 STE_PITCH_OK
+000AE968 STE_CUR_TX
+000AE96A STE_CUR_TY
+000AE96C STE_VIEW_BASE
+000AE970 STE_VIEW_HSCR
+000AE972 STE_SLOT_NEXT
+000AE974 STE_ST_PAL
+000AE984 STE_ST_PAL_OK
+000AE986 STE_HUD_ACTIVE
+000AE988 STE_HUD_VBASE
+000AE98C STE_RAD_LCNT
+000AE98E STE_RAD_DCNT
+000AE990 STE_DRAW_CNT
+000AE992 ste_install_hooks
+000AEAF2 ste_inst_trap8
+000AEAFC ste_cleanup
+000AEB3E ste_load_pitch
+000AEB98 ste_load_samples
+000AEBE0 ste_play_sound
+000AEBE6 ste_play_sound_hi
+000AEC1A ste_ps_rts
+000AEC1C ste_stop_sound
+000AEC36 ste_vbl_top
+000AED3A ste_vbl_end
+000AEE88 ste_key_hook
+000AEEF6 ste_restore_st_pal
+000AEF0A ste_pitch_update
+000AF094 ste_draw_col
+000AF0AC ste_draw_row
+000AF0C4 ste_skip_beam_1
+000AF0E0 ste_skip_beam_2
+000AF0FC ste_wait_beam
+000AF156 ste_draw_spr_core_hook
+000AF17A ste_blit_spr_core
+000AF240 ste_erase_spr
+000AF258 ste_erase_spr_amiga
+000AF402 ste_erase_all_slots
+000AF428 ste_cork_wrap_spr
+000AF4B0 STE_LIFT_CNT
+000AF4B2 STE_RAD_MAXC
+000AF4B4 STE_RAD_MAXY
+000AF4B6 STE_LIFT_PTRS
+000AF536 ste_hud_lift_spr
+000AF5B2 ste_hud_drop_spr
+000AF622 ste_hud_restore
+000AF706 ste_hud_draw
+000AF7CC ste_radar_draw
+000AFA36 ste_trap8_handler
+000B2400 STE_BHUD_SAVE
+000B2880 STE_DRAW_STACK
+000B2A80 STE_BAN_SAVE
+000C8B00 STE_SND_STG
+FFFF8A20 BLT_SRC_XINC
+FFFF8A22 BLT_SRC_YINC
+FFFF8A24 BLT_SRC_ADDR
+FFFF8A28 BLT_ENDMASK1
+FFFF8A2A BLT_ENDMASK2
+FFFF8A2C BLT_ENDMASK3
+FFFF8A2E BLT_DST_XINC
+FFFF8A30 BLT_DST_YINC
+FFFF8A32 BLT_DST_ADDR
+FFFF8A36 BLT_XCOUNT
+FFFF8A38 BLT_YCOUNT
+FFFF8A3A BLT_HOP
+FFFF8A3C BLT_LINE
+FFFF8A3D BLT_SKEW

@@ -1,0 +1,14 @@
+boot ok True
+v12 ste 0203131402020202 present
+v12 ste 303900077cbe present
+v12 ste 436f6e7665796f72206c656674 present
+boot ok True
+v12 megaste 0203131402020202 present
+v12 megaste 303900077cbe present
+v12 megaste 436f6e7665796f72206c656674 present
+boot ok True
+v12 st 0203131402020202 present
+v12 st 303900077cbe present
+v12 st 436f6e7665796f72206c656674 present
+GUARD FAIL (expected for v111): stale snapshot /tmp/ng12hd/x/snap/v111_ste.sav: 0203131402020202 not found
+GUARD PASS /tmp/ng12hd/x/snap/v12_ste.sav

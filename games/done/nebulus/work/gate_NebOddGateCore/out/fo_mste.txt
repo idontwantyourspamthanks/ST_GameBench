@@ -1,0 +1,60 @@
+PASS odd2.ovl: ovl.py validate: []
+== odd2.ovl: 2 levels, sizes [115, 165], 2 campaigns [('ODD2', [128, 0, 130, 1]), ('ODD2 REV', [1, 0])]
+title 68.64328908920288
+PASS odd2.ovl: F10 opens the manager: True
+PASS odd2.ovl: Load from campaign disk (nebcampaign.py new --ovl): 'Loaded 2 levels / 2 campaigns'
+PASS odd2.ovl: store in RAM == file: True
+PASS odd2.ovl: level list shows all levels: ['ODD ONE', 'ODD TWO']
+PASS odd2.ovl level 1 (record size 165) Play: tower started: True
+PASS odd2.ovl level 1 (record size 165) Play: grid == decoded record (ODD TWO): []
+PASS odd2.ovl level 1 (record size 165) Play: rows/mission/tower: (40, 2, 5)
+PASS odd2.ovl level 1 (record size 165) Play: initial time 480 s (remaining 467): True
+PASS odd2.ovl level 1 (record size 165) Play: tower name hook A0=$bc18b text: b'ODD TWO\x00'
+      record 1: size 165, name A0 $bc18b (odd address)
+PASS odd2.ovl level 1 (record size 165): F10 opens the manager again (= back at the title after Q): True
+PASS odd2.ovl: campaign list shows all campaigns: ['ODD2', 'ODD2 REV']
+PASS odd2.ovl campaign 1 ODD2 REV entry 0: tower started: True
+PASS odd2.ovl campaign 1 ODD2 REV entry 0: grid == decoded record (ODD TWO): []
+PASS odd2.ovl campaign 1 ODD2 REV entry 0: rows/mission/tower: (40, 2, 5)
+PASS odd2.ovl campaign 1 ODD2 REV entry 0: initial time 480 s (remaining 467): True
+PASS odd2.ovl campaign 1 ODD2 REV entry 0: tower name hook A0=$bc18b text: b'ODD TWO\x00'
+      record 1: size 165, name A0 $bc18b (odd address)
+PASS odd2.ovl campaign 1 ODD2 REV: F10 opens the manager again (= back at the title after Q): True
+PASS odd2.ovl campaign 0 ODD2 entry 0: tower started: True
+PASS odd2.ovl campaign 0 ODD2 entry 0: original M1 T1 grid: []
+PASS odd2.ovl campaign 0 ODD2 entry 0: original rows/mission/tower: (47, 1, 0)
+PASS odd2.ovl campaign 0 ODD2: F10 opens the manager again (= back at the title after Q): True
+PASS odd2.ovl: game alive (VBL runs): True
+PASS odd2.ovl: no Address/Bus Error/exception in the Hatari log: []
+PASS looks.ovl: ovl.py validate: []
+== looks.ovl: 10 levels, sizes [159, 159, 159, 159, 159, 159, 159, 159, 159, 159], 1 campaigns [('LOOKS', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])]
+title 68.56385564804077
+PASS looks.ovl: F10 opens the manager: True
+PASS looks.ovl: Load from campaign disk (nebcampaign.py new --ovl): 'Loaded 10 levels / 1 campaigns'
+PASS looks.ovl: store in RAM == file: True
+PASS looks.ovl: level list shows all levels: ['M1T1', 'M1T2', 'M1T3', 'M1T4', 'M1T5', 'M1T6', 'M1T7', 'M1T8', 'M2T1', 'M2T4']
+PASS looks.ovl level 1 (record size 159) Play: tower started: True
+PASS looks.ovl level 1 (record size 159) Play: grid == decoded record (M1T2): []
+PASS looks.ovl level 1 (record size 159) Play: rows/mission/tower: (48, 1, 1)
+PASS looks.ovl level 1 (record size 159) Play: initial time 600 s (remaining 587): True
+PASS looks.ovl level 1 (record size 159) Play: tower name hook A0=$bc1b7 text: b'M1T2\x00'
+      record 1: size 159, name A0 $bc1b7 (odd address)
+PASS looks.ovl level 1 (record size 159): F10 opens the manager again (= back at the title after Q): True
+PASS looks.ovl level 9 (record size 159) Play: tower started: True
+PASS looks.ovl level 9 (record size 159) Play: grid == decoded record (M2T4): []
+PASS looks.ovl level 9 (record size 159) Play: rows/mission/tower: (48, 2, 3)
+PASS looks.ovl level 9 (record size 159) Play: initial time 600 s (remaining 587): True
+PASS looks.ovl level 9 (record size 159) Play: tower name hook A0=$bc6af text: b'M2T4\x00'
+      record 9: size 159, name A0 $bc6af (odd address)
+PASS looks.ovl level 9 (record size 159): F10 opens the manager again (= back at the title after Q): True
+PASS looks.ovl: campaign list shows all campaigns: ['LOOKS']
+PASS looks.ovl campaign 0 LOOKS entry 0: tower started: True
+PASS looks.ovl campaign 0 LOOKS entry 0: grid == decoded record (M1T1): []
+PASS looks.ovl campaign 0 LOOKS entry 0: rows/mission/tower: (48, 1, 0)
+PASS looks.ovl campaign 0 LOOKS entry 0: initial time 600 s (remaining 587): True
+PASS looks.ovl campaign 0 LOOKS entry 0: tower name hook A0=$bc118 text: b'M1T1\x00'
+      record 0: size 159, name A0 $bc118 (even address)
+PASS looks.ovl campaign 0 LOOKS: F10 opens the manager again (= back at the title after Q): True
+PASS looks.ovl: game alive (VBL runs): True
+PASS looks.ovl: no Address/Bus Error/exception in the Hatari log: []
+FAILS []

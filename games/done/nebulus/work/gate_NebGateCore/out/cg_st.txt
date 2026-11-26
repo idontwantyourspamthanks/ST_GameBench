@@ -1,0 +1,21 @@
+files ['GXUT270.PRG', 'NEBCHEAT.TXT', 'NEBEXE.FIC', 'NEBLEVEL.OVL', 'NEBULTIT.FIC', 'NEBULUS.PCH', 'NEPATCH.BIN', 'Nebulus_campaign_disk.st', 'PATCHES.TXT', 'README.TXT', 'START.TOS'] ovl zero True
+title True 17s
+marker b'NEPO' sites word 27 reused 0
+/home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/gate_NebGateCore/cell_g.py:29: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  p = shot(h, n); im = Image.open(p).convert('RGB').crop(PIC).crop(box); return sum(1 for q in im.getdata() if q != (0,0,0))
+credit band lit px (4 shots) 3188
+/home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/gate_NebGateCore/cell_g.py:29: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  p = shot(h, n); im = Image.open(p).convert('RGB').crop(PIC).crop(box); return sum(1 for q in im.getdata() if q != (0,0,0))
+manager open: $70 = 0x75a32 title text rows lit px = 0 (0 = title gone), menu text px = 5780
+/home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/gate_NebGateCore/cell_g.py:29: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  p = shot(h, n); im = Image.open(p).convert('RGB').crop(PIC).crop(box); return sum(1 for q in im.getdata() if q != (0,0,0))
+manager closed again: $70 = 0x382d8 (000382d8 = game VBL) title text rows lit px = 4340
+tower: timer word 0x18 timer (24, 72, 47) tower 0
+marker 0x4e45504f sites 27 | $39ffa 0x602a $38514 0x4ef9 0x76d04 $3dcf4 0x4eb9 0x76c08 $3d698 0x4eb9 0x77a00 $3a332 0x4e71 $377a2 0x4ef9 0x75740 $3b87a 0x66084880 $37c42 42401023 $38486 4ef90007 $3853a 4ef90007 $39e2c 0x4e71
+E: noen 0x0 states (0, 0, 0, 0)
+E on timer counts (24, 64, 69) (24, 64, 4) True
+T: frz 0xffff (24, 56, 68) (24, 56, 68) (32, 0, 0) frozen False
+T again running (24, 72, 42) (24, 64, 32) True
+E off: noen 0xffff
+20 s drive: 14 rounds, vbl +1036, tower 0, timer (24, 72, 32), frog x,y,state 4 8 0
+crash lines in Hatari log: 0

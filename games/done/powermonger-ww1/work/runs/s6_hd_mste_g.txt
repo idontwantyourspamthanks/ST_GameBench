@@ -1,0 +1,101 @@
+  [hd_mste_g] [    8s vbl 602] name prompt
+  [hd_mste_g] [   14s vbl 932] option screen (typing attempt 1)
+GATE hd_mste_g/megaste-2.06-4096K-hd marker PASS $727f8 = b'PMPO' (want b'PMPO')
+GATE hd_mste_g/megaste-2.06-4096K-hd site fal_ym PASS $1bcb8 = 03c88df101888df1 (want 03c88df101888df1 = original: Falcon-only site, this is not a Falcon)
+GATE hd_mste_g/megaste-2.06-4096K-hd site hd_kbd PASS $e78 = 102900024a390001d2ae (want 102900024a390001d2ae)
+GATE hd_mste_g/megaste-2.06-4096K-hd site hd_load PASS $d962 = 4ef900077408 (want 4ef900077408)
+GATE hd_mste_g/megaste-2.06-4096K-hd site hd_sector PASS $ddea = 4ef90007740c (want 4ef90007740c)
+GATE hd_mste_g/megaste-2.06-4096K-hd site p3b_delta PASS $13e3c = 4eb900073e00 (want 4eb900073e00)
+GATE hd_mste_g/megaste-2.06-4096K-hd site p3b_interp PASS $13e1e = 4eb900073c00 (want 4eb900073c00)
+GATE hd_mste_g/megaste-2.06-4096K-hd site p4_clamp PASS $ed6 = 4eb900075c004e714e71 (want 4eb900075c004e714e71)
+GATE hd_mste_g/megaste-2.06-4096K-hd site p4_ptr_a PASS $87e = 4ef900075c40 (want 4ef900075c40)
+GATE hd_mste_g/megaste-2.06-4096K-hd site p4_ptr_b PASS $9b8 = 4ef900075d20 (want 4ef900075d20)
+GATE hd_mste_g/megaste-2.06-4096K-hd site p4_spr PASS $1325e = 4ef900075f20 (want 4ef900075f20)
+GATE hd_mste_g/megaste-2.06-4096K-hd site p6_cpy PASS $13a94 = 4ef900077000 (want 4ef900077000)
+GATE hd_mste_g/megaste-2.06-4096K-hd site p6_tri PASS $f342 = 4ef900076812 (want 4ef900076812)
+GATE hd_mste_g/megaste-2.06-4096K-hd site p7_triple_flip PASS $145e2 = 4eb900077240 (want 4eb900077240)
+GATE hd_mste_g/megaste-2.06-4096K-hd site p7_triple_tail PASS $e2c = 4eb9000773004e71 (want 4eb9000773004e71)
+GATE hd_mste_g/megaste-2.06-4096K-hd site p7_triple_wait PASS $13e04 = 4eb900077200 (want 4eb900077200)
+GATE hd_mste_g/megaste-2.06-4096K-hd site pm_cachecap PASS $e3f2 = 4eb900075800 (want 4eb900075800)
+GATE hd_mste_g/megaste-2.06-4096K-hd site pm_credit PASS $14baa = 4eb900072800 (want 4eb900072800)
+GATE hd_mste_g/megaste-2.06-4096K-hd site pm_nokeydisk PASS $13cec = 4e714e714e71 (want 4e714e714e71)
+GATE hd_mste_g/megaste-2.06-4096K-hd site pm_noprot PASS $15998 = 0000002c (want 0000002c)
+GATE hd_mste_g/megaste-2.06-4096K-hd site pm_noprot_box PASS $bbd2 = 4e754e714e71 (want 4e754e714e71)
+GATE hd_mste_g/megaste-2.06-4096K-hd site pm_tooltip PASS $13e18 = 4eb900073400 (want 4eb900073400)
+GATE hd_mste_g/megaste-2.06-4096K-hd site qol_hover PASS $13e2a = 4eb900074b00 (want 4eb900074b00)
+GATE hd_mste_g/megaste-2.06-4096K-hd site qol_hover2 PASS $12ee0 = 4eb900073940 (want 4eb900073940)
+GATE hd_mste_g/megaste-2.06-4096K-hd site qol_keys PASS $13e70 = 4eb900072c00 (want 4eb900072c00)
+GATE hd_mste_g/megaste-2.06-4096K-hd site qol_keys2 PASS $f30 = 4eb900073100 (want 4eb900073100)
+GATE hd_mste_g/megaste-2.06-4096K-hd site snd_core PASS $1c4de = 4eb900076400 (want 4eb900076400)
+GATE hd_mste_g/megaste-2.06-4096K-hd site snd_setup PASS $6de = 4eb90007640c4e714e71 (want 4eb90007640c4e714e71)
+GATE hd_mste_g/megaste-2.06-4096K-hd site snd_start PASS $1bbbc = 4ef900076404 (want 4ef900076404)
+GATE hd_mste_g/megaste-2.06-4096K-hd site snd_stop PASS $1bb96 = 4ef9000764084e714e71 (want 4ef9000764084e714e71)
+GATE hd_mste_g/megaste-2.06-4096K-hd site tick_click PASS $7e6 = 00072aa0 (want 00072aa0)
+GATE hd_mste_g/megaste-2.06-4096K-hd site tick_click2 PASS $842 = 00072aa0 (want 00072aa0)
+GATE hd_mste_g/megaste-2.06-4096K-hd site tick_click3 PASS $144b4 = 00072aa0 (want 00072aa0)
+GATE hd_mste_g/megaste-2.06-4096K-hd site tick_head PASS $13da0 = 4eb900072900 (want 4eb900072900)
+GATE hd_mste_g/megaste-2.06-4096K-hd site tick_men PASS $13e36 = 4eb900072a60 (want 4eb900072a60)
+GATE hd_mste_g/megaste-2.06-4096K-hd site tick_pass PASS $13de8 = 4eb900072a004e71 (want 4eb900072a004e71)
+GATE hd_mste_g/megaste-2.06-4096K-hd site tick_rain PASS $13e24 = 4eb900072ac0 (want 4eb900072ac0)
+GATE hd_mste_g/megaste-2.06-4096K-hd site tt_ptr PASS $e20 = 4eb900075a40 (want 4eb900075a40)
+GATE hd_mste_g/megaste-2.06-4096K-hd payload@options PASS unchanged
+GATE hd_mste_g/megaste-2.06-4096K-hd hi@options PASS pattern / constants: 0 of 90880 bytes changed in $b7d00-$b7fff, $c1c00-$c1fff, $ee400-$f6fff, $f7000-$fffff
+GATE hd_mste_g/megaste-2.06-4096K-hd cache cursor@options PASS [$2cfda] = $80000 (limit $b0000, 0 = no cache)
+GATE hd_mste_g/megaste-2.06-4096K-hd credit visible PASS rows 194-199: 780 px of colours [(102, 102, 68)]
+GATE hd_mste_g/megaste-2.06-4096K-hd boot PASS 38s
+GATE hd_mste_g/megaste-2.06-4096K-hd noprot flag PASS $15998 = $0000002c (want $0000002c) before the first land
+  [hd_mste_g] [   34s vbl 4639] no disk requester
+  [hd_mste_g] [   37s vbl 4806] chart expected
+  [hd_mste_g] [   54s vbl 5827] island clicked
+  [hd_mste_g] [   60s vbl 6182] 3D map view, world counter ticking
+GATE hd_mste_g/megaste-2.06-4096K-hd noprot: the check never ran PASS hits $acc4:0, $ae20:0, $b232:0, $b39c:0
+GATE hd_mste_g/megaste-2.06-4096K-hd noprot: 'Please wait' box skipped (stub reached) PASS $bbd2 reached 1x (an `rts` stub)
+GATE hd_mste_g/megaste-2.06-4096K-hd nokeydisk: the key-disk routine never ran, the flow went on PASS $1cf7c hit 0x, next instruction $13cf2 hit 1x; the Powermonger disk was never inserted
+GATE hd_mste_g/megaste-2.06-4096K-hd map view PASS counter 61, flag $15998 = $0000002c
+GATE hd_mste_g/megaste-2.06-4096K-hd payload@map PASS unchanged
+GATE hd_mste_g/megaste-2.06-4096K-hd hi@map PASS pattern / constants: 0 of 90880 bytes changed in $b7d00-$b7fff, $c1c00-$c1fff, $ee400-$f6fff, $f7000-$fffff
+GATE hd_mste_g/megaste-2.06-4096K-hd cache cursor@map PASS [$2cfda] = $9fc58 (limit $b0000, 0 = no cache)
+GATE hd_mste_g/megaste-2.06-4096K-hd pm_mste: speed / cache register $ff8e21 PASS $03 (want $03: Mega STE 16 MHz + cache, STE unmapped, ST nothing)
+GATE hd_mste_g/megaste-2.06-4096K-hd tt_ptr: LIVE flag PASS $00
+GATE hd_mste_g/megaste-2.06-4096K-hd core: FALCON flag ($727f4, _MCH cookie high word 3) PASS $00 on megaste
+GATE hd_mste_g/megaste-2.06-4096K-hd snd_core: FLAGS (DMA sound probe) PASS $3 (STE-class 3, plain ST 6)
+GATE hd_mste_g/megaste-2.06-4096K-hd snd_core: the DMA plays a chunk (play bit $ff8901.0 seen in 60 s) PASS bit seen True, SV busy ff, sequencer active 01, chunk busy ff
+GATE hd_mste_g/megaste-2.06-4096K-hd p4_spr: sprite path chosen (BLT word $df004) PASS $b17e0001 (want $b17e0001: blitter on STE / Mega STE, pre-shifted cache on ST / TT / Falcon)
+GATE hd_mste_g/megaste-2.06-4096K-hd p7_triple: the three buffers rotate ($1d500 / $25200 / $b0000 all seen as shown or drawing) PASS seen $1d500 $25200 $b0000
+  [hd_mste_g] HELD after the HD save, no button down: $2edbc/$2edbe = $00000000 ok
+  [hd_mste_g] HELD after the HD load, no button down: $2edbc/$2edbe = $00010000 STUCK (a release report was lost: the next click will be ignored)
+GATE hd_mste_g/megaste-2.06-4096K-hd save/load: loaded state == saved state PASS 101376 B: 0 differ
+GATE hd_mste_g/megaste-2.06-4096K-hd save/load: the world moved between save and load PASS saved vs the state just before the load: 209 differ
+GATE hd_mste_g/megaste-2.06-4096K-hd save/load: save disk slot A == saved state PASS sectors 1-198 equal: True, slot flag $ff, image 409600 B
+GATE hd_mste_g/megaste-2.06-4096K-hd save/load: the game runs on after the load PASS 
+GATE hd_mste_g/megaste-2.06-4096K-hd payload@saveload PASS unchanged
+GATE hd_mste_g/megaste-2.06-4096K-hd hi@saveload PASS pattern / constants: 0 of 90880 bytes changed in $b7d00-$b7fff, $c1c00-$c1fff, $ee400-$f6fff, $f7000-$fffff
+GATE hd_mste_g/megaste-2.06-4096K-hd cache cursor@saveload PASS [$2cfda] = $9fc58 (limit $b0000, 0 = no cache)
+GATE hd_mste_g/megaste-2.06-4096K-hd lose picture PASS non-black 0.77, 16 colours, seen stable x3; cache cursor $9fc58 -> $9fc58
+GATE hd_mste_g/megaste-2.06-4096K-hd lose picture still there after 8 s PASS non-black 0.77, 16 colours
+GATE hd_mste_g/megaste-2.06-4096K-hd payload@lose PASS unchanged
+GATE hd_mste_g/megaste-2.06-4096K-hd hi@lose PASS pattern / constants: 0 of 90880 bytes changed in $b7d00-$b7fff, $c1c00-$c1fff, $ee400-$f6fff, $f7000-$fffff
+GATE hd_mste_g/megaste-2.06-4096K-hd cache cursor@lose PASS [$2cfda] = $9fc58 (limit $b0000, 0 = no cache)
+GATE hd_mste_g/megaste-2.06-4096K-hd back to option screen FAIL 
+  [hd_mste_g] [   16s vbl 21036] island clicked
+  [hd_mste_g] [   22s vbl 21390] 3D map view, world counter ticking
+GATE hd_mste_g/megaste-2.06-4096K-hd map view (2nd land) PASS counter 1069
+GATE hd_mste_g/megaste-2.06-4096K-hd win picture PASS non-black 0.99, 15 colours, seen stable x3; cache cursor $a7958
+GATE hd_mste_g/megaste-2.06-4096K-hd win picture still there after 8 s PASS non-black 0.99, 15 colours
+GATE hd_mste_g/megaste-2.06-4096K-hd payload@win PASS unchanged
+GATE hd_mste_g/megaste-2.06-4096K-hd hi@win PASS pattern / constants: 0 of 90880 bytes changed in $b7d00-$b7fff, $c1c00-$c1fff, $ee400-$f6fff, $f7000-$fffff
+GATE hd_mste_g/megaste-2.06-4096K-hd cache cursor@win PASS [$2cfda] = $a7958 (limit $b0000, 0 = no cache)
+GATE hd_mste_g/megaste-2.06-4096K-hd back to option screen (after win) PASS 
+  [hd_mste_g] confirm dialog after START NEW CONQUEST on a won land: True ('WWI, are                you sure you want to    delete all o')
+  [hd_mste_g] [   16s vbl 27903] island clicked
+  [hd_mste_g] [   22s vbl 28258] 3D map view, world counter ticking
+GATE hd_mste_g/megaste-2.06-4096K-hd map view (3rd land) PASS counter 61
+GATE hd_mste_g/megaste-2.06-4096K-hd payload@round3 PASS unchanged
+GATE hd_mste_g/megaste-2.06-4096K-hd hi@round3 PASS pattern / constants: 0 of 90880 bytes changed in $b7d00-$b7fff, $c1c00-$c1fff, $ee400-$f6fff, $f7000-$fffff
+GATE hd_mste_g/megaste-2.06-4096K-hd cache cursor@round3 PASS [$2cfda] = $a7958 (limit $b0000, 0 = no cache)
+LOADER 9:D131 0:D26 2:D18 3:D29 4:D27 5:D35 16:D+11 10:D+91 11:D11 1:D+42 8:D+37 1:c5 8:c5 1:c4 8:c5 15:D+40 16:c0 10:c10 11:D12 1:c5 8:c5
+LOADER legend: n:D = loaded from the disk, n:c = from the cache; + = cached (cursor store), S = cap skip; number = VBLs call to return
+GATE hd_mste_g/megaste-2.06-4096K-hd loader: every cacheable resource (1 8 10 14 15 16) came from the disk at most once PASS disk loads per resource {1: 1, 8: 1, 10: 1, 15: 1, 16: 1}
+GATE hd_mste_g/megaste-2.06-4096K-hd loader: cache hits are fast (<= 40 VBL) PASS 8 cache hits, slow []
+GATE hd_mste_g/megaste-2.06-4096K-hd cap normal: no skip (M3a) PASS 0 skip(s)
+CELL DONE hd_mste_g/megaste-2.06-4096K-hd: FAIL (477s)

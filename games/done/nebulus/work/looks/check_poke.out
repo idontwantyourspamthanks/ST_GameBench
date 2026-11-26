@@ -1,0 +1,24 @@
+pA: tower-in-RAM 1
+   palette $351ac               == natural level start of: T2
+   raster4 $40398               == natural level start of: T2
+   eye buffers $24be0-$2fae0    == natural level start of: T3,T7
+   body buffer $100e0-$110e0    == natural level start of: T2
+   grid                         == natural level start of: none
+pB: tower-in-RAM 2
+   palette $351ac               == natural level start of: T5
+   raster4 $40398               == natural level start of: T5
+   eye buffers $24be0-$2fae0    == natural level start of: T3,T7
+   body buffer $100e0-$110e0    == natural level start of: T3
+   grid                         == natural level start of: none
+pC2: tower-in-RAM 1
+   palette $351ac               == natural level start of: T2
+   raster4 $40398               == natural level start of: T2
+   eye buffers $24be0-$2fae0    == natural level start of: T2,T6
+   body buffer $100e0-$110e0    == natural level start of: T7
+   grid                         == natural level start of: none
+pD_sky: tower-in-RAM 1
+   palette $351ac               == natural level start of: T2
+   raster4 $40398               == natural level start of: T2
+   eye buffers $24be0-$2fae0    == natural level start of: T2,T6
+   body buffer $100e0-$110e0    == natural level start of: T7
+   grid                         == natural level start of: none

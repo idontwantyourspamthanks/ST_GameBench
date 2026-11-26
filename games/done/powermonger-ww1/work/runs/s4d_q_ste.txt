@@ -1,0 +1,33 @@
+  [q_ste] [   28s vbl 1505] name prompt
+  [q_ste] [   35s vbl 1858] option screen (typing attempt 1)
+GATE q_ste/ste-1.62-1024K marker PASS $727f8 = b'PMPO' (want b'PMPO')
+GATE q_ste/ste-1.62-1024K site fal_ym PASS $1bcb8 = 03c88df101888df1 (want 03c88df101888df1 = original: Falcon-only site, this is not a Falcon)
+GATE q_ste/ste-1.62-1024K site p3b_delta PASS $13e3c = 4eb900073e00 (want 4eb900073e00)
+GATE q_ste/ste-1.62-1024K site p3b_interp PASS $13e1e = 4eb900073c00 (want 4eb900073c00)
+GATE q_ste/ste-1.62-1024K site p4_clamp PASS $ed6 = 4eb900075c004e714e71 (want 4eb900075c004e714e71)
+GATE q_ste/ste-1.62-1024K site pm_cachecap PASS $e3f2 = 4eb900075800 (want 4eb900075800)
+GATE q_ste/ste-1.62-1024K site pm_credit PASS $14baa = 4eb900072800 (want 4eb900072800)
+GATE q_ste/ste-1.62-1024K site pm_nokeydisk PASS $13cec = 4e714e714e71 (want 4e714e714e71)
+GATE q_ste/ste-1.62-1024K site pm_noprot PASS $15998 = 0000002c (want 0000002c)
+GATE q_ste/ste-1.62-1024K site pm_noprot_box PASS $bbd2 = 4e754e714e71 (want 4e754e714e71)
+GATE q_ste/ste-1.62-1024K site pm_tooltip PASS $13e18 = 4eb900073400 (want 4eb900073400)
+GATE q_ste/ste-1.62-1024K site qol_hover PASS $13e2a = 4eb900074b00 (want 4eb900074b00)
+GATE q_ste/ste-1.62-1024K site qol_hover2 PASS $12ee0 = 4eb900073940 (want 4eb900073940)
+GATE q_ste/ste-1.62-1024K site qol_keys PASS $13e70 = 4eb900072c00 (want 4eb900072c00)
+GATE q_ste/ste-1.62-1024K site qol_keys2 PASS $f30 = 4eb900073100 (want 4eb900073100)
+GATE q_ste/ste-1.62-1024K site snd_core PASS $1c4de = 4eb900076400 (want 4eb900076400)
+GATE q_ste/ste-1.62-1024K site snd_setup PASS $6de = 4eb90007640c4e714e71 (want 4eb90007640c4e714e71)
+GATE q_ste/ste-1.62-1024K site snd_start PASS $1bbbc = 4ef900076404 (want 4ef900076404)
+GATE q_ste/ste-1.62-1024K site snd_stop PASS $1bb96 = 4ef9000764084e714e71 (want 4ef9000764084e714e71)
+GATE q_ste/ste-1.62-1024K site tick_click PASS $7e6 = 00072aa0 (want 00072aa0)
+GATE q_ste/ste-1.62-1024K site tick_click2 PASS $842 = 00072aa0 (want 00072aa0)
+GATE q_ste/ste-1.62-1024K site tick_click3 PASS $144b4 = 00072aa0 (want 00072aa0)
+GATE q_ste/ste-1.62-1024K site tick_head PASS $13da0 = 4eb900072900 (want 4eb900072900)
+GATE q_ste/ste-1.62-1024K site tick_men PASS $13e36 = 4eb900072a60 (want 4eb900072a60)
+GATE q_ste/ste-1.62-1024K site tick_pass PASS $13de8 = 4eb900072a004e71 (want 4eb900072a004e71)
+GATE q_ste/ste-1.62-1024K site tick_rain PASS $13e24 = 4eb900072ac0 (want 4eb900072ac0)
+GATE q_ste/ste-1.62-1024K site tt_ptr PASS $e20 = 4eb900075a40 (want 4eb900075a40)
+GATE q_ste/ste-1.62-1024K payload@options PASS unchanged
+GATE q_ste/ste-1.62-1024K credit visible PASS rows 194-199: 780 px of colours [(102, 102, 68)]
+GATE q_ste/ste-1.62-1024K boot PASS 52s
+GATE q_ste/ste-1.62-1024K noprot flag PASS $15998 = $0000002c (want $0000002c) before the first land

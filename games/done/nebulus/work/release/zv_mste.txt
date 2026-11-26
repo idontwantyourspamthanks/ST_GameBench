@@ -1,0 +1,16 @@
+files ['GXUT270.PRG', 'NEBCHEAT.TXT', 'NEBEXE.FIC', 'NEBULTIT.FIC', 'NEBULUS.PCH', 'NEPATCH.BIN', 'PATCHES.TXT', 'README.TXT', 'START.TOS']
+title True 17s
+/home/ryan/Code/AtariST/gamebench/games/in_progress/nebulus/work/release/zip_verify.py:28: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  n = sum(1 for p in im.getdata() if p != (0,0,0)); lit = max(lit, n); time.sleep(0.5)
+credit band lit pixels (max of 4 shots) 3284
+tower timer word 0x20 timer (32, 0, 0)
+marker 0x4e45504f sites 10 | $39ffa 0x602a $38514 0x4ef9 0x76d04 $3dcf4 0x4eb9 0x76c08 $3d698 0x4eb9 0x77a00
+counting (24, 64, 46) (24, 56, 54) changes True
+before keys: frz 0x0 noen 0x0 states (8, 2, 7, 0)
+after E: noen 0xffff states (0, 0, 0, 0)
+  3s later states (0, 0, 0, 0) timer (24, 64, 72)
+E on, counting (no deaths) (24, 64, 20) (24, 56, 48) True
+after T: frz 0xffff timer (24, 56, 35) (24, 56, 35) (24, 56, 35) frozen mid-count True
+T again: frz 0x0 (24, 56, 5) (24, 48, 13) running True
+E again: noen 0x0 states (8, 2, 0, 0)
+after play: timer (32, 0, 0) (24, 72, 54) tower 0 vbl 5604 marker 0x4e45504f
