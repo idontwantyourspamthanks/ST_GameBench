@@ -34,7 +34,7 @@
 | `build/game/FILES/KO2ENG.BIN` | `934b13a84279197ab58d46312253f078` |
 | `build/game/FILES/KO2HND.BIN` | `a3505e2d266ec54f926b300b88d6be73` |
 | `build/game/FILES/PMMATCH.BIN` | `573090dad53da0a8539136558de7a1ae` |
-| `build/game/FILES/KO2STE.BIN` | `077364ad4595906fb36a89f8199c2c21` |
+| `build/game/FILES/KO2STE.BIN` | `ef08e9c287ba30787a7cbff22c3e42f7` |
 | `build/game/FILES/AMIGASND.BIN` | `d5bd5ab3b9e1051ed23d2d778a718753` |
 | `build/game/FILES/AMIGAP0.BIN` | `29cb99c7587974a2b2fb4a571c31eaa7` |
 
