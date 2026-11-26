@@ -29,25 +29,21 @@ STE_PIT_PAL     equ     $081000         ; 32 bytes (8 STE 12-bit pitch colours)
 STE_PIT_MAP     equ     $081020         ; 7,680 bytes (80 x 96 tilemap)
 STE_PIT_TILES   equ     $082e20         ; 24,576 bytes (256 x 96 bytes)
 STE_CORK_BUF    equ     $088f00         ; 73,984 bytes (424 x 168 + 480 slack)
-STE_SAVE_UNDER  equ     $09b000         ; 6,656 bytes (26 x 256 byte save-under slots: $09b000..$09c9ff)
-; STE Blitter HUD/Radar save-under & 1bpp mask buffers (100% inside 1 MB RAM, ZERO overlap with CORK!):
-STE_HUD_MASK    equ     $07fd00         ; 320 bytes (1bpp HUD/Banner mask & 32B sprite mask)
+STE_SAVE_UNDER  equ     $09b000         ; 8,192 bytes (32 x 256 byte save-under slots: $09b000..$09cfff)
+; STE Blitter Radar save-under & 1bpp mask buffers (100% inside 1 MB RAM, ZERO overlap!):
 STE_MASK_BUF    equ     $07fd00         ; 32 bytes (16-line 1bpp sprite mask scratch)
-STE_RADAR_SAVE  equ     $07fe40         ; 4,536 bytes: Blitter radar line save-under pool!
 STE_RAD_POOL    equ     $07fe40         ; line pixel save pool ($07fe40..$080ff8 = 4,536B = 567 cells -> fits scale=8!)
 STE_RAD_POOL_END equ    $080ff8
-STE_RAD_LREC    equ     $09ca00         ; line records (24 x 16B = 384B -> $09cb80, safely above 26 slots!)
-STE_RAD_DREC    equ     $09cb80         ; dot restore records (56 x 12B = 672B -> $09ce20)
-STE_RAD_CACHE   equ     $09ce20         ; pre-scaled radar lines cache (24 x 8B = 192B -> $09cee0)
-STE_LIFT_PTRS   equ     $09cee0         ; 32 x 4B = 128B lifted sprite ptrs (-> $09cf60)
-STE_ST_PAL      equ     $09cf60         ; 16B saved Classic ST palette 0..7 (-> $09cf70 < $09d000 KO2_FILES_CR!)
-STE_BHUD_SAVE   equ     $0b2400         ; 1,128 bytes (tight 3-box Bottom HUD) -> $0b2868
 STE_DRAW_STACK  equ     $0b2880         ; 512 bytes (32 x 16B overlap-safe LIFO sprite stack!) -> $0b2a80
-STE_BAN_SAVE    equ     $0b2a80         ; 1,344 bytes (8 lines x 21 cols x 8B) -> $0b2fc0 (< PMOK $0b2ff8!)
+STE_RAD_LREC    equ     $0b2a80         ; line records (24 x 16B = 384B -> $0b2c00)
+STE_RAD_DREC    equ     $0b2c00         ; dot restore records (48 x 12B = 576B -> $0b2e40)
+STE_RAD_CACHE   equ     $0b2e40         ; pre-scaled radar lines cache (24 x 8B = 192B -> $0b2f00)
+STE_LIFT_PTRS   equ     $0b2f00         ; 32 x 4B = 128B lifted sprite ptrs (-> $0b2f80)
+STE_ST_PAL      equ     $0b2f80         ; 16B saved Classic ST palette 0..7 (-> $0b2f90 < PMOK $0b2ff8!)
 
-CORK_STRIDE     equ     168             ; 336 pixels = 21 x 16px words (4 planes)
-CORK_RING_H     equ     224             ; 14 tile rows = 224 scanlines
-CORK_RING_BYTES equ     37632           ; 224 * 168
+CORK_STRIDE     equ     184             ; 368 pixels = 23 x 16px words (2-tile invisible H-margin!)
+CORK_RING_H     equ     192             ; 12 tile rows = 192 scanlines (> 182 visible pitch!)
+CORK_RING_BYTES equ     35328           ; 192 * 184 (2 halves = 70,656B -> $09a300 < $09b000!)
 
 ; STE Blitter registers (short I/O addresses $ffff8a20..$ffff8a3d -> 4-byte .w saves 300B + cycles!)
 BLT_SRC_XINC    equ     $ffff8a20
@@ -350,10 +346,10 @@ ste_vbl_top:
         move.w  STE_VIEW_HSCR(pc),d0
         move.b  d0,$ffff8265.w          ; fine pixel hscroll (0..15)
         beq.s   .vt_h0
-        clr.b   $ffff820f.w             ; hscroll != 0 -> STE adds 8 bytes automatically (=168)
+        move.b  #8,$ffff820f.w          ; hscroll != 0 -> STE adds +8B auto, +8 words (+16B) = 184B!
         jmp     $018d6e.l               ; continue KO2 VBL joystick reader!
 .vt_h0:
-        move.b  #4,$ffff820f.w          ; hscroll == 0 -> +4 extra words = +8 bytes (=168)
+        move.b  #12,$ffff820f.w         ; hscroll == 0 -> +12 extra words (+24B) = 184B!
         jmp     $018d6e.l
 
 .vt_stats:
@@ -395,9 +391,9 @@ ste_tb_hud:
         move.w  #$0730,$ffff8244.w      ; col 2 = crisp orange (home player name)
         move.w  #$0777,$ffff8246.w      ; col 3 = crisp white
         move.w  #$0500,$ffff8248.w      ; col 4 = crisp red (away player name)
-        ; Re-arm Timer B for +18 scanlines to restore jet-black bottom border!
+        ; Re-arm Timer B for +16 scanlines (line 197 < 199 -> GUARANTEED jet-black bottom border!)
         move.l  #ste_tb_bot,$0120.w
-        move.b  #18,$fffffa21.w
+        move.b  #16,$fffffa21.w
         move.b  #8,$fffffa1b.w
         bclr    #0,$fffffa0f.w          ; Timer B EOI
         rte
@@ -405,6 +401,9 @@ ste_tb_hud:
 ste_tb_bot:
         clr.b   $fffffa1b.w
         clr.w   $ffff8240.w             ; jet-black bottom border!
+        move.b  #$07,$ffff8205.w        ; point lines 197..199 to zeroed $078000 -> 100% black!
+        move.b  #$80,$ffff8207.w
+        clr.b   $ffff8209.w
         bclr    #0,$fffffa0f.w
         rte
 
@@ -693,11 +692,11 @@ ste_pitch_update:
         blt.s   .su_lp
         bra.s   .tiles_ok
 .scroll_d:
-        ; Scrolled down: fill row(s) STE_CUR_TY+14 .. d3+13
+        ; Scrolled down: fill row(s) STE_CUR_TY+12 .. d3+11
         move.w  STE_CUR_TY(pc),d7
-        addi.w  #14,d7
+        addi.w  #12,d7
         move.w  d3,d6
-        addi.w  #13,d6
+        addi.w  #11,d6
 .sd_lp: bsr.w   ste_draw_row
         addq.w  #1,d7
         cmp.w   d6,d7
@@ -705,7 +704,8 @@ ste_pitch_update:
 
 .tiles_ok:
         movem.l (sp)+,d4-d7             ; restore new_vb(d4), dtx(d5), dty(d6), new_hscr(d7)
-        ; 4. Back-to-back HUD/Radar restore -> wrap -> redraw, THEN atomically latch STE_VIEW_BASE!
+        ; 4. Wait until beam passes Radar (if currently inside y=0..STE_RAD_MAXY) so Radar NEVER half-erases!
+        bsr.w   ste_wait_radar_beam
         movem.l d2-d4/d7,-(sp)
         bsr.w   ste_hud_lift_spr
         bsr.w   ste_hud_restore
@@ -739,8 +739,8 @@ ste_pitch_update:
         bsr.w   ste_hud_restore
         movem.l (sp)+,d2-d4/d7
         movem.l d4/d7,-(sp)
-        move.w  d3,d7                   ; ty_row = d3 .. d3+13
-        moveq   #13,d5
+        move.w  d3,d7                   ; ty_row = d3 .. d3+11
+        moveq   #11,d5
 .ff_y:  bsr.w   ste_draw_row            ; draws d2..d2+20 at row d7
         addq.w  #1,d7
         dbra    d5,.ff_y
@@ -799,8 +799,7 @@ ste_draw_row:
 ste_skip_beam_1:
         tst.w   STE_AMIGA_ON
         beq.s   .sb1_st
-        bsr.s   ste_wait_beam           ; Amiga STE: exact 20-line beam-avoidance window (ZERO flicker, 50 FPS!)
-        jmp     $01a39c.l
+        jmp     $01a39c.l               ; ste_wait_beam runs in ste_blit_spr_core for ALL 4 entry points!
 .sb1_st:
         move.l  -$1320(a4),d4
         move.w  d4,d2
@@ -809,7 +808,6 @@ ste_skip_beam_1:
 ste_skip_beam_2:
         tst.w   STE_AMIGA_ON
         beq.s   .sb2_st
-        bsr.s   ste_wait_beam           ; Amiga STE: exact 20-line beam-avoidance window (ZERO flicker, 50 FPS!)
         jmp     $01a3f2.l
 .sb2_st:
         move.l  -$1320(a4),d4
@@ -817,14 +815,17 @@ ste_skip_beam_2:
         jmp     $01a3d2.l
 
 ; KO2-style STE hardware raster-beam avoidance window:
-; Waits ONLY if the video beam is inside [sprite_y - 16 .. sprite_y + 18] scanlines!
-; When beam is in top/bottom border, above sprite-16, or below sprite+18 -> ZERO WAIT!
+;   ste_wait_beam       : single sprite (d4.l = spr_addr, window [-16 .. +16] -> 50.00 FPS!)
+;   ste_wait_beam_chain : multi-sprite overlap chain (d4.l = spr_addr, window [-48 .. +18] -> ZERO walkout vanish!)
 ste_wait_beam:
-        movem.l d2/d4/d7,-(sp)
-        move.w  d1,d4
-        mulu.w  #CORK_STRIDE,d4         ; d4.l = sprite_y * 168
+        movem.l d2/d5/d7,-(sp)
+        move.l  #(-16*CORK_STRIDE),d5
+        bra.s   ste_wb_go
+ste_wait_beam_chain:
+        movem.l d2/d5/d7,-(sp)
+        move.l  #(-48*CORK_STRIDE),d5
+ste_wb_go:
         move.l  STE_VIEW_BASE(pc),d2
-        add.l   d2,d4                   ; d4.l = spr_addr in STE_CORK_BUF
 .wb_poll:
         moveq   #0,d7
         move.b  $ffff8205.w,d7
@@ -838,21 +839,68 @@ ste_wait_beam:
         bne.s   .wb_retry
         move.w  (sp)+,d7
         sub.l   d2,d7                   ; d7 = beam_off (bytes from STE_VIEW_BASE)
-        ble.s   .wb_ok                  ; top border -> ZERO WAIT!
+        blt.s   .wb_ok                  ; out of range -> ZERO WAIT!
+        beq.s   .wb_top                 ; top border (beam_off == 0) -> check if chain near top!
         cmpi.l  #(200*CORK_STRIDE),d7
         bge.s   .wb_ok                  ; bottom border -> ZERO WAIT!
         add.l   d2,d7
         sub.l   d4,d7                   ; d7 = beam_addr - spr_addr
-        cmpi.l  #(-28*CORK_STRIDE),d7
-        blt.s   .wb_ok                  ; beam > 28 lines ABOVE sprite -> ZERO WAIT!
+        cmp.l   d5,d7
+        blt.s   .wb_ok                  ; beam safely ABOVE sprite -> ZERO WAIT!
         cmpi.l  #(18*CORK_STRIDE),d7
         bgt.s   .wb_ok                  ; beam > 18 lines BELOW sprite -> ZERO WAIT!
-        bra.s   .wb_poll                ; beam is right on this sprite -> wait ~0.6 ms!
+        bra.s   .wb_poll                ; beam is right on this sprite -> wait!
+.wb_top:
+        ; During Top Border (beam_off == 0), if this is a multi-sprite chain (d5 < -30*184)
+        ; near the top of the screen (spr_off < 85*184), wait so walkout never erases under beam!
+        cmpi.l  #(-30*CORK_STRIDE),d5
+        bgt.s   .wb_ok                  ; single sprite -> ZERO WAIT!
+        move.l  d4,d7
+        sub.l   d2,d7                   ; spr_off
+        cmpi.l  #(85*CORK_STRIDE),d7
+        blt.s   .wb_poll                ; chain near top during Top Border -> wait!
+        bra.s   .wb_ok
 .wb_retry:
         addq.l  #2,sp
         bra.s   .wb_poll
 .wb_ok:
+        movem.l (sp)+,d2/d5/d7
+        rts
+
+; Wait ONLY if STE hardware video beam is currently inside [0 .. STE_RAD_MAXY + 4]
+; so Radar restore+redraw NEVER runs while the beam is scanning the Radar!
+ste_wait_radar_beam:
+        tst.w   -$0e10(a4)
+        ble.s   .wrb_ret
+        movem.l d2/d4/d7,-(sp)
+        move.w  STE_RAD_MAXY(pc),d4
+        beq.s   .wrb_ok
+        addq.w  #4,d4
+        mulu.w  #CORK_STRIDE,d4         ; d4.l = (STE_RAD_MAXY + 4) * 168
+        move.l  STE_VIEW_BASE(pc),d2
+.wrb_lp:
+        moveq   #0,d7
+        move.b  $ffff8205.w,d7
+        swap    d7
+        move.b  $ffff8207.w,d7
+        lsl.w   #8,d7
+        move.b  $ffff8209.w,d7
+        move.w  d7,-(sp)
+        lsr.w   #8,d7
+        cmp.b   $ffff8207.w,d7
+        bne.s   .wrb_re
+        move.w  (sp)+,d7
+        sub.l   d2,d7                   ; d7 = beam_off
+        ble.s   .wrb_ok                 ; top border -> ZERO WAIT!
+        cmp.l   d4,d7
+        bge.s   .wrb_ok                 ; beam already PAST Radar -> ZERO WAIT!
+        bra.s   .wrb_lp
+.wrb_re:
+        addq.l  #2,sp
+        bra.s   .wrb_lp
+.wrb_ok:
         movem.l (sp)+,d2/d4/d7
+.wrb_ret:
         rts
 
 ste_draw_spr_core_hook:
@@ -876,8 +924,8 @@ ste_blit_spr_core:
         cmpi.w  #$5354,8(a3)            ; magic "ST" already assigned?
         beq.s   .have_slot
         move.w  STE_SLOT_NEXT(pc),d2
-        cmpi.w  #26,d2
-        bcc.w   .spr_ret                ; safety cap (26 slots: $09b000..$09c9ff)
+        cmpi.w  #32,d2
+        bcc.w   .spr_ret                ; safety cap (32 slots: $09b000..$09cfff)
         addq.w  #1,STE_SLOT_NEXT
         ; Slot address = STE_SAVE_UNDER + d2 * 256
         lsl.w   #8,d2
@@ -924,10 +972,15 @@ ste_blit_spr_core:
         lsr.w   #8,d3
         move.b  d3,(a3)+                ; +13: slot_idx (0..25)
         lsr.w   #3,d0
-        move.b  d0,(a3)+                ; +14: x_col (0..20)
+        add.w   STE_CUR_TX(pc),d0       ; world_x_col (0..80) — 100% camera-scroll invariant!
+        move.b  d0,(a3)+                ; +14: world_x_col (0..80)
         move.b  d1,(a3)                 ; +15: y_px (0..199)
         movem.l (sp)+,d0/a3
 .no_push:
+        move.l  d4,-(sp)
+        move.l  a0,d4                   ; d4 = spr_addr for beam avoidance (ALL 4 KO2 entry points!)
+        bsr.w   ste_wait_beam
+        move.l  (sp)+,d4
         move.w  d2,d1                   ; d1 = skew (0..15)
         moveq   #3,d0                   ; cmd 3 = save_and_draw_sprite
         trap    #8
@@ -972,40 +1025,39 @@ ste_erase_spr_amiga:
         move.w  d4,d5
         subq.w  #1,d5
         sub.w   d3,d5                   ; d5 = count of sprites ABOVE idx (0 if top!)
-        beq.s   .es_fast_one            ; top of stack -> fast 1-blit restore!
+        beq.w   .es_fast_one            ; top of stack -> fast 1-blit restore!
 
-        ; Fast Targeted 2D-overlap LIFO: precompute [min_x-1, max_x+1, min_y-20, max_y+20] ONCE!
-        lea     -32(sp),sp              ; local ptr array at (sp)
+        ; 100% Camera-Scroll-Invariant 2D-overlap LIFO using (world_x_col, dst_addr)!
+        ; Support up to 16 chained sprites (64 bytes) so 11-player walkout lines NEVER drop a sprite!
+        lea     -64(sp),sp              ; local ptr array at (sp)
         movea.l sp,a1                   ; a1 = match write cursor
-        moveq   #0,d0                   ; d0.w = match count (0..8)
+        moveq   #0,d0                   ; d0.w = match count (0..16)
         moveq   #0,d1
-        move.b  14(a4),d1               ; target x_col
+        move.b  14(a4),d1               ; target world_x_col
         move.w  d1,d3
         subq.w  #1,d1                   ; d1 = min_x - 1
         addq.w  #1,d3                   ; d3 = max_x + 1
-        moveq   #0,d2
-        move.b  15(a4),d2               ; target y_px
-        move.w  d2,d4
-        subi.w  #20,d2                  ; d2 = min_y - 20 (covers +-4px camera scroll!)
-        addi.w  #20,d4                  ; d4 = max_y + 20
+        move.l  4(a4),d2                ; target dst_addr in STE_CORK_BUF
+        move.l  d2,d4
+        subi.l  #(16*CORK_STRIDE+16),d2 ; d2.l = min_dst (-16 scanlines)
+        addi.l  #(16*CORK_STRIDE+16),d4 ; d4.l = max_dst (+16 scanlines)
         lea     16(a4),a5               ; a5 = &stack[idx+1]
         move.w  d5,d6
         subq.w  #1,d6
 .es_ovl:
         moveq   #0,d7
-        move.b  14(a5),d7               ; j.x_col
-        cmp.w   d1,d7                   ; j.x_col < min_x - 1?
+        move.b  14(a5),d7               ; j.world_x_col
+        cmp.w   d1,d7                   ; j.x < min_x - 1?
         blt.s   .es_nxt
-        cmp.w   d3,d7                   ; j.x_col > max_x + 1?
+        cmp.w   d3,d7                   ; j.x > max_x + 1?
         bgt.s   .es_nxt
-        moveq   #0,d7
-        move.b  15(a5),d7               ; j.y_px
-        cmp.w   d2,d7                   ; j.y_px < min_y - 20?
+        move.l  4(a5),d7                ; j.dst_addr (camera-scroll invariant!)
+        cmp.l   d2,d7                   ; j.dst < min_dst?
         blt.s   .es_nxt
-        cmp.w   d4,d7                   ; j.y_px > max_y + 20?
+        cmp.l   d4,d7                   ; j.dst > max_dst?
         bgt.s   .es_nxt
-        ; TRUE 2D overlap! Record pointer a5 (if < 8) and expand x range for chains!
-        cmpi.w  #8,d0
+        ; TRUE 2D overlap! Record pointer a5 (if < 16) and expand x & dst range for chains!
+        cmpi.w  #16,d0
         bcc.s   .es_nxt
         move.l  a5,(a1)+
         addq.w  #1,d0
@@ -1017,19 +1069,38 @@ ste_erase_spr_amiga:
         move.w  d7,d1                   ; expand min_x - 1
 .es_nx1: addq.w #2,d7
         cmp.w   d3,d7
-        ble.s   .es_nxt
+        ble.s   .es_ny1
         move.w  d7,d3                   ; expand max_x + 1
+.es_ny1: move.l 4(a5),d7
+        subi.l  #(16*CORK_STRIDE+16),d7
+        cmp.l   d2,d7
+        bge.s   .es_ny2
+        move.l  d7,d2                   ; expand min_dst
+.es_ny2: move.l 4(a5),d7
+        addi.l  #(16*CORK_STRIDE+16),d7
+        cmp.l   d4,d7
+        ble.s   .es_nxt
+        move.l  d7,d4                   ; expand max_dst
 .es_nxt:
         lea     16(a5),a5
         dbra    d6,.es_ovl
 
         tst.w   d0
         bne.s   .es_do_targeted
-        lea     32(sp),sp               ; free local ptr array -> fast path!
+        lea     64(sp),sp               ; free local ptr array -> fast path!
 
 .es_fast_one:
         ; Fast path: no overlapping sprite above idx!
-        ; Only restore if dst is still inside current visible viewport [STE_VIEW_BASE .. +185*168]
+        ; Wait for beam BEFORE erasing single sprite
+        move.l  4(a4),d4
+        bsr.w   ste_wait_beam
+        ; Only restore if sprite is STILL inside current visible viewport X & Y (ZERO corkscrew-wrap boxes!)
+        moveq   #0,d0
+        move.b  14(a4),d0               ; world_x_col
+        sub.w   STE_CUR_TX(pc),d0       ; rel_x_col
+        blt.s   .es_skip_off
+        cmpi.w  #20,d0
+        bgt.s   .es_skip_off
         move.l  4(a4),a1                ; dst
         move.l  a1,d0
         sub.l   STE_VIEW_BASE(pc),d0
@@ -1048,7 +1119,12 @@ ste_erase_spr_amiga:
         bra.w   .es_done
 
 .es_do_targeted:
-        ; Restore ONLY the d0 (1..8) overlapping sprites in reverse LIFO order!
+        ; Multi-sprite overlap chain: wait with wider [-48..+18] margin BEFORE popping chain!
+        move.l  d4,-(sp)
+        move.l  4(a4),d4
+        bsr.w   ste_wait_beam_chain
+        move.l  (sp)+,d4
+        ; Restore ONLY the d0 (1..16) overlapping sprites in reverse LIFO order!
         move.w  d0,d6                   ; save match count in d6
         move.w  d0,d4
         subq.w  #1,d4                   ; loop counter
@@ -1056,6 +1132,12 @@ ste_erase_spr_amiga:
         move.w  d4,d2
         lsl.w   #2,d2
         movea.l 0(sp,d2.w),a5
+        moveq   #0,d0
+        move.b  14(a5),d0
+        sub.w   STE_CUR_TX(pc),d0
+        blt.s   .es_pm_sk
+        cmpi.w  #20,d0
+        bgt.s   .es_pm_sk
         movea.l 4(a5),a1                ; dst
         moveq   #0,d0
         move.b  13(a5),d0
@@ -1064,9 +1146,16 @@ ste_erase_spr_amiga:
         movea.l d0,a0                   ; slot
         moveq   #1,d0                   ; cmd 1 = restore_one
         trap    #8
+.es_pm_sk:
         dbra    d4,.es_pop_m
 
-        ; Restore target sprite idx (a4) itself!
+        ; Restore target sprite idx (a4) itself (if still inside visible viewport X!)
+        moveq   #0,d0
+        move.b  14(a4),d0
+        sub.w   STE_CUR_TX(pc),d0
+        blt.s   .es_tg_sk
+        cmpi.w  #20,d0
+        bgt.s   .es_tg_sk
         movea.l 4(a4),a1
         moveq   #0,d0
         move.b  13(a4),d0
@@ -1075,6 +1164,7 @@ ste_erase_spr_amiga:
         movea.l d0,a0
         moveq   #1,d0
         trap    #8
+.es_tg_sk:
 
         ; Re-draw ONLY the d6 (1..8) overlapping sprites in forward order!
         ; NOTE: compact shifts all entries above a4 down by 16 bytes, so subtract 16 from each ptr!
@@ -1099,7 +1189,7 @@ ste_erase_spr_amiga:
         addq.w  #1,d4
         cmp.w   d6,d4
         blt.s   .es_redr_m
-        lea     32(sp),sp               ; free local ptr array
+        lea     64(sp),sp               ; free local ptr array
 
 .es_done:
         movem.l (sp)+,d0-d7/a0-a2/a4-a5
@@ -1187,20 +1277,28 @@ STE_RAD_MAXY:   dc.w    0               ; exact bottom Y of drawn Radar (0 if OF
 ste_hud_lift_spr:
         clr.w   STE_LIFT_CNT
         move.w  STE_DRAW_CNT(pc),d0
-        beq.s   .hlf_ret
+        beq.w   .hlf_ret
         movem.l d1-d3/a0-a2/a5,-(sp)
         lea     STE_DRAW_STACK.l,a5
         lea     STE_LIFT_PTRS.l,a2
         moveq   #0,d2                   ; lifted count
+        ; Check if sprite overlaps active Radar (camera-scroll invariant dst_off & rel_x_col!)
+        move.w  STE_RAD_MAXY(pc),d3
+        beq.s   .hlf_done
+        addq.w  #2,d3
+        mulu.w  #CORK_STRIDE,d3         ; d3.l = (STE_RAD_MAXY + 2) * CORK_STRIDE
+        move.l  STE_VIEW_BASE(pc),a0
         subq.w  #1,d0
 .hlf_lp:
-        ; Check if sprite overlaps active Radar (y_px <= MAXY && x_col <= MAXC)
-        moveq   #0,d1
-        move.b  15(a5),d1               ; y_px
-        cmp.w   STE_RAD_MAXY(pc),d1
+        move.l  4(a5),d1                ; sprite dst_addr
+        sub.l   a0,d1                   ; current screen byte offset!
+        blt.s   .hlf_nxt
+        cmp.l   d3,d1
         bgt.s   .hlf_nxt
         moveq   #0,d1
-        move.b  14(a5),d1               ; x_col
+        move.b  14(a5),d1               ; world_x_col
+        sub.w   STE_CUR_TX(pc),d1       ; current screen rel_x_col!
+        blt.s   .hlf_nxt
         cmp.w   STE_RAD_MAXC(pc),d1
         bgt.s   .hlf_nxt
 .hlf_hit:
@@ -1293,16 +1391,6 @@ ste_hud_restore:
         move.w  STE_HUD_ACTIVE(pc),d3
         beq.s   .hr_done
         clr.w   STE_HUD_ACTIVE
-        ; Restore Center Banner if it was drawn (bit 1 of d3) — Bottom HUD is 0-cycle HW split-screen!
-        btst    #1,d3
-        beq.s   .hr_done
-        lea     STE_BAN_SAVE.l,a0
-        movea.l STE_HUD_VBASE(pc),a1
-        adda.l  #96*CORK_STRIDE,a1
-        moveq   #84,d1
-        moveq   #8,d2
-        moveq   #6,d0
-        trap    #8
 .hr_done:
         movem.l (sp)+,d0-d3/a0-a2
         rts
@@ -1316,35 +1404,11 @@ ste_hud_draw:
         move.w  STE_HUD_HSCR(pc),d3     ; d3 = skew (0..15)
         move.w  -$0e0a(a4),STE_HUD_SCALE
         move.w  -$0e10(a4),STE_HUD_RADON
-        moveq   #1,d5                   ; active flags: bit0=active
 
-        ; 1. Transparent, X-Resizable, D-Toggleable Vector Radar (Bottom HUD is 0-cycle HW split-screen!)
+        ; Transparent, X-Resizable, D-Toggleable Vector Radar (Bottom HUD is 0-cycle HW split-screen!)
         bsr.w   ste_radar_draw
 
-        ; 2. Center Event Banner (y=96..103, 8 lines): scan y=99 only every 4th frame!
-        move.w  STE_HUD_TICK(pc),d0
-        andi.w  #3,d0
-        bne.s   .hd_done
-        lea     $078000+99*160,a0
-        moveq   #39,d0                  ; 40 longs = 160 bytes
-        moveq   #0,d1
-.chk_b: or.l    (a0)+,d1
-        dbra    d0,.chk_b
-        tst.l   d1
-        beq.s   .hd_done
-        ori.w   #2,d5                   ; bit1 = banner active
-        lea     $078000+96*160,a0
-        movea.l STE_HUD_VBASE(pc),a1
-        adda.l  #96*CORK_STRIDE,a1
-        lea     STE_BAN_SAVE.l,a2
-        moveq   #20,d1
-        moveq   #8,d2
-        moveq   #1,d4                   ; all 4 planes
-        moveq   #5,d0
-        trap    #8
-
-.hd_done:
-        move.w  d5,STE_HUD_ACTIVE
+        move.w  #1,STE_HUD_ACTIVE
         movem.l (sp)+,d0-d5/a0-a2
         rts
 
@@ -1692,8 +1756,6 @@ ste_trap8_handler:
         beq.w   .cmd3_spr
         cmpi.w  #4,d0
         beq.w   .cmd4_clr
-        cmpi.w  #5,d0
-        beq.w   .cmd5_hud_draw
         cmpi.w  #6,d0
         beq.w   .cmd6_hud_rest
         cmpi.w  #7,d0
@@ -1717,7 +1779,10 @@ ste_trap8_handler:
         move.w  #16,BLT_YCOUNT.w
         move.w  #$0203,BLT_HOP.w
         clr.b   BLT_SKEW.w
-        move.b  #$c0,BLT_LINE.w
+        move.b  #$80,BLT_LINE.w
+.c1_w:  bset    #7,BLT_LINE.w
+        nop
+        bne.s   .c1_w
         rte
 
 ; --- cmd 2: Batched LIFO reverse-order restore of d1.w 16-byte records ending at a0 ---
@@ -1742,7 +1807,10 @@ ste_trap8_handler:
         move.l  d0,BLT_SRC_ADDR.w       ; slot_addr
         move.l  4(a0),BLT_DST_ADDR.w    ; dst_addr
         move.w  #16,BLT_YCOUNT.w
-        move.b  #$c0,BLT_LINE.w
+        move.b  #$80,BLT_LINE.w
+.c2_w:  bset    #7,BLT_LINE.w
+        nop
+        bne.s   .c2_w
         dbra    d1,.c2_lp
         rte
 
@@ -1763,11 +1831,10 @@ ste_trap8_handler:
         move.w  d0,BLT_ENDMASK3.w
         move.w  #8,BLT_XCOUNT.w
         moveq   #16,d2
-        moveq   #-64,d3
         move.w  d2,BLT_YCOUNT.w
         move.w  #$0203,BLT_HOP.w
         clr.b   BLT_SKEW.w
-        move.b  d3,BLT_LINE.w
+        bsr.w   .blt80
 
         ; 1b. Build 16-word 1bpp sprite mask in STE_MASK_BUF via STE Blitter (2x faster than 68000!)
         lea     STE_MASK_BUF.l,a3
@@ -1779,18 +1846,18 @@ ste_trap8_handler:
         move.l  a1,BLT_SRC_ADDR.w
         move.l  a3,BLT_DST_ADDR.w
         move.w  d2,BLT_YCOUNT.w
-        move.b  d3,BLT_LINE.w           ; plane 0 -> copy (OP=3 already set!)
+        bsr.w   .blt80                  ; plane 0 -> copy (OP=3 already set!)
         move.w  #$0207,BLT_HOP.w
         lea     $28(a1),a2
         move.l  a2,BLT_SRC_ADDR.w
         move.l  a3,BLT_DST_ADDR.w
         move.w  d2,BLT_YCOUNT.w
-        move.b  d3,BLT_LINE.w           ; plane 1 -> OR
+        bsr.w   .blt80                  ; plane 1 -> OR
         lea     $28(a2),a2
         move.l  a2,BLT_SRC_ADDR.w
         move.l  a3,BLT_DST_ADDR.w
         move.w  d2,BLT_YCOUNT.w
-        move.b  d3,BLT_LINE.w           ; plane 2 -> OR
+        bsr.w   .blt80                  ; plane 2 -> OR
 
         ; 2. Configure skew: skew==0 -> XCOUNT=1 (2x faster!), skew>0 -> XCOUNT=2, NFSR=$40|skew
         tst.w   d1
@@ -1821,19 +1888,19 @@ ste_trap8_handler:
         move.l  a3,BLT_SRC_ADDR.w
         move.l  a0,BLT_DST_ADDR.w
         move.w  d2,BLT_YCOUNT.w
-        move.b  d3,BLT_LINE.w
+        bsr.s   .blt80
 
         move.l  a3,BLT_SRC_ADDR.w
         lea     2(a0),a2
         move.l  a2,BLT_DST_ADDR.w
         move.w  d2,BLT_YCOUNT.w
-        move.b  d3,BLT_LINE.w
+        bsr.s   .blt80
 
         move.l  a3,BLT_SRC_ADDR.w
         addq.l  #2,a2
         move.l  a2,BLT_DST_ADDR.w
         move.w  d2,BLT_YCOUNT.w
-        move.b  d3,BLT_LINE.w
+        bsr.s   .blt80
 
         ; Pass 2: OR mask into plane 3 (a0+6 -> sets bit 3 = sprite colours 9..15!)
         move.w  #$0207,BLT_HOP.w
@@ -1841,33 +1908,41 @@ ste_trap8_handler:
         addq.l  #2,a2
         move.l  a2,BLT_DST_ADDR.w
         move.w  d2,BLT_YCOUNT.w
-        move.b  d3,BLT_LINE.w
+        bsr.s   .blt80
 
         ; Pass 3: OR sprite planes 0, 1, 2 DIRECTLY from KO2 src a1 (stride $78)!
         move.w  #$78,BLT_SRC_YINC.w
         move.l  a1,BLT_SRC_ADDR.w
         move.l  a0,BLT_DST_ADDR.w
         move.w  d2,BLT_YCOUNT.w
-        move.b  d3,BLT_LINE.w
+        bsr.s   .blt80
 
         lea     $28(a1),a2
         lea     2(a0),a3
         move.l  a2,BLT_SRC_ADDR.w
         move.l  a3,BLT_DST_ADDR.w
         move.w  d2,BLT_YCOUNT.w
-        move.b  d3,BLT_LINE.w
+        bsr.s   .blt80
 
         lea     $28(a2),a2
         addq.l  #2,a3
         move.l  a2,BLT_SRC_ADDR.w
         move.l  a3,BLT_DST_ADDR.w
         move.w  d2,BLT_YCOUNT.w
-        move.b  d3,BLT_LINE.w
+        bsr.s   .blt80
 
         movem.l (sp)+,d2-d3/a3
         rte
 
-; --- cmd 4: Zero STE_CORK_BUF (73,920B) AND $078000 (32,000B stale Classic ST lines!) ---
+; Official Atari STE Shared-Bus ($80) Blitter trigger: yields every 64 cycles (8 us)
+; and uses bset #7 + nop + bne so interrupts fire cleanly and Blitter NEVER stalls!
+.blt80: move.b  #$80,BLT_LINE.w
+.b80_w: bset    #7,BLT_LINE.w
+        nop
+        bne.s   .b80_w
+        rts
+
+; --- cmd 4: Zero STE_CORK_BUF (71,760B) AND $078000 (32,000B stale Classic ST lines!) ---
 .cmd4_clr:
         move.l  #STE_CORK_BUF,BLT_DST_ADDR.w
         move.w  #2,BLT_DST_XINC.w
@@ -1875,178 +1950,16 @@ ste_trap8_handler:
         moveq   #-1,d0
         move.l  d0,BLT_ENDMASK1.w
         move.w  d0,BLT_ENDMASK3.w
-        move.w  #84,BLT_XCOUNT.w        ; 168 bytes / 2
-        move.w  #440,BLT_YCOUNT.w       ; 440 * 168 = 73,920 bytes
+        move.w  #92,BLT_XCOUNT.w        ; 184 bytes / 2
+        move.w  #390,BLT_YCOUNT.w       ; 390 * 184 = 71,760 bytes (< $09b000!)
         clr.w   BLT_HOP.w        ; all zeroes
         clr.b   BLT_SKEW.w
         move.b  #$c0,BLT_LINE.w
-        ; Also zero $078000 (32,000 bytes) so no stale Classic ST pitch lines trigger HUD/Banner!
+        ; Also zero $078000 (32,576 bytes -> covers $07fd20..$07fe3f blank bottom border too!)
         move.l  #$078000,BLT_DST_ADDR.w
         move.w  #80,BLT_XCOUNT.w        ; 160 bytes / 2
-        move.w  #200,BLT_YCOUNT.w       ; 200 * 160 = 32,000 bytes
+        move.w  #204,BLT_YCOUNT.w       ; 204 * 160 = 32,640 bytes ($078000..$07ff7f -> clears $07fd20!)
         move.b  #$c0,BLT_LINE.w
-        rte
-
-; --- cmd 5: Blitter HUD/Radar band draw ---
-; a0 = src ($078000+y*160), a1 = dst (STE_VIEW_BASE+y*168), a2 = save_buf
-; d1.w = W (4 or 20), d2.w = H (lines), d3.w = skew (0..15), d4.w = 1 (all 4 planes) / 0 (2 planes)
-.cmd5_hud_draw:
-        movem.l d5-d7/a3,-(sp)
-        ; 1. Save-under (a1 -> a2): (W+1)*4 words x H lines
-        move.w  d1,d5
-        addq.w  #1,d5
-        lsl.w   #2,d5                   ; d5 = (W+1)*4 words
-        move.w  d5,d6
-        subq.w  #1,d6
-        add.w   d6,d6                   ; bytes advanced by XINC
-        move.w  #CORK_STRIDE,d7
-        sub.w   d6,d7                   ; SRC_YINC = 168 - ((W+1)*4 - 1)*2
-        move.l  a1,BLT_SRC_ADDR.w
-        move.l  a2,BLT_DST_ADDR.w
-        move.w  #2,BLT_SRC_XINC.w
-        move.w  d7,BLT_SRC_YINC.w
-        move.w  #2,BLT_DST_XINC.w
-        move.w  #2,BLT_DST_YINC.w
-        moveq   #-1,d0
-        move.l  d0,BLT_ENDMASK1.w
-        move.w  d0,BLT_ENDMASK3.w
-        move.w  d5,BLT_XCOUNT.w
-        move.w  d2,BLT_YCOUNT.w
-        move.w  #$0203,BLT_HOP.w
-        clr.b   BLT_SKEW.w
-        move.b  #$c0,BLT_LINE.w
-
-        ; 2. Build 1bpp mask in STE_HUD_MASK (W words x H lines)
-        ;    src_yinc = 160 - (W-1)*8
-        move.w  d1,d6
-        subq.w  #1,d6
-        lsl.w   #3,d6
-        move.w  #160,d7
-        sub.w   d6,d7                   ; d7 = src_yinc for 4bpp $078000
-        lea     STE_HUD_MASK.l,a3
-        move.w  #8,BLT_SRC_XINC.w
-        move.w  d7,BLT_SRC_YINC.w
-        move.w  #2,BLT_DST_XINC.w
-        move.w  #2,BLT_DST_YINC.w
-        move.w  d1,BLT_XCOUNT.w
-        ; Plane 0 -> copy
-        moveq   #-64,d0
-        move.l  a0,BLT_SRC_ADDR.w
-        move.l  a3,BLT_DST_ADDR.w
-        move.w  d2,BLT_YCOUNT.w
-        move.w  #$0203,BLT_HOP.w
-        move.b  d0,BLT_LINE.w
-        ; Plane 1 -> OR
-        addq.l  #2,a0
-        move.l  a0,BLT_SRC_ADDR.w
-        move.l  a3,BLT_DST_ADDR.w
-        move.w  d2,BLT_YCOUNT.w
-        move.w  #$0207,BLT_HOP.w
-        move.b  d0,BLT_LINE.w
-        ; Plane 2 -> OR
-        addq.l  #2,a0
-        move.l  a0,BLT_SRC_ADDR.w
-        move.l  a3,BLT_DST_ADDR.w
-        move.w  d2,BLT_YCOUNT.w
-        move.b  d0,BLT_LINE.w
-        ; Plane 3 -> OR
-        addq.l  #2,a0
-        move.l  a0,BLT_SRC_ADDR.w
-        move.l  a3,BLT_DST_ADDR.w
-        move.w  d2,BLT_YCOUNT.w
-        move.b  d0,BLT_LINE.w
-        subq.l  #6,a0
-
-.c5_mask_ok:
-        ; 3. Configure skew, endmasks, XCOUNT, and DST_YINC for compositing into a1
-        tst.w   d3
-        bne.s   .c5_skewed
-        ; skew == 0: XCOUNT = W, ENDMASK = ffff/ffff/ffff, DST_YINC = 168 - (W-1)*8
-        move.w  #$ffff,BLT_ENDMASK1.w
-        move.w  #$ffff,BLT_ENDMASK3.w
-        move.w  d1,BLT_XCOUNT.w
-        move.w  #CORK_STRIDE,d5
-        sub.w   d6,d5                   ; d6 is still (W-1)*8
-        move.w  d5,BLT_DST_YINC.w
-        clr.b   BLT_SKEW.w
-        bra.s   .c5_comp
-.c5_skewed:
-        ; skew > 0: XCOUNT = W+1, NFSR=$40|skew, DST_YINC = 168 - W*8
-        move.w  #$ffff,d5
-        lsr.w   d3,d5
-        move.w  d5,BLT_ENDMASK1.w
-        not.w   d5
-        move.w  d5,BLT_ENDMASK3.w
-        move.w  d1,d5
-        addq.w  #1,d5
-        move.w  d5,BLT_XCOUNT.w
-        move.w  d1,d5
-        lsl.w   #3,d5                   ; W * 8
-        neg.w   d5
-        addi.w  #CORK_STRIDE,d5         ; 168 - W*8
-        move.w  d5,BLT_DST_YINC.w
-        move.b  d3,d5
-        ori.b   #$40,d5                 ; NFSR = 1!
-        move.b  d5,BLT_SKEW.w
-
-.c5_comp:
-        ; Clear mask holes in dst planes 0, 1, 2 (OP=4: ~SRC & DST)
-        moveq   #-64,d0
-        move.w  #2,BLT_SRC_XINC.w
-        move.w  #2,BLT_SRC_YINC.w
-        move.w  #8,BLT_DST_XINC.w
-        move.w  #$0204,BLT_HOP.w
-        ; dst plane 0
-        move.l  a3,BLT_SRC_ADDR.w
-        move.l  a1,BLT_DST_ADDR.w
-        move.w  d2,BLT_YCOUNT.w
-        move.b  d0,BLT_LINE.w
-        ; dst plane 1
-        move.l  a3,BLT_SRC_ADDR.w
-        addq.l  #2,a1
-        move.l  a1,BLT_DST_ADDR.w
-        move.w  d2,BLT_YCOUNT.w
-        move.b  d0,BLT_LINE.w
-        ; dst plane 2
-        move.l  a3,BLT_SRC_ADDR.w
-        addq.l  #2,a1
-        move.l  a1,BLT_DST_ADDR.w
-        move.w  d2,BLT_YCOUNT.w
-        move.b  d0,BLT_LINE.w
-        ; Set plane 3 (OP=7: SRC | DST -> maps HUD colours 1..7 -> 9..15, 8 -> 8!)
-        move.w  #$0207,BLT_HOP.w
-        move.l  a3,BLT_SRC_ADDR.w
-        addq.l  #2,a1
-        move.l  a1,BLT_DST_ADDR.w
-        move.w  d2,BLT_YCOUNT.w
-        move.b  d0,BLT_LINE.w
-        subq.l  #6,a1
-
-        ; 4. OR source planes from $078000 (a0) into dst (a1)
-        move.w  #8,BLT_SRC_XINC.w
-        move.w  d7,BLT_SRC_YINC.w
-        ; plane 0
-        move.l  a0,BLT_SRC_ADDR.w
-        move.l  a1,BLT_DST_ADDR.w
-        move.w  d2,BLT_YCOUNT.w
-        move.b  d0,BLT_LINE.w
-        ; plane 1
-        addq.l  #2,a0
-        addq.l  #2,a1
-        move.l  a0,BLT_SRC_ADDR.w
-        move.l  a1,BLT_DST_ADDR.w
-        move.w  d2,BLT_YCOUNT.w
-        move.b  d0,BLT_LINE.w
-        ; plane 2
-        addq.l  #2,a0
-        addq.l  #2,a1
-        move.l  a0,BLT_SRC_ADDR.w
-        move.l  a1,BLT_DST_ADDR.w
-        move.w  d2,BLT_YCOUNT.w
-        move.b  d0,BLT_LINE.w
-
-.c5_done:
-        movem.l (sp)+,d5-d7/a3
         rte
 
 ; --- cmd 6: Blitter HUD/Radar restore-under ---
@@ -2073,7 +1986,10 @@ ste_trap8_handler:
         move.w  d0,BLT_DST_YINC.w
         move.w  d1,BLT_XCOUNT.w
         move.w  d2,BLT_YCOUNT.w
-        move.b  #$c0,BLT_LINE.w
+        move.b  #$80,BLT_LINE.w
+.c6_w:  bset    #7,BLT_LINE.w
+        nop
+        bne.s   .c6_w
         rte
 .c6_batch:
         subq.w  #1,d2
@@ -2095,7 +2011,7 @@ ste_trap8_handler:
 .c6_s2: move.w  d0,BLT_DST_YINC.w
         move.w  d1,BLT_XCOUNT.w
         move.w  10(a2),BLT_YCOUNT.w
-        move.b  #$c0,BLT_LINE.w
+        bsr.w   .blt80
         dbra    d2,.c6_blp
         rte
 
@@ -2134,7 +2050,7 @@ ste_trap8_handler:
         move.w  d5,BLT_XCOUNT.w
         move.w  d2,BLT_YCOUNT.w
         move.w  #$0203,BLT_HOP.w
-        move.b  #$c0,BLT_LINE.w
+        bsr.w   .blt80
         ; 2. Draw transparent black line (colour 9: p0=1, p3=1, p1=0, p2=0)
         move.w  (a0)+,BLT_ENDMASK1.w
         move.w  (a0)+,BLT_ENDMASK3.w
@@ -2151,24 +2067,23 @@ ste_trap8_handler:
 .c7_d2: move.w  d6,BLT_DST_YINC.w
         move.w  d3,BLT_XCOUNT.w
         move.w  #$000f,BLT_HOP.w
-        moveq   #-64,d6
         move.l  a1,BLT_DST_ADDR.w
         move.w  d2,BLT_YCOUNT.w
-        move.b  d6,BLT_LINE.w
+        bsr.w   .blt80
         addq.l  #2,a1
         clr.w   BLT_HOP.w
         move.l  a1,BLT_DST_ADDR.w
         move.w  d2,BLT_YCOUNT.w
-        move.b  d6,BLT_LINE.w
+        bsr.w   .blt80
         addq.l  #2,a1
         move.l  a1,BLT_DST_ADDR.w
         move.w  d2,BLT_YCOUNT.w
-        move.b  d6,BLT_LINE.w
+        bsr.w   .blt80
         addq.l  #2,a1
         move.w  #$000f,BLT_HOP.w
         move.l  a1,BLT_DST_ADDR.w
         move.w  d2,BLT_YCOUNT.w
-        move.b  d6,BLT_LINE.w
+        bsr.w   .blt80
         dbra    d1,.c7_lp
         movem.l (sp)+,d2-d6/a1
         rte
@@ -2196,12 +2111,12 @@ ste_trap8_handler:
         add.w   d1,d0
         lea     STE_PIT_MAP.l,a2
         adda.l  d0,a2
-        ; Compute primary dst a3 = STE_CORK_BUF + (ty%14)*16*168 + tx_left*8
+        ; Compute primary dst a3 = STE_CORK_BUF + (ty%12)*16*184 + tx_left*8
         moveq   #0,d0
         move.w  d2,d0
-        divu.w  #14,d0
-        swap    d0                      ; d0 = ty % 14
-        move.w  d0,d6                   ; d6 = ty % 14 (mirror if <= 12)
+        divu.w  #12,d0
+        swap    d0                      ; d0 = ty % 12
+        move.w  d0,d6                   ; d6 = ty % 12 (all 12 rows mirrored!)
         lsl.w   #4,d0
         mulu.w  #CORK_STRIDE,d0
         move.w  d1,d3
@@ -2221,13 +2136,13 @@ ste_trap8_handler:
         bge.s   .c8_cnt
         move.w  d0,d7
 .c8_cnt:
-        ; First: clear Plane 3 for the entire tile row in ONE Blitter call (+ mirror)!
+        ; First: clear Plane 3 for the entire tile row in ONE Shared-Bus ($80) Blitter call (+ mirror)!
         move.w  d7,d5                   ; save tile count (1..21) in d5
         move.w  d7,d4
         subq.w  #1,d4
         lsl.w   #3,d4
         neg.w   d4
-        addi.w  #CORK_STRIDE,d4         ; DST_YINC = 168 - (cnt-1)*8
+        addi.w  #CORK_STRIDE,d4         ; DST_YINC = 184 - (cnt-1)*8
         move.w  #8,BLT_DST_XINC.w
         move.w  d4,BLT_DST_YINC.w
         move.w  d7,BLT_XCOUNT.w
@@ -2235,13 +2150,17 @@ ste_trap8_handler:
         lea     6(a3),a1
         move.l  a1,BLT_DST_ADDR.w
         move.w  #16,BLT_YCOUNT.w
-        move.b  #$c0,BLT_LINE.w
-        cmpi.w  #12,d6
-        bgt.s   .c8_p3_ok
+        move.b  #$80,BLT_LINE.w
+.c8_w1: bset    #7,BLT_LINE.w
+        nop
+        bne.s   .c8_w1
         adda.l  #CORK_RING_BYTES,a1
         move.l  a1,BLT_DST_ADDR.w
         move.w  #16,BLT_YCOUNT.w
-        move.b  #$c0,BLT_LINE.w
+        move.b  #$80,BLT_LINE.w
+.c8_w2: bset    #7,BLT_LINE.w
+        nop
+        bne.s   .c8_w2
 .c8_p3_ok:
         ; Restore 3bpp tile blit settings
         move.w  #2,BLT_DST_XINC.w
@@ -2250,8 +2169,6 @@ ste_trap8_handler:
         move.w  #$0203,BLT_HOP.w
         move.w  d5,d7
         subq.w  #1,d7
-        cmpi.w  #12,d6
-        bgt.s   .c8_nomir
 .c8_mir_lp:
         moveq   #0,d0
         move.b  (a2)+,d0
@@ -2263,35 +2180,20 @@ ste_trap8_handler:
         move.l  a0,BLT_SRC_ADDR.w
         move.l  a3,BLT_DST_ADDR.w
         move.w  #16,BLT_YCOUNT.w
-        move.b  #$c0,BLT_LINE.w
+        bsr.w   .blt80
         move.l  a0,BLT_SRC_ADDR.w
         movea.l a3,a1
         adda.l  #CORK_RING_BYTES,a1
         move.l  a1,BLT_DST_ADDR.w
         move.w  #16,BLT_YCOUNT.w
-        move.b  #$c0,BLT_LINE.w
+        bsr.w   .blt80
         addq.l  #8,a3
         dbra    d7,.c8_mir_lp
-        bra.s   .c8_done
-.c8_nomir:
-        moveq   #0,d0
-        move.b  (a2)+,d0
-        move.w  d0,d3
-        lsl.w   #6,d0
-        lsl.w   #5,d3
-        add.w   d3,d0
-        lea     0(a4,d0.w),a0
-        move.l  a0,BLT_SRC_ADDR.w
-        move.l  a3,BLT_DST_ADDR.w
-        move.w  #16,BLT_YCOUNT.w
-        move.b  #$c0,BLT_LINE.w
-        addq.l  #8,a3
-        dbra    d7,.c8_nomir
 .c8_done:
         movem.l (sp)+,d3-d7/a2-a4
         rte
 
-; --- cmd 9: Batched 14-tile vertical column blit (d1=tx_col, d2=ty_top) ---
+; --- cmd 9: Batched 12-tile vertical column blit (d1=tx_col, d2=ty_top) ---
 .cmd9_blit_col:
         movem.l d3-d7/a2-a4,-(sp)
         move.w  #2,BLT_SRC_XINC.w
@@ -2311,12 +2213,12 @@ ste_trap8_handler:
         add.w   d1,d0
         lea     STE_PIT_MAP.l,a2
         adda.l  d0,a2
-        ; Initial ty%14 in d6, initial dst a3 in STE_CORK_BUF
+        ; Initial ty%12 in d6, initial dst a3 in STE_CORK_BUF
         moveq   #0,d0
         move.w  d2,d0
-        divu.w  #14,d0
+        divu.w  #12,d0
         swap    d0
-        move.w  d0,d6                   ; d6 = cur_row_mod (0..13)
+        move.w  d0,d6                   ; d6 = cur_row_mod (0..11)
         lsl.w   #4,d0
         mulu.w  #CORK_STRIDE,d0
         move.w  d1,d3
@@ -2327,8 +2229,8 @@ ste_trap8_handler:
         adda.l  d0,a3
         lea     STE_PIT_TILES.l,a4
 
-        ; Number of valid rows = min(14, 96 - ty_top)
-        moveq   #14,d7
+        ; Number of valid rows = min(12, 96 - ty_top)
+        moveq   #12,d7
         moveq   #96,d0
         sub.w   d2,d0
         ble.w   .c9_done
@@ -2336,7 +2238,7 @@ ste_trap8_handler:
         bge.s   .c9_cnt
         move.w  d0,d7
 .c9_cnt:
-        ; First: clear Plane 3 for the entire vertical column in ONE Blitter call (424 lines)!
+        ; First: clear Plane 3 for the entire vertical column in ONE Shared-Bus ($80) call (384 lines)!
         move.w  d1,d0
         lsl.w   #3,d0
         ext.l   d0
@@ -2347,8 +2249,11 @@ ste_trap8_handler:
         move.w  #1,BLT_XCOUNT.w
         clr.w   BLT_HOP.w        ; OP=0 (zero plane 3!)
         move.l  a1,BLT_DST_ADDR.w
-        move.w  #424,BLT_YCOUNT.w       ; entire primary + mirror column in 1 blit!
-        move.b  #$c0,BLT_LINE.w
+        move.w  #384,BLT_YCOUNT.w       ; entire primary + mirror column (2 * 192 lines)!
+        move.b  #$80,BLT_LINE.w
+.c9_w:  bset    #7,BLT_LINE.w
+        nop
+        bne.s   .c9_w
         ; Restore 3bpp tile blit settings
         move.w  #2,BLT_DST_XINC.w
         move.w  #(CORK_STRIDE-4),BLT_DST_YINC.w
@@ -2367,18 +2272,15 @@ ste_trap8_handler:
         move.l  a0,BLT_SRC_ADDR.w
         move.l  a3,BLT_DST_ADDR.w
         move.w  #16,BLT_YCOUNT.w
-        move.b  #$c0,BLT_LINE.w
-        cmpi.w  #12,d6
-        bgt.s   .c9_nomir
+        bsr.w   .blt80
         move.l  a0,BLT_SRC_ADDR.w
         movea.l a3,a1
         adda.l  #CORK_RING_BYTES,a1
         move.l  a1,BLT_DST_ADDR.w
         move.w  #16,BLT_YCOUNT.w
-        move.b  #$c0,BLT_LINE.w
-.c9_nomir:
+        bsr.w   .blt80
         addq.w  #1,d6
-        cmpi.w  #14,d6
+        cmpi.w  #12,d6
         blt.s   .c9_step
         moveq   #0,d6
         suba.l  #(CORK_RING_BYTES-16*CORK_STRIDE),a3
