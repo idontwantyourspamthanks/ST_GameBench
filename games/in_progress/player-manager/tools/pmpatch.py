@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Build patched Player Manager (PLAYERME) into build/game/."""
-import shutil, subprocess, sys
+import shutil, struct, subprocess, sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -151,6 +151,149 @@ stager:
         (BUILD / "FILES" / "PMMATCH.BIN").write_bytes(pm_ram.read_bytes()[0x18e80:0x2169c])
         shutil.copy2(ko2_orig, BUILD / "FILES" / "KRD")
         print("Installed Kick Off 2 match engine overlay (KO2ENG.BIN + KO2HND.BIN + PMMATCH.BIN + KRD)")
+
+    # v1.1: Assemble Atari STE Amiga Audio & Visuals overlay (KO2STE.BIN) + Amiga DMA Audio (AMIGASND.BIN)
+    ko2_ste_src = ROOT / "patches" / "ko2_ste.s"
+    if ko2_ste_src.exists():
+        ko2_ste_bin = assemble(ko2_ste_src, WORK / "ko2_ste.bin")
+        assert len(ko2_ste_bin) <= 0x4600, f"KO2STE.BIN too large: {len(ko2_ste_bin)}"
+        (BUILD / "FILES" / "KO2STE.BIN").write_bytes(ko2_ste_bin)
+        print(f"Assembled KO2STE.BIN: {len(ko2_ste_bin)} bytes")
+    amiga_snd_src = WORK / "amiga" / "extracted" / "sounds"
+    if amiga_snd_src.exists():
+        raw_s = amiga_snd_src.read_bytes()
+        tpos = len(raw_s) - 68
+        offs = struct.unpack(">17I", raw_s[tpos:])
+        PAL_CLK = 3546895.0
+        TARGET_HZ = 6258.0
+        DMA_MODE = 0x0080  # 6258 Hz mono signed 8-bit PCM
+        # Keep total <= 22,500 bytes (comfortably inside KO2's $1c138 Malloc with >600 bytes margin!)
+        MAX_LEN = {12: 6100, 13: 9000}
+        hdr = bytearray()
+        body = bytearray()
+        hdr_size = 17 * 12  # 204 bytes (even)
+        for i in range(17):
+            o = offs[i]
+            period, slen = struct.unpack(">HI", raw_s[o:o+6])
+            pcm = raw_s[o+6 : o+6+slen]
+            hz = PAL_CLK / period if period else TARGET_HZ
+            out_len = max(2, int(round(slen * TARGET_HZ / hz)) & ~1) if slen > 8 else 2
+            if i in MAX_LEN and out_len > MAX_LEN[i]:
+                out_len = MAX_LEN[i]
+            # Linear interpolation resample (signed 8-bit PCM)
+            if slen <= 8:
+                resamp = bytes([0, 0])
+            else:
+                out = bytearray(out_len)
+                ratio = (slen - 1) / max(1, (int(round(slen * TARGET_HZ / hz)) & ~1) - 1)
+                for j in range(out_len):
+                    pos = j * ratio
+                    k = int(pos)
+                    frac = pos - k
+                    s0 = pcm[k] - 256 if pcm[k] >= 128 else pcm[k]
+                    s1 = pcm[min(k + 1, slen - 1)]
+                    s1 = s1 - 256 if s1 >= 128 else s1
+                    val = int(round(s0 + (s1 - s0) * frac))
+                    # Smooth 64-sample fade-out if trimmed so zero click!
+                    if i in MAX_LEN and j >= out_len - 64:
+                        val = int(val * (out_len - 1 - j) / 64.0)
+                    val = max(-128, min(127, val))
+                    out[j] = val & 0xFF
+                resamp = bytes(out)
+            hdr.extend(struct.pack(">IIHH", hdr_size + len(body), len(resamp), DMA_MODE, 0))
+            body.extend(resamp)
+        amiga_snd_bin = bytes(hdr + body)
+        assert len(amiga_snd_bin) <= 23346, f"AMIGASND.BIN exceeds ST SAMPLES.DAT: {len(amiga_snd_bin)}"
+        (BUILD / "FILES" / "AMIGASND.BIN").write_bytes(amiga_snd_bin)
+        print(f"Built AMIGASND.BIN: {len(amiga_snd_bin)} bytes (17 Amiga samples @ 6258 Hz STE DMA)")
+
+    # v1.1: Convert all 4 Amiga pitches (nor, wet, sog, art) -> AMIGAP0..3.BIN (32,288 bytes each)
+    # Format per file:
+    #   +$0000 (   32 B): 8 STE 12-bit RGB pitch colours (0..7) + 8 pad words
+    #   +$0020 ( 7680 B): 80x96 tilemap (0-based tile indices 0..255)
+    #   +$1e20 (24576 B): 256 x (16x16 x 3bpp) tiles in ST interleaved word format (16 rows x 6 bytes)
+    amiga_pit_src = WORK / "amiga" / "extracted" / "pitches.dat"
+    if amiga_pit_src.exists():
+        pdata = amiga_pit_src.read_bytes()
+        phdr = struct.unpack(">I", pdata[:4])[0] + 4
+        pentries = {}
+        plist = []
+        for off in range(4, phdr - 4, 16):
+            ent = pdata[off:off+16]
+            if ent[0] == 0:
+                break
+            name = ent[:12].split(b"\x00", 1)[0].decode("ascii", "replace")
+            foff = struct.unpack(">I", ent[12:16])[0] + phdr
+            plist.append((name, foff))
+        for i, (name, foff) in enumerate(plist):
+            end = plist[i+1][1] if i + 1 < len(plist) else len(pdata)
+            pentries[name] = pdata[foff:end]
+
+        def amiga4_to_ste4(v: int) -> int:
+            # Atari STE 4-bit channel: bit 3 is LSB (bit 0 of 0..15), bits 2..0 are MSBs (bits 3..1)
+            return ((v >> 1) & 7) | ((v & 1) << 3)
+
+        def decode_ilbm_3bpp(buf: bytes):
+            pos = 12
+            w = h = npl = comp = 0
+            cmap = []
+            body = b""
+            while pos < len(buf) - 8:
+                cid = buf[pos:pos+4].decode("ascii", "replace")
+                clen = struct.unpack(">I", buf[pos+4:pos+8])[0]
+                cdata = buf[pos+8:pos+8+clen]
+                if cid == "BMHD":
+                    w, h, _x, _y, npl, _m, comp = struct.unpack(">HHhhBBB", cdata[:11])
+                elif cid == "CMAP":
+                    cmap = [(cdata[j] >> 4, cdata[j+1] >> 4, cdata[j+2] >> 4) for j in range(0, len(cdata), 3)]
+                elif cid == "BODY":
+                    body = cdata
+                pos += 8 + clen + (clen & 1)
+            row_bytes = ((w + 15) // 16) * 2
+            if comp == 1:
+                raw = bytearray()
+                i = 0
+                while i < len(body):
+                    n = body[i]; i += 1
+                    if n < 128:
+                        raw.extend(body[i:i+n+1]); i += n + 1
+                    elif n > 128:
+                        raw.extend(bytes([body[i]]) * (257 - n)); i += 1
+                body = bytes(raw)
+            return w, h, npl, row_bytes, cmap, body
+
+        for pidx, ext in enumerate(("nor", "wet", "sog", "art")):
+            pmap_raw = pentries[f"pdat.{ext}"]
+            mw, mh = struct.unpack(">HH", pmap_raw[:4])
+            assert (mw, mh) == (80, 96)
+            # Pre-subtract 1 so tile indices are 0..255!
+            tilemap = bytes((b - 1) & 0xFF for b in pmap_raw[4:4+80*96])
+            w, h, npl, row_bytes, cmap, body = decode_ilbm_3bpp(pentries[f"fbgraph4.{ext}"])
+            assert w == 320 and npl == 3 and row_bytes == 40
+            # Build 16-word STE palette header (0..7 = STE 12-bit Amiga pitch, 8..15 = 0)
+            pal_bytes = bytearray()
+            for c_i in range(8):
+                r, g, b = cmap[c_i] if c_i < len(cmap) else (0, 0, 0)
+                ste_rgb = (amiga4_to_ste4(r) << 8) | (amiga4_to_ste4(g) << 4) | amiga4_to_ste4(b)
+                pal_bytes.extend(struct.pack(">H", ste_rgb))
+            pal_bytes.extend(b"\x00" * 16)
+            # Extract 256 tiles (16x16x3bpp) in ST interleaved word format (row y: p0.w, p1.w, p2.w)
+            tiles_bytes = bytearray(256 * 96)
+            max_tiles = (h // 16) * 20
+            for tid in range(min(256, max_tiles)):
+                col = tid % 20
+                row = tid // 20
+                dst = tid * 96
+                for y in range(16):
+                    src_y = (row * 16 + y) * (3 * row_bytes)
+                    p0 = struct.unpack(">H", body[src_y + 0*row_bytes + col*2 : src_y + 0*row_bytes + col*2 + 2])[0]
+                    p1 = struct.unpack(">H", body[src_y + 1*row_bytes + col*2 : src_y + 1*row_bytes + col*2 + 2])[0]
+                    p2 = struct.unpack(">H", body[src_y + 2*row_bytes + col*2 : src_y + 2*row_bytes + col*2 + 2])[0]
+                    struct.pack_into(">HHH", tiles_bytes, dst + y * 6, p0, p1, p2)
+            out_pit = bytes(pal_bytes) + tilemap + bytes(tiles_bytes)
+            assert len(out_pit) == 32 + 7680 + 24576
+            (BUILD / "FILES" / f"AMIGAP{pidx}.BIN").write_bytes(out_pit)
+        print("Built AMIGAP0..3.BIN: 4 Amiga STE pitches (32,288 bytes each: STE 12-bit pal + 80x96 map + 256 3bpp tiles)")
 
     # Patch HAGA: pp_nofade (remove grey fade on saves/loads) + pp_bigram_cache (4MB+ safe for $b3000)
     haga_path = BUILD / "HAGA"

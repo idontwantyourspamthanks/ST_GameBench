@@ -1,7 +1,24 @@
-Player Manager v1.0 (patched PP HAGA hard-disk conversion)
+Player Manager v1.1 (patched PP HAGA hard-disk conversion)
 
 Copy the PLAYERME folder to your Atari ST/STE hard disk (or Hatari GEMDOS drive)
 and run RUNME.TOS. Requires 1 MB RAM or more.
+
+What's New in v1.1 (Atari STE Amiga Visuals & Audio):
+- Kick Off 2 Amiga Visuals on Atari STE (50 Hz in 1 MB RAM!):
+  * All 4 Amiga tiled pitches (Normal, Wet, Soggy, Artificial) rendered with
+    STE 12-bit RGB palettes, STE Hardware Fine Scrolling (Corkscrew ring),
+    and STE Hardware Blitter masked 4bpp sprites.
+  * Dual-playfield 16-colour split (0..7 Amiga pitch, 8..15 KO2 club kits &
+    HUD) with zero colour clashes, plus Blitter Compact Mini-Radar, Player
+    Name, Score, Match Clock, and Event Banners.
+- Kick Off 2 Amiga DMA Audio on Atari STE:
+  * 17 authentic Amiga 8-bit signed PCM sound effects playing via STE DMA
+    audio hardware (6,258 Hz mono) with zero Timer-A CPU overhead.
+- Live View Toggle (V key) & Plain ST Auto-Fallback:
+  * Press V during a match on STE to toggle live between Amiga STE and
+    Classic ST views.
+  * Plain 68000 Atari ST (1 MB+) is detected automatically and runs classic
+    v1.0 ST graphics (Timer B grass stripes) and YM audio with zero issues.
 
 What's New in v1.0:
 1. Full 1989-90 English Football League (92 Clubs, 4 Divisions)
@@ -39,10 +56,12 @@ What's New in v1.0:
 
 In-Match Controls (Kick Off 2):
   Joystick 1   Move + Fire (kick/pass/aftertouch)
+  V            Toggle Amiga STE / Classic ST view (Atari STE only)
   R            Instant Replay
   1 - 4        Switch tactics live (4-2-4, 4-3-3, 4-4-2, 5-3-2)
   P            Pause / Resume
   Esc          Exit match back to Match Report
 
 Every patch verifies original bytes before patching (marker PMOK at $b2ff8).
-Tested on Hatari: 1 MB STE (TOS 1.62, 8 MHz, 50 Hz PAL). Not tested on real hardware.
+Tested on Hatari: 1 MB STE (TOS 1.62) & 1 MB ST (TOS 1.04), 8 MHz, 50 Hz PAL.
+Not tested on real hardware.

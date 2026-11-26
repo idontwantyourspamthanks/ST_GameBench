@@ -40,6 +40,11 @@ BR_LINEA_BASE   equ     $0b5838         ; .l saved Line-A base ptr from $a000!
 BR_RESULTS      equ     $0b5840         ; 26 x 10 bytes = 260 bytes ($0b5840..$0b5943)
 BR_LINEA_SAVE   equ     $0b5950         ; 8 bytes ($2e..$35 of Line-A vars)
 BR_MFP_SAVE     equ     $0b5960         ; 24 bytes: $110,$114,$120,$134 + IERA/IERB/IMRA/IMRB
+BR_IS_STE       equ     $0b5978         ; .w: 1 = Atari STE/Mega STE detected, 0 = plain ST
+BR_SAV_A0       equ     $0b597c         ; .l: saved $a0.w (TRAP #8) vector for STE Blitter call
+
+KO2_STE_BASE    equ     $0ae940         ; $0ae940..$0b2ff7 (17.7 KB) for KO2STE.BIN (above FILES.CR $09d000..$0ae940!)
+KO2_STE_SND_STG equ     $0c8b00         ; temporary staging in KO2_REPLAY_BUF ($6014 = 24.6 KB) before $01564c!
 
 KO2_HOME_TEAM   equ     $0b5a00         ; $41e bytes
 KO2_AWAY_TEAM   equ     $0b5e20         ; $41e bytes
@@ -48,7 +53,7 @@ KO2_HND_BUF     equ     $0b6a90         ; $820 bytes
 PM_CODE_SAVE    equ     $0b7300         ; $8e80 bytes ($010000..$018e80)
 PM_DATA_SAVE    equ     $0c0180         ; $8964 bytes ($02169c..$02a000 -> $0c8ae4)
 KO2_REPLAY_BUF  equ     $0c8b00         ; $6014 bytes ($0c8b00..$0ceb14 < $0d0000!)
-KO2_FILES_CR    equ     $09d000         ; $11940 bytes ($09d000..$0ae940 < $0b3000!)
+KO2_FILES_CR    equ     $09d000         ; $11940 bytes ($09d000..$0ae940 < KO2_STE_BASE $0ae940!)
 
 KO2_A4          equ     $0284aa
 
@@ -168,6 +173,16 @@ ko2_bridge_match:
         move.l  #$14000,d0
         bsr.w   load_hd_file
         move.l  d0,-(sp)
+        ; Also preload KO2STE.BIN into $0ae940 and AMIGASND.BIN into KO2_REPLAY_BUF staging ($0c8b00)
+        lea     ko2_ste_fname(pc),a0
+        lea     KO2_STE_BASE.l,a1
+        move.l  #$4600,d0
+        bsr.w   load_hd_file
+        lea     amigasnd_fname(pc),a0
+        lea     KO2_STE_SND_STG.l,a1
+        move.l  #$5c00,d0
+        bsr.w   load_hd_file
+        move.l  d0,KO2_STE_BASE+8.l     ; store AMIGASND.BIN byte size in STE_SND_SIZE!
         jsr     $006942.w               ; restore PP PRD mode (before swap)
         move.l  (sp)+,d0
         tst.l   d0
@@ -192,6 +207,16 @@ ko2_bridge_match:
         move.l  #KO2_REPLAY_BUF,$01adba.l
         move.w  #$6010,$01adbe.l        ; bra.s $01add0
         move.w  #$6006,$01ae1a.l        ; bra.s $01ae22 (skip Mfree(a6))
+        ; Also route KO2's $01ffb8 temporary $1600 depack scratch buffer to KO2_REPLAY_BUF!
+        move.w  #$2c7c,$01ffb8.l        ; movea.l #KO2_REPLAY_BUF,a6
+        move.l  #KO2_REPLAY_BUF,$01ffba.l
+        move.w  #$6010,$01ffbe.l        ; bra.s $01ffd0
+        move.w  #$6006,$01fffa.l        ; bra.s $020002 (skip Mfree(a6))
+        ; Route KO2's $010a2e ($20f0 = 8.4 KB) Malloc to static $0b0000..$0b20f0 (prevents Week 2+ 1 MB OOM!)
+        move.w  #$297c,$010a2e.l        ; move.l #$000b0000,-$4450(a4)
+        move.l  #$000b0000,$010a30.l
+        move.w  #$bbb0,$010a34.l        ; -$4450
+        move.w  #$600a,$010a36.l        ; bra.s $010a42 (skip Malloc + beq $1189a)
         ; Skip KO2's $100000 dummy floppy spin-up delay at $01aaee (instant KRD load!)
         move.l  #1,$01aaf0.l
 
@@ -213,6 +238,7 @@ ko2_bridge_match:
 
         move.l  $70.w,BR_SAV_70.l
         move.l  $118.w,BR_SAV_118.l
+        move.l  $a0.w,BR_SAV_A0.l
         lea     BR_MFP_SAVE.l,a0
         move.l  $110.w,(a0)+            ; Timer D
         move.l  $114.w,(a0)+            ; Timer C (KO2 hooks this at $018602!)
@@ -237,7 +263,7 @@ ko2_bridge_match:
 .ld_h:  move.l  (a0)+,(a1)+
         dbra    d0,.ld_h
         move.l  $608.w,$6cb8.w
-        move.l  #$0001c000,$6c6e.w      ; 114 KB KRD cache ($81000..$9d000), leaving $9d000..$b1d40 for FILES.CR!
+        move.l  #$0001c000,$6c6e.w      ; 114 KB KRD cache ($81000..$9d000), leaving $9d000..$ae940 for FILES.CR!
         clr.w   $6c68.w                 ; force chunked cache mode
         move.l  $60c.w,$6c6a.w
         move.l  #-1,$6c72.w             ; invalidate KRD cache so $81000 reloads KRD!
@@ -248,10 +274,32 @@ ko2_bridge_match:
         move.l  BR_TOS_84.l,$6916.w
         move.l  #$000068c8,$84.w        ; KO2 TRAP #1 handler!
 
+        ; Detect Atari STE (DMA Sound $ff8901 + Blitter $ff8a3c) via Bus Error probe
+        clr.w   BR_IS_STE.l
+        move.w  sr,d3
+        move.w  #$2700,sr
+        move.l  $8.w,a2
+        move.l  sp,a3
+        lea     .not_ste(pc),a0
+        move.l  a0,$8.w
+        tst.b   $00ff8901.l             ; STE DMA sound control (Bus Error on plain ST)
+        tst.b   $00ff8a3c.l             ; STE Blitter control
+        move.w  #1,BR_IS_STE.l
+.not_ste:
+        move.l  a3,sp
+        move.l  a2,$8.w
+        move.w  d3,sr
+
         ; Return to User mode
         move.w  #$20,-(sp)
         trap    #1
         addq.l  #6,sp
+
+        ; If Atari STE detected, install STE Amiga Audio & Visuals hooks into KO2ENG!
+        tst.w   BR_IS_STE.l
+        beq.s   .skip_ste_init
+        jsr     KO2_STE_BASE.l          ; ste_install_hooks
+.skip_ste_init:
 
         ; Save Line-A base & fill pattern (PATPTR $2e(a0), PATMSK $32(a0), MFILL $34(a0))!
         dc.w    $a000                   ; Line-A init -> a0 = Line-A base
@@ -281,6 +329,55 @@ ko2_bridge_match:
         andi.w  #7,d0
         move.w  d0,-$34cc(a4)           ; Referee variety across weeks
         jsr     $013450.l               ; apply pitch/ref/half-length/aftertouch/ET
+
+        ; On Atari STE: now that KRD loading is finished ($081000..$09d000 is 100% free!)
+        ; and pitch condition -$4eee(a4) (0..3) is chosen, load AMIGAP0..3.BIN via proven PM HD mode!
+        tst.w   BR_IS_STE.l
+        beq.w   .skip_ste_pit
+        ; Patch '0'..'3' in "AMIGAP0.BIN"
+        move.w  -$4eee(a4),d0
+        andi.w  #3,d0
+        addi.b  #'0',d0
+        lea     amigapit_fname(pc),a0
+        move.b  d0,6(a0)
+        ; Briefly swap PM_HND ($6800 + $84.w) in to load AMIGAPx.BIN via proven load_hd_file!
+        pea     .swap_to_pm_hnd(pc)
+        move.w  #$26,-(sp)
+        trap    #14
+        addq.l  #6,sp
+        jsr     $006946.w               ; PP HD mode ON
+        lea     amigapit_fname(pc),a0
+        lea     $081000.l,a1            ; STE_PIT_PAL ($081000..$088e1f)
+        move.l  #32288,d0
+        bsr.w   load_hd_file
+        move.l  d0,-(sp)                ; save bytes read
+        jsr     $006942.w               ; PP PRD mode restored
+        pea     .swap_to_ko2_hnd(pc)
+        move.w  #$26,-(sp)
+        trap    #14
+        addq.l  #6,sp
+        move.l  (sp)+,d0                ; bytes read (32288 = ok!)
+        jsr     KO2_STE_BASE+12.l       ; ste_init_pitch(d0 = bytes_read)
+        bra.s   .skip_ste_pit
+
+.swap_to_pm_hnd:
+        lea     PM_HND_SAVE.l,a0
+        lea     $6800.w,a1
+        move.w  #($850/4-1),d0
+.sp1:   move.l  (a0)+,(a1)+
+        dbra    d0,.sp1
+        move.l  BR_PM_84.l,$84.w
+        rts
+
+.swap_to_ko2_hnd:
+        lea     KO2_HND_BUF.l,a0
+        lea     $6800.w,a1
+        move.w  #($820/4-1),d0
+.sk1:   move.l  (a0)+,(a1)+
+        dbra    d0,.sk1
+        move.l  #$000068c8,$84.w
+        rts
+.skip_ste_pit:
 
         ; Configure Home/Away controller & kickoff direction AFTER $013450
         clr.l   -$4f62(a4)
@@ -336,8 +433,13 @@ ko2_bridge_match:
 
         move.w  sr,BR_OLD_SR.l
         move.w  #$2700,sr
+        tst.w   BR_IS_STE.l
+        beq.s   .skip_ste_clean
+        jsr     KO2_STE_BASE+4.l        ; ste_cleanup (stop STE DMA + reset STE shifter)
+.skip_ste_clean:
         move.l  BR_SAV_70.l,$70.w
         move.l  BR_SAV_118.l,$118.w
+        move.l  BR_SAV_A0.l,$a0.w
         lea     BR_MFP_SAVE.l,a0
         move.l  (a0)+,$110.w            ; restore Timer D
         move.l  (a0)+,$114.w            ; restore Timer C (unhook KO2 $018602!)
@@ -606,6 +708,12 @@ ko2_hnd_fname:
         dc.b    "KO2HND.BIN",0
 ko2_eng_fname:
         dc.b    "KO2ENG.BIN",0
+ko2_ste_fname:
+        dc.b    "KO2STE.BIN",0
+amigasnd_fname:
+        dc.b    "AMIGASND.BIN",0
+amigapit_fname:
+        dc.b    "AMIGAP0.BIN",0
 pm_match_fname:
         dc.b    "PMMATCH.BIN",0
         even

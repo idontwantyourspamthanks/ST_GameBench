@@ -46,3 +46,39 @@ Verified on 1 MB STE (`build/game`):
   - Frame 1 (`t2_scroll_1.png`): `camY = 596`, `tb_init = 20`
   - Frame 2 (`t2_scroll_2.png`): `camY = 580`, `tb_init = 36` (exact 16-scanline shift matching the 16 px vertical camera movement)
   - Top goal (`t2_stripe_A.png`): `camY = -17`, `tb_init = 9`
+
+---
+
+## 4. v1.1 Atari STE Amiga Visuals & Audio Performance (`KO2STE.BIN`)
+
+Measured on **Hatari 8 MHz 68000 STE, 1 MB RAM, TOS 1.62, RGB 50 Hz PAL** (`build/game`, active Watch-mode match).
+
+### Hardware Architecture (100% Inside 1 MB STE RAM)
+- **Auto-Detection (`BR_IS_STE` at `$0b5978`):** Bus-Error-safe probe of `$ff8901` (STE DMA Sound) and `$ff8a3c` (STE Blitter). Plain 1 MB ST (`machine="st"`, TOS 1.04) detects `BR_IS_STE = 0` and runs 100% Classic ST mode (Timer B grass stripes + YM audio) with zero bus errors.
+- **STE DMA Audio (`AMIGASND.BIN`, 22,376 B):** 17 Amiga 8-bit signed PCM samples extracted from Kick Off 2 Final Whistle (`sounds`) and resampled to exact 6,258 Hz mono STE DMA (`$ff8900..$ff8924`). Zero Timer-A CPU interrupt overhead!
+- **STE Blitter Tiled Pitch (`AMIGAP0..3.BIN`, 32,288 B each):** All 4 Amiga pitches (`normal`, `wet`, `soggy`, `artificial`) converted to STE 12-bit RGB palettes (`$ff8240..$ff824e`, colours `0..7`), 0-based `80×96` tilemaps, and 256 ST-interleaved 3bpp `16×16` tiles. Rendered via STE Hardware Corkscrew scrolling (`$ff8201/$03/$0d`, `$ff820f`, `$ff8265`) into a 71.2 KB ring buffer (`$088f00..$09afff`, stride 168 bytes).
+- **Dual-Playfield 16-Colour Split:** Pitch tiles use colours `0..7` (Plane 3 = `0`); sprites and HUD/Radar set Plane 3 = `1` to use KO2's own sprite palette (`8..15`), preserving non-clashing club kits with zero colour clashes.
+- **Live View Toggle (`V` key):** Press `V` in-match on STE to swap instantaneously between Amiga STE and Classic ST views.
+
+### Measured v1.1 Performance & Optimisation Progression (1 MB 8 MHz STE)
+
+| Configuration | Active FPS | VBLs / Frame | Notes |
+|---|---:|---:|---|
+| v1.0 Classic ST (`V` toggle on STE) | **50.00 FPS** | **1.000** | 38.0% VBL idle headroom, Timer B stripes + YM audio |
+| v1.1 Amiga STE (pitch + sprites + DMA, no HUD) | **50.00 FPS** | **1.000** | **56.0% VBL idle headroom** (+18% faster than Classic ST!) |
+| v1.1 Amiga STE + 68000 sparse HUD/Radar (initial) | 26.68 FPS | 1.874 | Software 4-plane shifts (~420 cyc/word) exceeded 1 VBL |
+| v1.1 Amiga STE + Blitter 88-line masked Radar + full HUD | 25.31 FPS | 1.975 | 11 Blitter passes on 88×4w Radar + 14×20w HUD (~80% VBL) |
+| v1.1 Amiga STE + Opaque 88-line Radar + tight 3-box HUD | 30.67 FPS | 1.630 | Cut HUD to 3 tight boxes (Name/Score/Clock) + opaque Radar |
+| v1.1 + Direct `NFSR` single-`TRAP #8` sprites | 42.77 FPS | 1.169 | Eliminated `P0/P1/P2` scratch copies; `XCOUNT=1` when `skew=0` |
+| v1.1 + Batched tile rows/cols + 44-line Compact Mini-Radar + 1-call Plane-3 clear | **49.75–49.88 FPS** | **1.002–1.005** | **398–400 frames / 400–401 VBLs** — locked 50 Hz feel with full Radar, Name, Score, Clock & Event Banners! |
+
+### 1 MB STE Live Match RAM Map (`$07fd00..$0b2ff8`)
+- `$07fd00..$0800ff`: 1bpp Blitter HUD mask scratch (1 KB)
+- `$080100..$080ec0`: Compact Mini-Radar save-under (3.5 KB)
+- `$081000..$088e1f`: Active Amiga pitch (`AMIGAP0..3.BIN`: 32 B STE palette + 7,680 B map + 24,576 B 3bpp tiles)
+- `$088f00..$09afff`: STE Corkscrew ring buffer (`424 × 168` = 71.2 KB + slack)
+- `$09b000..$09cfff`: Blitter 4bpp sprite save-under slots (`32 × 256 B` = 8 KB)
+- `$09d000..$0ae93f`: `KO2_FILES_CR` (72 KB)
+- `$0ae940..$0affff`: `KO2STE.BIN` (5,786 B / 5,824 B slot)
+- `$0b0000..$0b20ef`: KO2 `$010a2e` static buffer (8.4 KB)
+- `$0b20f0..$0b2f5f`: Bottom HUD & Center Event Banner save-under (3.7 KB, cleanly below `PMOK` at `$0b2ff8`)
