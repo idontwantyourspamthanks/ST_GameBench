@@ -177,7 +177,7 @@ ko2_bridge_match:
         clr.w   KO2_STE_BASE.l          ; clear header magic so missing KO2STE.BIN falls back cleanly!
         lea     ko2_ste_fname(pc),a0
         lea     KO2_STE_BASE.l,a1
-        move.l  #$18c0,d0               ; max 6,336 bytes ($0ae940..$0b01ff)
+        move.l  #$19c0,d0               ; max 6,592 bytes ($0ae940..$0b02ff)
         bsr.w   load_hd_file
         tst.l   d0
         ble.s   .no_ste_bin
@@ -216,9 +216,9 @@ ko2_bridge_match:
         move.l  #KO2_REPLAY_BUF,$01ffba.l
         move.w  #$6010,$01ffbe.l        ; bra.s $01ffd0
         move.w  #$6006,$01fffa.l        ; bra.s $020002 (skip Mfree(a6))
-        ; Route KO2's $010a2e ($20f0 = 8.4 KB) Malloc to static $0b0200..$0b22f0 (prevents Week 2+ 1 MB OOM!)
-        move.w  #$297c,$010a2e.l        ; move.l #$000b0200,-$4450(a4)
-        move.l  #$000b0200,$010a30.l
+        ; Route KO2's $010a2e ($20f0 = 8.4 KB) Malloc to static $0b0300..$0b23f0 (prevents Week 2+ 1 MB OOM!)
+        move.w  #$297c,$010a2e.l        ; move.l #$000b0300,-$4450(a4)
+        move.l  #$000b0300,$010a30.l
         move.w  #$bbb0,$010a34.l        ; -$4450
         move.w  #$600a,$010a36.l        ; bra.s $010a42 (skip Malloc + beq $1189a)
         ; Skip KO2's $100000 dummy floppy spin-up delay at $01aaee (instant KRD load!)

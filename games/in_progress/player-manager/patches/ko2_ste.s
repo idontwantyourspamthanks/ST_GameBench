@@ -35,9 +35,9 @@ STE_HUD_MASK    equ     $07fd00         ; 320 bytes (1bpp HUD/Banner mask & 32B 
 STE_MASK_BUF    equ     $07fd00         ; 32 bytes (16-line 1bpp sprite mask scratch)
 STE_RADAR_SAVE  equ     $07fe40         ; 4,544 bytes (454 x 10B transparent vector radar save-under!)
 STE_RADAR_MAX   equ     450             ; max 10-byte saved cells for transparent radar
-STE_BHUD_SAVE   equ     $0b2300         ; 1,128 bytes (tight 3-box Bottom HUD) -> $0b2768
-STE_DRAW_STACK  equ     $0b2780         ; 512 bytes (32 x 16B overlap-safe LIFO sprite stack!) -> $0b2980
-STE_BAN_SAVE    equ     $0b2980         ; 1,344 bytes (8 lines x 21 cols x 8B) -> $0b2ec0 (< PMOK $0b2ff8!)
+STE_BHUD_SAVE   equ     $0b2400         ; 1,128 bytes (tight 3-box Bottom HUD) -> $0b2868
+STE_DRAW_STACK  equ     $0b2880         ; 512 bytes (32 x 16B overlap-safe LIFO sprite stack!) -> $0b2a80
+STE_BAN_SAVE    equ     $0b2a80         ; 1,344 bytes (8 lines x 21 cols x 8B) -> $0b2fc0 (< PMOK $0b2ff8!)
 
 CORK_STRIDE     equ     168             ; 336 pixels = 21 x 16px words (4 planes)
 CORK_RING_H     equ     224             ; 14 tile rows = 224 scanlines
@@ -161,12 +161,6 @@ ste_install_hooks:
         ; 5. In-match key handler ($01b564: cmpi.w #$72,d0 ; bne.b $1b570) -> 'V' view toggle!
         move.w  #$4ef9,$01b564.l
         move.l  #ste_key_hook,$01b566.l
-
-        ; 6. Pre-VBL HUD/Radar overlay hook ($01b4b2: tst.w -$131a(a4) ; beq.s $01b4b2)
-        ;    Drawing HUD & Transparent Radar AFTER sprites guarantees sprites NEVER save-under
-        ;    Radar lines -> ZERO ghosts when players cross the Radar or press X/D!
-        move.w  #$4ef9,$01b4b2.l
-        move.l  #ste_vbl_wait_hook,$01b4b4.l
 
         rts
 
@@ -448,8 +442,8 @@ ste_key_hook:
 .do_toggle:
         tst.w   STE_PITCH_OK
         beq.s   .v_done
-        bsr.w   ste_hud_restore         ; LIFO: restore HUD/Radar BEFORE sprites!
-        bsr.w   ste_erase_all_slots     ; restore all sprites to pristine grass!
+        bsr.w   ste_erase_all_slots     ; LIFO: restore sprites BEFORE HUD/Radar!
+        bsr.w   ste_hud_restore         ; restore HUD/Radar to pristine grass!
         eori.w  #1,STE_AMIGA_ON
         tst.w   STE_AMIGA_ON
         beq.s   .to_classic
@@ -496,12 +490,6 @@ ste_pitch_update:
         jmp     $01c1d6.l
 
 .pu_amiga:
-        ; Only restore HUD/Radar before scrolling (keep stationary sprites intact!).
-        ; On camera jump (.full_fill), ste_erase_all_slots erases all sprites cleanly.
-        tst.w   STE_HUD_ACTIVE
-        beq.s   .pu_no_hud
-        bsr.w   ste_hud_restore
-.pu_no_hud:
         ; 1. Exact KO2 smooth camera follow ($01c2b8..$01c2f0)
         movea.l -$110a(a4),a0
         move.l  (a0),d0
@@ -515,8 +503,12 @@ ste_pitch_update:
         asr.l   #3,d1
         add.l   d1,-$110e(a4)
 
-        ; 2. Compute Amiga world coords: wx = camX + 176 (0..960), wy = camY + 64 (0..1336)
+        ; 2. Restore HUD & Transparent Radar right before updating STE_VIEW_BASE,
+        ;    protecting any 0..2 sprites currently overlapping the Radar/HUD (LIFO!),
+        ;    then IMMEDIATELY redraw HUD & Radar at .upd_done (< 0.5ms absent -> ZERO FLICKER!).
         movem.l d0-d7/a0-a3,-(sp)
+        bsr.w   ste_hud_lift_spr        ; pop only sprites overlapping Radar/HUD (usually 0!)
+        bsr.w   ste_hud_restore
         move.w  -$1112(a4),d0           ; camX (integer part)
         addi.w  #176,d0
         bge.s   .wx_lo
@@ -629,6 +621,9 @@ ste_pitch_update:
 .upd_done:
         move.w  d2,STE_CUR_TX
         move.w  d3,STE_CUR_TY
+        ; Immediately redraw Transparent Radar & Bottom HUD (< 0.5 ms absent -> ZERO FLICKER!)
+        bsr.w   ste_hud_draw
+        bsr.w   ste_hud_drop_spr        ; re-draw any 0..2 sprites that were lifted over Radar/HUD
         movem.l (sp)+,d0-d7/a0-a3
         ; Still draw KO2's off-screen goal arrow ($01bffa)!
         jmp     $01bffa.l
@@ -669,13 +664,7 @@ ste_draw_row:
 ste_skip_beam_1:
         tst.w   STE_AMIGA_ON
         beq.s   .sb1_st
-        ; Amiga STE Mode: wait if STE CRT beam ($ff8205/$07/$09) is right at sprite_y (d1)!
-        ; Eliminates single-buffer player flicker identically to Classic ST KO2!
-        movem.l d0/d2,-(sp)
-        moveq   #7,d0                   ; cmd 7 = ste_beam_wait(d1=sprite_y)
-        trap    #8
-        movem.l (sp)+,d0/d2
-        jmp     $01a39c.l
+        jmp     $01a39c.l               ; Amiga STE: skip Timer B wait (keep locked 50 FPS!)
 .sb1_st:
         move.l  -$1320(a4),d4
         move.w  d4,d2
@@ -684,11 +673,7 @@ ste_skip_beam_1:
 ste_skip_beam_2:
         tst.w   STE_AMIGA_ON
         beq.s   .sb2_st
-        movem.l d0/d2,-(sp)
-        moveq   #7,d0                   ; cmd 7 = ste_beam_wait(d1=sprite_y)
-        trap    #8
-        movem.l (sp)+,d0/d2
-        jmp     $01a3f2.l
+        jmp     $01a3f2.l               ; Amiga STE: skip Timer B wait (keep locked 50 FPS!)
 .sb2_st:
         move.l  -$1320(a4),d4
         move.w  d4,d2
@@ -807,7 +792,7 @@ ste_erase_spr:
 ;   down to a3, remove a3, and re-draw the sprites that were above a3 -> ZERO GHOSTS!
 ste_erase_spr_amiga:
         clr.l   (a3)
-        movem.l d0-d6/a0-a2/a4-a5,-(sp)
+        movem.l d0-d7/a0-a2/a4-a5,-(sp)
         move.w  STE_DRAW_CNT(pc),d4
         beq.w   .es_done
         ; Search STE_DRAW_STACK backwards for a3
@@ -830,37 +815,66 @@ ste_erase_spr_amiga:
         sub.w   d3,d5                   ; d5 = count of sprites ABOVE idx (0 if top!)
         beq.s   .es_fast_one            ; top of stack -> fast 1-blit restore!
 
-        ; Exact 2D bounding-box overlap check: |x_col_i - x_col_idx| <= 1 AND |y_px_i - y_px_idx| < 16!
+        ; Targeted 2D-overlap LIFO: collect ONLY the sprites above idx that actually
+        ; 2D-overlap idx (expanding bbox for chains), NEVER touching unrelated players!
+        ; Store matching entry pointers in a tiny stack frame (max 8 entries = 32 bytes).
+        lea     -32(sp),sp              ; local ptr array at (sp)
+        movea.l sp,a1                   ; a1 = match write cursor
+        moveq   #0,d0                   ; d0.w = match count (0..8)
         moveq   #0,d1
-        move.b  14(a4),d1               ; d1 = target x_col
+        move.b  14(a4),d1               ; min_x = target x_col
+        move.w  d1,d3                   ; max_x = target x_col (reuse d3!)
         moveq   #0,d2
-        move.b  15(a4),d2               ; d2 = target y_px
+        move.b  15(a4),d2               ; min_y = target y_px
+        move.w  d2,d4                   ; max_y = target y_px (reuse d4!)
         lea     16(a4),a5               ; a5 = &stack[idx+1]
         move.w  d5,d6
         subq.w  #1,d6
 .es_ovl:
-        moveq   #0,d0
-        move.b  14(a5),d0
-        sub.w   d1,d0
-        bpl.s   .es_xp
-        neg.w   d0
-.es_xp: cmpi.w  #1,d0                   ; within 1 word column (<= 31 px)?
+        moveq   #0,d7
+        move.b  14(a5),d7               ; j.x_col
+        move.w  d1,d4
+        subq.w  #1,d4
+        cmp.w   d4,d7                   ; j.x_col < min_x - 1?
+        blt.s   .es_nxt
+        move.w  d3,d4
+        addq.w  #1,d4
+        cmp.w   d4,d7                   ; j.x_col > max_x + 1?
         bgt.s   .es_nxt
-        moveq   #0,d0
-        move.b  15(a5),d0
-        sub.w   d2,d0
-        bpl.s   .es_yp
-        neg.w   d0
-.es_yp: cmpi.w  #16,d0                  ; within 16 scanlines?
-        blt.s   .es_do_lifo             ; TRUE 2D overlap -> strict LIFO!
+        moveq   #0,d7
+        move.b  15(a5),d7               ; j.y_px
+        move.w  d2,d4
+        subi.w  #15,d4
+        cmp.w   d4,d7                   ; j.y_px < min_y - 15?
+        blt.s   .es_nxt
+        move.w  d2,d4
+        addi.w  #15,d4
+        cmp.w   d4,d7                   ; j.y_px > min_y + 15?
+        bgt.s   .es_nxt
+        ; TRUE 2D overlap! Record pointer a5 (if < 8) and expand x range for chains!
+        cmpi.w  #8,d0
+        bcc.s   .es_nxt
+        move.l  a5,(a1)+
+        addq.w  #1,d0
+        moveq   #0,d7
+        move.b  14(a5),d7
+        cmp.w   d1,d7
+        bge.s   .es_nx1
+        move.w  d7,d1                   ; min_x = j.x_col
+.es_nx1: cmp.w  d3,d7
+        ble.s   .es_nxt
+        move.w  d7,d3                   ; max_x = j.x_col
 .es_nxt:
         lea     16(a5),a5
         dbra    d6,.es_ovl
 
+        tst.w   d0
+        bne.s   .es_do_targeted
+        lea     32(sp),sp               ; free local ptr array -> fast path!
+
 .es_fast_one:
         ; Fast path: no overlapping sprite above idx!
         ; Only restore if dst is still inside current visible viewport [STE_VIEW_BASE .. +185*168]
-        ; (if it scrolled off-screen, new Corkscrew tiles already overwrote it!)
         move.l  4(a4),a1                ; dst
         move.l  a1,d0
         sub.l   STE_VIEW_BASE(pc),d0
@@ -875,30 +889,49 @@ ste_erase_spr_amiga:
         moveq   #1,d0                   ; cmd 1 = restore_one(a0=slot, a1=dst)
         trap    #8
 .es_skip_off:
-        ; Compact stack[idx+1..d4-1] down by 16 bytes
-        bsr.s   .es_compact
-        bra.s   .es_done
+        bsr.w   .es_compact
+        bra.w   .es_done
 
-.es_do_lifo:
-        ; Overlap path: pop & restore stack[d4-1 .. idx] in strict reverse LIFO order!
-        ; d5+1 sprites starting at stack[idx] -> cmd 2 (a0 = &stack[d4], d1 = d5+1)
-        move.w  d4,d0
-        lsl.w   #4,d0
-        lea     STE_DRAW_STACK.l,a0
-        adda.w  d0,a0
-        move.w  d5,d1
-        addq.w  #1,d1                   ; count = d5 + 1
-        moveq   #2,d0                   ; cmd 2 = restore_lifo_n(a0=end, d1=count)
+.es_do_targeted:
+        ; Restore ONLY the d0 (1..8) overlapping sprites in reverse LIFO order!
+        move.w  d0,d6                   ; save match count in d6
+        move.w  d0,d4
+        subq.w  #1,d4                   ; loop counter
+.es_pop_m:
+        move.w  d4,d2
+        lsl.w   #2,d2
+        movea.l 0(sp,d2.w),a5
+        movea.l 4(a5),a1                ; dst
+        moveq   #0,d0
+        move.b  13(a5),d0
+        lsl.w   #8,d0
+        addi.l  #STE_SAVE_UNDER,d0
+        movea.l d0,a0                   ; slot
+        moveq   #1,d0                   ; cmd 1 = restore_one
         trap    #8
-        ; Compact stack[idx] out (now d5 entries sit at a4 = &stack[idx]!)
+        dbra    d4,.es_pop_m
+
+        ; Restore target sprite idx (a4) itself!
+        movea.l 4(a4),a1
+        moveq   #0,d0
+        move.b  13(a4),d0
+        lsl.w   #8,d0
+        addi.l  #STE_SAVE_UNDER,d0
+        movea.l d0,a0
+        moveq   #1,d0
+        trap    #8
+
+        ; Re-draw ONLY the d6 (1..8) overlapping sprites in forward order!
+        ; NOTE: compact shifts all entries above a4 down by 16 bytes, so subtract 16 from each ptr!
         bsr.s   .es_compact
-        ; Re-draw the d5 sprites at a4..a4+(d5-1)*16 so they save pristine grass & draw cleanly!
-        move.w  d5,d6
-        subq.w  #1,d6
-.es_redr:
-        movea.l 4(a4),a0                ; dst
-        movea.l 8(a4),a1                ; src (KO2 3bpp sprite)
-        ; Rebuild 16-word mask in STE_MASK_BUF
+        moveq   #0,d4                   ; i = 0 .. d6-1
+.es_redr_m:
+        move.w  d4,d2
+        lsl.w   #2,d2
+        movea.l 0(sp,d2.w),a5
+        lea     -16(a5),a5              ; adjusted ptr after .es_compact!
+        movea.l 4(a5),a0                ; dst
+        movea.l 8(a5),a1                ; src (KO2 3bpp sprite)
         movem.l d4/d6/a0-a1,-(sp)
         lea     STE_MASK_BUF.l,a0
         moveq   #15,d6
@@ -909,21 +942,22 @@ ste_erase_spr_amiga:
         lea     $78(a1),a1
         dbra    d6,.es_mk
         movem.l (sp)+,d4/d6/a0-a1
-        ; Save-under + draw via cmd 3
         moveq   #0,d0
-        move.b  13(a4),d0               ; slot_idx.b
+        move.b  13(a5),d0
         lsl.w   #8,d0
         addi.l  #STE_SAVE_UNDER,d0
         movea.l d0,a2                   ; slot
         moveq   #0,d1
-        move.b  12(a4),d1               ; skew.b
+        move.b  12(a5),d1               ; skew
         moveq   #3,d0
         trap    #8
-        lea     16(a4),a4
-        dbra    d6,.es_redr
+        addq.w  #1,d4
+        cmp.w   d6,d4
+        blt.s   .es_redr_m
+        lea     32(sp),sp               ; free local ptr array
 
 .es_done:
-        movem.l (sp)+,d0-d6/a0-a2/a4-a5
+        movem.l (sp)+,d0-d7/a0-a2/a4-a5
         rts
 
 ; Helper: remove entry at a4 (&stack[idx]), shifting d5 entries above it down by 16 bytes
@@ -959,18 +993,99 @@ ste_erase_all_slots:
         rts
 
 ; ---------------------------------------------------------------------------
-; Pre-VBL HUD & Transparent Vector Radar Overlay ($01b4b2 hook)
-; Drawn AFTER all sprites (strict LIFO: restored at top of ste_pitch_update
-; BEFORE any sprite erases/draws next frame -> ZERO Radar ghosts on X/D!)
+; HUD & Transparent Vector Radar Overlay (called back-to-back in ste_pitch_update)
+; Lifting only the 0..2 sprites overlapping Radar/HUD preserves strict LIFO
+; (ZERO Radar ghosts on X/D!) while keeping Radar absent < 0.5 ms (ZERO FLICKER!)
 ; ---------------------------------------------------------------------------
-ste_vbl_wait_hook:
-        tst.w   STE_AMIGA_ON
-        beq.s   ste_vbl_wait_loop
-        bsr.w   ste_hud_draw
-ste_vbl_wait_loop:
-        tst.w   -$131a(a4)              ; original $01b4b2 VBL wait!
-        beq.s   ste_vbl_wait_loop
-        jmp     $01b4b8.l
+STE_LIFT_CNT:   dc.w    0
+STE_LIFT_PTRS:  ds.l    8               ; up to 8 sprites overlapping Radar/HUD
+
+ste_hud_lift_spr:
+        clr.w   STE_LIFT_CNT
+        move.w  STE_DRAW_CNT(pc),d0
+        beq.s   .hlf_ret
+        movem.l d1-d3/a0-a2/a5,-(sp)
+        lea     STE_DRAW_STACK.l,a5
+        lea     STE_LIFT_PTRS(pc),a2
+        moveq   #0,d2                   ; lifted count
+        subq.w  #1,d0
+.hlf_lp:
+        ; Check if sprite overlaps Radar (x_col <= 8 && y_px < 180) OR Bottom HUD (y_px >= 168)
+        moveq   #0,d1
+        move.b  15(a5),d1               ; y_px
+        cmpi.w  #168,d1
+        bge.s   .hlf_hit
+        cmpi.w  #180,d1
+        bge.s   .hlf_nxt
+        move.b  14(a5),d1               ; x_col
+        cmpi.b  #8,d1
+        bhi.s   .hlf_nxt
+.hlf_hit:
+        cmpi.w  #8,d2
+        bcc.s   .hlf_nxt
+        move.l  a5,(a2)+
+        addq.w  #1,d2
+.hlf_nxt:
+        lea     16(a5),a5
+        dbra    d0,.hlf_lp
+        move.w  d2,STE_LIFT_CNT
+        beq.s   .hlf_done
+        ; Restore lifted sprites in reverse LIFO order!
+        subq.w  #1,d2
+.hlf_pop:
+        movea.l -(a2),a5
+        movea.l 4(a5),a1                ; dst
+        moveq   #0,d0
+        move.b  13(a5),d0
+        lsl.w   #8,d0
+        addi.l  #STE_SAVE_UNDER,d0
+        movea.l d0,a0                   ; slot
+        moveq   #1,d0                   ; cmd 1 = restore_one
+        trap    #8
+        dbra    d2,.hlf_pop
+.hlf_done:
+        movem.l (sp)+,d1-d3/a0-a2/a5
+.hlf_ret:
+        rts
+
+ste_hud_drop_spr:
+        move.w  STE_LIFT_CNT(pc),d0
+        beq.s   .hdr_ret
+        clr.w   STE_LIFT_CNT
+        movem.l d1-d6/a0-a2/a5,-(sp)
+        lea     STE_LIFT_PTRS(pc),a2
+        subq.w  #1,d0
+.hdr_lp:
+        movea.l (a2)+,a5
+        movea.l 4(a5),a0                ; dst
+        movea.l 8(a5),a1                ; src
+        movem.l d0/a0-a2,-(sp)
+        lea     STE_MASK_BUF.l,a0
+        moveq   #15,d6
+.hdr_mk: move.w (a1),d4
+        or.w    $28(a1),d4
+        or.w    $50(a1),d4
+        move.w  d4,(a0)+
+        lea     $78(a1),a1
+        dbra    d6,.hdr_mk
+        movem.l (sp)+,d0/a0-a2
+        move.l  a2,-(sp)
+        moveq   #0,d1
+        move.b  13(a5),d1
+        lsl.w   #8,d1
+        addi.l  #STE_SAVE_UNDER,d1
+        movea.l d1,a2                   ; slot
+        moveq   #0,d1
+        move.b  12(a5),d1               ; skew
+        move.w  d0,-(sp)
+        moveq   #3,d0
+        trap    #8
+        move.w  (sp)+,d0
+        movea.l (sp)+,a2
+        dbra    d0,.hdr_lp
+        movem.l (sp)+,d1-d6/a0-a2/a5
+.hdr_ret:
+        rts
 
 ste_hud_restore:
         movem.l d0-d3/a0-a2,-(sp)
