@@ -174,15 +174,19 @@ ko2_bridge_match:
         bsr.w   load_hd_file
         move.l  d0,-(sp)
         ; Also preload KO2STE.BIN into $0ae940 and AMIGASND.BIN into KO2_REPLAY_BUF staging ($0c8b00)
+        clr.w   KO2_STE_BASE.l          ; clear header magic so missing KO2STE.BIN falls back cleanly!
         lea     ko2_ste_fname(pc),a0
         lea     KO2_STE_BASE.l,a1
-        move.l  #$4600,d0
+        move.l  #$16c0,d0               ; max 5,824 bytes ($0ae940..$0affff)
         bsr.w   load_hd_file
+        tst.l   d0
+        ble.s   .no_ste_bin
         lea     amigasnd_fname(pc),a0
         lea     KO2_STE_SND_STG.l,a1
         move.l  #$5c00,d0
         bsr.w   load_hd_file
         move.l  d0,KO2_STE_BASE+8.l     ; store AMIGASND.BIN byte size in STE_SND_SIZE!
+.no_ste_bin:
         jsr     $006942.w               ; restore PP PRD mode (before swap)
         move.l  (sp)+,d0
         tst.l   d0
@@ -295,9 +299,15 @@ ko2_bridge_match:
         trap    #1
         addq.l  #6,sp
 
-        ; If Atari STE detected, install STE Amiga Audio & Visuals hooks into KO2ENG!
+        ; If Atari STE detected AND KO2STE.BIN loaded cleanly (header $6000 = bra.w),
+        ; install STE Amiga Audio & Visuals hooks into KO2ENG!
         tst.w   BR_IS_STE.l
         beq.s   .skip_ste_init
+        cmpi.w  #$6000,KO2_STE_BASE.l
+        beq.s   .do_ste_init
+        clr.w   BR_IS_STE.l             ; KO2STE.BIN missing -> graceful Classic ST fallback!
+        bra.s   .skip_ste_init
+.do_ste_init:
         jsr     KO2_STE_BASE.l          ; ste_install_hooks
 .skip_ste_init:
 

@@ -28,9 +28,9 @@
 
 | Item | MD5 |
 |---|---|
-| `dist/PlayerManager_v1.1_patched_hd_2026-11-26.zip` | `e7d041a28a7fa01bb5190f828699fff3` |
+| `dist/PlayerManager_v1.1_patched_hd_2026-11-26.zip` | `44b74bf3aa00a81a1b95acd546f0bb74` |
 | `build/game/HAGA` | `1074342dd4a917bafdc7d2a031e9b088` |
-| `build/game/FILES/PMLA` | `11a0c52b134f00d796b1a75fc13911ba` |
+| `build/game/FILES/PMLA` | `5abd64e49eaa56c15fdddcdc05725767` |
 | `build/game/FILES/KO2ENG.BIN` | `934b13a84279197ab58d46312253f078` |
 | `build/game/FILES/KO2HND.BIN` | `a3505e2d266ec54f926b300b88d6be73` |
 | `build/game/FILES/PMMATCH.BIN` | `573090dad53da0a8539136558de7a1ae` |

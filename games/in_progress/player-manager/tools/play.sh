@@ -82,7 +82,7 @@ else
         [[ -f "$SRC/$f" ]] && cp "$SRC/$f" "$PLAY/$f"
     done
     cp "$SRC/FILES/PMLA" "$PLAY/FILES/PMLA"
-    for f in DEMO92.DAT KO2ENG.BIN KO2HND.BIN PMMATCH.BIN KRD; do
+    for f in DEMO92.DAT KO2ENG.BIN KO2HND.BIN PMMATCH.BIN KRD KO2STE.BIN AMIGASND.BIN AMIGAP0.BIN AMIGAP1.BIN AMIGAP2.BIN AMIGAP3.BIN; do
         [[ -f "$SRC/FILES/$f" ]] && cp "$SRC/FILES/$f" "$PLAY/FILES/$f"
     done
 fi
