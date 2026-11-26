@@ -126,6 +126,7 @@ STE_PITCH_OK:   dc.w    0               ; 1 = AMIGAPx.BIN loaded
 STE_SHOW_IDX:   dc.w    0               ; 0 = Buffer A displayed, 1 = Buffer B displayed (ATOMIC!)
 STE_STATS_DIRTY: dc.w   0               ; 1 = returning from Half-Time/Stats ($078000 was overwritten)
 STE_ORIG_TB:    dc.l    0               ; saved KO2 original Timer B vector ($120.w)
+STE_ORIG_VBL:   dc.l    0               ; saved TOS original VBL vector ($70.w)
 STE_CUR_WX:     dc.w    176             ; current camera world X (pixels) for sprite world coords
 STE_CUR_WY:     dc.w    64              ; current camera world Y (pixels)
 STE_SPR_CNT:    dc.w    0               ; active sprites in STE_SPR_LIST (0..32)
@@ -138,6 +139,7 @@ STE_BK_HSCR:    dc.w    0               ; temp backbuffer hscr during draw
 STE_BK_Y0:      dc.w    0               ; temp backbuffer y0 (0..207) during draw
 STE_BK_TX8:     dc.l    0               ; temp backbuffer tx*8 during draw
 STE_BK_REND:    dc.l    0               ; temp backbuffer radar pool end during draw
+STE_UL_DASH:    dc.l    0               ; secondary/pass-target player struct ptr ($fc3f dashed bar)
 
 DB_A:
         dc.l    STE_RING_A, STE_SAV_A, STE_STK_A, STE_RPOOL_A, STE_RLR_A, STE_RDR_A
@@ -165,8 +167,10 @@ ste_install_hooks:
         clr.w   STE_SHOW_IDX
         clr.w   STE_STATS_DIRTY
         clr.l   STE_ORIG_TB
+        clr.l   STE_ORIG_VBL
         clr.w   STE_SPR_CNT
         clr.w   STE_RAD_C_SC
+        clr.l   STE_UL_DASH
 
         ; Install TRAP #8 ($a0.w) fast Supervisor Blitter dispatcher via Supexec
         pea     ste_inst_trap8(pc)
@@ -185,9 +189,9 @@ ste_install_hooks:
         move.w  d0,$018598.l
         move.l  #ste_stop_sound,$01859a.l
 
-        ; 2. VBL top ($018d06) & bottom ($018e0a)
+        ; 2. VBL top ($018d06 -> skip KO2 ST screen setup; real setup runs at scanline -50 via $70.w!) & bottom ($018e0a)
         move.w  d0,$018d06.l
-        move.l  #ste_vbl_top,$018d08.l
+        move.l  #ste_vbl_skip,$018d08.l
         move.w  d0,$018e0a.l
         move.l  #ste_vbl_end,$018e0c.l
 
@@ -206,13 +210,22 @@ ste_install_hooks:
         move.w  d0,$01a3cc.l
         move.l  #$01a3f2,$01a3ce.l
 
-        ; 5. Skip KO2's hidden $078000 radar line ($01fae8) & dot ($01fbb4) drawers!
+        ; 5. Skip KO2's hidden $078000 radar line ($01fae8), dot ($01fbb4) & underline ($01f9e0/$01fa76) drawers!
         move.w  #$4e75,$01fae8.l        ; rts!
         move.w  #$4e75,$01fbb4.l        ; rts! (keeps KO2's $20(a5)/$22(a5) coord updates intact!)
+        move.l  #$60000036,$01f9e0.l    ; bra.w $01fa18 (skip $078000 solid underline; keeps replay record!)
+        move.w  d0,$01fa76.l            ; jmp ste_rec_ul_dash (skip $078000 dashed underline + capture ptr!)
+        move.l  #ste_rec_ul_dash,$01fa78.l
         rts
+
+ste_rec_ul_dash:
+        move.l  a5,STE_UL_DASH
+        jmp     $01faae.l
 
 ste_inst_trap8:
         move.l  #ste_trap8_handler,$a0.w
+        move.l  $70.w,STE_ORIG_VBL
+        move.l  #ste_vbl_irq,$70.w
         rts
 
 ; ---------------------------------------------------------------------------
@@ -225,6 +238,10 @@ ste_cleanup:
         beq.s   .cl_notb
         move.l  STE_ORIG_TB(pc),$0120.w
 .cl_notb:
+        tst.l   STE_ORIG_VBL
+        beq.s   .cl_novbl
+        move.l  STE_ORIG_VBL(pc),$70.w
+.cl_novbl:
         clr.b   $ffff820f.w
         clr.b   $ffff8265.w
         move.b  #$07,$ffff8201.w
@@ -245,6 +262,7 @@ ste_load_pitch:
         clr.w   STE_SHOW_IDX
         clr.w   STE_SPR_CNT
         clr.w   STE_RAD_C_SC
+        clr.l   STE_UL_DASH
         clr.w   STE_STATS_DIRTY
         bsr.s   ste_reset_bufs
         moveq   #4,d0                   ; cmd 4 = clear rings & blank line buffer
@@ -331,14 +349,20 @@ ste_stop_sound:
         rts
 
 ; ---------------------------------------------------------------------------
-; VBL Top ($018d06): Atomic Front-Buffer Display + Exact HBlank-Locked Timer B!
-; Writes SHOW_START to BOTH $8201/$03/$0d AND $8205/$07/$09 so screen base and
-; $8265 fine hscroll ALWAYS take effect on the EXACT SAME FRAME (ZERO +16px judder!)
+; VBL IRQ ($70.w): Runs at scanline -50 (BEFORE TOS VBL queue!) -> Timer B is
+; ALWAYS armed 50 scanlines before line 0, even under 100% Blitter load!
+; Writes SHOW_START to BOTH $8201/$03/$0d AND $8205/$07/$09 (ZERO +16px judder!)
 ; ---------------------------------------------------------------------------
-ste_vbl_top:
-        movem.l d0-d1/a0-a1,-(sp)
+ste_vbl_skip:
+        movem.l d0-d1,-(sp)             ; $018d6e expects d0-d1 on stack (original $018d06)!
+        jmp     $018d6e.l
+
+ste_vbl_irq:
         tst.w   STE_PITCH_OK
-        beq.w   .vt_stats
+        beq.w   .vt_chain_fast
+        movem.l d0-d2/a0-a1,-(sp)
+        bclr    #7,BLT_LINE.w           ; pause Blitter briefly so VBL setup finishes at line -49!
+        sne     d2
         tst.w   $02356a.l               ; KO2 -$4f40(a4): Half-Time/Full-Time/Stats on $078000?
         bne.w   .vt_stats_mark
 
@@ -404,13 +428,17 @@ ste_vbl_top:
         move.b  #8,$fffffa1b.w          ; Event Count mode
         bset    #0,$fffffa07.w          ; enable Timer B in IERA
         bset    #0,$fffffa13.w          ; enable Timer B in IMRA
-        movem.l (sp)+,d0-d1/a0-a1
-        movem.l d0-d1,-(sp)             ; $018d6e expects d0-d1 on stack (original $018d06)!
-        jmp     $018d6e.l
+.vt_exit:
+        tst.b   d2
+        beq.s   .vt_nr
+        bset    #7,BLT_LINE.w           ; resume paused Blitter!
+.vt_nr: movem.l (sp)+,d0-d2/a0-a1
+.vt_chain_fast:
+        move.l  STE_ORIG_VBL(pc),-(sp)
+        rts
 
 .vt_stats_mark:
         move.w  #1,STE_STATS_DIRTY
-.vt_stats:
         clr.b   $fffffa1b.w
         move.b  #$07,$ffff8201.w
         move.b  #$80,$ffff8203.w
@@ -420,9 +448,7 @@ ste_vbl_top:
         clr.b   $ffff8209.w
         clr.b   $ffff820f.w
         clr.b   $ffff8265.w
-        movem.l (sp)+,d0-d1/a0-a1
-        movem.l d0-d1,-(sp)
-        jmp     $018d6e.l
+        bra.s   .vt_exit
 
 ; ---------------------------------------------------------------------------
 ; Exact HBlank-Locked Timer B ISRs (Blitter-Paused -> ZERO bus-steal jitter!):
@@ -860,8 +886,9 @@ ste_pitch_update:
         move.w  d2,DB_TX(a6)
         move.w  d3,DB_TY(a6)
 
-        ; === STEP C: Draw Transparent Vector Radar + 23 Dots onto Backbuffer ===
+        ; === STEP C: Draw Transparent Vector Radar + 23 Dots + Active Player Underlines onto Backbuffer ===
         bsr.w   ste_bk_draw_rad
+        bsr.w   ste_bk_draw_ul
 
         ; === STEP D: Draw ALL Active Sprites from STE_SPR_LIST onto Backbuffer ===
         bsr.w   ste_bk_draw_spr
@@ -1294,6 +1321,102 @@ ste_bk_draw_dots:
 .bdd_c4:
         or.w    d3,4(a0)
 .bdd_r: rts
+
+; ---------------------------------------------------------------------------
+; Active Controlled Player Black Underline (16x1 solid $ffff, target dashed $fc3f)
+; Appends 1..2 word entries to DB_RDR(a6) -> works even with Radar OFF, ring-wrap aware!
+; ---------------------------------------------------------------------------
+ste_bk_draw_ul:
+        movem.l d0-d4/d7/a0/a2/a5,-(sp)
+        move.w  DB_RDCNT(a6),d7
+        move.w  d7,d0
+        mulu.w  #12,d0
+        movea.l DB_RDR(a6),a2
+        adda.l  d0,a2
+        ; 1. Home active player (-$5012(a4) -> $12!=0 -> $16=a5)
+        lea     -$5012(a4),a0
+        tst.l   $12(a0)
+        beq.s   .ul_away
+        movea.l $16(a0),a5
+        move.w  #$ffff,d4
+        bsr.s   .ul_one
+.ul_away:
+        ; 2. Away active player (-$4fbc(a4) -> $12!=0 -> $16=a5)
+        lea     -$4fbc(a4),a0
+        tst.l   $12(a0)
+        beq.s   .ul_dash
+        movea.l $16(a0),a5
+        move.w  #$ffff,d4
+        bsr.s   .ul_one
+.ul_dash:
+        ; 3. Secondary / pass-target dashed underline ($fc3f)
+        move.l  STE_UL_DASH(pc),d0
+        beq.s   .ul_done
+        clr.l   STE_UL_DASH
+        movea.l d0,a5
+        move.w  #$fc3f,d4
+        bsr.s   .ul_one
+.ul_done:
+        move.w  d7,DB_RDCNT(a6)
+        movem.l (sp)+,d0-d4/d7/a0/a2/a5
+        rts
+
+.ul_one:
+        tst.l   $b8(a5)                 ; KO2 sprite active / on-screen?
+        beq.w   .ul_ret
+        cmpi.w  #46,d7                  ; room for up to 2 words in 48-entry DB_RDR?
+        bcc.w   .ul_ret
+        move.w  (a5),d0                 ; world_x = (a5) + 176 - 8 = (a5) + 168
+        addi.w  #168,d0
+        sub.w   STE_CUR_WX(pc),d0       ; scr_x (0..304)
+        cmpi.w  #305,d0
+        bcc.s   .ul_ret
+        move.w  4(a5),d1                ; world_y = 4(a5) + 64 + 8 = 4(a5) + 72
+        addi.w  #72,d1
+        sub.w   STE_CUR_WY(pc),d1       ; scr_y (0..180)
+        cmpi.w  #PITCH_VIS_H,d1
+        bcc.s   .ul_ret
+        add.w   STE_BK_HSCR(pc),d0
+        move.w  d0,d2
+        andi.w  #15,d2                  ; skew (0..15)
+        moveq   #0,d3
+        move.w  d4,d3
+        swap    d3
+        lsr.l   d2,d3                   ; d3.high = word0 mask, d3.low = word1 mask
+        lsr.w   #4,d0
+        lsl.w   #3,d0
+        ext.l   d0
+        add.l   STE_BK_TX8(pc),d0
+        add.w   STE_BK_Y0(pc),d1
+        cmpi.w  #RING_H,d1
+        blt.s   .ul_y
+        subi.w  #RING_H,d1
+.ul_y:  mulu.w  #RING_STRIDE,d1
+        add.l   d0,d1
+        movea.l DB_RING(a6),a0
+        adda.l  d1,a0
+        ; Emit left word (word0) in col 9 (pure jet black: P0=1, P1=0, P2=0, P3=1)
+        swap    d3
+        tst.w   d3
+        beq.s   .ul_w2
+        bsr.s   .ul_put
+.ul_w2: swap    d3
+        tst.w   d3
+        beq.s   .ul_ret
+        addq.l  #8,a0
+.ul_put:
+        move.w  d3,d0
+        not.w   d0
+        move.l  a0,(a2)+
+        move.l  (a0),(a2)+
+        move.l  4(a0),(a2)+
+        addq.w  #1,d7
+        or.w    d3,(a0)
+        and.w   d0,2(a0)
+        and.w   d0,4(a0)
+        or.w    d3,6(a0)
+.ul_ret:
+        rts
 
 ; ---------------------------------------------------------------------------
 ; Step D: Draw ALL Active Sprites from STE_SPR_LIST onto Backbuffer!
