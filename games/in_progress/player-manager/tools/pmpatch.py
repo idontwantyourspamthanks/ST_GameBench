@@ -140,7 +140,7 @@ stager:
         print(f"Copied 92-team {demo_src.name} into {BUILD / 'FILES'}")
 
     # Task 2: Copy Kick Off 2 engine binary, resident handler, KRD assets, and PM match segment
-    assert 0xb3000 + len(payload) <= 0xb5800, f"payload overlaps BR_STATE: ${0xb3000 + len(payload):x}"
+    assert 0xb3000 + len(payload) <= 0xb5a00, f"payload overlaps BR_STATE: ${0xb3000 + len(payload):x}"
     ko2_orig = ROOT.parent.parent / "queue" / "kick-off-2" / "originals" / "KICKOFF2" / "FILES" / "KRD"
     ko2_ram = WORK / "ko2_ram.bin"
     pm_ram = WORK / "setup_ram.bin"
@@ -148,15 +148,15 @@ stager:
         ram = ko2_ram.read_bytes()
         (BUILD / "FILES" / "KO2ENG.BIN").write_bytes(ram[0x10000:0x24000])
         (BUILD / "FILES" / "KO2HND.BIN").write_bytes(ram[0x6800:0x7020])
-        (BUILD / "FILES" / "PMMATCH.BIN").write_bytes(pm_ram.read_bytes()[0x18e80:0x2169c])
+        (BUILD / "FILES" / "PMCODE.BIN").write_bytes(pm_ram.read_bytes()[0x10000:0x25900])
         shutil.copy2(ko2_orig, BUILD / "FILES" / "KRD")
-        print("Installed Kick Off 2 match engine overlay (KO2ENG.BIN + KO2HND.BIN + PMMATCH.BIN + KRD)")
+        print("Installed Kick Off 2 match engine overlay (KO2ENG.BIN + KO2HND.BIN + PMCODE.BIN + KRD)")
 
     # v1.1: Assemble Atari STE Amiga Audio & Visuals overlay (KO2STE.BIN) + Amiga DMA Audio (AMIGASND.BIN)
     ko2_ste_src = ROOT / "patches" / "ko2_ste.s"
     if ko2_ste_src.exists():
         ko2_ste_bin = assemble(ko2_ste_src, WORK / "ko2_ste.bin")
-        assert len(ko2_ste_bin) <= 0x4600, f"KO2STE.BIN too large: {len(ko2_ste_bin)}"
+        assert len(ko2_ste_bin) <= 0x19c0, f"KO2STE.BIN too large: {len(ko2_ste_bin)} > 6592"
         (BUILD / "FILES" / "KO2STE.BIN").write_bytes(ko2_ste_bin)
         print(f"Assembled KO2STE.BIN: {len(ko2_ste_bin)} bytes")
     amiga_snd_src = WORK / "amiga" / "extracted" / "sounds"

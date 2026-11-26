@@ -29,6 +29,21 @@ MARKER  equ     $b2ff8
 ; ---------------------------------------------------------------------------
 boot_entry:
         movem.l d0-d7/a0-a6,-(sp)
+        bsr.s   reapply_pm_hooks
+        tst.w   d0
+        bne.s   .b_fail
+        move.l  #'PMOK',MARKER.l
+        bra.s   .b_done
+.b_fail:
+        move.l  #'PMFL',MARKER.l
+.b_done:
+        movem.l (sp)+,d0-d7/a0-a6
+        jmp     $010000.l
+
+; Callable from boot_entry AND from ko2_bridge.s after reloading PMCODE.BIN ($010000..$025900)!
+; Returns d0.w = 0 ok, 1 fail.
+reapply_pm_hooks:
+        movem.l d1-d7/a0-a6,-(sp)
 
         ; Verify original bytes at every patch site
         cmpi.l  #$53407400,$01863e.l
@@ -119,14 +134,29 @@ boot_entry:
         tst.w   d0
         bne.s   .fail
 
-        move.l  #'PMOK',MARKER.l
-        bra.s   .done
+        ; 11. v1.1 Title Screen discreet credit ("v1.1 enhanced by dad_prg") on scr2.men & scr3.men
+        cmpi.l  #$4eba77c6,$010544.l
+        bne.s   .fail
+        cmpi.l  #$4eac8008,$010548.l
+        bne.s   .fail
+        cmpi.l  #$4eba77ba,$010550.l
+        bne.s   .fail
+        cmpi.l  #$4eac8008,$010554.l
+        bne.s   .fail
+        move.w  #$4ef9,$010544.l
+        move.l  #title_scr2_credit,$010546.l
+        move.w  #$4e71,$01054a.l
+        move.w  #$4ef9,$010550.l
+        move.l  #title_scr3_credit,$010552.l
+        move.w  #$4e71,$010556.l
 
+        moveq   #0,d0
+        movem.l (sp)+,d1-d7/a0-a6
+        rts
 .fail:
-        move.l  #'PMFL',MARKER.l
-.done:
-        movem.l (sp)+,d0-d7/a0-a6
-        jmp     $010000.l
+        moveq   #1,d0
+        movem.l (sp)+,d1-d7/a0-a6
+        rts
 
 ; ---------------------------------------------------------------------------
 ; Patch 1: fast_sum_rng_mod ($01863e) - 100% bit-exact (16/8/4/1-bit LFSR)
@@ -737,6 +767,114 @@ early_rej_after_season:
         jmp     $014cb2.l               ; continue career loop
 .retired:
         jmp     $014cc4.l               ; clr.b $4(a5) / bra $14c96
+
+; ---------------------------------------------------------------------------
+; Patch 11: Discreet Title Screen credit ("v1.1 enhanced by dad_prg")
+; Drawn centred in 4x6 font on BOTH scr2.men (Program by Dino Dini, y=178, col 4)
+; and scr3.men (Main Title Menu, y=184, col 13 dim slate on dark green).
+; ---------------------------------------------------------------------------
+title_scr2_credit:
+        jsr     $017d0c.l               ; draw scr2.men
+        movem.l d0-d7/a0-a3,-(sp)
+        lea     $078000+186*160.l,a3
+        moveq   #4,d0                   ; col 4 ($004 discreet dark blue on teal)
+        bsr.s   draw_credit_line
+        movem.l (sp)+,d0-d7/a0-a3
+        jsr     -$7ff8(a4)              ; wait click/key
+        jmp     $01054c.l
+
+title_scr3_credit:
+        jsr     $017d0c.l               ; draw scr3.men
+        movem.l d0-d7/a0-a3,-(sp)
+        lea     $078000+194*160.l,a3
+        moveq   #13,d0                  ; col 13 ($324 discreet dim slate on dark green)
+        bsr.s   draw_credit_line
+        movem.l (sp)+,d0-d7/a0-a3
+        jsr     -$7ff8(a4)              ; wait menu click
+        jmp     $010558.l
+
+; Input: a3 = screen row base ($078000 + y*160), d0.b = 4-bit colour index (0..15)
+draw_credit_line:
+        move.w  d0,-(sp)                ; save colour index on stack
+        lea     .cr_txt(pc),a0
+        moveq   #100,d4                 ; x = (320 - 24*5) / 2 = 100 (centred!)
+.cr_ch: moveq   #0,d0
+        move.b  (a0)+,d0
+        beq.w   .cr_end
+        lea     .cr_chr(pc),a1
+        moveq   #0,d1
+.cr_fn: move.b  (a1)+,d2
+        beq.s   .cr_nx
+        cmp.b   d2,d0
+        beq.s   .cr_gt
+        addq.w  #1,d1
+        bra.s   .cr_fn
+.cr_gt: mulu    #6,d1
+        lea     .cr_fnt(pc),a1
+        adda.w  d1,a1
+        movea.l a3,a2
+        moveq   #5,d3
+.cr_rw: move.b  (a1)+,d0
+        move.w  d4,d5
+        moveq   #3,d6
+.cr_cl: btst    d6,d0
+        beq.s   .cr_np
+        move.w  d5,d7
+        lsr.w   #4,d7
+        lsl.w   #3,d7
+        move.w  d5,d1
+        andi.w  #15,d1
+        move.w  #$8000,d2
+        lsr.w   d1,d2
+        not.w   d2
+        and.w   d2,0(a2,d7.w)
+        and.w   d2,2(a2,d7.w)
+        and.w   d2,4(a2,d7.w)
+        and.w   d2,6(a2,d7.w)
+        not.w   d2
+        move.w  (sp),d1                 ; 4-bit colour index
+        btst    #0,d1
+        beq.s   .p1
+        or.w    d2,0(a2,d7.w)
+.p1:    btst    #1,d1
+        beq.s   .p2
+        or.w    d2,2(a2,d7.w)
+.p2:    btst    #2,d1
+        beq.s   .p3
+        or.w    d2,4(a2,d7.w)
+.p3:    btst    #3,d1
+        beq.s   .cr_np
+        or.w    d2,6(a2,d7.w)
+.cr_np: addq.w  #1,d5
+        dbra    d6,.cr_cl
+        lea     160(a2),a2
+        dbra    d3,.cr_rw
+.cr_nx: addq.w  #5,d4
+        bra.w   .cr_ch
+.cr_end:
+        addq.l  #2,sp
+        rts
+
+.cr_txt: dc.b   "v1.1 enhanced by dad_prg",0
+.cr_chr: dc.b   " .1_abcdeghnprvy",0
+.cr_fnt:
+        dc.b    %0000,%0000,%0000,%0000,%0000,%0000    ; ' '
+        dc.b    %0000,%0000,%0000,%0000,%1000,%0000    ; '.'
+        dc.b    %0100,%1100,%0100,%0100,%1110,%0000    ; '1'
+        dc.b    %0000,%0000,%0000,%0000,%0000,%1111    ; '_'
+        dc.b    %0000,%0110,%0001,%0111,%1011,%0000    ; 'a'
+        dc.b    %1000,%1110,%1001,%1001,%1110,%0000    ; 'b'
+        dc.b    %0000,%0111,%1000,%1000,%0111,%0000    ; 'c'
+        dc.b    %0001,%0111,%1001,%1001,%0111,%0000    ; 'd'
+        dc.b    %0000,%0110,%1001,%1111,%0111,%0000    ; 'e'
+        dc.b    %0000,%0111,%1001,%0111,%0001,%0110    ; 'g'
+        dc.b    %1000,%1110,%1001,%1001,%1001,%0000    ; 'h'
+        dc.b    %0000,%1110,%1001,%1001,%1001,%0000    ; 'n'
+        dc.b    %0000,%1110,%1001,%1001,%1110,%1000    ; 'p'
+        dc.b    %0000,%1011,%1100,%1000,%1000,%0000    ; 'r'
+        dc.b    %0000,%1001,%1001,%1001,%0110,%0000    ; 'v'
+        dc.b    %0000,%1001,%1001,%0111,%0001,%0110    ; 'y'
+        even
 
 ; ---------------------------------------------------------------------------
 ; Data tables

@@ -58,10 +58,11 @@ VOLUME = "GAMES"
 
 # folder on C: -> game; versions/requirements for README.TXT are taken from the builds where possible (see readme_text)
 FOLDERS = ("MIDWINTR", "MW1ORIG", "MIDWINT2", "MW2ORIG", "MOONSHR", "MOONORIG", "HUNTER", "HUNTORIG", "NEBULUS", "NEBORIG", "POWERMON", "PMWW1",
-           "POPULOUS", "POPORIG", "POPS2", "POP2ORIG", "FLOOD", "OVERLAND", "AUTO")
+           "POPULOUS", "POPORIG", "POPS2", "POP2ORIG", "PLAYERME", "PMORIG", "FLOOD", "OVERLAND", "AUTO")
 FLOOD_VERSION = "1.1"                                   # the shipped release zip games/done/flood/dist/Flood_hd_v<this>.zip
 OVERLANDER_VERSION = "1.0"                              # games/*/overlander/dist/Overlander_hd_v<this>.zip
 PMWW1_VERSION = "1.0"                                   # games/*/powermonger-ww1/dist/PowermongerWW1_v<this>_patched_hd_<date>.zip (newest)
+PLAYMGR_VERSION = "1.1"                                 # games/*/player-manager/dist/PlayerManager_v<this>_patched_hd_<date>.zip (newest)
 
 
 def run(cmd, cwd=None, quiet=True, env=None):
@@ -196,6 +197,20 @@ def build_overlander() -> Path:
     return stage_zip_folder(GAMES / "overlander" / "dist" / f"Overlander_hd_v{OVERLANDER_VERSION}.zip", "OVERLAND", "OVERLAND")
 
 
+def build_playermgr() -> Path:
+    r"""Player Manager: newest shipped HD release zip (`dist/PlayerManager_v<PLAYMGR_VERSION>_patched_hd_*.zip`),
+    whose PLAYERME\ folder is copied as it is (RUNME.TOS + HAGA + FILES\ + PATCHED.TXT)."""
+    zips = sorted((GAMES / "player-manager" / "dist").glob(f"PlayerManager_v{PLAYMGR_VERSION}_patched_hd_*.zip"))
+    if not zips:
+        sys.exit(f"no PlayerManager_v{PLAYMGR_VERSION}_patched_hd_*.zip in player-manager/dist")
+    return stage_zip_folder(zips[-1], "PLAYERME", "PLAYERME")
+
+
+def build_playermgr_orig() -> Path:
+    """PP's unpatched Player Manager (originals/PLAYERME), for side-by-side comparison."""
+    return build_orig(GAMES / "player-manager" / "originals" / "PLAYERME", "PMORIG")
+
+
 def build_pmww1() -> Path:
     r"""Powermonger WW1: the newest shipped HD release zip; its POWERMONGER_WW1\ folder becomes C:\PMWW1\ with WW1.PRG moved up
     next to the data files (as POWERMON\WAR.PRG): it must be started from the AUTO phase, by AUTO\PMBOOT.PRG (W)."""
@@ -327,6 +342,7 @@ BUILDERS = {"MIDWINTR": build_midwinter, "MOONSHR": build_moonshine,
             "POWERMON": build_powermonger, "POPULOUS": build_populous,
             "POPORIG": lambda: build_orig(GAMES / "populous" / "originals" / "POPULOUS", "POPORIG"),
             "POPS2": build_populous2, "POP2ORIG": lambda: build_orig(GAMES / "populous-2" / "originals" / "POPUL2", "POP2ORIG"),
+            "PLAYERME": build_playermgr, "PMORIG": build_playermgr_orig,
             "FLOOD": build_flood, "OVERLAND": build_overlander, "PMWW1": build_pmww1,
             "AUTO": build_auto}
 
@@ -394,6 +410,8 @@ a 3-second question about Powermonger at boot.
   C:\POPORIG   Populous (original)    double-click RUNME.TOS     PP's release, unpatched
   C:\POPS2     Populous 2             double-click RUNME.TOS     {vers['POPS2']}
   C:\POP2ORIG  Populous 2 (original)  double-click RUNME.TOS     PP's release, unpatched
+  C:\PLAYERME  Player Manager         double-click RUNME.TOS     v{PLAYMGR_VERSION}
+  C:\PMORIG    Player Manager (orig)  double-click RUNME.TOS     PP's release, unpatched
   C:\FLOOD     Flood                  double-click FLO.PRG       v{FLOOD_VERSION}
   C:\OVERLAND  Overlander             double-click OVERLAND.PRG  v{OVERLANDER_VERSION}
 
@@ -428,6 +446,9 @@ Requirements
  - Overlander: STE, Mega STE, TT or Falcon for the Amiga music and sound
    (DMA sound) and the blitter; a plain ST plays the original YM sound.
  - Powermonger WW1: 1 MB; the same machines as Powermonger, plus the Falcon.
+ - Player Manager: 1 MB; 92-club 1989-90 league + genuine Kick Off 2 match
+   engine. On Atari STE / Mega STE it uses Amiga tiled pitches, Blitter sprites
+   and DMA audio automatically; plain 68000 ST runs classic ST visuals/YM sound.
  - Tested in the Hatari emulator only (STE, Mega STE, TT; Hunter also on a
    plain ST). On a TT the Midwinters need the PMMU (Hatari: --mmu true, as
    run_tt.sh does); PP's unpatched Midwinter does not start on a TT.
@@ -548,6 +569,7 @@ def versions() -> dict[str, str]:
     v["FLOOD"] = f"v{FLOOD_VERSION}"
     v["OVERLAND"] = f"v{OVERLANDER_VERSION}"
     v["PMWW1"] = f"v{PMWW1_VERSION}"
+    v["PLAYERME"] = f"v{PLAYMGR_VERSION}"
     return v
 
 
@@ -581,13 +603,15 @@ def layout_text(img: Path, tgt: str, total: int, psz: int, folders: dict[str, Pa
            "POP2ORIG": "Populous 2 (HAGA by PP, unpatched, for comparison)",
            "FLOOD": "Flood (shipped HD release, patched FLO.PRG + Amiga sound files)",
            "OVERLAND": "Overlander (shipped HD release, patched OVERLAND.PRG + Amiga sound files)",
+           "PLAYERME": "Player Manager (HAGA by PP, patched; 92 clubs, Kick Off 2 match engine, STE Amiga visuals & DMA audio)",
+           "PMORIG": "Player Manager (HAGA by PP, unpatched, for comparison)",
            "PMWW1": "Powermonger WW1 (shipped HD release, WW1.PRG moved up from AUTO\\; start it from the boot prompt, see README.TXT)",
            "AUTO": "boot prompt PMBOOT.PRG (tools/hd_pmboot.s): P = Powermonger, W = Powermonger WW1, any other key / 3 s = desktop"}
     for name, src in folders.items():
         n = sum(1 for p in src.rglob("*") if p.is_file())
         t.append(f"  {name + chr(92):<14} {why[name]}: {n} files, {tree_kb(src)} KB" + (f", {VERSIONS[name]}" if name in VERSIONS else ""))
     t += ["", "Start of the games: see README.TXT in the root (Powermonger: P at the boot prompt, Powermonger WW1: W; the others: double-click",
-          "  MIDWINTR\\RUNME.TOS, MIDWINT2\\RUNME.TOS, MOONSHR\\RUNME.TOS, POPULOUS\\RUNME.TOS, POPS2\\RUNME.TOS, HUNTER\\START.TOS, NEBULUS\\START.TOS,",
+          "  MIDWINTR\\RUNME.TOS, MIDWINT2\\RUNME.TOS, MOONSHR\\RUNME.TOS, POPULOUS\\RUNME.TOS, POPS2\\RUNME.TOS, PLAYERME\\RUNME.TOS, HUNTER\\START.TOS, NEBULUS\\START.TOS,",
           "  FLOOD\\FLO.PRG, OVERLAND\\OVERLAND.PRG on the desktop).", "",
           "Use",
           f"  real disk / SD card (ACSI2STM, UltraSatan, SCSI2SD + ACSI/SCSI bridge, ...): dd if={img.name} of=/dev/sdX bs=1M conv=fsync",

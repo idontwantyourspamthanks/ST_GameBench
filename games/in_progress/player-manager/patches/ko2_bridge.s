@@ -17,42 +17,42 @@
 ;   (Ends at $c8300 — 15 KB below VDI/screen at $cc000!)
 ; ---------------------------------------------------------------------------
 
-BR_STATE        equ     $0b5800
-BR_HOME_SC      equ     $0b5800         ; .w
-BR_AWAY_SC      equ     $0b5802         ; .w
-BR_HOME_HUM     equ     $0b5804         ; .w
-BR_AWAY_HUM     equ     $0b5806         ; .w
-BR_FAST         equ     $0b5808         ; .w (0=Normal 5m, 1=Fast 3m)
-BR_CUP_ET       equ     $0b580a         ; .w (0=League, 1=Cup Extra Time)
-BR_PM_A4        equ     $0b580c         ; .l
-BR_PM_84        equ     $0b5810         ; .l
-BR_TOS_84       equ     $0b5814         ; .l
-BR_KICK_DIR     equ     $0b5818         ; .w (bit0=up/down, bit1=kickoff team)
-BR_WEEK_SEED    equ     $0b581a         ; .w (week number for ref/weather variety)
-BR_SAV_70       equ     $0b581c         ; .l saved $70.w VBL
-BR_SAV_118      equ     $0b5820         ; .l saved $118.w IKBD
-BR_KBDVBASE     equ     $0b5824         ; .l saved Kbdvbase()
-BR_SAV_MVEC     equ     $0b5828         ; .l saved Kbdvbase+$10 (mousevec)
-BR_SAV_JVEC     equ     $0b582c         ; .l saved Kbdvbase+$18 (joyvec)
-BR_OLD_SSP      equ     $0b5830         ; .l saved old SSP across .rs_d!
-BR_OLD_SR       equ     $0b5834         ; .w saved old SR across .rs_d!
-BR_LINEA_BASE   equ     $0b5838         ; .l saved Line-A base ptr from $a000!
-BR_RESULTS      equ     $0b5840         ; 26 x 10 bytes = 260 bytes ($0b5840..$0b5943)
-BR_LINEA_SAVE   equ     $0b5950         ; 8 bytes ($2e..$35 of Line-A vars)
-BR_MFP_SAVE     equ     $0b5960         ; 24 bytes: $110,$114,$120,$134 + IERA/IERB/IMRA/IMRB
-BR_IS_STE       equ     $0b5978         ; .w: 1 = Atari STE/Mega STE detected, 0 = plain ST
-BR_SAV_A0       equ     $0b597c         ; .l: saved $a0.w (TRAP #8) vector for STE Blitter call
+BR_STATE        equ     $0b5a00
+BR_HOME_SC      equ     $0b5a00         ; .w
+BR_AWAY_SC      equ     $0b5a02         ; .w
+BR_HOME_HUM     equ     $0b5a04         ; .w
+BR_AWAY_HUM     equ     $0b5a06         ; .w
+BR_FAST         equ     $0b5a08         ; .w (0=Normal 5m, 1=Fast 3m)
+BR_CUP_ET       equ     $0b5a0a         ; .w (0=League, 1=Cup Extra Time)
+BR_PM_A4        equ     $0b5a0c         ; .l
+BR_PM_84        equ     $0b5a10         ; .l
+BR_TOS_84       equ     $0b5a14         ; .l
+BR_KICK_DIR     equ     $0b5a18         ; .w (bit0=up/down, bit1=kickoff team)
+BR_WEEK_SEED    equ     $0b5a1a         ; .w (week number for ref/weather variety)
+BR_SAV_70       equ     $0b5a1c         ; .l saved $70.w VBL
+BR_SAV_118      equ     $0b5a20         ; .l saved $118.w IKBD
+BR_KBDVBASE     equ     $0b5a24         ; .l saved Kbdvbase()
+BR_SAV_MVEC     equ     $0b5a28         ; .l saved Kbdvbase+$10 (mousevec)
+BR_SAV_JVEC     equ     $0b5a2c         ; .l saved Kbdvbase+$18 (joyvec)
+BR_OLD_SSP      equ     $0b5a30         ; .l saved old SSP across .rs_d!
+BR_OLD_SR       equ     $0b5a34         ; .w saved old SR across .rs_d!
+BR_LINEA_BASE   equ     $0b5a38         ; .l saved Line-A base ptr from $a000!
+BR_RESULTS      equ     $0b5a40         ; 26 x 10 bytes = 260 bytes ($0b5a40..$0b5b43)
+BR_LINEA_SAVE   equ     $0b5b50         ; 8 bytes ($2e..$35 of Line-A vars)
+BR_MFP_SAVE     equ     $0b5b60         ; 24 bytes: $110,$114,$120,$134 + IERA/IERB/IMRA/IMRB
+BR_IS_STE       equ     $0b5b78         ; .w: 1 = Atari STE/Mega STE detected, 0 = plain ST
+BR_SAV_A0       equ     $0b5b7c         ; .l: saved $a0.w (TRAP #8) vector for STE Blitter call
 
-KO2_STE_BASE    equ     $0ae940         ; $0ae940..$0b2ff7 (17.7 KB) for KO2STE.BIN (above FILES.CR $09d000..$0ae940!)
-KO2_STE_SND_STG equ     $0c8b00         ; temporary staging in KO2_REPLAY_BUF ($6014 = 24.6 KB) before $01564c!
+KO2_STE_BASE    equ     $0ae940         ; $0ae940..$0b02ff (6.5 KB) for KO2STE.BIN (above FILES.CR $09d000..$0ae940!)
 
-KO2_HOME_TEAM   equ     $0b5a00         ; $41e bytes
-KO2_AWAY_TEAM   equ     $0b5e20         ; $41e bytes
-PM_HND_SAVE     equ     $0b6240         ; $850 bytes
-KO2_HND_BUF     equ     $0b6a90         ; $820 bytes
-PM_CODE_SAVE    equ     $0b7300         ; $8e80 bytes ($010000..$018e80)
-PM_DATA_SAVE    equ     $0c0180         ; $8964 bytes ($02169c..$02a000 -> $0c8ae4)
-KO2_REPLAY_BUF  equ     $0c8b00         ; $6014 bytes ($0c8b00..$0ceb14 < $0d0000!)
+KO2_HOME_TEAM   equ     $0b5c00         ; $41e bytes
+KO2_AWAY_TEAM   equ     $0b6020         ; $41e bytes
+PM_HND_SAVE     equ     $0b6440         ; $850 bytes
+KO2_HND_BUF     equ     $0b6c90         ; $820 bytes
+PM_DATA1_SAVE   equ     $0b7500         ; $740 bytes ($0219c0..$022100 -> $0b7c40)
+PM_DATA2_SAVE   equ     $0b7c40         ; $3e00 bytes ($025900..$029700 -> $0bba40, well below 1MB HDDRIVER $0c4000 / TOS2.06 $0bdde4!)
+KO2_REPLAY_BUF  equ     $0bbb00         ; $6014 bytes ($0bbb00..$0c1b14 < $0c4000; 6 KB TOS 2.06 ring -> $0bd300 < $0bdde4!)
+KO2_SCRATCH_BUF equ     $099000         ; $2c00 bytes temp depack scratch during $015f4c ($099000..$09bc00 < $09d000!)
 KO2_FILES_CR    equ     $09d000         ; $11940 bytes ($09d000..$0ae940 < KO2_STE_BASE $0ae940!)
 
 KO2_A4          equ     $0284aa
@@ -153,19 +153,18 @@ ko2_bridge_match:
         tst.l   d0
         ble.w   .abort_restore_prd
 
-        ; Save PM management code ($010000..$018e80 -> PM_CODE_SAVE)
-        lea     $010000.l,a0
-        lea     PM_CODE_SAVE.l,a1
-        move.w  #($8e80/4-1),d0
-.sv_c:  move.l  (a0)+,(a1)+
-        dbra    d0,.sv_c
-
-        ; Save PM data+bss ($02169c..$02a000 -> PM_DATA_SAVE)
-        lea     $02169c.l,a0
-        lea     PM_DATA_SAVE.l,a1
-        move.w  #($8964/4-1),d0
-.sv_d:  move.l  (a0)+,(a1)+
-        dbra    d0,.sv_d
+        ; Save ONLY PM's live mutable data regions (17.3 KB -> $0b7300..$0bb840, well below 1MB HDDRIVER!)
+        ; Static code+tables ($010000..$025900) are reloaded cleanly from PMCODE.BIN on match exit.
+        lea     $0219c0.l,a0
+        lea     PM_DATA1_SAVE.l,a1
+        move.w  #($740/4-1),d0
+.sv_d1: move.l  (a0)+,(a1)+
+        dbra    d0,.sv_d1
+        lea     $025900.l,a0
+        lea     PM_DATA2_SAVE.l,a1
+        move.w  #($3e00/4-1),d0
+.sv_d2: move.l  (a0)+,(a1)+
+        dbra    d0,.sv_d2
 
         ; Load KO2ENG.BIN ($14000 bytes) directly into $010000!
         lea     ko2_eng_fname(pc),a0
@@ -173,20 +172,12 @@ ko2_bridge_match:
         move.l  #$14000,d0
         bsr.w   load_hd_file
         move.l  d0,-(sp)
-        ; Also preload KO2STE.BIN into $0ae940 and AMIGASND.BIN into KO2_REPLAY_BUF staging ($0c8b00)
+        ; Also preload KO2STE.BIN into $0ae940 (AMIGASND.BIN is loaded directly into KO2 heap after $013450!)
         clr.w   KO2_STE_BASE.l          ; clear header magic so missing KO2STE.BIN falls back cleanly!
         lea     ko2_ste_fname(pc),a0
         lea     KO2_STE_BASE.l,a1
         move.l  #$19c0,d0               ; max 6,592 bytes ($0ae940..$0b02ff)
         bsr.w   load_hd_file
-        tst.l   d0
-        ble.s   .no_ste_bin
-        lea     amigasnd_fname(pc),a0
-        lea     KO2_STE_SND_STG.l,a1
-        move.l  #$5c00,d0
-        bsr.w   load_hd_file
-        move.l  d0,KO2_STE_BASE+8.l     ; store AMIGASND.BIN byte size in STE_SND_SIZE!
-.no_ste_bin:
         jsr     $006942.w               ; restore PP PRD mode (before swap)
         move.l  (sp)+,d0
         tst.l   d0
@@ -199,21 +190,21 @@ ko2_bridge_match:
         dbra    d0,.clr_b
 
         ; Route KO2's $014c80 FILES.CR ($11940 = 72 KB) to KO2_FILES_CR ($09d000..$0ae940)
-        ; using the upper tail of HAGA's 200 KB cache buffer (shrunk to $1c000 = 114 KB)!
+        ; using the upper tail of HAGA's 200 KB cache buffer (shrunk to $18000 = 96 KB)!
         move.w  #$4ef9,$014c80.l
         move.l  #ko2_files_alloc,$014c82.l
-        ; Route KO2's $01564c replay buffer ($6014) to static KO2_REPLAY_BUF (1 MB RAM!)
+        ; Route KO2's $01564c replay buffer ($6014) to KO2_REPLAY_BUF ($0bb900..$0c1914) with 1MB HDDRIVER guard!
         move.w  #$4ef9,$01564c.l
         move.l  #ko2_replay_alloc,$01564e.l
-        ; Also route KO2's $01adb8 temporary $2c00 sprite-depack scratch buffer to KO2_REPLAY_BUF
-        ; (used only during $015f4c before replay init, and skip its Mfree at $01ae1a!)
-        move.w  #$2c7c,$01adb8.l        ; movea.l #KO2_REPLAY_BUF,a6
-        move.l  #KO2_REPLAY_BUF,$01adba.l
+        ; Route KO2's $01adb8 temporary $2c00 sprite-depack scratch buffer to KO2_SCRATCH_BUF ($099000..$09bc00)
+        ; (used only during $015f4c before STE rings init, and skip its Mfree at $01ae1a!)
+        move.w  #$2c7c,$01adb8.l        ; movea.l #KO2_SCRATCH_BUF,a6
+        move.l  #KO2_SCRATCH_BUF,$01adba.l
         move.w  #$6010,$01adbe.l        ; bra.s $01add0
         move.w  #$6006,$01ae1a.l        ; bra.s $01ae22 (skip Mfree(a6))
-        ; Also route KO2's $01ffb8 temporary $1600 depack scratch buffer to KO2_REPLAY_BUF!
-        move.w  #$2c7c,$01ffb8.l        ; movea.l #KO2_REPLAY_BUF,a6
-        move.l  #KO2_REPLAY_BUF,$01ffba.l
+        ; Route KO2's $01ffb8 temporary $1600 depack scratch buffer to KO2_SCRATCH_BUF ($099000..$09a600)!
+        move.w  #$2c7c,$01ffb8.l        ; movea.l #KO2_SCRATCH_BUF,a6
+        move.l  #KO2_SCRATCH_BUF,$01ffba.l
         move.w  #$6010,$01ffbe.l        ; bra.s $01ffd0
         move.w  #$6006,$01fffa.l        ; bra.s $020002 (skip Mfree(a6))
         ; Route KO2's $010a2e ($20f0 = 8.4 KB) Malloc to static $0b0300..$0b23f0 (prevents Week 2+ 1 MB OOM!)
@@ -269,7 +260,7 @@ ko2_bridge_match:
 .ld_h:  move.l  (a0)+,(a1)+
         dbra    d0,.ld_h
         move.l  $608.w,$6cb8.w
-        move.l  #$0001c000,$6c6e.w      ; 114 KB KRD cache ($81000..$9d000), leaving $9d000..$ae940 for FILES.CR!
+        move.l  #$00018000,$6c6e.w      ; 96 KB KRD cache ($81000..$99000), leaving $99000..$9d000 scratch & $9d000..$ae940 FILES.CR!
         clr.w   $6c68.w                 ; force chunked cache mode
         move.l  $60c.w,$6c6a.w
         move.l  #-1,$6c72.w             ; invalidate KRD cache so $81000 reloads KRD!
@@ -278,6 +269,12 @@ ko2_bridge_match:
         move.l  #ko2_uncached_fix,$6ba2.w
         move.w  #$4e71,$6ba6.w
         move.l  BR_TOS_84.l,$6916.w
+        ; Snapshot patched $6800..$7020 BACK into KO2_HND_BUF so .swap_to_ko2_hnd preserves all dynamic pointers (4MB/ACSI fix!)
+        lea     $6800.w,a0
+        lea     KO2_HND_BUF.l,a1
+        move.w  #($820/4-1),d0
+.sv_kh: move.l  (a0)+,(a1)+
+        dbra    d0,.sv_kh
         move.l  #$000068c8,$84.w        ; KO2 TRAP #1 handler!
 
         ; Detect Atari STE (DMA Sound $ff8901 + Blitter $ff8a3c) via Bus Error probe
@@ -362,7 +359,19 @@ ko2_bridge_match:
         lea     $081000.l,a1            ; STE_PIT_PAL ($081000..$088e1f)
         move.l  #32288,d0
         bsr.w   load_hd_file
-        move.l  d0,-(sp)                ; save bytes read
+        move.l  d0,-(sp)                ; save pitch bytes read
+        ; Load AMIGASND.BIN directly into KO2's reserved SAMPLES.DAT buffer (STE_SND_BASE = KO2_STE_BASE+$10)!
+        move.l  KO2_STE_BASE+$10.l,d0
+        beq.s   .skip_asnd
+        movea.l d0,a1
+        lea     amigasnd_fname(pc),a0
+        move.l  #$5a00,d0
+        bsr.w   load_hd_file
+        move.l  d0,KO2_STE_BASE+8.l
+        tst.l   d0
+        bgt.s   .skip_asnd
+        clr.l   KO2_STE_BASE+$10.l      ; missing AMIGASND.BIN -> silent fallback
+.skip_asnd:
         jsr     $006942.w               ; PP PRD mode restored
         pea     .swap_to_ko2_hnd(pc)
         move.w  #$26,-(sp)
@@ -390,6 +399,13 @@ ko2_bridge_match:
         move.l  #$000068c8,$84.w
         rts
 .skip_ste_pit:
+        ; Deselect floppy drives A & B (PSG reg 14 bits 1..2 = 1 via XBIOS Ongibit)
+        ; so the floppy motor stops cleanly during the match and KO2's $0202ac
+        ; Giaccess(0,14) motor-off poll never hangs when booting from floppy!
+        move.w  #$0006,-(sp)
+        move.w  #$1e,-(sp)              ; XBIOS #30 Ongibit(0x06)
+        trap    #14
+        addq.l  #4,sp
 
         ; Configure Home/Away controller & kickoff direction AFTER $013450
         clr.l   -$4f62(a4)
@@ -484,28 +500,31 @@ ko2_bridge_match:
         addq.l  #6,sp
 
 .restore_pm_only:
-        ; 2. Reload PM's $018e80..$02169c FIRST (before restoring PM_CODE/PM_DATA!)
+        ; 2. Reload unmodified PM code+static data ($010000..$025900 = $15900 bytes) from PMCODE.BIN
         jsr     $006946.w               ; PP HD mode
-        lea     pm_match_fname(pc),a0
-        lea     $018e80.l,a1
-        move.l  #$881c,d0
+        lea     pm_code_fname(pc),a0
+        lea     $010000.l,a1
+        move.l  #$15900,d0
         bsr.w   load_hd_file
         jsr     $006942.w               ; restore PP PRD mode
-        ; Re-install our 6-byte live match hook at $018ebe
-        move.w  #$4ef9,$018ebe.l
-        move.l  #ko2_bridge_match,$018ec0.l
+        move.w  #$0006,-(sp)
+        move.w  #$1e,-(sp)              ; XBIOS #30 Ongibit(0x06) - stop floppy motor cleanly
+        trap    #14
+        addq.l  #4,sp
+        ; Re-apply all micro_opt + league92 + ko2_bridge hooks cleanly!
+        bsr.w   reapply_pm_hooks
 
-        ; 3. Restore PM management code ($010000..$018e80) & data+bss ($02169c..$02a000)
-        lea     PM_CODE_SAVE.l,a0
-        lea     $010000.l,a1
-        move.w  #($8e80/4-1),d0
-.rs_c:  move.l  (a0)+,(a1)+
-        dbra    d0,.rs_c
-        lea     PM_DATA_SAVE.l,a0
-        lea     $02169c.l,a1
-        move.w  #($8964/4-1),d0
-.rs_d:  move.l  (a0)+,(a1)+
-        dbra    d0,.rs_d
+        ; 3. Restore PM's two live mutable data chunks ($0219c0..$022100 & $025900..$029700)
+        lea     PM_DATA1_SAVE.l,a0
+        lea     $0219c0.l,a1
+        move.w  #($740/4-1),d0
+.rs_d1: move.l  (a0)+,(a1)+
+        dbra    d0,.rs_d1
+        lea     PM_DATA2_SAVE.l,a0
+        lea     $025900.l,a1
+        move.w  #($3e00/4-1),d0
+.rs_d2: move.l  (a0)+,(a1)+
+        dbra    d0,.rs_d2
 
         movea.l BR_PM_A4.l,a4
 
@@ -710,7 +729,26 @@ ko2_files_alloc:
         jmp     $014c96.l
 
 ko2_replay_alloc:
+        ; Check if full 24 KB KO2_REPLAY_BUF ($0bb900..$0c1914) fits below resident HDDRIVER/TOS ($69a0)!
+        ; On 1MB TOS 1.04/1.62 + HDDRIVER: BR_TOS_84 >= $0cd050 (HDDRIVER >= $0c4000 -> 10 KB margin!).
+        ; On 1MB TOS 2.06 + HDDRIVER: BR_TOS_84 = $0c6d50 (HDDRIVER @ $0bdde4) -> shrink ring to 6 KB ($1800 -> $0bd100)!
         move.l  #KO2_REPLAY_BUF,-$2b8a(a4)
+        cmpi.l  #$0cb000,BR_TOS_84.l
+        bhs.s   .rep_full
+        ; Shrink KO2 replay ring from $6000 (24 KB) -> $1800 (6 KB, $0bb900..$0bd100 < $0bdde4!)
+        move.w  #$0bff,$01568c.l        ; clear 3,072 words ($1800 bytes) instead of $2fff words
+        move.w  #$1800,$01567e.l
+        move.w  #$1800,$015736.l
+        move.w  #$1800,$01a322.l
+        move.w  #$1800,$01a36c.l
+        move.w  #$1800,$01b270.l
+        move.w  #$1800,$01b294.l
+        move.w  #$1800,$01b2ba.l
+        move.w  #$1800,$01b2e0.l
+        move.w  #$1800,$01b4f4.l
+        move.w  #$1800,$01f9d6.l
+        move.w  #$1800,$01fa6c.l
+.rep_full:
         jmp     $015664.l
 
 kit_palette_tbl:
@@ -726,6 +764,6 @@ amigasnd_fname:
         dc.b    "AMIGASND.BIN",0
 amigapit_fname:
         dc.b    "AMIGAP0.BIN",0
-pm_match_fname:
-        dc.b    "PMMATCH.BIN",0
+pm_code_fname:
+        dc.b    "PMCODE.BIN",0
         even

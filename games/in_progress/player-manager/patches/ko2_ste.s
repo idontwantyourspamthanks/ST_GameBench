@@ -300,28 +300,16 @@ ste_reset_bufs:
 ; Audio: ste_load_samples / ste_play_sound / ste_play_sound_hi / ste_stop_sound
 ; ---------------------------------------------------------------------------
 ste_load_samples:
-        movem.l d0/a0,-(sp)
-        move.l  STE_SND_SIZE(pc),d0
-        ble.s   .ls_none
+        movem.l d0,-(sp)
         move.l  a5,d0
         addq.l  #1,d0
         and.l   #$fffffffe,d0
         movea.l d0,a5
         move.l  a5,-$1452(a4)
-        move.l  a5,STE_SND_BASE
-        lea     STE_SND_STG.l,a0
-        move.l  STE_SND_SIZE(pc),d0
-        addq.l  #3,d0
-        lsr.l   #2,d0
-        subq.w  #1,d0
-.cp_s:  move.l  (a0)+,(a5)+
-        dbra    d0,.cp_s
-        bra.s   .ls_done
-.ls_none:
-        clr.l   STE_SND_BASE
-.ls_done:
+        move.l  a5,STE_SND_BASE         ; ko2_bridge.s loads AMIGASND.BIN directly here!
+        adda.l  #$5a00,a5               ; reserve 23,040B inside KO2's $1c138 Malloc block (no staging RAM!)
         clr.w   -$142a(a4)
-        movem.l (sp)+,d0/a0
+        movem.l (sp)+,d0
         rts
 
 ste_play_sound:
