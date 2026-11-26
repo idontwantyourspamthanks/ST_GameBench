@@ -223,6 +223,8 @@ ko2_bridge_match:
         move.w  #$600a,$010a36.l        ; bra.s $010a42 (skip Malloc + beq $1189a)
         ; Skip KO2's $100000 dummy floppy spin-up delay at $01aaee (instant KRD load!)
         move.l  #1,$01aaf0.l
+        ; Disable KO2's standalone Esc match-abort key ($01b64c: bra.w $1b75e -> bra.w $1b556)!
+        move.l  #$6000ff08,$01b64c.l
 
         ; Save Kbdvbase() mousevec/joyvec BEFORE KO2's $01fd92 installs its own!
         move.w  #$22,-(sp)              ; XBIOS Kbdvbase()

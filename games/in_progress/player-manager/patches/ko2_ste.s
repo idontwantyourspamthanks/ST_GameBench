@@ -363,6 +363,8 @@ ste_vbl_irq:
         movem.l d0-d2/a0-a1,-(sp)
         bclr    #7,BLT_LINE.w           ; pause Blitter briefly so VBL setup finishes at line -49!
         sne     d2
+        tst.l   $0231c8.l               ; KO2 -$52e2(a4): KO2 VBL active? (0 = Half-Time/Full-Time/Exit!)
+        beq.w   .vt_stats_mark
         tst.w   $02356a.l               ; KO2 -$4f40(a4): Half-Time/Full-Time/Stats on $078000?
         bne.w   .vt_stats_mark
 
