@@ -6,7 +6,14 @@ Changes vs the original HAGA release:
   whatever the CPU speed (Mega STE 16 MHz, TT, Falcon, accelerators).
 - The 3D view is drawn between those steps, so motion is smooth when the
   machine can draw faster than 5 frames per second.
-- About 11-15% faster 3D display on a stock 8 MHz ST/STE, pixel-identical.
+- About 11-15% faster 3D display on a stock 8 MHz ST/STE, pixel-identical
+  (including single-pass solid polygon fill and once-per-polygon checkerboard
+  dither in v1.3).
+- Detail mode (new in v1.3; press D in 3D view to cycle HIGH / MEDIUM / LOW):
+  * HIGH (default): full 8-ring draw distance, full dithered shading, exact DDA.
+  * MEDIUM: 6-ring draw distance + fast reciprocal edge walker (~+17-23% FPS).
+  * LOW: 5-ring draw distance + flat non-dithered single-pass shading + fast
+    reciprocal edge walker (~+47-52% FPS on an 8 MHz STE).
 - Standing still, the 3D view is only redrawn when something in it changes
   (identical picture; up to about 5x faster while standing).
 - Direct controls: the mouse turns only while it moves; joystick/keyboard

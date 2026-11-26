@@ -1,6 +1,6 @@
 ; name: mw2_credit
 ; default: yes
-; version: 1.6.2
+; version: 1.7
 ; site: $1f5f0
 ; orig: 3d7c00a0000e
 ; phase: boot

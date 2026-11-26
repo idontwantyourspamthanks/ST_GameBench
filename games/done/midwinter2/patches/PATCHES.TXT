@@ -9,7 +9,14 @@ Changes vs the original HAGA release:
   can manage, at a pose extrapolated from the last step (no game logic runs in the
   extra frames; positions at each step are identical to the original game's).
 - About 20% faster 3D display on a stock 8 MHz ST/STE (18-23% in tests),
-  pixel-identical: less wasted work on hidden terrain and cockpit overdraw.
+  pixel-identical: less wasted work on hidden terrain, cockpit overdraw,
+  HUD radar rotation (v1.7) and trivial edge clipping (v1.7).
+- Detail mode (new in v1.7; press D in 3D view to cycle HIGH / MEDIUM / LOW;
+  cockpit stays intact in all modes):
+  * HIGH (default): full draw distance ($A90), all objects, full dithering.
+  * MEDIUM: trimmed far fog band ($900) + distant scenery object cull (~+10% FPS).
+  * LOW: shorter draw distance ($790) + tighter scenery object cull + flat
+    non-dithered terrain shading (~+20% FPS on an 8 MHz STE).
 - Direct controls: the mouse turns only while it moves; joystick/keyboard
   turn at a constant rate while held and stop on release.
 - No grey fading while loading.
