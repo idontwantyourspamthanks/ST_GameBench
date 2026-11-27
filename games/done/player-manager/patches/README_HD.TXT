@@ -10,8 +10,14 @@ What's New in v1.1 (Atari STE Amiga Visuals & Audio):
   * All 4 Amiga tiled pitches (Normal, Wet, Soggy, Artificial) rendered across
     the full 320x200 visible screen with STE 12-bit RGB palettes, three 448-line
     linear Ring Buffers, lockstep VBlank STE Hardware Fine Scrolling (VBASE +
-    LINEWID + HSCROLL), Blitter-accelerated HUD, pre-baked radar, and trimmed
-    CPU/Blitter sprites for locked 50 FPS gameplay with zero flicker or judder.
+    LINEWID + HSCROLL), Blitter-accelerated HUD, 160 KB 5-scale pre-baked radar
+    (cleanly suppressed during walk-out until arrival at the centre circle),
+    160 KB 640-sprite pre-trimmed/pre-masked 4bpp cache, and 30 KB 32-bit pitch
+    tile pointer map for locked 50 FPS gameplay with zero flicker or judder.
+  * Automatic 50 Hz PAL Match Switch & Restore: colour monitors (including 60 Hz
+    NTSC boots) automatically switch to 50 Hz PAL on match entry for exact Kick
+    Off 2 game speed and full VBlank headroom, then restore your original sync
+    mode upon returning to Player Manager.
   * Dual-playfield 16-colour split (0..7 Amiga pitch, 8..15 KO2 club kits &
     HUD), transparent vector radar (X resize, D toggle), active player black
     underline, and transparent drop-shadowed bottom HUD (kit-matched player

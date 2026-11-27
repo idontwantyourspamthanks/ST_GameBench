@@ -58,10 +58,8 @@ init_league92:
         move.w  #$4e71,$0101b4.l
         move.w  #$4e71,$0101b6.l
 
-        ; 4. Player pool Malloc ($f618 -> $1aa90) & clear/scan ($5db -> 2599)
+        ; 4. Player pool Malloc ($f618 -> $1aa90) & scan limit ($5db -> 2599)
         move.l  #PLAYER_BYTES,$0102f0.l
-        move.w  #$4ef9,$014c36.l
-        move.l  #clear_player_pool_2600,$014c38.l
         move.w  #(PLAYER_COUNT-1),$014c64.l
 
         ; 5. All 44-team loops ($2c -> $5c, $2b -> $5b)
@@ -82,19 +80,7 @@ init_league92:
         move.b  #$64,$0108a3.l          ; move.b #$64,$7(a2)
         move.b  #$60,$010b95.l          ; cmpi.b #$60,$7(a1)
 
-        ; 7. Redirect 3 squad_counts table refs (a4-$77f4) to squad_counts_92
-        move.w  #$4ef9,$010b78.l
-        move.l  #squad_cnt_10b78,$010b7a.l
-        move.w  #$4ef9,$016bae.l
-        move.l  #squad_cnt_16bae,$016bb0.l
-        move.w  #$4ef9,$016d30.l
-        move.l  #squad_cnt_16d30,$016d32.l
-
-        ; 8. Berger round-robin fixture generator ($013560)
-        move.w  #$4ef9,$013560.l
-        move.l  #berger_fixture_92,$013562.l
-
-        ; 9. Season week thresholds: 22->46 ($16->$2e), 18->38 ($12->$26), 11->23 ($0b->$17), 10->20 ($0a->$14)
+        ; 7. Season week thresholds: 22->46 ($16->$2e), 18->38 ($12->$26), 11->23 ($0b->$17), 10->20 ($0a->$14)
         move.w  #46,$0112e4.l
         move.w  #46,$0117ac.l
         move.w  #46,$01181e.l
@@ -105,10 +91,10 @@ init_league92:
         move.w  #20,$0123a6.l
         move.w  #20,$016fa4.l
 
-        ; 10. Promotion / Relegation: 2 up/down -> 3 up/down ($014a96: moveq #1,d6 -> moveq #2,d6)
+        ; 8. Promotion / Relegation: 2 up/down -> 3 up/down ($014a96: moveq #1,d6 -> moveq #2,d6)
         move.w  #$7c02,$014a96.l
 
-        ; 11. Save / Load buffer sizes ($1130 -> $23f0, $f618 -> $1aa90)
+        ; 9. Save / Load buffer sizes ($1130 -> $23f0, $f618 -> $1aa90)
         move.l  #TEAM_BYTES,$014630.l
         move.l  #TEAM_BYTES,$01464a.l
         move.l  #PLAYER_BYTES,$01465a.l
@@ -118,39 +104,41 @@ init_league92:
         move.l  #PLAYER_BYTES,$0146ae.l
         move.l  #PLAYER_BYTES,$0146c8.l
 
-        ; 12. Milestone 1D: Scrolling / Paging UI hooks
-        ;     - League Names screen ($012fd8)
-        move.w  #$4ef9,$012fd8.l
-        move.l  #league_names_92,$012fda.l
-        ;     - Division Tables screen ($0137c2)
-        move.w  #$4ef9,$0137c2.l
-        move.l  #div_tables_92,$0137c4.l
-        ;     - Weekly Fixtures ($0133ac) & Results ($013460) paging
-        move.w  #$4ef9,$0133ac.l
-        move.l  #fixtures_paged_92,$0133ae.l
-        move.w  #$4ef9,$013460.l
-        move.l  #results_paged_92,$013462.l
-
-        ; 13. Milestone 1E: 92-team Cup schedule (weeks 6,14,22,30,38,45) & R0/R1 draws
+        ; 10. Milestone 1E: 92-team Cup schedule (weeks 6,14,22,30,38,45)
         lea     cup_weeks_92(pc),a0
         lea     $0219e9.l,a1            ; a4 - $7cb1
         moveq   #5,d0
 .cp_cw: move.b  (a0)+,(a1)+
         dbra    d0,.cp_cw
-        move.w  #$4ef9,$013b36.l
-        move.l  #cup_draw_r0_92,$013b38.l
-        move.w  #$4ef9,$013b92.l
-        move.l  #cup_draw_r1_92,$013b94.l
 
-        ; 14. Demo Game & Restart Game ($0105b0): load 92-team FILES/DEMO92.DAT from HD
-        move.w  #$4ef9,$0105b0.l
-        move.l  #demo_load_92,$0105b2.l
+        ; 11. Install all 12 6-byte jmp hooks via compact table
+        lea     l92_jmp_tbl(pc),a0
+        moveq   #11,d0
+.l92_jh:
+        movea.l (a0)+,a1
+        move.w  #$4ef9,(a1)+
+        move.l  (a0)+,(a1)
+        dbra    d0,.l92_jh
 
         moveq   #0,d0
         rts
 .l92_fail:
         moveq   #1,d0
         rts
+
+l92_jmp_tbl:
+        dc.l    $014c36,clear_player_pool_2600
+        dc.l    $010b78,squad_cnt_10b78
+        dc.l    $016bae,squad_cnt_16bae
+        dc.l    $016d30,squad_cnt_16d30
+        dc.l    $013560,berger_fixture_92
+        dc.l    $012fd8,league_names_92
+        dc.l    $0137c2,div_tables_92
+        dc.l    $0133ac,fixtures_paged_92
+        dc.l    $013460,results_paged_92
+        dc.l    $013b36,cup_draw_r0_92
+        dc.l    $013b92,cup_draw_r1_92
+        dc.l    $0105b0,demo_load_92
 
 ; ---------------------------------------------------------------------------
 ; Load team d7 (0..91) name from 20-byte fixed-stride table into (a5)

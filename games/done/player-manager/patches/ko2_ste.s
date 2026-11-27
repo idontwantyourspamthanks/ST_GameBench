@@ -236,9 +236,9 @@ ste_install_hooks:
         trap    #14
         addq.l  #6,sp
 
-        ; Apply all 13 6-byte jmp hooks into KO2ENG.BIN via compact table
+        ; Apply all 16 6-byte jmp hooks into KO2ENG.BIN via compact table
         lea     ste_hook_tbl(pc),a0
-        moveq   #12,d0
+        moveq   #15,d0
 .ih_lp: movea.l (a0)+,a1
         move.w  #$4ef9,(a1)+
         move.l  (a0)+,(a1)
@@ -269,6 +269,9 @@ ste_hook_tbl:
         dc.l    $018d06,ste_vbl_skip
         dc.l    $018e0a,ste_vbl_end
         dc.l    $01c1d0,ste_pitch_update
+        dc.l    $01a32c,ste_draw_id     ; intercept spr_id (0..639) -> 2MB+ 256B pre-baked cache!
+        dc.l    $01a3a0,ste_draw_id
+        dc.l    $01a3f6,ste_draw_id
         dc.l    $01a426,ste_draw_spr_core
         dc.l    $01a83e,ste_erase_spr
         dc.l    $01a376,$01a39c         ; bypass KO2 Classic ST Timer B raster wait 1
@@ -333,7 +336,7 @@ ste_inst_trap8:
         cmpi.l  #$178000,$608.w         ; HAGA >= 2 MB ($1f8000/$3f8000)?
         blt.w   .it8_1m
 .it8_probe:
-        ; Belt-and-suspenders Bus-Error + anti-alias probe at $136800 (end of 160 KB 5-scale radar arena!)
+        ; Belt-and-suspenders Bus-Error + anti-alias probe at $166000 (end of 600 KB 2MB+ STE arena!)
         move.w  sr,d3
         move.w  #$2700,sr
         move.l  $8.w,a2
@@ -341,21 +344,21 @@ ste_inst_trap8:
         lea     .it8_pfail(pc),a0
         move.l  a0,$8.w
         moveq   #0,d4
-        move.l  $136800.l,d5
-        move.l  $036800.l,d6
-        move.l  #$5a3c96e1,$136800.l
+        move.l  $166000.l,d5
+        move.l  $066000.l,d6
+        move.l  #$5a3c96e1,$166000.l
         nop
-        cmpi.l  #$5a3c96e1,$136800.l
+        cmpi.l  #$5a3c96e1,$166000.l
         bne.s   .it8_prest
-        cmp.l   $036800.l,d6            ; must not alias low RAM!
+        cmp.l   $066000.l,d6            ; must not alias low RAM!
         bne.s   .it8_prest
-        move.l  #$a5c3691e,$136800.l
+        move.l  #$a5c3691e,$166000.l
         nop
-        cmpi.l  #$a5c3691e,$136800.l
+        cmpi.l  #$a5c3691e,$166000.l
         bne.s   .it8_prest
         moveq   #1,d4
 .it8_prest:
-        move.l  d5,$136800.l
+        move.l  d5,$166000.l
         bra.s   .it8_pdone
 .it8_pfail:
         moveq   #0,d4
@@ -450,7 +453,8 @@ ste_load_pitch:
         trap    #8
         tst.w   STE_BIG_RAM
         beq.s   .lp_set_ok
-        bsr.w   ste_prebake_all_rad     ; pre-bake all 5 radar scales (160 KB @ $10e800..$1367ff)!
+        bsr.w   ste_prebake_all_rad     ; pre-bake 160 KB 5-scale radar ($10e800..$1367ff)
+        bsr.w   ste_prebake_assets      ; pre-bake 160 KB 640-sprite cache ($136800) + 30 KB tilemap32 ($15e800)!
 .lp_set_ok:
         move.w  #1,STE_PITCH_OK
         rts
@@ -847,6 +851,26 @@ ste_vbl_end:
 ; (a3) = 1 on draw / 0 on erase; ste_bk_draw_spr also purges any slot whose
 ; (a3) was cleared directly by KO2 ($01a342/$0162b2/$01a826/kickoff reset)!
 ; ---------------------------------------------------------------------------
+ste_draw_id:
+        ; Intercepts $01a32c/$01a3a0/$01a3f6 with d3.w = spr_id (0..639)
+        tst.w   STE_BIG_RAM
+        beq.s   .di_1m
+        cmpi.w  #640,d3
+        bcc.s   .di_1m
+        moveq   #0,d2
+        move.w  d3,d2
+        lsl.l   #8,d2                   ; * 256 (ZERO mulu!)
+        lea     $136800.l,a1            ; pre-baked 256B sprite slot
+        adda.l  d2,a1
+        bra.s   ste_draw_spr_core
+.di_1m:
+        ext.l   d3
+        add.w   d3,d3
+        movea.l -$11f0(a4),a0
+        move.w  0(a0,d3.w),d3
+        movea.l -$1204(a4),a1
+        adda.l  d3,a1
+
 ste_draw_spr_core:
         ; Input: d0.w = x_scr, d1.w = y_scr, a1 = KO2 3bpp src, a3 = KO2 save record
         ; Caller pushed movem.l d0-d2/d4/d7/a0-a1/a3,-(sp)
@@ -1653,12 +1677,12 @@ ste_bk_erase_rad:
         move.l  8(a0),4(a1)
         dbra    d1,.ber_dl
 .ber_nod:
-        ; 2. Restore Backbuffer's old radar lines (2MB+ flat disjoint list vs 1MB reverse LIFO)
+        ; 2. Restore Backbuffer's old radar lines (2MB+ flat disjoint list)
         move.w  DB_RLCNT(a6),d0
-        beq.w   .ber_ret
+        beq.s   .ber_ret
         clr.w   DB_RLCNT(a6)
         tst.w   STE_BIG_RAM
-        beq.s   .ber_1m
+        beq.s   .ber_ret
         movea.l DB_RLR(a6),a0
         movea.l DB_RPOOL(a6),a2
         move.w  d0,d1
@@ -1688,47 +1712,6 @@ ste_bk_erase_rad:
         move.l  (a2)+,(a1)+
         move.l  (a2)+,(a1)
         dbra    d0,.ber_flp
-        bra.s   .ber_ret
-.ber_1m:
-        move.w  d0,d1
-        mulu.w  #12,d0
-        movea.l DB_RLR(a6),a0
-        adda.l  d0,a0
-        move.w  #(4*RING_STRIDE-4),d3
-        subq.w  #1,d1
-.ber_ll:
-        lea     -12(a0),a0
-        movea.l (a0),a1                 ; dst
-        movea.l 4(a0),a2                ; sav pool
-        move.w  8(a0),d2                ; count >= 1
-        tst.w   10(a0)                  ; 0=horiz, !=0=vert (stride 672)
-        bne.s   .ber_vl0
-        subq.w  #1,d2
-.ber_hl:
-        move.l  (a2)+,(a1)+
-        move.l  (a2)+,(a1)+
-        dbra    d2,.ber_hl
-        dbra    d1,.ber_ll
-        bra.s   .ber_ret
-.ber_vl0:
-        lsr.w   #1,d2
-        bcc.s   .ber_vle
-        move.l  (a2)+,(a1)+
-        move.l  (a2)+,(a1)
-        adda.w  d3,a1
-.ber_vle:
-        subq.w  #1,d2
-        blt.s   .ber_vln
-.ber_vl:
-        move.l  (a2)+,(a1)+
-        move.l  (a2)+,(a1)
-        adda.w  d3,a1
-        move.l  (a2)+,(a1)+
-        move.l  (a2)+,(a1)
-        adda.w  d3,a1
-        dbra    d2,.ber_vl
-.ber_vln:
-        dbra    d1,.ber_ll
 .ber_ret:
         movem.l (sp)+,d0-d3/a0-a2
         rts
@@ -1766,10 +1749,10 @@ ste_bk_draw_rad:
         movem.l d0-d7/a0-a3/a5,-(sp)
         movea.l DB_RLR(a6),a2           ; line restore record cursor
         movea.l DB_RPOOL(a6),a5         ; radar save pool cursor (2,048B safe)
-        tst.w   STE_BIG_RAM
-        beq.w   .br_1m_chk
-        ; === 2 MB+ STE: O(1) lookup into pre-baked 160 KB 5-scale table ($10e800 + idx*$8000 + hscr*$800) ===
         moveq   #0,d7
+        tst.w   STE_BIG_RAM
+        beq.w   .br_dots
+        ; === 2 MB+ STE: O(1) lookup into pre-baked 160 KB 5-scale table ($10e800 + idx*$8000 + hscr*$800) ===
         lsr.w   #2,d6
         subq.w  #2,d6                   ; 8,12,16,20,24 -> 0,1,2,3,4
         cmpi.w  #5,d6
@@ -1806,7 +1789,7 @@ ste_bk_draw_rad:
 .br_f4: move.w  d7,d6
         lsr.w   #2,d6
         subq.w  #1,d6
-        blt.w   .br_dots
+        blt.s   .br_dots
 .br_f0: adda.w  (a3)+,a1
         move.w  (a3)+,d4
         move.l  (a3)+,d5
@@ -1844,41 +1827,6 @@ ste_bk_draw_rad:
         and.l   d5,2(a1)
         or.w    d4,6(a1)
         dbra    d6,.br_f0
-        bra.w   .br_dots
-
-.br_1m_chk:
-        cmp.w   STE_RAD_C_SC(pc),d6
-        beq.s   .br_1m_go
-        move.w  d6,STE_RAD_C_SC
-        move.w  -$0e0e(a4),d4
-        move.w  -$0e0c(a4),d5
-        bsr.w   ste_build_rad_cache
-.br_1m_go:
-        lea     STE_RAD_CACHE.l,a3
-        move.l  a5,d0
-        addi.l  #2040,d0
-        move.l  d0,STE_BK_REND
-        moveq   #0,d7                   ; line record count
-
-        ; Horizontal radar lines
-        move.w  STE_RAD_C_HCNT(pc),d6
-        beq.s   .br_vs
-        subq.w  #1,d6
-.br_hl: move.w  (a3)+,d0
-        move.w  (a3)+,d1
-        move.w  (a3)+,d2
-        bsr.s   .br_hline
-        dbra    d6,.br_hl
-
-        ; Vertical radar lines (ring-wrap aware!)
-.br_vs: move.w  STE_RAD_C_VCNT(pc),d6
-        beq.s   .br_dots
-        subq.w  #1,d6
-.br_vl: move.w  (a3)+,d0
-        move.w  (a3)+,d1
-        move.w  (a3)+,d2
-        bsr.w   .br_vline
-        dbra    d6,.br_vl
 
 .br_dots:
         move.w  d7,DB_RLCNT(a6)
@@ -1887,175 +1835,82 @@ ste_bk_draw_rad:
 .bdr_done_ret:
         rts
 
-; Direct CPU Horizontal radar line: d0=sx1, d1=sy, d2=sx2 -> save+draw black col 9
-.br_hline:
-        cmpi.w  #PITCH_VIS_H,d1
-        bcc.w   .bh_ret
-        cmpi.w  #28,d7
-        bcc.w   .bh_ret
-        add.w   STE_BK_HSCR(pc),d0
-        add.w   STE_BK_HSCR(pc),d2
-        move.w  d0,d3
-        andi.w  #15,d3
-        move.w  #$ffff,d4
-        lsr.w   d3,d4                   ; m0 (left endmask)
-        move.w  d2,d3
-        andi.w  #15,d3
-        moveq   #15,d5
-        sub.w   d3,d5
-        move.w  #$ffff,d3
-        lsl.w   d5,d3                   ; m2 (right endmask)
-        lsr.w   #4,d0
-        lsr.w   #4,d2
-        sub.w   d0,d2
-        blt.s   .bh_ret
-        addq.w  #1,d2                   ; word_cols (>= 1)
-        move.w  d2,d5
-        lsl.w   #3,d5
-        lea     0(a5,d5.w),a0
-        cmpa.l  STE_BK_REND(pc),a0
-        bhi.s   .bh_ret
-        lsl.w   #3,d0
-        ext.l   d0                      ; rel_x_byte_off
-        bsr.w   ste_sy_ptr              ; a0 = dst on ring
-        move.l  a0,(a2)+                ; RLR +0: dst
-        move.l  a5,(a2)+                ; RLR +4: sav
-        move.w  d2,(a2)+                ; RLR +8: cnt
-        clr.w   (a2)+                   ; RLR +10: stride_flag = 0 (horiz)
-        addq.w  #1,d7
-        cmpi.w  #1,d2
-        bne.s   .bh_multi
-        and.w   d3,d4                   ; single word: m0 & m2
-        bra.s   .bh_last
-.bh_multi:
-        ; First word with m0 = d4
-        move.w  d4,d0
-        not.w   d0
-        move.l  (a0),(a5)+
-        move.l  4(a0),(a5)+
-        or.w    d4,(a0)+
-        and.w   d0,(a0)+
-        and.w   d0,(a0)+
-        or.w    d4,(a0)+
-        subq.w  #2,d2
-        ble.s   .bh_tail
-        subq.w  #1,d2
-.bh_mid:
-        move.l  (a0),(a5)+
-        move.l  4(a0),(a5)+
-        move.l  #$ffff0000,(a0)+
-        move.l  #$0000ffff,(a0)+
-        dbra    d2,.bh_mid
-.bh_tail:
-        move.w  d3,d4                   ; last word uses m2
-.bh_last:
-        move.w  d4,d0
-        not.w   d0
-        move.l  (a0),(a5)+
-        move.l  4(a0),(a5)+
-        or.w    d4,(a0)+
-        and.w   d0,(a0)+
-        and.w   d0,(a0)+
-        or.w    d4,(a0)
-.bh_ret:
-        rts
+; Pre-bake all 640 KO2 sprites into 256B trimmed 4bpp slots ($136800..$15e7ff = 160 KB)
+; + pre-expand 80x96 tilemap into 32-bit tile source pointers ($15e800..$165fff = 30 KB)!
+ste_prebake_assets:
+        movem.l d0-d7/a0-a6,-(sp)
+        movea.l (KO2_A4-$11f0).l,a4     ; 640-word sprite offset table
+        movea.l (KO2_A4-$1204).l,a5     ; KO2 3bpp sprite sheet base
+        lea     $136800.l,a6            ; STE_SPR_CACHE (640 x 256B)
+        move.w  #639,d7
+.pbs_sp:
+        moveq   #0,d0
+        move.w  (a4)+,d0                ; unsigned offset 0..$effe
+        lea     0(a5,d0.l),a1
+        moveq   #0,d1                   ; y_skip (0..16)
+        moveq   #15,d2
+.pbs_tt:
+        move.w  (a1),d0
+        or.w    $28(a1),d0
+        or.w    $50(a1),d0
+        bne.s   .pbs_tf
+        addq.w  #1,d1
+        lea     $78(a1),a1
+        dbra    d2,.pbs_tt
+        clr.l   (a6)                    ; empty frame: y_skip=0, trimmed_h=0
+        clr.l   4(a6)
+        bra.s   .pbs_nx
+.pbs_tf:
+        move.w  d1,(a6)                 ; +0: y_skip.w
+        lea     8(a6),a0                ; +8: contiguous [P0, P1, P2, MASK] rows
+        moveq   #0,d5                   ; flags: bit0=P0, bit1=P1, bit2=P2
+        moveq   #0,d6                   ; row_idx (1..16)
+        moveq   #0,d3                   ; trimmed_h (1..16)
+.pbs_rw:
+        addq.w  #1,d6
+        move.w  (a1),d0
+        beq.s   .pbs_p1
+        bset    #0,d5
+.pbs_p1:
+        move.w  d0,(a0)+
+        move.w  $28(a1),d4
+        beq.s   .pbs_p2
+        bset    #1,d5
+.pbs_p2:
+        move.w  d4,(a0)+
+        or.w    d4,d0
+        move.w  $50(a1),d4
+        beq.s   .pbs_pm
+        bset    #2,d5
+.pbs_pm:
+        move.w  d4,(a0)+
+        or.w    d4,d0                   ; MASK = P0 | P1 | P2
+        beq.s   .pbs_w3
+        move.w  d6,d3
+.pbs_w3:
+        move.w  d0,(a0)+
+        lea     $78(a1),a1
+        dbra    d2,.pbs_rw
+        move.w  d3,2(a6)                ; +2: trimmed_h.w (1..16)
+        move.w  d5,4(a6)                ; +4: flags.w
+        clr.w   6(a6)
+.pbs_nx:
+        lea     256(a6),a6
+        dbra    d7,.pbs_sp
 
-; Direct CPU Vertical radar line (Y_STEP=4, ring-wrap splitting!): d0=sx, d1=sy1, d2=sy2
-.br_vline:
-        cmpi.w  #320,d0
-        bcc.s   .bv_ret
-        cmpi.w  #PITCH_VIS_H,d1
-        bcc.s   .bv_ret
-        cmpi.w  #PITCH_VIS_H,d2
-        bcs.s   .bv_y2
-        move.w  #(PITCH_VIS_H-1),d2
-.bv_y2: sub.w   d1,d2
-        blt.s   .bv_ret
-        addq.w  #4,d2
-        lsr.w   #2,d2                   ; d2 = total dots (Y_STEP=4)
-        add.w   STE_BK_HSCR(pc),d0
-        move.w  d0,d3
-        andi.w  #15,d3
-        moveq   #15,d5
-        sub.w   d3,d5
-        moveq   #0,d4
-        bset    d5,d4                   ; d4 = single-bit mask
-        lsr.w   #4,d0
-        lsl.w   #3,d0
-        ext.l   d0                      ; d0.l = rel_x_byte_off
-        tst.w   STE_BIG_RAM
-        bne.s   .bv_big
-        add.w   STE_BK_Y0(pc),d1
-        cmpi.w  #RING_H,d1
-        blt.s   .bv_yr1
-        subi.w  #RING_H,d1
-.bv_yr1:
-        move.w  d2,d3
-        subq.w  #1,d3
-        lsl.w   #2,d3
-        add.w   d1,d3
-        cmpi.w  #RING_H,d3
-        blt.s   .bv_1m_one
-        move.w  #(RING_H-1),d3
-        sub.w   d1,d3
-        lsr.w   #2,d3
-        addq.w  #1,d3                   ; cnt1
-        move.w  d2,d5
-        sub.w   d3,d5                   ; cnt2
-        move.w  d5,-(sp)
-        move.w  d3,d5
-        lsl.w   #2,d5
-        add.w   d1,d5
-        subi.w  #RING_H,d5              ; yr2
-        move.w  d5,-(sp)
-        move.w  d3,d2
-        bsr.s   .bv_1m_emit
-        move.w  (sp)+,d1
-        move.w  (sp)+,d2
-        ble.s   .bv_ret
-.bv_1m_one:
-        bsr.s   .bv_1m_emit
-.bv_ret:
-        rts
-
-.bv_big:
-        bsr.w   ste_sy_ptr              ; a0 = DB_START + sy1*168 + rel_x
-        bra.s   .bv_emit_ptr
-.bv_1m_emit:
-        add.w   d1,d1
-        lea     STE_Y168_TBL.l,a0
-        move.w  0(a0,d1.w),d1
-        andi.l  #$ffff,d1
-        add.l   d0,d1
-        movea.l DB_WRAP(a6),a0
-        adda.l  d1,a0
-.bv_emit_ptr:
-        cmpi.w  #28,d7
-        bcc.s   .be_ret
-        move.l  STE_BK_REND(pc),d5
-        sub.l   a5,d5
-        lsr.l   #3,d5
-        ble.s   .be_ret
-        cmp.w   d5,d2
-        ble.s   .be_ok
-        move.w  d5,d2
-.be_ok: move.l  a0,(a2)+                ; RLR +0: dst
-        move.l  a5,(a2)+                ; RLR +4: sav
-        move.w  d2,(a2)+                ; RLR +8: cnt
-        move.w  #1,(a2)+                ; RLR +10: stride_flag = 1 (vert 4 lines)
-        addq.w  #1,d7
-        move.w  d4,d5
-        not.w   d5                      ; d5 = ~mask
-        subq.w  #1,d2
-.be_lp: move.l  (a0),(a5)+
-        move.l  4(a0),(a5)+
-        or.w    d4,(a0)+
-        and.w   d5,(a0)+
-        and.w   d5,(a0)+
-        or.w    d4,(a0)
-        lea     (4*RING_STRIDE-6)(a0),a0
-        dbra    d2,.be_lp
-.be_ret:
+        ; Pre-expand 80x96 byte tilemap -> 7,680 32-bit tile addresses ($15e800..$165fff)
+        lea     STE_PIT_MAP.l,a0
+        lea     STE_PIT_TILES.l,a1
+        lea     $15e800.l,a2
+        move.w  #7679,d1
+.pbm_lp:
+        moveq   #0,d0
+        move.b  (a0)+,d0
+        mulu.w  #96,d0
+        lea     0(a1,d0.l),a3
+        move.l  a3,(a2)+
+        dbra    d1,.pbm_lp
+        movem.l (sp)+,d0-d7/a0-a6
         rts
 
 ; Pre-bake ALL 5 radar zoom scales (8, 12, 16, 20, 24 -> 5 x 32 KB = 160 KB @ $10e800..$1367ff)
@@ -2560,6 +2415,21 @@ ste_bk_draw_spr:
         blt.w   .bds_nxt
         cmpi.w  #PITCH_VIS_H,d1
         bge.w   .bds_nxt
+        tst.w   STE_BIG_RAM
+        beq.s   .bds_1m_h
+        movea.l 4(a5),a2                ; pre-baked 256B sprite slot ($136800 + spr_id*256)
+        move.w  2(a2),d3                ; pre-baked trimmed_h (0..16)
+        beq.w   .bds_nxt                ; empty frame -> cull immediately!
+        add.w   (a2),d1                 ; scr_y += pre-baked y_skip
+        cmpi.w  #PITCH_VIS_H,d1
+        bge.w   .bds_nxt
+        move.w  #PITCH_VIS_H,d4
+        sub.w   d1,d4
+        cmp.w   d3,d4
+        bge.s   .bds_hok
+        move.w  d4,d3
+        bra.s   .bds_hok
+.bds_1m_h:
         move.w  #PITCH_VIS_H,d3
         sub.w   d1,d3
         cmpi.w  #16,d3
@@ -2738,54 +2608,17 @@ ste_trap8_handler:
         subq.w  #1,d6
         tst.w   STE_BIG_RAM
         beq.w   .c3_sp
-        ; === Fast 2 MB+ STE Inline HOG Sprite Loop (CPU 1-pass mask+trim + empty plane skip!) ===
+        ; === Ultra-Fast 2 MB+ STE Pre-Baked Sprite Loop (ZERO CPU row loops; 3-blit skew==0!) ===
         lea     BLT_SRC_ADDR.w,a0
         moveq   #-$40,d7                ; $c0 = HOG
 .c3_bsp:
-        movea.l 12(a6),a1               ; KO2 3bpp sprite src
-        movea.l (a6),a4                 ; dst_top
+        movea.l 12(a6),a1               ; pre-baked 256B slot ($136800 + spr_id*256)
+        movea.l (a6),a4                 ; pre-trimmed dst_top
         moveq   #0,d4
-        move.b  8(a6),d4                ; h1 (1..16)
-        subq.w  #1,d4
-.c3b_tt:
-        move.w  (a1),d0
-        or.w    $28(a1),d0
-        or.w    $50(a1),d0
-        bne.s   .c3b_tf
-        lea     $78(a1),a1
-        lea     RING_STRIDE(a4),a4
-        dbra    d4,.c3b_tt
-        clr.b   8(a6)                   ; 100% transparent frame -> skip draw & cmd 2 restore!
-        bra.w   .c3b_nx
-.c3b_tf:
-        move.l  a4,(a6)                 ; cmd 2 restores trimmed dst_top!
-        lea     STE_MASK_BUF.l,a3
-        movea.l a1,a2
-        moveq   #0,d2                   ; any_p0
-        moveq   #0,d3                   ; any_p1
-        moveq   #0,d5                   ; any_p2
-        move.w  d4,d1
-.c3b_mb:
-        move.w  (a2),d0
-        or.w    d0,d2
-        move.w  $28(a2),d4
-        or.w    d4,d3
-        or.w    d4,d0
-        move.w  $50(a2),d4
-        or.w    d4,d5
-        or.w    d4,d0
-        move.w  d0,(a3)+
-        lea     $78(a2),a2
-        dbra    d1,.c3b_mb
-.c3b_bl:
-        tst.w   -(a3)
-        beq.s   .c3b_bl
-        addq.l  #2,a3
-        move.l  a3,d4
-        lea     STE_MASK_BUF.l,a3
-        sub.l   a3,d4
-        lsr.w   #1,d4                   ; d4 = exact trimmed height (1..16)
-        move.b  d4,8(a6)                ; cmd 2 restores trimmed height!
+        move.b  8(a6),d4                ; pre-trimmed h (1..16)
+        move.w  4(a1),d2                ; pre-baked flags: bit0=P0, bit1=P1, bit2=P2
+        addq.l  #8,a1                   ; a1 -> [P0, P1, P2, MASK] rows (stride 8B)
+        lea     6(a1),a3                ; a3 -> MASK[0] (stride 8B)
 
         ; Save-under (4 words on skew==0, 8 words on skew!=0; ENDMASK1/3=$ffff, SKEW=0!)
         moveq   #-1,d0
@@ -2801,13 +2634,29 @@ ste_trap8_handler:
         move.w  d4,20(a0)
         move.w  10(a6),d1               ; skew (0..15)
         bne.s   .c3b_s8
+        ; skew == 0: 3 blits total (4w save + 3w AND ~MASK + 4w OR [P0,P1,P2,MASK])!
         move.w  #(RING_STRIDE-6),-2(a0) ; SRC_YINC = 162 (4 words)
         move.w  #4,18(a0)               ; XCOUNT = 4
-        move.b  d7,24(a0)               ; HOG save-under (4w)
-        move.w  #1,18(a0)
-        clr.w   10(a0)
-        move.w  #RING_STRIDE,12(a0)
-        bra.s   .c3b_m
+        move.b  d7,24(a0)               ; Blit 1: HOG save-under (4w)
+        clr.w   -4(a0)                  ; SRC_XINC = 0 (repeat MASK across P0,P1,P2)
+        move.w  #8,-2(a0)               ; SRC_YINC = 8
+        move.w  #3,18(a0)               ; XCOUNT = 3
+        move.w  #(RING_STRIDE-4),12(a0) ; DST_YINC = 164
+        move.w  #$0204,22(a0)           ; ~MASK & dst
+        move.l  a3,(a0)
+        move.l  a4,14(a0)
+        move.w  d4,20(a0)
+        move.b  d7,24(a0)               ; Blit 2: clear P0,P1,P2 in one pass
+        move.w  #2,-4(a0)               ; SRC_XINC = 2
+        move.w  #2,-2(a0)               ; SRC_YINC = 2
+        move.w  #4,18(a0)               ; XCOUNT = 4
+        move.w  #(RING_STRIDE-6),12(a0) ; DST_YINC = 162
+        move.w  #$0207,22(a0)           ; src | dst
+        move.l  a1,(a0)
+        move.l  a4,14(a0)
+        move.w  d4,20(a0)
+        move.b  d7,24(a0)               ; Blit 3: OR all 4 planes in one pass
+        bra.w   .c3b_nx
 .c3b_s8:
         move.w  #(RING_STRIDE-14),-2(a0) ; SRC_YINC = 154 (8 words)
         move.w  #8,18(a0)               ; XCOUNT = 8
@@ -2817,14 +2666,13 @@ ste_trap8_handler:
         move.w  d0,4(a0)                ; ENDMASK1
         not.w   d0
         move.w  d0,8(a0)                ; ENDMASK3
+        clr.w   -4(a0)                  ; SRC_XINC = 0
+        move.w  #8,-2(a0)               ; SRC_YINC = 8 (constant across MASK & P0..P2!)
         move.w  #2,18(a0)               ; XCOUNT = 2
         move.w  #8,10(a0)               ; DST_XINC = 8
         move.w  #(RING_STRIDE-8),12(a0) ; DST_YINC = 160
         ori.b   #$40,d1
         move.b  d1,25(a0)               ; SKEW = NFSR | skew
-.c3b_m:
-        clr.w   -4(a0)                  ; SRC_XINC = 0
-        move.w  #2,-2(a0)               ; SRC_YINC = 2
         move.w  #$0204,22(a0)           ; AND ~MASK on P0, P1, P2
         move.l  a3,(a0)
         move.l  a4,14(a0)
@@ -2846,26 +2694,25 @@ ste_trap8_handler:
         move.l  a2,14(a0)
         move.w  d4,20(a0)
         move.b  d7,24(a0)
-        move.w  #$78,-2(a0)             ; SRC_YINC = $78
-        tst.w   d2
+        btst    #0,d2
         beq.s   .c3b_np0
         move.l  a1,(a0)
         move.l  a4,14(a0)
         move.w  d4,20(a0)
         move.b  d7,24(a0)
 .c3b_np0:
-        tst.w   d3
+        btst    #1,d2
         beq.s   .c3b_np1
-        lea     $28(a1),a2
+        lea     2(a1),a2
         move.l  a2,(a0)
         lea     2(a4),a2
         move.l  a2,14(a0)
         move.w  d4,20(a0)
         move.b  d7,24(a0)
 .c3b_np1:
-        tst.w   d5
+        btst    #2,d2
         beq.s   .c3b_nx
-        lea     $50(a1),a2
+        lea     4(a1),a2
         move.l  a2,(a0)
         lea     4(a4),a2
         move.l  a2,14(a0)
@@ -3289,18 +3136,19 @@ ste_trap8_handler:
         subq.w  #1,d7
         tst.w   STE_BIG_RAM
         beq.s   .c8_lp
+        suba.l  #STE_PIT_MAP,a2
+        move.l  a2,d0
+        lsl.l   #2,d0
+        lea     $15e800.l,a2            ; STE_MAP32 pre-baked 32-bit tile ptrs!
+        adda.l  d0,a2
+        lea     BLT_SRC_ADDR.w,a4
+        moveq   #16,d4
+        moveq   #-$40,d3
 .c8_blp:
-        moveq   #0,d0
-        move.b  (a2)+,d0
-        move.w  d0,d3
-        lsl.w   #6,d0
-        lsl.w   #5,d3
-        add.w   d3,d0
-        lea     0(a4,d0.w),a1
-        move.l  a1,BLT_SRC_ADDR.w
-        move.l  a3,BLT_DST_ADDR.w
-        move.w  #16,BLT_YCOUNT.w
-        move.b  #$c0,BLT_LINE.w
+        move.l  (a2)+,(a4)
+        move.l  a3,14(a4)
+        move.w  d4,20(a4)
+        move.b  d3,24(a4)
         addq.l  #8,a3
         dbra    d7,.c8_blp
         ; Mirror entire 16-scanline strip to +RING_BYTES in ONE HOG blit!
@@ -3352,19 +3200,20 @@ ste_trap8_handler:
         subq.w  #1,d7
         tst.w   STE_BIG_RAM
         beq.s   .c9_lp
+        suba.l  #STE_PIT_MAP,a2
+        move.l  a2,d0
+        lsl.l   #2,d0
+        lea     $15e800.l,a2            ; STE_MAP32 pre-baked 32-bit tile ptrs!
+        adda.l  d0,a2
+        lea     BLT_SRC_ADDR.w,a4
+        moveq   #16,d4
+        moveq   #-$40,d3
 .c9_blp:
-        moveq   #0,d0
-        move.b  (a2),d0
-        adda.w  #80,a2
-        move.w  d0,d3
-        lsl.w   #6,d0
-        lsl.w   #5,d3
-        add.w   d3,d0
-        lea     0(a4,d0.w),a1
-        move.l  a1,BLT_SRC_ADDR.w
-        move.l  a3,BLT_DST_ADDR.w
-        move.w  #16,BLT_YCOUNT.w
-        move.b  #$c0,BLT_LINE.w
+        move.l  (a2),(a4)
+        adda.w  #320,a2
+        move.l  a3,14(a4)
+        move.w  d4,20(a4)
+        move.b  d3,24(a4)
         addq.w  #1,d6
         cmpi.w  #RING_ROWS,d6
         blt.s   .c9_bst

@@ -49,6 +49,9 @@ BR_AWAY_K1      equ     $0b6c88         ; .w: Away team 1st kit (packed word)
 BR_AWAY_K2      equ     $0b6c8a         ; .w: Away team 2nd kit (packed word)
 BR_HOME_ALT     equ     $0b6c8c         ; .w: 0 = Home wearing 1st kit, 1 = wearing 2nd kit
 BR_AWAY_ALT     equ     $0b6c8e         ; .w: 0 = Away wearing 1st kit, 1 = wearing 2nd kit
+BR_SAV_448      equ     $0b6c90         ; .w: saved TOS palmode ($448.w) before auto-50Hz switch
+BR_SAV_820A     equ     $0b6c92         ; .b: saved Shifter syncmode ($ffff820a.w) before auto-50Hz switch
+BR_DID_50HZ     equ     $0b6c93         ; .b: 1 = switched colour monitor to 50 Hz PAL for match
 
 KO2_STE_BASE    equ     $0ae940         ; $0ae940..$0b0eff (9.6 KB) for KO2STE.BIN (above FILES.CR $09d000..$0ae940!)
 
@@ -319,6 +322,18 @@ ko2_bridge_match:
         move.l  $118.w,BR_SAV_118.l
         move.l  $a0.w,BR_SAV_A0.l
         move.l  $466.w,BR_RNG_SEED.l    ; live 50Hz VBL counter for match PRNG seed!
+        ; Auto-switch colour ST/STE setups (incl. NTSC/60Hz boots) into 50 Hz PAL for exact KO2 speed & full 160,256-cyc VBL!
+        clr.b   BR_DID_50HZ.l
+        move.b  $ffff8260.w,d0
+        andi.b  #3,d0
+        cmpi.b  #2,d0                   ; skip on 71 Hz monochrome monitor
+        beq.s   .keep_sync
+        move.w  $448.w,BR_SAV_448.l
+        move.b  $ffff820a.w,BR_SAV_820A.l
+        move.w  #1,$448.w               ; TOS palmode = PAL 50 Hz
+        bset    #1,$ffff820a.w          ; Shifter syncmode bit 1 = 50 Hz PAL
+        move.b  #1,BR_DID_50HZ.l
+.keep_sync:
         lea     BR_MFP_SAVE.l,a0
         move.l  $110.w,(a0)+            ; Timer D
         move.l  $114.w,(a0)+            ; Timer C (KO2 hooks this at $018602!)
@@ -580,6 +595,11 @@ ko2_bridge_match:
         beq.s   .skip_ste_clean
         jsr     KO2_STE_BASE+4.l        ; ste_cleanup (stop STE DMA + reset STE shifter)
 .skip_ste_clean:
+        tst.b   BR_DID_50HZ.l
+        beq.s   .skip_sync_rest
+        move.w  BR_SAV_448.l,$448.w
+        move.b  BR_SAV_820A.l,$ffff820a.w
+.skip_sync_rest:
         move.l  BR_SAV_70.l,$70.w
         move.l  BR_SAV_118.l,$118.w
         move.l  BR_SAV_A0.l,$a0.w
