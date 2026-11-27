@@ -6,13 +6,15 @@ with real ACSI HDDRIVER and self-booting 1.44 MB floppy).
 
 What's New in v1.1 (Atari STE Amiga Visuals & Audio):
 - Kick Off 2 Amiga Visuals on Atari STE (True Double-Buffered in 1 MB RAM!):
-  * All 4 Amiga tiled pitches (Normal, Wet, Soggy, Artificial) rendered with
-    STE 12-bit RGB palettes, two 208x168 unmirrored Ring Buffers, STE Hardware
-    Fine Scrolling, and Shared-Bus STE Hardware Blitter masked 4bpp sprites.
+  * All 4 Amiga tiled pitches (Normal, Wet, Soggy, Artificial) rendered across
+    the full 320x200 visible screen with STE 12-bit RGB palettes, two 224x168
+    unmirrored Ring Buffers, STE Hardware Fine Scrolling, and Shared-Bus STE
+    Hardware Blitter masked 4bpp sprites.
   * Dual-playfield 16-colour split (0..7 Amiga pitch, 8..15 KO2 club kits &
     HUD), transparent vector radar (X resize, D toggle), active player black
-    underline, and Amiga-style black-background HBlank-locked bottom HUD
-    (kit-matched player names & score, crisp white clock, no green bar).
+    underline, and transparent drop-shadowed bottom HUD (kit-matched player
+    names & score + crisp white clock floating directly over the grass, no
+    bottom bar!).
   * Exact 0-pixel pitch-edge camera alignment across all four touchlines and
     goal lines (goal kicks, corners, throw-ins and goals trigger right on the
     painted white lines).

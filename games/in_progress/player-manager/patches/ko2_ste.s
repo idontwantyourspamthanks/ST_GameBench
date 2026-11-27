@@ -7,15 +7,17 @@
 ;
 ; True Double-Buffered 1 MB STE RAM Layout during live match:
 ;   $078000..$079fff : Buffer B sprite save-under (32 x 256B = 8 KB; KO2 radar $01fae8/$01fbb4 stubbed!)
-;   $07f1c0..$07fcff : KO2 Bottom HUD (untouched; 0-cycle HBlank-locked split screen!)
+;   $07a000..$07aa7f : Buffer A transparent HUD save-under (16 x 168B = 2,688B)
+;   $07ab00..$07b57f : Buffer B transparent HUD save-under (16 x 168B = 2,688B)
+;   $07b600..$07b87f : 1bpp transparent HUD mask buffer (16 x 40B = 640B)
+;   $07c800..$07e7ff : Buffer A sprite save-under (32 x 256B = 8 KB, below KO2 $07bc00 banners!)
+;   $07f1c0..$07fcff : KO2 hidden Bottom HUD source (composited transparently onto 200-line pitch!)
 ;   $07fd00..$0804ff : Buffer A radar line save pool (2 KB, outside $078000..$07fcff!)
 ;   $080500..$080cff : Buffer B radar line save pool (2 KB, outside $078000..$07fcff!)
-;   $080d00..$080fff : Zeroed black line buffer for bottom border (lines 197..199)
 ;   $081000..$088e1f : Active Amiga pitch (AMIGAP0..3.BIN: pal + 80x96 map + 256 tiles)
-;   $088f00..$0919ff : Ring Buffer A (208 lines x 168B + 640B slack = 35,584B)
-;   $091a00..$09a4ff : Ring Buffer B (208 lines x 168B + 640B slack = 35,584B)
-;   $09a500..$09af5f : Double-buffer stacks, radar records, mask & active sprite list
-;   $09b000..$09cfff : Buffer A sprite save-under (32 x 256B = 8 KB)
+;   $088e60..$0923ef : Ring Buffer A (224 lines x 168B + 1 mirror + 488B slack = 38,288B)
+;   $0923f0..$09b97f : Ring Buffer B (224 lines x 168B + 1 mirror + 488B slack = 38,288B)
+;   $09ba00..$09c45f : Double-buffer stacks, radar records, mask & active sprite list (< $09d000!)
 ;   $0b2880..$0b2cff : Double-buffer radar dot restore records (below PMOK @ $0b2ff8)
 ;
 ; Entry points (fixed header at $0ae940):
@@ -35,39 +37,43 @@ STE_PIT_PAL     equ     $081000         ; 32 bytes (8 STE 12-bit pitch colours)
 STE_PIT_MAP     equ     $081020         ; 7,680 bytes (80 x 96 tilemap)
 STE_PIT_TILES   equ     $082e20         ; 24,576 bytes (256 x 96 bytes 3bpp tiles)
 
-; Double-buffered 208-line x 168B Ring Buffers (13 tile rows x 21 tiles, unmirrored!)
+; Double-buffered 224-line x 168B Ring Buffers (14 tile rows x 21 tiles, unmirrored!)
 ; ALL metadata (stacks, records, sprite list) lives OUTSIDE $078000..$07fcff so KO2's
 ; center banners ("KICK OFF" / "GOAL") at $07bc00..$07c800 can NEVER corrupt pointers!
-STE_RING_A      equ     $088ee0         ; $088ee0..$0919ef (209*168 + 488B slack = 35,600B)
-STE_RING_B      equ     $0919f0         ; $0919f0..$09a4ff (209*168 + 488B slack = 35,600B)
-STE_SAV_A       equ     $09b000         ; $09b000..$09cfff (32 x 256B = 8 KB)
+STE_RING_A      equ     $088e60         ; $088e60..$0923ef (225*168 + 488B slack = 38,288B)
+STE_RING_B      equ     $0923f0         ; $0923f0..$09b97f (225*168 + 488B slack = 38,288B)
+STE_SAV_A       equ     $07c800         ; $07c800..$07e7ff (8 KB: below KO2 $07bc00 banners, above $07f1c0 HUD!)
 STE_SAV_B       equ     $078000         ; $078000..$079fff (8 KB: y=0..51, KO2 radar $01fae8/$01fbb4 stubbed!)
+STE_HUD_SAV_A   equ     $07a000         ; $07a000..$07aa7f (16 x 168B = 2,688B)
+STE_HUD_SAV_B   equ     $07ab00         ; $07ab00..$07b57f (16 x 168B = 2,688B)
+STE_HUD_MASK    equ     $07b600         ; $07b600..$07b87f (16 x 40B  = 640B 1bpp HUD mask)
+STE_HUD_SRC     equ     $07f1c0         ; KO2 hidden bottom HUD (16 lines x 160B)
 STE_RPOOL_A     equ     $07fd00         ; $07fd00..$0804ff (2 KB, cleanly above $07fcff screen!)
 STE_RPOOL_B     equ     $080500         ; $080500..$080cff (2 KB, cleanly above $07fcff screen!)
-STE_BLACK_LINE  equ     $080d00         ; $080d00..$080fff (768B zeroes -> lines 197..199!)
 
-; Double-buffer metadata in 100% KO2-untouched RAM ($09a500..$09af60 & $0b2880..$0b2d00!)
-STE_STK_A       equ     $09a500         ; 32 x 16B = 512B -> $09a700
-STE_STK_B       equ     $09a700         ; 32 x 16B = 512B -> $09a900
-STE_RLR_A       equ     $09a900         ; 28 x 16B = 448B -> $09aac0
-STE_RLR_B       equ     $09aac0         ; 28 x 16B = 448B -> $09ac80
-STE_SPR_LIST    equ     $09ac80         ; 32 x 16B = 512B -> $09ae80
-STE_RAD_CACHE   equ     $09ae80         ; 24 x 8B  = 192B -> $09af40
-STE_MASK_BUF    equ     $09af40         ; 32B             -> $09af60 (< $09b000!)
+; Double-buffer metadata in 100% KO2-untouched RAM ($09ba00..$09c460 & $0b2880..$0b2d00!)
+STE_STK_A       equ     $09ba00         ; 32 x 16B = 512B -> $09bc00
+STE_STK_B       equ     $09bc00         ; 32 x 16B = 512B -> $09be00
+STE_RLR_A       equ     $09be00         ; 28 x 16B = 448B -> $09bfc0
+STE_RLR_B       equ     $09bfc0         ; 28 x 16B = 448B -> $09c180
+STE_SPR_LIST    equ     $09c180         ; 32 x 16B = 512B -> $09c380
+STE_RAD_CACHE   equ     $09c380         ; 24 x 8B  = 192B -> $09c440
+STE_MASK_BUF    equ     $09c440         ; 32B             -> $09c460 (< $09d000!)
 STE_RDR_A       equ     $0b2880         ; 48 x 12B = 576B -> $0b2ac0
 STE_RDR_B       equ     $0b2ac0         ; 48 x 12B = 576B -> $0b2d00 (< PMOK $0b2ff8!)
 
 RING_STRIDE     equ     168             ; 336 pixels = 21 x 16px words (4bpp)
-RING_H          equ     208             ; 13 tile rows = 208 scanlines (covers 181px @ any wy%16!)
-RING_ROWS       equ     13              ; 208 / 16
-RING_BYTES      equ     34944           ; 208 * 168
-PITCH_VIS_H     equ     181             ; scanlines 0..180 pitch, 181..196 bottom HUD
+RING_H          equ     224             ; 14 tile rows = 224 scanlines (covers 200px @ any wy%16!)
+RING_ROWS       equ     14              ; 224 / 16
+RING_BYTES      equ     37632           ; 224 * 168
+PITCH_VIS_H     equ     200             ; full 320x200 pitch! (transparent HUD overlaid at y=183..198)
+HUD_SCR_Y       equ     183             ; transparent HUD top scanline (183..198 = 16 lines)
 
-; Buffer descriptor offsets (48 bytes per buffer: DB_A at 0, DB_B at 48)
-DB_RING         equ     0               ; .l ring base ($088f00 / $091a00)
-DB_SAV          equ     4               ; .l save-under base ($09b000 / $078000)
+; Buffer descriptor offsets (64 bytes per buffer: DB_A at 0, DB_B at 64)
+DB_RING         equ     0               ; .l ring base ($088e60 / $0923f0)
+DB_SAV          equ     4               ; .l save-under base ($07c800 / $078000)
 DB_STK          equ     8               ; .l sprite restore stack base
-DB_RPOOL        equ     12              ; .l radar line save pool base (4 KB)
+DB_RPOOL        equ     12              ; .l radar line save pool base (2 KB)
 DB_RLR          equ     16              ; .l radar line record base (28 x 16B)
 DB_RDR          equ     20              ; .l radar dot record base (48 x 12B)
 DB_TX           equ     24              ; .w last tile X drawn into this ring
@@ -78,9 +84,14 @@ DB_RDCNT        equ     32              ; .w radar dots drawn onto this ring (0.
 DB_PAD          equ     34              ; .w
 DB_START        equ     36              ; .l display start addr (RING + y0*168 + tx*8)
 DB_WRAP         equ     40              ; .l display wrap addr  (RING + tx*8)
-DB_WRAPY        equ     44              ; .w wrap scanline (208 - y0, 1..208)
+DB_WRAPY        equ     44              ; .w wrap scanline (224 - y0, 1..224)
 DB_HSCR         equ     46              ; .w fine hscroll (0..15)
-DB_SIZE         equ     48
+DB_HUDSAV       equ     48              ; .l HUD save-under base (STE_HUD_SAV_A / B)
+DB_HUD_T        equ     52              ; .l HUD top dst on ring
+DB_HUD_B        equ     56              ; .l HUD wrap bottom dst on ring (or 0)
+DB_HUD_H1       equ     60              ; .w HUD top height (0 = none, 1..16)
+DB_HUD_H2       equ     62              ; .w HUD wrap bottom height (0..15)
+DB_SIZE         equ     64
 
 ; STE Blitter registers (short I/O addresses $ffff8a20..$ffff8a3d)
 BLT_SRC_XINC    equ     $ffff8a20
@@ -133,28 +144,30 @@ STE_CUR_WX:     dc.w    176             ; current camera world X (pixels) for sp
 STE_CUR_WY:     dc.w    64              ; current camera world Y (pixels)
 STE_SPR_CNT:    dc.w    0               ; active sprites in STE_SPR_LIST (0..32)
 STE_TB_WRAP_A:  dc.l    STE_RING_A      ; latched wrap address for active frame's Timer B
-STE_TB_WRAP_Y:  dc.w    208             ; latched wrap scanline for active frame's Timer B
+STE_TB_WRAP_Y:  dc.w    224             ; latched wrap scanline for active frame's Timer B
 STE_RAD_C_SC:   dc.w    0               ; cached radar scale
 STE_RAD_C_HCNT: dc.w    0
 STE_RAD_C_VCNT: dc.w    0
 STE_BK_HSCR:    dc.w    0               ; temp backbuffer hscr during draw
-STE_BK_Y0:      dc.w    0               ; temp backbuffer y0 (0..207) during draw
+STE_BK_Y0:      dc.w    0               ; temp backbuffer y0 (0..223) during draw
 STE_BK_TX8:     dc.l    0               ; temp backbuffer tx*8 during draw
 STE_BK_REND:    dc.l    0               ; temp backbuffer radar pool end during draw
 STE_UL_DASH:    dc.l    0               ; secondary/pass-target player struct ptr ($fc3f dashed bar)
-STE_HUD_C2:     dc.w    $0730           ; HUD col 2 = Away team bright kit RGB (updated in VBL)
-STE_HUD_C4:     dc.w    $0770           ; HUD col 4 = Home team bright kit RGB (updated in VBL)
 
 DB_A:
         dc.l    STE_RING_A, STE_SAV_A, STE_STK_A, STE_RPOOL_A, STE_RLR_A, STE_RDR_A
         dc.w    -999, -999, 0, 0, 0, 0
         dc.l    STE_RING_A, STE_RING_A
-        dc.w    208, 0
+        dc.w    224, 0
+        dc.l    STE_HUD_SAV_A, 0, 0
+        dc.w    0, 0
 DB_B:
         dc.l    STE_RING_B, STE_SAV_B, STE_STK_B, STE_RPOOL_B, STE_RLR_B, STE_RDR_B
         dc.w    -999, -999, 0, 0, 0, 0
         dc.l    STE_RING_B, STE_RING_B
-        dc.w    208, 0
+        dc.w    224, 0
+        dc.l    STE_HUD_SAV_B, 0, 0
+        dc.w    0, 0
 
 ; ---------------------------------------------------------------------------
 ; ste_install_hooks: Patch KO2ENG.BIN at $010000..$024000 for pure STE mode
@@ -215,6 +228,12 @@ ste_install_hooks:
         move.l  #$01a39c,$01a378.l
         move.w  d0,$01a3cc.l
         move.l  #$01a3f2,$01a3ce.l
+        ; Expand KO2's sprite Y-culling limit from 183 ($b7) to 200 ($c8) for full 320x200 pitch!
+        move.w  #PITCH_VIS_H,d1
+        move.w  d1,$01a304.l
+        move.w  d1,$01a34e.l
+        move.w  d1,$01a3c4.l
+        move.w  d1,$01a41c.l
 
         ; 5. Skip KO2's hidden $078000 radar line ($01fae8), dot ($01fbb4) & underline ($01f9e0/$01fa76) drawers!
         move.w  #$4e75,$01fae8.l        ; rts!
@@ -298,8 +317,10 @@ ste_reset_bufs:
         clr.w   DB_RDCNT(a0)
         move.l  #STE_RING_A,DB_START(a0)
         move.l  #STE_RING_A,DB_WRAP(a0)
-        move.w  #208,DB_WRAPY(a0)
+        move.w  #RING_H,DB_WRAPY(a0)
         clr.w   DB_HSCR(a0)
+        clr.w   DB_HUD_H1(a0)
+        clr.w   DB_HUD_H2(a0)
         lea     DB_B(pc),a0
         move.w  #-999,DB_TX(a0)
         move.w  #-999,DB_TY(a0)
@@ -308,8 +329,10 @@ ste_reset_bufs:
         clr.w   DB_RDCNT(a0)
         move.l  #STE_RING_B,DB_START(a0)
         move.l  #STE_RING_B,DB_WRAP(a0)
-        move.w  #208,DB_WRAPY(a0)
+        move.w  #RING_H,DB_WRAPY(a0)
         clr.w   DB_HSCR(a0)
+        clr.w   DB_HUD_H1(a0)
+        clr.w   DB_HUD_H2(a0)
         rts
 
 ; ---------------------------------------------------------------------------
@@ -403,15 +426,6 @@ ste_vbl_irq:
         move.l  (a0)+,(a1)+
         move.l  (a0)+,(a1)+
 
-        ; Update bottom HUD team text colours (col 2 = Away -$4f54, col 4 = Home -$4f56)
-        ; Brighten very dark shirt colours so text is always crisp on the black HUD background
-        move.w  $023556.l,d0            ; Away shirt ST RGB (-$4f54(a4))
-        bsr.w   ste_hud_bright
-        move.w  d0,STE_HUD_C2
-        move.w  $023554.l,d0            ; Home shirt ST RGB (-$4f56(a4))
-        bsr.w   ste_hud_bright
-        move.w  d0,STE_HUD_C4
-
         ; Select active Front buffer descriptor (DB_A or DB_B)
         lea     DB_A(pc),a0
         tst.w   STE_SHOW_IDX
@@ -441,23 +455,17 @@ ste_vbl_irq:
         move.b  #4,$ffff820f.w          ; hscroll == 0 -> +4 extra words (+8B) = 168B!
 
 .vt_arm_tb:
-        ; Arm Timer B: if DB_WRAPY < 181, arm ring-wrap split first, else bottom HUD directly!
+        ; Full 320x200 pitch! Only arm Timer B if ring wraps within lines 0..199!
         move.l  DB_WRAP(a0),STE_TB_WRAP_A
         move.w  DB_WRAPY(a0),d0
         move.w  d0,STE_TB_WRAP_Y
-        cmpi.w  #PITCH_VIS_H,d0         ; wrap_y >= 181 -> no vertical wrap needed!
-        bge.s   .vt_hud_only
-        ; DB_WRAPY is ALWAYS in 2..180 (y0=207 mirrors row 0->208 and sets wrap_y=2)!
+        cmpi.w  #PITCH_VIS_H,d0         ; wrap_y >= 200 -> ZERO Timer B IRQs this frame!
+        bge.s   .vt_exit
+        ; DB_WRAPY is ALWAYS in 2..199 (y0=223 mirrors row 0->224 and sets wrap_y=2)!
         ; Arm 1 scanline early (wrap_y - 1 >= 1) so ste_tb_wrap locks onto EXACT HBlank!
         subq.w  #1,d0
         move.l  #ste_tb_wrap,$0120.w
         move.b  d0,$fffffa21.w
-        bra.s   .vt_tb_go
-.vt_hud_only:
-        ; Arm 1 scanline early (180 -> locks onto HBlank of line 180 -> HUD starts on 181!)
-        move.l  #ste_tb_hud,$0120.w
-        move.b  #180,$fffffa21.w
-.vt_tb_go:
         move.b  #8,$fffffa1b.w          ; Event Count mode
         bset    #0,$fffffa07.w          ; enable Timer B in IERA
         bset    #0,$fffffa13.w          ; enable Timer B in IMRA
@@ -493,25 +501,6 @@ ste_vbl_irq:
         clr.b   $ffff8265.w
         bra.s   .vt_exit
 
-; Helper: brighten dark ST 9-bit RGB word (d0) so team text is always legible on black ($000)
-ste_hud_bright:
-        andi.w  #$0777,d0
-        beq.s   .hb_blk                 ; $000 (Black) -> silver $555
-        cmpi.w  #$0007,d0               ; pure blue ($005 Navy / $007 Royal) -> crisp sky-royal $257
-        bls.s   .hb_blu
-        move.w  d0,d1
-        andi.w  #$0444,d1               ; any channel >= 4?
-        bne.s   .hb_ok
-        add.w   d0,d0                   ; double very dark colours ($300->$600, $030->$060)
-.hb_ok: or.w    #$0111,d0               ; gentle lift so dark reds/greens pop cleanly on black
-        rts
-.hb_blk:
-        move.w  #$0555,d0
-        rts
-.hb_blu:
-        move.w  #$0257,d0
-        rts
-
 ; MFP IPL-5 preemption wrappers: ISRB stays set (no re-entry!), but Timer B (prio 8) preempts immediately!
 ste_tc_wrap:
         move.w  #$2500,sr
@@ -524,10 +513,8 @@ ste_ikbd_wrap:
         rts
 
 ; ---------------------------------------------------------------------------
-; Exact HBlank-Locked Timer B ISRs (Blitter-Paused -> ZERO bus-steal jitter!):
-;   ste_tb_wrap  : Mid-screen 208-line Ring Buffer vertical wrap (ZERO glitch!)
-;   ste_tb_hud   : Bottom HUD split at scanline 181 -> $07f1c0 (ZERO shift/color swap!)
-;   ste_tb_bot   : Jet-black bottom border at scanline 197 -> STE_BLACK_LINE!
+; Exact HBlank-Locked Timer B ISR (Blitter-Paused -> ZERO bus-steal jitter!):
+;   ste_tb_wrap  : Mid-screen 224-line Ring Buffer vertical wrap (ONLY IRQ!)
 ; ---------------------------------------------------------------------------
 ste_tb_wrap:
         clr.b   $fffffa1b.w
@@ -552,8 +539,6 @@ ste_tb_wrap:
         nop
         cmp.b   4(a0),d0
         bne.s   .tw_hb
-
-ste_tb_wrap_do:
         nop
         nop
         nop
@@ -564,95 +549,11 @@ ste_tb_wrap_do:
         move.b  d1,(a0)                 ; $ffff8205 HIGH
         move.b  d2,2(a0)                ; $ffff8207 MID
         move.b  d3,4(a0)                ; $ffff8209 LOW
-
-        ; Schedule ste_tb_hud for scanline 180 (1 line before 181)!
-        move.w  #180,d0
-        sub.w   STE_TB_WRAP_Y(pc),d0
-        ble.s   ste_tb_hud_wait         ; wrap_y == 180 -> stay Blitter-paused, wait line 180 -> HUD!
-        move.l  #ste_tb_hud,$0120.w
-        move.b  d0,$fffffa21.w
-        move.b  #8,$fffffa1b.w
         tst.b   d4
         beq.s   .tw_no_res
         bset    #7,BLT_LINE.w           ; resume paused Blitter seamlessly!
 .tw_no_res:
         movem.l (sp)+,d0-d4/a0
-        bclr    #0,$fffffa0f.w
-        rte
-
-ste_tb_hud:
-        clr.b   $fffffa1b.w
-        movem.l d0-d4/a0,-(sp)
-        bclr    #7,BLT_LINE.w           ; pause active $80 Shared-Bus Blitter (0 jitter!)
-        sne     d4                      ; d4.b = $ff if Blitter was running
-        lea     $ffff8205.w,a0
-ste_tb_hud_wait:
-        ; Step 1: if in HBlank of line 179, wait for DE=1 of line 180
-.th_de: move.b  4(a0),d0
-        nop
-        cmp.b   4(a0),d0
-        beq.s   .th_de
-        ; Step 2: wait for DE=0 of line 180 = EXACT start of HBlank before HUD line 181!
-.th_hb: move.b  4(a0),d0
-        nop
-        cmp.b   4(a0),d0
-        bne.s   .th_hb
-        nop
-        nop
-        nop
-        nop
-        ; Step 3: Write HUD address, linewidth=0, hscroll=0, and HUD palette dead-center in HBlank!
-        move.b  #$07,(a0)               ; $8205 = $07
-        move.b  #$f1,2(a0)              ; $8207 = $f1
-        move.b  #$c0,4(a0)              ; $8209 = $c0
-        clr.b   $ffff820f.w
-        clr.b   $ffff8265.w
-        clr.w   $ffff8240.w             ; col 0 = jet black (no green bar, matches Amiga KO2!)
-        move.w  #$0777,$ffff8242.w      ; col 1 = crisp white (clock + score)
-        move.w  STE_HUD_C2(pc),$ffff8244.w ; col 2 = Away team shirt colour
-        move.w  #$0777,$ffff8246.w      ; col 3 = crisp white
-        move.w  STE_HUD_C4(pc),$ffff8248.w ; col 4 = Home team shirt colour
-        ; Re-arm Timer B for +15 scanlines (1 line early = end of line 195 -> razor-clean HSync cut before 197!)
-        move.l  #ste_tb_bot,$0120.w
-        move.b  #15,$fffffa21.w
-        move.b  #8,$fffffa1b.w
-        tst.b   d4
-        beq.s   .th_nr
-        bset    #7,BLT_LINE.w
-.th_nr: movem.l (sp)+,d0-d4/a0
-        bclr    #0,$fffffa0f.w
-        rte
-
-ste_tb_bot:
-        clr.b   $fffffa1b.w
-        movem.l d0-d1/a0,-(sp)
-        bclr    #7,BLT_LINE.w           ; pause Blitter so line 196->197 border cut is 100% jitter-free!
-        sne     d1
-        lea     $ffff8205.w,a0
-        ; 1-line-early exact HBlank lock on line 196 (4 scanlines before line 199 -> NEVER blocks VBL!)
-.tb_de: move.b  4(a0),d0
-        nop
-        cmp.b   4(a0),d0
-        beq.s   .tb_de
-.tb_hb: move.b  4(a0),d0
-        nop
-        cmp.b   4(a0),d0
-        bne.s   .tb_hb
-        nop
-        nop
-        nop
-        nop
-        move.b  #$08,(a0)               ; point lines 197..199 to zeroed STE_BLACK_LINE ($080d00) FIRST!
-        move.b  #$0d,2(a0)
-        clr.b   4(a0)
-        clr.l   $ffff8240.w             ; jet-black bottom border right in HSync before line 197!
-        clr.l   $ffff8244.w
-        clr.l   $ffff8248.w
-        clr.l   $ffff824c.w
-        tst.b   d1
-        beq.s   .tb_nr
-        bset    #7,BLT_LINE.w
-.tb_nr: movem.l (sp)+,d0-d1/a0
         bclr    #0,$fffffa0f.w
         rte
 
@@ -866,10 +767,10 @@ ste_pitch_update:
         moveq   #0,d1
         move.l  #$ffc00000,-$110e(a4)   ; clamp KO2 cam_y = -64.0 (exact top edge!)
         bra.s   .wy_ok
-.wy_lo: cmpi.w  #1355,d1                ; 1536 - 181 = 1355 (full bottom behind-goal view!)
+.wy_lo: cmpi.w  #1336,d1                ; 1536 - 200 = 1336 (full 320x200 bottom behind-goal view!)
         ble.s   .wy_ok
-        move.w  #1355,d1
-        move.l  #$050b0000,-$110e(a4)   ; clamp KO2 cam_y = +1291.0 (exact bottom edge!)
+        move.w  #1336,d1
+        move.l  #$04f80000,-$110e(a4)   ; clamp KO2 cam_y = +1272.0 (exact bottom edge!)
 .wy_ok:
         move.w  d0,STE_CUR_WX
         move.w  d1,STE_CUR_WY
@@ -915,11 +816,12 @@ ste_pitch_update:
         beq.s   .pu_got_bk
         lea     DB_A(pc),a6
 .pu_got_bk:
-        ; === STEP A: Strict Reverse-LIFO Erase of Backbuffer's old Sprites + Radar ===
+        ; === STEP A: Strict Reverse-LIFO Erase of Backbuffer's old HUD + Sprites + Radar ===
+        bsr.w   ste_bk_erase_hud
         bsr.w   ste_bk_erase_spr
         bsr.w   ste_bk_erase_rad
 
-        ; === STEP B: Update Backbuffer's Dirty Edge Tiles (13 rows x 21 cols, UNMIRRORED!) ===
+        ; === STEP B: Update Backbuffer's Dirty Edge Tiles (14 rows x 21 cols, UNMIRRORED!) ===
         move.w  d2,d5
         sub.w   DB_TX(a6),d5            ; dtx
         move.w  d3,d6
@@ -969,11 +871,11 @@ ste_pitch_update:
         blt.s   .bk_su
         bra.s   .bk_tiles_ok
 .bk_sd:
-        ; Scrolled down: fill rows DB_TY+13 .. d3+12 (13 rows covers 181px @ any wy%16!)
+        ; Scrolled down: fill rows DB_TY+14 .. d3+13 (14 rows covers 200px @ any wy%16!)
         move.w  DB_TY(a6),d0
-        addi.w  #13,d0
+        addi.w  #RING_ROWS,d0
         move.w  d3,d1
-        addi.w  #12,d1
+        addi.w  #(RING_ROWS-1),d1
 .bk_sdl: bsr.w  ste_bk_draw_row
         addq.w  #1,d0
         cmp.w   d1,d0
@@ -981,9 +883,9 @@ ste_pitch_update:
         bra.s   .bk_tiles_ok
 
 .bk_full:
-        ; Full 21x13 tile fill onto Backbuffer
+        ; Full 21x14 tile fill onto Backbuffer
         move.w  d3,d0
-        moveq   #12,d1
+        moveq   #(RING_ROWS-1),d1
 .bk_fy: bsr.w   ste_bk_draw_row
         addq.w  #1,d0
         dbra    d1,.bk_fy
@@ -996,8 +898,9 @@ ste_pitch_update:
         bsr.w   ste_bk_draw_rad
         bsr.w   ste_bk_draw_ul
 
-        ; === STEP D: Draw ALL Active Sprites from STE_SPR_LIST onto Backbuffer ===
+        ; === STEP D: Draw ALL Active Sprites + Transparent Bottom HUD onto Backbuffer ===
         bsr.w   ste_bk_draw_spr
+        bsr.w   ste_bk_draw_hud
 
         ; === STEP E: Compute Display Params & Atomically Swap Front <-> Back! ===
         move.l  DB_RING(a6),d0
@@ -1064,8 +967,70 @@ ste_bk_draw_col:
         rts
 
 ; ---------------------------------------------------------------------------
-; Step A: Reverse-LIFO Erase of Backbuffer's old Sprites & Radar (ZERO overlap checks!)
+; Step A: Reverse-LIFO Erase of Backbuffer's old HUD, Sprites & Radar (ZERO overlap checks!)
 ; ---------------------------------------------------------------------------
+ste_bk_erase_hud:
+        tst.w   DB_HUD_H1(a6)
+        beq.s   .beh_ret
+        movem.l d0/d2-d3/a0-a1,-(sp)
+        move.w  DB_HUD_H2(a6),d2
+        swap    d2
+        move.w  DB_HUD_H1(a6),d2        ; d2 = (h2<<16) | h1
+        clr.w   DB_HUD_H1(a6)
+        movea.l DB_HUD_T(a6),a0         ; a0 = dst_top
+        movea.l DB_HUDSAV(a6),a1        ; a1 = HUD save-under
+        move.l  DB_HUD_B(a6),d3         ; d3 = dst_bot (or 0)
+        moveq   #10,d0                  ; cmd 10 = restore HUD save-under
+        trap    #8
+        movem.l (sp)+,d0/d2-d3/a0-a1
+.beh_ret:
+        rts
+
+ste_bk_draw_hud:
+        movem.l d0-d5/a0-a1,-(sp)
+        ; Compute yr = (y0 + HUD_SCR_Y) % RING_H
+        move.w  STE_BK_Y0(pc),d1
+        addi.w  #HUD_SCR_Y,d1
+        cmpi.w  #RING_H,d1
+        blt.s   .bdh_yr
+        subi.w  #RING_H,d1
+.bdh_yr:
+        move.w  d1,d4
+        mulu.w  #RING_STRIDE,d4
+        add.l   STE_BK_TX8(pc),d4
+        movea.l DB_RING(a6),a0
+        adda.l  d4,a0                   ; a0 = dst_top
+        ; Check if yr + 16 > RING_H (crosses 224 -> 0 ring seam!)
+        move.w  d1,d4
+        addi.w  #16,d4
+        cmpi.w  #RING_H,d4
+        ble.s   .bdh_nowr
+        move.w  #RING_H,d4
+        sub.w   d1,d4                   ; d4 = h1 (1..15)
+        moveq   #16,d5
+        sub.w   d4,d5                   ; d5 = h2 (1..15)
+        move.l  DB_RING(a6),d3
+        add.l   STE_BK_TX8(pc),d3       ; d3 = dst_bot
+        bra.s   .bdh_go
+.bdh_nowr:
+        moveq   #16,d4                  ; h1 = 16
+        moveq   #0,d5                   ; h2 = 0
+        moveq   #0,d3                   ; dst_bot = 0
+.bdh_go:
+        move.l  a0,DB_HUD_T(a6)
+        move.l  d3,DB_HUD_B(a6)
+        move.w  d4,DB_HUD_H1(a6)
+        move.w  d5,DB_HUD_H2(a6)
+        movea.l DB_HUDSAV(a6),a1        ; a1 = HUD save-under
+        move.w  STE_BK_HSCR(pc),d1      ; d1 = hscr (0..15)
+        move.w  d5,d2
+        swap    d2
+        move.w  d4,d2                   ; d2 = (h2<<16) | h1
+        moveq   #11,d0                  ; cmd 11 = save-under + transparent HUD composite!
+        trap    #8
+        movem.l (sp)+,d0-d5/a0-a1
+        rts
+
 ste_bk_erase_spr:
         move.w  DB_SCNT(a6),d1
         beq.s   .bes_ret
@@ -1649,7 +1614,9 @@ ste_bk_draw_spr:
 ;   cmd 6 : batch reverse-LIFO restore of d2.w radar line records ending at a2
 ;   cmd 7 : batch save+draw of d1.w transparent black radar lines at a0
 ;   cmd 8 : unmirrored 21-tile horizontal row blit (a0=RING_BASE, d1=tx_left, d2=ty_row)
-;   cmd 9 : unmirrored 13-tile vertical col blit   (a0=RING_BASE, d1=tx_col, d2=ty_top)
+;   cmd 9 : unmirrored 14-tile vertical col blit   (a0=RING_BASE, d1=tx_col, d2=ty_top)
+;   cmd 10: restore transparent bottom HUD save-under (a0=dst_top, a1=hud_sav, d2=h2|h1, d3=dst_bot)
+;   cmd 11: save-under + composite transparent bottom HUD with 1px black drop-shadow
 ; ---------------------------------------------------------------------------
 ste_trap8_handler:
         cmpi.w  #2,d0
@@ -1664,7 +1631,11 @@ ste_trap8_handler:
         beq.w   .cmd7_rad_draw
         cmpi.w  #8,d0
         beq.w   .cmd8_blit_row
-        bra.w   .cmd9_blit_col
+        cmpi.w  #9,d0
+        beq.w   .cmd9_blit_col
+        cmpi.w  #10,d0
+        beq.w   .cmd10_hud_rest
+        bra.w   .cmd11_hud_draw
 
 ; Official Atari STE Shared-Bus ($80) Blitter trigger: yields every 64 cycles (8 us)
 ; so 1-line-early HBlank-locked Timer B NEVER misses HBlank, and bset #7 NEVER stalls!
@@ -1850,7 +1821,7 @@ ste_trap8_handler:
         bsr.w   .blt80
         rts
 
-; --- cmd 4: Zero STE_RING_A, STE_RING_B, and STE_BLACK_LINE ---
+; --- cmd 4: Zero STE_RING_A & STE_RING_B ---
 .cmd4_clr:
         moveq   #-1,d0
         move.l  d0,BLT_ENDMASK1.w
@@ -1861,11 +1832,7 @@ ste_trap8_handler:
         clr.b   BLT_SKEW.w
         move.l  #STE_RING_A,BLT_DST_ADDR.w
         move.w  #84,BLT_XCOUNT.w
-        move.w  #423,BLT_YCOUNT.w       ; 423 * 168 = 71,064B (strictly inside $088ee0..$09a4ff!)
-        move.b  #$c0,BLT_LINE.w
-        move.l  #STE_BLACK_LINE,BLT_DST_ADDR.w
-        move.w  #80,BLT_XCOUNT.w
-        move.w  #4,BLT_YCOUNT.w         ; 640B zeroed for lines 197..199!
+        move.w  #456,BLT_YCOUNT.w       ; 456 * 168 = 76,608B ($088e60..$09b99f < $09ba00!)
         move.b  #$c0,BLT_LINE.w
         rte
 
@@ -2130,3 +2097,220 @@ ste_trap8_handler:
 .c9_done:
         movem.l (sp)+,d3-d7/a2-a4
         rte
+
+; --- cmd 10: Restore transparent bottom HUD save-under (a0=dst_top, a1=hud_sav, d2=h2|h1, d3=dst_bot) ---
+.cmd10_hud_rest:
+        moveq   #-1,d0
+        move.l  d0,BLT_ENDMASK1.w
+        move.w  d0,BLT_ENDMASK3.w
+        move.w  #2,BLT_SRC_XINC.w
+        move.w  #2,BLT_SRC_YINC.w
+        move.w  #2,BLT_DST_XINC.w
+        move.w  #2,BLT_DST_YINC.w       ; 84 words = 168B = RING_STRIDE (contiguous!)
+        move.w  #84,BLT_XCOUNT.w
+        move.w  #$0203,BLT_HOP.w
+        clr.b   BLT_SKEW.w
+        move.l  a1,BLT_SRC_ADDR.w
+        move.l  a0,BLT_DST_ADDR.w
+        move.w  d2,BLT_YCOUNT.w         ; h1
+        bsr.w   .blt80
+        swap    d2
+        tst.w   d2
+        beq.s   .c10_done
+        move.l  d3,BLT_DST_ADDR.w       ; dst_bot (BLT_SRC_ADDR already continues!)
+        move.w  d2,BLT_YCOUNT.w         ; h2
+        bsr.w   .blt80
+.c10_done:
+        rte
+
+; --- cmd 11: Save-under + Transparent Bottom HUD Composite with 1px Black Drop-Shadow ---
+; a0=dst_top, a1=hud_sav, d1.w=hscr (0..15), d2.l=(h2<<16)|h1, d3.l=dst_bot
+.cmd11_hud_draw:
+        movem.l d2-d5/a2-a5,-(sp)
+        movea.l a0,a4                   ; a4 = dst_top
+        move.l  d2,d5                   ; d5 = (h2<<16)|h1
+
+        ; 1. Save-under 16 x 168B (h1 lines @ dst_top, h2 lines @ dst_bot) -> hud_sav (a1)
+        moveq   #-1,d0
+        move.l  d0,BLT_ENDMASK1.w
+        move.w  d0,BLT_ENDMASK3.w
+        move.w  #2,BLT_SRC_XINC.w
+        move.w  #2,BLT_SRC_YINC.w       ; 84 words = 168B = RING_STRIDE!
+        move.w  #2,BLT_DST_XINC.w
+        move.w  #2,BLT_DST_YINC.w
+        move.w  #84,BLT_XCOUNT.w
+        move.w  #$0203,BLT_HOP.w
+        clr.b   BLT_SKEW.w
+        move.l  a4,BLT_SRC_ADDR.w
+        move.l  a1,BLT_DST_ADDR.w
+        move.w  d5,BLT_YCOUNT.w         ; h1
+        bsr.w   .blt80
+        swap    d5
+        tst.w   d5
+        beq.s   .c11_msk
+        move.l  d3,BLT_SRC_ADDR.w       ; dst_bot (BLT_DST_ADDR already continues!)
+        move.w  d5,BLT_YCOUNT.w         ; h2
+        bsr.w   .blt80
+.c11_msk:
+        swap    d5                      ; d5 = (h2<<16)|h1 again
+
+        ; 2. Build 16 x 20-word 1bpp mask (P0 | P1 | P2) in STE_HUD_MASK ($07b600)
+        lea     STE_HUD_SRC.l,a5        ; a5 = $07f1c0
+        lea     STE_HUD_MASK.l,a3       ; a3 = $07b600
+        move.w  #8,BLT_SRC_XINC.w
+        move.w  #8,BLT_SRC_YINC.w
+        move.w  #2,BLT_DST_XINC.w
+        move.w  #2,BLT_DST_YINC.w
+        move.w  #20,BLT_XCOUNT.w
+        move.w  #$0203,BLT_HOP.w        ; P0 -> mask
+        move.l  a5,BLT_SRC_ADDR.w
+        move.l  a3,BLT_DST_ADDR.w
+        move.w  #16,BLT_YCOUNT.w
+        bsr.w   .blt80
+        move.w  #$0207,BLT_HOP.w        ; OR P1 -> mask
+        lea     2(a5),a2
+        move.l  a2,BLT_SRC_ADDR.w
+        move.l  a3,BLT_DST_ADDR.w
+        move.w  #16,BLT_YCOUNT.w
+        bsr.w   .blt80
+        addq.l  #2,a2                   ; OR P2 -> mask
+        move.l  a2,BLT_SRC_ADDR.w
+        move.l  a3,BLT_DST_ADDR.w
+        move.w  #16,BLT_YCOUNT.w
+        bsr.w   .blt80
+
+        ; 3. Configure Blitter skew & XCOUNT for hscr = d1 (0..15)
+        move.w  #$ffff,BLT_ENDMASK2.w
+        move.w  #8,BLT_DST_XINC.w
+        tst.w   d1
+        bne.s   .c11_sk
+        move.w  #$ffff,BLT_ENDMASK1.w
+        move.w  #$ffff,BLT_ENDMASK3.w
+        move.w  #20,BLT_XCOUNT.w
+        move.w  #16,BLT_DST_YINC.w      ; 168 - 19*8 = 16
+        clr.b   BLT_SKEW.w
+        bra.s   .c11_shd
+.c11_sk:
+        move.w  #$ffff,d0
+        lsr.w   d1,d0
+        move.w  d0,BLT_ENDMASK1.w
+        not.w   d0
+        move.w  d0,BLT_ENDMASK3.w
+        move.w  #21,BLT_XCOUNT.w
+        move.w  #8,BLT_DST_YINC.w       ; 168 - 20*8 = 8
+        move.b  d1,d0
+        ori.b   #$40,d0                 ; NFSR = 1
+        move.b  d0,BLT_SKEW.w
+
+.c11_shd:
+        ; 4. Draw 1px downward black drop-shadow (Col 9: P0=1, P1=0, P2=0, P3=1) at y+1 (15 lines)
+        move.w  #2,BLT_SRC_XINC.w
+        move.w  #2,BLT_SRC_YINC.w
+        move.w  d5,d4
+        subq.w  #1,d4                   ; sh_h1 = h1 - 1 (0..15)
+        beq.s   .c11_sh2
+        lea     RING_STRIDE(a4),a2      ; dst = dst_top + 1 line
+        bsr.s   .c11_sh_seg
+.c11_sh2:
+        move.l  d5,d0
+        swap    d0                      ; h2 (0..15)
+        tst.w   d0
+        beq.s   .c11_fg
+        ; Advance mask by sh_h1 * 40 bytes for bottom wrap segment
+        mulu.w  #40,d4
+        lea     0(a3,d4.w),a3
+        movea.l d3,a2                   ; dst = dst_bot
+        move.w  d0,d4                   ; sh_h2 = h2
+        bsr.s   .c11_sh_seg
+        lea     STE_HUD_MASK.l,a3       ; restore a3 = STE_HUD_MASK
+
+.c11_fg:
+        ; 5. Draw crisp transparent foreground text (Col 8 white, Col 10 Home, Col 12 Away!)
+        move.w  d5,d4                   ; h1 (1..16)
+        movea.l a4,a2                   ; dst_top
+        bsr.s   .c11_fg_seg
+        swap    d5                      ; h2 (0..15)
+        tst.w   d5
+        beq.s   .c11_done
+        move.w  d4,d0
+        mulu.w  #40,d0
+        adda.l  d0,a3                   ; advance mask by h1*40B
+        move.w  d4,d0
+        mulu.w  #160,d0
+        adda.l  d0,a5                   ; advance STE_HUD_SRC by h1*160B
+        movea.l d3,a2                   ; dst_bot
+        move.w  d5,d4                   ; h2
+        bsr.s   .c11_fg_seg
+.c11_done:
+        movem.l (sp)+,d2-d5/a2-a5
+        rte
+
+; Helper: draw d4 lines of 1px black shadow (Col 9: P0=1, P1=0, P2=0, P3=1) from mask a3 -> dst a2
+.c11_sh_seg:
+        move.w  #$0207,BLT_HOP.w        ; P0 |= mask
+        move.l  a3,BLT_SRC_ADDR.w
+        move.l  a2,BLT_DST_ADDR.w
+        move.w  d4,BLT_YCOUNT.w
+        bsr.w   .blt80
+        move.w  #$0204,BLT_HOP.w        ; P1 &= ~mask
+        move.l  a3,BLT_SRC_ADDR.w
+        lea     2(a2),a0
+        move.l  a0,BLT_DST_ADDR.w
+        move.w  d4,BLT_YCOUNT.w
+        bsr.w   .blt80
+        move.l  a3,BLT_SRC_ADDR.w       ; P2 &= ~mask
+        addq.l  #2,a0
+        move.l  a0,BLT_DST_ADDR.w
+        move.w  d4,BLT_YCOUNT.w
+        bsr.w   .blt80
+        move.w  #$0207,BLT_HOP.w        ; P3 |= mask
+        move.l  a3,BLT_SRC_ADDR.w
+        addq.l  #2,a0
+        move.l  a0,BLT_DST_ADDR.w
+        move.w  d4,BLT_YCOUNT.w
+        bsr.w   .blt80
+        rts
+
+; Helper: draw d4 lines of foreground HUD (a3=mask, a5=STE_HUD_SRC, a2=dst)
+.c11_fg_seg:
+        ; Pass 1: Clear mask in P0, P1, P2 (~mask & DST)
+        move.w  #2,BLT_SRC_XINC.w
+        move.w  #2,BLT_SRC_YINC.w
+        move.w  #$0204,BLT_HOP.w
+        move.l  a3,BLT_SRC_ADDR.w
+        move.l  a2,BLT_DST_ADDR.w
+        move.w  d4,BLT_YCOUNT.w
+        bsr.w   .blt80
+        move.l  a3,BLT_SRC_ADDR.w
+        lea     2(a2),a0
+        move.l  a0,BLT_DST_ADDR.w
+        move.w  d4,BLT_YCOUNT.w
+        bsr.w   .blt80
+        move.l  a3,BLT_SRC_ADDR.w
+        addq.l  #2,a0
+        move.l  a0,BLT_DST_ADDR.w
+        move.w  d4,BLT_YCOUNT.w
+        bsr.w   .blt80
+        ; Pass 2: Set P3 |= mask (Clock/Event hud_P0 is now Col 8 = CRISP WHITE!)
+        move.w  #$0207,BLT_HOP.w
+        move.l  a3,BLT_SRC_ADDR.w
+        addq.l  #2,a0
+        move.l  a0,BLT_DST_ADDR.w
+        move.w  d4,BLT_YCOUNT.w
+        bsr.w   .blt80
+        ; Pass 3: OR hud_P2 (Home) -> dst_P1 (Col 10 = Home kit!) & hud_P1 (Away) -> dst_P2 (Col 12 = Away kit!)
+        move.w  #8,BLT_SRC_XINC.w
+        move.w  #8,BLT_SRC_YINC.w
+        lea     4(a5),a0                ; hud_P2 = Home
+        move.l  a0,BLT_SRC_ADDR.w
+        lea     2(a2),a0                ; dst_P1 = Col 10 (Home!)
+        move.l  a0,BLT_DST_ADDR.w
+        move.w  d4,BLT_YCOUNT.w
+        bsr.w   .blt80
+        lea     2(a5),a0                ; hud_P1 = Away
+        move.l  a0,BLT_SRC_ADDR.w
+        lea     4(a2),a0                ; dst_P2 = Col 12 (Away!)
+        move.l  a0,BLT_DST_ADDR.w
+        move.w  d4,BLT_YCOUNT.w
+        bsr.w   .blt80
+        rts
