@@ -7,15 +7,19 @@
 - Loader: PP's HAGA conversion (`RUNME.TOS` + `HAGA`)
 - Machine/RAM notes: HAGA, **1 MB minimum** (verified on Hatari real ACSI `HDDRIVER` across 4 MB STE TOS 1.62, 1 MB STE TOS 1.62, 1 MB STE TOS 2.06, and 1 MB ST TOS 1.04, plus self-booting 1.44 MB floppy on 1 MB/4 MB STE TOS 1.62 and 1 MB ST TOS 1.04).
 
-## v1.1 Features (Atari STE Amiga Visuals & Audio)
-- **Kick Off 2 Amiga Tiled Pitch & 12-Bit Palette on STE (True Double-Buffered Ring Engine in 1 MB RAM):** All 4 Amiga pitches (`normal`, `wet`, `soggy`, `artificial`) converted to STE 12-bit RGB palettes + `80×96` tilemaps + 256 3bpp tiles (`AMIGAP0..3.BIN`), rendered into two 208×168 unmirrored ring buffers (`STE_RING_A`/`STE_RING_B`) via STE Hardware fine scrolling (`$ff8201/$03/$0d` + live `$ff8205/$07/$09` sync, `$ff820f`, `$ff8265`), Blitter-paused HBlank-locked Timer B splits (wrap + bottom HUD + jet-black border), and shared-bus (`$80`) STE Hardware Blitter masked 4bpp sprites + transparent vector radar (`X` resize, `D` toggle) + active player black underline ([patches/ko2_ste.s](patches/ko2_ste.s)).
-- **Kick Off 2 Amiga STE DMA Audio:** 17 Amiga 8-bit signed PCM sound effects (`AMIGASND.BIN`, 6,258 Hz mono) played via STE DMA audio hardware (`$ff8900..$ff8924`) with zero Timer-A CPU overhead.
+## v1.1 Features (Atari STE Amiga Visuals, Audio & Match Polish)
+- **Kick Off 2 Amiga Tiled Pitch & 12-Bit Palette on STE (True Double-Buffered Ring Engine in 1 MB RAM):** All 4 Amiga pitches (`normal`, `wet`, `soggy`, `artificial`) converted to STE 12-bit RGB palettes + `80×96` tilemaps + 256 3bpp tiles (`AMIGAP0..3.BIN`), rendered into two 208×168 unmirrored ring buffers (`STE_RING_A`/`STE_RING_B`) via STE Hardware fine scrolling (`$ff8201/$03/$0d` + live `$ff8205/$07/$09` sync, `$ff820f`, `$ff8265`), Blitter-paused HBlank-locked Timer B splits with MFP IPL-5 preemption wrappers (wrap + Amiga-style black-background bottom HUD with kit-matched team text and crisp white clock + jet-black border), exact 0-pixel pitch-edge camera clamping across all four lines, and shared-bus (`$80`) STE Hardware Blitter masked 4bpp sprites + transparent vector radar (`X` resize, `D` toggle) + active player black underline ([patches/ko2_ste.s](patches/ko2_ste.s)).
+- **Kick Off 2 Amiga STE DMA Audio:** 17 Amiga 8-bit signed PCM sound effects (`AMIGASND.BIN`, 6,258 Hz mono) played via STE DMA audio hardware (`$ff8900..$ff8924`) with exact 16-bit word KO2 script parsing and zero Timer-A CPU overhead.
+- **Authentic 1989–90 92-Club Kits, Pre-Match Screen & New Game Club Kit Picker:**
+  - All 92 English Football League clubs carry authentic 1989–90 home colours and verified Kick Off 2 styles (`Plain`, `Stripes`, `Chest Band`, `Sleeves`, `Shoulders`, `Sash`) with automatic colour-family clash avoidance.
+  - **New Game Club Kit Picker** ([patches/kit_picker.s](patches/kit_picker.s)) right after naming your club (e.g. `Anco United`) on `scr4.men`: pick Style, Shirt Colour, and Trim/Shorts with a live visual jersey preview (mouse clicks or keys `1`–`3` + `Space`/`Done`), persisted in every save game at `-$24c8(a4)`.
+  - **Kick Off 2 Pre-Match Screen (`ko6.men`)** before every match showing both clubs, live visual jerseys, genuinely randomized Referee (`0..23`), Pitch Condition (`NORMAL` / `WET` / `SOGGY` / `PLASTIC`), and Wind, with live kit tweaking before kick-off (Joystick `U/D` = Home, `L/R` = Away; keys `1`–`3` = Home Style/Shirt/Trim, `4`–`6` = Away; `Fire` / `Space` to kick off).
 - **Dedicated STE Mode & Plain ST Auto-Fallback:** Atari STE / Mega STE runs the dedicated True Double-Buffered Amiga STE engine automatically (`BR_IS_STE = 1`); plain 1 MB 68000 ST auto-detects `BR_IS_STE = 0` and stays on Classic v1.0 ST mode untouched.
 - **Real ACSI `HDDRIVER` & 1 MB / 4 MB Compatibility + Floppy Edition:**
   - Snapshots patched `$6800..$7020` handler back into `KO2_HND_BUF` so dynamic `HDDRIVER` `TRAP #1` / HAGA pointers stay valid on 4 MB+ machines.
-  - Replaces `PMMATCH.BIN` with `PMCODE.BIN` + `reapply_pm_hooks`, streams `AMIGASND.BIN` directly into KO2's heap, and caps replay ring to 6 KB when resident `HDDRIVER` sits below `$0cb000` (1 MB TOS 2.06) so high RAM stays safely below `HDDRIVER.SYS` on 1 MB ST/STE (TOS 1.04, 1.62, 2.06).
+  - Replaces `PMMATCH.BIN` with `PMCODE.BIN` + `reapply_pm_hooks`, streams `AMIGASND.BIN` directly into KO2's heap, and caps replay ring to 4 KB when resident `HDDRIVER` sits below `$0cb000` (1 MB TOS 2.06) so high RAM stays safely below `HDDRIVER.SYS` on 1 MB ST/STE (TOS 1.04, 1.62, 2.06).
   - Deselects floppy drives (`XBIOS Ongibit($06)`) after match/post-match loads so KO2's `$0202ac` motor-off poll never hangs when booting from floppy.
-  - Discreet `"v1.1 enhanced by dad_prg"` credit on `scr2.men` and `scr3.men`.
+  - Discreet `"V1.1 ENHANCED BY DAD_PRG"` credit on `scr2.men` and `scr3.men`.
 
 ## v1.0 Features
 - **Full 1989–90 English Football League (92 clubs, 4 divisions):** `[20, 24, 24, 24]` with 2,600-player pool, 38/46-week Berger round-robin fixtures, 3-up/3-down promotion & relegation, scrolling League Names & Division Tables, paged Weekly Fixtures/Results, 92-team Cup (R0/R1 draws), and 92-team `DEMO92.DAT` wired to Demo/Restart Game ([patches/league92.s](patches/league92.s)).
@@ -34,15 +38,15 @@
 
 | Item | MD5 |
 |---|---|
-| `dist/PlayerManager_v1.1_patched_hd_2026-11-26.zip` | `e0d03465df2bdfb3cdc993e3dc4dddf8` |
-| `dist/PlayerManager_v1.1_floppy_2026-11-26.st` | `6bb747cb856198207d8341dc3464a0fa` |
-| `dist/PlayerManager_v1.1_floppy_2026-11-26.zip` | `4602a88413e41370b3dcc69124a29ef7` |
+| `dist/PlayerManager_v1.1_patched_hd_2026-11-26.zip` | `cdf54bd2f48989e15041c339bbbe3e32` |
+| `dist/PlayerManager_v1.1_floppy_2026-11-26.st` | `1d69f4b1398670b8fb1c28e0db079cac` |
+| `dist/PlayerManager_v1.1_floppy_2026-11-26.zip` | `e8abac824a96d8c9b9c37ee9717d98c6` |
 | `build/game/HAGA` | `1074342dd4a917bafdc7d2a031e9b088` |
-| `build/game/FILES/PMLA` | `bb4cdba1bf70e1b4c0c279ca28f89e49` |
+| `build/game/FILES/PMLA` | `df6315cd88775b7ebd76046216048b7d` |
 | `build/game/FILES/KO2ENG.BIN` | `934b13a84279197ab58d46312253f078` |
 | `build/game/FILES/KO2HND.BIN` | `a3505e2d266ec54f926b300b88d6be73` |
 | `build/game/FILES/PMCODE.BIN` | `b151b784eec464874beb2a0db9810fcb` |
-| `build/game/FILES/KO2STE.BIN` | `b377d2f963a5f0a36ab3b4641b7f2cf8` |
+| `build/game/FILES/KO2STE.BIN` | `d9f34cd8cc07b60262d45f87fd520fce` |
 | `build/game/FILES/AMIGASND.BIN` | `d5bd5ab3b9e1051ed23d2d778a718753` |
 | `build/game/FILES/AMIGAP0.BIN` | `29cb99c7587974a2b2fb4a571c31eaa7` |
 

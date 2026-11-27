@@ -17,45 +17,47 @@
 ;   (Ends at $c8300 — 15 KB below VDI/screen at $cc000!)
 ; ---------------------------------------------------------------------------
 
-BR_STATE        equ     $0b5a00
-BR_HOME_SC      equ     $0b5a00         ; .w
-BR_AWAY_SC      equ     $0b5a02         ; .w
-BR_HOME_HUM     equ     $0b5a04         ; .w
-BR_AWAY_HUM     equ     $0b5a06         ; .w
-BR_FAST         equ     $0b5a08         ; .w (0=Normal 5m, 1=Fast 3m)
-BR_CUP_ET       equ     $0b5a0a         ; .w (0=League, 1=Cup Extra Time)
-BR_PM_A4        equ     $0b5a0c         ; .l
-BR_PM_84        equ     $0b5a10         ; .l
-BR_TOS_84       equ     $0b5a14         ; .l
-BR_KICK_DIR     equ     $0b5a18         ; .w (bit0=up/down, bit1=kickoff team)
-BR_WEEK_SEED    equ     $0b5a1a         ; .w (week number for ref/weather variety)
-BR_SAV_70       equ     $0b5a1c         ; .l saved $70.w VBL
-BR_SAV_118      equ     $0b5a20         ; .l saved $118.w IKBD
-BR_KBDVBASE     equ     $0b5a24         ; .l saved Kbdvbase()
-BR_SAV_MVEC     equ     $0b5a28         ; .l saved Kbdvbase+$10 (mousevec)
-BR_SAV_JVEC     equ     $0b5a2c         ; .l saved Kbdvbase+$18 (joyvec)
-BR_OLD_SSP      equ     $0b5a30         ; .l saved old SSP across .rs_d!
-BR_OLD_SR       equ     $0b5a34         ; .w saved old SR across .rs_d!
-BR_LINEA_BASE   equ     $0b5a38         ; .l saved Line-A base ptr from $a000!
-BR_RESULTS      equ     $0b5a40         ; 26 x 10 bytes = 260 bytes ($0b5a40..$0b5b43)
-BR_LINEA_SAVE   equ     $0b5b50         ; 8 bytes ($2e..$35 of Line-A vars)
-BR_MFP_SAVE     equ     $0b5b60         ; 24 bytes: $110,$114,$120,$134 + IERA/IERB/IMRA/IMRB
-BR_IS_STE       equ     $0b5b78         ; .w: 1 = Atari STE/Mega STE detected, 0 = plain ST
-BR_SAV_A0       equ     $0b5b7c         ; .l: saved $a0.w (TRAP #8) vector for STE Blitter call
+BR_STATE        equ     $0b6800
+BR_HOME_SC      equ     $0b6800         ; .w
+BR_AWAY_SC      equ     $0b6802         ; .w
+BR_HOME_HUM     equ     $0b6804         ; .w
+BR_AWAY_HUM     equ     $0b6806         ; .w
+BR_FAST         equ     $0b6808         ; .w (0=Normal 5m, 1=Fast 3m)
+BR_CUP_ET       equ     $0b680a         ; .w (0=League, 1=Cup Extra Time)
+BR_PM_A4        equ     $0b680c         ; .l
+BR_PM_84        equ     $0b6810         ; .l
+BR_TOS_84       equ     $0b6814         ; .l
+BR_KICK_DIR     equ     $0b6818         ; .w (bit0=up/down, bit1=kickoff team)
+BR_WEEK_SEED    equ     $0b681a         ; .w (week number for ref/weather variety)
+BR_SAV_70       equ     $0b681c         ; .l saved $70.w VBL
+BR_SAV_118      equ     $0b6820         ; .l saved $118.w IKBD
+BR_KBDVBASE     equ     $0b6824         ; .l saved Kbdvbase()
+BR_SAV_MVEC     equ     $0b6828         ; .l saved Kbdvbase+$10 (mousevec)
+BR_SAV_JVEC     equ     $0b682c         ; .l saved Kbdvbase+$18 (joyvec)
+BR_OLD_SSP      equ     $0b6830         ; .l saved old SSP across .rs_d!
+BR_OLD_SR       equ     $0b6834         ; .w saved old SR across .rs_d!
+BR_LINEA_BASE   equ     $0b6838         ; .l saved Line-A base ptr from $a000!
+BR_RESULTS      equ     $0b6840         ; 26 x 10 bytes = 260 bytes ($0b6840..$0b6943)
+BR_LINEA_SAVE   equ     $0b6950         ; 8 bytes ($2e..$35 of Line-A vars)
+BR_MFP_SAVE     equ     $0b6960         ; 24 bytes: $110,$114,$120,$134 + IERA/IERB/IMRA/IMRB
+BR_IS_STE       equ     $0b6978         ; .w: 1 = Atari STE/Mega STE detected, 0 = plain ST
+BR_SAV_A0       equ     $0b697c         ; .l: saved $a0.w (TRAP #8) vector for STE Blitter call
+BR_RNG_SEED     equ     $0b6980         ; .l: live VBL counter ($466.w) captured before KO2 PRNG seed!
 
 KO2_STE_BASE    equ     $0ae940         ; $0ae940..$0b02ff (6.5 KB) for KO2STE.BIN (above FILES.CR $09d000..$0ae940!)
 
-KO2_HOME_TEAM   equ     $0b5c00         ; $41e bytes
-KO2_AWAY_TEAM   equ     $0b6020         ; $41e bytes
-PM_HND_SAVE     equ     $0b6440         ; $850 bytes
-KO2_HND_BUF     equ     $0b6c90         ; $820 bytes
-PM_DATA1_SAVE   equ     $0b7500         ; $740 bytes ($0219c0..$022100 -> $0b7c40)
-PM_DATA2_SAVE   equ     $0b7c40         ; $3e00 bytes ($025900..$029700 -> $0bba40, well below 1MB HDDRIVER $0c4000 / TOS2.06 $0bdde4!)
-KO2_REPLAY_BUF  equ     $0bbb00         ; $6014 bytes ($0bbb00..$0c1b14 < $0c4000; 6 KB TOS 2.06 ring -> $0bd300 < $0bdde4!)
+KO2_HOME_TEAM   equ     $0b6a00         ; $41e bytes
+KO2_AWAY_TEAM   equ     $0b6e20         ; $41e bytes
+PM_HND_SAVE     equ     $0b7240         ; $850 bytes
+KO2_HND_BUF     equ     $0b7a90         ; $820 bytes
+PM_DATA1_SAVE   equ     $0b8300         ; $740 bytes ($0219c0..$022100 -> $0b8a40)
+PM_DATA2_SAVE   equ     $0b8a40         ; $3e00 bytes ($025900..$029700 -> $0bc840, well below 1MB HDDRIVER $0c4000 / TOS2.06 $0bdde4!)
+KO2_REPLAY_BUF  equ     $0bc900         ; $6014 bytes ($0bc900..$0c2914 < $0c4000; 4 KB TOS 2.06 ring -> $0bd900 < $0bdde4!)
 KO2_SCRATCH_BUF equ     $099000         ; $2c00 bytes temp depack scratch during $015f4c ($099000..$09bc00 < $09d000!)
 KO2_FILES_CR    equ     $09d000         ; $11940 bytes ($09d000..$0ae940 < KO2_STE_BASE $0ae940!)
 
 KO2_A4          equ     $0284aa
+PM_HUM_KIT_OFF  equ     -$24c8          ; saved in every PM savegame & DEMO92.DAT (unused gap before -$24c2!)
 
 ; Called from boot_entry; returns d0=0 ok, d0!=0 fail
 init_ko2_bridge:
@@ -112,36 +114,53 @@ ko2_bridge_match:
         move.w  -$1ee4(a4),BR_KICK_DIR.l ; bit0=up/down, bit1=kickoff (from d1!)
         move.w  -$336c(a4),BR_WEEK_SEED.l ; current week for referee variety
 
-        ; Pick non-clashing club kit colours from team names (KO2 palette indices)
-        ; Palette: 1=Blue, 4=White, 9=DarkRed, 10=Red, 11=Orange, 12=Yellow, 15=Purple
-        moveq   #0,d2
-        move.b  (a0),d2
-        add.b   2(a0),d2
-        andi.w  #7,d2
-        lea     kit_palette_tbl(pc),a3
-        move.b  0(a3,d2.w),d0           ; home shirt colour
-        ext.w   d0
-        moveq   #0,d3
-        move.b  (a1),d3
-        add.b   2(a1),d3
-        andi.w  #7,d3
-        move.b  0(a3,d3.w),d4           ; away shirt colour
-        ext.w   d4
-        cmp.w   d0,d4
+        ; Look up authentic 1989-90 kits (human club uses PM_HUM_KIT_OFF; AI clubs match team_names_92!)
+        ; Format of kit word: bit15=1, bits12..10=style(0..5), bits9..5=col1(0..19), bits4..0=col2(0..19)
+        bsr.w   lookup_team_kit         ; a0 = home team -> d0.w = home kit word
+        move.w  d0,d6                   ; d6 = home kit word
+        movea.l -$1ee8(a4),a0
+        bsr.w   lookup_team_kit         ; a0 = away team -> d0.w = away kit word
+        move.w  d0,d4                   ; d4 = away kit word
+
+        ; Smart perceptual colour-family clash resolution!
+        move.w  d6,d0
+        lsr.w   #5,d0
+        andi.w  #31,d0                  ; home col1
+        lea     kit_family_tbl(pc),a3
+        move.b  0(a3,d0.w),d2           ; home family (0..6)
+        move.w  d4,d1
+        lsr.w   #5,d1
+        andi.w  #31,d1                  ; away col1
+        cmp.b   0(a3,d1.w),d2
         bne.s   .no_clash
-        addq.w  #3,d3
-        andi.w  #7,d3
-        move.b  0(a3,d3.w),d4
-        ext.w   d4
+        ; Clashing primary shirts! First try swapping Away col1 <-> col2 (away strip!)
+        move.w  d4,d3
+        andi.w  #31,d3                  ; away col2
+        cmp.b   0(a3,d3.w),d2
+        beq.s   .clash_alt
+        ; Swap col1 <-> col2 on Away kit while keeping Away style!
+        move.w  d4,d0
+        andi.w  #$fc00,d0               ; keep bit15 + style
+        lsl.w   #5,d3
+        or.w    d3,d0                   ; new col1 = old col2
+        or.w    d1,d0                   ; new col2 = old col1
+        move.w  d0,d4
+        bra.s   .no_clash
+.clash_alt:
+        ; Both Away colours clash with Home -> switch Away to crisp Plain Yellow/Navy or RoyalBlue/White!
+        move.w  #$8180,d4               ; style 0 (Plain), Yellow(12) / Navy(0)
+        cmpi.b  #4,d2                   ; is Home already Yellow?
+        bne.s   .no_clash
+        move.w  #$8024,d4               ; style 0 (Plain), RoyalBlue(1) / White(4)
 .no_clash:
         ; Pack Home & Away teams into KO2 $41e structs
+        movea.l -$1eec(a4),a0
         lea     KO2_HOME_TEAM.l,a2
-        moveq   #1,d1                   ; kit style 1 (matches KO2 preloaded sprites!)
+        move.w  d6,d0                   ; packed home kit word
         bsr.w   pack_pm_to_ko2_team
         movea.l -$1ee8(a4),a0
         lea     KO2_AWAY_TEAM.l,a2
-        move.w  d4,d0                   ; away shirt colour
-        moveq   #3,d1                   ; kit style 3 (matches KO2 preloaded sprites!)
+        move.w  d4,d0                   ; packed away kit word
         bsr.w   pack_pm_to_ko2_team
 
         ; Load KO2HND.BIN ($820 bytes) into KO2_HND_BUF via PP HD mode
@@ -236,6 +255,7 @@ ko2_bridge_match:
         move.l  $70.w,BR_SAV_70.l
         move.l  $118.w,BR_SAV_118.l
         move.l  $a0.w,BR_SAV_A0.l
+        move.l  $466.w,BR_RNG_SEED.l    ; live 50Hz VBL counter for match PRNG seed!
         lea     BR_MFP_SAVE.l,a0
         move.l  $110.w,(a0)+            ; Timer D
         move.l  $114.w,(a0)+            ; Timer C (KO2 hooks this at $018602!)
@@ -319,14 +339,33 @@ ko2_bridge_match:
         ; --- Run Kick Off 2 natively at $010000 with a4 = $0284aa ---
         lea     KO2_A4.l,a4
         jsr     $01fd92.l               ; KO2 system/screen/IKBD init
+        move.w  #-1,-$df0(a4)           ; initialize Joystick 1 centered (-1, NOT 0=Up!)
+        move.w  #-1,-$df8(a4)           ; initialize Joystick 0 centered
         jsr     $014c6a.l               ; KO2 load FILES.CR (tactics/fonts/data -> $09d000)
+        jsr     $0139aa.l               ; KO2 Line-A menu graphics & font init (-$7724/-$7720)!
         jsr     $015f4c.l               ; KO2 Malloc($1c138) + KRD sprites + replay buf ($0c8b00)
         jsr     $014e54.l               ; KO2 string/name table init
         jsr     $010044.l               ; KO2 default match options
 
+        ; Seed KO2's 48-bit LFSR PRNG (-$4cf6(a4), zeroed by BSS clear!) BEFORE $013450 / $0128a4
+        ; so Pitch Condition (NORMAL/WET/SOGGY/PLASTIC), Wind, and Referee genuinely randomize!
+        move.l  BR_RNG_SEED.l,d0
+        move.w  BR_WEEK_SEED.l,d1
+        mulu.w  #257,d1
+        eor.l   d1,d0
+        eor.l   #$5a3c91d7,d0
+        bne.s   .rng_nz
+        move.l  #$13579bdf,d0
+.rng_nz:
+        move.l  d0,-$4cf6(a4)
+        move.w  #$a5c3,-$4cf2(a4)
+        moveq   #11,d7
+.rng_w: jsr     -$7e54(a4)              ; whiten 48-bit LFSR
+        dbra    d7,.rng_w
+
         ; Configure KO2 match options BEFORE $013450:
         move.w  BR_CUP_ET.l,-$34ca(a4)  ; Extra time if cup tie
-        move.w  #4,-$34d0(a4)           ; Pitch type = 4 (random: normal/wet/soggy/artificial!)
+        move.w  #4,-$34d0(a4)           ; Pitch type = 4 (random: normal/wet/soggy/plastic!)
         clr.w   -$34c4(a4)              ; Game speed = 0 (FULL 50 FPS! 1=25fps slow mode!)
         moveq   #1,d0                   ; Default 5-min half (PM NORMAL)
         tst.w   BR_FAST.l
@@ -334,10 +373,23 @@ ko2_bridge_match:
         moveq   #0,d0                   ; 3-min half (PM FAST)
 .len_ok:
         move.w  d0,-$34ce(a4)
-        move.w  BR_WEEK_SEED.l,d0
-        andi.w  #7,d0
-        move.w  d0,-$34cc(a4)           ; Referee variety across weeks
-        jsr     $013450.l               ; apply pitch/ref/half-length/aftertouch/ET
+        jsr     -$7e54(a4)
+        move.w  -$4cf6(a4),d0
+        andi.w  #3,d0                   ; Valid Wind Strength 0..3 (table -$791c has 4 words!)
+        move.w  d0,-$34cc(a4)
+        jsr     $013450.l               ; randomize pitch (-$4eee), wind, half-length, aftertouch, ET
+        clr.w   -$34be(a4)              ; random referee (0..23)
+        jsr     $0128a4.l               ; initialize KO2 Referee (-$3a66 name + traits!)
+
+        ; Show Kick Off 2's authentic Pre-Match Screen (ko6.men: clubs, kits, ref, pitch, wind)
+        ; with live interactive kit changer (Joystick + Keyboard) BEFORE loading AMIGAPx.BIN!
+        bsr.w   ko2_prematch_kits
+
+        ; Preload the chosen Home & Away kit styles (0..5) from KRD NOW while KRD cache ($81000) is active,
+        ; BEFORE AMIGAPx.BIN reuses $081000..$088e1f!
+        move.w  KO2_HOME_TEAM+$418.l,-$4ec8(a4)
+        move.w  KO2_AWAY_TEAM+$418.l,-$4ec6(a4)
+        jsr     $01af88.l               ; loads Home/Away sprites into -$1204 heap & sets -$11f4/-$11f2!
 
         ; On Atari STE: now that KRD loading is finished ($081000..$09d000 is 100% free!)
         ; and pitch condition -$4eee(a4) (0..3) is chosen, load AMIGAP0..3.BIN via proven PM HD mode!
@@ -592,13 +644,12 @@ load_hd_file:
         rts
 
 ; ---------------------------------------------------------------------------
-; Helper: pack_pm_to_ko2_team(a0=PM team, a2=KO2 $41e dst, d0.w=shirt, d1.w=style)
+; Helper: pack_pm_to_ko2_team(a0=PM team, a2=KO2 $41e dst, d0.w=packed kit word)
 ; Copies team name + up to 24 players (remapping shirt 13 -> 14 for KO2!)
 ; ---------------------------------------------------------------------------
 pack_pm_to_ko2_team:
         movem.l d0-d7/a0-a3/a5-a6,-(sp)
-        move.w  d0,d6                   ; shirt colour index
-        move.w  d1,-(sp)                ; save kit style on stack
+        move.w  d0,-(sp)                ; save packed kit word on stack
         ; Clear $41e bytes
         movea.l a2,a3
         move.w  #($41e/2-1),d1
@@ -672,16 +723,270 @@ pack_pm_to_ko2_team:
         cmpi.w  #14,d7
         ble.s   .chk_sh
 
-        ; Set KO2 tactics [0,1,2,3], active=0, kit style=(sp)+, shirt=d6, shorts=4 (white)
+        ; Set KO2 tactics [0,1,2,3], active=0, unpack kit word -> style($418), col1($41a), col2($41c)
         lea     $406(a2),a3
         move.l  #0,(a3)+
         move.l  #1,(a3)+
         move.l  #2,(a3)+
         move.l  #3,(a3)+
         clr.w   $416(a2)
-        move.w  (sp)+,$418(a2)          ; kit style (1 or 3)
-        move.w  d6,$41a(a2)             ; shirt colour index
-        move.w  #4,$41c(a2)             ; shorts: white ($777)
+        move.w  (sp)+,d0                ; packed kit word: bit15=1, 12..10=style, 9..5=col1, 4..0=col2
+        move.w  d0,d1
+        andi.w  #31,d1                  ; col2 (0..19)
+        move.w  d1,$41c(a2)
+        lsr.w   #5,d0
+        move.w  d0,d1
+        andi.w  #31,d1                  ; col1 (0..19)
+        move.w  d1,$41a(a2)
+        lsr.w   #5,d0
+        andi.w  #7,d0                   ; style (0..5)
+        cmpi.w  #6,d0
+        blt.s   .st_ok
+        moveq   #1,d0
+.st_ok: move.w  d0,$418(a2)
+        movem.l (sp)+,d0-d7/a0-a3/a5-a6
+        rts
+
+; ---------------------------------------------------------------------------
+; Helper: lookup_team_kit(a0 = PM team ptr, a4 = PM a4) -> d0.w packed kit word
+; ---------------------------------------------------------------------------
+lookup_team_kit:
+        movem.l d1-d3/a0-a3,-(sp)
+        ; Human club? Use custom kit saved at PM_HUM_KIT_OFF(a4) if initialized!
+        tst.w   $28(a0)
+        beq.s   .ltk_ai
+        move.w  PM_HUM_KIT_OFF(a4),d0
+        bmi.s   .ltk_ret                ; bit 15 set -> valid custom human club kit!
+        move.w  #$8024,d0               ; fallback default: style 0 (Plain), Royal Blue(1) / White(4)
+        bra.s   .ltk_ret
+.ltk_ai:
+        ; Match club name against team_names_92 (automatically follows promotion/relegation!)
+        lea     team_names_92(pc),a1
+        moveq   #0,d1                   ; idx 0..91
+.ltk_lp:
+        movea.l a0,a2
+        movea.l a1,a3
+.ltk_cm:
+        move.b  (a2)+,d2
+        move.b  (a3)+,d3
+        cmp.b   d2,d3
+        bne.s   .ltk_nx
+        tst.b   d2
+        bne.s   .ltk_cm
+        ; Exact name match at index d1!
+        add.w   d1,d1
+        lea     team_kits_92(pc),a2
+        move.w  0(a2,d1.w),d0
+        bra.s   .ltk_ret
+.ltk_nx:
+        lea     20(a1),a1
+        addq.w  #1,d1
+        cmpi.w  #92,d1
+        blt.s   .ltk_lp
+        ; Custom-renamed AI team: use its slot index in team_kits_92
+        move.l  a0,d0
+        sub.l   -$2e94(a4),d0
+        divu.w  #100,d0
+        cmpi.w  #92,d0
+        bhs.s   .ltk_def
+        add.w   d0,d0
+        lea     team_kits_92(pc),a2
+        move.w  0(a2,d0.w),d0
+        bra.s   .ltk_ret
+.ltk_def:
+        move.w  #$8024,d0
+.ltk_ret:
+        movem.l (sp)+,d1-d3/a0-a3
+        rts
+
+; ---------------------------------------------------------------------------
+; Pre-Match Screen (ko6.men): Display teams, kits, referee, pitch condition,
+; wind, and allow changing Home/Away kit colours & styles before kickoff!
+; Controls:
+;   Joystick 1 Fire / Space / Return : KICK OFF!
+;   Joystick 1 Up/Down (or Arrow U/D): cycle Home Shirt Colour
+;   Joystick 1 L/R    (or Arrow L/R) : cycle Away Shirt Colour
+;   Keys 1 / 2 / 3                   : Home Style / Shirt / Trim
+;   Keys 4 / 5 / 6                   : Away Style / Shirt / Trim
+; ---------------------------------------------------------------------------
+ko2_prematch_kits:
+        movem.l d0-d7/a0-a3/a5-a6,-(sp)
+        lea     KO2_HOME_TEAM.l,a0
+        lea     KO2_AWAY_TEAM.l,a1
+        jsr     $01338c.l               ; draw authentic Kick Off 2 ko6.men pre-match screen!
+
+        ; Clear unused bottom area (y=132..199: below PITCH/WIND boxes -> zero clipping!)
+        lea     $078000+132*160.l,a0
+        move.w  #(68*160/4-1),d0
+.pm_cb: clr.l   (a0)+
+        dbra    d0,.pm_cb
+
+        ; Set col 15 = pure crisp white ($0777) for our control legend (unused in y=0..131!)
+        move.w  #$0777,-(sp)
+        move.w  #15,-(sp)
+        move.w  #7,-(sp)                ; XBIOS Setcolor(15, $0777)
+        trap    #14
+        addq.l  #6,sp
+
+        ; Draw clean 4-line control legend centred in y=141..188
+        lea     $078000+141*160.l,a3
+        lea     pm_hint_l0(pc),a0
+        moveq   #82,d4                  ; 31*5=155 -> (320-155)/2 = 82
+        moveq   #15,d0
+        bsr.w   draw_mini_str
+        lea     $078000+155*160.l,a3
+        lea     pm_hint_l1(pc),a0
+        moveq   #55,d4                  ; 42*5=210 -> 55
+        moveq   #15,d0
+        bsr.w   draw_mini_str
+        lea     $078000+165*160.l,a3
+        lea     pm_hint_l2(pc),a0
+        moveq   #55,d4
+        moveq   #15,d0
+        bsr.w   draw_mini_str
+        lea     $078000+181*160.l,a3
+        lea     pm_hint_l3(pc),a0
+        moveq   #82,d4                  ; 31*5=155 -> 82
+        moveq   #15,d0
+        bsr.w   draw_mini_str
+
+        lea     KO2_HOME_TEAM.l,a5
+        lea     KO2_AWAY_TEAM.l,a6
+        ; NOTE: NEVER keep a2 across trap #1 / trap #14 (TOS clobbers d0-d2/a0-a2)!
+        ; Read Joystick 1 directly via a4-relative -$df0(a4) (dir) & -$dee(a4) (fire)!
+        ; Wait until fire button released so accidental held fire doesn't skip screen
+.pm_wrel:
+        move.w  #$25,-(sp)              ; XBIOS Vsync
+        trap    #14
+        addq.l  #2,sp
+        tst.w   -$dee(a4)
+        bne.s   .pm_wrel
+        ; Flush any stale buffered keypresses
+.pm_flsh:
+        move.w  #$0b,-(sp)              ; GEMDOS Cconis
+        trap    #1
+        addq.l  #2,sp
+        tst.w   d0
+        beq.s   .pm_go
+        move.w  #$08,-(sp)              ; GEMDOS Cnecin
+        trap    #1
+        addq.l  #2,sp
+        bra.s   .pm_flsh
+.pm_go:
+        moveq   #-1,d5                  ; last joy dir (edge-triggered!)
+.pm_loop:
+        move.w  #$25,-(sp)              ; XBIOS Vsync (50 Hz poll)
+        trap    #14
+        addq.l  #2,sp
+
+        ; 1. Check Joystick 1 Fire -> Kick Off!
+        tst.w   -$dee(a4)
+        bne.w   .pm_done
+
+        ; 2. Check Joystick 1 Direction (edge-triggered)
+        move.w  -$df0(a4),d0
+        cmp.w   d5,d0
+        beq.s   .pm_chk_key
+        move.w  d0,d5
+        cmpi.w  #0,d0                   ; Joy Up -> Home Col1 +1
+        beq.s   .h_c1_p
+        cmpi.w  #4,d0                   ; Joy Down -> Home Col1 -1
+        beq.s   .h_c1_m
+        cmpi.w  #2,d0                   ; Joy Right -> Away Col1 +1
+        beq.s   .a_c1_p
+        cmpi.w  #6,d0                   ; Joy Left -> Away Col1 -1
+        beq.s   .a_c1_m
+        bra.s   .pm_chk_key
+
+.h_c1_p: moveq  #1,d1
+        lea     $41a(a5),a3
+        bra.w   .mod_col
+.h_c1_m: moveq  #-1,d1
+        lea     $41a(a5),a3
+        bra.w   .mod_col
+.a_c1_p: moveq  #1,d1
+        lea     $41a(a6),a3
+        bra.w   .mod_col
+.a_c1_m: moveq  #-1,d1
+        lea     $41a(a6),a3
+        bra.w   .mod_col
+
+.pm_chk_key:
+        move.w  #$0b,-(sp)              ; GEMDOS Cconis
+        trap    #1
+        addq.l  #2,sp
+        tst.w   d0
+        beq.s   .pm_loop
+        move.w  #$08,-(sp)              ; GEMDOS Cnecin -> low byte ASCII, high word scancode
+        trap    #1
+        addq.l  #2,sp
+        cmpi.b  #' ',d0                 ; Space -> Kick Off!
+        beq.w   .pm_done
+        cmpi.b  #$0d,d0                 ; Return -> Kick Off!
+        beq.w   .pm_done
+        cmpi.b  #'1',d0                 ; 1 = Home Style (0..5)
+        beq.s   .h_st
+        cmpi.b  #'2',d0                 ; 2 = Home Col1 (0..19)
+        beq.s   .h_c1_p
+        cmpi.b  #'3',d0                 ; 3 = Home Col2 (0..19)
+        beq.s   .h_c2_p
+        cmpi.b  #'4',d0                 ; 4 = Away Style (0..5)
+        beq.s   .a_st
+        cmpi.b  #'5',d0                 ; 5 = Away Col1 (0..19)
+        beq.s   .a_c1_p
+        cmpi.b  #'6',d0                 ; 6 = Away Col2 (0..19)
+        beq.s   .a_c2_p
+        swap    d0                      ; scancode in low byte
+        cmpi.b  #$48,d0                 ; Up arrow -> Home Col1 +1
+        beq.s   .h_c1_p
+        cmpi.b  #$50,d0                 ; Down arrow -> Home Col1 -1
+        beq.s   .h_c1_m
+        cmpi.b  #$4d,d0                 ; Right arrow -> Away Col1 +1
+        beq.s   .a_c1_p
+        cmpi.b  #$4b,d0                 ; Left arrow -> Away Col1 -1
+        beq.s   .a_c1_m
+        bra.w   .pm_loop
+
+.h_c2_p: moveq  #1,d1
+        lea     $41c(a5),a3
+        bra.s   .mod_col
+.a_c2_p: moveq  #1,d1
+        lea     $41c(a6),a3
+        bra.s   .mod_col
+.h_st:  lea     $418(a5),a3
+        bra.s   .mod_st
+.a_st:  lea     $418(a6),a3
+.mod_st:
+        move.w  (a3),d0
+        addq.w  #1,d0
+        cmpi.w  #6,d0
+        blt.s   .st_sv
+        moveq   #0,d0
+.st_sv: move.w  d0,(a3)
+        bra.s   .pm_redraw
+.mod_col:
+        move.w  (a3),d0
+        add.w   d1,d0
+        bpl.s   .mc_hi
+        moveq   #19,d0
+.mc_hi: cmpi.w  #20,d0
+        blt.s   .mc_sv
+        moveq   #0,d0
+.mc_sv: move.w  d0,(a3)
+.pm_redraw:
+        movea.l a5,a0
+        movea.l a6,a1
+        jsr     $01331a.l               ; live-update both visual jerseys & palette slots 11..14!
+        bra.w   .pm_loop
+
+.pm_done:
+        ; Wait fire release before kicking off
+.pm_wr2:
+        move.w  #$25,-(sp)
+        trap    #14
+        addq.l  #2,sp
+        tst.w   -$dee(a4)
+        bne.s   .pm_wr2
         movem.l (sp)+,d0-d7/a0-a3/a5-a6
         rts
 
@@ -735,24 +1040,34 @@ ko2_replay_alloc:
         move.l  #KO2_REPLAY_BUF,-$2b8a(a4)
         cmpi.l  #$0cb000,BR_TOS_84.l
         bhs.s   .rep_full
-        ; Shrink KO2 replay ring from $6000 (24 KB) -> $1800 (6 KB, $0bb900..$0bd100 < $0bdde4!)
-        move.w  #$0bff,$01568c.l        ; clear 3,072 words ($1800 bytes) instead of $2fff words
-        move.w  #$1800,$01567e.l
-        move.w  #$1800,$015736.l
-        move.w  #$1800,$01a322.l
-        move.w  #$1800,$01a36c.l
-        move.w  #$1800,$01b270.l
-        move.w  #$1800,$01b294.l
-        move.w  #$1800,$01b2ba.l
-        move.w  #$1800,$01b2e0.l
-        move.w  #$1800,$01b4f4.l
-        move.w  #$1800,$01f9d6.l
-        move.w  #$1800,$01fa6c.l
+        ; Shrink KO2 replay ring from $6000 (24 KB) -> $1000 (4 KB, $0bc900..$0bd900 < $0bdde4!)
+        move.w  #$07ff,$01568c.l        ; clear 2,048 words ($1000 bytes) instead of $2fff words
+        move.w  #$1000,$01567e.l
+        move.w  #$1000,$015736.l
+        move.w  #$1000,$01a322.l
+        move.w  #$1000,$01a36c.l
+        move.w  #$1000,$01b270.l
+        move.w  #$1000,$01b294.l
+        move.w  #$1000,$01b2ba.l
+        move.w  #$1000,$01b2e0.l
+        move.w  #$1000,$01b4f4.l
+        move.w  #$1000,$01f9d6.l
+        move.w  #$1000,$01fa6c.l
 .rep_full:
         jmp     $015664.l
 
-kit_palette_tbl:
-        dc.b    10,1,4,12,11,9,15,2     ; Red, Blue, White, Yellow, Orange, DarkRed, Purple, Cyan
+; Perceptual colour-family table for KO2's 20 kit colours (0..19):
+; 0=Blue, 1=White/Grey, 2=Black, 3=Red/Orange/Claret, 4=Yellow, 5=Pink/Purple, 6=Green/Teal
+kit_family_tbl:
+        dc.b    0,0,0,0, 1,1,1, 2, 3,3,3,3, 4, 5,5,5, 6,6, 0,6
+pm_hint_l0:
+        dc.b    "MATCH KIT CHECK - AVOID CLASHES",0
+pm_hint_l1:
+        dc.b    "HOME: JOY U/D OR 1:STYLE 2:SHIRT 3:TRIM",0
+pm_hint_l2:
+        dc.b    "AWAY: JOY L/R OR 4:STYLE 5:SHIRT 6:TRIM",0
+pm_hint_l3:
+        dc.b    "PRESS FIRE OR SPACE TO KICK OFF",0
         even
 ko2_hnd_fname:
         dc.b    "KO2HND.BIN",0

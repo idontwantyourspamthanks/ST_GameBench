@@ -11,7 +11,23 @@ What's New in v1.1 (Atari STE Amiga Visuals & Audio):
     Fine Scrolling, and Shared-Bus STE Hardware Blitter masked 4bpp sprites.
   * Dual-playfield 16-colour split (0..7 Amiga pitch, 8..15 KO2 club kits &
     HUD), transparent vector radar (X resize, D toggle), active player black
-    underline, and HBlank-locked bottom HUD (player name, clock, score).
+    underline, and Amiga-style black-background HBlank-locked bottom HUD
+    (kit-matched player names & score, crisp white clock, no green bar).
+  * Exact 0-pixel pitch-edge camera alignment across all four touchlines and
+    goal lines (goal kicks, corners, throw-ins and goals trigger right on the
+    painted white lines).
+- Authentic 1989-90 Club Kits, Pre-Match Screen & New Game Kit Picker:
+  * All 92 English Football League clubs assigned authentic 1989-90 home
+    colours and Kick Off 2 kit styles (Plain, Stripes, Chest Band, Sleeves,
+    Shoulders, Sash) with automatic colour-family clash avoidance.
+  * New Game Club Kit Picker right after naming your club (e.g. Anco United):
+    choose Style, Shirt Colour and Trim/Shorts with live visual jersey preview
+    (mouse clicks or keys 1-3 + Space/Done), persisted in every save game.
+  * Kick Off 2 Pre-Match Screen before every match showing both clubs, live
+    visual jerseys, randomized Referee, randomized Pitch Condition (Normal,
+    Wet, Soggy, Plastic) and Wind. Change either kit live before kick-off
+    (Joystick U/D=Home, L/R=Away; keys 1-3=Home Style/Shirt/Trim, 4-6=Away;
+    Fire or Space to kick off).
 - Kick Off 2 Amiga DMA Audio on Atari STE:
   * 17 authentic Amiga 8-bit signed PCM sound effects playing via STE DMA
     audio hardware (6,258 Hz mono) with zero Timer-A CPU overhead.

@@ -184,3 +184,97 @@ squad_counts_92:
         dc.b 2,6,5,4
         dc.b 2,6,5,4
         dc.b 2,6,5,4
+        even
+team_kits_92:
+        dc.w $8d44 ; ARSENAL
+        dc.w $8d02 ; ASTON VILLA
+        dc.w $8144 ; CHARLTON
+        dc.w $8024 ; CHELSEA
+        dc.w $8044 ; COVENTRY CITY
+        dc.w $8541 ; CRYSTAL PALACE
+        dc.w $8087 ; DERBY COUNTY
+        dc.w $8024 ; EVERTON
+        dc.w $814a ; LIVERPOOL
+        dc.w $808b ; LUTON TOWN
+        dc.w $8044 ; MANCHESTER CITY
+        dc.w $8144 ; MANCHESTER UTD
+        dc.w $8004 ; MILLWALL
+        dc.w $8191 ; NORWICH CITY
+        dc.w $8144 ; NOTTM FOREST
+        dc.w $8824 ; Q.P.R.
+        dc.w $8424 ; SHEFFIELD WED
+        dc.w $8544 ; SOUTHAMPTON
+        dc.w $8080 ; TOTTENHAM
+        dc.w $802c ; WIMBLEDON
+        dc.w $8144 ; BARNSLEY
+        dc.w $9024 ; BLACKBURN
+        dc.w $8547 ; BOURNEMOUTH
+        dc.w $850c ; BRADFORD CITY
+        dc.w $8424 ; BRIGHTON
+        dc.w $8567 ; HULL CITY
+        dc.w $8024 ; IPSWICH TOWN
+        dc.w $808c ; LEEDS UNITED
+        dc.w $8024 ; LEICESTER CITY
+        dc.w $8144 ; MIDDLESBROUGH
+        dc.w $84e4 ; NEWCASTLE UTD
+        dc.w $8024 ; OLDHAM ATHLETIC
+        dc.w $8180 ; OXFORD UNITED
+        dc.w $8204 ; PLYMOUTH ARGYLE
+        dc.w $8024 ; PORTSMOUTH
+        dc.w $8087 ; PORT VALE
+        dc.w $8544 ; SHEFFIELD UTD
+        dc.w $8544 ; STOKE CITY
+        dc.w $8544 ; SUNDERLAND
+        dc.w $8144 ; SWINDON TOWN
+        dc.w $8187 ; WATFORD
+        dc.w $8404 ; WEST BROMWICH
+        dc.w $8d02 ; WEST HAM UTD
+        dc.w $8167 ; WOLVERHAMPTON
+        dc.w $8024 ; BIRMINGHAM CITY
+        dc.w $8164 ; BLACKPOOL
+        dc.w $8080 ; BOLTON
+        dc.w $8544 ; BRENTFORD
+        dc.w $8144 ; BRISTOL CITY
+        dc.w $9024 ; BRISTOL ROVERS
+        dc.w $8080 ; BURY
+        dc.w $8024 ; CARDIFF CITY
+        dc.w $8424 ; CHESTER CITY
+        dc.w $8144 ; CREWE ALEXANDRA
+        dc.w $8087 ; FULHAM
+        dc.w $8424 ; HUDDERSFIELD
+        dc.w $8144 ; LEYTON ORIENT
+        dc.w $8181 ; MANSFIELD TOWN
+        dc.w $8104 ; NORTHAMPTON
+        dc.w $84e4 ; NOTTS COUNTY
+        dc.w $8080 ; PRESTON
+        dc.w $8824 ; READING
+        dc.w $8d44 ; ROTHERHAM UTD
+        dc.w $842c ; SHREWSBURY
+        dc.w $8087 ; SWANSEA CITY
+        dc.w $8081 ; TRANMERE ROVERS
+        dc.w $8144 ; WALSALL
+        dc.w $8424 ; WIGAN ATHLETIC
+        dc.w $8141 ; ALDERSHOT
+        dc.w $8d02 ; BURNLEY
+        dc.w $8187 ; CAMBRIDGE UTD
+        dc.w $8024 ; CARLISLE UNITED
+        dc.w $8024 ; CHESTERFIELD
+        dc.w $8424 ; COLCHESTER UTD
+        dc.w $8944 ; DONCASTER
+        dc.w $8544 ; EXETER CITY
+        dc.w $8024 ; GILLINGHAM
+        dc.w $84e4 ; GRIMSBY TOWN
+        dc.w $8024 ; HALIFAX TOWN
+        dc.w $8424 ; HARTLEPOOL UTD
+        dc.w $8087 ; HEREFORD UNITED
+        dc.w $8544 ; LINCOLN CITY
+        dc.w $8187 ; MAIDSTONE UTD
+        dc.w $8024 ; PETERBOROUGH
+        dc.w $8427 ; ROCHDALE
+        dc.w $8144 ; SCARBOROUGH
+        dc.w $8102 ; SCUNTHORPE UTD
+        dc.w $8004 ; SOUTHEND UNITED
+        dc.w $8024 ; STOCKPORT
+        dc.w $8181 ; TORQUAY UNITED
+        dc.w $8144 ; WREXHAM
+        dc.w $8144 ; YORK CITY

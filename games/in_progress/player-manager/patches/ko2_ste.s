@@ -142,6 +142,8 @@ STE_BK_Y0:      dc.w    0               ; temp backbuffer y0 (0..207) during dra
 STE_BK_TX8:     dc.l    0               ; temp backbuffer tx*8 during draw
 STE_BK_REND:    dc.l    0               ; temp backbuffer radar pool end during draw
 STE_UL_DASH:    dc.l    0               ; secondary/pass-target player struct ptr ($fc3f dashed bar)
+STE_HUD_C2:     dc.w    $0730           ; HUD col 2 = Away team bright kit RGB (updated in VBL)
+STE_HUD_C4:     dc.w    $0770           ; HUD col 4 = Home team bright kit RGB (updated in VBL)
 
 DB_A:
         dc.l    STE_RING_A, STE_SAV_A, STE_STK_A, STE_RPOOL_A, STE_RLR_A, STE_RDR_A
@@ -401,6 +403,15 @@ ste_vbl_irq:
         move.l  (a0)+,(a1)+
         move.l  (a0)+,(a1)+
 
+        ; Update bottom HUD team text colours (col 2 = Away -$4f54, col 4 = Home -$4f56)
+        ; Brighten very dark shirt colours so text is always crisp on the black HUD background
+        move.w  $023556.l,d0            ; Away shirt ST RGB (-$4f54(a4))
+        bsr.w   ste_hud_bright
+        move.w  d0,STE_HUD_C2
+        move.w  $023554.l,d0            ; Home shirt ST RGB (-$4f56(a4))
+        bsr.w   ste_hud_bright
+        move.w  d0,STE_HUD_C4
+
         ; Select active Front buffer descriptor (DB_A or DB_B)
         lea     DB_A(pc),a0
         tst.w   STE_SHOW_IDX
@@ -481,6 +492,25 @@ ste_vbl_irq:
         clr.b   $ffff820f.w
         clr.b   $ffff8265.w
         bra.s   .vt_exit
+
+; Helper: brighten dark ST 9-bit RGB word (d0) so team text is always legible on black ($000)
+ste_hud_bright:
+        andi.w  #$0777,d0
+        beq.s   .hb_blk                 ; $000 (Black) -> silver $555
+        cmpi.w  #$0007,d0               ; pure blue ($005 Navy / $007 Royal) -> crisp sky-royal $257
+        bls.s   .hb_blu
+        move.w  d0,d1
+        andi.w  #$0444,d1               ; any channel >= 4?
+        bne.s   .hb_ok
+        add.w   d0,d0                   ; double very dark colours ($300->$600, $030->$060)
+.hb_ok: or.w    #$0111,d0               ; gentle lift so dark reds/greens pop cleanly on black
+        rts
+.hb_blk:
+        move.w  #$0555,d0
+        rts
+.hb_blu:
+        move.w  #$0257,d0
+        rts
 
 ; MFP IPL-5 preemption wrappers: ISRB stays set (no re-entry!), but Timer B (prio 8) preempts immediately!
 ste_tc_wrap:
@@ -577,11 +607,11 @@ ste_tb_hud_wait:
         move.b  #$c0,4(a0)              ; $8209 = $c0
         clr.b   $ffff820f.w
         clr.b   $ffff8265.w
-        move.w  #$0030,$ffff8240.w      ; dark pitch green scoreboard bar
-        move.w  #$0000,$ffff8242.w      ; col 1 = crisp black (clock + score)
-        move.w  #$0730,$ffff8244.w      ; col 2 = crisp orange (home player name)
+        clr.w   $ffff8240.w             ; col 0 = jet black (no green bar, matches Amiga KO2!)
+        move.w  #$0777,$ffff8242.w      ; col 1 = crisp white (clock + score)
+        move.w  STE_HUD_C2(pc),$ffff8244.w ; col 2 = Away team shirt colour
         move.w  #$0777,$ffff8246.w      ; col 3 = crisp white
-        move.w  #$0500,$ffff8248.w      ; col 4 = crisp red (away player name)
+        move.w  STE_HUD_C4(pc),$ffff8248.w ; col 4 = Home team shirt colour
         ; Re-arm Timer B for +15 scanlines (1 line early = end of line 195 -> razor-clean HSync cut before 197!)
         move.l  #ste_tb_bot,$0120.w
         move.b  #15,$fffffa21.w
@@ -815,23 +845,31 @@ ste_pitch_update:
         asr.l   #3,d1
         add.l   d1,-$110e(a4)
 
-        ; 2. Compute clamped world camera (wx, wy) and store for KO2's goal arrow + sprites
+        ; 2. Compute clamped world camera (wx, wy) AND write exact clamped position back to
+        ;    KO2's -$1112(a4) / -$110e(a4) so STE_CUR_WX - (-$1112) == +176 and
+        ;    STE_CUR_WY - (-$110e) == +64 IDENTICALLY at all 4 pitch edges (0px sprite drift!)
         movem.l d0-d7/a0-a3/a5-a6,-(sp)
         move.w  -$1112(a4),d0
         addi.w  #176,d0
         bge.s   .wx_lo
         moveq   #0,d0
+        move.l  #$ff500000,-$1112(a4)   ; clamp KO2 cam_x = -176.0 (exact left edge!)
+        bra.s   .wx_ok
 .wx_lo: cmpi.w  #960,d0
         ble.s   .wx_ok
         move.w  #960,d0
+        move.l  #$03100000,-$1112(a4)   ; clamp KO2 cam_x = +784.0 (exact right edge!)
 .wx_ok:
         move.w  -$110e(a4),d1
         addi.w  #64,d1
         bge.s   .wy_lo
         moveq   #0,d1
-.wy_lo: cmpi.w  #1336,d1
+        move.l  #$ffc00000,-$110e(a4)   ; clamp KO2 cam_y = -64.0 (exact top edge!)
+        bra.s   .wy_ok
+.wy_lo: cmpi.w  #1355,d1                ; 1536 - 181 = 1355 (full bottom behind-goal view!)
         ble.s   .wy_ok
-        move.w  #1336,d1
+        move.w  #1355,d1
+        move.l  #$050b0000,-$110e(a4)   ; clamp KO2 cam_y = +1291.0 (exact bottom edge!)
 .wy_ok:
         move.w  d0,STE_CUR_WX
         move.w  d1,STE_CUR_WY

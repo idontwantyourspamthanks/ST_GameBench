@@ -127,28 +127,38 @@ reapply_pm_hooks:
         ; 9. Task 1 (1B+1C+1D+1E): 92-team 1989-90 league expansion
         bsr.w   init_league92
         tst.w   d0
-        bne.s   .fail
+        bne.w   .fail
 
         ; 10. Task 2 (2B): Kick Off 2 match engine overlay bridge
         bsr.w   init_ko2_bridge
         tst.w   d0
-        bne.s   .fail
+        bne.w   .fail
 
         ; 11. v1.1 Title Screen discreet credit ("v1.1 enhanced by dad_prg") on scr2.men & scr3.men
         cmpi.l  #$4eba77c6,$010544.l
-        bne.s   .fail
+        bne.w   .fail
         cmpi.l  #$4eac8008,$010548.l
-        bne.s   .fail
+        bne.w   .fail
         cmpi.l  #$4eba77ba,$010550.l
-        bne.s   .fail
+        bne.w   .fail
         cmpi.l  #$4eac8008,$010554.l
-        bne.s   .fail
+        bne.w   .fail
         move.w  #$4ef9,$010544.l
         move.l  #title_scr2_credit,$010546.l
         move.w  #$4e71,$01054a.l
         move.w  #$4ef9,$010550.l
         move.l  #title_scr3_credit,$010552.l
         move.w  #$4e71,$010556.l
+
+        ; 12. v1.1 New Game Club Kit Picker hook at $010a34 (right after scr4.men Done!)
+        cmpi.l  #$2a6cd18c,$010a34.l    ; movea.l -$2e74(a4),a5
+        bne.w   .fail
+        cmpi.l  #$1b7c0064,$010a38.l    ; move.b #$64,$7(a5)
+        bne.w   .fail
+        move.w  #$4ef9,$010a34.l
+        move.l  #club_kit_picker,$010a36.l
+        move.w  #$4e71,$010a3a.l
+        move.w  #$4e71,$010a3c.l
 
         moveq   #0,d0
         movem.l (sp)+,d1-d7/a0-a6
@@ -795,13 +805,23 @@ title_scr3_credit:
 
 ; Input: a3 = screen row base ($078000 + y*160), d0.b = 4-bit colour index (0..15)
 draw_credit_line:
-        move.w  d0,-(sp)                ; save colour index on stack
-        lea     .cr_txt(pc),a0
+        lea     cr_txt(pc),a0
         moveq   #100,d4                 ; x = (320 - 24*5) / 2 = 100 (centred!)
+; Shared 4x6 low-res bitmap text drawer (A-Z, a-z -> uppercase, 0-9, punct)
+; In: a0 = NUL-terminated string, a3 = row base ($078000 + y*160), d4.w = X, d0.w = col (0..15)
+; Preserves ALL registers (d0-d7/a0-a6)!
+draw_mini_str:
+        movem.l d0-d7/a0-a2,-(sp)
+        move.w  d0,-(sp)                ; save colour index on stack
 .cr_ch: moveq   #0,d0
         move.b  (a0)+,d0
         beq.w   .cr_end
-        lea     .cr_chr(pc),a1
+        cmpi.b  #'a',d0
+        blt.s   .cr_lu
+        cmpi.b  #'z',d0
+        bgt.s   .cr_lu
+        subi.b  #32,d0
+.cr_lu: lea     cr_chr(pc),a1
         moveq   #0,d1
 .cr_fn: move.b  (a1)+,d2
         beq.s   .cr_nx
@@ -810,7 +830,7 @@ draw_credit_line:
         addq.w  #1,d1
         bra.s   .cr_fn
 .cr_gt: mulu    #6,d1
-        lea     .cr_fnt(pc),a1
+        lea     cr_fnt(pc),a1
         adda.w  d1,a1
         movea.l a3,a2
         moveq   #5,d3
@@ -853,27 +873,56 @@ draw_credit_line:
         bra.w   .cr_ch
 .cr_end:
         addq.l  #2,sp
+        movem.l (sp)+,d0-d7/a0-a2
         rts
 
-.cr_txt: dc.b   "v1.1 enhanced by dad_prg",0
-.cr_chr: dc.b   " .1_abcdeghnprvy",0
-.cr_fnt:
+cr_txt:  dc.b   "V1.1 ENHANCED BY DAD_PRG",0
+cr_chr:  dc.b   " .:/-_<>0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ",0
+cr_fnt:
         dc.b    %0000,%0000,%0000,%0000,%0000,%0000    ; ' '
         dc.b    %0000,%0000,%0000,%0000,%1000,%0000    ; '.'
-        dc.b    %0100,%1100,%0100,%0100,%1110,%0000    ; '1'
+        dc.b    %0000,%0100,%0000,%0100,%0000,%0000    ; ':'
+        dc.b    %0001,%0010,%0100,%1000,%0000,%0000    ; '/'
+        dc.b    %0000,%0000,%1110,%0000,%0000,%0000    ; '-'
         dc.b    %0000,%0000,%0000,%0000,%0000,%1111    ; '_'
-        dc.b    %0000,%0110,%0001,%0111,%1011,%0000    ; 'a'
-        dc.b    %1000,%1110,%1001,%1001,%1110,%0000    ; 'b'
-        dc.b    %0000,%0111,%1000,%1000,%0111,%0000    ; 'c'
-        dc.b    %0001,%0111,%1001,%1001,%0111,%0000    ; 'd'
-        dc.b    %0000,%0110,%1001,%1111,%0111,%0000    ; 'e'
-        dc.b    %0000,%0111,%1001,%0111,%0001,%0110    ; 'g'
-        dc.b    %1000,%1110,%1001,%1001,%1001,%0000    ; 'h'
-        dc.b    %0000,%1110,%1001,%1001,%1001,%0000    ; 'n'
-        dc.b    %0000,%1110,%1001,%1001,%1110,%1000    ; 'p'
-        dc.b    %0000,%1011,%1100,%1000,%1000,%0000    ; 'r'
-        dc.b    %0000,%1001,%1001,%1001,%0110,%0000    ; 'v'
-        dc.b    %0000,%1001,%1001,%0111,%0001,%0110    ; 'y'
+        dc.b    %0010,%0100,%1000,%0100,%0010,%0000    ; '<'
+        dc.b    %1000,%0100,%0010,%0100,%1000,%0000    ; '>'
+        dc.b    %0110,%1001,%1001,%1001,%0110,%0000    ; '0'
+        dc.b    %0100,%1100,%0100,%0100,%1110,%0000    ; '1'
+        dc.b    %1110,%0001,%0110,%1000,%1111,%0000    ; '2'
+        dc.b    %1110,%0001,%0110,%0001,%1110,%0000    ; '3'
+        dc.b    %1001,%1001,%1111,%0001,%0001,%0000    ; '4'
+        dc.b    %1111,%1000,%1110,%0001,%1110,%0000    ; '5'
+        dc.b    %0111,%1000,%1110,%1001,%0110,%0000    ; '6'
+        dc.b    %1111,%0001,%0010,%0100,%0100,%0000    ; '7'
+        dc.b    %0110,%1001,%0110,%1001,%0110,%0000    ; '8'
+        dc.b    %0110,%1001,%0111,%0001,%1110,%0000    ; '9'
+        dc.b    %0110,%1001,%1111,%1001,%1001,%0000    ; 'A'
+        dc.b    %1110,%1001,%1110,%1001,%1110,%0000    ; 'B'
+        dc.b    %0111,%1000,%1000,%1000,%0111,%0000    ; 'C'
+        dc.b    %1110,%1001,%1001,%1001,%1110,%0000    ; 'D'
+        dc.b    %1111,%1000,%1110,%1000,%1111,%0000    ; 'E'
+        dc.b    %1111,%1000,%1110,%1000,%1000,%0000    ; 'F'
+        dc.b    %0111,%1000,%1011,%1001,%0111,%0000    ; 'G'
+        dc.b    %1001,%1001,%1111,%1001,%1001,%0000    ; 'H'
+        dc.b    %1110,%0100,%0100,%0100,%1110,%0000    ; 'I'
+        dc.b    %0001,%0001,%0001,%1001,%0110,%0000    ; 'J'
+        dc.b    %1001,%1010,%1100,%1010,%1001,%0000    ; 'K'
+        dc.b    %1000,%1000,%1000,%1000,%1111,%0000    ; 'L'
+        dc.b    %1001,%1111,%1111,%1001,%1001,%0000    ; 'M'
+        dc.b    %1001,%1101,%1111,%1011,%1001,%0000    ; 'N'
+        dc.b    %0110,%1001,%1001,%1001,%0110,%0000    ; 'O'
+        dc.b    %1110,%1001,%1110,%1000,%1000,%0000    ; 'P'
+        dc.b    %0110,%1001,%1001,%1011,%0111,%0000    ; 'Q'
+        dc.b    %1110,%1001,%1110,%1010,%1001,%0000    ; 'R'
+        dc.b    %0111,%1000,%0110,%0001,%1110,%0000    ; 'S'
+        dc.b    %1110,%0100,%0100,%0100,%0100,%0000    ; 'T'
+        dc.b    %1001,%1001,%1001,%1001,%0110,%0000    ; 'U'
+        dc.b    %1001,%1001,%1001,%0110,%0110,%0000    ; 'V'
+        dc.b    %1001,%1001,%1111,%1111,%1001,%0000    ; 'W'
+        dc.b    %1001,%1001,%0110,%1001,%1001,%0000    ; 'X'
+        dc.b    %1001,%1001,%0110,%0100,%0100,%0000    ; 'Y'
+        dc.b    %1111,%0001,%0110,%1000,%1111,%0000    ; 'Z'
         even
 
 ; ---------------------------------------------------------------------------
@@ -903,6 +952,7 @@ popcnt_tbl:
 
         include "patches/league92.s"
         include "patches/ko2_bridge.s"
+        include "patches/kit_picker.s"
         include "work/luts.inc"
         even
 payload_end:
