@@ -4,7 +4,7 @@
 
 This repository holds the tools, the patches and the full working notes. It does **not** contain any game, any TOS ROM, or anything extracted from them. You need your own copies (see [Getting the game files](#getting-the-game-files)).
 
-Done: **Midwinter**, **Midwinter 2: Flames of Freedom** (v1.6.2), **Hunter** and **Powermonger**. Upcoming games are listed in [`games/queue/README.md`](games/queue/README.md).
+Done: **Midwinter**, **Midwinter 2: Flames of Freedom** (v1.6.2), **Hunter**, **Powermonger**, **Moonshine Racers**, **Nebulus**, **Populous**, **Populous 2**, **Flood** and **Player Manager** (v1.1). Upcoming games are listed in [`games/queue/README.md`](games/queue/README.md).
 
 ## What the patches do
 
@@ -57,6 +57,7 @@ The agent "skills" in [`.omp/skills/`](.omp/skills/) capture the method, the emu
 | `games/done/nebulus/` | **Nebulus (v1.2: input-lag fixes, an input-death fix, lift and shot hit-box fixes, trainers, an in-game level editor with campaign disks (v1.2: each custom level picks its colour scheme and enemy set from lists, copy tower, crumble ledge, paired doors, conveyor ledges), HD and floppy releases; user-tested on MiSTer; the community site (cart and disk-image download in the dadprg hub) is a future project): done.** `PLAN.md`, `patches/`, `tools/`, `work/notes/`. |
 | `games/done/populous/`, `games/done/populous-2/` | **Populous (v1.0) and Populous 2 (v1.0, incl. a 512 KB floppy build): done.** Same layout; `PLAN.md` and `work/notes/` (the shared Bullfrog-family study is `populous/work/notes/bullfrog_family.md`). |
 | `games/done/hunter/` | **Hunter (v1.4: STE palette, Amiga sky and dashboard, triple buffering, item/weapon keys, pause controls guide, HD save, even 1:1 mouse pointer, Jaguar pad, reworked 12517 Hz STE DMA sound with 1-pole IIR low-pass filter; v1.4: STE Blitter 4-plane halftone polygon spans + unrolled CPU fallback, bit-exact `swap`-accelerated 3D vertex rotation, stationary 3D mouse redraw skip, +10–20% FPS on 8 MHz STE): done.** Same layout; [`REPORT.md`](games/done/hunter/REPORT.md). |
+| `games/done/player-manager/` | **Player Manager (v1.1, 2 MB minimum: 92-club 1989–90 English Football League + 2,600-player pool, ~4.2× faster New Game setup, genuine Kick Off 2 match engine overlay, authentic 92-club Home/Away kits with perceptual clash avoidance and New Game kit picker; on 2 MB+ Atari STE/Mega STE, triple-buffered 50 fps full-screen 320×200 Amiga tiled pitches, transparent Blitter HUD, and 6,258 Hz DMA audio; HD, standalone `.vhd`, and 1.44 MB floppy releases; verified on Hatari and MiSTerFPGA): done.** `PLAN.md`, `patches/`, `tools/`, `work/notes/`. |
 | `games/done/midwinter/` | **Midwinter (v1.2, Jaguar pad): done.** Same layout; [`REPORT.md`](games/done/midwinter/REPORT.md). |
 | `games/done/` | Games declared finished. A game moves here (`git mv`) when it's declared ready, and back to `in_progress/` if new work is needed. |
 | `games/queue/` | **Upcoming games:** one folder per game with a README (source, file list, loader type) and early notes; the game files in `originals/` are git-ignored. The list is [`games/queue/README.md`](games/queue/README.md). |

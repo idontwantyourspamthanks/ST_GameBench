@@ -159,7 +159,7 @@ SPECS: tuple[GameSpec, ...] = (
         out_zip_tmpl="PlayerManager_v1.1_patched_vhd_{date}.zip",
         volume="PLAYMGR11",
         autorun="C:\\PLAYERME\\RUNME.TOS",
-        notes="On Atari STE / Mega STE, automatically enables full-screen 320x200 Amiga tiled pitches, transparent drop-shadowed bottom HUD, and 6258 Hz DMA audio; plain ST runs classic ST mode.",
+        notes="Requires 2 MB RAM minimum. On Atari STE / Mega STE (2 MB+), automatically enables triple-buffered 50 fps full-screen 320x200 Amiga tiled pitches, transparent drop-shadowed bottom HUD, and 6258 Hz DMA audio; plain ST runs classic ST mode.",
     ),
     GameSpec(
         slug="populous",

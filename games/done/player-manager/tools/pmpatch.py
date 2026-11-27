@@ -382,7 +382,7 @@ stager:
     ko2_ste_src = ROOT / "patches" / "ko2_ste.s"
     if ko2_ste_src.exists():
         ko2_ste_bin = assemble(ko2_ste_src, WORK / "ko2_ste.bin")
-        assert len(ko2_ste_bin) <= 0x19c0, f"KO2STE.BIN too large: {len(ko2_ste_bin)} > 6592"
+        assert len(ko2_ste_bin) <= 0x25c0, f"KO2STE.BIN too large: {len(ko2_ste_bin)} > 9664"
         (BUILD / "FILES" / "KO2STE.BIN").write_bytes(ko2_ste_bin)
         print(f"Assembled KO2STE.BIN: {len(ko2_ste_bin)} bytes")
     amiga_snd_src = WORK / "amiga" / "extracted" / "sounds"
@@ -522,6 +522,8 @@ stager:
         print("Built AMIGAP0..3.BIN: 4 Amiga STE pitches (32,288 bytes each: STE 12-bit pal + 80x96 map + 256 3bpp tiles)")
 
     # Patch HAGA: pp_nofade (remove grey fade on saves/loads) + pp_bigram_cache (4MB+ safe for $b3000)
+    # + clamp HAGA's $424-derived RAM units against phystop ($42e >> 19) so MiSTerFPGA MEM1M + TOS 1.62
+    # ($424=$08 while $42e=$100000) never relocates HAGA into unmapped $1f8000 (3-bomb Address Error!).
     haga_path = BUILD / "HAGA"
     haga = bytearray(haga_path.read_bytes())
     haga_edits = [
@@ -534,8 +536,11 @@ stager:
         (0x149c, "46fc270021fa000600704e75", "46fc270021df00704e714e75"),
         # pp_bigram_cache: keep chunked cache on >=4MB 68000 machines so $b3000 isn't overwritten
         (0x3228, "2412", "602a"),
+        # pp_phystop_ram: read tested phystop>>19 ($2(a0), from $42e.w) instead of $424.w bank config ($7(a0))
+        # so MiSTerFPGA MEM1M + TOS 1.62 ($424=$08, $42e=$100000) relocates HAGA to $0f8000 instead of $1f8000!
+        (0x21a0, "12a80007", "12a80002"),
     ]
-    # Assemble exact bytes for pp_nofade $1460..$1483? Verify with vasm to be 100% certain!
+    # Assemble exact bytes for pp_nofade $1460..$1483
     nofade_src = WORK / "haga_nofade.s"
     nofade_src.write_text("""
 HB      equ     0
@@ -556,6 +561,55 @@ HB      equ     0
     assert len(nf_bytes) == 36, f"unexpected nf_bytes len: {len(nf_bytes)}"
     haga_edits[2] = (0x1460, haga_edits[2][1], nf_bytes.hex())
 
+    # Assemble 32-bit-clean HAGA $014c..$0199 (78 bytes): preserve upper words of d1/d2/d3/d4 = 0
+    # and clamp $424-derived 512KB units d3 <= -1(a2) (phystop>>19) so BOTH RUNME.TOS and HAGA
+    # relocate HAGA to $0f8000 (never unmapped $1f8000!) on MiSTerFPGA MEM1M + TOS 1.62 ($424=$08).
+    haga_ram_orig = (
+        "428316380424240302020001220302010004e409d401"
+        "280302040002220302010008e409d801e20c42834a02"
+        "6708263c00040000e5ab42824a04670a243c00100000"
+        "e9aad6824843e64b15430004"
+    )
+    haga_ram_src = WORK / "haga_ram_clamp.s"
+    haga_ram_src.write_text("""
+        org     $014c
+        moveq   #0,d3
+        move.b  $424.w,d3
+        move.l  d3,d2
+        andi.b  #1,d2
+        move.l  d3,d1
+        andi.b  #4,d1
+        lsr.b   #2,d1
+        add.b   d1,d2
+        move.l  d3,d4
+        andi.b  #2,d4
+        move.l  d3,d1
+        andi.b  #8,d1
+        lsr.b   #2,d1
+        add.b   d1,d4
+        lsr.b   #1,d4
+        moveq   #0,d3
+        tst.b   d2
+        beq.s   .b1
+        moveq   #1,d3
+        subq.b  #1,d2
+        lsl.b   d2,d3
+.b1:    moveq   #0,d2
+        tst.b   d4
+        beq.s   .cl
+        moveq   #2,d2
+        lsl.b   d4,d2
+        add.b   d2,d3
+.cl:    cmp.b   -1(a2),d3
+        bls.s   .ok
+        move.b  -1(a2),d3
+.ok:    move.b  d3,4(a2)
+""")
+    haga_ram_new = assemble(haga_ram_src, WORK / "haga_ram_clamp.bin")
+    assert len(haga_ram_new) <= 78 and len(haga_ram_new) % 2 == 0
+    haga_ram_new += b"\x4e\x71" * ((78 - len(haga_ram_new)) // 2)
+    haga_edits.append((0x014c, haga_ram_orig, haga_ram_new.hex()))
+
     for off, orig_hex, new_hex in haga_edits:
         orig = bytes.fromhex(orig_hex)
         new = bytes.fromhex(new_hex)
@@ -563,7 +617,7 @@ HB      equ     0
         assert haga[off:off+len(orig)] == orig, f"HAGA+{off:#x} mismatch: {haga[off:off+len(orig)].hex()} != {orig_hex}"
         haga[off:off+len(new)] = new
     haga_path.write_bytes(haga)
-    print(f"Patched {haga_path} (pp_nofade + pp_bigram_cache)")
+    print(f"Patched {haga_path} (pp_nofade + pp_bigram_cache + ram_clamp)")
 
 if __name__ == "__main__":
     build()

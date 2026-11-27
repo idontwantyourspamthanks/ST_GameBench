@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # Play the patched Player Manager (PLAYERME) in Hatari, emulating an STE by default.
 #
-#   tools/play.sh                   # patched build, STE, 1 MB, TOS 1.62
+#   tools/play.sh                   # patched build, STE, 2 MB, TOS 1.62
 #   tools/play.sh --original        # unpatched PLAYERME, for comparison
 #   tools/play.sh --machine megaste # any Hatari machine: st, megast, ste, megaste, tt, falcon
-#   tools/play.sh --ram 2048        # RAM in KiB (1024 minimum)
+#   tools/play.sh --ram 4096        # RAM in KiB (2048 minimum)
 #   tools/play.sh --tos FILE        # override TOS image
 #   tools/play.sh --fresh           # discard build/play-<variant>/ (saves) and start clean
 #   tools/play.sh --fast-forward    # start Hatari with fast-forward enabled (AltGr+X toggles)
@@ -25,7 +25,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/.." && pwd -P)"
 TOSDIR="$ROOT/../../../tos"
 MACHINE=ste
-RAM=1024
+RAM=2048
 VARIANT=patched
 FRESH=0
 TOS=""

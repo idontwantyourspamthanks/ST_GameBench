@@ -446,9 +446,10 @@ Requirements
  - Overlander: STE, Mega STE, TT or Falcon for the Amiga music and sound
    (DMA sound) and the blitter; a plain ST plays the original YM sound.
  - Powermonger WW1: 1 MB; the same machines as Powermonger, plus the Falcon.
- - Player Manager: 1 MB; 92-club 1989-90 league + genuine Kick Off 2 match
-   engine. On Atari STE / Mega STE it uses Amiga tiled pitches, Blitter sprites
-   and DMA audio automatically; plain 68000 ST runs classic ST visuals/YM sound.
+ - Player Manager: 2 MB minimum; 92-club 1989-90 league + genuine Kick Off 2
+   match engine. On Atari STE / Mega STE (2 MB+) it uses triple-buffered 50 fps
+   Amiga tiled pitches, Blitter HUD and DMA audio automatically; plain 68000 ST
+   runs classic ST visuals/YM sound.
  - Tested in the Hatari emulator only (STE, Mega STE, TT; Hunter also on a
    plain ST). On a TT the Midwinters need the PMMU (Hatari: --mmu true, as
    run_tt.sh does); PP's unpatched Midwinter does not start on a TT.

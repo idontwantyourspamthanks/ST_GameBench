@@ -50,7 +50,7 @@ BR_AWAY_K2      equ     $0b6c8a         ; .w: Away team 2nd kit (packed word)
 BR_HOME_ALT     equ     $0b6c8c         ; .w: 0 = Home wearing 1st kit, 1 = wearing 2nd kit
 BR_AWAY_ALT     equ     $0b6c8e         ; .w: 0 = Away wearing 1st kit, 1 = wearing 2nd kit
 
-KO2_STE_BASE    equ     $0ae940         ; $0ae940..$0b02ff (6.5 KB) for KO2STE.BIN (above FILES.CR $09d000..$0ae940!)
+KO2_STE_BASE    equ     $0ae940         ; $0ae940..$0b0eff (9.6 KB) for KO2STE.BIN (above FILES.CR $09d000..$0ae940!)
 
 KO2_HOME_TEAM   equ     $0b6d00         ; $41e bytes
 KO2_AWAY_TEAM   equ     $0b7120         ; $41e bytes
@@ -258,7 +258,7 @@ ko2_bridge_match:
         clr.w   KO2_STE_BASE.l          ; clear header magic so missing KO2STE.BIN falls back cleanly!
         lea     ko2_ste_fname(pc),a0
         lea     KO2_STE_BASE.l,a1
-        move.l  #$19c0,d0               ; max 6,592 bytes ($0ae940..$0b02ff)
+        move.l  #$25c0,d0               ; max 9,664 bytes ($0ae940..$0b0eff)
         bsr.w   load_hd_file
         jsr     $006942.w               ; restore PP PRD mode (before swap)
         move.l  (sp)+,d0
@@ -289,9 +289,9 @@ ko2_bridge_match:
         move.l  #KO2_SCRATCH_BUF,$01ffba.l
         move.w  #$6010,$01ffbe.l        ; bra.s $01ffd0
         move.w  #$6006,$01fffa.l        ; bra.s $020002 (skip Mfree(a6))
-        ; Route KO2's $010a2e ($20f0 = 8.4 KB) Malloc to static $0b0300..$0b23f0 (prevents Week 2+ 1 MB OOM!)
-        move.w  #$297c,$010a2e.l        ; move.l #$000b0300,-$4450(a4)
-        move.l  #$000b0300,$010a30.l
+        ; Route KO2's $010a2e ($20f0 = 8.4 KB) Malloc to static $0b0f00..$0b2fef (prevents Week 2+ 1 MB OOM!)
+        move.w  #$297c,$010a2e.l        ; move.l #$000b0f00,-$4450(a4)
+        move.l  #$000b0f00,$010a30.l
         move.w  #$bbb0,$010a34.l        ; -$4450
         move.w  #$600a,$010a36.l        ; bra.s $010a42 (skip Malloc + beq $1189a)
         ; Skip KO2's $100000 dummy floppy spin-up delay at $01aaee (instant KRD load!)

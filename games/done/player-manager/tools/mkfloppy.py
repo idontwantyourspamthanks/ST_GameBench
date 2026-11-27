@@ -21,7 +21,7 @@ ROOT = Path(__file__).resolve().parent.parent
 BUILD = ROOT / "build" / "game"
 DIST = ROOT / "dist"
 VER = "1.1"
-DATE = os.environ.get("DATE", "2026-11-26")
+DATE = os.environ.get("DATE", "2026-11-27")
 
 # Minimal Atari TOS DESKTOP.INF (TOS 1.x) and NEWDESK.INF (TOS 2.x/3.x) that auto-run A:\RUNME.TOS
 DESKTOP_INF = (
@@ -71,10 +71,10 @@ Self-booting 1.44 MB HD Atari ST / STE floppy image (.st).
 Works on MiSTerFPGA, Hatari, Gotek / FlashFloppy / HxC, Mega STE, and Falcon.
 
 Requirements:
-  - 1 MB RAM minimum (works on 1 MB, 2 MB, and 4 MB ST / STE)
-  - Atari STE: full Amiga striped pitches (4 conditions), hardware fine scroll,
-    Blitter rendering, active player underline, and 6.25 kHz DMA audio!
-  - Plain Atari ST: automatically falls back to classic ST Kick Off 2 match engine.
+  - 2 MB RAM minimum (verified on 2 MB and 4 MB Atari STE / ST on MiSTerFPGA & Hatari)
+  - Atari STE (2 MB+): triple-buffered 50 FPS Amiga striped pitches (4 conditions),
+    hardware fine scroll, Blitter HUD, active player underline, and 6.25 kHz DMA audio!
+  - Plain Atari ST (2 MB+): automatically runs classic ST Kick Off 2 match visuals & YM audio.
 
 How to run:
   - Insert PlayerManager_v{VER}.st into Drive A: and cold-boot (auto-runs A:\\RUNME.TOS).

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Build Player Manager v1.0 and write the deterministic HD distribution zip into dist/.
+# Build Player Manager v1.1 and write the deterministic HD + VHD distribution zips into dist/.
 #
-#   tools/package.sh   # writes dist/PlayerManager_v1.0_patched_hd_<date>.zip
+#   tools/package.sh   # writes dist/PlayerManager_v1.1_patched_{hd,vhd}_<date>.zip
 #
 # Needs originals/PLAYERME, work/ko2_ram.bin, work/setup_ram.bin, work/DEMO92.DAT,
 # Kick Off 2 originals/KICKOFF2/FILES/KRD, and vasmm68k_mot.

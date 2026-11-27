@@ -76,53 +76,51 @@ reapply_pm_hooks:
         bne.w   .fail
         cmpi.l  #$48a7e000,$014ce2.l
         bne.w   .fail
+        cmpi.l  #$426cca26,$014c8c.l
+        bne.w   .fail
+        cmpi.w  #$6008,$014c90.l
+        bne.w   .fail
         cmpi.l  #$4eba04c2,$014c96.l
         bne.w   .fail
         cmpi.l  #$4eba05ac,$014cbe.l
         bne.w   .fail
 
+        ; Verify 11 & 12 original bytes before applying hooks
+        cmpi.l  #$45ec8158,$010540.l
+        bne.w   .fail
+        cmpi.l  #$4eba77c6,$010544.l
+        bne.w   .fail
+        cmpi.l  #$45ec8161,$01054c.l
+        bne.w   .fail
+        cmpi.l  #$4eba77ba,$010550.l
+        bne.w   .fail
+        cmpi.l  #$2a6cd18c,$010a34.l    ; movea.l -$2e74(a4),a5
+        bne.w   .fail
+        cmpi.l  #$1b7c0064,$010a38.l    ; move.b #$64,$7(a5)
+        bne.w   .fail
+
         clr.b   skip_matches
 
-        ; 1. Hook $01863e (sum_rng_mod)
-        move.w  #$4ef9,$01863e.l
-        move.l  #fast_sum_rng_mod,$018640.l
+        ; Apply all 15 6-byte jmp hooks in micro_opt via compact table
+        lea     pm_jmp_tbl(pc),a0
+        moveq   #14,d0
+.ap_j:  movea.l (a0)+,a1
+        move.w  #$4ef9,(a1)+
+        move.l  (a0)+,(a1)
+        dbra    d0,.ap_j
 
         ; 2. Hook $021792 (LFSR jump table)
         move.l  #fast_lfsr,$021794.l
 
-        ; 3. Hook $0155f2 (calc_pos_ratings)
-        move.w  #$4ef9,$0155f2.l
-        move.l  #fast_calc_pos_ratings,$0155f4.l
-
-        ; 4. Hook $0156f2 (pick_best_pos)
-        move.w  #$4ef9,$0156f2.l
-        move.l  #fast_pick_best_pos,$0156f4.l
-
-        ; 5. Hook $015758 (train_one_skill)
-        move.w  #$4ef9,$015758.l
-        move.l  #fast_train_one_skill,$01575a.l
-
-        ; 6. Hoist rating_lookup in sim_season_matches ($0153ee & $01545e)
-        move.w  #$4ef9,$0153ee.l
-        move.l  #hoist_match_entry,$0153f0.l
+        ; 6b. Short branch in sim_season_matches ($01545e)
         move.w  #$3407,$01545e.l        ; move.w d7,d2
         move.w  #$6012,$015460.l        ; bra.s  $015474
 
-        ; 7. New Game setup hooks
-        move.w  #$4ef9,$010cc0.l
-        move.l  #setup_enter,$010cc2.l
-        move.w  #$4ef9,$010cfe.l
-        move.l  #setup_bucket_inc,$010d00.l
-        move.w  #$4ef9,$01528e.l
-        move.l  #cond_sim_matches,$015290.l
-        move.w  #$4ef9,$014ce2.l
-        move.l  #accepted_final_matches,$014ce4.l
-
-        ; 8. Option A: early position rejection at $014c96 and $014cbe
-        move.w  #$4ef9,$014c96.l
-        move.l  #early_rej_after_create,$014c98.l
-        move.w  #$4ef9,$014cbe.l
-        move.l  #early_rej_after_season,$014cc0.l
+        ; 11 & 12. NOP padding after 8/10-byte displaced instructions
+        move.w  #$4e71,$010546.l
+        move.w  #$4e71,$010552.l
+        move.w  #$4e71,$010a3a.l
+        move.w  #$4e71,$010a3c.l
 
         ; 9. Task 1 (1B+1C+1D+1E): 92-team 1989-90 league expansion
         bsr.w   init_league92
@@ -134,32 +132,6 @@ reapply_pm_hooks:
         tst.w   d0
         bne.w   .fail
 
-        ; 11. v1.1 Title Screen discreet credit ("v1.1 enhanced by dad_prg") on scr2.men & scr3.men
-        cmpi.l  #$4eba77c6,$010544.l
-        bne.w   .fail
-        cmpi.l  #$4eac8008,$010548.l
-        bne.w   .fail
-        cmpi.l  #$4eba77ba,$010550.l
-        bne.w   .fail
-        cmpi.l  #$4eac8008,$010554.l
-        bne.w   .fail
-        move.w  #$4ef9,$010544.l
-        move.l  #title_scr2_credit,$010546.l
-        move.w  #$4e71,$01054a.l
-        move.w  #$4ef9,$010550.l
-        move.l  #title_scr3_credit,$010552.l
-        move.w  #$4e71,$010556.l
-
-        ; 12. v1.1 New Game Club Kit Picker hook at $010a34 (right after scr4.men Done!)
-        cmpi.l  #$2a6cd18c,$010a34.l    ; movea.l -$2e74(a4),a5
-        bne.w   .fail
-        cmpi.l  #$1b7c0064,$010a38.l    ; move.b #$64,$7(a5)
-        bne.w   .fail
-        move.w  #$4ef9,$010a34.l
-        move.l  #club_kit_picker,$010a36.l
-        move.w  #$4e71,$010a3a.l
-        move.w  #$4e71,$010a3c.l
-
         moveq   #0,d0
         movem.l (sp)+,d1-d7/a0-a6
         rts
@@ -167,6 +139,23 @@ reapply_pm_hooks:
         moveq   #1,d0
         movem.l (sp)+,d1-d7/a0-a6
         rts
+
+pm_jmp_tbl:
+        dc.l    $01863e,fast_sum_rng_mod
+        dc.l    $0155f2,fast_calc_pos_ratings
+        dc.l    $0156f2,fast_pick_best_pos
+        dc.l    $015758,fast_train_one_skill
+        dc.l    $0153ee,hoist_match_entry
+        dc.l    $010cc0,setup_enter
+        dc.l    $010cfe,setup_bucket_inc
+        dc.l    $01528e,cond_sim_matches
+        dc.l    $014ce2,accepted_final_matches
+        dc.l    $014c8c,early_rej_from_14c88
+        dc.l    $014c96,early_rej_after_create
+        dc.l    $014cbe,early_rej_after_season
+        dc.l    $010540,title_scr2_credit
+        dc.l    $01054c,title_scr3_credit
+        dc.l    $010a34,club_kit_picker
 
 ; ---------------------------------------------------------------------------
 ; Patch 1: fast_sum_rng_mod ($01863e) - 100% bit-exact (16/8/4/1-bit LFSR)
@@ -751,6 +740,12 @@ check_early_reject:
         moveq   #0,d0
         rts
 
+; Replaces $014c8c: clr.w -$35da(a4) / bra.b $14c9a (6 bytes)
+early_rej_from_14c88:
+        clr.w   -$35da(a4)
+        bsr.w   fast_lfsr               ; displaced jsr -$7f08(a4)
+        jmp     $014c9e.l
+
 ; Replaces $014c96: jsr $1515a(pc) / jsr -$7f08(a4) (8 bytes)
 early_rej_after_create:
         jsr     $01515a.l               ; create_player
@@ -784,24 +779,24 @@ early_rej_after_season:
 ; and scr3.men (Main Title Menu, y=184, col 13 dim slate on dark green).
 ; ---------------------------------------------------------------------------
 title_scr2_credit:
+        lea     -$7ea8(a4),a2
         jsr     $017d0c.l               ; draw scr2.men
         movem.l d0-d7/a0-a3,-(sp)
         lea     $078000+186*160.l,a3
         moveq   #4,d0                   ; col 4 ($004 discreet dark blue on teal)
         bsr.s   draw_credit_line
         movem.l (sp)+,d0-d7/a0-a3
-        jsr     -$7ff8(a4)              ; wait click/key
-        jmp     $01054c.l
+        jmp     $010548.l               ; untouched jsr -$7ff8(a4)
 
 title_scr3_credit:
+        lea     -$7e9f(a4),a2
         jsr     $017d0c.l               ; draw scr3.men
         movem.l d0-d7/a0-a3,-(sp)
         lea     $078000+194*160.l,a3
         moveq   #13,d0                  ; col 13 ($324 discreet dim slate on dark green)
         bsr.s   draw_credit_line
         movem.l (sp)+,d0-d7/a0-a3
-        jsr     -$7ff8(a4)              ; wait menu click
-        jmp     $010558.l
+        jmp     $010554.l               ; untouched jsr -$7ff8(a4)
 
 ; Input: a3 = screen row base ($078000 + y*160), d0.b = 4-bit colour index (0..15)
 draw_credit_line:
