@@ -134,7 +134,8 @@ STE_DMA_CNT:    dc.w    0
 ; Double-Buffered Video State
 ; ---------------------------------------------------------------------------
 STE_PITCH_OK:   dc.w    0               ; 1 = AMIGAPx.BIN loaded
-STE_SHOW_IDX:   dc.w    0               ; 0 = Buffer A displayed, 1 = Buffer B displayed (ATOMIC!)
+STE_SHOW_IDX:   dc.w    0               ; 0 = Buffer A ready, 1 = Buffer B ready (set by ste_pitch_update)
+STE_DISP_IDX:   dc.w    0               ; 0 = Buffer A live,  1 = Buffer B live  (latched by ste_vbl_irq!)
 STE_STATS_DIRTY: dc.w   0               ; 1 = returning from Half-Time/Stats ($078000 was overwritten)
 STE_ORIG_TB:    dc.l    0               ; saved KO2 original Timer B vector ($120.w)
 STE_ORIG_VBL:   dc.l    0               ; saved TOS original VBL vector ($70.w)
@@ -183,6 +184,7 @@ ste_install_hooks:
         clr.w   STE_DMA_CNT
         clr.w   STE_PITCH_OK
         clr.w   STE_SHOW_IDX
+        clr.w   STE_DISP_IDX
         clr.w   STE_STATS_DIRTY
         clr.l   STE_ORIG_TB
         clr.l   STE_ORIG_VBL
@@ -296,6 +298,7 @@ ste_load_pitch:
         cmpi.l  #32288,d0
         bne.s   .lp_fail
         clr.w   STE_SHOW_IDX
+        clr.w   STE_DISP_IDX
         clr.w   STE_SPR_CNT
         clr.w   STE_RAD_C_SC
         clr.l   STE_UL_DASH
@@ -427,9 +430,10 @@ ste_vbl_irq:
         move.l  (a0)+,(a1)+
         move.l  (a0)+,(a1)+
 
-        ; Select active Front buffer descriptor (DB_A or DB_B)
+        ; Select active Front buffer descriptor (DB_A or DB_B) & latch STE_DISP_IDX!
         lea     DB_A(pc),a0
-        tst.w   STE_SHOW_IDX
+        move.w  STE_SHOW_IDX(pc),d0
+        move.w  d0,STE_DISP_IDX
         beq.s   .vt_buf
         lea     DB_B(pc),a0
 .vt_buf:
@@ -481,6 +485,7 @@ ste_vbl_irq:
         rts
 
 .vt_stats_mark:
+        move.w  STE_SHOW_IDX(pc),STE_DISP_IDX
         move.w  #1,STE_STATS_DIRTY
         clr.b   $fffffa1b.w
         tst.l   STE_ORIG_TC
@@ -810,9 +815,16 @@ ste_pitch_update:
         ext.l   d5
         move.l  d5,STE_BK_TX8
 
+        ; Wait until VBL has actually latched STE_SHOW_IDX onto the Shifter (STE_DISP_IDX == STE_SHOW_IDX)
+        ; so we NEVER erase/draw into a buffer that is still being scanned out on-screen!
+.pu_wait_disp:
+        move.w  STE_SHOW_IDX(pc),d0
+        cmp.w   STE_DISP_IDX(pc),d0
+        bne.s   .pu_wait_disp
+
         ; Select INVISIBLE Backbuffer descriptor a6 = (STE_SHOW_IDX == 0) ? DB_B : DB_A
         lea     DB_B(pc),a6
-        tst.w   STE_SHOW_IDX
+        tst.w   d0
         beq.s   .pu_got_bk
         lea     DB_A(pc),a6
 .pu_got_bk:
