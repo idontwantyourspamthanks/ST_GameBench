@@ -399,9 +399,9 @@ ste_stop_sound:
         rts
 
 ; ---------------------------------------------------------------------------
-; VBL IRQ ($70.w): Runs at scanline -50 (BEFORE TOS VBL queue!) -> Timer B is
-; ALWAYS armed 50 scanlines before line 0, even under 100% Blitter load!
-; Writes SHOW_START to BOTH $8201/$03/$0d AND $8205/$07/$09 (ZERO +16px judder!)
+; VBL IRQ ($70.w): Minimal stats-screen detector; actual STE Shifter/HScroll
+; programming runs in ste_vbl_end (AFTER TOS VBL -> ~5+ scanlines past VSync,
+; completely outside the Atari STE GSTMCU VSync reload window -> ZERO judder!)
 ; ---------------------------------------------------------------------------
 ste_vbl_skip:
         movem.l d0-d1,-(sp)             ; $018d6e expects d0-d1 on stack (original $018d06)!
@@ -409,97 +409,11 @@ ste_vbl_skip:
 
 ste_vbl_irq:
         tst.w   STE_PITCH_OK
-        beq.w   .vt_chain_fast
-        movem.l d0-d2/a0-a1,-(sp)
-        bclr    #7,BLT_LINE.w           ; pause Blitter briefly so VBL setup finishes at line -49!
-        sne     d2
+        beq.s   .vt_chain_fast
         tst.l   $0231c8.l               ; KO2 -$52e2(a4): KO2 VBL active? (0 = Half-Time/Full-Time/Exit!)
-        beq.w   .vt_stats_mark
+        beq.s   .vt_stats_mark
         tst.w   $02356a.l               ; KO2 -$4f40(a4): Half-Time/Full-Time/Stats on $078000?
-        bne.w   .vt_stats_mark
-
-        clr.b   $fffffa1b.w             ; stop Timer B
-        tst.l   STE_ORIG_TB
-        bne.s   .vt_tb_ok
-        move.l  $0120.w,STE_ORIG_TB
-.vt_tb_ok:
-        ; Wrap Timer C ($114.w) & IKBD ($118.w) so higher-priority MFP Timer B (prio 8)
-        ; ALWAYS preempts them immediately (fixes MiSTerFPGA/real-STE Timer C/IKBD black-line slip!)
-        move.l  $0114.w,d0
-        beq.s   .vt_tc_ok
-        cmpi.l  #ste_tc_wrap,d0
-        beq.s   .vt_tc_ok
-        move.l  d0,STE_ORIG_TC
-        move.l  #ste_tc_wrap,$0114.w
-.vt_tc_ok:
-        move.l  $0118.w,d0
-        beq.s   .vt_ik_ok
-        cmpi.l  #ste_ikbd_wrap,d0
-        beq.s   .vt_ik_ok
-        move.l  d0,STE_ORIG_IKBD
-        move.l  #ste_ikbd_wrap,$0118.w
-.vt_ik_ok:
-        ; Load STE 12-bit Amiga pitch palette (0..7)
-        lea     STE_PIT_PAL.l,a0
-        lea     $ffff8240.w,a1
-        move.l  (a0)+,(a1)+
-        move.l  (a0)+,(a1)+
-        move.l  (a0)+,(a1)+
-        move.l  (a0)+,(a1)+
-
-        ; Select active Front buffer descriptor (DB_A or DB_B) & latch STE_DISP_IDX!
-        lea     DB_A(pc),a0
-        move.w  STE_SHOW_IDX(pc),d0
-        move.w  d0,STE_DISP_IDX
-        beq.s   .vt_buf
-        lea     DB_B(pc),a0
-.vt_buf:
-        ; Program BOTH Video Base ($8201/$03/$0d) AND live Video Counter ($8205/$07/$09)
-        ; -> Takes effect THIS frame alongside $8265/$820f -> ZERO +16px judder!
-        move.l  DB_START(a0),d0
-        move.l  d0,d1
-        swap    d1
-        move.b  d1,$ffff8201.w
-        move.b  d1,$ffff8205.w
-        move.w  d0,d1
-        lsr.w   #8,d1
-        move.b  d1,$ffff8203.w
-        move.b  d1,$ffff8207.w
-        move.b  d0,$ffff820d.w
-        move.b  d0,$ffff8209.w
-
-        move.w  DB_HSCR(a0),d0
-        move.b  d0,$ffff8265.w          ; fine pixel hscroll (0..15)
-        beq.s   .vt_h0
-        clr.b   $ffff820f.w             ; hscroll != 0 -> STE adds +8B auto = 168B!
-        bra.s   .vt_arm_tb
-.vt_h0:
-        move.b  #4,$ffff820f.w          ; hscroll == 0 -> +4 extra words (+8B) = 168B!
-
-.vt_arm_tb:
-        ; On 2 MB+ STE (STE_BIG_RAM == 1): 448-line mirrored buffer -> ZERO Timer B IRQs EVER!
-        tst.w   STE_BIG_RAM
-        bne.s   .vt_exit
-        ; 1 MB STE: Full 320x200 pitch; only arm Timer B if ring wraps within lines 0..199!
-        move.l  DB_WRAP(a0),STE_TB_WRAP_A
-        move.w  DB_WTGT(a0),STE_TB_TGT_W
-        move.w  DB_WRAPY(a0),d0
-        move.w  d0,STE_TB_WRAP_Y
-        cmpi.w  #PITCH_VIS_H,d0         ; wrap_y >= 200 -> ZERO Timer B IRQs this frame!
-        bge.s   .vt_exit
-        ; DB_WRAPY is ALWAYS in 2..199 (y0=223 mirrors row 0->224 and sets wrap_y=2)!
-        ; Arm 1 scanline early (wrap_y - 1 >= 1) so ste_tb_wrap locks onto exact video counter!
-        subq.w  #1,d0
-        move.l  #ste_tb_wrap,$0120.w
-        move.b  d0,$fffffa21.w
-        move.b  #8,$fffffa1b.w          ; Event Count mode
-        bset    #0,$fffffa07.w          ; enable Timer B in IERA
-        bset    #0,$fffffa13.w          ; enable Timer B in IMRA
-.vt_exit:
-        tst.b   d2
-        beq.s   .vt_nr
-        bset    #7,BLT_LINE.w           ; resume paused Blitter!
-.vt_nr: movem.l (sp)+,d0-d2/a0-a1
+        bne.s   .vt_stats_mark
 .vt_chain_fast:
         move.l  STE_ORIG_VBL(pc),-(sp)
         rts
@@ -526,7 +440,7 @@ ste_vbl_irq:
         clr.b   $ffff8209.w
         clr.b   $ffff820f.w
         clr.b   $ffff8265.w
-        bra.s   .vt_exit
+        bra.s   .vt_chain_fast
 
 ; MFP IPL-5 preemption wrappers: ISRB stays set (no re-entry!), but Timer B (prio 8) preempts immediately!
 ste_tc_wrap:
@@ -586,9 +500,97 @@ ste_tb_wrap:
         rte
 
 ; ---------------------------------------------------------------------------
-; VBL End ($018e0a): Skip ST $ff8240 stripe write, set VBL flag, step DMA Audio
+; VBL End ($018e0a): Runs inside TOS VBL queue (~5+ scanlines AFTER VSync,
+; ~55 scanlines BEFORE active display!) -> Official Atari STE Shifter update!
+; Programs $8201/$03/$0d + $8205/$07/$09 + $820f + $8265 cleanly outside VSync!
 ; ---------------------------------------------------------------------------
 ste_vbl_end:
+        tst.w   STE_PITCH_OK
+        beq.w   .ve_novid
+        tst.w   $02356a.l               ; Half-Time/Full-Time/Stats active?
+        bne.w   .ve_novid
+        movem.l d0-d2/a0-a1,-(sp)
+        bclr    #7,BLT_LINE.w           ; pause Blitter briefly if active (1 MB $80)
+        sne     d2
+        clr.b   $fffffa1b.w             ; stop Timer B
+        tst.l   STE_ORIG_TB
+        bne.s   .ve_tb_ok
+        move.l  $0120.w,STE_ORIG_TB
+.ve_tb_ok:
+        tst.w   STE_BIG_RAM
+        bne.s   .ve_pal                 ; 2 MB+ STE: no Timer B, no TC/IKBD wrap needed!
+        move.l  $0114.w,d0
+        beq.s   .ve_tc_ok
+        cmpi.l  #ste_tc_wrap,d0
+        beq.s   .ve_tc_ok
+        move.l  d0,STE_ORIG_TC
+        move.l  #ste_tc_wrap,$0114.w
+.ve_tc_ok:
+        move.l  $0118.w,d0
+        beq.s   .ve_pal
+        cmpi.l  #ste_ikbd_wrap,d0
+        beq.s   .ve_pal
+        move.l  d0,STE_ORIG_IKBD
+        move.l  #ste_ikbd_wrap,$0118.w
+.ve_pal:
+        ; Load STE 12-bit Amiga pitch palette (0..7)
+        lea     STE_PIT_PAL.l,a0
+        lea     $ffff8240.w,a1
+        move.l  (a0)+,(a1)+
+        move.l  (a0)+,(a1)+
+        move.l  (a0)+,(a1)+
+        move.l  (a0)+,(a1)+
+
+        ; Select active Front buffer descriptor & latch STE_DISP_IDX!
+        lea     DB_A(pc),a0
+        move.w  STE_SHOW_IDX(pc),d0
+        move.w  d0,STE_DISP_IDX
+        beq.s   .ve_buf
+        lea     DB_B(pc),a0
+.ve_buf:
+        ; Program VBASE ($8201/$03/$0d) + live VCOUNT ($8205/$07/$09) safely past VSync!
+        move.l  DB_START(a0),d0
+        move.l  d0,d1
+        swap    d1
+        move.b  d1,$ffff8201.w
+        move.b  d1,$ffff8205.w
+        move.w  d0,d1
+        lsr.w   #8,d1
+        move.b  d1,$ffff8203.w
+        move.b  d1,$ffff8207.w
+        move.b  d0,$ffff820d.w
+        move.b  d0,$ffff8209.w
+
+        ; Official Atari STE order: write LINEWID ($820f) BEFORE HSCROLL ($8265)!
+        move.w  DB_HSCR(a0),d0
+        beq.s   .ve_h0
+        clr.b   $ffff820f.w             ; hscroll != 0 -> LINEWID = 0 (+8B auto = 168B!)
+        move.b  d0,$ffff8265.w          ; HSCROLL = 1..15
+        bra.s   .ve_tb
+.ve_h0:
+        move.b  #4,$ffff820f.w          ; hscroll == 0 -> LINEWID = 4 words (+8B = 168B!)
+        clr.b   $ffff8265.w             ; HSCROLL = 0
+.ve_tb:
+        tst.w   STE_BIG_RAM
+        bne.s   .ve_done                ; 2 MB+ STE: ZERO Timer B IRQs EVER!
+        move.l  DB_WRAP(a0),STE_TB_WRAP_A
+        move.w  DB_WTGT(a0),STE_TB_TGT_W
+        move.w  DB_WRAPY(a0),d0
+        move.w  d0,STE_TB_WRAP_Y
+        cmpi.w  #PITCH_VIS_H,d0
+        bge.s   .ve_done
+        subq.w  #1,d0
+        move.l  #ste_tb_wrap,$0120.w
+        move.b  d0,$fffffa21.w
+        move.b  #8,$fffffa1b.w
+        bset    #0,$fffffa07.w
+        bset    #0,$fffffa13.w
+.ve_done:
+        tst.b   d2
+        beq.s   .ve_nr
+        bset    #7,BLT_LINE.w
+.ve_nr: movem.l (sp)+,d0-d2/a0-a1
+.ve_novid:
         clr.w   $2718a.l
         move.w  #$ffff,$27190.l         ; VBL sync flag!
 
