@@ -538,15 +538,18 @@ ste_tb_wrap:
         lsr.w   #8,d2                   ; d2.b = MID  ($8207); d3.b = LOW ($8209)
         move.w  STE_TB_TGT_W(pc),d5     ; d5.w = (TARGET - 8) & $ffff
         lea     $ffff8205.w,a0
-        ; Wait until Shifter live counter reaches exact end of line (wrap_y - 1)!
+        ; Step 1: Wait until Shifter live counter reaches end of line (wrap_y - 1)!
+        ;         (Never slips a scanline even if IRQ arrived late inside HBlank of line wrap_y-1!)
 .tw_wt: movep.w 2(a0),d0                ; atomic 16-bit read of $8207 (MID) + $8209 (LOW)
         sub.w   d5,d0                   ; signed (VCOUNT_16 - (TARGET - 8))
         blt.s   .tw_wt                  ; loop while still before end of line (wrap_y - 1)
-        nop                             ; 8 x nop = 32 cycles -> safely past DE=0 & LINEWID!
+        ; Step 2: Wait for DE=0 (HBlank!) so $8205/$07/$09 is NEVER written during active display!
+        ;         (Exits immediately if already in HBlank; prevents MiSTerFPGA counter clobber!)
+.tw_hb: move.b  4(a0),d0
         nop
-        nop
-        nop
-        nop
+        cmp.b   4(a0),d0
+        bne.s   .tw_hb
+        nop                             ; 4 x nop = 16 cycles -> safely past LINEWID!
         nop
         nop
         nop

@@ -112,6 +112,29 @@ pm_slim_match_init:
 ko2_bridge_match:
         ; Save PM state & flags
         move.l  a4,BR_PM_A4.l
+
+        ; Replace "Done" button on "The Line Up" screen with "LOADING..." immediately!
+        movem.l d0-d7/a0-a3,-(sp)
+        move.w  #2,-(sp)                ; XBIOS Physbase -> d0 = active display screen
+        trap    #14
+        addq.l  #2,sp
+        movea.l d0,a2
+        ; Clear Done button area (x=80..159 -> +40..+79, y=182..195 -> 14 lines)
+        lea     182*160+40(a2),a0
+        moveq   #13,d1
+.lu_cl: moveq   #9,d0                   ; 10 longs = 40 bytes (80px)
+        movea.l a0,a1
+.lu_c2: clr.l   (a1)+
+        dbra    d0,.lu_c2
+        lea     160(a0),a0
+        dbra    d1,.lu_cl
+        lea     186*160(a2),a3
+        lea     pm_loading_s(pc),a0     ; "LOADING..."
+        moveq   #95,d4                  ; centred over Done button (x=80..159)
+        moveq   #15,d0                  ; crisp white/bright text
+        bsr.w   draw_mini_str
+        movem.l (sp)+,d0-d7/a0-a3
+
         movea.l -$1eec(a4),a0           ; PM home team
         movea.l -$1ee8(a4),a1           ; PM away team
         move.w  $28(a0),BR_HOME_HUM.l
@@ -1165,6 +1188,16 @@ ko2_prematch_kits:
         bra.w   .pm_loop
 
 .pm_done:
+        ; Replace bottom prompt line (y=179..193) with "LOADING MATCH..." while KRD/pitches load!
+        lea     $078000+179*160.l,a0
+        move.w  #(15*160/4-1),d0
+.pm_cl: clr.l   (a0)+
+        dbra    d0,.pm_cl
+        lea     $078000+181*160.l,a3
+        lea     pm_load_match_s(pc),a0  ; "LOADING MATCH..."
+        moveq   #120,d4                 ; 16*5=80 -> (320-80)/2 = 120
+        moveq   #15,d0
+        bsr.w   draw_mini_str
         ; Wait fire release before kicking off
 .pm_wr2:
         move.w  #$25,-(sp)
@@ -1257,6 +1290,10 @@ pm_hint_l2:
         dc.b    "AWAY: L/R OR A 1ST/2ND  4-6 CUSTOM",0
 pm_hint_l3:
         dc.b    "PRESS FIRE OR SPACE TO KICK OFF",0
+pm_loading_s:
+        dc.b    "LOADING...",0
+pm_load_match_s:
+        dc.b    "LOADING MATCH...",0
         even
 ko2_hnd_fname:
         dc.b    "KO2HND.BIN",0
