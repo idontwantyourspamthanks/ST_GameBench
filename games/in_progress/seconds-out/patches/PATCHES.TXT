@@ -1,0 +1,79 @@
+SECONDS OUT (1988, Tynesoft) — Enhanced STE Edition v1.1
+Enhanced by dad_prg
+=========================================================
+
+WHAT IS NEW IN v1.1
+-------------------
+- Between-Fights Newspaper ("THE RING TIMES"): vintage newsprint front page
+  after every bout with custom Win/Loss headlines per opponent, ringside
+  report (opponent, result, best combo), and press-Fire-to-continue.
+- Tactical Stamina & Body Shots:
+  * Higher exertion costs: punches (-10, Iron Chin -7), specials (-22),
+    blocking (-9), ducking (-4), and 2x slower stamina regeneration.
+  * Low hits (body shots) drain -10 stamina from the defender (vs -3 high).
+  * 3+ Hit Combos permanently reduce the defender's maximum stamina (-4 per
+    hit from 3rd onward, floor 24, partially recovering +8 between rounds),
+    shown as a dark-grey ceiling cap on the HUD stamina bar.
+- Snappier Footwork: ~20-25% faster movement (Balanced 4, Speedster 5,
+  Heavy/Iron 3, Exhausted 2).
+- 68030 I-Cache Fix: replaced self-modifying `jsr $ffffffff` at $14ea with
+  clean indirect `jsr (a0)` for full Atari TT030 and Falcon030 support.
+- Discreet centered credit line along the bottom of the title screen.
+
+WHAT WAS ADDED IN v1.0
+----------------------
+1. STE Blitter + Uncoupled 50 Hz Engine:
+   - Precomputed 1-plane inverted mask cache ($90000-$a5fff) for all 8 sprite sheets.
+   - STE Blitter hardware acceleration for ring background restore (per-buffer
+     dirty horizontal strip), 4-plane shifted sprites, and 2-plane wireframe Marco,
+     chunked into IKBD-safe 4-line/16-line HOG bursts (~0.15 ms max).
+   - Fast register-only CPU fallback for Blitter-less ST / TT machines.
+   - Uncoupled 50 Hz rendering from a fixed 16.7 Hz real-time logic tick with
+     smooth 50 Hz horizontal motion tweening.
+   - Performance on 8 MHz STE: locked 50.0 fps (up from 12.6 fps).
+   - Identical gameplay speed on 8 MHz STE and 16 MHz Mega STE.
+
+2. Stamina System & Fatigue:
+   - Dual Gold Stamina Bars directly beneath the white Energy bars (turning Red
+     when exhausted).
+   - Punches (-6), Special moves (-14), blocking (-5), and ducking (-2) drain
+     stamina (original -1 HP self-damage on player punches removed).
+   - Reaching 0 stamina triggers Exhaustion (until recovered to 25%): slower
+     movement and halved punch damage for both human and CPU fighters.
+   - CPU fighters are stamina-aware and recover when gassed out.
+
+3. Rebalanced Fighter AI (All 5 Opponents):
+   - Fixes late-fighter unblockable spam on M. Hagman, J. Ronco, and M. Malone:
+     fair escalating reactive timers (20/14/12/10/8), normalised HP regen
+     (50/20/16/14/12), human-reactable punch telegraphs, 50% fair-read gate,
+     2.0 s Special cooldown, and stamina-gated auto-blocks.
+
+4. 2-Player Versus Mode (Title Screen: F1 / F3):
+   - F1 toggles 1P Career / 2P Versus.
+   - F3 selects which opponent Player 2 controls (Joe Weed through M. Malone).
+   - P2 Controls: Joystick Port 0 (IKBD $fe bug fixed) OR Keyboard:
+       A / D = Move Left / Right
+       W / S = High / Low Guard
+       Left Shift + A / D = Punch A / Punch B
+       Left Shift + W = Special Attack
+       Left Shift + S = Duck
+
+5. Career Fighting Styles / Perks (Title Screen: F2):
+   - BALANCED  : Standard speed, power, chin, and stamina.
+   - SPEEDSTER : Faster footwork (+33%), 2x stamina regen, -25% punch power.
+   - HEAVY HIT : +50% punch power, Glass Jaw (+40% damage taken), slower.
+   - IRON CHIN : -25% damage taken, -4 punch stamina cost (vs -6), slower.
+
+6. Hard-Drive Installable & Auto-Booting Floppy:
+   - Native GEMDOS HD install (SECONDS.PRG + B.TOS + .PI1 + .CSP) with fixed
+     $80000 relocator (safe on TOS 1.04, 1.62, 2.06+ without colliding with
+     trainer.pi1 at $1ffde).
+   - Auto-booting 720 KB FAT12 floppy image (AUTO/SECONDS.PRG).
+
+REQUIREMENTS & REAL-HARDWARE NOTES
+----------------------------------
+- Requires 1 MB+ ST-RAM (_phystop >= $100000).
+- Tested in Hatari on 1 MB & 4 MB STE (TOS 1.62), 2 MB Mega STE 16 MHz
+  (TOS 2.06), 1 MB ST (TOS 1.04), and 1 MB STE Floppy.
+- Blitter uses short IKBD-safe HOG bursts (4-line BG / 16-line sprite);
+  YM2149/PSG registers are untouched (original XBIOS Dosound preserved).
