@@ -64,6 +64,11 @@ KEY_F1          equ     $3b
 KEY_F2          equ     $3c
 KEY_F3          equ     $3d
 KEY_F4          equ     $3e
+KEY_ESC         equ     $01
+KEY_UP          equ     $48
+KEY_DOWN        equ     $50
+KEY_RETURN      equ     $1c
+KEY_SPACE       equ     $39
 
 ; Original routines
 G_ORIG_BLIT2    equ     GAME_BASE+$0bc4
@@ -1259,7 +1264,13 @@ stamina_tick:
                 addq.w  #1,p2_reg_div
                 moveq   #5,d0                   ; CPU base: +1 / 5 ticks
                 tst.w   cfg_2p_mode
-                bne.s   .st_p2_fast3            ; 2P Human: symmetric with P1 (+1 / 3 ticks)
+                beq.s   .st_p2_cpu
+                moveq   #3,d0                   ; 2P Human: +1 / 3 ticks (+1 / 2 if Speedster!)
+                cmpi.w  #1,cfg_p2_style
+                bne.s   .st_p2_div
+                moveq   #2,d0
+                bra.s   .st_p2_div
+.st_p2_cpu:
                 cmpi.w  #4,G_OPP_IDX.l          ; Malone (4): +1 / 3 ticks (true champ!)
                 beq.s   .st_p2_fast3
                 cmpi.w  #3,G_OPP_IDX.l          ; Ronco (3): +1 / 4 ticks
@@ -1689,6 +1700,26 @@ hook_p1_dmg:
                 addq.w  #1,d0
                 add.w   d0,d6
 .p1d_apply:
+                ; In 2P Versus, apply P2's defensive style (Heavy=Glass Jaw +50%, Iron Chin -25%)!
+                tst.w   cfg_2p_mode
+                beq.s   .p1d_cr_chk
+                move.w  cfg_p2_style(pc),d0
+                cmpi.w  #2,d0                   ; P2 Heavy Hitter -> Glass Jaw (+50% dmg taken!)
+                bne.s   .p1d_p2_irn
+                move.w  d6,d0
+                lsr.w   #1,d0
+                add.w   d0,d6
+                bra.s   .p1d_sub
+.p1d_p2_irn:
+                cmpi.w  #3,d0                   ; P2 Iron Chin (-25% dmg taken!)
+                bne.s   .p1d_sub
+                move.w  d6,d0
+                lsr.w   #2,d0
+                sub.w   d0,d6
+                bgt.s   .p1d_sub
+                moveq   #1,d6
+                bra.s   .p1d_sub
+.p1d_cr_chk:
                 ; Career progression damage bonuses (body power / head snap)
                 tst.w   cfg_game_mode
                 bne.s   .p1d_sub
@@ -1761,10 +1792,30 @@ hook_p2_dmg:
 .p2d_dmg:
                 move.w  $30(a0,d7.w),d6
                 tst.w   p2_exhausted
-                beq.s   .p2d_chin
+                beq.s   .p2d_p2style
                 lsr.w   #1,d6
                 bne.s   .p2d_chin
                 moveq   #1,d6
+                bra.s   .p2d_chin
+.p2d_p2style:
+                ; In 2P Versus, apply P2's offensive style (Speedster -1, Heavy Hit +50%)!
+                tst.w   cfg_2p_mode
+                beq.s   .p2d_chin
+                move.w  cfg_p2_style(pc),d0
+                cmpi.w  #1,d0
+                bne.s   .p2d_p2hvy
+                subq.w  #1,d6
+                cmpi.w  #2,d6
+                bge.s   .p2d_chin
+                moveq   #2,d6
+                bra.s   .p2d_chin
+.p2d_p2hvy:
+                cmpi.w  #2,d0
+                bne.s   .p2d_chin
+                move.w  d6,d0
+                lsr.w   #1,d0
+                addq.w  #1,d0
+                add.w   d0,d6
 .p2d_chin:
                 move.w  cfg_style(pc),d0
                 cmpi.w  #2,d0                   ; Heavy Hitter = Glass Jaw (+40% dmg taken!)
@@ -1870,6 +1921,12 @@ hook_opp_punch_a:
                 bne.s   .opa_skip
 .opa_go:
                 moveq   #10,d0
+                tst.w   cfg_2p_mode
+                beq.s   .opa_dr
+                cmpi.w  #3,cfg_p2_style         ; P2 Iron Chin -> -7 punch cost!
+                bne.s   .opa_dr
+                moveq   #7,d0
+.opa_dr:
                 bsr.w   drain_p2_stamina
                 lea     G_OPP_STRUCT.l,a0
                 jmp     GAME_BASE+$156e
@@ -1889,6 +1946,12 @@ hook_opp_punch_b:
                 bne.s   .opb_skip
 .opb_go:
                 moveq   #10,d0
+                tst.w   cfg_2p_mode
+                beq.s   .opb_dr
+                cmpi.w  #3,cfg_p2_style         ; P2 Iron Chin -> -7 punch cost!
+                bne.s   .opb_dr
+                moveq   #7,d0
+.opb_dr:
                 bsr.w   drain_p2_stamina
                 lea     G_OPP_STRUCT.l,a0
                 jmp     GAME_BASE+$15d8
@@ -2168,8 +2231,13 @@ p2_human_ctrl:
                 bra.w   .p2h_draw
 
 .p2h_input:
-                ; Read combined P2 input: Joy 0 ($3fef) OR Keyboard (W/A/S/D + LShift)
+                ; Read P2 input safely: ONLY read Joy 0 ($3fef) when cfg_p2_ctrl == 1 (JOY 0 mode)
+                ; so a plugged-in Atari mouse on Port 0 can NEVER inject phantom signals in WASD mode!
+                moveq   #0,d7
+                tst.w   cfg_p2_ctrl
+                beq.s   .p2h_kbd
                 move.b  G_JOY0.l,d7
+.p2h_kbd:
                 lea     G_KEY_BASE.l,a1
                 tst.b   KEY_W(a1)
                 beq.s   .k_no_w
@@ -2228,11 +2296,24 @@ p2_human_ctrl:
                 bra.w   .p2h_draw
 
 .p2h_move_guard:
-                ; Movement: ~20% faster (4 normal, 2 exhausted)
-                moveq   #4,d0
+                ; Movement: symmetric with P1 styles (Balanced 4, Speedster 5, Heavy/Iron 3, Exhausted 2)
                 tst.w   p2_exhausted
-                beq.s   .p2h_m_go
+                beq.s   .p2h_m_sty
                 moveq   #2,d0
+                bra.s   .p2h_m_go
+.p2h_m_sty:
+                move.w  cfg_p2_style(pc),d0
+                cmpi.w  #1,d0
+                beq.s   .p2h_m_fast
+                cmpi.w  #2,d0
+                beq.s   .p2h_m_slow
+                cmpi.w  #3,d0
+                beq.s   .p2h_m_slow
+                moveq   #4,d0
+                bra.s   .p2h_m_go
+.p2h_m_fast:    moveq   #5,d0
+                bra.s   .p2h_m_go
+.p2h_m_slow:    moveq   #3,d0
 .p2h_m_go:
                 btst    #2,d7                   ; Left
                 beq.s   .p2h_mr
@@ -2291,34 +2372,71 @@ hook_title_draw:
 
 hook_title_poll1:
                 bsr.w   poll_title_keys
-                btst.b  #7,G_JOY1.l
+                bsr.s   check_title_fire
+                tst.w   d0
                 beq.s   .htp1_wait
                 bsr.s   on_title_fire
-                jmp     GAME_BASE+$1db2         ; Fire pressed -> go straight into fight!
+                jmp     GAME_BASE+$1db2         ; Fire pressed on Mode Options -> start fight!
 .htp1_wait:
                 jmp     GAME_BASE+$1d78
 
 hook_title_poll2:
                 bsr.w   poll_title_keys
-                btst.b  #7,G_JOY1.l
+                bsr.s   check_title_fire
+                tst.w   d0
                 beq.s   .htp2_wait
                 bsr.s   on_title_fire
-                jmp     GAME_BASE+$1db2         ; Fire pressed -> go straight into fight!
+                jmp     GAME_BASE+$1db2
 .htp2_wait:
                 jmp     GAME_BASE+$1e4c
 
-; Called right when Fire is pressed on the title screen:
-; loads F3/2P opponent if needed, shows Pre-Fight THE RING SUN preview in 1P Career,
-; and restores $70000 cleanly before the game's single $1cba scroll-down!
+; Debounced Fire / Confirm handler for the 2-screen Title UX:
+;   ui_screen == 0 (Mode Select): Fire/Return/Space advances to ui_screen = 1 (returns d0=0)
+;   ui_screen == 1 (Mode Options): Fire launches the fight (returns d0=1)!
+check_title_fire:
+                btst.b  #7,G_JOY1.l
+                bne.s   .ctf_down
+                tst.w   ui_screen
+                bne.s   .ctf_up
+                lea     G_KEY_BASE.l,a0
+                tst.b   KEY_RETURN(a0)
+                bne.s   .ctf_down
+                tst.b   KEY_SPACE(a0)
+                bne.s   .ctf_down
+.ctf_up:
+                clr.w   fire_held
+                moveq   #0,d0
+                rts
+.ctf_down:
+                tst.w   fire_held
+                bne.s   .ctf_ignore
+                move.w  #1,fire_held
+                tst.w   ui_screen
+                bne.s   .ctf_launch
+                move.w  #1,ui_screen            ; Enter chosen mode's Options screen!
+                bsr.w   render_title_options
+                moveq   #0,d0
+                rts
+.ctf_launch:
+                moveq   #1,d0                   ; Launch fight!
+                rts
+.ctf_ignore:
+                moveq   #0,d0
+                rts
+
+; Called right when Fire is pressed on Mode Options (ui_screen == 1):
+; syncs active P1 style (Career vs Exhibition/2P), configures Port 0 safely for 2P,
+; loads opponent if needed, shows Pre-Fight THE RING SUN in 1P modes, and restores $70000!
 on_title_fire:
                 bsr.w   clear_bottom_credit
                 moveq   #0,d7                   ; d7=1 if $70000 was used as scratch
                 tst.w   cfg_game_mode
                 bne.s   .otf_non_career
                 ; --- 1P CAREER MODE ---
+                move.w  cfg_cr_style(pc),cfg_style
                 tst.w   career_active
                 bne.s   .otf_cr_cont
-                ; Starting a brand-new Career (style cfg_style is now locked in!)
+                ; Starting a brand-new Career (cfg_cr_style is now locked in!)
                 move.w  #1,career_active
                 clr.w   career_act
                 clr.w   career_wins
@@ -2334,12 +2452,23 @@ on_title_fire:
                 move.w  career_act(pc),d0
                 move.w  d0,cfg_2p_opp
                 cmp.w   G_OPP_IDX.l,d0
-                beq.s   .otf_chk_pre            ; already loaded!
+                beq.s   .otf_chk_pre
                 bra.s   .otf_load
 .otf_non_career:
-                clr.w   career_active           ; leaving Career if starting Free Bout / 2P
+                ; Exhibition / 2P Versus NEVER wipes an active/saved Career!
+                move.w  cfg_ex_style(pc),cfg_style
                 tst.w   cfg_2p_mode
-                bne.s   .otf_load
+                beq.s   .otf_ex_chk
+                ; 2P Versus: clear stale Port 0 byte; if JOY 0 enabled, send IKBD $12 (mouse off) + $14 (joy events)
+                clr.b   G_JOY0.l
+                tst.w   cfg_p2_ctrl
+                beq.s   .otf_load
+                move.b  #$12,d0
+                jsr     GAME_BASE+$0818
+                move.b  #$14,d0
+                jsr     GAME_BASE+$0818
+                bra.s   .otf_load
+.otf_ex_chk:
                 tst.w   opp_picked_f3
                 bne.s   .otf_load
                 move.w  cfg_2p_opp(pc),d0
@@ -2353,7 +2482,7 @@ on_title_fire:
                 jsr     GAME_BASE+$4572         ; draw MARCO vs chosen opponent Tale-of-the-Tape!
                 moveq   #1,d7
 .otf_chk_pre:
-                ; In 1P Career or 1P Free Bout, show Pre-Fight THE RING SUN!
+                ; In 1P Career or 1P Exhibition, show Pre-Fight THE RING SUN!
                 tst.w   cfg_2p_mode
                 bne.s   .otf_chk_rst
                 move.w  #1,np_mode
@@ -2398,53 +2527,137 @@ clear_bottom_credit:
 
 poll_title_keys:
                 lea     G_KEY_BASE.l,a0
-                ; F1: cycle 0=1P Career, 1=1P Free Bout, 2=2P Versus
+                tst.w   ui_screen
+                bne.w   .pt_screen1
+                ; =============================================================
+                ; SCREEN 0: MODE SELECT (Up/Down or Joy1 Up/Down or F1/F2/F3)
+                ; =============================================================
+                ; Up (Joy1 bit 0 or Up Arrow)
+                btst.b  #0,G_JOY1.l
+                bne.s   .pt0_up_dn
+                tst.b   KEY_UP(a0)
+                beq.s   .pt0_up_rel
+.pt0_up_dn:
+                tst.w   key_up_held
+                bne.s   .pt0_chk_dn
+                move.w  #1,key_up_held
+                subq.w  #1,cfg_game_mode
+                bge.s   .pt0_sync
+                move.w  #2,cfg_game_mode
+                bra.s   .pt0_sync
+.pt0_up_rel:
+                clr.w   key_up_held
+.pt0_chk_dn:
+                ; Down (Joy1 bit 1 or Down Arrow)
+                btst.b  #1,G_JOY1.l
+                bne.s   .pt0_dn_dn
+                tst.b   KEY_DOWN(a0)
+                beq.s   .pt0_dn_rel
+.pt0_dn_dn:
+                tst.w   key_dn_held
+                bne.s   .pt0_chk_f
+                move.w  #1,key_dn_held
+                addq.w  #1,cfg_game_mode
+                cmpi.w  #3,cfg_game_mode
+                blt.s   .pt0_sync
+                clr.w   cfg_game_mode
+                bra.s   .pt0_sync
+.pt0_dn_rel:
+                clr.w   key_dn_held
+.pt0_chk_f:
+                ; Direct F1/F2/F3 mode shortcuts on Mode Select
+                tst.b   KEY_F1(a0)
+                beq.s   .pt0_f2
+                clr.w   cfg_game_mode
+                bra.s   .pt0_sync
+.pt0_f2:        tst.b   KEY_F2(a0)
+                beq.s   .pt0_f3
+                move.w  #1,cfg_game_mode
+                bra.s   .pt0_sync
+.pt0_f3:        tst.b   KEY_F3(a0)
+                beq.s   .pt0_done
+                move.w  #2,cfg_game_mode
+.pt0_sync:
+                clr.w   cfg_2p_mode
+                cmpi.w  #2,cfg_game_mode
+                bne.s   .pt0_dr
+                move.w  #1,cfg_2p_mode
+.pt0_dr:
+                bsr.w   render_title_options
+.pt0_done:
+                rts
+
+                ; =============================================================
+                ; SCREEN 1: MODE-SPECIFIC OPTIONS (ESC backs out to Mode Select)
+                ; =============================================================
+.pt_screen1:
+                ; ESC: back out to Mode Select screen!
+                tst.b   KEY_ESC(a0)
+                beq.s   .pt_esc_up
+                tst.w   key_esc_held
+                bne.s   .pt_chk_f1
+                move.w  #1,key_esc_held
+                clr.w   ui_screen
+                bsr.w   render_title_options
+                rts
+.pt_esc_up:
+                clr.w   key_esc_held
+.pt_chk_f1:
+                ; F1: in 2P Versus ONLY -> cycle P1 Style (0..3)
                 tst.b   KEY_F1(a0)
                 beq.s   .pt_f1_up
                 tst.w   key_f1_held
                 bne.s   .pt_chk_f2
                 move.w  #1,key_f1_held
-                addq.w  #1,cfg_game_mode
-                cmpi.w  #3,cfg_game_mode
-                blt.s   .pt_f1_ok
-                clr.w   cfg_game_mode
-.pt_f1_ok:
-                clr.w   cfg_2p_mode
                 cmpi.w  #2,cfg_game_mode
-                bne.s   .pt_f1_dr
-                move.w  #1,cfg_2p_mode
-.pt_f1_dr:
+                bne.s   .pt_chk_f2
+                addq.w  #1,cfg_ex_style
+                andi.w  #3,cfg_ex_style
                 bsr.w   render_title_options
                 bra.s   .pt_chk_f2
 .pt_f1_up:
                 clr.w   key_f1_held
 .pt_chk_f2:
-                ; F2: cycle Fighting Style (0..3) — locked once a 1P Career is underway!
+                ; F2:
+                ;   Career (before Fight 1): cycle cfg_cr_style (hidden & locked once career_active!=0!)
+                ;   Exhibition: cycle cfg_ex_style
+                ;   2P Versus: cycle cfg_p2_style!
                 tst.b   KEY_F2(a0)
                 beq.s   .pt_f2_up
                 tst.w   key_f2_held
                 bne.s   .pt_chk_f3
                 move.w  #1,key_f2_held
                 tst.w   cfg_game_mode
-                bne.s   .pt_f2_go
+                bne.s   .pt_f2_noncr
                 tst.w   career_active
-                bne.s   .pt_chk_f3              ; locked for duration of Career!
-.pt_f2_go:
-                addq.w  #1,cfg_style
-                andi.w  #3,cfg_style
+                bne.s   .pt_chk_f3              ; locked mid-career!
+                addq.w  #1,cfg_cr_style
+                andi.w  #3,cfg_cr_style
+                bsr.w   render_title_options
+                bra.s   .pt_chk_f3
+.pt_f2_noncr:
+                cmpi.w  #1,cfg_game_mode
+                bne.s   .pt_f2_2p
+                addq.w  #1,cfg_ex_style
+                andi.w  #3,cfg_ex_style
+                bsr.w   render_title_options
+                bra.s   .pt_chk_f3
+.pt_f2_2p:
+                addq.w  #1,cfg_p2_style
+                andi.w  #3,cfg_p2_style
                 bsr.w   render_title_options
                 bra.s   .pt_chk_f3
 .pt_f2_up:
                 clr.w   key_f2_held
 .pt_chk_f3:
-                ; F3: cycle Opponent (0..4) in 1P Free Bout & 2P Versus (locked in 1P Career!)
+                ; F3: cycle Opponent (0..4) in Exhibition & 2P Versus (disabled in Career!)
                 tst.b   KEY_F3(a0)
                 beq.s   .pt_f3_up
                 tst.w   key_f3_held
-                bne.w   .pt_done
+                bne.w   .pt_chk_f4
                 move.w  #1,key_f3_held
                 tst.w   cfg_game_mode
-                beq.w   .pt_done                ; locked to Career story ladder!
+                beq.w   .pt_chk_f4
                 addq.w  #1,cfg_2p_opp
                 cmpi.w  #5,cfg_2p_opp
                 blt.s   .pt_f3_ok
@@ -2452,16 +2665,24 @@ poll_title_keys:
 .pt_f3_ok:
                 move.w  #1,opp_picked_f3
                 bsr.w   render_title_options
-                bra.s   .pt_done
+                bra.w   .pt_done
 .pt_f3_up:
                 clr.w   key_f3_held
 .pt_chk_f4:
-                ; F4: Reset/New Career (when in 1P Career with a saved/active Career!)
+                ; F4:
+                ;   Career (mid-career): Reset / New Career
+                ;   2P Versus: Toggle P2 Control (WASD vs JOY 0)
                 tst.b   KEY_F4(a0)
-                beq.s   .pt_f4_up
+                beq.w   .pt_f4_up
                 tst.w   key_f4_held
-                bne.s   .pt_done
+                bne.w   .pt_done
                 move.w  #1,key_f4_held
+                cmpi.w  #2,cfg_game_mode
+                bne.s   .pt_f4_cr
+                eori.w  #1,cfg_p2_ctrl
+                bsr.w   render_title_options
+                bra.s   .pt_done
+.pt_f4_cr:
                 tst.w   cfg_game_mode
                 bne.s   .pt_done
                 tst.w   career_active
@@ -2487,59 +2708,159 @@ poll_title_keys:
 
 render_title_options:
                 movem.l d0-d7/a0-a6,-(sp)
-                ; Only draw on initial title (opp_idx == 0 or 2P mode)
                 ; Clear both title boxes first ($4428)
                 jsr     GAME_BASE+$4428
-                ; Left box ($6bd28 + 1 byte = 8px left margin!): Controls
-                lea     $6bd29,a6
-                movea.l a6,a4
-                lea     str_controls(pc),a5
-                jsr     G_ORIG_PRINT
-
-                ; Discreet 2-line credit strictly inside middle bridge (x=104..207, y=162..176)
-                ; Never clipped when left/right title boxes cycle!
+                ; Always draw discreet 2-line credit strictly inside middle bridge (x=104..207, y=162..176)
                 bsr.w   clear_bottom_credit
-                lea     $68300+162*160+$31,a6   ; x=104 (centered 13 chars inside x=96..223!)
+                lea     $68300+162*160+$31,a6
                 movea.l a6,a4
                 lea     str_bottom_credit(pc),a5
                 jsr     G_ORIG_PRINT
 
-                ; Right box ($6bd90 + 1 byte = 8px left margin!): Mode + Style + Opponent
-                lea     $6bd91,a6
+                tst.w   ui_screen
+                bne.w   .rto_screen1
+                ; =============================================================
+                ; RENDER SCREEN 0: MODE SELECT
+                ; =============================================================
+                ; Stamp '.' marker next to selected mode in str_msel_left
+                moveq   #$5b,d0
+                move.b  d0,ms_m0
+                move.b  d0,ms_m1
+                move.b  d0,ms_m2
+                move.w  cfg_game_mode(pc),d1
+                beq.s   .rto0_m0
+                cmpi.w  #1,d1
+                beq.s   .rto0_m1
+                move.b  #$5c,ms_m2
+                bra.s   .rto0_lpr
+.rto0_m0:       move.b  #$5c,ms_m0
+                bra.s   .rto0_lpr
+.rto0_m1:       move.b  #$5c,ms_m1
+.rto0_lpr:
+                lea     $6bd29,a6
                 movea.l a6,a4
-                lea     str_mode_1p(pc),a5
-                cmpi.w  #1,cfg_game_mode
-                bne.s   .rto_chk2p
-                lea     str_mode_free(pc),a5
-                bra.s   .rto_m
-.rto_chk2p:
-                cmpi.w  #2,cfg_game_mode
-                bne.s   .rto_m
-                lea     str_mode_2p(pc),a5
-.rto_m:
+                lea     str_msel_left(pc),a5
                 jsr     G_ORIG_PRINT
 
-                ; Style line (+24 scanlines = $0f00)
-                lea     $6bd91+$0f00,a6
+                ; Right box: mode description (or Resume Career info!)
+                lea     $6bd91,a6
                 movea.l a6,a4
-                move.w  cfg_style(pc),d0
+                move.w  cfg_game_mode(pc),d1
+                beq.s   .rto0_rcr
+                cmpi.w  #1,d1
+                beq.s   .rto0_rex
+                lea     str_msel_r2p(pc),a5
+                jsr     G_ORIG_PRINT
+                bra.w   .rto_exit
+.rto0_rex:
+                lea     str_msel_rex(pc),a5
+                jsr     G_ORIG_PRINT
+                bra.w   .rto_exit
+.rto0_rcr:
+                tst.w   career_active
+                beq.s   .rto0_rcr_new
+                ; Stamp W/L into resume box
+                move.w  career_wins(pc),d0
+                cmpi.w  #9,d0
+                ble.s   .r0w
+                moveq   #9,d0
+.r0w:           move.b  d0,ms_rw
+                move.w  career_losses(pc),d0
+                cmpi.w  #9,d0
+                ble.s   .r0l
+                moveq   #9,d0
+.r0l:           move.b  d0,ms_rl
+                lea     str_msel_rcr_res(pc),a5
+                jsr     G_ORIG_PRINT
+                ; Also print next opponent name at +$1e00
+                lea     $6bd91+$1e00,a6
+                movea.l a6,a4
+                move.w  career_act(pc),d0
+                cmpi.w  #4,d0
+                ble.s   .r0o
+                moveq   #4,d0
+.r0o:           add.w   d0,d0
+                add.w   d0,d0
+                lea     opp_str_tbl(pc),a0
+                movea.l (a0,d0.w),a5
+                jsr     G_ORIG_PRINT
+                bra.w   .rto_exit
+.rto0_rcr_new:
+                lea     str_msel_rcr_new(pc),a5
+                jsr     G_ORIG_PRINT
+                bra.w   .rto_exit
+
+                ; =============================================================
+                ; RENDER SCREEN 1: MODE-SPECIFIC OPTIONS
+                ; =============================================================
+.rto_screen1:
+                move.w  cfg_game_mode(pc),d1
+                beq.s   .rto1_career
+                cmpi.w  #1,d1
+                beq.w   .rto1_exhib
+                bra.w   .rto1_2p
+
+.rto1_career:
+                ; Left box: before Fight 1 -> show F2 STYLE; mid-career -> HIDE F2 STYLE, show W/L + F4 NEW!
+                lea     $6bd29,a6
+                movea.l a6,a4
+                tst.w   career_active
+                bne.s   .rto1_cr_mid
+                lea     str_opt_cr_new(pc),a5
+                jsr     G_ORIG_PRINT
+                bra.s   .rto1_cr_r
+.rto1_cr_mid:
+                move.w  career_wins(pc),d0
+                cmpi.w  #9,d0
+                ble.s   .r1w
+                moveq   #9,d0
+.r1w:           move.b  d0,cr_opt_w
+                move.w  career_losses(pc),d0
+                cmpi.w  #9,d0
+                ble.s   .r1l
+                moveq   #9,d0
+.r1l:           move.b  d0,cr_opt_l
+                lea     str_opt_cr_mid(pc),a5
+                jsr     G_ORIG_PRINT
+.rto1_cr_r:
+                ; Right box: STYLE (cfg_cr_style) + NEXT BOUT (career_act)
+                lea     $6bd91,a6
+                movea.l a6,a4
+                move.w  cfg_cr_style(pc),d0
                 add.w   d0,d0
                 add.w   d0,d0
                 lea     style_str_tbl(pc),a0
                 movea.l (a0,d0.w),a5
                 jsr     G_ORIG_PRINT
-
-                ; Opponent line (+48 scanlines = $1e00)
-                ; In 1P Career, always display the current story bout (career_act)!
-                tst.w   cfg_game_mode
-                bne.s   .rto_opp
+                lea     $6bd91+$1e00,a6
+                movea.l a6,a4
                 move.w  career_act(pc),d0
                 cmpi.w  #4,d0
-                ble.s   .rto_sync
+                ble.s   .r1o
                 moveq   #4,d0
-.rto_sync:
-                move.w  d0,cfg_2p_opp
-.rto_opp:
+.r1o:           move.w  d0,cfg_2p_opp
+                add.w   d0,d0
+                add.w   d0,d0
+                lea     opp_str_tbl(pc),a0
+                movea.l (a0,d0.w),a5
+                jsr     G_ORIG_PRINT
+                bra.w   .rto_exit
+
+.rto1_exhib:
+                ; Left box: Exhibition controls (F2 STYLE, F3 OPP, ESC BACK)
+                lea     $6bd29,a6
+                movea.l a6,a4
+                lea     str_opt_exhib(pc),a5
+                jsr     G_ORIG_PRINT
+                ; Right box: STYLE (cfg_ex_style) + OPP (cfg_2p_opp)
+                lea     $6bd91,a6
+                movea.l a6,a4
+                move.w  cfg_ex_style(pc),d0
+                add.w   d0,d0
+                add.w   d0,d0
+                lea     style_str_tbl(pc),a0
+                movea.l (a0,d0.w),a5
+                jsr     G_ORIG_PRINT
                 lea     $6bd91+$1e00,a6
                 movea.l a6,a4
                 move.w  cfg_2p_opp(pc),d0
@@ -2548,39 +2869,127 @@ render_title_options:
                 lea     opp_str_tbl(pc),a0
                 movea.l (a0,d0.w),a5
                 jsr     G_ORIG_PRINT
+                bra.w   .rto_exit
 
+.rto1_2p:
+                ; Left box: 2P Versus controls (F1 P1 STY, F2 P2 STY, F3 P2 OPP, F4 P2 CTL, ESC BACK)
+                lea     $6bd29,a6
+                movea.l a6,a4
+                lea     str_opt_2p(pc),a5
+                jsr     G_ORIG_PRINT
+                ; Right box: P1 Style (+0), P2 Style (+$0a00), P2 Boxer (+$1400), P2 Ctrl (+$1e00)
+                lea     $6bd91,a6
+                movea.l a6,a4
+                move.w  cfg_ex_style(pc),d0
+                add.w   d0,d0
+                add.w   d0,d0
+                lea     p1_style_tbl(pc),a0
+                movea.l (a0,d0.w),a5
+                jsr     G_ORIG_PRINT
+                lea     $6bd91+$0a00,a6         ; +16 scanlines (16*160 = $0a00)
+                movea.l a6,a4
+                move.w  cfg_p2_style(pc),d0
+                add.w   d0,d0
+                add.w   d0,d0
+                lea     p2_style_tbl(pc),a0
+                movea.l (a0,d0.w),a5
+                jsr     G_ORIG_PRINT
+                lea     $6bd91+$1400,a6         ; +32 scanlines (32*160 = $1400)
+                movea.l a6,a4
+                move.w  cfg_2p_opp(pc),d0
+                add.w   d0,d0
+                add.w   d0,d0
+                lea     opp_short_tbl(pc),a0
+                movea.l (a0,d0.w),a5
+                jsr     G_ORIG_PRINT
+                lea     $6bd91+$1e00,a6         ; +48 scanlines (48*160 = $1e00)
+                movea.l a6,a4
+                lea     str_p2_wasd(pc),a5
+                tst.w   cfg_p2_ctrl
+                beq.s   .r1_2pc
+                lea     str_p2_joy0(pc),a5
+.r1_2pc:
+                jsr     G_ORIG_PRINT
+
+.rto_exit:
                 movem.l (sp)+,d0-d7/a0-a6
                 rts
 
 ; =============================================================================
 ; Title Screen Strings (Game font: 0..9 = $00..$09, A..Z = $41..$5a, ' '=$5b, '.'=$5c, NL=$ff, END=$fe)
 ; =============================================================================
-str_controls:
-                dc.b    'O','P','T','I','O','N','S',$ff,$ff
-                dc.b    'F',1,$5b,'M','O','D','E',$ff
-                dc.b    'F',2,$5b,'S','T','Y','L','E',$ff
-                dc.b    'F',3,$5b,'O','P','P',$ff,$ff,$ff
-                dc.b    $5b,'P','R','E','S','S',$ff
-                dc.b    $5b,$5b,'F','I','R','E',$fe
-
 str_bottom_credit:
-                dc.b    'E','N','H','A','N','C','E','D',$5b,'V',1,$5c,2,$ff
+                dc.b    'E','N','H','A','N','C','E','D',$5b,'V',1,$5c,3,$ff
                 dc.b    $5b,$5b,'B','Y',$5b,'D','A','D',$5b,'P','R','G',$fe
 
-str_mode_1p:
-                dc.b    'M','O','D','E',$ff
-                dc.b    1,'P',$5b,'C','A','R','E','E','R',$fe
-str_mode_free:
-                dc.b    'M','O','D','E',$ff
-                dc.b    1,'P',$5b,'F','R','E','E',$fe
-str_mode_2p:
-                dc.b    'M','O','D','E',$ff
-                dc.b    2,'P',$5b,'W','A','S','D',$fe
+; Mode Select (ui_screen == 0) — strictly <= 9 chars/line inside title boxes!
+str_msel_left:  dc.b    'G','A','M','E',$5b,'M','O','D','E',$ff,$ff
+ms_m0:          dc.b    $5c,'C','A','R','E','E','R',$ff,$ff
+ms_m1:          dc.b    $5b,'E','X','H','I','B',$ff,$ff
+ms_m2:          dc.b    $5b,2,'P',$5b,'V','S',$ff,$ff
+                dc.b    'F','I','R','E',$5b,'G','O',$fe
+
+str_msel_rcr_new:
+                dc.b    5,$5b,'B','O','U','T','S',$ff
+                dc.b    'S','T','O','R','Y',$ff,$ff
+                dc.b    'G','E','T',$5b,'P','E','R','K','S',$ff
+                dc.b    'W','I','N',$5b,'B','E','L','T',$fe
+str_msel_rcr_res:
+                dc.b    'R','E','S','U','M','E',$ff
+                dc.b    'C','A','R','E','E','R',$ff,$ff
+                dc.b    'W',$5b
+ms_rw:          dc.b    0,$5b,'L',$5b
+ms_rl:          dc.b    0,$fe
+str_msel_rex:   dc.b    'F','R','E','E',$5b,'B','O','U','T',$ff,$ff
+                dc.b    'P','I','C','K',$5b,'S','T','Y',$ff
+                dc.b    'P','I','C','K',$5b,'O','P','P',$ff,$ff
+                dc.b    'N','O',$5b,'C','A','R','E','E','R',$ff
+                dc.b    'I','M','P','A','C','T',$fe
+str_msel_r2p:   dc.b    2,$5b,'P','L','A','Y','E','R','S',$ff,$ff
+                dc.b    'P',1,$5b,'V','S',$5b,'P',2,$ff
+                dc.b    'P',1,$5b,'P',2,$5b,'S','T','Y',$ff,$ff
+                dc.b    'J','O','Y',$5b,0,$5b,'O','R',$ff
+                dc.b    'W','A','S','D',$fe
+
+; Mode Options (ui_screen == 1) — strictly <= 9 chars/line!
+str_opt_cr_new: dc.b    1,'P',$5b,'C','A','R','E','E','R',$ff,$ff
+                dc.b    'F',2,$5b,'S','T','Y','L','E',$ff
+                dc.b    'E','S','C',$5b,'B','A','C','K',$ff,$ff,$ff
+                dc.b    'F','I','R','E',$5b,'G','O',$fe
+str_opt_cr_mid: dc.b    1,'P',$5b,'C','A','R','E','E','R',$ff,$ff
+                dc.b    'W',$5b
+cr_opt_w:       dc.b    0,$5b,'L',$5b
+cr_opt_l:       dc.b    0,$ff
+                dc.b    'F',4,$5b,'N','E','W',$ff
+                dc.b    'E','S','C',$5b,'B','A','C','K',$ff,$ff
+                dc.b    'F','I','R','E',$5b,'G','O',$fe
+str_opt_exhib:  dc.b    1,'P',$5b,'E','X','H','I','B',$ff,$ff
+                dc.b    'F',2,$5b,'S','T','Y','L','E',$ff
+                dc.b    'F',3,$5b,'O','P','P',$ff
+                dc.b    'E','S','C',$5b,'B','A','C','K',$ff,$ff
+                dc.b    'F','I','R','E',$5b,'G','O',$fe
+str_opt_2p:     dc.b    2,'P',$5b,'V','E','R','S','U','S',$ff,$ff
+                dc.b    'F',1,$5b,'P',1,$5b,'S','T','Y',$ff
+                dc.b    'F',2,$5b,'P',2,$5b,'S','T','Y',$ff
+                dc.b    'F',3,$5b,'P',2,$5b,'O','P','P',$ff
+                dc.b    'F',4,$5b,'P',2,$5b,'C','T','L',$ff
+                dc.b    'E','S','C',$5b,'B','A','C','K',$ff
+                dc.b    'F','I','R','E',$5b,'G','O',$fe
 
 str_st_bal:     dc.b    'S','T','Y','L','E',$ff,'B','A','L','A','N','C','E','D',$fe
 str_st_spd:     dc.b    'S','T','Y','L','E',$ff,'S','P','E','E','D','S','T','E','R',$fe
 str_st_hvy:     dc.b    'S','T','Y','L','E',$ff,'H','E','A','V','Y',$5b,'H','I','T',$fe
 str_st_irn:     dc.b    'S','T','Y','L','E',$ff,'I','R','O','N',$5b,'C','H','I','N',$fe
+
+str_p1s_bal:    dc.b    'P',1,$5b,'B','A','L',$fe
+str_p1s_spd:    dc.b    'P',1,$5b,'S','P','E','E','D',$fe
+str_p1s_hvy:    dc.b    'P',1,$5b,'H','E','A','V','Y',$fe
+str_p1s_irn:    dc.b    'P',1,$5b,'I','R','O','N',$fe
+
+str_p2s_bal:    dc.b    'P',2,$5b,'B','A','L',$fe
+str_p2s_spd:    dc.b    'P',2,$5b,'S','P','E','E','D',$fe
+str_p2s_hvy:    dc.b    'P',2,$5b,'H','E','A','V','Y',$fe
+str_p2s_irn:    dc.b    'P',2,$5b,'I','R','O','N',$fe
 
 str_opp_0:      dc.b    'O','P','P',$ff,'J','O','E',$5b,'W','E','E','D',$fe
 str_opp_1:      dc.b    'O','P','P',$ff,'B',$5c,'J','O','N','E','S',$fe
@@ -2588,9 +2997,21 @@ str_opp_2:      dc.b    'O','P','P',$ff,'M',$5c,'H','A','G','M','A','N',$fe
 str_opp_3:      dc.b    'O','P','P',$ff,'J',$5c,'R','O','N','C','O',$fe
 str_opp_4:      dc.b    'O','P','P',$ff,'M',$5c,'M','A','L','O','N','E',$fe
 
+str_os_0:       dc.b    'P',2,$5b,'W','E','E','D',$fe
+str_os_1:       dc.b    'P',2,$5b,'J','O','N','E','S',$fe
+str_os_2:       dc.b    'P',2,$5b,'H','A','G','M','A','N',$fe
+str_os_3:       dc.b    'P',2,$5b,'R','O','N','C','O',$fe
+str_os_4:       dc.b    'P',2,$5b,'M','A','L','O','N','E',$fe
+
+str_p2_wasd:    dc.b    'C','T','L',$5b,'W','A','S','D',$fe
+str_p2_joy0:    dc.b    'C','T','L',$5b,'J','O','Y',$5b,0,$fe
+
                 even
 style_str_tbl:  dc.l    str_st_bal, str_st_spd, str_st_hvy, str_st_irn
+p1_style_tbl:   dc.l    str_p1s_bal, str_p1s_spd, str_p1s_hvy, str_p1s_irn
+p2_style_tbl:   dc.l    str_p2s_bal, str_p2s_spd, str_p2s_hvy, str_p2s_irn
 opp_str_tbl:    dc.l    str_opp_0, str_opp_1, str_opp_2, str_opp_3, str_opp_4
+opp_short_tbl:  dc.l    str_os_0, str_os_1, str_os_2, str_os_3, str_os_4
 
 ; =============================================================================
 ; 11. IKBD JOYSTICK 0 ($fe) FIX (Tynesoft's $4112 table had a byte/word bug!)
@@ -3843,7 +4264,7 @@ career_load_file:
                 beq.s   .clf_done
                 cmpi.w  #5,4(a0)                ; career_act < 5?
                 bge.s   .clf_done
-                move.w  (a0)+,cfg_style
+                move.w  (a0)+,cfg_cr_style
                 move.w  (a0)+,career_active
                 move.w  (a0)+,career_act
                 move.w  (a0)+,career_wins
@@ -3863,7 +4284,7 @@ career_save_file:
                 lea     career_save_buf(pc),a0
                 move.l  #'SOCR',(a0)+
                 move.w  #1,(a0)+
-                move.w  cfg_style(pc),(a0)+
+                move.w  cfg_cr_style(pc),(a0)+
                 move.w  career_active(pc),(a0)+
                 move.w  career_act(pc),(a0)+
                 move.w  career_wins(pc),(a0)+
@@ -4208,6 +4629,15 @@ cr_last_gain:   dc.w    0
 career_loaded:  dc.w    0
 key_f4_held:    dc.w    0
 wd_frame_cnt:   dc.w    0
+ui_screen:      dc.w    0                       ; 0=Mode Select, 1=Mode Options (stays in mode until ESC!)
+cfg_cr_style:   dc.w    0                       ; Career locked style (separate from Exhibition!)
+cfg_ex_style:   dc.w    0                       ; Exhibition & 2P P1 style
+cfg_p2_style:   dc.w    0                       ; 2P Versus P2 style
+cfg_p2_ctrl:    dc.w    0                       ; 2P P2 input: 0=WASD (mouse-safe default!), 1=JOY 0
+key_esc_held:   dc.w    0
+key_up_held:    dc.w    0
+key_dn_held:    dc.w    0
+fire_held:      dc.w    0
 stat_head:      dc.w    0
 stat_body:      dc.w    0
 stat_dazes:     dc.w    0

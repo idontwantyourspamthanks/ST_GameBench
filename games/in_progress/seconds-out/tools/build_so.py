@@ -17,7 +17,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-VERSION = "1.2"
+VERSION = "1.3"
 GAME_DIR = Path(__file__).resolve().parent.parent
 ORIG_ST = GAME_DIR / "originals" / "Seconds Out (1988)(Tynesoft).st"
 ORIG_ST_MD5 = "ea7f80595ef3f30a269cec5642d5db6a"
