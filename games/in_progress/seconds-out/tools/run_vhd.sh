@@ -5,11 +5,11 @@ GAME="$ROOT/games/in_progress/seconds-out"
 HATARI="${HATARI:-/home/ryan/Code/AtariST/hattari/build/src/hatari}"
 [[ -x "$HATARI" ]] || HATARI="$(command -v hatari)"
 
-VHD_ZIP="$GAME/dist/SecondsOut_Enhanced_v1.3_VHD.zip"
-VHD="${VHD:-$GAME/work/SecondsOut_v1.3.vhd}"
+VHD_ZIP="$GAME/dist/SecondsOut_Enhanced_v1.4_VHD.zip"
+VHD="${VHD:-$GAME/work/SecondsOut_v1.4.vhd}"
 if [[ ! -f "$VHD" || "$VHD_ZIP" -nt "$VHD" ]]; then
   mkdir -p "$(dirname "$VHD")"
-  unzip -qo "$VHD_ZIP" SecondsOut_v1.3.vhd -d "$(dirname "$VHD")"
+  unzip -qo "$VHD_ZIP" SecondsOut_v1.4.vhd -d "$(dirname "$VHD")"
 fi
 
 exec "$HATARI" --machine ste --tos "$ROOT/tos/TOS_1_62.img" --memsize 4096 \

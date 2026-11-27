@@ -257,12 +257,12 @@ hook_bg_partial:
                 sub.w   d2,d4
                 addq.w  #2,d4                   ; SYINC = DYINC = 160 - width + 2
 
-                move.l  #$00053e80,d0           ; y = 100 ($3e80)
+                move.l  #$00053980,d0           ; y = 92 ($3980, 8px headroom for 50Hz juice!)
                 ext.l   d1
                 add.l   d1,d0
                 move.l  d0,BLT_SADDR.w
                 move.l  G_SCR_BACK.l,d0
-                addi.l  #$3e80,d0
+                addi.l  #$3980,d0
                 add.l   d1,d0
                 move.l  d0,BLT_DADDR.w
                 move.w  #2,BLT_SXINC.w
@@ -276,8 +276,8 @@ hook_bg_partial:
                 move.b  #3,BLT_OP.w
                 move.b  #0,BLT_SKEW.w
                 move.w  d3,BLT_XCNT.w
-                ; 100 lines in 25 x 4-line HOG bursts (~0.15ms each -> 100% IKBD-safe!)
-                moveq   #25-1,d7
+                ; 108 lines in 27 x 4-line HOG bursts (~0.15ms each -> 100% IKBD-safe!)
+                moveq   #27-1,d7
 .bgp_s_lp:
                 move.w  #4,BLT_YCNT.w
                 BLT_GO_HOG
@@ -285,9 +285,9 @@ hook_bg_partial:
                 rts
 
 .bgp_full_strip:
-                move.l  #$00053e80,BLT_SADDR.w
+                move.l  #$00053980,BLT_SADDR.w
                 move.l  G_SCR_BACK.l,d0
-                addi.l  #$3e80,d0
+                addi.l  #$3980,d0
                 move.l  d0,BLT_DADDR.w
                 move.w  #2,BLT_SXINC.w
                 move.w  #2,BLT_SYINC.w
@@ -300,7 +300,7 @@ hook_bg_partial:
                 move.b  #3,BLT_OP.w
                 move.b  #0,BLT_SKEW.w
                 move.w  #80,BLT_XCNT.w
-                moveq   #25-1,d7
+                moveq   #27-1,d7
 .bgp_f_lp:
                 move.w  #4,BLT_YCNT.w
                 BLT_GO_HOG
@@ -310,7 +310,7 @@ hook_bg_partial:
                 lea     $57cd0,a0
                 movea.l G_SCR_BACK.l,a1
                 adda.l  #$7d00,a1
-                move.w  #$a6-1,d0
+                move.w  #$b4-1,d0
 .bgp_lp:
                 movem.l (a0),d1-d7/a2-a6
                 movem.l d1-d7/a2-a6,-(a1)
@@ -811,6 +811,7 @@ hook_fight_loop:
 .uncoupled_entry:
                 clr.w   vbl_accum
                 clr.l   buf_dirty_ok
+                bsr.w   reset_juice_state
                 move.w  G_P2_X.l,p2_prev_x
                 move.w  G_P1_X.l,p1_prev_x
                 move.w  #1,need_first_tick
@@ -819,6 +820,32 @@ hook_fight_loop:
                 move.w  G_BUF_IDX.l,d0
                 bsr.w   flip_1vbl
                 jsr     GAME_BASE+$aa0          ; pause check (P key)
+
+                ; 50 Hz Arcade Juice timers (tick every VBL!)
+                addq.w  #1,juice_vbl_cnt
+                tst.w   p1_recoil_vbl
+                beq.s   .ul_j_r2
+                subq.w  #1,p1_recoil_vbl
+.ul_j_r2:
+                tst.w   p2_recoil_vbl
+                beq.s   .ul_j_l1
+                subq.w  #1,p2_recoil_vbl
+.ul_j_l1:
+                tst.w   p1_lunge_vbl
+                beq.s   .ul_j_l2
+                subq.w  #1,p1_lunge_vbl
+.ul_j_l2:
+                tst.w   p2_lunge_vbl
+                beq.s   .ul_j_hs
+                subq.w  #1,p2_lunge_vbl
+.ul_j_hs:
+                ; Hit-Stop (Impact Freeze): pause logic on big hits while 50 Hz recoil/shake runs!
+                tst.w   hitstop_vbls
+                beq.s   .ul_no_hs
+                subq.w  #1,hitstop_vbls
+                clr.w   G_VBL_CNT.l
+                bra.w   .ul_render_only
+.ul_no_hs:
 
                 move.w  G_VBL_CNT.l,d0
                 clr.w   G_VBL_CNT.l
@@ -947,6 +974,7 @@ hook_fight_loop:
                 asr.w   #2,d3
                 add.w   d2,d3
                 move.w  d3,d4
+                bsr.w   apply_p1_juice
                 bra.s   .ul_track_bounds
 .ul_chk_p2:
                 cmpi.w  #2,d1
@@ -958,9 +986,10 @@ hook_fight_loop:
                 asr.w   #2,d3
                 add.w   d2,d3
                 move.w  d3,d4
+                bsr.w   apply_p2_juice
 .ul_track_bounds:
-                ; If sprite touches y < 100 (crowd flash / standing tall), disable partial strip
-                cmpi.w  #100,d5
+                ; If sprite touches y < 92 (crowd flash / standing tall), disable partial strip
+                cmpi.w  #92,d5
                 bge.s   .ul_tb_x
                 clr.w   cur_only_partial
 .ul_tb_x:
@@ -1007,10 +1036,12 @@ hook_fight_loop:
 .ul_round_end:
                 clr.w   dl_recording
                 clr.l   buf_dirty_ok
+                bsr.w   reset_juice_state
                 jmp     GAME_BASE+$5ea
 .ul_fight_end:
                 clr.w   dl_recording
                 clr.l   buf_dirty_ok
+                bsr.w   reset_juice_state
                 jmp     GAME_BASE+$6da
 
 flip_1vbl:
@@ -1023,7 +1054,15 @@ flip_1vbl:
                 lsr.l   #8,d1
                 move.b  d1,d2
                 tst.w   G_SHAKE_FLAG.l
+                bne.s   .f1_do_orig_sh
+                tst.w   shake_vbls
                 beq.s   .f1_noshake
+                subq.w  #1,shake_vbls
+                tst.w   G_BUF_IDX.l
+                beq.s   .f1_noshake
+                subi.b  #5,d2
+                bra.s   .f1_noshake
+.f1_do_orig_sh:
                 tst.w   G_BUF_IDX.l
                 beq.s   .f1_clrsh
                 subi.b  #5,d2
@@ -1098,6 +1137,7 @@ hook_fight_init:
                 clr.w   stat_dazes
                 clr.w   stat_blocks
                 clr.w   stat_exh
+                bsr.w   reset_juice_state
                 bsr.s   reset_stamina
                 jmp     GAME_BASE+$3e6
 
@@ -1119,6 +1159,7 @@ hook_round_init:
                 clr.w   stat_dazes
                 clr.w   stat_blocks
                 clr.w   stat_exh
+                bsr.w   reset_juice_state
                 bsr.s   reset_stamina
                 rts
 
@@ -1524,6 +1565,7 @@ hook_p1_punch_l:
                 moveq   #7,d0
 .pl_dr:
                 bsr.w   drain_p1_stamina
+                move.w  #10,p1_lunge_vbl        ; 50Hz punch lunge!
                 jmp     GAME_BASE+$1742
 .pl_tired:
                 jmp     GAME_BASE+$1a80         ; too tired to punch -> movement/stance only
@@ -1538,6 +1580,7 @@ hook_p1_punch_r:
                 moveq   #7,d0
 .pr_dr:
                 bsr.w   drain_p1_stamina
+                move.w  #10,p1_lunge_vbl        ; 50Hz punch lunge!
                 jmp     GAME_BASE+$178c
 .pr_tired:
                 jmp     GAME_BASE+$1a80
@@ -1553,6 +1596,7 @@ hook_p1_special:
 .ps_go:
                 moveq   #22,d0
                 bsr.w   drain_p1_stamina
+                move.w  #12,p1_lunge_vbl        ; big KO uppercut lunge!
                 move.w  #$ffff,GAME_BASE+$2f56.l
                 jmp     GAME_BASE+$1b7a
 .ps_tired:
@@ -1746,6 +1790,19 @@ hook_p1_dmg:
                 add.w   cr_body_pwr(pc),d6      ; +1 body dmg per Career Body Power level
 .p1d_sub:
                 sub.w   d6,G_P2_HP.l
+                ; 50Hz Arcade Juice: Hit-Stop + P2 Recoil (+ Ring Shake on KO/Daze/Knockdown!)
+                move.w  #2,hitstop_vbls
+                move.w  #8,p2_recoil_vbl
+                cmpi.w  #8,d7                   ; KO Uppercut?
+                beq.s   .p1d_heavy_j
+                cmpi.w  #50,p2_daze_tmr         ; Just triggered Daze?
+                beq.s   .p1d_heavy_j
+                tst.w   G_P2_HP.l               ; Knockdown?
+                bgt.s   .p1d_ret
+.p1d_heavy_j:
+                move.w  #4,hitstop_vbls
+                move.w  #10,p2_recoil_vbl
+                move.w  #4,shake_vbls
                 ; If this blow dropped P2 (HP <= 0), record whether it was a KO Super finisher (d7==8)!
                 tst.w   G_P2_HP.l
                 bgt.s   .p1d_ret
@@ -1845,6 +1902,19 @@ hook_p2_dmg:
                 moveq   #1,d6
 .p2d_apply:
                 sub.w   d6,G_P1_HP.l
+                ; 50Hz Arcade Juice: Hit-Stop + P1 Recoil (+ Ring Shake on Special/Daze/Knockdown!)
+                move.w  #2,hitstop_vbls
+                move.w  #8,p1_recoil_vbl
+                cmpi.w  #4,d7                   ; P2 Special?
+                beq.s   .p2d_heavy_j
+                cmpi.w  #50,p1_daze_tmr         ; Just triggered P1 Daze?
+                beq.s   .p2d_heavy_j
+                tst.w   G_P1_HP.l               ; Knockdown?
+                bgt.s   .p2d_tow
+.p2d_heavy_j:
+                move.w  #4,hitstop_vbls
+                move.w  #10,p1_recoil_vbl
+                move.w  #4,shake_vbls
                 ; If this blow dropped P1 (HP <= 0), record whether it was a Special finisher (d7==4)!
                 tst.w   G_P1_HP.l
                 bgt.s   .p2d_tow
@@ -1866,6 +1936,7 @@ hook_p2_dmg:
 ; Blocking drains MORE stamina (-9) for both P1 and P2, and breaks head-hit streaks!
 hook_p2_block:
                 clr.w   p2_head_streak
+                move.w  #4,p2_recoil_vbl        ; crisp guard absorption jolt!
                 moveq   #9,d0
                 bsr.w   drain_p2_stamina
                 move.l  #GAME_BASE+$34fe,-(sp)
@@ -1875,6 +1946,7 @@ hook_p1_block:
                 tst.w   GAME_BASE+$374c.l
                 bne.s   .p1b_skip
                 clr.w   p1_head_streak
+                move.w  #4,p1_recoil_vbl        ; crisp guard absorption jolt!
                 addq.w  #1,stat_blocks
                 moveq   #9,d0
                 tst.w   cfg_game_mode
@@ -1950,6 +2022,7 @@ hook_opp_punch_a:
                 moveq   #7,d0
 .opa_dr:
                 bsr.w   drain_p2_stamina
+                move.w  #10,p2_lunge_vbl        ; 50Hz P2 punch windup & snap!
                 lea     G_OPP_STRUCT.l,a0
                 jmp     GAME_BASE+$156e
 .opa_skip:
@@ -1978,6 +2051,7 @@ hook_opp_punch_b:
                 moveq   #7,d0
 .opb_dr:
                 bsr.w   drain_p2_stamina
+                move.w  #10,p2_lunge_vbl        ; 50Hz P2 punch windup & snap!
                 lea     G_OPP_STRUCT.l,a0
                 jmp     GAME_BASE+$15d8
 .opb_skip:
@@ -2012,6 +2086,7 @@ hook_opp_special:
 .ops_go:
                 moveq   #22,d0
                 bsr.w   drain_p2_stamina
+                move.w  #12,p2_lunge_vbl        ; 50Hz P2 special windup & snap!
                 lea     G_OPP_STRUCT.l,a0
                 jmp     GAME_BASE+$15a2
 .ops_skip:
@@ -3002,7 +3077,7 @@ render_title_options:
 ; Title Screen Strings (Game font: 0..9 = $00..$09, A..Z = $41..$5a, ' '=$5b, '.'=$5c, NL=$ff, END=$fe)
 ; =============================================================================
 str_bottom_credit:
-                dc.b    'E','N','H','A','N','C','E','D',$5b,'V',1,$5c,3,$ff
+                dc.b    'E','N','H','A','N','C','E','D',$5b,'V',1,$5c,4,$ff
                 dc.b    $5b,$5b,'B','Y',$5b,'D','A','D',$5b,'P','R','G',$fe
 
 ; Mode Select (ui_screen == 0) — strictly <= 9 chars/line inside title boxes!
@@ -4684,8 +4759,208 @@ add_stam_kd_pen:
                 rts
 
 ; =============================================================================
+; 13. 50 Hz ARCADE JUICE (Footwork Bounce, Punch Lunge, Hit-Recoil, Daze Sway)
+; =============================================================================
+reset_juice_state:
+                clr.w   juice_vbl_cnt
+                clr.w   hitstop_vbls
+                clr.w   shake_vbls
+                clr.w   p1_recoil_vbl
+                clr.w   p2_recoil_vbl
+                clr.w   p1_lunge_vbl
+                clr.w   p2_lunge_vbl
+                rts
+
+; Apply 50 Hz visual juice to P1 (Marco) sprite position (d4=X, d5=Y).
+; Preserves d0, d6, a6. Clamps d4 in [2..224] and d5 in [36..orig_y].
+apply_p1_juice:
+                tst.w   G_P1_HP.l
+                ble.w   .ap1_ret                ; knocked down -> no bounce/sway
+                move.w  d5,d3                   ; save orig_y ceiling
+
+                ; 1. Hit-Recoil (25 Hz horizontal vibration + brief -1px flinch)
+                move.w  p1_recoil_vbl(pc),d2
+                beq.s   .ap1_lunge
+                moveq   #1,d1
+                cmpi.w  #7,d2
+                blt.s   .ap1_r4
+                moveq   #3,d1
+                bra.s   .ap1_rsign
+.ap1_r4:        cmpi.w  #4,d2
+                blt.s   .ap1_rsign
+                moveq   #2,d1
+.ap1_rsign:     btst    #0,d2
+                beq.s   .ap1_radd
+                neg.w   d1
+.ap1_radd:      add.w   d1,d4
+                cmpi.w  #5,d2
+                blt.s   .ap1_daze
+                subq.w  #1,d5
+                bra.s   .ap1_daze
+
+.ap1_lunge:
+                ; 2. Punch Lunge (Marco faces UP: snap -4px -> -3 -> -2 -> -1 -> 0!)
+                move.w  p1_lunge_vbl(pc),d2
+                beq.s   .ap1_bounce
+                cmpi.w  #10,d2
+                bge.s   .ap1_daze               ; windup: planted before snap
+                cmpi.w  #7,d2
+                blt.s   .ap1_l4
+                subq.w  #4,d5
+                bra.s   .ap1_daze
+.ap1_l4:        cmpi.w  #4,d2
+                blt.s   .ap1_l2
+                subq.w  #3,d5
+                bra.s   .ap1_daze
+.ap1_l2:        cmpi.w  #2,d2
+                blt.s   .ap1_l1
+                subq.w  #2,d5
+                bra.s   .ap1_daze
+.ap1_l1:        subq.w  #1,d5
+                bra.s   .ap1_daze
+
+.ap1_bounce:
+                ; 3. Footwork Bounce (1.56 Hz rhythmic stance bob; flat-footed when exhausted!)
+                tst.w   p1_exhausted
+                bne.s   .ap1_daze
+                tst.w   G_P1_DUCK.l
+                bne.s   .ap1_daze
+                move.w  juice_vbl_cnt(pc),d1
+                lsr.w   #1,d1
+                andi.w  #15,d1
+                lea     bounce_tbl(pc),a0
+                move.b  (a0,d1.w),d2
+                ext.w   d2
+                add.w   d2,d5
+
+.ap1_daze:
+                ; 4. Daze Wobble (+/-3px woozy horizontal sway when Dazed!)
+                tst.w   p1_daze_tmr
+                beq.s   .ap1_clamp
+                move.w  juice_vbl_cnt(pc),d1
+                lsr.w   #1,d1
+                andi.w  #15,d1
+                lea     daze_sway_tbl(pc),a0
+                move.b  (a0,d1.w),d2
+                ext.w   d2
+                add.w   d2,d4
+
+.ap1_clamp:
+                cmpi.w  #2,d4
+                bge.s   .ap1_cx2
+                moveq   #2,d4
+.ap1_cx2:       cmpi.w  #224,d4
+                ble.s   .ap1_cy1
+                move.w  #224,d4
+.ap1_cy1:       cmpi.w  #36,d5
+                bge.s   .ap1_cy2
+                moveq   #36,d5
+.ap1_cy2:       cmp.w   d3,d5
+                ble.s   .ap1_ret
+                move.w  d3,d5
+.ap1_ret:       rts
+
+; Apply 50 Hz visual juice to P2 (Opponent) sprite position (d4=X, d5=Y).
+; Preserves d0, d6, a6. Clamps d4 in [2..224] and d5 in [36..orig_y].
+apply_p2_juice:
+                tst.w   G_P2_HP.l
+                ble.w   .ap2_ret                ; knocked down -> no bounce/sway
+                move.w  d5,d3                   ; save orig_y ceiling
+
+                ; 1. Hit-Recoil (25 Hz horizontal vibration + upward pushback away from Marco!)
+                move.w  p2_recoil_vbl(pc),d2
+                beq.s   .ap2_lunge
+                moveq   #1,d1
+                cmpi.w  #7,d2
+                blt.s   .ap2_r4
+                moveq   #3,d1
+                bra.s   .ap2_rsign
+.ap2_r4:        cmpi.w  #4,d2
+                blt.s   .ap2_rsign
+                moveq   #2,d1
+.ap2_rsign:     btst    #0,d2
+                beq.s   .ap2_radd
+                neg.w   d1
+.ap2_radd:      add.w   d1,d4
+                cmpi.w  #5,d2
+                blt.s   .ap2_ry2
+                subq.w  #3,d5                   ; knocked back UP 3px!
+                bra.s   .ap2_daze
+.ap2_ry2:       cmpi.w  #2,d2
+                blt.s   .ap2_daze
+                subq.w  #1,d5
+                bra.s   .ap2_daze
+
+.ap2_lunge:
+                ; 2. Punch Lunge (P2 faces DOWN: pull back -3px on windup, snap DOWN to 0 on impact!)
+                move.w  p2_lunge_vbl(pc),d2
+                beq.s   .ap2_bounce
+                cmpi.w  #9,d2
+                blt.s   .ap2_l7
+                subq.w  #3,d5                   ; windup pull-back
+                bra.s   .ap2_daze
+.ap2_l7:        cmpi.w  #7,d2
+                blt.s   .ap2_daze               ; impact snap forward (dy=0, +3px shift down!)
+                subq.w  #2,d5
+                bra.s   .ap2_daze
+
+.ap2_bounce:
+                ; 3. Footwork Bounce (half-phase offset from P1 so fighters bob independently!)
+                tst.w   p2_exhausted
+                bne.s   .ap2_daze
+                tst.w   G_P2_DUCK.l
+                bne.s   .ap2_daze
+                move.w  juice_vbl_cnt(pc),d1
+                lsr.w   #1,d1
+                addq.w  #8,d1
+                andi.w  #15,d1
+                lea     bounce_tbl(pc),a0
+                move.b  (a0,d1.w),d2
+                ext.w   d2
+                add.w   d2,d5
+
+.ap2_daze:
+                ; 4. Daze Wobble (+/-3px woozy horizontal sway when Dazed!)
+                tst.w   p2_daze_tmr
+                beq.s   .ap2_clamp
+                move.w  juice_vbl_cnt(pc),d1
+                lsr.w   #1,d1
+                addq.w  #4,d1
+                andi.w  #15,d1
+                lea     daze_sway_tbl(pc),a0
+                move.b  (a0,d1.w),d2
+                ext.w   d2
+                add.w   d2,d4
+
+.ap2_clamp:
+                cmpi.w  #2,d4
+                bge.s   .ap2_cx2
+                moveq   #2,d4
+.ap2_cx2:       cmpi.w  #224,d4
+                ble.s   .ap2_cy1
+                move.w  #224,d4
+.ap2_cy1:       cmpi.w  #36,d5
+                bge.s   .ap2_cy2
+                moveq   #36,d5
+.ap2_cy2:       cmp.w   d3,d5
+                ble.s   .ap2_ret
+                move.w  d3,d5
+.ap2_ret:       rts
+
+bounce_tbl:     dc.b    0,0,-1,-1,-2,-2,-2,-2,-2,-1,-1,0,0,0,0,0
+daze_sway_tbl:  dc.b    0,1,2,3,3,3,2,1,0,-1,-2,-3,-3,-3,-2,-1
+                even
+
+; =============================================================================
 ; Local variables
 ; =============================================================================
+juice_vbl_cnt:  dc.w    0
+hitstop_vbls:   dc.w    0
+shake_vbls:     dc.w    0
+p1_recoil_vbl:  dc.w    0
+p2_recoil_vbl:  dc.w    0
+p1_lunge_vbl:   dc.w    0
+p2_lunge_vbl:   dc.w    0
 tow_val:        dc.w    0
 p2_guard_stance: dc.w   0
 ikbd_joy0_pend: dc.w    0
