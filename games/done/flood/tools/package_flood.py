@@ -97,6 +97,10 @@ def package(version: str = "v1.1"):
             zf.write(st_img, st_img.name)
         print(f"Created {flp_zip} ({flp_zip.stat().st_size:,} B)")
 
+    # 3. Standalone auto-booting hard-disk image (.vhd)
+    bench_root = ROOT.parent.parent.parent
+    subprocess.run(["python3", str(bench_root / "tools" / "make_game_vhds.py"), "flood"], check=True)
+
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()

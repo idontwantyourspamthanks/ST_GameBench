@@ -210,13 +210,13 @@ patch_init:
         tst.b   has_dma
         beq.w   .try_bg_only
 
-        ; Allocate 278 KB (AM_MUS 129920 + AM_SFX 99460 + 4KB vol_tbl + 2KB dma_ring + 33KB bg_cache)
-        move.l  #278000, -(a7)
+        ; Allocate 268,288 B (AM_MUS 130048 + AM_SFX 99584 + 4KB vol_tbl + 2KB dma_ring + 32256 bg_cache)
+        move.l  #268288, -(a7)
         move.w  #$48, -(a7)             ; GEMDOS Malloc
         trap    #1
         addq.l  #6, a7
         tst.l   d0
-        ble.w   .init_done
+        ble.s   .try_bg_only            ; low RAM (e.g. 512KB or heavy HD driver): still try 32KB bg_cache!
 
         move.l  d0, a5                  ; a5 = allocated audio+bg arena
         move.l  a5, am_mus_buf          ; +0: AM_MUS.BIN (129920 B)
@@ -234,8 +234,11 @@ patch_init:
 
 .try_bg_only:
         tst.b   has_blitter
+        bne.s   .alloc_bg_only
+        tst.b   has_dma
         beq.w   .init_done
-        move.l  #33000, -(a7)
+.alloc_bg_only:
+        move.l  #32256, -(a7)
         move.w  #$48, -(a7)
         trap    #1
         addq.l  #6, a7
@@ -382,10 +385,13 @@ patch_vbl_pace:
 ;    change, then STE-Blitter shifts bg_cache -> backbuffer (stride 160B) by fine_x!
 ; ============================================================================
 patch_draw_tiles:
+        tst.l   bg_cache_ptr
+        beq.s   .cpu_tiles              ; no bg_cache RAM: fall back to original CPU tilemap renderer!
         tst.b   has_blitter
         bne.s   .blt_tiles
         tst.b   has_dma
         bne.w   .tt_tiles               ; TT (32 MHz, DMA, no Blitter): CPU smooth 1px scroll!
+.cpu_tiles:
         andi.w  #$f, d6
         beq.s   .cpu_eq
         move.l  ptr_tiles_cpu_ne(pc), a0
@@ -400,8 +406,6 @@ patch_draw_tiles:
         move.l  a5, bg_cur_a5
 
         ; Check if 21-tile bg_cache is valid and matches (a6, d6, d1, 21x13 tiles)
-        tst.l   bg_cache_ptr
-        beq.w   .tiles_done             ; safety
         tst.b   bg_valid
         beq.s   .rebuild_cache
         cmp.l   bg_last_a6(pc), a6
@@ -591,8 +595,6 @@ patch_draw_tiles:
         andi.w  #$f, d6
         move.l  a6, bg_cur_a6
         move.l  a5, bg_cur_a5
-        tst.l   bg_cache_ptr
-        beq.s   .tiles_done
         tst.b   bg_valid
         beq.s   .tt_rebuild
         cmp.l   bg_last_a6(pc), a6
@@ -1147,7 +1149,27 @@ patch_title_hook:
         bsr.w   start_amiga_music
         bsr.w   draw_credit_banner
         move.l  ptr_orig_title(pc), a0
-        jmp     (a0)
+        jsr     (a0)                    ; returns chosen level in d0.w
+        ; Pop up native-font "LOADING LEVEL / PLEASE WAIT" box while level loads
+        movem.l d0-d4/a0-a2, -(a7)
+        lea     loading_box_str(pc), a0
+        move.l  ptr_frontbuf(pc), a1
+        move.l  (a1), a1
+        moveq   #$50, d2                ; y = 80 (matches PLAY LEVEL / PASSWORD box)
+        moveq   #$12, d3                ; 18 bytes per line
+        moveq   #$0a, d4                ; x = 10
+        moveq   #$03, d1                ; 4 lines (dbra)
+        move.l  ptr_orig_title(pc), a2
+        jsr     $130(a2)                ; Flood's native box renderer (text+$28c2)
+        movem.l (a7)+, d0-d4/a0-a2
+        rts
+
+loading_box_str:
+        dc.b    '!"""""""""""""""#',0
+        dc.b    '$ LOADING LEVEL %',0
+        dc.b    '$  PLEASE WAIT  %',0
+        dc.b    '&)))))))))))))))(',0
+        even
 
 ; --- Draw small "enhanced by dad_prg v1.1" at top-left (x=4, y=4) of Title Screen ($26956) ---
 ; Uses compact 5x5 pixel bitmap font with 1px black drop-shadow (color 0) + color 15 text.
