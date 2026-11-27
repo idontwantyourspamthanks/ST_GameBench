@@ -161,12 +161,114 @@ TEAM_KITS_1989_90 = [
 ]
 assert len(TEAM_KITS_1989_90) == 92
 
+# Authentic 1989-90 English Football League 2nd (Away) kits for all 92 clubs.
+# Every away kit contrasts strongly with its club's home kit for automatic clash resolution!
+TEAM_AWAY_KITS_1989_90 = [
+    # Division 1 (20)
+    (0, 12, 0),  # ARSENAL          - Yellow & navy
+    (0, 4, 8),   # ASTON VILLA      - White & claret
+    (0, 12, 7),  # CHARLTON         - Yellow & black
+    (0, 4, 10),  # CHELSEA          - White & red
+    (0, 12, 0),  # COVENTRY CITY    - Yellow & navy
+    (0, 12, 1),  # CRYSTAL PALACE   - Yellow & blue
+    (0, 1, 4),   # DERBY COUNTY     - Royal blue & white
+    (0, 12, 1),  # EVERTON          - Yellow & blue
+    (0, 5, 10),  # LIVERPOOL        - Silver/grey & red (iconic 89-90 away!)
+    (0, 1, 11),  # LUTON TOWN       - Blue & orange
+    (0, 8, 4),   # MANCHESTER CITY  - Maroon & white
+    (0, 1, 4),   # MANCHESTER UTD   - Royal blue & white
+    (0, 12, 0),  # MILLWALL         - Yellow & navy
+    (0, 4, 17),  # NORWICH CITY     - White & green
+    (0, 12, 1),  # NOTTM FOREST     - Yellow & blue
+    (0, 10, 4),  # Q.P.R.           - Red & white
+    (0, 12, 0),  # SHEFFIELD WED    - Yellow & navy
+    (0, 12, 1),  # SOUTHAMPTON      - Yellow & blue
+    (0, 12, 0),  # TOTTENHAM        - Yellow & navy
+    (0, 12, 1),  # WIMBLEDON        - Yellow & blue
+    # Division 2 (24)
+    (0, 4, 10),  # BARNSLEY         - White & red
+    (0, 10, 7),  # BLACKBURN        - Red & black
+    (0, 12, 7),  # BOURNEMOUTH      - Yellow & black
+    (0, 4, 8),   # BRADFORD CITY    - White & claret
+    (0, 12, 1),  # BRIGHTON         - Yellow & blue
+    (0, 4, 7),   # HULL CITY        - White & black
+    (0, 12, 1),  # IPSWICH TOWN     - Yellow & blue
+    (0, 12, 1),  # LEEDS UNITED     - Yellow & blue
+    (0, 12, 1),  # LEICESTER CITY   - Yellow & blue
+    (0, 2, 0),   # MIDDLESBROUGH    - Sky blue & navy
+    (0, 12, 16), # NEWCASTLE UTD    - Yellow & green
+    (0, 11, 1),  # OLDHAM ATHLETIC  - Tangerine & blue
+    (0, 4, 0),   # OXFORD UNITED    - White & navy
+    (0, 4, 16),  # PLYMOUTH ARGYLE  - White & dark green
+    (0, 4, 1),   # PORTSMOUTH       - White & blue
+    (0, 12, 7),  # PORT VALE        - Yellow & black
+    (0, 12, 7),  # SHEFFIELD UTD    - Yellow & black
+    (0, 2, 0),   # STOKE CITY       - Sky blue & navy
+    (0, 1, 4),   # SUNDERLAND       - Royal blue & white
+    (0, 4, 10),  # SWINDON TOWN     - White & red
+    (0, 4, 7),   # WATFORD          - White & black
+    (0, 12, 17), # WEST BROMWICH    - Yellow & green
+    (0, 4, 8),   # WEST HAM UTD     - White & claret
+    (0, 4, 7),   # WOLVERHAMPTON    - White & black
+    # Division 3 (24)
+    (0, 12, 1),  # BIRMINGHAM CITY  - Yellow & blue
+    (0, 4, 11),  # BLACKPOOL        - White & tangerine
+    (0, 10, 4),  # BOLTON           - Red & white
+    (0, 12, 1),  # BRENTFORD        - Yellow & blue
+    (0, 12, 7),  # BRISTOL CITY     - Yellow & black
+    (0, 12, 1),  # BRISTOL ROVERS   - Yellow & blue
+    (0, 1, 4),   # BURY             - Royal blue & white
+    (0, 12, 1),  # CARDIFF CITY     - Yellow & blue
+    (0, 12, 1),  # CHESTER CITY     - Yellow & blue
+    (0, 4, 10),  # CREWE ALEXANDRA  - White & red
+    (0, 10, 4),  # FULHAM           - Red & white
+    (0, 12, 0),  # HUDDERSFIELD     - Yellow & navy
+    (0, 2, 0),   # LEYTON ORIENT    - Sky blue & navy
+    (0, 1, 4),   # MANSFIELD TOWN   - Royal blue & white
+    (0, 4, 8),   # NORTHAMPTON      - White & claret
+    (0, 12, 7),  # NOTTS COUNTY     - Yellow & black
+    (0, 12, 0),  # PRESTON          - Yellow & navy
+    (0, 12, 1),  # READING          - Yellow & blue
+    (0, 12, 7),  # ROTHERHAM UTD    - Yellow & black
+    (0, 4, 1),   # SHREWSBURY       - White & blue
+    (0, 10, 4),  # SWANSEA CITY     - Red & white
+    (0, 1, 4),   # TRANMERE ROVERS  - Royal blue & white
+    (0, 17, 4),  # WALSALL          - Green & white
+    (0, 12, 1),  # WIGAN ATHLETIC   - Yellow & blue
+    # Division 4 (24)
+    (0, 12, 1),  # ALDERSHOT        - Yellow & blue
+    (0, 4, 8),   # BURNLEY          - White & claret
+    (0, 4, 7),   # CAMBRIDGE UTD    - White & black
+    (0, 10, 4),  # CARLISLE UNITED  - Red & white
+    (0, 12, 1),  # CHESTERFIELD     - Yellow & blue
+    (0, 12, 1),  # COLCHESTER UTD   - Yellow & blue
+    (0, 12, 7),  # DONCASTER        - Yellow & black
+    (0, 12, 7),  # EXETER CITY      - Yellow & black
+    (0, 12, 1),  # GILLINGHAM       - Yellow & blue
+    (0, 10, 4),  # GRIMSBY TOWN     - Red & white
+    (0, 12, 1),  # HALIFAX TOWN     - Yellow & blue
+    (0, 12, 1),  # HARTLEPOOL UTD   - Yellow & blue
+    (0, 10, 4),  # HEREFORD UNITED  - Red & white
+    (0, 12, 7),  # LINCOLN CITY     - Yellow & black
+    (0, 4, 7),   # MAIDSTONE UTD    - White & black
+    (0, 12, 1),  # PETERBOROUGH     - Yellow & blue
+    (0, 12, 1),  # ROCHDALE         - Yellow & blue
+    (0, 12, 7),  # SCARBOROUGH      - Yellow & black
+    (0, 4, 8),   # SCUNTHORPE UTD   - White & claret
+    (0, 12, 0),  # SOUTHEND UNITED  - Yellow & navy
+    (0, 12, 1),  # STOCKPORT        - Yellow & blue
+    (0, 1, 4),   # TORQUAY UNITED   - Royal blue & white
+    (0, 4, 10),  # WREXHAM          - White & red
+    (0, 12, 1),  # YORK CITY        - Yellow & blue
+]
+assert len(TEAM_AWAY_KITS_1989_90) == 92
+
 def pack_kit_word(style: int, col1: int, col2: int) -> int:
     return 0x8000 | ((style & 7) << 10) | ((col1 & 31) << 5) | (col2 & 31)
 
 def build():
     WORK.mkdir(parents=True, exist_ok=True)
-    # Generate 92-team names, squad counts, and authentic 1989-90 kits
+    # Generate 92-team names, squad counts, and authentic 1989-90 home + away kits
     with (WORK / "league92_data.inc").open("w") as f:
         f.write("team_names_92:\n")
         for name in TEAMS_1989_90:
@@ -182,6 +284,10 @@ def build():
         for idx, (st, c1, c2) in enumerate(TEAM_KITS_1989_90):
             kw = pack_kit_word(st, c1, c2)
             f.write(f"        dc.w ${kw:04x} ; {TEAMS_1989_90[idx]}\n")
+        f.write("team_away_kits_92:\n")
+        for idx, (st, c1, c2) in enumerate(TEAM_AWAY_KITS_1989_90):
+            kw = pack_kit_word(st, c1, c2)
+            f.write(f"        dc.w ${kw:04x} ; {TEAMS_1989_90[idx]} away\n")
     # Generate exact lookup tables included by micro_opt.s
     with (WORK / "luts.inc").open("w") as f:
         f.write("tbl_1333:\n")
@@ -252,15 +358,15 @@ stager:
     demo_src = WORK / "DEMO92.DAT"
     if demo_src.exists():
         demo_bytes = bytearray(demo_src.read_bytes())
-        # Store default non-red kit (Style 0 Plain, Royal Blue & White) for Anco United at -$24c8(a4)
+        # Store default Home (Plain, Royal Blue & White) at -$24c8(a4) and Away (Plain, Yellow & Navy) at -$24c6(a4)
         hum_kit_off = 92 * 100 + 2600 * 42 + (0x2e70 - 0x24c8)
-        assert demo_bytes[hum_kit_off:hum_kit_off+2] == b"\x00\x00", "unexpected non-zero bytes at -$24c8(a4) in DEMO92.DAT"
-        struct.pack_into(">H", demo_bytes, hum_kit_off, pack_kit_word(0, 1, 4))
+        assert demo_bytes[hum_kit_off:hum_kit_off+4] == b"\x00\x00\x00\x00", "unexpected non-zero bytes at -$24c8..-$24c5(a4) in DEMO92.DAT"
+        struct.pack_into(">HH", demo_bytes, hum_kit_off, pack_kit_word(0, 1, 4), pack_kit_word(0, 12, 0))
         (BUILD / "FILES" / "DEMO92.DAT").write_bytes(demo_bytes)
-        print(f"Copied 92-team {demo_src.name} (+ default club kit) into {BUILD / 'FILES'}")
+        print(f"Copied 92-team {demo_src.name} (+ default 1st & 2nd club kits) into {BUILD / 'FILES'}")
 
     # Task 2: Copy Kick Off 2 engine binary, resident handler, KRD assets, and PM match segment
-    assert 0xb3000 + len(payload) <= 0xb6800, f"payload overlaps BR_STATE: ${0xb3000 + len(payload):x}"
+    assert 0xb3000 + len(payload) <= 0xb6b00, f"payload overlaps BR_STATE: ${0xb3000 + len(payload):x}"
     ko2_orig = ROOT.parent.parent / "queue" / "kick-off-2" / "originals" / "KICKOFF2" / "FILES" / "KRD"
     ko2_ram = WORK / "ko2_ram.bin"
     pm_ram = WORK / "setup_ram.bin"

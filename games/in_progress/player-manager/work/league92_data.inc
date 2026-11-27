@@ -278,3 +278,96 @@ team_kits_92:
         dc.w $8181 ; TORQUAY UNITED
         dc.w $8144 ; WREXHAM
         dc.w $8144 ; YORK CITY
+team_away_kits_92:
+        dc.w $8180 ; ARSENAL away
+        dc.w $8088 ; ASTON VILLA away
+        dc.w $8187 ; CHARLTON away
+        dc.w $808a ; CHELSEA away
+        dc.w $8180 ; COVENTRY CITY away
+        dc.w $8181 ; CRYSTAL PALACE away
+        dc.w $8024 ; DERBY COUNTY away
+        dc.w $8181 ; EVERTON away
+        dc.w $80aa ; LIVERPOOL away
+        dc.w $802b ; LUTON TOWN away
+        dc.w $8104 ; MANCHESTER CITY away
+        dc.w $8024 ; MANCHESTER UTD away
+        dc.w $8180 ; MILLWALL away
+        dc.w $8091 ; NORWICH CITY away
+        dc.w $8181 ; NOTTM FOREST away
+        dc.w $8144 ; Q.P.R. away
+        dc.w $8180 ; SHEFFIELD WED away
+        dc.w $8181 ; SOUTHAMPTON away
+        dc.w $8180 ; TOTTENHAM away
+        dc.w $8181 ; WIMBLEDON away
+        dc.w $808a ; BARNSLEY away
+        dc.w $8147 ; BLACKBURN away
+        dc.w $8187 ; BOURNEMOUTH away
+        dc.w $8088 ; BRADFORD CITY away
+        dc.w $8181 ; BRIGHTON away
+        dc.w $8087 ; HULL CITY away
+        dc.w $8181 ; IPSWICH TOWN away
+        dc.w $8181 ; LEEDS UNITED away
+        dc.w $8181 ; LEICESTER CITY away
+        dc.w $8040 ; MIDDLESBROUGH away
+        dc.w $8190 ; NEWCASTLE UTD away
+        dc.w $8161 ; OLDHAM ATHLETIC away
+        dc.w $8080 ; OXFORD UNITED away
+        dc.w $8090 ; PLYMOUTH ARGYLE away
+        dc.w $8081 ; PORTSMOUTH away
+        dc.w $8187 ; PORT VALE away
+        dc.w $8187 ; SHEFFIELD UTD away
+        dc.w $8040 ; STOKE CITY away
+        dc.w $8024 ; SUNDERLAND away
+        dc.w $808a ; SWINDON TOWN away
+        dc.w $8087 ; WATFORD away
+        dc.w $8191 ; WEST BROMWICH away
+        dc.w $8088 ; WEST HAM UTD away
+        dc.w $8087 ; WOLVERHAMPTON away
+        dc.w $8181 ; BIRMINGHAM CITY away
+        dc.w $808b ; BLACKPOOL away
+        dc.w $8144 ; BOLTON away
+        dc.w $8181 ; BRENTFORD away
+        dc.w $8187 ; BRISTOL CITY away
+        dc.w $8181 ; BRISTOL ROVERS away
+        dc.w $8024 ; BURY away
+        dc.w $8181 ; CARDIFF CITY away
+        dc.w $8181 ; CHESTER CITY away
+        dc.w $808a ; CREWE ALEXANDRA away
+        dc.w $8144 ; FULHAM away
+        dc.w $8180 ; HUDDERSFIELD away
+        dc.w $8040 ; LEYTON ORIENT away
+        dc.w $8024 ; MANSFIELD TOWN away
+        dc.w $8088 ; NORTHAMPTON away
+        dc.w $8187 ; NOTTS COUNTY away
+        dc.w $8180 ; PRESTON away
+        dc.w $8181 ; READING away
+        dc.w $8187 ; ROTHERHAM UTD away
+        dc.w $8081 ; SHREWSBURY away
+        dc.w $8144 ; SWANSEA CITY away
+        dc.w $8024 ; TRANMERE ROVERS away
+        dc.w $8224 ; WALSALL away
+        dc.w $8181 ; WIGAN ATHLETIC away
+        dc.w $8181 ; ALDERSHOT away
+        dc.w $8088 ; BURNLEY away
+        dc.w $8087 ; CAMBRIDGE UTD away
+        dc.w $8144 ; CARLISLE UNITED away
+        dc.w $8181 ; CHESTERFIELD away
+        dc.w $8181 ; COLCHESTER UTD away
+        dc.w $8187 ; DONCASTER away
+        dc.w $8187 ; EXETER CITY away
+        dc.w $8181 ; GILLINGHAM away
+        dc.w $8144 ; GRIMSBY TOWN away
+        dc.w $8181 ; HALIFAX TOWN away
+        dc.w $8181 ; HARTLEPOOL UTD away
+        dc.w $8144 ; HEREFORD UNITED away
+        dc.w $8187 ; LINCOLN CITY away
+        dc.w $8087 ; MAIDSTONE UTD away
+        dc.w $8181 ; PETERBOROUGH away
+        dc.w $8181 ; ROCHDALE away
+        dc.w $8187 ; SCARBOROUGH away
+        dc.w $8088 ; SCUNTHORPE UTD away
+        dc.w $8180 ; SOUTHEND UNITED away
+        dc.w $8181 ; STOCKPORT away
+        dc.w $8024 ; TORQUAY UNITED away
+        dc.w $808a ; WREXHAM away
+        dc.w $8181 ; YORK CITY away

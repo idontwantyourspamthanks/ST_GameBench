@@ -10,8 +10,9 @@
 club_kit_picker:
         movem.l d0-d7/a0-a3/a5-a6,-(sp)
 
-        ; Default kit: style 0 (Plain), col1 1 (Royal Blue), col2 4 (White)
-        clr.w   kp_style
+        ; 2-step setup: step 0 = Home (1st) kit -> NEXT, step 1 = Away (2nd) kit -> DONE!
+        clr.w   kp_step
+        clr.w   kp_style                ; default Home: Plain Royal Blue & White
         move.w  #1,kp_col1
         move.w  #4,kp_col2
 
@@ -30,35 +31,8 @@ club_kit_picker:
 .kp_cl: clr.l   (a0)+
         dbra    d0,.kp_cl
 
-        ; Outer gold frame & header banner
-        move.w  #8,d0
-        move.w  #6,d1
-        move.w  #304,d2
-        move.w  #30,d3
-        moveq   #4,d4                   ; pitch green banner fill
-        bsr.w   kp_fill_box
-        lea     $078000+11*160.l,a3
-        lea     kp_title_s(pc),a0
-        moveq   #122,d4                 ; centred "CHOOSE CLUB KIT" (15*5=75 -> (320-75)/2=122)
-        moveq   #5,d0                   ; gold
-        bsr.w   draw_mini_str
-
-        ; Draw chosen club name (-$2e6e(a4)) centred in white below title
-        lea     -$2e6e(a4),a0
-        moveq   #0,d4
-.kp_nl: tst.b   (a0,d4.w)
-        beq.s   .kp_nd
-        addq.w  #1,d4
-        cmpi.w  #20,d4
-        blt.s   .kp_nl
-.kp_nd: mulu.w  #5,d4
-        neg.w   d4
-        addi.w  #320,d4
-        asr.w   #1,d4
-        lea     $078000+23*160.l,a3
-        lea     -$2e6e(a4),a0
-        moveq   #1,d0                   ; crisp white
-        bsr.w   draw_mini_str
+        ; Draw header banner + club name + buttons (re-called on step 0 -> step 1!)
+        bsr.w   kp_draw_chrome
 
         ; Left Jersey Preview Box (x=24..108, y=46..136)
         move.w  #24,d0
@@ -118,18 +92,7 @@ club_kit_picker:
         addi.w  #30,d6
         dbra    d7,.kp_ab
 
-        ; DONE button (x=112..208, y=150..170)
-        move.w  #112,d0
-        move.w  #150,d1
-        move.w  #96,d2
-        move.w  #20,d3
-        moveq   #7,d4                   ; bright green
-        bsr.w   kp_fill_box
-        lea     $078000+157*160.l,a3
-        lea     kp_done_s(pc),a0
-        move.w  #150,d4                 ; centred "DONE" (4*5=20 -> 150)
-        moveq   #1,d0                   ; crisp white
-        bsr.w   draw_mini_str
+        ; DONE/NEXT button drawn by kp_draw_chrome (updated when advancing Home -> Away!)
 
         ; Bottom control hint
         lea     $078000+184*160.l,a3
@@ -263,20 +226,55 @@ club_kit_picker:
 
 .kp_upd:
         jsr     -$7f26(a4)              ; hide mouse
-        bsr.s   kp_redraw_live
+        bsr.w   kp_redraw_live
         jsr     -$7f20(a4)              ; show mouse
         bra.w   .kp_loop
 
 .kp_finish:
         jsr     -$7f26(a4)              ; hide mouse
-        ; Pack kit word: $8000 | (style<<10) | (col1<<5) | col2 -> PM_HUM_KIT_OFF(a4)
+        ; Pack kit word: $8000 | (style<<10) | (col1<<5) | col2
         move.w  kp_style(pc),d0
         lsl.w   #5,d0
         or.w    kp_col1(pc),d0
         lsl.w   #5,d0
         or.w    kp_col2(pc),d0
         ori.w   #$8000,d0
+        tst.w   kp_step
+        bne.s   .kp_save_away
+
+        ; Step 0 finished: save Home (1st) kit, auto-pick contrasting default Away (2nd) kit, enter Step 1!
         move.w  d0,PM_HUM_KIT_OFF(a4)
+        move.w  #1,kp_step
+        clr.w   kp_style
+        ; Choose a smart contrasting default Away kit based on Home's shirt colour family
+        move.w  kp_col1(pc),d1
+        lea     kit_family_tbl(pc),a0
+        move.b  0(a0,d1.w),d1           ; 0=Blue,1=White/Grey,2=Black,3=Red,4=Yellow,5=Pink/Purp,6=Green
+        cmpi.b  #4,d1                   ; Home is Yellow -> default Away = Royal Blue & White
+        beq.s   .ka_blu
+        cmpi.b  #1,d1                   ; Home is White/Grey -> default Away = Red & White
+        beq.s   .ka_red
+        ; Otherwise (Blue/Red/Black/Green/Purple) -> default Away = Yellow & Navy!
+        move.w  #12,kp_col1             ; Yellow
+        clr.w   kp_col2                 ; Navy
+        bra.s   .ka_go
+.ka_blu:
+        move.w  #1,kp_col1              ; Royal Blue
+        move.w  #4,kp_col2              ; White
+        bra.s   .ka_go
+.ka_red:
+        move.w  #10,kp_col1             ; Red
+        move.w  #4,kp_col2              ; White
+.ka_go:
+        bsr.s   kp_draw_chrome          ; update banner ("CHOOSE AWAY KIT (2ND)") & button ("DONE")!
+        bsr.w   kp_redraw_live
+        jsr     -$7f20(a4)              ; show mouse
+        ; Wait brief debounce / clear click so NEXT click doesn't double-trigger DONE
+        clr.w   -$3a24(a4)
+        bra.w   .kp_loop
+
+.kp_save_away:
+        move.w  d0,PM_HUM_AWAY_OFF(a4)
         jsr     -$7f20(a4)              ; restore mouse visibility for PM!
 
         movem.l (sp)+,d0-d7/a0-a3/a5-a6
@@ -284,6 +282,62 @@ club_kit_picker:
         movea.l -$2e74(a4),a5
         move.b  #$64,$7(a5)
         jmp     $010a3e.l
+
+; ---------------------------------------------------------------------------
+; Draw step-dependent header banner & NEXT/DONE button
+; ---------------------------------------------------------------------------
+kp_draw_chrome:
+        movem.l d0-d4/a0/a3,-(sp)
+        move.w  #8,d0
+        move.w  #6,d1
+        move.w  #304,d2
+        move.w  #30,d3
+        moveq   #4,d4                   ; pitch green banner fill
+        bsr.w   kp_fill_box
+        lea     $078000+11*160.l,a3
+        lea     kp_title_h(pc),a0       ; "CHOOSE HOME KIT (1ST)" (21*5=105 -> x=107)
+        tst.w   kp_step
+        beq.s   .kdc_t
+        lea     kp_title_a(pc),a0       ; "CHOOSE AWAY KIT (2ND)"
+.kdc_t: moveq   #107,d4
+        moveq   #5,d0                   ; gold
+        bsr.w   draw_mini_str
+
+        ; Draw chosen club name (-$2e6e(a4)) centred in white below title
+        lea     -$2e6e(a4),a0
+        moveq   #0,d4
+.kdc_n: tst.b   (a0,d4.w)
+        beq.s   .kdc_d
+        addq.w  #1,d4
+        cmpi.w  #20,d4
+        blt.s   .kdc_n
+.kdc_d: mulu.w  #5,d4
+        neg.w   d4
+        addi.w  #320,d4
+        asr.w   #1,d4
+        lea     $078000+23*160.l,a3
+        lea     -$2e6e(a4),a0
+        moveq   #1,d0                   ; crisp white
+        bsr.w   draw_mini_str
+
+        ; Bottom NEXT (step 0) / DONE (step 1) button (x=112..208, y=150..170)
+        move.w  #112,d0
+        move.w  #150,d1
+        move.w  #96,d2
+        move.w  #20,d3
+        moveq   #7,d4                   ; bright green
+        bsr.w   kp_fill_box
+        lea     $078000+157*160.l,a3
+        lea     kp_next_s(pc),a0        ; "NEXT: AWAY KIT" (14*5=70 -> x=125)
+        moveq   #125,d4
+        tst.w   kp_step
+        beq.s   .kdc_b
+        lea     kp_done_s(pc),a0        ; "DONE" (4*5=20 -> x=150)
+        move.w  #150,d4
+.kdc_b: moveq   #1,d0                   ; crisp white
+        bsr.w   draw_mini_str
+        movem.l (sp)+,d0-d4/a0/a3
+        rts
 
 ; ---------------------------------------------------------------------------
 ; Redraw live palette slots 12 & 13, 3 value boxes, and 48x52 jersey preview!
@@ -659,6 +713,7 @@ kp_fill_rect:
         rts
 
 ; --- Kit Picker Data ---
+kp_step:        dc.w    0               ; 0 = Home (1st) kit, 1 = Away (2nd) kit
 kp_style:       dc.w    0
 kp_col1:        dc.w    1
 kp_col2:        dc.w    4
@@ -673,14 +728,16 @@ kp_rgb_tbl:
         dc.w    $0300,$0500,$0700,$0730,$0770,$0747,$0707,$0307
         dc.w    $0030,$0050,$0245,$0043
 
-kp_title_s:     dc.b    "CHOOSE CLUB KIT",0
+kp_title_h:     dc.b    "CHOOSE HOME KIT (1ST)",0
+kp_title_a:     dc.b    "CHOOSE AWAY KIT (2ND)",0
 kp_lbl_st:      dc.b    "KIT STYLE",0
 kp_lbl_c1:      dc.b    "SHIRT COLOUR",0
 kp_lbl_c2:      dc.b    "TRIM / SHORTS",0
 kp_lt_s:        dc.b    "<",0
 kp_gt_s:        dc.b    ">",0
+kp_next_s:      dc.b    "NEXT: AWAY KIT",0
 kp_done_s:      dc.b    "DONE",0
-kp_hint_s:      dc.b    "CLICK ARROWS OR KEYS 1-3  -  CLICK DONE/SPACE",0
+kp_hint_s:      dc.b    "CLICK ARROWS OR KEYS 1-3  -  SPACE TO CONFIRM",0
 
 ; Fixed 12-byte stride style names (0..5, verified 1-to-1 against Kick Off 2!)
 kp_st_names:

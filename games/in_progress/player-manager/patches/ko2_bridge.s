@@ -17,47 +17,54 @@
 ;   (Ends at $c8300 — 15 KB below VDI/screen at $cc000!)
 ; ---------------------------------------------------------------------------
 
-BR_STATE        equ     $0b6800
-BR_HOME_SC      equ     $0b6800         ; .w
-BR_AWAY_SC      equ     $0b6802         ; .w
-BR_HOME_HUM     equ     $0b6804         ; .w
-BR_AWAY_HUM     equ     $0b6806         ; .w
-BR_FAST         equ     $0b6808         ; .w (0=Normal 5m, 1=Fast 3m)
-BR_CUP_ET       equ     $0b680a         ; .w (0=League, 1=Cup Extra Time)
-BR_PM_A4        equ     $0b680c         ; .l
-BR_PM_84        equ     $0b6810         ; .l
-BR_TOS_84       equ     $0b6814         ; .l
-BR_KICK_DIR     equ     $0b6818         ; .w (bit0=up/down, bit1=kickoff team)
-BR_WEEK_SEED    equ     $0b681a         ; .w (week number for ref/weather variety)
-BR_SAV_70       equ     $0b681c         ; .l saved $70.w VBL
-BR_SAV_118      equ     $0b6820         ; .l saved $118.w IKBD
-BR_KBDVBASE     equ     $0b6824         ; .l saved Kbdvbase()
-BR_SAV_MVEC     equ     $0b6828         ; .l saved Kbdvbase+$10 (mousevec)
-BR_SAV_JVEC     equ     $0b682c         ; .l saved Kbdvbase+$18 (joyvec)
-BR_OLD_SSP      equ     $0b6830         ; .l saved old SSP across .rs_d!
-BR_OLD_SR       equ     $0b6834         ; .w saved old SR across .rs_d!
-BR_LINEA_BASE   equ     $0b6838         ; .l saved Line-A base ptr from $a000!
-BR_RESULTS      equ     $0b6840         ; 26 x 10 bytes = 260 bytes ($0b6840..$0b6943)
-BR_LINEA_SAVE   equ     $0b6950         ; 8 bytes ($2e..$35 of Line-A vars)
-BR_MFP_SAVE     equ     $0b6960         ; 24 bytes: $110,$114,$120,$134 + IERA/IERB/IMRA/IMRB
-BR_IS_STE       equ     $0b6978         ; .w: 1 = Atari STE/Mega STE detected, 0 = plain ST
-BR_SAV_A0       equ     $0b697c         ; .l: saved $a0.w (TRAP #8) vector for STE Blitter call
-BR_RNG_SEED     equ     $0b6980         ; .l: live VBL counter ($466.w) captured before KO2 PRNG seed!
+BR_STATE        equ     $0b6b00
+BR_HOME_SC      equ     $0b6b00         ; .w
+BR_AWAY_SC      equ     $0b6b02         ; .w
+BR_HOME_HUM     equ     $0b6b04         ; .w
+BR_AWAY_HUM     equ     $0b6b06         ; .w
+BR_FAST         equ     $0b6b08         ; .w (0=Normal 5m, 1=Fast 3m)
+BR_CUP_ET       equ     $0b6b0a         ; .w (0=League, 1=Cup Extra Time)
+BR_PM_A4        equ     $0b6b0c         ; .l
+BR_PM_84        equ     $0b6b10         ; .l
+BR_TOS_84       equ     $0b6b14         ; .l
+BR_KICK_DIR     equ     $0b6b18         ; .w (bit0=up/down, bit1=kickoff team)
+BR_WEEK_SEED    equ     $0b6b1a         ; .w (week number for ref/weather variety)
+BR_SAV_70       equ     $0b6b1c         ; .l saved $70.w VBL
+BR_SAV_118      equ     $0b6b20         ; .l saved $118.w IKBD
+BR_KBDVBASE     equ     $0b6b24         ; .l saved Kbdvbase()
+BR_SAV_MVEC     equ     $0b6b28         ; .l saved Kbdvbase+$10 (mousevec)
+BR_SAV_JVEC     equ     $0b6b2c         ; .l saved Kbdvbase+$18 (joyvec)
+BR_OLD_SSP      equ     $0b6b30         ; .l saved old SSP across .rs_d!
+BR_OLD_SR       equ     $0b6b34         ; .w saved old SR across .rs_d!
+BR_LINEA_BASE   equ     $0b6b38         ; .l saved Line-A base ptr from $a000!
+BR_RESULTS      equ     $0b6b40         ; 26 x 10 bytes = 260 bytes ($0b6b40..$0b6c43)
+BR_LINEA_SAVE   equ     $0b6c50         ; 8 bytes ($2e..$35 of Line-A vars)
+BR_MFP_SAVE     equ     $0b6c60         ; 24 bytes: $110,$114,$120,$134 + IERA/IERB/IMRA/IMRB
+BR_IS_STE       equ     $0b6c78         ; .w: 1 = Atari STE/Mega STE detected, 0 = plain ST
+BR_SAV_A0       equ     $0b6c7c         ; .l: saved $a0.w (TRAP #8) vector for STE Blitter call
+BR_RNG_SEED     equ     $0b6c80         ; .l: live VBL counter ($466.w) captured before KO2 PRNG seed!
+BR_HOME_K1      equ     $0b6c84         ; .w: Home team 1st kit (packed word)
+BR_HOME_K2      equ     $0b6c86         ; .w: Home team 2nd kit (packed word)
+BR_AWAY_K1      equ     $0b6c88         ; .w: Away team 1st kit (packed word)
+BR_AWAY_K2      equ     $0b6c8a         ; .w: Away team 2nd kit (packed word)
+BR_HOME_ALT     equ     $0b6c8c         ; .w: 0 = Home wearing 1st kit, 1 = wearing 2nd kit
+BR_AWAY_ALT     equ     $0b6c8e         ; .w: 0 = Away wearing 1st kit, 1 = wearing 2nd kit
 
 KO2_STE_BASE    equ     $0ae940         ; $0ae940..$0b02ff (6.5 KB) for KO2STE.BIN (above FILES.CR $09d000..$0ae940!)
 
-KO2_HOME_TEAM   equ     $0b6a00         ; $41e bytes
-KO2_AWAY_TEAM   equ     $0b6e20         ; $41e bytes
-PM_HND_SAVE     equ     $0b7240         ; $850 bytes
-KO2_HND_BUF     equ     $0b7a90         ; $820 bytes
-PM_DATA1_SAVE   equ     $0b8300         ; $740 bytes ($0219c0..$022100 -> $0b8a40)
-PM_DATA2_SAVE   equ     $0b8a40         ; $3e00 bytes ($025900..$029700 -> $0bc840, well below 1MB HDDRIVER $0c4000 / TOS2.06 $0bdde4!)
-KO2_REPLAY_BUF  equ     $0bc900         ; $6014 bytes ($0bc900..$0c2914 < $0c4000; 4 KB TOS 2.06 ring -> $0bd900 < $0bdde4!)
+KO2_HOME_TEAM   equ     $0b6d00         ; $41e bytes
+KO2_AWAY_TEAM   equ     $0b7120         ; $41e bytes
+PM_HND_SAVE     equ     $0b7540         ; $850 bytes
+KO2_HND_BUF     equ     $0b7d90         ; $820 bytes
+PM_DATA1_SAVE   equ     $0b8600         ; $740 bytes ($0219c0..$022100 -> $0b8d40)
+PM_DATA2_SAVE   equ     $0b8d40         ; $3e00 bytes ($025900..$029700 -> $0bcb40, well below 1MB HDDRIVER $0c4000 / TOS2.06 $0bdde4!)
+KO2_REPLAY_BUF  equ     $0bcc00         ; $6014 bytes ($0bcc00..$0c2c14 < $0c4000; 4 KB TOS 2.06 ring -> $0bdc00 < $0bdde4!)
 KO2_SCRATCH_BUF equ     $099000         ; $2c00 bytes temp depack scratch during $015f4c ($099000..$09bc00 < $09d000!)
 KO2_FILES_CR    equ     $09d000         ; $11940 bytes ($09d000..$0ae940 < KO2_STE_BASE $0ae940!)
 
 KO2_A4          equ     $0284aa
-PM_HUM_KIT_OFF  equ     -$24c8          ; saved in every PM savegame & DEMO92.DAT (unused gap before -$24c2!)
+PM_HUM_KIT_OFF  equ     -$24c8          ; Home (1st) kit saved in every PM savegame & DEMO92.DAT!
+PM_HUM_AWAY_OFF equ     -$24c6          ; Away (2nd) kit saved in every PM savegame & DEMO92.DAT!
 
 ; Called from boot_entry; returns d0=0 ok, d0!=0 fail
 init_ko2_bridge:
@@ -114,45 +121,69 @@ ko2_bridge_match:
         move.w  -$1ee4(a4),BR_KICK_DIR.l ; bit0=up/down, bit1=kickoff (from d1!)
         move.w  -$336c(a4),BR_WEEK_SEED.l ; current week for referee variety
 
-        ; Look up authentic 1989-90 kits (human club uses PM_HUM_KIT_OFF; AI clubs match team_names_92!)
-        ; Format of kit word: bit15=1, bits12..10=style(0..5), bits9..5=col1(0..19), bits4..0=col2(0..19)
-        bsr.w   lookup_team_kit         ; a0 = home team -> d0.w = home kit word
-        move.w  d0,d6                   ; d6 = home kit word
+        ; Look up authentic 1989-90 Home (1st) + Away (2nd) kits for BOTH clubs!
+        ; lookup_team_kits(a0) -> d0.w = 1st kit, d1.w = 2nd kit
+        bsr.w   lookup_team_kits
+        move.w  d0,BR_HOME_K1.l
+        move.w  d1,BR_HOME_K2.l
         movea.l -$1ee8(a4),a0
-        bsr.w   lookup_team_kit         ; a0 = away team -> d0.w = away kit word
-        move.w  d0,d4                   ; d4 = away kit word
+        bsr.w   lookup_team_kits
+        move.w  d0,BR_AWAY_K1.l
+        move.w  d1,BR_AWAY_K2.l
 
-        ; Smart perceptual colour-family clash resolution!
+        ; Perceptual RGB clash check:
+        ; 1. Start with Home 1st kit vs Away 1st kit (standard Football League rule!).
+        clr.w   BR_HOME_ALT.l
+        clr.w   BR_AWAY_ALT.l
+        move.w  BR_HOME_K1.l,d6         ; chosen home kit
+        move.w  BR_AWAY_K1.l,d4         ; chosen away kit
         move.w  d6,d0
-        lsr.w   #5,d0
-        andi.w  #31,d0                  ; home col1
-        lea     kit_family_tbl(pc),a3
-        move.b  0(a3,d0.w),d2           ; home family (0..6)
         move.w  d4,d1
-        lsr.w   #5,d1
-        andi.w  #31,d1                  ; away col1
-        cmp.b   0(a3,d1.w),d2
-        bne.s   .no_clash
-        ; Clashing primary shirts! First try swapping Away col1 <-> col2 (away strip!)
-        move.w  d4,d3
-        andi.w  #31,d3                  ; away col2
-        cmp.b   0(a3,d3.w),d2
-        beq.s   .clash_alt
-        ; Swap col1 <-> col2 on Away kit while keeping Away style!
-        move.w  d4,d0
-        andi.w  #$fc00,d0               ; keep bit15 + style
-        lsl.w   #5,d3
-        or.w    d3,d0                   ; new col1 = old col2
-        or.w    d1,d0                   ; new col2 = old col1
-        move.w  d0,d4
-        bra.s   .no_clash
-.clash_alt:
-        ; Both Away colours clash with Home -> switch Away to crisp Plain Yellow/Navy or RoyalBlue/White!
-        move.w  #$8180,d4               ; style 0 (Plain), Yellow(12) / Navy(0)
-        cmpi.b  #4,d2                   ; is Home already Yellow?
-        bne.s   .no_clash
-        move.w  #$8024,d4               ; style 0 (Plain), RoyalBlue(1) / White(4)
-.no_clash:
+        bsr.w   kit_contrast_score      ; d0.w = perceptual contrast score (0..42+; <14 = clash!)
+        cmpi.w  #14,d0
+        bge.w   .kits_chosen
+
+        ; 2. Clash detected! Try Away team's 2nd kit first (real football rule: away side changes!).
+        move.w  BR_HOME_K1.l,d0
+        move.w  BR_AWAY_K2.l,d1
+        bsr.w   kit_contrast_score
+        move.w  d0,d5                   ; best_score = score(H1, A2)
+        move.w  BR_AWAY_K2.l,d4         ; best_away = A2
+        move.w  #1,BR_AWAY_ALT.l
+        cmpi.w  #14,d5
+        bge.w   .kits_chosen            ; Away 2nd kit resolves clash cleanly!
+
+        ; 3. Even Away 2nd kit is too close to Home 1st -> test Home 2nd vs Away 1st & 4 neutral 3rd kits,
+        ;    picking whichever strip yields the MAXIMUM visual contrast!
+        move.w  BR_HOME_K2.l,d0
+        move.w  BR_AWAY_K1.l,d1
+        bsr.w   kit_contrast_score
+        cmp.w   d5,d0
+        ble.s   .try_3rd
+        move.w  d0,d5
+        move.w  BR_HOME_K2.l,d6
+        move.w  BR_AWAY_K1.l,d4
+        move.w  #1,BR_HOME_ALT.l
+        clr.w   BR_AWAY_ALT.l
+        cmpi.w  #14,d5
+        bge.s   .kits_chosen
+.try_3rd:
+        lea     kit_3rd_pool(pc),a3
+        moveq   #3,d7                   ; 4 ultra-distinct fallback strips
+.t3_lp: move.w  BR_HOME_K1.l,d0
+        move.w  (a3)+,d1
+        bsr.w   kit_contrast_score
+        cmp.w   d5,d0
+        ble.s   .t3_nx
+        move.w  d0,d5
+        move.w  BR_HOME_K1.l,d6
+        move.w  -2(a3),d4
+        clr.w   BR_HOME_ALT.l
+        move.w  #1,BR_AWAY_ALT.l
+        move.w  d4,BR_AWAY_K2.l         ; store as Away's toggleable 2nd strip for this match!
+.t3_nx: dbra    d7,.t3_lp
+
+.kits_chosen:
         ; Pack Home & Away teams into KO2 $41e structs
         movea.l -$1eec(a4),a0
         lea     KO2_HOME_TEAM.l,a2
@@ -748,17 +779,29 @@ pack_pm_to_ko2_team:
         rts
 
 ; ---------------------------------------------------------------------------
-; Helper: lookup_team_kit(a0 = PM team ptr, a4 = PM a4) -> d0.w packed kit word
+; Helper: lookup_team_kits(a0 = PM team ptr, a4 = PM a4) -> d0.w = 1st kit, d1.w = 2nd kit
 ; ---------------------------------------------------------------------------
-lookup_team_kit:
-        movem.l d1-d3/a0-a3,-(sp)
-        ; Human club? Use custom kit saved at PM_HUM_KIT_OFF(a4) if initialized!
+lookup_team_kits:
+        movem.l d2-d3/a0-a3,-(sp)
+        ; Human club? Use custom Home (-$24c8) & Away (-$24c6) kits if initialized!
         tst.w   $28(a0)
         beq.s   .ltk_ai
         move.w  PM_HUM_KIT_OFF(a4),d0
-        bmi.s   .ltk_ret                ; bit 15 set -> valid custom human club kit!
-        move.w  #$8024,d0               ; fallback default: style 0 (Plain), Royal Blue(1) / White(4)
-        bra.s   .ltk_ret
+        bmi.s   .ltk_h2
+        move.w  #$8024,d0               ; fallback Home: Plain Royal Blue / White
+.ltk_h2:
+        move.w  PM_HUM_AWAY_OFF(a4),d1
+        bmi.w   .ltk_ret                ; valid custom Away (2nd) kit!
+        ; Older save without 2nd kit: pick clean contrasting 2nd kit automatically
+        move.w  d0,d2
+        lsr.w   #5,d2
+        andi.w  #31,d2
+        lea     kit_family_tbl(pc),a2
+        move.w  #$8180,d1               ; Yellow / Navy
+        cmpi.b  #4,0(a2,d2.w)
+        bne.w   .ltk_ret
+        move.w  #$8024,d1               ; Royal Blue / White
+        bra.w   .ltk_ret
 .ltk_ai:
         ; Match club name against team_names_92 (automatically follows promotion/relegation!)
         lea     team_names_92(pc),a1
@@ -776,38 +819,160 @@ lookup_team_kit:
         ; Exact name match at index d1!
         add.w   d1,d1
         lea     team_kits_92(pc),a2
-        move.w  0(a2,d1.w),d0
+        move.w  0(a2,d1.w),d0           ; 1st (Home) kit
+        lea     team_away_kits_92(pc),a2
+        move.w  0(a2,d1.w),d1           ; 2nd (Away) kit
         bra.s   .ltk_ret
 .ltk_nx:
         lea     20(a1),a1
         addq.w  #1,d1
         cmpi.w  #92,d1
         blt.s   .ltk_lp
-        ; Custom-renamed AI team: use its slot index in team_kits_92
+        ; Custom-renamed AI team: use its slot index in team_kits_92 / team_away_kits_92
         move.l  a0,d0
         sub.l   -$2e94(a4),d0
         divu.w  #100,d0
         cmpi.w  #92,d0
         bhs.s   .ltk_def
-        add.w   d0,d0
+        move.w  d0,d1
+        add.w   d1,d1
         lea     team_kits_92(pc),a2
-        move.w  0(a2,d0.w),d0
+        move.w  0(a2,d1.w),d0
+        lea     team_away_kits_92(pc),a2
+        move.w  0(a2,d1.w),d1
         bra.s   .ltk_ret
 .ltk_def:
         move.w  #$8024,d0
+        move.w  #$8180,d1
 .ltk_ret:
-        movem.l (sp)+,d1-d3/a0-a3
+        movem.l (sp)+,d2-d3/a0-a3
+        rts
+
+; ---------------------------------------------------------------------------
+; Perceptual RGB Contrast Scorer: kit_contrast_score(d0.w = kitA, d1.w = kitB) -> d0.w
+; Computes luminance-weighted RGB distance (2*|dR| + 3*|dG| + |dB|) on ST 0..7 RGB
+; between primary shirt colours, minus penalty if same colour family or patterned
+; secondary colour overlaps opponent's primary shirt!
+; Returns score (0..42+); < 14 indicates clashing / overly similar strips.
+; ---------------------------------------------------------------------------
+kit_contrast_score:
+        movem.l d1-d6/a0-a1,-(sp)
+        move.w  d0,d4                   ; save kitA
+        move.w  d1,d5                   ; save kitB
+        ; Extract primary shirt colour indices (0..19)
+        lsr.w   #5,d0
+        andi.w  #31,d0                  ; cA1
+        lsr.w   #5,d1
+        andi.w  #31,d1                  ; cB1
+        bsr.s   .rgb_dist               ; d2.w = 2*|dR| + 3*|dG| + |dB| (0..42)
+        move.w  d2,d6                   ; running score in d6
+        ; Same perceptual colour family penalty (-10 -> forces clash on Red/Orange, Blue/Navy, White/Grey!)
+        lea     kit_family_tbl(pc),a0
+        move.b  0(a0,d0.w),d2
+        cmp.b   0(a0,d1.w),d2
+        bne.s   .kcs_pat
+        subi.w  #10,d6
+.kcs_pat:
+        ; If kitA is patterned (style != 0, so col2 is visible on shirt!), penalize if kitA.col2 matches kitB.col1!
+        move.w  d4,d2
+        andi.w  #$1c00,d2
+        beq.s   .kcs_pb
+        move.w  d4,d0
+        andi.w  #31,d0                  ; cA2
+        bsr.s   .rgb_dist               ; dist(cA2, cB1)
+        cmpi.w  #10,d2
+        bge.s   .kcs_pb
+        subq.w  #6,d6
+.kcs_pb:
+        ; If kitB is patterned (style != 0), penalize if kitB.col2 matches kitA.col1!
+        move.w  d5,d2
+        andi.w  #$1c00,d2
+        beq.s   .kcs_done
+        move.w  d4,d0
+        lsr.w   #5,d0
+        andi.w  #31,d0                  ; cA1
+        move.w  d5,d1
+        andi.w  #31,d1                  ; cB2
+        bsr.s   .rgb_dist               ; dist(cA1, cB2)
+        cmpi.w  #10,d2
+        bge.s   .kcs_done
+        subq.w  #6,d6
+.kcs_done:
+        move.w  d6,d0
+        movem.l (sp)+,d1-d6/a0-a1
+        rts
+
+; Sub-helper: .rgb_dist(d0.w = colIdxA 0..19, d1.w = colIdxB 0..19) -> d2.w = 2*|dR|+3*|dG|+|dB|
+; Preserves d0, d1, d4, d5, d6!
+.rgb_dist:
+        movem.l d0-d1/d3,-(sp)
+        lea     kp_rgb_tbl(pc),a1
+        add.w   d0,d0
+        move.w  0(a1,d0.w),d0           ; ST RGB A ($0RGB)
+        add.w   d1,d1
+        move.w  0(a1,d1.w),d1           ; ST RGB B ($0RGB)
+        ; Blue: |B_a - B_b| * 1
+        move.w  d0,d2
+        andi.w  #7,d2
+        move.w  d1,d3
+        andi.w  #7,d3
+        sub.w   d3,d2
+        bpl.s   .db_ok
+        neg.w   d2
+.db_ok:
+        ; Green: |G_a - G_b| * 3
+        lsr.w   #4,d0
+        lsr.w   #4,d1
+        move.w  d0,d3
+        andi.w  #7,d3
+        move.w  d1,-(sp)
+        andi.w  #7,d1
+        sub.w   d1,d3
+        move.w  (sp)+,d1
+        bpl.s   .dg_ok
+        neg.w   d3
+.dg_ok: add.w   d3,d2
+        add.w   d3,d2
+        add.w   d3,d2
+        ; Red: |R_a - R_b| * 2
+        lsr.w   #4,d0
+        lsr.w   #4,d1
+        andi.w  #7,d0
+        andi.w  #7,d1
+        sub.w   d1,d0
+        bpl.s   .dr_ok
+        neg.w   d0
+.dr_ok: add.w   d0,d2
+        add.w   d0,d2
+        movem.l (sp)+,d0-d1/d3
+        rts
+
+; Helper: apply_kit_word(d0.w = packed kit word, a3 = KO2 team struct $41e)
+apply_kit_word:
+        move.w  d0,d1
+        andi.w  #31,d1
+        move.w  d1,$41c(a3)
+        lsr.w   #5,d0
+        move.w  d0,d1
+        andi.w  #31,d1
+        move.w  d1,$41a(a3)
+        lsr.w   #5,d0
+        andi.w  #7,d0
+        cmpi.w  #6,d0
+        blt.s   .akw_s
+        moveq   #0,d0
+.akw_s: move.w  d0,$418(a3)
         rts
 
 ; ---------------------------------------------------------------------------
 ; Pre-Match Screen (ko6.men): Display teams, kits, referee, pitch condition,
-; wind, and allow changing Home/Away kit colours & styles before kickoff!
+; wind, and allow toggling Home/Away between 1st & 2nd kits (or custom override)!
 ; Controls:
 ;   Joystick 1 Fire / Space / Return : KICK OFF!
-;   Joystick 1 Up/Down (or Arrow U/D): cycle Home Shirt Colour
-;   Joystick 1 L/R    (or Arrow L/R) : cycle Away Shirt Colour
-;   Keys 1 / 2 / 3                   : Home Style / Shirt / Trim
-;   Keys 4 / 5 / 6                   : Away Style / Shirt / Trim
+;   Joystick 1 Up/Down (or H / U/D)  : toggle Home 1st <-> 2nd kit!
+;   Joystick 1 L/R     (or A / L/R)  : toggle Away 1st <-> 2nd kit!
+;   Keys 1 / 2 / 3                   : Custom Home Style / Shirt / Trim
+;   Keys 4 / 5 / 6                   : Custom Away Style / Shirt / Trim
 ; ---------------------------------------------------------------------------
 ko2_prematch_kits:
         movem.l d0-d7/a0-a3/a5-a6,-(sp)
@@ -831,17 +996,17 @@ ko2_prematch_kits:
         ; Draw clean 4-line control legend centred in y=141..188
         lea     $078000+141*160.l,a3
         lea     pm_hint_l0(pc),a0
-        moveq   #82,d4                  ; 31*5=155 -> (320-155)/2 = 82
+        moveq   #75,d4                  ; 34*5=170 -> (320-170)/2 = 75
         moveq   #15,d0
         bsr.w   draw_mini_str
         lea     $078000+155*160.l,a3
         lea     pm_hint_l1(pc),a0
-        moveq   #55,d4                  ; 42*5=210 -> 55
+        moveq   #75,d4
         moveq   #15,d0
         bsr.w   draw_mini_str
         lea     $078000+165*160.l,a3
         lea     pm_hint_l2(pc),a0
-        moveq   #55,d4
+        moveq   #75,d4
         moveq   #15,d0
         bsr.w   draw_mini_str
         lea     $078000+181*160.l,a3
@@ -883,31 +1048,43 @@ ko2_prematch_kits:
         tst.w   -$dee(a4)
         bne.w   .pm_done
 
-        ; 2. Check Joystick 1 Direction (edge-triggered)
+        ; 2. Check Joystick 1 Direction (edge-triggered: U/D = toggle Home 1st/2nd, L/R = toggle Away 1st/2nd!)
         move.w  -$df0(a4),d0
         cmp.w   d5,d0
         beq.s   .pm_chk_key
         move.w  d0,d5
-        cmpi.w  #0,d0                   ; Joy Up -> Home Col1 +1
-        beq.s   .h_c1_p
-        cmpi.w  #4,d0                   ; Joy Down -> Home Col1 -1
-        beq.s   .h_c1_m
-        cmpi.w  #2,d0                   ; Joy Right -> Away Col1 +1
-        beq.s   .a_c1_p
-        cmpi.w  #6,d0                   ; Joy Left -> Away Col1 -1
-        beq.s   .a_c1_m
+        cmpi.w  #0,d0                   ; Joy Up -> Toggle Home 1st <-> 2nd kit
+        beq.s   .h_tog
+        cmpi.w  #4,d0                   ; Joy Down -> Toggle Home 1st <-> 2nd kit
+        beq.s   .h_tog
+        cmpi.w  #2,d0                   ; Joy Right -> Toggle Away 1st <-> 2nd kit
+        beq.s   .a_tog
+        cmpi.w  #6,d0                   ; Joy Left -> Toggle Away 1st <-> 2nd kit
+        beq.s   .a_tog
         bra.s   .pm_chk_key
+
+.h_tog: eori.w  #1,BR_HOME_ALT.l
+        move.w  BR_HOME_K1.l,d0
+        tst.w   BR_HOME_ALT.l
+        beq.s   .ht_ap
+        move.w  BR_HOME_K2.l,d0
+.ht_ap: movea.l a5,a3
+        bsr.w   apply_kit_word
+        bra.w   .pm_redraw
+
+.a_tog: eori.w  #1,BR_AWAY_ALT.l
+        move.w  BR_AWAY_K1.l,d0
+        tst.w   BR_AWAY_ALT.l
+        beq.s   .at_ap
+        move.w  BR_AWAY_K2.l,d0
+.at_ap: movea.l a6,a3
+        bsr.w   apply_kit_word
+        bra.w   .pm_redraw
 
 .h_c1_p: moveq  #1,d1
         lea     $41a(a5),a3
         bra.w   .mod_col
-.h_c1_m: moveq  #-1,d1
-        lea     $41a(a5),a3
-        bra.w   .mod_col
 .a_c1_p: moveq  #1,d1
-        lea     $41a(a6),a3
-        bra.w   .mod_col
-.a_c1_m: moveq  #-1,d1
         lea     $41a(a6),a3
         bra.w   .mod_col
 
@@ -916,7 +1093,7 @@ ko2_prematch_kits:
         trap    #1
         addq.l  #2,sp
         tst.w   d0
-        beq.s   .pm_loop
+        beq.w   .pm_loop
         move.w  #$08,-(sp)              ; GEMDOS Cnecin -> low byte ASCII, high word scancode
         trap    #1
         addq.l  #2,sp
@@ -924,27 +1101,35 @@ ko2_prematch_kits:
         beq.w   .pm_done
         cmpi.b  #$0d,d0                 ; Return -> Kick Off!
         beq.w   .pm_done
-        cmpi.b  #'1',d0                 ; 1 = Home Style (0..5)
+        cmpi.b  #'h',d0                 ; H = Toggle Home 1st/2nd kit!
+        beq.w   .h_tog
+        cmpi.b  #'H',d0
+        beq.w   .h_tog
+        cmpi.b  #'a',d0                 ; A = Toggle Away 1st/2nd kit!
+        beq.w   .a_tog
+        cmpi.b  #'A',d0
+        beq.w   .a_tog
+        cmpi.b  #'1',d0                 ; 1 = Custom Home Style (0..5)
         beq.s   .h_st
-        cmpi.b  #'2',d0                 ; 2 = Home Col1 (0..19)
+        cmpi.b  #'2',d0                 ; 2 = Custom Home Col1 (0..19)
         beq.s   .h_c1_p
-        cmpi.b  #'3',d0                 ; 3 = Home Col2 (0..19)
+        cmpi.b  #'3',d0                 ; 3 = Custom Home Col2 (0..19)
         beq.s   .h_c2_p
-        cmpi.b  #'4',d0                 ; 4 = Away Style (0..5)
+        cmpi.b  #'4',d0                 ; 4 = Custom Away Style (0..5)
         beq.s   .a_st
-        cmpi.b  #'5',d0                 ; 5 = Away Col1 (0..19)
+        cmpi.b  #'5',d0                 ; 5 = Custom Away Col1 (0..19)
         beq.s   .a_c1_p
-        cmpi.b  #'6',d0                 ; 6 = Away Col2 (0..19)
+        cmpi.b  #'6',d0                 ; 6 = Custom Away Col2 (0..19)
         beq.s   .a_c2_p
         swap    d0                      ; scancode in low byte
-        cmpi.b  #$48,d0                 ; Up arrow -> Home Col1 +1
-        beq.s   .h_c1_p
-        cmpi.b  #$50,d0                 ; Down arrow -> Home Col1 -1
-        beq.s   .h_c1_m
-        cmpi.b  #$4d,d0                 ; Right arrow -> Away Col1 +1
-        beq.s   .a_c1_p
-        cmpi.b  #$4b,d0                 ; Left arrow -> Away Col1 -1
-        beq.s   .a_c1_m
+        cmpi.b  #$48,d0                 ; Up arrow -> Toggle Home 1st/2nd
+        beq.w   .h_tog
+        cmpi.b  #$50,d0                 ; Down arrow -> Toggle Home 1st/2nd
+        beq.w   .h_tog
+        cmpi.b  #$4d,d0                 ; Right arrow -> Toggle Away 1st/2nd
+        beq.w   .a_tog
+        cmpi.b  #$4b,d0                 ; Left arrow -> Toggle Away 1st/2nd
+        beq.w   .a_tog
         bra.w   .pm_loop
 
 .h_c2_p: moveq  #1,d1
@@ -1060,12 +1245,16 @@ ko2_replay_alloc:
 ; 0=Blue, 1=White/Grey, 2=Black, 3=Red/Orange/Claret, 4=Yellow, 5=Pink/Purple, 6=Green/Teal
 kit_family_tbl:
         dc.b    0,0,0,0, 1,1,1, 2, 3,3,3,3, 4, 5,5,5, 6,6, 0,6
+        even
+; 4 ultra-distinct 3rd-kit fallback strips (Yellow/Navy, White/Black, Red/White, RoyalBlue/White)
+kit_3rd_pool:
+        dc.w    $8180,$8087,$8144,$8024
 pm_hint_l0:
-        dc.b    "MATCH KIT CHECK - AVOID CLASHES",0
+        dc.b    "MATCH KIT CHECK - AUTO CLASH AVOID",0
 pm_hint_l1:
-        dc.b    "HOME: JOY U/D OR 1:STYLE 2:SHIRT 3:TRIM",0
+        dc.b    "HOME: U/D OR H 1ST/2ND  1-3 CUSTOM",0
 pm_hint_l2:
-        dc.b    "AWAY: JOY L/R OR 4:STYLE 5:SHIRT 6:TRIM",0
+        dc.b    "AWAY: L/R OR A 1ST/2ND  4-6 CUSTOM",0
 pm_hint_l3:
         dc.b    "PRESS FIRE OR SPACE TO KICK OFF",0
         even

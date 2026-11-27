@@ -10,10 +10,11 @@
 ## v1.1 Features (Atari STE Amiga Visuals, Audio & Match Polish)
 - **Kick Off 2 Amiga Tiled Pitch & 12-Bit Palette on STE (True Double-Buffered Ring Engine in 1 MB RAM):** All 4 Amiga pitches (`normal`, `wet`, `soggy`, `artificial`) converted to STE 12-bit RGB palettes + `80×96` tilemaps + 256 3bpp tiles (`AMIGAP0..3.BIN`), rendered into two 208×168 unmirrored ring buffers (`STE_RING_A`/`STE_RING_B`) via STE Hardware fine scrolling (`$ff8201/$03/$0d` + live `$ff8205/$07/$09` sync, `$ff820f`, `$ff8265`), Blitter-paused HBlank-locked Timer B splits with MFP IPL-5 preemption wrappers (wrap + Amiga-style black-background bottom HUD with kit-matched team text and crisp white clock + jet-black border), exact 0-pixel pitch-edge camera clamping across all four lines, and shared-bus (`$80`) STE Hardware Blitter masked 4bpp sprites + transparent vector radar (`X` resize, `D` toggle) + active player black underline ([patches/ko2_ste.s](patches/ko2_ste.s)).
 - **Kick Off 2 Amiga STE DMA Audio:** 17 Amiga 8-bit signed PCM sound effects (`AMIGASND.BIN`, 6,258 Hz mono) played via STE DMA audio hardware (`$ff8900..$ff8924`) with exact 16-bit word KO2 script parsing and zero Timer-A CPU overhead.
-- **Authentic 1989–90 92-Club Kits, Pre-Match Screen & New Game Club Kit Picker:**
-  - All 92 English Football League clubs carry authentic 1989–90 home colours and verified Kick Off 2 styles (`Plain`, `Stripes`, `Chest Band`, `Sleeves`, `Shoulders`, `Sash`) with automatic colour-family clash avoidance.
-  - **New Game Club Kit Picker** ([patches/kit_picker.s](patches/kit_picker.s)) right after naming your club (e.g. `Anco United`) on `scr4.men`: pick Style, Shirt Colour, and Trim/Shorts with a live visual jersey preview (mouse clicks or keys `1`–`3` + `Space`/`Done`), persisted in every save game at `-$24c8(a4)`.
-  - **Kick Off 2 Pre-Match Screen (`ko6.men`)** before every match showing both clubs, live visual jerseys, genuinely randomized Referee (`0..23`), Pitch Condition (`NORMAL` / `WET` / `SOGGY` / `PLASTIC`), and Wind, with live kit tweaking before kick-off (Joystick `U/D` = Home, `L/R` = Away; keys `1`–`3` = Home Style/Shirt/Trim, `4`–`6` = Away; `Fire` / `Space` to kick off).
+- **Authentic 1989–90 92-Club Home & Away Kits, Auto Clash Avoidance & Kit Picker:**
+  - All 92 English Football League clubs carry authentic 1989–90 Home (`1st`) and Away (`2nd`) kits across all 6 verified Kick Off 2 styles (`Plain`, `Stripes`, `Chest Band`, `Sleeves`, `Shoulders`, `Sash`).
+  - Luminance-weighted perceptual RGB contrast scoring (`2*|dR| + 3*|dG| + |dB|`, plus colour-family & patterned-shirt overlap checks) automatically switches to the 2nd kit (or highest-contrast fallback strip) whenever two teams' kits are too similar.
+  - **2-Step New Game Club Kit Picker** ([patches/kit_picker.s](patches/kit_picker.s)) right after naming your club (e.g. `Anco United`) on `scr4.men`: pick both your **Home (1st)** and **Away (2nd)** kits with a live visual jersey preview (mouse clicks or keys `1`–`3` + `Space`), persisted in every save game at `-$24c8(a4)` and `-$24c6(a4)`.
+  - **Kick Off 2 Pre-Match Screen (`ko6.men`)** before every match showing both clubs, live visual jerseys, genuinely randomized Referee (`0..23`), Pitch Condition (`NORMAL` / `WET` / `SOGGY` / `PLASTIC`), and Wind, with instant 1st↔2nd kit override before kick-off (Joystick `U/D` or `H` = Home 1st/2nd, `L/R` or `A` = Away 1st/2nd; keys `1`–`3` / `4`–`6` for custom tweaks; `Fire` / `Space` to kick off).
 - **Dedicated STE Mode & Plain ST Auto-Fallback:** Atari STE / Mega STE runs the dedicated True Double-Buffered Amiga STE engine automatically (`BR_IS_STE = 1`); plain 1 MB 68000 ST auto-detects `BR_IS_STE = 0` and stays on Classic v1.0 ST mode untouched.
 - **Real ACSI `HDDRIVER` & 1 MB / 4 MB Compatibility + Floppy Edition:**
   - Snapshots patched `$6800..$7020` handler back into `KO2_HND_BUF` so dynamic `HDDRIVER` `TRAP #1` / HAGA pointers stay valid on 4 MB+ machines.
@@ -38,11 +39,11 @@
 
 | Item | MD5 |
 |---|---|
-| `dist/PlayerManager_v1.1_patched_hd_2026-11-26.zip` | `cdf54bd2f48989e15041c339bbbe3e32` |
-| `dist/PlayerManager_v1.1_floppy_2026-11-26.st` | `1d69f4b1398670b8fb1c28e0db079cac` |
-| `dist/PlayerManager_v1.1_floppy_2026-11-26.zip` | `e8abac824a96d8c9b9c37ee9717d98c6` |
+| `dist/PlayerManager_v1.1_patched_hd_2026-11-26.zip` | `4f5769adce18b8a5ce765694758630f9` |
+| `dist/PlayerManager_v1.1_floppy_2026-11-26.st` | `6f9849572e3f9440084da394b2507e9d` |
+| `dist/PlayerManager_v1.1_floppy_2026-11-26.zip` | `4d06576ff4aa4c3aa44c62a59d04ee1d` |
 | `build/game/HAGA` | `1074342dd4a917bafdc7d2a031e9b088` |
-| `build/game/FILES/PMLA` | `df6315cd88775b7ebd76046216048b7d` |
+| `build/game/FILES/PMLA` | `6e4559e179e58943a5b741c5c5450eb4` |
 | `build/game/FILES/KO2ENG.BIN` | `934b13a84279197ab58d46312253f078` |
 | `build/game/FILES/KO2HND.BIN` | `a3505e2d266ec54f926b300b88d6be73` |
 | `build/game/FILES/PMCODE.BIN` | `b151b784eec464874beb2a0db9810fcb` |

@@ -16,18 +16,21 @@ What's New in v1.1 (Atari STE Amiga Visuals & Audio):
   * Exact 0-pixel pitch-edge camera alignment across all four touchlines and
     goal lines (goal kicks, corners, throw-ins and goals trigger right on the
     painted white lines).
-- Authentic 1989-90 Club Kits, Pre-Match Screen & New Game Kit Picker:
-  * All 92 English Football League clubs assigned authentic 1989-90 home
-    colours and Kick Off 2 kit styles (Plain, Stripes, Chest Band, Sleeves,
-    Shoulders, Sash) with automatic colour-family clash avoidance.
+- Authentic 1989-90 Home & Away Club Kits, Auto Clash Avoidance & Kit Picker:
+  * All 92 English Football League clubs carry authentic 1989-90 Home (1st)
+    and Away (2nd) kits across all 6 Kick Off 2 styles (Plain, Stripes, Chest
+    Band, Sleeves, Shoulders, Sash).
+  * Perceptual RGB contrast scoring automatically switches to the 2nd kit
+    (or highest-contrast fallback strip) whenever two teams' kits are too
+    similar.
   * New Game Club Kit Picker right after naming your club (e.g. Anco United):
-    choose Style, Shirt Colour and Trim/Shorts with live visual jersey preview
-    (mouse clicks or keys 1-3 + Space/Done), persisted in every save game.
+    choose BOTH your Home (1st) and Away (2nd) kits with live visual jersey
+    preview (mouse clicks or keys 1-3 + Space), persisted in every save game.
   * Kick Off 2 Pre-Match Screen before every match showing both clubs, live
     visual jerseys, randomized Referee, randomized Pitch Condition (Normal,
-    Wet, Soggy, Plastic) and Wind. Change either kit live before kick-off
-    (Joystick U/D=Home, L/R=Away; keys 1-3=Home Style/Shirt/Trim, 4-6=Away;
-    Fire or Space to kick off).
+    Wet, Soggy, Plastic) and Wind. Override Home/Away between 1st & 2nd kits
+    instantly (Joystick U/D or H = Home 1st/2nd, L/R or A = Away 1st/2nd,
+    keys 1-3 / 4-6 for custom tweaks, Fire or Space to kick off).
 - Kick Off 2 Amiga DMA Audio on Atari STE:
   * 17 authentic Amiga 8-bit signed PCM sound effects playing via STE DMA
     audio hardware (6,258 Hz mono) with zero Timer-A CPU overhead.
