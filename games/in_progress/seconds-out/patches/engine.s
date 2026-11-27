@@ -63,6 +63,7 @@ KEY_LSHIFT      equ     $2a
 KEY_F1          equ     $3b
 KEY_F2          equ     $3c
 KEY_F3          equ     $3d
+KEY_F4          equ     $3e
 
 ; Original routines
 G_ORIG_BLIT2    equ     GAME_BASE+$0bc4
@@ -145,8 +146,9 @@ cfg_use_blitter: dc.w   1                       ; +$9c: 1 = STE Blitter
 cfg_uncouple:    dc.w   1                       ; +$8a: 1 = 50 Hz uncoupled
 cfg_tween:       dc.w   1                       ; +$8c: 1 = 50 Hz motion tween
 cfg_2p_mode:     dc.w   0                       ; +$8e: 0 = 1P Career, 1 = 2P Versus
-cfg_style:       dc.w   0                       ; +$90: 0=Bal, 1=Speed, 2=Heavy, 3=IronChin
-cfg_2p_opp:      dc.w   0                       ; +$92: 0..4 opponent for 2P mode
+cfg_style:       dc.w   0                       ; +$a4: 0=Bal, 1=Speed, 2=Heavy, 3=IronChin
+cfg_2p_opp:      dc.w   0                       ; +$a6: 0..4 opponent for 2P mode
+                jmp     hook_welldone_poll(pc)  ; +$a8: $46c0 (Malone WELL DONE exit on Fire/Space!)
 
 ; =============================================================================
 ; 1. MASK CACHE BUILDERS
@@ -1063,7 +1065,14 @@ hook_fight_init:
                 ; Replaces $3d6..$3e5 (init P1/P2 HP to $3f)
                 move.w  #$3f,G_P1_HP.l
                 move.w  #$3f,G_P2_HP.l
-                move.w  #63,p1_max_stamina
+                moveq   #63,d0
+                tst.w   cfg_game_mode
+                bne.s   .hfi_ms
+                tst.w   career_active
+                beq.s   .hfi_ms
+                add.w   cr_max_stam(pc),d0      ; Career progression: +max stamina!
+.hfi_ms:
+                move.w  d0,p1_max_stamina
                 move.w  #63,p2_max_stamina
                 clr.w   p1_combo
                 clr.w   p2_combo
@@ -1214,7 +1223,14 @@ stamina_tick:
                 addq.w  #1,p1_reg_div
                 moveq   #3,d0
                 cmpi.w  #1,cfg_style
+                beq.s   .st_p1_fast
+                tst.w   cfg_game_mode
                 bne.s   .st_p1_div
+                tst.w   career_active
+                beq.s   .st_p1_div
+                tst.w   cr_guard                ; Career Iron Guard perk -> faster regen!
+                beq.s   .st_p1_div
+.st_p1_fast:
                 moveq   #2,d0
 .st_p1_div:
                 cmp.w   p1_reg_div(pc),d0
@@ -1241,10 +1257,17 @@ stamina_tick:
                 tst.w   G_P2_ATK_ACT.l
                 bne.s   .st_done
                 addq.w  #1,p2_reg_div
-                moveq   #5,d0                   ; CPU: slower regen (+1 / 5 ticks)
+                moveq   #5,d0                   ; CPU base: +1 / 5 ticks
                 tst.w   cfg_2p_mode
-                beq.s   .st_p2_div
-                moveq   #3,d0                   ; 2P Human: symmetric with P1 (+1 / 3 ticks)
+                bne.s   .st_p2_fast3            ; 2P Human: symmetric with P1 (+1 / 3 ticks)
+                cmpi.w  #4,G_OPP_IDX.l          ; Malone (4): +1 / 3 ticks (true champ!)
+                beq.s   .st_p2_fast3
+                cmpi.w  #3,G_OPP_IDX.l          ; Ronco (3): +1 / 4 ticks
+                bne.s   .st_p2_div
+                moveq   #4,d0
+                bra.s   .st_p2_div
+.st_p2_fast3:
+                moveq   #3,d0
 .st_p2_div:
                 cmp.w   p2_reg_div(pc),d0
                 bgt.s   .st_done
@@ -1288,8 +1311,16 @@ draw_stamina_bars:
                 beq.s   .ds_p2
                 move.w  d1,p1_stam_drawn
                 move.w  p1_stamina(pc),d0
+                cmpi.w  #63,d0                  ; clamp drawn bar width to 63px
+                ble.s   .ds_p1_c0
+                moveq   #63,d0
+.ds_p1_c0:
                 move.w  d3,d1
                 move.w  p1_max_stamina(pc),d7
+                cmpi.w  #63,d7
+                ble.s   .ds_p1_c7
+                moveq   #63,d7
+.ds_p1_c7:
                 lea     $70000+$1060,a1
                 lea     $78000+$1060,a2
                 bsr.s   draw_bar_right_aligned
@@ -1592,18 +1623,24 @@ hook_p1_dmg:
 .p1d_body:
                 addq.w  #1,stat_body
                 clr.w   p2_head_streak          ; body hit resets head-hit streak
-                moveq   #10,d0                  ; heavy body-shot stamina drain!
-                ; Hagman (2 = weedy body) & Ronco (3 = stamina-weak) take extra -14 body drain!
+                moveq   #7,d0                   ; tactical body-shot stamina drain (-7)
+                ; Hagman (2 = weedy body) & Ronco (3 = stamina-weak) take extra -10 body drain!
                 cmpi.w  #2,G_OPP_IDX.l
                 beq.s   .p1d_body_ex
                 cmpi.w  #3,G_OPP_IDX.l
-                bne.s   .p1d_stam
+                bne.s   .p1d_body_cr
 .p1d_body_ex:
-                moveq   #14,d0
+                moveq   #10,d0
+.p1d_body_cr:
+                tst.w   cfg_game_mode
+                bne.s   .p1d_stam
+                tst.w   career_active
+                beq.s   .p1d_stam
+                add.w   cr_body_pwr(pc),d0      ; Career Body Power: +1 stamina drain/lvl
 .p1d_stam:
                 bsr.w   drain_p2_stamina
-                ; Reward human P1 with +6 stamina for landing a clean unblocked punch!
-                addq.w  #6,p1_stamina
+                ; Reward human P1 with +4 stamina for landing a clean unblocked punch!
+                addq.w  #4,p1_stamina
                 move.w  p1_max_stamina(pc),d0
                 cmp.w   p1_stamina(pc),d0
                 bge.s   .p1d_r_ok
@@ -1652,6 +1689,20 @@ hook_p1_dmg:
                 addq.w  #1,d0
                 add.w   d0,d6
 .p1d_apply:
+                ; Career progression damage bonuses (body power / head snap)
+                tst.w   cfg_game_mode
+                bne.s   .p1d_sub
+                tst.w   career_active
+                beq.s   .p1d_sub
+                cmpi.w  #4,d7
+                beq.s   .p1d_cr_b
+                cmpi.w  #6,d7
+                beq.s   .p1d_cr_b
+                add.w   cr_head_snap(pc),d6     ; +1 head dmg per Career Head Snap level
+                bra.s   .p1d_sub
+.p1d_cr_b:
+                add.w   cr_body_pwr(pc),d6      ; +1 body dmg per Career Body Power level
+.p1d_sub:
                 sub.w   d6,G_P2_HP.l
                 ; If this blow dropped P2 (HP <= 0), record whether it was a KO Super finisher (d7==8)!
                 tst.w   G_P2_HP.l
@@ -1685,10 +1736,10 @@ hook_p2_dmg:
                 moveq   #10,d0
 .p2d_stam:
                 bsr.w   drain_p1_stamina
-                ; In 2P mode ONLY (never CPU!), reward human P2 with +6 stamina for landing a clean hit!
+                ; In 2P mode ONLY (never CPU!), reward human P2 with +4 stamina for landing a clean hit!
                 tst.w   cfg_2p_mode
                 beq.s   .p2d_combo
-                addq.w  #6,p2_stamina
+                addq.w  #4,p2_stamina
                 move.w  p2_max_stamina(pc),d0
                 cmp.w   p2_stamina(pc),d0
                 bge.s   .p2d_r_ok
@@ -1764,6 +1815,15 @@ hook_p1_block:
                 clr.w   p1_head_streak
                 addq.w  #1,stat_blocks
                 moveq   #9,d0
+                tst.w   cfg_game_mode
+                bne.s   .p1b_dr
+                tst.w   career_active
+                beq.s   .p1b_dr
+                sub.w   cr_guard(pc),d0         ; Career Iron Guard: less block stamina drain!
+                cmpi.w  #4,d0
+                bge.s   .p1b_dr
+                moveq   #4,d0
+.p1b_dr:
                 bsr.w   drain_p1_stamina
 .p1b_skip:
                 tst.w   GAME_BASE+$374c.l
@@ -1924,28 +1984,28 @@ hook_load_opp:
                 move.w  #2,$82(a0)
                 bra.s   .bal_init_tmr
 .bal_ronco:
-                ; J. Ronco (3): Tight Guard Technician (High 3 / Low 4, -14 body stam drain!)
-                move.w  #10,$20(a0)
-                move.w  #100,$3a(a0)
+                ; J. Ronco (3): Tight Guard Champion (sharp reactions, High 3 / Low 3 / Spec 6)
+                move.w  #7,$20(a0)
+                move.w  #75,$3a(a0)
                 move.w  #3,$14(a0)
                 move.w  #3,$16(a0)
-                move.w  #4,$18(a0)
-                move.w  #4,$1a(a0)
-                move.w  #7,$1c(a0)
+                move.w  #3,$18(a0)
+                move.w  #3,$1a(a0)
+                move.w  #6,$1c(a0)
                 move.w  #2,$7e(a0)
                 move.w  #2,$82(a0)
                 bra.s   .bal_init_tmr
 .bal_malone:
-                ; M. Malone (4): Complete Champion (High 4 / Low 4 / Spec 8)
-                move.w  #8,$20(a0)
-                move.w  #90,$3a(a0)
+                ; M. Malone (4): Ruthless Undefeated Contender (fast, High 3 / Low 3 / Spec 6, heavy hits)
+                move.w  #5,$20(a0)
+                move.w  #60,$3a(a0)
                 move.w  #2,$1e(a0)
-                move.w  #12,$34(a0)
-                move.w  #4,$14(a0)
-                move.w  #4,$16(a0)
-                move.w  #4,$18(a0)
-                move.w  #4,$1a(a0)
-                move.w  #8,$1c(a0)
+                move.w  #14,$34(a0)
+                move.w  #3,$14(a0)
+                move.w  #3,$16(a0)
+                move.w  #3,$18(a0)
+                move.w  #3,$1a(a0)
+                move.w  #6,$1c(a0)
 .bal_init_tmr:
                 move.w  $3a(a0),GAME_BASE+$34b0.l ; seed CPU regen countdown cleanly
                 rts
@@ -2218,6 +2278,12 @@ p2_human_ctrl:
 ; 10. TITLE SCREEN MENU (F1: 1P/2P, F2: STYLE, F3: OPPONENT, CREDIT LINE)
 ; =============================================================================
 hook_title_draw:
+                ; On first boot, try loading saved CAREER.DAT from HD/VHD (optional)
+                tst.w   career_loaded
+                bne.s   .htd_go
+                move.w  #1,career_loaded
+                bsr.w   career_load_file
+.htd_go:
                 ; Draw our enhanced menu & credit in the left/right title boxes!
                 bsr.w   render_title_options
                 move.l  #$68300,d1              ; original instruction at $1d54
@@ -2247,9 +2313,37 @@ hook_title_poll2:
 on_title_fire:
                 bsr.w   clear_bottom_credit
                 moveq   #0,d7                   ; d7=1 if $70000 was used as scratch
+                tst.w   cfg_game_mode
+                bne.s   .otf_non_career
+                ; --- 1P CAREER MODE ---
+                tst.w   career_active
+                bne.s   .otf_cr_cont
+                ; Starting a brand-new Career (style cfg_style is now locked in!)
+                move.w  #1,career_active
+                clr.w   career_act
+                clr.w   career_wins
+                clr.w   career_losses
+                clr.w   career_kos
+                clr.w   cr_body_pwr
+                clr.w   cr_head_snap
+                clr.w   cr_max_stam
+                clr.w   cr_guard
+                clr.w   cr_chin
+                clr.w   cr_last_gain
+.otf_cr_cont:
+                move.w  career_act(pc),d0
+                move.w  d0,cfg_2p_opp
+                cmp.w   G_OPP_IDX.l,d0
+                beq.s   .otf_chk_pre            ; already loaded!
+                bra.s   .otf_load
+.otf_non_career:
+                clr.w   career_active           ; leaving Career if starting Free Bout / 2P
                 tst.w   cfg_2p_mode
                 bne.s   .otf_load
                 tst.w   opp_picked_f3
+                bne.s   .otf_load
+                move.w  cfg_2p_opp(pc),d0
+                cmp.w   G_OPP_IDX.l,d0
                 beq.s   .otf_chk_pre
 .otf_load:
                 clr.w   opp_picked_f3
@@ -2259,12 +2353,12 @@ on_title_fire:
                 jsr     GAME_BASE+$4572         ; draw MARCO vs chosen opponent Tale-of-the-Tape!
                 moveq   #1,d7
 .otf_chk_pre:
-                ; In 1P Career mode, show Pre-Fight THE RING SUN with opponent scouting report!
+                ; In 1P Career or 1P Free Bout, show Pre-Fight THE RING SUN!
                 tst.w   cfg_2p_mode
                 bne.s   .otf_chk_rst
-                move.w  #1,np_is_preview
+                move.w  #1,np_mode
                 bsr.w   draw_newspaper_common
-                clr.w   np_is_preview
+                clr.w   np_mode
                 ; Restore title screen ($68300) display before $1cba scrolls down into $70000!
                 move.b  #$06,$ffff8201.w
                 move.b  #$83,$ffff8203.w
@@ -2304,24 +2398,38 @@ clear_bottom_credit:
 
 poll_title_keys:
                 lea     G_KEY_BASE.l,a0
-                ; F1: toggle 1P Career / 2P Versus
+                ; F1: cycle 0=1P Career, 1=1P Free Bout, 2=2P Versus
                 tst.b   KEY_F1(a0)
                 beq.s   .pt_f1_up
                 tst.w   key_f1_held
                 bne.s   .pt_chk_f2
                 move.w  #1,key_f1_held
-                eori.w  #1,cfg_2p_mode
+                addq.w  #1,cfg_game_mode
+                cmpi.w  #3,cfg_game_mode
+                blt.s   .pt_f1_ok
+                clr.w   cfg_game_mode
+.pt_f1_ok:
+                clr.w   cfg_2p_mode
+                cmpi.w  #2,cfg_game_mode
+                bne.s   .pt_f1_dr
+                move.w  #1,cfg_2p_mode
+.pt_f1_dr:
                 bsr.w   render_title_options
                 bra.s   .pt_chk_f2
 .pt_f1_up:
                 clr.w   key_f1_held
 .pt_chk_f2:
-                ; F2: cycle Career Fighting Style (0..3)
+                ; F2: cycle Fighting Style (0..3) — locked once a 1P Career is underway!
                 tst.b   KEY_F2(a0)
                 beq.s   .pt_f2_up
                 tst.w   key_f2_held
                 bne.s   .pt_chk_f3
                 move.w  #1,key_f2_held
+                tst.w   cfg_game_mode
+                bne.s   .pt_f2_go
+                tst.w   career_active
+                bne.s   .pt_chk_f3              ; locked for duration of Career!
+.pt_f2_go:
                 addq.w  #1,cfg_style
                 andi.w  #3,cfg_style
                 bsr.w   render_title_options
@@ -2329,24 +2437,51 @@ poll_title_keys:
 .pt_f2_up:
                 clr.w   key_f2_held
 .pt_chk_f3:
-                ; F3: cycle Opponent (0..4) when in 2P mode
+                ; F3: cycle Opponent (0..4) in 1P Free Bout & 2P Versus (locked in 1P Career!)
                 tst.b   KEY_F3(a0)
                 beq.s   .pt_f3_up
                 tst.w   key_f3_held
-                bne.s   .pt_done
+                bne.w   .pt_done
                 move.w  #1,key_f3_held
+                tst.w   cfg_game_mode
+                beq.w   .pt_done                ; locked to Career story ladder!
                 addq.w  #1,cfg_2p_opp
                 cmpi.w  #5,cfg_2p_opp
                 blt.s   .pt_f3_ok
                 clr.w   cfg_2p_opp
 .pt_f3_ok:
                 move.w  #1,opp_picked_f3
-                ; Do NOT call $44d2 on the title screen (title wipe overwrites $60000)!
-                ; Chosen opponent is loaded cleanly in hook_fight_init after leaving title screen.
                 bsr.w   render_title_options
                 bra.s   .pt_done
 .pt_f3_up:
                 clr.w   key_f3_held
+.pt_chk_f4:
+                ; F4: Reset/New Career (when in 1P Career with a saved/active Career!)
+                tst.b   KEY_F4(a0)
+                beq.s   .pt_f4_up
+                tst.w   key_f4_held
+                bne.s   .pt_done
+                move.w  #1,key_f4_held
+                tst.w   cfg_game_mode
+                bne.s   .pt_done
+                tst.w   career_active
+                beq.s   .pt_done
+                clr.w   career_active
+                clr.w   career_act
+                clr.w   career_wins
+                clr.w   career_losses
+                clr.w   career_kos
+                clr.w   cr_body_pwr
+                clr.w   cr_head_snap
+                clr.w   cr_max_stam
+                clr.w   cr_guard
+                clr.w   cr_chin
+                clr.w   cr_last_gain
+                bsr.w   career_save_file
+                bsr.w   render_title_options
+                bra.s   .pt_done
+.pt_f4_up:
+                clr.w   key_f4_held
 .pt_done:
                 rts
 
@@ -2373,8 +2508,13 @@ render_title_options:
                 lea     $6bd91,a6
                 movea.l a6,a4
                 lea     str_mode_1p(pc),a5
-                tst.w   cfg_2p_mode
-                beq.s   .rto_m
+                cmpi.w  #1,cfg_game_mode
+                bne.s   .rto_chk2p
+                lea     str_mode_free(pc),a5
+                bra.s   .rto_m
+.rto_chk2p:
+                cmpi.w  #2,cfg_game_mode
+                bne.s   .rto_m
                 lea     str_mode_2p(pc),a5
 .rto_m:
                 jsr     G_ORIG_PRINT
@@ -2390,12 +2530,10 @@ render_title_options:
                 jsr     G_ORIG_PRINT
 
                 ; Opponent line (+48 scanlines = $1e00)
-                ; In 1P Career (if F3 wasn't pressed), sync displayed OPP with actual scheduled G_OPP_IDX!
-                tst.w   cfg_2p_mode
+                ; In 1P Career, always display the current story bout (career_act)!
+                tst.w   cfg_game_mode
                 bne.s   .rto_opp
-                tst.w   opp_picked_f3
-                bne.s   .rto_opp
-                move.w  G_OPP_IDX.l,d0
+                move.w  career_act(pc),d0
                 cmpi.w  #4,d0
                 ble.s   .rto_sync
                 moveq   #4,d0
@@ -2426,12 +2564,15 @@ str_controls:
                 dc.b    $5b,$5b,'F','I','R','E',$fe
 
 str_bottom_credit:
-                dc.b    'E','N','H','A','N','C','E','D',$5b,'V',1,$5c,1,$ff
+                dc.b    'E','N','H','A','N','C','E','D',$5b,'V',1,$5c,2,$ff
                 dc.b    $5b,$5b,'B','Y',$5b,'D','A','D',$5b,'P','R','G',$fe
 
 str_mode_1p:
                 dc.b    'M','O','D','E',$ff
                 dc.b    1,'P',$5b,'C','A','R','E','E','R',$fe
+str_mode_free:
+                dc.b    'M','O','D','E',$ff
+                dc.b    1,'P',$5b,'F','R','E','E',$fe
 str_mode_2p:
                 dc.b    'M','O','D','E',$ff
                 dc.b    2,'P',$5b,'W','A','S','D',$fe
@@ -2489,12 +2630,104 @@ hook_ikbd_joy1:
 ;   - col 3  ($600): Red-top masthead & footer banner (and boxing gloves!)
 ;   - col 14 ($665): Cream newsprint paper (p0=0, p1=1, p2=1, p3=1)
 ;   - col 15 ($777): Pure white masthead & footer text (p0=p1=p2=p3=1)
+NP_PHOTO_SCRATCH equ    $00094000       ; 56*160 scratch for Breaking News dual-opponent photo
+
 hook_newspaper:
-                clr.w   np_is_preview
-                bsr.s   draw_newspaper_common
+                tst.w   cfg_game_mode
+                bne.w   .hn_free
+                tst.w   career_active
+                beq.w   .hn_free
+                ; --- 1P CAREER POST-FIGHT ---
+                tst.w   GAME_BASE+$3a5e.l
+                beq.w   .hn_cr_loss
+                ; Career WIN!
+                addq.w  #1,career_wins
+                cmpi.w  #3,GAME_BASE+$32f8.l
+                bge.s   .hn_cr_aw
+                addq.w  #1,career_kos
+.hn_cr_aw:
+                bsr.w   career_award_upgrade
+                ; If beating Bonecrusher Jones (act 1), save his portrait before Hagman loads!
+                cmpi.w  #1,career_act
+                bne.s   .hn_cr_w_draw
+                movem.l d0/a0-a1,-(sp)
+                lea     $63ed0,a0
+                lea     NP_PHOTO_SCRATCH,a1
+                move.w  #(56*40)-1,d0           ; 56 rows x 160 bytes (40 longs)
+.hn_sv_j:       move.l  (a0)+,(a1)+
+                dbra    d0,.hn_sv_j
+                movem.l (sp)+,d0/a0-a1
+.hn_cr_w_draw:
+                clr.w   np_mode
+                bsr.w   draw_newspaper_common
+                ; After Act 2 (Jones), run the SPECIAL EDITION Breaking News front page!
+                cmpi.w  #1,career_act
+                bne.s   .hn_cr_adv
+                ; Blank palette to black before $44d2 unpacks Hagman into $70000 (prevents screen glitch!)
+                lea     $ffff8240.w,a0
+                moveq   #7,d0
+.hn_blk:        clr.l   (a0)+
+                dbra    d0,.hn_blk
+                move.w  #2,G_OPP_IDX.l
+                jsr     GAME_BASE+$44d2         ; load Hammerhead Hagman into $63ed0!
+                move.w  #2,np_mode
+                bsr.w   draw_newspaper_common
+                clr.w   np_mode
+                move.w  #1,G_OPP_IDX.l          ; $80344 will increment 1 -> 2 cleanly
+.hn_cr_adv:
+                addq.w  #1,career_act
+                cmpi.w  #5,career_act
+                blt.s   .hn_cr_sv
+                ; Beat Malone -> Career Complete! Reset for next Career run
+                clr.w   career_active
+                clr.w   career_act
+                clr.w   GAME_BASE+$3a5e.l       ; return cleanly to title at Opp 0
+.hn_cr_sv:
+                bsr.w   career_save_file        ; persist Career to CAREER.DAT (ignored on RO floppy)
+                bra.s   .hn_ret
+.hn_cr_loss:
+                ; Career LOSS -> increment losses, no stat gain, keep career_act for Rematch!
+                addq.w  #1,career_losses
+                clr.w   cr_last_gain
+                clr.w   np_mode
+                bsr.w   draw_newspaper_common
+                bsr.w   career_save_file        ; persist W-L & act to CAREER.DAT
+                bra.s   .hn_ret
+.hn_free:
+                clr.w   np_mode
+                bsr.w   draw_newspaper_common
+.hn_ret:
                 jmp     GAME_BASE+$1cf4
 
-; Shared renderer for BOTH Post-Fight (np_is_preview=0) and Pre-Fight Scouting Preview (np_is_preview=1)!
+; Award permanent Career stat upgrade based on how Marco won!
+career_award_upgrade:
+                bsr.w   pick_postfight_story    ; d0.w = 0..6 or 10
+                cmpi.w  #2,d0                   ; Body Hunter -> +1 Body Power
+                bne.s   .cau_h
+                addq.w  #1,cr_body_pwr
+                move.w  #1,cr_last_gain
+                rts
+.cau_h:         cmpi.w  #3,d0                   ; Head Hunter / Daze -> +1 Head Snap
+                bne.s   .cau_c
+                addq.w  #1,cr_head_snap
+                move.w  #2,cr_last_gain
+                rts
+.cau_c:         cmpi.w  #4,d0                   ; Combo King -> +4 Max Stamina
+                bne.s   .cau_g
+                addq.w  #4,cr_max_stam
+                move.w  #3,cr_last_gain
+                rts
+.cau_g:         cmpi.w  #5,d0                   ; Cool Guard -> +1 Iron Guard
+                bne.s   .cau_b
+                addq.w  #1,cr_guard
+                move.w  #4,cr_last_gain
+                rts
+.cau_b:         addq.w  #3,cr_max_stam          ; KO Finisher / Judges / All-Rounder -> +3 Stam & +1 Chin
+                addq.w  #1,cr_chin
+                move.w  #5,cr_last_gain
+                rts
+
+; Shared renderer: np_mode=0 Post-Fight, np_mode=1 Pre-Fight, np_mode=2 Breaking News Special!
 draw_newspaper_common:
                 movem.l d0-d7/a0-a6,-(sp)
 
@@ -2589,8 +2822,31 @@ draw_newspaper_common:
                 ; Sub-masthead strapline (y=30, x=24 -> +$09, small black ink)
                 lea     $70000+30*160+$09,a6
                 movea.l a6,a4
+                cmpi.w  #2,np_mode
+                bne.s   .np_sub_chk_cr
+                lea     str_np_sub_brk(pc),a5
+                bra.s   .np_sub_pr
+.np_sub_chk_cr:
+                tst.w   cfg_game_mode
+                bne.s   .np_sub_std
+                tst.w   career_active
+                beq.s   .np_sub_std
+                ; Stamp live W/L record into Career sub-masthead!
+                move.w  career_wins(pc),d0
+                cmpi.w  #9,d0
+                ble.s   .np_cw_ok
+                moveq   #9,d0
+.np_cw_ok:      move.b  d0,str_np_sub_crw
+                move.w  career_losses(pc),d0
+                cmpi.w  #9,d0
+                ble.s   .np_cl_ok
+                moveq   #9,d0
+.np_cl_ok:      move.b  d0,str_np_sub_crl
+                lea     str_np_sub_cr(pc),a5
+                bra.s   .np_sub_pr
+.np_sub_std:
                 lea     str_np_sub(pc),a5
-                tst.w   np_is_preview
+                tst.w   np_mode
                 beq.s   .np_sub_pr
                 lea     str_np_sub_pre(pc),a5
 .np_sub_pr:
@@ -2598,6 +2854,11 @@ draw_newspaper_common:
                 bsr.w   np_print_small
 
                 ; 7. CHUNKY 2x2 BOLD BLACK TABLOID HEADLINE (y=43, 2 lines!)
+                cmpi.w  #2,np_mode
+                bne.s   .np_hl_idx
+                lea     str_np_brk_hl(pc),a5
+                bra.s   .np_print_hl
+.np_hl_idx:
                 move.w  G_OPP_IDX.l,d0
                 cmpi.w  #4,d0
                 ble.s   .np_idx_ok
@@ -2605,19 +2866,37 @@ draw_newspaper_common:
 .np_idx_ok:
                 add.w   d0,d0
                 add.w   d0,d0
-                tst.w   np_is_preview
+                tst.w   np_mode
                 beq.s   .np_post_hl
+                tst.w   cfg_game_mode
+                bne.s   .np_pre_std
+                lea     np_cr_pre_tbl(pc),a0    ; Career 5-Act story pre-fight headline!
+                movea.l (a0,d0.w),a5
+                bra.s   .np_print_hl
+.np_pre_std:
                 lea     np_pre_tbl(pc),a0
                 movea.l (a0,d0.w),a5
                 bra.s   .np_print_hl
 .np_post_hl:
                 tst.w   GAME_BASE+$3a5e.l
                 beq.s   .np_loss
+                cmpi.w  #3,GAME_BASE+$32f8.l    ; went full 3 rounds -> Points Win?
+                bge.s   .np_pts_win
                 lea     np_win_tbl(pc),a0
                 movea.l (a0,d0.w),a5
                 bra.s   .np_print_hl
+.np_pts_win:
+                lea     np_ptsw_tbl(pc),a0
+                movea.l (a0,d0.w),a5
+                bra.s   .np_print_hl
 .np_loss:
+                cmpi.w  #3,GAME_BASE+$32f8.l    ; went full 3 rounds -> Points Loss?
+                bge.s   .np_pts_loss
                 lea     np_loss_tbl(pc),a0
+                movea.l (a0,d0.w),a5
+                bra.s   .np_print_hl
+.np_pts_loss:
+                lea     np_ptsl_tbl(pc),a0
                 movea.l (a0,d0.w),a5
 .np_print_hl:
                 lea     $70000+43*160+$10,a6    ; x=32 (16 chars max = 256px, centered!)
@@ -2626,7 +2905,9 @@ draw_newspaper_common:
                 bsr.w   np_print_big
 
                 ; 8. FIGHTER PHOTOS!
-                tst.w   np_is_preview
+                cmpi.w  #2,np_mode
+                beq.w   .np_pic_brk
+                tst.w   np_mode
                 bne.s   .np_pic_pre
                 tst.w   GAME_BASE+$3a5e.l
                 beq.w   .np_pic_loss
@@ -2645,6 +2926,10 @@ draw_newspaper_common:
                 lea     $70000+137*160+$71,a6
                 movea.l a6,a4
                 lea     str_np_cap_ko(pc),a5
+                cmpi.w  #3,GAME_BASE+$32f8.l    ; Points Decision -> "PTS LOSS"
+                blt.s   .np_cap_w_pr
+                lea     str_np_cap_pl(pc),a5
+.np_cap_w_pr:
                 moveq   #0,d7
                 bsr.w   np_print_small
                 bra.w   .np_pic_frames
@@ -2666,7 +2951,7 @@ draw_newspaper_common:
                 lea     str_np_cap_opp(pc),a5
                 moveq   #0,d7
                 bsr.w   np_print_small
-                bra.s   .np_pic_frames
+                bra.w   .np_pic_frames
 .np_pic_loss:
                 ; Marco LOST -> Left = Opponent ($63ed0), Right = Marco bruised ($38050)
                 lea     $63ed0,a0
@@ -2680,9 +2965,32 @@ draw_newspaper_common:
                 lea     str_np_cap_win(pc),a5
                 moveq   #0,d7
                 bsr.w   np_print_small
-                lea     $70000+137*160+$71,a6   ; Right: "KO MARCO"
+                lea     $70000+137*160+$71,a6   ; Right: "KO MARCO" or "OUTBOXED"
                 movea.l a6,a4
                 lea     str_np_cap_lm(pc),a5
+                cmpi.w  #3,GAME_BASE+$32f8.l
+                blt.s   .np_cap_l_pr
+                lea     str_np_cap_ob(pc),a5
+.np_cap_l_pr:
+                moveq   #0,d7
+                bsr.w   np_print_small
+
+.np_pic_brk:
+                ; BREAKING NEWS SPECIAL -> Left = Hagman ($63ed0), Right = Bonecrusher Jones ($94000)
+                lea     $63ed0,a0
+                lea     $70000+77*160+$08,a1
+                bsr.w   np_blit_photo
+                lea     NP_PHOTO_SCRATCH,a0
+                lea     $70000+77*160+$70,a1
+                bsr.w   np_blit_photo
+                lea     $70000+137*160+$09,a6
+                movea.l a6,a4
+                lea     str_np_cap_hag(pc),a5
+                moveq   #0,d7
+                bsr.w   np_print_small
+                lea     $70000+137*160+$71,a6
+                movea.l a6,a4
+                lea     str_np_cap_rip(pc),a5
                 moveq   #0,d7
                 bsr.w   np_print_small
 
@@ -2696,7 +3004,14 @@ draw_newspaper_common:
                 ; Center Tabloid Story Column (x=112..207, y=78, small black font!)
                 lea     $70000+78*160+$38,a6
                 movea.l a6,a4
-                tst.w   np_is_preview
+                cmpi.w  #2,np_mode
+                bne.s   .np_st_chk1
+                lea     str_np_brk_st(pc),a5
+                moveq   #0,d7
+                bsr.w   np_print_small
+                bra.s   .np_bot_strap
+.np_st_chk1:
+                tst.w   np_mode
                 beq.s   .np_st_post
                 move.w  G_OPP_IDX.l,d0
                 cmpi.w  #4,d0
@@ -2739,7 +3054,12 @@ draw_newspaper_common:
                 ; 10. Bottom Ringside Story Strap (y=153, x=24 -> +$09, full width small black text!)
                 lea     $70000+153*160+$09,a6
                 movea.l a6,a4
-                tst.w   np_is_preview
+                cmpi.w  #2,np_mode
+                bne.s   .np_fb_chk1
+                lea     str_np_brk_ft(pc),a5
+                bra.w   .np_fb_pr
+.np_fb_chk1:
+                tst.w   np_mode
                 beq.s   .np_fb_post
                 move.w  G_OPP_IDX.l,d0
                 cmpi.w  #4,d0
@@ -2748,10 +3068,57 @@ draw_newspaper_common:
 .np_tp_ok:
                 add.w   d0,d0
                 add.w   d0,d0
+                tst.w   cfg_game_mode
+                bne.s   .np_tp_std
+                lea     np_cr_pre_tip_tbl(pc),a0
+                movea.l (a0,d0.w),a5
+                bra.w   .np_fb_pr
+.np_tp_std:
                 lea     np_tip_tbl(pc),a0
                 movea.l (a0,d0.w),a5
-                bra.s   .np_fb_pr
+                bra.w   .np_fb_pr
 .np_fb_post:
+                ; In 1P Career post-fight, print Career story beat + earned stat gain (or Rematch on loss)!
+                tst.w   cfg_game_mode
+                bne.s   .np_fb_free
+                tst.w   career_active
+                beq.s   .np_fb_free
+                tst.w   GAME_BASE+$3a5e.l
+                beq.s   .np_fb_crloss
+                ; Career Win Line 1 (y=153): story beat
+                move.w  G_OPP_IDX.l,d0
+                cmpi.w  #4,d0
+                ble.s   .np_cw_idx
+                moveq   #4,d0
+.np_cw_idx:
+                add.w   d0,d0
+                add.w   d0,d0
+                lea     np_cr_win_strap_tbl(pc),a0
+                movea.l (a0,d0.w),a5
+                moveq   #0,d7
+                bsr.w   np_print_small
+                ; Career Win Line 2 (y=163): earned stat gain (or Finale honours on Act 4 Malone!)
+                lea     $70000+163*160+$09,a6
+                movea.l a6,a4
+                cmpi.w  #4,G_OPP_IDX.l
+                bge.s   .np_cw_fin
+                move.w  cr_last_gain(pc),d0
+                cmpi.w  #5,d0
+                ble.s   .np_cg_ok
+                moveq   #5,d0
+.np_cg_ok:
+                add.w   d0,d0
+                add.w   d0,d0
+                lea     np_cr_gain_tbl(pc),a0
+                movea.l (a0,d0.w),a5
+                bra.w   .np_fb_pr
+.np_cw_fin:
+                lea     str_cr_finale_l2(pc),a5
+                bra.w   .np_fb_pr
+.np_fb_crloss:
+                lea     str_cr_loss_strap(pc),a5
+                bra.w   .np_fb_pr
+.np_fb_free:
                 bsr.w   pick_postfight_story
                 add.w   d0,d0
                 add.w   d0,d0
@@ -2765,7 +3132,12 @@ draw_newspaper_common:
                 lea     $70000+182*160+$21,a6
                 movea.l a6,a4
                 lea     str_np_foot(pc),a5
-                tst.w   np_is_preview
+                cmpi.w  #2,np_mode
+                bne.s   .np_ft_chk1
+                lea     str_np_foot_brk(pc),a5
+                bra.s   .np_ft_pr
+.np_ft_chk1:
+                tst.w   np_mode
                 beq.s   .np_ft_pr
                 lea     str_np_foot_pre(pc),a5
 .np_ft_pr:
@@ -2821,18 +3193,38 @@ draw_newspaper_common:
                 rts
 
 ; Blit 80x56 fighter portrait from a0 to screen a1 (10 longs = 40 bytes per row)
+; Blit 80x56 fighter portrait (a0 = src, a1 = dst), remapping color 14 ($000 in
+; original WIN/RING palette, $665 cream newsprint here) cleanly to color 0 ($000)!
 np_blit_photo:
-                moveq   #56-1,d1
+                movem.l d2-d6,-(sp)
+                moveq   #56-1,d6
 .nbp_row:
                 movea.l a0,a2
                 movea.l a1,a3
-                moveq   #10-1,d0
+                moveq   #5-1,d5                 ; 5 x 16px = 80px wide
 .nbp_col:
-                move.l  (a2)+,(a3)+
-                dbra    d0,.nbp_col
+                move.w  (a2)+,d0                ; plane 0
+                move.w  (a2)+,d1                ; plane 1
+                move.w  (a2)+,d2                ; plane 2
+                move.w  (a2)+,d3                ; plane 3
+                move.w  d0,d4
+                not.w   d4                      ; ~p0
+                and.w   d1,d4                   ; ~p0 & p1
+                and.w   d2,d4                   ; ~p0 & p1 & p2
+                and.w   d3,d4                   ; d4 = mask of color-14 pixels
+                not.w   d4                      ; clear p1/p2/p3 on color-14 -> color 0 (black)
+                and.w   d4,d1
+                and.w   d4,d2
+                and.w   d4,d3
+                move.w  d0,(a3)+
+                move.w  d1,(a3)+
+                move.w  d2,(a3)+
+                move.w  d3,(a3)+
+                dbra    d5,.nbp_col
                 adda.w  #160,a0
                 adda.w  #160,a1
-                dbra    d1,.nbp_row
+                dbra    d6,.nbp_row
+                movem.l (sp)+,d2-d6
                 rts
 
 ; Draw 1px black border around 80x56 photo box (a0 = top border line at y-1)
@@ -3050,8 +3442,33 @@ str_np_l4:      dc.b    $5b,'C','H','A','M','P',$5b,'M','A','L','O','N','E',$5c,
 
 str_np_cap_wm:  dc.b    'W','I','N',$5b,'M','A','R','C','O',$fe
 str_np_cap_ko:  dc.b    'K','O',$5b,'L','O','S','E','R',$fe
+str_np_cap_pl:  dc.b    'P','T','S',$5b,'L','O','S','S',$fe
 str_np_cap_win: dc.b    $5b,'W','I','N','N','E','R',$fe
 str_np_cap_lm:  dc.b    'K','O',$5b,'M','A','R','C','O',$fe
+str_np_cap_ob:  dc.b    'O','U','T','B','O','X','E','D',$fe
+
+; Points Decision 2x2 Headlines (max 16 chars per line!)
+str_np_pw0:     dc.b    $5b,'W','E','E','D',$5b,'O','U','T','B','O','X','E','D',$5c,$ff
+                dc.b    $5b,'M','A','R','C','O',$5b,'O','N',$5b,'P','T','S',$5c,$fe
+str_np_pw1:     dc.b    $5b,'J','O','N','E','S',$5b,'B','E','A','T','E','N',$5c,$ff
+                dc.b    'J','U','D','G','E','S',$5b,'S','A','Y',$5b,'Y','E','S',$5c,$fe
+str_np_pw2:     dc.b    $5b,'H','A','G','M','A','N',$5b,'T','A','M','E','D',$5c,$ff
+                dc.b    $5b,'M','A','R','C','O',$5b,'O','N',$5b,'P','T','S',$5c,$fe
+str_np_pw3:     dc.b    $5b,'R','O','N','C','O',$5b,'E','D','G','E','D',$5c,$ff
+                dc.b    $5b,$5b,'T','I','T','L','E',$5b,'S','H','O','T',$5c,$fe
+str_np_pw4:     dc.b    $5b,$5b,'K','I','N','G',$5b,'M','A','R','C','O',$5c,$ff
+                dc.b    $5b,'P','O','I','N','T','S',$5b,'C','R','O','W','N',$5c,$fe
+
+str_np_pl0:     dc.b    $5b,'W','E','E','D',$5b,'O','N',$5b,'P','T','S',$5c,$ff
+                dc.b    $5b,'M','A','R','C','O',$5b,'E','D','G','E','D',$5c,$fe
+str_np_pl1:     dc.b    $5b,'J','O','N','E','S',$5b,'O','N',$5b,'P','T','S',$5c,$ff
+                dc.b    $5b,$5b,'C','L','O','S','E',$5b,'C','A','L','L',$5c,$fe
+str_np_pl2:     dc.b    $5b,'H','A','G','M','A','N',$5b,'N','I','P','S',$5c,$ff
+                dc.b    $5b,'J','U','D','G','E','S',$5b,'S','A','Y',$5b,'N','O',$5c,$fe
+str_np_pl3:     dc.b    $5b,'R','O','N','C','O',$5b,'O','N',$5b,'P','T','S',$5c,$ff
+                dc.b    $5b,$5b,'D','R','E','A','M',$5b,'O','V','E','R',$5c,$fe
+str_np_pl4:     dc.b    $5b,'M','A','L','O','N','E',$5b,'K','E','E','P','S',$5c,$ff
+                dc.b    $5b,$5b,'P','O','I','N','T','S',$5b,'W','I','N',$5c,$fe
 
 str_np_story_w: dc.b    'W','H','A','T',$5b,'A',$5b,'B','O','U','T',$5c,$ff
                 dc.b    'M','A','R','C','O',$5b,'L','A','N','D','E','D',$ff
@@ -3135,15 +3552,19 @@ str_np_combo_buf: dc.b  0,$fe
                 even
 np_win_tbl:     dc.l    str_np_w0, str_np_w1, str_np_w2, str_np_w3, str_np_w4
 np_loss_tbl:    dc.l    str_np_l0, str_np_l1, str_np_l2, str_np_l3, str_np_l4
+np_ptsw_tbl:    dc.l    str_np_pw0, str_np_pw1, str_np_pw2, str_np_pw3, str_np_pw4
+np_ptsl_tbl:    dc.l    str_np_pl0, str_np_pl1, str_np_pl2, str_np_pl3, str_np_pl4
 np_pre_tbl:     dc.l    str_np_p0, str_np_p1, str_np_p2, str_np_p3, str_np_p4
 np_scout_tbl:   dc.l    str_sc_0,  str_sc_1,  str_sc_2,  str_sc_3,  str_sc_4
 np_tip_tbl:     dc.l    str_tp_0,  str_tp_1,  str_tp_2,  str_tp_3,  str_tp_4
 
-; Dynamic Ringside Reporter: classify how Marco fought into story index d0.w (0..6 Win, 7..9 Loss)
+; Dynamic Ringside Reporter: classify how Marco fought into story index d0.w (0..6/10 Win, 7..9/11 Loss)
 pick_postfight_story:
                 tst.w   GAME_BASE+$3a5e.l
-                beq.s   .pps_loss
-                ; --- WIN STORIES (0..6) ---
+                beq.w   .pps_loss
+                ; --- WIN STORIES (0..6, 10=Points Decision) ---
+                cmpi.w  #3,GAME_BASE+$32f8.l    ; Points Decision: skip KO-finisher stories (0, 1)
+                bge.s   .pps_w_body
                 tst.w   ko_finisher_flag
                 beq.s   .pps_w_body
                 move.w  stat_body(pc),d0
@@ -3182,9 +3603,14 @@ pick_postfight_story:
                 blt.s   .pps_w6
                 moveq   #5,d0                   ; 5: Cool Counter-Puncher!
                 rts
-.pps_w6:        moveq   #6,d0                   ; 6: All-Rounder!
+.pps_w6:
+                cmpi.w  #3,GAME_BASE+$32f8.l
+                bge.s   .pps_w10
+                moveq   #6,d0                   ; 6: All-Rounder (KO)!
                 rts
-                ; --- LOSS STORIES (7..9) ---
+.pps_w10:       moveq   #10,d0                  ; 10: Judges Call (Points Win)!
+                rts
+                ; --- LOSS STORIES (7..9, 11=Points Decision) ---
 .pps_loss:
                 cmpi.w  #2,stat_exh
                 blt.s   .pps_l_scout
@@ -3206,7 +3632,12 @@ pick_postfight_story:
                 ble.s   .pps_l9
 .pps_l8:        moveq   #8,d0                   ; 8: Wrong Gameplan!
                 rts
-.pps_l9:        moveq   #9,d0                   ; 9: Outgunned!
+.pps_l9:
+                cmpi.w  #3,GAME_BASE+$32f8.l
+                bge.s   .pps_l11
+                moveq   #9,d0                   ; 9: Outgunned (KO)!
+                rts
+.pps_l11:       moveq   #11,d0                  ; 11: Lost on the Cards (Points Loss)!
                 rts
 
 ; Dynamic Post-Fight Center Column Stories (max 12 chars/line, 5-6 lines)
@@ -3260,6 +3691,16 @@ str_ds_9:       dc.b    'T','O','U','G','H',$5b,'N','I','G','H','T',$5c,$ff
                 dc.b    'R','E','A','L',$5b,'B','E','A','T','I','N','G',$ff
                 dc.b    'A','N','D',$5b,'H','I','T',$5b,'T','H','E',$ff
                 dc.b    'C','A','N','V','A','S',$5b,'H','A','R','D',$5c,$fe
+str_ds_10:      dc.b    'J','U','D','G','E','S',$5b,'C','A','L','L',$5c,$ff
+                dc.b    'M','A','R','C','O',$5b,'W','E','N','T',$ff
+                dc.b    'T','H','E',$5b,'D','I','S','T','A','N','C','E',$ff
+                dc.b    'A','N','D',$5b,'W','O','N',$5b,'O','N',$ff
+                dc.b    'T','H','E',$5b,'C','A','R','D','S',$5c,$fe
+str_ds_11:      dc.b    'S','O',$5b,'C','L','O','S','E',$5c,$ff
+                dc.b    'M','A','R','C','O',$5b,'W','E','N','T',$ff
+                dc.b    'T','H','E',$5b,'D','I','S','T','A','N','C','E',$ff
+                dc.b    'B','U','T',$5b,'L','O','S','T',$5b,'O','N',$ff
+                dc.b    'T','H','E',$5b,'C','A','R','D','S',$5c,$fe
 
 ; Dynamic Post-Fight Bottom Straps (max 34 chars/line, 2 lines)
 str_df_0:       dc.b    'W','O','R','K','E','D',$5b,'T','H','E',$5b,'R','I','B','S',$5b,'A','L','L',$5b,'F','I','G','H','T',$5b,'B','E','F','O','R','E',$ff
@@ -3267,7 +3708,7 @@ str_df_0:       dc.b    'W','O','R','K','E','D',$5b,'T','H','E',$5b,'R','I','B',
 str_df_1:       dc.b    'T','H','E',$5b,'C','R','O','W','D',$5b,'E','R','U','P','T','E','D',$5b,'A','S',$5b,'T','H','E',$5b,'F','I','N','A','L',$ff
                 dc.b    'K','O',$5b,'U','P','P','E','R','C','U','T',$5b,'S','E','N','T',$5b,'H','I','S',$5b,'F','O','E',$5b,'F','L','Y','I','N','G',$5c,$fe
 str_df_2:       dc.b    'R','E','L','E','N','T','L','E','S','S',$5b,'B','O','D','Y',$5b,'W','O','R','K',$5b,'L','E','F','T',$5b,'H','I','S',$ff
-                dc.b    'O','P','P','O','N','E','N','T',$5b,'T','O','O',$5b,'T','I','R','E','D',$5b,'T','O',$5b,'G','E','T',$5b,'U','P',$5c,$fe
+                dc.b    'O','P','P','O','N','E','N','T',$5b,'C','O','M','P','L','E','T','E','L','Y',$5b,'O','U','T',$5b,'O','F',$5b,'G','A','S',$5c,$fe
 str_df_3:       dc.b    'D','A','Z','E','D',$5b,'A','N','D',$5b,'C','O','N','F','U','S','E','D',$5c,$5b,'H','I','S',$5b,'R','I','V','A','L',$ff
                 dc.b    'H','A','D',$5b,'N','O',$5b,'A','N','S','W','E','R',$5b,'T','O',$5b,'T','H','E',$5b,'H','E','A','D',$5b,'S','H','O','T','S',$5c,$fe
 str_df_4:       dc.b    'P','U','N','D','I','T','S',$5b,'P','R','A','I','S','E','D',$5b,'M','A','R','C','O','S',$5b,'N','O','N','S','T','O','P',$ff
@@ -3282,14 +3723,182 @@ str_df_8:       dc.b    'S','H','O','U','L','D',$5b,'H','A','V','E',$5b,'R','E',
                 dc.b    'W','R','O','N','G',$5b,'T','A','C','T','I','C','S',$5b,'C','O','S','T',$5b,'M','A','R','C','O',$5b,'D','E','A','R',$5c,$fe
 str_df_9:       dc.b    'T','R','A','I','N','E','R',$5b,'S','A','Y','S',$5b,'M','A','R','C','O',$5b,'M','U','S','T',$5b,'H','I','T',$5b,'T','H','E',$ff
                 dc.b    'G','Y','M',$5b,'H','A','R','D',$5b,'B','E','F','O','R','E',$5b,'A','N','Y',$5b,'R','E','M','A','T','C','H',$5c,$fe
+str_df_10:      dc.b    'A','L','L',$5b,'T','H','R','E','E',$5b,'J','U','D','G','E','S',$5b,'S','C','O','R','E','D',$5b,'I','T',$5b,'F','O','R',$ff
+                dc.b    'M','A','R','C','O',$5b,'A','F','T','E','R',$5b,'A',$5b,'G','R','U','E','L','L','I','N','G',$5b,3,$5b,'R','O','U','N','D','S',$5c,$fe
+str_df_11:      dc.b    'H','E','A','R','T','B','R','E','A','K',$5b,'O','N',$5b,'T','H','E',$5b,'S','C','O','R','E','C','A','R','D','S',$5b,'A','S',$ff
+                dc.b    'T','H','E',$5b,'J','U','D','G','E','S',$5b,'B','A','C','K','E','D',$5b,'H','I','S',$5b,'R','I','V','A','L',$5c,$fe
 
                 even
 np_dyn_story_tbl:
                 dc.l    str_ds_0, str_ds_1, str_ds_2, str_ds_3, str_ds_4
                 dc.l    str_ds_5, str_ds_6, str_ds_7, str_ds_8, str_ds_9
+                dc.l    str_ds_10, str_ds_11
 np_dyn_foot_tbl:
                 dc.l    str_df_0, str_df_1, str_df_2, str_df_3, str_df_4
                 dc.l    str_df_5, str_df_6, str_df_7, str_df_8, str_df_9
+                dc.l    str_df_10, str_df_11
+
+; =============================================================================
+; 12b. CAREER MODE STORY & BREAKING NEWS STRINGS (v1.2)
+; =============================================================================
+str_np_sub_brk: dc.b    'B','R','E','A','K','I','N','G',$5b,'N','E','W','S',$5b,$5b,$5b,$5b,$5b,2,0,'P',$5b,$5b,$5b,$5b,$5b,$5b,'S','P','E','C','I','A','L',$fe
+str_np_sub_cr:  dc.b    'C','A','R','E','E','R',$5b,$5b,'W',$5b
+str_np_sub_crw: dc.b    0,$5b,'L',$5b
+str_np_sub_crl: dc.b    0,$5b,$5b,$5b,2,0,'P',$5b,$5b,$5b,$5b,$5b,'R','I','N','G','S','I','D','E',$fe
+str_np_foot_brk: dc.b   'P','R','E','S','S',$5b,'F','I','R','E',$5b,'T','O',$5b,'A','V','E','N','G','E',$5b,'J','O','N','E','S',$fe
+str_np_cap_hag: dc.b    'M',$5c,$5b,'H','A','G','M','A','N',$fe
+str_np_cap_rip: dc.b    $5b,$5b,'R',$5c,'I',$5c,'P',$5c,$fe
+
+; Breaking News Special Edition (between Act 2 & Act 3)
+str_np_brk_hl:  dc.b    $5b,'R','I','N','G',$5b,'T','R','A','G','E','D','Y',$5c,$ff
+                dc.b    $5b,'J','O','N','E','S',$5b,'K','I','L','L','E','D',$5c,$fe
+str_np_brk_st:  dc.b    'S','T','O','P',$5b,'T','H','E',$ff
+                dc.b    'P','R','E','S','S',$5c,$ff
+                dc.b    'H','A','G','M','A','N',$5b,'K','I','L','L','S',$ff
+                dc.b    'J','O','N','E','S',$5b,'I','N',$5b,'A',$ff
+                dc.b    'B','R','U','T','A','L',$5b,'B','O','U','T',$5c,$fe
+str_np_brk_ft:  dc.b    'S','A','V','A','G','E',$5b,'H','A','M','M','E','R','H','E','A','D',$5b,'S','T','O','P','P','E','D',$5b,'J','O','N','E','S',$5c,$ff
+                dc.b    'M','A','R','C','O',$5b,'V','O','W','S',$5b,'V','E','N','G','E','A','N','C','E',$5b,'I','N',$5b,'T','H','E',$5b,'R','I','N','G',$5c,$fe
+
+; Career 5-Act Pre-Fight 2x2 Headlines (max 16 chars/line)
+str_cr_p0:      dc.b    $5b,$5b,'L','A','S','T',$5b,'C','H','A','N','C','E',$5c,$ff
+                dc.b    $5b,'P','R','O','V','E',$5b,'Y','O','U','R','S','E','L','F',$fe
+str_cr_p1:      dc.b    $5b,'E','A','S','Y',$5b,'P','A','Y','D','A','Y',$5c,$ff
+                dc.b    $5b,'J','O','N','E','S',$5b,'C','A','L','L','S',$5b,'O','U','T',$fe
+str_cr_p2:      dc.b    $5b,'F','O','R',$5b,'B','O','N','E','C','R','U','S','H','E','R',$ff
+                dc.b    $5b,'V','E','N','G','E','A','N','C','E',$5b,'W','A','R',$5c,$fe
+str_cr_p3:      dc.b    $5b,'W','O','R','L','D',$5b,'T','I','T','L','E',$5c,$ff
+                dc.b    $5b,'R','O','N','C','O',$5b,'T','H','E',$5b,'K','I','N','G',$5c,$fe
+str_cr_p4:      dc.b    $5b,'T','I','T','L','E',$5b,'D','E','F','E','N','C','E',$5c,$ff
+                dc.b    $5b,$5b,'F','E','A','R',$5b,'M','A','L','O','N','E',$5c,$fe
+
+; Career 5-Act Pre-Fight Bottom Story + Corner Tip (max 34 chars/line)
+str_cr_pt0:     dc.b    'D','O','W','N',$5b,'O','N',$5b,'H','I','S',$5b,'L','U','C','K',$5b,'M','A','R','C','O',$5b,'N','E','E','D','S',$5b,'T','H','I','S',$5c,$ff
+                dc.b    'C','O','R','N','E','R',$5b,'T','I','P',$5b,'T','H','R','E','E',$5b,'H','E','A','D',$5b,'H','I','T','S',$5b,'D','A','Z','E',$5c,$fe
+str_cr_pt1:     dc.b    'C','O','C','K','Y',$5b,'S','H','O','W','M','A','N',$5b,'J','O','N','E','S',$5b,'W','A','N','T','S',$5b,'A',$5b,'S','H','O','W',$5c,$ff
+                dc.b    'C','O','R','N','E','R',$5b,'T','I','P',$5b,'A','I','M',$5b,'H','I','G','H',$5b,'T','O',$5b,'T','H','E',$5b,'C','H','I','N',$5c,$fe
+str_cr_pt2:     dc.b    'A','V','E','N','G','E',$5b,'J','O','N','E','S',$5c,$5b,'H','I','S',$5b,'H','E','A','D',$5b,'I','S',$5b,'R','O','C','K',$5c,$ff
+                dc.b    'C','O','R','N','E','R',$5b,'T','I','P',$5b,'P','O','U','N','D',$5b,'H','I','S',$5b,'B','O','D','Y',$5b,'H','A','R','D',$5c,$fe
+str_cr_pt3:     dc.b    'T','H','E',$5b,'M','A','I','N',$5b,'M','A','N',$5b,'H','O','L','D','S',$5b,'T','H','E',$5b,'W','O','R','L','D',$5b,'B','E','L','T',$5c,$ff
+                dc.b    'C','O','R','N','E','R',$5b,'T','I','P',$5b,'D','R','A','I','N',$5b,'H','I','S',$5b,'S','T','A','M','I','N','A',$5c,$fe
+str_cr_pt4:     dc.b    'R','U','T','H','L','E','S','S',$5b,'C','O','N','T','E','N','D','E','R',$5b,'W','A','N','T','S',$5b,'Y','O','U','R',$5b,'B','E','L','T',$ff
+                dc.b    'C','O','R','N','E','R',$5b,'T','I','P',$5b,'M','I','X',$5b,'H','I','G','H',$5b,'A','N','D',$5b,'L','O','W',$5c,$fe
+
+; Career Post-Fight Win Line 1 Story Beats (max 34 chars)
+str_cr_ws0:     dc.b    'J','O','N','E','S',$5b,'M','O','C','K','S',$5b,'M','A','R','C','O',$5c,$5b,'F','I','G','H','T',$5b,'M','E',$5b,'K','I','D',$5c,$fe
+str_cr_ws1:     dc.b    'J','O','N','E','S',$5b,'S','A','L','U','T','E','S',$5b,'M','A','R','C','O',$5b,'A','F','T','E','R',$5b,'A',$5b,'W','A','R',$5c,$fe
+str_cr_ws2:     dc.b    'J','U','S','T','I','C','E',$5b,'F','O','R',$5b,'J','O','N','E','S',$5c,$5b,'R','O','N','C','O',$5b,'W','A','I','T','S',$5c,$fe
+str_cr_ws3:     dc.b    'N','E','W',$5b,'C','H','A','M','P',$5c,$5b,'F','E','A','R','E','D',$5b,'M','A','L','O','N','E',$5b,'R','I','S','E','S',$5c,$fe
+str_cr_ws4:     dc.b    'U','N','D','I','S','P','U','T','E','D',$5b,'L','E','G','E','N','D',$5c,$5b,'W','O','R','L','D',$5b,'K','I','N','G',$5c,$fe
+
+; Career Earned Stat Gain Line 2 (max 34 chars)
+str_cr_g0:      dc.b    'C','A','R','E','E','R',$5b,'P','R','O','G','R','E','S','S',$5b,'S','A','V','E','D',$5c,$fe
+str_cr_g1:      dc.b    'C','A','R','E','E','R',$5b,'G','A','I','N',$5b,$5b,'P','L','U','S',$5b,1,$5b,'B','O','D','Y',$5b,'P','O','W','E','R',$5c,$fe
+str_cr_g2:      dc.b    'C','A','R','E','E','R',$5b,'G','A','I','N',$5b,$5b,'P','L','U','S',$5b,1,$5b,'H','E','A','D',$5b,'S','N','A','P',$5c,$fe
+str_cr_g3:      dc.b    'C','A','R','E','E','R',$5b,'G','A','I','N',$5b,$5b,'P','L','U','S',$5b,4,$5b,'M','A','X',$5b,'S','T','A','M','I','N','A',$5c,$fe
+str_cr_g4:      dc.b    'C','A','R','E','E','R',$5b,'G','A','I','N',$5b,$5b,'P','L','U','S',$5b,1,$5b,'I','R','O','N',$5b,'G','U','A','R','D',$5c,$fe
+str_cr_g5:      dc.b    'C','A','R','E','E','R',$5b,'G','A','I','N',$5b,$5b,'P','L','U','S',$5b,3,$5b,'S','T','A','M',$5b,1,$5b,'C','H','I','N',$5c,$fe
+str_cr_finale_l2: dc.b  'H','A','L','L',$5b,'O','F',$5b,'F','A','M','E',$5c,$5b,'A','L','L',$5b,'B','O','W',$5b,'T','O',$5b,'M','A','R','C','O',$5c,$fe
+str_cr_loss_strap: dc.b 'R','E','M','A','T','C','H',$5b,'S','E','T',$5c,$5b,'M','A','R','C','O',$5b,'V','O','W','S',$5b,'C','O','M','E','B','A','C','K',$5c,$ff
+                dc.b    'N','O',$5b,'S','T','A','T',$5b,'G','A','I','N',$5c,$5b,'H','I','T',$5b,'T','H','E',$5b,'G','Y','M',$5b,'H','A','R','D',$5c,$fe
+
+                even
+np_cr_pre_tbl:  dc.l    str_cr_p0, str_cr_p1, str_cr_p2, str_cr_p3, str_cr_p4
+np_cr_pre_tip_tbl: dc.l str_cr_pt0, str_cr_pt1, str_cr_pt2, str_cr_pt3, str_cr_pt4
+np_cr_win_strap_tbl: dc.l str_cr_ws0, str_cr_ws1, str_cr_ws2, str_cr_ws3, str_cr_ws4
+np_cr_gain_tbl: dc.l    str_cr_g0, str_cr_g1, str_cr_g2, str_cr_g3, str_cr_g4, str_cr_g5
+
+; =============================================================================
+; 12c. OPTIONAL CAREER.DAT PERSISTENCE ON HD / VHD (graceful no-op on RO floppy)
+; =============================================================================
+career_load_file:
+                movem.l d0-d2/a0-a2,-(sp)
+                clr.w   -(sp)                   ; mode 0 = read-only
+                pea     str_career_fn(pc)
+                move.w  #$3d,-(sp)              ; Fopen("CAREER.DAT", 0)
+                trap    #1
+                addq.l  #8,sp
+                tst.l   d0
+                bmi.w   .clf_done
+                move.w  d0,d2                   ; save handle
+                pea     career_save_buf(pc)
+                move.l  #28,-(sp)
+                move.w  d2,-(sp)
+                move.w  #$3f,-(sp)              ; Fread(handle, 28, buf)
+                trap    #1
+                lea     12(sp),sp
+                move.l  d0,d1                   ; bytes read
+                move.w  d2,-(sp)
+                move.w  #$3e,-(sp)              ; Fclose(handle)
+                trap    #1
+                addq.l  #4,sp
+                cmpi.l  #28,d1
+                bne.s   .clf_done
+                lea     career_save_buf(pc),a0
+                cmpi.l  #'SOCR',(a0)+
+                bne.s   .clf_done
+                cmpi.w  #1,(a0)+                ; version == 1
+                bne.s   .clf_done
+                tst.w   2(a0)                   ; career_active != 0?
+                beq.s   .clf_done
+                cmpi.w  #5,4(a0)                ; career_act < 5?
+                bge.s   .clf_done
+                move.w  (a0)+,cfg_style
+                move.w  (a0)+,career_active
+                move.w  (a0)+,career_act
+                move.w  (a0)+,career_wins
+                move.w  (a0)+,career_losses
+                move.w  (a0)+,career_kos
+                move.w  (a0)+,cr_body_pwr
+                move.w  (a0)+,cr_head_snap
+                move.w  (a0)+,cr_max_stam
+                move.w  (a0)+,cr_guard
+                move.w  (a0)+,cr_chin
+.clf_done:
+                movem.l (sp)+,d0-d2/a0-a2
+                rts
+
+career_save_file:
+                movem.l d0-d2/a0-a2,-(sp)
+                lea     career_save_buf(pc),a0
+                move.l  #'SOCR',(a0)+
+                move.w  #1,(a0)+
+                move.w  cfg_style(pc),(a0)+
+                move.w  career_active(pc),(a0)+
+                move.w  career_act(pc),(a0)+
+                move.w  career_wins(pc),(a0)+
+                move.w  career_losses(pc),(a0)+
+                move.w  career_kos(pc),(a0)+
+                move.w  cr_body_pwr(pc),(a0)+
+                move.w  cr_head_snap(pc),(a0)+
+                move.w  cr_max_stam(pc),(a0)+
+                move.w  cr_guard(pc),(a0)+
+                move.w  cr_chin(pc),(a0)+
+                clr.w   -(sp)                   ; attr 0 = normal file
+                pea     str_career_fn(pc)
+                move.w  #$3c,-(sp)              ; Fcreate("CAREER.DAT", 0)
+                trap    #1
+                addq.l  #8,sp
+                tst.l   d0
+                bmi.s   .csf_done               ; write-protected / read-only -> silent skip!
+                move.w  d0,d2
+                pea     career_save_buf(pc)
+                move.l  #28,-(sp)
+                move.w  d2,-(sp)
+                move.w  #$40,-(sp)              ; Fwrite(handle, 28, buf)
+                trap    #1
+                lea     12(sp),sp
+                move.w  d2,-(sp)
+                move.w  #$3e,-(sp)              ; Fclose(handle)
+                trap    #1
+                addq.l  #4,sp
+.csf_done:
+                movem.l (sp)+,d0-d2/a0-a2
+                rts
+
+str_career_fn:  dc.b    'CAREER.DAT',0
+                even
+career_save_buf: dcb.b  28,0
 
 ; =============================================================================
 ; 13. 2-PLAYER TUG-OF-WAR KO GAUGE WITH DUAL KO GLOVES ($2262 & $2b8e)
@@ -3490,20 +4099,61 @@ hook_trainer_2p:
                 rts
 
 ; Low stamina -> longer referee count on the floor (higher KO risk!)
-; Input: d0.w = current referee count (0..9). Compare d0 vs (base_getup + stamina_penalty)!
+; When a fighter DOES get back up (d0 >= d1), restore their stamina up to current max_stamina!
 hook_p2_kd_cnt:
                 move.w  GAME_BASE+$3a62.l,d1    ; base opponent get-up count
                 move.w  p2_stamina(pc),d2
-                bsr.s   add_stam_kd_pen
-                cmp.w   d1,d0                   ; sets flags identically to `cmp.w $3a62.l, d0`
+                bsr.w   add_stam_kd_pen
+                cmp.w   d1,d0
+                blt.s   .hp2k_ret               ; still on floor
+                move.w  p2_max_stamina(pc),p2_stamina
+                clr.w   p2_exhausted
+                clr.w   cpu_resting
+                move.w  #$ffff,p2_stam_drawn
+                cmp.w   d1,d0                   ; restore flags (d0 >= d1)
+.hp2k_ret:
                 jmp     GAME_BASE+$2f74
 
 hook_p1_kd_cnt:
                 move.w  GAME_BASE+$3be8.l,d1    ; base player get-up count
                 move.w  p1_stamina(pc),d2
-                bsr.s   add_stam_kd_pen
-                cmp.w   d1,d0                   ; sets flags identically to `cmp.w $3be8.l, d0`
+                bsr.w   add_stam_kd_pen
+                tst.w   cfg_game_mode
+                bne.s   .hp1k_cmp
+                tst.w   career_active
+                beq.s   .hp1k_cmp
+                sub.w   cr_chin(pc),d1          ; Career Chin perk -> quicker get-up!
+                bge.s   .hp1k_cmp
+                moveq   #0,d1
+.hp1k_cmp:
+                cmp.w   d1,d0
+                blt.s   .hp1k_ret               ; still on floor
+                move.w  p1_max_stamina(pc),p1_stamina
+                clr.w   p1_exhausted
+                move.w  #$ffff,p1_stam_drawn
+                cmp.w   d1,d0                   ; restore flags (d0 >= d1)
+.hp1k_ret:
                 jmp     GAME_BASE+$3a7a
+
+; Malone "WELL DONE" screen ($46c0): exit cleanly on Joy1 Fire OR Spacebar (after brief settle)
+; Returns Z=0 (exit) or Z=1 (keep animating) for `bne.w $8472e`!
+hook_welldone_poll:
+                addq.w  #1,wd_frame_cnt
+                cmpi.w  #15,wd_frame_cnt        ; ~1.5s settle so winning punch doesn't skip it
+                blt.s   .hwd_keep
+                tst.w   GAME_BASE+$425c.l       ; Spacebar?
+                bne.s   .hwd_exit
+                btst.b  #7,G_JOY1.l             ; Joystick 1 Fire?
+                bne.s   .hwd_exit
+                cmpi.w  #90,wd_frame_cnt        ; auto-continue after ~6s!
+                bge.s   .hwd_exit
+.hwd_keep:
+                moveq   #0,d0                   ; Z=1 -> keep celebrating
+                rts
+.hwd_exit:
+                clr.w   wd_frame_cnt
+                moveq   #1,d0                   ; Z=0 -> exit cleanly to Career Finale paper!
+                rts
 
 ; Add floor-count penalty to d1.w based on boxer's stamina in d2.w + KO Super finisher bonus!
 ;   Stamina: <10 -> +4, <24 -> +2, <40 -> +1, >=40 -> +0
@@ -3542,7 +4192,22 @@ opp_picked_f3:  dc.w    0
 opp_loaded_fire: dc.w   0
 cpu_resting:    dc.w    0
 ko_finisher_flag: dc.w  0
-np_is_preview:  dc.w    0
+np_mode:        dc.w    0                       ; 0=Post-Fight, 1=Pre-Fight, 2=Breaking News
+cfg_game_mode:  dc.w    0                       ; 0=1P Career, 1=1P Free Bout, 2=2P Versus
+career_active:  dc.w    0                       ; 1 while a 1P Career is underway (locks F2 style!)
+career_act:     dc.w    0                       ; 0..4 (Weed, Jones, Hagman, Ronco, Malone)
+career_wins:    dc.w    0
+career_losses:  dc.w    0
+career_kos:     dc.w    0
+cr_body_pwr:    dc.w    0
+cr_head_snap:   dc.w    0
+cr_max_stam:    dc.w    0
+cr_guard:       dc.w    0
+cr_chin:        dc.w    0
+cr_last_gain:   dc.w    0
+career_loaded:  dc.w    0
+key_f4_held:    dc.w    0
+wd_frame_cnt:   dc.w    0
 stat_head:      dc.w    0
 stat_body:      dc.w    0
 stat_dazes:     dc.w    0

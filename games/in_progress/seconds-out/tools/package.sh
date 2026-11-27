@@ -5,7 +5,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 GAME_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 BENCH_DIR="$(cd "$GAME_DIR/../../.." && pwd)"
-VERSION="1.1"
+VERSION="1.2"
 
 python3 "$SCRIPT_DIR/build_so.py"
 

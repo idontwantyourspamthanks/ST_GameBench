@@ -212,13 +212,16 @@ SPECS: tuple[GameSpec, ...] = (
     GameSpec(
         slug="seconds-out",
         title="Seconds Out",
-        version="1.1",
-        hd_zip="SecondsOut_Enhanced_v1.1_HD.zip",
+        version="1.2",
+        hd_zip="SecondsOut_Enhanced_v1.2_HD.zip",
         zip_root="SECONDS",
-        vhd_name="SecondsOut_v1.1.vhd",
-        out_zip_tmpl="SecondsOut_Enhanced_v1.1_VHD.zip",
+        vhd_name="SecondsOut_v1.2.vhd",
+        out_zip_tmpl="SecondsOut_Enhanced_v1.2_VHD.zip",
         volume="SECOUT",
-        autorun="C:\\SECONDS\\SECONDS.PRG",
+        autorun=None,
+        root_install=True,
+        renames=(("SECONDS.PRG", "AUTO/SECONDS.PRG"),),
+        notes="Seconds Out boots automatically from C:\\AUTO\\SECONDS.PRG before the GEM desktop starts (required for TOS 2.06 / EmuTOS / MiSTer compatibility).",
     ),
 )
 
@@ -310,7 +313,9 @@ def build_vhd(spec: GameSpec, date: str, size_kb: int = DEFAULT_SIZE_KB) -> Path
         for old_rel, new_rel in spec.renames:
             p = src_root / old_rel
             if p.exists():
-                p.rename(src_root / new_rel)
+                dst = src_root / new_rel
+                dst.parent.mkdir(parents=True, exist_ok=True)
+                p.rename(dst)
 
         check_83(src_root)
 

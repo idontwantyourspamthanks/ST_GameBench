@@ -17,7 +17,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-VERSION = "1.1"
+VERSION = "1.2"
 GAME_DIR = Path(__file__).resolve().parent.parent
 ORIG_ST = GAME_DIR / "originals" / "Seconds Out (1988)(Tynesoft).st"
 ORIG_ST_MD5 = "ea7f80595ef3f30a269cec5642d5db6a"
@@ -117,6 +117,70 @@ def jmp_abs(addr: int) -> bytes:
 
 def jsr_abs(addr: int) -> bytes:
     return b"\x4e\xb9" + struct.pack(">I", addr)
+
+
+def _unpack_csp(raw: bytes) -> bytearray:
+    out = bytearray()
+    i = 0
+    while i < len(raw) and len(out) < 0x7D00:
+        b = raw[i]
+        i += 1
+        if b == 0:
+            if i >= len(raw):
+                break
+            cnt = raw[i]
+            i += 1
+            out.extend(b"\x00" * (256 if cnt == 0 else cnt))
+        else:
+            out.append(b)
+    return out[:0x7D00]
+
+
+def _pack_csp(buf: bytearray) -> bytes:
+    out = bytearray()
+    i = 0
+    n = len(buf)
+    while i < n:
+        if buf[i] == 0:
+            run = 0
+            while i < n and buf[i] == 0 and run < 256:
+                run += 1
+                i += 1
+            out.append(0)
+            out.append(0 if run == 256 else run)
+        else:
+            out.append(buf[i])
+            i += 1
+    return bytes(out)
+
+
+def repair_csp_bad_sectors(name: str, raw: bytes) -> bytes:
+    """Repair two single-sector RLE desyncs baked into the original .ST dump (B1C.CSP & B2B.CSP)."""
+    if name == "B1C.CSP":
+        # Bonecrusher Jones knockdown row: y=53..68 shifted +2 bytes (yellow shorts), y=73..99 shifted +8 bytes (feet 16px right)
+        buf = _unpack_csp(raw)
+        fix = bytearray(buf)
+        fix[53 * 160 : 69 * 160] = buf[53 * 160 + 2 : 69 * 160 + 2]
+        fix[73 * 160 : 100 * 160] = buf[73 * 160 + 8 : 100 * 160 + 8]
+        for dst_y, src_y in ((52, 51), (69, 68), (70, 68), (71, 73), (72, 73)):
+            fix[dst_y * 160 : (dst_y + 1) * 160] = fix[src_y * 160 : (src_y + 1) * 160]
+        return _pack_csp(fix)
+    if name == "B2B.CSP":
+        # Hammerhead Hagman bottom row (portrait + punches) had 5 RLE desync bands (+2/+6/+8/+10/+14)
+        buf = _unpack_csp(raw)
+        fix = bytearray(buf)
+        for y0, y1, d in ((119, 124, 2), (126, 130, 6), (131, 141, 8), (142, 146, 10), (148, 200, 14)):
+            s0, s1 = y0 * 160, y1 * 160
+            seg = buf[s0 + d : s1 + d]
+            if len(seg) < s1 - s0:
+                seg = seg + b"\x00" * ((s1 - s0) - len(seg))
+            fix[s0:s1] = seg
+        # Clean the 1-2px transition seams from adjacent clean scanlines
+        fix[118 * 160 : 118 * 160 + 120] = fix[117 * 160 : 117 * 160 + 120]
+        for dst_y, src_y in ((124, 123), (125, 126), (130, 129), (141, 140), (146, 145), (147, 148)):
+            fix[dst_y * 160 : (dst_y + 1) * 160] = fix[src_y * 160 : (src_y + 1) * 160]
+        return _pack_csp(fix)
+    return raw
 
 
 def build_tos_prg(text_bytes: bytes) -> bytes:
@@ -313,6 +377,9 @@ def build(uncouple: bool = True, use_blitter: bool = True, tween: bool = True):
         # Low stamina increases knockdown floor count & KO risk ($2f6e P2, $3a74 P1)
         (0x2F6E, bytes.fromhex("b07900003a62"), jmp_abs(PATCH_BASE + 0x94)),
         (0x3A74, bytes.fromhex("b07900003be8"), jmp_abs(PATCH_BASE + 0x98)),
+        # Malone "WELL DONE" screen: allow Joy1 Fire / auto-exit ($46c0) & preserve G_WIN ($472e)
+        (0x46C0, bytes.fromhex("4a790000425c"), jsr_abs(PATCH_BASE + 0xA8)),
+        (0x472E, bytes.fromhex("427900003a5e"), b"\x4e\x71" * 3),
     ]
 
     # Strip \r before \0 in all filename strings
@@ -352,7 +419,7 @@ def build(uncouple: bool = True, use_blitter: bool = True, tween: bool = True):
         if rel.startswith("AUTO/") or rel == "ZSEND.TOS":
             continue
         dst_name = "B.TOS" if rel == "EMPTY.TOS" else rel
-        (hd_dir / dst_name).write_bytes(raw)
+        (hd_dir / dst_name).write_bytes(repair_csp_bad_sectors(dst_name, raw))
     (hd_dir / "SECONDS.PRG").write_bytes(out_prg)
     (hd_dir / "RUNME.TOS").write_bytes(out_prg)
 

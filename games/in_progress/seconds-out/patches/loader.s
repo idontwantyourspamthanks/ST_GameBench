@@ -17,6 +17,27 @@ HW_FLAGS_ADDR   equ     $00087f00       ; byte: bit 0 = has_blitter, bit 1 = is_
                 section text
 
 start:
+                ; Ensure current directory holds the game assets (TOS 2.06 #Z
+                ; autorun leaves CWD at C:\ instead of C:\SECONDS\).
+                ; Try Fopen("TITLE.PI1", 0); if it fails, Dsetpath("\SECONDS").
+                clr.w   -(sp)                   ; mode 0 = read-only
+                pea     probe_file(pc)
+                move.w  #$3d,-(sp)              ; Fopen
+                trap    #1
+                addq.l  #8,sp
+                tst.l   d0
+                bmi.s   .try_seconds_dir
+                move.w  d0,-(sp)
+                move.w  #$3e,-(sp)              ; Fclose
+                trap    #1
+                addq.l  #4,sp
+                bra.s   .cwd_ok
+.try_seconds_dir:
+                pea     seconds_dir(pc)
+                move.w  #$3b,-(sp)              ; Dsetpath("\SECONDS")
+                trap    #1
+                addq.l  #6,sp
+.cwd_ok:
                 ; Enter Supervisor mode so we can copy to $80000 and probe bus error
                 clr.l   -(sp)
                 move.w  #$20,-(sp)
@@ -127,6 +148,8 @@ start:
                 trap    #1
 
 saved_ssp:      dc.l    0
+probe_file:     dc.b    'TITLE.PI1',0
+seconds_dir:    dc.b    '\SECONDS',0
 
                 even
 payload_hdr:
