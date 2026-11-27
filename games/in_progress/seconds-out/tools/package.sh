@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
-# Package Seconds Out Enhanced v1.0 for distribution (HD zip + Floppy zip).
+# Package Seconds Out Enhanced v1.1 for distribution (HD zip + Floppy zip + Bootable VHD zip).
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 GAME_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+BENCH_DIR="$(cd "$GAME_DIR/../../.." && pwd)"
 VERSION="1.1"
 
 python3 "$SCRIPT_DIR/build_so.py"
@@ -36,5 +37,9 @@ FLOPPY_ZIP="$DIST/SecondsOut_Enhanced_v${VERSION}_Floppy.zip"
 rm -f "$FLOPPY_ZIP"
 (cd "$STAGE/floppy" && zip -q -r "$FLOPPY_ZIP" .)
 
+# 3. Bootable 8 MB VHD zip (HDDRIVER + FAT16 BGM + DESKTOP.INF/NEWDESK.INF autorun)
+VHD_ZIP="$DIST/SecondsOut_Enhanced_v${VERSION}_VHD.zip"
+python3 "$BENCH_DIR/tools/make_game_vhds.py" seconds-out
+
 echo "Packaged:"
-ls -lh "$HD_ZIP" "$FLOPPY_ZIP"
+ls -lh "$HD_ZIP" "$FLOPPY_ZIP" "$VHD_ZIP"

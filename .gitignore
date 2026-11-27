@@ -117,3 +117,12 @@ games/**/*.PCH
 games/**/*.PRG
 games/**/*.PAK
 games/**/*.DIF
+
+# Emulator logs, video captures, and trace dumps under work/
+**/work/**/*.log
+**/work/**/*.jsonl
+**/work/**/res/**/*.json
+**/work/**/res/**/*.txt
+**/work/**/st_*.json
+**/*.avi
+

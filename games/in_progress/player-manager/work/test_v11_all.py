@@ -142,7 +142,7 @@ def drive_to_match_and_exit(h, R, tag, prefix, wait_load=14.0, do_exit=True):
     frm2 = h.peekl(ko2_a4 - 0x4f4e)
     h.shot(str(WORK / f"{prefix}_{tag}_match.png"))
 
-    br_ste = h.peekw(0x0b6978)
+    br_ste = h.peekw(0x0b6c78)
     ste_ok = h.peekw(0x0ae940 + 0x24) if br_ste == 1 else 0
     snd_base = h.peekl(0x0ae940 + 0x10) if br_ste == 1 else 0
     snd_sz = h.peekl(0x0ae940 + 0x08) if br_ste == 1 else 0

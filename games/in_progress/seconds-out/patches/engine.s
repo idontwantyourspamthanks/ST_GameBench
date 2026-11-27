@@ -1061,16 +1061,6 @@ call_orig_spr_draw:
 ; =============================================================================
 hook_fight_init:
                 ; Replaces $3d6..$3e5 (init P1/P2 HP to $3f)
-                ; If on_title_fire ran $44d2 (which used $70000 as scratch), restore $70000 ring/HUD!
-                tst.w   opp_loaded_fire
-                beq.s   .hfi_hp
-                clr.w   opp_loaded_fire
-                move.l  #$70000,G_SCR_BACK.l
-                jsr     GAME_BASE+$10ec         ; restore clean ring BG on $70000
-                jsr     GAME_BASE+$1cba         ; restore clean HUD panel on $70000 & $78000
-                jsr     GAME_BASE+$2188         ; restore score/energy HUD text
-                jsr     GAME_BASE+$4458         ; draw crisp Marco & Opponent portraits on BOTH!
-.hfi_hp:
                 move.w  #$3f,G_P1_HP.l
                 move.w  #$3f,G_P2_HP.l
                 move.w  #63,p1_max_stamina
@@ -1086,6 +1076,13 @@ hook_fight_init:
                 clr.w   p2_daze_tmr
                 clr.w   tow_val
                 clr.w   p2_guard_stance
+                clr.w   cpu_resting
+                clr.w   ko_finisher_flag
+                clr.w   stat_head
+                clr.w   stat_body
+                clr.w   stat_dazes
+                clr.w   stat_blocks
+                clr.w   stat_exh
                 bsr.s   reset_stamina
                 jmp     GAME_BASE+$3e6
 
@@ -1100,6 +1097,13 @@ hook_round_init:
                 clr.w   p2_daze_tmr
                 clr.w   tow_val
                 clr.w   p2_guard_stance
+                clr.w   cpu_resting
+                clr.w   ko_finisher_flag
+                clr.w   stat_head
+                clr.w   stat_body
+                clr.w   stat_dazes
+                clr.w   stat_blocks
+                clr.w   stat_exh
                 bsr.s   reset_stamina
                 rts
 
@@ -1114,12 +1118,15 @@ reset_stamina:
                 bsr.w   draw_stamina_bars
                 rts
 
-; Drain P1 stamina by d0.w (sets p1_exhausted if hits 0)
+; Drain P1 stamina by d0.w (sets p1_exhausted if hits 0, tracks stat_exh)
 drain_p1_stamina:
                 sub.w   d0,p1_stamina
                 bgt.s   .dp1_ok
                 clr.w   p1_stamina
+                tst.w   p1_exhausted
+                bne.s   .dp1_ok
                 move.w  #1,p1_exhausted
+                addq.w  #1,stat_exh
 .dp1_ok:
                 rts
 
@@ -1568,10 +1575,12 @@ hook_p1_dmg:
                 cmpi.w  #6,d7
                 beq.s   .p1d_body
                 ; Head hit (0, 2, 8): drain -3 stamina, increment P2 head-hit streak!
+                addq.w  #1,stat_head
                 addq.w  #1,p2_head_streak
                 cmpi.w  #3,p2_head_streak
                 blt.s   .p1d_head_st
                 move.w  #50,p2_daze_tmr         ; 3 head hits in a row -> DAZED for 3.0s!
+                addq.w  #1,stat_dazes
                 clr.w   p2_head_streak
                 tst.w   cfg_2p_mode
                 bne.s   .p1d_head_st
@@ -1581,8 +1590,16 @@ hook_p1_dmg:
                 moveq   #3,d0
                 bra.s   .p1d_stam
 .p1d_body:
+                addq.w  #1,stat_body
                 clr.w   p2_head_streak          ; body hit resets head-hit streak
                 moveq   #10,d0                  ; heavy body-shot stamina drain!
+                ; Hagman (2 = weedy body) & Ronco (3 = stamina-weak) take extra -14 body drain!
+                cmpi.w  #2,G_OPP_IDX.l
+                beq.s   .p1d_body_ex
+                cmpi.w  #3,G_OPP_IDX.l
+                bne.s   .p1d_stam
+.p1d_body_ex:
+                moveq   #14,d0
 .p1d_stam:
                 bsr.w   drain_p2_stamina
                 ; Reward human P1 with +6 stamina for landing a clean unblocked punch!
@@ -1636,6 +1653,14 @@ hook_p1_dmg:
                 add.w   d0,d6
 .p1d_apply:
                 sub.w   d6,G_P2_HP.l
+                ; If this blow dropped P2 (HP <= 0), record whether it was a KO Super finisher (d7==8)!
+                tst.w   G_P2_HP.l
+                bgt.s   .p1d_ret
+                clr.w   ko_finisher_flag
+                cmpi.w  #8,d7
+                bne.s   .p1d_ret
+                move.w  #1,ko_finisher_flag
+.p1d_ret:
                 jmp     GAME_BASE+$2b4e
 
 ; P2 Punch Damage ($38a6): body-shot stamina hit + 3-hit combo + 3-head-hit DAZE!
@@ -1707,6 +1732,14 @@ hook_p2_dmg:
                 moveq   #1,d6
 .p2d_apply:
                 sub.w   d6,G_P1_HP.l
+                ; If this blow dropped P1 (HP <= 0), record whether it was a Special finisher (d7==4)!
+                tst.w   G_P1_HP.l
+                bgt.s   .p2d_tow
+                clr.w   ko_finisher_flag
+                cmpi.w  #4,d7
+                bne.s   .p2d_tow
+                move.w  #1,ko_finisher_flag
+.p2d_tow:
                 ; In 2P mode, P2 landing a clean punch pulls the KO tug-of-war RIGHT (+1, max +3)!
                 tst.w   cfg_2p_mode
                 beq.s   .p2d_ret
@@ -1729,6 +1762,7 @@ hook_p1_block:
                 tst.w   GAME_BASE+$374c.l
                 bne.s   .p1b_skip
                 clr.w   p1_head_streak
+                addq.w  #1,stat_blocks
                 moveq   #9,d0
                 bsr.w   drain_p1_stamina
 .p1b_skip:
@@ -1762,7 +1796,7 @@ hook_opp_move_sub:
 .oms_skip:
                 jmp     GAME_BASE+$13ae
 
-; Opponent attack initiation: block if dazed, exhausted, or stamina < 10% (<6)!
+; Opponent attack initiation: block if dazed, exhausted, stamina < 10%, or CPU resting!
 hook_opp_punch_a:
                 tst.w   p2_daze_tmr
                 bne.s   .opa_skip
@@ -1770,6 +1804,11 @@ hook_opp_punch_a:
                 bne.s   .opa_skip
                 cmpi.w  #6,p2_stamina
                 blt.s   .opa_skip
+                tst.w   cfg_2p_mode
+                bne.s   .opa_go
+                tst.w   cpu_resting
+                bne.s   .opa_skip
+.opa_go:
                 moveq   #10,d0
                 bsr.w   drain_p2_stamina
                 lea     G_OPP_STRUCT.l,a0
@@ -1784,6 +1823,11 @@ hook_opp_punch_b:
                 bne.s   .opb_skip
                 cmpi.w  #6,p2_stamina
                 blt.s   .opb_skip
+                tst.w   cfg_2p_mode
+                bne.s   .opb_go
+                tst.w   cpu_resting
+                bne.s   .opb_skip
+.opb_go:
                 moveq   #10,d0
                 bsr.w   drain_p2_stamina
                 lea     G_OPP_STRUCT.l,a0
@@ -1807,7 +1851,9 @@ hook_opp_special:
 .ops_cpu:
                 tst.w   p2_exhausted
                 bne.s   .ops_skip
-                cmpi.w  #20,p2_stamina          ; CPU needs >= 20 stamina for special
+                tst.w   cpu_resting
+                bne.s   .ops_skip
+                cmpi.w  #30,p2_stamina          ; Smart CPU: save Specials for >=30 stamina!
                 blt.s   .ops_skip
                 tst.w   p2_spec_cd
                 bne.s   .ops_skip
@@ -1821,9 +1867,10 @@ hook_opp_special:
                 rts
 
 ; =============================================================================
-; 8. FIGHTER AI REBALANCE (load_opp + reactive AI + auto-block)
+; 8. FIGHTER AI REBALANCE & HIGH/LOW WEAKNESS PROFILES
 ; =============================================================================
-; Replaces $2d24: copies opponent struct from EMPTY.TOS, then applies fair balance!
+; Replaces $2d24: copies opponent struct from EMPTY.TOS, then applies distinct tactical profiles!
+; $14/$16 = High L/R dmg taken, $18/$1a = Low L/R dmg taken, $1c = Special dmg taken
 hook_load_opp:
                 move.w  d0,d1                   ; save fighter index (0..4)
                 lsl.w   #2,d0
@@ -1837,59 +1884,79 @@ hook_load_opp:
                 subq.b  #2,d0
                 bne.s   .lo_cp
 
-                ; Apply fair balance adjustments per fighter (0..4)
-                ; Slower passive HP regen so stamina-paced fights don't rubber-band!
                 lea     G_OPP_STRUCT.l,a0
                 cmpi.w  #1,d1
                 beq.s   .bal_jones
                 cmpi.w  #2,d1
                 beq.s   .bal_hagman
                 cmpi.w  #3,d1
-                beq.s   .bal_ronco
+                beq.w   .bal_ronco
                 cmpi.w  #4,d1
-                beq.s   .bal_malone
-                ; Joe Weed (0): ~9.0s per +1 HP
+                beq.w   .bal_malone
+                ; Joe Weed (0): Glass Jaw — weak up top (High 5 / Low 3 / Spec 8)
                 move.w  #150,$3a(a0)
+                move.w  #5,$14(a0)
+                move.w  #5,$16(a0)
+                move.w  #3,$18(a0)
+                move.w  #3,$1a(a0)
+                move.w  #8,$1c(a0)
                 bra.w   .bal_init_tmr
 .bal_jones:
-                move.w  #14,$20(a0)             ; reactive timer: 10 -> 14
-                move.w  #130,$3a(a0)            ; regen ticks: ~7.8s per +1 HP
-                move.w  #4,$14(a0)              ; p_dmg_taken: (3,3,3,3,5) -> (4,4,4,4,8)
+                ; B. Jones (1): Muscular Brawler — rock-solid abs (Low 3), open chin (High 5 / Spec 8)
+                move.w  #14,$20(a0)
+                move.w  #130,$3a(a0)
+                move.w  #5,$14(a0)
+                move.w  #5,$16(a0)
+                move.w  #3,$18(a0)
+                move.w  #3,$1a(a0)
+                move.w  #8,$1c(a0)
+                bra.w   .bal_init_tmr
+.bal_hagman:
+                ; M. "Hammerhead" Hagman (2): Iron Skull (High 2!), Soft Weedy Body (Low 6 + -14 stam!)
+                move.w  #12,$20(a0)
+                move.w  #115,$3a(a0)
+                move.w  #2,$14(a0)
+                move.w  #2,$16(a0)
+                move.w  #6,$18(a0)
+                move.w  #6,$1a(a0)
+                move.w  #8,$1c(a0)
+                move.w  #2,$7e(a0)
+                move.w  #2,$82(a0)
+                bra.s   .bal_init_tmr
+.bal_ronco:
+                ; J. Ronco (3): Tight Guard Technician (High 3 / Low 4, -14 body stam drain!)
+                move.w  #10,$20(a0)
+                move.w  #100,$3a(a0)
+                move.w  #3,$14(a0)
+                move.w  #3,$16(a0)
+                move.w  #4,$18(a0)
+                move.w  #4,$1a(a0)
+                move.w  #7,$1c(a0)
+                move.w  #2,$7e(a0)
+                move.w  #2,$82(a0)
+                bra.s   .bal_init_tmr
+.bal_malone:
+                ; M. Malone (4): Complete Champion (High 4 / Low 4 / Spec 8)
+                move.w  #8,$20(a0)
+                move.w  #90,$3a(a0)
+                move.w  #2,$1e(a0)
+                move.w  #12,$34(a0)
+                move.w  #4,$14(a0)
                 move.w  #4,$16(a0)
                 move.w  #4,$18(a0)
                 move.w  #4,$1a(a0)
                 move.w  #8,$1c(a0)
-                bra.s   .bal_init_tmr
-.bal_hagman:
-                move.w  #12,$20(a0)             ; reactive timer: 9 -> 12
-                move.w  #115,$3a(a0)            ; regen ticks: ~6.9s per +1 HP
-                move.w  #2,$7e(a0)              ; anim delay: (1,2,1) -> (2,2,2)
-                move.w  #2,$82(a0)
-                bra.s   .bal_init_tmr
-.bal_ronco:
-                move.w  #10,$20(a0)             ; reactive timer: 4 -> 10
-                move.w  #100,$3a(a0)            ; regen ticks: ~6.0s per +1 HP
-                move.w  #2,$7e(a0)              ; anim delay: (1,2,1) -> (2,2,2)
-                move.w  #2,$82(a0)
-                bra.s   .bal_init_tmr
-.bal_malone:
-                move.w  #8,$20(a0)              ; reactive timer: 3 -> 8
-                move.w  #90,$3a(a0)             ; regen ticks: ~5.4s per +1 HP
-                move.w  #2,$1e(a0)              ; speed: 3 -> 2
-                move.w  #12,$34(a0)             ; special damage: 16 -> 12
-                move.w  #3,$14(a0)              ; p_dmg_taken: (2,2,4,3,4) -> (3,3,4,4,6)
-                move.w  #3,$16(a0)
-                move.w  #4,$1a(a0)
-                move.w  #6,$1c(a0)
 .bal_init_tmr:
                 move.w  $3a(a0),GAME_BASE+$34b0.l ; seed CPU regen countdown cleanly
                 rts
 
-; Reactive AI ($360c): skip when dazed or exhausted + 50% fair-read gate!
+; Reactive AI ($360c): skip when dazed, exhausted, or resting + 50% fair-read gate!
 hook_cpu_react:
                 tst.w   p2_daze_tmr
                 bne.s   .cr_skip
                 tst.w   p2_exhausted
+                bne.s   .cr_skip
+                tst.w   cpu_resting
                 bne.s   .cr_skip
                 ; 50% fair-read gate when timer is about to trigger ($2f52 == 1)
                 cmpi.w  #1,GAME_BASE+$2f52.l
@@ -1925,11 +1992,56 @@ hook_opp_ai_entry:
                 bne.w   p2_human_ctrl
                 ; If CPU is dazed, force evade/retreat flag ($34aa) so it only backs off!
                 tst.w   p2_daze_tmr
-                beq.s   .oae_go
+                bne.s   .oae_evade
+                ; Smarter CPU stamina management (hysteresis breather per fighter!):
+                ; Ronco (3) & Malone (4) press aggressively if player is dazed or exhausted!
+                move.w  G_OPP_IDX.l,d0
+                cmpi.w  #3,d0
+                blt.s   .oae_stam
+                tst.w   p1_daze_tmr
+                bne.s   .oae_push
+                tst.w   p1_exhausted
+                beq.s   .oae_stam
+.oae_push:
+                clr.w   cpu_resting
+                bra.s   .oae_go
+.oae_stam:
+                ; Thresholds: Weed=12/26, Jones=14/28, Hagman=20/34, Ronco=22/36, Malone=22/38
+                cmpi.w  #4,d0
+                ble.s   .oae_idx_ok
+                moveq   #4,d0
+.oae_idx_ok:
+                add.w   d0,d0
+                lea     cpu_rest_lo(pc),a1
+                move.w  (a1,d0.w),d1            ; low threshold -> start resting
+                lea     cpu_rest_hi(pc),a1
+                move.w  (a1,d0.w),d2            ; high threshold -> resume fighting
+                ; Cap recovery target to p2_max_stamina - 4 so reduced max doesn't trap CPU resting!
+                move.w  p2_max_stamina(pc),d3
+                subq.w  #4,d3
+                cmp.w   d3,d2
+                ble.s   .oae_hi_ok
+                move.w  d3,d2
+.oae_hi_ok:
+                tst.w   cpu_resting
+                bne.s   .oae_chk_rec
+                cmp.w   p2_stamina(pc),d1       ; if p2_stamina <= low_thresh -> rest!
+                blt.s   .oae_go
+                move.w  #1,cpu_resting
+                bra.s   .oae_evade
+.oae_chk_rec:
+                cmp.w   p2_stamina(pc),d2       ; if p2_stamina >= hi_thresh -> resume!
+                bgt.s   .oae_evade
+                clr.w   cpu_resting
+                bra.s   .oae_go
+.oae_evade:
                 move.w  #$ff00,GAME_BASE+$34aa.l
 .oae_go:
                 lea     G_OPP_STRUCT.l,a0
                 jmp     GAME_BASE+$1352
+
+cpu_rest_lo:    dc.w    12, 14, 20, 22, 22
+cpu_rest_hi:    dc.w    26, 28, 34, 36, 38
 
 ; Wrapper for P1 logic ($196e): when dazed, reverses directions & disables Fire!
 ; Uses race-free raw_joy1 captured by hook_ikbd_joy1 so IKBD packets are NEVER lost or stuck!
@@ -2130,20 +2242,47 @@ hook_title_poll2:
                 jmp     GAME_BASE+$1e4c
 
 ; Called right when Fire is pressed on the title screen:
-; clears bottom credit AND updates the Tale-of-the-Tape opponent portrait ($4572) if F3/2P picked!
+; loads F3/2P opponent if needed, shows Pre-Fight THE RING SUN preview in 1P Career,
+; and restores $70000 cleanly before the game's single $1cba scroll-down!
 on_title_fire:
-                bsr.s   clear_bottom_credit
+                bsr.w   clear_bottom_credit
+                moveq   #0,d7                   ; d7=1 if $70000 was used as scratch
                 tst.w   cfg_2p_mode
-                bne.s   .otf_sync
+                bne.s   .otf_load
                 tst.w   opp_picked_f3
-                beq.s   .otf_done
-.otf_sync:
+                beq.s   .otf_chk_pre
+.otf_load:
                 clr.w   opp_picked_f3
-                move.w  #1,opp_loaded_fire
                 move.w  cfg_2p_opp(pc),G_OPP_IDX.l
-                jsr     GAME_BASE+$44d2         ; unpack chosen opponent BxA/B/C.CSP cleanly!
+                jsr     GAME_BASE+$44d2         ; unpack chosen opponent BxA/B/C.CSP (uses $70000!)
                 jsr     GAME_BASE+$4428         ; clear title option boxes
                 jsr     GAME_BASE+$4572         ; draw MARCO vs chosen opponent Tale-of-the-Tape!
+                moveq   #1,d7
+.otf_chk_pre:
+                ; In 1P Career mode, show Pre-Fight THE RING SUN with opponent scouting report!
+                tst.w   cfg_2p_mode
+                bne.s   .otf_chk_rst
+                move.w  #1,np_is_preview
+                bsr.w   draw_newspaper_common
+                clr.w   np_is_preview
+                ; Restore title screen ($68300) display before $1cba scrolls down into $70000!
+                move.b  #$06,$ffff8201.w
+                move.b  #$83,$ffff8203.w
+                moveq   #1,d7
+.otf_chk_rst:
+                tst.w   d7
+                beq.s   .otf_done
+                ; Restore $70000 cleanly: copy untouched HUD top ($78000->$70000) + $10ec ring BG!
+                movem.l d0/a0-a1,-(sp)
+                lea     $78000,a0
+                lea     $70000,a1
+                move.w  #2400-1,d0
+.otf_hud_cp:
+                move.l  (a0)+,(a1)+
+                dbra    d0,.otf_hud_cp
+                movem.l (sp)+,d0/a0-a1
+                move.l  #$70000,G_SCR_BACK.l
+                jsr     GAME_BASE+$10ec
 .otf_done:
                 rts
 
@@ -2351,6 +2490,12 @@ hook_ikbd_joy1:
 ;   - col 14 ($665): Cream newsprint paper (p0=0, p1=1, p2=1, p3=1)
 ;   - col 15 ($777): Pure white masthead & footer text (p0=p1=p2=p3=1)
 hook_newspaper:
+                clr.w   np_is_preview
+                bsr.s   draw_newspaper_common
+                jmp     GAME_BASE+$1cf4
+
+; Shared renderer for BOTH Post-Fight (np_is_preview=0) and Pre-Fight Scouting Preview (np_is_preview=1)!
+draw_newspaper_common:
                 movem.l d0-d7/a0-a6,-(sp)
 
                 ; 1. Clear $70000 to black bezel (col 0 = $000, VBL-safe!)
@@ -2445,6 +2590,10 @@ hook_newspaper:
                 lea     $70000+30*160+$09,a6
                 movea.l a6,a4
                 lea     str_np_sub(pc),a5
+                tst.w   np_is_preview
+                beq.s   .np_sub_pr
+                lea     str_np_sub_pre(pc),a5
+.np_sub_pr:
                 moveq   #0,d7                   ; d7=0 -> BLACK ink (col 0) on cream paper!
                 bsr.w   np_print_small
 
@@ -2456,6 +2605,12 @@ hook_newspaper:
 .np_idx_ok:
                 add.w   d0,d0
                 add.w   d0,d0
+                tst.w   np_is_preview
+                beq.s   .np_post_hl
+                lea     np_pre_tbl(pc),a0
+                movea.l (a0,d0.w),a5
+                bra.s   .np_print_hl
+.np_post_hl:
                 tst.w   GAME_BASE+$3a5e.l
                 beq.s   .np_loss
                 lea     np_win_tbl(pc),a0
@@ -2470,27 +2625,45 @@ hook_newspaper:
                 moveq   #0,d7                   ; BLACK chunky bold capitals!
                 bsr.w   np_print_big
 
-                ; 8. FIGHTER PHOTOS! Left box = WINNER (x=16..95, y=77..132), Right box = LOSER (x=224..303, y=77..132)
-                ; Marco Win = $38000 (WIN.PI1 top-left, gloves raised!), Marco Loss = $38050 (bruised face!)
-                ; Opponent = $63ed0 (BxC.CSP standing portrait!)
+                ; 8. FIGHTER PHOTOS!
+                tst.w   np_is_preview
+                bne.s   .np_pic_pre
                 tst.w   GAME_BASE+$3a5e.l
-                beq.s   .np_pic_loss
+                beq.w   .np_pic_loss
                 ; Marco WON -> Left = Marco Win ($38000), Right = Opponent ($63ed0)
                 lea     $38000,a0
-                lea     $70000+77*160+$08,a1    ; Left photo box (x=16, y=77)
+                lea     $70000+77*160+$08,a1
                 bsr.w   np_blit_photo
                 lea     $63ed0,a0
-                lea     $70000+77*160+$70,a1    ; Right photo box (x=224, y=77)
+                lea     $70000+77*160+$70,a1
                 bsr.w   np_blit_photo
-                ; Captions under photos (y=137)
-                lea     $70000+137*160+$09,a6   ; Left: "WIN MARCO"
+                lea     $70000+137*160+$09,a6
                 movea.l a6,a4
                 lea     str_np_cap_wm(pc),a5
                 moveq   #0,d7
                 bsr.w   np_print_small
-                lea     $70000+137*160+$71,a6   ; Right: "KO " + Opponent
+                lea     $70000+137*160+$71,a6
                 movea.l a6,a4
                 lea     str_np_cap_ko(pc),a5
+                moveq   #0,d7
+                bsr.w   np_print_small
+                bra.w   .np_pic_frames
+.np_pic_pre:
+                ; PRE-FIGHT PREVIEW -> Left = Marco ($38000), Right = Opponent ($63ed0)
+                lea     $38000,a0
+                lea     $70000+77*160+$08,a1
+                bsr.w   np_blit_photo
+                lea     $63ed0,a0
+                lea     $70000+77*160+$70,a1
+                bsr.w   np_blit_photo
+                lea     $70000+137*160+$09,a6
+                movea.l a6,a4
+                lea     str_np_cap_mar(pc),a5
+                moveq   #0,d7
+                bsr.w   np_print_small
+                lea     $70000+137*160+$71,a6
+                movea.l a6,a4
+                lea     str_np_cap_opp(pc),a5
                 moveq   #0,d7
                 bsr.w   np_print_small
                 bra.s   .np_pic_frames
@@ -2523,11 +2696,26 @@ hook_newspaper:
                 ; Center Tabloid Story Column (x=112..207, y=78, small black font!)
                 lea     $70000+78*160+$38,a6
                 movea.l a6,a4
-                lea     str_np_story_l(pc),a5
-                tst.w   GAME_BASE+$3a5e.l
-                beq.s   .np_st_pr
-                lea     str_np_story_w(pc),a5
-.np_st_pr:
+                tst.w   np_is_preview
+                beq.s   .np_st_post
+                move.w  G_OPP_IDX.l,d0
+                cmpi.w  #4,d0
+                ble.s   .np_sc_ok
+                moveq   #4,d0
+.np_sc_ok:
+                add.w   d0,d0
+                add.w   d0,d0
+                lea     np_scout_tbl(pc),a0
+                movea.l (a0,d0.w),a5
+                moveq   #0,d7
+                bsr.w   np_print_small
+                bra.s   .np_bot_strap
+.np_st_post:
+                bsr.w   pick_postfight_story    ; d0.w = 0..9 dynamic story index!
+                add.w   d0,d0
+                add.w   d0,d0
+                lea     np_dyn_story_tbl(pc),a0
+                movea.l (a0,d0.w),a5
                 moveq   #0,d7
                 bsr.w   np_print_small
 
@@ -2547,13 +2735,28 @@ hook_newspaper:
                 moveq   #0,d7
                 bsr.w   np_print_small
 
+.np_bot_strap:
                 ; 10. Bottom Ringside Story Strap (y=153, x=24 -> +$09, full width small black text!)
                 lea     $70000+153*160+$09,a6
                 movea.l a6,a4
-                lea     str_np_foot_l(pc),a5
-                tst.w   GAME_BASE+$3a5e.l
-                beq.s   .np_fb_pr
-                lea     str_np_foot_w(pc),a5
+                tst.w   np_is_preview
+                beq.s   .np_fb_post
+                move.w  G_OPP_IDX.l,d0
+                cmpi.w  #4,d0
+                ble.s   .np_tp_ok
+                moveq   #4,d0
+.np_tp_ok:
+                add.w   d0,d0
+                add.w   d0,d0
+                lea     np_tip_tbl(pc),a0
+                movea.l (a0,d0.w),a5
+                bra.s   .np_fb_pr
+.np_fb_post:
+                bsr.w   pick_postfight_story
+                add.w   d0,d0
+                add.w   d0,d0
+                lea     np_dyn_foot_tbl(pc),a0
+                movea.l (a0,d0.w),a5
 .np_fb_pr:
                 moveq   #0,d7
                 bsr.w   np_print_small
@@ -2562,6 +2765,10 @@ hook_newspaper:
                 lea     $70000+182*160+$21,a6
                 movea.l a6,a4
                 lea     str_np_foot(pc),a5
+                tst.w   np_is_preview
+                beq.s   .np_ft_pr
+                lea     str_np_foot_pre(pc),a5
+.np_ft_pr:
                 moveq   #1,d7                   ; WHITE text on red footer bar!
                 bsr.w   np_print_small
 
@@ -2611,7 +2818,7 @@ hook_newspaper:
                 dbra    d0,.np_rpal
 
                 movem.l (sp)+,d0-d7/a0-a6
-                jmp     GAME_BASE+$1cf4
+                rts
 
 ; Blit 80x56 fighter portrait from a0 to screen a1 (10 longs = 40 bytes per row)
 np_blit_photo:
@@ -2868,11 +3075,221 @@ str_np_foot_l:  dc.b    'T','R','A','I','N','E','R',$5b,'S','A','Y','S',$5b,'M',
                 dc.b    'G','Y','M',$5b,'H','A','R','D',$5b,'B','E','F','O','R','E',$5b,'A','N','Y',$5b,'R','E','M','A','T','C','H',$5c,$fe
 
 str_np_foot:    dc.b    'P','R','E','S','S',$5b,'F','I','R','E',$5b,'T','O',$5b,'C','O','N','T','I','N','U','E',$fe
+str_np_foot_pre: dc.b   'P','R','E','S','S',$5b,'F','I','R','E',$5b,'T','O',$5b,'E','N','T','E','R',$5b,'R','I','N','G',$fe
+str_np_sub_pre: dc.b    'F','I','G','H','T',$5b,'N','I','G','H','T',$5b,$5b,$5b,$5b,$5b,2,0,'P',$5b,$5b,$5b,$5b,$5b,$5b,$5b,$5b,'P','R','E','V','I','E','W',$fe
+str_np_cap_mar: dc.b    $5b,$5b,'M','A','R','C','O',$fe
+str_np_cap_opp: dc.b    $5b,'C','H','A','M','P','I','O','N',$fe
+
+; Pre-Fight Chunky 2x2 Headlines (max 16 chars per line!)
+str_np_p0:      dc.b    $5b,'M','A','R','C','O',$5b,'V','S',$5b,'W','E','E','D',$5c,$ff
+                dc.b    $5b,$5b,'R','O','O','K','I','E',$5b,'B','O','U','T',$5c,$fe
+str_np_p1:      dc.b    $5b,$5b,'J','O','N','E','S',$5b,'T','E','S','T',$5c,$ff
+                dc.b    $5b,$5b,'P','O','W','E','R',$5b,'C','L','A','S','H',$5c,$fe
+str_np_p2:      dc.b    $5b,$5b,'H','A','M','M','E','R','H','E','A','D',$5c,$ff
+                dc.b    $5b,'H','E','A','D','B','U','T','T',$5b,'W','A','R',$5c,$fe
+str_np_p3:      dc.b    $5b,$5b,'R','O','N','C','O',$5b,'W','A','L','L',$5c,$ff
+                dc.b    $5b,$5b,'T','I','T','L','E',$5b,'E','L','I','M',$5c,$fe
+str_np_p4:      dc.b    $5b,$5b,'W','O','R','L','D',$5b,'T','I','T','L','E',$5c,$ff
+                dc.b    $5b,'C','H','A','M','P',$5b,'M','A','L','O','N','E',$5c,$fe
+
+; Pre-Fight Center Column Scouting Reports (12 chars wide max!)
+str_sc_0:       dc.b    'S','C','O','U','T',$5b,'R','E','P','O','R','T',$ff,$ff
+                dc.b    'G','L','A','S','S',$5b,'J','A','W',$5c,$ff
+                dc.b    'W','E','A','K',$5b,'U','P',$5b,'T','O','P',$5c,$ff
+                dc.b    'G','O',$5b,'F','O','R',$5b,'H','E','A','D',$ff
+                dc.b    'C','O','M','B','O','S',$5c,$fe
+str_sc_1:       dc.b    'S','C','O','U','T',$5b,'R','E','P','O','R','T',$ff,$ff
+                dc.b    'R','O','C','K',$5b,'S','O','L','I','D',$ff
+                dc.b    'B','O','D','Y',$5c,$5b,'A','I','M',$ff
+                dc.b    'H','I','G','H',$5b,'T','O',$5b,'T','H','E',$ff
+                dc.b    'C','H','I','N',$5c,$fe
+str_sc_2:       dc.b    'S','C','O','U','T',$5b,'R','E','P','O','R','T',$ff,$ff
+                dc.b    'I','R','O','N',$5b,'S','K','U','L','L',$5c,$ff
+                dc.b    'W','E','E','D','Y',$5b,'G','U','T',$5c,$ff
+                dc.b    'R','I','P',$5b,'B','O','D','Y',$ff
+                dc.b    'S','H','O','T','S',$5c,$fe
+str_sc_3:       dc.b    'S','C','O','U','T',$5b,'R','E','P','O','R','T',$ff,$ff
+                dc.b    'T','I','G','H','T',$5b,'G','U','A','R','D',$5c,$ff
+                dc.b    'D','R','A','I','N',$5b,'H','I','S',$ff
+                dc.b    'S','T','A','M','I','N','A',$5b,'T','O',$ff
+                dc.b    'W','I','N',$5c,$fe
+str_sc_4:       dc.b    'S','C','O','U','T',$5b,'R','E','P','O','R','T',$ff,$ff
+                dc.b    'T','O','U','G','H',$5b,'C','H','A','M','P',$5c,$ff
+                dc.b    'M','I','X',$5b,'H','I','G','H',$5b,'A','N','D',$ff
+                dc.b    'L','O','W',$5b,'F','O','R',$5b,'A',$ff
+                dc.b    'K','O',$5b,'F','I','N','I','S','H',$5c,$fe
+
+; Pre-Fight Bottom Corner Advice (34 chars max per line!)
+str_tp_0:       dc.b    'C','O','R','N','E','R',$5b,'T','I','P',$5b,'T','H','R','E','E',$5b,'H','E','A','D',$5b,'H','I','T','S',$5b,'D','A','Z','E',$5c,$ff
+                dc.b    'S','E','T','S',$5b,'U','P',$5b,'A','N',$5b,'E','A','S','Y',$5b,'F','I','R','S','T',$5b,'W','I','N',$5c,$fe
+str_tp_1:       dc.b    'C','O','R','N','E','R',$5b,'T','I','P',$5b,'D','O',$5b,'N','O','T',$5b,'W','A','S','T','E',$5b,'L','O','W',$5b,'J','A','B','S',$5c,$ff
+                dc.b    'J','O','N','E','S',$5b,'T','A','K','E','S',$5b,'H','E','A','V','Y',$5b,'H','E','A','D',$5b,'D','A','M','A','G','E',$5c,$fe
+str_tp_2:       dc.b    'C','O','R','N','E','R',$5b,'T','I','P',$5b,'H','I','S',$5b,'H','E','A','D',$5b,'I','S',$5b,'S','O','L','I','D',$5b,'R','O','C','K',$5c,$ff
+                dc.b    'P','O','U','N','D',$5b,'H','I','S',$5b,'B','O','D','Y',$5b,'T','O',$5b,'F','O','L','D',$5b,'H','I','M',$5c,$fe
+str_tp_3:       dc.b    'C','O','R','N','E','R',$5b,'T','I','P',$5b,'W','O','R','K',$5b,'H','I','S',$5b,'B','O','D','Y',$5b,'H','A','R','D',$5c,$ff
+                dc.b    'E','M','P','T','Y',$5b,'H','I','S',$5b,'T','A','N','K',$5b,'T','H','E','N',$5b,'K','O',$5b,'H','I','M',$5c,$fe
+str_tp_4:       dc.b    'C','O','R','N','E','R',$5b,'T','I','P',$5b,'S','A','V','E',$5b,'Y','O','U','R',$5b,'K','O',$5b,'U','P','P','E','R','C','U','T',$ff
+                dc.b    'F','O','R',$5b,'T','H','E',$5b,'F','I','N','A','L',$5b,'B','L','O','W',$5b,'T','O',$5b,'W','I','N',$5c,$fe
 
 str_np_combo_buf: dc.b  0,$fe
                 even
 np_win_tbl:     dc.l    str_np_w0, str_np_w1, str_np_w2, str_np_w3, str_np_w4
 np_loss_tbl:    dc.l    str_np_l0, str_np_l1, str_np_l2, str_np_l3, str_np_l4
+np_pre_tbl:     dc.l    str_np_p0, str_np_p1, str_np_p2, str_np_p3, str_np_p4
+np_scout_tbl:   dc.l    str_sc_0,  str_sc_1,  str_sc_2,  str_sc_3,  str_sc_4
+np_tip_tbl:     dc.l    str_tp_0,  str_tp_1,  str_tp_2,  str_tp_3,  str_tp_4
+
+; Dynamic Ringside Reporter: classify how Marco fought into story index d0.w (0..6 Win, 7..9 Loss)
+pick_postfight_story:
+                tst.w   GAME_BASE+$3a5e.l
+                beq.s   .pps_loss
+                ; --- WIN STORIES (0..6) ---
+                tst.w   ko_finisher_flag
+                beq.s   .pps_w_body
+                move.w  stat_body(pc),d0
+                cmp.w   stat_head(pc),d0
+                ble.s   .pps_w1
+                moveq   #0,d0                   ; 0: Body-to-KO specialist!
+                rts
+.pps_w1:        moveq   #1,d0                   ; 1: KO Uppercut finisher!
+                rts
+.pps_w_body:
+                move.w  stat_body(pc),d0
+                cmpi.w  #4,d0
+                blt.s   .pps_w_head
+                cmp.w   stat_head(pc),d0
+                ble.s   .pps_w_head
+                moveq   #2,d0                   ; 2: Body Snatcher!
+                rts
+.pps_w_head:
+                cmpi.w  #2,stat_dazes
+                bge.s   .pps_w3
+                move.w  stat_body(pc),d0
+                add.w   d0,d0                   ; 2 * stat_body
+                cmp.w   stat_head(pc),d0
+                bgt.s   .pps_w_combo
+                tst.w   stat_head
+                beq.s   .pps_w_combo
+.pps_w3:        moveq   #3,d0                   ; 3: Head-Hunter / Daze Master!
+                rts
+.pps_w_combo:
+                cmpi.w  #4,p1_best_combo
+                blt.s   .pps_w_def
+                moveq   #4,d0                   ; 4: Combo Machine!
+                rts
+.pps_w_def:
+                cmpi.w  #6,stat_blocks
+                blt.s   .pps_w6
+                moveq   #5,d0                   ; 5: Cool Counter-Puncher!
+                rts
+.pps_w6:        moveq   #6,d0                   ; 6: All-Rounder!
+                rts
+                ; --- LOSS STORIES (7..9) ---
+.pps_loss:
+                cmpi.w  #2,stat_exh
+                blt.s   .pps_l_scout
+                moveq   #7,d0                   ; 7: Gassed Out!
+                rts
+.pps_l_scout:
+                ; Ignored Scout Report: head-hunted Hagman (2) OR body-hunted Jones (1)!
+                cmpi.w  #2,G_OPP_IDX.l
+                bne.s   .pps_l_j
+                move.w  stat_head(pc),d0
+                cmp.w   stat_body(pc),d0
+                bgt.s   .pps_l8
+                bra.s   .pps_l9
+.pps_l_j:
+                cmpi.w  #1,G_OPP_IDX.l
+                bne.s   .pps_l9
+                move.w  stat_body(pc),d0
+                cmp.w   stat_head(pc),d0
+                ble.s   .pps_l9
+.pps_l8:        moveq   #8,d0                   ; 8: Wrong Gameplan!
+                rts
+.pps_l9:        moveq   #9,d0                   ; 9: Outgunned!
+                rts
+
+; Dynamic Post-Fight Center Column Stories (max 12 chars/line, 5-6 lines)
+str_ds_0:       dc.b    'B','O','D','Y',$5b,'T','H','E','N',$ff
+                dc.b    'B','O','O','M',$5c,$5b,'M','A','R','C','O',$ff
+                dc.b    'D','R','A','I','N','E','D',$5b,'T','H','E',$ff
+                dc.b    'T','A','N','K',$5b,'T','H','E','N',$ff
+                dc.b    'L','A','N','D','E','D',$5b,'K','O',$5c,$fe
+str_ds_1:       dc.b    'L','I','G','H','T','S',$5b,'O','U','T',$5c,$ff
+                dc.b    'M','A','R','C','O',$5b,'H','I','T',$5b,'A',$ff
+                dc.b    'M','A','S','S','I','V','E',$5b,'K','O',$ff
+                dc.b    'U','P','P','E','R','C','U','T',$5b,'T','O',$ff
+                dc.b    'E','N','D',$5b,'I','T',$5c,$fe
+str_ds_2:       dc.b    'B','O','D','Y',$5b,'H','U','N','T','E','R',$ff
+                dc.b    'M','A','R','C','O',$5b,'R','I','P','P','E','D',$ff
+                dc.b    'T','H','E',$5b,'R','I','B','S',$5b,'T','O',$ff
+                dc.b    'G','A','S',$5b,'H','I','S',$5b,'F','O','E',$ff
+                dc.b    'C','O','M','P','L','E','T','E','L','Y',$5c,$fe
+str_ds_3:       dc.b    'H','E','A','D',$5b,'H','U','N','T','E','R',$ff
+                dc.b    'M','A','R','C','O',$5b,'R','O','C','K','E','D',$ff
+                dc.b    'H','I','S',$5b,'R','I','V','A','L',$5b,'I','N',$ff
+                dc.b    'A',$5b,'D','A','Z','I','N','G',$ff
+                dc.b    'B','L','I','T','Z',$5c,$fe
+str_ds_4:       dc.b    'C','O','M','B','O',$5b,'K','I','N','G',$5c,$ff
+                dc.b    'M','A','R','C','O',$5b,'L','A','N','D','E','D',$ff
+                dc.b    'B','R','U','T','A','L',$5b,'H','I','T',$ff
+                dc.b    'C','H','A','I','N','S',$5b,'T','O',$ff
+                dc.b    'W','I','N',$5b,'B','I','G',$5c,$fe
+str_ds_5:       dc.b    'C','O','O','L',$5b,'G','U','A','R','D',$5c,$ff
+                dc.b    'M','A','R','C','O',$5b,'S','O','A','K','E','D',$ff
+                dc.b    'U','P',$5b,'T','H','E',$5b,'S','T','O','R','M',$ff
+                dc.b    'A','N','D',$5b,'P','I','C','K','E','D',$ff
+                dc.b    'H','I','S',$5b,'S','H','O','T','S',$5c,$fe
+str_ds_6:       dc.b    'T','O','T','A','L',$5b,'C','L','A','S','S',$5c,$ff
+                dc.b    'M','A','R','C','O',$5b,'M','I','X','E','D',$ff
+                dc.b    'H','E','A','D',$5b,'A','N','D',$ff
+                dc.b    'B','O','D','Y',$5b,'F','O','R',$5b,'A',$ff
+                dc.b    'C','L','E','A','N',$5b,'W','I','N',$5c,$fe
+str_ds_7:       dc.b    'O','U','T',$5b,'O','F',$5b,'G','A','S',$5c,$ff
+                dc.b    'M','A','R','C','O',$5b,'S','W','U','N','G',$ff
+                dc.b    'W','I','L','D',$5b,'A','N','D',$ff
+                dc.b    'E','M','P','T','I','E','D',$5b,'H','I','S',$ff
+                dc.b    'O','W','N',$5b,'T','A','N','K',$5c,$fe
+str_ds_8:       dc.b    'W','R','O','N','G',$5b,'P','L','A','N',$5c,$ff
+                dc.b    'M','A','R','C','O',$5b,'P','L','A','Y','E','D',$ff
+                dc.b    'I','N','T','O',$5b,'H','I','S',$ff
+                dc.b    'R','I','V','A','L','S',$5b,'O','W','N',$ff
+                dc.b    'S','T','R','E','N','G','T','H',$5c,$fe
+str_ds_9:       dc.b    'T','O','U','G','H',$5b,'N','I','G','H','T',$5c,$ff
+                dc.b    'M','A','R','C','O',$5b,'T','O','O','K',$5b,'A',$ff
+                dc.b    'R','E','A','L',$5b,'B','E','A','T','I','N','G',$ff
+                dc.b    'A','N','D',$5b,'H','I','T',$5b,'T','H','E',$ff
+                dc.b    'C','A','N','V','A','S',$5b,'H','A','R','D',$5c,$fe
+
+; Dynamic Post-Fight Bottom Straps (max 34 chars/line, 2 lines)
+str_df_0:       dc.b    'W','O','R','K','E','D',$5b,'T','H','E',$5b,'R','I','B','S',$5b,'A','L','L',$5b,'F','I','G','H','T',$5b,'B','E','F','O','R','E',$ff
+                dc.b    'S','E','A','L','I','N','G',$5b,'I','T',$5b,'W','I','T','H',$5b,'A',$5b,'H','U','G','E',$5b,'U','P','P','E','R','C','U','T',$5c,$fe
+str_df_1:       dc.b    'T','H','E',$5b,'C','R','O','W','D',$5b,'E','R','U','P','T','E','D',$5b,'A','S',$5b,'T','H','E',$5b,'F','I','N','A','L',$ff
+                dc.b    'K','O',$5b,'U','P','P','E','R','C','U','T',$5b,'S','E','N','T',$5b,'H','I','S',$5b,'F','O','E',$5b,'F','L','Y','I','N','G',$5c,$fe
+str_df_2:       dc.b    'R','E','L','E','N','T','L','E','S','S',$5b,'B','O','D','Y',$5b,'W','O','R','K',$5b,'L','E','F','T',$5b,'H','I','S',$ff
+                dc.b    'O','P','P','O','N','E','N','T',$5b,'T','O','O',$5b,'T','I','R','E','D',$5b,'T','O',$5b,'G','E','T',$5b,'U','P',$5c,$fe
+str_df_3:       dc.b    'D','A','Z','E','D',$5b,'A','N','D',$5b,'C','O','N','F','U','S','E','D',$5c,$5b,'H','I','S',$5b,'R','I','V','A','L',$ff
+                dc.b    'H','A','D',$5b,'N','O',$5b,'A','N','S','W','E','R',$5b,'T','O',$5b,'T','H','E',$5b,'H','E','A','D',$5b,'S','H','O','T','S',$5c,$fe
+str_df_4:       dc.b    'P','U','N','D','I','T','S',$5b,'P','R','A','I','S','E','D',$5b,'M','A','R','C','O','S',$5b,'N','O','N','S','T','O','P',$ff
+                dc.b    'C','O','M','B','I','N','A','T','I','O','N',$5b,'P','U','N','C','H','I','N','G',$5b,'T','O','N','I','G','H','T',$5c,$fe
+str_df_5:       dc.b    'T','E','X','T','B','O','O','K',$5b,'G','U','A','R','D',$5b,'W','O','R','K',$5b,'F','R','U','S','T','R','A','T','E','D',$ff
+                dc.b    'H','I','S',$5b,'R','I','V','A','L',$5b,'A','L','L',$5b,'N','I','G','H','T',$5b,'L','O','N','G',$5c,$fe
+str_df_6:       dc.b    'F','A','N','S',$5b,'R','O','A','R','E','D',$5b,'A','S',$5b,'M','A','R','C','O',$5b,'T','O','O','K',$5b,'C','O','N','T','R','O','L',$ff
+                dc.b    'O','F',$5b,'T','H','E',$5b,'R','I','N','G',$5c,$5b,'N','E','X','T',$5b,'S','T','O','P',$5b,'T','H','E',$5b,'T','I','T','L','E',$5c,$fe
+str_df_7:       dc.b    'C','O','R','N','E','R',$5b,'S','A','Y','S',$5b,'M','A','R','C','O',$5b,'M','U','S','T',$5b,'P','A','C','E',$5b,'H','I','S',$ff
+                dc.b    'P','U','N','C','H','E','S',$5b,'A','N','D',$5b,'W','A','T','C','H',$5b,'H','I','S',$5b,'S','T','A','M','I','N','A',$5c,$fe
+str_df_8:       dc.b    'S','H','O','U','L','D',$5b,'H','A','V','E',$5b,'R','E','A','D',$5b,'T','H','E',$5b,'S','C','O','U','T',$5b,'R','E','P','O','R','T',$5c,$ff
+                dc.b    'W','R','O','N','G',$5b,'T','A','C','T','I','C','S',$5b,'C','O','S','T',$5b,'M','A','R','C','O',$5b,'D','E','A','R',$5c,$fe
+str_df_9:       dc.b    'T','R','A','I','N','E','R',$5b,'S','A','Y','S',$5b,'M','A','R','C','O',$5b,'M','U','S','T',$5b,'H','I','T',$5b,'T','H','E',$ff
+                dc.b    'G','Y','M',$5b,'H','A','R','D',$5b,'B','E','F','O','R','E',$5b,'A','N','Y',$5b,'R','E','M','A','T','C','H',$5c,$fe
+
+                even
+np_dyn_story_tbl:
+                dc.l    str_ds_0, str_ds_1, str_ds_2, str_ds_3, str_ds_4
+                dc.l    str_ds_5, str_ds_6, str_ds_7, str_ds_8, str_ds_9
+np_dyn_foot_tbl:
+                dc.l    str_df_0, str_df_1, str_df_2, str_df_3, str_df_4
+                dc.l    str_df_5, str_df_6, str_df_7, str_df_8, str_df_9
 
 ; =============================================================================
 ; 13. 2-PLAYER TUG-OF-WAR KO GAUGE WITH DUAL KO GLOVES ($2262 & $2b8e)
@@ -3088,9 +3505,14 @@ hook_p1_kd_cnt:
                 cmp.w   d1,d0                   ; sets flags identically to `cmp.w $3be8.l, d0`
                 jmp     GAME_BASE+$3a7a
 
-; Add floor-count penalty to d1.w based on boxer's stamina in d2.w:
-;   <10 -> +4 counts, <24 -> +2 counts, <40 -> +1 count, >=40 -> +0
+; Add floor-count penalty to d1.w based on boxer's stamina in d2.w + KO Super finisher bonus!
+;   Stamina: <10 -> +4, <24 -> +2, <40 -> +1, >=40 -> +0
+;   KO Super Finisher: +3 extra counts!
 add_stam_kd_pen:
+                tst.w   ko_finisher_flag
+                beq.s   .ask_stam
+                addq.w  #3,d1
+.ask_stam:
                 cmpi.w  #10,d2
                 bge.s   .ask_24
                 addq.w  #4,d1
@@ -3118,6 +3540,14 @@ p1_reg_div:     dc.w    0
 p2_reg_div:     dc.w    0
 opp_picked_f3:  dc.w    0
 opp_loaded_fire: dc.w   0
+cpu_resting:    dc.w    0
+ko_finisher_flag: dc.w  0
+np_is_preview:  dc.w    0
+stat_head:      dc.w    0
+stat_body:      dc.w    0
+stat_dazes:     dc.w    0
+stat_blocks:    dc.w    0
+stat_exh:       dc.w    0
 p1_max_stamina: dc.w    63
 p2_max_stamina: dc.w    63
 p1_combo:       dc.w    0

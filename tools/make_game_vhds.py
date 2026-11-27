@@ -197,6 +197,17 @@ SPECS: tuple[GameSpec, ...] = (
         root_install=True,
         notes="Powermonger WW1 boots automatically from C:\\AUTO\\WW1.PRG before the GEM desktop starts (required by the game).",
     ),
+    GameSpec(
+        slug="seconds-out",
+        title="Seconds Out",
+        version="1.1",
+        hd_zip="SecondsOut_Enhanced_v1.1_HD.zip",
+        zip_root="SECONDS",
+        vhd_name="SecondsOut_v1.1.vhd",
+        out_zip_tmpl="SecondsOut_Enhanced_v1.1_VHD.zip",
+        volume="SECOUT",
+        autorun="C:\\SECONDS\\SECONDS.PRG",
+    ),
 )
 
 
@@ -266,6 +277,10 @@ For the full patch list and controls, see README.TXT / PATCHES.TXT inside the ga
 
 def build_vhd(spec: GameSpec, date: str, size_kb: int = DEFAULT_SIZE_KB) -> Path:
     gdir = DONE / spec.slug
+    if not gdir.is_dir():
+        alt = ROOT / "games" / "in_progress" / spec.slug
+        if alt.is_dir():
+            gdir = alt
     src_zip = gdir / "dist" / spec.hd_zip
     if not src_zip.is_file():
         sys.exit(f"missing source HD zip: {src_zip}")
