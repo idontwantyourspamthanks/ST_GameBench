@@ -8,7 +8,7 @@
 - Machine/RAM notes: HAGA, **2 MB minimum** (verified on Hatari and MiSTerFPGA across 2 MB & 4 MB Atari STE/ST with real ACSI `HDDRIVER` `.vhd` and self-booting 1.44 MB floppy).
 
 ## v1.1 Features (Atari STE Amiga Visuals, Audio & Match Polish)
-- **Kick Off 2 Amiga Tiled Pitch & 12-Bit Palette on STE (Triple-Buffered 50 FPS Full-Screen 320×200 Ring Engine on 2 MB+ STE):** All 4 Amiga pitches (`normal`, `wet`, `soggy`, `artificial`) converted to STE 12-bit RGB palettes + `80×96` tilemaps + 256 3bpp tiles (`AMIGAP0..3.BIN`), rendered across the **full 320×200 visible screen** into three 448-line linear ring buffers (`$0d0000`/`$0e2800`/`$0f5000`) via lockstep VBlank STE Hardware fine scrolling (`$ff8201/$03/$0d`, `$ff820f`, `$ff8265`), exact 0-pixel pitch-edge camera clamping across all four lines, 1-pass trimmed CPU/Blitter 4bpp sprites + pre-baked transparent vector radar (`X` resize, `D` toggle) + active player black underline + **transparent drop-shadowed Blitter bottom HUD** (kit-matched player names & score + crisp white clock floating directly over the grass, no bottom bar!) ([patches/ko2_ste.s](patches/ko2_ste.s)).
+- **Kick Off 2 Amiga Tiled Pitch & 12-Bit Palette on STE (Triple-Buffered 50 FPS Full-Screen 320×200 Ring Engine on 2 MB+ STE):** All 4 Amiga pitches (`normal`, `wet`, `soggy`, `artificial`) converted to STE 12-bit RGB palettes + `80×96` tilemaps + 256 3bpp tiles (`AMIGAP0..3.BIN`), rendered across the **full 320×200 visible screen** into three 448-line linear ring buffers (`$0d0000`/`$0e2800`/`$0f5000`) via lockstep VBlank STE Hardware fine scrolling (`$ff8201/$03/$0d`, `$ff820f`, `$ff8265`), exact 0-pixel pitch-edge camera clamping across all four lines, 1-pass trimmed CPU/Blitter 4bpp sprites + **160 KB 5-scale pre-baked transparent vector radar** (`$10e800..$1367ff`, hidden cleanly during player walk-out until arrival at the centre circle, with 0-stall `X` resize & `D` toggle) + active player black underline + **transparent drop-shadowed Blitter bottom HUD** (kit-matched player names & score + crisp white clock floating directly over the grass, no bottom bar!) ([patches/ko2_ste.s](patches/ko2_ste.s)).
 - **Kick Off 2 Amiga STE DMA Audio:** 17 Amiga 8-bit signed PCM sound effects (`AMIGASND.BIN`, 6,258 Hz mono) played via STE DMA audio hardware (`$ff8900..$ff8924`) with exact 16-bit word KO2 script parsing and zero Timer-A CPU overhead.
 - **Authentic 1989–90 92-Club Home & Away Kits, Auto Clash Avoidance & Kit Picker:**
   - All 92 English Football League clubs carry authentic 1989–90 Home (`1st`) and Away (`2nd`) kits across all 6 verified Kick Off 2 styles (`Plain`, `Stripes`, `Chest Band`, `Sleeves`, `Shoulders`, `Sash`).
@@ -39,16 +39,16 @@
 
 | Item | MD5 |
 |---|---|
-| `dist/PlayerManager_v1.1_patched_hd_2026-11-27.zip` | `30ad04d0a5c247e8f0172daa06573b9f` |
-| `dist/PlayerManager_v1.1_patched_vhd_2026-11-27.zip` | `a12ef5620d533458780293faf2b91b6f` |
-| `dist/PlayerManager_v1.1_floppy_2026-11-27.st` | `a809262ebd0531ff6ca460c6a625e5fc` |
-| `dist/PlayerManager_v1.1_floppy_2026-11-27.zip` | `d6691167f6eb7fb31038ffd4fd65999e` |
+| `dist/PlayerManager_v1.1_patched_hd_2026-11-27.zip` | `ca264ad4ea36283494704dc95ad893fb` |
+| `dist/PlayerManager_v1.1_patched_vhd_2026-11-27.zip` | `9869f9798ac172ff1d874ffdf7775a43` |
+| `dist/PlayerManager_v1.1_floppy_2026-11-27.st` | `a54ee543d3799a64a7803107b05f9d05` |
+| `dist/PlayerManager_v1.1_floppy_2026-11-27.zip` | `3bf560be9c48f81e89a72c64d317cb4e` |
 | `build/game/HAGA` | `5d573a9cd79de06588ce53da9aa44e05` |
 | `build/game/FILES/PMLA` | `5f5c99f9dacfc112170619c19d3b4e3c` |
 | `build/game/FILES/KO2ENG.BIN` | `934b13a84279197ab58d46312253f078` |
 | `build/game/FILES/KO2HND.BIN` | `a3505e2d266ec54f926b300b88d6be73` |
 | `build/game/FILES/PMCODE.BIN` | `b151b784eec464874beb2a0db9810fcb` |
-| `build/game/FILES/KO2STE.BIN` | `79c901794af46ffdd763c08ba64ddc80` |
+| `build/game/FILES/KO2STE.BIN` | `f19540a8267d3ebaa08fe7cd469fd5c6` |
 | `build/game/FILES/AMIGASND.BIN` | `d5bd5ab3b9e1051ed23d2d778a718753` |
 | `build/game/FILES/AMIGAP0.BIN` | `29cb99c7587974a2b2fb4a571c31eaa7` |
 
