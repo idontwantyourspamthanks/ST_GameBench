@@ -95,8 +95,8 @@ credit: movem.l d0-d7/a1-a4,-(sp)
         rts
 masks:  dc.b    -((EDGE>>0)&1),-((BODY>>0)&1),-((EDGE>>1)&1),-((BODY>>1)&1)
         dc.b    -((EDGE>>2)&1),-((BODY>>2)&1),-((EDGE>>3)&1),-((BODY>>3)&1)
-text:   dc.b    "v@VERSION@ enhanced by dad_prg",0
-chars:  dc.b    " .0123456789abcdeghnprvy_",0
+text:   dc.b    "v@VERSION@@VARIANT@ enhanced by dad_prg",0
+chars:  dc.b    " .0123456789abcdeghnprvyx_",0
         even
 glyphs:
         dc.b    $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00   ; ' '
@@ -123,4 +123,5 @@ glyphs:
         dc.b    $00,$00,$02,$fc,$11,$e6,$10,$e0,$10,$e0,$10,$e0,$00,$00   ; 'r'
         dc.b    $00,$00,$11,$e6,$11,$e6,$12,$6c,$04,$38,$08,$10,$00,$00   ; 'v'
         dc.b    $00,$00,$11,$e6,$11,$e6,$01,$7e,$01,$06,$11,$e6,$02,$7c   ; 'y'
+        dc.b    $00,$00,$11,$e6,$02,$7c,$04,$38,$02,$7c,$11,$e6,$00,$00   ; 'x'
         dc.b    $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$ff   ; '_'

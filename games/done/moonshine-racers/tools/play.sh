@@ -48,6 +48,7 @@ while [[ $# -gt 0 ]]; do
         --print)    PRINT=1 ;;
         --extrap)   ;;                      # no-op alias
         --noextrap) DROP+=(mg_sync mg_pace); ADD+=(mt_sync) ;;
+        --fast|--2x) BUILDARGS+=(--fast); VARIANT="${VARIANT}-2x" ;;
         --safex)    BUILDARGS+=(--set "SAFE=$2"); shift ;;
         --no-nomouse)  DROP+=(ta_nomouse) ;;
         --no-blit)     DROP+=(tb_blit tb_blit11 tb_blit13 tb_blit15) ;;
@@ -108,7 +109,7 @@ patched_build() {                          # $1 = hd | floppy
 if [[ $MEDIA == hd ]]; then
     PLAY="$ROOT/build/play-hd-$VARIANT"
     bld rm -rf "$PLAY"; bld mkdir -p "$PLAY"
-    if [[ $VARIANT == patched ]]; then
+    if [[ $VARIANT == patched* ]]; then
         patched_build hd
     else
         bld cp -r "$ROOT/originals/MOONSHR/." "$PLAY/"
@@ -118,7 +119,7 @@ if [[ $MEDIA == hd ]]; then
 else
     PLAY="$ROOT/build/play-floppy-$VARIANT"
     bld rm -rf "$PLAY"; bld mkdir -p "$PLAY"
-    if [[ $VARIANT == patched ]]; then
+    if [[ $VARIANT == patched* ]]; then
         patched_build floppy
         A="$PLAY/disk_a.st"; B="$PLAY/disk_b.st"
     else

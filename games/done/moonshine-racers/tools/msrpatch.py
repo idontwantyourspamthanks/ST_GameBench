@@ -132,8 +132,10 @@ ORG_RE = re.compile(r"^\s*org\s+(\S+)\s*$", re.I)
 HDR_RE = re.compile(r"^;\s*([a-z]+):\s*(.*)$")
 HB_ORG_RE = re.compile(r"^\s*org\s+HB\s*\+\s*\$([0-9a-fA-F]+)\s*$", re.I)
 VERSION_TAG = "@VERSION@"
+VARIANT_TAG = "@VARIANT@"
 CREDIT = "enhanced by dad_prg"
 CORE_FILES = ("core.s", "core_floppy.s")
+_VARIANT = ""                     # "" (normal 1x, TICK=30) or "x2" (--fast / --2x, TICK=15)
 
 
 def addr_expr(s: str) -> int:
@@ -175,7 +177,22 @@ def render_doc(text: str) -> str:
     """`{PATCHES}` = the default patches of the HD build (no floppy-only patch); `{PATCHES_FLOPPY}` = the default patches of the floppy build
     (HD file patches excluded: HAGA does not exist there); `{RAM}` = the payload/reserved-RAM map of the default HD set."""
     text = text.replace(VERSION_TAG, release_version())
+    text = text.replace(VARIANT_TAG, _VARIANT)
     text = text.replace("{GIT}", build_stamp())
+    if _VARIANT == "x2":
+        banner = (
+            "\n2X SPEED VARIANT (--fast / TICK=15)\n"
+            "  Target game speed is doubled from 10 to 20 logic steps per second (exact at 50 and 60 Hz).\n"
+            "  - 8 MHz STE: runs at ~17.3 real game steps/s (~1.7x faster movement; every frame is a real game step).\n"
+            "  - 16 MHz Mega STE / 32 MHz TT/Falcon: runs at the full 20.0 game steps/s (2.0x speed) with extra\n"
+            "    in-between pictures drawn on top.  Music and sound effects keep their normal tempo and pitch.\n"
+        )
+        lines = text.splitlines()
+        if len(lines) >= 3 and set(lines[2]) == {"="}:
+            lines[0] = lines[0].replace(f"v{release_version()}", f"v{release_version()}x2 (2x Speed Variant)")
+            text = "\n".join(lines[:3]) + "\n" + banner + "\n".join(lines[3:]) + "\n"
+        else:
+            text = banner + "\n" + text
     if "{RAM}" in text:
         text = text.replace("{RAM}", "\n".join(ram_map(*default_selection(load_patches(), load_file_patches(), False))))
     for token, floppy in (("{PATCHES}", False), ("{PATCHES_FLOPPY}", True)):
@@ -230,7 +247,7 @@ class Patch:
         self.conflicts = []       # patch names that must not be in the same build
         cur = None
         text = path.read_text()
-        text = text.replace(VERSION_TAG, release_version())
+        text = text.replace(VERSION_TAG, release_version()).replace(VARIANT_TAG, _VARIANT)
         for line in text.splitlines():
             if cur is None and re.match(r"^\s*\w+\s+equ\s+", line):
                 self.preamble.append(_override_equ(line))
@@ -1338,10 +1355,12 @@ def main():
     b.add_argument("--out", default="build/hd")
     b.add_argument("--zip", nargs="?", const="", default=None, help="also write a zip (default dist/MoonshineRacers_hd_v<VERSION>.zip)")
     b.add_argument("--floppy", action="store_true", help="build the two-disk floppy release (original disk A + our payload) instead of the HD folder")
+    b.add_argument("--fast", "--2x", dest="fast", action="store_true", help="build the 2x movement speed variant (TICK=15: 20 logic steps/s target, ~17.3 steps/s on 8 MHz STE, 20.0 steps/s on 16 MHz+)")
     b.add_argument("--set", action="append", metavar="NAME=VALUE", help=SET_HELP)
     lv = sub.add_parser("live")
     lv.add_argument("--only", nargs="*", default=None)
     lv.add_argument("--out", default="build/live/patches")
+    lv.add_argument("--fast", "--2x", dest="fast", action="store_true", help="build the 2x movement speed variant (TICK=15)")
     lv.add_argument("--set", action="append", metavar="NAME=VALUE", help=SET_HELP)
     sub.add_parser("list")
     sub.add_parser("verify")
@@ -1350,6 +1369,10 @@ def main():
     rd = sub.add_parser("doc", help="print a doc file with @VERSION@ / {PATCHES} replaced")
     rd.add_argument("file")
     a = ap.parse_args()
+    global _VARIANT
+    if getattr(a, "fast", False):
+        _VARIANT = "x2"
+        SET_OVERRIDES["TICK"] = "15"
     for kv in getattr(a, "set", None) or []:
         name, sep, val = kv.partition("=")
         if not sep or not re.fullmatch(r"[A-Za-z_]\w*", name) or not val.strip():
@@ -1391,12 +1414,16 @@ def main():
         raise SystemExit("invalid patch selection:\n  " + "\n  ".join(msgs))
     if a.cmd == "build":
         zp = None
+        fast = getattr(a, "fast", False)
         if a.zip is not None:
-            zp = Path(a.zip) if a.zip else ROOT / "dist" / (f"MoonshineRacers_{'floppy' if floppy else 'hd'}_v{release_version()}.zip")
+            tag = "_2x" if fast else ""
+            zp = Path(a.zip) if a.zip else ROOT / "dist" / (f"MoonshineRacers{tag}_{'floppy' if floppy else 'hd'}_v{release_version()}.zip")
         if floppy:
-            cmd_build_floppy(sel, fsel, ROOT / (a.out if a.out != "build/hd" else "build/floppy"), zp)
+            default_out = "build/floppy_2x" if fast else "build/floppy"
+            cmd_build_floppy(sel, fsel, ROOT / (a.out if a.out != "build/hd" else default_out), zp)
         else:
-            cmd_build(sel, ROOT / a.out, fsel, zp)
+            default_out = "build/hd_2x" if fast else "build/hd"
+            cmd_build(sel, ROOT / (a.out if a.out != "build/hd" else default_out), fsel, zp)
     else:
         if fsel and a.only is not None:
             raise SystemExit("file patches (HAGA) are not applicable to `live`: they are applied at build time")

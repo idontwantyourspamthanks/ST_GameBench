@@ -77,6 +77,7 @@ class GameSpec:
     root_install: bool = False  # True: extract zip_root contents directly to C:\ (Powermonger / WW1)
     renames: tuple[tuple[str, str], ...] = ()
     notes: str = ""
+    dir_slug: str | None = None  # optional directory name under games/done/ if different from slug
 
 
 SPECS: tuple[GameSpec, ...] = (
@@ -135,6 +136,19 @@ SPECS: tuple[GameSpec, ...] = (
         out_zip_tmpl="MoonshineRacers_vhd_v1.4.1.zip",
         volume="MOONSHR",
         autorun="C:\\MOONSHR\\RUNME.TOS",
+    ),
+    GameSpec(
+        slug="moonshine-racers-2x",
+        dir_slug="moonshine-racers",
+        title="Moonshine Racers (2x Speed)",
+        version="1.4.1",
+        hd_zip="MoonshineRacers_2x_hd_v1.4.1.zip",
+        zip_root="MOONSHR",
+        vhd_name="MoonshineRacers_2x_v1.4.1.vhd",
+        out_zip_tmpl="MoonshineRacers_2x_vhd_v1.4.1.zip",
+        volume="MOONSHR2X",
+        autorun="C:\\MOONSHR\\RUNME.TOS",
+        notes="2x speed variant (TICK=15): target game speed is doubled from 10 to 20 logic steps/s (~17.3 steps/s on 8 MHz STE, 20.0 steps/s exact on 16 MHz+ Mega STE/TT/Falcon).",
     ),
     GameSpec(
         slug="nebulus",
@@ -212,11 +226,11 @@ SPECS: tuple[GameSpec, ...] = (
     GameSpec(
         slug="seconds-out",
         title="Seconds Out",
-        version="1.3",
-        hd_zip="SecondsOut_Enhanced_v1.3_HD.zip",
+        version="1.4",
+        hd_zip="SecondsOut_Enhanced_v1.4_HD.zip",
         zip_root="SECONDS",
-        vhd_name="SecondsOut_v1.3.vhd",
-        out_zip_tmpl="SecondsOut_Enhanced_v1.3_VHD.zip",
+        vhd_name="SecondsOut_v1.4.vhd",
+        out_zip_tmpl="SecondsOut_Enhanced_v1.4_VHD.zip",
         volume="SECOUT",
         autorun=None,
         root_install=True,
@@ -291,9 +305,10 @@ For the full patch list and controls, see README.TXT / PATCHES.TXT inside the ga
 
 
 def build_vhd(spec: GameSpec, date: str, size_kb: int = DEFAULT_SIZE_KB) -> Path:
-    gdir = DONE / spec.slug
+    folder = spec.dir_slug or spec.slug
+    gdir = DONE / folder
     if not gdir.is_dir():
-        alt = ROOT / "games" / "in_progress" / spec.slug
+        alt = ROOT / "games" / "in_progress" / folder
         if alt.is_dir():
             gdir = alt
     src_zip = gdir / "dist" / spec.hd_zip
