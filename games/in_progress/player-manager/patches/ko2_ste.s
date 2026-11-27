@@ -134,9 +134,14 @@ STE_DMA_CNT:    dc.w    0
 ; Double-Buffered Video State
 ; ---------------------------------------------------------------------------
 STE_PITCH_OK:   dc.w    0               ; 1 = AMIGAPx.BIN loaded
-STE_BIG_RAM:    dc.w    0               ; 1 = >= 2 MB STE (448-line mirrored linear rings, 0 Timer B, $c0 HOG!)
-STE_SHOW_IDX:   dc.w    0               ; 0 = Buffer A ready, 1 = Buffer B ready (set by ste_pitch_update)
-STE_DISP_IDX:   dc.w    0               ; 0 = Buffer A live,  1 = Buffer B live  (latched by ste_vbl_irq!)
+STE_BIG_RAM:    dc.w    0               ; 1 = >= 2 MB STE (triple-buffered 448-line linear rings, 0 Timer B, $c0 HOG!)
+STE_SHOW_IDX:   dc.w    0               ; newest completed buffer index (0..1 on 1MB, 0..2 on 2MB+)
+STE_DISP_IDX:   dc.w    0               ; buffer index currently being scanned out by Shifter
+STE_PEND_IDX:   dc.w    0               ; 2MB+ triple-buf: buffer index queued in $8201/$03/$0d for next VSync!
+STE_PEND_HSCR:  dc.w    0               ; 2MB+ triple-buf: hscr matching $8201/$03/$0d (applied after VSync!)
+STE_BK_IDX:     dc.w    0               ; temp backbuffer index being rendered in ste_pitch_update
+STE_HUD_TICK:   dc.w    0               ; HUD cache refresh counter (rebuilds cache every 8 frames)
+STE_HUD_CCNT:   dc.w    0               ; cached non-empty HUD word count (0..128)
 STE_STATS_DIRTY: dc.w   0               ; 1 = returning from Half-Time/Stats ($078000 was overwritten)
 STE_ORIG_TB:    dc.l    0               ; saved KO2 original Timer B vector ($120.w)
 STE_ORIG_VBL:   dc.l    0               ; saved TOS original VBL vector ($70.w)
@@ -171,6 +176,13 @@ DB_B:
         dc.w    224, 0
         dc.l    STE_HUD_SAV_B, 0, 0
         dc.w    0, 0
+DB_C:                                   ; 3rd buffer (2 MB+ STE triple-buffering -> ZERO $8205 writes!)
+        dc.l    0, 0, 0, 0, 0, 0
+        dc.w    -999, -999, 0, 0, 0, 0
+        dc.l    0, 0
+        dc.w    224, 0
+        dc.l    0, 0, 0
+        dc.w    0, 0
 
 ; ---------------------------------------------------------------------------
 ; ste_install_hooks: Patch KO2ENG.BIN at $010000..$024000 for pure STE mode
@@ -186,6 +198,8 @@ ste_install_hooks:
         clr.w   STE_PITCH_OK
         clr.w   STE_SHOW_IDX
         clr.w   STE_DISP_IDX
+        clr.w   STE_PEND_IDX
+        clr.w   STE_PEND_HSCR
         clr.w   STE_STATS_DIRTY
         clr.l   STE_ORIG_TB
         clr.l   STE_ORIG_VBL
@@ -262,10 +276,32 @@ ste_inst_trap8:
         cmpi.l  #$180000,d2             ; >= 1.5 MB (2 MB / 4 MB STE)?
         blt.s   .it8_1m
         move.w  #1,STE_BIG_RAM
+        ; Triple-buffered 448-line linear rings in upper RAM (38 KB below TOS screen!):
+        ;   DB_A = phystop - $4c000 (75 KB)
+        ;   DB_B = phystop - $38000 (75 KB)
+        ;   DB_C = phystop - $24000 (75 KB)
+        ;   DB_C metadata/save-under = phystop - $54000 (32 KB)
         move.l  d2,d0
-        subi.l  #$038000,d0             ; Ring A = phystop - 224 KB (448 lines, 0 Timer B!)
+        subi.l  #$04c000,d0
         move.l  d2,d1
-        subi.l  #$024000,d1             ; Ring B = phystop - 144 KB (38 KB below TOS screen!)
+        subi.l  #$038000,d1
+        lea     DB_C(pc),a0
+        move.l  d2,d3
+        subi.l  #$024000,d3
+        move.l  d3,DB_RING(a0)
+        move.l  d2,d3
+        subi.l  #$054000,d3             ; DB_C save/meta base
+        move.l  d3,DB_SAV(a0)           ; +$0000 (8 KB)
+        addi.l  #$2000,d3
+        move.l  d3,DB_HUDSAV(a0)        ; +$2000 (3 KB)
+        addi.l  #$1000,d3
+        move.l  d3,DB_RPOOL(a0)         ; +$3000 (2 KB)
+        addi.l  #$0800,d3
+        move.l  d3,DB_STK(a0)           ; +$3800 (512B)
+        addi.l  #$0200,d3
+        move.l  d3,DB_RLR(a0)           ; +$3a00 (448B)
+        addi.l  #$0200,d3
+        move.l  d3,DB_RDR(a0)           ; +$3c00 (576B)
 .it8_1m:
         lea     DB_A(pc),a0
         move.l  d0,DB_RING(a0)
@@ -316,6 +352,10 @@ ste_load_pitch:
         bne.s   .lp_fail
         clr.w   STE_SHOW_IDX
         clr.w   STE_DISP_IDX
+        clr.w   STE_PEND_IDX
+        clr.w   STE_PEND_HSCR
+        clr.w   STE_HUD_TICK
+        clr.w   STE_HUD_CCNT
         clr.w   STE_SPR_CNT
         clr.w   STE_RAD_C_SC
         clr.l   STE_UL_DASH
@@ -331,18 +371,11 @@ ste_load_pitch:
 
 ste_reset_bufs:
         lea     DB_A(pc),a0
-        move.w  #-999,DB_TX(a0)
-        move.w  #-999,DB_TY(a0)
-        clr.w   DB_SCNT(a0)
-        clr.w   DB_RLCNT(a0)
-        clr.w   DB_RDCNT(a0)
-        move.l  DB_RING(a0),DB_START(a0)
-        move.l  DB_RING(a0),DB_WRAP(a0)
-        move.w  #RING_H,DB_WRAPY(a0)
-        clr.w   DB_HSCR(a0)
-        clr.w   DB_HUD_H1(a0)
-        clr.w   DB_HUD_H2(a0)
+        bsr.s   .rb_one
         lea     DB_B(pc),a0
+        bsr.s   .rb_one
+        lea     DB_C(pc),a0
+.rb_one:
         move.w  #-999,DB_TX(a0)
         move.w  #-999,DB_TY(a0)
         clr.w   DB_SCNT(a0)
@@ -541,7 +574,42 @@ ste_vbl_end:
         move.l  (a0)+,(a1)+
         move.l  (a0)+,(a1)+
 
-        ; Select active Front buffer descriptor & latch STE_DISP_IDX!
+        ; Branch: 2 MB+ STE (Triple-Buffered PURE VBASE — NEVER writes $8205/$07/$09 -> ZERO judder!)
+        ; vs 1 MB STE (Double-Buffered + Timer B wrap).
+        tst.w   STE_BIG_RAM
+        beq.s   .ve_1m
+
+        ; 2 MB+ STE:
+        ; 1. Apply HSCROLL/LINEWID for STE_PEND_IDX (the VBASE GSTMCU JUST latched at VSync!)
+        move.w  STE_PEND_HSCR(pc),d0
+        beq.s   .ve_bh0
+        clr.b   $ffff820f.w
+        move.b  d0,$ffff8265.w
+        bra.s   .ve_b2
+.ve_bh0:
+        move.b  #4,$ffff820f.w
+        clr.b   $ffff8265.w
+.ve_b2:
+        move.w  STE_PEND_IDX(pc),STE_DISP_IDX
+        ; 2. Queue newest completed buffer (STE_SHOW_IDX) into VBASE ($8201/$03/$0d) ONLY!
+        move.w  STE_SHOW_IDX(pc),d0
+        move.w  d0,STE_PEND_IDX
+        lsl.w   #6,d0                   ; * 64 (DB_SIZE)
+        lea     DB_A(pc),a0
+        adda.w  d0,a0
+        move.w  DB_HSCR(a0),STE_PEND_HSCR
+        move.l  DB_START(a0),d0
+        move.l  d0,d1
+        swap    d1
+        move.b  d1,$ffff8201.w          ; VBASE HI
+        move.w  d0,d1
+        lsr.w   #8,d1
+        move.b  d1,$ffff8203.w          ; VBASE MID
+        move.b  d0,$ffff820d.w          ; VBASE LO (latched cleanly by GSTMCU at next VSync!)
+        bra.w   .ve_done
+
+.ve_1m:
+        ; 1 MB STE: Select active Front buffer descriptor & latch STE_DISP_IDX!
         lea     DB_A(pc),a0
         move.w  STE_SHOW_IDX(pc),d0
         move.w  d0,STE_DISP_IDX
@@ -571,8 +639,6 @@ ste_vbl_end:
         move.b  #4,$ffff820f.w          ; hscroll == 0 -> LINEWID = 4 words (+8B = 168B!)
         clr.b   $ffff8265.w             ; HSCROLL = 0
 .ve_tb:
-        tst.w   STE_BIG_RAM
-        bne.s   .ve_done                ; 2 MB+ STE: ZERO Timer B IRQs EVER!
         move.l  DB_WRAP(a0),STE_TB_WRAP_A
         move.w  DB_WTGT(a0),STE_TB_TGT_W
         move.w  DB_WRAPY(a0),d0
@@ -840,8 +906,29 @@ ste_pitch_update:
         ext.l   d5
         move.l  d5,STE_BK_TX8
 
-        ; Wait until VBL has actually latched STE_SHOW_IDX onto the Shifter (STE_DISP_IDX == STE_SHOW_IDX)
-        ; so we NEVER erase/draw into a buffer that is still being scanned out on-screen!
+        ; Select INVISIBLE Backbuffer descriptor a6:
+        ;   2 MB+ STE: Triple-buffered -> pick free buffer != STE_DISP_IDX & != STE_PEND_IDX (ZERO wait!)
+        ;   1 MB  STE: Double-buffered -> wait until VBL latches STE_SHOW_IDX
+        tst.w   STE_BIG_RAM
+        beq.s   .pu_wait_disp
+        moveq   #0,d0
+        cmp.w   STE_DISP_IDX(pc),d0
+        beq.s   .pb_1
+        cmp.w   STE_PEND_IDX(pc),d0
+        bne.s   .pb_got
+.pb_1:  moveq   #1,d0
+        cmp.w   STE_DISP_IDX(pc),d0
+        beq.s   .pb_2
+        cmp.w   STE_PEND_IDX(pc),d0
+        bne.s   .pb_got
+.pb_2:  moveq   #2,d0
+.pb_got:
+        move.w  d0,STE_BK_IDX
+        lsl.w   #6,d0                   ; * 64 (DB_SIZE)
+        lea     DB_A(pc),a6
+        adda.w  d0,a6
+        bra.s   .pu_got_bk
+
 .pu_wait_disp:
         move.w  STE_SHOW_IDX(pc),d0
         cmp.w   STE_DISP_IDX(pc),d0
@@ -975,9 +1062,14 @@ ste_pitch_update:
         move.w  d1,DB_WRAPY(a6)
         move.w  STE_BK_HSCR(pc),DB_HSCR(a6)
 
-        ; ATOMIC 1-instruction Front <-> Back buffer flip!
+        ; ATOMIC 1-instruction Front <-> Back buffer publish!
+        tst.w   STE_BIG_RAM
+        beq.s   .pu_flip1m
+        move.w  STE_BK_IDX(pc),STE_SHOW_IDX
+        bra.s   .pu_ret
+.pu_flip1m:
         eori.w  #1,STE_SHOW_IDX
-
+.pu_ret:
         movem.l (sp)+,d0-d7/a0-a3/a5-a6
         rts
 
@@ -1035,20 +1127,62 @@ ste_bk_erase_hud:
         rts
 
 ; ---------------------------------------------------------------------------
-; Ultra-Fast Zero-Skipping 68000 Transparent Bottom HUD (~1.0 ms vs 7 ms Blitter!)
-; Skips >80% empty word-columns, draws crisp white/kit-matched text + 1px right
-; black drop-shadow (Col 9) on the exact same scanline, hscr & wrap aware!
+; Cached Zero-Skipping 68000 Transparent Bottom HUD (~0.8 ms -> LOCKED 50 FPS!)
+; Rebuilds non-empty word cache (STE_HUD_MASK = $07b600, max 128 x 10B = 1280B)
+; every 8th frame (6.25 Hz); on 7/8 frames skips the 320-word scan completely!
 ; ---------------------------------------------------------------------------
 ste_bk_draw_hud:
         movem.l d0-d7/a0-a5,-(sp)
-        movea.l DB_HUDSAV(a6),a2        ; a2 = save-under record cursor (max 130 x 20B)
-        lea     STE_HUD_SRC.l,a3        ; a3 = KO2 hidden HUD ($07f1c0)
-        clr.w   DB_HUD_H1(a6)           ; record count
-        moveq   #0,d7                   ; sy = 0..15 (full 8px font rows 0..7 & 8..15!)
-.bdh_ylp:
-        ; Compute ring line yr = y0 + HUD_SCR_Y + sy (wrap % 224 only on 1 MB STE!)
-        move.w  STE_BK_Y0(pc),d0
-        addi.w  #HUD_SCR_Y,d0
+        move.w  STE_HUD_TICK(pc),d0
+        addq.w  #1,STE_HUD_TICK
+        andi.w  #7,d0
+        bne.s   .bdh_use_cache
+
+        ; Rebuild cache: scan $07f1c0 (16 lines x 20 cols), store (sy.w, col8.w, mask.w, P1.w, P2.w)
+        lea     STE_HUD_SRC.l,a0
+        lea     STE_HUD_MASK.l,a2       ; $07b600..$07baff (128 x 10B = 1,280B < $07bc00!)
+        moveq   #0,d5                   ; cached count
+        moveq   #0,d7                   ; sy = 0..15
+.hc_y:  moveq   #0,d6                   ; col8 = 0, 8, 16, ..., 152
+.hc_x:  move.l  (a0)+,d0
+        or.l    (a0)+,d0
+        beq.s   .hc_nx
+        cmpi.w  #128,d5
+        bcc.s   .hc_done
+        move.w  -8(a0),d0               ; P0
+        move.w  -6(a0),d1               ; P1 (Away)
+        move.w  -4(a0),d2               ; P2 (Home)
+        or.w    d1,d0
+        or.w    d2,d0                   ; mask = P0 | P1 | P2
+        beq.s   .hc_nx
+        move.w  d7,(a2)+                ; +0: sy (0..15)
+        move.w  d6,(a2)+                ; +2: col*8 (0..152)
+        move.w  d0,(a2)+                ; +4: mask
+        move.w  d1,(a2)+                ; +6: P1 (Away)
+        move.w  d2,(a2)+                ; +8: P2 (Home)
+        addq.w  #1,d5
+.hc_nx: addq.w  #8,d6
+        cmpi.w  #160,d6
+        blt.s   .hc_x
+        addq.w  #1,d7
+        cmpi.w  #16,d7
+        blt.s   .hc_y
+.hc_done:
+        move.w  d5,STE_HUD_CCNT
+
+.bdh_use_cache:
+        move.w  STE_HUD_CCNT(pc),d6
+        beq.w   .bdh_done
+        move.w  d6,DB_HUD_H1(a6)
+        subq.w  #1,d6
+        lea     STE_HUD_MASK.l,a3       ; cached non-empty entries
+        movea.l DB_HUDSAV(a6),a2        ; save-under record cursor
+        movea.l DB_RING(a6),a4          ; ring base
+        add.l   STE_BK_TX8(pc),a4       ; ring base + tx*8
+        move.w  STE_BK_Y0(pc),d7
+        addi.w  #HUD_SCR_Y,d7           ; d7 = y0 + HUD_SCR_Y
+.bdh_lp:
+        move.w  (a3)+,d0                ; sy (0..15)
         add.w   d7,d0
         tst.w   STE_BIG_RAM
         bne.s   .bdh_yok
@@ -1057,66 +1191,54 @@ ste_bk_draw_hud:
         subi.w  #RING_H,d0
 .bdh_yok:
         mulu.w  #RING_STRIDE,d0
-        add.l   STE_BK_TX8(pc),d0
-        movea.l DB_RING(a6),a1
-        adda.l  d0,a1                   ; a1 = dst_line on Backbuffer
-        movea.l a3,a0                   ; a0 = src_line in $07f1c0
-        moveq   #19,d6                  ; 20 word-columns (320px)
-.bdh_xlp:
-        move.w  (a0),d0                 ; hud P0 (white clock/scorer)
-        move.w  2(a0),d1                ; hud P1 (Away kit)
-        move.w  4(a0),d2                ; hud P2 (Home kit)
-        move.w  d0,d3
-        or.w    d1,d3
-        or.w    d2,d3                   ; d3 = text mask (P0 | P1 | P2)
-        beq.w   .bdh_nx                 ; >80% empty -> skip immediately!
-        cmpi.w  #130,DB_HUD_H1(a6)
-        bcc.w   .bdh_done
+        moveq   #0,d1
+        move.w  (a3)+,d1
+        add.l   d1,d0
+        movea.l a4,a1
+        adda.l  d0,a1                   ; a1 = dst_ptr on Backbuffer
         ; Save 2 adjacent 4bpp words (16 bytes) at a1 into record (a2)
         move.l  a1,(a2)+
         move.l  (a1),(a2)+
         move.l  4(a1),(a2)+
         move.l  8(a1),(a2)+
         move.l  12(a1),(a2)+
-        addq.w  #1,DB_HUD_H1(a6)
 
-        ; Build 32-bit shifted masks for hscr = STE_BK_HSCR (0..15):
-        ;   d3 = text mask, d4 = 1px right black shadow = (d3 >> 1) & ~d3
+        move.w  (a3)+,d3                ; mask
+        move.w  (a3)+,d1                ; Away (P1 -> Col 12)
+        move.w  (a3)+,d2                ; Home (P2 -> Col 10)
         move.w  STE_BK_HSCR(pc),d5
         swap    d3
         clr.w   d3
-        lsr.l   d5,d3                   ; d3.l = text mask (hi=word0, lo=word1)
+        lsr.l   d5,d3
         move.l  d3,d4
         lsr.l   #1,d4
         move.l  d3,d0
         not.l   d0
-        and.l   d0,d4                   ; d4.l = 1px right shadow mask (Col 9 black!)
+        and.l   d0,d4                   ; 1px right black shadow (Col 9)
         swap    d1
         clr.w   d1
-        lsr.l   d5,d1                   ; d1.l = Away mask (Col 12 -> P2)
+        lsr.l   d5,d1
         swap    d2
         clr.w   d2
-        lsr.l   d5,d2                   ; d2.l = Home mask (Col 10 -> P1)
+        lsr.l   d5,d2
 
-        ; Composite word 0 (high words of d3, d4, d1, d2) at (a1)
         swap    d3
         swap    d4
         swap    d1
         swap    d2
         move.w  d3,d0
-        or.w    d4,d0                   ; total mask = text | shadow
+        or.w    d4,d0
         beq.s   .bdh_w1
         move.w  d0,d5
         not.w   d5
         and.w   d5,(a1)
-        or.w    d4,(a1)                 ; P0 = shadow (Col 9!)
+        or.w    d4,(a1)
         and.w   d5,2(a1)
-        or.w    d2,2(a1)                ; P1 = Home (Col 10!)
+        or.w    d2,2(a1)
         and.w   d5,4(a1)
-        or.w    d1,4(a1)                ; P2 = Away (Col 12!)
-        or.w    d0,6(a1)                ; P3 = text | shadow (Col 8 white / 9 / 10 / 12!)
+        or.w    d1,4(a1)
+        or.w    d0,6(a1)
 .bdh_w1:
-        ; Composite word 1 (low words of d3, d4, d1, d2) at 8(a1)
         swap    d3
         swap    d4
         swap    d1
@@ -1134,14 +1256,7 @@ ste_bk_draw_hud:
         or.w    d1,12(a1)
         or.w    d0,14(a1)
 .bdh_nx:
-        addq.l  #8,a0
-        addq.l  #8,a1
-        dbra    d6,.bdh_xlp
-.bdh_ny:
-        lea     160(a3),a3
-        addq.w  #1,d7
-        cmpi.w  #16,d7
-        blt.w   .bdh_ylp
+        dbra    d6,.bdh_lp
 .bdh_done:
         movem.l (sp)+,d0-d7/a0-a5
         rts
@@ -1969,6 +2084,10 @@ ste_trap8_handler:
         move.w  #(2*RING_H+3),BLT_YCOUNT.w ; 451 * 168 = 75,768B
         move.b  #$c0,BLT_LINE.w
         lea     DB_B(pc),a0
+        move.l  DB_RING(a0),BLT_DST_ADDR.w
+        move.w  #(2*RING_H+3),BLT_YCOUNT.w
+        move.b  #$c0,BLT_LINE.w
+        lea     DB_C(pc),a0
         move.l  DB_RING(a0),BLT_DST_ADDR.w
         move.w  #(2*RING_H+3),BLT_YCOUNT.w
         move.b  #$c0,BLT_LINE.w
