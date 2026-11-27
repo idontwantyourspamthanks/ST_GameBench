@@ -380,6 +380,8 @@ def build(uncouple: bool = True, use_blitter: bool = True, tween: bool = True):
         # Malone "WELL DONE" screen: allow Joy1 Fire / auto-exit ($46c0) & preserve G_WIN ($472e)
         (0x46C0, bytes.fromhex("4a790000425c"), jsr_abs(PATCH_BASE + 0xA8)),
         (0x472E, bytes.fromhex("427900003a5e"), b"\x4e\x71" * 3),
+        # KO Uppercut smashes High Guard when opponent is Dazed, Exhausted, or low stamina (<16)
+        (0x2AF8, bytes.fromhex("4ef900002bb8"), jmp_abs(PATCH_BASE + 0xAC)),
     ]
 
     # Strip \r before \0 in all filename strings

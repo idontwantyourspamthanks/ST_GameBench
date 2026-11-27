@@ -154,6 +154,7 @@ cfg_2p_mode:     dc.w   0                       ; +$8e: 0 = 1P Career, 1 = 2P Ve
 cfg_style:       dc.w   0                       ; +$a4: 0=Bal, 1=Speed, 2=Heavy, 3=IronChin
 cfg_2p_opp:      dc.w   0                       ; +$a6: 0..4 opponent for 2P mode
                 jmp     hook_welldone_poll(pc)  ; +$a8: $46c0 (Malone WELL DONE exit on Fire/Space!)
+                jmp     hook_ko_guard_break(pc) ; +$ac: $2af8 (KO Uppercut smashes tired/dazed High Guard!)
 
 ; =============================================================================
 ; 1. MASK CACHE BUILDERS
@@ -1153,9 +1154,9 @@ drain_p2_stamina:
 .dp2_ok:
                 rts
 
-; Reduce P1 max stamina by 4 (floor 24) when hit by 3+ combo
+; Reduce P1 max stamina by 2 (floor 24) when hit by 3+ combo (multi-round attrition)
 reduce_p1_max_stamina:
-                subq.w  #4,p1_max_stamina
+                subq.w  #2,p1_max_stamina
                 cmpi.w  #24,p1_max_stamina
                 bge.s   .rm1_ok
                 move.w  #24,p1_max_stamina
@@ -1168,9 +1169,9 @@ reduce_p1_max_stamina:
                 move.w  #$ffff,p1_stam_drawn    ; force HUD bar redraw
                 rts
 
-; Reduce P2 max stamina by 4 (floor 24) when hit by 3+ combo
+; Reduce P2 max stamina by 2 (floor 24) when hit by 3+ combo (multi-round attrition)
 reduce_p2_max_stamina:
-                subq.w  #4,p2_max_stamina
+                subq.w  #2,p2_max_stamina
                 cmpi.w  #24,p2_max_stamina
                 bge.s   .rm2_ok
                 move.w  #24,p2_max_stamina
@@ -1634,14 +1635,14 @@ hook_p1_dmg:
 .p1d_body:
                 addq.w  #1,stat_body
                 clr.w   p2_head_streak          ; body hit resets head-hit streak
-                moveq   #7,d0                   ; tactical body-shot stamina drain (-7)
-                ; Hagman (2 = weedy body) & Ronco (3 = stamina-weak) take extra -10 body drain!
+                moveq   #5,d0                   ; balanced body-shot stamina drain (-5)
+                ; Hagman (2 = weedy body) & Ronco (3 = stamina-weak) take extra -8 body drain!
                 cmpi.w  #2,G_OPP_IDX.l
                 beq.s   .p1d_body_ex
                 cmpi.w  #3,G_OPP_IDX.l
                 bne.s   .p1d_body_cr
 .p1d_body_ex:
-                moveq   #10,d0
+                moveq   #8,d0
 .p1d_body_cr:
                 tst.w   cfg_game_mode
                 bne.s   .p1d_stam
@@ -1693,13 +1694,23 @@ hook_p1_dmg:
                 moveq   #2,d6
                 bra.s   .p1d_apply
 .p1d_chk_hvy:
-                cmpi.w  #2,d0                   ; Heavy Hitter: +50% power!
+                cmpi.w  #2,d0                   ; Heavy Hitter: +25% + 1 power!
                 bne.s   .p1d_apply
                 move.w  d6,d0
-                lsr.w   #1,d0
+                lsr.w   #2,d0
                 addq.w  #1,d0
                 add.w   d0,d6
 .p1d_apply:
+                ; Body shots deal -50% HP damage (lsr #1, min 1) so head shots stay primary HP damage!
+                cmpi.w  #4,d7
+                beq.s   .p1d_body_hp
+                cmpi.w  #6,d7
+                bne.s   .p1d_p2def
+.p1d_body_hp:
+                lsr.w   #1,d6
+                bne.s   .p1d_p2def
+                moveq   #1,d6
+.p1d_p2def:
                 ; In 2P Versus, apply P2's defensive style (Heavy=Glass Jaw +50%, Iron Chin -25%)!
                 tst.w   cfg_2p_mode
                 beq.s   .p1d_cr_chk
@@ -1813,7 +1824,7 @@ hook_p2_dmg:
                 cmpi.w  #2,d0
                 bne.s   .p2d_chin
                 move.w  d6,d0
-                lsr.w   #1,d0
+                lsr.w   #2,d0
                 addq.w  #1,d0
                 add.w   d0,d6
 .p2d_chin:
@@ -1907,7 +1918,15 @@ hook_opp_move_sub:
 .oms_skip:
                 jmp     GAME_BASE+$13ae
 
-; Opponent attack initiation: block if dazed, exhausted, stamina < 10%, or CPU resting!
+; Helper: returns d0.w = |G_P2_X - G_P1_X|
+cpu_dist_to_p1:
+                move.w  G_P2_X.l,d0
+                sub.w   G_P1_X.l,d0
+                bge.s   .cdp_ok
+                neg.w   d0
+.cdp_ok:        rts
+
+; Opponent attack initiation: block if dazed, exhausted, stamina < 10%, resting, OR out of range (>26px)!
 hook_opp_punch_a:
                 tst.w   p2_daze_tmr
                 bne.s   .opa_skip
@@ -1919,6 +1938,9 @@ hook_opp_punch_a:
                 bne.s   .opa_go
                 tst.w   cpu_resting
                 bne.s   .opa_skip
+                bsr.s   cpu_dist_to_p1
+                cmpi.w  #26,d0                  ; don't throw pointless punches miles away!
+                bgt.s   .opa_skip
 .opa_go:
                 moveq   #10,d0
                 tst.w   cfg_2p_mode
@@ -1944,6 +1966,9 @@ hook_opp_punch_b:
                 bne.s   .opb_go
                 tst.w   cpu_resting
                 bne.s   .opb_skip
+                bsr.w   cpu_dist_to_p1
+                cmpi.w  #26,d0                  ; only punch within sensible range!
+                bgt.s   .opb_skip
 .opb_go:
                 moveq   #10,d0
                 tst.w   cfg_2p_mode
@@ -1976,6 +2001,9 @@ hook_opp_special:
                 bne.s   .ops_skip
                 tst.w   cpu_resting
                 bne.s   .ops_skip
+                bsr.w   cpu_dist_to_p1
+                cmpi.w  #28,d0                  ; only launch special when within striking range!
+                bgt.s   .ops_skip
                 cmpi.w  #30,p2_stamina          ; Smart CPU: save Specials for >=30 stamina!
                 blt.s   .ops_skip
                 tst.w   p2_spec_cd
@@ -2059,8 +2087,10 @@ hook_load_opp:
                 move.w  #2,$82(a0)
                 bra.s   .bal_init_tmr
 .bal_malone:
-                ; M. Malone (4): Ruthless Undefeated Contender (fast, High 3 / Low 3 / Spec 6, heavy hits)
-                move.w  #5,$20(a0)
+                ; M. Malone (4): Ruthless Contender (fair head-hit window: $20=9, $22=8, $38=1!)
+                move.w  #9,$20(a0)
+                move.w  #8,$22(a0)
+                move.w  #1,$38(a0)
                 move.w  #60,$3a(a0)
                 move.w  #2,$1e(a0)
                 move.w  #14,$34(a0)
@@ -2096,16 +2126,36 @@ hook_cpu_react:
 .cr_skip:
                 rts
 
-; Auto-block ($4ab8, opcode 13): skip when dazed or exhausted!
+; Auto-block ($4ab8, opcode 13): skip when dazed, exhausted, or low stamina (<16)!
 hook_react_blk:
                 tst.w   p2_daze_tmr
                 bne.s   .rb_skip
                 tst.w   p2_exhausted
                 bne.s   .rb_skip
+                cmpi.w  #16,p2_stamina
+                blt.s   .rb_skip
                 tst.w   G_P2_ATK_ACT.l
                 jmp     GAME_BASE+$4abe
 .rb_skip:
                 rts
+
+; KO Uppercut Guard-Break ($2af8): 50% chance to smash through High Guard when
+; opponent is Dazed, Exhausted, or <16 stamina (opponent blocks 50% fewer KOs than usual!)
+hook_ko_guard_break:
+                cmpi.w  #8,d7                   ; KO Uppercut (d7 == 8)?
+                bne.s   .kgb_blk
+                tst.w   p2_daze_tmr
+                bne.s   .kgb_50
+                tst.w   p2_exhausted
+                bne.s   .kgb_50
+                cmpi.w  #16,p2_stamina
+                bge.s   .kgb_blk
+.kgb_50:
+                btst    #0,logic_tick_cnt+1(pc) ; 50% guard-break chance (prevents KO spam!)
+                beq.s   .kgb_blk
+                jmp     GAME_BASE+$2b22         ; smash through High Guard!
+.kgb_blk:
+                jmp     GAME_BASE+$2bb8         ; normal High Guard block
 
 ; =============================================================================
 ; 9. 2-PLAYER MODE & DAZED CONTROL REVERSAL
@@ -2113,23 +2163,37 @@ hook_react_blk:
 hook_opp_ai_entry:
                 tst.w   cfg_2p_mode
                 bne.w   p2_human_ctrl
-                ; If CPU is dazed, force evade/retreat flag ($34aa) so it only backs off!
+                ; 1. If CPU is dazed or exhausted, force retreat/evade ($34aa) to recover!
                 tst.w   p2_daze_tmr
-                bne.s   .oae_evade
-                ; Smarter CPU stamina management (hysteresis breather per fighter!):
-                ; Ronco (3) & Malone (4) press aggressively if player is dazed or exhausted!
-                move.w  G_OPP_IDX.l,d0
-                cmpi.w  #3,d0
+                bne.w   .oae_evade
+                tst.w   p2_exhausted
+                bne.w   .oae_evade
+
+                ; 2. Killer Instinct: if player is low stamina (<16), exhausted, or dazed
+                ;    AND CPU has gas (>=12), cancel rest and hunt the player down!
+                cmpi.w  #12,p2_stamina
                 blt.s   .oae_stam
                 tst.w   p1_daze_tmr
-                bne.s   .oae_push
+                bne.s   .oae_hunt
                 tst.w   p1_exhausted
-                beq.s   .oae_stam
-.oae_push:
+                bne.s   .oae_hunt
+                cmpi.w  #16,p1_stamina
+                bge.s   .oae_stam
+.oae_hunt:
                 clr.w   cpu_resting
-                bra.s   .oae_go
+                clr.w   GAME_BASE+$34aa.l       ; actively chase player!
+                ; Accelerate CPU attack readiness when in striking range (<=26px)
+                bsr.w   cpu_dist_to_p1
+                cmpi.w  #26,d0
+                bgt.s   .oae_chase_boost
+                cmpi.w  #2,GAME_BASE+$2f52.l
+                blt.w   .oae_go
+                subq.w  #1,GAME_BASE+$2f52.l    ; punish gassed player faster!
+                bra.w   .oae_go
+
 .oae_stam:
-                ; Thresholds: Weed=12/26, Jones=14/28, Hagman=20/34, Ronco=22/36, Malone=22/38
+                ; 3. Hysteresis stamina management: either recover away OR actively chase!
+                move.w  G_OPP_IDX.l,d0
                 cmpi.w  #4,d0
                 ble.s   .oae_idx_ok
                 moveq   #4,d0
@@ -2149,13 +2213,32 @@ hook_opp_ai_entry:
                 tst.w   cpu_resting
                 bne.s   .oae_chk_rec
                 cmp.w   p2_stamina(pc),d1       ; if p2_stamina <= low_thresh -> rest!
-                blt.s   .oae_go
+                blt.s   .oae_attack_mode
                 move.w  #1,cpu_resting
                 bra.s   .oae_evade
 .oae_chk_rec:
                 cmp.w   p2_stamina(pc),d2       ; if p2_stamina >= hi_thresh -> resume!
                 bgt.s   .oae_evade
                 clr.w   cpu_resting
+.oae_attack_mode:
+                clr.w   GAME_BASE+$34aa.l       ; focused chase toward player!
+                bsr.w   cpu_dist_to_p1
+                cmpi.w  #22,d0
+                ble.s   .oae_go
+.oae_chase_boost:
+                ; Extra +1 px/tick step toward P1 when closing distance from afar!
+                move.w  G_P2_X.l,d0
+                cmp.w   G_P1_X.l,d0
+                beq.s   .oae_go
+                bgt.s   .oae_cb_l
+                cmpi.w  #$dc,d0
+                bge.s   .oae_go
+                addq.w  #1,G_P2_X.l
+                bra.s   .oae_go
+.oae_cb_l:
+                cmpi.w  #6,d0
+                ble.s   .oae_go
+                subq.w  #1,G_P2_X.l
                 bra.s   .oae_go
 .oae_evade:
                 move.w  #$ff00,GAME_BASE+$34aa.l
