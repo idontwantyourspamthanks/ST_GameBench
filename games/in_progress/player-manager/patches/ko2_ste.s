@@ -134,6 +134,7 @@ STE_DMA_CNT:    dc.w    0
 ; Double-Buffered Video State
 ; ---------------------------------------------------------------------------
 STE_PITCH_OK:   dc.w    0               ; 1 = AMIGAPx.BIN loaded
+STE_BIG_RAM:    dc.w    0               ; 1 = >= 2 MB STE (448-line mirrored linear rings, 0 Timer B, $c0 HOG!)
 STE_SHOW_IDX:   dc.w    0               ; 0 = Buffer A ready, 1 = Buffer B ready (set by ste_pitch_update)
 STE_DISP_IDX:   dc.w    0               ; 0 = Buffer A live,  1 = Buffer B live  (latched by ste_vbl_irq!)
 STE_STATS_DIRTY: dc.w   0               ; 1 = returning from Half-Time/Stats ($078000 was overwritten)
@@ -254,6 +255,22 @@ ste_inst_trap8:
         move.l  #ste_trap8_handler,$a0.w
         move.l  $70.w,STE_ORIG_VBL
         move.l  #ste_vbl_irq,$70.w
+        clr.w   STE_BIG_RAM
+        move.l  #STE_RING_A,d0
+        move.l  #STE_RING_B,d1
+        move.l  $42e.w,d2               ; phystop
+        cmpi.l  #$180000,d2             ; >= 1.5 MB (2 MB / 4 MB STE)?
+        blt.s   .it8_1m
+        move.w  #1,STE_BIG_RAM
+        move.l  d2,d0
+        subi.l  #$038000,d0             ; Ring A = phystop - 224 KB (448 lines, 0 Timer B!)
+        move.l  d2,d1
+        subi.l  #$024000,d1             ; Ring B = phystop - 144 KB (38 KB below TOS screen!)
+.it8_1m:
+        lea     DB_A(pc),a0
+        move.l  d0,DB_RING(a0)
+        lea     DB_B(pc),a0
+        move.l  d1,DB_RING(a0)
         rts
 
 ; ---------------------------------------------------------------------------
@@ -319,8 +336,8 @@ ste_reset_bufs:
         clr.w   DB_SCNT(a0)
         clr.w   DB_RLCNT(a0)
         clr.w   DB_RDCNT(a0)
-        move.l  #STE_RING_A,DB_START(a0)
-        move.l  #STE_RING_A,DB_WRAP(a0)
+        move.l  DB_RING(a0),DB_START(a0)
+        move.l  DB_RING(a0),DB_WRAP(a0)
         move.w  #RING_H,DB_WRAPY(a0)
         clr.w   DB_HSCR(a0)
         clr.w   DB_HUD_H1(a0)
@@ -331,8 +348,8 @@ ste_reset_bufs:
         clr.w   DB_SCNT(a0)
         clr.w   DB_RLCNT(a0)
         clr.w   DB_RDCNT(a0)
-        move.l  #STE_RING_B,DB_START(a0)
-        move.l  #STE_RING_B,DB_WRAP(a0)
+        move.l  DB_RING(a0),DB_START(a0)
+        move.l  DB_RING(a0),DB_WRAP(a0)
         move.w  #RING_H,DB_WRAPY(a0)
         clr.w   DB_HSCR(a0)
         clr.w   DB_HUD_H1(a0)
@@ -460,7 +477,10 @@ ste_vbl_irq:
         move.b  #4,$ffff820f.w          ; hscroll == 0 -> +4 extra words (+8B) = 168B!
 
 .vt_arm_tb:
-        ; Full 320x200 pitch! Only arm Timer B if ring wraps within lines 0..199!
+        ; On 2 MB+ STE (STE_BIG_RAM == 1): 448-line mirrored buffer -> ZERO Timer B IRQs EVER!
+        tst.w   STE_BIG_RAM
+        bne.s   .vt_exit
+        ; 1 MB STE: Full 320x200 pitch; only arm Timer B if ring wraps within lines 0..199!
         move.l  DB_WRAP(a0),STE_TB_WRAP_A
         move.w  DB_WTGT(a0),STE_TB_TGT_W
         move.w  DB_WRAPY(a0),d0
@@ -928,6 +948,8 @@ ste_pitch_update:
         move.l  d1,DB_START(a6)         ; start_addr = RING + y0*168 + tx*8
         move.w  #RING_H,d1
         sub.w   d4,d1                   ; wrap_y = 224 - y0 (1..224)
+        tst.w   STE_BIG_RAM
+        bne.s   .pu_wyok                ; 2 MB+ STE: linear 448-line buffer -> no wrap mirror needed!
         move.l  d0,d3
         addi.l  #(RING_BYTES-8),d3      ; d3.w = (RING + 224*168 + tx*8 - 8) & $ffff
         ; Always mirror visible Row 0 -> Row 224 whenever a ring wrap is on-screen (wrap_y <= 200)
@@ -985,68 +1007,141 @@ ste_bk_draw_col:
         rts
 
 ; ---------------------------------------------------------------------------
-; Step A: Reverse-LIFO Erase of Backbuffer's old HUD, Sprites & Radar (ZERO overlap checks!)
+; Step A: Reverse-LIFO Erase of Backbuffer's old HUD (68000 zero-skipping -> ~0.2 ms!)
 ; ---------------------------------------------------------------------------
 ste_bk_erase_hud:
         tst.w   DB_HUD_H1(a6)
         beq.s   .beh_ret
-        movem.l d0/d2-d3/a0-a1,-(sp)
-        move.w  DB_HUD_H2(a6),d2
-        swap    d2
-        move.w  DB_HUD_H1(a6),d2        ; d2 = (h2<<16) | h1
+        movem.l d0-d1/a0-a1,-(sp)
+        move.w  DB_HUD_H1(a6),d0        ; record count (1..130)
         clr.w   DB_HUD_H1(a6)
-        movea.l DB_HUD_T(a6),a0         ; a0 = dst_top
-        movea.l DB_HUDSAV(a6),a1        ; a1 = HUD save-under
-        move.l  DB_HUD_B(a6),d3         ; d3 = dst_bot (or 0)
-        moveq   #10,d0                  ; cmd 10 = restore HUD save-under
-        trap    #8
-        movem.l (sp)+,d0/d2-d3/a0-a1
+        move.w  d0,d1
+        mulu.w  #20,d1                  ; end offset = count * 20
+        movea.l DB_HUDSAV(a6),a0
+        adda.l  d1,a0
+        subq.w  #1,d0
+.beh_lp:
+        lea     -20(a0),a0
+        movea.l (a0),a1
+        move.l  4(a0),(a1)+
+        move.l  8(a0),(a1)+
+        move.l  12(a0),(a1)+
+        move.l  16(a0),(a1)+
+        dbra    d0,.beh_lp
+        movem.l (sp)+,d0-d1/a0-a1
 .beh_ret:
         rts
 
+; ---------------------------------------------------------------------------
+; Ultra-Fast Zero-Skipping 68000 Transparent Bottom HUD (~1.0 ms vs 7 ms Blitter!)
+; Skips >80% empty word-columns, draws crisp white/kit-matched text + 1px right
+; black drop-shadow (Col 9) on the exact same scanline, hscr & wrap aware!
+; ---------------------------------------------------------------------------
 ste_bk_draw_hud:
-        movem.l d0-d5/a0-a1,-(sp)
-        ; Compute yr = (y0 + HUD_SCR_Y) % RING_H
-        move.w  STE_BK_Y0(pc),d1
-        addi.w  #HUD_SCR_Y,d1
-        cmpi.w  #RING_H,d1
-        blt.s   .bdh_yr
-        subi.w  #RING_H,d1
-.bdh_yr:
-        move.w  d1,d4
-        mulu.w  #RING_STRIDE,d4
-        add.l   STE_BK_TX8(pc),d4
-        movea.l DB_RING(a6),a0
-        adda.l  d4,a0                   ; a0 = dst_top
-        ; Check if yr + 16 > RING_H (crosses 224 -> 0 ring seam!)
-        move.w  d1,d4
-        addi.w  #16,d4
-        cmpi.w  #RING_H,d4
-        ble.s   .bdh_nowr
-        move.w  #RING_H,d4
-        sub.w   d1,d4                   ; d4 = h1 (1..15)
-        moveq   #16,d5
-        sub.w   d4,d5                   ; d5 = h2 (1..15)
-        move.l  DB_RING(a6),d3
-        add.l   STE_BK_TX8(pc),d3       ; d3 = dst_bot
-        bra.s   .bdh_go
-.bdh_nowr:
-        moveq   #16,d4                  ; h1 = 16
-        moveq   #0,d5                   ; h2 = 0
-        moveq   #0,d3                   ; dst_bot = 0
-.bdh_go:
-        move.l  a0,DB_HUD_T(a6)
-        move.l  d3,DB_HUD_B(a6)
-        move.w  d4,DB_HUD_H1(a6)
-        move.w  d5,DB_HUD_H2(a6)
-        movea.l DB_HUDSAV(a6),a1        ; a1 = HUD save-under
-        move.w  STE_BK_HSCR(pc),d1      ; d1 = hscr (0..15)
-        move.w  d5,d2
+        movem.l d0-d7/a0-a5,-(sp)
+        movea.l DB_HUDSAV(a6),a2        ; a2 = save-under record cursor (max 130 x 20B)
+        lea     STE_HUD_SRC.l,a3        ; a3 = KO2 hidden HUD ($07f1c0)
+        clr.w   DB_HUD_H1(a6)           ; record count
+        moveq   #0,d7                   ; sy = 0..15 (full 8px font rows 0..7 & 8..15!)
+.bdh_ylp:
+        ; Compute ring line yr = y0 + HUD_SCR_Y + sy (wrap % 224 only on 1 MB STE!)
+        move.w  STE_BK_Y0(pc),d0
+        addi.w  #HUD_SCR_Y,d0
+        add.w   d7,d0
+        tst.w   STE_BIG_RAM
+        bne.s   .bdh_yok
+        cmpi.w  #RING_H,d0
+        blt.s   .bdh_yok
+        subi.w  #RING_H,d0
+.bdh_yok:
+        mulu.w  #RING_STRIDE,d0
+        add.l   STE_BK_TX8(pc),d0
+        movea.l DB_RING(a6),a1
+        adda.l  d0,a1                   ; a1 = dst_line on Backbuffer
+        movea.l a3,a0                   ; a0 = src_line in $07f1c0
+        moveq   #19,d6                  ; 20 word-columns (320px)
+.bdh_xlp:
+        move.w  (a0),d0                 ; hud P0 (white clock/scorer)
+        move.w  2(a0),d1                ; hud P1 (Away kit)
+        move.w  4(a0),d2                ; hud P2 (Home kit)
+        move.w  d0,d3
+        or.w    d1,d3
+        or.w    d2,d3                   ; d3 = text mask (P0 | P1 | P2)
+        beq.w   .bdh_nx                 ; >80% empty -> skip immediately!
+        cmpi.w  #130,DB_HUD_H1(a6)
+        bcc.w   .bdh_done
+        ; Save 2 adjacent 4bpp words (16 bytes) at a1 into record (a2)
+        move.l  a1,(a2)+
+        move.l  (a1),(a2)+
+        move.l  4(a1),(a2)+
+        move.l  8(a1),(a2)+
+        move.l  12(a1),(a2)+
+        addq.w  #1,DB_HUD_H1(a6)
+
+        ; Build 32-bit shifted masks for hscr = STE_BK_HSCR (0..15):
+        ;   d3 = text mask, d4 = 1px right black shadow = (d3 >> 1) & ~d3
+        move.w  STE_BK_HSCR(pc),d5
+        swap    d3
+        clr.w   d3
+        lsr.l   d5,d3                   ; d3.l = text mask (hi=word0, lo=word1)
+        move.l  d3,d4
+        lsr.l   #1,d4
+        move.l  d3,d0
+        not.l   d0
+        and.l   d0,d4                   ; d4.l = 1px right shadow mask (Col 9 black!)
+        swap    d1
+        clr.w   d1
+        lsr.l   d5,d1                   ; d1.l = Away mask (Col 12 -> P2)
         swap    d2
-        move.w  d4,d2                   ; d2 = (h2<<16) | h1
-        moveq   #11,d0                  ; cmd 11 = save-under + transparent HUD composite!
-        trap    #8
-        movem.l (sp)+,d0-d5/a0-a1
+        clr.w   d2
+        lsr.l   d5,d2                   ; d2.l = Home mask (Col 10 -> P1)
+
+        ; Composite word 0 (high words of d3, d4, d1, d2) at (a1)
+        swap    d3
+        swap    d4
+        swap    d1
+        swap    d2
+        move.w  d3,d0
+        or.w    d4,d0                   ; total mask = text | shadow
+        beq.s   .bdh_w1
+        move.w  d0,d5
+        not.w   d5
+        and.w   d5,(a1)
+        or.w    d4,(a1)                 ; P0 = shadow (Col 9!)
+        and.w   d5,2(a1)
+        or.w    d2,2(a1)                ; P1 = Home (Col 10!)
+        and.w   d5,4(a1)
+        or.w    d1,4(a1)                ; P2 = Away (Col 12!)
+        or.w    d0,6(a1)                ; P3 = text | shadow (Col 8 white / 9 / 10 / 12!)
+.bdh_w1:
+        ; Composite word 1 (low words of d3, d4, d1, d2) at 8(a1)
+        swap    d3
+        swap    d4
+        swap    d1
+        swap    d2
+        move.w  d3,d0
+        or.w    d4,d0
+        beq.s   .bdh_nx
+        move.w  d0,d5
+        not.w   d5
+        and.w   d5,8(a1)
+        or.w    d4,8(a1)
+        and.w   d5,10(a1)
+        or.w    d2,10(a1)
+        and.w   d5,12(a1)
+        or.w    d1,12(a1)
+        or.w    d0,14(a1)
+.bdh_nx:
+        addq.l  #8,a0
+        addq.l  #8,a1
+        dbra    d6,.bdh_xlp
+.bdh_ny:
+        lea     160(a3),a3
+        addq.w  #1,d7
+        cmpi.w  #16,d7
+        blt.w   .bdh_ylp
+.bdh_done:
+        movem.l (sp)+,d0-d7/a0-a5
         rts
 
 ste_bk_erase_spr:
@@ -1197,9 +1292,9 @@ ste_bk_draw_rad:
 ; Horizontal radar line: d0=sx1, d1=sy, d2=sx2 -> ring-wrapped dst in DB_RING(a6)
 .br_hline:
         cmpi.w  #PITCH_VIS_H,d1
-        bcc.s   .bh_ret
+        bcc.w   .bh_ret
         cmpi.w  #28,d7
-        bcc.s   .bh_ret
+        bcc.w   .bh_ret
         add.w   STE_BK_HSCR(pc),d0
         add.w   STE_BK_HSCR(pc),d2
         move.w  d0,d3
@@ -1226,8 +1321,10 @@ ste_bk_draw_rad:
         lea     0(a5,d5.w),a0
         cmpa.l  STE_BK_REND(pc),a0
         bhi.s   .bh_ret
-        ; Ring line yr = (y0 + sy) % 208
+        ; Ring line yr = (y0 + sy) % 224 (linear on 2 MB+ STE!)
         add.w   STE_BK_Y0(pc),d1
+        tst.w   STE_BIG_RAM
+        bne.s   .bh_yok
         cmpi.w  #RING_H,d1
         blt.s   .bh_yok
         subi.w  #RING_H,d1
@@ -1274,8 +1371,10 @@ ste_bk_draw_rad:
         lsl.w   #3,d0
         ext.l   d0
         add.l   STE_BK_TX8(pc),d0       ; d0.l = x_byte_off
-        ; yr1 = (y0 + sy1) % 208
+        ; yr1 = (y0 + sy1) % 224 (linear on 2 MB+ STE -> never splits!)
         add.w   STE_BK_Y0(pc),d1
+        tst.w   STE_BIG_RAM
+        bne.s   .bv_one
         cmpi.w  #RING_H,d1
         blt.s   .bv_yr1
         subi.w  #RING_H,d1
@@ -1388,6 +1487,8 @@ ste_bk_draw_dots:
         ext.l   d0
         add.l   STE_BK_TX8(pc),d0
         add.w   STE_BK_Y0(pc),d1
+        tst.w   STE_BIG_RAM
+        bne.s   .bdd_y
         cmpi.w  #RING_H,d1
         blt.s   .bdd_y
         subi.w  #RING_H,d1
@@ -1481,6 +1582,8 @@ ste_bk_draw_ul:
         ext.l   d0
         add.l   STE_BK_TX8(pc),d0
         add.w   STE_BK_Y0(pc),d1
+        tst.w   STE_BIG_RAM
+        bne.s   .ul_y
         cmpi.w  #RING_H,d1
         blt.s   .ul_y
         subi.w  #RING_H,d1
@@ -1552,8 +1655,10 @@ ste_bk_draw_spr:
         tst.w   d2
         bne.w   .bds_nxt                ; col 20 with skew > 0 would touch col 21 -> skip!
 .bds_xok:
-        ; Compute yr = (y0 + scr_y) % 208
+        ; Compute yr = (y0 + scr_y) % 224 (linear on 2 MB+ STE -> never wraps/splits!)
         add.w   STE_BK_Y0(pc),d1
+        tst.w   STE_BIG_RAM
+        bne.s   .bds_yr
         cmpi.w  #RING_H,d1
         blt.s   .bds_yr
         subi.w  #RING_H,d1
@@ -1568,7 +1673,9 @@ ste_bk_draw_spr:
         movea.l DB_RING(a6),a0
         adda.l  d4,a0                   ; a0 = dst_top
 
-        ; Check if yr + h > RING_H (crosses 208 -> 0 ring seam!)
+        ; Check if yr + h > RING_H (1 MB STE ring seam split only!)
+        tst.w   STE_BIG_RAM
+        bne.s   .bds_nowr
         move.w  d1,d4
         add.w   d3,d4
         cmpi.w  #RING_H,d4
@@ -1631,10 +1738,8 @@ ste_bk_draw_spr:
 ;   cmd 4 : clear STE_RING_A, STE_RING_B, STE_BLACK_LINE
 ;   cmd 6 : batch reverse-LIFO restore of d2.w radar line records ending at a2
 ;   cmd 7 : batch save+draw of d1.w transparent black radar lines at a0
-;   cmd 8 : unmirrored 21-tile horizontal row blit (a0=RING_BASE, d1=tx_left, d2=ty_row)
-;   cmd 9 : unmirrored 14-tile vertical col blit   (a0=RING_BASE, d1=tx_col, d2=ty_top)
-;   cmd 10: restore transparent bottom HUD save-under (a0=dst_top, a1=hud_sav, d2=h2|h1, d3=dst_bot)
-;   cmd 11: save-under + composite transparent bottom HUD with 1px black drop-shadow
+;   cmd 8 : 21-tile horizontal row blit (mirrored +RING_BYTES on 2 MB+ STE)
+;   cmd 9 : 14-tile vertical col blit   (mirrored +RING_BYTES on 2 MB+ STE)
 ; ---------------------------------------------------------------------------
 ste_trap8_handler:
         cmpi.w  #2,d0
@@ -1649,15 +1754,16 @@ ste_trap8_handler:
         beq.w   .cmd7_rad_draw
         cmpi.w  #8,d0
         beq.w   .cmd8_blit_row
-        cmpi.w  #9,d0
-        beq.w   .cmd9_blit_col
-        cmpi.w  #10,d0
-        beq.w   .cmd10_hud_rest
-        bra.w   .cmd11_hud_draw
+        bra.w   .cmd9_blit_col
 
-; Official Atari STE Shared-Bus ($80) Blitter trigger: yields every 64 cycles (8 us)
-; so 1-line-early HBlank-locked Timer B NEVER misses HBlank, and bset #7 NEVER stalls!
-.blt80: move.b  #$80,BLT_LINE.w
+; Blitter trigger:
+;   2 MB+ STE (STE_BIG_RAM == 1): 0 Timer B IRQs -> FULL-SPEED $c0 HOG MODE (2x faster -> locked 50 FPS!)
+;   1 MB  STE (STE_BIG_RAM == 0): Shared-Bus $80 -> yields every 64 cycles (8 us) for Timer B!
+.blt80: tst.w   STE_BIG_RAM
+        beq.s   .b80_sh
+        move.b  #$c0,BLT_LINE.w
+        rts
+.b80_sh: move.b #$80,BLT_LINE.w
 .b80_w: bset    #7,BLT_LINE.w
         nop
         bne.s   .b80_w
@@ -1839,7 +1945,7 @@ ste_trap8_handler:
         bsr.w   .blt80
         rts
 
-; --- cmd 4: Zero STE_RING_A & STE_RING_B ---
+; --- cmd 4: Zero Ring A & Ring B (1 MB: 224-line contiguous; 2 MB+: two 448-line rings) ---
 .cmd4_clr:
         moveq   #-1,d0
         move.l  d0,BLT_ENDMASK1.w
@@ -1848,9 +1954,21 @@ ste_trap8_handler:
         move.w  #2,BLT_DST_YINC.w
         clr.w   BLT_HOP.w
         clr.b   BLT_SKEW.w
-        move.l  #STE_RING_A,BLT_DST_ADDR.w
         move.w  #84,BLT_XCOUNT.w
+        tst.w   STE_BIG_RAM
+        bne.s   .c4_big
+        move.l  #STE_RING_A,BLT_DST_ADDR.w
         move.w  #456,BLT_YCOUNT.w       ; 456 * 168 = 76,608B ($088e60..$09b99f < $09ba00!)
+        move.b  #$c0,BLT_LINE.w
+        rte
+.c4_big:
+        lea     DB_A(pc),a0
+        move.l  DB_RING(a0),BLT_DST_ADDR.w
+        move.w  #(2*RING_H+3),BLT_YCOUNT.w ; 451 * 168 = 75,768B
+        move.b  #$c0,BLT_LINE.w
+        lea     DB_B(pc),a0
+        move.l  DB_RING(a0),BLT_DST_ADDR.w
+        move.w  #(2*RING_H+3),BLT_YCOUNT.w
         move.b  #$c0,BLT_LINE.w
         rte
 
@@ -1990,12 +2108,12 @@ ste_trap8_handler:
         moveq   #21,d7
         moveq   #80,d0
         sub.w   d1,d0
-        ble.s   .c8_done
+        ble.w   .c8_done
         cmp.w   d7,d0
         bge.s   .c8_cnt
         move.w  d0,d7
 .c8_cnt:
-        ; Clear Plane 3 for the row in ONE call (unmirrored!)
+        ; Clear Plane 3 for the row (and mirrored +RING_BYTES row on 2 MB+ STE!)
         move.w  d7,d5
         move.w  d7,d4
         subq.w  #1,d4
@@ -2010,8 +2128,14 @@ ste_trap8_handler:
         move.l  a1,BLT_DST_ADDR.w
         move.w  #16,BLT_YCOUNT.w
         bsr.w   .blt80
-
-        ; Blit 3bpp tiles (unmirrored -> 2x faster!)
+        tst.w   STE_BIG_RAM
+        beq.s   .c8_p3d
+        adda.l  #RING_BYTES,a1
+        move.l  a1,BLT_DST_ADDR.w
+        move.w  #16,BLT_YCOUNT.w
+        bsr.w   .blt80
+.c8_p3d:
+        ; Blit 3bpp tiles (also mirrored +RING_BYTES on 2 MB+ STE!)
         move.w  #2,BLT_DST_XINC.w
         move.w  #(RING_STRIDE-4),BLT_DST_YINC.w
         move.w  #3,BLT_XCOUNT.w
@@ -2029,7 +2153,15 @@ ste_trap8_handler:
         move.l  a3,BLT_DST_ADDR.w
         move.w  #16,BLT_YCOUNT.w
         bsr.w   .blt80
-        addq.l  #8,a3
+        tst.w   STE_BIG_RAM
+        beq.s   .c8_nx
+        move.l  a1,BLT_SRC_ADDR.w
+        move.l  a3,d0
+        addi.l  #RING_BYTES,d0
+        move.l  d0,BLT_DST_ADDR.w
+        move.w  #16,BLT_YCOUNT.w
+        bsr.w   .blt80
+.c8_nx: addq.l  #8,a3
         dbra    d7,.c8_lp
 .c8_done:
         movem.l (sp)+,d3-d7/a2-a4
@@ -2073,7 +2205,7 @@ ste_trap8_handler:
         bge.s   .c9_cnt
         move.w  d0,d7
 .c9_cnt:
-        ; Clear Plane 3 for entire 208-line vertical column in ONE call!
+        ; Clear Plane 3 for entire vertical column in ONE call (448 lines on 2 MB+ STE!)
         move.w  d1,d0
         lsl.w   #3,d0
         ext.l   d0
@@ -2084,7 +2216,11 @@ ste_trap8_handler:
         move.w  #1,BLT_XCOUNT.w
         clr.w   BLT_HOP.w
         move.l  a1,BLT_DST_ADDR.w
-        move.w  #RING_H,BLT_YCOUNT.w    ; 208 lines (unmirrored -> 2x faster!)
+        move.w  #RING_H,d0
+        tst.w   STE_BIG_RAM
+        beq.s   .c9_p3
+        add.w   d0,d0                   ; 448 lines!
+.c9_p3: move.w  d0,BLT_YCOUNT.w
         bsr.w   .blt80
 
         move.w  #2,BLT_DST_XINC.w
@@ -2104,7 +2240,15 @@ ste_trap8_handler:
         move.l  a3,BLT_DST_ADDR.w
         move.w  #16,BLT_YCOUNT.w
         bsr.w   .blt80
-        addq.w  #1,d6
+        tst.w   STE_BIG_RAM
+        beq.s   .c9_nm
+        move.l  a1,BLT_SRC_ADDR.w
+        move.l  a3,d0
+        addi.l  #RING_BYTES,d0
+        move.l  d0,BLT_DST_ADDR.w
+        move.w  #16,BLT_YCOUNT.w
+        bsr.w   .blt80
+.c9_nm: addq.w  #1,d6
         cmpi.w  #RING_ROWS,d6
         blt.s   .c9_st
         moveq   #0,d6
@@ -2116,219 +2260,3 @@ ste_trap8_handler:
         movem.l (sp)+,d3-d7/a2-a4
         rte
 
-; --- cmd 10: Restore transparent bottom HUD save-under (a0=dst_top, a1=hud_sav, d2=h2|h1, d3=dst_bot) ---
-.cmd10_hud_rest:
-        moveq   #-1,d0
-        move.l  d0,BLT_ENDMASK1.w
-        move.w  d0,BLT_ENDMASK3.w
-        move.w  #2,BLT_SRC_XINC.w
-        move.w  #2,BLT_SRC_YINC.w
-        move.w  #2,BLT_DST_XINC.w
-        move.w  #2,BLT_DST_YINC.w       ; 84 words = 168B = RING_STRIDE (contiguous!)
-        move.w  #84,BLT_XCOUNT.w
-        move.w  #$0203,BLT_HOP.w
-        clr.b   BLT_SKEW.w
-        move.l  a1,BLT_SRC_ADDR.w
-        move.l  a0,BLT_DST_ADDR.w
-        move.w  d2,BLT_YCOUNT.w         ; h1
-        bsr.w   .blt80
-        swap    d2
-        tst.w   d2
-        beq.s   .c10_done
-        move.l  d3,BLT_DST_ADDR.w       ; dst_bot (BLT_SRC_ADDR already continues!)
-        move.w  d2,BLT_YCOUNT.w         ; h2
-        bsr.w   .blt80
-.c10_done:
-        rte
-
-; --- cmd 11: Save-under + Transparent Bottom HUD Composite with 1px Black Drop-Shadow ---
-; a0=dst_top, a1=hud_sav, d1.w=hscr (0..15), d2.l=(h2<<16)|h1, d3.l=dst_bot
-.cmd11_hud_draw:
-        movem.l d2-d5/a2-a5,-(sp)
-        movea.l a0,a4                   ; a4 = dst_top
-        move.l  d2,d5                   ; d5 = (h2<<16)|h1
-
-        ; 1. Save-under 16 x 168B (h1 lines @ dst_top, h2 lines @ dst_bot) -> hud_sav (a1)
-        moveq   #-1,d0
-        move.l  d0,BLT_ENDMASK1.w
-        move.w  d0,BLT_ENDMASK3.w
-        move.w  #2,BLT_SRC_XINC.w
-        move.w  #2,BLT_SRC_YINC.w       ; 84 words = 168B = RING_STRIDE!
-        move.w  #2,BLT_DST_XINC.w
-        move.w  #2,BLT_DST_YINC.w
-        move.w  #84,BLT_XCOUNT.w
-        move.w  #$0203,BLT_HOP.w
-        clr.b   BLT_SKEW.w
-        move.l  a4,BLT_SRC_ADDR.w
-        move.l  a1,BLT_DST_ADDR.w
-        move.w  d5,BLT_YCOUNT.w         ; h1
-        bsr.w   .blt80
-        swap    d5
-        tst.w   d5
-        beq.s   .c11_msk
-        move.l  d3,BLT_SRC_ADDR.w       ; dst_bot (BLT_DST_ADDR already continues!)
-        move.w  d5,BLT_YCOUNT.w         ; h2
-        bsr.w   .blt80
-.c11_msk:
-        swap    d5                      ; d5 = (h2<<16)|h1 again
-
-        ; 2. Build 16 x 20-word 1bpp mask (P0 | P1 | P2) in STE_HUD_MASK ($07b600)
-        lea     STE_HUD_SRC.l,a5        ; a5 = $07f1c0
-        lea     STE_HUD_MASK.l,a3       ; a3 = $07b600
-        move.w  #8,BLT_SRC_XINC.w
-        move.w  #8,BLT_SRC_YINC.w
-        move.w  #2,BLT_DST_XINC.w
-        move.w  #2,BLT_DST_YINC.w
-        move.w  #20,BLT_XCOUNT.w
-        move.w  #$0203,BLT_HOP.w        ; P0 -> mask
-        move.l  a5,BLT_SRC_ADDR.w
-        move.l  a3,BLT_DST_ADDR.w
-        move.w  #16,BLT_YCOUNT.w
-        bsr.w   .blt80
-        move.w  #$0207,BLT_HOP.w        ; OR P1 -> mask
-        lea     2(a5),a2
-        move.l  a2,BLT_SRC_ADDR.w
-        move.l  a3,BLT_DST_ADDR.w
-        move.w  #16,BLT_YCOUNT.w
-        bsr.w   .blt80
-        addq.l  #2,a2                   ; OR P2 -> mask
-        move.l  a2,BLT_SRC_ADDR.w
-        move.l  a3,BLT_DST_ADDR.w
-        move.w  #16,BLT_YCOUNT.w
-        bsr.w   .blt80
-
-        ; 3. Configure Blitter skew & XCOUNT for hscr = d1 (0..15)
-        move.w  #$ffff,BLT_ENDMASK2.w
-        move.w  #8,BLT_DST_XINC.w
-        tst.w   d1
-        bne.s   .c11_sk
-        move.w  #$ffff,BLT_ENDMASK1.w
-        move.w  #$ffff,BLT_ENDMASK3.w
-        move.w  #20,BLT_XCOUNT.w
-        move.w  #16,BLT_DST_YINC.w      ; 168 - 19*8 = 16
-        clr.b   BLT_SKEW.w
-        bra.s   .c11_shd
-.c11_sk:
-        move.w  #$ffff,d0
-        lsr.w   d1,d0
-        move.w  d0,BLT_ENDMASK1.w
-        not.w   d0
-        move.w  d0,BLT_ENDMASK3.w
-        move.w  #21,BLT_XCOUNT.w
-        move.w  #8,BLT_DST_YINC.w       ; 168 - 20*8 = 8
-        move.b  d1,d0
-        ori.b   #$40,d0                 ; NFSR = 1
-        move.b  d0,BLT_SKEW.w
-
-.c11_shd:
-        ; 4. Draw 1px downward black drop-shadow (Col 9: P0=1, P1=0, P2=0, P3=1) at y+1 (15 lines)
-        move.w  #2,BLT_SRC_XINC.w
-        move.w  #2,BLT_SRC_YINC.w
-        move.w  d5,d4
-        subq.w  #1,d4                   ; sh_h1 = h1 - 1 (0..15)
-        beq.s   .c11_sh2
-        lea     RING_STRIDE(a4),a2      ; dst = dst_top + 1 line
-        bsr.s   .c11_sh_seg
-.c11_sh2:
-        move.l  d5,d0
-        swap    d0                      ; h2 (0..15)
-        tst.w   d0
-        beq.s   .c11_fg
-        ; Advance mask by sh_h1 * 40 bytes for bottom wrap segment
-        mulu.w  #40,d4
-        lea     0(a3,d4.w),a3
-        movea.l d3,a2                   ; dst = dst_bot
-        move.w  d0,d4                   ; sh_h2 = h2
-        bsr.s   .c11_sh_seg
-        lea     STE_HUD_MASK.l,a3       ; restore a3 = STE_HUD_MASK
-
-.c11_fg:
-        ; 5. Draw crisp transparent foreground text (Col 8 white, Col 10 Home, Col 12 Away!)
-        move.w  d5,d4                   ; h1 (1..16)
-        movea.l a4,a2                   ; dst_top
-        bsr.s   .c11_fg_seg
-        swap    d5                      ; h2 (0..15)
-        tst.w   d5
-        beq.s   .c11_done
-        move.w  d4,d0
-        mulu.w  #40,d0
-        adda.l  d0,a3                   ; advance mask by h1*40B
-        move.w  d4,d0
-        mulu.w  #160,d0
-        adda.l  d0,a5                   ; advance STE_HUD_SRC by h1*160B
-        movea.l d3,a2                   ; dst_bot
-        move.w  d5,d4                   ; h2
-        bsr.s   .c11_fg_seg
-.c11_done:
-        movem.l (sp)+,d2-d5/a2-a5
-        rte
-
-; Helper: draw d4 lines of 1px black shadow (Col 9: P0=1, P1=0, P2=0, P3=1) from mask a3 -> dst a2
-.c11_sh_seg:
-        move.w  #$0207,BLT_HOP.w        ; P0 |= mask
-        move.l  a3,BLT_SRC_ADDR.w
-        move.l  a2,BLT_DST_ADDR.w
-        move.w  d4,BLT_YCOUNT.w
-        bsr.w   .blt80
-        move.w  #$0204,BLT_HOP.w        ; P1 &= ~mask
-        move.l  a3,BLT_SRC_ADDR.w
-        lea     2(a2),a0
-        move.l  a0,BLT_DST_ADDR.w
-        move.w  d4,BLT_YCOUNT.w
-        bsr.w   .blt80
-        move.l  a3,BLT_SRC_ADDR.w       ; P2 &= ~mask
-        addq.l  #2,a0
-        move.l  a0,BLT_DST_ADDR.w
-        move.w  d4,BLT_YCOUNT.w
-        bsr.w   .blt80
-        move.w  #$0207,BLT_HOP.w        ; P3 |= mask
-        move.l  a3,BLT_SRC_ADDR.w
-        addq.l  #2,a0
-        move.l  a0,BLT_DST_ADDR.w
-        move.w  d4,BLT_YCOUNT.w
-        bsr.w   .blt80
-        rts
-
-; Helper: draw d4 lines of foreground HUD (a3=mask, a5=STE_HUD_SRC, a2=dst)
-.c11_fg_seg:
-        ; Pass 1: Clear mask in P0, P1, P2 (~mask & DST)
-        move.w  #2,BLT_SRC_XINC.w
-        move.w  #2,BLT_SRC_YINC.w
-        move.w  #$0204,BLT_HOP.w
-        move.l  a3,BLT_SRC_ADDR.w
-        move.l  a2,BLT_DST_ADDR.w
-        move.w  d4,BLT_YCOUNT.w
-        bsr.w   .blt80
-        move.l  a3,BLT_SRC_ADDR.w
-        lea     2(a2),a0
-        move.l  a0,BLT_DST_ADDR.w
-        move.w  d4,BLT_YCOUNT.w
-        bsr.w   .blt80
-        move.l  a3,BLT_SRC_ADDR.w
-        addq.l  #2,a0
-        move.l  a0,BLT_DST_ADDR.w
-        move.w  d4,BLT_YCOUNT.w
-        bsr.w   .blt80
-        ; Pass 2: Set P3 |= mask (Clock/Event hud_P0 is now Col 8 = CRISP WHITE!)
-        move.w  #$0207,BLT_HOP.w
-        move.l  a3,BLT_SRC_ADDR.w
-        addq.l  #2,a0
-        move.l  a0,BLT_DST_ADDR.w
-        move.w  d4,BLT_YCOUNT.w
-        bsr.w   .blt80
-        ; Pass 3: OR hud_P2 (Home) -> dst_P1 (Col 10 = Home kit!) & hud_P1 (Away) -> dst_P2 (Col 12 = Away kit!)
-        move.w  #8,BLT_SRC_XINC.w
-        move.w  #8,BLT_SRC_YINC.w
-        lea     4(a5),a0                ; hud_P2 = Home
-        move.l  a0,BLT_SRC_ADDR.w
-        lea     2(a2),a0                ; dst_P1 = Col 10 (Home!)
-        move.l  a0,BLT_DST_ADDR.w
-        move.w  d4,BLT_YCOUNT.w
-        bsr.w   .blt80
-        lea     2(a5),a0                ; hud_P1 = Away
-        move.l  a0,BLT_SRC_ADDR.w
-        lea     4(a2),a0                ; dst_P2 = Col 12 (Away!)
-        move.l  a0,BLT_DST_ADDR.w
-        move.w  d4,BLT_YCOUNT.w
-        bsr.w   .blt80
-        rts

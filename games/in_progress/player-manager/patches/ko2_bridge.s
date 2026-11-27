@@ -113,25 +113,34 @@ ko2_bridge_match:
         ; Save PM state & flags
         move.l  a4,BR_PM_A4.l
 
-        ; Replace "Done" button on "The Line Up" screen with "LOADING..." immediately!
+        ; Replace "Done" button on "The Line Up" screen with native-styled "LOADING..."!
         movem.l d0-d7/a0-a3,-(sp)
         move.w  #2,-(sp)                ; XBIOS Physbase -> d0 = active display screen
         trap    #14
         addq.l  #2,sp
         movea.l d0,a2
-        ; Clear Done button area (x=80..159 -> +40..+79, y=182..195 -> 14 lines)
-        lea     182*160+40(a2),a0
+        ; Tile untouched native button background (x=32..47 -> +16) across x=112..207 (+56..+103)
+        ; on y=182..195 (preserves exact blue/striped PM button texture, zero black box!)
+        lea     182*160(a2),a0
         moveq   #13,d1
-.lu_cl: moveq   #9,d0                   ; 10 longs = 40 bytes (80px)
-        movea.l a0,a1
-.lu_c2: clr.l   (a1)+
+.lu_cl: move.l  16(a0),d2               ; sample native button background word (planes 0-1)
+        move.l  20(a0),d3               ; sample native button background word (planes 2-3)
+        lea     56(a0),a1               ; x=112 (centred around x=160)
+        moveq   #5,d0                   ; 6 word-columns = 96px (x=112..207)
+.lu_c2: move.l  d2,(a1)+
+        move.l  d3,(a1)+
         dbra    d0,.lu_c2
         lea     160(a0),a0
         dbra    d1,.lu_cl
-        lea     186*160(a2),a3
-        lea     pm_loading_s(pc),a0     ; "LOADING..."
-        moveq   #95,d4                  ; centred over Done button (x=80..159)
-        moveq   #15,d0                  ; crisp white/bright text
+        ; Draw "LOADING..." dead-center (x=135, y=186) in PM gold (col 11) + 1px black shadow (col 0)!
+        lea     187*160(a2),a3
+        lea     pm_loading_s(pc),a0
+        move.w  #136,d4
+        moveq   #0,d0
+        bsr.w   draw_mini_str
+        lea     -160(a3),a3
+        subq.w  #1,d4
+        moveq   #11,d0                  ; PM warm gold ($762) matching native menu headers/buttons!
         bsr.w   draw_mini_str
         movem.l (sp)+,d0-d7/a0-a3
 
