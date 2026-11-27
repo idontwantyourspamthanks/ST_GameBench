@@ -81,7 +81,7 @@ DB_TY           equ     26              ; .w last tile Y drawn into this ring
 DB_SCNT         equ     28              ; .w sprites drawn onto this ring (0..32)
 DB_RLCNT        equ     30              ; .w radar lines drawn onto this ring (0..28)
 DB_RDCNT        equ     32              ; .w radar dots drawn onto this ring (0..48)
-DB_PAD          equ     34              ; .w
+DB_WTGT         equ     34              ; .w (TARGET - 8) & $ffff for exact video-counter wrap lock!
 DB_START        equ     36              ; .l display start addr (RING + y0*168 + tx*8)
 DB_WRAP         equ     40              ; .l display wrap addr  (RING + tx*8)
 DB_WRAPY        equ     44              ; .w wrap scanline (224 - y0, 1..224)
@@ -145,6 +145,7 @@ STE_CUR_WY:     dc.w    64              ; current camera world Y (pixels)
 STE_SPR_CNT:    dc.w    0               ; active sprites in STE_SPR_LIST (0..32)
 STE_TB_WRAP_A:  dc.l    STE_RING_A      ; latched wrap address for active frame's Timer B
 STE_TB_WRAP_Y:  dc.w    224             ; latched wrap scanline for active frame's Timer B
+STE_TB_TGT_W:   dc.w    0               ; latched (TARGET - 8) & $ffff for video-counter lock!
 STE_RAD_C_SC:   dc.w    0               ; cached radar scale
 STE_RAD_C_HCNT: dc.w    0
 STE_RAD_C_VCNT: dc.w    0
@@ -457,12 +458,13 @@ ste_vbl_irq:
 .vt_arm_tb:
         ; Full 320x200 pitch! Only arm Timer B if ring wraps within lines 0..199!
         move.l  DB_WRAP(a0),STE_TB_WRAP_A
+        move.w  DB_WTGT(a0),STE_TB_TGT_W
         move.w  DB_WRAPY(a0),d0
         move.w  d0,STE_TB_WRAP_Y
         cmpi.w  #PITCH_VIS_H,d0         ; wrap_y >= 200 -> ZERO Timer B IRQs this frame!
         bge.s   .vt_exit
         ; DB_WRAPY is ALWAYS in 2..199 (y0=223 mirrors row 0->224 and sets wrap_y=2)!
-        ; Arm 1 scanline early (wrap_y - 1 >= 1) so ste_tb_wrap locks onto EXACT HBlank!
+        ; Arm 1 scanline early (wrap_y - 1 >= 1) so ste_tb_wrap locks onto exact video counter!
         subq.w  #1,d0
         move.l  #ste_tb_wrap,$0120.w
         move.b  d0,$fffffa21.w
@@ -513,39 +515,37 @@ ste_ikbd_wrap:
         rts
 
 ; ---------------------------------------------------------------------------
-; Exact HBlank-Locked Timer B ISR (Blitter-Paused -> ZERO bus-steal jitter!):
+; Exact Video-Counter-Locked Timer B ISR (Blitter-Paused -> ZERO 1px judder!):
 ;   ste_tb_wrap  : Mid-screen 224-line Ring Buffer vertical wrap (ONLY IRQ!)
+;   Compares live Shifter counter ($8207/$8209 via movep.w) against TARGET-8 so
+;   even late IRQ arrival into HBlank of line (wrap_y-1) NEVER slips a scanline!
 ; ---------------------------------------------------------------------------
 ste_tb_wrap:
         clr.b   $fffffa1b.w
-        movem.l d0-d4/a0,-(sp)
-        bclr    #7,BLT_LINE.w           ; pause active $80 Shared-Bus Blitter (0 jitter!)
+        bclr    #7,BLT_LINE.w           ; pause active $80 Blitter FIRST (movem preserves CCR!)
+        movem.l d0-d5/a0,-(sp)
         sne     d4                      ; d4.b = $ff if Blitter was running
-        ; Pre-split STE_TB_WRAP_A into HIGH(d1), MID(d2), LOW(d3) BEFORE HBlank -> 36-cycle write!
+        ; Pre-split STE_TB_WRAP_A into HIGH(d1), MID(d2), LOW(d3) BEFORE HBlank
         move.l  STE_TB_WRAP_A(pc),d3
         move.l  d3,d1
         swap    d1                      ; d1.b = HIGH ($8205)
         move.w  d3,d2
         lsr.w   #8,d2                   ; d2.b = MID  ($8207); d3.b = LOW ($8209)
+        move.w  STE_TB_TGT_W(pc),d5     ; d5.w = (TARGET - 8) & $ffff
         lea     $ffff8205.w,a0
-        ; 1-line-early exact HBlank lock (tolerates up to 50 us interrupt latency!):
-        ; Step 1: if in HBlank of line (wrap_y-2), wait for DE=1 of line (wrap_y-1)
-.tw_de: move.b  4(a0),d0
-        nop
-        cmp.b   4(a0),d0
-        beq.s   .tw_de
-        ; Step 2: wait for DE=0 of line (wrap_y-1) = EXACT start of HBlank!
-.tw_hb: move.b  4(a0),d0
-        nop
-        cmp.b   4(a0),d0
-        bne.s   .tw_hb
+        ; Wait until Shifter live counter reaches exact end of line (wrap_y - 1)!
+.tw_wt: movep.w 2(a0),d0                ; atomic 16-bit read of $8207 (MID) + $8209 (LOW)
+        sub.w   d5,d0                   ; signed (VCOUNT_16 - (TARGET - 8))
+        blt.s   .tw_wt                  ; loop while still before end of line (wrap_y - 1)
+        nop                             ; 8 x nop = 32 cycles -> safely past DE=0 & LINEWID!
         nop
         nop
         nop
         nop
         nop
         nop
-        ; Reload live video counter HIGH->MID->LOW dead-center in HBlank (after LINEWID add, before pre-fetch!)
+        nop
+        ; Reload live video counter HIGH->MID->LOW dead-center in HBlank (before pre-fetch!)
         move.b  d1,(a0)                 ; $ffff8205 HIGH
         move.b  d2,2(a0)                ; $ffff8207 MID
         move.b  d3,4(a0)                ; $ffff8209 LOW
@@ -553,7 +553,7 @@ ste_tb_wrap:
         beq.s   .tw_no_res
         bset    #7,BLT_LINE.w           ; resume paused Blitter seamlessly!
 .tw_no_res:
-        movem.l (sp)+,d0-d4/a0
+        movem.l (sp)+,d0-d5/a0
         bclr    #0,$fffffa0f.w
         rte
 
@@ -912,24 +912,27 @@ ste_pitch_update:
         add.l   d0,d1
         move.l  d1,DB_START(a6)         ; start_addr = RING + y0*168 + tx*8
         move.w  #RING_H,d1
-        sub.w   d4,d1                   ; wrap_y = 208 - y0 (1..208)
-        ; Always mirror visible Row 0 -> Row 208 whenever a ring wrap is on-screen (wrap_y <= 181)
-        ; so Row 208 is NEVER black zeroes (eliminates any possibility of a black wrap seam!)
+        sub.w   d4,d1                   ; wrap_y = 224 - y0 (1..224)
+        move.l  d0,d3
+        addi.l  #(RING_BYTES-8),d3      ; d3.w = (RING + 224*168 + tx*8 - 8) & $ffff
+        ; Always mirror visible Row 0 -> Row 224 whenever a ring wrap is on-screen (wrap_y <= 200)
         cmpi.w  #PITCH_VIS_H,d1
         bgt.s   .pu_wyok
         movea.l d0,a0                   ; src = RING + tx*8 (row 0)
         movea.l d0,a1
-        adda.l  #RING_BYTES,a1          ; dst = RING + 208*168 + tx*8 (row 208)
+        adda.l  #RING_BYTES,a1          ; dst = RING + 224*168 + tx*8 (row 224)
         moveq   #41,d2                  ; 42 longs = 168 bytes (1 full scanline)
 .pu_m0: move.l  (a0)+,(a1)+
         dbra    d2,.pu_m0
         cmpi.w  #1,d1
         bne.s   .pu_wyok
-        ; y0 == 207 (wrap_y == 1): Row 208 now mirrors Row 0 -> wrap at line 2 to Row 1!
+        ; y0 == 223 (wrap_y == 1): Row 224 now mirrors Row 0 -> wrap at line 2 to Row 1!
         addi.l  #RING_STRIDE,d0         ; wrap_addr = RING + 168 + tx*8 (row 1)
         move.l  d0,DB_WRAP(a6)
+        addi.w  #RING_STRIDE,d3         ; target advances by 1 line (end of Row 224!)
         moveq   #2,d1                   ; wrap_y = 2!
 .pu_wyok:
+        move.w  d3,DB_WTGT(a6)
         move.w  d1,DB_WRAPY(a6)
         move.w  STE_BK_HSCR(pc),DB_HSCR(a6)
 
