@@ -26,4 +26,6 @@ find build/dist_stage -exec touch -d "$STAMP" {} +
 (cd build/dist_stage && find PLAYERME -type f | LC_ALL=C sort | TZ=UTC zip -q -X -@ "$ROOT/$HDZIP")
 
 echo "Built $HDZIP"
-md5sum build/game/HAGA build/game/FILES/PMLA build/game/FILES/KO2ENG.BIN build/game/FILES/KO2HND.BIN build/game/FILES/PMCODE.BIN build/game/FILES/KO2STE.BIN build/game/FILES/AMIGASND.BIN build/game/FILES/AMIGAP0.BIN "$HDZIP"
+python3 "$ROOT/../../../tools/make_game_vhds.py" player-manager --date "$DATE"
+VHDZIP="dist/PlayerManager_v${VER}_patched_vhd_${DATE}.zip"
+md5sum build/game/HAGA build/game/FILES/PMLA build/game/FILES/KO2ENG.BIN build/game/FILES/KO2HND.BIN build/game/FILES/PMCODE.BIN build/game/FILES/KO2STE.BIN build/game/FILES/AMIGASND.BIN build/game/FILES/AMIGAP0.BIN "$HDZIP" "$VHDZIP"

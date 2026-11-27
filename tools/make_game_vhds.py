@@ -150,6 +150,18 @@ SPECS: tuple[GameSpec, ...] = (
         notes="The blank campaign disk is stored on the drive as C:\\NEBULUS\\NEBCAMP.ST (8.3 filename).",
     ),
     GameSpec(
+        slug="player-manager",
+        title="Player Manager",
+        version="1.1",
+        hd_zip="PlayerManager_v1.1_patched_hd_2026-11-27.zip",
+        zip_root="PLAYERME",
+        vhd_name="PlayerManager_v1.1.vhd",
+        out_zip_tmpl="PlayerManager_v1.1_patched_vhd_{date}.zip",
+        volume="PLAYMGR11",
+        autorun="C:\\PLAYERME\\RUNME.TOS",
+        notes="On Atari STE / Mega STE, automatically enables full-screen 320x200 Amiga tiled pitches, transparent drop-shadowed bottom HUD, and 6258 Hz DMA audio; plain ST runs classic ST mode.",
+    ),
+    GameSpec(
         slug="populous",
         title="Populous",
         version="1.1",
