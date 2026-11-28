@@ -1077,10 +1077,26 @@ FLOPPY_GEO = (80, 2, 10)                      # tracks, sides, sectors/track of 
 SECT = 512
 LOADER_ORG = 0x78CA                           # free area of the boot sector: $78CA-$79F3 (the original program ends at $78C1, its track/buffer
                                               # descriptor sits at $78C4-$78C9 and is read by the relocated copy, $79F4-$79FF is stale mastering data)
-BOOT_ENTRY = 0x7818                           # the original boot program's first instruction `lea.l $7f830.l,a6` (6 B): displaced into the loader
-BOOT_ENTRY_ORIG = bytes.fromhex("4df90007f830")
-BOOT_PROG = BOOT_ENTRY + 6                    # ... and the loader continues at the next instruction (offsets 0-$17 of the sector stay as shipped: the game
-                                              # itself tests the long at offset 2 ('MOON') to recognise disk 1, $d77a)
+BOOT_PATCH_OFF = 0x7806                       # $7806..$7821 (28 B): original `bra.s $7818`, "    MOONSHINE   ", `lea $7f830.l,a6`, `lea $7832(pc),a5`
+BOOT_PATCH_ORIG = bytes.fromhex("6010202020204d4f4f4e5348494e452020204df90007f8304bfa0012")
+BOOT_PROG = 0x7822                            # original relocator loop `move.w #$7f,d7` (offsets $00-$05 stay `60 04 'MOON'`: game checks $68002 == 'MOON')
+# Valid Atari ST 800 KB (80 tracks x 2 sides x 10 sectors/track, 512 B/sector) BPB for boot-sector offsets $08..$1D (22 B).
+# Replaces the original non-BPB ASCII + code bytes that sat across $0B..$1D (and caused 16-bit disk writers like Makedisk to divide by zero).
+BOOT_BPB_800K = (
+    b"MSR"                                    # $08..$0A: 24-bit serial
+    + struct.pack("<HBHBHHBHHHH",
+                  512,                        # $0B..$0C: bytes per sector
+                  2,                          # $0D:      sectors per cluster
+                  1,                          # $0E..$0F: reserved sectors
+                  2,                          # $10:      number of FATs
+                  112,                        # $11..$12: root directory entries
+                  1600,                       # $13..$14: total sectors (80 * 2 * 10)
+                  0xF9,                       # $15:      media descriptor
+                  5,                          # $16..$17: sectors per FAT
+                  10,                         # $18..$19: sectors per track
+                  2,                          # $1A..$1B: sides
+                  0)                          # $1C..$1D: hidden sectors
+)
 # Sectors that the boot loader never reads (raw FDC trace of a full pre-question boot, build/logs/floppy_flow.log: 1,127 reads, tracks 0-61) and
 # that are blank (0x6DB6 fill) in the original disk A: safe places for the payload.  Runs (track, side, first sector, count), consumed in order;
 # 129 sectors = 66,048 B >= IMG_MAX_LEN (61,440 B).
@@ -1181,8 +1197,9 @@ def floppy_loader(runs) -> bytes:
              "\tbls.s\t.st",
              ".no:\tmoveq\t#0,d0\t\t\t\t; TT / Falcon / unknown: gate closed",
              f".st:\tmove.l\td0,${IB + 4:x}.l\t\t; IB+4 = phystop for ST-family machines, else 0",
-             "\tlea.l\t$7f830.l,a6\t\t; the displaced first instruction of the original boot program",
-             f"\tbra.w\t${BOOT_PROG:x}\t\t; position independent: TOS runs the boot sector at its disk buffer ($185C on TOS 1.62), not at $7800",
+             "\tlea.l\t$7f830.l,a6\t\t; displaced $7818",
+             "\tlea.l\t$7832(pc),a5\t\t; displaced $781e (position independent)",
+             f"\tbra.w\t${BOOT_PROG:x}\t\t; continue at $7822 (position independent: TOS runs the boot sector at its disk buffer)",
              "desc:"]
     for tr, side, sec, n in runs:
         lines.append(f"\tdc.b\t{tr},{side},{sec},{n}")
@@ -1202,6 +1219,45 @@ def disk_patch_bytes(p: Patch) -> dict[int, bytes]:
         lines = [l for o, ls in p.segments if o == off for l in ls]
         segs[off] = assemble(off, lines, "\n".join(p.preamble))
     return segs
+
+
+def st_to_msa(st: bytes) -> bytes:
+    """Uncompressed Magic Shadow Archiver (.msa) image of an 800 KB raw .st (80 tracks x 2 sides x 10 sectors/track)."""
+    t, sides, spt = FLOPPY_GEO
+    track_len = spt * SECT
+    if len(st) != t * sides * track_len:
+        raise SystemExit(f"st_to_msa: unexpected size {len(st)} B (expected {t * sides * track_len} B)")
+    out = bytearray(struct.pack(">HHHHH", 0x0E0F, spt, sides - 1, 0, t - 1))
+    for o in range(0, len(st), track_len):
+        out += struct.pack(">H", track_len) + st[o:o + track_len]
+    return bytes(out)
+
+
+def msa_to_st(msa: bytes) -> bytes:
+    """Inverse of st_to_msa (also decodes RLE tracks) to verify every generated .msa round-trips byte-for-byte."""
+    magic, spt, sides, t0, t1 = struct.unpack(">HHHHH", msa[:10])
+    assert magic == 0x0E0F
+    tl, p, out = spt * SECT, 10, bytearray()
+    for _ in range((t1 - t0 + 1) * (sides + 1)):
+        ln = struct.unpack(">H", msa[p:p + 2])[0]
+        p += 2
+        if ln == tl:
+            out += msa[p:p + ln]
+            p += ln
+        else:
+            end, tr = p + ln, bytearray()
+            while p < end:
+                b = msa[p]; p += 1
+                if b == 0xE5:
+                    val, cnt = msa[p], struct.unpack(">H", msa[p + 1:p + 3])[0]
+                    tr += bytes([val]) * cnt
+                    p += 3
+                else:
+                    tr.append(b)
+            assert len(tr) == tl
+            out += tr
+    assert p == len(msa)
+    return bytes(out)
 
 
 def fix_boot_checksum(sec: bytes, word: int = 255) -> bytes:
@@ -1265,21 +1321,32 @@ def cmd_build_floppy(patches, fpatches, out: Path, zip_path: Path | None):
     o = LOADER_ORG - 0x7800
     if any(boot[o:0x1F4]):
         raise SystemExit("disk A boot sector: the loader area is not zero in the original")
-    e = BOOT_ENTRY - 0x7800
-    if bytes(boot[e:e + 6]) != BOOT_ENTRY_ORIG:
-        raise SystemExit(f"disk A boot sector: unexpected original entry instruction {bytes(boot[e:e + 6]).hex()}")
-    boot[e:e + 6] = bytes.fromhex("6000") + struct.pack(">H", o - (e + 2)) + bytes.fromhex("4e71")   # bra.w loader + nop (position independent)
+    p0 = BOOT_PATCH_OFF - 0x7800
+    if bytes(boot[p0:p0 + len(BOOT_PATCH_ORIG)]) != BOOT_PATCH_ORIG:
+        raise SystemExit(f"disk A boot sector: unexpected original header/entry bytes {bytes(boot[p0:p0 + len(BOOT_PATCH_ORIG)]).hex()}")
+    # $06..$07: bra.s $1E (skip BPB); $08..$1D: valid 80x2x10 BPB; $1E..$21: bra.w loader (position independent)
+    boot[p0:p0 + 2] = bytes.fromhex("6016")
+    boot[0x08:0x1E] = BOOT_BPB_800K
+    boot[0x1E:0x22] = bytes.fromhex("6000") + struct.pack(">H", o - 0x20)
     boot[o:o + len(loader)] = loader
     a[:SECT] = fix_boot_checksum(bytes(boot), (o + len(loader) - 2) // 2)
     b_disk = b_disk_pre
     out.mkdir(parents=True, exist_ok=True)
-    (out / "disk_a.st").write_bytes(bytes(a))
-    (out / "disk_b.st").write_bytes(bytes(b_disk))
-    print(f"floppy: disk A {len(a)} B, disk B {len(b_disk)} B; payload {len(img)} B ({need} sectors) at "
+    for stale in out.iterdir():
+        if stale.is_file():
+            stale.unlink()
+    a_bytes, b_bytes = bytes(a), bytes(b_disk)
+    a_msa, b_msa = st_to_msa(a_bytes), st_to_msa(b_bytes)
+    assert msa_to_st(a_msa) == a_bytes and msa_to_st(b_msa) == b_bytes
+    (out / "disk_a.st").write_bytes(a_bytes)
+    (out / "disk_b.st").write_bytes(b_bytes)
+    (out / "disk_a.msa").write_bytes(a_msa)
+    (out / "disk_b.msa").write_bytes(b_msa)
+    print(f"floppy: disk A {len(a_bytes)} B (.msa {len(a_msa)} B), disk B {len(b_bytes)} B (.msa {len(b_msa)} B); payload {len(img)} B ({need} sectors) at "
           + ", ".join(f"t{t}.{sd}s{s}x{n}" for t, sd, s, n in jobs[:4]) + ("..." if len(jobs) > 4 else ""))
     for s in sites:
         print(f"${s['addr']:05x}  {len(s['orig']):4d} {s['orig'].hex()} -> {s['new'].hex()}   [{s['name']}]")
-    for tpl_name, dst in (("README_FLOPPY.TXT", "README.TXT"), ("PATCHES_FLOPPY.TXT", "PATCHES.TXT")):
+    for tpl_name, dst in (("README_FLOPPY.TXT", "README.TXT"), ("PATCHES_FLOPPY.TXT", "PATCHES.TXT"), ("WRITING_DISKS.TXT", "WRITING_DISKS.TXT")):
         if (PATCHDIR / tpl_name).exists():
             (out / dst).write_text(render_doc((PATCHDIR / tpl_name).read_text()))
     if zip_path is not None:

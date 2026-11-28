@@ -1,0 +1,60 @@
+Moonshine Racers v@VERSION@ enhanced by dad_prg - writing the two disks to real floppies
+=========================================================================================
+
+THE FILES
+  disk_a.st / disk_a.msa   Disk 1 (boot disk - boot from this one)
+  disk_b.st / disk_b.msa   Disk 2 (data disk - swap into A: at the prompt, or keep in B:)
+
+The .st and .msa files of each disk hold the exact same 800 KB of sector data
+(80 tracks x 2 sides x 10 sectors of 512 bytes = 819,200 bytes).  The .msa is an
+uncompressed Magic Shadow Archiver wrapper whose header explicitly declares the
+80 x 2 x 10 geometry so disk writers do not have to guess it.  Use whichever
+format your writer prefers.
+
+IMPORTANT: 800 KB (10 SECTORS PER TRACK) ON DOUBLE-DENSITY MEDIA
+* Media: 720 KB double-density (DD) double-sided 3.5" disks (not 1.44 MB HD disks).
+  Both disks are formatted to 80 tracks x 2 sides x 10 sectors per track (800 KB),
+  the exact format of the original Millennium release.
+* Because there are 10 sectors per track instead of 9, the writer MUST format/write
+  the disk as 80 x 2 x 10 (not standard 720 KB 80 x 2 x 9).
+
+WHAT v1.4.2 FIXED (Makedisk "Divide Error" on Disk 1)
+* In v1.0-v1.4.1, disk_a.st kept the original non-DOS boot sector header with our
+  stage-0 branch placed at offset $18-$1D - right across the BPB's sectors-per-track
+  and sides fields ($0060 and $B000).  In 16-bit arithmetic, 96 x 45056 wraps to 0,
+  causing DOS Makedisk and other BPB-reading disk writers on PC and Atari ST to fail
+  with a Divide Error (or reject the image as corrupt).
+* v1.4.2 moves the stage-0 branch past the BPB ($1E) and puts a valid Atari ST
+  800 KB BPB (512 B/sector, 10 sectors/track, 2 sides, 1600 total sectors) in
+  disk_a.st, while preserving the 'MOON' signature at offset 2 that the game checks.
+* v1.4.2 also ships uncompressed .msa copies (disk_a.msa and disk_b.msa).
+
+WHY disk_b.st STILL HAS NO BOOT SECTOR / BPB
+* Disk 2 is a raw Pack-Ice data stream ("Ice!" at byte 0), identical to the original
+  Millennium Disk 2.  It has no boot sector and no BPB by design, and cannot be given
+  one because the game's Disk 2 identity check reads the raw bytes at offset $0E-$11
+  ($66055505).
+* If a disk writer complains about a missing/invalid boot sector on disk_b.st, either
+  use disk_b.msa (whose MSA header carries the 80 x 2 x 10 geometry explicitly) or
+  force raw 80 x 2 x 10 mode in your writer.
+
+RECOMMENDED WRITERS
+* PC / DOS:
+    Makedisk (DOS):        makedisk /write disk_a.st /auto   (or use disk_a.msa / disk_b.msa)
+    FloImg (Windows):      open disk_a.msa / disk_b.msa (or .st in 80x2x10 mode)
+    Greaseweazle:          gw write --format=atarist.800 disk_a.st
+                           gw write --format=atarist.800 disk_b.st
+    HxC floppy emulator:   load disk_a.msa / disk_b.msa (or .st; 80 x 2 x 10)
+* Atari ST (real hardware):
+    JayMSA / MSA Converter / Floppy Image / FastCopy Pro (with .msa):
+      write disk_a.msa and disk_b.msa directly - the MSA header sets 10 sectors/track,
+      2 sides, tracks 0-79 automatically.
+
+BOOTING & PLAYING
+1. Put Disk 1 in drive A: and power on / reset (1 MB RAM or more; 2 MB+ for F10
+   campaigns).
+2. At the "Insert Disk 2 and press a key." prompt, either swap Disk 2 into drive A:
+   and press a key, or have Disk 2 in drive B: (with Disk 2 already in B: from
+   power-on, the prompt is skipped automatically).
+3. On a Mega STE, test at 8 MHz with cache off first (the original game's custom FDC
+   driver uses fixed 8 MHz delay loops).

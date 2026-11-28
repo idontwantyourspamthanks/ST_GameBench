@@ -7,6 +7,10 @@ What it is
   start-up: fixed game speed, faster drawing, extra in-between pictures on machines with time to spare, a new top-bar HUD.
   The game files are PP's, unchanged.  PATCHES.TXT lists every change.
 
+v1.4.2
+  Version bump matching the floppy v1.4.2 release (fixes `disk_a.st` BPB Divide Error in Makedisk and other ST/PC disk
+  writers; adds uncompressed `.msa` images and `WRITING_DISKS.TXT` to the floppy zip).  HD gameplay is unchanged from v1.4.1.
+
 v1.4.1
   Fixed: Track Editor (`FILES\MSEDIT.OVL`) could get stuck scrolling down as if the Down key were held.
   When HAGA swapped TOS in and out to read/write files (entering the editor, loading a track via `rd_stock`, saving a

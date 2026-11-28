@@ -8,6 +8,13 @@ What it is
   new top-bar HUD, and no manual copy-protection question.  disk_b.st is the original disk 2, unchanged.  PATCHES.TXT lists
   every change.
 
+v1.4.2
+  Fixed: `disk_a.st` now has a valid Atari ST 800 KB BPB (512 B/sector, 10 sectors/track, 2 sides, 1600 sectors) at offsets
+  $08-$1D, with the stage-0 branch moved to $1E.  In v1.0-v1.4.1, the stage-0 branch at $18-$1D put $0060/$B000 into the
+  BPB's sectors-per-track and sides fields (16-bit product = 0), causing DOS Makedisk to fail with a Divide Error and other
+  ST/PC disk writers to reject Disk 1.  Uncompressed `.msa` copies (`disk_a.msa`, `disk_b.msa`) and `WRITING_DISKS.TXT` are
+  now included in the floppy zip.
+
 v1.4.1
   Version bump matching the HD v1.4.1 release (fixes a stuck Down key / joystick direction in the HD Track Editor after
   HAGA/TOS disk swaps; `trk_read` now also clears the held-key table and joystick bytes on return from TOS).
