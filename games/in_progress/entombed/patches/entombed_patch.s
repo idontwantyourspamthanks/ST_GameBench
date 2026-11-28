@@ -178,10 +178,8 @@ my_vbl:
         tst.b   ste_scroll_active
         beq.s   .no_ste
 
-        ; Program STe Shifter for next frame's playfield scroll
-        move.b  disp_hi(pc),HW_VBASE_HI
-        move.b  disp_mid(pc),HW_VBASE_MID
-        move.b  disp_lo(pc),HW_VBASE_LO
+        ; Shifter ALREADY latched HW_VBASE_HI/MID/LO at the start of this VBL!
+        ; Now write LINEWID & HSCROLL so they match this exact latched frame!
         move.b  disp_linewid(pc),HW_LINEWID
         move.b  disp_hscroll(pc),HW_HSCROLL
         clr.b   disp_pending
@@ -652,28 +650,30 @@ shift_pf_buffer:
         move.w  d4,BLT_XCOUNT
         move.w  d7,BLT_YCOUNT
         bsr.w   blt_go
-        bra.s   .sdone
+        bra.w   .sdone
 
 .desc:
-        ; Descending copy: point to last word of last line
+        ; NEVER use XINC = -2 on STe Blitter (hardware barrel-shifter 1-word delay)!
+        ; Case A: dy < 0 (dst_y = 1, src_y = 0) -> every dest row is 16 lines below src,
+        ;         so copying bottom-to-top with XINC = +2 has ZERO overlap!
+        tst.w   d6                  ; dst_y == 1 means dy == -1
+        beq.s   .desc_left_only
+
+        ; Point to start of last line (ylines - 1) * PF_STRIDE
         move.w  d7,d0
         subq.w  #1,d0
         mulu.w  #PF_STRIDE,d0
-        move.w  d4,d1
-        subq.w  #1,d1
-        add.w   d1,d1               ; (xwords - 1) * 2
-        add.l   d1,d0
         adda.l  d0,a0
         adda.l  d0,a1
 
-        move.w  #-2,BLT_SRC_XINC
-        move.w  #-2,BLT_DST_XINC
-        move.w  #PF_STRIDE,d0
-        move.w  d4,d1
-        add.w   d1,d1
-        sub.w   d1,d0
-        addq.w  #2,d0
-        neg.w   d0                  ; yinc = -(PF_STRIDE - xbytes + 2)
+        move.w  #2,BLT_SRC_XINC
+        move.w  #2,BLT_DST_XINC
+        ; After xwords words (+2 each, total +2*(xwords-1)), step back 1 line (-PF_STRIDE)
+        ; -> yinc = -PF_STRIDE - 2*(xwords - 1) = -(PF_STRIDE + xbytes - 2)
+        move.w  d4,d0
+        add.w   d0,d0               ; xbytes
+        addi.w  #PF_STRIDE-2,d0
+        neg.w   d0
         move.w  d0,BLT_SRC_YINC
         move.w  d0,BLT_DST_YINC
         move.l  a0,BLT_SRC_ADDR
@@ -681,6 +681,27 @@ shift_pf_buffer:
         move.w  d4,BLT_XCOUNT
         move.w  d7,BLT_YCOUNT
         bsr.w   blt_go
+        bra.w   .sdone
+
+.desc_left_only:
+        ; Case B: dy == 0, dx == -1 (dst = src + 16, 10 tile columns x 208 lines)
+        ; Copy column 9 down to 0 with XINC = +2, XCOUNT = 8 -> ZERO overlap!
+        move.w  #2,BLT_SRC_XINC
+        move.w  #2,BLT_DST_XINC
+        move.w  #PF_STRIDE-14,BLT_SRC_YINC
+        move.w  #PF_STRIDE-14,BLT_DST_YINC
+        lea     9*16(a0),a0         ; col 9 src
+        lea     9*16(a1),a1         ; col 9 dst (= col 10)
+        moveq   #9,d2               ; 10 columns
+.dcol:
+        move.l  a0,BLT_SRC_ADDR
+        move.l  a1,BLT_DST_ADDR
+        move.w  #8,BLT_XCOUNT
+        move.w  d7,BLT_YCOUNT
+        bsr.w   blt_go
+        lea     -16(a0),a0
+        lea     -16(a1),a1
+        dbra    d2,.dcol
 
 .sdone:
         movem.l (sp)+,d0-d7/a0-a3
@@ -1216,13 +1237,16 @@ hook_game_swap:
         beq.s   .lw_ok
         moveq   #4,d2
 .lw_ok:
+        ; Write HW_VBASE_HI/MID/LO NOW (before next VBL) so Shifter latches it
+        ; cleanly at the start of next VBL; my_vbl then writes LINEWID & HSCROLL
+        ; to match that exact latched frame!
         move.w  sr,d3
         ori.w   #$0700,sr
-        move.b  d0,disp_lo
+        move.b  d0,HW_VBASE_LO
         lsr.l   #8,d0
-        move.b  d0,disp_mid
+        move.b  d0,HW_VBASE_MID
         lsr.l   #8,d0
-        move.b  d0,disp_hi
+        move.b  d0,HW_VBASE_HI
         move.b  d2,disp_linewid
         move.b  d1,disp_hscroll
         st      ste_scroll_active
