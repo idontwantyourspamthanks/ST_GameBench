@@ -188,12 +188,27 @@ my_vbl:
         tst.b   ste_scroll_active
         beq.s   .no_ste
 
-        ; Shifter ALREADY latched HW_VBASE_HI/MID/LO at the start of this VBL!
-        ; Latch cur_disp_lo (= exact HW_VCNT_LO at end of scanline 191 since 192*176=$8400!)
-        move.b  next_disp_lo(pc),cur_disp_lo
-        move.b  disp_linewid(pc),HW_LINEWID
-        move.b  disp_hscroll(pc),HW_HSCROLL
+        tst.b   disp_pending
+        beq.s   .apply_act          ; 2-VBL overrun frame: keep active buffer & cur_disp_lo!
+
+        ; Atomically commit new frame during top border (nHBL < nStartHBL):
+        ; Write BOTH HW_VBASE (for any repeat VBL) AND HW_VCNT (for THIS frame!)
+        ; in strict HI -> MID -> LO order — eliminates the line 260/310
+        ; RestartVideoCounter race window completely!
+        move.b  disp_hi(pc),HW_VBASE_HI
+        move.b  disp_mid(pc),HW_VBASE_MID
+        move.b  disp_lo(pc),HW_VBASE_LO
+        move.b  disp_hi(pc),HW_VCNT_HI
+        move.b  disp_mid(pc),HW_VCNT_MID
+        move.b  disp_lo(pc),HW_VCNT_LO
+        move.b  disp_lo(pc),cur_disp_lo
+        move.b  disp_linewid(pc),act_linewid
+        move.b  disp_hscroll(pc),act_hscroll
         clr.b   disp_pending
+
+.apply_act:
+        move.b  act_linewid(pc),HW_LINEWID
+        move.b  act_hscroll(pc),HW_HSCROLL
 
         ; Arm Timer B at scanline 191 (1 line early) so my_timer_b can
         ; cycle-lock to the exact falling edge of scanline 191 DE!
@@ -231,7 +246,13 @@ my_ikbd_wrap:
 ; =============================================================================
 my_timer_b:
         clr.b   MFP_TBCR
-        move.w  d0,-(sp)
+        move.l  d0,-(sp)
+
+        ; Pause Blitter if active in shared mode ($80) so it CANNOT retake the bus
+        ; after 64 CPU bus accesses while we spin in .w_end191!
+        move.b  BLT_CTRL,d0
+        bclr    #7,BLT_CTRL
+        swap    d0                  ; save original BLT_CTRL in high word of d0
 
         move.b  cur_disp_lo(pc),d0
 .w_end191:
@@ -249,7 +270,13 @@ tb_hud_lo:
         clr.b   HW_LINEWID          ; 16 cyc
         clr.b   HW_HSCROLL          ; 16 cyc
 
-        move.w  (sp)+,d0
+        ; Resume Blitter if it was busy when we paused it
+        swap    d0
+        tst.b   d0
+        bpl.s   .no_blt_res
+        move.b  #$80,BLT_CTRL
+.no_blt_res:
+        move.l  (sp)+,d0
         bclr    #0,MFP_ISRA
         rte
 
@@ -389,12 +416,12 @@ hook_tile_cache:
 ;          hardware shared mode ($80, <=64 cyc IRQ latency) near Timer B!
 ; =============================================================================
 blt_go:
-        cmpi.b  #6,MFP_TBDR
+        cmpi.b  #8,MFP_TBDR
         bls.s   .shared
-        move.b  #$c0,BLT_CTRL       ; 97% of frame: 100% full-speed HOG!
+        move.b  #$c0,BLT_CTRL       ; 96% of frame: 100% full-speed HOG!
         rts
 .shared:
-        move.b  #$80,BLT_CTRL       ; lines 185..191: shared mode (<=64 cyc Timer B latency!)
+        move.b  #$80,BLT_CTRL       ; lines 183..191: shared mode (64 bus accesses = 256 cyc max!)
 .sh_w:
         nop                         ; IRQ window for Timer B!
         tst.b   BLT_CTRL            ; bit 7 (N) = BUSY
@@ -1301,19 +1328,17 @@ hook_game_swap:
         beq.s   .lw_ok
         moveq   #4,d2
 .lw_ok:
-        ; Write HW_VBASE in strict HI -> MID -> LO order!
-        ; CRITICAL STe HW RULE: writing $ff8201/$ff8203 clears $ff820d (LO) to 0,
-        ; so HW_VBASE_LO MUST be written LAST!
+        ; Publish display parameters atomically to RAM — my_vbl commits HW_VBASE + HW_VCNT
+        ; together during top border so we NEVER race line 260/310 RestartVideoCounter!
         move.w  sr,d3
         ori.w   #$0700,sr
         swap    d0
-        move.b  d0,HW_VBASE_HI      ; 1st: HI
+        move.b  d0,disp_hi
         swap    d0
         move.w  d0,d4
         lsr.w   #8,d4
-        move.b  d4,HW_VBASE_MID     ; 2nd: MID (resets LO to 0)
-        move.b  d0,HW_VBASE_LO      ; 3rd: LO (sticks!)
-        move.b  d0,next_disp_lo
+        move.b  d4,disp_mid
+        move.b  d0,disp_lo
         move.b  d2,disp_linewid
         move.b  d1,disp_hscroll
         st      ste_scroll_active
@@ -1385,11 +1410,13 @@ disp_mid:           dc.b 0
 disp_lo:            dc.b 0
 disp_linewid:       dc.b 0
 disp_hscroll:       dc.b 0
-next_disp_lo:       dc.b 0
+act_linewid:        dc.b 0
+act_hscroll:        dc.b 0
 cur_disp_lo:        dc.b 0
 hud_hi:             dc.b 0
 hud_mid:            dc.b 0
 hud_lo:             dc.b 0
+        even
 hud_cache:          ds.b 14
 str_credit:
         dc.b    "       enhanced by dad_prg v1.0",0,$ff
