@@ -189,7 +189,8 @@ my_vbl:
         beq.s   .no_ste
 
         ; Shifter ALREADY latched HW_VBASE_HI/MID/LO at the start of this VBL!
-        ; Now write LINEWID & HSCROLL so they match this exact latched frame!
+        ; Latch cur_disp_lo (= exact HW_VCNT_LO at end of scanline 191 since 192*176=$8400!)
+        move.b  next_disp_lo(pc),cur_disp_lo
         move.b  disp_linewid(pc),HW_LINEWID
         move.b  disp_hscroll(pc),HW_HSCROLL
         clr.b   disp_pending
@@ -222,28 +223,22 @@ my_ikbd_wrap:
         rts
 
 ; =============================================================================
-; Timer B HBL Interrupt Handler — cycle-exact HUD split at scanline 192
-;   Fires at end of scanline 190 (MFP_TBDR=191), waits for scanline 191 DE
-;   to start and end via HW_VCNT_LO ($ffff8209), then switches to hud_buf
-;   at exact cycle ~392 of line 191 (immune to Blitter/IRQ/Crawio jitter!).
+; Timer B HBL Interrupt Handler — exact hardware-address HUD split at line 192
+;   Fires at end of scanline 190 (MFP_TBDR=191). On scanline 191, HW_VCNT_LO
+;   starts at (cur_disp_lo + $50), ramps to (cur_disp_lo + $f0/$f8), and hits
+;   EXACTLY cur_disp_lo at the falling edge of scanline 191 DE (192*176=$8400)!
+;   Immune to up to 400 cycles of Blitter/IRQ entry latency!
 ; =============================================================================
 my_timer_b:
         clr.b   MFP_TBCR
         move.w  d0,-(sp)
 
-        ; 1. Wait for scanline 191 active display (DE) to start
-        move.b  HW_VCNT_LO,d0
-.w_de_start:
+        move.b  cur_disp_lo(pc),d0
+.w_end191:
         cmp.b   HW_VCNT_LO,d0
-        beq.s   .w_de_start
+        bne.s   .w_end191
 
-        ; 2. Scanline 191 DE is EXACTLY 320 cycles (both 50Hz & 60Hz)!
-        ;    Wait 328 cycles -> lands ~8 cycles into HBL with 180+ cycles margin!
-        moveq   #31,d0              ; 4 cyc
-.w_de_end:
-        dbra    d0,.w_de_end        ; 31*10 + 14 = 324 cyc -> 328 cyc total!
-
-        ; 3. Exact start of HBL of line 191 -> switch cleanly to static hud_buf!
+        ; Exact start of HBL of line 191 (~cycle 384, 120+ cycles before line 192 DE!)
         clr.b   HW_LINEWID
         clr.b   HW_HSCROLL
 tb_hud_hi:
@@ -386,13 +381,12 @@ hook_tile_cache:
         rts
 
 ; =============================================================================
-; Blitter helper: start in shared-bus mode ($80) so Timer B HBL never jitters!
+; Blitter helper: HOG mode ($c0) finishes 2x faster in wall-clock time so ALL
+; Blitter work (even tile-boundary shifts!) completes by scanline ~170 — well
+; before scanline 191 Timer B fires, giving 0-cycle Timer B latency!
 ; =============================================================================
 blt_go:
-        move.b  #$80,BLT_CTRL
-.wait:
-        bset    #7,BLT_CTRL
-        bne.s   .wait
+        move.b  #$c0,BLT_CTRL
         rts
 
 ; =============================================================================
@@ -686,7 +680,8 @@ shift_pf_buffer:
         cmpa.l  a0,a1
         bhi.s   .desc               ; dst > src -> descending copy!
 
-        ; Ascending copy
+        ; Ascending copy in 4-line HOG chunks (4 * 80w = 320 words -> <= ~1280? Wait:
+        ; 1-line HOG chunk = 80w = 320 cycles < 420-cycle Timer B latency budget!)
         move.w  #2,BLT_SRC_XINC
         move.w  #2,BLT_DST_XINC
         move.w  #PF_STRIDE,d0
@@ -698,19 +693,20 @@ shift_pf_buffer:
         move.w  d0,BLT_DST_YINC
         move.l  a0,BLT_SRC_ADDR
         move.l  a1,BLT_DST_ADDR
+        subq.w  #1,d7               ; ylines - 1
+.asc_l:
         move.w  d4,BLT_XCOUNT
-        move.w  d7,BLT_YCOUNT
-        bsr.w   blt_go
+        move.w  #1,BLT_YCOUNT       ; 1 line = 80 words = ~320 cyc max HOG burst!
+        move.b  #$c0,BLT_CTRL
+        dbra    d7,.asc_l
         bra.w   .sdone
 
 .desc:
         ; NEVER use XINC = -2 on STe Blitter (hardware barrel-shifter 1-word delay)!
-        ; Case A: dy < 0 (dst_y = 1, src_y = 0) -> every dest row is 16 lines below src,
-        ;         so copying bottom-to-top with XINC = +2 has ZERO overlap!
+        ; Case A: dy < 0 (dst_y = 1, src_y = 0) -> bottom-to-top, 1-line HOG chunks!
         tst.w   d6                  ; dst_y == 1 means dy == -1
         beq.s   .desc_left_only
 
-        ; Point to start of last line (ylines - 1) * PF_STRIDE
         move.w  d7,d0
         subq.w  #1,d0
         mulu.w  #PF_STRIDE,d0
@@ -719,8 +715,6 @@ shift_pf_buffer:
 
         move.w  #2,BLT_SRC_XINC
         move.w  #2,BLT_DST_XINC
-        ; After xwords words (+2 each, total +2*(xwords-1)), step back 1 line (-PF_STRIDE)
-        ; -> yinc = -PF_STRIDE - 2*(xwords - 1) = -(PF_STRIDE + xbytes - 2)
         move.w  d4,d0
         add.w   d0,d0               ; xbytes
         addi.w  #PF_STRIDE-2,d0
@@ -729,14 +723,17 @@ shift_pf_buffer:
         move.w  d0,BLT_DST_YINC
         move.l  a0,BLT_SRC_ADDR
         move.l  a1,BLT_DST_ADDR
+        subq.w  #1,d7
+.du_l:
         move.w  d4,BLT_XCOUNT
-        move.w  d7,BLT_YCOUNT
-        bsr.w   blt_go
+        move.w  #1,BLT_YCOUNT       ; 1 line = ~320 cyc max HOG burst!
+        move.b  #$c0,BLT_CTRL
+        dbra    d7,.du_l
         bra.w   .sdone
 
 .desc_left_only:
         ; Case B: dy == 0, dx == -1 (dst = src + 16, 10 tile columns x 208 lines)
-        ; Copy column 9 down to 0 with XINC = +2, XCOUNT = 8 -> ZERO overlap!
+        ; Copy column 9 down to 0 in 8-line HOG chunks (8*8 = 64 words = ~256 cyc max!)
         move.w  #2,BLT_SRC_XINC
         move.w  #2,BLT_DST_XINC
         move.w  #PF_STRIDE-14,BLT_SRC_YINC
@@ -747,9 +744,12 @@ shift_pf_buffer:
 .dcol:
         move.l  a0,BLT_SRC_ADDR
         move.l  a1,BLT_DST_ADDR
+        moveq   #25,d3              ; 26 * 8 = 208 lines
+.dcol_c:
         move.w  #8,BLT_XCOUNT
-        move.w  d7,BLT_YCOUNT
-        bsr.w   blt_go
+        move.w  #8,BLT_YCOUNT       ; 64 words = ~256 cyc max HOG burst!
+        move.b  #$c0,BLT_CTRL
+        dbra    d3,.dcol_c
         lea     -16(a0),a0
         lea     -16(a1),a1
         dbra    d2,.dcol
@@ -1300,6 +1300,7 @@ hook_game_swap:
         lsr.w   #8,d4
         move.b  d4,HW_VBASE_MID     ; 2nd: MID (resets LO to 0)
         move.b  d0,HW_VBASE_LO      ; 3rd: LO (sticks!)
+        move.b  d0,next_disp_lo
         move.b  d2,disp_linewid
         move.b  d1,disp_hscroll
         st      ste_scroll_active
@@ -1352,6 +1353,8 @@ disp_mid:           dc.b 0
 disp_lo:            dc.b 0
 disp_linewid:       dc.b 0
 disp_hscroll:       dc.b 0
+next_disp_lo:       dc.b 0
+cur_disp_lo:        dc.b 0
 hud_hi:             dc.b 0
 hud_mid:            dc.b 0
 hud_lo:             dc.b 0
