@@ -78,13 +78,17 @@ fast_draw_str:
         cmpi.w  #320,d2
         bgt.w   .fds_slow
 
-        ; Get active TOS logical screen base ONCE per string (XBIOS #3 Logbase clobbers d0-d2/a0-a2!)
+        ; Use cached logical screen base from fast_draw_screen (zero per-string trap #14!)
+        tst.l   ui_logbase
+        bne.s   .fds_lb_ok
         movem.l d0-d2/a0/a2,-(sp)
         move.w  #3,-(sp)
         trap    #14
         addq.l  #2,sp
-        movea.l d0,a5                   ; a5 = logical screen base
+        move.l  d0,ui_logbase
         movem.l (sp)+,d0-d2/a0/a2
+.fds_lb_ok:
+        movea.l ui_logbase(pc),a5       ; a5 = logical screen base
         move.w  d2,-$764a(a4)           ; update cur_x = end_x (exact match to $017a38!)
 
         ; Compute screen row base a5 += y * 160 (zero mulu!)
@@ -412,3 +416,342 @@ select_team_assign:
         dc.w    $a005                   ; Line-A filled rect (single 18x6 cell!)
         movem.l (sp)+,d0-d2/a0-a2
         rts
+
+; ===========================================================================
+; 3. Universal "Please Wait" Progress Bar + Percentage (0%..100%)
+;    draw_wait_pct(d0.w = pct 0..100, d1.w = bar_x, d2.w = bar_y)
+;    Only redraws when pct changes (ui_last_pct != d0). Preserves all regs!
+; ===========================================================================
+draw_wait_pct:
+        cmpi.w  #100,d0
+        ble.s   .dwp_c0
+        moveq   #100,d0
+.dwp_c0:
+        tst.w   d0
+        bge.s   .dwp_chk
+        moveq   #0,d0
+.dwp_chk:
+        cmp.w   ui_last_pct(pc),d0
+        beq.w   .dwp_rts
+        move.w  d0,ui_last_pct
+        movem.l d0-d7/a0-a6,-(sp)
+        move.w  d0,d5                   ; d5 = pct (0..100)
+        move.w  d1,d6                   ; d6 = bar_x
+        move.w  d2,d7                   ; d7 = bar_y
+
+        jsr     -$7f26(a4)              ; hide mouse
+        movea.l -$7656(a4),a5           ; a5 = Line-A base
+
+        ; 1. Outer 102x8 black frame (col 0)
+        moveq   #0,d0
+        jsr     $0175fa.l
+        clr.w   $24(a5)                 ; WRT_MODE = 0 (Replace)
+        move.w  d6,$26(a5)
+        move.w  d7,$28(a5)
+        move.w  d6,d0
+        addi.w  #101,d0
+        move.w  d0,$2a(a5)
+        move.w  d7,d0
+        addq.w  #7,d0
+        move.w  d0,$2c(a5)
+        dc.w    $a005
+
+        ; 2. Filled portion (1..pct) in widget's bright fg colour (ui_bar_col)
+        tst.w   d5
+        beq.s   .dwp_bg
+        move.w  ui_bar_col(pc),d0
+        jsr     $0175fa.l
+        move.w  d6,d0
+        addq.w  #1,d0
+        move.w  d0,$26(a5)
+        add.w   d5,d0
+        subq.w  #1,d0
+        move.w  d0,$2a(a5)
+        move.w  d7,d0
+        addq.w  #1,d0
+        move.w  d0,$28(a5)
+        addq.w  #5,d0
+        move.w  d0,$2c(a5)
+        dc.w    $a005
+
+.dwp_bg:
+        ; 3. Clear 26x8 label area to right of bar (bar_x+104..+129) in black (col 0)
+        moveq   #0,d0
+        jsr     $0175fa.l
+        move.w  d6,d0
+        addi.w  #104,d0
+        move.w  d0,$26(a5)
+        addi.w  #26,d0
+        move.w  d0,$2a(a5)
+        move.w  d7,$28(a5)
+        move.w  d7,d0
+        addq.w  #7,d0
+        move.w  d0,$2c(a5)
+        dc.w    $a005
+
+        ; 4. Format "XX%" (or "100%") into ui_pct_buf & draw in 6x6 font (font 0, col 15/3)
+        lea     ui_pct_buf(pc),a3
+        move.w  d5,d0
+        cmpi.w  #100,d0
+        blt.s   .dwp_2d
+        move.b  #'1',(a3)+
+        move.b  #'0',(a3)+
+        move.b  #'0',(a3)+
+        bra.s   .dwp_pc
+.dwp_2d:
+        ext.l   d0
+        divu.w  #10,d0
+        tst.w   d0
+        beq.s   .dwp_sp
+        addi.b  #'0',d0
+        move.b  d0,(a3)+
+        bra.s   .dwp_u
+.dwp_sp:
+        move.b  #' ',(a3)+
+.dwp_u: swap    d0
+        addi.b  #'0',d0
+        move.b  d0,(a3)+
+.dwp_pc:
+        move.b  #'%',(a3)+
+        clr.b   (a3)
+
+        move.w  -$764e(a4),-(sp)        ; save current font index
+        clr.w   -$764e(a4)              ; font 0 = 6x6 system font
+        move.w  #1,$24(a5)              ; WRT_MODE = 1 (Transparent)
+        move.w  ui_bar_col(pc),$6a(a5)  ; bright fg colour matching screen palette
+        move.w  d6,d0
+        addi.w  #106,d0
+        move.w  d7,d1
+        addq.w  #1,d1
+        lea     ui_pct_buf(pc),a3
+        bsr.w   fast_draw_str
+        move.w  (sp)+,-$764e(a4)        ; restore font index
+
+        jsr     -$7f20(a4)              ; show mouse
+        movem.l (sp)+,d0-d7/a0-a6
+.dwp_rts:
+        rts
+
+; Helper: compute centred (bar_x, bar_y) & bright fg colour inside widget 3 of Please Wait dialog ($01853c)
+pw_get_dialog_pos:
+        move.l  a2,-(sp)
+        moveq   #3,d0
+        jsr     $017f3a.l               ; widget 3 = Please Wait dialog body
+        move.l  a2,d0
+        beq.s   .pgp_def
+        moveq   #0,d0
+        move.b  $1c(a2),d0              ; widget 3 text fg colour (bright yellow!)
+        move.w  d0,ui_bar_col
+        move.w  $c(a2),d1               ; box.w
+        subi.w  #130,d1
+        asr.w   #1,d1
+        add.w   $8(a2),d1               ; bar_x = box.x + (box.w - 130) / 2
+        move.w  $a(a2),d2
+        add.w   $e(a2),d2
+        subi.w  #12,d2                  ; bar_y = box.y + box.h - 12
+        movea.l (sp)+,a2
+        rts
+.pgp_def:
+        move.w  #15,ui_bar_col
+        move.w  #95,d1
+        move.w  #116,d2
+        movea.l (sp)+,a2
+        rts
+
+; ===========================================================================
+; 4. End-of-Week "Please Wait" Progress Hook ($0126a8 -> returns to $0126b4)
+;    Replaces jsr $12384 + jsr $12368 + jsr $12afa with live 0%..100% bar!
+; ===========================================================================
+pw_week_end:
+        movem.l d0-d7/a0-a6,-(sp)
+        move.w  #-1,ui_last_pct
+        bsr.s   pw_get_dialog_pos       ; d1 = bar_x, d2 = bar_y
+        move.w  d1,ui_bar_x
+        move.w  d2,ui_bar_y
+        moveq   #0,d0
+        bsr.w   draw_wait_pct
+
+        ; Pass 1: 92 clubs AI transfer/training ($16f24) -> 0%..48%
+        movea.l -$2e94(a4),a5
+        moveq   #0,d6                   ; club index 0..91
+.pww_1:
+        tst.w   $28(a5)
+        bne.s   .pww_1n
+        movem.l d6/a5,-(sp)
+        jsr     $016f24.l
+        movem.l (sp)+,d6/a5
+.pww_1n:
+        adda.l  #$64,a5
+        addq.w  #1,d6
+        move.w  d6,d0
+        andi.w  #3,d0
+        bne.s   .pww_1c
+        move.w  d6,d0
+        mulu.w  #48,d0
+        divu.w  #92,d0
+        move.w  ui_bar_x(pc),d1
+        move.w  ui_bar_y(pc),d2
+        bsr.w   draw_wait_pct
+.pww_1c:
+        cmpi.w  #92,d6
+        blt.s   .pww_1
+
+        jsr     $012ea8.l               ; transfer market update
+        moveq   #50,d0
+        move.w  ui_bar_x(pc),d1
+        move.w  ui_bar_y(pc),d2
+        bsr.w   draw_wait_pct
+
+        ; Pass 2: 92 clubs AI squad selection ($16f04) -> 50%..95%
+        movea.l -$2e94(a4),a5
+        moveq   #0,d6
+.pww_2:
+        tst.w   $28(a5)
+        bne.s   .pww_2n
+        movem.l d6/a5,-(sp)
+        jsr     $016f04.l
+        movem.l (sp)+,d6/a5
+.pww_2n:
+        adda.l  #$64,a5
+        addq.w  #1,d6
+        move.w  d6,d0
+        andi.w  #3,d0
+        bne.s   .pww_2c
+        move.w  d6,d0
+        mulu.w  #45,d0
+        divu.w  #92,d0
+        addi.w  #50,d0
+        move.w  ui_bar_x(pc),d1
+        move.w  ui_bar_y(pc),d2
+        bsr.w   draw_wait_pct
+.pww_2c:
+        cmpi.w  #92,d6
+        blt.s   .pww_2
+
+        jsr     $012afa.l               ; finances/morale
+        moveq   #100,d0
+        move.w  ui_bar_x(pc),d1
+        move.w  ui_bar_y(pc),d2
+        bsr.w   draw_wait_pct
+        movem.l (sp)+,d0-d7/a0-a6
+        jmp     $0126b4.l
+
+; ===========================================================================
+; 5. End-of-Season "Please Wait" Progress Hook ($0129e0 -> returns to $012a12)
+;    Shows live 10% -> 50% -> 85% -> 88..97% -> 100% across season rollover!
+; ===========================================================================
+pw_season_end:
+        move.w  #-1,ui_last_pct
+        bsr.w   pw_get_dialog_pos
+        move.w  d1,ui_bar_x
+        move.w  d2,ui_bar_y
+        moveq   #10,d0
+        bsr.w   draw_wait_pct
+
+        jsr     $014844.l               ; age / retire all players
+        moveq   #50,d0
+        move.w  ui_bar_x(pc),d1
+        move.w  ui_bar_y(pc),d2
+        bsr.w   draw_wait_pct
+
+        jsr     $0149da.l               ; generate youth / replacements
+        moveq   #85,d0
+        move.w  ui_bar_x(pc),d1
+        move.w  ui_bar_y(pc),d2
+        bsr.w   draw_wait_pct
+
+        clr.w   -$2d7c(a4)
+        clr.w   -$2d74(a4)
+        clr.w   -$2e3e(a4)
+        addq.w  #1,-$2d7a(a4)
+        moveq   #0,d0
+.pws_dv:
+        jsr     $013362.l               ; division promotion/relegation & fixtures
+        addq.w  #1,d0
+        movem.l d0,-(sp)
+        mulu.w  #3,d0
+        addi.w  #85,d0                  ; 88%, 91%, 94%, 97%
+        move.w  ui_bar_x(pc),d1
+        move.w  ui_bar_y(pc),d2
+        bsr.w   draw_wait_pct
+        movem.l (sp)+,d0
+        cmpi.w  #4,d0
+        blt.s   .pws_dv
+
+        jsr     $013ad6.l
+        jsr     $0137a8.l
+        jsr     $017566.l
+        moveq   #100,d0
+        move.w  ui_bar_x(pc),d1
+        move.w  ui_bar_y(pc),d2
+        bsr.w   draw_wait_pct
+        jmp     $012a12.l
+
+; Helper for New Game Setup progress bar (called from setup_enter / setup_bucket_inc)
+; Computes pct = (sum_i min(count[i], quota[i])) * 100 / sum_i(quota[i])!
+pw_setup_update:
+        movem.l d0-d4,-(sp)
+        moveq   #0,d1                   ; filled
+        moveq   #0,d2                   ; total quota
+        moveq   #15,d3
+.psu_lp:
+        moveq   #0,d0
+        move.b  0(a3,d3.w),d0           ; quota[i]
+        add.w   d0,d2
+        moveq   #0,d4
+        move.b  0(a6,d3.w),d4           ; count[i]
+        cmp.w   d0,d4
+        bls.s   .psu_ok
+        move.w  d0,d4
+.psu_ok:
+        add.w   d4,d1
+        dbra    d3,.psu_lp
+        tst.w   d2
+        beq.s   .psu_ret
+        mulu.w  #100,d1
+        divu.w  d2,d1
+        move.w  d1,d0
+        move.w  #95,d1
+        move.w  #186,d2
+        bsr.w   draw_wait_pct
+.psu_ret:
+        movem.l (sp)+,d0-d4
+        rts
+
+; ===========================================================================
+; 4. Universal Screen-Draw Batching ($017d0c + -$7ff8(a4) wait_event)
+;    - Caches XBIOS #3 Logbase() ONCE per screen load (zero per-string trap #14!)
+;    - Holds mouse hidden across all post-draw_screen field/list/finance draws,
+;      then shows mouse ONCE right before wait_event ($018148) waits for input!
+; ===========================================================================
+fast_draw_screen:
+        movem.l d0-d7/a0-a3/a5-a6,-(sp)
+        move.l  a2,-(sp)
+        move.w  #3,-(sp)                ; XBIOS #3 Logbase() ONCE per screen
+        trap    #14
+        addq.l  #2,sp
+        move.l  d0,ui_logbase
+        tst.b   ui_mouse_held
+        bne.s   .fds_m_ok
+        st      ui_mouse_held
+        jsr     -$7f26(a4)              ; hide mouse until next wait_event!
+.fds_m_ok:
+        jmp     $017d12.l               ; continue draw_screen
+
+fast_wait_event:
+        tst.b   ui_mouse_held
+        beq.s   .fwe_go
+        clr.b   ui_mouse_held
+        jsr     -$7f20(a4)              ; show mouse ONCE before waiting!
+.fwe_go:
+        jmp     $018148.l               ; original wait_event
+
+ui_logbase:     dc.l    0
+ui_last_pct:    dc.w    -1
+ui_bar_x:       dc.w    95
+ui_bar_y:       dc.w    116
+ui_bar_col:     dc.w    15
+ui_mouse_held:  dc.b    0
+                even
+ui_pct_buf:     ds.b    8
+                even

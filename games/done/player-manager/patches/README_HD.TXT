@@ -51,14 +51,28 @@ What's New in v1.1 (Atari STE Amiga Visuals & Audio):
     Amiga STE engine automatically.
   * Plain 68000 Atari ST (2 MB+) is detected automatically and runs classic
     v1.0 ST graphics (Timer B grass stripes) and YM audio with zero issues.
-- Faster Management UI & Auto-Advancing Select Team Shirt Picker:
-  * Direct 68000 ST Low 4bpp string renderer replaces per-character TOS Line-A
-    $a008 traps globally, making "The Opponents", "Select Team", "Player
-    Information", "The Squad", and all menu screens draw noticeably faster.
+- Faster Management UI, 92-Team League Screens & Select Team Polish:
+  * Direct 68000 ST Low 4bpp string renderer + cached screen Logbase +
+    screen-level mouse batching (eliminates per-field Line-A mouse hide/show
+    thrashing and per-string trap #14 calls) makes "The Squad", "The Club ->
+    Finances", "The Opponents", "Select Team", "Player Information", and all
+    menu screens render near-instantly.
+  * Upgraded 92-Team League Screens (native styling):
+    - "Division Tables": displays ALL 20 (Div 1) or 24 (Div 2-4) clubs on ONE
+      screen with zero scrolling, right-aligned positions, human club highlight,
+      and 3-up/3-down promotion & relegation lines.
+    - "This Week's Fixtures" & "Last Week's Results": opens straight onto your
+      current division's full fixture/result list (all 10 or 12 matches on one
+      screen with your club highlighted) with native Division 1-4 & Done
+      buttons along the bottom (or press 1-4 / Esc).
   * On "Select Team", assigning a shirt number updates only the changed shirt
     cell(s) in-place (zero full-list redraw/flicker) and automatically advances
     the active shirt number (1 -> 2 -> ... -> 12 -> 14 -> 1, skipping missing
     shirt 13 and any right-clicked N/A slots).
+  * Live 0%-100% progress bar & percentage readout on all "Please Wait" screens
+    (New Game setup, End-of-Week processing, and End-of-Season rollover).
+  * Tactics Editor "Done" button now exits cleanly on a single click (removing
+    the original hidden double-click requirement).
 - Real Hard-Disk Driver & 2 MB / 4 MB+ RAM Compatibility:
   * 32-bit-clean HAGA RAM detection and dynamic TRAP #1 / HAGA pointer
     preservation on 2 MB / 4 MB+ machines (including MiSTerFPGA cold boots).

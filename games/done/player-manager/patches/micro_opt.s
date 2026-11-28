@@ -106,29 +106,44 @@ reapply_pm_hooks:
         bne.w   .fail
         cmpi.l  #$74005246,$0111ec.l
         bne.w   .fail
+        cmpi.l  #$662e740c,$0163a4.l    ; Tactics Done double-click check ($0163a6)
+        bne.w   .fail
+        cmpi.l  #$4ebafcda,$0126a8.l    ; Week-end Please Wait ($0126a8)
+        bne.w   .fail
+        cmpi.l  #$4eba1e62,$0129e0.l    ; Season-end Please Wait ($0129e0)
+        bne.w   .fail
+        cmpi.l  #$48e7fff6,$017d0c.l    ; draw_screen ($017d0c)
+        bne.w   .fail
+        cmpi.l  #$4ef90001,$0216a2.l    ; -$7ff8(a4) wait_event jump table ($0216a2)
+        bne.w   .fail
 
         clr.b   skip_matches
+        clr.b   ui_mouse_held
+        clr.l   ui_logbase
 
-        ; Apply all 17 6-byte jmp hooks in micro_opt via compact table
+        ; Apply all 20 6-byte jmp hooks in micro_opt via compact table
         lea     pm_jmp_tbl(pc),a0
-        moveq   #16,d0
+        moveq   #19,d0
 .ap_j:  movea.l (a0)+,a1
         move.w  #$4ef9,(a1)+
         move.l  (a0)+,(a1)
         dbra    d0,.ap_j
 
-        ; 2. Hook $021792 (LFSR jump table)
+        ; 2. Hook $021792 (LFSR jump table) & $0216a2 (wait_event mouse-batch release)
         move.l  #fast_lfsr,$021794.l
+        move.l  #fast_wait_event,$0216a4.l
 
         ; 6b. Short branch in sim_season_matches ($01545e)
         move.w  #$3407,$01545e.l        ; move.w d7,d2
         move.w  #$6012,$015460.l        ; bra.s  $015474
 
-        ; 11 & 12. NOP padding after 8/10-byte displaced instructions
+        ; 11 & 12. NOP padding after 8/10-byte displaced instructions + Tactics single-click Done!
         move.w  #$4e71,$010546.l
         move.w  #$4e71,$010552.l
         move.w  #$4e71,$010a3a.l
         move.w  #$4e71,$010a3c.l
+        move.w  #$6042,$0163a6.l        ; Tactics Done: bra.s $0163ea (exit on single click!)
+        move.w  #$4e71,$0129e6.l        ; pad after 6-byte jmp pw_season_end at $0129e0
 
         ; 9. Task 1 (1B+1C+1D+1E): 92-team 1989-90 league expansion
         bsr.w   init_league92
@@ -166,6 +181,9 @@ pm_jmp_tbl:
         dc.l    $010a34,club_kit_picker
         dc.l    $017a38,fast_draw_str
         dc.l    $0111e8,select_team_assign
+        dc.l    $0126a8,pw_week_end
+        dc.l    $0129e0,pw_season_end
+        dc.l    $017d0c,fast_draw_screen
 
 ; ---------------------------------------------------------------------------
 ; Patch 1: fast_sum_rng_mod ($01863e) - 100% bit-exact (16/8/4/1-bit LFSR)
@@ -611,6 +629,12 @@ setup_enter:
         st.b    skip_matches
         lea     -$7ec9(a4),a2
         jsr     $017d0c.l
+        move.w  #-1,ui_last_pct
+        move.w  #15,ui_bar_col
+        moveq   #0,d0
+        move.w  #95,d1
+        move.w  #186,d2
+        bsr.w   draw_wait_pct
         jmp     $010cc8.l
 
 ; Replaces $010cfe..$010d42 (increment count, batched redraw, quota/full check)
@@ -659,11 +683,12 @@ setup_bucket_inc:
         lea     -$7dd1(a4),a3
         jsr     $017b9c.l
         movem.l (sp)+,d0-d7/a0-a3/a5-a6
+        bsr.w   pw_setup_update
 .next:
         jmp     $010cde.l
 
 .setup_done:
-        ; Redraw all 16 final bucket counts + d7=0 before returning
+        ; Redraw all 16 final bucket counts + d7=0 + 100% bar before returning
         movem.l d0-d7/a0-a3/a5-a6,-(sp)
         moveq   #0,d4
 .fin_loop:
@@ -680,6 +705,10 @@ setup_bucket_inc:
         moveq   #0,d1
         lea     -$7dd1(a4),a3
         jsr     $017b9c.l
+        moveq   #100,d0
+        move.w  #95,d1
+        move.w  #186,d2
+        bsr.w   draw_wait_pct
         movem.l (sp)+,d0-d7/a0-a3/a5-a6
         clr.b   skip_matches
         rts

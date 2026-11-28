@@ -16,7 +16,11 @@
   - Luminance-weighted perceptual RGB contrast scoring (`2*|dR| + 3*|dG| + |dB|`, plus colour-family & patterned-shirt overlap checks) automatically switches to the 2nd kit (or highest-contrast fallback strip) whenever two teams' kits are too similar.
   - **2-Step New Game Club Kit Picker** ([patches/kit_picker.s](patches/kit_picker.s)) right after naming your club (e.g. `Anco United`) on `scr4.men`: pick both your **Home (1st)** and **Away (2nd)** kits with a live visual jersey preview (mouse clicks or keys `1`–`3` + `Space`), persisted in every save game at `-$24c8(a4)` and `-$24c6(a4)`.
   - **Kick Off 2 Pre-Match Screen (`ko6.men`)** before every match showing both clubs, live visual jerseys, genuinely randomized Referee (`0..23`), Pitch Condition (`NORMAL` / `WET` / `SOGGY` / `PLASTIC`), and Wind, with instant 1st↔2nd kit override before kick-off (Joystick `U/D` or `H` = Home 1st/2nd, `L/R` or `A` = Away 1st/2nd; keys `1`–`3` / `4`–`6` for custom tweaks; `Fire` / `Space` to kick off).
-- **Fast Management UI & Auto-Advancing Select Team Picker ([patches/ui_fast.s](patches/ui_fast.s)):** Direct 68000 ST Low 4bpp transparent string renderer replaces per-character TOS Line-A `$a008` traps globally across *The Opponents*, *Select Team*, *Player Information*, *The Squad*, and all dialogs; *Select Team* updates only the changed shirt cell(s) in-place (zero full-list redraw) and auto-advances the active shirt number (`1 → 2 → … → 12 → 14 → 1`, skipping missing shirt 13 and any N/A slots).
+- **Fast Management UI, Upgraded 92-Team League Screens & Select Team Polish ([patches/ui_fast.s](patches/ui_fast.s), [patches/league92.s](patches/league92.s)):**
+  - Direct 68000 ST Low 4bpp transparent string renderer + cached screen `Logbase` + universal screen-level mouse batching (`fast_draw_screen` / `fast_wait_event`, eliminating per-field Line-A mouse hide/show thrashing and per-string `trap #14` overhead) makes *The Squad*, *The Club → Finances*, *The Opponents*, *Select Team*, *Player Information*, and all menu screens render near-instantly.
+  - **Single-Screen 92-Team Division Tables:** Displays all **20 (Div 1)** or **24 (Div 2–4)** clubs on ONE screen with zero scrolling, right-aligned positions, bright yellow human-club highlight, and 3-up/3-down promotion & relegation lines.
+  - **Division-Tabbed This Week's Fixtures & Last Week's Results:** Opens straight onto your current division's full fixture/result list (all 10 or 12 matches on one screen with your match highlighted) with native `Division 1`–`4` & `Done` buttons along the bottom (or press `1`–`4` / `Esc`).
+  - *Select Team* updates only the changed shirt cell(s) in-place (zero full-list redraw) and auto-advances the active shirt number (`1 → 2 → … → 12 → 14 → 1`, skipping missing shirt 13 and any N/A slots); all *Please Wait* screens display a live `0%–100%` progress bar; and Tactics Editor *Done* exits on a single click.
 - **Dedicated STE Mode & Plain ST Auto-Fallback:** Atari STE / Mega STE (2 MB+) runs the dedicated Triple-Buffered 50 FPS Amiga STE engine automatically (`BR_IS_STE = 1`, `STE_BIG_RAM = 1`); plain 2 MB+ 68000 ST auto-detects `BR_IS_STE = 0` and stays on Classic v1.0 ST mode untouched.
 - **Real ACSI `HDDRIVER`, MiSTerFPGA & 2 MB / 4 MB+ Compatibility + Floppy Edition:**
   - 32-bit-clean `HAGA` `phystop >> 19` RAM clamp (`HAGA+$014c` & `HAGA+$21a0`) for cold-boot stability on MiSTerFPGA and 2 MB / 4 MB+ machines, plus dynamic `HDDRIVER` `TRAP #1` / HAGA pointer preservation across `KO2_HND_BUF`.
@@ -41,12 +45,12 @@
 
 | Item | MD5 |
 |---|---|
-| `dist/PlayerManager_v1.1_patched_hd_2026-11-27.zip` | `a63c036f8f61cff0c57c4b787b0131a6` |
-| `dist/PlayerManager_v1.1_patched_vhd_2026-11-27.zip` | `0b8b44a777aecadb663b79baa01c14fc` |
-| `dist/PlayerManager_v1.1_floppy_2026-11-27.st` | `9caff0decce668655a556f2a1222bef7` |
-| `dist/PlayerManager_v1.1_floppy_2026-11-27.zip` | `4e0aa1b277bce0e80a5097aeaa02c4d7` |
+| `dist/PlayerManager_v1.1_patched_hd_2026-11-27.zip` | `affcdcc8f0bfb86f84c329b5c7deb3dd` |
+| `dist/PlayerManager_v1.1_patched_vhd_2026-11-27.zip` | `678818154f248d55a4751d351c5b55a4` |
+| `dist/PlayerManager_v1.1_floppy_2026-11-27.st` | `37c6de85173c967d4317659be8f3cd48` |
+| `dist/PlayerManager_v1.1_floppy_2026-11-27.zip` | `281bedd6cbde30394b6b712da4e47ec3` |
 | `build/game/HAGA` | `5d573a9cd79de06588ce53da9aa44e05` |
-| `build/game/FILES/PMLA` | `5b72f41d4a644c855f62a61f2e696327` |
+| `build/game/FILES/PMLA` | `d073d0ca873b9f3c32dc467e6b9cb82a` |
 | `build/game/FILES/KO2ENG.BIN` | `934b13a84279197ab58d46312253f078` |
 | `build/game/FILES/KO2HND.BIN` | `a3505e2d266ec54f926b300b88d6be73` |
 | `build/game/FILES/PMCODE.BIN` | `b151b784eec464874beb2a0db9810fcb` |

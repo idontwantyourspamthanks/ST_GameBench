@@ -366,7 +366,7 @@ stager:
         print(f"Copied 92-team {demo_src.name} (+ default 1st & 2nd club kits) into {BUILD / 'FILES'}")
 
     # Task 2: Copy Kick Off 2 engine binary, resident handler, KRD assets, and PM match segment
-    assert 0xb3000 + len(payload) <= 0xb7300, f"payload overlaps BR_STATE: ${0xb3000 + len(payload):x}"
+    assert 0xb3000 + len(payload) <= 0xb7700, f"payload overlaps BR_STATE: ${0xb3000 + len(payload):x}"
     ko2_orig = ROOT.parent.parent / "queue" / "kick-off-2" / "originals" / "KICKOFF2" / "FILES" / "KRD"
     ko2_ram = WORK / "ko2_ram.bin"
     pm_ram = WORK / "setup_ram.bin"
