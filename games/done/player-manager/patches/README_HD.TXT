@@ -12,12 +12,14 @@ What's New in v1.1 (Atari STE Amiga Visuals & Audio):
     linear Ring Buffers, lockstep VBlank STE Hardware Fine Scrolling (VBASE +
     LINEWID + HSCROLL), Blitter-accelerated HUD, 160 KB 5-scale pre-baked radar
     (cleanly suppressed during walk-out until arrival at the centre circle),
-    160 KB 640-sprite pre-trimmed/pre-masked 4bpp cache, and 30 KB 32-bit pitch
-    tile pointer map for locked 50 FPS gameplay with zero flicker or judder.
-  * Automatic 50 Hz PAL Match Switch & Restore: colour monitors (including 60 Hz
-    NTSC boots) automatically switch to 50 Hz PAL on match entry for exact Kick
-    Off 2 game speed and full VBlank headroom, then restore your original sync
-    mode upon returning to Player Manager.
+    160 KB 640-sprite pre-trimmed/pre-masked/X-trimmed 4bpp cache, direct
+    Supervisor 1-plane NFSR HUD blits, and 30 KB 32-bit pitch tile pointer map
+    for ultra-steady 50 FPS gameplay (and 60 Hz headroom!) with zero flicker/judder.
+  * Automatic 50 Hz PAL Match Switch & Live 'H' 60 Hz Turbo Key: colour monitors
+    (including 60 Hz NTSC boots) automatically switch to 50 Hz PAL on match
+    entry for exact Kick Off 2 game speed, allow toggling 60 Hz turbo mode live
+    in-match with the H key, and restore your original sync mode upon returning
+    to Player Manager.
   * Dual-playfield 16-colour split (0..7 Amiga pitch, 8..15 KO2 club kits &
     HUD), transparent vector radar (X resize, D toggle), active player black
     underline, and transparent drop-shadowed bottom HUD (kit-matched player
@@ -95,6 +97,7 @@ In-Match Controls (Kick Off 2):
   D            Toggle radar on / off
   R            Instant Replay
   1 - 4        Switch tactics live (4-2-4, 4-3-3, 4-4-2, 5-3-2)
+  H            Toggle 50 Hz PAL / 60 Hz Turbo mode live in-match
   P            Pause / Resume
 
 Every patch verifies original bytes before patching (marker PMOK at $b2ff8).

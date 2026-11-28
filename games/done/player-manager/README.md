@@ -8,8 +8,8 @@
 - Machine/RAM notes: HAGA, **2 MB minimum** (verified on Hatari and MiSTerFPGA across 2 MB & 4 MB Atari STE/ST with real ACSI `HDDRIVER` `.vhd` and self-booting 1.44 MB floppy).
 
 ## v1.1 Features (Atari STE Amiga Visuals, Audio & Match Polish)
-- **Kick Off 2 Amiga Tiled Pitch & 12-Bit Palette on STE (Triple-Buffered 50 FPS Full-Screen 320×200 Ring Engine on 2 MB+ STE):** All 4 Amiga pitches (`normal`, `wet`, `soggy`, `artificial`) converted to STE 12-bit RGB palettes + `80×96` tilemaps + 256 3bpp tiles (`AMIGAP0..3.BIN`), rendered across the **full 320×200 visible screen** into three 448-line linear ring buffers (`$0d0000`/`$0e2800`/`$0f5000`) via lockstep VBlank STE Hardware fine scrolling (`$ff8201/$03/$0d`, `$ff820f`, `$ff8265`), exact 0-pixel pitch-edge camera clamping across all four lines, **160 KB 640-sprite pre-trimmed/pre-masked 4bpp cache** (`$136800..$15e7ff`, zero runtime CPU row loops, 3-blit `skew==0` fast path), **30 KB pre-expanded 32-bit pitch tile pointer map** (`$15e800..$165fff`), **160 KB 5-scale pre-baked transparent vector radar** (`$10e800..$1367ff`, hidden cleanly during player walk-out until arrival at the centre circle, with 0-stall `X` resize & `D` toggle), active player black underline, and **transparent drop-shadowed Blitter bottom HUD** (kit-matched player names & score + crisp white clock floating directly over the grass, no bottom bar!) ([patches/ko2_ste.s](patches/ko2_ste.s)).
-- **Automatic 50 Hz PAL Match Switch & Clean Restore:** Colour ST/STE setups (including 60 Hz NTSC boots) automatically switch into 50 Hz PAL (`$448.w = 1`, `$ffff820a |= 2`) on match entry for exact Kick Off 2 game speed and full 160,256-cycle VBL headroom, then restore `$448.w` and `$ffff820a.w` on return to Player Manager ([patches/ko2_bridge.s](patches/ko2_bridge.s)).
+- **Kick Off 2 Amiga Tiled Pitch & 12-Bit Palette on STE (Triple-Buffered 50/60 FPS Full-Screen 320×200 Ring Engine on 2 MB+ STE):** All 4 Amiga pitches (`normal`, `wet`, `soggy`, `artificial`) converted to STE 12-bit RGB palettes + `80×96` tilemaps + 256 3bpp tiles (`AMIGAP0..3.BIN`), rendered across the **full 320×200 visible screen** into three 448-line linear ring buffers (`$0d0000`/`$0e2800`/`$0f5000`) under a single Supervisor frame bracket via lockstep VBlank STE Hardware fine scrolling (`$ff8201/$03/$0d`, `$ff820f`, `$ff8265`), exact 0-pixel pitch-edge camera clamping across all four lines, $O(1)$ `(a3)` sprite slot indexing, **160 KB 640-sprite pre-trimmed/pre-masked/X-trimmed 4bpp cache** (`$136800..$15e7ff`, 3-blit `skew==0` + single-column `4w` skewed fast paths), direct Supervisor 1-plane NFSR transparent bottom HUD (`$168000..$169fff` 4 KB save pools, skipping zero planes), **30 KB pre-expanded 32-bit pitch tile pointer map** (`$15e800..$165fff`), **160 KB 5-scale pre-baked transparent vector radar** (`$10e800..$1367ff` split solid `$ffff` + masked words + `STE_DOT_XLUT`, hidden cleanly during player walk-out until arrival at the centre circle, with 0-stall `X` resize & `D` toggle), direct `Iorec(1)` keypress check, and active player black underline ([patches/ko2_ste.s](patches/ko2_ste.s)).
+- **Automatic 50 Hz PAL Match Switch, Live `H` 60 Hz Key & Clean Restore:** Colour ST/STE setups (including 60 Hz NTSC boots) automatically switch into 50 Hz PAL (`$448.w = 1`, `$ffff820a |= 2`) on match entry for authentic Kick Off 2 speed, support pressing **`H`** live in-match to toggle **60 Hz Turbo / 50 Hz PAL** on the fly (with HUD status banner), and restore your original `$448.w` and `$ffff820a.w` on return to Player Manager ([patches/ko2_bridge.s](patches/ko2_bridge.s), [patches/ko2_ste.s](patches/ko2_ste.s)).
 - **Kick Off 2 Amiga STE DMA Audio:** 17 Amiga 8-bit signed PCM sound effects (`AMIGASND.BIN`, 6,258 Hz mono) played via STE DMA audio hardware (`$ff8900..$ff8924`) with exact 16-bit word KO2 script parsing and zero Timer-A CPU overhead.
 - **Authentic 1989–90 92-Club Home & Away Kits, Auto Clash Avoidance & Kit Picker:**
   - All 92 English Football League clubs carry authentic 1989–90 Home (`1st`) and Away (`2nd`) kits across all 6 verified Kick Off 2 styles (`Plain`, `Stripes`, `Chest Band`, `Sleeves`, `Shoulders`, `Sash`).
@@ -40,16 +40,16 @@
 
 | Item | MD5 |
 |---|---|
-| `dist/PlayerManager_v1.1_patched_hd_2026-11-27.zip` | `1fc2c907e5af654f37999c16c2a3b0f5` |
-| `dist/PlayerManager_v1.1_patched_vhd_2026-11-27.zip` | `724d6fff11dd0ed85d9fb57df384d611` |
-| `dist/PlayerManager_v1.1_floppy_2026-11-27.st` | `2846523fea4bd890503ee2a8ff2785d3` |
-| `dist/PlayerManager_v1.1_floppy_2026-11-27.zip` | `fb28b31e76ea488d8e3e585462c6cb7c` |
+| `dist/PlayerManager_v1.1_patched_hd_2026-11-27.zip` | `6485bd4e7517c979c590aab7aaf92a21` |
+| `dist/PlayerManager_v1.1_patched_vhd_2026-11-27.zip` | `205223d28976225f1782b27e441f304b` |
+| `dist/PlayerManager_v1.1_floppy_2026-11-27.st` | `951c51aa52e70cc7abf0b94e54e82ffc` |
+| `dist/PlayerManager_v1.1_floppy_2026-11-27.zip` | `6418bfdfe70f2191ed5076fc513ffd88` |
 | `build/game/HAGA` | `5d573a9cd79de06588ce53da9aa44e05` |
 | `build/game/FILES/PMLA` | `ad23b74e7c9a923db56503917dd1bd14` |
 | `build/game/FILES/KO2ENG.BIN` | `934b13a84279197ab58d46312253f078` |
 | `build/game/FILES/KO2HND.BIN` | `a3505e2d266ec54f926b300b88d6be73` |
 | `build/game/FILES/PMCODE.BIN` | `b151b784eec464874beb2a0db9810fcb` |
-| `build/game/FILES/KO2STE.BIN` | `ec8a6803f25340defc21c1046f45b210` |
+| `build/game/FILES/KO2STE.BIN` | `5a974b7487423d32e51bf28ab0351ec8` |
 | `build/game/FILES/AMIGASND.BIN` | `d5bd5ab3b9e1051ed23d2d778a718753` |
 | `build/game/FILES/AMIGAP0.BIN` | `29cb99c7587974a2b2fb4a571c31eaa7` |
 
