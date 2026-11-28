@@ -194,9 +194,10 @@ my_vbl:
         move.b  disp_hscroll(pc),HW_HSCROLL
         clr.b   disp_pending
 
-        ; Arm Timer B for HUD split at scanline 192
+        ; Arm Timer B at scanline 191 (1 line early) so my_timer_b can
+        ; cycle-lock to the exact falling edge of scanline 191 DE!
         clr.b   MFP_TBCR
-        move.b  #192,MFP_TBDR
+        move.b  #191,MFP_TBDR
         move.b  #8,MFP_TBCR
         bset    #0,MFP_IERA
         bset    #0,MFP_IMRA
@@ -221,19 +222,38 @@ my_ikbd_wrap:
         rts
 
 ; =============================================================================
-; Timer B HBL Interrupt Handler — switch scanline 192 to static HUD buffer
+; Timer B HBL Interrupt Handler — cycle-exact HUD split at scanline 192
+;   Fires at end of scanline 190 (MFP_TBDR=191), waits for scanline 191 DE
+;   to start and end via HW_VCNT_LO ($ffff8209), then switches to hud_buf
+;   at exact cycle ~392 of line 191 (immune to Blitter/IRQ/Crawio jitter!).
 ; =============================================================================
 my_timer_b:
-        ; Ultra-fast HBL switch (68 cycles total; VCNT written FIRST!)
-tb_hud_hi:
-        move.b  #0,HW_VCNT_HI       ; 12 cyc (patched at init)
-tb_hud_mid:
-        move.b  #0,HW_VCNT_MID      ; 12 cyc (patched at init)
-tb_hud_lo:
-        move.b  #0,HW_VCNT_LO       ; 12 cyc (patched at init)
-        clr.b   HW_LINEWID          ; 16 cyc
-        clr.b   HW_HSCROLL          ; 16 cyc
         clr.b   MFP_TBCR
+        move.w  d0,-(sp)
+
+        ; 1. Wait for scanline 191 active display (DE) to start
+        move.b  HW_VCNT_LO,d0
+.w_de_start:
+        cmp.b   HW_VCNT_LO,d0
+        beq.s   .w_de_start
+
+        ; 2. Wait for scanline 191 DE to end (HW_VCNT_LO stops incrementing)
+.w_de_end:
+        move.b  HW_VCNT_LO,d0       ; 12 cyc
+        cmp.b   HW_VCNT_LO,d0       ; 12 cyc (+6 bytes during DE -> never equal)
+        bne.s   .w_de_end
+
+        ; 3. Exact start of HBL of line 191 -> switch cleanly to static hud_buf!
+        clr.b   HW_LINEWID
+        clr.b   HW_HSCROLL
+tb_hud_hi:
+        move.b  #0,HW_VCNT_HI       ; patched at init
+tb_hud_mid:
+        move.b  #0,HW_VCNT_MID      ; patched at init
+tb_hud_lo:
+        move.b  #0,HW_VCNT_LO       ; patched at init
+
+        move.w  (sp)+,d0
         bclr    #0,MFP_ISRA
         rte
 
