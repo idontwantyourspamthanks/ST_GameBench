@@ -237,11 +237,11 @@ my_timer_b:
         cmp.b   HW_VCNT_LO,d0
         beq.s   .w_de_start
 
-        ; 2. Wait for scanline 191 DE to end (HW_VCNT_LO stops incrementing)
+        ; 2. Scanline 191 DE is EXACTLY 320 cycles (both 50Hz & 60Hz)!
+        ;    Wait 328 cycles -> lands ~8 cycles into HBL with 180+ cycles margin!
+        moveq   #31,d0              ; 4 cyc
 .w_de_end:
-        move.b  HW_VCNT_LO,d0       ; 12 cyc
-        cmp.b   HW_VCNT_LO,d0       ; 12 cyc (+6 bytes during DE -> never equal)
-        bne.s   .w_de_end
+        dbra    d0,.w_de_end        ; 31*10 + 14 = 324 cyc -> 328 cyc total!
 
         ; 3. Exact start of HBL of line 191 -> switch cleanly to static hud_buf!
         clr.b   HW_LINEWID
