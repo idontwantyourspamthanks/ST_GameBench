@@ -85,6 +85,8 @@ MFP_TBCR        equ $fffffa1b
 MFP_TBDR        equ $fffffa21
 
 SYS_VBL_VEC     equ $00000070
+SYS_TC_VEC      equ $00000114
+SYS_IKBD_VEC    equ $00000118
 SYS_TB_VEC      equ $00000120
 
 PF_STRIDE       equ 176             ; 352 px = 11 tiles * 16 bytes
@@ -131,7 +133,8 @@ hook_init:
         btst    #1,HW_SYNCMODE
         seq     is_60hz
 
-        ; Install VBL & Timer B handlers
+        ; Install VBL, Timer B, and IPL-lowering Timer C / IKBD wrappers
+        ; (so MFP Timer B ALWAYS preempts 200Hz Timer C & IKBD joystick IRQs!)
         move.w  sr,d2
         ori.w   #$0700,sr
         clr.b   MFP_TBCR
@@ -141,6 +144,12 @@ hook_init:
         move.l  SYS_TB_VEC,old_tb
         lea     my_timer_b(pc),a0
         move.l  a0,SYS_TB_VEC
+        move.l  SYS_TC_VEC,old_tc
+        lea     my_tc_wrap(pc),a0
+        move.l  a0,SYS_TC_VEC
+        move.l  SYS_IKBD_VEC,old_ikbd
+        lea     my_ikbd_wrap(pc),a0
+        move.l  a0,SYS_IKBD_VEC
         move.w  d2,sr
 
         clr.l   vbl_count
@@ -196,18 +205,34 @@ my_vbl:
         rts
 
 ; =============================================================================
+; Timer C ($114) & IKBD ($118) IPL-5 Wrappers
+;   MFP hardware ISRA/ISRB arbitration prevents re-entry of Timer C / IKBD,
+;   while lowering 68000 IPL from 6 -> 5 lets higher-priority Timer B (ISRA.0)
+;   preempt them instantaneously at scanline 192 -> ZERO HUD flicker!
+; =============================================================================
+my_tc_wrap:
+        move.w  #$2500,sr
+        move.l  old_tc,-(sp)
+        rts
+
+my_ikbd_wrap:
+        move.w  #$2500,sr
+        move.l  old_ikbd,-(sp)
+        rts
+
+; =============================================================================
 ; Timer B HBL Interrupt Handler — switch scanline 192 to static HUD buffer
 ; =============================================================================
 my_timer_b:
-        ; Ultra-fast HBL switch (72 cycles total -> fits even with 64-cycle Blitter bus yield!)
-        clr.b   HW_LINEWID          ; 16 cyc
-        clr.b   HW_HSCROLL          ; 16 cyc
+        ; Ultra-fast HBL switch (68 cycles total; VCNT written FIRST!)
 tb_hud_hi:
         move.b  #0,HW_VCNT_HI       ; 12 cyc (patched at init)
 tb_hud_mid:
         move.b  #0,HW_VCNT_MID      ; 12 cyc (patched at init)
 tb_hud_lo:
         move.b  #0,HW_VCNT_LO       ; 12 cyc (patched at init)
+        clr.b   HW_LINEWID          ; 16 cyc
+        clr.b   HW_HSCROLL          ; 16 cyc
         clr.b   MFP_TBCR
         bclr    #0,MFP_ISRA
         rte
@@ -1324,6 +1349,8 @@ orig_base:          ds.l 1
 old_ssp:            ds.l 1
 old_vbl:            ds.l 1
 old_tb:             ds.l 1
+old_tc:             ds.l 1
+old_ikbd:           ds.l 1
 vbl_count:          ds.l 1
 pf_buf0:            ds.l 1
 pf_buf1:            ds.l 1
