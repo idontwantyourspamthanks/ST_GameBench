@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../../../.." && pwd)"
-GAME="$ROOT/games/in_progress/seconds-out"
+GAME="$ROOT/games/done/seconds-out"
 HATARI="${HATARI:-/home/ryan/Code/AtariST/hattari/build/src/hatari}"
 [[ -x "$HATARI" ]] || HATARI="$(command -v hatari)"
 
