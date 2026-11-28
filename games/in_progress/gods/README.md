@@ -1,7 +1,7 @@
 # The Gods
 
 - Slug: `gods`
-- Status: **queued, not started**
+- Status: **in progress**
 - VHD source: `Atari3gb.vhd`, partition at offset 1840700928 (letters G-R), folder ::/G/GODS
 - Local copy: `originals/GODS` (git-ignored)
 - Loader: Gamex (START.TOS + .PCH/.FIC)
