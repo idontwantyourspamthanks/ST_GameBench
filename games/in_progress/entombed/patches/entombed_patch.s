@@ -384,10 +384,21 @@ hook_tile_cache:
 ; =============================================================================
 ; Blitter helper: HOG mode ($c0) finishes 2x faster in wall-clock time so ALL
 ; Blitter work (even tile-boundary shifts!) completes by scanline ~170 — well
-; before scanline 191 Timer B fires, giving 0-cycle Timer B latency!
+; =============================================================================
+; blt_go — Safe Blitter trigger: full-speed HOG ($c0) outside scanlines 185..191,
+;          hardware shared mode ($80, <=64 cyc IRQ latency) near Timer B!
 ; =============================================================================
 blt_go:
-        move.b  #$c0,BLT_CTRL
+        cmpi.b  #6,MFP_TBDR
+        bls.s   .shared
+        move.b  #$c0,BLT_CTRL       ; 97% of frame: 100% full-speed HOG!
+        rts
+.shared:
+        move.b  #$80,BLT_CTRL       ; lines 185..191: shared mode (<=64 cyc Timer B latency!)
+.sh_w:
+        nop                         ; IRQ window for Timer B!
+        tst.b   BLT_CTRL            ; bit 7 (N) = BUSY
+        bmi.s   .sh_w
         rts
 
 ; =============================================================================
@@ -697,8 +708,8 @@ shift_pf_buffer:
         subq.w  #1,d7               ; ylines - 1
 .asc_l:
         move.w  d4,BLT_XCOUNT
-        move.w  #1,BLT_YCOUNT       ; 1 line = 80 words = ~320 cyc max HOG burst!
-        move.b  #$c0,BLT_CTRL
+        move.w  #1,BLT_YCOUNT
+        bsr.w   blt_go
         dbra    d7,.asc_l
         bra.w   .sdone
 
@@ -727,8 +738,8 @@ shift_pf_buffer:
         subq.w  #1,d7
 .du_l:
         move.w  d4,BLT_XCOUNT
-        move.w  #1,BLT_YCOUNT       ; 1 line = ~320 cyc max HOG burst!
-        move.b  #$c0,BLT_CTRL
+        move.w  #1,BLT_YCOUNT
+        bsr.w   blt_go
         dbra    d7,.du_l
         bra.w   .sdone
 
@@ -748,8 +759,8 @@ shift_pf_buffer:
         moveq   #25,d3              ; 26 * 8 = 208 lines
 .dcol_c:
         move.w  #8,BLT_XCOUNT
-        move.w  #8,BLT_YCOUNT       ; 64 words = ~256 cyc max HOG burst!
-        move.b  #$c0,BLT_CTRL
+        move.w  #8,BLT_YCOUNT
+        bsr.w   blt_go
         dbra    d3,.dcol_c
         lea     -16(a0),a0
         lea     -16(a1),a1
