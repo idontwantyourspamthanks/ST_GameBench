@@ -1,5 +1,7 @@
 # gamebench
 
+[<img src="https://img.buymeacoffee.com/button-api/?text=Buy%20me%20a%20coffee&emoji=%E2%98%95&slug=dadprg&button_colour=FFDD00&font_colour=000000&font_family=Cookie&outline_colour=000000&coffee_colour=ffffff" alt="Buy Me A Coffee" height="36">](https://buymeacoffee.com/dadprg)
+
 **Speeding up and modernising classic Atari ST games by patching them, without their source code.**
 
 This repository holds the tools, the patches and the full working notes. It does **not** contain any game, any TOS ROM, or anything extracted from them. You need your own copies (see [Getting the game files](#getting-the-game-files)).
