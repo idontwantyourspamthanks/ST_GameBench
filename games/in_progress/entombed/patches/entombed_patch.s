@@ -119,12 +119,13 @@ hook_init:
         move.l  a0,d0
         clr.b   d0
         move.l  d0,hud_buf
-        ; Pre-split hud_buf bytes for fast Timer B ISR
-        move.b  d0,hud_lo
+        ; Pre-patch hud_buf address bytes directly into my_timer_b immediates
+        ; (12 cycles per write instead of 16 -> saves 12 cycles in HBL!)
+        move.b  d0,tb_hud_lo+3
         lsr.l   #8,d0
-        move.b  d0,hud_mid
+        move.b  d0,tb_hud_mid+3
         lsr.l   #8,d0
-        move.b  d0,hud_hi
+        move.b  d0,tb_hud_hi+3
 
         ; Detect initial 50/60Hz
         btst    #1,HW_SYNCMODE
@@ -198,13 +199,15 @@ my_vbl:
 ; Timer B HBL Interrupt Handler — switch scanline 192 to static HUD buffer
 ; =============================================================================
 my_timer_b:
-        ; Write STe Shifter regs immediately (0 NOPs, before clearing MFP_TBCR)
-        ; so all 5 writes land inside HBL before scanline 192 starts fetching!
-        clr.b   HW_LINEWID
-        clr.b   HW_HSCROLL
-        move.b  hud_hi(pc),HW_VCNT_HI
-        move.b  hud_mid(pc),HW_VCNT_MID
-        move.b  hud_lo(pc),HW_VCNT_LO
+        ; Ultra-fast HBL switch (72 cycles total -> fits even with 64-cycle Blitter bus yield!)
+        clr.b   HW_LINEWID          ; 16 cyc
+        clr.b   HW_HSCROLL          ; 16 cyc
+tb_hud_hi:
+        move.b  #0,HW_VCNT_HI       ; 12 cyc (patched at init)
+tb_hud_mid:
+        move.b  #0,HW_VCNT_MID      ; 12 cyc (patched at init)
+tb_hud_lo:
+        move.b  #0,HW_VCNT_LO       ; 12 cyc (patched at init)
         clr.b   MFP_TBCR
         bclr    #0,MFP_ISRA
         rte
@@ -223,14 +226,17 @@ disable_ste_scroll:
         clr.b   HW_LINEWID
         clr.b   HW_HSCROLL
         move.w  (sp)+,sr
-        ; Restore original TOS screen base ($18130)
+        ; Restore original TOS screen base ($18130) in HI -> MID -> LO order!
         movea.l orig_base,a0
         move.l  O_SCR_PHYS(a0),d0
-        move.b  d0,HW_VBASE_LO
-        lsr.l   #8,d0
-        move.b  d0,HW_VBASE_MID
-        lsr.l   #8,d0
-        move.b  d0,HW_VBASE_HI
+        swap    d0
+        move.b  d0,HW_VBASE_HI      ; 1st: HI
+        swap    d0
+        move.w  d0,-(sp)
+        lsr.w   #8,d0
+        move.b  d0,HW_VBASE_MID     ; 2nd: MID (resets LO to 0 on STe)
+        move.w  (sp)+,d0
+        move.b  d0,HW_VBASE_LO      ; 3rd: LO (must be written LAST on STe!)
         rts
 
 ; =============================================================================
@@ -1237,16 +1243,18 @@ hook_game_swap:
         beq.s   .lw_ok
         moveq   #4,d2
 .lw_ok:
-        ; Write HW_VBASE_HI/MID/LO NOW (before next VBL) so Shifter latches it
-        ; cleanly at the start of next VBL; my_vbl then writes LINEWID & HSCROLL
-        ; to match that exact latched frame!
+        ; Write HW_VBASE in strict HI -> MID -> LO order!
+        ; CRITICAL STe HW RULE: writing $ff8201/$ff8203 clears $ff820d (LO) to 0,
+        ; so HW_VBASE_LO MUST be written LAST!
         move.w  sr,d3
         ori.w   #$0700,sr
-        move.b  d0,HW_VBASE_LO
-        lsr.l   #8,d0
-        move.b  d0,HW_VBASE_MID
-        lsr.l   #8,d0
-        move.b  d0,HW_VBASE_HI
+        swap    d0
+        move.b  d0,HW_VBASE_HI      ; 1st: HI
+        swap    d0
+        move.w  d0,d4
+        lsr.w   #8,d4
+        move.b  d4,HW_VBASE_MID     ; 2nd: MID (resets LO to 0)
+        move.b  d0,HW_VBASE_LO      ; 3rd: LO (sticks!)
         move.b  d2,disp_linewid
         move.b  d1,disp_hscroll
         st      ste_scroll_active
