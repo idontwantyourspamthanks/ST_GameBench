@@ -55,23 +55,25 @@ def main():
 
         sync50 = [l for l in h.debug("m $ff820a 1", 0.4).splitlines() if "00FF820A" in l]
         print("50Hz sync:", sync50)
-        t0 = h.peekw(0x1815e)
+        v0, t0 = h.vbl(), h.peekw(0x1815e)
         r50 = h.fps(150)
-        t1 = h.peekw(0x1815e)
+        v1, t1 = h.vbl(), h.peekw(0x1815e)
         dt50 = (t1 - t0) & 0xffff
-        print(f"50Hz: {r50['flips']} flips / 150 VBLs = {r50['fps']:.2f} fps  |  world ticks={dt50} ({dt50*50.0/150:.2f} Hz)")
+        dv50 = max(1, v1 - v0)
+        print(f"50Hz: {r50['flips']} flips / 150 VBLs = {r50['fps']:.2f} fps  |  world ticks={dt50}/{dv50} VBLs ({dt50*50.0/dv50:.2f} Hz)")
 
         # Toggle to 60Hz with 'H' (scancode 35)
         h.keypress(35)
         time.sleep(0.5)
         sync60 = [l for l in h.debug("m $ff820a 1", 0.4).splitlines() if "00FF820A" in l]
         print("60Hz sync:", sync60)
-        t0 = h.peekw(0x1815e)
+        v0, t0 = h.vbl(), h.peekw(0x1815e)
         r60 = h.fps(180)
-        t1 = h.peekw(0x1815e)
+        v1, t1 = h.vbl(), h.peekw(0x1815e)
         dt60 = (t1 - t0) & 0xffff
+        dv60 = max(1, v1 - v0)
         fps60 = r60["flips"] * 60.0 / 180.0
-        print(f"60Hz: {r60['flips']} flips / 180 VBLs = {fps60:.2f} fps  |  world ticks={dt60} ({dt60*60.0/180:.2f} Hz)")
+        print(f"60Hz: {r60['flips']} flips / 180 VBLs = {fps60:.2f} fps  |  world ticks={dt60}/{dv60} VBLs ({dt60*60.0/dv60:.2f} Hz)")
 
         if args.move:
             h._xdo("keydown", "--window", h.win, "Right")

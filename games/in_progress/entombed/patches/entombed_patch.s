@@ -239,14 +239,15 @@ my_timer_b:
         bne.s   .w_end191
 
         ; Exact start of HBL of line 191 (~cycle 384, 120+ cycles before line 192 DE!)
-        clr.b   HW_LINEWID
-        clr.b   HW_HSCROLL
+        ; Write VCNT_HI/MID/LO FIRST so it latches 32 cycles earlier (crucial at 60Hz!)
 tb_hud_hi:
-        move.b  #0,HW_VCNT_HI       ; patched at init
+        move.b  #0,HW_VCNT_HI       ; 12 cyc (patched at init)
 tb_hud_mid:
-        move.b  #0,HW_VCNT_MID      ; patched at init
+        move.b  #0,HW_VCNT_MID      ; 12 cyc (patched at init)
 tb_hud_lo:
-        move.b  #0,HW_VCNT_LO       ; patched at init
+        move.b  #0,HW_VCNT_LO       ; 12 cyc (patched at init)
+        clr.b   HW_LINEWID          ; 16 cyc
+        clr.b   HW_HSCROLL          ; 16 cyc
 
         move.w  (sp)+,d0
         bclr    #0,MFP_ISRA
@@ -1165,6 +1166,7 @@ hook_game_swap:
         bne.s   .render_vbl_loop
         move.w  d0,prev_cam_x
         move.w  d1,prev_cam_y
+        move.l  vbl_count,last_vbl
         st      has_prev_tick
         clr.w   step_accum
 
@@ -1315,12 +1317,27 @@ hook_game_swap:
         ; Flip double-buffer index for next frame
         eori.w  #1,back_idx
 
-        ; 5. Advance fixed-timestep accumulator (50Hz: +60, 60Hz: +50; threshold 180 = 16.667 Hz)
-        moveq   #60,d0
+        ; 5. Advance fixed-timestep accumulator by REAL elapsed VBLs!
+        ;    (50Hz: +60/VBL, 60Hz: +50/VBL; threshold 180 = exact 16.667 Hz even if a frame ever takes 2 VBLs!)
+        move.l  vbl_count,d1
+        move.l  d1,d0
+        sub.l   last_vbl,d0
+        move.l  d1,last_vbl
+        ; Clamp elapsed VBLs to [1..4] (guards first frame / pauses)
+        cmp.l   #1,d0
+        bge.s   .ev_min
+        moveq   #1,d0
+.ev_min:
+        cmp.l   #4,d0
+        ble.s   .ev_max
+        moveq   #4,d0
+.ev_max:
+        moveq   #60,d2
         tst.b   is_60hz
         beq.s   .dt_ok
-        moveq   #50,d0
+        moveq   #50,d2
 .dt_ok:
+        mulu.w  d2,d0
         add.w   step_accum,d0
         cmp.w   #180,d0
         bcc.s   .tick_ready
@@ -1329,6 +1346,10 @@ hook_game_swap:
 
 .tick_ready:
         sub.w   #180,d0
+        cmp.w   #180,d0
+        bcs.s   .acc_ok
+        moveq   #0,d0
+.acc_ok:
         move.w  d0,step_accum
 
         ; Save current tick's camera & sprite list as prev for next tick's interpolation
@@ -1375,6 +1396,7 @@ old_tb:             ds.l 1
 old_tc:             ds.l 1
 old_ikbd:           ds.l 1
 vbl_count:          ds.l 1
+last_vbl:           ds.l 1
 pf_buf0:            ds.l 1
 pf_buf1:            ds.l 1
 hud_buf:            ds.l 1
