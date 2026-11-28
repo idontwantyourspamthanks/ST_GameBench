@@ -51,6 +51,14 @@ What's New in v1.1 (Atari STE Amiga Visuals & Audio):
     Amiga STE engine automatically.
   * Plain 68000 Atari ST (2 MB+) is detected automatically and runs classic
     v1.0 ST graphics (Timer B grass stripes) and YM audio with zero issues.
+- Faster Management UI & Auto-Advancing Select Team Shirt Picker:
+  * Direct 68000 ST Low 4bpp string renderer replaces per-character TOS Line-A
+    $a008 traps globally, making "The Opponents", "Select Team", "Player
+    Information", "The Squad", and all menu screens draw noticeably faster.
+  * On "Select Team", assigning a shirt number updates only the changed shirt
+    cell(s) in-place (zero full-list redraw/flicker) and automatically advances
+    the active shirt number (1 -> 2 -> ... -> 12 -> 14 -> 1, skipping missing
+    shirt 13 and any right-clicked N/A slots).
 - Real Hard-Disk Driver & 2 MB / 4 MB+ RAM Compatibility:
   * 32-bit-clean HAGA RAM detection and dynamic TRAP #1 / HAGA pointer
     preservation on 2 MB / 4 MB+ machines (including MiSTerFPGA cold boots).

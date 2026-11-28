@@ -17,51 +17,51 @@
 ;   (Ends at $c8300 — 15 KB below VDI/screen at $cc000!)
 ; ---------------------------------------------------------------------------
 
-BR_STATE        equ     $0b6b00
-BR_HOME_SC      equ     $0b6b00         ; .w
-BR_AWAY_SC      equ     $0b6b02         ; .w
-BR_HOME_HUM     equ     $0b6b04         ; .w
-BR_AWAY_HUM     equ     $0b6b06         ; .w
-BR_FAST         equ     $0b6b08         ; .w (0=Normal 5m, 1=Fast 3m)
-BR_CUP_ET       equ     $0b6b0a         ; .w (0=League, 1=Cup Extra Time)
-BR_PM_A4        equ     $0b6b0c         ; .l
-BR_PM_84        equ     $0b6b10         ; .l
-BR_TOS_84       equ     $0b6b14         ; .l
-BR_KICK_DIR     equ     $0b6b18         ; .w (bit0=up/down, bit1=kickoff team)
-BR_WEEK_SEED    equ     $0b6b1a         ; .w (week number for ref/weather variety)
-BR_SAV_70       equ     $0b6b1c         ; .l saved $70.w VBL
-BR_SAV_118      equ     $0b6b20         ; .l saved $118.w IKBD
-BR_KBDVBASE     equ     $0b6b24         ; .l saved Kbdvbase()
-BR_SAV_MVEC     equ     $0b6b28         ; .l saved Kbdvbase+$10 (mousevec)
-BR_SAV_JVEC     equ     $0b6b2c         ; .l saved Kbdvbase+$18 (joyvec)
-BR_OLD_SSP      equ     $0b6b30         ; .l saved old SSP across .rs_d!
-BR_OLD_SR       equ     $0b6b34         ; .w saved old SR across .rs_d!
-BR_LINEA_BASE   equ     $0b6b38         ; .l saved Line-A base ptr from $a000!
-BR_RESULTS      equ     $0b6b40         ; 26 x 10 bytes = 260 bytes ($0b6b40..$0b6c43)
-BR_LINEA_SAVE   equ     $0b6c50         ; 8 bytes ($2e..$35 of Line-A vars)
-BR_MFP_SAVE     equ     $0b6c60         ; 24 bytes: $110,$114,$120,$134 + IERA/IERB/IMRA/IMRB
-BR_IS_STE       equ     $0b6c78         ; .w: 1 = Atari STE/Mega STE detected, 0 = plain ST
-BR_SAV_A0       equ     $0b6c7c         ; .l: saved $a0.w (TRAP #8) vector for STE Blitter call
-BR_RNG_SEED     equ     $0b6c80         ; .l: live VBL counter ($466.w) captured before KO2 PRNG seed!
-BR_HOME_K1      equ     $0b6c84         ; .w: Home team 1st kit (packed word)
-BR_HOME_K2      equ     $0b6c86         ; .w: Home team 2nd kit (packed word)
-BR_AWAY_K1      equ     $0b6c88         ; .w: Away team 1st kit (packed word)
-BR_AWAY_K2      equ     $0b6c8a         ; .w: Away team 2nd kit (packed word)
-BR_HOME_ALT     equ     $0b6c8c         ; .w: 0 = Home wearing 1st kit, 1 = wearing 2nd kit
-BR_AWAY_ALT     equ     $0b6c8e         ; .w: 0 = Away wearing 1st kit, 1 = wearing 2nd kit
-BR_SAV_448      equ     $0b6c90         ; .w: saved TOS palmode ($448.w) before auto-50Hz switch
-BR_SAV_820A     equ     $0b6c92         ; .b: saved Shifter syncmode ($ffff820a.w) before auto-50Hz switch
-BR_DID_50HZ     equ     $0b6c93         ; .b: 1 = switched colour monitor to 50 Hz PAL for match
+BR_STATE        equ     $0b7300
+BR_HOME_SC      equ     $0b7300         ; .w
+BR_AWAY_SC      equ     $0b7302         ; .w
+BR_HOME_HUM     equ     $0b7304         ; .w
+BR_AWAY_HUM     equ     $0b7306         ; .w
+BR_FAST         equ     $0b7308         ; .w (0=Normal 5m, 1=Fast 3m)
+BR_CUP_ET       equ     $0b730a         ; .w (0=League, 1=Cup Extra Time)
+BR_PM_A4        equ     $0b730c         ; .l
+BR_PM_84        equ     $0b7310         ; .l
+BR_TOS_84       equ     $0b7314         ; .l
+BR_KICK_DIR     equ     $0b7318         ; .w (bit0=up/down, bit1=kickoff team)
+BR_WEEK_SEED    equ     $0b731a         ; .w (week number for ref/weather variety)
+BR_SAV_70       equ     $0b731c         ; .l saved $70.w VBL
+BR_SAV_118      equ     $0b7320         ; .l saved $118.w IKBD
+BR_KBDVBASE     equ     $0b7324         ; .l saved Kbdvbase()
+BR_SAV_MVEC     equ     $0b7328         ; .l saved Kbdvbase+$10 (mousevec)
+BR_SAV_JVEC     equ     $0b732c         ; .l saved Kbdvbase+$18 (joyvec)
+BR_OLD_SSP      equ     $0b7330         ; .l saved old SSP across .rs_d!
+BR_OLD_SR       equ     $0b7334         ; .w saved old SR across .rs_d!
+BR_LINEA_BASE   equ     $0b7338         ; .l saved Line-A base ptr from $a000!
+BR_RESULTS      equ     $0b7340         ; 26 x 10 bytes = 260 bytes ($0b7340..$0b7443)
+BR_LINEA_SAVE   equ     $0b7450         ; 8 bytes ($2e..$35 of Line-A vars)
+BR_MFP_SAVE     equ     $0b7460         ; 24 bytes: $110,$114,$120,$134 + IERA/IERB/IMRA/IMRB
+BR_IS_STE       equ     $0b7478         ; .w: 1 = Atari STE/Mega STE detected, 0 = plain ST
+BR_SAV_A0       equ     $0b747c         ; .l: saved $a0.w (TRAP #8) vector for STE Blitter call
+BR_RNG_SEED     equ     $0b7480         ; .l: live VBL counter ($466.w) captured before KO2 PRNG seed!
+BR_HOME_K1      equ     $0b7484         ; .w: Home team 1st kit (packed word)
+BR_HOME_K2      equ     $0b7486         ; .w: Home team 2nd kit (packed word)
+BR_AWAY_K1      equ     $0b7488         ; .w: Away team 1st kit (packed word)
+BR_AWAY_K2      equ     $0b748a         ; .w: Away team 2nd kit (packed word)
+BR_HOME_ALT     equ     $0b748c         ; .w: 0 = Home wearing 1st kit, 1 = wearing 2nd kit
+BR_AWAY_ALT     equ     $0b748e         ; .w: 0 = Away wearing 1st kit, 1 = wearing 2nd kit
+BR_SAV_448      equ     $0b7490         ; .w: saved TOS palmode ($448.w) before auto-50Hz switch
+BR_SAV_820A     equ     $0b7492         ; .b: saved Shifter syncmode ($ffff820a.w) before auto-50Hz switch
+BR_DID_50HZ     equ     $0b7493         ; .b: 1 = switched colour monitor to 50 Hz PAL for match
 
 KO2_STE_BASE    equ     $0ae940         ; $0ae940..$0b0eff (9.6 KB) for KO2STE.BIN (above FILES.CR $09d000..$0ae940!)
 
-KO2_HOME_TEAM   equ     $0b6d00         ; $41e bytes
-KO2_AWAY_TEAM   equ     $0b7120         ; $41e bytes
-PM_HND_SAVE     equ     $0b7540         ; $850 bytes
-KO2_HND_BUF     equ     $0b7d90         ; $820 bytes
-PM_DATA1_SAVE   equ     $0b8600         ; $740 bytes ($0219c0..$022100 -> $0b8d40)
-PM_DATA2_SAVE   equ     $0b8d40         ; $3e00 bytes ($025900..$029700 -> $0bcb40, well below 1MB HDDRIVER $0c4000 / TOS2.06 $0bdde4!)
-KO2_REPLAY_BUF  equ     $0bcc00         ; $6014 bytes ($0bcc00..$0c2c14 < $0c4000; 4 KB TOS 2.06 ring -> $0bdc00 < $0bdde4!)
+KO2_HOME_TEAM   equ     $0b7500         ; $41e bytes
+KO2_AWAY_TEAM   equ     $0b7920         ; $41e bytes
+PM_HND_SAVE     equ     $0b7d40         ; $850 bytes
+KO2_HND_BUF     equ     $0b8590         ; $820 bytes
+PM_DATA1_SAVE   equ     $0b8e00         ; $740 bytes ($0219c0..$022100 -> $0b9540)
+PM_DATA2_SAVE   equ     $0b9540         ; $3e00 bytes ($025900..$029700 -> $0bd340)
+KO2_REPLAY_BUF  equ     $0bd400         ; $6014 bytes ($0bd400..$0c3414 < $0c4000!)
 KO2_SCRATCH_BUF equ     $099000         ; $2c00 bytes temp depack scratch during $015f4c ($099000..$09bc00 < $09d000!)
 KO2_FILES_CR    equ     $09d000         ; $11940 bytes ($09d000..$0ae940 < KO2_STE_BASE $0ae940!)
 

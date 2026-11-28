@@ -98,12 +98,20 @@ reapply_pm_hooks:
         bne.w   .fail
         cmpi.l  #$1b7c0064,$010a38.l    ; move.b #$64,$7(a5)
         bne.w   .fail
+        cmpi.l  #$48e7c010,$017a38.l    ; draw_string_at_xy ($017a38)
+        bne.w   .fail
+        cmpi.l  #$4eac80da,$017a3c.l
+        bne.w   .fail
+        cmpi.l  #$206cd188,$0111e8.l    ; Select Team shirt assign ($0111e8)
+        bne.w   .fail
+        cmpi.l  #$74005246,$0111ec.l
+        bne.w   .fail
 
         clr.b   skip_matches
 
-        ; Apply all 15 6-byte jmp hooks in micro_opt via compact table
+        ; Apply all 17 6-byte jmp hooks in micro_opt via compact table
         lea     pm_jmp_tbl(pc),a0
-        moveq   #14,d0
+        moveq   #16,d0
 .ap_j:  movea.l (a0)+,a1
         move.w  #$4ef9,(a1)+
         move.l  (a0)+,(a1)
@@ -156,6 +164,8 @@ pm_jmp_tbl:
         dc.l    $010540,title_scr2_credit
         dc.l    $01054c,title_scr3_credit
         dc.l    $010a34,club_kit_picker
+        dc.l    $017a38,fast_draw_str
+        dc.l    $0111e8,select_team_assign
 
 ; ---------------------------------------------------------------------------
 ; Patch 1: fast_sum_rng_mod ($01863e) - 100% bit-exact (16/8/4/1-bit LFSR)
@@ -948,6 +958,7 @@ popcnt_tbl:
         include "patches/league92.s"
         include "patches/ko2_bridge.s"
         include "patches/kit_picker.s"
+        include "patches/ui_fast.s"
         include "work/luts.inc"
         even
 payload_end:

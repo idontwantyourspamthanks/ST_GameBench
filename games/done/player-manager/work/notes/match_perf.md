@@ -94,3 +94,35 @@ Verified via Hatari `--avirecord --avi-vcodec png --avi-fps 50` (120 consecutive
   - Default Radar (`scale=16`): **47.22–49.81 FPS (`1.004–1.059 VBL/frame`)**, **0/119** radar drops, **0/119** player drops, **0/119** HUD drops.
   - Large Radar (`scale=8`): **49.80 FPS (`1.004 VBL/frame`)**, **0/119** radar drops (pixel-identical every frame), **0/119** player drops, **0/119** HUD drops.
   - Live `V`-key toggle: Classic ST **49.71 FPS** <-> Amiga STE **50.29 FPS**, `PMOK @ $b2ff8 = $504d4f4b` intact.
+
+---
+
+## 5. v1.1 Final 2 MB+ STE Triple-Buffered 50/60 Hz Engine & Lessons Learned (2026-11-28)
+
+### Final Architecture (`KO2STE.BIN`, 7,572 B, 2 MB Minimum RAM)
+Moving to a **2 MB minimum** unlocked a clean 616 KB STE match arena (`$0d0000..$169fff`, >250 KB below 2 MB `HDDRIVER`) with **zero flicker, zero tearing, zero judder**, and enough headroom to sneak beneath the **60 Hz NTSC (`133,604` cyc/VBL)** ceiling:
+- **Triple-Buffered 448-Line Linear Rings (`DB_A`/`DB_B`/`DB_C`, `$0d0000..$1077ff`):** Lockstep `ste_vbl_end` VBlank latching (`STE_DISP_IDX` scanned out, `STE_PEND_IDX` queued in `$ff8201/$03/$0d` with `STE_PEND_HSCR` applied after VSync, `STE_SHOW_IDX` newest completed) eliminates single-buffer raster chasing and 1 MB ring-seam splits completely.
+- **Single Supervisor Render Bracket (`ste_pu_sup` on isolated 4 KB stack `$10e000`):** One `TRAP #8` per frame with `IPL=0` preserved (VBL/Timer C/IKBD fire freely), eliminating all mid-frame exception round-trips.
+- **$O(1)$ Sprite Slot Indexing + Inactive Fast-Skip:** `(a3)` stores `slot_idx + 1` (`1..32`); `ste_erase_spr` exits in 28 cycles on `tst.l (a3) == 0` before saving registers.
+- **160 KB 640-Sprite Pre-Trimmed / Pre-Masked / X-Trimmed Cache (`$136800..$15e7ff`):** Precomputes `y_skip`, `trimmed_h`, plane-activity flags, and `max_1col_skew` (trailing zero bits of combined mask) so skewed sprites that fit in 16 pixels blit/save/restore as `4w` (`XCOUNT=1`) instead of `8w` (`XCOUNT=2`).
+- **Direct Supervisor 1-Plane `NFSR` Transparent Bottom HUD (`$168000`/`$169000` 4 KB save pools):** Runs directly inside `ste_pu_sup`, `AND`s only 3 planes (`P0..P2`), and skips zero `P2_HOME`/`P1_AWAY` planes on `OR`.
+- **160 KB 5-Scale Split Radar (`$10e800..$1367ff`) + `STE_DOT_XLUT` (`$166000`) + `ste_rad_div`:** Pass 1 draws solid `$ffff` horizontal radar words via 2-byte deltas (zero RMW); Pass 2 draws masked words; 23 dots plot with zero shifts via a 336×16 B LUT; scales 16/8 use `lsr.w #4`/`#3`; radar is cleanly hidden during walk-out (`STE_WALKOUT`) until centre-circle arrival.
+- **44-Cycle Direct `Iorec(1)` Check (`ste_fast_cconis` at `$02024a`):** Checks `ibufhd == ibuftl` directly in User mode, bypassing `TRAP #1` $\to$ GEMDOS $\to$ BIOS on 99.9% of frames.
+- **Auto-50 Hz PAL Match Switch + Live `H` 60 Hz Toggle:** Auto-switches colour systems to 50 Hz PAL on match entry, allows live `H` toggle between 50 Hz PAL and 60 Hz NTSC Turbo with HUD banner, and restores pre-match `$448.w`/`$ff820a.w` on match exit.
+
+### Measured 200-VBL Hardware Cycle Profiles (Cold-Boot `.vhd`, 8 MHz 2 MB STE, TOS 1.62)
+
+| Scenario | VBL Budget | Active (CPU + Blitter HOG) | Free Headroom | Measured FPS |
+|---|---:|---:|---:|---:|
+| 50 Hz PAL — Steady Open Play | `160,256` cyc/VBL | **`107,735` cyc/VBL** (`67.2%`) | **`+52,521`** (`32.8%`) | **`50.0 fps`** |
+| 50 Hz PAL — Heavy 22-AI Fast-Break Scroll | `160,256` cyc/VBL | **`152,884` cyc/VBL** (`95.4%`) | **`+7,372`** (`4.6%`) | **`48.6–50.0 fps`** |
+| 60 Hz Turbo (`H`) — Steady Open Play | `133,604` cyc/VBL | **`107,456` cyc/VBL** (`80.4%`) | **`+26,148`** (`19.6%`) | **`60.00 fps`** (`266/266` VBLs) |
+| 60 Hz Turbo (`H`) — Heavy 22-AI Fast-Break Scroll | `133,604` cyc/VBL | **`128,873` cyc/VBL** (`96.5%`) | **`+4,731`** (`3.5%`) | **`49.6–55.7 fps`** |
+
+### Key Engineering Lessons Learned
+1. **Triple-buffering beats raster-chasing every time:** Single-buffer beam avoidance is inherently fragile under variable load and real hardware/MiSTerFPGA timing. Three linear rings with lockstep VBlank `VBASE` + `HSCROLL`/`LINEWID` latching eliminate flicker/tearing structurally.
+2. **Isolate Supervisor render stacks from tight game stacks:** KO2's `USP` (`$028292`) and `ISP` (`$028250`) sit only 66 bytes apart. Running a whole frame render + nested VBL/Timer C IRQs on a dedicated 4 KB stack (`$10e000`) prevents silent stack corruption.
+3. **Measure Blitter bus traffic, not just blit count:** Pre-interleaving the HUD into 4bpp (`3` blits) actually *increased* bus cycles (`24` RMW ops/col-row across all 4 planes) compared to direct 1-plane `NFSR` (`15` RMW ops/col-row skipping empty planes, where `NFSR` reads `N-1` source words per scanline — fewer than `SKEW=0`). Always profile after every optimisation.
+4. **Never assume unused struct padding in a closed binary:** Writing a slot index to `4(a3)` clobbered KO2's live player struct (`$bc(a5)`). Encoding `slot_idx + 1` inside `(a3)` itself preserved KO2's `tst.l (a3)` contract with zero extra bytes.
+5. **Fast-exit hooks that the engine calls unconditionally:** KO2 calls `$01a83e` (`ste_erase_spr`) on all ~35 entities every frame relying on its first `tst.l (a3); beq` to skip inactive ones. Checking `tst.l (a3)` *before* `movem.l` saved ~4,000 cycles/VBL in two instructions.
+6. **Verify with real moving-camera gameplay, not stationary screens:** A single leftover human controller pointer (`$b4(a5)`) can stall a goal kick and produce misleadingly low cycle profiles. Always inspect screenshots alongside profiler output.
