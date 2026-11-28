@@ -24,7 +24,6 @@ Stages: `games/queue/` (not started) -> `games/in_progress/` (being worked on) -
 | Elite | elite | Gamex | ELITE |  |
 | Fire and Ice | fire-and-ice | PP's HAGA conversion | FIREICE |  |
 | Frontier: Elite II | frontier-elite-2 | Gamex | FRONTIER |  |
-| The Gods | gods | Gamex | GODS |  |
 | Interphase | interphase | Gamex | INTERPH |  |
 | Kick Off | kick-off | PP's HAGA conversion | KICKOFF |  |
 | Kick Off 2 | kick-off-2 | PP's HAGA conversion | KICKOFF2 |  |
