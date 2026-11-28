@@ -9,6 +9,7 @@
 - Build & test tools:
   - `python3 tools/build_entombed.py` — unpacks `originals/stf30a.msa`, assembles `patches/entombed_patch.s` (`vasmm68k_mot`), and outputs `work/disk_overlay/ENTOMBED.PRG`
   - `python3 tools/bench.py --tag test --title --move` — headless Hatari STe 50/60 Hz FPS, world-tick, and screenshot verification
+- Play launchers: `./tools/run_ste.sh`, `./tools/run_megaste.sh`, `./tools/run_orig.sh` (arrows + Right Ctrl = Joystick 1, `H` = 50/60 Hz toggle, `P` = pause)
 
 ## Files
 

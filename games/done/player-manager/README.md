@@ -45,12 +45,12 @@
 
 | Item | MD5 |
 |---|---|
-| `dist/PlayerManager_v1.1_patched_hd_2026-11-27.zip` | `affcdcc8f0bfb86f84c329b5c7deb3dd` |
-| `dist/PlayerManager_v1.1_patched_vhd_2026-11-27.zip` | `678818154f248d55a4751d351c5b55a4` |
-| `dist/PlayerManager_v1.1_floppy_2026-11-27.st` | `37c6de85173c967d4317659be8f3cd48` |
-| `dist/PlayerManager_v1.1_floppy_2026-11-27.zip` | `281bedd6cbde30394b6b712da4e47ec3` |
+| `dist/PlayerManager_v1.1_patched_hd_2026-11-27.zip` | `26ad1098b30fd291d0f55e7af31e4577` |
+| `dist/PlayerManager_v1.1_patched_vhd_2026-11-27.zip` | `7a07e6ad08dba598984e6fcf81cda606` |
+| `dist/PlayerManager_v1.1_floppy_2026-11-27.st` | `013e9110aadad6cc8c26a3483e9b7314` |
+| `dist/PlayerManager_v1.1_floppy_2026-11-27.zip` | `0d2e785fb418a4a3318104233463bb8a` |
 | `build/game/HAGA` | `5d573a9cd79de06588ce53da9aa44e05` |
-| `build/game/FILES/PMLA` | `d073d0ca873b9f3c32dc467e6b9cb82a` |
+| `build/game/FILES/PMLA` | `149830df83fb5b90d388953ce892d03b` |
 | `build/game/FILES/KO2ENG.BIN` | `934b13a84279197ab58d46312253f078` |
 | `build/game/FILES/KO2HND.BIN` | `a3505e2d266ec54f926b300b88d6be73` |
 | `build/game/FILES/PMCODE.BIN` | `b151b784eec464874beb2a0db9810fcb` |

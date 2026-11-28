@@ -114,24 +114,23 @@ reapply_pm_hooks:
         bne.w   .fail
         cmpi.l  #$48e7fff6,$017d0c.l    ; draw_screen ($017d0c)
         bne.w   .fail
-        cmpi.l  #$4ef90001,$0216a2.l    ; -$7ff8(a4) wait_event jump table ($0216a2)
+        cmpi.l  #$2f084a6c,$018148.l    ; wait_event ($018148)
         bne.w   .fail
 
         clr.b   skip_matches
         clr.b   ui_mouse_held
         clr.l   ui_logbase
 
-        ; Apply all 20 6-byte jmp hooks in micro_opt via compact table
+        ; Apply all 21 6-byte jmp hooks in micro_opt via compact table
         lea     pm_jmp_tbl(pc),a0
-        moveq   #19,d0
+        moveq   #20,d0
 .ap_j:  movea.l (a0)+,a1
         move.w  #$4ef9,(a1)+
         move.l  (a0)+,(a1)
         dbra    d0,.ap_j
 
-        ; 2. Hook $021792 (LFSR jump table) & $0216a2 (wait_event mouse-batch release)
+        ; 2. Hook $021792 (LFSR jump table)
         move.l  #fast_lfsr,$021794.l
-        move.l  #fast_wait_event,$0216a4.l
 
         ; 6b. Short branch in sim_season_matches ($01545e)
         move.w  #$3407,$01545e.l        ; move.w d7,d2
@@ -184,6 +183,7 @@ pm_jmp_tbl:
         dc.l    $0126a8,pw_week_end
         dc.l    $0129e0,pw_season_end
         dc.l    $017d0c,fast_draw_screen
+        dc.l    $018148,fast_wait_event
 
 ; ---------------------------------------------------------------------------
 ; Patch 1: fast_sum_rng_mod ($01863e) - 100% bit-exact (16/8/4/1-bit LFSR)

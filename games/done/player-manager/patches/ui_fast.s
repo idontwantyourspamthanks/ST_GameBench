@@ -119,23 +119,25 @@ fast_draw_str:
 
         ; Outer character loop: d6 = cur_x, a3 = string ptr, a5 = screen_base + y*160
         move.w  d0,d6
-
+        bra.s   .fds_ch
+.fds_adv_tr:
+        add.w   ui_cellw(pc),d6
 .fds_ch:
         moveq   #0,d0
         move.b  (a3)+,d0
         beq.w   .fds_ok
         cmpi.b  #' ',d0                 ; space has 0 pixels -> instant advance!
-        beq.w   .fds_adv
+        beq.s   .fds_adv_tr
         sub.w   ui_first(pc),d0
-        blt.w   .fds_adv
+        blt.s   .fds_adv_tr
         add.w   d0,d0
         movea.l ui_offtbl(pc),a0
         move.w  0(a0,d0.w),d1           ; d1 = bit_x in font strip
         move.w  2(a0,d0.w),d2
         sub.w   d1,d2                   ; d2 = glyph width (1..8)
-        ble.w   .fds_adv
+        ble.s   .fds_adv_tr
         cmpi.w  #8,d2
-        bhi.w   .fds_adv
+        bhi.s   .fds_adv_tr
         add.w   d2,d2
         lea     ui_wmask_tbl(pc),a0
         move.w  0(a0,d2.w),d5           ; d5 = top-w-bits mask ($fc00 for 6px, $ff00 for 8px)
@@ -739,12 +741,27 @@ fast_draw_screen:
         jmp     $017d12.l               ; continue draw_screen
 
 fast_wait_event:
+        move.l  a0,-(sp)
         tst.b   ui_mouse_held
-        beq.s   .fwe_go
+        beq.s   .fwe_lp
         clr.b   ui_mouse_held
         jsr     -$7f20(a4)              ; show mouse ONCE before waiting!
-.fwe_go:
-        jmp     $018148.l               ; original wait_event
+.fwe_lp:
+        tst.w   -$3a24(a4)
+        bne.s   .fwe_m
+        move.w  #11,-(sp)               ; GEMDOS Cconis()
+        trap    #1
+        addq.l  #2,sp
+        tst.w   d0
+        beq.s   .fwe_lp
+        jmp     $018178.l               ; Cnecin() + return key
+.fwe_m:
+        tst.w   -$3a26(a4)
+        bne.s   .fwe_hit
+        clr.w   -$3a24(a4)
+        bra.s   .fwe_lp
+.fwe_hit:
+        jmp     $01816a.l               ; hit_test_widget + return click
 
 ui_logbase:     dc.l    0
 ui_last_pct:    dc.w    -1
@@ -753,5 +770,5 @@ ui_bar_y:       dc.w    116
 ui_bar_col:     dc.w    15
 ui_mouse_held:  dc.b    0
                 even
-ui_pct_buf:     ds.b    8
+ui_pct_buf:     ds.b    6
                 even
