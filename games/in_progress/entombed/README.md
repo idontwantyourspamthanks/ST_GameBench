@@ -1,13 +1,15 @@
 # Entombed
 
 - Slug: `entombed`
-- Status: **in progress** (STe Enhanced prototype built & verified at locked **50.00 FPS** & **60.00 FPS** with unlinked timestep + 1-px interpolation)
+- Status: **in progress — v1.0 STe Enhanced complete** (verified locked **50.00 FPS** & **60.00 FPS** with 0 HUD glitches, unlinked 16.67 Hz world clock + 1-px interpolation)
 - Source: ST Format Issue 30 coverdisk (`originals/stf30a.msa`, `SIDE_2\ENTOMBED\ENTOMBED.PRG`)
 - Original: *Entombed* by Nick Concannon (free coverdisk game, no copy protection, pure 68000 assembly)
-- Local copies: `originals/` and `work/extracted/` (git-ignored, never committed)
+- Local copies: `originals/`, `work/extracted/`, and `dist/` (git-ignored, never committed)
 - Research notes: [`work/notes/RESEARCH.md`](work/notes/RESEARCH.md)
-- Build & test tools:
+- Release notes: [`patches/PATCHES.TXT`](patches/PATCHES.TXT)
+- Build, package & test tools:
   - `python3 tools/build_entombed.py` — unpacks `originals/stf30a.msa`, assembles `patches/entombed_patch.s` (`vasmm68k_mot`), and outputs `work/disk_overlay/ENTOMBED.PRG`
+  - `./tools/package.sh` — builds `dist/Entombed_Enhanced_v1.0_HD.zip`, `dist/Entombed_Enhanced_v1.0_Floppy.zip` (`.st`), and `dist/Entombed_Enhanced_v1.0_VHD.zip` (standalone 8 MB auto-booting `.vhd` via `tools/make_game_vhds.py entombed`)
   - `python3 tools/bench.py --tag test --title --move` — headless Hatari STe 50/60 Hz FPS, world-tick, and screenshot verification
 - Play launchers: `./tools/run_ste.sh`, `./tools/run_megaste.sh`, `./tools/run_orig.sh` (arrows + Right Ctrl = Joystick 1, `H` = 50/60 Hz toggle, `P` = pause)
 
@@ -26,10 +28,10 @@
 | **50 Hz PAL** | 16.67 FPS (3.0 VBLs/f) | **50.00 FPS (1.0 VBL/f)** | **16.67 Hz (locked)** |
 | **60 Hz NTSC (`H` key)** | — | **60.00 FPS (1.0 VBL/f)** | **16.67 Hz (locked)** |
 
-### Implemented Enhancements (`patches/entombed_patch.s`, 3,210 B)
+### Implemented Enhancements in v1.0 (`patches/entombed_patch.s`, 3,534 B)
 - **Unpacked relocatable build pipeline** (`tools/unpack_entombed.py`, `tools/build_entombed.py`) with instant startup (skips the original 138 KB tile pre-shifter).
 - **STe Hardware 8-Way Scrolling (`$ff820d`, `$ff820f`, `$ff8265`)** using double-buffered `352×208` playfield buffers with in-place Blitter scrolling and dirty-tile incremental Blitter updates (~700 cycles per 32×16 4-plane tile).
 - **STe Blitter Masked Sprites** with hardware 1-pixel skew (`$ff8a3d`), on-the-fly plane normalization & mask generation, and automatic dirty-tile restore.
-- **Timer B Split-Screen HUD at scanline 192** rendering to a static, dirty-checked 8-line buffer (0 CPU cycles on unchanged frames, zero scroll jitter).
-- **Unlinked Fixed-Timestep Engine + 1-Pixel Render Interpolation**: game logic ticks at a constant `16.67 Hz` regardless of 50 Hz / 60 Hz / CPU speed, while camera and all entity-tagged sprites linearly interpolate to exact 1-pixel positions every single VBL.
+- **Zero-Glitch Timer B Split-Screen HUD at scanline 192** locked to `$ff8209` (`HW_VCNT_LO`), with atomic top-border `HW_VBASE` + `HW_VCNT` commits, IPL-5 Timer C / IKBD wrappers, and hardware Blitter bus-sharing/pause around scanline 191 (verified 0 / 1,190 60 Hz frames & 0 / 235 50 Hz frames in full-rate AVI analysis).
+- **Unlinked VBL-Compensated Fixed-Timestep Engine + 1-Pixel Render Interpolation**: game logic ticks at a constant `16.67 Hz` regardless of 50 Hz / 60 Hz / CPU speed, while camera and all entity-tagged sprites linearly interpolate to exact 1-pixel positions every single VBL.
 - **Live `'H'` 50/60 Hz Toggle** in-game + discreet `enhanced by dad_prg v1.0` credit on the title screen.

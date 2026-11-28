@@ -82,6 +82,18 @@ class GameSpec:
 
 SPECS: tuple[GameSpec, ...] = (
     GameSpec(
+        slug="entombed",
+        title="Entombed",
+        version="1.0",
+        hd_zip="Entombed_Enhanced_v1.0_HD.zip",
+        zip_root="ENTOMBED",
+        vhd_name="Entombed_v1.0.vhd",
+        out_zip_tmpl="Entombed_Enhanced_v1.0_VHD.zip",
+        volume="ENTOMBED",
+        autorun="C:\\ENTOMBED\\ENTOMBED.PRG",
+        notes="Requires Atari STE or Mega STE (1 MB+ RAM) for hardware fine scrolling and Blitter acceleration. Press H in-game to toggle 50/60 Hz.",
+    ),
+    GameSpec(
         slug="flood",
         title="Flood",
         version="1.1",

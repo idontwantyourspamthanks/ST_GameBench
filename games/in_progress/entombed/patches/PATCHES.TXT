@@ -1,0 +1,49 @@
+ENTOMBED - ATARI STE ENHANCED v1.0
+==================================
+Original game (c) 1991 Nick Concannon (ST Format Issue 30)
+Atari STe enhancement v1.0 by dad_prg
+
+REQUIREMENTS
+------------
+- Atari STe or Mega STe with 1 MB RAM minimum (uses STe hardware
+  fine scrolling + Blitter chip)
+- RGB / SCART / Multisync monitor or MiSTer / Hatari (supports live
+  50 Hz PAL / 60 Hz NTSC switching)
+
+CONTROLS
+--------
+- Joystick Port 1   Move / Jump / Climb / Use levers
+- H                 Toggle 50 Hz (50 FPS) / 60 Hz (60 FPS) live in-game
+- P                 Pause / unpause game
+- 0 - 9             Adjust hourglass tomb-change speed
+
+WHAT'S NEW IN v1.0
+------------------
+1. Locked 50 FPS & 60 FPS Smoothness (up from 16.67 FPS original)
+   - Replaces the CPU-bound 16-shift software tilemap redraw with
+     Atari STe 8-way hardware fine scrolling ($FF820D/$FF820F/$FF8265)
+     over double-buffered 352x208 playfields, using the Blitter for
+     in-place buffer scrolling and incremental dirty-tile updates.
+   - Skips the original 138 KB startup tile pre-shifter for instant
+     level loads and fit inside 1 MB RAM.
+
+2. Blitter Masked 1-Pixel Sprites
+   - All game sprites are normalized, masked, and drawn via the STe
+     Blitter hardware barrel shifter ($FF8A3D) at exact 1-pixel
+     positions with automatic dirty-tile background restoration.
+
+3. Unlinked Fixed-Timestep World Clock + 1-Pixel Interpolation
+   - Game physics, traps, enemies, and tomb timers run at Nick's exact
+     original 16.67 Hz world tick rate regardless of 50 Hz, 60 Hz, or
+     CPU clock (8 MHz STe vs 16 MHz Mega STe), compensated by real
+     elapsed VBLs.
+   - Every rendered VBL linearly interpolates both the camera and all
+     active sprites to sub-tick 1-pixel coordinates for silky 50/60 FPS
+     motion without altering jump arcs or trap timing.
+
+4. Rock-Solid Timer B Split-Screen Status Bar
+   - Scanline-192 hardware HUD split locked to the Shifter video
+     counter ($FF8209) with atomic top-border VBASE+VCNT commits,
+     IPL-5 Timer C / IKBD wrappers, and hardware Blitter bus-sharing /
+     pause around scanline 191 for zero status-bar flicker at both
+     50 Hz and 60 Hz.
